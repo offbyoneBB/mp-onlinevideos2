@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>4755</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label</define>
+  <define>#header.hover</define>
+  <controls>
+    <import>common.window.xml</import>
+    <import>common.facade.xml</import>
+    <import>common.time.xml</import>
+    <import>myonlinevideos.details.xml</import>    
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>106</buttonwidth>
+      <buttonheight>720</buttonheight>
+      <textureFocus>Action_focus.png</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>568</width>
+      <height>900</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <posX>26</posX>
+        <posY>78</posY>
+        <width>367</width>
+        <height>591</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="250" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>button group</description>
+        <type>group</type>
+        <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="250" end="-300,0" reversible="false">hidden</animation>
+        <posX>71</posX>
+        <posY>121</posY>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>View-As</description>
+          <type>button</type>
+          <id>2</id>
+          <label>101</label>
+          <onright>50</onright>
+          <onup>17</onup>
+        </control>
+        <control>
+          <description>select category</description>
+          <type>selectbutton</type>
+          <id>9</id>
+          <onright>50</onright>
+          <label>194</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Search</description>
+          <id>10</id>
+          <onright>50</onright>
+          <label>137</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Favorites</description>
+          <id>11</id>
+          <onright>50</onright>
+          <label>359</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <type>selectbutton</type>
+          <description>Max Results</description>
+          <id>5</id>
+          <onright>50</onright>
+          <onup>2</onup>
+          <label>Max Results</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <type>selectbutton</type>
+          <description>Order By</description>
+          <id>6</id>
+          <onright>50</onright>
+          <onup>5</onup>
+          <label>103</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <type>selectbutton</type>
+          <description>TimeFrame button</description>
+          <id>7</id>
+          <onright>50</onright>
+          <onup>6</onup>
+          <label>Timeframe</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Update button</description>
+          <id>8</id>
+          <onright>50</onright>
+          <onup>7</onup>
+          <label>184</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Next Page</description>
+          <id>3</id>          
+          <onright>50</onright>
+          <onup>8</onup>
+          <ondown>4</ondown>
+          <label>1975</label>
+          <animation effect="fade" time="200">WindowOpen</animation>
+          <animation effect="fade" time="200">WindowClose</animation>
+          <visible>no</visible>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Previous Page</description>
+          <id>4</id>          
+          <onright>50</onright>
+          <onup>3</onup>
+          <ondown>12</ondown>
+          <label>30004</label>
+          <animation effect="fade" time="200">WindowOpen</animation>
+          <animation effect="fade" time="200">WindowClose</animation>
+          <visible>no</visible>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Do Age Check</description>
+          <id>12</id>          
+          <onright>50</onright>
+          <onup>4</onup>
+          <ondown>2</ondown>
+          <label>Enter Pin</label>          
+          <visible>no</visible>
+        </control>
+      </control>
+    </control>
+  </controls>
+</window>
