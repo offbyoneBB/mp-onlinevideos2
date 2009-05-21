@@ -1,0 +1,516 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<OnlineVideoSites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Sites>
+    <Site name="YouTube" util="YouTube" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Top Rated">http://gdata.youtube.com/feeds/api/standardfeeds/top_rated</Category>
+        <Category xsi:type="RssLink" name="Recently Added">http://gdata.youtube.com/feeds/api/videos?orderby=published</Category>
+        <Category xsi:type="RssLink" name="Recently Featured">http://gdata.youtube.com/feeds/api/standardfeeds/recently_featured</Category>
+        <Category xsi:type="RssLink" name="Top Favorites">http://gdata.youtube.com/feeds/api/standardfeeds/top_favorites</Category>
+        <Category xsi:type="RssLink" name="Top Viewed">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed</Category>
+        <Category xsi:type="RssLink" name="Top Viewed:Today">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=today</Category>
+        <Category xsi:type="RssLink" name="Top Viewed:This Week">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=this_week</Category>
+        <Category xsi:type="RssLink" name="Top Viewed:This Month">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=this_month</Category>
+      </Categories>
+    </Site>
+    <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" playmode="Video">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories />
+    </Site>
+    <Site name="ZDF Mediatek" util="ZDFMediathek" agecheck="false" enabled="true" playmode="Video">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories />
+    </Site>
+    <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Top 10 Today">http://www.myvideo.de/feeds/myVideo-Top10-daily.rss</Category>
+        <Category xsi:type="RssLink" name="Top 10 Week">http://www.myvideo.de/feeds/myVideo-Top10-weekly.rss</Category>
+        <Category xsi:type="RssLink" name="Top 10 Month">http://www.myvideo.de/feeds/myVideo-Top10-monthly.rss</Category>
+        <Category xsi:type="RssLink" name="Top 10 Alltime">http://www.myvideo.de/feeds/myVideo-Top10-alltime.rss</Category>
+      </Categories>
+    </Site>
+    <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl>http://www.metacafe.com/f/tags/{0}/rss.xml</SearchUrl>
+      <Categories>
+        <Category xsi:type="RssLink" name="New Videos">http://www.metacafe.com/rss/new_videos.rss</Category>
+        <Category xsi:type="RssLink" name="Top Rated">http://www.metacafe.com/rss/today_videos/rss.xml?sort=rank</Category>
+        <Category xsi:type="RssLink" name="Top Discussed">http://www.metacafe.com/rss/today_videos/rss.xml?sort=discussed</Category>
+      </Categories>
+    </Site>
+    <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl>http://www.dailymotion.com/rss/relevance/search/{0}</SearchUrl>
+      <Categories>
+        <Category xsi:type="RssLink" name="Front Page">http://www.dailymotion.com/rss</Category>
+        <Category xsi:type="RssLink" name="Ads">http://www.dailymotion.com/rss/cluster/ads</Category>
+        <Category xsi:type="RssLink" name="Animals">http://www.dailymotion.com/rss/cluster/animals</Category>
+        <Category xsi:type="RssLink" name="Fun">http://www.dailymotion.com/rss/cluster/fun</Category>
+        <Category xsi:type="RssLink" name="Auto">http://www.dailymotion.com/rss/cluster/auto</Category>
+        <Category xsi:type="RssLink" name="Street">http://www.dailymotion.com/rss/cluster/street</Category>
+        <Category xsi:type="RssLink" name="Creation">http://www.dailymotion.com/rss/cluster/creation</Category>
+        <Category xsi:type="RssLink" name="Short Films">http://www.dailymotion.com/rss/cluster/shortfilms</Category>
+        <Category xsi:type="RssLink" name="Business">http://www.dailymotion.com/rss/cluster/business</Category>
+        <Category xsi:type="RssLink" name="Tech">http://www.dailymotion.com/rss/cluster/tech</Category>
+        <Category xsi:type="RssLink" name="Sport">http://www.dailymotion.com/rss/cluster/sport</Category>
+        <Category xsi:type="RssLink" name="Extreme">http://www.dailymotion.com/rss/cluster/extreme</Category>
+        <Category xsi:type="RssLink" name="Events">http://www.dailymotion.com/rss/cluster/events</Category>
+        <Category xsi:type="RssLink" name="Family">http://www.dailymotion.com/rss/cluster/family</Category>
+        <Category xsi:type="RssLink" name="Music">http://www.dailymotion.com/rss/cluster/music</Category>
+        <Category xsi:type="RssLink" name="News">http://www.dailymotion.com/rss/cluster/news</Category>
+        <Category xsi:type="RssLink" name="Parties">http://www.dailymotion.com/rss/cluster/parties</Category>
+        <Category xsi:type="RssLink" name="School">http://www.dailymotion.com/rss/cluster/school</Category>
+        <Category xsi:type="RssLink" name="Travel">http://www.dailymotion.com/rss/cluster/travel</Category>
+        <Category xsi:type="RssLink" name="Video Games">http://www.dailymotion.com/rss/cluster/videogames</Category>
+        <Category xsi:type="RssLink" name="Blog">http://www.dailymotion.com/rss/cluster/blog</Category>
+        <Category xsi:type="RssLink" name="3D">http://www.dailymotion.com/rss/cluster/3D</Category>
+        <Category xsi:type="RssLink" name="Dating">http://www.dailymotion.com/rss/cluster/dating</Category>
+      </Categories>
+    </Site>
+    <Site name="GameTrailers" util="GameTrailers" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="New Trailers">http://www.gametrailers.com/rss/newest.xml</Category>
+        <Category xsi:type="RssLink" name="Newest DS">http://www.gametrailers.com/rss/newestds.xml</Category>
+        <Category xsi:type="RssLink" name="Newest Nintendo">http://www.gametrailers.com/rss/newestnintendo.xml</Category>
+        <Category xsi:type="RssLink" name="Newest PC">http://www.gametrailers.com/rss/newestpc.xml</Category>
+        <Category xsi:type="RssLink" name="Newest PS2">http://www.gametrailers.com/rss/newestps2.xml</Category>
+        <Category xsi:type="RssLink" name="Newest PS3">http://www.gametrailers.com/rss/newestps3.xml</Category>
+        <Category xsi:type="RssLink" name="Newest PSP">http://www.gametrailers.com/rss/newestpsp.xml</Category>
+        <Category xsi:type="RssLink" name="Newest Sony">http://www.gametrailers.com/rss/newestsony.xml</Category>
+        <Category xsi:type="RssLink" name="Newest Xb360">http://www.gametrailers.com/rss/newestxb360.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20">http://www.gametrailers.com/rss/top20.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 DS">http://www.gametrailers.com/rss/top20ds.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 GBA">http://www.gametrailers.com/rss/top20gba.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 GC">http://www.gametrailers.com/rss/top20gc.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 NGage">http://www.gametrailers.com/rss/top20ngage.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 Nintendo">http://www.gametrailers.com/rss/top20nintendo.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 PC">http://www.gametrailers.com/rss/top20pc.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 PS2">http://www.gametrailers.com/rss/top20ps2.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 PS3">http://www.gametrailers.com/rss/top20ps3.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 PSP">http://www.gametrailers.com/rss/top20psp.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 Sony">http://www.gametrailers.com/rss/top20sony.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 Xbox360">http://www.gametrailers.com/rss/top20xb360.xml</Category>
+        <Category xsi:type="RssLink" name="Top 20 Xbox">http://www.gametrailers.com/rss/top20xbox.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated">http://www.gametrailers.com/rss/toprated.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated DS">http://www.gametrailers.com/rss/topratedds.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated GBA">http://www.gametrailers.com/rss/topratedgba.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated GC">http://www.gametrailers.com/rss/topratedgc.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated NGage">http://www.gametrailers.com/rss/topratedngage.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated Nintendo">http://www.gametrailers.com/rss/topratednintendo.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated PC">http://www.gametrailers.com/rss/topratedpc.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated PS2">http://www.gametrailers.com/rss/topratedps2.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated PS3">http://www.gametrailers.com/rss/topratedps3.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated PSP">http://www.gametrailers.com/rss/topratedpsp.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated Sony">http://www.gametrailers.com/rss/topratedsony.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated Xb360">http://www.gametrailers.com/rss/topratedxb360.xml</Category>
+        <Category xsi:type="RssLink" name="Top Rated Xbox">http://www.gametrailers.com/rss/topratedxbox.xml</Category>
+      </Categories>
+    </Site>
+    <Site name="Apple Trailers" util="AppleTrailers" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories />
+    </Site>
+    <Site name="Break" util="Break" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl>http://rss.break.com/tag/{0}/</SearchUrl>
+      <Categories>
+        <Category xsi:type="RssLink" name="Home Page">http://rss.break.com/channel/homepage/</Category>
+        <Category xsi:type="RssLink" name="Movies">http://rss.break.com/channel/movies/</Category>
+        <Category xsi:type="RssLink" name="Originals">http://rss.break.com/channel/break-originals/</Category>
+        <Category xsi:type="RssLink" name="Cute Girls">http://rss.break.com/channel/cute-girls/</Category>
+        <Category xsi:type="RssLink" name="Crazy Pet Tricks">http://rss.break.com/channel/crazy-pet-tricks/</Category>
+        <Category xsi:type="RssLink" name="How To">http://rss.break.com/channel/how-to/</Category>
+      </Categories>
+    </Site>
+    <Site name="CNN" util="Cnn" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Top Stories">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/top_stories.xml</Category>
+        <Category xsi:type="RssLink" name="Most Popular">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/most_popular.xml</Category>
+        <Category xsi:type="RssLink" name="Staff Picks">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/staff_picks.xml</Category>
+        <Category xsi:type="RssLink" name="CNN TV">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/cnn_tv.xml</Category>
+        <Category xsi:type="RssLink" name="I-Reports">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_ireports.xml</Category>
+        <Category xsi:type="RssLink" name="US">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_us.xml</Category>
+        <Category xsi:type="RssLink" name="US Crime">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_crime.xml</Category>
+        <Category xsi:type="RssLink" name="World">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_world.xml</Category>
+        <Category xsi:type="RssLink" name="International">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_international.xml</Category>
+        <Category xsi:type="RssLink" name="CNN En Espanol">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_espanol.xml</Category>
+        <Category xsi:type="RssLink" name="Politics">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_politics.xml</Category>
+        <Category xsi:type="RssLink" name="Entertainment">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_showbiz.xml</Category>
+        <Category xsi:type="RssLink" name="Offbeat">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_funny_news.xml</Category>
+        <Category xsi:type="RssLink" name="Tech">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_tech.xml</Category>
+        <Category xsi:type="RssLink" name="Living">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_living.xml</Category>
+        <Category xsi:type="RssLink" name="Student News">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_student.xml</Category>
+        <Category xsi:type="RssLink" name="Health">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_health.xml</Category>
+        <Category xsi:type="RssLink" name="Business">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_business.xml</Category>
+        <Category xsi:type="RssLink" name="Sports">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_sports.xml</Category>
+        <Category xsi:type="RssLink" name="Weather">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_weather.xml</Category>
+      </Categories>
+    </Site>
+    <Site name="VeryFunnyAds" util="VeryFunnyAds" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories />
+    </Site>
+    <Site name="MSNBC" util="Msnbc" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Today">http://www.msnbc.msn.com/id/12133116/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Nightly News">http://www.msnbc.msn.com/id/3032618/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Dateline">http://www.msnbc.msn.com/id/12680786/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Meet the Press">http://www.msnbc.msn.com/id/15483101/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="MSNBC TV">http://www.msnbc.msn.com/id/3096433/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Business Video">http://www.msnbc.msn.com/id/9611459/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="The Week in Video">http://www.msnbc.msn.com/id/14514583/device/rss/rss.xml</Category>
+      </Categories>
+    </Site>
+    <Site name="TEDTalks" util="GenericSite" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="All">http://feeds2.feedburner.com/TedtalksHD</Category>
+        <Category xsi:type="RssLink" name="New">http://www.ted.com/themes/rss/id/46</Category>
+        <Category xsi:type="RssLink" name="The Creative Spark">http://www.ted.com/themes/rss/id/1</Category>
+        <Category xsi:type="RssLink" name="Animals That Amaze">http://www.ted.com/themes/rss/id/2</Category>
+        <Category xsi:type="RssLink" name="Evolution's Genius">http://www.ted.com/themes/rss/id/3</Category>
+        <Category xsi:type="RssLink" name="The Power of Cities">http://www.ted.com/themes/rss/id/5</Category>
+        <Category xsi:type="RssLink" name="What's Next in Tech">http://www.ted.com/themes/rss/id/6</Category>
+        <Category xsi:type="RssLink" name="Spectacular Performance">http://www.ted.com/themes/rss/id/9</Category>
+        <Category xsi:type="RssLink" name="Architectural Inspiration">http://www.ted.com/themes/rss/id/10</Category>
+        <Category xsi:type="RssLink" name="TED Prize Winners">http://www.ted.com/themes/rss/id/12</Category>
+        <Category xsi:type="RssLink" name="Inspired by Nature">http://www.ted.com/themes/rss/id/14</Category>
+        <Category xsi:type="RssLink" name="A Greener Future?">http://www.ted.com/themes/rss/id/15</Category>
+        <Category xsi:type="RssLink" name="Art Unusual">http://www.ted.com/themes/rss/id/17</Category>
+      </Categories>
+    </Site>
+    <Site name="NASA" util="GenericSite" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="NASACast">http://www.nasa.gov/rss/NASAcast_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="This Week @ NASA">http://www.nasa.gov/rss/TWAN_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="50th Anniversary Moments">http://www.nasa.gov/rss/moments_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="NASA Mission Update">http://www.nasa.gov/rss/mission_update_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="NASA 360">http://www.nasa.gov/rss/nasa360_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="NASA Edge">http://www.nasa.gov/rss/NASAEdge_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Last Mission to Hubble">http://www.nasa.gov/rss/hubble_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Shuttle &amp; Station">http://www.nasa.gov/rss/shuttle_station_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="To the Moon">http://www.nasa.gov/rss/exploration_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Solar System">http://www.nasa.gov/rss/solar_system_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Universe">http://www.nasa.gov/rss/universe_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Earth">http://www.nasa.gov/rss/Earth_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="What's Up?">http://www.nasa.gov/rss/whatsup_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Exploration">http://www.nasa.gov/rss/exploration_vodcast.rss</Category>
+      </Categories>
+    </Site>
+    <Site name="blip.tv" util="GenericSite" agecheck="false" enabled="true" playmode="Video">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Most Popular">http://blip.tv/?1=1&amp;s=posts&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Art">http://blip.tv/posts/view/?category=27&amp;category_name=Art&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Business">http://blip.tv/posts/view/?category=26&amp;category_name=Business&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Citizen Journalism">http://blip.tv/posts/view/?category=4&amp;category_name=Citizen%20Journalism&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Comedy">http://blip.tv/posts/view/?category=2&amp;category_name=Comedy&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Conferences and Other Events">http://blip.tv/posts/view/?category=10&amp;category_name=Conferences%20and%20Other%20Events&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Convenient Truths Contest">http://blip.tv/posts/view/?category=20&amp;category_name=Convenient%20Truths%20Contest&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Documentary">http://blip.tv/posts/view/?category=19&amp;category_name=Documentary&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Educational">http://blip.tv/posts/view/?category=21&amp;category_name=Educational&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Food and Drink">http://blip.tv/posts/view/?category=12&amp;category_name=Food%20%26%20Drink&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Friends">http://blip.tv/posts/view/?category=15&amp;category_name=Friends&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Gaming">http://blip.tv/posts/view/?category=13&amp;category_name=Gaming&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Health">http://blip.tv/posts/view/?category=25&amp;category_name=Health&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Literature">http://blip.tv/posts/view/?category=11&amp;category_name=Literature&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Movies and Television">http://blip.tv/posts/view/?category=28&amp;category_name=Movies%20and%20Television&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Music and Entertainment">http://blip.tv/posts/view/?category=5&amp;category_name=Music%20and%20Entertainment&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Personal or Auto-biographical">http://blip.tv/posts/view/?category=8&amp;category_name=Personal%20or%20Auto-biographical&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Politics">http://blip.tv/posts/view/?category=3&amp;category_name=Politics&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Religion">http://blip.tv/posts/view/?category=23&amp;category_name=Religion&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="School and Education">http://blip.tv/posts/view/?category=16&amp;category_name=School%20and%20Education&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Science">http://blip.tv/posts/view/?category=14&amp;category_name=Science&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Sports">http://blip.tv/posts/view/?category=6&amp;category_name=Sports&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Technology">http://blip.tv/posts/view/?category=7&amp;category_name=Technology&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="The Environment">http://blip.tv/posts/view/?category=22&amp;category_name=The%20Environment&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="The Mainstream Media">http://blip.tv/posts/view/?category=18&amp;category_name=The%20Mainstream%20Media&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Travel">http://blip.tv/posts/view/?category=24&amp;category_name=Travel&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Videoblogging">http://blip.tv/posts/view/?category=9&amp;category_name=Videoblogging&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Web Development and Sites">http://blip.tv/posts/view/?category=17&amp;category_name=Web%20Development%20and%20Sites&amp;skin=rss</Category>
+        <Category xsi:type="RssLink" name="Search">http://blip.tv/?1=1&amp;search={0};page=1;s=posts&amp;skin=rss</Category>
+      </Categories>
+    </Site>
+    <Site name="Revision3" util="GenericSite" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Best of">http://revision3.com/bestof/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="CO-OP">http://revision3.com/coop/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="Digg Dialogg">http://revision3.com/diggdialogg/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="Diggnation">http://revision3.com/diggnation/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="The Digg Reel">http://revision3.com/diggreel/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="Hak5">http://revision3.com/hak5/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="iFanboy">http://revision3.com/ifanboy/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="Pixel Perfect">http://revision3.com/pixelperfect/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="Scam School">http://revision3.com/scamschool/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="Systm">http://revision3.com/systm/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="Tekzilla">http://revision3.com/tekzilla/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="The Totally Rad Show">http://revision3.com/trs/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="XLR8R TV">http://revision3.com/xlr8rtv/feed/quicktime-large/</Category>
+      </Categories>
+    </Site>
+    <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true" playmode="Guess">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="MSDN">http://channel9.msdn.com/rss.aspx?ShowID=1</Category>
+        <Category xsi:type="RssLink" name="Rocketboom">http://www.rocketboom.com/rss/hd.xml</Category>
+        <Category xsi:type="RssLink" name="Crave">http://feeds2.feedburner.com/cnet/crave</Category>
+        <Category xsi:type="RssLink" name="CNet">http://feeds2.feedburner.com/allcnetvideopodcasts</Category>
+        <Category xsi:type="RssLink" name="DL.TV">http://feeds2.feedburner.com/ziffdavis/dltvwmvvideo</Category>
+        <Category xsi:type="Group" name="MyStreamsGroup">
+          <Channels>
+            <Channel name="wwiTV - AstroCenterTv">http://wwitv.com/stream/b2749.asx</Channel>
+            <Channel name="French Tv - Orange">mms://livewm.orange.fr/live-multicanaux</Channel>
+            <Channel name="French Tv - Direct8">http://football.direct8.fr/live.php</Channel>
+          </Channels>
+        </Category>
+      </Categories>
+    </Site>
+    <Site name="YahooMusicVideos" util="YahooMusicVideos" agecheck="false" enabled="true" playmode="Video">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories />
+    </Site>
+    <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Все">http://linecinema.ru</Category>
+        <Category xsi:type="RssLink" name="Боевик">http://linecinema.ru/news/1-0-1</Category>
+        <Category xsi:type="RssLink" name="Детектив">http://linecinema.ru/news/1-0-10</Category>
+        <Category xsi:type="RssLink" name="Исторический">http://linecinema.ru/news/1-0-11</Category>
+        <Category xsi:type="RssLink" name="Мистика">http://linecinema.ru/news/1-0-12</Category>
+        <Category xsi:type="RssLink" name="Мультфильм">http://linecinema.ru/news/1-0-13</Category>
+        <Category xsi:type="RssLink" name="Документальный">http://linecinema.ru/news/1-0-14</Category>
+        <Category xsi:type="RssLink" name="Юмор">http://linecinema.ru/news/1-0-15</Category>
+        <Category xsi:type="RssLink" name="Эротика 16+">http://linecinema.ru/news/1-0-16</Category>
+        <Category xsi:type="RssLink" name="Гоблин">http://linecinema.ru/news/1-0-17</Category>
+        <Category xsi:type="RssLink" name="Сериал">http://linecinema.ru/news/1-0-18</Category>
+        <Category xsi:type="RssLink" name="Анимэ">http://linecinema.ru/news/1-0-19</Category>
+        <Category xsi:type="RssLink" name="Комедия">http://linecinema.ru/news/1-0-2</Category>
+        <Category xsi:type="RssLink" name="Триллер">http://linecinema.ru/news/1-0-3</Category>
+        <Category xsi:type="RssLink" name="Мелодрама">http://linecinema.ru/news/1-0-4</Category>
+        <Category xsi:type="RssLink" name="Драма">http://linecinema.ru/news/1-0-5</Category>
+        <Category xsi:type="RssLink" name="Приключения">http://linecinema.ru/news/1-0-6</Category>
+        <Category xsi:type="RssLink" name="Фантастика">http://linecinema.ru/news/1-0-7</Category>
+        <Category xsi:type="RssLink" name="Ужасы">http://linecinema.ru/news/1-0-8</Category>
+        <Category xsi:type="RssLink" name="Отечественный">http://linecinema.ru/news/1-0-9</Category>
+      </Categories>
+    </Site>
+    <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" playmode="Video">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
+      </Categories>
+    </Site>
+    <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Browse">http://www.youporn.com/browse</Category>
+        <Category xsi:type="RssLink" name="Top Rated">http://www.youporn.com/top_rated</Category>
+        <Category xsi:type="RssLink" name="Most Viewed">http://www.youporn.com/most_viewed</Category>
+      </Categories>
+    </Site>
+    <Site name="RedTube" util="RedTube" agecheck="true" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="New">http://www.redtube.com/new</Category>
+        <Category xsi:type="RssLink" name="Top">http://www.redtube.com/top</Category>
+        <Category xsi:type="RssLink" name="Amateur">http://www.redtube.com/redtube/amateur</Category>
+        <Category xsi:type="RssLink" name="Anal">http://www.redtube.com/redtube/anal</Category>
+        <Category xsi:type="RssLink" name="Asian">http://www.redtube.com/redtube/asian</Category>
+        <Category xsi:type="RssLink" name="Bigtits">http://www.redtube.com/redtube/bigtits</Category>
+        <Category xsi:type="RssLink" name="Blowjob">http://www.redtube.com/redtube/blowjob</Category>
+        <Category xsi:type="RssLink" name="Cumshot">http://www.redtube.com/redtube/cumshot</Category>
+        <Category xsi:type="RssLink" name="Ebony">http://www.redtube.com/redtube/ebony</Category>
+        <Category xsi:type="RssLink" name="Fetish">http://www.redtube.com/redtube/fetish</Category>
+        <Category xsi:type="RssLink" name="Gay">http://www.redtube.com/redtube/gay</Category>
+        <Category xsi:type="RssLink" name="Group">http://www.redtube.com/redtube/group</Category>
+        <Category xsi:type="RssLink" name="Hentai">http://www.redtube.com/redtube/hentai</Category>
+        <Category xsi:type="RssLink" name="Lesbian">http://www.redtube.com/redtube/lesbian</Category>
+        <Category xsi:type="RssLink" name="Mature">http://www.redtube.com/redtube/mature</Category>
+        <Category xsi:type="RssLink" name="Public">http://www.redtube.com/redtube/public</Category>
+        <Category xsi:type="RssLink" name="Teens">http://www.redtube.com/redtube/teens</Category>
+        <Category xsi:type="RssLink" name="Wildcrazy">http://www.redtube.com/redtube/wildcrazy</Category>
+      </Categories>
+    </Site>
+    <Site name="xHamster" util="xHamster" agecheck="true" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="New">http://www.xhamster.com/</Category>
+        <Category xsi:type="RssLink" name="Amateur">http://www.xhamster.com/channels/new-amateur-1.html</Category>
+        <Category xsi:type="RssLink" name="Anal">http://www.xhamster.com/channels/new-anal-1.html</Category>
+        <Category xsi:type="RssLink" name="Asian">http://www.xhamster.com/channels/new-asian-1.html</Category>
+        <Category xsi:type="RssLink" name="Babes">http://www.xhamster.com/channels/new-babes-1.html</Category>
+        <Category xsi:type="RssLink" name="BBW">http://www.xhamster.com/channels/new-bbw-1.html</Category>
+        <Category xsi:type="RssLink" name="BDSM">http://www.xhamster.com/channels/new-bdsm-1.html</Category>
+        <Category xsi:type="RssLink" name="Beach">http://www.xhamster.com/channels/new-beach-1.html</Category>
+        <Category xsi:type="RssLink" name="Ebony">http://www.xhamster.com/channels/new-ebony-1.html</Category>
+        <Category xsi:type="RssLink" name="Blondes">http://www.xhamster.com/channels/new-blondes-1.html</Category>
+        <Category xsi:type="RssLink" name="Blowjobs">http://www.xhamster.com/channels/new-blowjobs-1.html</Category>
+        <Category xsi:type="RssLink" name="Brunettes">http://www.xhamster.com/channels/new-brunettes-1.html</Category>
+        <Category xsi:type="RssLink" name="Busty">http://www.xhamster.com/channels/new-busty-1.html</Category>
+        <Category xsi:type="RssLink" name="Cartoons">http://www.xhamster.com/channels/new-cartoons-1.html</Category>
+        <Category xsi:type="RssLink" name="Celebrities">http://www.xhamster.com/channels/new-celebs-1.html</Category>
+        <Category xsi:type="RssLink" name="Close-ups">http://www.xhamster.com/channels/new-close_ups-1.html</Category>
+        <Category xsi:type="RssLink" name="Cumshots">http://www.xhamster.com/channels/new-cumshots-1.html</Category>
+        <Category xsi:type="RssLink" name="Facials">http://www.xhamster.com/channels/new-facials-1.html</Category>
+        <Category xsi:type="RssLink" name="Flashing">http://www.xhamster.com/channels/new-flashing-1.html</Category>
+        <Category xsi:type="RssLink" name="Funny">http://www.xhamster.com/channels/new-funny-1.html</Category>
+        <Category xsi:type="RssLink" name="Fingering">http://www.xhamster.com/channels/new-fingering-1.html</Category>
+        <Category xsi:type="RssLink" name="Group Sex">http://www.xhamster.com/channels/new-group-1.html</Category>
+        <Category xsi:type="RssLink" name="Hairy">http://www.xhamster.com/channels/new-hairy-1.html</Category>
+        <Category xsi:type="RssLink" name="Handjobs">http://www.xhamster.com/channels/new-handjobs-1.html</Category>
+        <Category xsi:type="RssLink" name="Hardcore">http://www.xhamster.com/channels/new-hardcore-1.html</Category>
+        <Category xsi:type="RssLink" name="Hidden Cams">http://www.xhamster.com/channels/new-hidden-1.html</Category>
+        <Category xsi:type="RssLink" name="Lesbians">http://www.xhamster.com/channels/new-lesbians-1.html</Category>
+        <Category xsi:type="RssLink" name="Men">http://www.xhamster.com/channels/new-men-1.html</Category>
+        <Category xsi:type="RssLink" name="Masturbation">http://www.xhamster.com/channels/new-masturbation-1.html</Category>
+        <Category xsi:type="RssLink" name="Matures">http://www.xhamster.com/channels/new-matures-1.html</Category>
+        <Category xsi:type="RssLink" name="Nipples">http://www.xhamster.com/channels/new-nipples-1.html</Category>
+        <Category xsi:type="RssLink" name="Pornstars">http://www.xhamster.com/channels/new-pornstars-1.html</Category>
+        <Category xsi:type="RssLink" name="Public">http://www.xhamster.com/channels/new-public-1.html</Category>
+        <Category xsi:type="RssLink" name="Sex Toys">http://www.xhamster.com/channels/new-toys-1.html</Category>
+        <Category xsi:type="RssLink" name="Shemales">http://www.xhamster.com/channels/new-shemales-1.html</Category>
+        <Category xsi:type="RssLink" name="Showers">http://www.xhamster.com/channels/new-showers-1.html</Category>
+        <Category xsi:type="RssLink" name="Stockings">http://www.xhamster.com/channels/new-stockings-1.html</Category>
+        <Category xsi:type="RssLink" name="Teens">http://www.xhamster.com/channels/new-teens-1.html</Category>
+        <Category xsi:type="RssLink" name="Tits">http://www.xhamster.com/channels/new-tits-1.html</Category>
+        <Category xsi:type="RssLink" name="Upskirts">http://www.xhamster.com/channels/new-upskirts-1.html</Category>
+        <Category xsi:type="RssLink" name="Vintage">http://www.xhamster.com/channels/new-vintage-1.html</Category>
+        <Category xsi:type="RssLink" name="Webcams">http://www.xhamster.com/channels/new-webcams-1.html</Category>
+      </Categories>
+    </Site>
+    <Site name="Tube8" util="Tube8" agecheck="true" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Latest">http://www.tube8.com/latest.html</Category>
+        <Category xsi:type="RssLink" name="Top Rated">http://www.tube8.com/top.html</Category>
+        <Category xsi:type="RssLink" name="Most Viewed">http://www.tube8.com/mostviewed.html</Category>
+        <Category xsi:type="RssLink" name="Most Favorited">http://www.tube8.com/mostfavorited.html</Category>
+        <Category xsi:type="RssLink" name="Most Discussed">http://www.tube8.com/mostdiscussed.html</Category>
+        <Category xsi:type="RssLink" name="Most Voted">http://www.tube8.com/mostvoted.html</Category>
+      </Categories>
+    </Site>
+    <Site name="Empflix" util="RegExpSite" agecheck="true" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl>http://www.empflix.com/search.php</SearchUrl>
+      <Categories>
+        <Category xsi:type="RssLink" name="Top Rated">http://www.empflix.com/browse.php?category=tr</Category>
+        <Category xsi:type="RssLink" name="Most Recent">http://www.empflix.com/browse.php?category=mr</Category>
+        <Category xsi:type="RssLink" name="Most Viewed">http://www.empflix.com/browse.php?category=mv</Category>
+        <Category xsi:type="RssLink" name="Amateur">http://www.empflix.com/browsecat.php?chid=6</Category>
+        <Category xsi:type="RssLink" name="Anal">http://www.empflix.com/browsecat.php?chid=4</Category>
+        <Category xsi:type="RssLink" name="Asian">http://www.empflix.com/browsecat.php?chid=17</Category>
+        <Category xsi:type="RssLink" name="Ass">http://www.empflix.com/browsecat.php?chid=37</Category>
+        <Category xsi:type="RssLink" name="BBW">http://www.empflix.com/browsecat.php?chid=32</Category>
+        <Category xsi:type="RssLink" name="BJ/HJ">http://www.empflix.com/browsecat.php?chid=7</Category>
+        <Category xsi:type="RssLink" name="Babes">http://www.empflix.com/browsecat.php?chid=26</Category>
+        <Category xsi:type="RssLink" name="Big Boobs">http://www.empflix.com/browsecat.php?chid=13</Category>
+        <Category xsi:type="RssLink" name="Big Cock">http://www.empflix.com/browsecat.php?chid=27</Category>
+        <Category xsi:type="RssLink" name="Bizarre">http://www.empflix.com/browsecat.php?chid=62</Category>
+        <Category xsi:type="RssLink" name="Blonde">http://www.empflix.com/browsecat.php?chid=63</Category>
+        <Category xsi:type="RssLink" name="Brunette">http://www.empflix.com/browsecat.php?chid=64</Category>
+        <Category xsi:type="RssLink" name="Celebrity">http://www.empflix.com/browsecat.php?chid=41</Category>
+        <Category xsi:type="RssLink" name="Classic">http://www.empflix.com/browsecat.php?chid=31</Category>
+        <Category xsi:type="RssLink" name="Club Chix">http://www.empflix.com/browsecat.php?chid=36</Category>
+        <Category xsi:type="RssLink" name="Creampie">http://www.empflix.com/browsecat.php?chid=15</Category>
+        <Category xsi:type="RssLink" name="Cum">http://www.empflix.com/browsecat.php?chid=3</Category>
+        <Category xsi:type="RssLink" name="DP">http://www.empflix.com/browsecat.php?chid=21</Category>
+        <Category xsi:type="RssLink" name="Ebony">http://www.empflix.com/browsecat.php?chid=16</Category>
+        <Category xsi:type="RssLink" name="Extreme">http://www.empflix.com/browsecat.php?chid=49</Category>
+        <Category xsi:type="RssLink" name="Facial">http://www.empflix.com/browsecat.php?chid=65</Category>
+        <Category xsi:type="RssLink" name="Fat">http://www.empflix.com/browsecat.php?chid=61</Category>
+        <Category xsi:type="RssLink" name="Feet">http://www.empflix.com/browsecat.php?chid=46</Category>
+        <Category xsi:type="RssLink" name="Fisting">http://www.empflix.com/browsecat.php?chid=14</Category>
+        <Category xsi:type="RssLink" name="Flashing">http://www.empflix.com/browsecat.php?chid=50</Category>
+        <Category xsi:type="RssLink" name="Funny">http://www.empflix.com/browsecat.php?chid=51</Category>
+        <Category xsi:type="RssLink" name="Gang Bang">http://www.empflix.com/browsecat.php?chid=20</Category>
+        <Category xsi:type="RssLink" name="Gay/Bi-Male">http://www.empflix.com/browsecat.php?chid=30</Category>
+        <Category xsi:type="RssLink" name="Gothic">http://www.empflix.com/browsecat.php?chid=45</Category>
+        <Category xsi:type="RssLink" name="Granny">http://www.empflix.com/browsecat.php?chid=57</Category>
+        <Category xsi:type="RssLink" name="Group Sex">http://www.empflix.com/browsecat.php?chid=10</Category>
+        <Category xsi:type="RssLink" name="Hairy">http://www.empflix.com/browsecat.php?chid=47</Category>
+        <Category xsi:type="RssLink" name="Hardcore">http://www.empflix.com/browsecat.php?chid=1</Category>
+        <Category xsi:type="RssLink" name="Home made">http://www.empflix.com/browsecat.php?chid=35</Category>
+        <Category xsi:type="RssLink" name="Indian">http://www.empflix.com/browsecat.php?chid=54</Category>
+        <Category xsi:type="RssLink" name="Insertions">http://www.empflix.com/browsecat.php?chid=53</Category>
+        <Category xsi:type="RssLink" name="Interracial">http://www.empflix.com/browsecat.php?chid=12</Category>
+        <Category xsi:type="RssLink" name="Latinas">http://www.empflix.com/browsecat.php?chid=18</Category>
+        <Category xsi:type="RssLink" name="Lesbian">http://www.empflix.com/browsecat.php?chid=11</Category>
+        <Category xsi:type="RssLink" name="MILF">http://www.empflix.com/browsecat.php?chid=59</Category>
+        <Category xsi:type="RssLink" name="Mature">http://www.empflix.com/browsecat.php?chid=9</Category>
+        <Category xsi:type="RssLink" name="Other Fetish">http://www.empflix.com/browsecat.php?chid=25</Category>
+        <Category xsi:type="RssLink" name="POV">http://www.empflix.com/browsecat.php?chid=29</Category>
+        <Category xsi:type="RssLink" name="Petite">http://www.empflix.com/browsecat.php?chid=24</Category>
+        <Category xsi:type="RssLink" name="Piss">http://www.empflix.com/browsecat.php?chid=34</Category>
+        <Category xsi:type="RssLink" name="Porn Stars">http://www.empflix.com/browsecat.php?chid=19</Category>
+        <Category xsi:type="RssLink" name="Pregnant">http://www.empflix.com/browsecat.php?chid=56</Category>
+        <Category xsi:type="RssLink" name="Public / Out Door">http://www.empflix.com/browsecat.php?chid=52</Category>
+        <Category xsi:type="RssLink" name="Redhead">http://www.empflix.com/browsecat.php?chid=44</Category>
+        <Category xsi:type="RssLink" name="Shemale/Trans">http://www.empflix.com/browsecat.php?chid=23</Category>
+        <Category xsi:type="RssLink" name="Softcore">http://www.empflix.com/browsecat.php?chid=22</Category>
+        <Category xsi:type="RssLink" name="Solo">http://www.empflix.com/browsecat.php?chid=8</Category>
+        <Category xsi:type="RssLink" name="Spanking">http://www.empflix.com/browsecat.php?chid=58</Category>
+        <Category xsi:type="RssLink" name="Squirting">http://www.empflix.com/browsecat.php?chid=5</Category>
+        <Category xsi:type="RssLink" name="Storyline">http://www.empflix.com/browsecat.php?chid=33</Category>
+        <Category xsi:type="RssLink" name="Swingers">http://www.empflix.com/browsecat.php?chid=48</Category>
+        <Category xsi:type="RssLink" name="Teens">http://www.empflix.com/browsecat.php?chid=2</Category>
+        <Category xsi:type="RssLink" name="Toys">http://www.empflix.com/browsecat.php?chid=60</Category>
+        <Category xsi:type="RssLink" name="UK Dogging">http://www.empflix.com/browsecat.php?chid=55</Category>
+        <Category xsi:type="RssLink" name="Upskirt Down Blouse">http://www.empflix.com/browsecat.php?chid=43</Category>
+        <Category xsi:type="RssLink" name="Voyeurism">http://www.empflix.com/browsecat.php?chid=42</Category>
+      </Categories>
+    </Site>
+  </Sites>
+</OnlineVideoSites>

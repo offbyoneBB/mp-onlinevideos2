@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+
+<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.0 -->
+
+<window>
+
+  <controls>
+
+	<!-- *** OVERLAYS *** -->
+	
+    <control>
+		<type>image</type>
+		<description>movie border</description>
+		<id>23</id>
+		<posX>37</posX>
+		<posY>312</posY>
+		<width>280</width>
+		<height>389</height>
+		<visible>no</visible>
+		<texture>onlinevideos_clip_backdrop.png</texture>
+    </control>
+    
+	<!-- *** POSTER *** -->
+
+	<control>
+		<type>image</type>
+		<description>movie poster</description>
+		<id>24</id>
+		<posX>40</posX>
+		<posY>315</posY>
+		<width>260</width>
+		<height>368</height>
+		<visible>no</visible>
+		<texture>#movieposter</texture>
+	</control>
+
+	<!-- *** RELEASE DATE *** -->
+	
+	<control>
+		<type>label</type>
+		<description>Release Date Label</description>
+		<id>54</id>
+		<posX>320</posX>
+		<posY>320</posY>
+		<label>172</label>
+		<visible>no</visible>
+		<textcolor>ffb2d4f5</textcolor>
+	</control>
+
+    <control>
+		<type>fadelabel</type>
+		<description>Release Date</description>
+		<id>55</id>
+		<posX>349</posX>
+		<posY>350</posY>
+		<width>375</width>
+		<label>#releasedate</label>
+		<visible>no</visible>
+		<font>mediastream11</font>
+		<disabledcolor>ff808080</disabledcolor>
+    </control>
+	
+	<!-- *** GENRE *** -->
+	
+    <control>
+		<type>label</type>
+		<description>Genre Label</description>
+		<id>56</id>
+		<posX>320</posX>
+		<posY>390</posY>
+		<label>174</label>
+		<visible>no</visible>
+		<textcolor>ffb2d4f5</textcolor>
+    </control>
+	
+    <control>
+		<type>fadelabel</type>
+		<description>Genre</description>
+		<id>57</id>
+		<posX>349</posX>
+		<posY>420</posY>
+		<width>362</width>
+		<label>#genre</label>
+		<visible>no</visible>
+		<font>mediastream11</font>
+		<disabledcolor>ff808080</disabledcolor>
+    </control>
+	
+	<!-- *** PLOT *** -->
+	
+    <control>
+		<type>label</type>
+		<description>Plot Label</description>
+		<id>58</id>
+		<posX>320</posX>
+		<posY>460</posY>
+		<visible>no</visible>
+		<label>Plot:</label>
+		<textcolor>ffb2d4f5</textcolor>
+    </control>
+	
+    <control>
+		<type>image</type>
+		<description>Plot Background</description>
+		<id>0</id>
+		<posX>334</posX>
+		<posY>490</posY>
+		<width>404</width>
+		<height>209</height>
+		<visible>control.isvisible(24)</visible>
+		<texture>pic_preview_thumb_background_nofocus.png</texture>
+    </control>
+    
+    <control>
+		<type>textboxscrollup</type>
+		<description>Plot</description>
+		<id>59</id>
+		<posX>349</posX>
+		<posY>495</posY>
+		<width>375</width>
+		<height>186</height>
+		<colordiffuse>ffffffff</colordiffuse>
+		<visible>no</visible>
+		<font>mediastream10</font>
+		<label>#trailerdesc</label>
+		<textcolor>FFFFFFFF</textcolor>
+    </control>
+	
+  </controls>
+  
+</window>

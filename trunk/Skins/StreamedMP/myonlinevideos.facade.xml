@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.1 -->
+
+<window>
+	<controls>
+		<control>
+			<description>group element</description>
+			<type>group</type>
+			<visible>!Control.HasFocus(50)</visible>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+			<animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
+			<animation effect="slide" time="250" end="800,0">WindowClose</animation>
+
+			<!-- *** CLIPS LIST *** -->
+
+			<control>
+				<description>Apple Trailers Clips List</description>
+				<type>listcontrol</type>
+				<id>51</id>
+				<onright>51</onright>
+				<onleft>51</onleft>
+				<posX>756</posX>
+				<posY>250</posY>
+				<height>460</height>
+				<textXOff2>500</textXOff2>
+				<spinPosX>1249</spinPosX>
+				<spinPosY>690</spinPosY>
+				<spinAlign>Right</spinAlign>
+				<spinColor>ff006698</spinColor>
+				<spinCanFocus>no</spinCanFocus>
+				<unfocusedAlpha>255</unfocusedAlpha>
+			</control>
+
+			<control>
+				<description>composite control consisting of a list control and a thumbnail panel</description>
+				<type>facadeview</type>
+				<id>50</id>
+
+				<control>
+					<description>Movie List</description>
+					<type>listcontrol</type>
+					<id>50</id>
+					<scrollOffset>2</scrollOffset>
+					<posX>756</posX>
+					<posY>250</posY>
+					<height>460</height>
+					<textXOff2>500</textXOff2>
+					<spinPosX>1249</spinPosX>
+					<spinPosY>690</spinPosY>
+					<spinAlign>Right</spinAlign>
+					<spinColor>ff006698</spinColor>
+					<spinCanFocus>no</spinCanFocus>
+					<unfocusedAlpha>255</unfocusedAlpha>-->
+				</control>
+
+				<!-- List with icons 
+				<control>
+					<description>Movie List</description>
+					<type>listcontrol</type>
+					<id>50</id>
+					<onleft>2</onleft>
+					<onright>2</onright>
+					<posX>756</posX>
+					<posY>250</posY>
+					<height>460</height>
+					<textXOff2>500</textXOff2>
+					<spinPosX>1249</spinPosX>
+					<spinPosY>690</spinPosY>
+					<spinAlign>Right</spinAlign>
+					<spinColor>ff006698</spinColor>
+					<spinCanFocus>no</spinCanFocus>
+					<unfocusedAlpha>255</unfocusedAlpha>
+					<textXOff>4</textXOff>
+					<IconXOff>3</IconXOff>
+					<IconYOff>3</IconYOff>
+					<itemWidth>35</itemWidth>
+					<itemHeight>35</itemHeight>
+				</control> -->
+
+				<control>
+					<description>Thumbnail Panel</description>
+					<type>thumbnailpanel</type>
+					<id>50</id>
+					<posX>17</posX>
+					<posY>310</posY>
+					<unfocusedAlpha>255</unfocusedAlpha>
+					<width>1260</width>
+					<height>420</height>
+					<imageFolder>defaultepisodethumb.png</imageFolder>
+					<imageFolderFocus>onlinevideos_thumbborder.png</imageFolderFocus>
+					<spinPosX>1212</spinPosX>
+					<spinPosY>690</spinPosY>
+					<spinColor>ff006698</spinColor>
+					<spinAlign>Right</spinAlign>
+					<!-- smallicons -->
+					<itemWidth>156</itemWidth>
+					<itemHeight>118</itemHeight>
+					<textureWidth>154</textureWidth>
+					<textureHeight>116</textureHeight>
+					<thumbWidth>140</thumbWidth>
+					<thumbHeight>104</thumbHeight>
+					<thumbPosX>7</thumbPosX>
+					<thumbPosY>6</thumbPosY>
+					<!-- largeicons -->
+					<itemWidthBig>251</itemWidthBig>
+					<itemHeightBig>186</itemHeightBig>
+					<textureWidthBig>244</textureWidthBig>
+					<textureHeightBig>183</textureHeightBig>
+					<thumbWidthBig>220</thumbWidthBig>
+					<thumbHeightBig>166</thumbHeightBig>
+					<thumbPosXBig>12</thumbPosXBig>
+					<thumbPosYBig>8</thumbPosYBig>
+					<thumbZoom>no</thumbZoom>
+					<enableFocusZoom>no</enableFocusZoom>
+					<onleft>2</onleft>
+					<onright>2</onright>
+				</control>
+		
+				<control>
+					<description>Filmstrip view</description>
+					<type>filmstrip</type>
+					<id>50</id>
+					<onup>2</onup>
+					<onleft>50</onleft>
+					<posX>12</posX>
+					<posY>512</posY>
+					<width>1280</width>
+					<scrollOffset>4</scrollOffset>
+					<spinPosX>1300</spinPosX>
+					<spinPosY>720</spinPosY>
+					<spinWidth>24</spinWidth>
+					<spinHeight>24</spinHeight>
+					<spinColor>ffcccccc</spinColor>
+					<itemWidth>142</itemWidth>
+					<itemHeight>156</itemHeight>
+					<textureWidth>120</textureWidth>
+					<textureHeight>170</textureHeight>
+					<thumbWidth>106</thumbWidth>
+					<thumbHeight>156</thumbHeight>
+					<thumbPosX>7</thumbPosX>
+					<thumbPosY>7</thumbPosY>
+					<thumbs flipY="true" diffuse="diffusemirrorwide.png" />
+					<InfoImage></InfoImage>
+					<imageFolder>-</imageFolder>
+					<imageFolderFocus>thumbborder.png</imageFolderFocus>
+					<frame>-</frame>
+					<frameFocus>-</frameFocus>
+					<showFrame>no</showFrame>
+					<showFolder>yes</showFolder>
+					<showBackGround>no</showBackGround>
+					<showInfoImage>no</showInfoImage>
+					<thumbAnimation effect="zoom" start="100,100" end="120,120" time="110">focus</thumbAnimation>
+					<thumbAnimation effect="zoom" start="120,120" end="100,100" time="110">unfocus</thumbAnimation>
+				</control>
+
+				<control>
+					<description>playlist listcontrol</description>
+					<type>playlistcontrol</type>
+					<id>50</id>
+					<scrollOffset>2</scrollOffset>
+					<spinPosX>1249</spinPosX>
+					<spinPosY>690</spinPosY>
+					<spinAlign>Right</spinAlign>
+					<spinColor>ff006698</spinColor>
+					<spinCanFocus>no</spinCanFocus>
+					<onleft>2</onleft>
+					<onright>2</onright>
+				</control>
+			</control>
+		</control>
+
+		<!-- *** Count for List view *** -->
+		
+		<control>
+			<description>Media Count Background</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>1113</posX>
+			<posY>684</posY>
+			<width>159</width>
+			<height>28</height>
+			<texture>mediacountbackground.png</texture>
+			<visible>![facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
+		</control>
+    
+		<control>
+			<description>Media Count Label</description>
+			<type>label</type>
+			<label>PAGE:</label>
+			<id>0</id>
+			<posX>1123</posX>
+			<posY>688</posY>
+			<font>mediastream10tc</font>
+			<textcolor>ff909090</textcolor>
+			<visible>![facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
+		</control>
+
+		<!-- *** Count for Icons view *** -->
+		
+		<control>
+			<description>Media Count Background</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>1088</posX>
+			<posY>684</posY>
+			<width>184</width>
+			<height>28</height>
+			<texture>mediacountbackground.png</texture>
+			<visible>facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip</visible>
+		</control>
+    
+		<control>
+			<description>Media Count Label</description>
+			<type>label</type>
+			<label>PAGE:</label>
+			<id>0</id>
+			<posX>1098</posX>
+			<posY>688</posY>
+			<font>mediastream10tc</font>
+			<textcolor>ff909090</textcolor>
+			<visible>facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip</visible>
+		</control>
+		
+	</controls>
+</window>
