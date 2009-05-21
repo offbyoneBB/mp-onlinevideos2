@@ -290,6 +290,20 @@ namespace OnlineVideos
         {
             if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && currentState != State.home)
             {
+                // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
+                GUIControl focusedControl = GetControl(GetFocusControlId());
+                if (focusedControl != null)
+                {
+                    if (focusedControl.Type == "button")
+                    {
+                        int focusedControlId = GetFocusControlId();
+                        if (focusedControlId >= 0)
+                        {
+                            GUIControl.UnfocusControl(GetID, focusedControlId);
+                        }
+                    }
+                }
+
                 OnShowPreviousMenu();
                 return;
             }
