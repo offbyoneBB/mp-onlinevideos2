@@ -1223,7 +1223,7 @@ namespace OnlineVideos
                 case State.videos:
                     string headerlabel = selectedCategory != null ? selectedCategory.Name : "";
                     if (searchMode) headerlabel = GUILocalizeStrings.Get(283);
-                    else if (showingFavorites) headerlabel = GUILocalizeStrings.Get(359);
+                    else if (showingFavorites) headerlabel = GUILocalizeStrings.Get(932);
                     GUIPropertyManager.SetProperty("#header.label", headerlabel);
                     GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
                     ShowFacade();
