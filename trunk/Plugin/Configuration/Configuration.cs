@@ -63,6 +63,7 @@ namespace OnlineVideos
 			}
             this.chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;
             chkUseAgeConfirmation_CheckedChanged(chkUseAgeConfirmation, EventArgs.Empty);
+            cmbYoutubeQuality.SelectedIndex = (int)settings.YouTubeQuality;
             this.tbxPin.Text = settings.pinAgeConfirmation;
 		}
 		
@@ -222,6 +223,7 @@ namespace OnlineVideos
             Log.Info("OnlineVideo Configuration - download Dir:" + txtDownloadDir.Text);
 			settings.msDownloadDir = txtDownloadDir.Text;
             settings.AppleTrailerSize = (Sites.AppleTrailersUtil.VideoQuality)cmbTrailerSize.SelectedItem;
+            settings.YouTubeQuality = (Sites.YouTubeUtil.YoutubeVideoQuality)cmbYoutubeQuality.SelectedIndex;
             settings.useAgeConfirmation = chkUseAgeConfirmation.Checked;
             settings.pinAgeConfirmation = tbxPin.Text;
 			settings.moSiteList.Clear();
@@ -382,6 +384,11 @@ namespace OnlineVideos
 
             chkAVISplitterInstalled.Checked = cc.AVI_Splitter.IsInstalled;
             tbxAVISplitter.Text = cc.AVI_Splitter.IsInstalled ? string.Format("{0} | {1}", cc.AVI_Splitter.CodecFile, cc.AVI_Splitter.Version) : "";
+        }
+
+        private void tabGeneral_Click(object sender, EventArgs e)
+        {
+
         }
 	}
 }

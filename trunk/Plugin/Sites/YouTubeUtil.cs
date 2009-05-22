@@ -14,6 +14,7 @@ using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
+
     public class YouTubeUtil : SiteUtilBase, IFilter, ISearch, IFavorite
     {
         private List<int> steps;
@@ -62,6 +63,16 @@ namespace OnlineVideos.Sites
 
             //orderByList.Add("")
         }
+
+        public enum YoutubeVideoQuality : int
+        {
+            Normal = 0,
+            High = 1,
+            HD = 2,
+            Unknow = 3,
+        }
+
+
         private CookieCollection moCookies;
         private Regex regexId = new Regex("/videos/(.+)");
 
@@ -135,86 +146,63 @@ namespace OnlineVideos.Sites
         }
         public override String getUrl(VideoInfo foVideo, SiteSettings foSite)
         {
-            String lsSessionId = getSessionId(foVideo.VideoUrl, foSite);
-            String lsUrl = String.Format(VIDEO_URL,foVideo.VideoUrl ,lsSessionId);
-            Log.Info("youtube video url={0}", lsUrl);
-            
-            return lsUrl + "&txe=.flv";
-        }
-        public String getSessionId(String fsId, SiteSettings foSite)
-        {
-            //Log.Info("getting youtube session id");
-            String lsUrl;
-            String lsNextUrl = "";
-            String lsPostData = "";
-            if (foSite.ConfirmAge && !String.IsNullOrEmpty(foSite.Username) && !String.IsNullOrEmpty(foSite.Password))
-            {
-                Log.Info("confirmAge is set to yes");
-                lsUrl = "http://www.youtube.com/verify_age?next_url=/watch?v=" + fsId;
-                lsNextUrl = "/watch?v=" + fsId;
-                lsPostData = "next_url=" + lsNextUrl + "&action_confirm=Confirm+Birth+Date";
-                if (!isLoggedIn())
-                {
-                    Log.Info("Not currently logged in. Trying to log in");
-                    //try to login
-                    if (login(foSite.Username, foSite.Password))
-                    {
-                        Log.Info("logged in successfully");
-                        //foreach(Cookie cookie in moCookies){
-                        //    Log.Info("Found cookie:" + cookie.Name);
-                        //}
+            OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
+            YoutubeVideoQuality qa = settings.YouTubeQuality;
 
-                    }
-                    else
-                    {
-                        Log.Info("login failed");
-                    }
+            Dictionary<string, string> Items = new Dictionary<string, string>();
+            GetVideInfo(foVideo.VideoUrl, Items);
+
+            string Token = "";
+            string FmtMap = "";
+
+            if (Items.ContainsKey("token"))
+                Token = Items["token"];
+            if (Items.ContainsKey("fmt_map"))
+                FmtMap = System.Web.HttpUtility.UrlDecode(Items["fmt_map"]);
+            
+            if (qa == YoutubeVideoQuality.HD && !FmtMap.Contains("22/"))
+            {
+                qa = YoutubeVideoQuality.High;
+            }
+
+            string lsUrl = string.Format("http://youtube.com/get_video?video_id={0}&t={1}&ext=.flv", foVideo.VideoUrl, Token);
+            switch (qa)
+            {
+                case YoutubeVideoQuality.Normal:
+                    lsUrl = string.Format("http://youtube.com/get_video?video_id={0}&t={1}&ext=.flv", foVideo.VideoUrl, Token);
+                    break;
+                case YoutubeVideoQuality.High:
+                    lsUrl = string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt=18&ext=.mp4", foVideo.VideoUrl, Token);
+                    break;
+                case YoutubeVideoQuality.HD:
+                    lsUrl = string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt=22&ext=.mp4", foVideo.VideoUrl, Token);
+                    break;
+            }
+            Log.Info("youtube video url={0}", lsUrl);
+            return lsUrl;
+        }
+        
+        public void GetVideInfo(string videoId,Dictionary<string, string> Items )
+        {
+            WebClient client = new WebClient();
+            client.CachePolicy = new System.Net.Cache.RequestCachePolicy();
+            client.UseDefaultCredentials = true;
+            client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+            try
+            {
+                string contents = client.DownloadString(string.Format("http://youtube.com/get_video_info?video_id={0}", videoId));
+                string[] elemest = (contents).Split('&');
+
+                foreach (string s in elemest)
+                {
+                    Items.Add(s.Split('=')[0], s.Split('=')[1]);
                 }
             }
-            else
+            catch
             {
-                lsUrl = "http://www.youtube.com/watch?v=" + fsId;
             }
-
-            //String lsHtml = getHTMLData(lsUrl);
-            //WebClient loClient1 = new WebClient();
-            HttpWebRequest Request = (HttpWebRequest)WebRequest.Create(lsUrl);
-            Request.Method = "POST";
-            Request.ContentType = "application/x-www-form-urlencoded";
-
-            Request.CookieContainer = new CookieContainer();
-            if (moCookies != null)
-            {
-                Log.Info("setting the cookies for the request");
-                Request.CookieContainer.Add(moCookies);
-            }
-            Stream RequestStream = Request.GetRequestStream();
-            ASCIIEncoding ASCIIEncoding = new ASCIIEncoding();
-            //Byte [] PostData = ASCIIEncoding.GetBytes("username=" + fsUser +"&password="+ fsPassword);
-            Byte[] PostData = ASCIIEncoding.GetBytes(lsPostData);
-            RequestStream.Write(PostData, 0, PostData.Length);
-            RequestStream.Close();
-            HttpWebResponse response = (HttpWebResponse)Request.GetResponse();
-            StreamReader Reader = new StreamReader(Request.GetResponse().GetResponseStream());
-            String lsHtml = Reader.ReadToEnd();
-            //Log.Info("Session Html:{0}",lsHtml);            
-
-
-
-            //String lsHtml = getHTMLData(lsUrl);
-            Regex loRegex;
-            Match loMatch;
-            String session;          
-            loRegex = new Regex(@"fullscreenUrl\s=\s'.*&t=([^&]*)");
-
-            //}
-            loMatch = loRegex.Match(lsHtml);
-            session = loMatch.Groups[1].Value;
-            Log.Info("Session id={0}", session);
-
-            //Log.Info("finished getting youtube session id");
-            return session;
         }
+
         public bool login(String fsUser, String fsPassword)
         {
             HttpWebRequest Request = (HttpWebRequest)WebRequest.Create("http://www.youtube.com/login?next=/");

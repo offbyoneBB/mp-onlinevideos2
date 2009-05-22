@@ -33,6 +33,7 @@ namespace OnlineVideos
         const string BASICHOMESCREEN_NAME = "basicHomeScreenName";        
         const string THUMBNAIL_DIR = "thumbDir";
         const string TRAILER_SIZE = "trailerSize";
+        const string YOUTUBEQUALITY = "youtubequality";
         const string DOWNLOAD_DIR = "downloadDir";        
         const string FILTER = "filter";
         const string USE_AGECONFIRMATION = "useAgeConfirmation";
@@ -47,6 +48,8 @@ namespace OnlineVideos
         public string pinAgeConfirmation = "";
         public Dictionary<String, SiteSettings> moSiteList = new Dictionary<String, SiteSettings>();
         public Sites.AppleTrailersUtil.VideoQuality AppleTrailerSize = Sites.AppleTrailersUtil.VideoQuality.HD720;
+        public Sites.YouTubeUtil.YoutubeVideoQuality YouTubeQuality = OnlineVideos.Sites.YouTubeUtil.YoutubeVideoQuality.High;
+
         public SortedList<string, bool> videoExtensions = new SortedList<string, bool>();
         public CodecConfiguration CodecConfiguration;
 
@@ -75,7 +78,8 @@ namespace OnlineVideos
                     useAgeConfirmation = xmlreader.GetValueAsBool(SECTION, USE_AGECONFIRMATION, false);
                     pinAgeConfirmation = xmlreader.GetValueAsString(SECTION, PIN_AGECONFIRMATION, "");                    
                     String lsFilter = xmlreader.GetValueAsString(SECTION, FILTER, "");
-                    lsTrailerSize = xmlreader.GetValueAsString(SECTION, TRAILER_SIZE, "h640");                    
+                    lsTrailerSize = xmlreader.GetValueAsString(SECTION, TRAILER_SIZE, "h640");
+                    this.YouTubeQuality = (Sites.YouTubeUtil.YoutubeVideoQuality)xmlreader.GetValueAsInt(SECTION, YOUTUBEQUALITY, 1);
                     msFilterArray = lsFilter.Split(new char[] { ',' });
                     if (msFilterArray.Length == 1 && msFilterArray[0] == "")
                     {
@@ -161,6 +165,7 @@ namespace OnlineVideos
                     Log.Info("OnlineVideoSettings - download Dir:" + msDownloadDir);
                     xmlwriter.SetValue(SECTION, DOWNLOAD_DIR, msDownloadDir);
                     xmlwriter.SetValue(SECTION, TRAILER_SIZE, AppleTrailerSize.ToString());
+                    xmlwriter.SetValue(SECTION, YOUTUBEQUALITY, (int)YouTubeQuality);
                     xmlwriter.SetValueAsBool(SECTION, USE_AGECONFIRMATION, useAgeConfirmation);
                     xmlwriter.SetValue(SECTION, PIN_AGECONFIRMATION, pinAgeConfirmation);
                 }
