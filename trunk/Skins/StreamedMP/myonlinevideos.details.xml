@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 
-<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.0 -->
+<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.2 -->
 
 <window>
 
@@ -19,7 +19,37 @@
 		<visible>no</visible>
 		<texture>onlinevideos_clip_backdrop.png</texture>
     </control>
-    
+
+	<!-- *** TITLE *** -->
+
+	<control>
+		<description>Category Text Shadow</description>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>152</posX>
+		<posY>252</posY>
+		<width>574</width>
+		<font>mediastream16tc</font>
+		<label>#header.label</label>
+		<textcolor>ff222222</textcolor>
+		<visible>Control.IsVisible(51)</visible>
+		<animation effect="fade" time="250">VisibleChange</animation>
+	</control>
+		
+	<control>
+		<description>Category Text</description>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>150</posX>
+		<posY>250</posY>
+		<width>574</width>
+		<font>mediastream16tc</font>
+		<label>#header.label</label>
+		<textcolor>ffFFFFFF</textcolor>
+		<visible>Control.IsVisible(51)</visible>
+		<animation effect="fade" time="250">VisibleChange</animation>
+	</control>
+
 	<!-- *** POSTER *** -->
 
 	<control>
@@ -41,7 +71,7 @@
 		<description>Release Date Label</description>
 		<id>54</id>
 		<posX>320</posX>
-		<posY>320</posY>
+		<posY>312</posY>
 		<label>172</label>
 		<visible>no</visible>
 		<textcolor>ffb2d4f5</textcolor>
@@ -52,7 +82,7 @@
 		<description>Release Date</description>
 		<id>55</id>
 		<posX>349</posX>
-		<posY>350</posY>
+		<posY>332</posY>
 		<width>375</width>
 		<label>#releasedate</label>
 		<visible>no</visible>
@@ -67,8 +97,8 @@
 		<description>Genre Label</description>
 		<id>56</id>
 		<posX>320</posX>
-		<posY>390</posY>
-		<label>174</label>
+		<posY>362</posY>
+		<label>135</label>
 		<visible>no</visible>
 		<textcolor>ffb2d4f5</textcolor>
     </control>
@@ -78,11 +108,37 @@
 		<description>Genre</description>
 		<id>57</id>
 		<posX>349</posX>
-		<posY>420</posY>
-		<width>362</width>
+		<posY>382</posY>
+		<width>368</width>
 		<label>#genre</label>
 		<visible>no</visible>
 		<font>mediastream11</font>
+		<disabledcolor>ff808080</disabledcolor>
+    </control>
+
+	<!-- *** CAST *** -->
+	
+    <control>
+		<type>label</type>
+		<description>Cast Label</description>
+		<id>52</id>
+		<posX>320</posX>
+		<posY>412</posY>
+		<label>206</label>
+		<visible>no</visible>
+		<textcolor>ffb2d4f5</textcolor>
+    </control>
+
+    <control>
+		<type>fadelabel</type>
+		<description>Cast</description>
+		<id>53</id>
+		<posX>349</posX>
+		<posY>432</posY>
+		<width>368</width>
+		<font>mediastream11</font>
+		<label>#cast</label>
+		<visible>no</visible>
 		<disabledcolor>ff808080</disabledcolor>
     </control>
 	
@@ -93,7 +149,7 @@
 		<description>Plot Label</description>
 		<id>58</id>
 		<posX>320</posX>
-		<posY>460</posY>
+		<posY>462</posY>
 		<visible>no</visible>
 		<label>Plot:</label>
 		<textcolor>ffb2d4f5</textcolor>
