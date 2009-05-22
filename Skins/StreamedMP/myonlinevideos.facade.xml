@@ -1,16 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.1 -->
+<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.2 -->
 
 <window>
 	<controls>
 		<control>
 			<description>group element</description>
 			<type>group</type>
-			<visible>!Control.HasFocus(50)</visible>
 			<animation effect="fade" time="250">WindowOpen</animation>
 			<animation effect="fade" time="250">WindowClose</animation>
-			<animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
+			<animation effect="slide" time="250" start="800,0">WindowOpen</animation>
 			<animation effect="slide" time="250" end="800,0">WindowClose</animation>
 
 			<!-- *** CLIPS LIST *** -->
@@ -169,59 +168,58 @@
 					<onright>2</onright>
 				</control>
 			</control>
-		</control>
 
-		<!-- *** Count for List view *** -->
+			<!-- *** COUNT FOR LIST VIEW *** -->
+			
+			<control>
+				<description>Media Count Background</description>
+				<type>image</type>
+				<id>0</id>
+				<posX>1113</posX>
+				<posY>684</posY>
+				<width>159</width>
+				<height>28</height>
+				<texture>mediacountbackground.png</texture>
+				<visible>![facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
+			</control>
 		
-		<control>
-			<description>Media Count Background</description>
-			<type>image</type>
-			<id>0</id>
-			<posX>1113</posX>
-			<posY>684</posY>
-			<width>159</width>
-			<height>28</height>
-			<texture>mediacountbackground.png</texture>
-			<visible>![facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
-		</control>
-    
-		<control>
-			<description>Media Count Label</description>
-			<type>label</type>
-			<label>PAGE:</label>
-			<id>0</id>
-			<posX>1123</posX>
-			<posY>688</posY>
-			<font>mediastream10tc</font>
-			<textcolor>ff909090</textcolor>
-			<visible>![facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
-		</control>
+			<control>
+				<description>Media Count Label</description>
+				<type>label</type>
+				<label>PAGE:</label>
+				<id>0</id>
+				<posX>1123</posX>
+				<posY>688</posY>
+				<font>mediastream10tc</font>
+				<textcolor>ff909090</textcolor>
+				<visible>![facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
+			</control>
 
-		<!-- *** Count for Icons view *** -->
+			<!-- *** COUNT FOR ICONS VIEW *** -->
+			
+			<control>
+				<description>Media Count Background</description>
+				<type>image</type>
+				<id>0</id>
+				<posX>1088</posX>
+				<posY>684</posY>
+				<width>184</width>
+				<height>28</height>
+				<texture>mediacountbackground.png</texture>
+				<visible>facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip</visible>
+			</control>
 		
-		<control>
-			<description>Media Count Background</description>
-			<type>image</type>
-			<id>0</id>
-			<posX>1088</posX>
-			<posY>684</posY>
-			<width>184</width>
-			<height>28</height>
-			<texture>mediacountbackground.png</texture>
-			<visible>facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip</visible>
+			<control>
+				<description>Media Count Label</description>
+				<type>label</type>
+				<label>PAGE:</label>
+				<id>0</id>
+				<posX>1098</posX>
+				<posY>688</posY>
+				<font>mediastream10tc</font>
+				<textcolor>ff909090</textcolor>
+				<visible>facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip</visible>
+			</control>
 		</control>
-    
-		<control>
-			<description>Media Count Label</description>
-			<type>label</type>
-			<label>PAGE:</label>
-			<id>0</id>
-			<posX>1098</posX>
-			<posY>688</posY>
-			<font>mediastream10tc</font>
-			<textcolor>ff909090</textcolor>
-			<visible>facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip</visible>
-		</control>
-		
 	</controls>
 </window>
