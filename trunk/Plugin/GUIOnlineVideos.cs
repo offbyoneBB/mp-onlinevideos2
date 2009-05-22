@@ -294,7 +294,7 @@ namespace OnlineVideos
                 GUIControl focusedControl = GetControl(GetFocusControlId());
                 if (focusedControl != null)
                 {
-                    if (focusedControl.Type == "button")
+                    if (focusedControl.Type == "button" || focusedControl.Type == "selectbutton")
                     {
                         int focusedControlId = GetFocusControlId();
                         if (focusedControlId >= 0)
@@ -401,6 +401,8 @@ namespace OnlineVideos
 
             else if (control == btnNext)
             {
+                GUIControl.UnfocusControl(GetID, btnNext.GetID);
+
                 moCurrentVideoList = null;
                 moCurrentVideoList = selectedSite.Util.getNextPageVideos();
                 DisplayCategoryVideos();
@@ -414,6 +416,8 @@ namespace OnlineVideos
             }
             else if (control == btnPrevious)
             {
+                GUIControl.UnfocusControl(GetID, btnPrevious.GetID);
+
                 moCurrentVideoList = null;
                 moCurrentVideoList = selectedSite.Util.getPreviousPageVideos();
                 DisplayCategoryVideos();
