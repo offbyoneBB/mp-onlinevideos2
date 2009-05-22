@@ -1,61 +1,69 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 
-<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.1 -->
+<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.2 -->
 
 <window>
 	<id>4755</id>
 	<defaultcontrol>50</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label</define>
-	<define>#header.hover</define>
+	<define>#header.hover:hover_onlinevideos.png</define>
+	<define>#header.BG.colordiffuse:ffffffff</define>
+    <define>#header.BG.overlay:onlinevideosoverlay.png</define>
 
-	<define>#skinversion:Skin Version 1.1.1</define>
+	<define>#skinversion:Skin Version 1.1.2</define>
 	<define>#nofocuscolor:ffffffff</define>
 	<define>#discolor:ff606060</define>
 
 	<controls>
-	
-		<!-- *** BACKGROUND *** -->
-    
+
+		<!-- *** WINDOW DEFAULTS *** -->
+
 		<control>
-			<description>background image</description>
+			<id>1</id>
+			<description>Background Image</description>
 			<type>image</type>
-			<id>0</id>
 			<posX>0</posX>
 			<posY>0</posY>
 			<width>1280</width>
 			<height>720</height>
-			<texture>hover_onlinevideos.png</texture>
-			<animation effect="fade" time="400" delay="0">WindowOpen</animation>
+			<texture>#header.hover</texture>
+            <colordiffuse>#header.BG.colordiffuse</colordiffuse>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
 		</control>
-
-		<control>
-			<description>movies overlay image</description>
-			<type>image</type>
-			<id>0</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>1280</width>
-			<height>720</height>
-			<texture>onlinevideosoverlay.png</texture>
-			<animation effect="fade" time="400" delay="0">WindowOpen</animation>
-		</control>
-
-		<!-- *** IMPORTS *** -->
 		
-		<import>common.window.xml</import>
-		<import>myonlinevideos.overlays.xml</import>
-		<import>myonlinevideos.facade.xml</import>
-		<import>myonlinevideos.details.xml</import>
-		<import>common.time.xml</import>
-
-
-		<!-- *** LOGO & CATEGORY *** -->
-
 		<control>
-			<description>Top Title</description>
+			<id>1</id>
+			<description>Overlay Image</description>
+			<type>image</type>
+			<posX>0</posX>
+			<posY>0</posY>
+			<width>1280</width>
+			<height>720</height>
+			<texture>#header.BG.overlay</texture>
+			<animation effect="fade" time="50">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+		</control>
+		
+		<control>
+			<id>1</id>
+			<description>Top Title Background</description>
+			<type>image</type>
+			<posX>77</posX>
+			<posY>11</posY>
+			<width>437</width>
+			<height>35</height>
+			<texture>tvtitlebg.png</texture>
+			<animation effect="slide" start="-514,0" end="0,0" tween="quadratic" time="300" delay="0">WindowOpen</animation>
+			<animation effect="slide" start="0,0" end="-514,0" tween="quadratic" time="300" delay="0">WindowClose</animation>
+			<animation effect="fade" time="150">WindowClose</animation>
+		</control>
+		
+		<control>
+			<id>1</id>
 			<type>fadelabel</type>
-			<id>0</id>
+			<description>Top Title</description>
 			<posX>493</posX>
 			<posY>13</posY>
 			<width>350</width>
@@ -63,8 +71,21 @@
 			<align>right</align>
 			<visible>yes</visible>
 			<label>Online Videos</label>
+			<!--<label>#currentmodule</label>-->
 			<animation effect="slide" start="-514,0" end="0,0" tween="quadratic" time="300" delay="0">WindowOpen</animation>
+			<animation effect="slide" start="0,0" end="-514,0" tween="quadratic" time="300" delay="0">WindowClose</animation>
+			<animation effect="fade" time="150">WindowClose</animation>
 		</control>
+	
+		<!-- *** IMPORTS *** -->
+		
+		<import>myonlinevideos.overlays.xml</import>
+		<import>myonlinevideos.facade.xml</import>
+		<import>myonlinevideos.details.xml</import>
+		<import>common.time.xml</import>
+
+
+		<!-- *** LOGO & CATEGORY *** -->
 
 		<control>
 			<description>Category Logo</description>
@@ -76,7 +97,7 @@
 			<height>35</height>
 			<texture>#header.image</texture>
 			<animation effect="fade" time="250">WindowOpen</animation>
-			<animation effect="fade" time="250">WindowClose</animation>
+ 			<animation effect="fade" time="250">WindowClose</animation>
 		</control>
 
 		<control>
@@ -89,8 +110,7 @@
 			<font>mediastream16tc</font>
 			<label>#header.label</label>
 			<textcolor>ff222222</textcolor>
-			<visible>facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip</visible>
-			<visible>yes</visible>
+			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
 			<animation effect="fade" time="250">VisibleChange</animation>
 		</control>
 		
@@ -104,7 +124,7 @@
 			<font>mediastream16tc</font>
 			<label>#header.label</label>
 			<textcolor>ffFFFFFF</textcolor>
-			<visible>facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip</visible>
+			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
 			<animation effect="fade" time="250">VisibleChange</animation>
 		</control>
 
@@ -113,24 +133,12 @@
 		<control>
 			<description>Dummy Length</description>
 			<type>label</type>
-			<id>5002</id>
+			<id>5001</id>
 			<posX>10</posX>
 			<posY>70</posY>
 			<width>1</width>
 			<height>1</height>
 			<label>#length</label>
-			<visible>yes</visible>
-		</control>
-
-		<control>
-			<description>Dummy Desc</description>
-			<type>label</type>
-			<id>5003</id>
-			<posX>11</posX>
-			<posY>70</posY>
-			<width>1</width>
-			<height>1</height>
-			<label>#desc</label>
 			<visible>yes</visible>
 		</control>
 
@@ -143,7 +151,7 @@
 			<width>756</width>
 			<height>152</height>
 			<texture>dialogprogressbg.png</texture>
-			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
+			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
 			<animation effect="fade" time="250">VisibleChange</animation>
 		</control>
 
@@ -157,20 +165,21 @@
 			<font>mediastream12tc</font>
 			<label>#selecteditem</label>
 			<textcolor>ff222222</textcolor>
-			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
+			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
+			<animation effect="fade" time="250">VisibleChange</animation>
 		</control>
 		
 		<control>
 			<description>Title</description>
 			<type>fadelabel</type>
-			<id>5001</id>
+			<id>0</id>
 			<posX>24</posX>
 			<posY>80</posY>
 			<width>715</width>
 			<font>mediastream12tc</font>
 			<label>#selecteditem</label>
 			<textcolor>ffb2d4f5</textcolor>
-			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
+			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
 		</control>
 
 		<control>
@@ -183,7 +192,7 @@
 			<font>mediastream9</font>
 			<label>299</label>
 			<textcolor>ffb2d4f5</textcolor>
-			<visible>[!Control.IsVisible(51)]+control.hastext(5002)+[facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
+			<visible>[!Control.IsVisible(51)]+control.hastext(5001)+[facadeview.smallicons|facadeview.largeicons]</visible>
 		</control>
 
 		<control>
@@ -196,7 +205,7 @@
 			<font>mediastream9</font>
 			<label>#length</label>
 			<textcolor>ffffffff</textcolor>
-			<visible>[!Control.IsVisible(51)]+control.hastext(5002)+[facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
+			<visible>[!Control.IsVisible(51)]+control.hastext(5001)+[facadeview.smallicons|facadeview.largeicons]</visible>
 		</control>
 
 		<control>
@@ -211,8 +220,7 @@
 			<font>mediastream11</font>
 			<label>#desc</label>
 			<textcolor>FFFFFFFF</textcolor>
-			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons|facadeview.filmstrip]</visible>
-			<animation effect="fade" time="250">VisibleChange</animation>
+			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
 		</control>
 
 		<!-- *** HIDDEN MENU *** -->
@@ -232,7 +240,7 @@
 				<height>720</height>
 	        	<texture>hiddenmenu_right.png</texture>
 				<visible>!Control.HasFocus(50)</visible>
-	        	<animation effect="slide" time="100" start="300,0">visible</animation>
+	        	<animation effect="slide" time="200" start="300,0">visible</animation>
 	        	<animation effect="slide" time="0" end="300,0">hidden</animation>
 			</control>
 
@@ -242,12 +250,25 @@
 	        	<id>0</id>
 	        	<font>mediastream12tc</font>
 	        	<posX>1040</posX>
-	        	<posY>225</posY>
+	        	<posY>230</posY>
 	        	<visible>!Control.HasFocus(50)</visible>
 	        	<label>496</label>
-	        	<animation effect="slide" time="100" start="300,0">visible</animation>
+	        	<animation effect="slide" time="200" start="300,0">visible</animation>
 	        	<animation effect="slide" time="0" end="300,0">hidden</animation>
 	      	</control>	      	     
+
+			<control>
+				<description>Clips Header</description>
+				<type>label</type>
+				<id>0</id>
+				<font>mediastream12tc</font>
+				<visible>!Control.HasFocus(50)</visible>
+	        	<posX>1040</posX>
+				<posY>314</posY>
+				<label>5907</label>
+				<animation effect="slide" time="200" start="300,0">visible</animation>
+				<animation effect="slide" time="0" end="300,0">hidden</animation>
+			</control>	      	     
 
 			<control>
 				<description>Skin Version</description>
@@ -259,21 +280,21 @@
 	        	<label>#skinversion</label>
 	        	<font>mediastream9</font>
 				<textcolor>b0315662</textcolor>
-	        	<animation effect="slide" time="100" start="300,0">visible</animation>
+	        	<animation effect="slide" time="200" start="300,0">visible</animation>
 	        	<animation effect="slide" time="0" end="300,0">hidden</animation>
 	      	</control>	      	     
 
 			<control>
 				<description>Button Group</description>
 				<type>group</type>
-	        	<animation effect="slide" time="100" start="300,0">visible</animation>
-	        	<animation effect="slide" time="0" end="300,0">hidden</animation>
 	        	<posX>1040</posX>
 	        	<posY>250</posY>
 	        	<width>220</width>
 	        	<height>720</height>
 				<layout>StackLayout</layout>
 				<visible>!Control.HasFocus(50)</visible>
+	        	<animation effect="slide" time="200" start="300,0">visible</animation>
+	        	<animation effect="slide" time="0" end="300,0">hidden</animation>
 				
 				<control>
 					<description>View-As</description>
@@ -296,25 +317,6 @@
 					<label>Enter Pin</label>          
 					<visible>no</visible>
 				</control>
-
-				<control>
-					<description>Empty button</description>
-					<type>button</type>
-					<id>0</id>
-					<label>-</label>
-					<visible>false</visible>
-				</control>
-
-				<control>
-					<description>Clips Header</description>
-					<type>label</type>
-					<id>0</id>
-					<font>mediastream12tc</font>
-					<visible>!Control.HasFocus(50)</visible>
-					<label>5907</label>
-					<animation effect="slide" time="100" start="300,0">visible</animation>
-					<animation effect="slide" time="0" end="300,0">hidden</animation>
-				</control>	      	     
 
 				<control>
 					<description>Empty button</description>
@@ -402,14 +404,6 @@
 				</control>
 
 				<control>
-					<description>Empty button</description>
-					<type>button</type>
-					<id>0</id>
-					<label>-</label>
-					<visible>false</visible>
-				</control>
-
-				<control>
 					<description>Next Page</description>
 					<type>button</type>
 					<id>3</id>          
@@ -430,19 +424,11 @@
 					<label>30004</label>
 					<visible>no</visible>
 				</control>
-				
-				<control>
-					<description>Empty button</description>
-					<type>button</type>
-					<id>0</id>
-					<label>-</label>
-					<visible>false</visible>
-				</control>
 
 			</control>
 			
 		</control>
     
-  </controls>
+	</controls>
 
 </window>
