@@ -206,7 +206,7 @@ namespace OnlineVideos
                 name = System.IO.Path.GetFileNameWithoutExtension(name);
                 imageLocation = lsThumbLocation + name + "L.jpg";
                 thumbnailLocation = lsThumbLocation + name + ".jpg";
-                if (System.IO.File.Exists(thumbnailLocation) == false)
+                if (System.IO.File.Exists(imageLocation) == false)
                 {
                     Log.Info("downloading image :" + url);
                     try
