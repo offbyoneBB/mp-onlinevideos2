@@ -729,24 +729,36 @@ namespace OnlineVideos
             }
             catch (Exception) { }
 
-            List<VideoInfo> loListItems;
-            if (searchMode)
-            {
-                Log.Info("Filtering search result");
-                //filtering a search result
-                if (String.IsNullOrEmpty(msLastSearchCategory))
+            GUIWaitCursor.Init();
+            GUIWaitCursor.Show();
+
+            List<VideoInfo> loListItems = new List<VideoInfo>();
+
+            worker = new BackgroundWorker();
+            worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+            {                    
+                if (searchMode)
                 {
-                    loListItems = ((IFilter)selectedSite.Util).filterSearchResultList(msLastSearchQuery, miMaxResult, msOrderBy, msTimeFrame);
+                    Log.Info("Filtering search result");
+                    //filtering a search result
+                    if (String.IsNullOrEmpty(msLastSearchCategory))
+                    {
+                        loListItems = ((IFilter)selectedSite.Util).filterSearchResultList(msLastSearchQuery, miMaxResult, msOrderBy, msTimeFrame);
+                    }
+                    else
+                    {
+                        loListItems = ((IFilter)selectedSite.Util).filterSearchResultList(msLastSearchQuery, msLastSearchCategory, miMaxResult, msOrderBy, msTimeFrame);
+                    }
                 }
                 else
                 {
-                    loListItems = ((IFilter)selectedSite.Util).filterSearchResultList(msLastSearchQuery, msLastSearchCategory, miMaxResult, msOrderBy, msTimeFrame);
+                    loListItems = ((IFilter)selectedSite.Util).filterVideoList(selectedCategory, miMaxResult, msOrderBy, msTimeFrame);
                 }
-            }
-            else
-            {
-                loListItems = ((IFilter)selectedSite.Util).filterVideoList(selectedCategory, miMaxResult, msOrderBy, msTimeFrame);
-            }
+            });
+            worker.RunWorkerAsync();
+            while (worker.IsBusy) GUIWindowManager.Process();
+
+            GUIWaitCursor.Hide();
 
             UpdateVideoList(loListItems);
             moCurrentVideoList = loListItems;
@@ -758,19 +770,32 @@ namespace OnlineVideos
             SelectedSearchCategoryIndex = btnSearchCategories.SelectedItem;
             if (query != String.Empty)
             {
-                String category = String.Empty;
-                if (moSupportedSearchCategoryList.Count > 1 && !btnSearchCategories.SelectedLabel.Equals("All"))
-                {
-                    category = moSupportedSearchCategoryList[btnSearchCategories.SelectedLabel];
-                    Log.Info("Searching for {0} in category {1}", query, category);
-                    msLastSearchCategory = category;
-                    loListItems = ((ISearch)selectedSite.Util).search(selectedSite.SearchUrl, query, category);
-                }
-                else
-                {
-                    Log.Info("Searching for {0} in all categories ", query);
-                    loListItems = ((ISearch)selectedSite.Util).search(selectedSite.SearchUrl, query);
-                }
+                 String category = String.Empty;
+
+                GUIWaitCursor.Init();
+                GUIWaitCursor.Show();
+
+                worker = new BackgroundWorker();
+                worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+                {                    
+                    if (moSupportedSearchCategoryList.Count > 1 && !btnSearchCategories.SelectedLabel.Equals("All"))
+                    {
+                        category = moSupportedSearchCategoryList[btnSearchCategories.SelectedLabel];
+                        Log.Info("Searching for {0} in category {1}", query, category);
+                        msLastSearchCategory = category;
+                        loListItems = ((ISearch)selectedSite.Util).search(selectedSite.SearchUrl, query, category);
+                    }
+                    else
+                    {
+                        Log.Info("Searching for {0} in all categories ", query);
+                        loListItems = ((ISearch)selectedSite.Util).search(selectedSite.SearchUrl, query);
+                    }
+                });
+                worker.RunWorkerAsync();
+                while (worker.IsBusy) GUIWindowManager.Process();
+
+                GUIWaitCursor.Hide();
+
                 UpdateVideoList(loListItems);
                 searchMode = true;
                 moCurrentVideoList = loListItems;
