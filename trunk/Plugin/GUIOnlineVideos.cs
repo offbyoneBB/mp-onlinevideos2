@@ -1650,6 +1650,8 @@ namespace OnlineVideos
 
         private void AddOrRemoveFavorite(VideoInfo loSelectedVideo)
         {
+            bool refreshList = false;
+
             if (selectedSite.Util is IFavorite)
             {
                 if (string.IsNullOrEmpty(selectedSite.Password) || string.IsNullOrEmpty(selectedSite.Username))
@@ -1666,6 +1668,7 @@ namespace OnlineVideos
                     {
                         Log.Info("Received request to remove video from favorites.");                         
                         ((IFavorite)selectedSite.Util).removeFavorite(loSelectedVideo, selectedSite.Username, selectedSite.Password);
+                        refreshList = true;
                     }
                     else
                     {
@@ -1679,13 +1682,14 @@ namespace OnlineVideos
                 if (showingFavorites || selectedSite.UtilName == "Favorite")
                 {
                     selectedSite.Util.RemoveFavorite(loSelectedVideo);
+                    refreshList = true;
                 }
                 else
                 {
                     selectedSite.Util.AddFavorite(loSelectedVideo, selectedSite.Name);
                 }
             }
-            refreshVideoList();
+            if (refreshList) refreshVideoList();
         }
 
         private void getRelatedVideos(VideoInfo loSelectedVideo)
