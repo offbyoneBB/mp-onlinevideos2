@@ -851,7 +851,12 @@ namespace OnlineVideos
                     dlg_error.SetLine(1, "No Videos found!");
                     dlg_error.SetLine(2, String.Empty);
                     dlg_error.DoModal(GUIWindowManager.ActiveWindow);
-                    currentState = State.categories;                    
+
+                    if (selectedSite.UtilName == "Favorite")
+                    {
+                        DisplayCategories();
+                    }
+                    currentState = State.categories;
                     UpdateViewState();
                 }
             }
