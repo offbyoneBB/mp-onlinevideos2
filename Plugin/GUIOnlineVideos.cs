@@ -230,6 +230,8 @@ namespace OnlineVideos
 
             if (dlgSel != null)
             {
+                dlgSel.SetHeading(498);  // Actions
+
                 dlgSel.Add("Play All");
 
                 if (showingFavorites == false && selectedSite.UtilName != "Favorite")
