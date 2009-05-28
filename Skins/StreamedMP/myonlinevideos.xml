@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 
-<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.2 -->
+<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.3 -->
 
 <window>
 	<id>4755</id>
@@ -11,9 +11,9 @@
 	<define>#header.BG.colordiffuse:ffffffff</define>
     <define>#header.BG.overlay:onlinevideosoverlay.png</define>
 
-	<define>#skinversion:Skin Version 1.1.2</define>
-	<define>#nofocuscolor:ffffffff</define>
-	<define>#discolor:ff606060</define>
+	<define>#OnlineVideos.skinversion:Skin Version 1.1.3</define>
+	<define>#OnlineVideos.nofocuscolor:ffffffff</define>
+	<define>#OnlineVideos.discolor:ff606060</define>
 
 	<controls>
 
@@ -138,7 +138,7 @@
 			<posY>70</posY>
 			<width>1</width>
 			<height>1</height>
-			<label>#length</label>
+			<label>#OnlineVideos.length</label>
 			<visible>yes</visible>
 		</control>
 
@@ -203,7 +203,7 @@
 			<posY>102</posY>
 			<width>550</width>
 			<font>mediastream9</font>
-			<label>#length</label>
+			<label>#OnlineVideos.length</label>
 			<textcolor>ffffffff</textcolor>
 			<visible>[!Control.IsVisible(51)]+control.hastext(5001)+[facadeview.smallicons|facadeview.largeicons]</visible>
 		</control>
@@ -218,7 +218,7 @@
 			<height>74</height>
 			<colordiffuse>ffffffff</colordiffuse>
 			<font>mediastream11</font>
-			<label>#desc</label>
+			<label>#OnlineVideos.desc</label>
 			<textcolor>FFFFFFFF</textcolor>
 			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
 		</control>
@@ -264,7 +264,7 @@
 				<font>mediastream12tc</font>
 				<visible>!Control.HasFocus(50)</visible>
 	        	<posX>1040</posX>
-				<posY>314</posY>
+				<posY>340</posY>
 				<label>5907</label>
 				<animation effect="slide" time="200" start="300,0">visible</animation>
 				<animation effect="slide" time="0" end="300,0">hidden</animation>
@@ -277,7 +277,7 @@
 	        	<posX>1145</posX>
 	        	<posY>690</posY>
 	        	<visible>!Control.HasFocus(50)</visible>
-	        	<label>#skinversion</label>
+	        	<label>#OnlineVideos.skinversion</label>
 	        	<font>mediastream9</font>
 				<textcolor>b0315662</textcolor>
 	        	<animation effect="slide" time="200" start="300,0">visible</animation>
@@ -300,10 +300,10 @@
 					<description>View-As</description>
 					<type>button</type>
 					<id>2</id>
+					<ondown>12</ondown>
 					<label>101</label>
-					<disabledcolor>#discolor</disabledcolor>
-					<textcolorNoFocus>#nofocuscolor</textcolorNoFocus>
-					<onleft>50</onleft>
+					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
+					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
 					<onup>17</onup>
 				</control>
 
@@ -311,9 +311,9 @@
 					<description>Do Age Check</description>
 					<type>button</type>
 					<id>12</id>          
-					<onleft>50</onleft>
-					<disabledcolor>#discolor</disabledcolor>
-					<textcolorNoFocus>#nofocuscolor</textcolorNoFocus>
+					<ondown>11</ondown>
+					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
+					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
 					<label>Enter Pin</label>          
 					<visible>no</visible>
 				</control>
@@ -322,6 +322,16 @@
 					<description>Empty button</description>
 					<type>button</type>
 					<id>0</id>
+					<ondown>11</ondown>
+					<label>-</label>
+					<visible>false</visible>
+				</control>
+
+				<control>
+					<description>Empty button</description>
+					<type>button</type>
+					<id>0</id>
+					<ondown>11</ondown>
 					<label>-</label>
 					<visible>false</visible>
 				</control>
@@ -330,10 +340,10 @@
 					<description>Favorites</description>
 					<type>button</type>
 					<id>11</id>
-					<onleft>50</onleft>
+					<ondown>10</ondown>
 					<label>932</label>
-					<disabledcolor>#discolor</disabledcolor>
-					<textcolorNoFocus>#nofocuscolor</textcolorNoFocus>
+					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
+					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
 					<visible>no</visible>
 				</control>
 
@@ -341,10 +351,10 @@
 					<description>Search</description>
 					<type>button</type>
 					<id>10</id>
-					<onleft>50</onleft>
+					<ondown>9</ondown>
 					<label>137</label>
-					<disabledcolor>#discolor</disabledcolor>
-					<textcolorNoFocus>#nofocuscolor</textcolorNoFocus>
+					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
+					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
 					<visible>no</visible>
 				</control>
 
@@ -352,10 +362,10 @@
 					<description>Select Category</description>
 					<type>selectbutton</type>
 					<id>9</id>
-					<onleft>50</onleft>
+					<ondown>5</ondown>
 					<label>2053</label>
-					<disabledcolor>#discolor</disabledcolor>
-					<textcolorNoFocus>#nofocuscolor</textcolorNoFocus>
+					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
+					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
 					<visible>no</visible>
 				</control>
 
@@ -363,20 +373,20 @@
 					<description>Max Results</description>
 					<type>selectbutton</type>
 					<id>5</id>
-					<onleft>50</onleft>
-					<disabledcolor>#discolor</disabledcolor>
-					<textcolorNoFocus>#nofocuscolor</textcolorNoFocus>
+					<ondown>7</ondown>
+					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
+					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
 					<label>Max Results</label>
 					<visible>no</visible>
 				</control>
 
 				<control>
-					<description>TimeFrame button</description>
+					<description>TimeFrame</description>
 					<type>selectbutton</type>
 					<id>7</id>
-					<onleft>50</onleft>
-					<disabledcolor>#discolor</disabledcolor>
-					<textcolorNoFocus>#nofocuscolor</textcolorNoFocus>
+					<ondown>6</ondown>
+					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
+					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
 					<label>Timeframe</label>
 					<visible>no</visible>
 				</control>
@@ -385,31 +395,40 @@
 					<description>Order By</description>
 					<type>selectbutton</type>
 					<id>6</id>
-					<onleft>50</onleft>
-					<disabledcolor>#discolor</disabledcolor>
-					<textcolorNoFocus>#nofocuscolor</textcolorNoFocus>
-					<label>103</label>
+					<ondown>8</ondown>
+					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
+					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
+					<label>495</label>
 					<visible>no</visible>
 				</control>
 
 				<control>
-					<description>Update button</description>
+					<description>Update</description>
 					<type>button</type>
 					<id>8</id>
-					<onleft>50</onleft>
-					<disabledcolor>#discolor</disabledcolor>
-					<textcolorNoFocus>#nofocuscolor</textcolorNoFocus>
+					<ondown>3</ondown>
+					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
+					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
 					<label>184</label>
 					<visible>no</visible>
+				</control>
+
+				<control>
+					<description>Empty button</description>
+					<type>button</type>
+					<id>0</id>
+					<ondown>3</ondown>
+					<label>-</label>
+					<visible>false</visible>
 				</control>
 
 				<control>
 					<description>Next Page</description>
 					<type>button</type>
 					<id>3</id>          
-					<onleft>50</onleft>
-					<disabledcolor>#discolor</disabledcolor>
-					<textcolorNoFocus>#nofocuscolor</textcolorNoFocus>
+					<ondown>4</ondown>
+					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
+					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
 					<label>1975</label>
 					<visible>no</visible>
 				</control>
@@ -418,9 +437,9 @@
 					<description>Previous Page</description>
 					<type>button</type>
 					<id>4</id>          
-					<onleft>50</onleft>
-					<disabledcolor>#discolor</disabledcolor>
-					<textcolorNoFocus>#nofocuscolor</textcolorNoFocus>
+					<ondown>2</ondown>
+					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
+					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
 					<label>30004</label>
 					<visible>no</visible>
 				</control>

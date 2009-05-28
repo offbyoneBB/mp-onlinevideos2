@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 
-<!-- StreamedMP skin for OnlineVideos plugin Version 1.0.0 -->
+<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.3 -->
 
 <window>
 
@@ -43,7 +43,6 @@
 			<width>203</width>
 			<height>114</height>
 			<action>18</action>
-			<textureFocus>-</textureFocus>
 			<visible>player.hasmedia+![facadeview.filmstrip|Control.IsVisible(1236)]+!control.isvisible(3337)</visible>
 		</control>
 		
