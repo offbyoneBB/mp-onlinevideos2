@@ -176,8 +176,8 @@ namespace OnlineVideos
         {
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
             LoadSettings();
-            GUIPropertyManager.SetProperty("#desc", " ");
-            GUIPropertyManager.SetProperty("#length", " ");
+            GUIPropertyManager.SetProperty("#OnlineVideos.desc", " ");
+            GUIPropertyManager.SetProperty("#OnlineVideos.length", " ");
             return result;
         }
         
@@ -639,8 +639,8 @@ namespace OnlineVideos
             
             if (selectedSiteIndex < facadeView.Count) facadeView.SelectedListItemIndex = selectedSiteIndex;
 
-            GUIPropertyManager.SetProperty("#header.label", "Home");
-            GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
+            GUIPropertyManager.SetProperty("#OnlineVideos.header.label", "Home");
+            GUIPropertyManager.SetProperty("#OnlineVideos.header.image", "OnlineVideos/OnlineVideos.png");
         }
 
         private void DisplayCategories()
@@ -1236,8 +1236,8 @@ namespace OnlineVideos
             switch (currentState)
             {
                 case State.home:
-                    GUIPropertyManager.SetProperty("#header.label", "Home");
-                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
+                    GUIPropertyManager.SetProperty("#OnlineVideos.header.label", "Home");
+                    GUIPropertyManager.SetProperty("#OnlineVideos.header.image", "OnlineVideos/OnlineVideos.png");
                     ShowFacade();
                     ShowFacadeViewAsButton();
                     HideNextPageButton();
@@ -1255,8 +1255,8 @@ namespace OnlineVideos
                     SwitchView();
                     break;
                 case State.categories:
-                    GUIPropertyManager.SetProperty("#header.label", selectedSite.Name);                    
-                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
+                    GUIPropertyManager.SetProperty("#OnlineVideos.header.label", selectedSite.Name);                    
+                    GUIPropertyManager.SetProperty("#OnlineVideos.header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
                     ShowFacade();
                     HideFacadeViewAsButton();
                     HideNextPageButton();
@@ -1274,8 +1274,8 @@ namespace OnlineVideos
                     string headerlabel = selectedCategory != null ? selectedCategory.Name : "";
                     if (searchMode) headerlabel = GUILocalizeStrings.Get(283);
                     else if (showingFavorites) headerlabel = GUILocalizeStrings.Get(932);
-                    GUIPropertyManager.SetProperty("#header.label", headerlabel);
-                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
+                    GUIPropertyManager.SetProperty("#OnlineVideos.header.label", headerlabel);
+                    GUIPropertyManager.SetProperty("#OnlineVideos.header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
                     ShowFacade();
                     ShowFacadeViewAsButton();
                     if (selectedSite.Util.hasNextPage()) ShowNextPageButton(); else HideNextPageButton();
@@ -1290,8 +1290,8 @@ namespace OnlineVideos
                     SwitchView();
                     break;
                 case State.info:
-                    GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
-                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
+                    GUIPropertyManager.SetProperty("#OnlineVideos.header.label", selectedVideo.Title);
+                    GUIPropertyManager.SetProperty("#OnlineVideos.header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
                     HideFacade();
                     HideFacadeViewAsButton();
                     HideNextPageButton();
@@ -1349,15 +1349,15 @@ namespace OnlineVideos
 
         private void ShowVideoDetails()
         {            
-            GUIPropertyManager.SetProperty("#movieposter", ImageDownloader.downloadPoster(selectedVideo.Tags, selectedVideo.Title, OnlineVideoSettings.getInstance().msThumbLocation));
-            GUIPropertyManager.SetProperty("#movietitle", selectedVideo.Title);
-            GUIPropertyManager.SetProperty("#trailerdesc", selectedVideo.Description);
+            GUIPropertyManager.SetProperty("#OnlineVideos.movieposter", ImageDownloader.downloadPoster(selectedVideo.Tags, selectedVideo.Title, OnlineVideoSettings.getInstance().msThumbLocation));
+            GUIPropertyManager.SetProperty("#OnlineVideos.movietitle", selectedVideo.Title);
+            GUIPropertyManager.SetProperty("#OnlineVideos.trailerdesc", selectedVideo.Description);
             Sites.AppleTrailersUtil.Trailer info = selectedVideo.Other as Sites.AppleTrailersUtil.Trailer;
             if (info != null)
             {                
-                GUIPropertyManager.SetProperty("#genre", info.Genres.ToString());
-                GUIPropertyManager.SetProperty("#releasedate", info.ReleaseDate.ToShortDateString());
-                GUIPropertyManager.SetProperty("#cast", info.Cast.ToString());
+                GUIPropertyManager.SetProperty("#OnlineVideos.genre", info.Genres.ToString());
+                GUIPropertyManager.SetProperty("#OnlineVideos.releasedate", info.ReleaseDate.ToShortDateString());
+                GUIPropertyManager.SetProperty("#OnlineVideos.cast", info.Cast.ToString());
             }
             GUIControl.ShowControl(GetID, 23);
             GUIControl.EnableControl(GetID, 23);            
@@ -1611,25 +1611,25 @@ namespace OnlineVideos
         {
             if (foVideo == null)
             {
-                GUIPropertyManager.SetProperty("#videotitle", String.Empty);
-                GUIPropertyManager.SetProperty("#tags", String.Empty);
-                GUIPropertyManager.SetProperty("#length", String.Empty);
-                GUIPropertyManager.SetProperty("#desc", String.Empty);
+                GUIPropertyManager.SetProperty("#OnlineVideos.videotitle", String.Empty);
+                GUIPropertyManager.SetProperty("#OnlineVideos.tags", String.Empty);
+                GUIPropertyManager.SetProperty("#OnlineVideos.length", String.Empty);
+                GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
             }
             else
             {
-                GUIPropertyManager.SetProperty("#videotitle", foVideo.Title);
+                GUIPropertyManager.SetProperty("#OnlineVideos.videotitle", foVideo.Title);
                 if (String.IsNullOrEmpty(foVideo.Tags))
                 {
-                    GUIPropertyManager.SetProperty("#tags", "None");
+                    GUIPropertyManager.SetProperty("#OnlineVideos.tags", "None");
                 }
                 else
                 {
-                    GUIPropertyManager.SetProperty("#tags", foVideo.Tags);
+                    GUIPropertyManager.SetProperty("#OnlineVideos.tags", foVideo.Tags);
                 }
                 if (String.IsNullOrEmpty(foVideo.Length))
                 {
-                    GUIPropertyManager.SetProperty("#length", "None");
+                    GUIPropertyManager.SetProperty("#OnlineVideos.length", "None");
                 }
                 else
                 {
@@ -1637,20 +1637,20 @@ namespace OnlineVideos
                     if (Double.TryParse(foVideo.Length, out ldLength))
                     {
                         TimeSpan t = TimeSpan.FromSeconds(ldLength);
-                        GUIPropertyManager.SetProperty("#length", t.ToString());
+                        GUIPropertyManager.SetProperty("#OnlineVideos.length", t.ToString());
                     }
                     else
                     {
-                        GUIPropertyManager.SetProperty("#length", foVideo.Length);
+                        GUIPropertyManager.SetProperty("#OnlineVideos.length", foVideo.Length);
                     }
                 }
                 if (String.IsNullOrEmpty(foVideo.Description))
                 {
-                    GUIPropertyManager.SetProperty("#desc", "None");
+                    GUIPropertyManager.SetProperty("#OnlineVideos.desc", "None");
                 }
                 else
                 {
-                    GUIPropertyManager.SetProperty("#desc", foVideo.Description);
+                    GUIPropertyManager.SetProperty("#OnlineVideos.desc", foVideo.Description);
                 }
             }
         }
