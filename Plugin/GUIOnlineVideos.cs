@@ -639,8 +639,8 @@ namespace OnlineVideos
             
             if (selectedSiteIndex < facadeView.Count) facadeView.SelectedListItemIndex = selectedSiteIndex;
 
-            GUIPropertyManager.SetProperty("#OnlineVideos.header.label", "Home");
-            GUIPropertyManager.SetProperty("#OnlineVideos.header.image", "OnlineVideos/OnlineVideos.png");
+            GUIPropertyManager.SetProperty("#header.label", "Home");
+            GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
         }
 
         private void DisplayCategories()
@@ -1236,8 +1236,8 @@ namespace OnlineVideos
             switch (currentState)
             {
                 case State.home:
-                    GUIPropertyManager.SetProperty("#OnlineVideos.header.label", "Home");
-                    GUIPropertyManager.SetProperty("#OnlineVideos.header.image", "OnlineVideos/OnlineVideos.png");
+                    GUIPropertyManager.SetProperty("#header.label", "Home");
+                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
                     ShowFacade();
                     ShowFacadeViewAsButton();
                     HideNextPageButton();
@@ -1255,8 +1255,8 @@ namespace OnlineVideos
                     SwitchView();
                     break;
                 case State.categories:
-                    GUIPropertyManager.SetProperty("#OnlineVideos.header.label", selectedSite.Name);                    
-                    GUIPropertyManager.SetProperty("#OnlineVideos.header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
+                    GUIPropertyManager.SetProperty("#header.label", selectedSite.Name);                    
+                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
                     ShowFacade();
                     HideFacadeViewAsButton();
                     HideNextPageButton();
@@ -1274,8 +1274,8 @@ namespace OnlineVideos
                     string headerlabel = selectedCategory != null ? selectedCategory.Name : "";
                     if (searchMode) headerlabel = GUILocalizeStrings.Get(283);
                     else if (showingFavorites) headerlabel = GUILocalizeStrings.Get(932);
-                    GUIPropertyManager.SetProperty("#OnlineVideos.header.label", headerlabel);
-                    GUIPropertyManager.SetProperty("#OnlineVideos.header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
+                    GUIPropertyManager.SetProperty("#header.label", headerlabel);
+                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
                     ShowFacade();
                     ShowFacadeViewAsButton();
                     if (selectedSite.Util.hasNextPage()) ShowNextPageButton(); else HideNextPageButton();
@@ -1290,8 +1290,8 @@ namespace OnlineVideos
                     SwitchView();
                     break;
                 case State.info:
-                    GUIPropertyManager.SetProperty("#OnlineVideos.header.label", selectedVideo.Title);
-                    GUIPropertyManager.SetProperty("#OnlineVideos.header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
+                    GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
+                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
                     HideFacade();
                     HideFacadeViewAsButton();
                     HideNextPageButton();
