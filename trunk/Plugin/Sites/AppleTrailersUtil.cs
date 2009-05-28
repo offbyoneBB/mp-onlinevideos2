@@ -50,8 +50,6 @@ namespace OnlineVideos.Sites
             SMALL,
             MEDIUM,
             LARGE,
-            SD,
-            HD,
             HD480,
             HD720,
             FULLHD

@@ -55,11 +55,15 @@ namespace OnlineVideos
 				moSiteList.Add(site);
 			}
             foreach (Sites.AppleTrailersUtil.VideoQuality size in Enum.GetValues(typeof(Sites.AppleTrailersUtil.VideoQuality)))
-            {				
-				cmbTrailerSize.Items.Add(size);
-				if(size==OnlineVideoSettings.getInstance().AppleTrailerSize){
-					cmbTrailerSize.SelectedIndex = cmbTrailerSize.Items.Count-1;
-				}
+            {
+                if (size != OnlineVideos.Sites.AppleTrailersUtil.VideoQuality.UNKNOWN)
+                {
+                    cmbTrailerSize.Items.Add(size);
+                    if (size == OnlineVideoSettings.getInstance().AppleTrailerSize)
+                    {
+                        cmbTrailerSize.SelectedIndex = cmbTrailerSize.Items.Count - 1;
+                    }
+                }
 			}
             this.chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;
             chkUseAgeConfirmation_CheckedChanged(chkUseAgeConfirmation, EventArgs.Empty);
