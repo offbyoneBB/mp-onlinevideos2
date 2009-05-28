@@ -21,7 +21,7 @@
       <width>200</width>
       <height>280</height>
       <visible>no</visible>
-      <texture flipY="true" diffuse="Thumb_Mask.png">#movieposter</texture>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#OnlineVideos.movieposter</texture>
     </control>
     <control>
       <type>listcontrol</type>
@@ -55,7 +55,7 @@
       <posY>120</posY>
       <width>230</width>
       <font>font12</font>
-      <label>#cast</label>
+      <label>#OnlineVideos.cast</label>
       <visible>no</visible>
       <disabledcolor>ff808080</disabledcolor>
     </control>
@@ -75,7 +75,7 @@
       <id>55</id>
       <posX>50</posX>
       <posY>425</posY>
-      <label>#releasedate</label>
+      <label>#OnlineVideos.releasedate</label>
       <visible>no</visible>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -96,7 +96,7 @@
       <posX>50</posX>
       <posY>485</posY>
       <width>195</width>
-      <label>#genre</label>
+      <label>#OnlineVideos.genre</label>
       <visible>no</visible>
       <disabledcolor>ff808080</disabledcolor>
     </control>
@@ -121,7 +121,7 @@
       <colordiffuse>ffffffff</colordiffuse>
       <visible>no</visible>
       <font>font13</font>
-      <label>#trailerdesc</label>
+      <label>#OnlineVideos.trailerdesc</label>
       <textcolor>FFFFFFFF</textcolor>
     </control>    
   </controls>
