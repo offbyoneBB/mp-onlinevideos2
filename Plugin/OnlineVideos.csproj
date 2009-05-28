@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -250,7 +250,7 @@
     <Compile Include="Sites\Interfaces\ISearch.cs" />
     <Compile Include="Sites\LineCinemaRuUtil.cs" />
     <Compile Include="Sites\LiveVideoUtil.cs" />
-    <Compile Include="Sites\MyVideodUtil.cs" />
+    <Compile Include="Sites\MyVideoUtil.cs" />
     <Compile Include="Sites\OnTVRuUtil.cs" />
     <Compile Include="Sites\RegExpSiteUtil.cs" />
     <Compile Include="Sites\MsnbcUtil.cs" />
