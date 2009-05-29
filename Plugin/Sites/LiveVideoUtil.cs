@@ -17,6 +17,7 @@ namespace OnlineVideos.Sites
 	{        
         public override String getUrl(VideoInfo video, SiteSettings foSite)
         {
+            CookieContainer cookieContainer = new CookieContainer();
             String lsUrl = "";
 
             HttpWebRequest request = WebRequest.Create(video.VideoUrl) as HttpWebRequest;
@@ -29,13 +30,14 @@ namespace OnlineVideos.Sites
                 lsUrl = loMatch.Groups[1].Value;
                 string url_hash = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(lsUrl + "&f=flash" + "undefined" + "LVX*7x8yzwe", "MD5").ToLower();
                 lsUrl += "&f=flash" + "undefined" + "&h=" + url_hash;
-
+                
                 HttpWebRequest request2 = WebRequest.Create(lsUrl) as HttpWebRequest;
+                request2.CookieContainer = cookieContainer;
                 request2.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
                 WebResponse response2 = request2.GetResponse();
                 Stream receiveStream = response2.GetResponseStream();
                 StreamReader reader = new StreamReader(receiveStream, System.Text.Encoding.UTF8);
-                string str = reader.ReadToEnd();                                
+                string str = reader.ReadToEnd();                
 
                 Match loMatch2 = Regex.Match(str, @"video_id=(.+\.flv)");
                 if (loMatch2.Success)
@@ -43,6 +45,8 @@ namespace OnlineVideos.Sites
                     lsUrl = System.Web.HttpUtility.UrlDecode(loMatch2.Groups[1].Value);
                 }                
             }
+
+            // the cookie in cookieContainer probably must be send on the request for the flv - how?
             return lsUrl;
         }
 
