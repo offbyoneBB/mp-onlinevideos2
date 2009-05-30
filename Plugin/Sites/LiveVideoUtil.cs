@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites
 	/// Description of LiveVideoUtil.
 	/// </summary>
 	public class LiveVideoUtil : SiteUtilBase
-	{        
+	{       
         public override String getUrl(VideoInfo video, SiteSettings foSite)
         {
             CookieContainer cookieContainer = new CookieContainer();
@@ -46,8 +46,18 @@ namespace OnlineVideos.Sites
                 }                
             }
 
-            // the cookie in cookieContainer probably must be send on the request for the flv - how?
-            return lsUrl;
+            // the cookie in cookieContainer must be send on the request for the flv which is done through IE
+            if (cookieContainer.Count > 0)
+            {
+                // set all IE requests in one process
+                InternetSetOption(0, 42, null, 0);
+                // set the cookie for IE
+                bool success = SetCookie("http://cdn.livevideo.com", cookieContainer.GetCookies(new Uri("http://cdn.livevideo.com"))[0]);
+                if (success) return lsUrl;
+            }
+
+            // getting here means some error occured
+            return "";
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -67,35 +77,48 @@ namespace OnlineVideos.Sites
 			}
 			return loVideoList;
 		}
+
+        [System.Runtime.InteropServices.DllImport("wininet.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto, SetLastError = true)]
+        public static extern bool InternetGetCookie(string url, string cookieName, StringBuilder cookieData, ref int size);
+
+        [System.Runtime.InteropServices.DllImport("wininet.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto, SetLastError = true)]
+        public static extern bool InternetSetCookie(string lpszUrlName, string lpszCookieName, string lpszCookieData);
+
+        [System.Runtime.InteropServices.DllImport("wininet.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto, SetLastError = true)]
+        public static extern bool InternetSetOption(int hInternet, int dwOption, string lpBuffer, int dwBufferLength);
+
+        public static bool SetCookie(string url, Cookie cookie)
+        {
+            return InternetSetCookie(url, cookie.Name, cookie.Value);
+        }
+
+        public static CookieContainer GetUriCookieContainer(Uri uri)
+        {
+            CookieContainer cookies = null;
+
+            // Determine the size of the cookie
+            int datasize = 256;
+            StringBuilder cookieData = new StringBuilder(datasize);
+
+            if (!InternetGetCookie(uri.ToString(), null, cookieData,
+              ref datasize))
+            {
+                if (datasize < 0)
+                    return null;
+
+                // Allocate stringbuilder large enough to hold the cookie
+                cookieData = new StringBuilder(datasize);
+                if (!InternetGetCookie(uri.ToString(), null, cookieData,
+                  ref datasize))
+                    return null;
+            }
+
+            if (cookieData.Length > 0)
+            {
+                cookies = new CookieContainer();
+                cookies.SetCookies(uri, cookieData.ToString().Replace(';', ','));
+            }
+            return cookies;
+        }
 	}
 }
-/*
- <Site name="Live Video" util="LiveVideo" agecheck="false" enabled="false">
-      <Username />
-      <Password />
-      <SearchUrl />
-      <Categories>
-        <Category xsi:type="RssLink" name="Featured Videos">http://rss.livevideo.com/rss/rss.ashx?v=Featured</Category>
-        <Category xsi:type="RssLink" name="New Videos">http://rss.livevideo.com/rss/rss.ashx?v=Newest</Category>
-        <Category xsi:type="RssLink" name="Most Viewed Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostViewed</Category>
-        <Category xsi:type="RssLink" name="Most Discussed Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostDiscussed</Category>
-        <Category xsi:type="RssLink" name="Most Hit Votes Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostHit</Category>
-        <Category xsi:type="RssLink" name="Most Miss Votes Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostMiss</Category>
-        <Category xsi:type="RssLink" name="Arts &amp; Animation">http://rss.livevideo.com/rss/rss.ashx?catid=1</Category>
-        <Category xsi:type="RssLink" name="Auto &amp; Vehicles">http://rss.livevideo.com/rss/rss.ashx?catid=6</Category>
-        <Category xsi:type="RssLink" name="Comedy">http://rss.livevideo.com/rss/rss.ashx?catid=7</Category>
-        <Category xsi:type="RssLink" name="Entertainment">http://rss.livevideo.com/rss/rss.ashx?catid=8</Category>
-        <Category xsi:type="RssLink" name="Extreme">http://rss.livevideo.com/rss/rss.ashx?catid=3</Category>
-        <Category xsi:type="RssLink" name="Music">http://rss.livevideo.com/rss/rss.ashx?catid=9</Category>
-        <Category xsi:type="RssLink" name="News">http://rss.livevideo.com/rss/rss.ashx?catid=10</Category>
-        <Category xsi:type="RssLink" name="People">http://rss.livevideo.com/rss/rss.ashx?catid=11</Category>
-        <Category xsi:type="RssLink" name="Pets &amp; Animals">http://rss.livevideo.com/rss/rss.ashx?catid=12</Category>
-        <Category xsi:type="RssLink" name="Science &amp; Technology">http://rss.livevideo.com/rss/rss.ashx?catid=13</Category>
-        <Category xsi:type="RssLink" name="Sports">http://rss.livevideo.com/rss/rss.ashx?catid=5</Category>
-        <Category xsi:type="RssLink" name="Travel &amp; Places">http://rss.livevideo.com/rss/rss.ashx?catid=14</Category>
-        <Category xsi:type="RssLink" name="Video Blogs">http://rss.livevideo.com/rss/rss.ashx?catid=17</Category>
-        <Category xsi:type="RssLink" name="Video Comments">http://rss.livevideo.com/rss/rss.ashx?catid=18</Category>
-        <Category xsi:type="RssLink" name="Video Games">http://rss.livevideo.com/rss/rss.ashx?catid=15</Category>
-      </Categories>
-    </Site>
-*/

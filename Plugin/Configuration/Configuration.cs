@@ -67,7 +67,8 @@ namespace OnlineVideos
 			}
             this.chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;
             chkUseAgeConfirmation_CheckedChanged(chkUseAgeConfirmation, EventArgs.Empty);
-            cmbYoutubeQuality.SelectedIndex = (int)settings.YouTubeQuality;
+            cmbYoutubeQuality.SelectedIndex = (int)settings.YouTubeQuality;            
+            cmbDasErsteQuality.SelectedIndex = (int)settings.DasErsteQuality;
             this.tbxPin.Text = settings.pinAgeConfirmation;
 		}
 		
@@ -226,8 +227,9 @@ namespace OnlineVideos
             settings.BasicHomeScreenName = tbxScreenName.Text;
             Log.Info("OnlineVideo Configuration - download Dir:" + txtDownloadDir.Text);
 			settings.msDownloadDir = txtDownloadDir.Text;
-            settings.AppleTrailerSize = (Sites.AppleTrailersUtil.VideoQuality)cmbTrailerSize.SelectedItem;
+            settings.AppleTrailerSize = (Sites.AppleTrailersUtil.VideoQuality)cmbTrailerSize.SelectedItem;            
             settings.YouTubeQuality = (Sites.YouTubeUtil.YoutubeVideoQuality)cmbYoutubeQuality.SelectedIndex;
+            settings.DasErsteQuality = (OnlineVideos.Sites.DasErsteMediathekUtil.DasErsteVideoQuality)cmbDasErsteQuality.SelectedIndex;
             settings.useAgeConfirmation = chkUseAgeConfirmation.Checked;
             settings.pinAgeConfirmation = tbxPin.Text;
 			settings.moSiteList.Clear();
