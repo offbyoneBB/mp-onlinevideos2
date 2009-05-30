@@ -10,9 +10,8 @@ namespace OnlineVideos.Sites
 {    
     public class DasErsteMediathekUtil : SiteUtilBase
     {
-        protected static bool _stopped = false;
-        protected string configName = "DasErsteMediathekNetworkConfig";
-        
+        public enum DasErsteVideoQuality { Low, High };
+
         protected string ConvertUmlaut(string strIN)
         {
             return strIN.Replace("\x00c4", "Ae").Replace("\x00e4", "ae").Replace("\x00d6", "Oe").Replace("\x00f6", "oe").Replace("\x00dc", "Ue").Replace("\x00fc", "ue");
@@ -89,12 +88,7 @@ namespace OnlineVideos.Sites
                 while (beginIndex > 0);
             }
             return list;
-        }
-
-        public string getFileNameForRecord(VideoInfo link)
-        {
-            return (this.ConvertUmlaut(link.Title) + ".asf");
-        }
+        }        
 
         protected static int getTagValues(string source, string begTag, string endTag, out string value, int beginIndex)
         {
@@ -125,17 +119,27 @@ namespace OnlineVideos.Sites
             return (index + endTag.Length);
         }
 
-        Regex videoSearchRegExp = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['2'\]\s*=\s*""(?<videoUrl>http://[^""]+)""");
-        public override String getUrl(VideoInfo video, SiteSettings foSite)        
+        Regex videoSearchRegExp_Low = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['1'\]\s*=\s*""(?<videoUrl>http://[^""]+)""");
+        Regex videoSearchRegExp_High = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['2'\]\s*=\s*""(?<videoUrl>http://[^""]+)""");
+        Regex cachedRegExp;
+        public override String getUrl(VideoInfo video, SiteSettings foSite)
         {
+            if (cachedRegExp == null)
+            {
+                if (OnlineVideoSettings.getInstance().DasErsteQuality == DasErsteVideoQuality.Low)
+                    cachedRegExp = videoSearchRegExp_Low;
+                else
+                    cachedRegExp = videoSearchRegExp_High;
+            }
+
             string fsId = video.VideoUrl;
             string str = getCachedHTMLData(fsId);
-            Match match = videoSearchRegExp.Match(str);
+            Match match = cachedRegExp.Match(str);
             string resultUrl = "";
             while (match.Success)
             {
                 resultUrl = match.Groups["videoUrl"].Value;
-                if (match.Groups["type"].Value == "microsoftmedia") break;
+                if (match.Groups["type"].Value == "flashmedia") break; // prefer flash over wmv
                 match = match.NextMatch();
             }
             return resultUrl;
