@@ -32,6 +32,8 @@ namespace OnlineVideos
         {
             SetInfosFromCodecs();
 
+            lblVersion.Text = "Version: " + new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version.ToString();
+
             foreach (string site in SiteUtilFactory.GetAllNames())
             {
                 cbSiteUtil.Items.Add(site);

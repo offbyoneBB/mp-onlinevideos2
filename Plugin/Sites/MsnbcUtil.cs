@@ -28,8 +28,8 @@ namespace OnlineVideos.Sites
             {
                 video = new VideoInfo();
                 video.Description = rssItem.description;
-                video.ImageUrl = rssItem.mediaThumbnail;
-                video.Title = rssItem.title;
+                video.ImageUrl = rssItem.contentList[0].url;
+                video.Title = rssItem.title.Replace("Video: ", "");
                 video.Length = rssItem.contentList[0].duration;
                 video.VideoUrl = idRegex.Match(rssItem.guid).Groups[1].Value;
                 loVideoList.Add(video);
