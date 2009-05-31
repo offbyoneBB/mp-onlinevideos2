@@ -244,6 +244,7 @@
     <Compile Include="Sites\BreakUtil.cs" />
     <Compile Include="Sites\CnnUtil.cs" />
     <Compile Include="Sites\DasErsteMediathekUtil.cs" />
+    <Compile Include="Sites\EmpflixUtil.cs" />
     <Compile Include="Sites\GameTrailersUtil.cs" />
     <Compile Include="Sites\Interfaces\IFavorite.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
@@ -252,7 +253,6 @@
     <Compile Include="Sites\LiveVideoUtil.cs" />
     <Compile Include="Sites\MyVideoUtil.cs" />
     <Compile Include="Sites\OnTVRuUtil.cs" />
-    <Compile Include="Sites\RegExpSiteUtil.cs" />
     <Compile Include="Sites\MsnbcUtil.cs" />
     <Compile Include="Sites\RedTubeUtil.cs" />
     <Compile Include="Sites\RTLNowUtil.cs" />

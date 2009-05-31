@@ -469,7 +469,7 @@
         <Category xsi:type="RssLink" name="Most Voted">http://www.tube8.com/mostvoted.html</Category>
       </Categories>
     </Site>
-    <Site name="Empflix" util="RegExpSite" agecheck="true" enabled="true" playmode="Stream">
+    <Site name="Empflix" util="Empflix" agecheck="true" enabled="true" playmode="Stream">
       <Username />
       <Password />
       <SearchUrl>http://www.empflix.com/search.php</SearchUrl>
