@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Net;
 using System.IO;
 using MediaPortal.GUI.Library;
@@ -9,9 +10,67 @@ namespace OnlineVideos.Sites
 {
     public class YouPornUtil : SiteUtilBase
     {
+        static Regex PreviousPageRegEx = new Regex(@"\<a\shref=""(?<url>/browse\?page=[\d]+)""\>.*Previous\</a\>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex NextPageRegEx = new Regex(@"\<a\shref=""(?<url>/browse\?page=[\d]+)""\>Next.*\</a\>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
         public override List<VideoInfo> getVideoList(Category category)
         {
-            return Parse(((RssLink)category).Url);            
+            return Parse(((RssLink)category).Url);
+        }
+
+        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        {
+            string ret = video.VideoUrl;
+
+            int x;
+            int y;
+            string data;
+
+
+            data = GetData(video.VideoUrl);
+
+            if (data.Length > 0)
+            {
+                x = data.IndexOf("<a href=\"http://download.youporn.com/download");
+                y = 0;
+
+                if (x != -1)
+                {
+                    y = data.IndexOf("\"", x + 10);
+                    if (y != -1)
+                    {
+                        ret = data.Substring(x + 9, y - x - 9) + ".flv";
+
+                        Log.Debug("YouPorn - Found flv " + ret);
+                    }
+                }
+            }
+
+            return (ret);
+        }
+
+        string nextPageUrl = "";
+        bool nextPageAvailable = false;
+        public override bool hasNextPage()
+        {
+            return nextPageAvailable;
+        }
+
+        string previousPageUrl = "";
+        bool previousPageAvailable = false;
+        public override bool hasPreviousPage()
+        {
+            return previousPageAvailable;
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            return Parse("http://www.youporn.com"+nextPageUrl);
+        }        
+
+        public override List<VideoInfo> getPreviousPageVideos()
+        {
+            return Parse("http://www.youporn.com" + previousPageUrl);
         }
 
         List<VideoInfo> Parse(String fsUrl)
@@ -27,6 +86,33 @@ namespace OnlineVideos.Sites
                 // is there any data ?
                 if (dataPage.Length > 0)
                 {
+                    // check for previous page link
+                    Match mPrev = PreviousPageRegEx.Match(dataPage);
+                    if (mPrev.Success)
+                    {
+                        previousPageAvailable = true;
+                        previousPageUrl = mPrev.Groups["url"].Value;
+                    }
+                    else
+                    {
+                        previousPageAvailable = false;
+                        previousPageUrl = "";
+                    }
+
+                    // check for next page link
+                    Match mNext = NextPageRegEx.Match(dataPage);
+                    if (mNext.Success)
+                    {
+                        nextPageAvailable = true;
+                        nextPageUrl = mNext.Groups["url"].Value;
+                    }
+                    else
+                    {
+                        nextPageAvailable = false;
+                        nextPageUrl = "";
+                    }
+
+                    // parse vidoes
                     ParseLinks(dataPage, loRssItems);
                     if (loRssItems.Count > 0)
                     {
@@ -44,7 +130,7 @@ namespace OnlineVideos.Sites
             return loRssItems;
         }
 
-        private string GetData(string Url)
+        string GetData(string Url)
         {
             string str = "";
             int timeout = 5000;
@@ -77,7 +163,7 @@ namespace OnlineVideos.Sites
             return str;
         }
 
-        private void ParseLinks(string Page, List<VideoInfo> loRssItems)
+        void ParseLinks(string Page, List<VideoInfo> loRssItems)
         {            
             int x = 0;
             int y = 0;
@@ -136,7 +222,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        private void ParseThumbs(string Page, List<VideoInfo> loRssItems)
+        void ParseThumbs(string Page, List<VideoInfo> loRssItems)
         {
             int x = 0;
             int y;
@@ -169,7 +255,13 @@ namespace OnlineVideos.Sites
                             thumb = Page.Substring(y, z - y);
                             Log.Debug("YouPorn - Found thumb " + thumb);
 
-                            if (thumb.Contains("screenshot"))
+                            if (thumb.Contains("video-thumb"))
+                            {
+                                int startIndexSrc = Page.IndexOf("src=\"", z)+5;
+                                int endIndexSrc = Page.IndexOf('"', startIndexSrc);
+                                loRssItems[cnt - 1].ImageUrl = Page.Substring(startIndexSrc, endIndexSrc - startIndexSrc);
+                            }
+                            else if (thumb.Contains("screenshot"))
                             {
                                 //YouPorn - Found thumb http://ss-2.youporn.com/screenshot/28/01/screenshot/280156_large.jpg
 
@@ -238,8 +330,8 @@ namespace OnlineVideos.Sites
 
                                         string tmp = t;
                                         Log.Debug("YouPorn - Found ext2 thumb " + t);
-                                        
-                                        loRssItems[cnt - 1].ImageUrl = tmp + "1.jpg?cb=1";                                 
+
+                                        loRssItems[cnt - 1].ImageUrl = tmp + "1.jpg?cb=1";
                                     }
                                 }
                             }
@@ -253,38 +345,6 @@ namespace OnlineVideos.Sites
                     }
                 }
             }
-        }
-
-        // resolve url for video
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
-        {
-            string ret = video.VideoUrl;
-
-            int x;
-            int y;
-            string data;
-
-
-            data = GetData(video.VideoUrl);
-
-            if (data.Length > 0)
-            {
-                x = data.IndexOf("<a href=\"http://download.youporn.com/download");
-                y = 0;
-
-                if (x != -1)
-                {
-                    y = data.IndexOf("\"", x + 10);
-                    if (y != -1)
-                    {
-                        ret = data.Substring(x + 9, y - x - 9) + ".flv";
-
-                        Log.Debug("YouPorn - Found flv " + ret);
-                    }
-                }
-            }
-
-            return (ret);
-        }
+        }               
     }
 }
