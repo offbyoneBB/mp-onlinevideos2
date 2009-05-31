@@ -116,8 +116,7 @@ namespace OnlineVideos.Sites
                 HttpWebRequest httpWebRequest = webRequest as HttpWebRequest;
                 if (httpWebRequest == null) return url;
                 httpWebRequest.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
-                httpWebRequest.Timeout = 10000;
-                httpWebRequest.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.CacheIfAvailable);
+                httpWebRequest.Timeout = 10000;                
                 HttpWebResponse httpWebresponse = httpWebRequest.GetResponse() as HttpWebResponse;
                 if (httpWebresponse == null) return url;
                 if (httpWebRequest.RequestUri.Equals(httpWebresponse.ResponseUri))
@@ -137,8 +136,7 @@ namespace OnlineVideos.Sites
             HttpWebRequest request = WebRequest.Create(fsUrl) as HttpWebRequest;
             if (request == null) return "";
             request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
-            request.Timeout = 20000;
-            request.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.CacheIfAvailable);
+            request.Timeout = 20000;            
             WebResponse response = request.GetResponse();
             using (System.IO.StreamReader reader = new System.IO.StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))
             {
