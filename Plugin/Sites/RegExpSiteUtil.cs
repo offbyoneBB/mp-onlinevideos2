@@ -17,10 +17,10 @@ namespace OnlineVideos.Sites
     public class RegExpSiteUtil : SiteUtilBase, ISearch
 	{
         static string videoListRegExpString = @"<div.*a.href=""(?<VideoUrl>http://www.empflix.com/view.php\?id\=\d+)"".*<img src=""(?<ImageUrl>http://pic.empflix.com/images/thumb/.*\.jpg)"".*</div>[\s\r\n]*<div\sclass=""videoTitle"">.+\stitle=""(?<Title>.+)"".+</div>";
-        static string videoUrlRegExpString = @"http://cdn.empflix.com[^%]+";
+        static string playlistUrlRegExpString = @"so.addVariable\('config',\s'(?<PlaylistUrl>[^']+)'\);";        
 
         Regex videoListRegExp = new Regex(videoListRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        Regex videoUrlRegExp = new Regex(videoUrlRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        Regex playlistUrlRegExp = new Regex(playlistUrlRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);        
 
         public override String getUrl(VideoInfo video, SiteSettings foSite)
 		{
@@ -29,10 +29,19 @@ namespace OnlineVideos.Sites
                 string dataPage = GetWebData(video.VideoUrl);
                 if (dataPage.Length > 0)
                 {
-                    Match m = videoUrlRegExp.Match(dataPage);
+                    Match m = playlistUrlRegExp.Match(dataPage);
                     if (m.Success)
                     {
-                        return m.Value;
+                        string playlistUrl = "http://cdnt.empflix.com/" + m.Groups["PlaylistUrl"].Value;
+                        playlistUrl = System.Web.HttpUtility.UrlDecode(playlistUrl);
+                        dataPage = GetWebData(playlistUrl);
+                        if (dataPage.Length > 0)
+                        {
+                            XmlDocument doc = new XmlDocument();
+                            doc.LoadXml(dataPage);
+                            string result = doc.SelectSingleNode("//file").InnerText;
+                            return result + "&filetype=.flv";                            
+                        }                        
                     }
                 }
             }
