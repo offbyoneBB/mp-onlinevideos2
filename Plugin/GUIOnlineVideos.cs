@@ -220,6 +220,9 @@ namespace OnlineVideos
         protected override void OnShowContextMenu()
         {
             int liSelected = facadeView.SelectedListItemIndex - 1;
+
+            if (selectedSite.UtilName == "AppleTrailers" && currentState == State.info) liSelected = infoList.SelectedListItemIndex - 1;
+
             if (liSelected < 0 || currentState == State.home || currentState == State.categories || selectedSite.UtilName == "DownloadedVideo" || (selectedSite.UtilName == "AppleTrailers" && currentState == State.videos))
             {
                 return;
@@ -953,8 +956,8 @@ namespace OnlineVideos
                 currentState = State.videos;
                 DisplayCategoryVideos();
                 return;
-            }                
-            
+            }
+
             moCurrentTrailerList.Clear();
             GUIControl.ClearControl(GetID, facadeView.GetID);
             GUIControl.ClearControl(GetID, 51);
@@ -968,7 +971,7 @@ namespace OnlineVideos
             {
                 liIdx++;
                 loVideoInfo.Description = cleanString(loVideoInfo.Description);
-                loListItem = new GUIListItem(loVideoInfo.Title2);                
+                loListItem = new GUIListItem(loVideoInfo.Title2);
                 loListItem.Path = loVideoInfo.VideoUrl;
                 loListItem.ItemId = liIdx;
                 infoList.Add(loListItem);
