@@ -23,7 +23,7 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video, SiteSettings foSite)
         {
             SiteSettings loSite = OnlineVideoSettings.getInstance().moSiteList[video.SiteID];
-            return SiteUtilFactory.GetByName(video.SiteID).getUrl(video, loSite); ;
+            return foSite.Util.getUrl(video, loSite); ;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
