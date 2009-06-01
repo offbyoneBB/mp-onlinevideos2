@@ -294,8 +294,12 @@ namespace OnlineVideos.Sites
             foreach (Video v in trailer.Media)
             {
                 VideoInfo newVideo = new VideoInfo();
+                newVideo.Title = trailer.Title + " - " + v.Label;
                 newVideo.Title2 = v.Label;
-                newVideo.VideoUrl = GetTrailerUrlForConfiguredResolution(v.Size);                                   
+                newVideo.Description = trailer.Description;
+                newVideo.Length = v.Duration.ToString();
+                newVideo.ImageUrl = trailer.Thumb;
+                newVideo.VideoUrl = GetTrailerUrlForConfiguredResolution(v.Size);
                 videoList.Add(newVideo);
             }
             
