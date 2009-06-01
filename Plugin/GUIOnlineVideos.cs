@@ -527,6 +527,15 @@ namespace OnlineVideos
             }
             else if (currentState == State.info)
             {
+                ///------------------------------------------------------------------------
+                /// 2009-05-31 MichelC
+                /// For some reason, without like, the menu functionality gets weird after
+                /// viewing the Apple Trailer Details section in Blue3 & Blue3Wide skins.
+                ///------------------------------------------------------------------------
+                GUIControl.UnfocusControl(GetID, infoList.GetID);
+                infoList.Focus = false;
+                ///------------------------------------------------------------------------
+
                 ImageDownloader._stopDownload = true;
                 DisplayCategoryVideos();
                 SwitchView();                
