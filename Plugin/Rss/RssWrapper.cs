@@ -104,7 +104,6 @@ namespace OnlineVideos
                                 XmlNode nin = n.ChildNodes[j];
                                 switch (nin.Name)
                                 {
-
                                     case "media:content":
                                         loMediaContent = new MediaContent();
                                         try
@@ -128,7 +127,6 @@ namespace OnlineVideos
                                     case "media:title":
                                         loRssItem.mediaTitle = nin.InnerText;
                                         break;
-
                                 }
                             }
                             break;
@@ -196,13 +194,25 @@ namespace OnlineVideos
                         case "media:category":
                             loRssItem.mediaCategory = n.InnerText;
                             break;
+                        case "exInfo:fileType":
+                            loMediaContent = new MediaContent();
+                            for (int j = 0; j < n.ChildNodes.Count; j++)
+                            {
+                                XmlNode nin = n.ChildNodes[j];
+                                switch (nin.Name)
+                                {
+                                    case "type": loMediaContent.type = nin.InnerText; break;
+                                    case "link": loMediaContent.url = nin.InnerText; break;                                    
+                                }
+                            }
+                            loRssItem.contentList.Add(loMediaContent);                            
+                            break;
                         default:
                             break;
                     }
                 }
                 loRssItems.Add(loRssItem);
             }
-
 
             return loRssItems;
         }
