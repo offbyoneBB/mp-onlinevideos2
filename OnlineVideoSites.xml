@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <OnlineVideoSites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Sites>
-    <Site name="YouTube" util="YouTube" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="YouTube" util="YouTube" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -16,19 +16,19 @@
         <Category xsi:type="RssLink" name="Top Viewed:This Month">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=this_month</Category>
       </Categories>
     </Site>
-    <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" playmode="Video">
+    <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="ZDF Mediatek" util="ZDFMediathek" agecheck="false" enabled="true" playmode="Video">
+    <Site name="ZDF Mediatek" util="ZDFMediathek" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -39,7 +39,7 @@
         <Category xsi:type="RssLink" name="Top 10 Alltime">http://www.myvideo.de/feeds/myVideo-Top10-alltime.rss</Category>
       </Categories>
     </Site>
-    <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl>http://www.metacafe.com/f/tags/{0}/rss.xml</SearchUrl>
@@ -49,7 +49,7 @@
         <Category xsi:type="RssLink" name="Top Discussed">http://www.metacafe.com/rss/today_videos/rss.xml?sort=discussed</Category>
       </Categories>
     </Site>
-    <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl>http://www.dailymotion.com/rss/relevance/search/{0}</SearchUrl>
@@ -106,8 +106,8 @@
         <Category xsi:type="RssLink" name="Video Comments">http://rss.livevideo.com/rss/rss.ashx?catid=18</Category>
         <Category xsi:type="RssLink" name="Video Games">http://rss.livevideo.com/rss/rss.ashx?catid=15</Category>
       </Categories>
-    </Site>    
-    <Site name="GameTrailers" util="GameTrailers" agecheck="false" enabled="true" playmode="Stream">
+    </Site>
+    <Site name="GameTrailers" util="GameTrailers" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -149,13 +149,13 @@
         <Category xsi:type="RssLink" name="Top Rated Xbox">http://www.gametrailers.com/rss/topratedxbox.xml</Category>
       </Categories>
     </Site>
-    <Site name="Apple Trailers" util="AppleTrailers" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="Apple Trailers" util="AppleTrailers" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="Break" util="Break" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="Break" util="Break" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl>http://rss.break.com/tag/{0}/</SearchUrl>
@@ -168,7 +168,7 @@
         <Category xsi:type="RssLink" name="How To">http://rss.break.com/channel/how-to/</Category>
       </Categories>
     </Site>
-    <Site name="CNN" util="Cnn" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="CNN" util="Cnn" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -195,13 +195,13 @@
         <Category xsi:type="RssLink" name="Weather">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_weather.xml</Category>
       </Categories>
     </Site>
-    <Site name="VeryFunnyAds" util="VeryFunnyAds" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="VeryFunnyAds" util="VeryFunnyAds" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="MSNBC" util="Msnbc" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="MSNBC" util="Msnbc" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -215,7 +215,7 @@
         <Category xsi:type="RssLink" name="The Week in Video">http://www.msnbc.msn.com/id/14514583/device/rss/rss.xml</Category>
       </Categories>
     </Site>
-    <Site name="TEDTalks" util="GenericSite" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="TEDTalks" util="GenericSite" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -235,7 +235,7 @@
         <Category xsi:type="RssLink" name="Art Unusual">http://www.ted.com/themes/rss/id/17</Category>
       </Categories>
     </Site>
-    <Site name="NASA" util="GenericSite" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="NASA" util="GenericSite" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -256,7 +256,7 @@
         <Category xsi:type="RssLink" name="Exploration">http://www.nasa.gov/rss/exploration_vodcast.rss</Category>
       </Categories>
     </Site>
-    <Site name="blip.tv" util="GenericSite" agecheck="false" enabled="true" playmode="Video">
+    <Site name="blip.tv" util="GenericSite" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -292,7 +292,7 @@
         <Category xsi:type="RssLink" name="Search">http://blip.tv/?1=1&amp;search={0};page=1;s=posts&amp;skin=rss</Category>
       </Categories>
     </Site>
-    <Site name="Revision3" util="GenericSite" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="Revision3" util="GenericSite" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -312,7 +312,7 @@
         <Category xsi:type="RssLink" name="XLR8R TV">http://revision3.com/xlr8rtv/feed/quicktime-large/</Category>
       </Categories>
     </Site>
-    <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true" playmode="Guess">
+    <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -331,19 +331,19 @@
         </Category>
       </Categories>
     </Site>
-    <Site name="YahooMusicVideos" util="YahooMusicVideos" agecheck="false" enabled="true" playmode="Video">
+    <Site name="YahooMusicVideos" util="YahooMusicVideos" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="true" playmode="Stream">
+    <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -370,7 +370,7 @@
         <Category xsi:type="RssLink" name="Отечественный">http://linecinema.ru/news/1-0-9</Category>
       </Categories>
     </Site>
-    <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" playmode="Video">
+    <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -378,7 +378,7 @@
         <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
       </Categories>
     </Site>
-    <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true" playmode="Stream">
+    <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -388,7 +388,7 @@
         <Category xsi:type="RssLink" name="Most Viewed">http://www.youporn.com/most_viewed</Category>
       </Categories>
     </Site>
-    <Site name="RedTube" util="RedTube" agecheck="true" enabled="true" playmode="Stream">
+    <Site name="RedTube" util="RedTube" agecheck="true" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -413,7 +413,7 @@
         <Category xsi:type="RssLink" name="Wildcrazy">http://www.redtube.com/redtube/wildcrazy</Category>
       </Categories>
     </Site>
-    <Site name="xHamster" util="xHamster" agecheck="true" enabled="true" playmode="Stream">
+    <Site name="xHamster" util="xHamster" agecheck="true" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -462,7 +462,7 @@
         <Category xsi:type="RssLink" name="Webcams">http://www.xhamster.com/channels/new-webcams-1.html</Category>
       </Categories>
     </Site>
-    <Site name="Tube8" util="Tube8" agecheck="true" enabled="true" playmode="Stream">
+    <Site name="Tube8" util="Tube8" agecheck="true" enabled="true">
       <Username />
       <Password />
       <SearchUrl />
@@ -475,7 +475,7 @@
         <Category xsi:type="RssLink" name="Most Voted">http://www.tube8.com/mostvoted.html</Category>
       </Categories>
     </Site>
-    <Site name="Empflix" util="Empflix" agecheck="true" enabled="true" playmode="Stream">
+    <Site name="Empflix" util="Empflix" agecheck="true" enabled="true">
       <Username />
       <Password />
       <SearchUrl>http://www.empflix.com/search.php</SearchUrl>
@@ -545,6 +545,6 @@
         <Category xsi:type="RssLink" name="Upskirt Down Blouse">http://www.empflix.com/browsecat.php?chid=43</Category>
         <Category xsi:type="RssLink" name="Voyeurism">http://www.empflix.com/browsecat.php?chid=42</Category>
       </Categories>
-    </Site>    
+    </Site>
   </Sites>
 </OnlineVideoSites>

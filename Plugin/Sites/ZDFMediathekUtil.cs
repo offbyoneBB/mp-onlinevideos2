@@ -10,13 +10,73 @@ using ZDF.BL;
 
 namespace OnlineVideos.Sites
 {
-    public class ZDFMediathekUtil : SiteUtilBase
+    public class ZDFMediathekUtil : SiteUtilBase, ISearch
     {
-        protected static bool _stopped = false;
-        private static List<List<VideoInfo>> listOfAllLinks = new List<List<VideoInfo>>();
-        private static List<BackgroundWorker> listOfWorkers = new List<BackgroundWorker>();
-        protected eBandwidthType m_iBandwidthType = eBandwidthType.DSL2000;
+        RestAgent agent;
+        RestAgent Agent 
+        { 
+            get 
+            {
+                if (agent == null)
+                {
+                    agent = new RestAgent("http://www.zdf.de/ZDFmediathek/tv/mceservice/1.9") { CVer = "1.4.3" };
+                }
+                return agent;
+            } 
+        }
+        Dictionary<string, string> categoriesForSearching = new Dictionary<string, string>();
+
+        public override List<Category> getDynamicCategories()
+        {            
+            List<Category> list = new List<Category>();
+            
+            foreach (Teaser teaser in Agent.Inhalt(Kanaltyp.Sendungen, "Alle"))
+            {
+                RssLink item = new RssLink();
+                item.Name = convertUnicodeU(teaser.Titel);
+                item.Url = teaser.ID;
+                //item.iconUrl = teaser.Teaserbilder[0].Url;
+                list.Add(item);
+                categoriesForSearching.Add(item.Name, item.Url);
+            }
+            return list;
+        }
         
+        public override String getUrl(VideoInfo video, SiteSettings foSite)        
+        {
+            string fsId = video.VideoUrl;
+            Beitrag beitrag = Agent.Beitrag(fsId);
+            string s = GetWebData(beitrag.StreamUrl);
+            XmlDocument document = new XmlDocument();
+            document.Load(XmlReader.Create(new StringReader(s)));
+            return document.SelectSingleNode("//ASX/Entry/Ref").Attributes.GetNamedItem("href").InnerText;
+        }        
+
+        public override List<VideoInfo> getVideoList(Category category)
+        {
+            string fsSubUrl = (category as RssLink).Url;
+            Suchergebnis suchergebnis = Agent.Suchergebnis(" ", 1, 0x1869f, SortOption.Datum, false, fsSubUrl, true, false, false, false, new DateTime(), new DateTime());
+            return GetTeasersFromSuchergebnis(suchergebnis);
+        }
+
+        protected List<VideoInfo> GetTeasersFromSuchergebnis(Suchergebnis suchergebnis)
+        {
+            List<VideoInfo> list = new List<VideoInfo>();
+            foreach (Teaser teaser in suchergebnis.Teasers)
+            {
+                if (teaser.Typ == Beitragstype.Video)
+                {
+                    VideoInfo item = new VideoInfo();
+                    item.ImageUrl = teaser.Teaserbilder[0].Url;
+                    item.Title = teaser.Titel + "(" + teaser.Datum + " " + teaser.Startzeit + " - " + teaser.Laenge + ")";
+                    item.Description = teaser.Beschreibung;
+                    item.VideoUrl = teaser.ID;
+                    list.Add(item);
+                }
+            }
+            return list;
+        }
+
         protected string ConvertUmlaut(string strIN)
         {
             return strIN.Replace("\x00c4", "Ae").Replace("\x00e4", "ae").Replace("\x00d6", "Oe").Replace("\x00f6", "oe").Replace("\x00dc", "Ue").Replace("\x00fc", "ue");
@@ -60,82 +120,27 @@ namespace OnlineVideos.Sites
         protected string getCachedHTMLData(string fsUrl)
         {
             return convertUnicodeU(convertUnicodeD(GetWebData(fsUrl)));
+        }                  
+
+        #region ISearch Member
+
+        public Dictionary<string, string> getSearchableCategories()
+        {
+            return categoriesForSearching;
         }
 
-        public override List<Category> getDynamicCategories()
-        {            
-            List<Category> list = new List<Category>();
-            RestAgent agent = new RestAgent("http://www.zdf.de/ZDFmediathek/tv/mceservice/1.9");
-            agent.CVer = "1.4.0";
-            foreach (Teaser teaser in agent.Inhalt(Kanaltyp.Sendungen, "Alle"))
-            {
-                RssLink item = new RssLink();
-                item.Name = convertUnicodeU(teaser.Titel);
-                item.Url = teaser.ID;
-                //item.iconUrl = teaser.Teaserbilder[0].Url;
-                //item.iDepth = 19;
-                list.Add(item);
-            }
-            return list;
+        public List<VideoInfo> search(string searchUrl, string query)
+        {
+            Suchergebnis suchergebnis = Agent.Suchergebnis(query, 1, 0x1869f, SortOption.Datum, false, "Alle", true, false, false, false, new DateTime(), new DateTime());
+            return GetTeasersFromSuchergebnis(suchergebnis);            
         }
 
-        public string getFileNameForRecord(VideoInfo link)
+        public List<VideoInfo> search(string searchUrl, string query, string category)
         {
-            return (this.ConvertUmlaut(link.Title) + ".asf");
+            return search(searchUrl, query);
         }
 
-        public override String getUrl(VideoInfo video, SiteSettings foSite)        
-        {
-            string fsId = video.VideoUrl;
-            RestAgent agent = new RestAgent("http://www.zdf.de/ZDFmediathek/tv/mceservice/1.9");
-            agent.CVer = "1.4.0";
-            Beitrag beitrag = agent.Beitrag(fsId);
-            string s = GetWebData(beitrag.StreamUrl);
-            XmlDocument document = new XmlDocument();
-            document.Load(XmlReader.Create(new StringReader(s)));
-            return document.SelectSingleNode("//ASX/Entry/Ref").Attributes.GetNamedItem("href").InnerText;
-        }        
-
-        public override List<VideoInfo> getVideoList(Category category)
-        {
-            string fsSubUrl = (category as RssLink).Url;
-            RestAgent agent = new RestAgent("http://www.zdf.de/ZDFmediathek/tv/mceservice/1.9");
-            agent.CVer = "1.4.0";
-            Suchergebnis suchergebnis = agent.Suchergebnis(" ", 1, 0x1869f, SortOption.Datum, false, fsSubUrl, true, false, false, false, new DateTime(), new DateTime());
-            List<VideoInfo> list = new List<VideoInfo>();
-            foreach (Teaser teaser in suchergebnis.Teasers)
-            {
-                if (teaser.Typ == Beitragstype.Video)
-                {
-                    VideoInfo item = new VideoInfo();
-                    item.ImageUrl = teaser.Teaserbilder[0].Url;
-                    item.Title = teaser.Titel + "(" + teaser.Datum + " " + teaser.Startzeit + " - " + teaser.Laenge + ")";
-                    item.Description = teaser.Beschreibung;
-                    item.VideoUrl = teaser.ID;
-                    list.Add(item);
-                }
-            }
-            return list;
-        }      
-
-        public eBandwidthType BandwidthType
-        {
-            get
-            {
-                return this.m_iBandwidthType;
-            }
-            set
-            {
-                this.m_iBandwidthType = value;
-            }
-        }
-        
-        public enum eBandwidthType
-        {
-            DSL2000,
-            DSL1000,
-            ISDN
-        }
+        #endregion
     }
 }
 

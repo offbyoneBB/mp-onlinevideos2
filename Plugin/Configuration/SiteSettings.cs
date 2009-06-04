@@ -5,8 +5,6 @@ using OnlineVideos.Sites;
 
 namespace OnlineVideos
 {
-    public enum PlayMode { Guess, Stream, Video }
-
     [Serializable]    
     public class SiteSettings
     {
@@ -47,15 +45,7 @@ namespace OnlineVideos
         {
             get { return isEnabled; }
             set { isEnabled = value; }
-        }
-
-        PlayMode playmode = PlayMode.Guess;
-        [XmlAttribute("playmode")]
-        public PlayMode PlayMode
-        {
-            get { return playmode; }
-            set { playmode = value; }
-        }
+        }        
 
         string username;
         public string Username
@@ -138,6 +128,14 @@ namespace OnlineVideos
         {
             get { return url; }
             set { url = value; }
+        }
+
+        uint estimatedVideoCount = 0;
+        [XmlIgnore]
+        public uint EstimatedVideoCount 
+        { 
+            get { return estimatedVideoCount; }
+            set { estimatedVideoCount = value; } 
         }
     }
 

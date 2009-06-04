@@ -2,13 +2,22 @@
 	<ver>1.00.000</ver>
 	<FileList>
 		<File>
+			<FileName>OnlineVideoSites.xml</FileName>
+			<Type>Other</Type>
+			<SubType>%Config%</SubType>
+			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\OnlineVideoSites.xml</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>e412006d-6814-4d9d-81b9-ba52e8514471</Guid>
+		</File>
+		<File>
 			<FileName>Apple Trailers.png</FileName>
 			<Type>Media</Type>
 			<SubType>Blue3</SubType>
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\Apple Trailers.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\Apple Trailers.png|</Option>
-			<Guid>6c0e8fba-53a4-458c-8b26-ef7a0ffde5fb</Guid>
+			<Guid>bbddbe80-4382-4f91-83d7-c4fd5983b8d0</Guid>
 		</File>
 		<File>
 			<FileName>Apple Trailers.png</FileName>
@@ -17,52 +26,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\Apple Trailers.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\Apple Trailers.png|</Option>
-			<Guid>f934dd85-adbe-4bbf-8b12-87804e004406</Guid>
-		</File>
-		<File>
-			<FileName>Apple Trailers.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Apple Trailers.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Apple Trailers.png|</Option>
-			<Guid>22d22815-11c2-4a94-a0e4-0f21a31cadb2</Guid>
-		</File>
-		<File>
-			<FileName>Apple Trailers.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Apple Trailers.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Apple Trailers.png|</Option>
-			<Guid>7f928f74-93ae-450e-b127-f7e0e73aaac5</Guid>
-		</File>
-		<File>
-			<FileName>Apple Trailers.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Apple Trailers.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Apple Trailers.png|</Option>
-			<Guid>5c240797-b050-43e6-9acb-fa7de2f69485</Guid>
-		</File>
-		<File>
-			<FileName>Apple Trailers.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Apple Trailers.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Apple Trailers.png|</Option>
-			<Guid>edb2597f-038a-4769-90f6-ab5ad823f7d2</Guid>
-		</File>
-		<File>
-			<FileName>AxInterop.ShockwaveFlashObjects.dll</FileName>
-			<Type>Plugin</Type>
-			<SubType>Window</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\AxInterop.ShockwaveFlashObjects.dll</Source>
-			<Id>01010</Id>
-			<Option />
-			<Guid>249395eb-c04a-49ae-a90a-9a74566a86b3</Guid>
+			<Guid>e979a662-4f3f-4aed-aa02-2246eefca5c6</Guid>
 		</File>
 		<File>
 			<FileName>blip.tv.png</FileName>
@@ -71,7 +35,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\blip.tv.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\blip.tv.png|</Option>
-			<Guid>9fdb6be2-14c8-46cd-8648-02d367db3e97</Guid>
+			<Guid>7d8bbb51-609d-4ca4-8ee0-322bcc9e0e47</Guid>
 		</File>
 		<File>
 			<FileName>blip.tv.png</FileName>
@@ -80,43 +44,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\blip.tv.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\blip.tv.png|</Option>
-			<Guid>e1e4c451-39a6-4247-aa2e-4c611c66a997</Guid>
-		</File>
-		<File>
-			<FileName>blip.tv.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\blip.tv.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\blip.tv.png|</Option>
-			<Guid>96622648-0e01-4b66-89ab-15310ab55f7f</Guid>
-		</File>
-		<File>
-			<FileName>blip.tv.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\blip.tv.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\blip.tv.png|</Option>
-			<Guid>baa2ebd8-830d-4912-bbea-35ec17d4e2e0</Guid>
-		</File>
-		<File>
-			<FileName>blip.tv.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\blip.tv.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\blip.tv.png|</Option>
-			<Guid>7976a856-5628-4a39-a329-6e8463625b3e</Guid>
-		</File>
-		<File>
-			<FileName>blip.tv.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\blip.tv.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\blip.tv.png|</Option>
-			<Guid>00107680-13ce-4aed-a6a8-27b3ecf7c8cc</Guid>
+			<Guid>74c19220-0997-4e20-9769-c1cece7fbec3</Guid>
 		</File>
 		<File>
 			<FileName>Break.png</FileName>
@@ -125,7 +53,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\Break.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\Break.png|</Option>
-			<Guid>6d9fe801-1c26-4a68-a6ee-ab394db07a9c</Guid>
+			<Guid>f19e55e7-913c-46eb-9837-64d1a275b5d1</Guid>
 		</File>
 		<File>
 			<FileName>Break.png</FileName>
@@ -134,43 +62,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\Break.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\Break.png|</Option>
-			<Guid>9145f88d-1863-4fd6-9d1c-4a3ebda14899</Guid>
-		</File>
-		<File>
-			<FileName>Break.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Break.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Break.png|</Option>
-			<Guid>bb0edeaa-01f1-41de-ab86-aaf0e6cd5ea6</Guid>
-		</File>
-		<File>
-			<FileName>Break.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Break.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Break.png|</Option>
-			<Guid>e2fc85e1-5c87-4107-b45f-d3a207545a99</Guid>
-		</File>
-		<File>
-			<FileName>Break.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Break.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Break.png|</Option>
-			<Guid>cc553d28-c10a-4aa7-835e-eeb38ac402da</Guid>
-		</File>
-		<File>
-			<FileName>Break.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Break.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Break.png|</Option>
-			<Guid>1f762395-e316-4279-8d17-cf0f4be6e8ff</Guid>
+			<Guid>4b3a3c1c-29a5-4902-a129-6ae77edbc6b5</Guid>
 		</File>
 		<File>
 			<FileName>CNN.png</FileName>
@@ -179,7 +71,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\CNN.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\CNN.png|</Option>
-			<Guid>13101bde-ad6f-46d1-a7a5-5a7e3d06fdb7</Guid>
+			<Guid>11fd50e8-f292-4247-86d6-ce89c98bccd8</Guid>
 		</File>
 		<File>
 			<FileName>CNN.png</FileName>
@@ -188,43 +80,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\CNN.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\CNN.png|</Option>
-			<Guid>4f1e8d51-58ed-450c-af40-acb7ebfbbc25</Guid>
-		</File>
-		<File>
-			<FileName>CNN.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\CNN.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\CNN.png|</Option>
-			<Guid>25b8777a-4b93-4ca9-9655-93c9ea95a43d</Guid>
-		</File>
-		<File>
-			<FileName>CNN.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\CNN.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\CNN.png|</Option>
-			<Guid>2ff24b6e-d61d-4713-b579-e08b26bdc605</Guid>
-		</File>
-		<File>
-			<FileName>CNN.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\CNN.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\CNN.png|</Option>
-			<Guid>00226488-d748-4f8d-92e3-66d0602038f0</Guid>
-		</File>
-		<File>
-			<FileName>CNN.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\CNN.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\CNN.png|</Option>
-			<Guid>c596d96f-0266-4c84-a74c-bbbd75bb775c</Guid>
+			<Guid>63172fa2-9a6f-4bbc-aac5-c9c2c9fc6140</Guid>
 		</File>
 		<File>
 			<FileName>DailyMotion.png</FileName>
@@ -233,7 +89,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\DailyMotion.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\DailyMotion.png|</Option>
-			<Guid>ceac0832-f3b3-403a-8e4e-1a4de9df626e</Guid>
+			<Guid>21fe11eb-6e4f-43bb-8e01-ec7e9e3e09d4</Guid>
 		</File>
 		<File>
 			<FileName>DailyMotion.png</FileName>
@@ -242,43 +98,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\DailyMotion.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\DailyMotion.png|</Option>
-			<Guid>08887136-b443-4c37-9a89-28d7802f16a3</Guid>
-		</File>
-		<File>
-			<FileName>DailyMotion.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\DailyMotion.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\DailyMotion.png|</Option>
-			<Guid>7e20204e-3ea2-4854-b821-b78d82d171af</Guid>
-		</File>
-		<File>
-			<FileName>DailyMotion.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\DailyMotion.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\DailyMotion.png|</Option>
-			<Guid>f9e8bf51-00c9-4ee7-b9a6-de1a7d6b18a8</Guid>
-		</File>
-		<File>
-			<FileName>DailyMotion.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\DailyMotion.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\DailyMotion.png|</Option>
-			<Guid>e3f8e827-c909-4aa7-af42-dd219d152896</Guid>
-		</File>
-		<File>
-			<FileName>DailyMotion.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\DailyMotion.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\DailyMotion.png|</Option>
-			<Guid>c60a4d7a-da48-4907-a66c-dfaa86a4ab91</Guid>
+			<Guid>7b18cd7c-571b-421a-ae83-25f4f91ec374</Guid>
 		</File>
 		<File>
 			<FileName>Das Erste.png</FileName>
@@ -287,7 +107,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\Das Erste.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\Das Erste.png|</Option>
-			<Guid>3c393f75-262c-4100-99eb-261bfcc27615</Guid>
+			<Guid>c1115dd6-0b16-4b3b-9d93-0429ba64295a</Guid>
 		</File>
 		<File>
 			<FileName>Das Erste.png</FileName>
@@ -296,43 +116,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\Das Erste.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\Das Erste.png|</Option>
-			<Guid>293a21c3-3903-4749-8b13-f9b6e113ad5a</Guid>
-		</File>
-		<File>
-			<FileName>Das Erste.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Das Erste.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Das Erste.png|</Option>
-			<Guid>14dc5cf9-e7b7-4b1c-b7ae-2a731051ccb5</Guid>
-		</File>
-		<File>
-			<FileName>Das Erste.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Das Erste.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Das Erste.png|</Option>
-			<Guid>3945d23d-285c-427e-a289-5c1f247f5d0a</Guid>
-		</File>
-		<File>
-			<FileName>Das Erste.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Das Erste.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Das Erste.png|</Option>
-			<Guid>fc104f45-20b5-4ec0-b4ee-397841469b03</Guid>
-		</File>
-		<File>
-			<FileName>Das Erste.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Das Erste.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Das Erste.png|</Option>
-			<Guid>58bdc075-0e51-4ad5-9830-467035b11a23</Guid>
+			<Guid>4ce2ed3a-8d16-4210-bf0c-c1411c3d69c3</Guid>
 		</File>
 		<File>
 			<FileName>Empflix.png</FileName>
@@ -341,7 +125,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\Empflix.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\Empflix.png|</Option>
-			<Guid>6f5d79f5-e020-4c71-bc2d-83805cef1006</Guid>
+			<Guid>46cf764e-e764-4e1b-b09e-91bd76d3366a</Guid>
 		</File>
 		<File>
 			<FileName>Empflix.png</FileName>
@@ -350,43 +134,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\Empflix.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\Empflix.png|</Option>
-			<Guid>3d54ec6d-1cbd-4646-8790-c851f8ecffd7</Guid>
-		</File>
-		<File>
-			<FileName>Empflix.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Empflix.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Empflix.png|</Option>
-			<Guid>fa727cd2-8f75-4705-a80d-a12375b6451b</Guid>
-		</File>
-		<File>
-			<FileName>Empflix.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Empflix.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Empflix.png|</Option>
-			<Guid>e6d2c304-4d4f-4943-8f0d-749ab23dea2c</Guid>
-		</File>
-		<File>
-			<FileName>Empflix.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Empflix.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Empflix.png|</Option>
-			<Guid>65edf775-3b04-4af4-9504-b964a9d20440</Guid>
-		</File>
-		<File>
-			<FileName>Empflix.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Empflix.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Empflix.png|</Option>
-			<Guid>79a355ed-ebc6-4b64-b9c4-3aa2dfa4309e</Guid>
+			<Guid>7f7ac3c7-1683-4a9a-a687-9bba59d1fb71</Guid>
 		</File>
 		<File>
 			<FileName>Favorites.png</FileName>
@@ -395,7 +143,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\Favorites.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\Favorites.png|</Option>
-			<Guid>8186c789-b745-40f4-8da8-a387313cfd43</Guid>
+			<Guid>55ddcd42-b197-460b-8260-8b03ace18c97</Guid>
 		</File>
 		<File>
 			<FileName>Favorites.png</FileName>
@@ -404,43 +152,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\Favorites.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\Favorites.png|</Option>
-			<Guid>b0648153-2c48-4421-9fcb-8831f75a0ade</Guid>
-		</File>
-		<File>
-			<FileName>Favorites.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Favorites.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Favorites.png|</Option>
-			<Guid>47492a24-0278-4b69-bf47-92ff1172ee44</Guid>
-		</File>
-		<File>
-			<FileName>Favorites.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Favorites.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Favorites.png|</Option>
-			<Guid>7ce821e8-7815-4eb9-905a-ea6fbb14b5be</Guid>
-		</File>
-		<File>
-			<FileName>Favorites.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Favorites.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Favorites.png|</Option>
-			<Guid>30371652-6378-4888-ab3d-e9d51f78ccbd</Guid>
-		</File>
-		<File>
-			<FileName>Favorites.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Favorites.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Favorites.png|</Option>
-			<Guid>70e9fe58-fb96-4e93-b473-ed8e6e0d4669</Guid>
+			<Guid>60337596-d833-4fdb-b8aa-b52728fb9327</Guid>
 		</File>
 		<File>
 			<FileName>GameTrailers.png</FileName>
@@ -449,7 +161,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\GameTrailers.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\GameTrailers.png|</Option>
-			<Guid>8977ae0a-9e91-487e-b4fc-38b5a429687d</Guid>
+			<Guid>bc2194d6-2c73-4f64-af69-bb7c834dc1f9</Guid>
 		</File>
 		<File>
 			<FileName>GameTrailers.png</FileName>
@@ -458,43 +170,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\GameTrailers.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\GameTrailers.png|</Option>
-			<Guid>35dcb58b-69a9-4810-b43f-eed38105c37c</Guid>
-		</File>
-		<File>
-			<FileName>GameTrailers.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\GameTrailers.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\GameTrailers.png|</Option>
-			<Guid>f9d59d73-abd1-4e80-83d3-68c20758a352</Guid>
-		</File>
-		<File>
-			<FileName>GameTrailers.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\GameTrailers.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\GameTrailers.png|</Option>
-			<Guid>7c55242c-3606-4b12-bc40-cc2a63bd2934</Guid>
-		</File>
-		<File>
-			<FileName>GameTrailers.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\GameTrailers.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\GameTrailers.png|</Option>
-			<Guid>9a0ba122-3dc6-4b3e-b3c4-8f4cd457e932</Guid>
-		</File>
-		<File>
-			<FileName>GameTrailers.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\GameTrailers.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\GameTrailers.png|</Option>
-			<Guid>b0909e9f-9a6b-4853-814f-d9d66dd8b079</Guid>
+			<Guid>86a42058-3e6c-4a6e-9fa5-3cecee0cfd85</Guid>
 		</File>
 		<File>
 			<FileName>hover_OnlineVideos.png</FileName>
@@ -503,34 +179,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\hover_OnlineVideos.png</Source>
 			<Id>02020</Id>
 			<Option />
-			<Guid>8f6bb38e-2161-4650-b52f-ccf11adccc9d</Guid>
-		</File>
-		<File>
-			<FileName>hover_OnlineVideos.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\hover_OnlineVideos.png</Source>
-			<Id>02020</Id>
-			<Option />
-			<Guid>8159a0d6-bda5-43b2-bd3b-ec8287a45627</Guid>
-		</File>
-		<File>
-			<FileName>hover_OnlineVideos.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\hover_OnlineVideos.png</Source>
-			<Id>02020</Id>
-			<Option />
-			<Guid>2e7cd8ba-ae93-428f-85c8-6cc0fcc3d68d</Guid>
-		</File>
-		<File>
-			<FileName>Interop.ShockwaveFlashObjects.dll</FileName>
-			<Type>Plugin</Type>
-			<SubType>Window</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\Interop.ShockwaveFlashObjects.dll</Source>
-			<Id>01010</Id>
-			<Option />
-			<Guid>427fa3e4-9314-4a01-93ca-8d5e325acd8d</Guid>
+			<Guid>b23125f7-5b69-4e70-901e-6fcc11e727a0</Guid>
 		</File>
 		<File>
 			<FileName>Live Video.png</FileName>
@@ -539,7 +188,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\Live Video.png</Source>
 			<Id>02020</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\Live Video.png|</Option>
-			<Guid>a641d8ce-8156-440b-8a7f-6a8772bc79f4</Guid>
+			<Guid>f8b793cf-7975-49d0-a3fa-bb56b8f00a24</Guid>
 		</File>
 		<File>
 			<FileName>Live Video.png</FileName>
@@ -548,43 +197,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\Live Video.png</Source>
 			<Id>02020</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\Live Video.png|</Option>
-			<Guid>434a8481-4ef1-447d-94f1-64b085b02925</Guid>
-		</File>
-		<File>
-			<FileName>Live Video.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Live Video.png</Source>
-			<Id>02020</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Live Video.png|</Option>
-			<Guid>c5b431db-7b43-4316-b42d-250792394242</Guid>
-		</File>
-		<File>
-			<FileName>Live Video.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Live Video.png</Source>
-			<Id>02020</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Live Video.png|</Option>
-			<Guid>2f70a89e-b125-4cf4-9f00-effc5007db41</Guid>
-		</File>
-		<File>
-			<FileName>Live Video.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Live Video.png</Source>
-			<Id>02020</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Live Video.png|</Option>
-			<Guid>75073faf-c3f6-4d69-89da-e2ba1a68f319</Guid>
-		</File>
-		<File>
-			<FileName>Live Video.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Live Video.png</Source>
-			<Id>02020</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Live Video.png|</Option>
-			<Guid>10b6f6b0-ce3e-474a-a3a4-4e83a6d30315</Guid>
+			<Guid>f66a613e-7766-4417-9f4a-42f03675d79a</Guid>
 		</File>
 		<File>
 			<FileName>MetaCafe.png</FileName>
@@ -593,7 +206,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\MetaCafe.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\MetaCafe.png|</Option>
-			<Guid>f06250b7-d87b-4e18-a3a5-f92b61cdcbc3</Guid>
+			<Guid>31838baa-97e6-478d-9067-11c4f321e367</Guid>
 		</File>
 		<File>
 			<FileName>MetaCafe.png</FileName>
@@ -602,43 +215,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\MetaCafe.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\MetaCafe.png|</Option>
-			<Guid>48560a10-6ce0-4a06-9ec8-137d82ada76e</Guid>
-		</File>
-		<File>
-			<FileName>MetaCafe.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\MetaCafe.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\MetaCafe.png|</Option>
-			<Guid>362d2bbe-750a-49db-ae96-85ce92310495</Guid>
-		</File>
-		<File>
-			<FileName>MetaCafe.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\MetaCafe.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\MetaCafe.png|</Option>
-			<Guid>ee849d56-c352-4157-a661-f2367f7bd189</Guid>
-		</File>
-		<File>
-			<FileName>MetaCafe.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\MetaCafe.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\MetaCafe.png|</Option>
-			<Guid>09e4dc3e-c9ec-4323-9178-80cc57f20828</Guid>
-		</File>
-		<File>
-			<FileName>MetaCafe.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\MetaCafe.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\MetaCafe.png|</Option>
-			<Guid>8a10c787-84cb-49fc-b996-7a628b1bad5b</Guid>
+			<Guid>070cf86a-fae9-4ec2-b2db-955e0fb35813</Guid>
 		</File>
 		<File>
 			<FileName>MSNBC.png</FileName>
@@ -647,7 +224,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\MSNBC.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\MSNBC.png|</Option>
-			<Guid>e38c0cab-f997-4fd7-bd23-df98c1475c1f</Guid>
+			<Guid>3566fa4f-9a34-43be-a2e5-fb2ee7e2b95f</Guid>
 		</File>
 		<File>
 			<FileName>MSNBC.png</FileName>
@@ -656,43 +233,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\MSNBC.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\MSNBC.png|</Option>
-			<Guid>3d7ab06a-ea97-40ba-9a03-ca6660836bee</Guid>
-		</File>
-		<File>
-			<FileName>MSNBC.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\MSNBC.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\MSNBC.png|</Option>
-			<Guid>a83fb07f-577e-4b03-92f0-895ef6a3517d</Guid>
-		</File>
-		<File>
-			<FileName>MSNBC.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\MSNBC.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\MSNBC.png|</Option>
-			<Guid>84d4a4b2-735d-4b48-8cf6-cbdaf8cc149a</Guid>
-		</File>
-		<File>
-			<FileName>MSNBC.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\MSNBC.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\MSNBC.png|</Option>
-			<Guid>d506a7ad-d495-4be2-bbcd-88f5e98c1e05</Guid>
-		</File>
-		<File>
-			<FileName>MSNBC.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\MSNBC.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\MSNBC.png|</Option>
-			<Guid>a78545f5-cc21-4a6a-af64-794bb0a411f9</Guid>
+			<Guid>e6f43f6f-a457-4f6c-813f-4e919666a3d5</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.details.xml</FileName>
@@ -701,43 +242,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\myonlinevideos.details.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>d3d10fce-2181-4477-8179-41b674452ed9</Guid>
-		</File>
-		<File>
-			<FileName>myonlinevideos.details.xml</FileName>
-			<Type>Skin</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\myonlinevideos.details.xml</Source>
-			<Id>02010</Id>
-			<Option />
-			<Guid>6abeb0ab-44c5-4d18-a10a-9da590fd3e99</Guid>
-		</File>
-		<File>
-			<FileName>myonlinevideos.details.xml</FileName>
-			<Type>Skin</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.details.xml</Source>
-			<Id>02010</Id>
-			<Option />
-			<Guid>3bdb9543-854e-417f-8d58-c40268af5a35</Guid>
-		</File>
-		<File>
-			<FileName>myonlinevideos.facade.xml</FileName>
-			<Type>Skin</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.facade.xml</Source>
-			<Id>02010</Id>
-			<Option />
-			<Guid>5b98c7a8-638e-4d1b-add4-599aa7da961b</Guid>
-		</File>
-		<File>
-			<FileName>myonlinevideos.overlays.xml</FileName>
-			<Type>Skin</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.overlays.xml</Source>
-			<Id>02010</Id>
-			<Option />
-			<Guid>56205422-3c4b-4a28-b26f-94f856165d2b</Guid>
+			<Guid>efb0cf4e-94f4-42db-84ce-b3fb2fc90d0c</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.xml</FileName>
@@ -746,25 +251,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\myonlinevideos.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>4cb2b14f-e3c4-4f0d-a49e-3f766a9eb5fc</Guid>
-		</File>
-		<File>
-			<FileName>myonlinevideos.xml</FileName>
-			<Type>Skin</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\myonlinevideos.xml</Source>
-			<Id>02010</Id>
-			<Option />
-			<Guid>8957bc77-8964-4fec-85ca-7055460df4a8</Guid>
-		</File>
-		<File>
-			<FileName>myonlinevideos.xml</FileName>
-			<Type>Skin</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.xml</Source>
-			<Id>02010</Id>
-			<Option />
-			<Guid>fcb2d893-5516-4007-8bf5-5eb7a86a881d</Guid>
+			<Guid>fd7db02e-c142-4178-aaa3-2e9da4387e19</Guid>
 		</File>
 		<File>
 			<FileName>MyVideo.png</FileName>
@@ -773,7 +260,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\MyVideo.png</Source>
 			<Id>02020</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\MyVideo.png|</Option>
-			<Guid>22c047e4-8b28-43ed-a38f-84bbca832bcd</Guid>
+			<Guid>1ce0c2eb-b425-4b35-9875-146f484c321a</Guid>
 		</File>
 		<File>
 			<FileName>MyVideo.png</FileName>
@@ -782,43 +269,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\MyVideo.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\MyVideo.png|</Option>
-			<Guid>f9b2e753-916a-4524-a616-adc462c59308</Guid>
-		</File>
-		<File>
-			<FileName>MyVideo.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\MyVideo.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\MyVideo.png|</Option>
-			<Guid>cb46cd99-288b-4aed-ae25-089e64d34255</Guid>
-		</File>
-		<File>
-			<FileName>MyVideo.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\MyVideo.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\MyVideo.png|</Option>
-			<Guid>8c4279bf-6c3a-4179-8c3b-5a4766553558</Guid>
-		</File>
-		<File>
-			<FileName>MyVideo.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\MyVideo.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\MyVideo.png|</Option>
-			<Guid>f3f9d04c-ae29-4b46-a777-50903c5c3bb1</Guid>
-		</File>
-		<File>
-			<FileName>MyVideo.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\MyVideo.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\MyVideo.png|</Option>
-			<Guid>4160c436-149d-40de-87cf-c2f386dc124a</Guid>
+			<Guid>b453088c-395b-4653-ad7f-de3e50dd53dc</Guid>
 		</File>
 		<File>
 			<FileName>NASA.png</FileName>
@@ -827,7 +278,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\NASA.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\NASA.png|</Option>
-			<Guid>cc54af31-946d-4d88-9225-fdb720ffad76</Guid>
+			<Guid>d28e5887-47dc-4e44-a126-f861abe198d0</Guid>
 		</File>
 		<File>
 			<FileName>NASA.png</FileName>
@@ -836,52 +287,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\NASA.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\NASA.png|</Option>
-			<Guid>f2396c25-07f8-48ea-b5ad-762cd9414768</Guid>
-		</File>
-		<File>
-			<FileName>NASA.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\NASA.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\NASA.png|</Option>
-			<Guid>23870992-ba67-4100-91dc-7e62687fbbac</Guid>
-		</File>
-		<File>
-			<FileName>NASA.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\NASA.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\NASA.png|</Option>
-			<Guid>ecb7c035-2a3b-42cb-997c-6b1db1b24fb5</Guid>
-		</File>
-		<File>
-			<FileName>NASA.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\NASA.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\NASA.png|</Option>
-			<Guid>0c1659dc-d5de-44bf-91c7-cf58ea9fd171</Guid>
-		</File>
-		<File>
-			<FileName>NASA.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\NASA.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\NASA.png|</Option>
-			<Guid>5214eaa0-cc8d-4e73-813f-18b20cbf0e76</Guid>
-		</File>
-		<File>
-			<FileName>OnlineVideos.dll</FileName>
-			<Type>Plugin</Type>
-			<SubType>Window</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.dll</Source>
-			<Id>01010</Id>
-			<Option />
-			<Guid>980fdff4-fcb6-4279-a25e-0b0b6a0caac7</Guid>
+			<Guid>936d3026-6088-4725-8ee6-320d35a063ca</Guid>
 		</File>
 		<File>
 			<FileName>OnlineVideos.png</FileName>
@@ -890,70 +296,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\OnlineVideos.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\OnlineVideos.png|</Option>
-			<Guid>32c67790-fe09-421d-8a2f-cecc03ac09e2</Guid>
-		</File>
-		<File>
-			<FileName>OnlineVideos.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\OnlineVideos.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\OnlineVideos.png|</Option>
-			<Guid>022bf7d7-4880-48b1-866e-8dbb413e3072</Guid>
-		</File>
-		<File>
-			<FileName>OnlineVideos.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\OnlineVideos.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\OnlineVideos.png|</Option>
-			<Guid>b2915f64-5fae-4dec-bbde-803f600b56e4</Guid>
-		</File>
-		<File>
-			<FileName>OnlineVideos.XmlSerializers.dll</FileName>
-			<Type>Plugin</Type>
-			<SubType>Window</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.XmlSerializers.dll</Source>
-			<Id>01010</Id>
-			<Option />
-			<Guid>3fc75332-9968-42f3-9e44-b71bf9acc6e4</Guid>
-		</File>
-		<File>
-			<FileName>onlinevideos_clip_backdrop.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\onlinevideos_clip_backdrop.png</Source>
-			<Id>02020</Id>
-			<Option />
-			<Guid>aeefd89c-6b78-45b4-a744-2fed4433695c</Guid>
-		</File>
-		<File>
-			<FileName>onlinevideos_thumbborder.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\onlinevideos_thumbborder.png</Source>
-			<Id>02020</Id>
-			<Option />
-			<Guid>42524b2c-6e38-41c4-b649-455d0ead04bc</Guid>
-		</File>
-		<File>
-			<FileName>OnlineVideoSites.xml</FileName>
-			<Type>Other</Type>
-			<SubType>%Config%</SubType>
-			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\OnlineVideoSites.xml</Source>
-			<Id>04010</Id>
-			<Option />
-			<Guid>0226e9d6-c3a4-46f3-975f-e533c6dc072b</Guid>
-		</File>
-		<File>
-			<FileName>onlinevideosoverlay.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\onlinevideosoverlay.png</Source>
-			<Id>02020</Id>
-			<Option />
-			<Guid>9359732d-01dd-442d-bfe7-fe405b30c1cb</Guid>
+			<Guid>6a1205fb-02eb-4d1f-9227-18e12508f84e</Guid>
 		</File>
 		<File>
 			<FileName>RedTube.png</FileName>
@@ -962,7 +305,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\RedTube.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\RedTube.png|</Option>
-			<Guid>7bdc1369-d2c3-40fe-9751-44a209a8c9c7</Guid>
+			<Guid>c006d10c-6c4e-40bd-8c4f-d174cbc5e4e7</Guid>
 		</File>
 		<File>
 			<FileName>RedTube.png</FileName>
@@ -971,43 +314,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\RedTube.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\RedTube.png|</Option>
-			<Guid>94c602e0-8a37-4115-8bb1-d541c3ff8fb6</Guid>
-		</File>
-		<File>
-			<FileName>RedTube.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\RedTube.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\RedTube.png|</Option>
-			<Guid>aad71185-37c2-4acd-ad7e-55636ed585fd</Guid>
-		</File>
-		<File>
-			<FileName>RedTube.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\RedTube.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\RedTube.png|</Option>
-			<Guid>b020f382-155c-4ebc-9ff0-bd63b919e5e0</Guid>
-		</File>
-		<File>
-			<FileName>RedTube.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\RedTube.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\RedTube.png|</Option>
-			<Guid>ad2ba0ff-23d9-4d10-9614-2c8c8f28c676</Guid>
-		</File>
-		<File>
-			<FileName>RedTube.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\RedTube.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\RedTube.png|</Option>
-			<Guid>f5d1039c-af5d-46fe-829e-4ed3d4acb092</Guid>
+			<Guid>31b2965a-0a63-44fd-b8c8-1e129da5d075</Guid>
 		</File>
 		<File>
 			<FileName>Revision3.png</FileName>
@@ -1016,7 +323,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\Revision3.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\Revision3.png|</Option>
-			<Guid>9a3bc5c7-b7d2-4b6c-ba29-049fa383ed13</Guid>
+			<Guid>9cbc43fc-fb10-46c5-8c7c-4692aea1df3e</Guid>
 		</File>
 		<File>
 			<FileName>Revision3.png</FileName>
@@ -1025,43 +332,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\Revision3.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\Revision3.png|</Option>
-			<Guid>a111b46d-9b09-4370-b75e-42b30e12ef29</Guid>
-		</File>
-		<File>
-			<FileName>Revision3.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Revision3.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Revision3.png|</Option>
-			<Guid>067c1a18-be81-42d6-a2cd-3942f60aa230</Guid>
-		</File>
-		<File>
-			<FileName>Revision3.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Revision3.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Revision3.png|</Option>
-			<Guid>7b132041-f7c6-4119-953f-cea17b04db30</Guid>
-		</File>
-		<File>
-			<FileName>Revision3.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Revision3.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Revision3.png|</Option>
-			<Guid>e82dd610-9334-4afb-aab8-9d780e0f5f27</Guid>
-		</File>
-		<File>
-			<FileName>Revision3.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Revision3.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Revision3.png|</Option>
-			<Guid>f765b2cb-e644-454b-82bb-336ccd876fc7</Guid>
+			<Guid>96c2e0af-7404-47b6-8776-31097b60938d</Guid>
 		</File>
 		<File>
 			<FileName>TEDTalks.png</FileName>
@@ -1070,7 +341,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\TEDTalks.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\TEDTalks.png|</Option>
-			<Guid>2e8494ea-fba4-4b95-9d79-d2cc62eadd4a</Guid>
+			<Guid>cce88dd6-df09-45ef-8bdf-ae3754dd35db</Guid>
 		</File>
 		<File>
 			<FileName>TEDTalks.png</FileName>
@@ -1079,43 +350,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\TEDTalks.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\TEDTalks.png|</Option>
-			<Guid>6ffe5ce1-dde1-4080-ad8d-9cd5997ca654</Guid>
-		</File>
-		<File>
-			<FileName>TEDTalks.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\TEDTalks.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\TEDTalks.png|</Option>
-			<Guid>5217e1e7-40b8-4b39-8f43-e6f87834cec6</Guid>
-		</File>
-		<File>
-			<FileName>TEDTalks.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\TEDTalks.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\TEDTalks.png|</Option>
-			<Guid>ce0b168c-e4e7-45d0-a1e6-5da6432a8859</Guid>
-		</File>
-		<File>
-			<FileName>TEDTalks.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\TEDTalks.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\TEDTalks.png|</Option>
-			<Guid>5da0ac9b-c03b-4ca6-9fb8-1f7658a4f253</Guid>
-		</File>
-		<File>
-			<FileName>TEDTalks.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\TEDTalks.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\TEDTalks.png|</Option>
-			<Guid>6e88a841-0005-4cd6-8888-d8a9d85c0fe4</Guid>
+			<Guid>3ef2230b-0422-4e6b-958d-960606ab679f</Guid>
 		</File>
 		<File>
 			<FileName>Tube8.png</FileName>
@@ -1124,7 +359,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\Tube8.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\Tube8.png|</Option>
-			<Guid>686ee75a-68e9-4471-85e5-685466bfdaf5</Guid>
+			<Guid>1bb7c9c3-85ed-4886-b9bd-264062d32673</Guid>
 		</File>
 		<File>
 			<FileName>Tube8.png</FileName>
@@ -1133,43 +368,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\Tube8.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\Tube8.png|</Option>
-			<Guid>96b9c660-719d-4716-a7a0-268e0ff3386d</Guid>
-		</File>
-		<File>
-			<FileName>Tube8.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Tube8.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Tube8.png|</Option>
-			<Guid>f116d093-2b2a-4402-aec1-6483e73d0444</Guid>
-		</File>
-		<File>
-			<FileName>Tube8.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Tube8.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Tube8.png|</Option>
-			<Guid>2cb9cc2d-1485-4952-b079-2f363335bf4a</Guid>
-		</File>
-		<File>
-			<FileName>Tube8.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Tube8.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Tube8.png|</Option>
-			<Guid>86665796-e456-480e-b281-14d92915f175</Guid>
-		</File>
-		<File>
-			<FileName>Tube8.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Tube8.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Tube8.png|</Option>
-			<Guid>6cbd9340-2773-44e9-b3a8-4c5e8e44c1a4</Guid>
+			<Guid>dce94005-ffc8-439f-ac65-1e6e63aa5f5d</Guid>
 		</File>
 		<File>
 			<FileName>VeryFunnyAds.png</FileName>
@@ -1178,7 +377,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\VeryFunnyAds.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\VeryFunnyAds.png|</Option>
-			<Guid>56299762-e515-417b-afd7-3728e6484499</Guid>
+			<Guid>dffa236a-c01c-4f3c-8b18-2327a1186b01</Guid>
 		</File>
 		<File>
 			<FileName>VeryFunnyAds.png</FileName>
@@ -1187,43 +386,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\VeryFunnyAds.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\VeryFunnyAds.png|</Option>
-			<Guid>16a38e05-0140-42e8-a6d7-feb3ed16f952</Guid>
-		</File>
-		<File>
-			<FileName>VeryFunnyAds.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\VeryFunnyAds.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\VeryFunnyAds.png|</Option>
-			<Guid>c9149a08-10e3-4464-8f1f-8ff6136a2244</Guid>
-		</File>
-		<File>
-			<FileName>VeryFunnyAds.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\VeryFunnyAds.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\VeryFunnyAds.png|</Option>
-			<Guid>e05f6cfb-cfba-444a-876c-5d10b8ea5d4d</Guid>
-		</File>
-		<File>
-			<FileName>VeryFunnyAds.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\VeryFunnyAds.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\VeryFunnyAds.png|</Option>
-			<Guid>2f148ce3-f009-4acb-8312-e6420b4d38da</Guid>
-		</File>
-		<File>
-			<FileName>VeryFunnyAds.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\VeryFunnyAds.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\VeryFunnyAds.png|</Option>
-			<Guid>ea5eed96-8a01-411e-beee-d9e2a0a6cbd3</Guid>
+			<Guid>b0396b0d-60af-450b-95da-095e1be657e7</Guid>
 		</File>
 		<File>
 			<FileName>Vodcasts.png</FileName>
@@ -1232,7 +395,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\Vodcasts.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\Vodcasts.png|</Option>
-			<Guid>837dbd35-55dc-44e0-be90-c90f000c426e</Guid>
+			<Guid>6b9c7fda-bca8-4129-85fa-8108facb233b</Guid>
 		</File>
 		<File>
 			<FileName>Vodcasts.png</FileName>
@@ -1241,43 +404,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\Vodcasts.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\Vodcasts.png|</Option>
-			<Guid>4718352f-1200-4f93-ba16-ae35a1c01c51</Guid>
-		</File>
-		<File>
-			<FileName>Vodcasts.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Vodcasts.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Vodcasts.png|</Option>
-			<Guid>9ad21c33-2a08-4b2b-9243-4b69d541e65a</Guid>
-		</File>
-		<File>
-			<FileName>Vodcasts.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Vodcasts.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Vodcasts.png|</Option>
-			<Guid>5bca4175-0041-475b-81d1-30c34a0657df</Guid>
-		</File>
-		<File>
-			<FileName>Vodcasts.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Vodcasts.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\Vodcasts.png|</Option>
-			<Guid>d95f2c56-fcc0-4809-a615-bece726991eb</Guid>
-		</File>
-		<File>
-			<FileName>Vodcasts.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Vodcasts.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\Vodcasts.png|</Option>
-			<Guid>a82679b6-a8a5-4424-9be1-0ad44cc1b30e</Guid>
+			<Guid>f89c1252-0972-43fb-990e-09c7065cdf0b</Guid>
 		</File>
 		<File>
 			<FileName>xHamster.png</FileName>
@@ -1286,7 +413,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\xHamster.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\xHamster.png|</Option>
-			<Guid>3a43294c-cb18-4da4-95d7-3669700afd76</Guid>
+			<Guid>9245d016-24db-4091-8691-2adc2ac44d73</Guid>
 		</File>
 		<File>
 			<FileName>xHamster.png</FileName>
@@ -1295,43 +422,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\xHamster.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\xHamster.png|</Option>
-			<Guid>30464bc5-e0b4-4514-8e86-e2e0356f6f3b</Guid>
-		</File>
-		<File>
-			<FileName>xHamster.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\xHamster.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\xHamster.png|</Option>
-			<Guid>bf2a90fb-6ca1-4fa6-91c2-d98436ae0f8e</Guid>
-		</File>
-		<File>
-			<FileName>xHamster.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\xHamster.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\xHamster.png|</Option>
-			<Guid>8dc09852-ac42-4f4f-b181-0cc14118f511</Guid>
-		</File>
-		<File>
-			<FileName>xHamster.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\xHamster.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\xHamster.png|</Option>
-			<Guid>f17dcae7-9088-4011-ba5f-5978f86782b8</Guid>
-		</File>
-		<File>
-			<FileName>xHamster.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\xHamster.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\xHamster.png|</Option>
-			<Guid>82f82edb-e5ca-4392-b24d-8cc7bdb5517b</Guid>
+			<Guid>34153c3a-d72b-408b-8934-d1ab60cd7bca</Guid>
 		</File>
 		<File>
 			<FileName>YahooMusicVideos.png</FileName>
@@ -1340,7 +431,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\YahooMusicVideos.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\YahooMusicVideos.png|</Option>
-			<Guid>187c5ca4-965d-4a1f-ae3b-7cc010cb4e98</Guid>
+			<Guid>c004806a-3457-4af3-afb1-484e2fd5a259</Guid>
 		</File>
 		<File>
 			<FileName>YahooMusicVideos.png</FileName>
@@ -1349,43 +440,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\YahooMusicVideos.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\YahooMusicVideos.png|</Option>
-			<Guid>50c9df1e-2701-4d14-8da2-010f4015d63c</Guid>
-		</File>
-		<File>
-			<FileName>YahooMusicVideos.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\YahooMusicVideos.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\YahooMusicVideos.png|</Option>
-			<Guid>be55a528-b3b5-44ca-86a6-0a87c4bad215</Guid>
-		</File>
-		<File>
-			<FileName>YahooMusicVideos.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\YahooMusicVideos.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\YahooMusicVideos.png|</Option>
-			<Guid>c3d84878-5b15-4d05-b8c7-afda81b55971</Guid>
-		</File>
-		<File>
-			<FileName>YahooMusicVideos.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\YahooMusicVideos.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\YahooMusicVideos.png|</Option>
-			<Guid>af3e6c58-b811-48c9-9ac3-a50e1990b416</Guid>
-		</File>
-		<File>
-			<FileName>YahooMusicVideos.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\YahooMusicVideos.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\YahooMusicVideos.png|</Option>
-			<Guid>7ed5a711-8277-405e-875e-b2374747998a</Guid>
+			<Guid>87875335-958b-46fb-b644-c6f6542ba827</Guid>
 		</File>
 		<File>
 			<FileName>YouPorn.png</FileName>
@@ -1394,7 +449,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\YouPorn.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\YouPorn.png|</Option>
-			<Guid>afc10bdb-f44c-4a73-8e66-b2277d9ece6c</Guid>
+			<Guid>62f15ac4-374e-40e9-a689-0e4d6dd1ff2f</Guid>
 		</File>
 		<File>
 			<FileName>YouPorn.png</FileName>
@@ -1403,43 +458,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\YouPorn.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\YouPorn.png|</Option>
-			<Guid>93fb8f55-de9f-450f-8e55-c97df31aaff8</Guid>
-		</File>
-		<File>
-			<FileName>YouPorn.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\YouPorn.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\YouPorn.png|</Option>
-			<Guid>21602741-3ec8-4f00-af93-e3501954c734</Guid>
-		</File>
-		<File>
-			<FileName>YouPorn.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\YouPorn.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\YouPorn.png|</Option>
-			<Guid>ddab1bb1-de4b-429d-bcc2-aea206321e1f</Guid>
-		</File>
-		<File>
-			<FileName>YouPorn.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\YouPorn.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\YouPorn.png|</Option>
-			<Guid>c6143a7e-776e-447e-b696-f6590e11a050</Guid>
-		</File>
-		<File>
-			<FileName>YouPorn.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\YouPorn.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\YouPorn.png|</Option>
-			<Guid>a5bcefeb-8786-4de8-a057-e36710be1f62</Guid>
+			<Guid>607c8249-7602-4482-8f43-32626d6683e8</Guid>
 		</File>
 		<File>
 			<FileName>YouTube.png</FileName>
@@ -1448,7 +467,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\YouTube.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\YouTube.png|</Option>
-			<Guid>0ef29312-c72f-467d-9ad9-dbd400971979</Guid>
+			<Guid>dbb88a6f-84dc-4314-a05f-bfee8d5be9f7</Guid>
 		</File>
 		<File>
 			<FileName>YouTube.png</FileName>
@@ -1457,43 +476,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\YouTube.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\YouTube.png|</Option>
-			<Guid>9699ab80-9dad-4706-9884-bb5fa9887127</Guid>
-		</File>
-		<File>
-			<FileName>YouTube.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\YouTube.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\YouTube.png|</Option>
-			<Guid>d2e60e85-3bab-4853-9c96-9738ef393ebb</Guid>
-		</File>
-		<File>
-			<FileName>YouTube.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\YouTube.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\YouTube.png|</Option>
-			<Guid>27a6c9a7-ccfb-4cbb-86b6-1550cb7ae8a4</Guid>
-		</File>
-		<File>
-			<FileName>YouTube.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\YouTube.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Banners\YouTube.png|</Option>
-			<Guid>b55f585c-396e-4cd0-8646-0f5001f360b7</Guid>
-		</File>
-		<File>
-			<FileName>YouTube.png</FileName>
-			<Type>Media</Type>
-			<SubType>StreamedMP</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\YouTube.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Icons\YouTube.png|</Option>
-			<Guid>cdad8aeb-9264-4748-8a10-af31cba902c5</Guid>
+			<Guid>873c18fb-cfac-4781-b3a7-5494a55ecb6e</Guid>
 		</File>
 		<File>
 			<FileName>ZDF Mediatek.png</FileName>
@@ -1502,7 +485,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Banners\ZDF Mediatek.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\ZDF Mediatek.png|</Option>
-			<Guid>9c785625-4d36-4267-9624-8e0a69c4deaa</Guid>
+			<Guid>5660a28c-2093-4d66-a861-dae8f2ba9d48</Guid>
 		</File>
 		<File>
 			<FileName>ZDF Mediatek.png</FileName>
@@ -1511,7 +494,475 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\OnlineVideos\Icons\ZDF Mediatek.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\ZDF Mediatek.png|</Option>
-			<Guid>0227911b-de6c-43c1-a0ef-5de6b2ef44b9</Guid>
+			<Guid>87e87233-26f3-4e41-a1d7-2e6898bd4754</Guid>
+		</File>
+		<File>
+			<FileName>Apple Trailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Apple Trailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Apple Trailers.png|</Option>
+			<Guid>b5c30337-e924-4573-a159-c223367dd257</Guid>
+		</File>
+		<File>
+			<FileName>Apple Trailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Apple Trailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Apple Trailers.png|</Option>
+			<Guid>db901868-4566-41b2-a9c0-7f6e2067af62</Guid>
+		</File>
+		<File>
+			<FileName>blip.tv.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\blip.tv.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\blip.tv.png|</Option>
+			<Guid>da5d309c-7897-46f2-bf15-b9f9a673af3a</Guid>
+		</File>
+		<File>
+			<FileName>blip.tv.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\blip.tv.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\blip.tv.png|</Option>
+			<Guid>72eee982-4e8e-4f4c-b147-5e10f7437fc6</Guid>
+		</File>
+		<File>
+			<FileName>Break.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Break.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Break.png|</Option>
+			<Guid>8cbbb7b5-c379-4f13-961e-29c25677b58f</Guid>
+		</File>
+		<File>
+			<FileName>Break.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Break.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Break.png|</Option>
+			<Guid>929de1f7-4498-48f5-b023-ba7764258783</Guid>
+		</File>
+		<File>
+			<FileName>CNN.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\CNN.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\CNN.png|</Option>
+			<Guid>7fee9c9a-913e-43d4-95af-841eba595d81</Guid>
+		</File>
+		<File>
+			<FileName>CNN.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\CNN.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\CNN.png|</Option>
+			<Guid>584709bb-7b34-40f3-8677-ddc09c09b075</Guid>
+		</File>
+		<File>
+			<FileName>DailyMotion.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\DailyMotion.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\DailyMotion.png|</Option>
+			<Guid>48c1dc87-5ed4-4ff7-8993-a69edd9fec8d</Guid>
+		</File>
+		<File>
+			<FileName>DailyMotion.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\DailyMotion.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\DailyMotion.png|</Option>
+			<Guid>288c8b2f-a195-42f4-972e-c28189881c9c</Guid>
+		</File>
+		<File>
+			<FileName>Das Erste.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Das Erste.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Das Erste.png|</Option>
+			<Guid>6713fa0b-6433-484a-a60c-588c9d6ed309</Guid>
+		</File>
+		<File>
+			<FileName>Das Erste.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Das Erste.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Das Erste.png|</Option>
+			<Guid>fdf028e4-de68-4875-8210-5451f689bfa4</Guid>
+		</File>
+		<File>
+			<FileName>Empflix.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Empflix.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Empflix.png|</Option>
+			<Guid>2e093192-6ab1-417e-adb4-80aa3c61875f</Guid>
+		</File>
+		<File>
+			<FileName>Empflix.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Empflix.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Empflix.png|</Option>
+			<Guid>485ba85e-0409-4427-bfb8-bbf281ab4a71</Guid>
+		</File>
+		<File>
+			<FileName>Favorites.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Favorites.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Favorites.png|</Option>
+			<Guid>c4a9f0d2-5578-43d1-9cec-3c933332c86e</Guid>
+		</File>
+		<File>
+			<FileName>Favorites.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Favorites.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Favorites.png|</Option>
+			<Guid>5a7428fd-9802-42bd-a4ed-6f2be0cd82ac</Guid>
+		</File>
+		<File>
+			<FileName>GameTrailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\GameTrailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\GameTrailers.png|</Option>
+			<Guid>2aeacfd2-50f5-4a5e-ba7e-a84276662dc5</Guid>
+		</File>
+		<File>
+			<FileName>GameTrailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\GameTrailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\GameTrailers.png|</Option>
+			<Guid>9bdb7e3e-d953-41cc-8dd6-4d59b2cca014</Guid>
+		</File>
+		<File>
+			<FileName>hover_OnlineVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\hover_OnlineVideos.png</Source>
+			<Id>02020</Id>
+			<Option />
+			<Guid>f6ca87d9-ecbb-434c-92e6-7dd7de256c1e</Guid>
+		</File>
+		<File>
+			<FileName>Live Video.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Live Video.png</Source>
+			<Id>02020</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Live Video.png|</Option>
+			<Guid>cb4519da-4cb9-4fd9-ae19-376a5d3221ec</Guid>
+		</File>
+		<File>
+			<FileName>Live Video.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Live Video.png</Source>
+			<Id>02020</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Live Video.png|</Option>
+			<Guid>86f47a1e-e473-4b50-b4d6-192bfa03f848</Guid>
+		</File>
+		<File>
+			<FileName>MetaCafe.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\MetaCafe.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\MetaCafe.png|</Option>
+			<Guid>f70d17e6-85a7-4f5a-8e6d-c9ee2ab9e36d</Guid>
+		</File>
+		<File>
+			<FileName>MetaCafe.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\MetaCafe.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\MetaCafe.png|</Option>
+			<Guid>6e212dda-5934-4a25-a2d3-907e05eceab1</Guid>
+		</File>
+		<File>
+			<FileName>MSNBC.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\MSNBC.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\MSNBC.png|</Option>
+			<Guid>b0387c18-3149-46cd-88d1-0f376b9041fb</Guid>
+		</File>
+		<File>
+			<FileName>MSNBC.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\MSNBC.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\MSNBC.png|</Option>
+			<Guid>02596558-7f1c-4910-9cdd-724af32c1eb2</Guid>
+		</File>
+		<File>
+			<FileName>myonlinevideos.details.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\myonlinevideos.details.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>85eabe33-d206-4bf2-afb1-673c1e1379f4</Guid>
+		</File>
+		<File>
+			<FileName>myonlinevideos.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\myonlinevideos.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>03a1f1bb-da77-49cc-8232-661ac2af95e7</Guid>
+		</File>
+		<File>
+			<FileName>MyVideo.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\MyVideo.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\MyVideo.png|</Option>
+			<Guid>e50242b3-f76c-40c9-ba41-6481f773e15b</Guid>
+		</File>
+		<File>
+			<FileName>MyVideo.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\MyVideo.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\MyVideo.png|</Option>
+			<Guid>4da98cb1-ac60-420f-af36-322b1f130952</Guid>
+		</File>
+		<File>
+			<FileName>NASA.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\NASA.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\NASA.png|</Option>
+			<Guid>bf1c6d09-effb-4279-976f-c10e3d1c637d</Guid>
+		</File>
+		<File>
+			<FileName>NASA.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\NASA.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\NASA.png|</Option>
+			<Guid>4bad5e5c-46db-42bc-8d65-a1f2b21a349c</Guid>
+		</File>
+		<File>
+			<FileName>OnlineVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\OnlineVideos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\OnlineVideos.png|</Option>
+			<Guid>55cb3401-10be-45ac-b065-a988d88c874b</Guid>
+		</File>
+		<File>
+			<FileName>RedTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\RedTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\RedTube.png|</Option>
+			<Guid>7d394772-b860-4e71-a853-91b54c231a17</Guid>
+		</File>
+		<File>
+			<FileName>RedTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\RedTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\RedTube.png|</Option>
+			<Guid>ac2431ca-3f79-485d-b4b2-abdc67106f49</Guid>
+		</File>
+		<File>
+			<FileName>Revision3.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Revision3.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Revision3.png|</Option>
+			<Guid>9e555be6-b26f-41a5-b9d7-f16a722e51c2</Guid>
+		</File>
+		<File>
+			<FileName>Revision3.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Revision3.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Revision3.png|</Option>
+			<Guid>1dc046e5-8fd9-4bdb-84bc-30b23f9180c1</Guid>
+		</File>
+		<File>
+			<FileName>TEDTalks.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\TEDTalks.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\TEDTalks.png|</Option>
+			<Guid>b9f71f61-b46f-4f68-9a5b-7d1b9ce40a36</Guid>
+		</File>
+		<File>
+			<FileName>TEDTalks.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\TEDTalks.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\TEDTalks.png|</Option>
+			<Guid>d79a8a2c-978d-403b-a8f5-9bfa9addd160</Guid>
+		</File>
+		<File>
+			<FileName>Tube8.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Tube8.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Tube8.png|</Option>
+			<Guid>31564b79-2b42-4565-861e-2b76b602dce8</Guid>
+		</File>
+		<File>
+			<FileName>Tube8.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Tube8.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Tube8.png|</Option>
+			<Guid>fd8d584d-af38-449f-80f2-3c726dbe6f10</Guid>
+		</File>
+		<File>
+			<FileName>VeryFunnyAds.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\VeryFunnyAds.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\VeryFunnyAds.png|</Option>
+			<Guid>a31d6888-d0a0-421c-a18e-c0fe4de4a9d1</Guid>
+		</File>
+		<File>
+			<FileName>VeryFunnyAds.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\VeryFunnyAds.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\VeryFunnyAds.png|</Option>
+			<Guid>c2f169b8-5d0f-4627-802d-4aa130dbb011</Guid>
+		</File>
+		<File>
+			<FileName>Vodcasts.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\Vodcasts.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Vodcasts.png|</Option>
+			<Guid>d6d4f5d7-dfed-440b-8446-eaa629c557ac</Guid>
+		</File>
+		<File>
+			<FileName>Vodcasts.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\Vodcasts.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Vodcasts.png|</Option>
+			<Guid>3aa93888-f30f-4430-b293-9dcd9bb52718</Guid>
+		</File>
+		<File>
+			<FileName>xHamster.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\xHamster.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\xHamster.png|</Option>
+			<Guid>82ae4c17-6816-43aa-a16f-afa98fbd6c62</Guid>
+		</File>
+		<File>
+			<FileName>xHamster.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\xHamster.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\xHamster.png|</Option>
+			<Guid>c2443f74-ea9d-4f24-b5e8-f765f3bf1aa7</Guid>
+		</File>
+		<File>
+			<FileName>YahooMusicVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\YahooMusicVideos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\YahooMusicVideos.png|</Option>
+			<Guid>94922b89-3106-44ae-b5c2-faa79d477d84</Guid>
+		</File>
+		<File>
+			<FileName>YahooMusicVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\YahooMusicVideos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\YahooMusicVideos.png|</Option>
+			<Guid>7e399d04-aba0-467d-a3e1-c8cbfe3ae6b2</Guid>
+		</File>
+		<File>
+			<FileName>YouPorn.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\YouPorn.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\YouPorn.png|</Option>
+			<Guid>55cff3b9-8124-4d92-8f62-7e8d2b1ca0e8</Guid>
+		</File>
+		<File>
+			<FileName>YouPorn.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\YouPorn.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\YouPorn.png|</Option>
+			<Guid>01b939d8-d7cb-422c-8bad-bd2c52bb274d</Guid>
+		</File>
+		<File>
+			<FileName>YouTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\YouTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\YouTube.png|</Option>
+			<Guid>49ade66e-e1d5-499d-91a7-612bca035daa</Guid>
+		</File>
+		<File>
+			<FileName>YouTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\YouTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\YouTube.png|</Option>
+			<Guid>5b4fdf2c-777b-4647-8a7e-0aad22ab67f4</Guid>
 		</File>
 		<File>
 			<FileName>ZDF Mediatek.png</FileName>
@@ -1520,7 +971,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Banners\ZDF Mediatek.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\ZDF Mediatek.png|</Option>
-			<Guid>48fe736d-d6e8-4c89-ba4f-ca985eeb4203</Guid>
+			<Guid>a0b92859-74f5-499a-bd01-91283245b0a0</Guid>
 		</File>
 		<File>
 			<FileName>ZDF Mediatek.png</FileName>
@@ -1529,7 +980,520 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Icons\ZDF Mediatek.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\ZDF Mediatek.png|</Option>
-			<Guid>cbe9e78a-340a-4ea1-803f-7efad8910531</Guid>
+			<Guid>95059811-1bf0-4ae5-ac71-e62c345c1db8</Guid>
+		</File>
+		<File>
+			<FileName>Apple Trailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Apple Trailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Apple Trailers.png|</Option>
+			<Guid>8397d89c-7b34-49ca-bf6d-ddee5a1beef5</Guid>
+		</File>
+		<File>
+			<FileName>Apple Trailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Apple Trailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Apple Trailers.png|</Option>
+			<Guid>a746a2d5-663f-45a8-ba68-7d99d8cc2bb6</Guid>
+		</File>
+		<File>
+			<FileName>blip.tv.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\blip.tv.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\blip.tv.png|</Option>
+			<Guid>d15d5d01-fb3f-453f-9a63-e8d2b1e2c125</Guid>
+		</File>
+		<File>
+			<FileName>blip.tv.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\blip.tv.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\blip.tv.png|</Option>
+			<Guid>1788e225-44c7-4eb9-8428-bc38a86d19e3</Guid>
+		</File>
+		<File>
+			<FileName>Break.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Break.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Break.png|</Option>
+			<Guid>ab86477b-eb87-459d-ba66-ca1faf046417</Guid>
+		</File>
+		<File>
+			<FileName>Break.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Break.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Break.png|</Option>
+			<Guid>5d413c00-e54d-466f-8c87-22acefd17ce7</Guid>
+		</File>
+		<File>
+			<FileName>CNN.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\CNN.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\CNN.png|</Option>
+			<Guid>73ef9656-8959-4745-b0ca-11d5d1229ac0</Guid>
+		</File>
+		<File>
+			<FileName>CNN.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\CNN.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\CNN.png|</Option>
+			<Guid>d0b5f63e-8c41-4943-ba14-0e6890d4eb97</Guid>
+		</File>
+		<File>
+			<FileName>DailyMotion.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\DailyMotion.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\DailyMotion.png|</Option>
+			<Guid>0eb3205b-2550-4ed7-a161-5414fba1e5f5</Guid>
+		</File>
+		<File>
+			<FileName>DailyMotion.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\DailyMotion.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\DailyMotion.png|</Option>
+			<Guid>c3114108-c855-4d72-bede-75d174911b4e</Guid>
+		</File>
+		<File>
+			<FileName>Das Erste.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Das Erste.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Das Erste.png|</Option>
+			<Guid>2aa7b7b0-616a-4ab3-a976-db31f52989f4</Guid>
+		</File>
+		<File>
+			<FileName>Das Erste.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Das Erste.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Das Erste.png|</Option>
+			<Guid>59f49260-d491-4e89-b55e-bfc533924ef9</Guid>
+		</File>
+		<File>
+			<FileName>Empflix.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Empflix.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Empflix.png|</Option>
+			<Guid>2944d4d8-997c-4480-b588-79cdb0a6daad</Guid>
+		</File>
+		<File>
+			<FileName>Empflix.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Empflix.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Empflix.png|</Option>
+			<Guid>dcf2baab-d96e-48b6-a91f-7e66d16a8ee6</Guid>
+		</File>
+		<File>
+			<FileName>Favorites.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Favorites.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Favorites.png|</Option>
+			<Guid>5167e742-85a0-4262-95c1-390977821042</Guid>
+		</File>
+		<File>
+			<FileName>Favorites.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Favorites.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Favorites.png|</Option>
+			<Guid>92ade36d-cdf4-41ee-94eb-c445b3e64653</Guid>
+		</File>
+		<File>
+			<FileName>GameTrailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\GameTrailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\GameTrailers.png|</Option>
+			<Guid>feaf0a37-e351-4fb7-ba61-1c58784eb8b4</Guid>
+		</File>
+		<File>
+			<FileName>GameTrailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\GameTrailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\GameTrailers.png|</Option>
+			<Guid>d92cd2ba-4650-494e-bb1f-19b614ff97e0</Guid>
+		</File>
+		<File>
+			<FileName>hover_OnlineVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\hover_OnlineVideos.png</Source>
+			<Id>02020</Id>
+			<Option />
+			<Guid>d3a4003c-260b-48f6-89e8-73a5feeab5ba</Guid>
+		</File>
+		<File>
+			<FileName>Live Video.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Live Video.png</Source>
+			<Id>02020</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Live Video.png|</Option>
+			<Guid>9bd27004-221d-4dd8-a0ab-53630b2701f1</Guid>
+		</File>
+		<File>
+			<FileName>Live Video.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Live Video.png</Source>
+			<Id>02020</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Live Video.png|</Option>
+			<Guid>5bdbbb2c-7845-44f8-8528-9cb090a35654</Guid>
+		</File>
+		<File>
+			<FileName>MetaCafe.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\MetaCafe.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\MetaCafe.png|</Option>
+			<Guid>d13643d5-3214-47d3-ad9f-2dde6e1d9e4f</Guid>
+		</File>
+		<File>
+			<FileName>MetaCafe.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\MetaCafe.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\MetaCafe.png|</Option>
+			<Guid>f9399629-54bd-4b4d-bf8b-307808832330</Guid>
+		</File>
+		<File>
+			<FileName>MSNBC.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\MSNBC.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\MSNBC.png|</Option>
+			<Guid>283df9f8-b8f5-4eb1-977f-b79d642d469e</Guid>
+		</File>
+		<File>
+			<FileName>MSNBC.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\MSNBC.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\MSNBC.png|</Option>
+			<Guid>2e68f445-5bfd-46dd-bf39-dd3128fc7d60</Guid>
+		</File>
+		<File>
+			<FileName>myonlinevideos.details.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.details.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>bbb0cee6-b91f-497e-a373-0cbb5553d52f</Guid>
+		</File>
+		<File>
+			<FileName>myonlinevideos.facade.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.facade.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>4240f654-6d75-42b8-b3e0-e8357a6da149</Guid>
+		</File>
+		<File>
+			<FileName>myonlinevideos.overlays.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.overlays.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>30da9b91-cf26-4d6a-9860-b1d92a3c171f</Guid>
+		</File>
+		<File>
+			<FileName>myonlinevideos.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>244accda-f67c-48ce-9edc-d44a23e9310d</Guid>
+		</File>
+		<File>
+			<FileName>MyVideo.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\MyVideo.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\MyVideo.png|</Option>
+			<Guid>a2c52906-8600-458f-b923-1296580f28ac</Guid>
+		</File>
+		<File>
+			<FileName>MyVideo.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\MyVideo.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\MyVideo.png|</Option>
+			<Guid>16def8c2-16f1-4ae8-9ed0-5e0d53ef406c</Guid>
+		</File>
+		<File>
+			<FileName>NASA.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\NASA.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\NASA.png|</Option>
+			<Guid>09cd4a3b-f336-42b6-99b1-5ad82d75d2ca</Guid>
+		</File>
+		<File>
+			<FileName>NASA.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\NASA.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\NASA.png|</Option>
+			<Guid>675cc6cc-29f4-4ac8-8486-8ab4627d7d27</Guid>
+		</File>
+		<File>
+			<FileName>OnlineVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\OnlineVideos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\OnlineVideos.png|</Option>
+			<Guid>4aaab69d-1052-4493-a086-86cb90a47bfb</Guid>
+		</File>
+		<File>
+			<FileName>onlinevideos_clip_backdrop.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\onlinevideos_clip_backdrop.png</Source>
+			<Id>02020</Id>
+			<Option />
+			<Guid>43050ed2-8846-4fb1-8e95-25599a3f758e</Guid>
+		</File>
+		<File>
+			<FileName>onlinevideos_thumbborder.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\onlinevideos_thumbborder.png</Source>
+			<Id>02020</Id>
+			<Option />
+			<Guid>b6ee52b7-581f-4e3a-9c1c-51fe1083885c</Guid>
+		</File>
+		<File>
+			<FileName>onlinevideosoverlay.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\onlinevideosoverlay.png</Source>
+			<Id>02020</Id>
+			<Option />
+			<Guid>5c22ff6a-81f3-4c28-ad47-f2f8a4183600</Guid>
+		</File>
+		<File>
+			<FileName>RedTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\RedTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\RedTube.png|</Option>
+			<Guid>95f0ff48-bfd7-4c77-9437-540f762b16f7</Guid>
+		</File>
+		<File>
+			<FileName>RedTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\RedTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\RedTube.png|</Option>
+			<Guid>1e332840-be1f-41a7-95d4-49acc6b1c0d6</Guid>
+		</File>
+		<File>
+			<FileName>Revision3.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Revision3.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Revision3.png|</Option>
+			<Guid>6de044d7-bb16-459b-96be-edea8750cbcb</Guid>
+		</File>
+		<File>
+			<FileName>Revision3.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Revision3.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Revision3.png|</Option>
+			<Guid>91fa269f-b93e-4c36-95ad-287f22a51e70</Guid>
+		</File>
+		<File>
+			<FileName>TEDTalks.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\TEDTalks.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\TEDTalks.png|</Option>
+			<Guid>7cd46d10-29b0-458b-b36a-c065691f8322</Guid>
+		</File>
+		<File>
+			<FileName>TEDTalks.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\TEDTalks.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\TEDTalks.png|</Option>
+			<Guid>a7ca758f-33c4-49ab-9da6-2b6a6cd8775b</Guid>
+		</File>
+		<File>
+			<FileName>Tube8.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Tube8.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Tube8.png|</Option>
+			<Guid>6a981c2f-57f4-467b-a622-aa4c88a7567b</Guid>
+		</File>
+		<File>
+			<FileName>Tube8.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Tube8.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Tube8.png|</Option>
+			<Guid>99e22ff1-8947-4792-80ee-7fee95f88bc5</Guid>
+		</File>
+		<File>
+			<FileName>VeryFunnyAds.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\VeryFunnyAds.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\VeryFunnyAds.png|</Option>
+			<Guid>94d787db-3eb1-41e6-83ee-d79d4267630f</Guid>
+		</File>
+		<File>
+			<FileName>VeryFunnyAds.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\VeryFunnyAds.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\VeryFunnyAds.png|</Option>
+			<Guid>e168c0c6-a717-41d5-a8cd-15bbf6cf4eab</Guid>
+		</File>
+		<File>
+			<FileName>Vodcasts.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\Vodcasts.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Vodcasts.png|</Option>
+			<Guid>9d70ca78-3df2-4b52-a989-6e725c3ee451</Guid>
+		</File>
+		<File>
+			<FileName>Vodcasts.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\Vodcasts.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Vodcasts.png|</Option>
+			<Guid>2c970fd9-5ac9-4c8e-b881-ff024f1a5926</Guid>
+		</File>
+		<File>
+			<FileName>xHamster.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\xHamster.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\xHamster.png|</Option>
+			<Guid>f2288d62-a532-49d3-abb4-180ee740bd17</Guid>
+		</File>
+		<File>
+			<FileName>xHamster.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\xHamster.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\xHamster.png|</Option>
+			<Guid>946ed704-ec6c-4e29-bca5-06f4ec57cb7b</Guid>
+		</File>
+		<File>
+			<FileName>YahooMusicVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\YahooMusicVideos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\YahooMusicVideos.png|</Option>
+			<Guid>98b36006-fd7e-4f99-a67e-e710e3a2dc2e</Guid>
+		</File>
+		<File>
+			<FileName>YahooMusicVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\YahooMusicVideos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\YahooMusicVideos.png|</Option>
+			<Guid>8620eff7-0a85-455f-b76c-8e1cd0db2d33</Guid>
+		</File>
+		<File>
+			<FileName>YouPorn.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\YouPorn.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\YouPorn.png|</Option>
+			<Guid>832250f6-5814-4eb9-822a-d9d8f5a6b86f</Guid>
+		</File>
+		<File>
+			<FileName>YouPorn.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\YouPorn.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\YouPorn.png|</Option>
+			<Guid>66df0a78-ea43-4765-8f55-39078b8ec11e</Guid>
+		</File>
+		<File>
+			<FileName>YouTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\YouTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\YouTube.png|</Option>
+			<Guid>0b91c081-736b-4986-b468-343e0d54ea2f</Guid>
+		</File>
+		<File>
+			<FileName>YouTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>StreamedMP</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\YouTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\YouTube.png|</Option>
+			<Guid>cbcef4c0-873b-4671-889c-b4d7171c0a45</Guid>
 		</File>
 		<File>
 			<FileName>ZDF Mediatek.png</FileName>
@@ -1538,7 +1502,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Banners\ZDF Mediatek.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Banners\ZDF Mediatek.png|</Option>
-			<Guid>e0433637-96ff-438d-a30e-5faa58ea6974</Guid>
+			<Guid>6790a6f7-3ddd-404a-b9ef-7486b649c467</Guid>
 		</File>
 		<File>
 			<FileName>ZDF Mediatek.png</FileName>
@@ -1547,7 +1511,574 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\OnlineVideos\Icons\ZDF Mediatek.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Icons\ZDF Mediatek.png|</Option>
-			<Guid>07892e91-7a7d-487e-8036-28d3e7636032</Guid>
+			<Guid>989f73cf-1a0d-4374-91ae-6d6b2d565feb</Guid>
+		</File>
+		<File>
+			<FileName>AxInterop.ShockwaveFlashObjects.dll</FileName>
+			<Type>Plugin</Type>
+			<SubType>Window</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\AxInterop.ShockwaveFlashObjects.dll</Source>
+			<Id>01010</Id>
+			<Option />
+			<Guid>00f3aa0b-c6c8-4009-af18-6a318f652d10</Guid>
+		</File>
+		<File>
+			<FileName>Interop.ShockwaveFlashObjects.dll</FileName>
+			<Type>Plugin</Type>
+			<SubType>Window</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\Interop.ShockwaveFlashObjects.dll</Source>
+			<Id>01010</Id>
+			<Option />
+			<Guid>8455756f-c83d-4682-ad38-63fdc8384ae7</Guid>
+		</File>
+		<File>
+			<FileName>OnlineVideos.dll</FileName>
+			<Type>Plugin</Type>
+			<SubType>Window</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.dll</Source>
+			<Id>01010</Id>
+			<Option />
+			<Guid>e8601ef5-1581-444e-8a14-2265d0162da5</Guid>
+		</File>
+		<File>
+			<FileName>OnlineVideos.XmlSerializers.dll</FileName>
+			<Type>Plugin</Type>
+			<SubType>Window</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.XmlSerializers.dll</Source>
+			<Id>01010</Id>
+			<Option />
+			<Guid>27d8c04d-b912-419f-9582-1c935c83ccea</Guid>
+		</File>
+		<File>
+			<FileName>Apple Trailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\Apple Trailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Apple Trailers.png|</Option>
+			<Guid>a1d0867b-ac42-4be9-93e0-80da50ad7a6b</Guid>
+		</File>
+		<File>
+			<FileName>Apple Trailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\Apple Trailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Apple Trailers.png|</Option>
+			<Guid>4142b9a6-f426-494d-934f-c16669190e3f</Guid>
+		</File>
+		<File>
+			<FileName>blip.tv.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\blip.tv.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\blip.tv.png|</Option>
+			<Guid>c90fcc91-7503-467a-bd54-7f299ef59e60</Guid>
+		</File>
+		<File>
+			<FileName>blip.tv.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\blip.tv.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\blip.tv.png|</Option>
+			<Guid>08b12ea4-5314-4dea-a75c-5bc5b5570f0c</Guid>
+		</File>
+		<File>
+			<FileName>Break.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\Break.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Break.png|</Option>
+			<Guid>c2c80962-22b8-4c03-851f-8fdd2a3fd793</Guid>
+		</File>
+		<File>
+			<FileName>Break.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\Break.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Break.png|</Option>
+			<Guid>9a1fc65a-aad9-47d3-9310-ac591fa0ca00</Guid>
+		</File>
+		<File>
+			<FileName>button_online videos.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\button_online videos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\button_online videos.png|</Option>
+			<Guid>0109f314-7c07-40b0-ab8d-72303bdb0eba</Guid>
+		</File>
+		<File>
+			<FileName>buttonNF_online videos.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\buttonNF_online videos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\buttonNF_online videos.png|</Option>
+			<Guid>96732433-b1ad-49ff-8cbf-1eef40781834</Guid>
+		</File>
+		<File>
+			<FileName>CNN.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\CNN.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\CNN.png|</Option>
+			<Guid>53e63a52-e76e-44ef-bf0f-55d40ad29e5f</Guid>
+		</File>
+		<File>
+			<FileName>CNN.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\CNN.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\CNN.png|</Option>
+			<Guid>8a795129-0e5a-4407-b054-94d69ccce5fd</Guid>
+		</File>
+		<File>
+			<FileName>DailyMotion.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\DailyMotion.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\DailyMotion.png|</Option>
+			<Guid>e44eda87-4030-4571-a02c-762a92cc575b</Guid>
+		</File>
+		<File>
+			<FileName>DailyMotion.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\DailyMotion.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\DailyMotion.png|</Option>
+			<Guid>9736d299-9eef-46ce-bded-d6d559a71539</Guid>
+		</File>
+		<File>
+			<FileName>Das Erste.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\Das Erste.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Das Erste.png|</Option>
+			<Guid>aec66113-b0ff-4587-9c66-79d77ad3ac51</Guid>
+		</File>
+		<File>
+			<FileName>Das Erste.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\Das Erste.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Das Erste.png|</Option>
+			<Guid>7b9530aa-3ad8-4587-8ef2-db555503c0d1</Guid>
+		</File>
+		<File>
+			<FileName>Empflix.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\Empflix.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Empflix.png|</Option>
+			<Guid>ffc2a10a-741c-4d75-abd4-c5f5f553cc48</Guid>
+		</File>
+		<File>
+			<FileName>Empflix.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\Empflix.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Empflix.png|</Option>
+			<Guid>4454dfe3-fc68-4e57-b80d-384f62a02dc4</Guid>
+		</File>
+		<File>
+			<FileName>Favorites.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\Favorites.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Favorites.png|</Option>
+			<Guid>60a6995c-3439-4696-a6d0-c1cbef14bb16</Guid>
+		</File>
+		<File>
+			<FileName>Favorites.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\Favorites.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Favorites.png|</Option>
+			<Guid>8003aaa9-6f3a-473d-a9ba-7c7fe280b412</Guid>
+		</File>
+		<File>
+			<FileName>GameTrailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\GameTrailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\GameTrailers.png|</Option>
+			<Guid>ef16029c-3b34-4878-a1e9-9cc88fa33e1d</Guid>
+		</File>
+		<File>
+			<FileName>GameTrailers.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\GameTrailers.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\GameTrailers.png|</Option>
+			<Guid>16c1a7a1-7ff8-403e-9771-8dfb4f9fd5da</Guid>
+		</File>
+		<File>
+			<FileName>hover_onlinevideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\hover_onlinevideos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\hover_onlinevideos.png|</Option>
+			<Guid>ee0b97c6-4555-4f4e-95a4-a79300406a5b</Guid>
+		</File>
+		<File>
+			<FileName>Live Video.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\Live Video.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Live Video.png|</Option>
+			<Guid>6d50d2dc-a707-44f4-aedb-c2ee9c9c36c9</Guid>
+		</File>
+		<File>
+			<FileName>Live Video.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\Live Video.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Live Video.png|</Option>
+			<Guid>3a1c4252-38a3-4c97-842b-1b939000ccd7</Guid>
+		</File>
+		<File>
+			<FileName>MetaCafe.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\MetaCafe.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\MetaCafe.png|</Option>
+			<Guid>3b68d074-539e-4c62-afee-9dbc5c8cd32c</Guid>
+		</File>
+		<File>
+			<FileName>MetaCafe.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\MetaCafe.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\MetaCafe.png|</Option>
+			<Guid>b0dd9626-9f62-4404-b222-044357e4ec5d</Guid>
+		</File>
+		<File>
+			<FileName>MSNBC.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\MSNBC.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\MSNBC.png|</Option>
+			<Guid>2ced6c77-e398-4f07-9de7-001f34effd7f</Guid>
+		</File>
+		<File>
+			<FileName>MSNBC.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\MSNBC.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\MSNBC.png|</Option>
+			<Guid>4878cdd5-538e-4677-820c-a723e2927074</Guid>
+		</File>
+		<File>
+			<FileName>myonlinevideos.details.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\myonlinevideos.details.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>16d2d228-3f97-47af-bc58-ca66e02da4a7</Guid>
+		</File>
+		<File>
+			<FileName>myonlinevideos.facade.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\myonlinevideos.facade.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>aba058e3-ace4-4d5b-81db-8346eb5d341a</Guid>
+		</File>
+		<File>
+			<FileName>myonlinevideos.window.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\myonlinevideos.window.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>d2cd2e4f-927e-415c-afdc-f7548b47bcd9</Guid>
+		</File>
+		<File>
+			<FileName>myonlinevideos.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\myonlinevideos.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>927fc0aa-d519-449c-8422-ddf2c8b22de5</Guid>
+		</File>
+		<File>
+			<FileName>MyVideo.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\MyVideo.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\MyVideo.png|</Option>
+			<Guid>4e86baff-2083-4959-9774-a972b563b9ab</Guid>
+		</File>
+		<File>
+			<FileName>MyVideo.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\MyVideo.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\MyVideo.png|</Option>
+			<Guid>196bb040-227b-4960-94ff-e18dbdbd6047</Guid>
+		</File>
+		<File>
+			<FileName>NASA.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\NASA.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\NASA.png|</Option>
+			<Guid>a30306ca-a964-4c45-ada4-54689ff4ca41</Guid>
+		</File>
+		<File>
+			<FileName>NASA.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\NASA.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\NASA.png|</Option>
+			<Guid>68fab464-3a34-489f-a175-649abea4e62d</Guid>
+		</File>
+		<File>
+			<FileName>OnlineVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos.png|</Option>
+			<Guid>d87f8dc2-598b-49c7-841d-9625cf406ff0</Guid>
+		</File>
+		<File>
+			<FileName>OnlineVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\OnlineVideos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\OnlineVideos.png|</Option>
+			<Guid>d92d4f66-d3e7-44b9-b1f9-79525f502449</Guid>
+		</File>
+		<File>
+			<FileName>RedTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\RedTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\RedTube.png|</Option>
+			<Guid>9aaa2bc3-75e4-4164-ab70-41642bc300f0</Guid>
+		</File>
+		<File>
+			<FileName>RedTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\RedTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\RedTube.png|</Option>
+			<Guid>f480b3db-508e-48c6-a111-a7d15c05316a</Guid>
+		</File>
+		<File>
+			<FileName>Revision3.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\Revision3.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Revision3.png|</Option>
+			<Guid>396f485e-f3af-4afc-aa23-4449b2aec725</Guid>
+		</File>
+		<File>
+			<FileName>Revision3.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\Revision3.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Revision3.png|</Option>
+			<Guid>e7aafdc4-55a9-40b2-a36f-7587ad2a7264</Guid>
+		</File>
+		<File>
+			<FileName>TEDTalks.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\TEDTalks.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\TEDTalks.png|</Option>
+			<Guid>b37c47af-a784-4895-87bf-c70eec6197db</Guid>
+		</File>
+		<File>
+			<FileName>TEDTalks.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\TEDTalks.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\TEDTalks.png|</Option>
+			<Guid>d686df4c-b79e-4b45-9fb6-d3a0a15bcc00</Guid>
+		</File>
+		<File>
+			<FileName>Tube8.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\Tube8.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Tube8.png|</Option>
+			<Guid>2ecdc5df-1192-4940-a7bb-76440326531b</Guid>
+		</File>
+		<File>
+			<FileName>Tube8.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\Tube8.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Tube8.png|</Option>
+			<Guid>fb042c67-9be3-4b65-80e6-ae76b4eab428</Guid>
+		</File>
+		<File>
+			<FileName>VeryFunnyAds.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\VeryFunnyAds.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\VeryFunnyAds.png|</Option>
+			<Guid>934a2c43-225b-4a0c-a724-943f1c33d311</Guid>
+		</File>
+		<File>
+			<FileName>VeryFunnyAds.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\VeryFunnyAds.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\VeryFunnyAds.png|</Option>
+			<Guid>89e09614-ad88-4327-8fdf-790b4f0f1fc6</Guid>
+		</File>
+		<File>
+			<FileName>Vodcasts.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\Vodcasts.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\Vodcasts.png|</Option>
+			<Guid>3e8f1979-62b9-4510-bfc7-6c9d54160c3f</Guid>
+		</File>
+		<File>
+			<FileName>Vodcasts.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\Vodcasts.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\Vodcasts.png|</Option>
+			<Guid>ee1f375c-a75d-4e0e-b76e-0bb53d3cb2ca</Guid>
+		</File>
+		<File>
+			<FileName>xHamster.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\xHamster.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\xHamster.png|</Option>
+			<Guid>485024ce-cb33-4229-833a-4dbc3907f0f9</Guid>
+		</File>
+		<File>
+			<FileName>xHamster.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\xHamster.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\xHamster.png|</Option>
+			<Guid>854552a0-52a4-4a32-ae34-204ce6ffa034</Guid>
+		</File>
+		<File>
+			<FileName>YahooMusicVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\YahooMusicVideos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\YahooMusicVideos.png|</Option>
+			<Guid>0f1c8465-66eb-4aeb-92a4-08f4c2af0d09</Guid>
+		</File>
+		<File>
+			<FileName>YahooMusicVideos.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\YahooMusicVideos.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\YahooMusicVideos.png|</Option>
+			<Guid>084e568e-a21b-46fb-bf74-e09e7b7b43c4</Guid>
+		</File>
+		<File>
+			<FileName>YouPorn.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\YouPorn.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\YouPorn.png|</Option>
+			<Guid>5ad7373d-59b5-46a0-9b1f-a6c9777078ab</Guid>
+		</File>
+		<File>
+			<FileName>YouPorn.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\YouPorn.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\YouPorn.png|</Option>
+			<Guid>1f930181-b51a-4d33-813a-c24ea28137c0</Guid>
+		</File>
+		<File>
+			<FileName>YouTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\YouTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\YouTube.png|</Option>
+			<Guid>8b6c1b62-8868-4600-95e0-053a43e3098d</Guid>
+		</File>
+		<File>
+			<FileName>YouTube.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\YouTube.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\YouTube.png|</Option>
+			<Guid>7e5c9d96-3171-4580-a20b-9965f3b75785</Guid>
+		</File>
+		<File>
+			<FileName>ZDF Mediatek.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Icons\ZDF Mediatek.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Icons\ZDF Mediatek.png|</Option>
+			<Guid>b00b75fc-cb7a-4fa8-9f5f-eb6cd30a012f</Guid>
+		</File>
+		<File>
+			<FileName>ZDF Mediatek.png</FileName>
+			<Type>Media</Type>
+			<SubType>Xface</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\OnlineVideos\Banners\ZDF Mediatek.png</Source>
+			<Id>02010</Id>
+			<Option>OutputFileName=\OnlineVideos\Banners\ZDF Mediatek.png|</Option>
+			<Guid>3924951d-ee3a-40d8-902c-73fb6d64fe98</Guid>
 		</File>
 	</FileList>
 	<StringList />
@@ -1560,7 +2091,7 @@
 		<ProiectName>Online Videos</ProiectName>
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com</UpdateURL>
-		<Version>0.9.0</Version>
+		<Version>0.9.1</Version>
 		<Description>Allows watching videos from various websites, by either using their RSS feeds or parsing the html. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, Break, CNN, VeryFunnyAds, MSNBC, YahooMusicVideos, YouPorn, RedTube, xHamster, Tube8, Empflix.</Description>
 		<Group>Web</Group>
 		<Release>Beta</Release>
@@ -1656,7 +2187,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL />
 		<WikiURL />
-		<CreationDate>31-05-09</CreationDate>
+		<CreationDate>04-06-09</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>False</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>

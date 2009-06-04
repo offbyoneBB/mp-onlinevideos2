@@ -114,7 +114,7 @@ namespace OnlineVideos
         protected GUIListControl infoList = null;
         #endregion
 
-        #region Current Facade View
+        #region Facade ViewModes
         protected GUIFacadeControl.ViewMode currentView = GUIFacadeControl.ViewMode.List;
         protected GUIFacadeControl.ViewMode currentSiteView = GUIFacadeControl.ViewMode.List;
         protected GUIFacadeControl.ViewMode currentVideoView = GUIFacadeControl.ViewMode.SmallIcons;
@@ -698,21 +698,25 @@ namespace OnlineVideos
 
             foreach (Category loCat in selectedSite.Categories.Values)
             {
+                loListItem = new GUIListItem(loCat.Name);
+                loListItem.IsFolder = true;
+                MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
+                facadeView.Add(loListItem);
+
                 if (loCat is RssLink)
-                {                    
-                    loListItem = new GUIListItem(loCat.Name);
-                    loListItem.Path = ((RssLink)loCat).Url;
-                    loListItem.IsFolder = true;
-                    MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
-                    facadeView.Add(loListItem);
+                {
+                    RssLink link = loCat as RssLink;
+                    loListItem.Path = link.Url;
+                    if (link.EstimatedVideoCount > 0) loListItem.Label2 = link.EstimatedVideoCount.ToString();
                 }
                 else
                 {
-                    loListItem = new GUIListItem(loCat.Name);
                     loListItem.Path = loCat.Name;
-                    loListItem.IsFolder = true;
-                    MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
-                    facadeView.Add(loListItem); 
+                }
+
+                if (loCat is Group)
+                {
+                    loListItem.Label2 = (loCat as Group).Channels.Count.ToString();
                 }
             }            
 
@@ -1085,32 +1089,6 @@ namespace OnlineVideos
                 IPlayerFactory savedFactory = g_Player.Factory;
                 g_Player.Factory = new OnlineVideos.Player.PlayerFactory();
                 g_Player.Play(lsUrl);
-                
-                /*
-                switch (selectedSite.PlayMode)
-                {
-                    case PlayMode.Stream: 
-                        g_Player.PlayVideoStream(lsUrl, foListItem.Title);
-                        break;
-                    case PlayMode.Video:
-                        g_Player.Play(lsUrl, g_Player.MediaType.Video);
-                        break;
-                    default:
-                        if (selectedSite.Util.isPossibleVideo(lsUrl))
-                        {
-                            // PlayVideoStream always load the VMR9 player to play back a video stream, so the external players aren't loaded.
-                            // use for urls that have some videoextension in their url (.flv, .mp4, ...)
-                            g_Player.PlayVideoStream(lsUrl, foListItem.Title);
-                        }
-                        else
-                        {
-                            // Play trys to load the best player for the file type internal or external
-                            // use when the url doesn't clearly state that it's a video, or some redirection will happen (.swf, ...)
-                            g_Player.Play(lsUrl, g_Player.MediaType.Video);
-                        }
-                        break;
-                }                
-                */
                 g_Player.Factory = savedFactory;
 
                 if (g_Player.Player != null && g_Player.IsVideo)
