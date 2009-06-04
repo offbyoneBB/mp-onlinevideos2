@@ -34,6 +34,7 @@ namespace OnlineVideos.Sites
                     {
                         VideoInfo videoInfo = new VideoInfo();
                         videoInfo.Title = FormatTitle(vi);
+                        videoInfo.Length = vi.Video.Duration.ToString();
                         videoInfo.VideoUrl = vi.Video.Id;
                         videoInfo.ImageUrl = vi.Image.Url;
                         videoList.Add(videoInfo);
@@ -54,6 +55,7 @@ namespace OnlineVideos.Sites
                     {
                         VideoInfo videoInfo = new VideoInfo();
                         videoInfo.Title = FormatTitle(vi);
+                        videoInfo.Length = vi.Video.Duration.ToString();
                         videoInfo.VideoUrl = vi.Video.Id;
                         videoInfo.ImageUrl = vi.Image.Url;
                         videoList.Add(videoInfo);
@@ -164,6 +166,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo loRssItem = new VideoInfo();
                     loRssItem.Title = FormatTitle(vi);
+                    loRssItem.Length = vi.Video.Duration.ToString();
                     loRssItem.VideoUrl = vi.Video.Id;
                     loRssItem.ImageUrl = vi.Image.Url;
                     loRssItemList.Add(loRssItem);
@@ -187,6 +190,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo loRssItem = new VideoInfo();
                     loRssItem.Title = FormatTitle(vi);
+                    loRssItem.Length = vi.Video.Duration.ToString();
                     loRssItem.VideoUrl = vi.Video.Id;
                     loRssItem.ImageUrl = vi.Image.Url;
                     loRssItemList.Add(loRssItem);
