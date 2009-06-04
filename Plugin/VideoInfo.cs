@@ -13,14 +13,28 @@ namespace OnlineVideos
         public string Tags = "";
         public object Other;
         public string SiteID = "";
-        public int VideoID;
-        public VideoInfo()
-        {
-            VideoID = -1;
-        }
+        public int VideoID = -1;
+        public string StartTime = "";
+
         public override string ToString()
         {
             return string.Format("Title:{0}\nDesc:{1}\nVidUrl:{2}\nImgUrl:{3}\nLength:{4}\nTags:{5}", Title, Description, VideoUrl, ImageUrl, Length, Tags);
+        }
+
+        public double GetSecondsFromStartTime()
+        {
+            // Example: startTime = 02:34:25.00 should result in 9265 seconds
+            double hours = new double();
+            double minutes = new double();
+            double seconds = new double();
+
+            double.TryParse(StartTime.Substring(0, 2), out hours);
+            double.TryParse(StartTime.Substring(3, 2), out minutes);
+            double.TryParse(StartTime.Substring(6, 2), out seconds);
+
+            seconds += (((hours * 60) + minutes) * 60);
+
+            return seconds;
         }
     }    
 }

@@ -43,10 +43,17 @@ namespace OnlineVideos.Sites
 				video.ImageUrl = rssItem.exInfoImage;
 				video.Title = rssItem.title;
                 video.Other = rssItem.gameID;
-				//Match loMatch = Regex.Match(rssItem.exInfoImage,"[\\d]-([^\\.]*)");
-                //video.VideoUrl = loMatch.Groups[1].Value;	
-                video.VideoUrl = rssItem.link;
-                loVideoList.Add(video);
+                if (rssItem.contentList != null && rssItem.contentList.Count > 0)
+                {
+                    foreach (MediaContent media in rssItem.contentList)
+                    {
+                        if (!string.IsNullOrEmpty(media.url) && media.type=="wmv")
+                        {
+                            video.VideoUrl = media.url;                            
+                        }
+                    }
+                }
+                if (!(string.IsNullOrEmpty(video.VideoUrl))) loVideoList.Add(video);
 			}
 			return loVideoList;
 		}        

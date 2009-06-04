@@ -256,6 +256,7 @@
     <Compile Include="Sites\MsnbcUtil.cs" />
     <Compile Include="Sites\RedTubeUtil.cs" />
     <Compile Include="Sites\RTLNowUtil.cs" />
+    <Compile Include="Sites\SVTPlayUtil.cs" />
     <Compile Include="Sites\Tube8Util.cs" />
     <Compile Include="Sites\VeryFunnyAdsUtil.cs" />
     <Compile Include="Sites\DailyMotionUtil.cs" />
