@@ -337,7 +337,13 @@
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="false" playmode="Stream">
+    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" playmode="Stream">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories />
+    </Site>
+    <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="true" playmode="Stream">
       <Username />
       <Password />
       <SearchUrl />
@@ -364,7 +370,7 @@
         <Category xsi:type="RssLink" name="Отечественный">http://linecinema.ru/news/1-0-9</Category>
       </Categories>
     </Site>
-    <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="false" playmode="Video">
+    <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" playmode="Video">
       <Username />
       <Password />
       <SearchUrl />

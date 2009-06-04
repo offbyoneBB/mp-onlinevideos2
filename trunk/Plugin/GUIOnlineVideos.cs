@@ -1118,6 +1118,14 @@ namespace OnlineVideos
                     playing = true;
                     GUIGraphicsContext.IsFullScreenVideo = true;
                     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+
+                    if (foListItem.StartTime != String.Empty)
+                    {
+                        Log.Info("Found starttime: {0}", foListItem.StartTime);
+                        double seconds = foListItem.GetSecondsFromStartTime();
+                        Log.Info("SeekingAbsolute: {0}", seconds);
+                        g_Player.SeekAbsolute(seconds);
+                    }
                 }
             }            
         }
