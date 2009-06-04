@@ -34,7 +34,7 @@ namespace OnlineVideos.Player
                         }
                         else
                         {
-                            return new OnlineVideosPlayer();
+                            return new VideoPlayerVMR9(); // safer to use default until codec specific playback is done - OnlineVideosPlayer();
                         }
                     }
                 }

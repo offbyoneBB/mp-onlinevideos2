@@ -79,8 +79,10 @@ namespace OnlineVideos.Sites
                         string str7;
                         RssLink item = new RssLink();
                         int num2 = getTagValues(str5, null, "\"><span class=\"title\">", out str6, 0);
-                        num2 = getTagValues(str5, null, "</span><span class=\"count\">", out str7, num2);
-                        item.Name = str7 + " (" + str5.Substring(num2) + ")";
+                        num2 = getTagValues(str5, null, "</span><span class=\"count\">", out str7, num2);                        
+                        item.Name = System.Web.HttpUtility.HtmlDecode(str7);
+                        uint count = 0;
+                        if (uint.TryParse(str5.Substring(num2), out count)) item.EstimatedVideoCount = count;
                         item.Url = "http://mediathek.daserste.de" + str6 + "&goto=1";
                         list.Add(item);
                     }
