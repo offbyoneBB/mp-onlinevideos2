@@ -104,6 +104,13 @@
       <DependentUpon>FlashControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Player\YahooMusicVideosPlayer.cs" />
+    <Compile Include="RTMP_LIB\AMFObject.cs" />
+    <Compile Include="RTMP_LIB\AMFObjectProperty.cs" />
+    <Compile Include="RTMP_LIB\FLVStream.cs" />
+    <Compile Include="RTMP_LIB\HTTPServer.cs" />
+    <Compile Include="RTMP_LIB\Log.cs" />
+    <Compile Include="RTMP_LIB\RTMP.cs" />
+    <Compile Include="RTMP_LIB\RTMPPacket.cs" />
     <Compile Include="Sites\AppleTrailersUtil.cs" />
     <Compile Include="Configuration\BrowserForm.cs">
       <SubType>Form</SubType>

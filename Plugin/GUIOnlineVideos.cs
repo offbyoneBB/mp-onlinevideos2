@@ -137,7 +137,9 @@ namespace OnlineVideos
         List<VideoInfo> moCurrentVideoList = new List<VideoInfo>();
         List<VideoInfo> moCurrentTrailerList = new List<VideoInfo>();        
 
-        bool showingFavorites = false;        
+        bool showingFavorites = false;
+
+        RTMP_LIB.HTTPServer rtmpServer;
         #endregion
 
         #region filter variables
@@ -176,6 +178,7 @@ namespace OnlineVideos
         {
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
             LoadSettings();
+            rtmpServer = new RTMP_LIB.HTTPServer();
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", " ");
             GUIPropertyManager.SetProperty("#OnlineVideos.length", " ");
             return result;
