@@ -121,8 +121,8 @@ namespace OnlineVideos.Sites
             return (index + endTag.Length);
         }
 
-        Regex videoSearchRegExp_Low = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['1'\]\s*=\s*""(?<videoUrl>http://[^""]+)""");
-        Regex videoSearchRegExp_High = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['2'\]\s*=\s*""(?<videoUrl>http://[^""]+)""");
+        Regex videoSearchRegExp_Low = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['1'\]\s*=\s*""(?<videoUrl>(http|rtmp)://[^""]+)""");
+        Regex videoSearchRegExp_High = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['2'\]\s*=\s*""(?<videoUrl>(http|rtmp)://[^""]+)""");
         Regex cachedRegExp;
         public override String getUrl(VideoInfo video, SiteSettings foSite)
         {
@@ -143,6 +143,10 @@ namespace OnlineVideos.Sites
                 resultUrl = match.Groups["videoUrl"].Value;
                 if (match.Groups["type"].Value == "flashmedia") break; // prefer flash over wmv
                 match = match.NextMatch();
+            }
+            if (resultUrl.StartsWith("rtmp"))
+            {
+                resultUrl = "http://localhost:20004/stream.flv?rtmpurl=" + System.Web.HttpUtility.HtmlEncode(resultUrl);
             }
             return resultUrl;
         }
