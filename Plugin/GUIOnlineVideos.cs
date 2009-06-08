@@ -356,6 +356,8 @@ namespace OnlineVideos
                         selectedVideo = null;
                         selectedVideoIndex = 0;
                         currentState = State.videos;
+                        HideFacade();
+                        
                         refreshVideoList();
                     }
                 }
