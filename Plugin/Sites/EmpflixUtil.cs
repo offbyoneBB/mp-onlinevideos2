@@ -16,7 +16,7 @@ namespace OnlineVideos.Sites
 	/// </summary>
     public class EmpflixUtil : SiteUtilBase, ISearch
 	{
-        static string videoListRegExpString = @"<div.*a.href=""(?<VideoUrl>http://www.empflix.com/view.php\?id\=\d+)"".*<img src=""(?<ImageUrl>http://pic.empflix.com/images/thumb/.*\.jpg)"".*</div>[\s\r\n]*<div\sclass=""videoTitle"">.+\stitle=""(?<Title>.+)"".+</div>";
+        static string videoListRegExpString = @"<div.*a.href=""(?<VideoUrl>http://www.empflix.com/view.php\?id\=\d+)"".*<img src=""(?<ImageUrl>http://pic.*.empflix.com/images/thumb/.*\.jpg)"".*</div>[\s\r\n]*<div\sclass=""videoTitle"">.+\stitle=""(?<Title>.+)"".+</div>";
         static string playlistUrlRegExpString = @"so.addVariable\('config',\s'(?<PlaylistUrl>[^']+)'\);";        
 
         Regex videoListRegExp = new Regex(videoListRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
