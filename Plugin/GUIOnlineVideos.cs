@@ -357,7 +357,7 @@ namespace OnlineVideos
                         selectedVideoIndex = 0;
                         currentState = State.videos;
                         HideFacade();
-                        
+
                         refreshVideoList();
                     }
                 }
@@ -408,10 +408,21 @@ namespace OnlineVideos
 
             else if (control == btnNext)
             {
-                GUIControl.UnfocusControl(GetID, btnNext.GetID);
-
                 moCurrentVideoList = null;
-                moCurrentVideoList = selectedSite.Util.getNextPageVideos();
+
+                GUIWaitCursor.Init();
+                GUIWaitCursor.Show();
+                worker = new BackgroundWorker();
+                worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+                {
+                    moCurrentVideoList = selectedSite.Util.getNextPageVideos();
+                });
+                worker.RunWorkerAsync();
+                while (worker.IsBusy) GUIWindowManager.Process();
+
+                GUIWaitCursor.Hide();
+
+                selectedVideoIndex = 0;
                 DisplayCategoryVideos();
                 UpdateViewState();
 
@@ -420,13 +431,26 @@ namespace OnlineVideos
 
                 if (selectedSite.Util.hasPreviousPage()) ShowPreviousPageButton();
                 else HidePreviousPageButton();
+
+                GUIControl.UnfocusControl(GetID, btnNext.GetID);
             }
             else if (control == btnPrevious)
             {
-                GUIControl.UnfocusControl(GetID, btnPrevious.GetID);
-
                 moCurrentVideoList = null;
-                moCurrentVideoList = selectedSite.Util.getPreviousPageVideos();
+
+                GUIWaitCursor.Init();
+                GUIWaitCursor.Show();
+                worker = new BackgroundWorker();
+                worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+                {
+                    moCurrentVideoList = selectedSite.Util.getPreviousPageVideos();
+                });
+                worker.RunWorkerAsync();
+                while (worker.IsBusy) GUIWindowManager.Process();
+
+                GUIWaitCursor.Hide();
+
+                selectedVideoIndex = 0;
                 DisplayCategoryVideos();
                 UpdateViewState();
 
@@ -435,6 +459,8 @@ namespace OnlineVideos
 
                 if (selectedSite.Util.hasPreviousPage()) ShowPreviousPageButton();
                 else HidePreviousPageButton();
+
+                GUIControl.UnfocusControl(GetID, btnPrevious.GetID);
             }
             else if (control == btnMaxResult)
             {
