@@ -7,11 +7,22 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 using MediaPortal.GUI.Library;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
-    public class Tube8Util : SiteUtilBase    
+    public class Tube8Util : SiteUtilBase, ISearch
     {
+        private string searchUrl = "";
+
+        string nextPageUrl = "";
+        string previousPageUrl = "";
+        bool nextPageAvailable = false;
+        bool previousPageAvailable = false;
+
+        static Regex PreviousPageRegEx = new Regex(@"\<a\sclass=nounder\shref=""(?<url>[^\>]+)""\>&lt;\</a\>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex NextPageRegEx = new Regex(@"\<a\sclass=nounder\shref=""(?<url>[^\>]+)""\>&gt;\</a\>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
         public override List<VideoInfo> getVideoList(Category category)
         {
             return Parse(((RssLink)category).Url);            
@@ -23,6 +34,11 @@ namespace OnlineVideos.Sites
 
             try
             {
+                previousPageAvailable = false;
+                previousPageUrl = "";
+                nextPageAvailable = false;
+                nextPageUrl = "";
+
                 // receive main page
                 string dataPage = GetWebData(fsUrl);
                 Log.Debug("Tube8 - Received " + dataPage.Length + " bytes");
@@ -34,6 +50,31 @@ namespace OnlineVideos.Sites
                     if (loRssItems.Count > 0)
                     {
                         Log.Debug("Tube8 - finish to receive " + fsUrl);
+                        // check for previous page link
+                        Match mPrev = PreviousPageRegEx.Match(dataPage);
+                        if (mPrev.Success)
+                        {
+                            previousPageAvailable = true;
+                            previousPageUrl = mPrev.Groups["url"].Value;
+                        }
+                        else
+                        {
+                            previousPageAvailable = false;
+                            previousPageUrl = "";
+                        }
+
+                        // check for next page link
+                        Match mNext = NextPageRegEx.Match(dataPage);
+                        if (mNext.Success)
+                        {
+                            nextPageAvailable = true;
+                            nextPageUrl = mNext.Groups["url"].Value;
+                        }
+                        else
+                        {
+                            nextPageAvailable = false;
+                            nextPageUrl = "";
+                        }
                     }
                 }
             }
@@ -107,6 +148,12 @@ namespace OnlineVideos.Sites
                     g = GetDataPage(g);
                     loRssItem.Title = g.Data; // title
 
+                    g.Search = "tinyInfo\"><";
+                    g.Start = ">";
+                    g.Stop = "<";
+                    g = GetDataPage(g);
+                    loRssItem.Length = g.Data; // length
+
                     loRssItems.Add(loRssItem);
                 }
             }
@@ -178,6 +225,48 @@ namespace OnlineVideos.Sites
             }
             return ret;
         }
-        
+
+        public override bool hasNextPage()
+        {
+            return nextPageAvailable;
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            return Parse(nextPageUrl);
+        }
+
+        public override bool hasPreviousPage()
+        {
+            return previousPageAvailable;
+        }
+
+        public override List<VideoInfo> getPreviousPageVideos()
+        {
+            return Parse(previousPageUrl);
+        }
+
+        #region ISearch Member
+
+        public Dictionary<string, string> getSearchableCategories()
+        {
+            return new Dictionary<string, string>();
+        }
+
+        public List<VideoInfo> search(string searchUrl, string query)
+        {
+            this.searchUrl = searchUrl;
+
+            List<VideoInfo> itemsList = Parse(searchUrl + "?q=" + query);
+
+            return itemsList;
+        }
+
+        public List<VideoInfo> search(string searchUrl, string query, string category)
+        {
+            return search(searchUrl, query);
+        }
+
+        #endregion
     }
 }
