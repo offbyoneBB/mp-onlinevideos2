@@ -175,6 +175,7 @@ namespace OnlineVideos.Sites
 
             string url;
             string desc;
+            string duration;
             string id;
 
             while (x != -1)
@@ -206,6 +207,12 @@ namespace OnlineVideos.Sites
                             if (y != -1)
                             {
                                 desc = line.Substring(z + 2, y - z - 2);
+
+                                z = Page.IndexOf("<h2>", x);
+                                duration = Page.Substring(z + 4, Page.IndexOf("<span>", z) - z - 4);
+                                z = Page.IndexOf("</span>", z);
+                                duration = duration + ":" + Page.Substring(z + 7, Page.IndexOf("</h2>", z) - z - 7);
+
                                 Log.Debug("YouPorn - Found object " + desc + " @ " + url);
 
                                 cnt++;
@@ -213,6 +220,7 @@ namespace OnlineVideos.Sites
                                 VideoInfo loRssItem = new VideoInfo();
                                 loRssItem.SiteID = id;
                                 loRssItem.Title = desc;
+                                loRssItem.Length = duration;
                                 loRssItem.VideoUrl = url;                                    
                                 loRssItems.Add(loRssItem);
                             }
