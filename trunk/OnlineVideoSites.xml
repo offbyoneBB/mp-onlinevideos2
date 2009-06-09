@@ -473,6 +473,21 @@
         <Category xsi:type="RssLink" name="Most Favorited">http://www.tube8.com/mostfavorited.html</Category>
         <Category xsi:type="RssLink" name="Most Discussed">http://www.tube8.com/mostdiscussed.html</Category>
         <Category xsi:type="RssLink" name="Most Voted">http://www.tube8.com/mostvoted.html</Category>
+        <Category xsi:type="RssLink" name="Amateur">http://www.tube8.com/cat/amateur/6.html</Category>
+        <Category xsi:type="RssLink" name="Anal">http://www.tube8.com/cat/anal/13.html</Category>
+        <Category xsi:type="RssLink" name="Asian">http://www.tube8.com/cat/asian/12.html</Category>
+        <Category xsi:type="RssLink" name="Blowjob">http://www.tube8.com/cat/blowjob/7.html</Category>
+        <Category xsi:type="RssLink" name="Ebony">http://www.tube8.com/cat/ebony/4.html</Category>
+        <Category xsi:type="RssLink" name="Erotic">http://www.tube8.com/cat/erotic/11.html</Category>
+        <Category xsi:type="RssLink" name="Fetish">http://www.tube8.com/cat/fetish/5.html</Category>
+        <Category xsi:type="RssLink" name="Gay">http://www.tube8.com/cat/gay/9.html</Category>
+        <Category xsi:type="RssLink" name="Hardcore">http://www.tube8.com/cat/hardcore/1.html</Category>
+        <Category xsi:type="RssLink" name="Latina">http://www.tube8.com/cat/latina/14.html</Category>
+        <Category xsi:type="RssLink" name="Lesbian">http://www.tube8.com/cat/lesbian/8.html</Category>
+        <Category xsi:type="RssLink" name="Mature">http://www.tube8.com/cat/mature/2.html</Category>
+        <Category xsi:type="RssLink" name="Shemale">http://www.tube8.com/cat/shemale/15.html</Category>
+        <Category xsi:type="RssLink" name="Strip">http://www.tube8.com/cat/strip/10.html</Category>
+        <Category xsi:type="RssLink" name="Teen">http://www.tube8.com/cat/teen/3.html</Category>
       </Categories>
     </Site>
     <Site name="Empflix" util="Empflix" agecheck="true" enabled="true">
