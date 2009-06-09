@@ -465,7 +465,7 @@
     <Site name="Tube8" util="Tube8" agecheck="true" enabled="true">
       <Username />
       <Password />
-      <SearchUrl />
+      <SearchUrl>http://www.tube8.com/search.html</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="Latest">http://www.tube8.com/latest.html</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.tube8.com/top.html</Category>
