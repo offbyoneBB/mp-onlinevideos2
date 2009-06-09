@@ -11,22 +11,10 @@ namespace OnlineVideos.Sites
 {
 	public class OnTVRuUtil : SiteUtilBase
 	{
-        private String browseUrl(string url)
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            using (WebResponse response = request.GetResponse())
-            {
-                Stream receiveStream = response.GetResponseStream();
-                StreamReader reader = new StreamReader(receiveStream, Encoding.UTF8);
-                string str = reader.ReadToEnd();
-                return str;
-            }
-        }
-
-        public List<VideoInfo> parseEpisodes(String fsUrl)
+        private List<VideoInfo> parseEpisodes(String fsUrl)
         {
             List<VideoInfo> loRssItems = new List<VideoInfo>();
-            String pageContent = browseUrl(fsUrl);
+            String pageContent = GetWebData(fsUrl);
 
             String ul = getStringBetween(pageContent, "<div class=\"widget_meta", "</ul>");
             String regExpStr = @"href=""(?<link>http://on-tv.ru/[^""]+)"">(<font color=red>|)(?<name>[^<]+)";
@@ -64,14 +52,13 @@ namespace OnlineVideos.Sites
         
 		public override List<VideoInfo> getVideoList(Category category)
 		{
-            
             List<VideoInfo> loRssItemList = parseEpisodes(((RssLink)category).Url);
 			return loRssItemList;
 		}
 
         public override String getUrl(VideoInfo video, SiteSettings foSite)
 		{
-            String lsHtml = browseUrl(video.VideoUrl);
+            String lsHtml = GetWebData(video.VideoUrl);
 
             String regExpStr = @"<embed.*src=""(?<link>[^""]+)""";
             Regex regExp = new Regex(regExpStr, RegexOptions.Compiled | RegexOptions.CultureInvariant);
