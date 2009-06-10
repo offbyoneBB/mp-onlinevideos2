@@ -387,6 +387,12 @@ namespace OnlineVideos
             chkMP4SplitterInstalled.Checked = cc.MPC_HC_MP4Splitter.IsInstalled;
             tbxMP4Splitter.Text = cc.MPC_HC_MP4Splitter.IsInstalled ? string.Format("{0} | {1}", cc.MPC_HC_MP4Splitter.CodecFile, cc.MPC_HC_MP4Splitter.Version) : "";
 
+            if (!chkMP4SplitterInstalled.Checked)
+            {
+                chkMP4SplitterInstalled.Checked = cc.HaaliMediaSplitter.IsInstalled;
+                tbxMP4Splitter.Text = cc.HaaliMediaSplitter.IsInstalled ? string.Format("{0} | {1}", cc.HaaliMediaSplitter.CodecFile, cc.HaaliMediaSplitter.Version) : "";
+            }
+
             chkWMVSplitterInstalled.Checked = cc.WM_ASFReader.IsInstalled;
             tbxWMVSplitter.Text = cc.WM_ASFReader.IsInstalled ? string.Format("{0} | {1}", cc.WM_ASFReader.CodecFile, cc.WM_ASFReader.Version) : "";
 
