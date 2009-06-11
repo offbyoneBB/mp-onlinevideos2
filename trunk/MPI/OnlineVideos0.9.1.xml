@@ -2,10 +2,10 @@
 	<ver>1.00.000</ver>
 	<ExtensionList>
 		<Extension>
-			<FileName>OnlineVideos0.9.0.mpi</FileName>
+			<FileName>OnlineVideos0.9.1.mpi</FileName>
 			<Name>Online Videos</Name>
 			<URL>http://www.team-mediaportal.com</URL>
-			<Version>0.9.0</Version>
+			<Version>0.9.1</Version>
 			<Author>offbyone</Author>
 			<Description>Allows watching videos from various websites, by either using their RSS feeds or parsing the html. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, Break, CNN, VeryFunnyAds, MSNBC, YahooMusicVideos, YouPorn, RedTube, xHamster, Tube8, Empflix.</Description>
 			<Group>Web</Group>
@@ -18,7 +18,7 @@
 				<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 				<WebURL />
 				<WikiURL />
-				<CreationDate>31-05-09</CreationDate>
+				<CreationDate>10-06-09</CreationDate>
 				<SingleGroupSelect>False</SingleGroupSelect>
 				<ClearSkinCache>False</ClearSkinCache>
 				<UseRealPathInPackage>False</UseRealPathInPackage>
