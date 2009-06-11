@@ -17,6 +17,8 @@ namespace OnlineVideos.Sites
 
     public class YouTubeUtil : SiteUtilBase, IFilter, ISearch, IFavorite
     {
+        static Regex PageStartIndex = new Regex(@"start-index=(?<item>[\d]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
         private List<int> steps;
         private Dictionary<String, String> orderByList;
         private Dictionary<String, String> timeFrameList;
@@ -29,6 +31,7 @@ namespace OnlineVideos.Sites
         private const String CATEGORY_FEED = "http://gdata.youtube.com/feeds/api/videos/-/{0}";
         private const String ALL_CATEGORIES_FEED = "http://gdata.youtube.com/schemas/2007/categories.cat?hl=en-US";
         private YouTubeService service;
+
         public YouTubeUtil()
         {
             steps = new List<int>();
@@ -72,6 +75,10 @@ namespace OnlineVideos.Sites
             Unknow = 3,
         }
 
+        string nextPageUrl = "";
+        string previousPageUrl = "";
+        bool nextPageAvailable = false;
+        bool previousPageAvailable = false;
 
         private CookieCollection moCookies;
         private Regex regexId = new Regex("/videos/(.+)");
@@ -87,7 +94,6 @@ namespace OnlineVideos.Sites
             return parseGData(query);
         }
 
-
         public override List<VideoInfo> getSiteFavorites(String fsUser)
         {
             //http://www.youtube.com/api2_rest?method=%s&dev_id=7WqJuRKeRtc&%s"   # usage   base_api %( method, extra)   eg base_api %( youtube.videos.get_detail, video_id=yyPHkJMlD0Q)
@@ -98,19 +104,47 @@ namespace OnlineVideos.Sites
             //String lsXMLResponse = getHTMLData(lsUrl);
             //Log.Info(lsXMLResponse);
         }
+
         public List<VideoInfo> parseGData(YouTubeQuery query)
         {           
+
             YouTubeFeed feed = service.Query(query);
 
             List<VideoInfo> loRssItems = new List<VideoInfo>();
+
+            // check for previous page link
+            if (feed.PrevChunk != null)
+            {
+                previousPageAvailable = true;
+                previousPageUrl = feed.PrevChunk;
+            }
+            else
+            {
+                previousPageAvailable = false;
+                previousPageUrl = "";
+            }
+
+            // check for next page link
+            if (feed.NextChunk != null)
+            {
+                nextPageAvailable = true;
+                nextPageUrl = feed.NextChunk;
+            }
+            else
+            {
+                nextPageAvailable = false;
+                nextPageUrl = "";
+            }
 
             foreach (YouTubeEntry entry in feed.Entries)
             {
                 loRssItems.Add(getVideoInfo(entry));
             }
             _LastPerformedQuery = query;
+
             return loRssItems;
         }
+
         public VideoInfo getVideoInfo(YouTubeEntry entry)
         {
             VideoInfo video = new VideoInfo();
@@ -130,6 +164,7 @@ namespace OnlineVideos.Sites
             video.VideoUrl = entry.Media.VideoId.Value;
             return video;
         }
+
         public override List<VideoInfo> getVideoList(Category category)
         {
             string fsUrl = ((RssLink)category).Url;
@@ -144,6 +179,7 @@ namespace OnlineVideos.Sites
             //VideoInfo video;			
             return loRssItemList;
         }
+
         public override String getUrl(VideoInfo foVideo, SiteSettings foSite)
         {
             OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
@@ -234,11 +270,11 @@ namespace OnlineVideos.Sites
             response.Close();
             return isLoggedIn();
         }
+
         private bool isLoggedIn()
         {
             return moCookies != null && moCookies["LOGIN_INFO"] != null;
         }
-       
         
         public override List<Category> getDynamicCategories()
         {
@@ -256,6 +292,7 @@ namespace OnlineVideos.Sites
             result.Sort();            
             return result;
         }
+
         //private Dictionary<String, String> getYoutubeCategories()
         //{
         //    YouTubeQuery query = new YouTubeQuery(ALL_CATEGORIES_FEED);
@@ -267,6 +304,7 @@ namespace OnlineVideos.Sites
         //    }
         //    return categories;
         //}
+
         private Dictionary<String, String> getYoutubeCategories()
         {
             XmlDocument doc = new XmlDocument();
@@ -292,7 +330,44 @@ namespace OnlineVideos.Sites
             return categories;
         }
 
+        public override bool hasNextPage()
+        {
+            return nextPageAvailable;
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            YouTubeQuery query = _LastPerformedQuery;
+
+            Match mIndex = PageStartIndex.Match(nextPageUrl);
+            if (mIndex.Success)
+            {
+                query.StartIndex = Convert.ToInt16(mIndex.Groups["item"].Value);
+            }
+
+            return parseGData(query);
+        }
+
+        public override bool hasPreviousPage()
+        {
+            return previousPageAvailable;
+        }
+
+        public override List<VideoInfo> getPreviousPageVideos()
+        {
+            YouTubeQuery query = _LastPerformedQuery;
+
+            Match mIndex = PageStartIndex.Match(previousPageUrl);
+            if (mIndex.Success)
+            {
+                query.StartIndex = Convert.ToInt16(mIndex.Groups["item"].Value);
+            }
+
+            return parseGData(query);
+        }
+
         #region IFilter Members
+
         //private String buildFilterUrl(string catUrl, int maxResult, string orderBy, string timeFrame)
         //{
         //    if (catUrl == null)
@@ -337,25 +412,39 @@ namespace OnlineVideos.Sites
         //    }
         //    return newCatUrl;
         //}
+
         public List<VideoInfo> filterVideoList(Category category, int maxResult, string orderBy, string timeFrame)
         {
             YouTubeQuery query = _LastPerformedQuery;
+            query.StartIndex = 1;
             query.NumberToRetrieve = maxResult;
             query.OrderBy = orderBy;
-            if (Enum.IsDefined(typeof(YouTubeQuery.UploadTime), timeFrame)){
-                query.Time = (YouTubeQuery.UploadTime)Enum.Parse(typeof(YouTubeQuery.UploadTime), timeFrame, true);                 
+
+            ///-------------------------------------------------------------------------------------------------
+            /// 2009-06-09 MichelC
+            /// Youtube doesn't allow the following parameter for Recently Featured clips and return and error.
+            ///-------------------------------------------------------------------------------------------------
+            if (category.Name != "Recently Featured")
+            {
+                if (Enum.IsDefined(typeof(YouTubeQuery.UploadTime), timeFrame))
+                {
+                    query.Time = (YouTubeQuery.UploadTime)Enum.Parse(typeof(YouTubeQuery.UploadTime), timeFrame, true);
+                }
             }
+
             return parseGData(query);
             //String filteredUrl = buildFilterUrl(catUrl, maxResult, orderBy, timeFrame); 
             //Log.Info("Youtube Filtered url:" + filteredUrl);
             //return getVideoList(filteredUrl);
         }
+
         public List<VideoInfo> filterSearchResultList(string queryStr, int maxResult, string orderBy, string timeFrame)
         {
             //String filteredUrl = buildFilterUrl(buildSearchUrl(query,String.Empty), maxResult, orderBy, timeFrame);
             //Log.Info("Youtube Filtered url:" + filteredUrl);
             //return getVideoList(filteredUrl);
             YouTubeQuery query = _LastPerformedQuery;
+            query.StartIndex = 1;
             query.NumberToRetrieve = maxResult;
             query.OrderBy = orderBy;
             if (Enum.IsDefined(typeof(YouTubeQuery.UploadTime), timeFrame))
@@ -371,6 +460,7 @@ namespace OnlineVideos.Sites
             //Log.Info("Youtube Filtered url:" + filteredUrl);
             //return getVideoList(filteredUrl);
             YouTubeQuery query = _LastPerformedQuery;
+            query.StartIndex = 1;
             query.NumberToRetrieve = maxResult;
             query.OrderBy = orderBy;
             if (Enum.IsDefined(typeof(YouTubeQuery.UploadTime), timeFrame))
@@ -427,6 +517,7 @@ namespace OnlineVideos.Sites
         //    return searchUrl;
 
         //}
+
         public List<VideoInfo> search(string searchUrl, string queryStr, string category)
         {
             YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
@@ -439,7 +530,6 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
-
 
         #region IFavorite Members
 
@@ -483,6 +573,7 @@ namespace OnlineVideos.Sites
         //response.Close();
             //throw new Exception("");
         }
+
         public void removeFavorite(VideoInfo video, string fsUsername, string fsPassword)
         {
             ((YouTubeEntry)video.Other).Delete();
@@ -540,8 +631,6 @@ namespace OnlineVideos.Sites
 
         ////return lsResponse;
         //}
-
-
 
     }
 

@@ -14,6 +14,7 @@
         <Category xsi:type="RssLink" name="Top Viewed:Today">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=today</Category>
         <Category xsi:type="RssLink" name="Top Viewed:This Week">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=this_week</Category>
         <Category xsi:type="RssLink" name="Top Viewed:This Month">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=this_month</Category>
+		<Category xsi:type="RssLink" name="HD Content">http://gdata.youtube.com/feeds/api/videos/-/HD</Category>
       </Categories>
     </Site>
     <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true">
