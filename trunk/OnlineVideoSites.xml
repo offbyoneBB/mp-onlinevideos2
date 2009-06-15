@@ -342,7 +342,9 @@
       <Username />
       <Password />
       <SearchUrl />
-      <Categories />
+      <Categories>
+        <Category xsi:type="RssLink" name="Senaste nyheter">http://feeds.svtplay.se/v1/video/list/96244?expression=full&amp;mode=plain</Category>
+      </Categories>
     </Site>
     <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="true">
       <Username />
