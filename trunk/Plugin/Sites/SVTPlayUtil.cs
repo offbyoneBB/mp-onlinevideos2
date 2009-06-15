@@ -22,6 +22,7 @@ namespace OnlineVideos.Sites
         Regex reFindCategories = new Regex(@"(?<HTML><a[^>]*href\s*=\s*[\""\'']?/t/(?<Id>[^/)(?<HRef>[^""''>\s]*)[\""\'']?[^>]*>(?<Title>[^<]+|.*?)?</a\s*>)");
         Regex reFindASX = new Regex(@"(?<HTML><a[^>]*href\s*=\s*[\""\'']?(?<HRef>[^""''>\s]*\.asx)[\""\'']?[^>]*>(?<Title>[^<]+|.*?)?</a\s*>)");
         Regex reFindWMV = new Regex(@"(?<HTML><a[^>]*href\s*=\s*[\""\'']?(?<HRef>[^""''>\s]*\.wmv)[\""\'']?[^>]*>(?<Title>[^<]+|.*?)?</a\s*>)");
+        Regex reFindFLV = new Regex(@"(?<HTML><param[^>]*pathflv\s*=\s*[\""\'']?(?<HRef>[^""''>\s]*\.flv)[\""\'']?[^>]*/>)");
         Regex reFindImgUrl = new Regex(@"(?<HTML><link[^>]*href\s*=\s*[\""\'']?(?<IMGUrl>[^""''>\s]*\.jpg)[\""\'']?[^>]*/>)");
         Regex reFindStartTime = new Regex(@"starttime\svalue\s*=\s*[\""\'']?(?<starttime>[^""''>\s]*)");
         Regex reFindDuration = new Regex(@"duration\svalue\s*=\s*[\""\'']?(?<duration>[^""''>\s]*)");
@@ -82,7 +83,7 @@ namespace OnlineVideos.Sites
             if (request == null) return "";
             request.CookieContainer = cookieContainer;
             request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
-            request.Timeout = 20000;            
+            request.Timeout = 20000;
             WebResponse response = request.GetResponse();
             using (System.IO.StreamReader reader = new System.IO.StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))
             {
@@ -164,7 +165,7 @@ namespace OnlineVideos.Sites
                             }
                         }
                     }
-                    else
+                    if (videoInfo.VideoUrl == string.Empty)
                     {
                         Log.Debug("Trying to find WMV file instead of ASX");
 
@@ -173,6 +174,25 @@ namespace OnlineVideos.Sites
                         if (wmvMatch.Success)
                         {
                             Log.Debug("Found WMV: {0}", wmvMatch.Groups["HRef"].Value);
+
+                            videoInfo.VideoUrl = wmvMatch.Groups["HRef"].Value;
+
+                            if (videoInfo.VideoUrl.ToLower().StartsWith("mms"))
+                            {
+                                // http works better
+                                videoInfo.VideoUrl = "http" + videoInfo.VideoUrl.Remove(0, "mms".Length);
+                            }
+                        }
+                    }
+                    if (videoInfo.VideoUrl == string.Empty)
+                    {
+                        Log.Debug("Trying to find FLV file instead of ASX/WMV");
+
+                        // Try finding flv file (some feeds have no WMV/ASX, dont know why and when?)
+                        Match wmvMatch = reFindFLV.Match(rssLinkContent);
+                        if (wmvMatch.Success)
+                        {
+                            Log.Debug("Found FLV: {0}", wmvMatch.Groups["HRef"].Value);
 
                             videoInfo.VideoUrl = wmvMatch.Groups["HRef"].Value;
 
