@@ -17,6 +17,7 @@ namespace OnlineVideos.Sites
     public class MyVideoUtil : SiteUtilBase
     {
         static Regex videoUrlRegEx = new Regex(@"V=(http[^&]+\.flv)");
+        static Regex infoRegEx = new Regex(@"\</a\>(?<desc>.*)Stichwörter\:.*Länge\:\s(?<duration>.*)\<br/\>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public override String getUrl(VideoInfo video, SiteSettings site)
         {
@@ -42,8 +43,12 @@ namespace OnlineVideos.Sites
             VideoInfo video;
             foreach (RssItem rssItem in loRssItemList)
             {
+                rssItem.description = rssItem.description.Replace("\n", "<br/>");
+                Match mInfo = infoRegEx.Match(rssItem.description);
+
                 video = new VideoInfo();
-                video.Description = rssItem.description;
+                video.Description = mInfo.Groups["desc"].Value;
+                video.Length = mInfo.Groups["duration"].Value;
                 video.ImageUrl = rssItem.mediaThumbnail;
                 video.Title = rssItem.title;
                 video.VideoUrl = Regex.Match(rssItem.link, "watch/([\\d]*)").Groups[1].Value;
