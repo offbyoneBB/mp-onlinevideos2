@@ -123,113 +123,120 @@ namespace OnlineVideos.Sites
             // loop thru rssitems and construct VideoInfo of each RssItem, add VideoInfo to result
             foreach (RssItem rssItem in rssItems)
             {
-                // Create new VideoInfo
-                videoInfo = new VideoInfo();
-
-                // Title
-                if (!String.IsNullOrEmpty(rssItem.title))
-                    videoInfo.Title = rssItem.title;
-
-                // VideoUrl AND ImageUrl
-                if (!String.IsNullOrEmpty(rssItem.link))
+                try
                 {
-                    Log.Debug("RssItem.Link: {0}", rssItem.link);
+                    // Create new VideoInfo
+                    videoInfo = new VideoInfo();
 
-                    // Try to find video from rss link
-                    string rssLinkContent = GetWebWithCoockieData(rssItem.link);
-                    // Searches for href with .asx
-                    Match asxMatch = reFindASX.Match(rssLinkContent);
-                    if (asxMatch.Success)
+                    // Title
+                    if (!String.IsNullOrEmpty(rssItem.title))
+                        videoInfo.Title = rssItem.title;
+
+                    // VideoUrl AND ImageUrl
+                    if (!String.IsNullOrEmpty(rssItem.link))
                     {
-                        Log.Debug("Found ASXlink: {0}", asxMatch.Groups["HRef"].Value);
-                        string asxContent = GetWebWithCoockieData(asxMatch.Groups["HRef"].Value);
-                        Log.Debug("ASXContent: {0}", asxContent);
+                        Log.Debug("RssItem.Link: {0}", rssItem.link);
 
-                        // Find URL for video in ASX
-                        Match mmsMatch = Regex.Match(asxContent.ToLower(), @"(?<=href.?=.?"").*?(?="")");
-                        if (mmsMatch.Success && mmsMatch.Value != "")
+                        // Try to find video from rss link
+                        string rssLinkContent = GetWebWithCoockieData(rssItem.link);
+                        // Searches for href with .asx
+                        Match asxMatch = reFindASX.Match(rssLinkContent);
+                        if (asxMatch.Success)
                         {
-                            if (reFindStartTime.Match(asxContent.ToLower()).Groups["starttime"].Value != "00:00:00.00")
+                            Log.Debug("Found ASXlink: {0}", asxMatch.Groups["HRef"].Value);
+                            string asxContent = GetWebWithCoockieData(asxMatch.Groups["HRef"].Value);
+                            Log.Debug("ASXContent: {0}", asxContent);
+
+                            // Find URL for video in ASX
+                            Match mmsMatch = Regex.Match(asxContent.ToLower(), @"(?<=href.?=.?"").*?(?="")");
+                            if (mmsMatch.Success && mmsMatch.Value != "")
                             {
-                                videoInfo.StartTime = reFindStartTime.Match(asxContent.ToLower()).Groups["starttime"].Value;
-                            }
+                                if (reFindStartTime.Match(asxContent.ToLower()).Groups["starttime"].Value != "00:00:00.00")
+                                {
+                                    videoInfo.StartTime = reFindStartTime.Match(asxContent.ToLower()).Groups["starttime"].Value;
+                                }
 
-                            videoInfo.Length = reFindDuration.Match(asxContent.ToLower()).Groups["duration"].Value;
+                                videoInfo.Length = reFindDuration.Match(asxContent.ToLower()).Groups["duration"].Value;
 
-                            videoInfo.VideoUrl = mmsMatch.Value;
+                                videoInfo.VideoUrl = mmsMatch.Value;
 
-                            if (videoInfo.VideoUrl.ToLower().StartsWith("mms"))
-                            {
-                                // http works better
-                                videoInfo.VideoUrl = "http" + videoInfo.VideoUrl.Remove(0, "mms".Length);
+                                if (videoInfo.VideoUrl.ToLower().StartsWith("mms"))
+                                {
+                                    // http works better
+                                    videoInfo.VideoUrl = "http" + videoInfo.VideoUrl.Remove(0, "mms".Length);
+                                }
                             }
                         }
-                    }
-                    if (videoInfo.VideoUrl == string.Empty)
-                    {
-                        Log.Debug("Trying to find WMV file instead of ASX");
-
-                        // Try finding wmv file (some feeds have WMV, dont know why and when?)
-                        Match wmvMatch = reFindWMV.Match(rssLinkContent);
-                        if (wmvMatch.Success)
+                        if (videoInfo.VideoUrl == string.Empty)
                         {
-                            Log.Debug("Found WMV: {0}", wmvMatch.Groups["HRef"].Value);
+                            Log.Debug("Trying to find WMV file instead of ASX");
 
-                            videoInfo.VideoUrl = wmvMatch.Groups["HRef"].Value;
-
-                            if (videoInfo.VideoUrl.ToLower().StartsWith("mms"))
+                            // Try finding wmv file (some feeds have WMV, dont know why and when?)
+                            Match wmvMatch = reFindWMV.Match(rssLinkContent);
+                            if (wmvMatch.Success)
                             {
-                                // http works better
-                                videoInfo.VideoUrl = "http" + videoInfo.VideoUrl.Remove(0, "mms".Length);
+                                Log.Debug("Found WMV: {0}", wmvMatch.Groups["HRef"].Value);
+
+                                videoInfo.VideoUrl = wmvMatch.Groups["HRef"].Value;
+
+                                if (videoInfo.VideoUrl.ToLower().StartsWith("mms"))
+                                {
+                                    // http works better
+                                    videoInfo.VideoUrl = "http" + videoInfo.VideoUrl.Remove(0, "mms".Length);
+                                }
                             }
                         }
-                    }
-                    if (videoInfo.VideoUrl == string.Empty)
-                    {
-                        Log.Debug("Trying to find FLV file instead of ASX/WMV");
-
-                        // Try finding flv file (some feeds have no WMV/ASX, dont know why and when?)
-                        Match wmvMatch = reFindFLV.Match(rssLinkContent);
-                        if (wmvMatch.Success)
+                        if (videoInfo.VideoUrl == string.Empty)
                         {
-                            Log.Debug("Found FLV: {0}", wmvMatch.Groups["HRef"].Value);
+                            Log.Debug("Trying to find FLV file instead of ASX/WMV");
 
-                            videoInfo.VideoUrl = wmvMatch.Groups["HRef"].Value;
-
-                            if (videoInfo.VideoUrl.ToLower().StartsWith("mms"))
+                            // Try finding flv file (some feeds have no WMV/ASX, dont know why and when?)
+                            Match wmvMatch = reFindFLV.Match(rssLinkContent);
+                            if (wmvMatch.Success)
                             {
-                                // http works better
-                                videoInfo.VideoUrl = "http" + videoInfo.VideoUrl.Remove(0, "mms".Length);
+                                Log.Debug("Found FLV: {0}", wmvMatch.Groups["HRef"].Value);
+
+                                videoInfo.VideoUrl = wmvMatch.Groups["HRef"].Value;
+
+                                if (videoInfo.VideoUrl.ToLower().StartsWith("mms"))
+                                {
+                                    // http works better
+                                    videoInfo.VideoUrl = "http" + videoInfo.VideoUrl.Remove(0, "mms".Length);
+                                }
                             }
                         }
+
+                        // ImageUrl
+                        Match matchIMGUrl = reFindImgUrl.Match(rssLinkContent);
+                        if (matchIMGUrl.Success)
+                        {
+                            videoInfo.ImageUrl = matchIMGUrl.Groups["IMGUrl"].Value;
+                        }
+                        else
+                        {
+                            videoInfo.ImageUrl = "http://www.svtplay.se";
+                        }
+
+
                     }
 
-                    // ImageUrl
-                    Match matchIMGUrl = reFindImgUrl.Match(rssLinkContent);
-                    if (matchIMGUrl.Success)
-                    {
-                        videoInfo.ImageUrl = matchIMGUrl.Groups["IMGUrl"].Value;
-                    }
-                    else
-                    {
-                        videoInfo.ImageUrl = "http://www.svtplay.se";
-                    }
+                    // Description
+                    if (!String.IsNullOrEmpty(rssItem.description))
+                        videoInfo.Description = rssItem.description;
 
+                    // Title2 (pubDate from rssItem)
+                    if (!String.IsNullOrEmpty(rssItem.pubDate))
+                        videoInfo.Title2 = rssItem.pubDate;
 
+                    Log.Debug("Adding videoInfo: {0}", videoInfo.ToString());
+
+                    // Add VideoInfo to List
+                    result.Add(videoInfo);
                 }
-
-                // Description
-                if (!String.IsNullOrEmpty(rssItem.description))
-                    videoInfo.Description = rssItem.description;
-
-                // Title2 (pubDate from rssItem)
-                if (!String.IsNullOrEmpty(rssItem.pubDate))
-                    videoInfo.Title2 = rssItem.pubDate;
-
-                Log.Debug("Adding videoInfo: {0}", videoInfo.ToString());
-
-                // Add VideoInfo to List
-                result.Add(videoInfo);
+                catch
+                {
+                    
+                }
             }
 
             return result;
