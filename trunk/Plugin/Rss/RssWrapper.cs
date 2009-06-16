@@ -110,10 +110,10 @@ namespace OnlineVideos
                                         {
                                             loMediaContent.url = nin.Attributes["url"].Value;
                                             loMediaContent.type = nin.Attributes["type"].Value;
-                                            loMediaContent.medium = nin.Attributes["medium"].Value;
                                             loMediaContent.duration = nin.Attributes["duration"].Value;
                                             loMediaContent.height = nin.Attributes["height"].Value;
                                             loMediaContent.width = nin.Attributes["width"].Value;
+                                            if (nin.Attributes["medium"] != null) loMediaContent.medium = nin.Attributes["medium"].Value;
                                         }
                                         catch (Exception) { };
                                         loRssItem.contentList.Add(loMediaContent);
