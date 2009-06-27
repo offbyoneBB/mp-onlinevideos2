@@ -57,7 +57,7 @@
           <type>selectbutton</type>
           <id>9</id>
           <onright>50</onright>
-          <label>194</label>
+          <label>2053</label>
           <visible>no</visible>
         </control>
         <control>
@@ -73,7 +73,7 @@
           <description>Favorites</description>
           <id>11</id>
           <onright>50</onright>
-          <label>359</label>
+          <label>932</label>
           <visible>no</visible>
         </control>
         <control>
@@ -91,7 +91,7 @@
           <id>6</id>
           <onright>50</onright>
           <onup>5</onup>
-          <label>103</label>
+          <label>495</label>
           <visible>no</visible>
         </control>
         <control>
