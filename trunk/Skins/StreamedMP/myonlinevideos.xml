@@ -186,7 +186,7 @@
 			<description>Length Label</description>
 			<type>label</type>
 			<id>0</id>
-			<posX>38</posX>
+			<posX>24</posX>
 			<posY>102</posY>
 			<width>550</width>
 			<font>mediastream9</font>
@@ -199,7 +199,7 @@
 			<description>Length</description>
 			<type>label</type>
 			<id>0</id>
-			<posX>100</posX>
+			<posX>120</posX>
 			<posY>102</posY>
 			<width>550</width>
 			<font>mediastream9</font>
