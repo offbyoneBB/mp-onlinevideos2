@@ -8,10 +8,10 @@ using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
-    public class YouPornUtil : SiteUtilBase
+    public class YouPornUtil : SiteUtilBase, ISearch
     {
-        static Regex PreviousPageRegEx = new Regex(@"\<a\shref=""(?<url>/browse\?page=[\d]+)""\>.*Previous\</a\>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        static Regex NextPageRegEx = new Regex(@"\<a\shref=""(?<url>/browse\?page=[\d]+)""\>Next.*\</a\>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex PreviousPageRegEx = new Regex(@"<a\shref=""(?<url>.+page=\d+)"">&#171;.+</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex NextPageRegEx = new Regex(@"<a\shref=""(?<url>.+page=\d+)"">.+&#187;</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public override List<VideoInfo> getVideoList(Category category)
         {
@@ -112,7 +112,7 @@ namespace OnlineVideos.Sites
                         nextPageUrl = "";
                     }
 
-                    // parse vidoes
+                    // parse videos
                     ParseLinks(dataPage, loRssItems);
                     if (loRssItems.Count > 0)
                     {
@@ -353,6 +353,25 @@ namespace OnlineVideos.Sites
                     }
                 }
             }
-        }               
+        }
+
+        #region ISearch Member
+
+        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
+        {
+            return new Dictionary<string, string>();
+        }
+
+        public List<VideoInfo> Search(string searchUrl, string query)
+        {
+            return Parse(string.Format(searchUrl, query));
+        }
+
+        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        {
+            return Search(searchUrl, query);
+        }
+
+        #endregion
     }
 }

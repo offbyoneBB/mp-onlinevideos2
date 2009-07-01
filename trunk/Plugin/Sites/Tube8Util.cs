@@ -13,8 +13,6 @@ namespace OnlineVideos.Sites
 {
     public class Tube8Util : SiteUtilBase, ISearch
     {
-        private string searchUrl = "";
-
         string nextPageUrl = "";
         string previousPageUrl = "";
         bool nextPageAvailable = false;
@@ -248,23 +246,19 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> getSearchableCategories()
+        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
         {
             return new Dictionary<string, string>();
         }
 
-        public List<VideoInfo> search(string searchUrl, string query)
+        public List<VideoInfo> Search(string searchUrl, string query)
         {
-            this.searchUrl = searchUrl;
-
-            List<VideoInfo> itemsList = Parse(searchUrl + "?q=" + query);
-
-            return itemsList;
+            return Parse(string.Format(searchUrl, query));
         }
 
-        public List<VideoInfo> search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string searchUrl, string query, string category)
         {
-            return search(searchUrl, query);
+            return Search(searchUrl, query);
         }
 
         #endregion

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Net;
 using System.IO;
 using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
-    public class xHamsterUtil : SiteUtilBase
+    public class xHamsterUtil : SiteUtilBase, ISearch
     {
         public override List<VideoInfo> getVideoList(Category category)
         {
@@ -27,6 +28,33 @@ namespace OnlineVideos.Sites
                 // is there any data ?
                 if (dataPage.Length > 0)
                 {
+                    // check for previous page link
+                    Match mPrev = PreviousPageRegEx.Match(dataPage);
+                    if (mPrev.Success)
+                    {
+                        previousPageAvailable = true;
+                        previousPageUrl = mPrev.Groups["url"].Value;
+                    }
+                    else
+                    {
+                        previousPageAvailable = false;
+                        previousPageUrl = "";
+                    }
+
+                    // check for next page link
+                    Match mNext = NextPageRegEx.Match(dataPage);
+                    if (mNext.Success)
+                    {
+                        nextPageAvailable = true;
+                        nextPageUrl = mNext.Groups["url"].Value;
+                    }
+                    else
+                    {
+                        nextPageAvailable = false;
+                        nextPageUrl = "";
+                    }
+
+                    // parse videos
                     ParseLinks(dataPage, loRssItems);
                     if (loRssItems.Count > 0)
                     {
@@ -199,6 +227,54 @@ namespace OnlineVideos.Sites
 
             return (ret);
         }
-        
+
+        #region Next|Previous Page
+
+        static Regex NextPageRegEx = new Regex(@"<SPAN\sclass=navNext><A\sHREF=""(?<url>.+)"">Next</A></SPAN>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        string nextPageUrl = "";
+        bool nextPageAvailable = false;
+        public override bool hasNextPage()
+        {
+            return nextPageAvailable;
+        }
+
+        static Regex PreviousPageRegEx = new Regex(@"<SPAN\sclass=navPrev><A\sHREF=""(?<url>.+)"">Prev</A></SPAN>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        string previousPageUrl = "";
+        bool previousPageAvailable = false;
+        public override bool hasPreviousPage()
+        {
+            return previousPageAvailable;
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            return Parse("http://www.xhamster.com" + nextPageUrl);
+        }
+
+        public override List<VideoInfo> getPreviousPageVideos()
+        {
+            return Parse("http://www.xhamster.com" + previousPageUrl);
+        }
+
+        #endregion
+
+        #region ISearch Member
+
+        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
+        {
+            return new Dictionary<string, string>();
+        }
+
+        public List<VideoInfo> Search(string searchUrl, string query)
+        {
+            return Parse(string.Format(searchUrl, query));
+        }
+
+        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        {
+            return Search(searchUrl, query);
+        }
+
+        #endregion
     }
 }
