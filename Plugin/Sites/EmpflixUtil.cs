@@ -11,21 +11,30 @@ using MediaPortal.Configuration;
 
 namespace OnlineVideos.Sites
 {
-	/// <summary>
+    /// <summary>
     /// Description of EmpflixUtil.
-	/// </summary>
+    /// </summary>
     public class EmpflixUtil : SiteUtilBase, ISearch
-	{
-        static string videoListRegExpString = @"<div.*a.href=""(?<VideoUrl>http://www.empflix.com/view.php\?id\=\d+)"".*<img src=""(?<ImageUrl>http://pic.*.empflix.com/images/thumb/.*\.jpg)"".*</div>[\s\r\n]*<div\sclass=""videoTitle"">.+\stitle=""(?<Title>.+)"".+</div>";
-        static string playlistUrlRegExpString = @"so.addVariable\('config',\s'(?<PlaylistUrl>[^']+)'\);";        
+    {
+        static string videoListRegExpString = @"<div.*a.href=""(?<VideoUrl>http://www.empflix.com/view.php\?id\=\d+)"".*<img\ssrc=""(?<ImageUrl>http://pic.*.empflix.com/images/thumb/.*\.jpg)"".*</div>[\s\r\n]*<div\sclass=""videoTitle"">.+\stitle=""(?<Title>.+)"".+</div>.*[\s\r\n]*.*<div\sclass=""videoLeft"">(?<Duration>.*)<br\s/>";
+        static string playlistUrlRegExpString = @"so.addVariable\('config',\s'(?<PlaylistUrl>[^']+)'\);";
+        static string nextPageRegExpString = @"<a\shref=""(?<url>.*)"">next\s&gt;&gt;</a>";
+        static string previousPageRegExpString = @"<a\shref=""(?<url>.*)"">&lt;&lt;\sprev</a>";
 
-        Regex videoListRegExp = new Regex(videoListRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        Regex playlistUrlRegExp = new Regex(playlistUrlRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);        
+        static Regex videoListRegExp = new Regex(videoListRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex playlistUrlRegExp = new Regex(playlistUrlRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex nextPageRegExp = new Regex(nextPageRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex previousPageRegExp = new Regex(previousPageRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+        public override List<VideoInfo> getVideoList(Category category)
+        {
+            return Parse(GetWebData(((RssLink)category).Url));
+        }
 
         public override String getUrl(VideoInfo video, SiteSettings foSite)
-		{
-			try
-            {                             
+        {
+            try
+            {
                 string dataPage = GetWebData(video.VideoUrl);
                 if (dataPage.Length > 0)
                 {
@@ -40,8 +49,8 @@ namespace OnlineVideos.Sites
                             XmlDocument doc = new XmlDocument();
                             doc.LoadXml(dataPage);
                             string result = doc.SelectSingleNode("//file").InnerText;
-                            return result + "&filetype=.flv";                            
-                        }                        
+                            return result + "&filetype=.flv";
+                        }
                     }
                 }
             }
@@ -50,60 +59,83 @@ namespace OnlineVideos.Sites
                 Log.Error(ex);
             }
             return video.VideoUrl;
-		}
-
-		public override List<VideoInfo> getVideoList(Category category)
-		{
-            List<VideoInfo> loVideoList = new List<VideoInfo>();
-            try
-            {
-                string dataPage = GetWebData(((RssLink)category).Url);
-                fillVideoListFromDataPage(dataPage, loVideoList);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-            }            
-			return loVideoList;
-		}
-
-        void fillVideoListFromDataPage(string dataPage, List<VideoInfo> loVideoList)
-        {
-            if (dataPage.Length > 0)
-            {
-                Match m = videoListRegExp.Match(dataPage);
-                while (m.Success)
-                {
-                    VideoInfo videoInfo = new VideoInfo();
-                    videoInfo.Title = m.Groups["Title"].Value;
-                    videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
-                    videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                    loVideoList.Add(videoInfo);
-                    m = m.NextMatch();
-                }
-            }
         }
 
-        string getHTMLDataFromPost(string url, string search)
-        {            
-            byte[] data = Encoding.UTF8.GetBytes("what=" + search + "&search_button=");
+        string nextPageUrl = "";
+        bool nextPageAvailable = false;
+        public override bool hasNextPage()
+        {
+            return nextPageAvailable;
+        }
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
-            request.ContentLength = data.Length;
-            request.ProtocolVersion = HttpVersion.Version10;
-            Stream newStream = request.GetRequestStream();
-            newStream.Write(data, 0, data.Length);
-            newStream.Close();
-            using (WebResponse response = request.GetResponse())
+        string previousPageUrl = "";
+        bool previousPageAvailable = false;
+        public override bool hasPreviousPage()
+        {
+            return previousPageAvailable;
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            return Parse(GetWebData("http://www.empflix.com/" + nextPageUrl));
+        }
+
+        public override List<VideoInfo> getPreviousPageVideos()
+        {
+            return Parse(GetWebData("http://www.empflix.com/" + previousPageUrl));
+        }
+
+        List<VideoInfo> Parse(string dataPage)
+        {
+            List<VideoInfo> loVideoList = new List<VideoInfo>();
+            if (dataPage.Length > 0)
             {
-                Stream receiveStream = response.GetResponseStream();
-                StreamReader reader = new StreamReader(receiveStream, Encoding.UTF8);
-                string str = reader.ReadToEnd();
-                return str;
+                try
+                {
+                    Match m = videoListRegExp.Match(dataPage);
+                    while (m.Success)
+                    {
+                        VideoInfo videoInfo = new VideoInfo();
+                        videoInfo.Title = m.Groups["Title"].Value;
+                        videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
+                        videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+                        videoInfo.Length = m.Groups["Duration"].Value;
+                        loVideoList.Add(videoInfo);
+                        m = m.NextMatch();
+                    }
+                    
+                    // check for previous page link
+                    Match mPrev = previousPageRegExp.Match(dataPage);
+                    if (mPrev.Success)
+                    {
+                        previousPageAvailable = true;
+                        previousPageUrl = mPrev.Groups["url"].Value;
+                    }
+                    else
+                    {
+                        previousPageAvailable = false;
+                        previousPageUrl = "";
+                    }
+                    
+                    // check for next page link
+                    Match mNext = nextPageRegExp.Match(dataPage);
+                    if (mNext.Success)
+                    {
+                        nextPageAvailable = true;
+                        nextPageUrl = mNext.Groups["url"].Value;
+                    }
+                    else
+                    {
+                        nextPageAvailable = false;
+                        nextPageUrl = "";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
+                }
             }
+            return loVideoList;
         }
 
         #region ISearch Member
@@ -112,20 +144,20 @@ namespace OnlineVideos.Sites
         {
             return new Dictionary<string, string>();
         }
-        
+
         public List<VideoInfo> search(string searchUrl, string query)
         {
-            List<VideoInfo> loVideoList = new List<VideoInfo>();
             try
-            {                
-                string dataPage = getHTMLDataFromPost(searchUrl, query);  
-                fillVideoListFromDataPage(dataPage, loVideoList);
+            {
+                string dataPage = GetWebDataFromPost(searchUrl, "what=" + query);
+                return Parse(dataPage);
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
+                return new List<VideoInfo>();
             }
-            return loVideoList;
+
         }
 
         public List<VideoInfo> search(string searchUrl, string query, string category)

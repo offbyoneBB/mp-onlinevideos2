@@ -1,22 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using MediaPortal.GUI.Library;
 using System.ComponentModel;
-using System.Web;
+using System.IO;
 using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Web;
 using System.Xml;
 using System.Xml.XPath;
-using System.Threading;
 using OnlineVideos.Database;
-using System.Text.RegularExpressions;
+using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 
 namespace OnlineVideos.Sites
 {
     public abstract class SiteUtilBase
     {
+        public abstract List<VideoInfo> getVideoList(Category category);
+
         string name = string.Empty;
         public virtual string Name
         {
@@ -35,8 +38,6 @@ namespace OnlineVideos.Sites
         {
             return new List<VideoInfo>();
         }
-
-        public abstract List<VideoInfo> getVideoList(Category category);
 
         public virtual List<VideoInfo> getRelatedVideos(String fsTags)
         {
@@ -107,43 +108,6 @@ namespace OnlineVideos.Sites
                 return new List<RssItem>();
             }
         }
-
-        protected static string GetRedirectedUrl(string url)
-        {
-            try
-            {
-                WebRequest webRequest = WebRequest.Create(url);
-                HttpWebRequest httpWebRequest = webRequest as HttpWebRequest;
-                if (httpWebRequest == null) return url;
-                httpWebRequest.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
-                httpWebRequest.Timeout = 10000;                
-                HttpWebResponse httpWebresponse = httpWebRequest.GetResponse() as HttpWebResponse;
-                if (httpWebresponse == null) return url;
-                if (httpWebRequest.RequestUri.Equals(httpWebresponse.ResponseUri))
-                    return url;
-                else
-                    return httpWebresponse.ResponseUri.ToString();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-            }
-            return url;
-        }
-        
-        protected static string GetWebData(string fsUrl)
-        {            
-            HttpWebRequest request = WebRequest.Create(fsUrl) as HttpWebRequest;
-            if (request == null) return "";
-            request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
-            request.Timeout = 20000;            
-            WebResponse response = request.GetResponse();
-            using (System.IO.StreamReader reader = new System.IO.StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))
-            {
-                string str = reader.ReadToEnd();
-                return str.Trim();
-            }            
-        }
         
         public virtual bool isPossibleVideo(string fsUrl)
         {
@@ -182,5 +146,64 @@ namespace OnlineVideos.Sites
         {
             return false;
         }
+
+        protected static string GetRedirectedUrl(string url)
+        {
+            try
+            {
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;                
+                if (request == null) return url;
+                request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
+                request.Timeout = 15000;
+                HttpWebResponse httpWebresponse = request.GetResponse() as HttpWebResponse;
+                if (httpWebresponse == null) return url;
+                if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
+                    return url;
+                else
+                    return httpWebresponse.ResponseUri.ToString();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
+            return url;
+        }
+
+        protected static string GetWebData(string url)
+        {
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            if (request == null) return "";
+            request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
+            request.Timeout = 15000;
+            WebResponse response = request.GetResponse();
+            using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+            {
+                string str = reader.ReadToEnd();
+                return str.Trim();
+            }
+        }
+        
+        protected static string GetWebDataFromPost(string url, string postData)
+        {
+            byte[] data = Encoding.UTF8.GetBytes(postData);
+
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
+            request.Timeout = 15000;
+            request.ContentLength = data.Length;
+            request.ProtocolVersion = HttpVersion.Version10;
+            Stream requestStream = request.GetRequestStream();
+            requestStream.Write(data, 0, data.Length);
+            requestStream.Close();
+            using (WebResponse response = request.GetResponse())
+            {
+                Stream responseStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(responseStream, Encoding.UTF8);
+                string str = reader.ReadToEnd();
+                return str.Trim();
+            }
+        }        
     }
 }
