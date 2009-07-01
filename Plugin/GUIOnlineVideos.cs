@@ -832,12 +832,12 @@ namespace OnlineVideos
                         category = moSupportedSearchCategoryList[btnSearchCategories.SelectedLabel];
                         Log.Info("Searching for {0} in category {1}", query, category);
                         msLastSearchCategory = category;
-                        loListItems = ((ISearch)selectedSite.Util).search(selectedSite.SearchUrl, query, category);
+                        loListItems = ((ISearch)selectedSite.Util).Search(selectedSite.SearchUrl, query, category);
                     }
                     else
                     {
                         Log.Info("Searching for {0} in all categories ", query);
-                        loListItems = ((ISearch)selectedSite.Util).search(selectedSite.SearchUrl, query);
+                        loListItems = ((ISearch)selectedSite.Util).Search(selectedSite.SearchUrl, query);
                     }
                 });
                 worker.RunWorkerAsync();
@@ -1490,7 +1490,7 @@ namespace OnlineVideos
         {
             Log.Debug("Showing Search buttons");
             btnSearchCategories.Clear();
-            moSupportedSearchCategoryList = ((ISearch)selectedSite.Util).getSearchableCategories();
+            moSupportedSearchCategoryList = ((ISearch)selectedSite.Util).GetSearchableCategories(selectedSite.CategoriesArray);
             GUIControl.AddItemLabelControl(GetID, btnSearchCategories.GetID, "All");
             foreach (String category in moSupportedSearchCategoryList.Keys)
             {

@@ -140,7 +140,7 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> getSearchableCategories()
+        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
         {
             Dictionary<string, string> loRssItems = new Dictionary<string, string>();
 
@@ -152,7 +152,7 @@ namespace OnlineVideos.Sites
             return loRssItems;
         }
 
-        public List<VideoInfo> search(string searchUrl, string query)
+        public List<VideoInfo> Search(string searchUrl, string query)
         {
             videoSearchList.Category = "";
             videoSearchList.Keyword = query;            
@@ -176,7 +176,7 @@ namespace OnlineVideos.Sites
             return loRssItemList;            
         }
 
-        public List<VideoInfo> search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string searchUrl, string query, string category)
         {
             videoSearchList.Category = category;
             videoSearchList.Keyword = query;

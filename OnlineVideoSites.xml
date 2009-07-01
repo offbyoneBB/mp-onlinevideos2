@@ -385,7 +385,7 @@
     <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true">
       <Username />
       <Password />
-      <SearchUrl />
+      <SearchUrl>http://www.youporn.com/search?type=straight&amp;query={0}</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="Browse">http://www.youporn.com/browse</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.youporn.com/top_rated</Category>
@@ -395,7 +395,7 @@
     <Site name="RedTube" util="RedTube" agecheck="true" enabled="true">
       <Username />
       <Password />
-      <SearchUrl />
+      <SearchUrl>{0}?search={1}</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="New">http://www.redtube.com/new</Category>
         <Category xsi:type="RssLink" name="Top">http://www.redtube.com/top</Category>
@@ -420,7 +420,7 @@
     <Site name="xHamster" util="xHamster" agecheck="true" enabled="true">
       <Username />
       <Password />
-      <SearchUrl />
+      <SearchUrl>http://www.xhamster.com/search.php?q={0}</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="New">http://www.xhamster.com/</Category>
         <Category xsi:type="RssLink" name="Amateur">http://www.xhamster.com/channels/new-amateur-1.html</Category>
@@ -469,7 +469,7 @@
     <Site name="Tube8" util="Tube8" agecheck="true" enabled="true">
       <Username />
       <Password />
-      <SearchUrl>http://www.tube8.com/search.html</SearchUrl>
+      <SearchUrl>http://www.tube8.com/search.html?q={0}</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="Latest">http://www.tube8.com/latest.html</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.tube8.com/top.html</Category>

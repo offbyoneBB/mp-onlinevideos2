@@ -489,12 +489,12 @@ namespace OnlineVideos.Sites
 
         #region ISearch Members
 
-        public Dictionary<string, string> getSearchableCategories()
+        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
         {
             return getYoutubeCategories();            
         }
 
-        public List<VideoInfo> search(string searchUrl, string queryStr)
+        public List<VideoInfo> Search(string searchUrl, string queryStr)
         {
             YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
             query.Query = queryStr;           
@@ -518,7 +518,7 @@ namespace OnlineVideos.Sites
 
         //}
 
-        public List<VideoInfo> search(string searchUrl, string queryStr, string category)
+        public List<VideoInfo> Search(string searchUrl, string queryStr, string category)
         {
             YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
             query.Query = queryStr;  

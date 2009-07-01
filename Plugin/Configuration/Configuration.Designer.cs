@@ -94,6 +94,7 @@ namespace OnlineVideos
             this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.lblVersion = new System.Windows.Forms.Label();
             this.cmbDasErsteQuality = new System.Windows.Forms.ComboBox();
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
@@ -113,7 +114,6 @@ namespace OnlineVideos
             this.label12 = new System.Windows.Forms.Label();
             this.chkFLVSplitterInstalled = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.lblVersion = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPageRssLinks.SuspendLayout();
@@ -188,7 +188,7 @@ namespace OnlineVideos
             this.CategoryList.Location = new System.Drawing.Point(4, 7);
             this.CategoryList.Margin = new System.Windows.Forms.Padding(4);
             this.CategoryList.Name = "CategoryList";
-            this.CategoryList.Size = new System.Drawing.Size(159, 212);
+            this.CategoryList.Size = new System.Drawing.Size(159, 228);
             this.CategoryList.TabIndex = 6;
             this.CategoryList.SelectedIndexChanged += new System.EventHandler(this.CategoryListSelectedIndexChanged);
             // 
@@ -341,10 +341,11 @@ namespace OnlineVideos
             // 
             // chkAgeConfirm
             // 
+            this.chkAgeConfirm.AutoSize = true;
             this.chkAgeConfirm.Location = new System.Drawing.Point(176, 223);
             this.chkAgeConfirm.Margin = new System.Windows.Forms.Padding(4);
             this.chkAgeConfirm.Name = "chkAgeConfirm";
-            this.chkAgeConfirm.Size = new System.Drawing.Size(139, 30);
+            this.chkAgeConfirm.Size = new System.Drawing.Size(107, 21);
             this.chkAgeConfirm.TabIndex = 16;
             this.chkAgeConfirm.Text = "Confirm Age";
             this.chkAgeConfirm.UseVisualStyleBackColor = true;
@@ -578,12 +579,11 @@ namespace OnlineVideos
             // btnAddChannel
             // 
             this.btnAddChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnAddChannel.AutoSize = true;
             this.btnAddChannel.Enabled = false;
-            this.btnAddChannel.Location = new System.Drawing.Point(180, 238);
+            this.btnAddChannel.Location = new System.Drawing.Point(180, 240);
             this.btnAddChannel.Margin = new System.Windows.Forms.Padding(4);
             this.btnAddChannel.Name = "btnAddChannel";
-            this.btnAddChannel.Size = new System.Drawing.Size(123, 33);
+            this.btnAddChannel.Size = new System.Drawing.Size(106, 28);
             this.btnAddChannel.TabIndex = 25;
             this.btnAddChannel.Text = "Add Stream";
             this.btnAddChannel.UseVisualStyleBackColor = true;
@@ -592,12 +592,11 @@ namespace OnlineVideos
             // btnAddGroup
             // 
             this.btnAddGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnAddGroup.AutoSize = true;
             this.btnAddGroup.Enabled = false;
-            this.btnAddGroup.Location = new System.Drawing.Point(85, 238);
+            this.btnAddGroup.Location = new System.Drawing.Point(81, 241);
             this.btnAddGroup.Margin = new System.Windows.Forms.Padding(4);
             this.btnAddGroup.Name = "btnAddGroup";
-            this.btnAddGroup.Size = new System.Drawing.Size(116, 33);
+            this.btnAddGroup.Size = new System.Drawing.Size(91, 28);
             this.btnAddGroup.TabIndex = 24;
             this.btnAddGroup.Text = "Add Group";
             this.btnAddGroup.UseVisualStyleBackColor = true;
@@ -606,12 +605,11 @@ namespace OnlineVideos
             // btnDeleteChannel
             // 
             this.btnDeleteChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDeleteChannel.AutoSize = true;
             this.btnDeleteChannel.Enabled = false;
-            this.btnDeleteChannel.Location = new System.Drawing.Point(7, 238);
+            this.btnDeleteChannel.Location = new System.Drawing.Point(4, 240);
             this.btnDeleteChannel.Margin = new System.Windows.Forms.Padding(4);
             this.btnDeleteChannel.Name = "btnDeleteChannel";
-            this.btnDeleteChannel.Size = new System.Drawing.Size(79, 33);
+            this.btnDeleteChannel.Size = new System.Drawing.Size(69, 28);
             this.btnDeleteChannel.TabIndex = 23;
             this.btnDeleteChannel.Text = "Delete";
             this.btnDeleteChannel.UseVisualStyleBackColor = true;
@@ -802,6 +800,16 @@ namespace OnlineVideos
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             this.tabGeneral.Click += new System.EventHandler(this.tabGeneral_Click);
+            // 
+            // lblVersion
+            // 
+            this.lblVersion.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lblVersion.Location = new System.Drawing.Point(3, 577);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(563, 17);
+            this.lblVersion.TabIndex = 37;
+            this.lblVersion.Text = "Version";
+            this.lblVersion.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // cmbDasErsteQuality
             // 
@@ -1025,16 +1033,6 @@ namespace OnlineVideos
             this.label11.Size = new System.Drawing.Size(22, 17);
             this.label11.TabIndex = 0;
             this.label11.Text = "flv";
-            // 
-            // lblVersion
-            // 
-            this.lblVersion.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lblVersion.Location = new System.Drawing.Point(3, 577);
-            this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(563, 17);
-            this.lblVersion.TabIndex = 37;
-            this.lblVersion.Text = "Version";
-            this.lblVersion.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // Configuration
             // 

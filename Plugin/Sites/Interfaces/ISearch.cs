@@ -5,8 +5,8 @@ namespace OnlineVideos
 {
     interface ISearch
     {
-        Dictionary<string, string> getSearchableCategories();        
-        List<VideoInfo> search(string searchUrl, string query);
-        List<VideoInfo> search(string searchUrl, string query, string category);
+        Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories);
+        List<VideoInfo> Search(string searchUrl, string query);
+        List<VideoInfo> Search(string searchUrl, string query, string category);
     }
 }

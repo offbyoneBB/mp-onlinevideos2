@@ -57,20 +57,20 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> getSearchableCategories()
+        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
         {
             return new Dictionary<string, string>();
         }
         
-        public List<VideoInfo> search(string searchUrl, string query)
+        public List<VideoInfo> Search(string searchUrl, string query)
         {            
             string url = string.Format(searchUrl, query);
             return getVideoListFromRss(url);
         }
 
-        public List<VideoInfo> search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string searchUrl, string query, string category)
         {
-            return search(searchUrl, query);
+            return Search(searchUrl, query);
         }
 
         #endregion

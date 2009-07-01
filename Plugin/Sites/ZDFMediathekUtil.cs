@@ -124,20 +124,20 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> getSearchableCategories()
+        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
         {
             return categoriesForSearching;
         }
 
-        public List<VideoInfo> search(string searchUrl, string query)
+        public List<VideoInfo> Search(string searchUrl, string query)
         {
             Suchergebnis suchergebnis = Agent.Suchergebnis(query, 1, 0x1869f, SortOption.Datum, false, "Alle", true, false, false, false, new DateTime(), new DateTime());
             return GetTeasersFromSuchergebnis(suchergebnis);            
         }
 
-        public List<VideoInfo> search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string searchUrl, string query, string category)
         {
-            return search(searchUrl, query);
+            return Search(searchUrl, query);
         }
 
         #endregion
