@@ -30,6 +30,7 @@ namespace OnlineVideos.Sites
             	if(isPossibleVideo(lsVideo)){
                 	loVideoInfo = new VideoInfo();
                 	loVideoInfo.VideoUrl = lsVideo;
+                    loVideoInfo.ImageUrl = lsVideo.Substring(0,lsVideo.LastIndexOf(".")) + ".jpg";
                 
                 	loVideoInfo.Title  = Utils.GetFilename(lsVideo);
                 	loVideoInfoList.Add(loVideoInfo);

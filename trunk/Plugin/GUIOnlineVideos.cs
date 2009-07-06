@@ -226,7 +226,7 @@ namespace OnlineVideos
 
             if (selectedSite.UtilName == "AppleTrailers" && currentState == State.info) liSelected = infoList.SelectedListItemIndex - 1;
 
-            if (liSelected < 0 || currentState == State.home || currentState == State.categories || selectedSite.UtilName == "DownloadedVideo" || (selectedSite.UtilName == "AppleTrailers" && currentState == State.videos))
+            if (liSelected < 0 || currentState == State.home || currentState == State.categories || (selectedSite.UtilName == "AppleTrailers" && currentState == State.videos))
             {
                 return;
             }
@@ -242,7 +242,7 @@ namespace OnlineVideos
 
                 if (showingFavorites == false && selectedSite.UtilName != "Favorite")
                 {
-                    dlgSel.Add("Add to favorites");
+                    if (selectedSite.UtilName != "DownloadedVideo") dlgSel.Add("Add to favorites");
                 }
                 else
                 {
@@ -254,7 +254,7 @@ namespace OnlineVideos
                 }
                 if (String.IsNullOrEmpty(OnlineVideoSettings.getInstance().msDownloadDir) == false && selectedSite.UtilName != "YahooMusicVideos")
                 {
-                    dlgSel.Add("Save");
+                    if (selectedSite.UtilName == "DownloadedVideo") dlgSel.Add("Delete"); else dlgSel.Add("Save");
                 }
             }
             dlgSel.DoModal(GetID);
@@ -274,7 +274,16 @@ namespace OnlineVideos
                     playAll();
                     break;
                 case 2:
-                    AddOrRemoveFavorite(loSelectedVideo);
+                    if (selectedSite.UtilName == "DownloadedVideo")
+                    {
+                        if (System.IO.File.Exists(loSelectedVideo.ImageUrl)) System.IO.File.Delete(loSelectedVideo.ImageUrl);
+                        if (System.IO.File.Exists(loSelectedVideo.VideoUrl)) System.IO.File.Delete(loSelectedVideo.VideoUrl);
+                        refreshVideoList();
+                    }
+                    else
+                    {
+                        AddOrRemoveFavorite(loSelectedVideo);
+                    }
                     break;
                 case 3:
                     if (selectedSite.UtilName == "YouTube")
@@ -283,11 +292,11 @@ namespace OnlineVideos
                     }
                     else
                     {
-                        SaveVideo(loSelectedVideo);
+                        SaveVideo(loSelectedVideo, loListItem.ThumbnailImage);
                     }
                     break;
                 case 4:
-                    SaveVideo(loSelectedVideo);
+                    SaveVideo(loSelectedVideo, loListItem.ThumbnailImage);
                     break;
 
             }
@@ -1190,7 +1199,7 @@ namespace OnlineVideos
             }
         }
 
-        private void SaveVideo(VideoInfo foListItem)
+        private void SaveVideo(VideoInfo foListItem, string thumbPath)
         {            
             String lsUrl = selectedSite.Util.getUrl(foListItem, selectedSite);
             WebClient loClient = new WebClient();
@@ -1203,8 +1212,10 @@ namespace OnlineVideos
                 downloadDir += "/";
             }
             string safeName = ImageDownloader.GetSaveFilename(foListItem.Title + (foListItem.Title2 != null ? "_" + foListItem.Title2 : ""));
-            String lsFileName = downloadDir + safeName + lsExtension;
-            loClient.DownloadFileAsync(new Uri(lsUrl), lsFileName, foListItem.Title);
+            string localFileName = downloadDir + safeName + lsExtension;
+            string localImageName = downloadDir + safeName + System.IO.Path.GetExtension(thumbPath);
+            if (System.IO.File.Exists(thumbPath)) System.IO.File.Copy(thumbPath, localImageName);
+            loClient.DownloadFileAsync(new Uri(lsUrl), localFileName, foListItem.Title);
         }
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)

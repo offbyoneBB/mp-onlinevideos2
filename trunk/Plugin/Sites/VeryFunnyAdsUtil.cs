@@ -12,25 +12,20 @@ namespace OnlineVideos.Sites
 {
 	public class VeryFunnyAdsUtil : SiteUtilBase
 	{		
-		//private CookieCollection moCookies;
-        //private Regex regexId = new Regex("/videos/(.+)");		
-		
         public List<VideoInfo> parseEpisodes(String fsUrl)
         {
             List<VideoInfo> loRssItems = new List<VideoInfo>();
             XmlDocument doc = new XmlDocument();
-            
 
-            doc.Load(XmlReader.Create(String.Format("http://tbs.com/veryfunnyads/getCollectionById.do?offset=0&id={0}&sort=&limit=50&daysback=",fsUrl)));
+            doc.Load(XmlReader.Create(String.Format("http://tbs.com/veryfunnyads/getCollectionById.do?offset=0&id={0}&sort=&limit=50&daysback=", fsUrl)));            
 
             XmlNamespaceManager nsMgr = new XmlNamespaceManager(doc.NameTable);           
             XmlNodeList nodeList = doc.SelectNodes("/episodes/episode", nsMgr);
-
            
             XmlAttributeCollection ac;
 
             VideoInfo loRssItem;
-            //GUIListItem loListItem;
+
             foreach (XmlNode chileNode in nodeList)
             {                
                 loRssItem = new VideoInfo();
@@ -51,7 +46,6 @@ namespace OnlineVideos.Sites
                     loRssItem.ImageUrl = node.InnerText;
                 }
 
-
                 node = chileNode.SelectSingleNode("segments");
                 node = node.SelectSingleNode("segment");
                 if (node != null)
@@ -65,51 +59,40 @@ namespace OnlineVideos.Sites
                 //loListItem = new GUIListItem(loRssItem.title);
                 //loListItem.Path = loRssItem.videoUrl;
                 loRssItems.Add(loRssItem);
-
-
             }
             return loRssItems;
-
         }
+
         public List<Category> parseCollections(String fsUrl)
         {
             List<Category> loRssItems = new List<Category>();
             XmlDocument doc = new XmlDocument();
-
-
             doc.Load(XmlReader.Create(fsUrl));
 
             XmlNamespaceManager nsMgr = new XmlNamespaceManager(doc.NameTable);
             XmlNodeList nodeList = doc.SelectNodes("/collections/collection", nsMgr);
-                       
-
-            RssLink loRssItem;
-            //GUIListItem loListItem;
+                                   
             foreach (XmlNode chileNode in nodeList)
-            {                
-                loRssItem = new RssLink();
+            {
+                RssLink loRssItem = new RssLink();
                 loRssItem.Url = chileNode.Attributes["id"].InnerText;
                 
                 XmlNode node = chileNode.SelectSingleNode("name", nsMgr);
                 loRssItem.Name = node.InnerText;                
                 loRssItems.Add(loRssItem);
-
-
             }
             return loRssItems;
-
         }
+
         public override List<Category> getDynamicCategories()
-        {
-            return parseCollections("http://www.tbs.com/veryfunnyads/getCollections.do?id=24823");
+        {            
+            //return parseCollections("http://www.tbs.com/veryfunnyads/getCollections.do?id=24823"); - outdated
+            return parseCollections("http://www.tbs.com/veryfunnyads/getCollections.do?id=26322");
         }
 
 		public override List<VideoInfo> getVideoList(Category category)
 		{
-            List<VideoInfo> loRssItemList = parseEpisodes(((RssLink)category).Url);
-			//List<VideoInfo> loVideoList = new List<VideoInfo>();
-			//VideoInfo video;			
-			return loRssItemList;
+            return parseEpisodes(((RssLink)category).Url);
 		}
 
         public override String getUrl(VideoInfo video, SiteSettings foSite)
@@ -123,7 +106,6 @@ namespace OnlineVideos.Sites
                 lsUrl = loMatch.Groups[1].Value;                        
             }
             return lsUrl;
-		}
-		
+		}		
 	}
 }
