@@ -32,6 +32,7 @@ namespace RTMP_LIB
         public bool m_bPlaying = false;
         RTMPPacket[] m_vecChannelsIn = new RTMPPacket[64];
         RTMPPacket[] m_vecChannelsOut = new RTMPPacket[64];
+        uint[] m_channelTimestamp = new uint[64]; // abs timestamp of last packet
         Stack<string> m_methodCalls = new Stack<string>(); //remote method calls queue
 
         TcpClient tcpClient = null;
@@ -75,8 +76,7 @@ namespace RTMP_LIB
             while (!bHasMediaPacket && IsConnected() && ReadPacket(out packet))
             {
                 if (!packet.IsReady())
-                {
-                    packet.FreePacket();
+                {                    
                     continue;
                 }
 
@@ -134,7 +134,8 @@ namespace RTMP_LIB
                         //CLog::Log(LOGERROR,"%s, unknown packet type received: 0x%02x", __FUNCTION__, packet.m_packetType);
                         break;
                 }
-                if (!bHasMediaPacket) packet.FreePacket();
+                //if (!bHasMediaPacket) packet.FreePacket();
+                packet.m_nBytesRead = 0;
             }
             if (bHasMediaPacket) m_bPlaying = true;
             return bHasMediaPacket;
@@ -181,96 +182,96 @@ namespace RTMP_LIB
 
         bool ReadPacket(out RTMPPacket packet)
         {
-            packet = new RTMPPacket();
+            while (tcpClient.Available < 1) System.Threading.Thread.Sleep(10); // wait until data is available
 
-            do
+            // Chunk Basic Header (1, 2 or 3 bytes)
+            // the two most significant bits hold the chunk type
+            // value in the 6 least significant bits gives the chunk stream id (0,1,2 are reserved): 0 -> 3 byte header | 1 -> 2 byte header | 2 -> low level protocol message | 3-63 -> stream id
+            byte type = (byte)stream.ReadByte(); bytesReadTotal++;
+            byte headerType = (byte)((type & 0xc0) >> 6);
+            byte channel = (byte)(type & 0x3f);
+            uint nSize = packetSize[headerType];
+
+            Logger.Log(string.Format("reading RTMP packet chunk on channel {0}, headersz {1}", channel, nSize));
+
+            if (nSize < RTMP_LARGE_HEADER_SIZE)
+                packet = m_vecChannelsIn[channel]; // using values from the last message of this channel
+            else
+                packet = new RTMPPacket() { m_headerType = headerType, m_nChannel = channel }; // new packet
+
+            nSize--;
+
+            byte[] header = new byte[RTMP_LARGE_HEADER_SIZE];
+            while (tcpClient.Available < nSize) System.Threading.Thread.Sleep(10); // wait until data is available
+            if (nSize > 0 && stream.Read(header, 0, (int)nSize) != nSize)
             {
-                while (tcpClient.Available < 1) System.Threading.Thread.Sleep(10);
+                Logger.Log(string.Format("failed to read RTMP packet header. type: {0}", type));
+                return false;
+            }
+            bytesReadTotal += (int)nSize;
 
-                byte type = (byte)stream.ReadByte(); bytesReadTotal++;
-                /*{
-                  CLog::Log(LOGERROR, "%s, failed to read RTMP packet header", __FUNCTION__);
-                  return false;
-                }*/
+            if (nSize >= 3)
+                packet.m_nInfoField1 = ReadInt24(header, 0);
 
-                packet.m_headerType = (byte)((type & 0xc0) >> 6);
-                packet.m_nChannel = (byte)(type & 0x3f);
+            if (nSize >= 6)
+            {
+                packet.m_nBodySize = (uint)ReadInt24(header, 3);
+                Logger.Log(string.Format("new packet body to read {0}", packet.m_nBodySize));
+                packet.m_nBytesRead = 0;
+                packet.FreePacketHeader(); // new packet body
+            }
 
-                uint nSize = packetSize[packet.m_headerType];
+            if (nSize > 6)
+                packet.m_packetType = header[6];
 
-                //  CLog::Log(LOGDEBUG, "%s, reading RTMP packet chunk on channel %x, headersz %i", __FUNCTION__, packet.m_nChannel, nSize);
+            if (nSize == 11)
+                packet.m_nInfoField2 = ReadInt32LE(header, 7);
 
-                if (nSize < RTMP_LARGE_HEADER_SIZE) // using values from the last message of this channel
-                    packet = m_vecChannelsIn[packet.m_nChannel];
+            if (packet.m_nBodySize >= 0 && packet.m_body == null && !packet.AllocPacket((int)packet.m_nBodySize))
+            {
+                //CLog::Log(LOGDEBUG,"%s, failed to allocate packet", __FUNCTION__);
+                return false;
+            }
 
-                nSize--;
+            uint nToRead = packet.m_nBodySize - packet.m_nBytesRead;
+            uint nChunk = (uint)m_chunkSize;
+            if (nToRead < nChunk)
+                nChunk = nToRead;
 
-                byte[] header = new byte[RTMP_LARGE_HEADER_SIZE];
-                if (nSize > 0 && stream.Read(header, 0, (int)nSize) != nSize)
-                {
-                    //CLog::Log(LOGERROR, "%s, failed to read RTMP packet header. type: %x", __FUNCTION__, (unsigned int)type);
-                    return false;
-                }
-                bytesReadTotal += (int)nSize;
+            while (tcpClient.Available < nChunk) System.Threading.Thread.Sleep(10); // wait until data is available
 
-                if (nSize >= 3)
-                    packet.m_nInfoField1 = ReadInt24(header, 0);
+            int read = stream.Read(packet.m_body, (int)packet.m_nBytesRead, (int)nChunk);
+            if (read != nChunk)
+            {
+                //CLog::Log(LOGERROR, "%s, failed to read RTMP packet body. len: %lu", __FUNCTION__, packet.m_nBodySize);
+                packet.m_body = null; // we dont want it deleted since its pointed to from the stored packets (m_vecChannelsIn)
+                return false;
+            }
+            bytesReadTotal += (int)read;
 
-                if (nSize >= 6)
-                {
-                    packet.m_nBodySize = (uint)ReadInt24(header, 3);
-                    packet.m_nBytesRead = 0;
-                    packet.FreePacketHeader(); // new packet body
-                }
+            packet.m_nBytesRead += nChunk;
 
-                if (nSize > 6)
-                    packet.m_packetType = header[6];
+            // keep the packet as ref for other packets on this channel
+            m_vecChannelsIn[packet.m_nChannel] = packet;
+            
+            if (bytesReadTotal > lastSentBytesRead + (600 * 1024)) SendBytesReceived(); // report every 600K
 
-                if (nSize == 11)
-                    packet.m_nInfoField2 = ReadInt32LE(header, 7);
+            if (packet.IsReady())
+            {
+                Logger.Log(string.Format("packet with {0} bytes read", packet.m_nBytesRead));
+                packet.m_nTimeStamp = (uint)packet.m_nInfoField1;
 
-                if (packet.m_nBodySize >= 0 && packet.m_body == null && !packet.AllocPacket((int)packet.m_nBodySize))
-                {
-                    //CLog::Log(LOGDEBUG,"%s, failed to allocate packet", __FUNCTION__);
-                    return false;
-                }
+                // make packet's timestamp absolute 
+                if (!packet.m_hasAbsTimestamp) packet.m_nTimeStamp += m_channelTimestamp[packet.m_nChannel]; // timestamps seem to be always relative!! 
+                m_channelTimestamp[packet.m_nChannel] = packet.m_nTimeStamp;
 
-                uint nToRead = packet.m_nBodySize - packet.m_nBytesRead;
-                uint nChunk = (uint)m_chunkSize;
-                if (nToRead < nChunk)
-                    nChunk = nToRead;
+                // reset the data from the stored packet. we keep the header since we may use it later if a new packet for this channel
+                // arrives and requests to re-use some info (small packet header)
+                //m_vecChannelsIn[packet.m_nChannel].m_body = null;
+                //m_vecChannelsIn[packet.m_nChannel].m_nBytesRead = 0;
+                m_vecChannelsIn[packet.m_nChannel].m_hasAbsTimestamp = false; // can only be false if we reuse header
+            }
 
-                while (tcpClient.Available < nChunk) System.Threading.Thread.Sleep(10);
-
-                int read = stream.Read(packet.m_body, (int)packet.m_nBytesRead, (int)nChunk);
-                if (read != nChunk)
-                {
-                    //CLog::Log(LOGERROR, "%s, failed to read RTMP packet body. len: %lu", __FUNCTION__, packet.m_nBodySize);
-                    packet.m_body = null; // we dont want it deleted since its pointed to from the stored packets (m_vecChannelsIn)
-                    return false;
-                }
-                bytesReadTotal += (int)read;
-
-                packet.m_nBytesRead += nChunk;
-
-                // keep the packet as ref for other packets on this channel
-                m_vecChannelsIn[packet.m_nChannel] = packet;
-
-                /*
-                if (packet.IsReady())
-                {
-                    // reset the data from the stored packet. we keep the header since we may use it later if a new packet for this channel
-                    // arrives and requests to re-use some info (small packet header)
-                    //m_vecChannelsIn[packet.m_nChannel].m_body = null;
-                    //m_vecChannelsIn[packet.m_nChannel].m_nBytesRead = 0;
-                }
-                else
-                    packet.m_body = null; // so it wont be erased on "free"
-                */
-
-                if (bytesReadTotal > lastSentBytesRead + (600 * 1024)) SendBytesReceived(); // report every 600K
-
-            } while (!packet.IsReady());
             return true;
         }
 
@@ -383,11 +384,13 @@ namespace RTMP_LIB
                     return false;
                 }
             }
-
-            //CLog::Log(LOGDEBUG,"%s, invoking play '%s'", __FUNCTION__, strPlay.c_str() );
+            
+            Logger.Log(string.Format("invoking play '{0}'", strPlay));
 
             EncodeString(enc, strPlay);
-            //EncodeNumber(enc, 0.0); - not needed from looking at the streams
+            EncodeNumber(enc, 0.0);
+            EncodeNumber(enc, -1.0);
+            EncodeBoolean(enc, true);
 
             packet.m_body = enc.ToArray();
             packet.m_nBodySize = (uint)enc.Count;

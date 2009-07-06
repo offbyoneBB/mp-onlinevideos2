@@ -50,7 +50,7 @@ namespace OnlineVideos.Sites
                     if (!String.IsNullOrEmpty(rssItem.enclosure) && isPossibleVideo(rssItem.enclosure))
                     {
                         video.VideoUrl = rssItem.enclosure;
-                        video.Length = rssItem.enclosureDuration;
+                        video.Length = rssItem.enclosureDuration != null ? rssItem.enclosureDuration : rssItem.pubDate; // if no duration at least display the Publication date
                     }
                     else if (rssItem.contentList.Count > 0)
                     {

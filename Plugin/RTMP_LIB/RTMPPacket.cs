@@ -15,9 +15,10 @@ namespace RTMP_LIB
         public byte m_nChannel;
         public int m_nInfoField1; // first 3 bytes
         public int m_nInfoField2; // last  4 bytes in a long header        
-        public uint m_nBytesRead;
-        public uint m_nInternalTimestamp;
+        public bool m_hasAbsTimestamp; // timestamp absolute or relative?
+        public uint m_nTimeStamp; // absolute timestamp 
         public uint m_nBodySize;
+        public uint m_nBytesRead;
         public byte[] m_body;
 
         public bool IsReady() { return m_nBytesRead == m_nBodySize; }
@@ -41,7 +42,7 @@ namespace RTMP_LIB
             m_nInfoField2 = 0;
             m_nBodySize = 0;
             m_nBytesRead = 0;
-            m_nInternalTimestamp = 0;
+            m_hasAbsTimestamp = false;            
             m_body = null;
         }
 

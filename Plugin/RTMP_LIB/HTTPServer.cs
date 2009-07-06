@@ -56,7 +56,7 @@ namespace RTMP_LIB
                 {
                     paramsHash.Add(System.Web.HttpUtility.HtmlDecode(match.Groups[1].Value), System.Web.HttpUtility.HtmlDecode(match.Groups[2].Value));
                     match = match.NextMatch();
-                }                
+                }
 
                 RTMP rtmp = new RTMP();
                 bool connected = rtmp.Connect(paramsHash["rtmpurl"]);
@@ -66,9 +66,9 @@ namespace RTMP_LIB
                     ctx.Response.ContentType = "application/octet-stream";
                     ctx.Response.AppendHeader("Content-Disposition", "attachment;Filename=stream.flv");
                     ctx.Response.ContentLength64 = int.MaxValue; // since we don't know the length for sure
-                    
+
                     FLVStream.WriteFLV(rtmp, ctx.Response.OutputStream);
-                    
+
                     ctx.Response.OutputStream.Flush();
                     ctx.Response.OutputStream.Close();
                     ctx.Response.Close();
@@ -80,8 +80,9 @@ namespace RTMP_LIB
             }
             catch (Exception ex)
             {
+                ctx.Response.StatusCode = 500;
                 Logger.Log(ex.Message);
-            }
+            }            
         }
     }
 }

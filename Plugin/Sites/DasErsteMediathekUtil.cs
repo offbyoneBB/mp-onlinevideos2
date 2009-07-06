@@ -121,8 +121,8 @@ namespace OnlineVideos.Sites
             return (index + endTag.Length);
         }
 
-        Regex videoSearchRegExp_Low = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['1'\]\s*=\s*""(?<videoUrl>(http|rtmp)://[^""]+)""");
-        Regex videoSearchRegExp_High = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['2'\]\s*=\s*""(?<videoUrl>(http|rtmp)://[^""]+)""");
+        Regex videoSearchRegExp_Low = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['1'\]\s*=\s*""(?<videoUrl>(http|rtmp|mms)://[^""]+)""");
+        Regex videoSearchRegExp_High = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['2'\]\s*=\s*""(?<videoUrl>(http|rtmp|mms)://[^""]+)""");
         Regex cachedRegExp;
         public override String getUrl(VideoInfo video, SiteSettings foSite)
         {
@@ -141,7 +141,7 @@ namespace OnlineVideos.Sites
             while (match.Success)
             {
                 resultUrl = match.Groups["videoUrl"].Value;
-                if (match.Groups["type"].Value == "flashmedia") break; // prefer flash over wmv
+                if (match.Groups["type"].Value == "flashmedia" && !resultUrl.StartsWith("rtmp")) break; // prefer flash over wmv if not rtmp
                 match = match.NextMatch();
             }
             if (resultUrl.StartsWith("rtmp"))

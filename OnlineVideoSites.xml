@@ -234,6 +234,32 @@
         <Category xsi:type="RssLink" name="Inspired by Nature">http://www.ted.com/themes/rss/id/14</Category>
         <Category xsi:type="RssLink" name="A Greener Future?">http://www.ted.com/themes/rss/id/15</Category>
         <Category xsi:type="RssLink" name="Art Unusual">http://www.ted.com/themes/rss/id/17</Category>
+        <Category xsi:type="RssLink" name="To Boldly Go ...">http://www.ted.com/themes/rss/id/18</Category>
+        <Category xsi:type="RssLink" name="The Rise of Collaboration">http://www.ted.com/themes/rss/id/19</Category>
+        <Category xsi:type="RssLink" name="Rethinking Poverty">http://www.ted.com/themes/rss/id/20</Category>
+        <Category xsi:type="RssLink" name="Is There a God?">http://www.ted.com/themes/rss/id/21</Category>
+        <Category xsi:type="RssLink" name="Master Storytellers">http://www.ted.com/themes/rss/id/22</Category>
+        <Category xsi:type="RssLink" name="Bold Predictions, Stern Warnings">http://www.ted.com/themes/rss/id/23</Category>
+        <Category xsi:type="RssLink" name="Design Like You Give a Damn">http://www.ted.com/themes/rss/id/25</Category>
+        <Category xsi:type="RssLink" name="Not Business as Usual">http://www.ted.com/themes/rss/id/28</Category>
+        <Category xsi:type="RssLink" name="Peering into Space">http://www.ted.com/themes/rss/id/29</Category>
+        <Category xsi:type="RssLink" name="Technology, History and Destiny">http://www.ted.com/themes/rss/id/30</Category>
+        <Category xsi:type="RssLink" name="TED Under 30">http://www.ted.com/themes/rss/id/31</Category>
+        <Category xsi:type="RssLink" name="Unconventional Explanations">http://www.ted.com/themes/rss/id/32</Category>
+        <Category xsi:type="RssLink" name="What Makes Us Happy?">http://www.ted.com/themes/rss/id/33</Category>
+        <Category xsi:type="RssLink" name="Whipsmart Comedy">http://www.ted.com/themes/rss/id/34</Category>
+        <Category xsi:type="RssLink" name="Live Music">http://www.ted.com/themes/rss/id/36</Category>
+        <Category xsi:type="RssLink" name="Might You Live a Great Deal Longer?">http://www.ted.com/themes/rss/id/44</Category>
+        <Category xsi:type="RssLink" name="Africa: The Next Chapter">http://www.ted.com/themes/rss/id/45</Category>
+        <Category xsi:type="RssLink" name="New on TED.com">http://www.ted.com/themes/rss/id/46</Category>
+        <Category xsi:type="RssLink" name="Medicine Without Borders">http://www.ted.com/themes/rss/id/47</Category>
+        <Category xsi:type="RssLink" name="TED in 3 Minutes">http://www.ted.com/themes/rss/id/48</Category>
+        <Category xsi:type="RssLink" name="Words About Words">http://www.ted.com/themes/rss/id/49</Category>
+        <Category xsi:type="RssLink" name="How We Learn">http://www.ted.com/themes/rss/id/51</Category>
+        <Category xsi:type="RssLink" name="Top 10 TEDTalks">http://www.ted.com/themes/rss/id/54</Category>
+        <Category xsi:type="RssLink" name="Media With Meaning">http://www.ted.com/themes/rss/id/55</Category>
+        <Category xsi:type="RssLink" name="Hidden Gems">http://www.ted.com/themes/rss/id/56</Category>
+        <Category xsi:type="RssLink" name="Speaking at TED2009">http://www.ted.com/themes/rss/id/58</Category>                  
       </Categories>
     </Site>
     <Site name="NASA" util="GenericSite" agecheck="false" enabled="true">
