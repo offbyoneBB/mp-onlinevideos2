@@ -14,11 +14,7 @@ namespace OnlineVideos.Player
         {
             Uri uri = new Uri(filename);
 
-            if (uri.AbsolutePath.EndsWith(".swf") && uri.AbsolutePath.Contains("yahoo"))
-            {
-                return new YahooMusicVideosPlayer();
-            }
-            else if (uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asx"))
+            if (uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asx"))
             {
                 return new AudioPlayerWMP9();
             }

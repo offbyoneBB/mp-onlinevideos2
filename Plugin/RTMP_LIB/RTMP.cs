@@ -8,6 +8,37 @@ namespace RTMP_LIB
 {
     public class RTMP
     {
+        #region  Constants
+
+        const int SHA256_DIGEST_LENGTH = 32;
+
+        const short RTMP_PROTOCOL_UNDEFINED = -1;
+        const short RTMP_PROTOCOL_RTMP = 0;
+        const short RTMP_PROTOCOL_RTMPT = 1;
+        const short RTMP_PROTOCOL_RTMPS = 2;
+        const short RTMP_PROTOCOL_RTMPE = 3;
+        const short RTMP_PROTOCOL_RTMPTE = 4;
+        const short RTMP_PROTOCOL_RTMFP = 5;
+
+        static readonly byte[] GenuineFPKey = new byte[62] 
+        {
+            0x47,0x65,0x6E,0x75,0x69,0x6E,0x65,0x20,0x41,0x64,0x6F,0x62,0x65,0x20,0x46,0x6C,
+            0x61,0x73,0x68,0x20,0x50,0x6C,0x61,0x79,0x65,0x72,0x20,0x30,0x30,0x31,0xF0,0xEE,
+            0xC2,0x4A,0x80,0x68,0xBE,0xE8,0x2E,0x00,0xD0,0xD1,0x02,0x9E,0x7E,0x57,0x6E,0xEC,
+            0x5D,0x2D,0x29,0x80,0x6F,0xAB,0x93,0xB8,0xE6,0x36,0xCF,0xEB,0x31,0xAE
+        };
+
+        static readonly byte[] GenuineFMSKey = new byte[68]  
+        {
+            0x47, 0x65, 0x6e, 0x75, 0x69, 0x6e, 0x65, 0x20, 0x41, 0x64, 0x6f, 0x62, 0x65, 0x20, 0x46, 0x6c,
+            0x61, 0x73, 0x68, 0x20, 0x4d, 0x65, 0x64, 0x69, 0x61, 0x20, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72,
+            0x20, 0x30, 0x30, 0x31, // Genuine Adobe Flash Media Server 001 
+
+            0xf0, 0xee, 0xc2, 0x4a, 0x80, 0x68, 0xbe, 0xe8, 0x2e, 0x00, 0xd0, 0xd1,
+            0x02, 0x9e, 0x7e, 0x57, 0x6e, 0xec, 0x5d, 0x2d, 0x29, 0x80, 0x6f, 0xab, 0x93, 0xb8, 0xe6, 0x36,
+            0xcf, 0xeb, 0x31, 0xae 
+        };
+
         const int RTMP_PACKET_SIZE_LARGE   = 0;
         const int RTMP_PACKET_SIZE_MEDIUM  = 1;
         const int RTMP_PACKET_SIZE_SMALL   = 2;
@@ -16,10 +47,12 @@ namespace RTMP_LIB
         const int RTMP_SIG_SIZE = 1536;
         static readonly uint[] packetSize = { 12, 8, 4, 1 };
 
-        string m_strLink = "";
-        string m_strPlayer = "";
-        string m_strPageUrl = "";
-        string m_strPlayPath = "";
+        #endregion
+
+        TcpClient tcpClient = null;
+        NetworkStream networkStream = null;
+
+        Link Link = new Link();        
 
         int bytesReadTotal = 0;
         int lastSentBytesRead = 0;
@@ -35,35 +68,23 @@ namespace RTMP_LIB
         uint[] m_channelTimestamp = new uint[64]; // abs timestamp of last packet
         Stack<string> m_methodCalls = new Stack<string>(); //remote method calls queue
 
-        TcpClient tcpClient = null;
-        NetworkStream stream = null;
-
-        public bool Connect(string rtmpUrl, string tcUrl, string swfUrl, string pageUrl, string app, string playPath)
+        public bool Connect(Link link)
         {
             // close any previous connection
             Close();
 
-            // set local variables
-            m_strLink = rtmpUrl;
-            m_strPlayer = swfUrl;
-            m_strPageUrl = pageUrl;
-            m_strPlayPath = playPath;
-
+            Link = link;
+            
             // connect            
-            tcpClient = new TcpClient(new Uri(m_strLink).Host, 1935);
-            stream = tcpClient.GetStream();
+            tcpClient = new TcpClient(Link.hostname, Link.port);
+            networkStream = tcpClient.GetStream();
 
-            if (!HandShake()) return false;
-            if (!SendConnectPacket(app, tcUrl)) return false;
+            if (!HandShake(false)) return false;
+            if (!SendConnectPacket()) return false;
 
             return true;
         }
-
-        public bool Connect(string rtmpUrl)
-        {
-            return Connect(rtmpUrl, "", "", "", "", "");
-        }
-
+        
         public bool IsConnected()
         {
             return tcpClient != null && tcpClient.Connected;
@@ -140,54 +161,13 @@ namespace RTMP_LIB
             if (bHasMediaPacket) m_bPlaying = true;
             return bHasMediaPacket;
         }
-
-        bool HandShake()
-        {
-            byte[] clientsig = new byte[RTMP_SIG_SIZE + 1];
-            byte[] serversig = new byte[RTMP_SIG_SIZE];
-            clientsig[0] = 0x3;
-            int uptime = System.Environment.TickCount;
-            byte[] uptime_bytes = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(uptime));
-            Array.Copy(uptime_bytes, 0, clientsig, 1, uptime_bytes.Length);
-            for (int i = 5; i <= 8; i++) clientsig[i] = 0;
-            int magic = uptime/* % 256*/;
-            int bytes = 9;
-            while (bytes < RTMP_SIG_SIZE)
-            {
-                magic = (1211121 * magic + 1) % 256;
-                clientsig[bytes] = (byte)magic;
-                clientsig[bytes + 1] = 0;
-                bytes += 2;
-            }
-            stream.Write(clientsig, 0, RTMP_SIG_SIZE + 1);
-            int dummy = stream.ReadByte();// 0x03
-            if (dummy != 0x03)
-                return false;
-            while (tcpClient.Available < RTMP_SIG_SIZE) System.Threading.Thread.Sleep(10);            
-
-            if (stream.Read(serversig, 0, RTMP_SIG_SIZE) != RTMP_SIG_SIZE)
-                return false;
-            byte[] resp = new byte[RTMP_SIG_SIZE];
-
-            while (tcpClient.Available < RTMP_SIG_SIZE) System.Threading.Thread.Sleep(10);            
-
-            if (stream.Read(resp, 0, RTMP_SIG_SIZE) != RTMP_SIG_SIZE)
-                return false;
-            for (int i = 0; i < RTMP_SIG_SIZE; i++) 
-                if (resp[i] != clientsig[i + 1])
-                    return false; //client signature does not match!
-            stream.Write(serversig, 0, RTMP_SIG_SIZE); // send server signature back to finish handshake
-            return true;
-        }
-
+        
         bool ReadPacket(out RTMPPacket packet)
         {
-            while (tcpClient.Available < 1) System.Threading.Thread.Sleep(10); // wait until data is available
-
             // Chunk Basic Header (1, 2 or 3 bytes)
             // the two most significant bits hold the chunk type
             // value in the 6 least significant bits gives the chunk stream id (0,1,2 are reserved): 0 -> 3 byte header | 1 -> 2 byte header | 2 -> low level protocol message | 3-63 -> stream id
-            byte type = (byte)stream.ReadByte(); bytesReadTotal++;
+            byte type = ReadByte(); bytesReadTotal++;
             byte headerType = (byte)((type & 0xc0) >> 6);
             byte channel = (byte)(type & 0x3f);
             uint nSize = packetSize[headerType];
@@ -201,9 +181,8 @@ namespace RTMP_LIB
 
             nSize--;
 
-            byte[] header = new byte[RTMP_LARGE_HEADER_SIZE];
-            while (tcpClient.Available < nSize) System.Threading.Thread.Sleep(10); // wait until data is available
-            if (nSize > 0 && stream.Read(header, 0, (int)nSize) != nSize)
+            byte[] header = new byte[RTMP_LARGE_HEADER_SIZE];            
+            if (nSize > 0 && ReadN(header, 0, (int)nSize) != nSize)
             {
                 Logger.Log(string.Format("failed to read RTMP packet header. type: {0}", type));
                 return false;
@@ -238,9 +217,7 @@ namespace RTMP_LIB
             if (nToRead < nChunk)
                 nChunk = nToRead;
 
-            while (tcpClient.Available < nChunk) System.Threading.Thread.Sleep(10); // wait until data is available
-
-            int read = stream.Read(packet.m_body, (int)packet.m_nBytesRead, (int)nChunk);
+            int read = ReadN(packet.m_body, (int)packet.m_nBytesRead, (int)nChunk);
             if (read != nChunk)
             {
                 //CLog::Log(LOGERROR, "%s, failed to read RTMP packet body. len: %lu", __FUNCTION__, packet.m_nBodySize);
@@ -277,10 +254,10 @@ namespace RTMP_LIB
 
         void Close()
         {
-            if (stream != null) stream.Close(1000);
+            if (networkStream != null) networkStream.Close(1000);
             if (tcpClient != null && tcpClient.Connected) tcpClient.Close();
 
-            stream = null;
+            networkStream = null;
             tcpClient = null;
 
             m_chunkSize = 128;
@@ -299,23 +276,8 @@ namespace RTMP_LIB
 
         #region Send Client Packets
 
-        bool SendConnectPacket(string app, string tcUrl)
-        {
-            Uri url = new Uri(m_strLink);
-            if (string.IsNullOrEmpty(app)) app = url.AbsolutePath.TrimStart(new char[] { '/' });//.GetFileName();
-
-            int slistPos = app.IndexOf("slist=");
-            if (slistPos == -1)
-            {
-                // no slist parameter. send the path as the app
-                // if URL path contains a slash, use the part up to that as the app
-                // as we'll send the part after the slash as the thing to play
-                int pos_slash = app.LastIndexOf("/");
-                if (pos_slash != -1) app = app.Substring(0, pos_slash + 1);
-            }
-
-            if (string.IsNullOrEmpty(tcUrl)) tcUrl = url.GetLeftPart(UriPartial.Authority) + app;// .GetURLWithoutFilename(tcURL);
-
+        bool SendConnectPacket()
+        {            
             RTMPPacket packet = new RTMPPacket();
             packet.m_nChannel = 0x03;   // control channel (invoke)
             packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
@@ -325,17 +287,18 @@ namespace RTMP_LIB
             List<byte> enc = new List<byte>();
             EncodeString(enc, "connect");
             EncodeNumber(enc, 1.0);
-            enc.Add(0x03); //Object Datatype            
-            EncodeString(enc, "app", app);
-            EncodeString(enc, "flashVer", "WIN 10,0,22,87");
-            EncodeString(enc, "swfUrl", m_strPlayer);
-            EncodeString(enc, "tcUrl", tcUrl);
+            enc.Add(0x03); //Object Datatype                
+            EncodeString(enc, "app", Link.app);
+            EncodeNumber(enc, "objectEncoding", 0.0);
             EncodeBoolean(enc, "fpad", false);
-            EncodeNumber(enc, "capabilities", 15.0);
-            EncodeNumber(enc, "audioCodecs", 3191.0);
-            EncodeNumber(enc, "videoCodecs", 252.0);
+            EncodeString(enc, "flashVer", "WIN 9,0,115,0");//EncodeString(enc, "flashVer", "WIN 10,0,22,87");            
+            if (!string.IsNullOrEmpty(Link.swfUrl)) EncodeString(enc, "swfUrl", Link.swfUrl);
+            EncodeString(enc, "tcUrl", Link.tcUrl);                        
+            EncodeNumber(enc, "audioCodecs", 1639.0);//EncodeNumber(enc, "audioCodecs", 3191.0);
             EncodeNumber(enc, "videoFunction", 1.0);
-            EncodeString(enc, "pageUrl", m_strPageUrl);
+            EncodeNumber(enc, "capabilities", 15.0);
+            EncodeNumber(enc, "videoCodecs", 252.0);            
+            if (!string.IsNullOrEmpty(Link.pageUrl)) EncodeString(enc, "pageUrl", Link.pageUrl);
             enc.Add(0); enc.Add(0); enc.Add(0x09); // end of object - 0x00 0x00 0x09
 
             Array.Copy(enc.ToArray(), packet.m_body, enc.Count);
@@ -356,45 +319,18 @@ namespace RTMP_LIB
             List<byte> enc = new List<byte>();
 
             EncodeString(enc, "play");
-            EncodeNumber(enc, 0.0);
+            EncodeNumber(enc, 3.0);
             enc.Add(0x05); // NULL  
 
-            // use m_strPlayPath
-            string strPlay = m_strPlayPath;
-            if (strPlay == string.Empty)
-            {
-                Uri url = new Uri(m_strLink);
-                // or use slist parameter, if there is one
-                int nPos = url.AbsolutePath.IndexOf("slist=");
-                if (nPos > 0)
-                    strPlay = url.AbsolutePath.Substring(nPos, 6);
+            Logger.Log(string.Format("invoking play '{0}'", Link.playpath));
 
-                if (strPlay == string.Empty)
-                {
-                    // or use last piece of URL, if there's more than one level
-                    int pos_slash = url.AbsolutePath.LastIndexOf("/");
-                    if (pos_slash != -1)
-                        strPlay = url.AbsolutePath.Substring(pos_slash + 1);
-                    if (strPlay.EndsWith(".flv")) strPlay = strPlay.Substring(0, strPlay.Length - 4);
-                }
-
-                if (strPlay == string.Empty)
-                {
-                    //CLog::Log(LOGERROR,"%s, no name to play!", __FUNCTION__);
-                    return false;
-                }
-            }
-            
-            Logger.Log(string.Format("invoking play '{0}'", strPlay));
-
-            EncodeString(enc, strPlay);
+            EncodeString(enc, Link.playpath);
             EncodeNumber(enc, 0.0);
-            EncodeNumber(enc, -1.0);
-            EncodeBoolean(enc, true);
+            EncodeNumber(enc, -2.0);
+            //EncodeBoolean(enc, true);
 
             packet.m_body = enc.ToArray();
             packet.m_nBodySize = (uint)enc.Count;
-
 
             return SendRTMP(packet);
         }
@@ -536,18 +472,18 @@ namespace RTMP_LIB
             if (nSize > 8)
                 EncodeInt32LE(header, packet.m_nInfoField2);
 
-            stream.Write(header.ToArray(), 0, (int)nSize);
+            WriteN(header.ToArray(), 0, (int)nSize);
 
             nSize = packet.m_nBodySize;
             byte[] buffer = packet.m_body;
             uint bufferOffset = 0;
             while (nSize > 0)
             {
-                uint nChunkSize = packet.m_packetType == 0x14 ? (uint)m_chunkSize : packet.m_nBodySize;
+                uint nChunkSize = packet.m_packetType == 0x14 ? (uint)m_chunkSize : packet.m_nBodySize;                
                 if (nSize < m_chunkSize)
                     nChunkSize = nSize;
 
-                stream.Write(buffer, (int)bufferOffset, (int)nChunkSize);
+                WriteN(buffer, (int)bufferOffset, (int)nChunkSize);
 
                 nSize -= nChunkSize;
                 bufferOffset += nChunkSize;
@@ -555,7 +491,7 @@ namespace RTMP_LIB
                 if (nSize > 0)
                 {
                     byte sep = (byte)(0xc0 | packet.m_nChannel);
-                    stream.WriteByte(sep);
+                    WriteByte(sep);
                 }
             }
 
@@ -840,6 +776,468 @@ namespace RTMP_LIB
             return BitConverter.ToDouble(bytes, 0);
         }
 
+        #endregion        
+
+        # region Handshake
+
+        bool HandShake(bool FP9HandShake)
+        {
+            bool encrypted = Link.protocol == RTMP_PROTOCOL_RTMPE || Link.protocol == RTMP_PROTOCOL_RTMPTE;            
+
+            if (encrypted && !FP9HandShake)
+            {
+                Logger.Log("RTMPE requires FP9 handshake!");
+                return false;
+            }
+
+            byte[] clientsig = new byte[RTMP_SIG_SIZE + 1];
+            byte[] serversig = new byte[RTMP_SIG_SIZE];
+
+            Link.rc4keyIn = Link.rc4keyOut = null;
+
+            if (encrypted) clientsig[0] = 0x06; // 0x08 is RTMPE as well
+            else clientsig[0] = 0x03;
+
+            int uptime = System.Environment.TickCount;
+            byte[] uptime_bytes = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(uptime));
+            Array.Copy(uptime_bytes, 0, clientsig, 1, uptime_bytes.Length);
+
+            if (FP9HandShake)
+            {
+                //* TODO RTMPE ;), its just RC4 with diffie-hellman
+                // set version to at least 9.0.115.0
+                clientsig[5] = 9;
+                clientsig[6] = 0;
+                clientsig[7] = 124;
+                clientsig[8] = 2;
+                
+                Logger.Log(string.Format("Client type: {0}", clientsig[0]));
+            }
+            else
+            {
+                clientsig[5] = 0; clientsig[6] = 0; clientsig[7] = 0; clientsig[8] = 0;
+            }
+
+            // generate random data
+            Random rand = new Random();
+            for (int i = 9; i <= RTMP_SIG_SIZE; i++) clientsig[i] = (byte)rand.Next(0, 256);
+
+            int dhposClient = 0;
+            byte[] keyIn = null;
+            byte[] keyOut = null;
+
+            if (encrypted)
+            {
+                // generate Diffie-Hellmann parameters                
+                Link.dh = new Org.Mentalis.Security.Cryptography.DiffieHellmanManaged(1024, 0, Org.Mentalis.Security.Cryptography.DHKeyGeneration.Static);//DHInit(1024);
+                
+                dhposClient = (int)GetDHOffset1(clientsig, 1, RTMP_SIG_SIZE);
+                Logger.Log(string.Format("DH pubkey position: {0}", dhposClient));
+
+                Array.Copy(Link.dh.CreateKeyExchange(), 0, clientsig, 1 + dhposClient, 128);
+            }
+
+            // set handshake digest
+            if (FP9HandShake)
+            {
+                int digestPosClient = (int)GetDigestOffset1(clientsig,1, RTMP_SIG_SIZE); // maybe reuse this value in verification
+                Logger.Log(string.Format("Client digest offset: {0}", digestPosClient));
+
+                CalculateDigest(digestPosClient, clientsig, 1, GenuineFPKey, 30, clientsig, 1 + digestPosClient);
+
+                Logger.Log("Initial client digest: ");
+                string digestAsHexString = "";
+                for(int i = 1 + digestPosClient; i<1 + digestPosClient+SHA256_DIGEST_LENGTH;i++) digestAsHexString += clientsig[i].ToString("X2") + " ";
+                Logger.Log(digestAsHexString);
+            }
+
+            WriteN(clientsig, 0, RTMP_SIG_SIZE + 1);
+
+            byte type = ReadByte(); // 0x03 or 0x06
+
+            Logger.Log(string.Format("Type Answer   : {0}", type.ToString("X2")));
+
+            if (type != clientsig[0]) Logger.Log(string.Format("Type mismatch: client sent {0}, server answered {0}", clientsig[0], type));
+
+            if (ReadN(serversig, 0, RTMP_SIG_SIZE) != RTMP_SIG_SIZE) return false;
+
+            // decode server response
+            uint suptime = (uint)ReadInt32(serversig,0);            
+
+            Logger.Log(string.Format("Server Uptime : {0}",suptime));
+            Logger.Log(string.Format("FMS Version   : {0}.{1}.{2}.{3}", serversig[4], serversig[5], serversig[6], serversig[7]));
+
+            // we have to use this signature now to find the correct algorithms for getting the digest and DH positions
+            int digestPosServer = (int)GetDigestOffset2(serversig,0, RTMP_SIG_SIZE);
+            int dhposServer = (int)GetDHOffset2(serversig,0, RTMP_SIG_SIZE);
+
+            if (!VerifyDigest(digestPosServer, serversig, GenuineFMSKey, 36))
+            {
+                Logger.Log("Trying different position for server digest!");
+                digestPosServer = (int)GetDigestOffset1(serversig, 0, RTMP_SIG_SIZE);
+                dhposServer = (int)GetDHOffset1(serversig,0, RTMP_SIG_SIZE);
+
+                if (!VerifyDigest(digestPosServer, serversig, GenuineFMSKey, 36))
+                {
+                    Logger.Log("Couldn't verify the server digest");//,  continuing anyway, will probably fail!\n");
+                    return false;
+                }
+            }
+
+            Logger.Log(string.Format("Server DH public key offset: {0}",dhposServer));
+
+            // generate SWFVerification token (SHA256 HMAC hash of decompressed SWF, key are the last 32 bytes of the server handshake)            
+            if (Link.SWFHash != null)
+            {
+                byte[] swfVerify = new byte[2] { 0x01, 0x01 };
+                Array.Copy(swfVerify, Link.SWFVerificationResponse, 2);
+                List<byte> data = new List<byte>();
+                EncodeInt32(data, Link.SWFSize);
+                EncodeInt32(data, Link.SWFSize);
+                Array.Copy(data.ToArray(), 0, Link.SWFVerificationResponse, 2, data.Count);
+                byte[] key = new byte[SHA256_DIGEST_LENGTH];
+                Array.Copy(serversig, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, key, 0, SHA256_DIGEST_LENGTH);
+                HMACsha256(Link.SWFHash, 0, SHA256_DIGEST_LENGTH, key, SHA256_DIGEST_LENGTH, Link.SWFVerificationResponse, 10);
+            }
+
+            // do Diffie-Hellmann Key exchange for encrypted RTMP
+            if (encrypted)
+            {
+                // compute secret key	
+                byte[] secretKey = new byte[128];
+
+                byte[] serverKey = new byte[128];
+                Array.Copy(serversig, dhposServer, serverKey, 0, 128);
+                secretKey = Link.dh.DecryptKeyExchange(serverKey);
+
+                Logger.Log("Secret key: ");
+                string secretKeyAsHexString = "";
+                for (int i = 0; i < 128; i++) secretKeyAsHexString += secretKey[i].ToString("X2") + " ";
+                Logger.Log(secretKeyAsHexString);                
+                
+                InitRC4Encryption(
+                    secretKey,
+                    serversig, dhposServer,
+                    clientsig, 1 + dhposClient,
+                    out keyIn, out keyOut);                
+            }
+
+            // 2nd part of handshake
+            byte[] resp = new byte[RTMP_SIG_SIZE];            
+            if (ReadN(resp, 0, RTMP_SIG_SIZE) != RTMP_SIG_SIZE) return false;
+
+            if (FP9HandShake && resp[4] == 0 && resp[5] == 0 && resp[6] == 0 && resp[7] == 0)
+            {
+                Logger.Log("Wait, did the server just refuse signed authentication?");
+            }
+
+            if (!FP9HandShake)
+            {
+                for (int i = 0; i < RTMP_SIG_SIZE; i++)
+                    if (resp[i] != clientsig[i + 1])
+                    {
+                        Logger.Log("client signature does not match!");
+                        return false;
+                    }                
+                WriteN(serversig, 0, RTMP_SIG_SIZE); // send server signature back to finish handshake
+            }
+            else
+            {
+                // verify server response
+                int digestPosClient = (int)GetDigestOffset1(clientsig, 1, RTMP_SIG_SIZE);
+
+                byte[] signature = new byte[SHA256_DIGEST_LENGTH];
+                byte[] digest = new byte[SHA256_DIGEST_LENGTH];
+
+                Logger.Log(string.Format("Client signature digest position: {0}", digestPosClient));                
+                HMACsha256(clientsig, 1 + digestPosClient, SHA256_DIGEST_LENGTH, GenuineFMSKey, GenuineFMSKey.Length, digest, 0);
+                HMACsha256(resp,0, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digest, SHA256_DIGEST_LENGTH, signature, 0);
+
+                // show some information
+                Logger.Log("Digest key: ");
+                Logger.LogHex(digest, 0, SHA256_DIGEST_LENGTH);
+
+                Logger.Log("Signature calculated:");
+                Logger.LogHex(signature, 0, SHA256_DIGEST_LENGTH);
+
+                Logger.Log("Server sent signature:");
+                Logger.LogHex(resp, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, SHA256_DIGEST_LENGTH);
+
+                for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+                    if (signature[i] != resp[RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH + i])
+                    {
+                        Logger.Log("Server not genuine Adobe!");
+                        return false;
+                    }
+                Logger.Log("Genuine Adobe Flash Media Server");
+                
+                // generate signed answer
+                byte[] clientResp = new byte[RTMP_SIG_SIZE];
+                for (int i = 0; i < RTMP_SIG_SIZE; i++) clientResp[i] = (byte)(rand.Next(0, 256));
+
+                // calculate response now
+                byte[] signatureResp = new byte[SHA256_DIGEST_LENGTH];
+                byte[] digestResp = new byte[SHA256_DIGEST_LENGTH];
+
+                HMACsha256(serversig, digestPosServer, SHA256_DIGEST_LENGTH, GenuineFPKey, GenuineFPKey.Length, digestResp, 0);
+                HMACsha256(clientResp, 0, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digestResp, SHA256_DIGEST_LENGTH, signatureResp, 0);
+
+                // some info output
+                Logger.Log("Calculated digest key from secure key and server digest: ");
+                Logger.LogHex(digestResp, 0, SHA256_DIGEST_LENGTH);
+
+                Logger.Log("Client signature calculated:");
+                Logger.LogHex(signatureResp, 0, SHA256_DIGEST_LENGTH);
+
+                Array.Copy(signatureResp, 0, clientResp, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, SHA256_DIGEST_LENGTH);
+
+                WriteN(clientResp,0, RTMP_SIG_SIZE);
+            }
+
+            if (encrypted)
+            {
+                // set keys for encryption from now on
+                Link.rc4keyIn = keyIn;
+                Link.rc4keyOut = keyOut;
+            }
+
+            Logger.Log("Handshaking finished....");
+            return true;
+        }
+
+        uint GetDHOffset1(byte[] handshake, int bufferoffset, uint len)
+        {
+            uint offset = 0;
+            bufferoffset += 1532;
+
+            offset += handshake[bufferoffset]; bufferoffset++; 
+            offset += handshake[bufferoffset]; bufferoffset++;
+            offset += handshake[bufferoffset]; bufferoffset++;
+            offset += handshake[bufferoffset];// (*ptr);
+
+            uint res = (offset % 632) + 772;
+
+            if (res + 128 > 1531)
+            {
+                Logger.Log(string.Format("Couldn't calculate DH offset (got {0}), exiting!", res));
+                throw new Exception();
+            }
+
+            return res;
+        }
+
+        uint GetDigestOffset1(byte[] handshake, int bufferoffset, uint len)
+        {
+            uint offset = 0;
+            bufferoffset += 8;
+
+            offset += handshake[bufferoffset]; bufferoffset++;
+            offset += handshake[bufferoffset]; bufferoffset++;
+            offset += handshake[bufferoffset]; bufferoffset++;
+            offset += handshake[bufferoffset];
+
+            uint res = (offset % 728) + 12;
+
+            if (res + 32 > 771)
+            {
+                Logger.Log(string.Format("Couldn't calculate digest offset (got {0}), exiting!", res));
+                throw new Exception();
+            }
+
+            return res;
+        }
+
+        uint GetDHOffset2(byte[] handshake, int bufferoffset, uint len)
+        {
+            uint offset = 0;
+            bufferoffset += 768;
+            //assert(RTMP_SIG_SIZE <= len);
+
+            offset += handshake[bufferoffset]; bufferoffset++;
+            offset += handshake[bufferoffset]; bufferoffset++;
+            offset += handshake[bufferoffset]; bufferoffset++;
+            offset += handshake[bufferoffset];
+
+            uint res = (offset % 632) + 8;
+
+            if (res + 128 > 767)
+            {
+                Logger.Log(string.Format("Couldn't calculate correct DH offset (got {0}), exiting!", res));
+                throw new Exception();
+            }
+            return res;
+        }
+
+        uint GetDigestOffset2(byte[] handshake, int bufferoffset, uint len)
+        {
+            uint offset = 0;
+            bufferoffset += 772;
+            //assert(12 <= len);
+
+            offset += handshake[bufferoffset]; bufferoffset++;
+            offset += handshake[bufferoffset]; bufferoffset++;
+            offset += handshake[bufferoffset]; bufferoffset++;
+            offset += handshake[bufferoffset];// (*ptr);
+
+            uint res = (offset % 728) + 776;
+
+            if (res + 32 > 1535)
+            {
+                Logger.Log(string.Format("Couldn't calculate correct digest offset (got {0}), exiting", res));
+                throw new Exception();
+            }
+            return res;
+        }
+
+        void CalculateDigest(int digestPos, byte[] handshakeMessage, int handshakeOffset, byte[] key, int keyLen, byte[] digest, int digestOffset)
+        {
+	        const int messageLen = RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH;
+            byte[] message = new byte[messageLen];
+
+            Array.Copy(handshakeMessage, handshakeOffset, message, 0, digestPos);
+            Array.Copy(handshakeMessage, handshakeOffset + digestPos + SHA256_DIGEST_LENGTH, message, digestPos, messageLen - digestPos);
+
+            HMACsha256(message, 0, messageLen, key, keyLen, digest, digestOffset);
+        }
+
+        bool VerifyDigest(int digestPos, byte[] handshakeMessage, byte[] key, int keyLen)
+        {
+            byte[] calcDigest = new byte[SHA256_DIGEST_LENGTH];
+
+	        CalculateDigest(digestPos, handshakeMessage, 0, key, keyLen, calcDigest, 0);
+
+            for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+            {
+                if (handshakeMessage[digestPos + i] != calcDigest[i]) return false;
+            }
+            return true;            	        
+        }
+
+        void HMACsha256(byte[] message, int messageOffset, int messageLen, byte[] key, int keylen, byte[] digest, int digestOffset)
+        {
+            System.Security.Cryptography.HMAC hmac = System.Security.Cryptography.HMACSHA256.Create("HMACSHA256");
+            byte[] actualKey = new byte[keylen]; Array.Copy(key, actualKey, keylen);                       
+            hmac.Key = actualKey;
+
+            byte[] actualMessage = new byte[messageLen];
+            Array.Copy(message, messageOffset, actualMessage, 0, messageLen);
+            
+            byte[] calcDigest = hmac.ComputeHash(actualMessage);
+            Array.Copy(calcDigest, 0, digest, digestOffset, calcDigest.Length);
+        }
+
+        void InitRC4Encryption(byte[] secretKey, byte[] pubKeyIn, int inOffset, byte[] pubKeyOut, int outOffset, out byte[] rc4keyIn, out byte[] rc4keyOut)
+        {
+            byte[] digest = new byte[SHA256_DIGEST_LENGTH];            
+
+            System.Security.Cryptography.HMAC hmac = System.Security.Cryptography.HMACSHA256.Create("HMACSHA256");            
+            hmac.Key = secretKey;
+
+            byte[] actualpubKeyIn = new byte[128];
+            Array.Copy(pubKeyIn, inOffset, actualpubKeyIn, 0, 128);
+            digest = hmac.ComputeHash(actualpubKeyIn);
+            
+            rc4keyOut = new byte[16];
+            Array.Copy(digest, rc4keyOut, 16);
+            Logger.Log("RC4 Out Key: ");
+            Logger.LogHex(rc4keyOut, 0, 16);
+
+            hmac = System.Security.Cryptography.HMACSHA256.Create("HMACSHA256");
+            hmac.Key = secretKey;
+            
+            byte[] actualpubKeyOut = new byte[128];
+            Array.Copy(pubKeyOut, outOffset, actualpubKeyOut, 0, 128);
+            digest = hmac.ComputeHash(actualpubKeyOut);
+
+            rc4keyIn = new byte[16];
+            Array.Copy(digest, rc4keyIn, 16);
+            Logger.Log("RC4 In Key: ");
+            Logger.LogHex(rc4keyIn, 0, 16);
+        }
+
         #endregion
+
+        public static void RC4(ref byte[] bytes, int offset, int size, byte[] key)
+        {
+            Byte[] s = new Byte[256];
+            Byte[] k = new Byte[256];
+            Byte temp;
+            int i, j;
+
+            for (i = 0; i < 256; i++)
+            {
+                s[i] = (Byte)i;
+                k[i] = key[i % key.GetLength(0)];
+            }
+
+            j = 0;
+            for (i = 0; i < 256; i++)
+            {
+                j = (j + s[i] + k[i]) % 256;
+                temp = s[i];
+                s[i] = s[j];
+                s[j] = temp;
+            }
+
+            i = j = 0;
+            for (int x = offset; x < offset+size; x++)
+            {
+                i = (i + 1) % 256;
+                j = (j + s[i]) % 256;
+                temp = s[i];
+                s[i] = s[j];
+                s[j] = temp;
+                int t = (s[i] + s[j]) % 256;
+                bytes[x] ^= s[t];
+            }
+        }
+
+        int ReadN(byte[] buffer, int offset, int size)
+        {            
+            // wait (max) one second until data is available
+            int i = 1000;
+            while (tcpClient.Available < size && i > 0)
+            {
+                i--;
+                System.Threading.Thread.Sleep(10);
+            }
+            if (tcpClient.Available < size) throw new Exception("No Data Available");
+
+            int read = networkStream.Read(buffer, offset, size);
+
+            // decrypt if needed
+            if (read > 0 && Link.rc4keyIn != null)
+            {
+                RC4(ref buffer, offset, size, Link.rc4keyIn);
+            }
+
+            return read;
+        }
+
+        byte ReadByte()
+        {
+            byte[] buffer = new byte[1];
+            ReadN(buffer, 0, 1);
+            return buffer[0];
+        }
+
+        void WriteN(byte[] buffer, int offset, int size)
+        {
+            byte[] data = buffer;
+
+            // encrypt if needed
+            if (Link.rc4keyOut != null)
+            {
+                data = (byte[])buffer.Clone();
+                RC4(ref data, offset, size, Link.rc4keyOut);                
+            }
+            networkStream.Write(data, offset, size);
+        }
+
+        void WriteByte(byte data)
+        {
+            WriteN(new byte[1] { data }, 0, 1);
+        }        
+
     }
 }

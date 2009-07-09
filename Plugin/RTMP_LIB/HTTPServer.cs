@@ -16,7 +16,6 @@ namespace RTMP_LIB
         HttpListener listener;
         Thread processingThread;
         bool listen = true;
-        static Regex requestParamRegEx = new Regex("[?&]([^=]+)=([^=&]+)");
 
         public HTTPServer() : this("http://localhost:20004/") {}
 
@@ -50,16 +49,36 @@ namespace RTMP_LIB
 
             try
             {
-                StringDictionary paramsHash = new StringDictionary();
-                Match match = requestParamRegEx.Match(ctx.Request.Url.Query);
-                while (match.Success)
+                NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(ctx.Request.Url.Query);
+
+                Link link = new Link();
+                if (!string.IsNullOrEmpty(paramsHash["rtmpurl"]))
                 {
-                    paramsHash.Add(System.Web.HttpUtility.HtmlDecode(match.Groups[1].Value), System.Web.HttpUtility.HtmlDecode(match.Groups[2].Value));
-                    match = match.NextMatch();
+                    link = Link.FromRtmpUrl(new Uri(paramsHash["rtmpurl"]));
+                }
+                if (!string.IsNullOrEmpty(paramsHash["app"]))
+                {
+                    link.app = paramsHash["app"];
+                }
+                if (!string.IsNullOrEmpty(paramsHash["tcUrl"]))
+                {
+                    link.tcUrl = paramsHash["tcUrl"];
+                }
+                if (!string.IsNullOrEmpty(paramsHash["hostname"]))
+                {
+                    link.hostname = paramsHash["hostname"];
+                }
+                if (!string.IsNullOrEmpty(paramsHash["port"]))
+                {
+                    link.port = int.Parse(paramsHash["port"]);
+                }
+                if (!string.IsNullOrEmpty(paramsHash["playpath"]))
+                {
+                    link.playpath = paramsHash["playpath"];
                 }
 
                 RTMP rtmp = new RTMP();
-                bool connected = rtmp.Connect(paramsHash["rtmpurl"]);
+                bool connected = rtmp.Connect(link);
                 if (connected)
                 {
                     ctx.Response.StatusCode = 200;
