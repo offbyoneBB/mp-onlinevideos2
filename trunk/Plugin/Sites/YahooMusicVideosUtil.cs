@@ -182,6 +182,7 @@ namespace OnlineVideos.Sites
             s = s.Replace("%artist%", vid.Artist.Name);
             s = s.Replace("%year%", vid.Video.CopyrightYear.ToString());
             s = s.Replace("%rating%", vid.Video.Rating.ToString());
+            s = System.Web.HttpUtility.HtmlDecode(s);
             return s;
         }
 
