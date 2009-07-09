@@ -217,14 +217,14 @@ namespace YahooMusicEngine.OnlineDataProvider
         }
         catch (AuthenticationException ex)
         {
-
-          return null;
+            if (OnError != null) OnError(ex);
+            Error = true;
+            ErrorMessage = ex.Message;
+            return null;
         }
         catch (Exception ex)
         {
-          //System.Windows.Forms.MessageBox.Show(ex.Message);
-          if (OnError != null)
-            OnError(ex);
+          if (OnError != null) OnError(ex);
           Error = true;
           ErrorMessage = ex.Message;
           return null;

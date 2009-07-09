@@ -717,11 +717,13 @@ namespace OnlineVideos
                             List<Category> dynamicCategories = selectedSite.Util.getDynamicCategories();
                             Log.Info("Found {0} dynamic categories.", dynamicCategories != null ? dynamicCategories.Count : 0);
                             if (dynamicCategories != null)
+                            {
                                 foreach (RssLink loCat in dynamicCategories)
                                 {
                                     selectedSite.Categories.Add(loCat.Name, loCat);
                                 }
-                            selectedSite.DynamicCategoriesDiscovered = true;
+                                selectedSite.DynamicCategoriesDiscovered = true;
+                            }
                         });
                     worker.RunWorkerAsync();
                     while (worker.IsBusy) GUIWindowManager.Process();

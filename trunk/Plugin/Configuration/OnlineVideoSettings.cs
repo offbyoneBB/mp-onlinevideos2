@@ -12,20 +12,6 @@ namespace OnlineVideos
     /// </summary>
     public class OnlineVideoSettings
     {
-        [Serializable]
-        [XmlRoot("OnlineVideoSites")]
-        public class SerializableSettings
-        {
-            SiteSettings[] sites;
-            [XmlArray("Sites")]
-            [XmlArrayItem("Site")]
-            public SiteSettings[] Sites
-            {
-                get { return sites; }
-                set { sites = value; }
-            }
-        }
-
         const string SETTINGS_FILE = "OnlineVideoSites.xml";
         public const string SECTION = "onlinevideos";
         public const string SITEVIEW_MODE = "siteview";

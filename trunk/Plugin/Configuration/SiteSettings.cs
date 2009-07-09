@@ -5,6 +5,20 @@ using OnlineVideos.Sites;
 
 namespace OnlineVideos
 {
+    [Serializable]
+    [XmlRoot("OnlineVideoSites")]
+    public class SerializableSettings
+    {
+        SiteSettings[] sites;
+        [XmlArray("Sites")]
+        [XmlArrayItem("Site")]
+        public SiteSettings[] Sites
+        {
+            get { return sites; }
+            set { sites = value; }
+        }
+    }
+
     [Serializable]    
     public class SiteSettings
     {

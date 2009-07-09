@@ -83,6 +83,20 @@ namespace OnlineVideos.Sites
                 provider.SetLocale(settings.Locale);
                 provider.Init();
             }
+            else if (provider.Error)
+            {
+                provider.Error = false;
+                provider.Init();
+            }
+
+            if (provider.Error)
+            {
+                MediaPortal.Dialogs.GUIDialogNotify dlg = (MediaPortal.Dialogs.GUIDialogNotify)MediaPortal.GUI.Library.GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                dlg.SetHeading("ERROR");
+                dlg.SetText("Yahoo Authentication Token invalid. Please check Configuration.");
+                dlg.DoModal(MediaPortal.GUI.Library.GUIWindowManager.ActiveWindow);
+                return null;
+            }
 
             if (catserv == null)
             {
@@ -115,7 +129,17 @@ namespace OnlineVideos.Sites
         }
 
         public override String getUrl(VideoInfo video, SiteSettings foSite)
-        {            
+        {
+            RTMP_LIB.Link link = YahooRTMPLinkCatcher(video.VideoUrl);
+            string resultUrl = string.Format("http://localhost:20004/stream.flv?app={0}&tcUrl={1}&hostname={2}&port={3}&playpath={4}",
+                System.Web.HttpUtility.UrlEncode(link.app),
+                System.Web.HttpUtility.UrlEncode(link.tcUrl),
+                System.Web.HttpUtility.UrlEncode(link.hostname),
+                link.port,
+                System.Web.HttpUtility.UrlEncode(link.playpath));
+            return resultUrl;
+
+            /*
             VideoPlayer player = new VideoPlayer(video.VideoUrl);
             player.AutoStart = true;
             if (settings.Bandwith != 0) player.Bandwidth = settings.Bandwith;
@@ -123,6 +147,30 @@ namespace OnlineVideos.Sites
             player.EID = provider.Locale.EID;
             player.VideoIds.Clear();            
             return player.VideoPlayerUrl;
+            */
+        }
+
+        static RTMP_LIB.Link YahooRTMPLinkCatcher(string videoId)
+        {
+            RTMP_LIB.Link link = new RTMP_LIB.Link();
+
+            string url = "http://video.music.yahoo.com/ver/268.0/process/getPlaylistFOP.php?node_id=v" + videoId + "&tech=flash&bitrate=5000&eventid=1301797";
+            System.Xml.XmlDocument data = new System.Xml.XmlDocument();
+            data.Load(System.Xml.XmlReader.Create(url));
+
+            System.Xml.XmlElement stream = (System.Xml.XmlElement)data.SelectSingleNode("//SEQUENCE-ITEM[@TYPE='S_STREAM']/STREAM");
+            if (stream != null)
+            {
+                link.tcUrl = stream.Attributes["APP"].Value;
+                link.hostname = stream.Attributes["SERVER"].Value;
+                link.port = 1935;
+                string queryString = stream.Attributes["QUERYSTRING"].Value;
+                string path = stream.Attributes["PATH"].Value.Substring(1);
+                link.app = link.tcUrl.Substring(link.tcUrl.LastIndexOf('/') + 1);
+                link.playpath = path.Substring(0, path.LastIndexOf('.')) + '?' + queryString;
+            }
+
+            return link;
         }
 
         string FormatTitle(VideoResponse vid)
@@ -143,12 +191,13 @@ namespace OnlineVideos.Sites
         public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
         {
             Dictionary<string, string> loRssItems = new Dictionary<string, string>();
-
-            foreach (CategoryEntity cat in catserv.Items)
+            if (catserv != null)
             {
-                loRssItems.Add(cat.Name, cat.Id);
+                foreach (CategoryEntity cat in catserv.Items)
+                {
+                    loRssItems.Add(cat.Name, cat.Id);
+                }
             }
-
             return loRssItems;
         }
 

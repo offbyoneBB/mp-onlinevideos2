@@ -33,6 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,6 +42,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <StartAction>Program</StartAction>
@@ -49,7 +51,6 @@
     <StartWorkingDirectory>C:\Program Files\Team MediaPortal\MediaPortal</StartWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxInterop.ShockwaveFlashObjects, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Core, Version=0.2.3.17915, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
@@ -70,7 +71,6 @@
       <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\DirectShowLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Interop.ShockwaveFlashObjects, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
@@ -97,17 +97,23 @@
     <Compile Include="Configuration\CodecConfiguration.cs" />
     <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Player\PlayerFactory.cs" />
-    <Compile Include="Player\FlashControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Player\FlashControl.Designer.cs">
-      <DependentUpon>FlashControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Player\YahooMusicVideosPlayer.cs" />
     <Compile Include="RTMP_LIB\AMFObject.cs" />
     <Compile Include="RTMP_LIB\AMFObjectProperty.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\DHKeyGeneration.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\DHParameters.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\DiffieHellman.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\DiffieHellmanManaged.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\mono\BigInteger.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\mono\ConfidenceFactor.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\mono\MiniParser.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\mono\NextPrimeFinder.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\mono\PrimalityTests.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\mono\PrimeGeneratorBase.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\mono\SecurityParser.cs" />
+    <Compile Include="RTMP_LIB\DiffieHellmann\mono\SequentialSearchPrimeGeneratorBase.cs" />
     <Compile Include="RTMP_LIB\FLVStream.cs" />
     <Compile Include="RTMP_LIB\HTTPServer.cs" />
+    <Compile Include="RTMP_LIB\Link.cs" />
     <Compile Include="RTMP_LIB\Log.cs" />
     <Compile Include="RTMP_LIB\RTMP.cs" />
     <Compile Include="RTMP_LIB\RTMPPacket.cs" />
@@ -366,24 +372,14 @@
   <ItemGroup>
     <EmbeddedResource Include="OnlineVideos.png" />
     <EmbeddedResource Include="OnlineVideosDisabled.png" />
-    <EmbeddedResource Include="Player\FlashControl.resx">
-      <DependentUpon>FlashControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="References\AxInterop.ShockwaveFlashObjects.dll" />
-    <Content Include="References\Interop.ShockwaveFlashObjects.dll" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"%25ProgramFiles%25\Microsoft SDKs\Windows\v6.0A\bin\sgen.exe" /a:"$(TargetPath)" /force /reference:"$(TargetDir)..\..\Core.dll" /reference:"$(TargetDir)..\..\Databases.dll" /reference:"$(TargetDir)Dialogs.dll" /reference:"$(TargetDir)..\..\Utils.dll"
-
-</PostBuildEvent>
+    <PostBuildEvent>"%25ProgramFiles%25\Microsoft SDKs\Windows\v6.0A\bin\sgen.exe" /a:"$(TargetPath)" /force /reference:"$(TargetDir)..\..\Core.dll" /reference:"$(TargetDir)..\..\Databases.dll" /reference:"$(TargetDir)Dialogs.dll" /reference:"$(TargetDir)..\..\Utils.dll" /type:OnlineVideos.SerializableSettings</PostBuildEvent>
   </PropertyGroup>
 </Project>
