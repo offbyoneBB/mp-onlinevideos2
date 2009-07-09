@@ -26,6 +26,9 @@ namespace OnlineVideos
         const string USE_AGECONFIRMATION = "useAgeConfirmation";
         const string PIN_AGECONFIRMATION = "pinAgeConfirmation";
 
+        string bannerIconsDir = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\";
+        public string BannerIconsDir { get { return bannerIconsDir; } }
+
         private static OnlineVideoSettings instance = new OnlineVideoSettings();
         public string BasicHomeScreenName = "Online Videos";
         public String msThumbLocation;

@@ -669,12 +669,12 @@ namespace OnlineVideos
                     loListItem = new GUIListItem(aSite.Name);
                     loListItem.Path = aSite.Name;
                     loListItem.IsFolder = true;
-                    image = GUIGraphicsContext.Skin + @"/Media/OnlineVideos/Icons/" + aSite.Name + ".png";
+                    image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Name + ".png";
                     if (System.IO.File.Exists(image))
                     {
-                        loListItem.ThumbnailImage = GUIGraphicsContext.Skin + @"/Media/OnlineVideos/Icons/" + aSite.Name + ".png";
-                        loListItem.IconImage = GUIGraphicsContext.Skin + @"/Media/OnlineVideos/Icons/" + aSite.Name + ".png";
-                        loListItem.IconImageBig = GUIGraphicsContext.Skin + @"/Media/OnlineVideos/Icons/" + aSite.Name + ".png";
+                        loListItem.ThumbnailImage = image;
+                        loListItem.IconImage = image;
+                        loListItem.IconImageBig = image;
                         loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
                     }
                     else
@@ -1279,7 +1279,7 @@ namespace OnlineVideos
             {
                 case State.home:
                     GUIPropertyManager.SetProperty("#header.label", "Home");
-                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
+                    GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
                     ShowFacade();
                     ShowFacadeViewAsButton();
                     HideNextPageButton();
@@ -1297,8 +1297,8 @@ namespace OnlineVideos
                     SwitchView();
                     break;
                 case State.categories:
-                    GUIPropertyManager.SetProperty("#header.label", selectedSite.Name);                    
-                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
+                    GUIPropertyManager.SetProperty("#header.label", selectedSite.Name);
+                    GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Name + ".png");
                     ShowFacade();
                     HideFacadeViewAsButton();
                     HideNextPageButton();
@@ -1317,7 +1317,7 @@ namespace OnlineVideos
                     if (searchMode) headerlabel = GUILocalizeStrings.Get(283);
                     else if (showingFavorites) headerlabel = GUILocalizeStrings.Get(932);
                     GUIPropertyManager.SetProperty("#header.label", headerlabel);
-                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
+                    GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Name + ".png");
                     ShowFacade();
                     ShowFacadeViewAsButton();
                     if (selectedSite.Util.hasNextPage()) ShowNextPageButton(); else HideNextPageButton();
@@ -1333,7 +1333,7 @@ namespace OnlineVideos
                     break;
                 case State.info:
                     GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
-                    GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/Banners/" + selectedSite.Name + ".png");
+                    GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Name + ".png");
                     HideFacade();
                     HideFacadeViewAsButton();
                     HideNextPageButton();
