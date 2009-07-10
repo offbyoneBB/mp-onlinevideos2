@@ -44,9 +44,10 @@ namespace OnlineVideos.Sites
             return new List<VideoInfo>();
         }
 
-        public virtual List<Category> getDynamicCategories()
+        public virtual int DiscoverDynamicCategories(SiteSettings site)
         {
-            return new List<Category>();
+            site.DynamicCategoriesDiscovered = true;
+            return 0;
         }
 
         public virtual String getUrl(VideoInfo video, SiteSettings foSite)
@@ -204,6 +205,23 @@ namespace OnlineVideos.Sites
                 string str = reader.ReadToEnd();
                 return str.Trim();
             }
-        }        
+        }
+
+        protected static object GetWebDataAsJson(string url)
+        {
+            string WebData = GetWebData(url);
+            try
+            {
+                // attempts to convert the returned string into a Json object
+                object data = Jayrock.Json.Conversion.JsonConvert.Import(WebData);
+                return data;
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error parsing results from {0} as JSON: {1}", url, e.Message);
+            }
+            return null;
+        }
+
     }
 }

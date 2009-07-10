@@ -5,7 +5,7 @@ using System.Web;
 using System.Net;
 using System.Text;
 using System.Xml;
-using LitJson;
+using Jayrock.Json;
 using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
@@ -213,28 +213,29 @@ namespace OnlineVideos.Sites
             return true;
         }
 
-        public override List<Category> getDynamicCategories()
+        public override int DiscoverDynamicCategories(SiteSettings site)
         {
-            List<Category> categories = new List<Category>();
+            site.Categories.Clear();
+
             RssLink link = new RssLink();
             link.Name = "Just Added";
             link.Url = urlJsonJustAdded;
-            categories.Add(link);
+            site.Categories.Add(link.Name, link);
 
             link = new RssLink();
             link.Name = "Exclusive";
             link.Url = urlJsonExlusive;
-            categories.Add(link);
+            site.Categories.Add(link.Name, link);
 
             link = new RssLink();
             link.Name = "Just HD";
             link.Url = urlJsonHD;
-            categories.Add(link);
+            site.Categories.Add(link.Name, link);
 
             link = new RssLink();
             link.Name = "Most Popular";
             link.Url = urlJsonPop;
-            categories.Add(link);
+            site.Categories.Add(link.Name, link);
 
             Dictionary<string, string> genresAndStudiosHash = new Dictionary<string, string>();
 
@@ -261,10 +262,11 @@ namespace OnlineVideos.Sites
                 link = new RssLink();
                 link.Name = aCat.Key;
                 link.Url = aCat.Value;
-                categories.Add(link);                
+                site.Categories.Add(link.Name, link);                
             }
 
-            return categories;
+            site.DynamicCategoriesDiscovered = true;
+            return site.Categories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -490,13 +492,13 @@ namespace OnlineVideos.Sites
         {
             List<string> trailers = new List<string>();
 
-            JsonData jsonData = GetJson(url);
+            object jsonData = GetWebDataAsJson(url);
 
-            if (!jsonData.IsArray) jsonData = jsonData["results"]; // when search was used
+            if (!(jsonData is JsonArray)) jsonData = (jsonData as JsonObject)["results"]; // when search was used
 
-            Log.Info("[MyTrailers][Apple Trailers] Found {0} items.", jsonData.Count.ToString());
+            Log.Info("[MyTrailers][Apple Trailers] Found {0} items.", (jsonData as JsonArray).Count.ToString());
 
-            foreach (JsonData trailer in jsonData)
+            foreach (JsonObject trailer in jsonData as JsonArray)
             {
                 string key = (string)trailer["location"];
 
@@ -543,7 +545,7 @@ namespace OnlineVideos.Sites
                 // List genres
                 try
                 {
-                    foreach (JsonData genre in trailer["genre"])
+                    foreach (string genre in trailer["genre"] as JsonArray)
                     {
                         newTrailer.Genres.Add(genre.ToString());
                     }
@@ -554,7 +556,7 @@ namespace OnlineVideos.Sites
                 // actors isn't always available
                 try
                 {
-                    foreach (JsonData actor in trailer["actors"])
+                    foreach (string actor in trailer["actors"] as JsonArray)
                     {
                         newTrailer.Cast.Add(HttpUtility.HtmlDecode(actor.ToString()));
                     }
@@ -655,28 +657,7 @@ namespace OnlineVideos.Sites
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Get Json data from url
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns>JsonData array</returns>
-        protected JsonData GetJson(string url)
-        {
-            string WebData = GetWebData(url);
-            try
-            {
-                // attempts to convert the returned string into a JsonData object
-                JsonData data = JsonMapper.ToObject(WebData);
-                return data;
-            }
-            catch (JsonException e)
-            {
-                Log.Error("Error parsing results from {0} as JSON: {1}", url, e.Message);
-            }
-            return null;
-        }
+        }        
 
         public static new string GetWebData(string url)
         {

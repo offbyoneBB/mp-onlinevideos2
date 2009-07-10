@@ -27,9 +27,8 @@ namespace OnlineVideos.Sites
         Regex reFindStartTime = new Regex(@"starttime\svalue\s*=\s*[\""\'']?(?<starttime>[^""''>\s]*)");
         Regex reFindDuration = new Regex(@"duration\svalue\s*=\s*[\""\'']?(?<duration>[^""''>\s]*)");
 
-        public override List<Category> getDynamicCategories()
+        public override int DiscoverDynamicCategories(SiteSettings site)
         {
-            List<Category> result = new List<Category>();
             SVTPlayCategory item;
 
             // Get Alfabeticlisting of shows (categories) from site
@@ -48,13 +47,14 @@ namespace OnlineVideos.Sites
                 item.Url = match.Groups["Url"].Value;
 
                 // Add category to List
-                result.Add(item);
+                site.Categories.Add(item.Name, item);
 
                 // Find next match if possible
                 match = match.NextMatch();
             }
 
-            return result;
+            site.DynamicCategoriesDiscovered = true;
+            return site.Categories.Count;
         }
 
         /// <summary>

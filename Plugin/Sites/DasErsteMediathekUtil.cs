@@ -57,13 +57,14 @@ namespace OnlineVideos.Sites
             return convertUnicodeU(convertUnicodeD(GetWebData(fsUrl)));
         }
 
-        public override List<Category> getDynamicCategories()        
+        public override int DiscoverDynamicCategories(SiteSettings site)        
         {
+            site.Categories.Clear();
+
             string lsUrl = "http://mediathek.daserste.de/daserste/servlet/content/487872";
 
             string str4;
             string source = getCachedHTMLData(lsUrl);
-            List<Category> list = new List<Category>();
             string begTag = "<div id=\"alphapane\" class=\"jScrollPane\">";
             string endTag = "</div><!-- .module -->";
             if (getTagValues(source, begTag, endTag, out str4, 0) > 0)
@@ -84,12 +85,13 @@ namespace OnlineVideos.Sites
                         uint count = 0;
                         if (uint.TryParse(str5.Substring(num2), out count)) item.EstimatedVideoCount = count;
                         item.Url = "http://mediathek.daserste.de" + str6 + "&goto=1";
-                        list.Add(item);
+                        site.Categories.Add(item.Name, item);
                     }
                 }
                 while (beginIndex > 0);
             }
-            return list;
+            site.DynamicCategoriesDiscovered = true;
+            return site.Categories.Count;
         }        
 
         protected static int getTagValues(string source, string begTag, string endTag, out string value, int beginIndex)

@@ -26,20 +26,20 @@ namespace OnlineVideos.Sites
         }
         Dictionary<string, string> categoriesForSearching = new Dictionary<string, string>();
 
-        public override List<Category> getDynamicCategories()
-        {            
-            List<Category> list = new List<Category>();
-            
+        public override int DiscoverDynamicCategories(SiteSettings site)
+        {
+            site.Categories.Clear();
             foreach (Teaser teaser in Agent.Inhalt(Kanaltyp.Sendungen, "Alle"))
             {
                 RssLink item = new RssLink();
                 item.Name = convertUnicodeU(teaser.Titel);
                 item.Url = teaser.ID;
                 //item.iconUrl = teaser.Teaserbilder[0].Url;
-                list.Add(item);
+                site.Categories.Add(item.Name, item);
                 categoriesForSearching.Add(item.Name, item.Url);
             }
-            return list;
+            site.DynamicCategoriesDiscovered = true;
+            return site.Categories.Count;
         }
         
         public override String getUrl(VideoInfo video, SiteSettings foSite)        

@@ -66,7 +66,7 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        public override List<Category> getDynamicCategories()
+        public override int DiscoverDynamicCategories(SiteSettings site)
         {
             if (settings == null)
             {
@@ -95,7 +95,7 @@ namespace OnlineVideos.Sites
                 dlg.SetHeading("ERROR");
                 dlg.SetText("Yahoo Authentication Token invalid. Please check Configuration.");
                 dlg.DoModal(MediaPortal.GUI.Library.GUIWindowManager.ActiveWindow);
-                return null;
+                return 0;
             }
 
             if (catserv == null)
@@ -105,27 +105,28 @@ namespace OnlineVideos.Sites
                 provider.GetData(catserv);                
             }
 
-            List<Category> loRssItems = new List<Category>();
+            site.Categories.Clear();
 
             RssLink popularItem = new RssLink();
             popularItem.Name = "Popular";
             popularItem.Url = "popular";
-            loRssItems.Add(popularItem);
+            site.Categories.Add(popularItem.Name, popularItem);
 
             RssLink newItem = new RssLink();
             newItem.Name = "New";
             newItem.Url = "new";
-            loRssItems.Add(newItem);
+            site.Categories.Add(newItem.Name, newItem);
 
             foreach (CategoryEntity cat in catserv.Items)
             {
                 RssLink loRssItem = new RssLink();
                 loRssItem.Name = cat.Name;
-                loRssItem.Url = cat.Id;                
-                loRssItems.Add(loRssItem);
-            }            
-            
-            return loRssItems;
+                loRssItem.Url = cat.Id;
+                site.Categories.Add(loRssItem.Name, loRssItem);
+            }
+
+            site.DynamicCategoriesDiscovered = true;
+            return site.Categories.Count;
         }
 
         public override String getUrl(VideoInfo video, SiteSettings foSite)

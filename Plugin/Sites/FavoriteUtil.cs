@@ -47,13 +47,14 @@ namespace OnlineVideos.Sites
             return loVideoList;
         }
 
-        public override List<Category> getDynamicCategories()
+        public override int DiscoverDynamicCategories(SiteSettings site)
         {
+            site.Categories.Clear();
+
             RssLink all = new RssLink();
             all.Name = "All";
             all.Url = "fav:";
-            List<Category> cats = new List<Category>();
-            cats.Add(all);
+            site.Categories.Add(all.Name, all);
 
             FavoritesDatabase db = FavoritesDatabase.getInstance();
             string[] lsSiteIds = db.getSiteIDs();
@@ -66,15 +67,16 @@ namespace OnlineVideos.Sites
                 cat = new RssLink();
                 cat.Name = loSite.Name + "-Favorites";
                 cat.Url = "fav:" + loSite.Name;
-                cats.Add(cat);
+                site.Categories.Add(cat.Name, cat);
 
             }
             cat = new RssLink();
             cat.Name = "Search-Favorites";
             cat.Url = "fav:%{0}";
-            cats.Add(cat);
+            site.Categories.Add(cat.Name, cat);
 
-            return cats;
+            site.DynamicCategoriesDiscovered = true;
+            return site.Categories.Count;
         }
     }
 }

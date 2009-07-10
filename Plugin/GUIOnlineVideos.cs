@@ -714,15 +714,14 @@ namespace OnlineVideos
                     worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e) 
                         {
                             Log.Info("Looking for dynamic categories for {0}", selectedSite.Name);
-                            List<Category> dynamicCategories = selectedSite.Util.getDynamicCategories();
-                            Log.Info("Found {0} dynamic categories.", dynamicCategories != null ? dynamicCategories.Count : 0);
-                            if (dynamicCategories != null)
+                            try
                             {
-                                foreach (RssLink loCat in dynamicCategories)
-                                {
-                                    selectedSite.Categories.Add(loCat.Name, loCat);
-                                }
-                                selectedSite.DynamicCategoriesDiscovered = true;
+                                int foundCategories = selectedSite.Util.DiscoverDynamicCategories(selectedSite);
+                                Log.Info("Found {0} dynamic categories.", foundCategories);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error("Error looking for dynamic categories: " + ex.ToString());
                             }
                         });
                     worker.RunWorkerAsync();

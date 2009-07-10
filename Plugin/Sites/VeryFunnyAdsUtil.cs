@@ -62,32 +62,28 @@ namespace OnlineVideos.Sites
             }
             return loRssItems;
         }
-
-        public List<Category> parseCollections(String fsUrl)
+        
+        public override int DiscoverDynamicCategories(SiteSettings site)
         {
-            List<Category> loRssItems = new List<Category>();
+            site.Categories.Clear();
+
             XmlDocument doc = new XmlDocument();
-            doc.Load(XmlReader.Create(fsUrl));
+            doc.Load(XmlReader.Create("http://www.tbs.com/veryfunnyads/getCollections.do?id=26322"));
 
             XmlNamespaceManager nsMgr = new XmlNamespaceManager(doc.NameTable);
             XmlNodeList nodeList = doc.SelectNodes("/collections/collection", nsMgr);
-                                   
+
             foreach (XmlNode chileNode in nodeList)
             {
                 RssLink loRssItem = new RssLink();
                 loRssItem.Url = chileNode.Attributes["id"].InnerText;
-                
-                XmlNode node = chileNode.SelectSingleNode("name", nsMgr);
-                loRssItem.Name = node.InnerText;                
-                loRssItems.Add(loRssItem);
-            }
-            return loRssItems;
-        }
 
-        public override List<Category> getDynamicCategories()
-        {            
-            //return parseCollections("http://www.tbs.com/veryfunnyads/getCollections.do?id=24823"); - outdated
-            return parseCollections("http://www.tbs.com/veryfunnyads/getCollections.do?id=26322");
+                XmlNode node = chileNode.SelectSingleNode("name", nsMgr);
+                loRssItem.Name = node.InnerText;
+                site.Categories.Add(loRssItem.Name, loRssItem);
+            }
+            site.DynamicCategoriesDiscovered = true;
+            return site.Categories.Count;
         }
 
 		public override List<VideoInfo> getVideoList(Category category)

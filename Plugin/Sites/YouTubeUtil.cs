@@ -276,21 +276,18 @@ namespace OnlineVideos.Sites
             return moCookies != null && moCookies["LOGIN_INFO"] != null;
         }
         
-        public override List<Category> getDynamicCategories()
-        {
-            List<Category> result = new List<Category>();
-            Dictionary<String, String> categories = getYoutubeCategories();            
-            Log.Info("Youtube - dynamic Categories: " + categories.Count);
+        public override int DiscoverDynamicCategories(SiteSettings site)
+        {            
+            Dictionary<String, String> categories = getYoutubeCategories();
             foreach (KeyValuePair<String, String> cat in categories)
             {
                 RssLink item = new RssLink();
                 item.Name = cat.Key;
                 item.Url = String.Format(CATEGORY_FEED, cat.Value);
-                result.Add(item);
-                Log.Info("Found category: " + cat.Value);
-            }            
-            result.Sort();            
-            return result;
+                site.Categories.Add(item.Name, item);
+            }
+            site.DynamicCategoriesDiscovered = true;
+            return categories.Count;
         }
 
         //private Dictionary<String, String> getYoutubeCategories()
