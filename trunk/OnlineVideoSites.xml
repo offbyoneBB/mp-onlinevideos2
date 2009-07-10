@@ -153,7 +153,7 @@
     <Site name="Apple Trailers" util="AppleTrailers" agecheck="false" enabled="true">
       <Username />
       <Password />
-      <SearchUrl />
+      <SearchUrl>http://www.apple.com/trailers/home/scripts/quickfind.php?q={0}</SearchUrl>
       <Categories />
     </Site>
     <Site name="Break" util="Break" agecheck="false" enabled="true">

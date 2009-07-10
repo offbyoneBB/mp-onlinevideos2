@@ -10,7 +10,7 @@ using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
-    public class AppleTrailersUtil : SiteUtilBase
+    public class AppleTrailersUtil : SiteUtilBase, ISearch
     {
         public struct IndexItem
         {
@@ -491,6 +491,9 @@ namespace OnlineVideos.Sites
             List<string> trailers = new List<string>();
 
             JsonData jsonData = GetJson(url);
+
+            if (!jsonData.IsArray) jsonData = jsonData["results"]; // when search was used
+
             Log.Info("[MyTrailers][Apple Trailers] Found {0} items.", jsonData.Count.ToString());
 
             foreach (JsonData trailer in jsonData)
@@ -724,5 +727,24 @@ namespace OnlineVideos.Sites
                 else return files[vq[0]].ToString();
             }
         }
+
+        #region ISearch Member
+
+        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
+        {
+            return new Dictionary<string, string>();
+        }
+
+        public List<VideoInfo> Search(string searchUrl, string query)
+        {
+            return getVideoList(new RssLink() { Url = string.Format(searchUrl, query) });
+        }
+
+        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        {
+            return Search(searchUrl, query);
+        }
+
+        #endregion
     }
 }
