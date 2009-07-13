@@ -14,12 +14,12 @@ namespace OnlineVideos.Player
         {
             Uri uri = new Uri(filename);
 
-            if (uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asx"))
-            {
+            if (uri.PathAndQuery.Contains(".asx"))
+            {                
                 return new AudioPlayerWMP9();
             }
             else
-            {
+            {                
                 foreach (string anExt in OnlineVideoSettings.getInstance().videoExtensions.Keys)
                 {
                     if (uri.PathAndQuery.Contains(anExt))
@@ -30,12 +30,12 @@ namespace OnlineVideos.Player
                         }
                         else
                         {
-                            return new VideoPlayerVMR9(); // safer to use default until codec specific playback is done - OnlineVideosPlayer();
+                            return new OnlineVideosPlayer();
                         }
                     }
                 }
                 return new AudioPlayerWMP9();
-            }
+            }            
         }              
     }
 }

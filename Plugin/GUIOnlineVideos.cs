@@ -238,23 +238,23 @@ namespace OnlineVideos
             {
                 dlgSel.SetHeading(498);  // Actions
 
-                dlgSel.Add("Play All");
+                dlgSel.Add(GUILocalizeStrings.Get(30003)); //Play All
 
                 if (showingFavorites == false && selectedSite.UtilName != "Favorite")
                 {
-                    if (selectedSite.UtilName != "DownloadedVideo") dlgSel.Add("Add to favorites");
+                    if (selectedSite.UtilName != "DownloadedVideo") dlgSel.Add(GUILocalizeStrings.Get(930)/*Add to favorites*/);
                 }
                 else
                 {
-                    dlgSel.Add("Remove from favorites");
+                    dlgSel.Add(GUILocalizeStrings.Get(933)/*Remove from favorites*/);
                 }
                 if (selectedSite.UtilName == "YouTube")
                 {
                     dlgSel.Add("Related Videos");
                 }
-                if (String.IsNullOrEmpty(OnlineVideoSettings.getInstance().msDownloadDir) == false && selectedSite.UtilName != "YahooMusicVideos")
+                if (String.IsNullOrEmpty(OnlineVideoSettings.getInstance().msDownloadDir) == false)
                 {
-                    if (selectedSite.UtilName == "DownloadedVideo") dlgSel.Add("Delete"); else dlgSel.Add("Save");
+                    if (selectedSite.UtilName == "DownloadedVideo") dlgSel.Add(GUILocalizeStrings.Get(117)/*Delete*/); else dlgSel.Add(GUILocalizeStrings.Get(190)/*Save*/);
                 }
             }
             dlgSel.DoModal(GetID);
@@ -691,7 +691,7 @@ namespace OnlineVideos
             
             if (selectedSiteIndex < facadeView.Count) facadeView.SelectedListItemIndex = selectedSiteIndex;
 
-            GUIPropertyManager.SetProperty("#header.label", "Home");
+            GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(2143)/*Home*/);
             GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
         }
 
@@ -907,7 +907,7 @@ namespace OnlineVideos
                 {
                     GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
                     dlg_error.SetHeading(PluginName());
-                    dlg_error.SetLine(1, "No Videos found!");
+                    dlg_error.SetLine(1, GUILocalizeStrings.Get(1036)/*No Videos found!*/); 
                     dlg_error.SetLine(2, String.Empty);
                     dlg_error.DoModal(GUIWindowManager.ActiveWindow);
 
@@ -953,7 +953,7 @@ namespace OnlineVideos
             {
                 GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
                 dlg_error.SetHeading(PluginName());
-                dlg_error.SetLine(1, "No Videos found!");
+                dlg_error.SetLine(1, GUILocalizeStrings.Get(1036)/*No Videos found!*/); 
                 dlg_error.SetLine(2, String.Empty);
                 dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                 //currentState = State.categories;
@@ -1119,7 +1119,7 @@ namespace OnlineVideos
                 if (String.IsNullOrEmpty(lsUrl))
                 {                    
                     GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    dlg.SetHeading("ERROR");
+                    dlg.SetHeading(GUILocalizeStrings.Get(257)/*ERROR*/);
                     dlg.SetText("Unable to play the video.");
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                     return;
@@ -1277,7 +1277,7 @@ namespace OnlineVideos
             switch (currentState)
             {
                 case State.home:
-                    GUIPropertyManager.SetProperty("#header.label", "Home");
+                    GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(2143)/*Home*/);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
                     ShowFacade();
                     ShowFacadeViewAsButton();
