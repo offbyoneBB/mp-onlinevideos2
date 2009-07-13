@@ -92,7 +92,7 @@ namespace OnlineVideos.Sites
             if (provider.Error)
             {
                 MediaPortal.Dialogs.GUIDialogNotify dlg = (MediaPortal.Dialogs.GUIDialogNotify)MediaPortal.GUI.Library.GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                dlg.SetHeading("ERROR");
+                dlg.SetHeading(MediaPortal.GUI.Library.GUILocalizeStrings.Get(257)/*ERROR*/);
                 dlg.SetText("Yahoo Authentication Token invalid. Please check Configuration.");
                 dlg.DoModal(MediaPortal.GUI.Library.GUIWindowManager.ActiveWindow);
                 return 0;
