@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.IO;
 
 namespace OnlineVideos.Sites
 {    
@@ -145,6 +147,13 @@ namespace OnlineVideos.Sites
                 resultUrl = match.Groups["videoUrl"].Value;
                 if (match.Groups["type"].Value == "flashmedia" && !resultUrl.StartsWith("rtmp")) break; // prefer flash over wmv if not rtmp
                 match = match.NextMatch();
+            }
+            if (resultUrl.Contains(".lsc"))
+            {
+                string asx = GetWebData(resultUrl);
+                XmlDocument document = new XmlDocument();
+                document.Load(XmlReader.Create(new StringReader(asx)));
+                resultUrl = document.SelectSingleNode("//ASX/entry/ref").Attributes.GetNamedItem("HREF").InnerText;
             }
             if (resultUrl.StartsWith("rtmp"))
             {

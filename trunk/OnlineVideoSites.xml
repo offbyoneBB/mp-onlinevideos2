@@ -365,11 +365,13 @@
         <Category xsi:type="RssLink" name="Crave">http://feeds2.feedburner.com/cnet/crave</Category>
         <Category xsi:type="RssLink" name="CNet">http://feeds2.feedburner.com/allcnetvideopodcasts</Category>
         <Category xsi:type="RssLink" name="DL.TV">http://feeds2.feedburner.com/ziffdavis/dltvwmvvideo</Category>
-        <Category xsi:type="Group" name="MyStreamsGroup">
-          <Channels>
-            <Channel name="wwiTV - AstroCenterTv">http://wwitv.com/stream/b2749.asx</Channel>
+        <Category xsi:type="Group" name="Live TV">
+          <Channels>            
             <Channel name="French Tv - Orange">mms://livewm.orange.fr/live-multicanaux</Channel>
             <Channel name="French Tv - Direct8">http://football.direct8.fr/live.php</Channel>
+            <Channel name="Russian Tv - Vesti 24">http://video.rfn.ru/vesti_24?MSWMExt=.asf</Channel>
+            <Channel name="Russian Tv - RTR Planeta">mms://video.rfn.ru/rtr-planeta</Channel>
+            <Channel name="Russian Tv - MusicClips">mms://85.21.138.210/mclips4</Channel>            
           </Channels>
         </Category>
       </Categories>
