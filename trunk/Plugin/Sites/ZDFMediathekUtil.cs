@@ -68,8 +68,9 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo item = new VideoInfo();
                     item.ImageUrl = teaser.Teaserbilder[0].Url;
-                    item.Title = teaser.Titel + "(" + teaser.Datum + " " + teaser.Startzeit + " - " + teaser.Laenge + ")";
+                    item.Title = teaser.Titel + " (" + teaser.Datum + " " + teaser.Startzeit + ")";
                     item.Description = teaser.Beschreibung;
+                    item.Length = teaser.Laenge;
                     item.VideoUrl = teaser.ID;
                     list.Add(item);
                 }
