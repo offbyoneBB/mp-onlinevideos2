@@ -56,6 +56,7 @@ namespace OnlineVideos.Player
             {
                 Error.SetError("Unable to load DirectshowFilter: WM ASF Reader", "Windows Media Player not installed?");
                 Log.Error("Unable to load DirectshowFilter: WM ASF Reader", new object[0]);
+                return false;
             }
 
             // load the file with the source filter

@@ -14,7 +14,11 @@ namespace OnlineVideos.Player
         {
             Uri uri = new Uri(filename);
 
-            if (uri.PathAndQuery.Contains(".asx"))
+            if (uri.Scheme == "mms")
+            {
+                return new OnlineVideosPlayer();
+            }
+            else if (uri.PathAndQuery.Contains(".asx"))
             {                
                 return new AudioPlayerWMP9();
             }

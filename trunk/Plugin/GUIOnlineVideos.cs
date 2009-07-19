@@ -271,7 +271,7 @@ namespace OnlineVideos
             switch (liSelectedIdx)
             {
                 case 1:
-                    playAll();
+                    PlayAll();
                     break;
                 case 2:
                     if (selectedSite.UtilName == "DownloadedVideo")
@@ -742,6 +742,18 @@ namespace OnlineVideos
                 loListItem = new GUIListItem(loCat.Name);
                 loListItem.IsFolder = true;
                 MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
+                // Favorite Catgories can have the same images as the home view
+                if (selectedSite.Util is Sites.FavoriteUtil)
+                {
+                    string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + ((RssLink)loCat).Url.Substring(4) + ".png";
+                    if (System.IO.File.Exists(image))
+                    {
+                        loListItem.ThumbnailImage = image;
+                        loListItem.IconImage = image;
+                        loListItem.IconImageBig = image;                    
+                    }
+                }                
+
                 facadeView.Add(loListItem);
 
                 if (loCat is RssLink)
@@ -1149,9 +1161,12 @@ namespace OnlineVideos
             }            
         }
 
-        private void playAll()
-        {
+        private void PlayAll()
+        {            
             bool playing = false;
+            PlayListPlayer.SingletonPlayer.Init();
+            PlayListPlayer.SingletonPlayer.Reset();
+            PlayListPlayer.SingletonPlayer.g_Player = new Player.PlaylistPlayerWrapper();
             PlayList videoList = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
             videoList.Clear();
             PlayListItem item;
@@ -1170,22 +1185,13 @@ namespace OnlineVideos
             foreach (VideoInfo loVideo in loVideoList)
             {
                 lsUrl = selectedSite.Util.getUrl(loVideo, selectedSite);
-                /*
-                if (settings.mbForceMPlayer && !loVideo.VideoUrl.EndsWith(".wmv"))
-                {
-
-                    item = new PlayListItem("", lsUrl + OnlineVideoSettings.MPLAYER_EXT);
-                }
-                else
-                {*/
-                    item = new PlayListItem("", lsUrl);
-                //}
+                item = new PlayListItem(loVideo.Title, lsUrl);
                 videoList.Add(item);
                 Log.Info("GUIOnlineVideos.playAll:Added {0} to playlist", loVideo.Title);
                 if (!firstAdded)
                 {
                     firstAdded = true;
-                    PlayListPlayer.SingletonPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
+                    PlayListPlayer.SingletonPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;                    
                     if (PlayListPlayer.SingletonPlayer.Play(0))
                     {
                         playing = true;
@@ -1280,7 +1286,7 @@ namespace OnlineVideos
                     GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(2143)/*Home*/);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
                     ShowFacade();
-                    ShowFacadeViewAsButton();
+                    //ShowFacadeViewAsButton();
                     HideNextPageButton();
                     HidePreviousPageButton();
                     HideVideoDetails();                    
@@ -1299,7 +1305,7 @@ namespace OnlineVideos
                     GUIPropertyManager.SetProperty("#header.label", selectedSite.Name);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Name + ".png");
                     ShowFacade();
-                    HideFacadeViewAsButton();
+                    //HideFacadeViewAsButton();
                     HideNextPageButton();
                     HidePreviousPageButton();
                     HideVideoDetails();
@@ -1318,7 +1324,7 @@ namespace OnlineVideos
                     GUIPropertyManager.SetProperty("#header.label", headerlabel);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Name + ".png");
                     ShowFacade();
-                    ShowFacadeViewAsButton();
+                    //ShowFacadeViewAsButton();
                     if (selectedSite.Util.hasNextPage()) ShowNextPageButton(); else HideNextPageButton();
                     if (selectedSite.Util.hasPreviousPage()) ShowPreviousPageButton(); else HidePreviousPageButton();
                     HideVideoDetails();
@@ -1334,7 +1340,7 @@ namespace OnlineVideos
                     GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Name + ".png");
                     HideFacade();
-                    HideFacadeViewAsButton();
+                    //HideFacadeViewAsButton();
                     HideNextPageButton();
                     HidePreviousPageButton();
                     ShowVideoDetails();
@@ -1549,6 +1555,7 @@ namespace OnlineVideos
             GUIControl.EnableControl(GetID, facadeView.GetID);
         }
 
+        /*
         void HideFacadeViewAsButton()
         {
             GUIControl.DisableControl(GetID, btnViewAs.GetID);
@@ -1560,6 +1567,7 @@ namespace OnlineVideos
             GUIControl.ShowControl(GetID, btnViewAs.GetID);
             GUIControl.EnableControl(GetID, btnViewAs.GetID);
         }
+        */
 
         void HideNextPageButton()
         {
@@ -1614,12 +1622,13 @@ namespace OnlineVideos
             if (currentState == State.home)
             {
                 currentSiteView = currentView;
+                SwitchView();
             }
             else if (currentState == State.videos)
             {
                 currentVideoView = currentView;
-            }
-            SwitchView();
+                SwitchView();
+            }            
         }
 
         protected void SwitchView()
@@ -1734,7 +1743,7 @@ namespace OnlineVideos
                 }
                 else
                 {
-                    selectedSite.Util.AddFavorite(loSelectedVideo, selectedSite.Name);
+                    selectedSite.Util.AddFavorite(loSelectedVideo, selectedSite);
                 }
             }
             if (refreshList) refreshVideoList();

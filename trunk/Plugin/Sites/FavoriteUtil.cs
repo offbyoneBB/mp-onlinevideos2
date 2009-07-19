@@ -18,12 +18,12 @@ namespace OnlineVideos.Sites
     /// <summary>
     /// Description of FavoriteUtil.
     /// </summary>
-    public class FavoriteUtil : SiteUtilBase
+    public class FavoriteUtil : SiteUtilBase, ISearch
     {
         public override string getUrl(VideoInfo video, SiteSettings foSite)
         {
-            SiteSettings loSite = OnlineVideoSettings.getInstance().moSiteList[video.SiteID];
-            return foSite.Util.getUrl(video, loSite); ;
+            SiteSettings loSite = OnlineVideoSettings.getInstance().moSiteList[video.SiteName];
+            return loSite.Util.getUrl(video, loSite);
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -65,7 +65,7 @@ namespace OnlineVideos.Sites
             {
                 loSite = loSiteList[lsSiteId];
                 cat = new RssLink();
-                cat.Name = loSite.Name + "-Favorites";
+                cat.Name = loSite.Name + " - Favorites";
                 cat.Url = "fav:" + loSite.Name;
                 site.Categories.Add(cat.Name, cat);
 
@@ -78,5 +78,32 @@ namespace OnlineVideos.Sites
             site.DynamicCategoriesDiscovered = true;
             return site.Categories.Count;
         }
+
+        public override bool RemoveFavorite(VideoInfo foVideo)
+        {
+            bool result = base.RemoveFavorite(foVideo);
+            if (result) OnlineVideoSettings.getInstance().moSiteList["Favorites"].DynamicCategoriesDiscovered = false;
+            return result;
+        }
+
+        #region ISearch Member
+
+        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
+        {
+            return new Dictionary<string, string>();
+        }
+
+        public List<VideoInfo> Search(string searchUrl, string query)
+        {
+            FavoritesDatabase db = FavoritesDatabase.getInstance();
+            return db.searchFavoriteVideos(query);
+        }
+
+        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        {
+            return Search(searchUrl, query);
+        }
+
+        #endregion
     }
 }
