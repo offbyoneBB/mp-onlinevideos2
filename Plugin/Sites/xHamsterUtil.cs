@@ -129,9 +129,7 @@ namespace OnlineVideos.Sites
                                         // add new entry
                                         VideoInfo loRssItem = new VideoInfo();
                                         loRssItem.Title = desc;
-                                        loRssItem.VideoUrl = url;
-                                        loRssItem.VideoID = cnt;
-                                        loRssItem.SiteID = id;
+                                        loRssItem.VideoUrl = url;                                        
                                         loRssItems.Add(loRssItem);
                                     }
                                 }
@@ -176,7 +174,6 @@ namespace OnlineVideos.Sites
 
                         VideoInfo loRssItem = loRssItems[cnt - 1];
                         loRssItem.ImageUrl = lnk + "/1_" + id + ".jpg";
-                        loRssItem.SiteID = id;                        
                     }
                 }
                 if (x != -1)

@@ -147,7 +147,7 @@ namespace OnlineVideos.Sites
                         loRssItem.Tags = l;
                         loRssItem.Title = d;
                         loRssItem.VideoUrl = flv;                        
-                        loRssItem.SiteID = no;
+                        loRssItem.Other = no;
 
                         loRssItems.Add(loRssItem);
                     }
@@ -163,7 +163,7 @@ namespace OnlineVideos.Sites
             for (int i = 0; i < loRssItems.Count; i++)
             {
                 VideoInfo loRssItem = loRssItems[i];
-                loRssItem.ImageUrl = GetThumb(loRssItem.SiteID, 2);
+                loRssItem.ImageUrl = GetThumb((string)loRssItem.Other, 2);
             }
         }
 

@@ -89,7 +89,7 @@ namespace OnlineVideos.Database
         Log.Info(e.ToString());
       }
     }
-    public bool addFavoriteVideo(OnlineVideos.VideoInfo foVideo, String fsSiteId)
+    public bool addFavoriteVideo(OnlineVideos.VideoInfo foVideo, string siteName)
     {
             
      //check if the video is already in the favorite list
@@ -112,7 +112,7 @@ namespace OnlineVideos.Database
       DatabaseUtility.RemoveInvalidChars(ref foVideo.Title);
       DatabaseUtility.RemoveInvalidChars(ref foVideo.VideoUrl);
       
-      string lsSQL = string.Format("insert into FAVORITE_VIDEOS(VDO_NM,VDO_URL,VDO_DESC,VDO_TAGS,VDO_LENGTH,VDO_IMG_URL,VDO_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')", foVideo.Title,foVideo.VideoUrl, foVideo.Description,foVideo.Tags,foVideo.Length, foVideo.ImageUrl, fsSiteId);
+      string lsSQL = string.Format("insert into FAVORITE_VIDEOS(VDO_NM,VDO_URL,VDO_DESC,VDO_TAGS,VDO_LENGTH,VDO_IMG_URL,VDO_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')", foVideo.Title,foVideo.VideoUrl, foVideo.Description,foVideo.Tags,foVideo.Length, foVideo.ImageUrl, siteName);
       m_db.Execute(lsSQL);
       if (m_db.ChangedRows() > 0)
       {
@@ -128,10 +128,8 @@ namespace OnlineVideos.Database
       
 
     public bool removeFavoriteVideo(VideoInfo foVideo)
-    {
-    	
-     
-      String lsSQL = string.Format("delete from FAVORITE_VIDEOS where VDO_ID='{0}' ", foVideo.VideoID);
+    {    	     
+      String lsSQL = string.Format("delete from FAVORITE_VIDEOS where VDO_ID='{0}' ", foVideo.Other.ToString());
       m_db.Execute(lsSQL);
       if (m_db.ChangedRows() > 0)
       {
@@ -141,9 +139,6 @@ namespace OnlineVideos.Database
       {
         return false;
       }
-      
-     
-
     }
      
 
@@ -176,14 +171,14 @@ namespace OnlineVideos.Database
         	video.Tags = DatabaseUtility.Get(loResultSet, iRow, "VDO_TAGS");
         	video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");
         	video.VideoUrl = DatabaseUtility.Get(loResultSet,iRow,"VDO_URL");
-			video.SiteID = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");
-        	video.VideoID = DatabaseUtility.GetAsInt(loResultSet,iRow,"VDO_ID");
+			video.SiteName = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");
+        	video.Other = DatabaseUtility.GetAsInt(loResultSet,iRow,"VDO_ID");
         	Log.Info("Pulled {0} out of the database",video.Title);
-        	loFavoriteList.Add(video);
-        	
+        	loFavoriteList.Add(video);        	
         }
         return loFavoriteList;
     }
+
     public string [] getSiteIDs(){
     	string lsSQL = "select distinct VDO_SITE_ID from favorite_videos";
     	SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
@@ -193,8 +188,7 @@ namespace OnlineVideos.Database
     	 	siteIdList[iRow] = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");
     	 		
     	 }
-    	 return siteIdList;
-    	
+    	 return siteIdList;    	
     }
     
      public List<VideoInfo> searchFavoriteVideos(String fsQuery){
@@ -219,46 +213,13 @@ namespace OnlineVideos.Database
         	video.Tags = DatabaseUtility.Get(loResultSet, iRow, "VDO_TAGS");
         	video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");
         	video.VideoUrl = DatabaseUtility.Get(loResultSet,iRow,"VDO_URL");
-			video.SiteID = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");
-        	
+			video.SiteName = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");
+            video.Other = DatabaseUtility.GetAsInt(loResultSet, iRow, "VDO_ID");
         	Log.Info("Pulled {0} out of the database",video.Title);
         	loFavoriteList.Add(video);
         	
         }
         return loFavoriteList;
-    }
-
-    /*
-    public List<GUIOnlineVideos.FavoriteVideos> getSiteFavoriteVideos(GUIOnlineVideos.Site foSite)
-    {
-      List<YahooVideo> loFavoriteList = new List<YahooVideo>();
-      string lsSQL = String.Format("select FAVORITE_ID from FAVORITE where FAVORITE_NM='{0}'", fsFavoriteNm.Replace("'", "''"));
-      SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
-
-      string lsFavID = (String)loResultSet.GetColumn(0)[0];
-      lsSQL = string.Format("select SONG_NM,SONG_ID,ARTIST_NM,ARTIST_ID,COUNTRY from FAVORITE_VIDEOS where FAVORITE_ID={0}", lsFavID);
-      loResultSet = m_db.Execute(lsSQL);
-
-      foreach (ArrayList loRow in loResultSet.RowsList)
-      {
-        YahooVideo loVideo = new YahooVideo();
-        IEnumerator en = loRow.GetEnumerator();
-        en.MoveNext();
-        loVideo.songName = (String)en.Current;
-        en.MoveNext();
-        loVideo.songId = (String)en.Current;
-        en.MoveNext();
-        loVideo.artistName = (String)en.Current;
-        en.MoveNext();
-        loVideo.artistId = (String)en.Current;
-        en.MoveNext();
-        loVideo.countryId = (String)en.Current;
-        loFavoriteList.Add(loVideo);
-
-      }
-
-      return loFavoriteList;
-    }
-    */
+    }    
   }
 }

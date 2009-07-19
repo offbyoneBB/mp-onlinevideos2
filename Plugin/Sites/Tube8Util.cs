@@ -104,10 +104,7 @@ namespace OnlineVideos.Sites
                     cnt++;
                     
                     // add new entry
-                    VideoInfo loRssItem = new VideoInfo();
-                    
-                    loRssItem.VideoID = cnt;
-                    loRssItem.SiteID = cnt.ToString();                    
+                    VideoInfo loRssItem = new VideoInfo();                    
 
                     //tmpClip.Url = g.Data;   // link
                     string h = g.Data;

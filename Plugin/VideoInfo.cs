@@ -11,11 +11,12 @@ namespace OnlineVideos
         public string ImageUrl = "";
         public string Length;
         public string Tags = "";
-        public object Other;
-        public string SiteID = "";
-        public int VideoID = -1;
         public string StartTime = "";
-
+        public object Other;
+        
+        /// <summary>This field is only used by the <see cref="FavoriteUtil"/> to store the Name of the Site where this Video came from.</summary>
+        public string SiteName = "";
+                
         public override string ToString()
         {
             return string.Format("Title:{0}\nDesc:{1}\nVidUrl:{2}\nImgUrl:{3}\nLength:{4}\nTags:{5}", Title, Description, VideoUrl, ImageUrl, Length, Tags);

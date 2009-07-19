@@ -75,10 +75,10 @@ namespace OnlineVideos.Sites
             return new List<VideoInfo>();
         }
 
-        public virtual void AddFavorite(VideoInfo foVideo, String fsSiteId)
+        public virtual void AddFavorite(VideoInfo foVideo, SiteSettings site)
         {
             FavoritesDatabase db = FavoritesDatabase.getInstance();
-            db.addFavoriteVideo(foVideo, fsSiteId);
+            db.addFavoriteVideo(foVideo, site.Name);
         }
 
         public virtual bool RemoveFavorite(VideoInfo foVideo)
@@ -119,19 +119,7 @@ namespace OnlineVideos.Sites
                 foreach (string anExt in OnlineVideoSettings.getInstance().videoExtensions.Keys) if (fsUrl.Contains(anExt)) { isVideo = true; break; }
             }
             return isVideo;
-        }
-
-        protected List<String> parseASX(String fsAsxUrl)
-        {
-            String lsAsxData = GetWebData(fsAsxUrl);
-            MatchCollection videoUrls = Regex.Matches(lsAsxData, "<Ref\\shref\\s=\\s\"(?<url>[^\"]*)");
-            List<String> urlList = new List<String>();
-            foreach (Match videoUrl in videoUrls)
-            {
-                urlList.Add(videoUrl.Groups["url"].Value);
-            }
-            return urlList;
-        }
+        }        
 
         public virtual bool MultipleFilePlay()
         {
@@ -223,5 +211,16 @@ namespace OnlineVideos.Sites
             return null;
         }
 
+        protected static List<String> ParseASX(String fsAsxUrl)
+        {
+            String lsAsxData = GetWebData(fsAsxUrl).ToLower();
+            MatchCollection videoUrls = Regex.Matches(lsAsxData, "<ref\\shref\\s=\\s\"(?<url>[^\"]*)");
+            List<String> urlList = new List<String>();
+            foreach (Match videoUrl in videoUrls)
+            {
+                urlList.Add(videoUrl.Groups["url"].Value);
+            }
+            return urlList;
+        }
     }
 }

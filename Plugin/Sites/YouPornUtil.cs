@@ -218,7 +218,6 @@ namespace OnlineVideos.Sites
                                 cnt++;
                                 // add new entry
                                 VideoInfo loRssItem = new VideoInfo();
-                                loRssItem.SiteID = id;
                                 loRssItem.Title = desc;
                                 loRssItem.Length = duration;
                                 loRssItem.VideoUrl = url;                                    

@@ -16,7 +16,12 @@ namespace OnlineVideos.Sites
 	{
         public override String getUrl(VideoInfo video, SiteSettings foSite)
         {
-            return GetRedirectedUrl(video.VideoUrl);
+            string url = GetRedirectedUrl(video.VideoUrl);
+            if (url.EndsWith(".asx"))
+            {
+                url = ParseASX(url)[0];
+            }
+            return url;
         }
 
 		public override List<VideoInfo> getVideoList(Category category)

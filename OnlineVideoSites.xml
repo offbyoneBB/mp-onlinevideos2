@@ -283,6 +283,12 @@
       <Password />
       <SearchUrl />
       <Categories>
+        <Category xsi:type="Group" name="NASA Live TV">
+          <Channels>
+            <Channel name="NASA Digital Media">http://www.nasa.gov/145590main_Digital_Media.asx</Channel>
+            <Channel name="NASA Edu">http://www.nasa.gov/145588main_Digital_Edu.asx</Channel>
+          </Channels>
+        </Category>
         <Category xsi:type="RssLink" name="NASACast">http://www.nasa.gov/rss/NASAcast_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="This Week @ NASA">http://www.nasa.gov/rss/TWAN_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="50th Anniversary Moments">http://www.nasa.gov/rss/moments_vodcast.rss</Category>
@@ -353,7 +359,8 @@
         <Category xsi:type="RssLink" name="Tekzilla">http://revision3.com/tekzilla/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="The Totally Rad Show">http://revision3.com/trs/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="XLR8R TV">http://revision3.com/xlr8rtv/feed/quicktime-large/</Category>
-      </Categories>
+        <Category xsi:type="RssLink" name="HD Nation">http://revision3.com/hdnation/feed/quicktime-large/</Category>
+        </Categories>
     </Site>
     <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true">
       <Username />
@@ -381,6 +388,39 @@
       <Password />
       <SearchUrl />
       <Categories />
+    </Site>
+    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="Group" name="RockTelevision">
+          <Channels>
+            <Channel name="RockTV">mms://194.116.83.15/New</Channel>
+            <Channel name="90s">mms://194.116.83.15/90s</Channel>
+            <Channel name="80s">mms://194.116.83.15/80s</Channel>
+            <Channel name="70s">mms://194.116.83.15/70s</Channel>
+            <Channel name="Hard and Heavy">mms://194.116.83.15/Hard and Heavy</Channel>
+            <Channel name="Prog Rock">mms://194.116.83.15/Prog</Channel>
+            <Channel name="Soft and Ballads">mms://194.116.83.15/Soft and Ballads</Channel>
+          </Channels>
+        </Category>
+      </Categories>
+    </Site>
+    <Site name="Snowboard Surf and Skate" util="GenericSite" agecheck="false" enabled="true">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="Group" name="Board Live TV">
+          <Channels>
+            <Channel name="Boardriders Tv LIVE">http://www.impek.tv/brtv/live.asx</Channel>
+          </Channels>
+        </Category>
+        <Category xsi:type="RssLink" name="BOARDRIDERS TV">http://www.boardriderstv.com/podcast/index.php</Category>
+        <Category xsi:type="RssLink" name="shralp.com snowboard (wmv)">http://shralp.com/rss/shralp_wmv.xml</Category>
+        <Category xsi:type="RssLink" name="shralp.com surf (mov)">http://shralp.com/rss/shralpsurf_mov.xml</Category>
+      </Categories>
     </Site>
     <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true">
       <Username />
