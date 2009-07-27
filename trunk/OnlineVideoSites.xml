@@ -378,7 +378,8 @@
             <Channel name="French Tv - Direct8">http://football.direct8.fr/live.php</Channel>
             <Channel name="Russian Tv - Vesti 24">http://video.rfn.ru/vesti_24?MSWMExt=.asf</Channel>
             <Channel name="Russian Tv - RTR Planeta">mms://video.rfn.ru/rtr-planeta</Channel>
-            <Channel name="Russian Tv - MusicClips">mms://85.21.138.210/mclips4</Channel>            
+            <Channel name="Russian Tv - MusicClips">mms://85.21.138.210/mclips4</Channel>
+            <Channel name="Russian Tv - First Baltic Music Channel">mms://195.244.137.207:81</Channel>
           </Channels>
         </Category>
       </Categories>

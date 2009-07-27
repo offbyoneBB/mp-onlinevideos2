@@ -25,10 +25,115 @@ namespace OnlineVideos.Player
 
         protected override bool GetInterfaces()
         {
-            if (CurrentFile.StartsWith("mms://"))
+            if (CurrentFile.StartsWith("mms://") || CurrentFile.Contains(".asf"))
                 return BuildGraphForMMS();
             else
-                return base.GetInterfaces();
+            {
+                //bool result = BuildGraphForLocalFLV();
+                bool result = base.GetInterfaces();
+                return result;
+            }
+        }
+
+        bool BuildGraphForLocalFLV()
+        {
+            base.graphBuilder = (IGraphBuilder)new FilterGraph();
+
+            // add the source filter manually
+            IBaseFilter sourceFilter = DirectShowUtil.AddFilterToGraph(base.graphBuilder, "MPC - FLV Source (Gabest)");
+            //IBaseFilter sourceFilter = DirectShowUtil.AddFilterToGraph(base.graphBuilder, "File Source (URL)");
+
+            if (sourceFilter == null)
+            {
+                Error.SetError("Unable to load DirectshowFilter: MPC - FLV Source (Gabest)", "MPC - FLV Source (Gabest) not registered!");
+                Log.Error("Unable to load DirectshowFilter: MPC - FLV Source (Gabest)", new object[0]);
+                return false;
+            }
+
+            AMMediaType amType = new AMMediaType();
+            amType.majorType = MediaType.Stream;
+            amType.subType = new Guid("{F2FAC0F1-3852-4670-AAC0-9051D400AC54}");
+
+            //string testFile = "http://localhost:20004/a.flv";
+            string testFile = "http://87.106.7.69/Public/s.flv";
+
+            // load the file with the source filter
+            int result = ((IFileSourceFilter)sourceFilter).Load(testFile, amType);
+            if (result != 0)
+            {
+                DirectShowUtil.ReleaseComObject(sourceFilter);
+                this.Cleanup();
+                this.Vmr9 = null;
+                return false;
+            }
+
+            // add video renderer
+            Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode", new object[0]);
+            GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+            GUIWindowManager.SendMessage(message);
+            this.Vmr9 = new VMR9Util();
+            this.Vmr9.AddVMR9(base.graphBuilder);
+            this.Vmr9.Enable(false);
+
+            // add audio rendere
+            using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+                string audiorenderer = settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+                base.audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(base.graphBuilder, audiorenderer, false);
+            }
+
+            // get the output pin of the File Source (URL)
+            IEnumPins enumPins;
+            IPin[] sourceFilterPins = new IPin[2];
+            int fetched;
+            result = sourceFilter.EnumPins(out enumPins);
+            result = enumPins.Next(2, sourceFilterPins, out fetched);
+            /*
+            IAsyncReader readerPin = ((IAsyncReader)sourceFilterPins[0]);
+            System.Threading.Thread.Sleep(3000);
+
+
+            IBaseFilter splitterFilter = DirectShowUtil.AddFilterToGraph(base.graphBuilder, "MPC - FLV Splitter (Gabest)");
+            IPin[] splitterFilterPins = new IPin[2];
+            result = splitterFilter.EnumPins(out enumPins);
+            result = enumPins.Next(2, splitterFilterPins, out fetched);
+
+            AMMediaType amType2 = new AMMediaType();
+            amType2.majorType = MediaType.Stream;
+            amType2.subType = new Guid("{F2FAC0F1-3852-4670-AAC0-9051D400AC54}");
+            
+            result = base.graphBuilder.ConnectDirect(sourceFilterPins[0], splitterFilterPins[0], amType2);            
+            */
+            // connect the pins automatically
+            result = base.graphBuilder.Render(sourceFilterPins[0]);
+            result = base.graphBuilder.Render(sourceFilterPins[1]);
+            
+
+            // cleanup resources
+            DirectShowUtil.ReleaseComObject(sourceFilter);
+            DirectShowUtil.ReleaseComObject(enumPins);
+            DirectShowUtil.ReleaseComObject(sourceFilterPins[0]);
+            DirectShowUtil.ReleaseComObject(sourceFilterPins[0]);
+
+            // set fields for playback
+            base.mediaCtrl = (IMediaControl)base.graphBuilder;
+            base.mediaEvt = (IMediaEventEx)base.graphBuilder;
+            base.mediaSeek = (IMediaSeeking)base.graphBuilder;
+            base.mediaPos = (IMediaPosition)base.graphBuilder;
+            base.basicAudio = base.graphBuilder as IBasicAudio;
+            DirectShowUtil.EnableDeInterlace(base.graphBuilder);
+            base.m_iVideoWidth = this.Vmr9.VideoWidth;
+            base.m_iVideoHeight = this.Vmr9.VideoHeight;
+
+            if (!this.Vmr9.IsVMR9Connected)
+            {
+                base.mediaCtrl = null;
+                this.Cleanup();
+                return false;
+            }
+            this.Vmr9.SetDeinterlaceMode();
+
+            return true;
         }
 
         bool BuildGraphForMMS()

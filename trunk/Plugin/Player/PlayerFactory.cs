@@ -14,7 +14,7 @@ namespace OnlineVideos.Player
         {
             Uri uri = new Uri(filename);
 
-            if (uri.Scheme == "mms")
+            if (uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asf"))
             {
                 return new OnlineVideosPlayer();
             }
