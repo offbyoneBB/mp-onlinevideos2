@@ -150,8 +150,8 @@ namespace OnlineVideos.Sites
         {
             VideoInfo video = new VideoInfo();
             video.Other = entry;
-            
-            video.Description = entry.Media.Description.Value;
+
+            video.Description = entry.Media.Description != null ? entry.Media.Description.Value : "";
             int maxHeight = 0;
             foreach (MediaThumbnail thumbnail in entry.Media.Thumbnails)
             {
@@ -160,7 +160,7 @@ namespace OnlineVideos.Sites
                     video.ImageUrl = thumbnail.Url;
                 }
             }
-            video.Length = entry.Media.Duration.Seconds;
+            video.Length = entry.Media.Duration != null ? entry.Media.Duration.Seconds : "";
             video.Title = entry.Title.Text;            
             video.VideoUrl = entry.Media.VideoId.Value;
             return video;
