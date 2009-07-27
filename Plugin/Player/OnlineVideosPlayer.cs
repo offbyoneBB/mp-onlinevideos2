@@ -24,7 +24,7 @@ namespace OnlineVideos.Player
         { }
 
         protected override bool GetInterfaces()
-        {
+        {            
             if (CurrentFile.StartsWith("mms://") || CurrentFile.Contains(".asf"))
                 return BuildGraphForMMS();
             else
@@ -147,8 +147,8 @@ namespace OnlineVideos.Player
             this.Vmr9.AddVMR9(base.graphBuilder);
             this.Vmr9.Enable(false);
 
-            base.videoCodecFilter = DirectShowUtil.AddFilterToGraph(base.graphBuilder, "WMVideo Decoder DMO");
-            base.audioCodecFilter = DirectShowUtil.AddFilterToGraph(base.graphBuilder, "WMAudio Decoder DMO");
+            //base.videoCodecFilter = DirectShowUtil.AddFilterToGraph(base.graphBuilder, "WMVideo Decoder DMO");
+            //base.audioCodecFilter = DirectShowUtil.AddFilterToGraph(base.graphBuilder, "WMAudio Decoder DMO");
             using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
                 string audiorenderer = settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");

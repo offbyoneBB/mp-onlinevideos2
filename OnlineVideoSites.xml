@@ -285,10 +285,12 @@
       <Categories>
         <Category xsi:type="Group" name="NASA Live TV">
           <Channels>
+            <Channel name="NASA TV">http://playlist.yahoo.com/makeplaylist.dll?id=1369080&amp;segment=149773</Channel>
             <Channel name="NASA Digital Media">http://www.nasa.gov/145590main_Digital_Media.asx</Channel>
             <Channel name="NASA Edu">http://www.nasa.gov/145588main_Digital_Edu.asx</Channel>
           </Channels>
         </Category>
+        <Category xsi:type="RssLink" name="Hidden Universe HD: NASA's Spitzer Space Telescope">http://www.nasa.gov/rss/NASAcast_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="NASACast">http://www.nasa.gov/rss/NASAcast_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="This Week @ NASA">http://www.nasa.gov/rss/TWAN_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="50th Anniversary Moments">http://www.nasa.gov/rss/moments_vodcast.rss</Category>
@@ -418,9 +420,19 @@
             <Channel name="Boardriders Tv LIVE">http://www.impek.tv/brtv/live.asx</Channel>
           </Channels>
         </Category>
+        <Category xsi:type="RssLink" name="shralp.com snowboard (m4v)">http://shralp.com/rss/shralp_itunes.xml</Category>
+        <Category xsi:type="RssLink" name="shralp.com surf (m4v)">http://shralp.com/rss/shralpsurf_itunes.xml</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: SnowBoard">http://podcasts.fuel.tv/xml/snow_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: Skate">http://podcasts.fuel.tv/xml/skate_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: Surf">http://podcasts.fuel.tv/xml/surf2_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: BMX">http://podcasts.fuel.tv/xml/bmx3_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: FMX">http://podcasts.fuel.tv/xml/fmx_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: Wake">http://podcasts.fuel.tv/xml/wake9_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: Best Of">http://podcasts.fuel.tv/xml/mix_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: HD">http://podcasts.fuel.tv/xml/hd_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: FirstHand">http://podcasts.fuel.tv/xml/firsthand_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="Skateboard Mag PodCast">http://theskateboardmag.com/feeds/watch/</Category>
         <Category xsi:type="RssLink" name="BOARDRIDERS TV">http://www.boardriderstv.com/podcast/index.php</Category>
-        <Category xsi:type="RssLink" name="shralp.com snowboard (wmv)">http://shralp.com/rss/shralp_wmv.xml</Category>
-        <Category xsi:type="RssLink" name="shralp.com surf (mov)">http://shralp.com/rss/shralpsurf_mov.xml</Category>
       </Categories>
     </Site>
     <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true">

@@ -214,7 +214,7 @@ namespace OnlineVideos.Sites
         protected static List<String> ParseASX(String fsAsxUrl)
         {
             String lsAsxData = GetWebData(fsAsxUrl).ToLower();
-            MatchCollection videoUrls = Regex.Matches(lsAsxData, "<ref\\shref\\s=\\s\"(?<url>[^\"]*)");
+            MatchCollection videoUrls = Regex.Matches(lsAsxData, @"<ref\s+href\s*=\s*\""(?<url>[^\""]*)");
             List<String> urlList = new List<String>();
             foreach (Match videoUrl in videoUrls)
             {
