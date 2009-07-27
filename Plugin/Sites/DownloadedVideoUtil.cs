@@ -23,7 +23,6 @@ namespace OnlineVideos.Sites
 		    List<VideoInfo>loVideoInfoList = new List<VideoInfo>();
             string[]loVideoList = Directory.GetFiles(((RssLink)category).Url);
             
-
             VideoInfo loVideoInfo;
             foreach (String lsVideo in loVideoList)
             {

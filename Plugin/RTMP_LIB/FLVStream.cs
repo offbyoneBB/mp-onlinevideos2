@@ -6,6 +6,8 @@ namespace RTMP_LIB
 {
     public class FLVStream
     {
+        bool headerWritten = false;
+
         static readonly byte[] flvHeader = new byte[] 
             { 
               Convert.ToByte('F'), Convert.ToByte('L'), Convert.ToByte('V'), 0x01,
@@ -14,30 +16,39 @@ namespace RTMP_LIB
               0x00, 0x00, 0x00, 0x00 // first prevTagSize=0
             };
 
-        public static void WriteFLV(RTMP rtmp, Stream stream)
+        public void WriteFLV(RTMP rtmp, Stream stream)
         {
             // rtmp must be connected
             if (!rtmp.IsConnected()) return;
 
-            // write header
-            WriteHeader(stream);
+            // we will be writing in chunks, so use our own stream
+            MemoryStream ms = new MemoryStream();
+
+            // header
+            ms.Write(FLVStream.flvHeader, 0, FLVStream.flvHeader.Length);
 
             // write stream
             uint timeStammp = 0;
             int nRead = 0;
+            int packets = 0;
+            int httpChunkSize = 1024 * 10; // first chunk should be big enough so the direct show filter can get all the info and do some buffering
             do
             {
-                nRead = WriteStream(rtmp, stream, out timeStammp);
+                nRead = WriteStream(rtmp, ms, out timeStammp);
+                packets++;
+                if (packets > 10 && ms.Length > httpChunkSize)
+                {
+                    httpChunkSize = 1024; // reduce chunksize
+                    Logger.Log("Writing Data to Socket: " + ms.Length.ToString());
+                    byte[] buffer = ms.ToArray();
+                    stream.Write(buffer, 0, buffer.Length);
+                    ms = new MemoryStream();
+                }
             }
             while (nRead > -1 && rtmp.m_bPlaying);
         }
 
-        static void WriteHeader(Stream stream)
-        {            
-            stream.Write(flvHeader, 0, flvHeader.Length);
-        }
-
-        static int WriteStream(RTMP rtmp, Stream stream, out uint nTimeStamp)
+        int WriteStream(RTMP rtmp, Stream stream, out uint nTimeStamp)
         {
             nTimeStamp = 0;
             uint prevTagSize = 0;
@@ -74,7 +85,7 @@ namespace RTMP_LIB
                     // set data type
                     //*dataType |= (((packet.m_packetType == 0x08)<<2)|(packet.m_packetType == 0x09));
 
-                    nTimeStamp = (uint)packet.m_nInfoField1;
+                    nTimeStamp = (uint)packet.m_nTimeStamp;
                     prevTagSize = 11 + packet.m_nBodySize;
 
                     stream.WriteByte(packet.m_packetType);

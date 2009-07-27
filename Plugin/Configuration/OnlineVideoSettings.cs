@@ -87,6 +87,7 @@ namespace OnlineVideos
                         if (!videoExtensions.ContainsKey(anExt.ToLower().Trim())) videoExtensions.Add(anExt.ToLower().Trim(), true);
                     }
 
+                    if (!videoExtensions.ContainsKey(".asf")) videoExtensions.Add(".asf", false);
                     if (!videoExtensions.ContainsKey(".flv")) videoExtensions.Add(".flv", false);
                     if (!videoExtensions.ContainsKey(".m4v")) videoExtensions.Add(".m4v", false);
                     if (!videoExtensions.ContainsKey(".mp4")) videoExtensions.Add(".mp4", false);

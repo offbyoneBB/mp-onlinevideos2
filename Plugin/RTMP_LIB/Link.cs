@@ -24,10 +24,11 @@ namespace RTMP_LIB
         public bool bLiveStream;
 
         public int timeout; // number of seconds before connection times out
-        
-        public Org.Mentalis.Security.Cryptography.DiffieHellman dh; // for encryption
-        public byte[] rc4keyIn;
-        public byte[] rc4keyOut;
+
+        public Org.BouncyCastle.Crypto.IStreamCipher rc4In;
+        public Org.BouncyCastle.Crypto.IStreamCipher rc4Out;
+        public Org.BouncyCastle.Crypto.Agreement.DHBasicAgreement keyAgreement;
+
         public byte[] SWFVerificationResponse = new byte[42];
 
         public static Link FromRtmpUrl(Uri url)

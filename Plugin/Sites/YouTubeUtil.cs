@@ -18,6 +18,7 @@ namespace OnlineVideos.Sites
     public class YouTubeUtil : SiteUtilBase, IFilter, ISearch, IFavorite
     {
         static Regex PageStartIndex = new Regex(@"start-index=(?<item>[\d]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex swfJsonArgs = new Regex(@"var\sswfArgs\s=\s(?<json>\{.+\})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         private List<int> steps;
         private Dictionary<String, String> orderByList;
@@ -193,6 +194,8 @@ namespace OnlineVideos.Sites
 
             if (Items.ContainsKey("token"))
                 Token = Items["token"];
+            if (Token == "" && Items.ContainsKey("t"))
+                Token = Items["t"];
             if (Items.ContainsKey("fmt_map"))
                 FmtMap = System.Web.HttpUtility.UrlDecode(Items["fmt_map"]);
             
@@ -225,13 +228,28 @@ namespace OnlineVideos.Sites
             client.UseDefaultCredentials = true;
             client.Proxy.Credentials = CredentialCache.DefaultCredentials;
             try
-            {
+            {                
                 string contents = client.DownloadString(string.Format("http://youtube.com/get_video_info?video_id={0}", videoId));
                 string[] elemest = (contents).Split('&');
 
                 foreach (string s in elemest)
                 {
                     Items.Add(s.Split('=')[0], s.Split('=')[1]);
+                }
+
+                if (Items["status"] == "fail")
+                {
+                    contents = client.DownloadString(string.Format("http://www.youtube.com/watch?v={0}", videoId));
+                    Match m = swfJsonArgs.Match(contents);
+                    if (m.Success)
+                    {
+                        Items.Clear();
+                        object data = Jayrock.Json.Conversion.JsonConvert.Import(m.Groups["json"].Value);
+                        foreach (string z in (data as Jayrock.Json.JsonObject).Names)
+                        {
+                            Items.Add(z,(data as Jayrock.Json.JsonObject)[z].ToString());
+                        }
+                    }
                 }
             }
             catch

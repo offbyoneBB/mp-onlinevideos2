@@ -10,20 +10,30 @@ namespace RTMP_LIB
     {
         #region  Constants
 
+        static readonly byte[] DH_MODULUS_BYTES = new byte[128] 
+                { 
+    	            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xC9, 0x0F, 0xDA, 0xA2, 0x21, 0x68, 0xC2, 0x34, 0xC4, 0xC6, 0x62, 0x8B, 0x80, 0xDC, 0x1C, 0xD1, 0x29, 0x02, 0x4E, 0x08, 0x8A, 0x67, 0xCC, 0x74,
+    	            0x02, 0x0B, 0xBE, 0xA6, 0x3B, 0x13, 0x9B, 0x22, 0x51, 0x4A, 0x08, 0x79, 0x8E, 0x34, 0x04, 0xDD, 0xEF, 0x95, 0x19, 0xB3, 0xCD, 0x3A, 0x43, 0x1B, 0x30, 0x2B, 0x0A, 0x6D, 0xF2, 0x5F, 0x14, 0x37, 
+    	            0x4F, 0xE1, 0x35, 0x6D, 0x6D, 0x51, 0xC2, 0x45, 0xE4, 0x85, 0xB5, 0x76, 0x62, 0x5E, 0x7E, 0xC6, 0xF4, 0x4C, 0x42, 0xE9, 0xA6, 0x37, 0xED, 0x6B, 0x0B, 0xFF, 0x5C, 0xB6, 0xF4, 0x06, 0xB7, 0xED, 
+    	            0xEE, 0x38, 0x6B, 0xFB, 0x5A, 0x89, 0x9F, 0xA5, 0xAE, 0x9F, 0x24, 0x11, 0x7C, 0x4B, 0x1F, 0xE6, 0x49, 0x28, 0x66, 0x51, 0xEC, 0xE6, 0x53, 0x81, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+                };
+
         const int SHA256_DIGEST_LENGTH = 32;
 
-        const short RTMP_PROTOCOL_UNDEFINED = -1;
-        const short RTMP_PROTOCOL_RTMP = 0;
-        const short RTMP_PROTOCOL_RTMPT = 1;
-        const short RTMP_PROTOCOL_RTMPS = 2;
-        const short RTMP_PROTOCOL_RTMPE = 3;
-        const short RTMP_PROTOCOL_RTMPTE = 4;
-        const short RTMP_PROTOCOL_RTMFP = 5;
+        public const short RTMP_PROTOCOL_UNDEFINED = -1;
+        public const short RTMP_PROTOCOL_RTMP = 0;
+        public const short RTMP_PROTOCOL_RTMPT = 1;
+        public const short RTMP_PROTOCOL_RTMPS = 2;
+        public const short RTMP_PROTOCOL_RTMPE = 3;
+        public const short RTMP_PROTOCOL_RTMPTE = 4;
+        public const short RTMP_PROTOCOL_RTMFP = 5;
 
         static readonly byte[] GenuineFPKey = new byte[62] 
         {
             0x47,0x65,0x6E,0x75,0x69,0x6E,0x65,0x20,0x41,0x64,0x6F,0x62,0x65,0x20,0x46,0x6C,
-            0x61,0x73,0x68,0x20,0x50,0x6C,0x61,0x79,0x65,0x72,0x20,0x30,0x30,0x31,0xF0,0xEE,
+            0x61,0x73,0x68,0x20,0x50,0x6C,0x61,0x79,0x65,0x72,0x20,0x30,0x30,0x31,
+            
+            0xF0,0xEE,
             0xC2,0x4A,0x80,0x68,0xBE,0xE8,0x2E,0x00,0xD0,0xD1,0x02,0x9E,0x7E,0x57,0x6E,0xEC,
             0x5D,0x2D,0x29,0x80,0x6F,0xAB,0x93,0xB8,0xE6,0x36,0xCF,0xEB,0x31,0xAE
         };
@@ -79,7 +89,7 @@ namespace RTMP_LIB
             tcpClient = new TcpClient(Link.hostname, Link.port);
             networkStream = tcpClient.GetStream();
 
-            if (!HandShake(false)) return false;
+            if (!HandShake(Link.protocol == RTMP_PROTOCOL_RTMPE || Link.protocol == RTMP_PROTOCOL_RTMPTE)) return false;
             if (!SendConnectPacket()) return false;
 
             return true;
@@ -239,7 +249,8 @@ namespace RTMP_LIB
                 packet.m_nTimeStamp = (uint)packet.m_nInfoField1;
 
                 // make packet's timestamp absolute 
-                if (!packet.m_hasAbsTimestamp) packet.m_nTimeStamp += m_channelTimestamp[packet.m_nChannel]; // timestamps seem to be always relative!! 
+                if (!packet.m_hasAbsTimestamp) 
+                    packet.m_nTimeStamp += m_channelTimestamp[packet.m_nChannel]; // timestamps seem to be always relative!! 
                 m_channelTimestamp[packet.m_nChannel] = packet.m_nTimeStamp;
 
                 // reset the data from the stored packet. we keep the header since we may use it later if a new packet for this channel
@@ -781,7 +792,7 @@ namespace RTMP_LIB
         # region Handshake
 
         bool HandShake(bool FP9HandShake)
-        {
+        {            
             bool encrypted = Link.protocol == RTMP_PROTOCOL_RTMPE || Link.protocol == RTMP_PROTOCOL_RTMPTE;            
 
             if (encrypted && !FP9HandShake)
@@ -791,9 +802,7 @@ namespace RTMP_LIB
             }
 
             byte[] clientsig = new byte[RTMP_SIG_SIZE + 1];
-            byte[] serversig = new byte[RTMP_SIG_SIZE];
-
-            Link.rc4keyIn = Link.rc4keyOut = null;
+            byte[] serversig = new byte[RTMP_SIG_SIZE];            
 
             if (encrypted) clientsig[0] = 0x06; // 0x08 is RTMPE as well
             else clientsig[0] = 0x03;
@@ -828,13 +837,39 @@ namespace RTMP_LIB
 
             if (encrypted)
             {
-                // generate Diffie-Hellmann parameters                
-                Link.dh = new Org.Mentalis.Security.Cryptography.DiffieHellmanManaged(1024, 0, Org.Mentalis.Security.Cryptography.DHKeyGeneration.Static);//DHInit(1024);
+                // generate Diffie-Hellmann parameters                                
+                Org.BouncyCastle.Crypto.Parameters.DHParameters dhParams = 
+                    new Org.BouncyCastle.Crypto.Parameters.DHParameters(
+                        new Org.BouncyCastle.Math.BigInteger(1, DH_MODULUS_BYTES),
+                        Org.BouncyCastle.Math.BigInteger.ValueOf(2));
+                Org.BouncyCastle.Crypto.Parameters.DHKeyGenerationParameters keySpec = new Org.BouncyCastle.Crypto.Parameters.DHKeyGenerationParameters(new Org.BouncyCastle.Security.SecureRandom(), dhParams);
+                Org.BouncyCastle.Crypto.Generators.DHBasicKeyPairGenerator keyGen = new Org.BouncyCastle.Crypto.Generators.DHBasicKeyPairGenerator();                
+                keyGen.Init(keySpec);
+                Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair pair = keyGen.GenerateKeyPair();
+                Org.BouncyCastle.Crypto.Agreement.DHBasicAgreement keyAgreement = new Org.BouncyCastle.Crypto.Agreement.DHBasicAgreement();
+                keyAgreement.Init(pair.Private);
+                Link.keyAgreement = keyAgreement;
+
+                byte[] publicKey = (pair.Public as Org.BouncyCastle.Crypto.Parameters.DHPublicKeyParameters).Y.ToByteArray();
+
+                byte[] temp = new byte[128];
+                if (publicKey.Length < 128)
+                {
+                    Array.Copy(publicKey, 0, temp, 128 - publicKey.Length, publicKey.Length);
+                    publicKey = temp;
+                    Logger.Log("padded public key length to 128");
+                }
+                else if (publicKey.Length > 128)
+                {
+                    Array.Copy(publicKey, publicKey.Length - 128, temp, 0, 128);
+                    publicKey = temp;
+                    Logger.Log("truncated public key length to 128");
+                }
                 
                 dhposClient = (int)GetDHOffset1(clientsig, 1, RTMP_SIG_SIZE);
                 Logger.Log(string.Format("DH pubkey position: {0}", dhposClient));
 
-                Array.Copy(Link.dh.CreateKeyExchange(), 0, clientsig, 1 + dhposClient, 128);
+                Array.Copy(publicKey, 0, clientsig, 1 + dhposClient, 128);                
             }
 
             // set handshake digest
@@ -908,18 +943,27 @@ namespace RTMP_LIB
 
                 byte[] serverKey = new byte[128];
                 Array.Copy(serversig, dhposServer, serverKey, 0, 128);
-                secretKey = Link.dh.DecryptKeyExchange(serverKey);
+                
+                Org.BouncyCastle.Crypto.Parameters.DHParameters dhParams =
+                    new Org.BouncyCastle.Crypto.Parameters.DHParameters(
+                        new Org.BouncyCastle.Math.BigInteger(1, DH_MODULUS_BYTES),
+                        Org.BouncyCastle.Math.BigInteger.ValueOf(2));
 
-                Logger.Log("Secret key: ");
-                string secretKeyAsHexString = "";
-                for (int i = 0; i < 128; i++) secretKeyAsHexString += secretKey[i].ToString("X2") + " ";
-                Logger.Log(secretKeyAsHexString);                
+                Org.BouncyCastle.Crypto.Parameters.DHPublicKeyParameters dhPubKey =
+                    new Org.BouncyCastle.Crypto.Parameters.DHPublicKeyParameters(
+                        new Org.BouncyCastle.Math.BigInteger(1, serverKey),
+                        dhParams);
+
+                secretKey = Link.keyAgreement.CalculateAgreement(dhPubKey).ToByteArray();
+
+                Logger.Log("DH SecretKey:");
+                Logger.LogHex(secretKey, 0, 128);                
                 
                 InitRC4Encryption(
                     secretKey,
                     serversig, dhposServer,
                     clientsig, 1 + dhposClient,
-                    out keyIn, out keyOut);                
+                    out keyIn, out keyOut);
             }
 
             // 2nd part of handshake
@@ -974,7 +1018,7 @@ namespace RTMP_LIB
                 // generate signed answer
                 byte[] clientResp = new byte[RTMP_SIG_SIZE];
                 for (int i = 0; i < RTMP_SIG_SIZE; i++) clientResp[i] = (byte)(rand.Next(0, 256));
-
+                
                 // calculate response now
                 byte[] signatureResp = new byte[SHA256_DIGEST_LENGTH];
                 byte[] digestResp = new byte[SHA256_DIGEST_LENGTH];
@@ -997,8 +1041,21 @@ namespace RTMP_LIB
             if (encrypted)
             {
                 // set keys for encryption from now on
-                Link.rc4keyIn = keyIn;
-                Link.rc4keyOut = keyOut;
+                Link.rc4In = new Org.BouncyCastle.Crypto.Engines.RC4Engine();
+                Link.rc4In.Init(false, new Org.BouncyCastle.Crypto.Parameters.KeyParameter(keyIn));
+
+                Link.rc4Out = new Org.BouncyCastle.Crypto.Engines.RC4Engine();
+                Link.rc4Out.Init(true, new Org.BouncyCastle.Crypto.Parameters.KeyParameter(keyOut));
+
+                // update 'encoder / decoder state' for the RC4 keys
+                // both parties *pretend* as if handshake part 2 (1536 bytes) was encrypted
+                // effectively this hides / discards the first few bytes of encrypted session
+                // which is known to increase the secure-ness of RC4
+                // RC4 state is just a function of number of bytes processed so far
+                // that's why we just run 1536 arbitrary bytes through the keys below
+                byte[] dummyBytes = new byte[RTMP_SIG_SIZE];
+                Link.rc4In.ProcessBytes(dummyBytes, 0, RTMP_SIG_SIZE, new byte[RTMP_SIG_SIZE], 0);
+                Link.rc4Out.ProcessBytes(dummyBytes, 0, RTMP_SIG_SIZE, new byte[RTMP_SIG_SIZE], 0);
             }
 
             Logger.Log("Handshaking finished....");
@@ -1007,15 +1064,15 @@ namespace RTMP_LIB
 
         uint GetDHOffset1(byte[] handshake, int bufferoffset, uint len)
         {
-            uint offset = 0;
+            int offset = 0;
             bufferoffset += 1532;
 
-            offset += handshake[bufferoffset]; bufferoffset++; 
+            offset += handshake[bufferoffset]; bufferoffset++;
             offset += handshake[bufferoffset]; bufferoffset++;
             offset += handshake[bufferoffset]; bufferoffset++;
             offset += handshake[bufferoffset];// (*ptr);
 
-            uint res = (offset % 632) + 772;
+            int res = (offset % 632) + 772;
 
             if (res + 128 > 1531)
             {
@@ -1023,12 +1080,12 @@ namespace RTMP_LIB
                 throw new Exception();
             }
 
-            return res;
+            return (uint)res;
         }
 
         uint GetDigestOffset1(byte[] handshake, int bufferoffset, uint len)
         {
-            uint offset = 0;
+            int offset = 0;
             bufferoffset += 8;
 
             offset += handshake[bufferoffset]; bufferoffset++;
@@ -1036,7 +1093,7 @@ namespace RTMP_LIB
             offset += handshake[bufferoffset]; bufferoffset++;
             offset += handshake[bufferoffset];
 
-            uint res = (offset % 728) + 12;
+            int res = (offset % 728) + 12;
 
             if (res + 32 > 771)
             {
@@ -1044,7 +1101,7 @@ namespace RTMP_LIB
                 throw new Exception();
             }
 
-            return res;
+            return (uint)res;
         }
 
         uint GetDHOffset2(byte[] handshake, int bufferoffset, uint len)
@@ -1155,42 +1212,7 @@ namespace RTMP_LIB
             Logger.LogHex(rc4keyIn, 0, 16);
         }
 
-        #endregion
-
-        public static void RC4(ref byte[] bytes, int offset, int size, byte[] key)
-        {
-            Byte[] s = new Byte[256];
-            Byte[] k = new Byte[256];
-            Byte temp;
-            int i, j;
-
-            for (i = 0; i < 256; i++)
-            {
-                s[i] = (Byte)i;
-                k[i] = key[i % key.GetLength(0)];
-            }
-
-            j = 0;
-            for (i = 0; i < 256; i++)
-            {
-                j = (j + s[i] + k[i]) % 256;
-                temp = s[i];
-                s[i] = s[j];
-                s[j] = temp;
-            }
-
-            i = j = 0;
-            for (int x = offset; x < offset+size; x++)
-            {
-                i = (i + 1) % 256;
-                j = (j + s[i]) % 256;
-                temp = s[i];
-                s[i] = s[j];
-                s[j] = temp;
-                int t = (s[i] + s[j]) % 256;
-                bytes[x] ^= s[t];
-            }
-        }
+        #endregion        
 
         int ReadN(byte[] buffer, int offset, int size)
         {            
@@ -1203,12 +1225,17 @@ namespace RTMP_LIB
             }
             if (tcpClient.Available < size) throw new Exception("No Data Available");
 
-            int read = networkStream.Read(buffer, offset, size);
+            byte[] data = new byte[size];
+            int read = networkStream.Read(data, 0, size);
 
             // decrypt if needed
-            if (read > 0 && Link.rc4keyIn != null)
+            if (read > 0 && Link.rc4In != null)
             {
-                RC4(ref buffer, offset, size, Link.rc4keyIn);
+                Link.rc4In.ProcessBytes(data, 0, size, buffer, offset);                
+            }
+            else
+            {
+                Array.Copy(data, 0, buffer, offset, size);
             }
 
             return read;
@@ -1222,22 +1249,23 @@ namespace RTMP_LIB
         }
 
         void WriteN(byte[] buffer, int offset, int size)
-        {
-            byte[] data = buffer;
-
+        {            
             // encrypt if needed
-            if (Link.rc4keyOut != null)
+            if (Link.rc4Out != null)
             {
-                data = (byte[])buffer.Clone();
-                RC4(ref data, offset, size, Link.rc4keyOut);                
+                byte[] result = new byte[size];
+                Link.rc4Out.ProcessBytes(buffer, offset, size, result, 0);
+                networkStream.Write(result, 0, size);                
             }
-            networkStream.Write(data, offset, size);
+            else
+            {
+                networkStream.Write(buffer, offset, size);
+            }
         }
 
         void WriteByte(byte data)
         {
             WriteN(new byte[1] { data }, 0, 1);
-        }        
-
+        }
     }
 }
