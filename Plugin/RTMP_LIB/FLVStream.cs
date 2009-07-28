@@ -6,8 +6,6 @@ namespace RTMP_LIB
 {
     public class FLVStream
     {
-        bool headerWritten = false;
-
         static readonly byte[] flvHeader = new byte[] 
             { 
               Convert.ToByte('F'), Convert.ToByte('L'), Convert.ToByte('V'), 0x01,
@@ -16,10 +14,18 @@ namespace RTMP_LIB
               0x00, 0x00, 0x00, 0x00 // first prevTagSize=0
             };
 
-        public void WriteFLV(RTMP rtmp, Stream stream)
+        public delegate Stream DataReadyHandler(); // will be called when the first data is going to be written
+
+        public long Length { get; protected set; } // actual amount of bytes written to the stream
+
+        public long EstimatedLength { get; protected set; } // predicted amount of byte in the file
+
+        public void WriteFLV(RTMP rtmp, DataReadyHandler DataReady)
         {
             // rtmp must be connected
             if (!rtmp.IsConnected()) return;
+
+            Stream outputStream = null;
 
             // we will be writing in chunks, so use our own stream
             MemoryStream ms = new MemoryStream();
@@ -38,14 +44,32 @@ namespace RTMP_LIB
                 packets++;
                 if (packets > 10 && ms.Length > httpChunkSize)
                 {
-                    httpChunkSize = 1024; // reduce chunksize
-                    Logger.Log("Writing Data to Socket: " + ms.Length.ToString());
+                    if (outputStream == null) // first time writing data
+                    {
+                        if (rtmp.CombinedTracksLength > 0)
+                        {
+                            EstimatedLength = rtmp.CombinedTracksLength;
+                        }
+                        else if (rtmp.CombinedBitrates > 0)
+                        {
+                            EstimatedLength = (long)(rtmp.CombinedBitrates * 1000 / 8 * rtmp.Duration);
+                        }
+                        else
+                        {
+                            EstimatedLength = (long)(2000 * 1000 / 8 * rtmp.Duration); // nothing was in the metadata -> just use duration and a birate of 2000
+                        }
+                        outputStream = DataReady(); // get the stream
+                        httpChunkSize = 1024; // reduce chunksize
+                    }
+
+                    //Logger.Log("Writing Data to Socket: " + ms.Length.ToString());
                     byte[] buffer = ms.ToArray();
-                    stream.Write(buffer, 0, buffer.Length);
+                    outputStream.Write(buffer, 0, buffer.Length);
+                    Length += (uint)buffer.Length;
                     ms = new MemoryStream();
                 }
             }
-            while (nRead > -1 && rtmp.m_bPlaying);
+            while (nRead > -1 && rtmp.Playing);
         }
 
         int WriteStream(RTMP rtmp, Stream stream, out uint nTimeStamp)

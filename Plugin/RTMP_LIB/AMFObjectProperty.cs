@@ -14,7 +14,7 @@ namespace RTMP_LIB
 
         public AMFObjectProperty()
         {
-            Reset();            
+            Reset();
         }
 
         public string GetPropName()
@@ -127,7 +127,20 @@ namespace RTMP_LIB
 
                         // next comes the rest, mixed array has a final 0x000009 mark and names, so its an object
                         m_objVal = new AMFObject();
-                        int nRes = m_objVal.Decode(pBuffer, bufferOffset + +5, nSize, true);
+                        int nRes = m_objVal.Decode(pBuffer, bufferOffset + 5, nSize, true);
+                        if (nRes == -1)
+                            return -1;
+                        nSize -= nRes;
+                        m_type = AMFDataType.AMF_OBJECT;
+                        break;
+                    }
+                case 0x0A: // AMF_ARRAY
+                    {
+                        int nArrayLen = RTMP.ReadInt32(pBuffer, bufferOffset + 1);
+                        nSize -= 4;
+
+                        m_objVal = new AMFObject();
+                        int nRes = m_objVal.DecodeArray(pBuffer, bufferOffset + 5, nSize, nArrayLen, false);
                         if (nRes == -1)
                             return -1;
                         nSize -= nRes;
@@ -195,6 +208,6 @@ namespace RTMP_LIB
             m_strVal = "";
             m_objVal = null;
             m_type = AMFDataType.AMF_INVALID;
-        }       
+        }
     }
 }

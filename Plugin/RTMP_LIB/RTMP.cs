@@ -67,12 +67,15 @@ namespace RTMP_LIB
         int bytesReadTotal = 0;
         int lastSentBytesRead = 0;
 
-        int m_nBufferMS = 300;
-        int m_chunkSize = 128;
-        int m_stream_id; // returned in _result from invoking createStream    
-        double m_fDuration; // duration of stream in seconds returned by Metadata
-        int m_nBWCheckCounter;
-        public bool m_bPlaying = false;
+        public double Duration { get; protected set; } // duration of stream in seconds returned by Metadata
+        public int ChunkSize { get; protected set; } // current ChunkSize, defaults to 128
+        public bool Playing { get; protected set; } // indicates if currently streaming a media file
+        public long CombinedTracksLength { get; protected set; }
+        public long CombinedBitrates { get; protected set; }
+
+        int m_nBufferMS = 300;        
+        int m_stream_id; // returned in _result from invoking createStream            
+        int m_nBWCheckCounter;        
         RTMPPacket[] m_vecChannelsIn = new RTMPPacket[64];
         RTMPPacket[] m_vecChannelsOut = new RTMPPacket[64];
         uint[] m_channelTimestamp = new uint[64]; // abs timestamp of last packet
@@ -158,17 +161,18 @@ namespace RTMP_LIB
                         break;
                     case 0x16:
                         // FLV tag(s)
-                        //CLog::Log(LOGDEBUG,"%s, received: FLV tag(s) %lu bytes", __FUNCTION__, packet.m_nBodySize);
+                        HandleFlvTags(packet);
+                        //Logger.Log(string.Format("received: FLV tag(s) {0} bytes", packet.m_nBodySize));
                         bHasMediaPacket = true;
                         break;
                     default:
-                        //CLog::Log(LOGERROR,"%s, unknown packet type received: 0x%02x", __FUNCTION__, packet.m_packetType);
+                        Logger.Log(string.Format("Unknown packet type received: {0}", packet.m_packetType));
                         break;
                 }
                 //if (!bHasMediaPacket) packet.FreePacket();
                 packet.m_nBytesRead = 0;
             }
-            if (bHasMediaPacket) m_bPlaying = true;
+            if (bHasMediaPacket) Playing = true;
             return bHasMediaPacket;
         }
         
@@ -182,7 +186,7 @@ namespace RTMP_LIB
             byte channel = (byte)(type & 0x3f);
             uint nSize = packetSize[headerType];
 
-            Logger.Log(string.Format("reading RTMP packet chunk on channel {0}, headersz {1}", channel, nSize));
+            //Logger.Log(string.Format("reading RTMP packet chunk on channel {0}, headersz {1}", channel, nSize));
 
             if (nSize < RTMP_LARGE_HEADER_SIZE)
                 packet = m_vecChannelsIn[channel]; // using values from the last message of this channel
@@ -205,7 +209,7 @@ namespace RTMP_LIB
             if (nSize >= 6)
             {
                 packet.m_nBodySize = (uint)ReadInt24(header, 3);
-                Logger.Log(string.Format("new packet body to read {0}", packet.m_nBodySize));
+                //Logger.Log(string.Format("new packet body to read {0}", packet.m_nBodySize));
                 packet.m_nBytesRead = 0;
                 packet.FreePacketHeader(); // new packet body
             }
@@ -223,7 +227,7 @@ namespace RTMP_LIB
             }
 
             uint nToRead = packet.m_nBodySize - packet.m_nBytesRead;
-            uint nChunk = (uint)m_chunkSize;
+            uint nChunk = (uint)ChunkSize;
             if (nToRead < nChunk)
                 nChunk = nToRead;
 
@@ -245,7 +249,7 @@ namespace RTMP_LIB
 
             if (packet.IsReady())
             {
-                Logger.Log(string.Format("packet with {0} bytes read", packet.m_nBytesRead));
+                //Logger.Log(string.Format("packet with {0} bytes read", packet.m_nBytesRead));
                 packet.m_nTimeStamp = (uint)packet.m_nInfoField1;
 
                 // make packet's timestamp absolute 
@@ -271,7 +275,12 @@ namespace RTMP_LIB
             networkStream = null;
             tcpClient = null;
 
-            m_chunkSize = 128;
+            Duration = 0;
+            ChunkSize = 128;
+            Playing = false;
+            CombinedTracksLength = 0;
+            CombinedBitrates = 0;
+
             m_nBWCheckCounter = 0;
             bytesReadTotal = 0;
             lastSentBytesRead = 0;
@@ -280,9 +289,10 @@ namespace RTMP_LIB
             {
                 m_vecChannelsIn[i] = null;
                 m_vecChannelsOut[i] = null;
+                m_channelTimestamp[i] = 0;
             }
 
-            m_bPlaying = false;
+            m_methodCalls.Clear();
         }
 
         #region Send Client Packets
@@ -490,8 +500,8 @@ namespace RTMP_LIB
             uint bufferOffset = 0;
             while (nSize > 0)
             {
-                uint nChunkSize = packet.m_packetType == 0x14 ? (uint)m_chunkSize : packet.m_nBodySize;                
-                if (nSize < m_chunkSize)
+                uint nChunkSize = packet.m_packetType == 0x14 ? (uint)ChunkSize : packet.m_nBodySize;                
+                if (nSize < ChunkSize)
                     nChunkSize = nSize;
 
                 WriteN(buffer, (int)bufferOffset, (int)nChunkSize);
@@ -522,8 +532,8 @@ namespace RTMP_LIB
         {
             if (packet.m_nBodySize >= 4)
             {
-                m_chunkSize = ReadInt32(packet.m_body, 0);
-                Logger.Log(string.Format("received: chunk size change to {0}", m_chunkSize));
+                ChunkSize = ReadInt32(packet.m_body, 0);
+                Logger.Log(string.Format("received: chunk size change to {0}", ChunkSize));
             }
         }
 
@@ -622,9 +632,14 @@ namespace RTMP_LIB
         }
 
         void HandleMetadata(RTMPPacket packet)
+        {
+            HandleMetadata(packet.m_body, 0, (int)packet.m_nBodySize);
+        }
+
+        void HandleMetadata(byte[] buffer, int offset, int size)
         {            
             AMFObject obj = new AMFObject();
-            int nRes = obj.Decode(packet.m_body, 0, (int)packet.m_nBodySize, false);
+            int nRes = obj.Decode(buffer, offset, size, false);
             if (nRes < 0)
             {
                 //Log(LOGERROR, "%s, error decoding meta data packet", __FUNCTION__);
@@ -636,13 +651,60 @@ namespace RTMP_LIB
 
             if (metastring == "onMetaData")
             {
-                AMFObjectProperty prop = null;
-                if (obj.FindFirstMatchingProperty("duration", ref prop))
+                List<AMFObjectProperty> props = new List<AMFObjectProperty>();
+                obj.FindMatchingProperty("duration", props, 1);
+                if (props.Count > 0)
                 {
-                    m_fDuration = prop.GetNumber();
-                    Logger.Log(string.Format("Set duration: {0}", m_fDuration));
+                    Duration = props[0].GetNumber();
+                    Logger.Log(string.Format("Set duration: {0}", Duration));
+                }
+                props.Clear();
+                obj.FindMatchingProperty("length", props, int.MaxValue);
+                if (props.Count > 0)
+                {
+                    foreach (AMFObjectProperty prop in props)
+                    {
+                        CombinedTracksLength += (int)prop.GetNumber();
+                    }
+                    Logger.Log(string.Format("Set CombinedTracksLength: {0}", CombinedTracksLength));
+                }
+                props.Clear();
+                obj.FindMatchingProperty("audiodatarate", props, 1);
+                if (props.Count > 0)
+                {
+                    CombinedBitrates += (int)props[0].GetNumber();
+                    Logger.Log(string.Format("audiodatarate: {0}", Duration));
+                }
+                props.Clear();
+                obj.FindMatchingProperty("videodatarate", props, 1);
+                if (props.Count > 0)
+                {
+                    CombinedBitrates += (int)props[0].GetNumber();
+                    Logger.Log(string.Format("audiodatarate: {0}", Duration));
                 }
             }
+        }
+
+        void HandleFlvTags(RTMPPacket packet)
+        {
+            // go through FLV packets and handle metadata packets
+            int pos = 0;
+
+            while (pos + 11 < packet.m_nBodySize)
+            {
+                int dataSize = ReadInt24(packet.m_body, pos + 1); // size without header (11) and prevTagSize (4)
+
+                if (pos + 11 + dataSize + 4 > packet.m_nBodySize)
+                {
+                    Logger.Log("Stream corrupt?!");
+                    break;
+                }
+                if (packet.m_body[pos] == 0x12)
+                {
+                    HandleMetadata(packet.m_body, pos + 11, dataSize);
+                }
+                pos += (11 + dataSize + 4);
+            }	
         }
 
         #endregion        

@@ -104,16 +104,16 @@ namespace HybridDSP.Net.HTTP
 
             AddressFamily addressFamily;
             IPAddress bindAddress;
-            if (Socket.OSSupportsIPv6)
-            {
-                addressFamily = AddressFamily.InterNetworkV6;
-                bindAddress = IPAddress.IPv6Any;
-            }
-            else
-            {
+            //if (Socket.OSSupportsIPv6)
+            //{
+            //    addressFamily = AddressFamily.InterNetworkV6;
+            //    bindAddress = IPAddress.IPv6Any;
+            //}
+            //else
+            //{
                 addressFamily = AddressFamily.InterNetwork;
                 bindAddress = IPAddress.Any;
-            }
+            //}
 
             _socket = new Socket(addressFamily, SocketType.Stream, ProtocolType.Tcp);
             _socket.Bind(new IPEndPoint(bindAddress, port));

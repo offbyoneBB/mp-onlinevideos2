@@ -14,7 +14,7 @@ namespace RTMP_LIB
         {
             Reset();
         }
-        
+
         public int Decode(byte[] pBuffer, int bufferOffset, int nSize, bool bDecodeName)
         {
             int nOriginalSize = nSize;
@@ -36,7 +36,7 @@ namespace RTMP_LIB
                     continue;
                 }
 
-                AMFObjectProperty prop = new AMFObjectProperty();                
+                AMFObjectProperty prop = new AMFObjectProperty();
                 int nRes = prop.Decode(pBuffer, bufferOffset, nSize, bDecodeName);
                 if (nRes == -1)
                     bError = true;
@@ -49,6 +49,32 @@ namespace RTMP_LIB
             }
 
             if (bError) return -1;
+
+            return nOriginalSize - nSize;
+        }
+
+        public int DecodeArray(byte[] buffer, int offset, int nSize, int nArrayLen, bool bDecodeName)
+        {
+            int nOriginalSize = nSize;
+            bool bError = false;
+
+            while (nArrayLen > 0)
+            {
+                nArrayLen--;
+
+                AMFObjectProperty prop = new AMFObjectProperty();
+                int nRes = prop.Decode(buffer, offset, nSize, bDecodeName);
+                if (nRes == -1)
+                    bError = true;
+                else
+                {
+                    nSize -= nRes;
+                    offset += nRes;
+                    m_properties.Add(prop);
+                }
+            }
+            if (bError)
+                return -1;
 
             return nOriginalSize - nSize;
         }
@@ -74,30 +100,30 @@ namespace RTMP_LIB
 
         public AMFObjectProperty GetProperty(int nIndex)
         {
-            if (nIndex >= m_properties.Count) 
+            if (nIndex >= m_properties.Count)
                 return null;
             else
                 return m_properties[nIndex];
         }
-       
-        public bool FindFirstMatchingProperty(string name, ref AMFObjectProperty p)
-        {            
+
+        public void FindMatchingProperty(string name, List<AMFObjectProperty> p, int stopAt)
+        {
             for (int n = 0; n < GetPropertyCount(); n++)
             {
                 AMFObjectProperty prop = GetProperty(n);
 
                 if (prop.GetPropName() == name)
                 {
-                    p = GetProperty(n);
-                    return true;
+                    if (p == null) p = new List<AMFObjectProperty>();
+                    p.Add(GetProperty(n));
+                    if (p.Count >= stopAt) return;
                 }
 
                 if (prop.GetDataType() == AMFDataType.AMF_OBJECT)
-                {                    
-                    return prop.GetObject().FindFirstMatchingProperty(name, ref p);
+                {
+                    prop.GetObject().FindMatchingProperty(name, p, stopAt);
                 }
-            }
-            return false;
+            }            
         }
 
         public void Dump()
