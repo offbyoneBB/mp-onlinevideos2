@@ -21,7 +21,7 @@ namespace HybridDSP.Net.HTTP
         public override void Close()
         {
             //Finished chunked data, write footer.            
-            byte[] data = System.Text.Encoding.UTF8.GetBytes("0;\r\n\r\n");
+            byte[] data = System.Text.Encoding.UTF8.GetBytes("0\r\n\r\n");
             base.Write(data, 0, data.Length);            
 
             base.Close();
