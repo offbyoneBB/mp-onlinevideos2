@@ -166,21 +166,14 @@ namespace OnlineVideos
 
     [Serializable]
     public class Channel
-    {
-        string streamName;
+    {        
         [XmlAttribute("name")]
-        public string StreamName
-        {
-            get { return streamName; }
-            set { streamName = value; }
-        }
-
-        string url;
+        public string StreamName { get; set; }
+        
         [XmlText]
-        public string Url
-        {
-            get { return url; }
-            set { url = value; }
-        }        
+        public string Url { get; set; }
+
+        [XmlAttribute("thumb")]
+        public string Thumb { get; set; }
     }
 }

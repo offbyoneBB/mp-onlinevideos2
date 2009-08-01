@@ -274,6 +274,8 @@ namespace OnlineVideos
                     tbxStreamName.Enabled = false;
                     tbxStreamUrl.Text = "";
                     tbxStreamUrl.Enabled = false;
+                    tbxStreamThumb.Text = "";
+                    tbxStreamThumb.Enabled = false;
                     btnAddChannel.Enabled = true;
                 }
                 else
@@ -284,6 +286,8 @@ namespace OnlineVideos
                     tbxStreamName.Enabled = true;
                     tbxStreamUrl.Text = ((Channel)e.Node.Tag).Url;
                     tbxStreamUrl.Enabled = true;
+                    tbxStreamThumb.Text = ((Channel)e.Node.Tag).Thumb;
+                    tbxStreamThumb.Enabled = true;
                     btnAddChannel.Enabled = false;
                 }
             }
@@ -295,6 +299,8 @@ namespace OnlineVideos
                 tbxStreamName.Enabled = false;
                 tbxStreamUrl.Text = "";
                 tbxStreamUrl.Enabled = false;
+                tbxStreamThumb.Text = "";
+                tbxStreamThumb.Enabled = false;
                 btnSaveChannel.Enabled = false;
                 btnDeleteChannel.Enabled = false;
                 btnAddChannel.Enabled = false;
@@ -319,7 +325,8 @@ namespace OnlineVideos
                     Channel channel = tvGroups.SelectedNode.Tag as Channel;
                     channel.StreamName = tbxStreamName.Text;
                     tvGroups.SelectedNode.Text = tbxStreamName.Text;
-                    channel.Url = tbxStreamUrl.Text;                    
+                    channel.Url = tbxStreamUrl.Text;
+                    if (tbxStreamThumb.Text != "") channel.Thumb = tbxStreamThumb.Text;
                 }
             }
         }
