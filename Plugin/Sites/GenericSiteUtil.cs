@@ -83,6 +83,7 @@ namespace OnlineVideos.Sites
                         video = new VideoInfo();
                         video.Title = channel.StreamName;
                         video.VideoUrl = channel.Url;
+                        video.ImageUrl = channel.Thumb;
                         loVideoList.Add(video);      
                     }                            
             }

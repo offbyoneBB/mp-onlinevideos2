@@ -14,7 +14,7 @@
         <Category xsi:type="RssLink" name="Top Viewed:Today">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=today</Category>
         <Category xsi:type="RssLink" name="Top Viewed:This Week">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=this_week</Category>
         <Category xsi:type="RssLink" name="Top Viewed:This Month">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=this_month</Category>
-		<Category xsi:type="RssLink" name="HD Content">http://gdata.youtube.com/feeds/api/videos/-/HD</Category>
+        <Category xsi:type="RssLink" name="HD Content">http://gdata.youtube.com/feeds/api/videos/-/HD</Category>
       </Categories>
     </Site>
     <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true">
@@ -205,13 +205,13 @@
         <Category xsi:type="RssLink" name="Playoffs">http://www.nba.com/.element/ssi/sect/1.1/video/playoffs.html</Category>
         <Category xsi:type="RssLink" name="Draft">http://www.nba.com/.element/ssi/sect/1.1/video/draft.html</Category>
         <Category xsi:type="RssLink" name="Highlights">http://www.nba.com/.element/ssi/sect/1.1/video/highlights.html</Category>
-        <Category xsi:type="RssLink" name="Top Plays">http://www.nba.com/.element/ssi/sect/1.1/video/topplays.html</Category>        
-        <Category xsi:type="RssLink" name="NBA TV">http://www.nba.com/.element/ssi/sect/1.1/video/nbatv.html</Category>        
-        <Category xsi:type="RssLink" name="TNT OT">http://www.nba.com/.element/ssi/sect/1.1/video/tntot.html</Category>        
-        <Category xsi:type="RssLink" name="Features">http://www.nba.com/.element/ssi/sect/1.1/video/featured.html</Category>        
+        <Category xsi:type="RssLink" name="Top Plays">http://www.nba.com/.element/ssi/sect/1.1/video/topplays.html</Category>
+        <Category xsi:type="RssLink" name="NBA TV">http://www.nba.com/.element/ssi/sect/1.1/video/nbatv.html</Category>
+        <Category xsi:type="RssLink" name="TNT OT">http://www.nba.com/.element/ssi/sect/1.1/video/tntot.html</Category>
+        <Category xsi:type="RssLink" name="Features">http://www.nba.com/.element/ssi/sect/1.1/video/featured.html</Category>
         <Category xsi:type="RssLink" name="Barkley Zone">http://www.nba.com/.element/ssi/sect/1.1/video/barkleyzone.html</Category>
       </Categories>
-    </Site>    
+    </Site>
     <Site name="VeryFunnyAds" util="VeryFunnyAds" agecheck="false" enabled="true">
       <Username />
       <Password />
@@ -275,7 +275,7 @@
         <Category xsi:type="RssLink" name="Top 10 TEDTalks">http://www.ted.com/themes/rss/id/54</Category>
         <Category xsi:type="RssLink" name="Media With Meaning">http://www.ted.com/themes/rss/id/55</Category>
         <Category xsi:type="RssLink" name="Hidden Gems">http://www.ted.com/themes/rss/id/56</Category>
-        <Category xsi:type="RssLink" name="Speaking at TED2009">http://www.ted.com/themes/rss/id/58</Category>                  
+        <Category xsi:type="RssLink" name="Speaking at TED2009">http://www.ted.com/themes/rss/id/58</Category>
       </Categories>
     </Site>
     <Site name="NASA" util="GenericSite" agecheck="false" enabled="true">
@@ -362,7 +362,7 @@
         <Category xsi:type="RssLink" name="The Totally Rad Show">http://revision3.com/trs/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="XLR8R TV">http://revision3.com/xlr8rtv/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="HD Nation">http://revision3.com/hdnation/feed/quicktime-large/</Category>
-        </Categories>
+      </Categories>
     </Site>
     <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true">
       <Username />
@@ -375,13 +375,12 @@
         <Category xsi:type="RssLink" name="CNet">http://feeds2.feedburner.com/allcnetvideopodcasts</Category>
         <Category xsi:type="RssLink" name="DL.TV">http://feeds2.feedburner.com/ziffdavis/dltvwmvvideo</Category>
         <Category xsi:type="Group" name="Live TV">
-          <Channels>            
+          <Channels>
             <Channel name="French Tv - Orange">mms://livewm.orange.fr/live-multicanaux</Channel>
             <Channel name="French Tv - Direct8">http://football.direct8.fr/live.php</Channel>
-            <Channel name="Russian Tv - Vesti 24">http://video.rfn.ru/vesti_24?MSWMExt=.asf</Channel>
-            <Channel name="Russian Tv - RTR Planeta">mms://video.rfn.ru/rtr-planeta</Channel>
-            <Channel name="Russian Tv - MusicClips">mms://85.21.138.210/mclips4</Channel>
-            <Channel name="Russian Tv - First Baltic Music Channel">mms://195.244.137.207:81</Channel>
+            <Channel name="Russian Tv - Vesti 24" thumb="http://www.comtel-vologda.ru/images/logos/vesti_logo.png">http://video.rfn.ru/vesti_24?MSWMExt=.asf</Channel>
+            <Channel name="Russian Tv - RTR Planeta" thumb="http://www.rtr-planeta.com/i/h1_1.jpg">mms://video.rfn.ru/rtr-planeta</Channel>            
+            <Channel name="Russian Tv - First Baltic Music Channel" thumb="http://www.tv-port.net/wp-content/uploads/2009/05/1baltic.jpg">mms://195.244.137.207:81</Channel>
           </Channels>
         </Category>
       </Categories>

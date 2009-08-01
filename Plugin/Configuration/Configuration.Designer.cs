@@ -114,6 +114,8 @@ namespace OnlineVideos
             this.label12 = new System.Windows.Forms.Label();
             this.chkFLVSplitterInstalled = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.tbxStreamThumb = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPageRssLinks.SuspendLayout();
@@ -556,6 +558,8 @@ namespace OnlineVideos
             // 
             // tabChannels
             // 
+            this.tabChannels.Controls.Add(this.label17);
+            this.tabChannels.Controls.Add(this.tbxStreamThumb);
             this.tabChannels.Controls.Add(this.btnAddChannel);
             this.tabChannels.Controls.Add(this.btnAddGroup);
             this.tabChannels.Controls.Add(this.btnDeleteChannel);
@@ -619,7 +623,7 @@ namespace OnlineVideos
             // 
             this.btnSaveChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSaveChannel.Enabled = false;
-            this.btnSaveChannel.Location = new System.Drawing.Point(413, 110);
+            this.btnSaveChannel.Location = new System.Drawing.Point(413, 134);
             this.btnSaveChannel.Margin = new System.Windows.Forms.Padding(4);
             this.btnSaveChannel.Name = "btnSaveChannel";
             this.btnSaveChannel.Size = new System.Drawing.Size(127, 28);
@@ -1034,6 +1038,27 @@ namespace OnlineVideos
             this.label11.TabIndex = 0;
             this.label11.Text = "flv";
             // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(211, 113);
+            this.label17.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(74, 17);
+            this.label17.TabIndex = 26;
+            this.label17.Text = "Thumb Url";
+            // 
+            // tbxStreamThumb
+            // 
+            this.tbxStreamThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxStreamThumb.Enabled = false;
+            this.tbxStreamThumb.Location = new System.Drawing.Point(325, 110);
+            this.tbxStreamThumb.Margin = new System.Windows.Forms.Padding(4);
+            this.tbxStreamThumb.Name = "tbxStreamThumb";
+            this.tbxStreamThumb.Size = new System.Drawing.Size(215, 22);
+            this.tbxStreamThumb.TabIndex = 27;
+            // 
             // Configuration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -1147,5 +1172,7 @@ namespace OnlineVideos
         private System.Windows.Forms.ComboBox cmbDasErsteQuality;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label lblVersion;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox tbxStreamThumb;
 	}
 }
