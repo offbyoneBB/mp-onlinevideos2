@@ -10,26 +10,39 @@ namespace OnlineVideos.Sites
 {
     public class RedTubeUtil : SiteUtilBase, ISearch
     {
+        static Regex videoListRegEx = new Regex(
+                            @"<div\sclass=""video"">\s*
+                            <a\shref=""/(?<VideoUrl>\d{1,})""\stitle=""(?<Title>[^""]*)""[^>]*>\s*
+                            <img\s(?:(?!src).)*src=""(?<ImageUrl>[^""]*)""
+                            (?:(?!<div\sclass=""time"">).)*<div\sclass=""time"">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<", 
+                            RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
         public override List<VideoInfo> getVideoList(Category category)
         {
-            return Parse(((RssLink)category).Url);
+            return Parse(GetData(((RssLink)category).Url));            
         }
 
-        List<VideoInfo> Parse(String fsUrl)
+        List<VideoInfo> Parse(string dataPage)
         {
-            List<VideoInfo> loRssItems = new List<VideoInfo>();
-
-            try
+            List<VideoInfo> loVideoList = new List<VideoInfo>();
+            if (dataPage.Length > 0)
             {
-                // receive main page
-                string dataPage = GetData(fsUrl);
-                Log.Debug("RedTube - Received " + dataPage.Length + " bytes");
-
-                // is there any data ?
-                if (dataPage.Length > 0)
+                try
                 {
+                    Match m = videoListRegEx.Match(dataPage);
+                    while (m.Success)
+                    {
+                        VideoInfo videoInfo = new VideoInfo();
+                        videoInfo.Title = m.Groups["Title"].Value;
+                        videoInfo.VideoUrl = GetLink(m.Groups["VideoUrl"].Value);
+                        videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+                        videoInfo.Length = m.Groups["Duration"].Value;
+                        loVideoList.Add(videoInfo);
+                        m = m.NextMatch();
+                    }
+
                     // check for previous page link
-                    Match mPrev = PreviousPageRegEx.Match(dataPage);
+                    Match mPrev = previousPageRegEx.Match(dataPage);
                     if (mPrev.Success)
                     {
                         previousPageAvailable = true;
@@ -42,7 +55,7 @@ namespace OnlineVideos.Sites
                     }
 
                     // check for next page link
-                    Match mNext = NextPageRegEx.Match(dataPage);
+                    Match mNext = nextPageRegEx.Match(dataPage);
                     if (mNext.Success)
                     {
                         nextPageAvailable = true;
@@ -53,23 +66,13 @@ namespace OnlineVideos.Sites
                         nextPageAvailable = false;
                         nextPageUrl = "";
                     }
-
-                    // parse videos
-                    ParseLinks(dataPage, loRssItems);
-                    if (loRssItems.Count > 0)
-                    {
-                        ParseThumbs(loRssItems);
-
-                        Log.Debug("RedTube - finish to receive " + fsUrl);                        
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
                 }
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-            }
-
-            return loRssItems;
+            return loVideoList;
         }
 
         private string GetData(string Link)
@@ -104,68 +107,7 @@ namespace OnlineVideos.Sites
             {
                 return "";
             }
-        }
-
-        public void ParseLinks(string Data, List<VideoInfo> loRssItems)
-        {
-            int x = 0;
-            int y = 0;
-
-            while (x != -1)
-            {
-                x = Data.IndexOf("<a class=s", x);
-                y = Data.IndexOf(">", x + 1);
-                y = Data.IndexOf(">", y + 1);
-
-
-                if ((y != -1) && (x != -1))
-                {
-                    string t = Data.Substring(x, y - x - 2);
-
-                    // <a class=s target=_blank href='http://www.redtube.com/19791'>Brea Bennett alone on the couch<
-
-                    int z = t.IndexOf("href=", 0);
-                    if (z != -1)
-                    {
-                        y = t.IndexOf(">", z + 1);
-
-                        string l = t.Substring(z + 5, y - z - 5);
-                        l = l.Replace("'", "");
-                        string d = t.Substring(y + 1, t.Length - y - 2);
-
-                        z = l.LastIndexOf('/');
-
-                        string no = "";
-                        if (z != -1)
-                        {
-                            no = l.Substring(z + 1, l.Length - z - 1);
-                        }
-
-                        string flv = GetLink(no);
-
-                        VideoInfo loRssItem = new VideoInfo();
-                        loRssItem.Tags = l;
-                        loRssItem.Title = d;
-                        loRssItem.VideoUrl = flv;                        
-                        loRssItem.Other = no;
-
-                        loRssItems.Add(loRssItem);
-                    }
-                }
-                if (x != -1)
-                    x = x + 1;
-
-            }
-        }
-
-        private void ParseThumbs(List<VideoInfo> loRssItems)
-        {
-            for (int i = 0; i < loRssItems.Count; i++)
-            {
-                VideoInfo loRssItem = loRssItems[i];
-                loRssItem.ImageUrl = GetThumb((string)loRssItem.Other, 2);
-            }
-        }
+        }        
 
         private string GetLink(string no)
         {
@@ -224,43 +166,11 @@ namespace OnlineVideos.Sites
 
             return dl;
 
-        }
-
-        private static int picNo = 2;
-
-        public static string GetThumb(string no)
-        {
-            Int64 nr = Convert.ToInt64(no);
-
-            picNo++;
-            if ((picNo < 2) || (picNo > 16)) picNo = 2;
-
-            string lnk = "";
-
-            // http://thumbs.redtube.com/_thumbs/0000019/0019791/0019791_016.jpg
-            // 2-16...
-
-            lnk = "http://thumbs.redtube.com/_thumbs/";
-
-            string file = string.Format("{0:0000000}", nr);
-            string leng = string.Format("{0:0000000}", nr / 1000);
-            string pic = "0" + string.Format("{0:00}", picNo);
-
-            lnk += leng + "/" + file + "/" + file + "_" + pic + ".jpg";
-
-            return lnk;
-        }
-
-        public static string GetThumb(string no, int selPic)
-        {
-            picNo = selPic;
-            picNo--;
-            return (GetThumb(no));
-        }
+        }        
 
         #region Next|Previous Page
 
-        static Regex NextPageRegEx = new Regex(@"<a\sclass=p\shref='(?<url>[^']+?page=\d+)'>Next</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);        
+        static Regex nextPageRegEx = new Regex(@"<a\stitle=""Next\spage""\shref=""(?<url>[^""]*page=\d{1,})"">Next</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);        
         string nextPageUrl = "";
         bool nextPageAvailable = false;
         public override bool hasNextPage()
@@ -268,7 +178,7 @@ namespace OnlineVideos.Sites
             return nextPageAvailable;
         }
 
-        static Regex PreviousPageRegEx = new Regex(@"<a\sclass=p\shref='(?<url>[^']+?page=\d+)'>Prev</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex previousPageRegEx = new Regex(@"<a\stitle=""Previous\spage""\shref=""(?<url>[^""]*page=\d{1,})"">Prev</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         string previousPageUrl = "";
         bool previousPageAvailable = false;
         public override bool hasPreviousPage()
@@ -278,12 +188,12 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getNextPageVideos()
         {
-            return Parse("http://www.redtube.com" + nextPageUrl);
+            return Parse(GetData("http://www.redtube.com" + nextPageUrl));
         }
 
         public override List<VideoInfo> getPreviousPageVideos()
         {
-            return Parse("http://www.redtube.com" + previousPageUrl);
+            return Parse(GetData("http://www.redtube.com" + previousPageUrl));
         }
 
         #endregion
