@@ -81,6 +81,9 @@ namespace OnlineVideos
             get { return searchUrl; }
             set { searchUrl = value; }
         }
+
+        [XmlAttribute("lang")]
+        public string Language { get; set; }
         
         [XmlArray("Categories")]
         public Category[] CategoriesArray

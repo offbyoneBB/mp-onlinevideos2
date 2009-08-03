@@ -667,12 +667,13 @@ namespace OnlineVideos
                     (!aSite.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || ageHasBeenConfirmed))
                 {                    
                     loListItem = new GUIListItem(aSite.Name);
+                    loListItem.Label2 = aSite.Language;
                     loListItem.Path = aSite.Name;
                     loListItem.IsFolder = true;
                     image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Name + ".png";
                     if (System.IO.File.Exists(image))
                     {
-                        loListItem.ThumbnailImage = image;
+                        loListItem.ThumbnailImage = image;                        
                         loListItem.IconImage = image;
                         loListItem.IconImageBig = image;
                         loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);

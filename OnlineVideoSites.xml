@@ -17,19 +17,19 @@
         <Category xsi:type="RssLink" name="HD Content">http://gdata.youtube.com/feeds/api/videos/-/HD</Category>
       </Categories>
     </Site>
-    <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true">
+    <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" lang="de">
       <Username />
       <Password />
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="ZDF Mediatek" util="ZDFMediathek" agecheck="false" enabled="true">
+    <Site name="ZDF Mediatek" util="ZDFMediathek" agecheck="false" enabled="true" lang="de">
       <Username />
       <Password />
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true">
+    <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
       <Username />
       <Password />
       <SearchUrl />
@@ -108,7 +108,7 @@
         <Category xsi:type="RssLink" name="Video Games">http://rss.livevideo.com/rss/rss.ashx?catid=15</Category>
       </Categories>
     </Site>
-    <Site name="GameTrailers" util="GameTrailers" agecheck="false" enabled="true">
+    <Site name="GameTrailers" util="GameTrailers" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl />
@@ -150,7 +150,7 @@
         <Category xsi:type="RssLink" name="Top Rated Xbox">http://www.gametrailers.com/rss/topratedxbox.xml</Category>
       </Categories>
     </Site>
-    <Site name="Apple Trailers" util="AppleTrailers" agecheck="false" enabled="true">
+    <Site name="Apple Trailers" util="AppleTrailers" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl>http://www.apple.com/trailers/home/scripts/quickfind.php?q={0}</SearchUrl>
@@ -169,7 +169,7 @@
         <Category xsi:type="RssLink" name="How To">http://rss.break.com/channel/how-to/</Category>
       </Categories>
     </Site>
-    <Site name="CNN" util="Cnn" agecheck="false" enabled="true">
+    <Site name="CNN" util="Cnn" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl />
@@ -196,7 +196,7 @@
         <Category xsi:type="RssLink" name="Weather">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_weather.xml</Category>
       </Categories>
     </Site>
-    <Site name="NBA" util="Nba" agecheck="false" enabled="true">
+    <Site name="NBA" util="Nba" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl />
@@ -278,7 +278,7 @@
         <Category xsi:type="RssLink" name="Speaking at TED2009">http://www.ted.com/themes/rss/id/58</Category>
       </Categories>
     </Site>
-    <Site name="NASA" util="GenericSite" agecheck="false" enabled="true">
+    <Site name="NASA" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl />
@@ -379,7 +379,7 @@
             <Channel name="French Tv - Orange" thumb="http://www.broadbandtvnews.com/wp-content/uploads/2008/02/orange-logo.thumbnail.jpg">mms://livewm.orange.fr/live-multicanaux</Channel>
             <Channel name="French Tv - Direct8" thumb="http://www1.orange.ch/binary/images/internet/orangetv/direct8.jpg">http://football.direct8.fr/live.php</Channel>
             <Channel name="Russian Tv - Vesti 24" thumb="http://www.comtel-vologda.ru/images/logos/vesti_logo.png">http://video.rfn.ru/vesti_24?MSWMExt=.asf</Channel>
-            <Channel name="Russian Tv - RTR Planeta" thumb="http://www.rtr-planeta.com/i/h1_1.jpg">mms://video.rfn.ru/rtr-planeta</Channel>            
+            <Channel name="Russian Tv - RTR Planeta" thumb="http://www.rtr-planeta.com/i/h1_1.jpg">mms://video.rfn.ru/rtr-planeta</Channel>
             <Channel name="Russian Tv - First Baltic Music Channel" thumb="http://www.tv-port.net/wp-content/uploads/2009/05/1baltic.jpg">mms://195.244.137.207:81</Channel>
           </Channels>
         </Category>
@@ -434,7 +434,7 @@
         <Category xsi:type="RssLink" name="BOARDRIDERS TV">http://www.boardriderstv.com/podcast/index.php</Category>
       </Categories>
     </Site>
-    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true">
+    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sw">
       <Username />
       <Password />
       <SearchUrl />
@@ -443,7 +443,7 @@
         <Category xsi:type="RssLink" name="Senaste sportnytt">http://feeds.svtplay.se/v1/video/list/103738?expression=full&amp;mode=plain</Category>
       </Categories>
     </Site>
-    <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="true">
+    <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="true" lang="ru">
       <Username />
       <Password />
       <SearchUrl />
@@ -470,7 +470,7 @@
         <Category xsi:type="RssLink" name="Отечественный">http://linecinema.ru/news/1-0-9</Category>
       </Categories>
     </Site>
-    <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true">
+    <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" lang="ru">
       <Username />
       <Password />
       <SearchUrl />

@@ -72,6 +72,16 @@ namespace OnlineVideos
             cmbYoutubeQuality.SelectedIndex = (int)settings.YouTubeQuality;            
             cmbDasErsteQuality.SelectedIndex = (int)settings.DasErsteQuality;
             this.tbxPin.Text = settings.pinAgeConfirmation;
+
+            // fill language identifiers combobox
+            List<string> cultureNames = new List<string>();
+            foreach (System.Globalization.CultureInfo ci in System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.NeutralCultures))
+            {
+                string name = ci.Name.IndexOf('-') >= 0 ? ci.Name.Substring(0, ci.Name.IndexOf('-')) : ci.Name;
+                if (!cultureNames.Contains(name)) cultureNames.Add(name);
+            }
+            cultureNames.Sort();
+            cbLanguages.Items.AddRange(cultureNames.ToArray());
 		}
 		
 		void SiteListSelectedIndexChanged(object sender, EventArgs e)
@@ -86,16 +96,22 @@ namespace OnlineVideos
 				txtPassword.Text = site.Password;
 				chkEnabled.Checked = site.IsEnabled;
 				chkAgeConfirm.Checked = site.ConfirmAge;
-                tbxSearchUrl.Text = site.SearchUrl;                
-                if(site.Util.hasLoginSupport())                    
-                    txtPassword.Enabled = true;
-                else
-                    txtPassword.Enabled = false;
+                tbxSearchUrl.Text = site.SearchUrl;
+                cbLanguages.SelectedItem = site.Language;
+
+                chkEnabled.Enabled = true;
+                chkAgeConfirm.Enabled = true;
                 txtSiteName.Enabled = true;
+                cbSiteUtil.Enabled = true;
+                txtUserId.Enabled = true;
+                txtPassword.Enabled = site.Util.hasLoginSupport();
+                tbxSearchUrl.Enabled = true;
+                cbLanguages.Enabled = true;
                 btnSiteSave.Enabled = true;
+                
                 btnDeleteRss.Enabled = true;
-                btnRssSave.Enabled = true;
-                btnAdd.Enabled = true;
+                btnSaveRss.Enabled = true;
+                btnAddRss.Enabled = true;
                 
 				CategoryList.Items.Clear();
 				tvGroups.Nodes.Clear();
@@ -123,7 +139,7 @@ namespace OnlineVideos
 			txtRssName.Text = "";
             txtRssUrl.Enabled = false;
             txtRssName.Enabled = false;
-            btnRssSave.Enabled = false;
+            btnSaveRss.Enabled = false;
 
             tbxChannelName.Text = "";
             tbxStreamName.Text = "";
@@ -151,14 +167,14 @@ namespace OnlineVideos
                 txtRssName.Text = link.Name;
                 txtRssUrl.Enabled = true;
                 txtRssName.Enabled = true;
-                btnRssSave.Enabled = true;
+                btnSaveRss.Enabled = true;
 
             }
             if (CategoryList.SelectedIndex == -1)
             {
                 txtRssUrl.Enabled = false;
                 txtRssName.Enabled = false;
-                btnRssSave.Enabled = false;                
+                btnSaveRss.Enabled = false;                
             }
 		}
 		
@@ -172,6 +188,7 @@ namespace OnlineVideos
 			site.ConfirmAge = chkAgeConfirm.Checked;
 			site.IsEnabled = chkEnabled.Checked;
             site.SearchUrl = tbxSearchUrl.Text;
+            site.Language = cbLanguages.SelectedItem.ToString();
 			siteList.Items[siteList.SelectedIndex] = site.Name;
 		}
 		
