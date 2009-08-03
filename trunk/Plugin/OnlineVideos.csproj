@@ -487,6 +487,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="OnlineVideos.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"%25ProgramFiles%25\Microsoft SDKs\Windows\v6.0A\bin\sgen.exe" /a:"$(TargetPath)" /force /reference:"$(TargetDir)..\..\Core.dll" /reference:"$(TargetDir)..\..\Databases.dll" /reference:"$(TargetDir)Dialogs.dll" /reference:"$(TargetDir)..\..\Utils.dll" /type:OnlineVideos.SerializableSettings</PostBuildEvent>
