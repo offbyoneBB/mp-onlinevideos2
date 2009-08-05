@@ -117,6 +117,7 @@ namespace OnlineVideos
         #region Facade ViewModes
         protected GUIFacadeControl.ViewMode currentView = GUIFacadeControl.ViewMode.List;
         protected GUIFacadeControl.ViewMode currentSiteView = GUIFacadeControl.ViewMode.List;
+        protected GUIFacadeControl.ViewMode currentCategoryView = GUIFacadeControl.ViewMode.List;
         protected GUIFacadeControl.ViewMode currentVideoView = GUIFacadeControl.ViewMode.SmallIcons;
         #endregion
 
@@ -539,6 +540,7 @@ namespace OnlineVideos
             {
                 xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_MODE, (int)currentSiteView);
                 xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.VIDEOVIEW_MODE, (int)currentVideoView);
+                xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.CATEGORYVIEW_MODE, (int)currentCategoryView);
             }
             base.OnPageDestroy(newWindowId);
         }
@@ -598,6 +600,7 @@ namespace OnlineVideos
             {
                 currentSiteView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
                 currentVideoView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
+                currentCategoryView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
                 SwitchView();
             }
             OnlineVideoSettings settings = OnlineVideoSettings.getInstance();            
@@ -755,6 +758,24 @@ namespace OnlineVideos
                     }
                 }                
 
+                // SVTPlay Categories can have images from web
+                if (selectedSite.Util is Sites.SVTPlayUtil && loCat is OnlineVideos.Sites.SVTPlayCategory)
+                {
+                    OnlineVideos.Sites.SVTPlayCategory sVTPlayCategory = (OnlineVideos.Sites.SVTPlayCategory)loCat;
+
+                    if (sVTPlayCategory.ImageUrl != null && sVTPlayCategory.ImageUrl != string.Empty)
+                    {
+                        string image = OnlineVideoSettings.getInstance().msThumbLocation + sVTPlayCategory.ImageUrl;
+
+                        if (System.IO.File.Exists(image))
+                        {
+                            loListItem.ThumbnailImage = image;
+                            loListItem.IconImage = image;
+                            loListItem.IconImageBig = image;
+                        }
+                    }
+                }
+
                 facadeView.Add(loListItem);
 
                 if (loCat is RssLink)
@@ -772,8 +793,7 @@ namespace OnlineVideos
                 {
                     loListItem.Label2 = (loCat as Group).Channels.Count.ToString();
                 }
-            }            
-
+            }
             if (selectedCategoryIndex < facadeView.Count) facadeView.SelectedListItemIndex = selectedCategoryIndex;
         }
         
@@ -1315,7 +1335,15 @@ namespace OnlineVideos
                     if (selectedSite.Util is IFavorite) ShowFavoriteButtons(); else HideFavoriteButtons();
                     HideEnterPinButton();
                     DisplayVideoInfo(null);
-                    currentView = GUIFacadeControl.ViewMode.List;
+                    if (selectedSite.Util is OnlineVideos.Sites.SVTPlayUtil)
+                    {
+                        currentView = currentCategoryView;
+                    }
+                    else
+                    {
+                        currentView = GUIFacadeControl.ViewMode.List;
+                    }
+
                     SwitchView();
                     break;
                 case State.videos:
@@ -1623,6 +1651,11 @@ namespace OnlineVideos
             if (currentState == State.home)
             {
                 currentSiteView = currentView;
+                SwitchView();
+            }
+            else if (currentState == State.categories && selectedSite.Util is OnlineVideos.Sites.SVTPlayUtil)
+            {
+                currentCategoryView = currentView;
                 SwitchView();
             }
             else if (currentState == State.videos)
