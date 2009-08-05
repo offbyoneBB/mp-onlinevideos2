@@ -16,6 +16,7 @@ namespace OnlineVideos
         public const string SECTION = "onlinevideos";
         public const string SITEVIEW_MODE = "siteview";
         public const string VIDEOVIEW_MODE = "videoview";
+        public const string CATEGORYVIEW_MODE = "categoryview";
         const string BASICHOMESCREEN_NAME = "basicHomeScreenName";        
         const string THUMBNAIL_DIR = "thumbDir";
         const string TRAILER_SIZE = "trailerSize";
