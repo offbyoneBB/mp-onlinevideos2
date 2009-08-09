@@ -136,6 +136,13 @@ namespace OnlineVideos.Sites
             return false;
         }
 
+        public virtual string GetFileNameForDownload(VideoInfo video, string url)
+        {            
+            string extension = System.IO.Path.GetExtension(url);
+            string safeName = ImageDownloader.GetSaveFilename(video.Title + (video.Title2 != null ? "_" + video.Title2 : ""));
+            return safeName + extension;            
+        }
+
         protected static string GetRedirectedUrl(string url)
         {
             try

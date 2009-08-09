@@ -1227,23 +1227,25 @@ namespace OnlineVideos
             }
         }
 
-        private void SaveVideo(VideoInfo foListItem, string thumbPath)
-        {            
-            String lsUrl = selectedSite.Util.getUrl(foListItem, selectedSite);
+        private void SaveVideo(VideoInfo video, string thumbPath)
+        {
+            string downloadDir = OnlineVideoSettings.getInstance().msDownloadDir;
+            if (!downloadDir.EndsWith("/") || !downloadDir.EndsWith("\\")) downloadDir += "/";
+
+            string url = selectedSite.Util.getUrl(video, selectedSite);
+
+            string safeName = selectedSite.Util.GetFileNameForDownload(video, url);
+            string localFileName = downloadDir + safeName;
+
+            // download file
             WebClient loClient = new WebClient();
-            loClient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-            loClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadFileCompleted);
-            String lsExtension = System.IO.Path.GetExtension(lsUrl);
-            String downloadDir = OnlineVideoSettings.getInstance().msDownloadDir;
-            if (!downloadDir.EndsWith("/") || !downloadDir.EndsWith("\\"))
-            {
-                downloadDir += "/";
-            }
-            string safeName = ImageDownloader.GetSaveFilename(foListItem.Title + (foListItem.Title2 != null ? "_" + foListItem.Title2 : ""));
-            string localFileName = downloadDir + safeName + lsExtension;
-            string localImageName = downloadDir + safeName + System.IO.Path.GetExtension(thumbPath);
-            if (System.IO.File.Exists(thumbPath)) System.IO.File.Copy(thumbPath, localImageName);
-            loClient.DownloadFileAsync(new Uri(lsUrl), localFileName, foListItem.Title);
+            loClient.Headers.Add("user-agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2");
+            loClient.DownloadFileCompleted += DownloadFileCompleted;
+            loClient.DownloadFileAsync(new Uri(url), localFileName, video.Title);            
+
+            // save thumb for this video as well
+            string localImageName = downloadDir + System.IO.Path.GetFileNameWithoutExtension(localFileName) + System.IO.Path.GetExtension(thumbPath);
+            if (System.IO.File.Exists(thumbPath)) System.IO.File.Copy(thumbPath, localImageName);            
         }
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
