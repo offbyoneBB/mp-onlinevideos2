@@ -151,6 +151,12 @@ namespace OnlineVideos.Sites
             */
         }
 
+        public override string GetFileNameForDownload(VideoInfo video, string url)
+        {
+            string safeName = ImageDownloader.GetSaveFilename(video.Title);
+            return safeName + ".flv";
+        }
+
         static RTMP_LIB.Link YahooRTMPLinkCatcher(string videoId)
         {
             RTMP_LIB.Link link = new RTMP_LIB.Link();
