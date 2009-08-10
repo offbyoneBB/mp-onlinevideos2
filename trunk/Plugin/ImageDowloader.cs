@@ -168,6 +168,13 @@ namespace OnlineVideos
             worker.RunWorkerAsync(loParms);
         }
 
+        public static string GetThumbFile(string url)
+        {
+            string name = MediaPortal.Util.Utils.GetThumb(url);
+            name = System.IO.Path.GetFileNameWithoutExtension(name)+ "L.jpg";
+            return System.IO.Path.Combine(OnlineVideoSettings.getInstance().msThumbLocation, name);
+        }
+
         public static void DownloadImages2(object sender, DoWorkEventArgs e)
         {
             //Log.Info("Using thumb directory:{0}", _imageDirectory);
