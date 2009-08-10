@@ -293,11 +293,11 @@ namespace OnlineVideos
                     }
                     else
                     {
-                        SaveVideo(loSelectedVideo, loListItem.ThumbnailImage);
+                        SaveVideo(loSelectedVideo);
                     }
                     break;
                 case 4:
-                    SaveVideo(loSelectedVideo, loListItem.ThumbnailImage);
+                    SaveVideo(loSelectedVideo);
                     break;
 
             }
@@ -1227,33 +1227,47 @@ namespace OnlineVideos
             }
         }
 
-        private void SaveVideo(VideoInfo video, string thumbPath)
+        private void SaveVideo(VideoInfo video)
         {
-            string downloadDir = OnlineVideoSettings.getInstance().msDownloadDir;
-            if (!downloadDir.EndsWith("/") || !downloadDir.EndsWith("\\")) downloadDir += "/";
-
             string url = selectedSite.Util.getUrl(video, selectedSite);
-
             string safeName = selectedSite.Util.GetFileNameForDownload(video, url);
-            string localFileName = downloadDir + safeName;
-
+            string localFileName = System.IO.Path.Combine(OnlineVideoSettings.getInstance().msDownloadDir, safeName);
+            string thumbFile = ImageDownloader.GetThumbFile(video.ImageUrl);
+            
             // download file
             WebClient loClient = new WebClient();
             loClient.Headers.Add("user-agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2");
             loClient.DownloadFileCompleted += DownloadFileCompleted;
-            loClient.DownloadFileAsync(new Uri(url), localFileName, video.Title);            
-
-            // save thumb for this video as well
-            string localImageName = downloadDir + System.IO.Path.GetFileNameWithoutExtension(localFileName) + System.IO.Path.GetExtension(thumbPath);
-            if (System.IO.File.Exists(thumbPath)) System.IO.File.Copy(thumbPath, localImageName);            
+            loClient.DownloadFileAsync(new Uri(url), localFileName, new DownloadInfo { Title = video.Title, DownloadedFile = localFileName, ThumbFile = thumbFile });
         }
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-            loDlgNotify.SetHeading("Download Complete");
-            loDlgNotify.SetText(e.UserState.ToString());
-            loDlgNotify.DoModal(GetID);
+            if (e.Error != null)
+            {
+                GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                loDlgNotify.SetHeading(GUILocalizeStrings.Get(257)/*ERROR*/);
+                loDlgNotify.SetText((e.UserState as DownloadInfo).Title);
+                loDlgNotify.DoModal(GetID);
+            }
+            else
+            {
+                DownloadInfo downloadInfo = e.UserState as DownloadInfo;
+                // save thumb for this video as well if it exists
+                if (System.IO.File.Exists(downloadInfo.ThumbFile))
+                {
+                    string localImageName = System.IO.Path.Combine(
+                        System.IO.Path.GetDirectoryName(downloadInfo.DownloadedFile),
+                        System.IO.Path.GetFileNameWithoutExtension(downloadInfo.DownloadedFile))
+                        + System.IO.Path.GetExtension(downloadInfo.ThumbFile);
+                    System.IO.File.Copy(downloadInfo.ThumbFile, localImageName);
+                }
+                
+                GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                loDlgNotify.SetHeading("Download Complete");
+                loDlgNotify.SetText((e.UserState as DownloadInfo).Title);
+                loDlgNotify.DoModal(GetID);
+            }
         }
 
         private bool FilterOut(String fsStr)

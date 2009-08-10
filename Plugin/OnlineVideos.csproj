@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\CodecConfiguration.cs" />
+    <Compile Include="DownloadInfo.cs" />
     <Compile Include="Jayrock.Json\BooleanObject.cs" />
     <Compile Include="Jayrock.Json\Collections\KeyedCollection.cs" />
     <Compile Include="Jayrock.Json\Compat.cs" />

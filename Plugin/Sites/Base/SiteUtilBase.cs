@@ -137,9 +137,9 @@ namespace OnlineVideos.Sites
         }
 
         public virtual string GetFileNameForDownload(VideoInfo video, string url)
-        {            
+        {
             string extension = System.IO.Path.GetExtension(url);
-            string safeName = ImageDownloader.GetSaveFilename(video.Title + (video.Title2 != null ? "_" + video.Title2 : ""));
+            string safeName = ImageDownloader.GetSaveFilename(video.Title);
             return safeName + extension;            
         }
 
