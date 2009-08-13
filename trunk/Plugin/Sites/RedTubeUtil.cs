@@ -14,12 +14,15 @@ namespace OnlineVideos.Sites
                             @"<div\sclass=""video"">\s*
                             <a\shref=""/(?<VideoUrl>\d{1,})""\stitle=""(?<Title>[^""]*)""[^>]*>\s*
                             <img\s(?:(?!src).)*src=""(?<ImageUrl>[^""]*)""
-                            (?:(?!<div\sclass=""time"">).)*<div\sclass=""time"">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<", 
+                            (?:(?!<div\sclass=""time"">).)*<div\sclass=""time"">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<",
                             RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
+
+        //static Regex videoListRegEx = new Regex(@"<a\starget=_blank\shref='/(?<VideoUrl>\d{1,7})'\stitle=""(?<Title>[^""]*)""><img[^>]*src='(?<ImageUrl>[^']*)'", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        
         public override List<VideoInfo> getVideoList(Category category)
         {
-            return Parse(GetData(((RssLink)category).Url));            
+            return Parse(GetWebData(((RssLink)category).Url, CookieContainer));
         }
 
         List<VideoInfo> Parse(string dataPage)
@@ -74,41 +77,7 @@ namespace OnlineVideos.Sites
             }
             return loVideoList;
         }
-
-        private string GetData(string Link)
-        {
-            try
-            {
-                int timeout = 5000;
-
-                Cookie c = new Cookie();
-                c.Name = "pp";
-                c.Value = "1";
-                c.Expires = DateTime.Now.AddHours(1);
-                c.Domain = "www.redtube.com";
-
-                CookieContainer cc = new CookieContainer();
-                cc.Add(c);
-
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Link);
-
-                request.Timeout = timeout;
-                request.CookieContainer = cc;
-
-                string encodemap = "utf-8";
-                WebResponse response = request.GetResponse();
-                Stream receiveStream = response.GetResponseStream();
-                Encoding encode = System.Text.Encoding.GetEncoding(encodemap);
-                StreamReader reader = new StreamReader(receiveStream, encode);
-                string str = reader.ReadToEnd();
-                return str;
-            }
-            catch
-            {
-                return "";
-            }
-        }        
-
+        
         private string GetLink(string no)
         {
             string dl = "";
@@ -166,11 +135,23 @@ namespace OnlineVideos.Sites
 
             return dl;
 
-        }        
+        }
+
+        CookieContainer CookieContainer
+        {
+            get
+            {
+                Cookie c = new Cookie() { Name = "pp", Value = "1", Expires = DateTime.Now.AddHours(1), Domain = "www.redtube.com" };
+                CookieContainer cc = new CookieContainer();
+                cc.Add(c);
+                return cc;
+            }
+        }
 
         #region Next|Previous Page
 
-        static Regex nextPageRegEx = new Regex(@"<a\stitle=""Next\spage""\shref=""(?<url>[^""]*page=\d{1,})"">Next</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);        
+        static Regex nextPageRegEx = new Regex(@"<a\stitle=""Next\spage""\shref=""(?<url>[^""]*page=\d{1,})"">Next</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        //static Regex nextPageRegEx = new Regex(@"<a\sclass=p\shref='(?<url>/[^\?]*\?page=\d{1,5})'>Next</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);        
         string nextPageUrl = "";
         bool nextPageAvailable = false;
         public override bool hasNextPage()
@@ -179,6 +160,7 @@ namespace OnlineVideos.Sites
         }
 
         static Regex previousPageRegEx = new Regex(@"<a\stitle=""Previous\spage""\shref=""(?<url>[^""]*page=\d{1,})"">Prev</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        //static Regex previousPageRegEx = new Regex(@"<a\sclass=p\shref='(?<url>/[^\?]*\?page=\d{1,5})'>Prev</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         string previousPageUrl = "";
         bool previousPageAvailable = false;
         public override bool hasPreviousPage()
@@ -188,12 +170,12 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getNextPageVideos()
         {
-            return Parse(GetData("http://www.redtube.com" + nextPageUrl));
+            return Parse(GetWebData("http://www.redtube.com" + nextPageUrl, CookieContainer));
         }
 
         public override List<VideoInfo> getPreviousPageVideos()
         {
-            return Parse(GetData("http://www.redtube.com" + previousPageUrl));
+            return Parse(GetWebData("http://www.redtube.com" + previousPageUrl, CookieContainer));
         }
 
         #endregion
@@ -203,18 +185,18 @@ namespace OnlineVideos.Sites
         public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
-            foreach (RssLink category in configuredCategories) result.Add(category.Name, category.Url);
+            //foreach (RssLink category in configuredCategories) result.Add(category.Name, category.Url);
             return result;
         }
 
         public List<VideoInfo> Search(string searchUrl, string query)
         {
-            return Parse(string.Format(searchUrl, "http://www.redtube.com/", query));
+            return Parse(GetWebData(string.Format(searchUrl, query), CookieContainer));
         }
 
         public List<VideoInfo> Search(string searchUrl, string query, string category)
         {
-            return Parse(string.Format(searchUrl, category, query));
+            return Search(searchUrl, query);
         }
 
         #endregion

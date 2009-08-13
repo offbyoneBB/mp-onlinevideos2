@@ -144,7 +144,7 @@ namespace OnlineVideos.Sites
         }
 
         protected static string GetRedirectedUrl(string url)
-        {
+        {            
             try
             {
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;                
@@ -154,7 +154,12 @@ namespace OnlineVideos.Sites
                 HttpWebResponse httpWebresponse = request.GetResponse() as HttpWebResponse;
                 if (httpWebresponse == null) return url;
                 if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
-                    return url;
+                {
+                    if (httpWebresponse.ContentLength > 0 && httpWebresponse.ContentLength < 1024)
+                        return GetUrlFromResponse(httpWebresponse);
+                    else
+                        return url;
+                }
                 else
                     return httpWebresponse.ResponseUri.ToString();
             }
@@ -165,18 +170,35 @@ namespace OnlineVideos.Sites
             return url;
         }
 
-        protected static string GetWebData(string url)
+        static string GetUrlFromResponse(HttpWebResponse httpWebresponse)
+        {   
+            StreamReader sr = new StreamReader(httpWebresponse.GetResponseStream());                        
+            string content = sr.ReadToEnd();
+            if (httpWebresponse.ContentType.Contains("video/quicktime"))
+            {
+                return content.Split('\n')[1];
+            }
+            return httpWebresponse.ResponseUri.ToString();
+        }
+
+        protected static string GetWebData(string url, CookieContainer cc)
         {
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
             if (request == null) return "";
             request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
             request.Timeout = 15000;
+            if (cc != null) request.CookieContainer = cc;
             WebResponse response = request.GetResponse();
             using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
             {
                 string str = reader.ReadToEnd();
                 return str.Trim();
             }
+        }
+
+        protected static string GetWebData(string url)
+        {
+            return GetWebData(url, null);
         }
         
         protected static string GetWebDataFromPost(string url, string postData)

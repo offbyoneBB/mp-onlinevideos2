@@ -98,7 +98,10 @@ namespace OnlineVideos.Sites
                     vi.Title = (string)jsonData["headline"];
                     vi.Description = (string)jsonData["description"];
                     vi.Length = (string)jsonData["dateCreated"];
-                    vi.ImageUrl = (string)((jsonData["images"] as JsonArray)[2] as JsonObject)["resource"];
+                    if ((jsonData["images"] as JsonArray).Count > 2)
+                    {
+                        vi.ImageUrl = (string)((jsonData["images"] as JsonArray)[2] as JsonObject)["resource"];
+                    }
 
                     vi.VideoUrl = string.Format("http://nba.cdn.turner.com/nba/big{0}_nba_{1}.flv", (string)jsonData["location"], (string)((JsonArray)jsonData["sizes"])[0]);
 

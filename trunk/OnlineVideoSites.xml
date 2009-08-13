@@ -29,6 +29,29 @@
       <SearchUrl />
       <Categories />
     </Site>
+    <Site name="3sat" util="GenericSite" agecheck="false" enabled="true" lang="de">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Kulturzeit">http://www.3sat.de/mediathek/rss/mediathek_Kulturzeit.xml</Category>
+        <Category xsi:type="RssLink" name="nano">http://www.3sat.de/mediathek/rss/mediathek_nano.xml</Category>
+        <Category xsi:type="RssLink" name="hitec">http://www.3sat.de/mediathek/rss/mediathek_hitec.xml</Category>
+        <Category xsi:type="RssLink" name="scobel">http://www.3sat.de/mediathek/rss/mediathek_scobel.xml</Category>
+        <Category xsi:type="RssLink" name="3satbörse">http://www.3sat.de/mediathek/rss/mediathek_boerse.xml</Category>
+        <Category xsi:type="RssLink" name="Bauerfeind">http://www.3sat.de/mediathek/rss/mediathek_bauerfeind.xml</Category>
+        <Category xsi:type="RssLink" name="vivo">http://www.3sat.de/mediathek/rss/mediathek_vivo.xml</Category>
+        <Category xsi:type="RssLink" name="neues">http://www.3sat.de/mediathek/rss/mediathek_neues.xml</Category>
+        <Category xsi:type="RssLink" name="bookmark">http://www.3sat.de/mediathek/rss/mediathek_bookmark.xml</Category>
+        <Category xsi:type="RssLink" name="Peter Voß fragt">http://www.3sat.de/mediathek/rss/mediathek_begegnungen.xml</Category>
+        <Category xsi:type="RssLink" name="Gero von Boehm">http://www.3sat.de/mediathek/rss/mediathek_gero.xml</Category>
+        <Category xsi:type="RssLink" name="hessenreporter ">http://www.3sat.de/mediathek/rss/mediathek_hessenreporter.xml</Category>
+        <Category xsi:type="RssLink" name="Recht brisant ">http://www.3sat.de/mediathek/rss/mediathek_Recht%20brisant.xml</Category>
+        <Category xsi:type="RssLink" name="Kabarett">http://www.3sat.de/mediathek/rss/mediathek_kabarett.xml</Category>
+        <Category xsi:type="RssLink" name="Musik">http://www.3sat.de/mediathek/rss/mediathek_musik.xml</Category>        
+        <Category xsi:type="RssLink" name="Theater und Foyer ">http://www.3sat.de/mediathek/rss/mediathek_theater.xml</Category>
+      </Categories>
+    </Site>
     <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
       <Username />
       <Password />
@@ -48,6 +71,19 @@
         <Category xsi:type="RssLink" name="New Videos">http://www.metacafe.com/rss/new_videos.rss</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.metacafe.com/rss/today_videos/rss.xml?sort=rank</Category>
         <Category xsi:type="RssLink" name="Top Discussed">http://www.metacafe.com/rss/today_videos/rss.xml?sort=discussed</Category>
+        <Category xsi:type="RssLink" name="Young Hollywood">http://www.metacafe.com/younghollywood/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Video Games">http://www.metacafe.com/video-games/rss.xml</Category>
+        <Category xsi:type="RssLink" name="National Lampoon">http://www.metacafe.com/nationallampoon/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Sport Clips">http://www.metacafe.com/sports_clips/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Bikini.com">http://www.metacafe.com/bikini/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Video Detective">http://www.metacafe.com/videodetective/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Gumball 3000">http://www.metacafe.com/gumball3000/rss.xml</Category>
+        <Category xsi:type="RssLink" name="MTV's Virtual Dance Off Video Awards">http://www.metacafe.com/virtualworlds/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Playboy">http://www.metacafe.com/playboy/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Liv Films">http://www.metacafe.com/livfilms/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Most Recent Internet Filmmaking">http://www.metacafe.com/directors/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Tornados">http://www.metacafe.com/channels/TornadoVideosdotnet/rss.xml</Category>
+        <Category xsi:type="RssLink" name="MassageNerd">http://www.metacafe.com/channels/massagenerd/rss.xml</Category>
       </Categories>
     </Site>
     <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true">
@@ -218,7 +254,7 @@
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="MSNBC" util="Msnbc" agecheck="false" enabled="true">
+    <Site name="MSNBC" util="Msnbc" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl />
@@ -232,7 +268,7 @@
         <Category xsi:type="RssLink" name="The Week in Video">http://www.msnbc.msn.com/id/14514583/device/rss/rss.xml</Category>
       </Categories>
     </Site>
-    <Site name="TEDTalks" util="GenericSite" agecheck="false" enabled="true">
+    <Site name="TEDTalks" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl />
@@ -343,7 +379,7 @@
         <Category xsi:type="RssLink" name="Search">http://blip.tv/?1=1&amp;search={0};page=1;s=posts&amp;skin=rss</Category>
       </Categories>
     </Site>
-    <Site name="Revision3" util="GenericSite" agecheck="false" enabled="true">
+    <Site name="Revision3" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl />
@@ -491,7 +527,7 @@
     <Site name="RedTube" util="RedTube" agecheck="true" enabled="true">
       <Username />
       <Password />
-      <SearchUrl>{0}?search={1}</SearchUrl>
+      <SearchUrl>http://www.redtube.com/?search={0}</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="New">http://www.redtube.com/new</Category>
         <Category xsi:type="RssLink" name="Top">http://www.redtube.com/top</Category>
