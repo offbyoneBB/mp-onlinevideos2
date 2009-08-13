@@ -1,0 +1,1 @@
+#summary Screen shots of the plugin running in MediaPortal using different skins.
