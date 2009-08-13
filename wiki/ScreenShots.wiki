@@ -1,1 +1,25 @@
 #summary Screen shots of the plugin running in MediaPortal using different skins.
+
+=Sites View in Small Icon Mode=
+
+<img src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg"/>
+
+=Sites View in List Mode=
+
+<img src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg"/>
+
+=Categories View with Side Menu=
+
+<img src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg"/>
+
+=Videos View in Small Icon Mode=
+
+<img src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg"/>
+
+=Videos View with Side Menu=
+
+<img src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg"/>
+
+=Videos View with Context Menu=
+
+<img src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg"/>
