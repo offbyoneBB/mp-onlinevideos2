@@ -179,7 +179,7 @@ namespace OnlineVideos
         {
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
             LoadSettings();
-            rtmpServer = new RTMP_LIB.HTTPServer();
+            if (rtmpServer == null) rtmpServer = new RTMP_LIB.HTTPServer();
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", " ");
             GUIPropertyManager.SetProperty("#OnlineVideos.length", " ");
             return result;

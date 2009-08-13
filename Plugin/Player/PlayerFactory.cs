@@ -14,16 +14,16 @@ namespace OnlineVideos.Player
         {
             Uri uri = new Uri(filename);
 
-            if (uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asf"))
+            if (uri.Scheme == "rtsp" || uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asf"))
             {
                 return new OnlineVideosPlayer();
             }
             else if (uri.PathAndQuery.Contains(".asx"))
-            {                
+            {
                 return new AudioPlayerWMP9();
             }
             else
-            {                
+            {
                 foreach (string anExt in OnlineVideoSettings.getInstance().videoExtensions.Keys)
                 {
                     if (uri.PathAndQuery.Contains(anExt))

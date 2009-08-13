@@ -177,6 +177,8 @@ namespace OnlineVideos
 
         public static void DownloadImages2(object sender, DoWorkEventArgs e)
         {
+            System.Threading.Thread.CurrentThread.Name = "OnlineVideosImageDownloader";
+
             //Log.Info("Using thumb directory:{0}", _imageDirectory);
             Log.Info("Downloading images");
             _imageLocationList.Clear();
@@ -200,42 +202,44 @@ namespace OnlineVideos
             string thumbnailLocation;
             string name;
             foreach (String url in loImageUrlList)
-            {
+            {                
                 liIdx++;
                 if (_stopDownload)
                 {
                     Log.Info("Received Request to stop Download");
                     break;
                 }
-
-                name = MediaPortal.Util.Utils.GetThumb(url);
-                //Log.Info("1)lsThumb = "+lsThumb);
-                name = System.IO.Path.GetFileNameWithoutExtension(name);
-                imageLocation = lsThumbLocation + name + "L.jpg";
-                thumbnailLocation = lsThumbLocation + name + ".jpg";
-                if (System.IO.File.Exists(imageLocation) == false)
+                if (!string.IsNullOrEmpty(url))
                 {
-                    Log.Info("downloading image :" + url);
-                    try
+                    name = MediaPortal.Util.Utils.GetThumb(url);
+                    //Log.Info("1)lsThumb = "+lsThumb);
+                    name = System.IO.Path.GetFileNameWithoutExtension(name);
+                    imageLocation = lsThumbLocation + name + "L.jpg";
+                    thumbnailLocation = lsThumbLocation + name + ".jpg";
+                    if (System.IO.File.Exists(imageLocation) == false)
                     {
-                        client.DownloadFile(url, imageLocation);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex);
-                        //continue;
-                    }
-                    //if (System.IO.File.Exists(thumbnailLocation) == false)
-                    //{
-                    //	//int iRotate = dbs.GetRotation(imageLocation);
-                    //    MediaPortal.Util.Picture.CreateThumbnail(imageLocation, thumbnailLocation, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-                    //	System.Threading.Thread.Sleep(25);
-                    //	System.IO.File.Delete(imageLocation);
-                    //}
+                        Log.Info("downloading image :" + url);
+                        try
+                        {
+                            client.DownloadFile(url, imageLocation);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex);
+                            //continue;
+                        }
+                        //if (System.IO.File.Exists(thumbnailLocation) == false)
+                        //{
+                        //	//int iRotate = dbs.GetRotation(imageLocation);
+                        //    MediaPortal.Util.Picture.CreateThumbnail(imageLocation, thumbnailLocation, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+                        //	System.Threading.Thread.Sleep(25);
+                        //	System.IO.File.Delete(imageLocation);
+                        //}
 
+                    }
+                    //_imageLocationList.Add(thumbnailLocation);
+                    _imageLocationList.Add(imageLocation);
                 }
-                //_imageLocationList.Add(thumbnailLocation);
-                _imageLocationList.Add(imageLocation);
                 if (facadeView.Count <= liIdx)
                 {
                     break;
