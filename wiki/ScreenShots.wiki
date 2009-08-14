@@ -23,3 +23,7 @@
 =Videos View with Context Menu=
 
 <img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg"/>
+
+=Details View on Apple Trailers=
+
+<img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg"/>
