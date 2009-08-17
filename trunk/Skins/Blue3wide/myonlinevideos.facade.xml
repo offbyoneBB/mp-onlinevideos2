@@ -21,7 +21,7 @@
           <id>50</id>
           <posX>80</posX>
           <width>1120</width>
-          <posY>90</posY>
+          <posY>85</posY>
           <height>520</height>
           <onleft>2</onleft>
           <onright>2</onright>
@@ -35,7 +35,7 @@
           <id>50</id>
           <posX>80</posX>
           <width>1120</width>
-          <posY>90</posY>
+          <posY>85</posY>
           <height>540</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
@@ -45,7 +45,7 @@
           
           <!-- smallicons -->
           <itemWidth>159</itemWidth>
-          <itemHeight>118</itemHeight>
+          <itemHeight>117</itemHeight>
           <textureWidth>155</textureWidth>
           <textureHeight>116</textureHeight>
           <thumbWidth>143</thumbWidth>
@@ -55,13 +55,13 @@
           
           <!-- largeicons -->
           <itemWidthBig>224</itemWidthBig>
-          <itemHeightBig>158</itemHeightBig>
+          <itemHeightBig>156</itemHeightBig>
           <textureWidthBig>217</textureWidthBig>
-          <textureHeightBig>156</textureHeightBig>
+          <textureHeightBig>155</textureHeightBig>
           <thumbWidthBig>201</thumbWidthBig>
-          <thumbHeightBig>148</thumbHeightBig>
+          <thumbHeightBig>145</thumbHeightBig>
           <thumbPosXBig>7</thumbPosXBig>
-          <thumbPosYBig>2</thumbPosYBig>
+          <thumbPosYBig>5</thumbPosYBig>
 
           <spinCanFocus>no</spinCanFocus>          
           <spinPosX>1180</spinPosX>

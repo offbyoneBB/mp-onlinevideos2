@@ -118,13 +118,11 @@ namespace OnlineVideos
     [XmlInclude(typeof(Group))]
     public class Category : IComparable<Category>
     {
-        string name;
         [XmlAttribute("name")]
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
+        public string Name { get; set; }
+
+        [XmlAttribute("thumb")]
+        public string Thumb { get; set; }
         
         #region IComparable<Category> Member
 

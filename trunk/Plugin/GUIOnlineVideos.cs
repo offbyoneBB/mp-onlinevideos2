@@ -14,6 +14,8 @@ namespace OnlineVideos
     [PluginIcons("OnlineVideos.OnlineVideos.png", "OnlineVideos.OnlineVideosDisabled.png")]
     public class GUIOnlineVideos : GUIWindow, ISetupForm, IShowPlugin
     {
+        public enum SiteOrder { AsInFile = 0, Name = 1, Language = 2 }
+
         public enum State { home = 0, categories = 1, videos = 2, info = 3 }
 
         public const string PLUGIN_NAME = "Online Videos";
@@ -75,6 +77,9 @@ namespace OnlineVideos
             return PLUGIN_NAME;
         }
 
+        /// <summary>
+        /// Show Plugin Configuration Dialog.
+        /// </summary>
         public void ShowPlugin()
         {
             System.Windows.Forms.Form setup = new Configuration();
@@ -119,6 +124,7 @@ namespace OnlineVideos
         protected GUIFacadeControl.ViewMode currentSiteView = GUIFacadeControl.ViewMode.List;
         protected GUIFacadeControl.ViewMode currentCategoryView = GUIFacadeControl.ViewMode.List;
         protected GUIFacadeControl.ViewMode currentVideoView = GUIFacadeControl.ViewMode.SmallIcons;
+        protected GUIFacadeControl.ViewMode? suggestedView;
         #endregion
 
         #region state variables
@@ -139,6 +145,8 @@ namespace OnlineVideos
         List<VideoInfo> moCurrentTrailerList = new List<VideoInfo>();        
 
         bool showingFavorites = false;
+
+        SiteOrder siteOrder = SiteOrder.AsInFile;
 
         RTMP_LIB.HTTPServer rtmpServer;
         #endregion
@@ -482,6 +490,7 @@ namespace OnlineVideos
             else if (control == btnOrderBy)
             {
                 GUIControl.SelectItemControl(GetID, btnOrderBy.GetID, btnOrderBy.SelectedItem);
+                if (currentState == State.home) siteOrder = (SiteOrder)btnOrderBy.SelectedItem;
             }
             else if (control == btnTimeFrame)
             {
@@ -490,7 +499,12 @@ namespace OnlineVideos
             else if (control == btnUpdate)
             {
                 GUIControl.UnfocusControl(GetID, btnUpdate.GetID);
-                FilterVideos();
+
+                switch (currentState)
+                {
+                    case State.home: DisplaySites(); break;
+                    case State.videos: FilterVideos(); break;                    
+                }
                 UpdateViewState();
             }
             else if (control == btnSearchCategories)
@@ -539,6 +553,7 @@ namespace OnlineVideos
             using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
                 xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_MODE, (int)currentSiteView);
+                xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_ORDER, (int)siteOrder);
                 xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.VIDEOVIEW_MODE, (int)currentVideoView);
                 xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.CATEGORYVIEW_MODE, (int)currentCategoryView);
             }
@@ -599,6 +614,7 @@ namespace OnlineVideos
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
                 currentSiteView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
+                siteOrder = (SiteOrder)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_ORDER, 0);
                 currentVideoView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
                 currentCategoryView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
                 SwitchView();
@@ -659,21 +675,58 @@ namespace OnlineVideos
         private void DisplaySites()
         {
             selectedCategoryIndex = 0;
-
             GUIControl.ClearControl(GetID, facadeView.GetID);
 
-            GUIListItem loListItem;
-            String image;
-            foreach (SiteSettings aSite in OnlineVideoSettings.getInstance().moSiteList.Values)
+            // set order by options
+            btnOrderBy.Clear();
+            GUIControl.AddItemLabelControl(GetID, btnOrderBy.GetID, GUILocalizeStrings.Get(886)); //Default
+            GUIControl.AddItemLabelControl(GetID, btnOrderBy.GetID, GUILocalizeStrings.Get(103)); //Name
+            GUIControl.AddItemLabelControl(GetID, btnOrderBy.GetID, GUILocalizeStrings.Get(304)); //Language
+            btnOrderBy.SelectedItem = (int)siteOrder;
+            
+            // get names in right order
+            string[] names = new string[OnlineVideoSettings.getInstance().moSiteList.Count];
+            switch (siteOrder)
             {
+                case SiteOrder.Name:
+                    OnlineVideoSettings.getInstance().moSiteList.Keys.CopyTo(names, 0);
+                    Array.Sort(names);
+                    break;
+                case SiteOrder.Language:
+                    Dictionary<string, List<string>> sitenames = new Dictionary<string, List<string>>();
+                    foreach (SiteSettings aSite in OnlineVideoSettings.getInstance().moSiteList.Values)
+                    {
+                        string key = string.IsNullOrEmpty(aSite.Language) ? "zzzzz" : aSite.Language; // puts empty lang at the end
+                        List<string> listForLang = null;
+                        if (!sitenames.TryGetValue(key, out listForLang)) { listForLang = new List<string>(); sitenames.Add(key, listForLang); }
+                        listForLang.Add(aSite.Name);
+                    }
+                    string[] langs = new string[sitenames.Count];
+                    sitenames.Keys.CopyTo(langs, 0);
+                    Array.Sort(langs);
+                    int index = 0;
+                    foreach (string lang in langs)
+                    {
+                        sitenames[lang].CopyTo(names, index);
+                        index += sitenames[lang].Count;
+                    }
+                    break;
+                default:
+                    OnlineVideoSettings.getInstance().moSiteList.Keys.CopyTo(names, 0);
+                    break;
+            }
+            
+            foreach (string name in names)
+            {
+                SiteSettings aSite = OnlineVideoSettings.getInstance().moSiteList[name];
                 if (aSite.IsEnabled &&
                     (!aSite.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || ageHasBeenConfirmed))
-                {                    
-                    loListItem = new GUIListItem(aSite.Name);
+                {
+                    GUIListItem loListItem = new GUIListItem(aSite.Name);
                     loListItem.Label2 = aSite.Language;
                     loListItem.Path = aSite.Name;
                     loListItem.IsFolder = true;
-                    image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Name + ".png";
+                    string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Name + ".png";
                     if (System.IO.File.Exists(image))
                     {
                         loListItem.ThumbnailImage = image;                        
@@ -707,6 +760,9 @@ namespace OnlineVideos
             loListItem.IsFolder = true;
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
             facadeView.Add(loListItem);
+
+            int numCategoriesWithThumb = 0;
+            List<String> imagesUrlList = new List<string>();
 
             if (!selectedSite.DynamicCategoriesDiscovered)
             {
@@ -757,15 +813,14 @@ namespace OnlineVideos
                         loListItem.IconImageBig = image;                    
                     }
                 }                
-
                 // SVTPlay Categories can have images from web
-                if (selectedSite.Util is Sites.SVTPlayUtil && loCat is OnlineVideos.Sites.SVTPlayCategory)
+                else if (selectedSite.Util is Sites.SVTPlayUtil && loCat is OnlineVideos.Sites.SVTPlayCategory)
                 {
                     OnlineVideos.Sites.SVTPlayCategory sVTPlayCategory = (OnlineVideos.Sites.SVTPlayCategory)loCat;
 
-                    if (sVTPlayCategory.ImageUrl != null && sVTPlayCategory.ImageUrl != string.Empty)
+                    if (sVTPlayCategory.Thumb != null && sVTPlayCategory.Thumb != string.Empty)
                     {
-                        string image = OnlineVideoSettings.getInstance().msThumbLocation + sVTPlayCategory.ImageUrl;
+                        string image = OnlineVideoSettings.getInstance().msThumbLocation + sVTPlayCategory.Thumb;
 
                         if (System.IO.File.Exists(image))
                         {
@@ -773,6 +828,17 @@ namespace OnlineVideos
                             loListItem.IconImage = image;
                             loListItem.IconImageBig = image;
                         }
+                    }
+                }
+                else
+                {
+                    imagesUrlList.Add(loCat.Thumb);
+                    if (!string.IsNullOrEmpty(loCat.Thumb))
+                    {
+                        numCategoriesWithThumb++;
+                        loListItem.ItemId = imagesUrlList.Count;
+                        loListItem.RetrieveArt = false;
+                        loListItem.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
                     }
                 }
 
@@ -794,6 +860,14 @@ namespace OnlineVideos
                     loListItem.Label2 = (loCat as Group).Channels.Count.ToString();
                 }
             }
+
+            suggestedView = null;
+
+            if (numCategoriesWithThumb > 0)
+                ImageDownloader.getImages(imagesUrlList, OnlineVideoSettings.getInstance().msThumbLocation, facadeView);
+            else
+                suggestedView = GUIFacadeControl.ViewMode.List;
+
             if (selectedCategoryIndex < facadeView.Count) facadeView.SelectedListItemIndex = selectedCategoryIndex;
         }
         
@@ -1328,6 +1402,7 @@ namespace OnlineVideos
                     HidePreviousPageButton();
                     HideVideoDetails();                    
                     HideFilterButtons();
+                    ShowOrderButtons();
                     HideSearchButtons();
                     HideFavoriteButtons();
                     if (OnlineVideoSettings.getInstance().useAgeConfirmation && !ageHasBeenConfirmed)
@@ -1335,7 +1410,7 @@ namespace OnlineVideos
                     else
                         HideEnterPinButton();
                     DisplayVideoInfo(null);
-                    currentView = currentSiteView;                    
+                    currentView = currentSiteView;
                     SwitchView();
                     break;
                 case State.categories:
@@ -1351,15 +1426,7 @@ namespace OnlineVideos
                     if (selectedSite.Util is IFavorite) ShowFavoriteButtons(); else HideFavoriteButtons();
                     HideEnterPinButton();
                     DisplayVideoInfo(null);
-                    if (selectedSite.Util is OnlineVideos.Sites.SVTPlayUtil)
-                    {
-                        currentView = currentCategoryView;
-                    }
-                    else
-                    {
-                        currentView = GUIFacadeControl.ViewMode.List;
-                    }
-
+                    currentView = suggestedView != null ? suggestedView.Value : currentCategoryView;
                     SwitchView();
                     break;
                 case State.videos:
@@ -1410,7 +1477,7 @@ namespace OnlineVideos
 
                 facadeView.Focus = true;
                 GUIControl.FocusControl(GetID, facadeView.GetID);
-            }
+            }            
         }
 
         private void HideVideoDetails()
@@ -1473,20 +1540,25 @@ namespace OnlineVideos
             GUIControl.EnableControl(GetID, 58);
             GUIControl.ShowControl(GetID, 59);
             GUIControl.EnableControl(GetID, 59);
+        }        
+
+        private void ShowOrderButtons()
+        {
+            GUIControl.ShowControl(GetID, btnOrderBy.GetID);
+            GUIControl.EnableControl(GetID, btnOrderBy.GetID);
+            GUIControl.ShowControl(GetID, btnUpdate.GetID);
+            GUIControl.EnableControl(GetID, btnUpdate.GetID);
         }
 
         private void HideFilterButtons()
         {
-            Log.Debug("Hiding Filter buttons");
-
             GUIControl.DisableControl(GetID, btnMaxResult.GetID);
-            GUIControl.DisableControl(GetID, btnOrderBy.GetID);
-            GUIControl.DisableControl(GetID, btnTimeFrame.GetID);
-            GUIControl.DisableControl(GetID, btnUpdate.GetID);
-
             GUIControl.HideControl(GetID, btnMaxResult.GetID);
-            GUIControl.HideControl(GetID, btnOrderBy.GetID);
+            GUIControl.DisableControl(GetID, btnTimeFrame.GetID);
             GUIControl.HideControl(GetID, btnTimeFrame.GetID);
+            GUIControl.DisableControl(GetID, btnOrderBy.GetID);
+            GUIControl.HideControl(GetID, btnOrderBy.GetID);
+            GUIControl.DisableControl(GetID, btnUpdate.GetID);            
             GUIControl.HideControl(GetID, btnUpdate.GetID);
         }
 
@@ -1669,7 +1741,7 @@ namespace OnlineVideos
                 currentSiteView = currentView;
                 SwitchView();
             }
-            else if (currentState == State.categories && selectedSite.Util is OnlineVideos.Sites.SVTPlayUtil)
+            else if (currentState == State.categories)
             {
                 currentCategoryView = currentView;
                 SwitchView();

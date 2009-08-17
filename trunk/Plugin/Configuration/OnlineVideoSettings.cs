@@ -15,6 +15,7 @@ namespace OnlineVideos
         const string SETTINGS_FILE = "OnlineVideoSites.xml";
         public const string SECTION = "onlinevideos";
         public const string SITEVIEW_MODE = "siteview";
+        public const string SITEVIEW_ORDER = "siteview_order";
         public const string VIDEOVIEW_MODE = "videoview";
         public const string CATEGORYVIEW_MODE = "categoryview";
         const string BASICHOMESCREEN_NAME = "basicHomeScreenName";        
