@@ -34,7 +34,7 @@ namespace OnlineVideos.Sites
                 RssLink item = new RssLink();
                 item.Name = convertUnicodeU(teaser.Titel);
                 item.Url = teaser.ID;
-                //item.iconUrl = teaser.Teaserbilder[0].Url;
+                item.Thumb = teaser.Teaserbilder[0].Url;
                 site.Categories.Add(item.Name, item);
                 categoriesForSearching.Add(item.Name, item.Url);
             }

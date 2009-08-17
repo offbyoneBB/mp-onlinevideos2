@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <OnlineVideoSites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Sites>
-    <Site name="YouTube" util="YouTube" agecheck="false" enabled="true">
+    <Site name="YouTube" util="YouTube" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl />
@@ -22,6 +22,32 @@
       <Password />
       <SearchUrl />
       <Categories />
+    </Site>
+    <Site name="WDR" util="GenericSite" agecheck="false" enabled="true" lang="de">
+      <Username />
+      <Password />
+      <SearchUrl />
+      <Categories>
+        <Category xsi:type="RssLink" name="Sendung mit der Maus" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_maus.jpg">http://podcast.wdr.de/maus.xml</Category>
+        <Category xsi:type="RssLink" name="Tiere suchen ein Zuhause" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_tieresucheneinzuhause.jpg">http://podcast.wdr.de/sztiere.xml</Category>
+        <Category xsi:type="RssLink" name="Hier und Heute" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_hierundheute.jpg">http://podcast.wdr.de/hierundheute.xml</Category>
+        <Category xsi:type="RssLink" name="Wissen macht Ah!" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_wissenmachtah.jpg">http://podcast.wdr.de/wissenmachtah.xml</Category>
+        <Category xsi:type="RssLink" name="neuneinhalb" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_neuneinhalb.jpg">http://podcast.wdr.de/neuneinhalb.xml</Category>
+        <Category xsi:type="RssLink" name="Angeklickt" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_angeklickt.jpg">http://podcast.wdr.de/angeklickt.xml</Category>
+        <Category xsi:type="RssLink" name="Käpt'n Blaubär" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_blaubaer.jpg">http://podcast.wdr.de/blaubaer.xml</Category>
+        <Category xsi:type="RssLink" name="Menschen hautnah" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_menschenhautnah.jpg">http://podcast.wdr.de/menschenhautnah.xml</Category>
+        <Category xsi:type="RssLink" name="Monitor" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_monitor.jpg">http://podcast.wdr.de/monitor.xml</Category>
+        <Category xsi:type="RssLink" name="Quarks &amp; Co" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_quarks.jpg">http://podcast.wdr.de/quarks.xml</Category>
+        <Category xsi:type="RssLink" name="Testmarkt" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_testmarkt.jpg">http://podcast.wdr.de/testmarkt.xml</Category>
+        <Category xsi:type="RssLink" name="die story" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_diestory.jpg">http://podcast.wdr.de/diestory.xml</Category>
+        <Category xsi:type="RssLink" name="Hart aber fair" thumb="http://www.wdr.de/themen/_config_/podcast/img/podcast_hartaberfair.jpg">http://podcast.wdr.de/hartaberfair.xml</Category>
+        <Category xsi:type="RssLink" name="Planet Wissen" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_planetwissen.jpg">http://podcast.wdr.de/planetwissen.xml</Category>
+        <Category xsi:type="RssLink" name="schön hier" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_schoenhier.jpg">http://podcast.wdr.de/schoenhier.xml</Category>
+        <Category xsi:type="RssLink" name="Kopfball" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_kopfball.jpg">http://podcast.wdr.de/kopfball.xml</Category>
+        <Category xsi:type="RssLink" name="frauTV" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_frautv.jpg">http://podcast.wdr.de/frautv.xml</Category>
+        <Category xsi:type="RssLink" name="echtzeit" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_echtzeit.jpg">http://podcast.wdr.de/echtzeit.xml</Category>        
+        <Category xsi:type="RssLink" name="Servicezeit: kompakt" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_szkompakt.jpg">http://podcast.wdr.de/szkompakt.xml</Category>                
+      </Categories>
     </Site>
     <Site name="ZDF Mediatek" util="ZDFMediathek" agecheck="false" enabled="true" lang="de">
       <Username />
@@ -63,7 +89,7 @@
         <Category xsi:type="RssLink" name="Top 10 Alltime">http://www.myvideo.de/feeds/myVideo-Top10-alltime.rss</Category>
       </Categories>
     </Site>
-    <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true">
+    <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl>http://www.metacafe.com/f/tags/{0}/rss.xml</SearchUrl>
@@ -86,7 +112,7 @@
         <Category xsi:type="RssLink" name="MassageNerd">http://www.metacafe.com/channels/massagenerd/rss.xml</Category>
       </Categories>
     </Site>
-    <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true">
+    <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl>http://www.dailymotion.com/rss/relevance/search/{0}</SearchUrl>
@@ -116,7 +142,7 @@
         <Category xsi:type="RssLink" name="Dating">http://www.dailymotion.com/rss/cluster/dating</Category>
       </Categories>
     </Site>
-    <Site name="Live Video" util="LiveVideo" agecheck="false" enabled="true">
+    <Site name="Live Video" util="LiveVideo" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl />
@@ -192,7 +218,7 @@
       <SearchUrl>http://www.apple.com/trailers/home/scripts/quickfind.php?q={0}</SearchUrl>
       <Categories />
     </Site>
-    <Site name="Break" util="Break" agecheck="false" enabled="true">
+    <Site name="Break" util="Break" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl>http://rss.break.com/tag/{0}/</SearchUrl>
@@ -248,7 +274,7 @@
         <Category xsi:type="RssLink" name="Barkley Zone">http://www.nba.com/.element/ssi/sect/1.1/video/barkleyzone.html</Category>
       </Categories>
     </Site>
-    <Site name="VeryFunnyAds" util="VeryFunnyAds" agecheck="false" enabled="true">
+    <Site name="VeryFunnyAds" util="VeryFunnyAds" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl />
@@ -343,7 +369,7 @@
         <Category xsi:type="RssLink" name="Exploration">http://www.nasa.gov/rss/exploration_vodcast.rss</Category>
       </Categories>
     </Site>
-    <Site name="blip.tv" util="GenericSite" agecheck="false" enabled="true">
+    <Site name="blip.tv" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl />
@@ -514,7 +540,7 @@
         <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
       </Categories>
     </Site>
-    <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true">
+    <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl>http://www.youporn.com/search?type=straight&amp;query={0}</SearchUrl>
@@ -524,7 +550,7 @@
         <Category xsi:type="RssLink" name="Most Viewed">http://www.youporn.com/most_viewed</Category>
       </Categories>
     </Site>
-    <Site name="RedTube" util="RedTube" agecheck="true" enabled="true">
+    <Site name="RedTube" util="RedTube" agecheck="true" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl>http://www.redtube.com/?search={0}</SearchUrl>
@@ -549,7 +575,7 @@
         <Category xsi:type="RssLink" name="Wildcrazy">http://www.redtube.com/redtube/wildcrazy</Category>
       </Categories>
     </Site>
-    <Site name="xHamster" util="xHamster" agecheck="true" enabled="true">
+    <Site name="xHamster" util="xHamster" agecheck="true" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl>http://www.xhamster.com/search.php?q={0}</SearchUrl>
@@ -598,7 +624,7 @@
         <Category xsi:type="RssLink" name="Webcams">http://www.xhamster.com/channels/new-webcams-1.html</Category>
       </Categories>
     </Site>
-    <Site name="Tube8" util="Tube8" agecheck="true" enabled="true">
+    <Site name="Tube8" util="Tube8" agecheck="true" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl>http://www.tube8.com/search.html?q={0}</SearchUrl>
@@ -626,7 +652,7 @@
         <Category xsi:type="RssLink" name="Teen">http://www.tube8.com/cat/teen/3.html</Category>
       </Categories>
     </Site>
-    <Site name="Empflix" util="Empflix" agecheck="true" enabled="true">
+    <Site name="Empflix" util="Empflix" agecheck="true" enabled="true" lang="en">
       <Username />
       <Password />
       <SearchUrl>http://www.empflix.com/search.php</SearchUrl>

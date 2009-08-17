@@ -2,7 +2,7 @@
 <window>
   <id>4755</id>
   <defaultcontrol>50</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <define>#header.label</define>
   <define>#header.image</define>
   <controls>
@@ -73,45 +73,31 @@
     <import>myonlinevideos.facade.xml</import>
     
     <!-- *** Bottom part *** -->
-    
+        
     <control>
       <description>video rectangle</description>
       <type>image</type>
       <id>0</id>
-      <posX>80</posX>
-      <posY>576</posY>
+      <posX>78</posX>
+      <posY>553</posY>
       <width>219</width>
       <height>124</height>
       <texture>Picture_cover.png</texture>
-      <visible>!Control.IsVisible(51)</visible>
-      <animation effect="fade" time="250">visiblechange</animation>      
-    </control>
-    <control>
-      <description>video preview window</description>
-      <type>videowindow</type>
-      <id>0</id>
-      <posX>86</posX>
-      <posY>580</posY>
-      <width>203</width>
-      <height>115</height>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
-      <animation effect="fade" time="250">visiblechange</animation>
-      <visible>player.hasmedia</visible>
+      <visible>!videoplayer.usingoverlays + !player.hasmedia + !Control.IsVisible(51)</visible>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
     </control>
     <control>
       <id>500</id>
       <type>image</type>
-      <posX>86</posX>
-      <posY>580</posY>
-      <width>203</width>
-      <height>115</height>
+      <posX>79</posX>
+      <posY>555</posY>
+      <width>214</width>
+      <height>119</height>
       <centered>yes</centered>
       <texture diffuse="Thumb_Mask.png">#selectedthumb</texture>
       <keepaspectratio>yes</keepaspectratio>
-      <visible>!player.hasmedia + !Control.IsVisible(51)</visible>
+      <visible>!videoplayer.usingoverlays + !player.hasmedia + !Control.IsVisible(51)</visible>
       <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
     <control>
@@ -121,7 +107,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>300</posX>
-      <posY>560</posY>
+      <posY>551</posY>
       <width>880</width>
       <label>#selecteditem</label>
       <font>font11</font>
@@ -133,7 +119,7 @@
       <type>label</type>
       <id>0</id>
       <posX>300</posX>
-      <posY>590</posY>
+      <posY>579</posY>
       <width>120</width>
       <font>font10</font>
       <label>299</label>
@@ -145,7 +131,7 @@
       <type>label</type>
       <id>501</id>
       <posX>420</posX>
-      <posY>590</posY>
+      <posY>579</posY>
       <width>780</width>
       <font>font10</font>
       <label>#OnlineVideos.length</label>
@@ -157,9 +143,9 @@
       <type>textboxscrollup</type>
       <id>0</id>
       <posX>300</posX>
-      <posY>615</posY>
+      <posY>604</posY>
       <width>780</width>
-      <height>105</height>
+      <height>116</height>
       <colordiffuse>ffffffff</colordiffuse>
       <font>font10</font>
       <label>#OnlineVideos.desc</label>
@@ -209,6 +195,7 @@
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
+          <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
           <type>button</type>
@@ -221,6 +208,7 @@
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
+          <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
           <description>select category</description>
@@ -233,6 +221,7 @@
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
+          <visible>!Control.HasFocus(50)</visible>
         </control>        
         <control>
           <type>selectbutton</type>
@@ -245,6 +234,7 @@
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
+          <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
           <type>selectbutton</type>
@@ -257,6 +247,7 @@
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
+          <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
           <type>selectbutton</type>
@@ -269,6 +260,7 @@
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
+          <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
           <type>button</type>
@@ -281,6 +273,7 @@
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
+          <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
           <type>button</type>
@@ -295,6 +288,7 @@
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
+          <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
           <type>button</type>
@@ -309,6 +303,7 @@
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
+          <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
           <type>button</type>
@@ -321,6 +316,7 @@
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
+          <visible>!Control.HasFocus(50)</visible>
         </control>
         <control>
           <type>button</type>
@@ -334,6 +330,7 @@
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
+          <visible>!Control.HasFocus(50)</visible>
         </control>
       </control>
     </control>    

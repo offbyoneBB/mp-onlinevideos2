@@ -46,10 +46,10 @@ namespace OnlineVideos.Sites
                 item.Name = System.Web.HttpUtility.HtmlDecode(match.Groups["Title"].Value);
                 item.Id = match.Groups["Id"].Value;
                 item.Url = match.Groups["Url"].Value;
-                item.ImageUrl = item.Id + "_p.jpg";
-                Log.Info("Setting CategoryImageUrl to: {0}", item.ImageUrl);
+                item.Thumb = item.Id + "_p.jpg";
+                Log.Info("Setting CategoryImageUrl to: {0}", item.Thumb);
 
-                if (!System.IO.File.Exists(OnlineVideoSettings.getInstance().msThumbLocation + item.ImageUrl))
+                if (!System.IO.File.Exists(OnlineVideoSettings.getInstance().msThumbLocation + item.Thumb))
                 {
                     try
                     {
@@ -69,7 +69,7 @@ namespace OnlineVideos.Sites
                             }
                             catch
                             {
-                                item.ImageUrl = "";
+                                item.Thumb = "";
                             }
                         }
                     }
@@ -308,19 +308,7 @@ namespace OnlineVideos.Sites
             {
                 id = value;
             }
-        }
-
-        public string ImageUrl
-        {
-            get
-            {
-                return imageUrl;
-            }
-            set
-            {
-                imageUrl = value;
-            }
-        }
+        }        
     }
 
 }
