@@ -5,10 +5,17 @@ namespace OnlineVideos.Player
 {
     public class PlaylistPlayerWrapper : MediaPortal.Playlists.PlayListPlayer.IPlayer
     {
+        PlayerType playerType;
+
+        public PlaylistPlayerWrapper(PlayerType playerType)
+        {
+            this.playerType = playerType;
+        }
+
         public bool Play(string strFile)
         {
             IPlayerFactory savedFactory = g_Player.Factory;
-            g_Player.Factory = new OnlineVideos.Player.PlayerFactory();
+            g_Player.Factory = new OnlineVideos.Player.PlayerFactory(playerType);
             bool result = g_Player.Play(strFile);
             g_Player.Factory = savedFactory;
 

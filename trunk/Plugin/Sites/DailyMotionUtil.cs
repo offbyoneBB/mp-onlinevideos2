@@ -24,7 +24,8 @@ namespace OnlineVideos.Sites
                 loMatch = Regex.Match(lsTemp, "([^@]*)@@spark");
                 if(loMatch.Success){
                     lsUrl = loMatch.Groups[1].Value; 
-        		    lsUrl = "http://www.dailymotion.com"+lsUrl+"&txe=.flv";
+        		    lsUrl += "&txe=.flv";
+                    if (!lsUrl.StartsWith("http://")) lsUrl = "http://www.dailymotion.com" + lsUrl;
                     return lsUrl;
                 }
         	}

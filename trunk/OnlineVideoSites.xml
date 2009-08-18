@@ -55,7 +55,7 @@
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="3sat" util="GenericSite" agecheck="false" enabled="true" lang="de">
+    <Site name="3sat" util="GenericSite" agecheck="false" enabled="false" lang="de">
       <Username />
       <Password />
       <SearchUrl />
@@ -453,12 +453,12 @@
       <SearchUrl />
       <Categories />
     </Site>
-    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true">
+    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" player="WMP">
       <Username />
       <Password />
       <SearchUrl />
       <Categories>
-        <Category xsi:type="Group" name="RockTelevision">
+        <Category xsi:type="Group" name="RockTelevision" thumb="http://www.tv-port.net/wp-content/uploads/2009/05/rock-tv.jpg">
           <Channels>
             <Channel name="RockTV">mms://194.116.83.15/New</Channel>
             <Channel name="90s">mms://194.116.83.15/90s</Channel>
