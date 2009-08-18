@@ -137,14 +137,18 @@ namespace OnlineVideos
 			CategoryList.SelectedIndex = -1;
 			txtRssUrl.Text = "";
 			txtRssName.Text = "";
+            txtRssThumb.Text = "";
             txtRssUrl.Enabled = false;
             txtRssName.Enabled = false;
+            txtRssThumb.Enabled = false;
             btnSaveRss.Enabled = false;
 
             tbxChannelName.Text = "";
+            tbxChannelThumb.Text = "";
             tbxStreamName.Text = "";
             tbxStreamUrl.Text = "";
             tbxChannelName.Enabled = false;
+            tbxChannelThumb.Enabled = false;
             tbxStreamName.Enabled = false;
             tbxStreamUrl.Enabled = false;
             btnSaveChannel.Enabled = false;
@@ -165,16 +169,22 @@ namespace OnlineVideos
                 link = site.Categories[msSelectedCategoryName] as RssLink;
                 txtRssUrl.Text = link.Url;
                 txtRssName.Text = link.Name;
+                txtRssThumb.Text = link.Thumb;
                 txtRssUrl.Enabled = true;
                 txtRssName.Enabled = true;
+                txtRssThumb.Enabled = true;
                 btnSaveRss.Enabled = true;
 
             }
             if (CategoryList.SelectedIndex == -1)
             {
+                txtRssUrl.Text = "";
+                txtRssName.Text = "";
+                txtRssThumb.Text = "";
                 txtRssUrl.Enabled = false;
                 txtRssName.Enabled = false;
-                btnSaveRss.Enabled = false;                
+                txtRssThumb.Enabled = false;
+                btnSaveRss.Enabled = false;
             }
 		}
 		
@@ -202,6 +212,7 @@ namespace OnlineVideos
                 site.Categories.Remove(msSelectedCategoryName);
                 link.Name = txtRssName.Text;
                 link.Url = txtRssUrl.Text;
+                link.Thumb = txtRssThumb.Text != "" ? txtRssThumb.Text : null;
                 CategoryList.Items[CategoryList.SelectedIndex] = txtRssName.Text;
                 site.Categories.Add(link.Name, link);
                 CategoryList.SelectedIndex = -1;
@@ -287,6 +298,8 @@ namespace OnlineVideos
                 {
                     tbxChannelName.Enabled = true;
                     tbxChannelName.Text = e.Node.Text;
+                    tbxChannelThumb.Enabled = true;
+                    tbxChannelThumb.Text = ((Group)e.Node.Tag).Thumb;
                     tbxStreamName.Text = "";
                     tbxStreamName.Enabled = false;
                     tbxStreamUrl.Text = "";
@@ -299,6 +312,8 @@ namespace OnlineVideos
                 {
                     tbxChannelName.Text = "";
                     tbxChannelName.Enabled = false;
+                    tbxChannelThumb.Text = "";
+                    tbxChannelThumb.Enabled = false;
                     tbxStreamName.Text = e.Node.Text;
                     tbxStreamName.Enabled = true;
                     tbxStreamUrl.Text = ((Channel)e.Node.Tag).Url;
@@ -312,6 +327,8 @@ namespace OnlineVideos
             {
                 tbxChannelName.Text = "";
                 tbxChannelName.Enabled = false;
+                tbxChannelThumb.Text = "";
+                tbxChannelThumb.Enabled = false;
                 tbxStreamName.Text = "";
                 tbxStreamName.Enabled = false;
                 tbxStreamUrl.Text = "";
@@ -334,6 +351,7 @@ namespace OnlineVideos
                     Group group = tvGroups.SelectedNode.Tag as Group;
                     site.Categories.Remove(group.Name);
                     group.Name = tbxChannelName.Text;
+                    group.Thumb = tbxChannelThumb.Text != "" ? tbxChannelThumb.Text : null;
                     tvGroups.SelectedNode.Text = tbxChannelName.Text;
                     site.Categories.Add(group.Name, group);                    
                 }
@@ -343,7 +361,7 @@ namespace OnlineVideos
                     channel.StreamName = tbxStreamName.Text;
                     tvGroups.SelectedNode.Text = tbxStreamName.Text;
                     channel.Url = tbxStreamUrl.Text;
-                    if (tbxStreamThumb.Text != "") channel.Thumb = tbxStreamThumb.Text;
+                    channel.Thumb = tbxStreamThumb.Text != "" ? tbxStreamThumb.Text : null;
                 }
             }
         }
