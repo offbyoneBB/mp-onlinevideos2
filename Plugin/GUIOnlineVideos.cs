@@ -824,6 +824,7 @@ namespace OnlineVideos
 
                         if (System.IO.File.Exists(image))
                         {
+                            numCategoriesWithThumb++;
                             loListItem.ThumbnailImage = image;
                             loListItem.IconImage = image;
                             loListItem.IconImageBig = image;
@@ -1069,6 +1070,7 @@ namespace OnlineVideos
                 return;
             }
             List<String> loImageUrlList = new List<string>();
+            int numVideosWithThumb = 0;
             int liIdx = 0;
             foreach (VideoInfo loVideoInfo in foVideos)
             {
@@ -1086,8 +1088,14 @@ namespace OnlineVideos
                 loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
                 facadeView.Add(loListItem);
                 loImageUrlList.Add(loVideoInfo.ImageUrl);
+                if (!string.IsNullOrEmpty(loVideoInfo.ImageUrl)) numVideosWithThumb++;
             }
-            ImageDownloader.getImages(loImageUrlList, OnlineVideoSettings.getInstance().msThumbLocation, facadeView);
+
+            suggestedView = null;
+            if (numVideosWithThumb > 0)
+                ImageDownloader.getImages(loImageUrlList, OnlineVideoSettings.getInstance().msThumbLocation, facadeView);
+            else
+                suggestedView = GUIFacadeControl.ViewMode.List;
         }
 
         private void DisplayVideoDetails(VideoInfo foVideo)
@@ -1235,7 +1243,7 @@ namespace OnlineVideos
                 if (g_Player.Playing) g_Player.Stop();
                 
                 IPlayerFactory savedFactory = g_Player.Factory;
-                g_Player.Factory = new OnlineVideos.Player.PlayerFactory();
+                g_Player.Factory = new OnlineVideos.Player.PlayerFactory(selectedSite.Player);
                 g_Player.Play(lsUrl);
                 g_Player.Factory = savedFactory;
 
@@ -1261,7 +1269,7 @@ namespace OnlineVideos
             bool playing = false;
             PlayListPlayer.SingletonPlayer.Init();
             PlayListPlayer.SingletonPlayer.Reset();
-            PlayListPlayer.SingletonPlayer.g_Player = new Player.PlaylistPlayerWrapper();
+            PlayListPlayer.SingletonPlayer.g_Player = new Player.PlaylistPlayerWrapper(selectedSite.Player);
             PlayList videoList = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
             videoList.Clear();
             PlayListItem item;
@@ -1445,7 +1453,7 @@ namespace OnlineVideos
                     HideFavoriteButtons();                    
                     HideEnterPinButton();
                     DisplayVideoInfo(selectedVideo);
-                    currentView = currentVideoView;                    
+                    currentView = suggestedView != null ? suggestedView.Value : currentVideoView;                    
                     SwitchView();
                     break;
                 case State.info:

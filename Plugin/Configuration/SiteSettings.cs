@@ -6,6 +6,14 @@ using OnlineVideos.Sites;
 namespace OnlineVideos
 {
     [Serializable]
+    public enum PlayerType
+    {
+        [XmlEnum(Name = "Auto")] Auto,
+        [XmlEnum(Name = "Internal")] Internal,
+        [XmlEnum(Name = "WMP")] WMP
+    }
+
+    [Serializable]
     [XmlRoot("OnlineVideoSites")]
     public class SerializableSettings
     {
@@ -59,7 +67,11 @@ namespace OnlineVideos
         {
             get { return isEnabled; }
             set { isEnabled = value; }
-        }        
+        }
+
+        [XmlAttribute("player")]
+        public PlayerType Player { get; set; }
+        public bool ShouldSerializePlayer() { return Player != PlayerType.Auto; }
 
         string username;
         public string Username
@@ -101,7 +113,7 @@ namespace OnlineVideos
 
         bool dynamicCategoriesDiscovered = false;
         [XmlIgnore]
-        public bool DynamicCategoriesDiscovered
+        internal bool DynamicCategoriesDiscovered
         {
             get { return dynamicCategoriesDiscovered; }
             set { dynamicCategoriesDiscovered = value; }
@@ -137,32 +149,17 @@ namespace OnlineVideos
     [Serializable]
     public class RssLink : Category
     {        
-        string url;
         [XmlText]
-        public string Url
-        {
-            get { return url; }
-            set { url = value; }
-        }
-
-        uint estimatedVideoCount = 0;
+        public string Url { get; set; }
+        
         [XmlIgnore]
-        public uint EstimatedVideoCount 
-        { 
-            get { return estimatedVideoCount; }
-            set { estimatedVideoCount = value; } 
-        }
+        internal uint EstimatedVideoCount  { get; set; }
     }
 
     [Serializable]
     public class Group : Category
     {
-        List<Channel> channels;
-        public List<Channel> Channels
-        {
-            get { return channels; }
-            set { channels = value; }
-        }
+        public List<Channel> Channels { get; set; }        
     }
 
     [Serializable]
