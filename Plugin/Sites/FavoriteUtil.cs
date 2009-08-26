@@ -75,7 +75,8 @@ namespace OnlineVideos.Sites
             cat.Url = "fav:%{0}";
             site.Categories.Add(cat.Name, cat);
 
-            site.DynamicCategoriesDiscovered = true;
+            // need to always get the categories, because when adding new fav video from a new site, a removing the last one for a site, the categories must be refreshed 
+            site.DynamicCategoriesDiscovered = false; 
             return site.Categories.Count;
         }
 

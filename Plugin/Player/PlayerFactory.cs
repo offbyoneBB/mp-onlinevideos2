@@ -5,13 +5,13 @@ namespace OnlineVideos.Player
 {
     public class PlayerFactory : IPlayerFactory
     {
-        PlayerType playerType;
+        PlayerType playerType = PlayerType.Auto;        
 
         public PlayerFactory(PlayerType playerType)
         {
             this.playerType = playerType;
         }
-
+        
         public IPlayer Create(string filename)
         {
             return Create(filename, g_Player.MediaType.Unknown);

@@ -30,6 +30,11 @@ namespace OnlineVideos
     [Serializable]    
     public class SiteSettings
     {
+        public SiteSettings()
+        {
+            Language = "";
+        }
+
         SiteUtilBase util;
         [XmlIgnore]
         public SiteUtilBase Util
@@ -96,6 +101,7 @@ namespace OnlineVideos
 
         [XmlAttribute("lang")]
         public string Language { get; set; }
+        public bool ShouldSerializeLanguage() { return !string.IsNullOrEmpty(Language); }
         
         [XmlArray("Categories")]
         public Category[] CategoriesArray
@@ -135,6 +141,26 @@ namespace OnlineVideos
 
         [XmlAttribute("thumb")]
         public string Thumb { get; set; }
+
+        [XmlAttribute("desc")]
+        public string Description { get; set; }
+
+        [XmlIgnore]
+        public bool HasSubCategories { get; set; }
+
+        [XmlIgnore]
+        public bool SubCategoriesDiscovered { get; set; }
+
+        [XmlIgnore]
+        public Dictionary<string, Category> SubCategories { get; set; }
+
+        [XmlIgnore]
+        public Category ParentCategory { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
         
         #region IComparable<Category> Member
 

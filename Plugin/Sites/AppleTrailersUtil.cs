@@ -308,6 +308,11 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
+        public override string getUrl(VideoInfo video, SiteSettings foSite)
+        {            
+            return string.Format("http://localhost:{0}/?url={1}", OnlineVideoSettings.APPLE_PROXY_PORT, System.Web.HttpUtility.UrlEncode(video.VideoUrl));
+        }
+
         private List<IndexItem> fetchIndex(string url)
         {
             List<IndexItem> items = new List<IndexItem>();
@@ -465,7 +470,7 @@ namespace OnlineVideos.Sites
                                 trailer.Media.Add(video);
                             }                            
                             // Add the current quality to the video
-                            video.Size[quality] = new Uri(videourl);
+                            video.Size[quality] = new Uri(/*FixTrailerUrl(*/videourl/*,quality)*/);
                             // Set the duration of the video
                             video.Duration = new TimeSpan(0, 0, duration);
 
@@ -709,6 +714,22 @@ namespace OnlineVideos.Sites
             }
         }
 
+        /*
+        string FixTrailerUrl(string url, VideoQuality quality)
+        {
+            switch(quality)
+            {
+                case VideoQuality.SMALL: url = url.Replace("h320.mov", "h.320.mov"); break;
+                case VideoQuality.MEDIUM: url = url.Replace("h480.mov", "h.480.mov"); break;
+                case VideoQuality.LARGE: url = url.Replace("h640w.mov", "h.640.mov"); break;
+                case VideoQuality.HD480: url = url.Replace("h480p.mov", "480p.mov"); break;
+                case VideoQuality.HD720: url = url.Replace("h720p.mov", "720p.mov"); break;
+                case VideoQuality.FULLHD: url = url.Replace("h1080p.mov", "1080p.mov"); break;
+            }
+            return url;
+        }
+        */
+
         #region ISearch Member
 
         public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
@@ -727,5 +748,70 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// This class handles HTTP Request that will be used to get apple trailers with the correct User Agent and return them via http.
+    /// </summary>
+    internal class AppleProxyServer
+    {
+        HybridDSP.Net.HTTP.HTTPServer _server = null;
+
+        public AppleProxyServer(int port)
+        {
+            _server = new HybridDSP.Net.HTTP.HTTPServer(new RequestHandlerFactory(), port);
+            _server.OnServerException += new HybridDSP.Net.HTTP.HTTPServer.ServerCaughtException(delegate(Exception ex) { Log.Error(ex.Message); });
+            _server.Start();
+        }
+
+        public void StopListening()
+        {
+            _server.Stop();
+        }
+
+        class RequestHandlerFactory : HybridDSP.Net.HTTP.IHTTPRequestHandlerFactory
+        {
+            public HybridDSP.Net.HTTP.IHTTPRequestHandler CreateRequestHandler(HybridDSP.Net.HTTP.HTTPServerRequest request)
+            {
+                return new RequestHandler();
+            }
+        }
+
+        class RequestHandler : HybridDSP.Net.HTTP.IHTTPRequestHandler
+        {
+            public void HandleRequest(HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
+            {
+                string url = System.Web.HttpUtility.ParseQueryString(new Uri(new Uri("http://localhost"), request.URI).Query)["url"];
+
+                HttpWebRequest appleRequest = WebRequest.Create(url) as HttpWebRequest;
+                if (appleRequest == null)
+                {
+                    response.Status = HybridDSP.Net.HTTP.HTTPServerResponse.HTTPStatus.HTTP_NOT_FOUND;
+                    response.Send().Close();
+                }
+                else
+                {
+                    appleRequest.UserAgent = "QuickTime/7.6.2";
+                    WebResponse appleResponse = appleRequest.GetResponse();
+                    // copy response settings
+                    response.ContentType = appleResponse.ContentType;
+                    response.ContentLength = appleResponse.ContentLength;                    
+                    // restream data
+                    Stream responseStream = response.Send();
+                    Stream appleResponseStream = appleResponse.GetResponseStream();
+                    int read = 0;
+                    while(read < appleResponse.ContentLength)
+                    {
+                        byte[] data = new byte[1024];
+                        int fetched = appleResponseStream.Read(data, 0, 1024);
+                        read += fetched;
+                        responseStream.Write(data, 0, fetched);
+                        if (fetched == 0 || read >= appleResponse.ContentLength) break;
+                    }
+                    responseStream.Flush();
+                    responseStream.Close();
+                }
+            }
+        }
     }
 }
