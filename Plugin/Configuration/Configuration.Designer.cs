@@ -113,6 +113,7 @@ namespace OnlineVideos
             this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.label21 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblVersion = new System.Windows.Forms.Label();
             this.cmbDasErsteQuality = new System.Windows.Forms.ComboBox();
@@ -134,7 +135,7 @@ namespace OnlineVideos
             this.label12 = new System.Windows.Forms.Label();
             this.chkFLVSplitterInstalled = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.toolStripContainer3.ContentPanel.SuspendLayout();
             this.toolStripContainer3.TopToolStripPanel.SuspendLayout();
@@ -527,6 +528,7 @@ namespace OnlineVideos
             this.txtFilters.Name = "txtFilters";
             this.txtFilters.Size = new System.Drawing.Size(249, 22);
             this.txtFilters.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.txtFilters, "Comma seperated list of words that will be used to filter out videos.");
             // 
             // label2
             // 
@@ -1045,6 +1047,16 @@ namespace OnlineVideos
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(326, 44);
+            this.label21.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(28, 17);
+            this.label21.TabIndex = 39;
+            this.label21.Text = "Pin";
+            // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1291,16 +1303,6 @@ namespace OnlineVideos
             this.label11.TabIndex = 0;
             this.label11.Text = "flv";
             // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(326, 44);
-            this.label21.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(28, 17);
-            this.label21.TabIndex = 39;
-            this.label21.Text = "Pin";
-            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -1459,5 +1461,6 @@ namespace OnlineVideos
         private System.Windows.Forms.ToolStripButton btnDeleteSite;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.ToolTip toolTip1;
 	}
 }
