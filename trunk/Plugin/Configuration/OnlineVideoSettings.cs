@@ -72,16 +72,12 @@ namespace OnlineVideos
                     msThumbLocation = xmlreader.GetValueAsString(SECTION, THUMBNAIL_DIR, "");
                     msDownloadDir = xmlreader.GetValueAsString(SECTION, DOWNLOAD_DIR, "");
                     useAgeConfirmation = xmlreader.GetValueAsBool(SECTION, USE_AGECONFIRMATION, false);
-                    pinAgeConfirmation = xmlreader.GetValueAsString(SECTION, PIN_AGECONFIRMATION, "");                    
-                    String lsFilter = xmlreader.GetValueAsString(SECTION, FILTER, "");
+                    pinAgeConfirmation = xmlreader.GetValueAsString(SECTION, PIN_AGECONFIRMATION, "");                                        
                     lsTrailerSize = xmlreader.GetValueAsString(SECTION, TRAILER_SIZE, "hd480");
                     YouTubeQuality = (Sites.YouTubeUtil.YoutubeVideoQuality)xmlreader.GetValueAsInt(SECTION, YOUTUBEQUALITY, 1);
                     DasErsteQuality = (Sites.DasErsteMediathekUtil.DasErsteVideoQuality)xmlreader.GetValueAsInt(SECTION, DASERSTEQUALITY, 1);
-                    msFilterArray = lsFilter.Split(new char[] { ',' });
-                    if (msFilterArray.Length == 1 && msFilterArray[0] == "")
-                    {
-                        msFilterArray = null;
-                    }
+                    String lsFilter = xmlreader.GetValueAsString(SECTION, FILTER, "");
+                    msFilterArray = lsFilter != "" ? lsFilter.Split(new char[] { ',' }) : null;
 
                     // read the video extensions configured in MediaPortal
                     string[] mediaportal_user_configured_video_extensions;
@@ -103,10 +99,10 @@ namespace OnlineVideos
                     AppleTrailerSize = (Sites.AppleTrailersUtil.VideoQuality)Enum.Parse(typeof(Sites.AppleTrailersUtil.VideoQuality), lsTrailerSize, true);
                 }
 
-                if (String.IsNullOrEmpty(msThumbLocation))
-                {
-                    msThumbLocation = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\";
-                }
+                // set a default thumbnail location, and fix any existing one to include the last \
+                if (String.IsNullOrEmpty(msThumbLocation)) msThumbLocation = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\";                
+                msThumbLocation = msThumbLocation.Replace("/", @"\");
+                if (!msThumbLocation.EndsWith(@"\")) msThumbLocation = msThumbLocation + @"\";
 
                 string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
                 if (!System.IO.File.Exists(filename))
@@ -140,24 +136,10 @@ namespace OnlineVideos
                 Log.Info("using MP config file:" + Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
                 using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
                 {
-                    String lsFilterList = "";
-                    String[] lsFilterArray = msFilterArray;
-                    if (lsFilterArray != null)
-                    {
-                        foreach (String lsFilter in lsFilterArray)
-                        {
-                            lsFilterList += lsFilter + ",";
-                        }
-                    }
-                    if ((lsFilterList == ",") == false)
-                    {
-                        lsFilterList.Remove(lsFilterList.Length - 1);
-                        xmlwriter.SetValue(SECTION, FILTER, lsFilterList);
-                    }
-                    else
-                    {
-                        msFilterArray = null;
-                    }
+                    String lsFilterList = "";                    
+                    if (msFilterArray != null && msFilterArray.Length > 0) lsFilterList = string.Join(",", msFilterArray);
+                    
+                    xmlwriter.SetValue(SECTION, FILTER, lsFilterList);
                     xmlwriter.SetValue(SECTION, BASICHOMESCREEN_NAME, BasicHomeScreenName);
                     xmlwriter.SetValue(SECTION, THUMBNAIL_DIR, msThumbLocation);
                     Log.Info("OnlineVideoSettings - download Dir:" + msDownloadDir);
