@@ -240,6 +240,10 @@ namespace OnlineVideos
                     //_imageLocationList.Add(thumbnailLocation);
                     _imageLocationList.Add(imageLocation);
                 }
+                else
+                {
+                    _imageLocationList.Add("");
+                }
                 if (facadeView.Count <= liIdx)
                 {
                     break;

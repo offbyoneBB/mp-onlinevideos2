@@ -8,7 +8,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\3sat.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>ee81d312-e42a-4fd6-bf55-08966dbc1299</Guid>
+			<Guid>974715d6-bfd9-41d9-b8a7-54d1e065a0c0</Guid>
 		</File>
 		<File>
 			<FileName>3sat.png</FileName>
@@ -17,7 +17,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\3sat.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>74675355-185f-4ef9-9bc3-a5e749dfe3f0</Guid>
+			<Guid>df5f870f-36e2-405e-be50-ad4fc06f9edf</Guid>
 		</File>
 		<File>
 			<FileName>Apple Trailers.png</FileName>
@@ -26,7 +26,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Apple Trailers.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>80c8c6fb-e263-468b-92ce-344861c6e12b</Guid>
+			<Guid>45336859-c182-4748-8fdf-fe0eff0a4a73</Guid>
 		</File>
 		<File>
 			<FileName>Apple Trailers.png</FileName>
@@ -35,7 +35,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Apple Trailers.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>366cb9bb-6af8-47e2-aa02-55bde8380905</Guid>
+			<Guid>6737aead-9901-46f5-a55c-526e892e5a75</Guid>
 		</File>
 		<File>
 			<FileName>blip.tv.png</FileName>
@@ -44,7 +44,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\blip.tv.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>3766aeea-c462-4525-8c95-2ca68dc14fc4</Guid>
+			<Guid>8bc5468d-55ef-4df7-8dc1-652b8c31efd3</Guid>
 		</File>
 		<File>
 			<FileName>blip.tv.png</FileName>
@@ -53,7 +53,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\blip.tv.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>78c589b6-4dd1-4746-840c-73d94c4a0bc5</Guid>
+			<Guid>62a6b6b0-1fff-4925-9556-824398dc9b6a</Guid>
 		</File>
 		<File>
 			<FileName>Break.png</FileName>
@@ -62,7 +62,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Break.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>c98c98b6-6907-4301-b90a-91f1fb2eda38</Guid>
+			<Guid>f7258175-93ec-473a-afb7-67b4884ed736</Guid>
 		</File>
 		<File>
 			<FileName>Break.png</FileName>
@@ -71,7 +71,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Break.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>5312eb76-d53b-4615-b347-333eab901f2e</Guid>
+			<Guid>385b744a-1495-4b9f-b3d5-fa08e9d0ffdd</Guid>
 		</File>
 		<File>
 			<FileName>button_online videos.png</FileName>
@@ -80,7 +80,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\button_online videos.png</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>87fcab08-5d2b-4e6b-882a-5c2f393093d4</Guid>
+			<Guid>bedaabd2-99a1-4bb1-8816-25a3fc929ced</Guid>
 		</File>
 		<File>
 			<FileName>buttonNF_online videos.png</FileName>
@@ -89,7 +89,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\buttonNF_online videos.png</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>da30bd22-27c4-4b49-a901-93d5c769bc07</Guid>
+			<Guid>6c419181-c5f4-4ad7-b033-8c20505dd388</Guid>
 		</File>
 		<File>
 			<FileName>CNN.png</FileName>
@@ -98,7 +98,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\CNN.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>5184a6bc-3880-489d-895e-906fae96d010</Guid>
+			<Guid>2139da70-bab2-4f58-8ea2-75702fb3ab79</Guid>
 		</File>
 		<File>
 			<FileName>CNN.png</FileName>
@@ -107,7 +107,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\CNN.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>2d8ccb77-83a4-4a47-bece-8e9ca27995ab</Guid>
+			<Guid>db56a6cf-985c-4474-8fb5-92b2deed5135</Guid>
 		</File>
 		<File>
 			<FileName>DailyMotion.png</FileName>
@@ -116,7 +116,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\DailyMotion.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>2be378c6-b1df-4a0e-9ea2-ad1ac42abd80</Guid>
+			<Guid>be4e3094-61ea-4920-96bf-c97486a78f06</Guid>
 		</File>
 		<File>
 			<FileName>DailyMotion.png</FileName>
@@ -125,7 +125,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\DailyMotion.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>84746044-8459-497b-bef6-66f81320b26d</Guid>
+			<Guid>3a50081c-fa06-4fa3-9522-f11d8e27cb55</Guid>
 		</File>
 		<File>
 			<FileName>Das Erste.png</FileName>
@@ -134,7 +134,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Das Erste.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>04b8bfee-9ce6-4ae5-bd1d-cb7e8ab6f744</Guid>
+			<Guid>c64286a7-1752-497b-b10f-a315362817f0</Guid>
 		</File>
 		<File>
 			<FileName>Das Erste.png</FileName>
@@ -143,7 +143,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Das Erste.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>01c07305-2a8c-4309-a103-28e822b0e50b</Guid>
+			<Guid>31f6871d-2f3a-4412-bb8f-fa743b113027</Guid>
 		</File>
 		<File>
 			<FileName>Downloaded Videos.png</FileName>
@@ -152,7 +152,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Downloaded Videos.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>39d9be40-4701-4c48-b6d5-8e6749a6c0f8</Guid>
+			<Guid>5081ca79-d469-4877-b222-93d102fbb375</Guid>
 		</File>
 		<File>
 			<FileName>Downloaded Videos.png</FileName>
@@ -161,7 +161,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Downloaded Videos.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>e1c2d9d2-abe6-463f-b11d-521e7342c5b3</Guid>
+			<Guid>2299d509-72ce-46c2-bf6c-fabe1ce587ae</Guid>
 		</File>
 		<File>
 			<FileName>Empflix.png</FileName>
@@ -170,7 +170,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Empflix.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>d131fab7-8506-48e2-b5a0-2aa0158f55b0</Guid>
+			<Guid>dc84edfc-eff6-4441-b303-bb18794e89fb</Guid>
 		</File>
 		<File>
 			<FileName>Empflix.png</FileName>
@@ -179,7 +179,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Empflix.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>9d5567de-fb81-4246-b9bb-7a998c209602</Guid>
+			<Guid>b5a8b69d-4dd8-4fd2-a447-044994e7b2ee</Guid>
 		</File>
 		<File>
 			<FileName>Favorites.png</FileName>
@@ -188,7 +188,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Favorites.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>bdf90421-f7b0-4ff1-8029-d1314b82cc1e</Guid>
+			<Guid>734cfedb-eeb8-45ef-9e2f-9d1c145c6ff6</Guid>
 		</File>
 		<File>
 			<FileName>Favorites.png</FileName>
@@ -197,7 +197,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Favorites.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>5b590954-f970-440d-99c1-40eb41aed115</Guid>
+			<Guid>2da1f8b1-641f-429b-8ce6-78b4994d8459</Guid>
 		</File>
 		<File>
 			<FileName>GameTrailers.png</FileName>
@@ -206,7 +206,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\GameTrailers.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>912cdc89-f613-46ef-a447-967db050b2a1</Guid>
+			<Guid>e8e0e3f1-e8cb-4a21-9862-87554b6ab174</Guid>
 		</File>
 		<File>
 			<FileName>GameTrailers.png</FileName>
@@ -215,7 +215,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\GameTrailers.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>549cf911-c840-4f08-b03a-80e8965ee8a6</Guid>
+			<Guid>ff1259c3-15ce-43e4-b245-42951fababab</Guid>
 		</File>
 		<File>
 			<FileName>hover_onlinevideos.png</FileName>
@@ -224,7 +224,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\Media\hover_onlinevideos.png</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>4c39e816-cb64-498c-a425-09ee0dfeecd7</Guid>
+			<Guid>e33c6068-37d0-41f8-b4c7-ebaa12dfdadf</Guid>
 		</File>
 		<File>
 			<FileName>hover_OnlineVideos.png</FileName>
@@ -233,7 +233,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\Media\hover_OnlineVideos.png</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>47e0c2f8-62d8-4779-8400-d039e1d44e4f</Guid>
+			<Guid>4d6d0b11-c675-43f1-9f8c-5dd90fcba582</Guid>
 		</File>
 		<File>
 			<FileName>hover_OnlineVideos.png</FileName>
@@ -242,7 +242,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\hover_OnlineVideos.png</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>3462c09b-57fc-4eae-8fee-22fd51451db7</Guid>
+			<Guid>4d4e730e-a325-41a2-9338-862af95cea7f</Guid>
 		</File>
 		<File>
 			<FileName>hover_OnlineVideos.png</FileName>
@@ -251,7 +251,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\hover_OnlineVideos.png</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>8a19a120-7ef7-4a3a-b147-4ae0377770ff</Guid>
+			<Guid>25aeda9d-306e-4e54-bb01-500633452dc7</Guid>
 		</File>
 		<File>
 			<FileName>Live Video.png</FileName>
@@ -260,7 +260,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Live Video.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>2af0bf65-b262-4dfe-9482-d830143bdc6e</Guid>
+			<Guid>4d19be1e-93c2-41cb-9cc0-dce4d60bc545</Guid>
 		</File>
 		<File>
 			<FileName>Live Video.png</FileName>
@@ -269,7 +269,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Live Video.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>8a1f9b65-4398-4bc8-9946-086e06bf4d9f</Guid>
+			<Guid>a8d8dd30-1f24-4bc6-9d52-087f3e1d1334</Guid>
 		</File>
 		<File>
 			<FileName>MetaCafe.png</FileName>
@@ -278,7 +278,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\MetaCafe.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>e9395978-4605-4a12-afdb-f9eaef0a4f33</Guid>
+			<Guid>78e29fdf-7dc5-4d33-9483-d155784f4b5e</Guid>
 		</File>
 		<File>
 			<FileName>MetaCafe.png</FileName>
@@ -287,7 +287,25 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\MetaCafe.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>800203e7-dce9-4f90-abb7-f094fa61ea0c</Guid>
+			<Guid>0f2c509b-7291-47d0-8de5-a50bdfc2f842</Guid>
+		</File>
+		<File>
+			<FileName>Miro.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Miro.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>a68a0812-6446-4302-bdf1-3f244e9268de</Guid>
+		</File>
+		<File>
+			<FileName>Miro.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Miro.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>22ae684d-4f5b-432e-a031-283e2b4fdeb6</Guid>
 		</File>
 		<File>
 			<FileName>MSNBC.png</FileName>
@@ -296,7 +314,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\MSNBC.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>10007b23-cde0-4ac1-80fa-5d6e96a08e45</Guid>
+			<Guid>6e070fb0-fdc7-49e3-9b4d-79c7100e2889</Guid>
 		</File>
 		<File>
 			<FileName>MSNBC.png</FileName>
@@ -305,7 +323,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\MSNBC.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>a8c50317-01a7-492e-bf63-7c17d2ff3545</Guid>
+			<Guid>cb6619dd-0f0c-4ce4-a42f-71b11bfc00c6</Guid>
 		</File>
 		<File>
 			<FileName>MusicTelevision.png</FileName>
@@ -314,7 +332,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\MusicTelevision.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>05e4256c-e67a-4af8-bc5a-a67681f88618</Guid>
+			<Guid>878126c4-0e08-4778-a056-308ae71d59f6</Guid>
 		</File>
 		<File>
 			<FileName>MusicTelevision.png</FileName>
@@ -323,7 +341,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\MusicTelevision.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>ceb74143-a679-400a-b33f-f53070e191f2</Guid>
+			<Guid>74e2cba1-20e1-4115-a362-894d399665e9</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.details.xml</FileName>
@@ -332,7 +350,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\myonlinevideos.details.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>a9aae5fe-a0f1-4e7a-beb7-458a8b6e0243</Guid>
+			<Guid>f596c1da-3939-46dd-bbdb-358161d3156e</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.details.xml</FileName>
@@ -341,7 +359,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\myonlinevideos.details.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>6ecbb881-5f5e-4d44-baac-27c3fa7376d4</Guid>
+			<Guid>0f8d044c-12d6-43f1-ab17-5a2c5ae70cdb</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.details.xml</FileName>
@@ -350,7 +368,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.details.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>cd763433-8eda-4000-85e5-47651e8a445a</Guid>
+			<Guid>a1f11e2c-609e-42f9-9f0f-31539b7521c1</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.details.xml</FileName>
@@ -359,7 +377,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\myonlinevideos.details.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>e9a0dd1b-516f-48d6-be4d-295f49f8716a</Guid>
+			<Guid>6f1aaa60-5c8f-4ca8-b78e-bfe62f84bc73</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.facade.xml</FileName>
@@ -368,7 +386,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\myonlinevideos.facade.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>fa044085-8fc6-4bc9-ab72-a94353ce9149</Guid>
+			<Guid>bc9ee73a-3c92-4c7d-8d43-16f091cf15f6</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.facade.xml</FileName>
@@ -377,7 +395,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.facade.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>96747e01-0a51-4221-92e9-ff2ec3956208</Guid>
+			<Guid>6aa9ef0c-eb46-484f-b1db-845b614ab2e3</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.facade.xml</FileName>
@@ -386,7 +404,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\myonlinevideos.facade.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>08e3705f-4187-4ffc-8fa5-632a89da9c84</Guid>
+			<Guid>c56e8897-f8af-44ee-a3a9-beffeed1480f</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.overlays.xml</FileName>
@@ -395,7 +413,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.overlays.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>252197d0-cb88-41fa-8c4c-ca8b6e45b944</Guid>
+			<Guid>ef7bda7c-a92e-434a-964e-8bb4d10c08b8</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.window.xml</FileName>
@@ -404,7 +422,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\myonlinevideos.window.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>b6b10bf6-db96-4b2e-a728-9fc1298bbfe3</Guid>
+			<Guid>030b003d-722c-4371-8fa1-63d0bb359932</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.xml</FileName>
@@ -413,7 +431,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3\myonlinevideos.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>18aabe89-4a88-464f-a3f9-a12e0b49b1a7</Guid>
+			<Guid>9316898a-23a2-48c2-ba9c-1d1eebb94503</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.xml</FileName>
@@ -422,7 +440,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\myonlinevideos.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>c9de50a8-d907-497d-835c-4ac2d5c8e525</Guid>
+			<Guid>dcdefbd3-c328-46d6-a663-432a15531b1d</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.xml</FileName>
@@ -431,7 +449,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\myonlinevideos.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>fe61a60d-e151-4088-a3d8-665d4e35617a</Guid>
+			<Guid>a84e546e-8478-43bf-b483-40b410a829f4</Guid>
 		</File>
 		<File>
 			<FileName>myonlinevideos.xml</FileName>
@@ -440,7 +458,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Xface\myonlinevideos.xml</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>b18ac74d-7c88-4c96-a423-dd0bf18e3ebc</Guid>
+			<Guid>6d0dd9eb-62c1-4fce-abc0-bc923f92a7b0</Guid>
 		</File>
 		<File>
 			<FileName>MyVideo.png</FileName>
@@ -449,7 +467,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\MyVideo.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>e8342dbd-790d-45ac-9f65-f6df3b4aba6d</Guid>
+			<Guid>c8e0ba2b-1d36-4bad-a175-142c5a19025d</Guid>
 		</File>
 		<File>
 			<FileName>MyVideo.png</FileName>
@@ -458,7 +476,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\MyVideo.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>5d0a9ac1-4925-47c4-8236-da1dc80e4b10</Guid>
+			<Guid>89af37ed-e010-4652-8196-910d22800196</Guid>
 		</File>
 		<File>
 			<FileName>NASA.png</FileName>
@@ -467,7 +485,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\NASA.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>5f5276a8-f2ea-4af1-8552-88a4bd546d87</Guid>
+			<Guid>22ac449e-8f68-4ccf-a20a-efefe76c6003</Guid>
 		</File>
 		<File>
 			<FileName>NASA.png</FileName>
@@ -476,7 +494,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\NASA.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>ace09da3-1755-4678-b3cf-cd5fa27d7a2d</Guid>
+			<Guid>fdba13ee-215c-4f3e-8ac0-28dc0cdfec1f</Guid>
 		</File>
 		<File>
 			<FileName>NBA.png</FileName>
@@ -485,7 +503,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\NBA.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>0b90aeba-b7f8-46f4-9d27-e65efc1f7e7c</Guid>
+			<Guid>a320f0db-f763-44e7-ae25-982b4945b684</Guid>
 		</File>
 		<File>
 			<FileName>NBA.png</FileName>
@@ -494,7 +512,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\NBA.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>2d2ec75d-62e0-4886-b204-bd4c5eb98824</Guid>
+			<Guid>78097787-360f-4463-b27c-4f7645506f48</Guid>
 		</File>
 		<File>
 			<FileName>OnlineVideos.dll</FileName>
@@ -503,7 +521,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.dll</Source>
 			<Id>01010</Id>
 			<Option />
-			<Guid>976c9f67-5634-4410-a223-65eb2dcfb81d</Guid>
+			<Guid>36b69256-8c90-4af0-9853-f0526297098c</Guid>
 		</File>
 		<File>
 			<FileName>OnlineVideos.png</FileName>
@@ -512,7 +530,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\OnlineVideos.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>f4761469-63b7-4ed3-86c9-56e11e5583ff</Guid>
+			<Guid>3c48c4a4-31ed-4d31-845e-09b2156587ed</Guid>
 		</File>
 		<File>
 			<FileName>OnlineVideos.XmlSerializers.dll</FileName>
@@ -521,7 +539,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.XmlSerializers.dll</Source>
 			<Id>01010</Id>
 			<Option />
-			<Guid>177a3aff-584a-435a-ad49-bcd118ca9b3f</Guid>
+			<Guid>c06aa4b9-9d08-49fb-8ac4-3646e58aa97f</Guid>
 		</File>
 		<File>
 			<FileName>onlinevideos_clip_backdrop.png</FileName>
@@ -530,7 +548,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\onlinevideos_clip_backdrop.png</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>48670889-30df-42de-b93b-cb936dcc35c1</Guid>
+			<Guid>9875573c-8d69-4825-919a-8fbd6851b416</Guid>
 		</File>
 		<File>
 			<FileName>onlinevideos_thumbborder.png</FileName>
@@ -539,7 +557,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\onlinevideos_thumbborder.png</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>dd61646f-ea76-4f13-badf-5094d0787131</Guid>
+			<Guid>5ff29005-f084-4d61-a171-b14bd30ebfee</Guid>
 		</File>
 		<File>
 			<FileName>OnlineVideoSites.xml</FileName>
@@ -548,7 +566,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\OnlineVideoSites.xml</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>6b112236-f584-40f4-9e24-e0551a95a413</Guid>
+			<Guid>eebecbcb-66db-4f56-99e0-581006d51379</Guid>
 		</File>
 		<File>
 			<FileName>onlinevideosoverlay.png</FileName>
@@ -557,7 +575,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\StreamedMP\Media\onlinevideosoverlay.png</Source>
 			<Id>02010</Id>
 			<Option />
-			<Guid>74e0b348-3bb8-4a2a-9d83-d3112f44d018</Guid>
+			<Guid>a84ca88f-7e34-46b1-b46d-840df92cc42c</Guid>
 		</File>
 		<File>
 			<FileName>Picture_cover_focused.png</FileName>
@@ -566,7 +584,7 @@
 			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\skin\Blue3wide\Media\OnlineVideos\Picture_cover_focused.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Picture_cover_focused.png|</Option>
-			<Guid>40ea682a-b6c0-4ca3-816b-b0d8b5c52575</Guid>
+			<Guid>c81e621c-e1b8-442d-8256-80521d9270e4</Guid>
 		</File>
 		<File>
 			<FileName>RedTube.png</FileName>
@@ -575,7 +593,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\RedTube.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>ff51001c-f86a-440c-8543-c3121e5c1f59</Guid>
+			<Guid>7d6cce2b-c2ff-4fcf-8cd2-0c5d2a792c30</Guid>
 		</File>
 		<File>
 			<FileName>RedTube.png</FileName>
@@ -584,7 +602,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\RedTube.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>bd332a5f-320d-472a-9405-830ef29d1039</Guid>
+			<Guid>be7cd6a8-0bca-4267-aad5-6684d72764b9</Guid>
 		</File>
 		<File>
 			<FileName>Revision3.png</FileName>
@@ -593,7 +611,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Revision3.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>281516fd-8cc9-431f-a67d-f53f33f5aab6</Guid>
+			<Guid>209f7c60-52e0-45e9-8b6c-2794f172916d</Guid>
 		</File>
 		<File>
 			<FileName>Revision3.png</FileName>
@@ -602,7 +620,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Revision3.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>68bfa217-fd42-469e-b9a7-6ae53dcfa57b</Guid>
+			<Guid>0d55bcf4-944f-447c-bf80-044d3813c374</Guid>
 		</File>
 		<File>
 			<FileName>Snowboard Surf and Skate.png</FileName>
@@ -611,7 +629,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Snowboard Surf and Skate.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>a7383ab5-8b4e-4625-b33f-b970d644c212</Guid>
+			<Guid>d161ff86-91d2-4013-8c7a-71a8a5e38f2c</Guid>
 		</File>
 		<File>
 			<FileName>Snowboard Surf and Skate.png</FileName>
@@ -620,7 +638,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Snowboard Surf and Skate.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>55b73c5a-ccea-41f2-9aa5-e5fabed060cd</Guid>
+			<Guid>7be5cd63-297e-431f-b285-82f0e15d63d5</Guid>
 		</File>
 		<File>
 			<FileName>SVTPlay.png</FileName>
@@ -629,7 +647,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\SVTPlay.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>42329184-c4be-4e35-9221-d7054fab4513</Guid>
+			<Guid>68276df7-80ed-40a5-af0f-54e85b61b32a</Guid>
 		</File>
 		<File>
 			<FileName>SVTPlay.png</FileName>
@@ -638,7 +656,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\SVTPlay.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>42154c3b-3d4a-45b5-bed2-7235f8631859</Guid>
+			<Guid>88d893ad-8731-4673-84ef-5c7cd8894dd2</Guid>
 		</File>
 		<File>
 			<FileName>TEDTalks.png</FileName>
@@ -647,7 +665,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\TEDTalks.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>d570ee13-d5d6-48b5-acd9-055656529bc0</Guid>
+			<Guid>a3e29d4d-edbb-454b-9ba8-8d621063a446</Guid>
 		</File>
 		<File>
 			<FileName>TEDTalks.png</FileName>
@@ -656,7 +674,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\TEDTalks.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>04b6e06f-4d9f-417b-8f34-de5566c55e49</Guid>
+			<Guid>67a8ed64-0cd2-4912-86c0-7e8163fb8957</Guid>
 		</File>
 		<File>
 			<FileName>Tube8.png</FileName>
@@ -665,7 +683,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Tube8.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>5fd0208d-0499-4666-a34a-44233be73d8b</Guid>
+			<Guid>6c7e2e09-3951-4efa-88a8-8cd2b40f7d16</Guid>
 		</File>
 		<File>
 			<FileName>Tube8.png</FileName>
@@ -674,7 +692,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Tube8.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>bac2e1f0-0806-4116-8c51-e45a0bc99373</Guid>
+			<Guid>f860f9cf-1097-412b-94ad-913f456aba1e</Guid>
 		</File>
 		<File>
 			<FileName>VeryFunnyAds.png</FileName>
@@ -683,7 +701,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\VeryFunnyAds.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>d8b0d3b0-1d81-43f7-9605-972c3a3f7e52</Guid>
+			<Guid>9f3f5856-a4e0-4837-bac6-6b304633b2e8</Guid>
 		</File>
 		<File>
 			<FileName>VeryFunnyAds.png</FileName>
@@ -692,7 +710,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\VeryFunnyAds.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>2bf74416-93ba-45fe-8387-ec4925e8655f</Guid>
+			<Guid>879b0fa4-6f73-4b1a-bbe8-08ac3300be8e</Guid>
 		</File>
 		<File>
 			<FileName>Vodcasts.png</FileName>
@@ -701,7 +719,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\Vodcasts.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>11765dee-b6dd-45a0-bb70-ec9a851b5590</Guid>
+			<Guid>e98c8589-17b3-4745-ace6-de61814d5d4b</Guid>
 		</File>
 		<File>
 			<FileName>Vodcasts.png</FileName>
@@ -710,7 +728,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\Vodcasts.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>16ad4375-210f-442f-a9b1-67c873a6e577</Guid>
+			<Guid>7e599a3f-23c5-49e8-8ac3-f4b754017f60</Guid>
 		</File>
 		<File>
 			<FileName>WDR.png</FileName>
@@ -719,7 +737,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\WDR.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>11bdae86-ee54-4759-a6ef-78c90a02133d</Guid>
+			<Guid>7df41823-f478-4949-8465-d7a8f963f930</Guid>
 		</File>
 		<File>
 			<FileName>WDR.png</FileName>
@@ -728,7 +746,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\WDR.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>ec7eb597-1272-4686-8b5f-0d6c4c1a7e8b</Guid>
+			<Guid>fc59ab52-1149-4438-9846-cfdccedec9ed</Guid>
 		</File>
 		<File>
 			<FileName>xHamster.png</FileName>
@@ -737,7 +755,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\xHamster.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>634e56a5-72b2-4314-acee-66c53aaf1e29</Guid>
+			<Guid>a27f7cec-d4de-4ad0-9e0d-b5c9f71dcd3f</Guid>
 		</File>
 		<File>
 			<FileName>xHamster.png</FileName>
@@ -746,7 +764,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\xHamster.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>5517a627-5e0b-40f1-9a41-7e56780613f9</Guid>
+			<Guid>0cadd1d4-8d5d-4669-92f3-487259a6a542</Guid>
 		</File>
 		<File>
 			<FileName>YahooMusicVideos.png</FileName>
@@ -755,7 +773,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\YahooMusicVideos.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>57d52d23-5014-49fb-8db3-be82e5b6db2b</Guid>
+			<Guid>b34a53a3-ae7e-45aa-9b6f-b1b2a2c27a56</Guid>
 		</File>
 		<File>
 			<FileName>YahooMusicVideos.png</FileName>
@@ -764,7 +782,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\YahooMusicVideos.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>2dc41833-c762-4d85-a6cb-00f3e11ca7fc</Guid>
+			<Guid>6527fe49-04f0-45cd-9622-b900251654f6</Guid>
 		</File>
 		<File>
 			<FileName>YouPorn.png</FileName>
@@ -773,7 +791,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\YouPorn.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>1dff705e-f4da-4850-91e4-7bacfaaabfaa</Guid>
+			<Guid>8c39648e-13e5-42e1-a0ab-58d530a53dc6</Guid>
 		</File>
 		<File>
 			<FileName>YouPorn.png</FileName>
@@ -782,7 +800,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\YouPorn.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>309585a1-3d0a-4a86-acef-c196bb8c050b</Guid>
+			<Guid>3138e5d3-6c03-40ba-871f-9fd9dd6a0201</Guid>
 		</File>
 		<File>
 			<FileName>YouTube.png</FileName>
@@ -791,7 +809,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\YouTube.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>396a042d-1c79-4c36-9c1b-340fa430242c</Guid>
+			<Guid>9e278fd6-29a3-4cd2-958b-08dd8f3c890c</Guid>
 		</File>
 		<File>
 			<FileName>YouTube.png</FileName>
@@ -800,7 +818,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\YouTube.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>f9c38351-fd0b-4bb2-98cb-62d471906837</Guid>
+			<Guid>4c8712b6-7959-426e-a53f-5e4983aa91d8</Guid>
 		</File>
 		<File>
 			<FileName>ZDF Mediatek.png</FileName>
@@ -809,7 +827,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Banners\ZDF Mediatek.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>cafaa49a-8254-4bf8-bd7e-de7fc74e93fa</Guid>
+			<Guid>54aa8a44-555c-456b-ad6f-25e5e3a8f0ed</Guid>
 		</File>
 		<File>
 			<FileName>ZDF Mediatek.png</FileName>
@@ -818,7 +836,7 @@
 			<Source>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\OnlineVideos\Icons\ZDF Mediatek.png</Source>
 			<Id>04010</Id>
 			<Option />
-			<Guid>2e1271e5-db62-4cda-9fe7-668425d2617c</Guid>
+			<Guid>96505a1b-cc69-4b11-83ce-0894a90b098a</Guid>
 		</File>
 	</FileList>
 	<StringList />
@@ -831,7 +849,7 @@
 		<ProiectName>Online Videos</ProiectName>
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com</UpdateURL>
-		<Version>0.9.5</Version>
+		<Version>0.9.6</Version>
 		<Description>Allows watching videos from various websites, by either using their RSS feeds or parsing the html. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, SVT, Break, CNN, VeryFunnyAds, MSNBC, YahooMusicVideos, YouPorn, RedTube, xHamster, Tube8, Empflix.</Description>
 		<Group>Web</Group>
 		<Release>Beta</Release>
@@ -927,7 +945,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL />
-		<CreationDate>18-08-09</CreationDate>
+		<CreationDate>24-08-09</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>

@@ -12,6 +12,9 @@ namespace OnlineVideos
     /// </summary>
     public class OnlineVideoSettings
     {
+        public const int RTMP_PROXY_PORT = 30004;
+        public const int APPLE_PROXY_PORT = 30005;
+
         const string SETTINGS_FILE = "OnlineVideoSites.xml";
         public const string SECTION = "onlinevideos";
         public const string SITEVIEW_MODE = "siteview";

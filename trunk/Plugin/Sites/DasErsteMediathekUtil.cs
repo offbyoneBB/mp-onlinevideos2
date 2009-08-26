@@ -160,16 +160,17 @@ namespace OnlineVideos.Sites
                 Uri uri = new Uri(resultUrl);
                 if (uri.Host == "vod.daserste.de")
                 {
-                    resultUrl = string.Format("http://localhost:20004/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}",
+                    resultUrl = string.Format("http://localhost:{5}/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}",
                         System.Web.HttpUtility.UrlEncode(uri.Host),
                         "1935",
                         System.Web.HttpUtility.UrlEncode(uri.Segments[1]),
                         System.Web.HttpUtility.UrlEncode("rtmpe://" + uri.Host + ":1935" + uri.Segments[0] + uri.Segments[1]),
-                        System.Web.HttpUtility.UrlEncode(uri.PathAndQuery.Substring((uri.Segments[0] + uri.Segments[1]).Length)));
+                        System.Web.HttpUtility.UrlEncode(uri.PathAndQuery.Substring((uri.Segments[0] + uri.Segments[1]).Length)),
+                        OnlineVideoSettings.RTMP_PROXY_PORT);
                 }
                 else
                 {
-                    resultUrl = "http://localhost:20004/stream.flv?rtmpurl=" + System.Web.HttpUtility.UrlEncode(resultUrl);
+                    resultUrl = string.Format("http://localhost:{0}/stream.flv?rtmpurl={1}",OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(resultUrl));
                 }
             }
             return resultUrl;

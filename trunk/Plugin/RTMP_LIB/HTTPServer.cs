@@ -76,13 +76,11 @@ namespace RTMP_LIB
     /// </summary>
     public class HTTPServer
     {
-        HybridDSP.Net.HTTP.HTTPServer _server = null;
-
-        public HTTPServer() : this(20004) {}
+        HybridDSP.Net.HTTP.HTTPServer _server = null;        
 
         public HTTPServer(int port)
-        {            
-            _server = new HybridDSP.Net.HTTP.HTTPServer(new RequestHandlerFactory(), 20004);
+        {
+            _server = new HybridDSP.Net.HTTP.HTTPServer(new RequestHandlerFactory(), port);
             _server.OnServerException += new HybridDSP.Net.HTTP.HTTPServer.ServerCaughtException(delegate(Exception ex) { Logger.Log(ex.Message); });
             _server.Start();            
         }        
@@ -91,5 +89,5 @@ namespace RTMP_LIB
         {
             _server.Stop();
         }        
-    }
+    }    
 }

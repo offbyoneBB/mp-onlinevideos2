@@ -50,6 +50,12 @@ namespace OnlineVideos.Sites
             return 0;
         }
 
+        public virtual int DiscoverSubCategories(SiteSettings site, Category parentCategory)
+        {
+            parentCategory.SubCategoriesDiscovered = true;
+            return 0;
+        }
+
         public virtual String getUrl(VideoInfo video, SiteSettings foSite)
         {
             return video.VideoUrl;
