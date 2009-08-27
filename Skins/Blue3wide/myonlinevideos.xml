@@ -70,7 +70,7 @@
     </control>
     
     <import>myonlinevideos.details.xml</import>
-    <import>myonlinevideos.facade.xml</import>
+    <import>myonlinevideos.facade.xml</import>        
     
     <!-- *** Bottom part *** -->
         
@@ -83,7 +83,24 @@
       <width>219</width>
       <height>124</height>
       <texture>Picture_cover.png</texture>
-      <visible>!videoplayer.usingoverlays + !player.hasmedia + !Control.IsVisible(51)</visible>
+      <visible>!Control.IsVisible(51)</visible>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="fade" time="150">WindowOpen</animation>
+    </control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>86</posX>
+      <posY>558</posY>
+      <width>203</width>
+      <height>115</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <visible>player.hasmedia | videoplayer.usingoverlays</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="150">WindowClose</animation>
       <animation effect="fade" time="150">WindowOpen</animation>
     </control>
