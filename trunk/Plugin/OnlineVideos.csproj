@@ -95,6 +95,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\CodecConfiguration.cs" />
+    <Compile Include="Configuration\ImExportXml.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\ImExportXml.Designer.cs">
+      <DependentUpon>ImExportXml.cs</DependentUpon>
+    </Compile>
     <Compile Include="DownloadInfo.cs" />
     <Compile Include="Jayrock.Json\BooleanObject.cs" />
     <Compile Include="Jayrock.Json\Collections\KeyedCollection.cs" />
@@ -481,6 +487,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Configuration\ImExportXml.resx">
+      <DependentUpon>ImExportXml.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OnlineVideos.png" />
     <EmbeddedResource Include="OnlineVideosDisabled.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -504,6 +513,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ImportXml.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
