@@ -23,7 +23,7 @@ namespace RTMP_LIB
                 
             try
             {
-                NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(new Uri(new Uri("http://localhost"), request.URI).Query);
+                NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(new Uri(new Uri("http://127.0.0.1"), request.URI).Query);
 
                 Link link = new Link();
                 if (!string.IsNullOrEmpty(paramsHash["rtmpurl"])) link = Link.FromRtmpUrl(new Uri(paramsHash["rtmpurl"]));

@@ -309,8 +309,8 @@ namespace OnlineVideos.Sites
         }
 
         public override string getUrl(VideoInfo video, SiteSettings foSite)
-        {            
-            return string.Format("http://localhost:{0}/?url={1}", OnlineVideoSettings.APPLE_PROXY_PORT, System.Web.HttpUtility.UrlEncode(video.VideoUrl));
+        {
+            return string.Format("http://127.0.0.1:{0}/?url={1}", OnlineVideoSettings.APPLE_PROXY_PORT, System.Web.HttpUtility.UrlEncode(video.VideoUrl));
         }
 
         private List<IndexItem> fetchIndex(string url)
@@ -781,7 +781,7 @@ namespace OnlineVideos.Sites
         {
             public void HandleRequest(HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
             {
-                string url = System.Web.HttpUtility.ParseQueryString(new Uri(new Uri("http://localhost"), request.URI).Query)["url"];
+                string url = System.Web.HttpUtility.ParseQueryString(new Uri(new Uri("http://127.0.0.1"), request.URI).Query)["url"];
 
                 HttpWebRequest appleRequest = WebRequest.Create(url) as HttpWebRequest;
                 if (appleRequest == null)
