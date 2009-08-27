@@ -155,7 +155,7 @@ namespace OnlineVideos.Sites
             {
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;                
                 if (request == null) return url;
-                request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
+                request.UserAgent = OnlineVideoSettings.UserAgent;
                 request.Timeout = 15000;
                 HttpWebResponse httpWebresponse = request.GetResponse() as HttpWebResponse;
                 if (httpWebresponse == null) return url;
@@ -191,7 +191,7 @@ namespace OnlineVideos.Sites
         {
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
             if (request == null) return "";
-            request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
+            request.UserAgent = OnlineVideoSettings.UserAgent;
             request.Timeout = 15000;
             if (cc != null) request.CookieContainer = cc;
             WebResponse response = request.GetResponse();
@@ -214,7 +214,7 @@ namespace OnlineVideos.Sites
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
-            request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
+            request.UserAgent = OnlineVideoSettings.UserAgent;
             request.Timeout = 15000;
             request.ContentLength = data.Length;
             request.ProtocolVersion = HttpVersion.Version10;

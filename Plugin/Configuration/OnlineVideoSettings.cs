@@ -12,6 +12,7 @@ namespace OnlineVideos
     /// </summary>
     public class OnlineVideoSettings
     {
+        public const string UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
         public const int RTMP_PROXY_PORT = 30004;
         public const int APPLE_PROXY_PORT = 30005;
 

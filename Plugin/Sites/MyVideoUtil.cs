@@ -23,7 +23,7 @@ namespace OnlineVideos.Sites
         {
             String lsUrl = "";
             HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(String.Format("http://www.myvideo.de/movie/{0}", video.VideoUrl));
-            webrequest.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
+            webrequest.UserAgent = OnlineVideoSettings.UserAgent;
             webrequest.KeepAlive = false;
             webrequest.Method = "GET";
             webrequest.ContentType = "text/html";
