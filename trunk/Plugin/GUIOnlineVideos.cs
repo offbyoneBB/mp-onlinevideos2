@@ -1419,7 +1419,7 @@ namespace OnlineVideos
             
             // download file
             WebClient loClient = new WebClient();
-            loClient.Headers.Add("user-agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2");
+            loClient.Headers.Add("user-agent", OnlineVideoSettings.UserAgent);
             loClient.DownloadFileCompleted += DownloadFileCompleted;
             loClient.DownloadFileAsync(new Uri(url), localFileName, new DownloadInfo { Title = video.Title, DownloadedFile = localFileName, ThumbFile = thumbFile });
         }

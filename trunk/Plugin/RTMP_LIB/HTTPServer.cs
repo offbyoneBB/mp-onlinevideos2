@@ -43,7 +43,15 @@ namespace RTMP_LIB
 
                     Stream responseStream = null;
                     FLVStream fs = new FLVStream();
-                    fs.WriteFLV(rtmp, delegate() { response.ContentLength = fs.EstimatedLength; responseStream = response.Send(); return responseStream; });
+                    fs.WriteFLV(rtmp, delegate() 
+                    {
+                        // we must set a content lenght for the File Source filter, otherwise it thinks we have no content
+                        // but don't set a lenght if it is our user agent, so a download will always be complete
+                        if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.UserAgent) 
+                            response.ContentLength = fs.EstimatedLength; 
+                        responseStream = response.Send(); 
+                        return responseStream; 
+                    });
 
                     long zeroBytes = fs.EstimatedLength - fs.Length;
                     while (zeroBytes > 0)

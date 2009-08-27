@@ -21,7 +21,7 @@ namespace OnlineVideos.Sites
             String lsUrl = "";
 
             HttpWebRequest request = WebRequest.Create(video.VideoUrl) as HttpWebRequest;
-            request.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
+            request.UserAgent = OnlineVideoSettings.UserAgent;
             WebResponse response = request.GetResponse();
             string lsHtml = System.Web.HttpUtility.UrlDecode(response.ResponseUri.OriginalString);
             Match loMatch = Regex.Match(lsHtml, "video=([^\"]+)");
@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites
                 
                 HttpWebRequest request2 = WebRequest.Create(lsUrl) as HttpWebRequest;
                 request2.CookieContainer = cookieContainer;
-                request2.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.0; sv-SE; rv:1.9.1b2) Gecko/20081201 Firefox/3.1b2";
+                request2.UserAgent = OnlineVideoSettings.UserAgent;
                 WebResponse response2 = request2.GetResponse();
                 Stream receiveStream = response2.GetResponseStream();
                 StreamReader reader = new StreamReader(receiveStream, System.Text.Encoding.UTF8);
