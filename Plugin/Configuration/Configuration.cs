@@ -106,10 +106,14 @@ namespace OnlineVideos
                 btnAddGroup.Enabled = true;
 
                 btnDeleteSite.Enabled = true;
+                btnSiteUp.Enabled = true;
+                btnSiteDown.Enabled = true;
             }
             else
             {
                 btnDeleteSite.Enabled = false;
+                btnSiteUp.Enabled = false;
+                btnSiteDown.Enabled = false;
             }
 		}
 		
@@ -410,6 +414,61 @@ namespace OnlineVideos
             OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
             SiteSettings site = siteList.SelectedItem as SiteSettings;            
             bindingSourceSite.Remove(site);            
+        }
+
+        private void btnSiteUp_Click(object sender, EventArgs e)
+        {
+            SiteSettings site = siteList.SelectedItem as SiteSettings;
+            int currentPos = sites.IndexOf(site);
+            sites.Remove(site);
+            if (currentPos == 0) sites.Add(site);
+            else sites.Insert(currentPos - 1, site);
+            siteList.SelectedItem = site;
+        }
+
+        private void btnSiteDown_Click(object sender, EventArgs e)
+        {
+            SiteSettings site = siteList.SelectedItem as SiteSettings;
+            int currentPos = sites.IndexOf(site);
+            sites.Remove(site);
+            if (currentPos >= sites.Count) sites.Insert(0, site);
+            else sites.Insert(currentPos + 1, site);
+            siteList.SelectedItem = site;
+        }
+
+        private void btnImportSite_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ImExportXml dialog = new ImExportXml();
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {                    
+                    string xml = dialog.txtXml.Text;
+                    xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<OnlineVideoSites xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+<Sites>
+" + xml + @"
+</Sites>
+</OnlineVideoSites>";
+                    System.IO.StringReader sr = new System.IO.StringReader(xml);
+                    AppDomain.CurrentDomain.AssemblyResolve += OnlineVideoSettings.CurrentDomain_AssemblyResolve;
+                    System.Xml.Serialization.XmlSerializer ser = new System.Xml.Serialization.XmlSerializer(typeof(SerializableSettings));
+                    SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
+                    if (s.Sites != null)
+                    {
+                        foreach (SiteSettings site in s.Sites) sites.Add(site);
+                        if (s.Sites.Length > 0) siteList.SelectedItem = s.Sites[s.Sites.Length - 1];
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                AppDomain.CurrentDomain.AssemblyResolve -= OnlineVideoSettings.CurrentDomain_AssemblyResolve;
+            }
         }        
 	}
 }

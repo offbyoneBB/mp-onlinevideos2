@@ -190,7 +190,7 @@ namespace OnlineVideos
         /// <param name="sender"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        internal static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             foreach (System.Reflection.Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {

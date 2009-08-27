@@ -74,6 +74,13 @@ namespace OnlineVideos.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Down {
+            get {
+                object obj = ResourceManager.GetObject("Down", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cookie is not set. ähnelt.
         /// </summary>
@@ -146,6 +153,13 @@ namespace OnlineVideos.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap ImportXml {
+            get {
+                object obj = ResourceManager.GetObject("ImportXml", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap NewFolderHS {
             get {
                 object obj = ResourceManager.GetObject("NewFolderHS", resourceCulture);
@@ -156,6 +170,13 @@ namespace OnlineVideos.Properties {
         internal static System.Drawing.Bitmap Save {
             get {
                 object obj = ResourceManager.GetObject("Save", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Up {
+            get {
+                object obj = ResourceManager.GetObject("Up", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
