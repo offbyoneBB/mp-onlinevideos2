@@ -26,6 +26,7 @@ namespace OnlineVideos.Sites
             if (id == "popular" || id == "new")
             {
                 videoPublishedList.Id = id;
+                videoPublishedList.Count = settings.ItemCount;
                 provider.GetData(videoPublishedList);
 
                 foreach (VideoResponse vi in videoPublishedList.Items)
@@ -46,7 +47,7 @@ namespace OnlineVideos.Sites
                 CategoryEntity cat = catserv.Find(id);
 
                 videoInCatList.Category = id;
-                videoInCatList.Count = cat.VideoCount;
+                videoInCatList.Count = settings.ItemCount;
                 provider.GetData(videoInCatList);
 
                 foreach (VideoResponse vi in videoInCatList.Items)
@@ -235,32 +236,14 @@ namespace OnlineVideos.Sites
 
         public List<VideoInfo> Search(string searchUrl, string query)
         {
-            videoSearchList.Category = "";
-            videoSearchList.Keyword = query;            
-            provider.GetData(videoSearchList);
-
-            List<VideoInfo> loRssItemList = new List<VideoInfo>();
-
-            foreach (VideoResponse vi in videoSearchList.Items)
-            {
-                if (!string.IsNullOrEmpty(vi.Video.Id))
-                {
-                    VideoInfo loRssItem = new VideoInfo();
-                    loRssItem.Title = FormatTitle(vi);
-                    loRssItem.Length = vi.Video.Duration.ToString();
-                    loRssItem.VideoUrl = vi.Video.Id;
-                    loRssItem.ImageUrl = vi.Image.Url;
-                    loRssItemList.Add(loRssItem);
-                }
-            }
-
-            return loRssItemList;            
+            return Search(searchUrl, query, "");    
         }
 
         public List<VideoInfo> Search(string searchUrl, string query, string category)
         {
             videoSearchList.Category = category;
             videoSearchList.Keyword = query;
+            videoSearchList.Count = settings.ItemCount;
             provider.GetData(videoSearchList);
 
             List<VideoInfo> loRssItemList = new List<VideoInfo>();
