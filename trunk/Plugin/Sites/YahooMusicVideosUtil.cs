@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                CategoryEntity cat = catserv.Items.Find(new Predicate<CategoryEntity>(delegate(CategoryEntity ce) { return ce.Id == id; }));
+                CategoryEntity cat = catserv.Find(id);
 
                 videoInCatList.Category = id;
                 videoInCatList.Count = cat.VideoCount;
@@ -123,6 +123,29 @@ namespace OnlineVideos.Sites
                 loRssItem.Name = cat.Name;
                 loRssItem.Url = cat.Id;
                 site.Categories.Add(loRssItem.Name, loRssItem);
+
+                // create sub cats tree
+                if (cat.Childs != null && cat.Childs.Count > 0)
+                {
+                    loRssItem.HasSubCategories = true;
+                    loRssItem.SubCategoriesDiscovered = true;
+                    loRssItem.SubCategories = new Dictionary<string, Category>();
+
+                    RssLink general = new RssLink();
+                    general.Name = "General " + cat.Name;
+                    general.Url = cat.Id;
+                    loRssItem.SubCategories.Add(general.Name, general);
+                    general.ParentCategory = loRssItem;
+
+                    foreach(CategoryEntity subcat in cat.Childs)
+                    {
+                        RssLink subitem = new RssLink();
+                        subitem.Name = subcat.Name;
+                        subitem.Url = subcat.Id;
+                        loRssItem.SubCategories.Add(subitem.Name, subitem);
+                        subitem.ParentCategory = loRssItem;
+                    }
+                }
             }
 
             site.DynamicCategoriesDiscovered = true;

@@ -105,5 +105,22 @@ namespace YahooMusicEngine.Services
       RootID = string.Empty;
     }
 
+    public CategoryEntity Find(string id)
+    {
+        foreach(CategoryEntity ce in Items)
+        {
+            if (ce.Id == id) return ce;
+
+            if (ce.Childs != null && ce.Childs.Count > 0)
+            {
+                foreach (CategoryEntity sub_ce in ce.Childs)
+                {
+                    if (sub_ce.Id == id) return sub_ce;
+                }
+            }
+        }
+        return null;
+    }
+
   }
 }
