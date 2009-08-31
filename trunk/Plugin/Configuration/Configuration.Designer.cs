@@ -56,9 +56,9 @@ namespace OnlineVideos
             this.btnSiteUp = new System.Windows.Forms.ToolStripButton();
             this.btnSiteDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripSites = new System.Windows.Forms.ToolStrip();
+            this.btnImportSite = new System.Windows.Forms.ToolStripButton();
             this.btnAddSite = new System.Windows.Forms.ToolStripButton();
             this.btnDeleteSite = new System.Windows.Forms.ToolStripButton();
-            this.btnImportSite = new System.Windows.Forms.ToolStripButton();
             this.label18 = new System.Windows.Forms.Label();
             this.cbLanguages = new System.Windows.Forms.ComboBox();
             this.bindingSourceSite = new System.Windows.Forms.BindingSource(this.components);
@@ -349,7 +349,7 @@ namespace OnlineVideos
             this.btnSiteDown});
             this.toolStripSiteUpDown.Location = new System.Drawing.Point(0, 0);
             this.toolStripSiteUpDown.Name = "toolStripSiteUpDown";
-            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 217);
+            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 242);
             this.toolStripSiteUpDown.Stretch = true;
             this.toolStripSiteUpDown.TabIndex = 0;
             // 
@@ -386,8 +386,18 @@ namespace OnlineVideos
             this.btnDeleteSite});
             this.toolStripSites.Location = new System.Drawing.Point(3, 0);
             this.toolStripSites.Name = "toolStripSites";
-            this.toolStripSites.Size = new System.Drawing.Size(103, 25);
+            this.toolStripSites.Size = new System.Drawing.Size(72, 25);
             this.toolStripSites.TabIndex = 0;
+            // 
+            // btnImportSite
+            // 
+            this.btnImportSite.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnImportSite.Image = global::OnlineVideos.Properties.Resources.ImportXml;
+            this.btnImportSite.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnImportSite.Name = "btnImportSite";
+            this.btnImportSite.Size = new System.Drawing.Size(23, 22);
+            this.btnImportSite.Text = "Import";
+            this.btnImportSite.Click += new System.EventHandler(this.btnImportSite_Click);
             // 
             // btnAddSite
             // 
@@ -409,16 +419,6 @@ namespace OnlineVideos
             this.btnDeleteSite.Size = new System.Drawing.Size(23, 22);
             this.btnDeleteSite.Text = "Delete";
             this.btnDeleteSite.Click += new System.EventHandler(this.btnDeleteSite_Click);
-            // 
-            // btnImportSite
-            // 
-            this.btnImportSite.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnImportSite.Image = global::OnlineVideos.Properties.Resources.ImportXml;
-            this.btnImportSite.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnImportSite.Name = "btnImportSite";
-            this.btnImportSite.Size = new System.Drawing.Size(23, 22);
-            this.btnImportSite.Text = "Import";
-            this.btnImportSite.Click += new System.EventHandler(this.btnImportSite_Click);
             // 
             // label18
             // 
@@ -1019,6 +1019,7 @@ namespace OnlineVideos
             this.tbxPin.Location = new System.Drawing.Point(361, 41);
             this.tbxPin.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tbxPin.Name = "tbxPin";
+            this.tbxPin.PasswordChar = '*';
             this.tbxPin.Size = new System.Drawing.Size(261, 22);
             this.tbxPin.TabIndex = 29;
             // 

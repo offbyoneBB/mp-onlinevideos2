@@ -48,7 +48,7 @@ namespace RTMP_LIB
                     {
                         if (rtmp.CombinedTracksLength > 0)
                         {
-                            EstimatedLength = rtmp.CombinedTracksLength;
+                            EstimatedLength = rtmp.CombinedTracksLength + (rtmp.CombinedTracksLength / rtmp.ChunkSize) * 11;
                         }
                         else if (rtmp.CombinedBitrates > 0)
                         {
@@ -58,6 +58,9 @@ namespace RTMP_LIB
                         {
                             EstimatedLength = (long)(2000 * 1000 / 8 * rtmp.Duration); // nothing was in the metadata -> just use duration and a birate of 2000
                         }
+
+                        EstimatedLength = (long)((double)EstimatedLength * 1.5d);
+
                         outputStream = DataReady(); // get the stream
                         httpChunkSize = 1024; // reduce chunksize
                     }
