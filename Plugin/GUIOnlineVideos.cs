@@ -529,15 +529,17 @@ namespace OnlineVideos
             else if (control == btnSearch)
             {
                 String query = String.Empty;
-                GetUserInputString(ref query);
-                GUIControl.FocusControl(GetID, facadeView.GetID);
-                if (query != String.Empty)
+                if (GetUserInputString(ref query, false))
                 {
-                    msLastSearchQuery = query;
-                    if (SearchVideos(query))
+                    GUIControl.FocusControl(GetID, facadeView.GetID);
+                    if (query != String.Empty)
                     {
-                        currentState = State.videos;
-                        UpdateViewState();
+                        msLastSearchQuery = query;
+                        if (SearchVideos(query))
+                        {
+                            currentState = State.videos;
+                            UpdateViewState();
+                        }
                     }
                 }
             }
@@ -553,13 +555,15 @@ namespace OnlineVideos
             else if (control == btnEnterPin)
             {
                 string pin = String.Empty;
-                GetUserInputString(ref pin);
-                if (pin == OnlineVideoSettings.getInstance().pinAgeConfirmation)
+                if (GetUserInputString(ref pin, true))
                 {
-                    ageHasBeenConfirmed = true;
-                    HideEnterPinButton();
-                    DisplaySites();
-                    GUIControl.FocusControl(GetID, facadeView.GetID);
+                    if (pin == OnlineVideoSettings.getInstance().pinAgeConfirmation)
+                    {
+                        ageHasBeenConfirmed = true;
+                        HideEnterPinButton();
+                        DisplaySites();
+                        GUIControl.FocusControl(GetID, facadeView.GetID);
+                    }
                 }
             }
 
@@ -1268,12 +1272,13 @@ namespace OnlineVideos
             */
         }
 
-        private bool GetUserInputString(ref string sString)
+        private bool GetUserInputString(ref string sString, bool password)
         {
             VirtualKeyboard keyBoard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
             keyBoard.Reset();
             keyBoard.IsSearchKeyboard = true;
             keyBoard.Text = sString;
+            keyBoard.Password = password;
             keyBoard.DoModal(GetID); // show it...
             if (keyBoard.IsConfirmed) sString = keyBoard.Text;
             return keyBoard.IsConfirmed;
@@ -1284,19 +1289,27 @@ namespace OnlineVideos
             bool playing = false;            
             if (selectedSite.Util.MultipleFilePlay())
             {
+                //PlayListPlayer.SingletonPlayer.Init(); // re.registers Eventhandler among other for PlaybackStoppt, so will call play twice later!
+                PlayListPlayer.SingletonPlayer.Reset();
+                PlayListPlayer.SingletonPlayer.g_Player = new Player.PlaylistPlayerWrapper(selectedSite.Player);
                 PlayList videoList = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
-                PlayListItem item;
-
+                videoList.Clear();                
                 List<String> loUrlList = selectedSite.Util.getMultipleVideoUrls(foListItem, selectedSite);
                 foreach (String url in loUrlList)
                 {
-                    item = new PlayListItem("", url);
-                    videoList.Add(item);
+                    PlayListItem item = new PlayListItem("", url);
+                    videoList.Add(item);                   
                 }
+
                 PlayListPlayer.SingletonPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
                 if (PlayListPlayer.SingletonPlayer.Play(0))
                 {
                     playing = true;
+                }
+                if (playing)
+                {                    
+                    GUIGraphicsContext.IsFullScreenVideo = true;
+                    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
                 }
             }
             else
@@ -1320,7 +1333,7 @@ namespace OnlineVideos
                     GUIWaitCursor.Hide();
                 }
 
-                if (String.IsNullOrEmpty(lsUrl) || !Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute))
+                if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)) )
                 {                    
                     GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                     dlg.SetHeading(GUILocalizeStrings.Get(257)/*ERROR*/);
@@ -1358,14 +1371,11 @@ namespace OnlineVideos
         private void PlayAll()
         {            
             bool playing = false;
-            PlayListPlayer.SingletonPlayer.Init();
+            //PlayListPlayer.SingletonPlayer.Init(); // re.registers Eventhandler among other for PlaybackStoppt, so will call play twice later!
             PlayListPlayer.SingletonPlayer.Reset();
             PlayListPlayer.SingletonPlayer.g_Player = new Player.PlaylistPlayerWrapper(selectedSite.Player);
             PlayList videoList = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
             videoList.Clear();
-            PlayListItem item;
-            OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
-            String lsUrl;            
             List<VideoInfo> loVideoList;
             if (selectedSite.UtilName == "AppleTrailers")
             {
@@ -1378,8 +1388,8 @@ namespace OnlineVideos
             bool firstAdded = false;
             foreach (VideoInfo loVideo in loVideoList)
             {
-                lsUrl = selectedSite.Util.getUrl(loVideo, selectedSite);
-                item = new PlayListItem(loVideo.Title, lsUrl);
+                string lsUrl = selectedSite.Util.getUrl(loVideo, selectedSite);
+                PlayListItem item = new PlayListItem(loVideo.Title, lsUrl);
                 videoList.Add(item);
                 Log.Info("GUIOnlineVideos.playAll:Added {0} to playlist", loVideo.Title);
                 if (!firstAdded)

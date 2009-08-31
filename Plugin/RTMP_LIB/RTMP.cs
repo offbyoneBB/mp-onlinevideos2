@@ -367,18 +367,25 @@ namespace RTMP_LIB
             packet.m_nInfoField1 = System.Environment.TickCount;
 
             int nSize = (nType == 0x03 ? 10 : 6); // type 3 is the buffer time and requires all 3 parameters. all in all 10 bytes.
+            if (nType == 0x1B) nSize = 44;
             packet.AllocPacket(nSize);
             packet.m_nBodySize = (uint)nSize;
 
             List<byte> buf = new List<byte>();
             EncodeInt16(buf, nType);
 
-            if (nSize > 2)
-                EncodeInt32(buf, (int)nObject);
+            if (nType == 0x1B)
+            {
+                buf.AddRange(Link.SWFVerificationResponse);
+            }
+            else
+            {
+                if (nSize > 2)
+                    EncodeInt32(buf, (int)nObject);
 
-            if (nSize > 6)
-                EncodeInt32(buf, (int)nTime);
-
+                if (nSize > 6)
+                    EncodeInt32(buf, (int)nTime);
+            }
             packet.m_body = buf.ToArray();
             return SendRTMP(packet);
         }
@@ -465,10 +472,10 @@ namespace RTMP_LIB
             if (packet.m_headerType != RTMP_PACKET_SIZE_LARGE)
             {
                 // compress a bit by using the prev packet's attributes
-                if (prevPacket.m_nBodySize == packet.m_nBodySize && packet.m_headerType == RTMP_PACKET_SIZE_MEDIUM)
+                if (prevPacket != null && prevPacket.m_nBodySize == packet.m_nBodySize && packet.m_headerType == RTMP_PACKET_SIZE_MEDIUM)
                     packet.m_headerType = RTMP_PACKET_SIZE_SMALL;
 
-                if (prevPacket.m_nInfoField2 == packet.m_nInfoField2 && packet.m_headerType == RTMP_PACKET_SIZE_SMALL)
+                if (prevPacket != null && prevPacket.m_nInfoField2 == packet.m_nInfoField2 && packet.m_headerType == RTMP_PACKET_SIZE_SMALL)
                     packet.m_headerType = RTMP_PACKET_SIZE_MINIMUM;
             }
 
@@ -544,11 +551,24 @@ namespace RTMP_LIB
                 nType = ReadInt16(packet.m_body, 0);
             
             Logger.Log(string.Format("received: ping, type: {0}", nType));
-
+            
             if (nType == 0x06 && packet.m_nBodySize >= 6) // server ping. reply with pong.
             {
                 uint nTime = (uint)ReadInt32(packet.m_body, 2);
                 SendPing(0x07, nTime, 0);
+            }
+
+            if (nType == 0x1A)
+            {
+                // respond with HMAC SHA256 of decompressed SWF, key is the 30byte player key, also the last 30 bytes of the server handshake are applied
+                if (Link.SWFHash != null)
+                {
+                    SendPing(0x1B, 0, 0);
+                }
+                else
+                {
+                    Logger.Log("Ignoring SWFVerification request, use --swfhash and --swfsize!");
+                }
             }
         }
 

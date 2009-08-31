@@ -45,8 +45,8 @@ namespace RTMP_LIB
                 // no slist parameter. send the path as the app
                 // if URL path contains a slash, use the part up to that as the app
                 // as we'll send the part after the slash as the thing to play
-                int pos_slash = link.app.LastIndexOf("/");
-                if (pos_slash != -1) link.app = link.app.Substring(0, pos_slash + 1);
+                int pos_slash = link.app.IndexOf("/");
+                if (pos_slash != -1) link.app = link.app.Substring(0, pos_slash);
             }
 
             link.tcUrl = string.Format("{0}://{1}:{2}/{3}", url.Scheme, link.hostname, link.port, link.app);
@@ -59,14 +59,25 @@ namespace RTMP_LIB
             }
             else
             {
-                // or use last piece of URL, if there's more than one level
-                int pos_slash = url.AbsolutePath.LastIndexOf("/");
-                if (pos_slash != -1)
-                    link.playpath = url.AbsolutePath.Substring(pos_slash + 1);
+                // use part after app
+                link.playpath = url.AbsolutePath.TrimStart(new char[] { '/' }).Substring(link.app.Length).TrimStart(new char[] { '/' });
                 if (link.playpath.EndsWith(".flv")) link.playpath = link.playpath.Substring(0, link.playpath.Length - 4);
+                if (link.playpath.EndsWith(".mp4")) link.playpath = "mp4:" + link.playpath;
             }
 
             return link;
+        }
+
+        public static byte[] ArrayFromHexString(string data)
+        {
+            byte[] result = new byte[data.Length / 2];
+
+            for (int i = 0; i < data.Length-1; i += 2)
+            {
+                result[i/2] = byte.Parse(data[i].ToString()+data[i+1].ToString(), System.Globalization.NumberStyles.AllowHexSpecifier);
+            }
+
+            return result;
         }
     }
 }
