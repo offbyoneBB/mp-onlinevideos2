@@ -310,6 +310,7 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video, SiteSettings foSite)
         {
+            //return video.VideoUrl.Replace("http://movies.apple.com/", "http://apple.com/"); // doesn't work on avatar, but any other tested
             return string.Format("http://127.0.0.1:{0}/?url={1}", OnlineVideoSettings.APPLE_PROXY_PORT, System.Web.HttpUtility.UrlEncode(video.VideoUrl));
         }
 
