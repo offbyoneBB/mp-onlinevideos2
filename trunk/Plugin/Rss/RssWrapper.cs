@@ -54,8 +54,7 @@ namespace OnlineVideos
             XmlNode root = doc.SelectSingleNode("//rss/channel/item", expr);
             XmlNodeList nodeList;
             nodeList = root.SelectNodes("//rss/channel/item");
-            RssItem loRssItem;
-            MediaContent loMediaContent;
+            RssItem loRssItem;            
             int itemCount = 0;
             foreach (XmlNode chileNode in nodeList)
             {
@@ -98,82 +97,18 @@ namespace OnlineVideos
                             loRssItem.feedBurnerOrigLink = n.InnerText;
                             break;
                         case "media:group":
-
                             for (int j = 0; j < n.ChildNodes.Count; j++)
                             {
                                 XmlNode nin = n.ChildNodes[j];
-                                switch (nin.Name)
+                                if (nin.Name == "media:content")
                                 {
-                                    case "media:content":
-                                        loMediaContent = new MediaContent();
-                                        try
-                                        {
-                                            loMediaContent.url = nin.Attributes["url"].Value;
-                                            loMediaContent.type = nin.Attributes["type"].Value;
-                                            loMediaContent.duration = nin.Attributes["duration"].Value;
-                                            loMediaContent.height = nin.Attributes["height"].Value;
-                                            loMediaContent.width = nin.Attributes["width"].Value;
-                                            if (nin.Attributes["medium"] != null) loMediaContent.medium = nin.Attributes["medium"].Value;
-                                        }
-                                        catch (Exception) { };
-                                        loRssItem.contentList.Add(loMediaContent);
-                                        break;
-                                    case "media:description":
-                                        loRssItem.mediaDescription = n.InnerText;
-                                        break;
-                                    case "media:thumbnail":
-                                        loRssItem.mediaThumbnail = nin.Attributes["url"].Value;
-                                        break;
-                                    case "media:title":
-                                        loRssItem.mediaTitle = nin.InnerText;
-                                        break;
+                                    GetContent(nin, loRssItem); 
+                                    break;
                                 }
                             }
                             break;
                         case "media:content":
-                            loMediaContent = new MediaContent();
-                            if (n.Attributes["url"] != null)
-                            {
-                                loMediaContent.url = n.Attributes["url"].Value;
-                            }
-                            if (n.Attributes["type"] != null)
-                            {
-                                loMediaContent.type = n.Attributes["type"].Value;
-                            }
-                            if (n.Attributes["medium"] != null)
-                            {
-                                loMediaContent.medium = n.Attributes["medium"].Value;
-                            }
-                            if (n.Attributes["duration"] != null)
-                            {
-                                loMediaContent.duration = n.Attributes["duration"].Value;
-                            }
-                            if (n.Attributes["height"] != null)
-                            {
-                                loMediaContent.height = n.Attributes["height"].Value;
-                            }
-                            if (n.Attributes["width"] != null)
-                            {
-                                loMediaContent.width = n.Attributes["width"].Value;
-                            }
-                            loRssItem.contentList.Add(loMediaContent);
-                            for (int j = 0; j < n.ChildNodes.Count; j++)
-                            {
-                                XmlNode nin = n.ChildNodes[j];
-
-                                switch (nin.Name)
-                                {
-                                    case "media:description":
-                                        loRssItem.mediaDescription = n.InnerText;
-                                        break;
-                                    case "media:thumbnail":
-                                        loRssItem.mediaThumbnail = nin.Attributes["url"].Value;
-                                        break;
-                                    case "media:title":
-                                        loRssItem.mediaTitle = nin.InnerText;
-                                        break;
-                                }
-                            }
+                            GetContent(n, loRssItem);
                             break;
                         case "media:description":
                             loRssItem.mediaDescription = n.InnerText;
@@ -195,7 +130,7 @@ namespace OnlineVideos
                             loRssItem.mediaCategory = n.InnerText;
                             break;
                         case "exInfo:fileType":
-                            loMediaContent = new MediaContent();
+                            MediaContent loMediaContent = new MediaContent();
                             for (int j = 0; j < n.ChildNodes.Count; j++)
                             {
                                 XmlNode nin = n.ChildNodes[j];
@@ -215,6 +150,38 @@ namespace OnlineVideos
             }
 
             return loRssItems;
+        }
+
+        private static void GetContent(XmlNode contentNode, RssItem loRssItem)
+        {
+            MediaContent loMediaContent = new MediaContent();
+
+            if (contentNode.Attributes["url"] != null) loMediaContent.url = contentNode.Attributes["url"].Value;
+            if (contentNode.Attributes["type"] != null) loMediaContent.type = contentNode.Attributes["type"].Value;
+            if (contentNode.Attributes["medium"] != null) loMediaContent.medium = contentNode.Attributes["medium"].Value;
+            if (contentNode.Attributes["duration"] != null) loMediaContent.duration = contentNode.Attributes["duration"].Value;
+            if (contentNode.Attributes["height"] != null) loMediaContent.height = contentNode.Attributes["height"].Value;
+            if (contentNode.Attributes["width"] != null) loMediaContent.width = contentNode.Attributes["width"].Value;
+            
+            for (int j = 0; j < contentNode.ChildNodes.Count; j++)
+            {
+                XmlNode nin = contentNode.ChildNodes[j];
+
+                switch (nin.Name)
+                {
+                    case "media:description":
+                        loRssItem.mediaDescription = nin.InnerText;
+                        break;
+                    case "media:thumbnail":
+                        loRssItem.mediaThumbnail = nin.Attributes["url"].Value;
+                        break;
+                    case "media:title":
+                        loRssItem.mediaTitle = nin.InnerText;
+                        break;
+                }
+            }
+
+            loRssItem.contentList.Add(loMediaContent);
         }
     }
 }
