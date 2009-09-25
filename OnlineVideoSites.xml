@@ -297,13 +297,14 @@
       <Password />
       <SearchUrl />
       <Categories>
-        <Category xsi:type="RssLink" name="Today">http://www.msnbc.msn.com/id/12133116/device/rss/rss.xml</Category>
-        <Category xsi:type="RssLink" name="Nightly News">http://www.msnbc.msn.com/id/3032618/device/rss/rss.xml</Category>
-        <Category xsi:type="RssLink" name="Dateline">http://www.msnbc.msn.com/id/12680786/device/rss/rss.xml</Category>
-        <Category xsi:type="RssLink" name="Meet the Press">http://www.msnbc.msn.com/id/15483101/device/rss/rss.xml</Category>
-        <Category xsi:type="RssLink" name="MSNBC TV">http://www.msnbc.msn.com/id/3096433/device/rss/rss.xml</Category>
-        <Category xsi:type="RssLink" name="Business Video">http://www.msnbc.msn.com/id/9611459/device/rss/rss.xml</Category>
-        <Category xsi:type="RssLink" name="The Week in Video">http://www.msnbc.msn.com/id/14514583/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Today">http://rss.msnbc.msn.com/id/3032632/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Nightly News">http://www.msnbc.msn.com/id/3032618/device/rss/rss.xml</Category>                                                         
+        <Category xsi:type="RssLink" name="Dateline">http://rss.msnbc.msn.com/id/18424719/device/rss/rss.xml</Category>        
+        <Category xsi:type="RssLink" name="Meet the Press">http://rss.msnbc.msn.com/id/18424744/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Rachel Maddow Show">http://rss.msnbc.msn.com/id/26548304/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Today Show">http://rss.msnbc.msn.com/id/18424824/device/rss/rss.xml"</Category>
+        <Category xsi:type="RssLink" name="MSNBC TV">http://rss.msnbc.msn.com/id/3096433/device/rss/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Business Video">http://rss.msnbc.msn.com/id/18424696/device/rss/rss.xml</Category>
       </Categories>
     </Site>
     <Site name="TEDTalks" util="GenericSite" agecheck="false" enabled="true" lang="en">
