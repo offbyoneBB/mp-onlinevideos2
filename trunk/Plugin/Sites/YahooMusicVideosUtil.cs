@@ -111,31 +111,31 @@ namespace OnlineVideos.Sites
             RssLink popularItem = new RssLink();
             popularItem.Name = "Popular";
             popularItem.Url = "popular";
-            site.Categories.Add(popularItem.Name, popularItem);
+            site.Categories.Add(popularItem);
 
             RssLink newItem = new RssLink();
             newItem.Name = "New";
             newItem.Url = "new";
-            site.Categories.Add(newItem.Name, newItem);
+            site.Categories.Add(newItem);
 
             foreach (CategoryEntity cat in catserv.Items)
             {
                 RssLink loRssItem = new RssLink();
                 loRssItem.Name = cat.Name;
                 loRssItem.Url = cat.Id;
-                site.Categories.Add(loRssItem.Name, loRssItem);
+                site.Categories.Add(loRssItem);
 
                 // create sub cats tree
                 if (cat.Childs != null && cat.Childs.Count > 0)
                 {
                     loRssItem.HasSubCategories = true;
                     loRssItem.SubCategoriesDiscovered = true;
-                    loRssItem.SubCategories = new Dictionary<string, Category>();
+                    loRssItem.SubCategories = new List<Category>();
 
                     RssLink general = new RssLink();
                     general.Name = "General " + cat.Name;
                     general.Url = cat.Id;
-                    loRssItem.SubCategories.Add(general.Name, general);
+                    loRssItem.SubCategories.Add(general);
                     general.ParentCategory = loRssItem;
 
                     foreach(CategoryEntity subcat in cat.Childs)
@@ -143,7 +143,7 @@ namespace OnlineVideos.Sites
                         RssLink subitem = new RssLink();
                         subitem.Name = subcat.Name;
                         subitem.Url = subcat.Id;
-                        loRssItem.SubCategories.Add(subitem.Name, subitem);
+                        loRssItem.SubCategories.Add(subitem);
                         subitem.ParentCategory = loRssItem;
                     }
                 }
@@ -221,7 +221,7 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
         {
             Dictionary<string, string> loRssItems = new Dictionary<string, string>();
             if (catserv != null)

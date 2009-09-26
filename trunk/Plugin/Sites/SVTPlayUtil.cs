@@ -77,7 +77,7 @@ namespace OnlineVideos.Sites
 
 
                 // Add category to List
-                site.Categories.Add(item.Name, item);
+                site.Categories.Add(item);
 
                 // Find next match if possible
                 match = match.NextMatch();

@@ -83,7 +83,7 @@ namespace OnlineVideos.Sites
                     rss.HasSubCategories = true;
                     rss.Name = m.Groups["name"].Value;
                     rss.Url = m.Groups["url"].Value;
-                    site.Categories.Add(rss.Name, rss);
+                    site.Categories.Add(rss);
                     m = m.NextMatch();
                 }
                 site.DynamicCategoriesDiscovered = true;
@@ -94,7 +94,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(SiteSettings site, Category parentCategory)
         {
             string catsString = GetWebData((parentCategory as RssLink).Url);
-            parentCategory.SubCategories = new Dictionary<string, Category>();
+            parentCategory.SubCategories = new List<Category>();
             if (!string.IsNullOrEmpty(catsString))
             {
                 Match m = subCategoriesRegEx.Match(catsString);
@@ -108,7 +108,7 @@ namespace OnlineVideos.Sites
                     rss.Description = m.Groups["desc"].Value;
                     string feedId = m.Groups["mirourl"].Value.Substring(m.Groups["mirourl"].Value.LastIndexOf('/') + 1); 
                     rss.Thumb = string.Format("http://s3.miroguide.com/static/media/thumbnails/97x65/{0}.jpeg", feedId);
-                    parentCategory.SubCategories.Add(rss.Name, rss);
+                    parentCategory.SubCategories.Add(rss);
                     rss.ParentCategory = parentCategory;
                     m = m.NextMatch();
                 }
@@ -120,7 +120,7 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public System.Collections.Generic.Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
+        public System.Collections.Generic.Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
         {
             return new System.Collections.Generic.Dictionary<string,string>();
         }

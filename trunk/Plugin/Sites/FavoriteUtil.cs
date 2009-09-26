@@ -54,7 +54,7 @@ namespace OnlineVideos.Sites
             RssLink all = new RssLink();
             all.Name = "All";
             all.Url = "fav:";
-            site.Categories.Add(all.Name, all);
+            site.Categories.Add(all);
 
             FavoritesDatabase db = FavoritesDatabase.getInstance();
             string[] lsSiteIds = db.getSiteIDs();
@@ -67,13 +67,13 @@ namespace OnlineVideos.Sites
                 cat = new RssLink();
                 cat.Name = loSite.Name + " - Favorites";
                 cat.Url = "fav:" + loSite.Name;
-                site.Categories.Add(cat.Name, cat);
+                site.Categories.Add(cat);
 
             }
             cat = new RssLink();
             cat.Name = "Search-Favorites";
             cat.Url = "fav:%{0}";
-            site.Categories.Add(cat.Name, cat);
+            site.Categories.Add(cat);
 
             // need to always get the categories, because when adding new fav video from a new site, a removing the last one for a site, the categories must be refreshed 
             site.DynamicCategoriesDiscovered = false; 
@@ -89,7 +89,7 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
         {
             return new Dictionary<string, string>();
         }

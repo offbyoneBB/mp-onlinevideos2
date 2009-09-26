@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using OnlineVideos.Sites;
+using System.ComponentModel;
 
 namespace OnlineVideos
 {
@@ -16,15 +17,9 @@ namespace OnlineVideos
     [Serializable]
     [XmlRoot("OnlineVideoSites")]
     public class SerializableSettings
-    {
-        SiteSettings[] sites;
-        [XmlArray("Sites")]
-        [XmlArrayItem("Site")]
-        public SiteSettings[] Sites
-        {
-            get { return sites; }
-            set { sites = value; }
-        }
+    {                
+        [XmlArray("Sites"), XmlArrayItem("Site")]
+        public BindingList<SiteSettings> Sites { get; set; }
     }
 
     [Serializable]    
@@ -33,22 +28,11 @@ namespace OnlineVideos
         public SiteSettings()
         {
             Language = "";
+            Categories = new BindingList<Category>();
         }
-
-        SiteUtilBase util;
-        [XmlIgnore]
-        public SiteUtilBase Util
-        {
-            get { return util; }
-        }
-
-        string name;
+        
         [XmlAttribute("name")]
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
+        public string Name { get; set; }
 
         string utilName;
         [XmlAttribute("util")]
@@ -58,77 +42,36 @@ namespace OnlineVideos
             set { utilName = value; util = SiteUtilFactory.GetByName(value); }
         }
 
-        bool confirmAge;
+        SiteUtilBase util;
+        [XmlIgnore]
+        public SiteUtilBase Util { get { return util; } }
+        
         [XmlAttribute("agecheck")]
-        public bool ConfirmAge
-        {
-            get { return confirmAge; }
-            set { confirmAge = value; }
-        }
-
-        bool isEnabled;
+        public bool ConfirmAge { get; set; }
+        
         [XmlAttribute("enabled")]
-        public bool IsEnabled
-        {
-            get { return isEnabled; }
-            set { isEnabled = value; }
-        }
+        public bool IsEnabled { get; set; }
 
         [XmlAttribute("player")]
         public PlayerType Player { get; set; }
         public bool ShouldSerializePlayer() { return Player != PlayerType.Auto; }
 
-        string username;
-        public string Username
-        {
-            get { return username; }
-            set { username = value; }
-        }
-
-        string password;
-        public string Password
-        {
-            get { return password; }
-            set { password = value; }
-        }
-
-        string searchUrl;
-        public string SearchUrl
-        {
-            get { return searchUrl; }
-            set { searchUrl = value; }
-        }
-
         [XmlAttribute("lang")]
         public string Language { get; set; }
         public bool ShouldSerializeLanguage() { return !string.IsNullOrEmpty(Language); }
-        
-        [XmlArray("Categories")]
-        public Category[] CategoriesArray
-        {
-            get { Category[] result = new Category[Categories.Count]; Categories.Values.CopyTo(result,0); return result; }
-            set { categories.Clear(); foreach (Category c in value) Categories.Add(c.Name, c); }
-        }
-        
-        Dictionary<string, Category> categories = new Dictionary<string, Category>();
-        [XmlIgnore]
-        public Dictionary<string, Category> Categories
-        {
-            get { return categories; }
-        }
 
-        bool dynamicCategoriesDiscovered = false;
+        public string Username { get; set; }
+
+        public string Password { get; set; }
+
+        public string SearchUrl { get; set; }
+
+        public BindingList<Category> Categories { get; set; }
+               
         [XmlIgnore]
-        internal bool DynamicCategoriesDiscovered
-        {
-            get { return dynamicCategoriesDiscovered; }
-            set { dynamicCategoriesDiscovered = value; }
-        }
+        internal bool DynamicCategoriesDiscovered { get; set; }        
         
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() { return Name; }
     }
 
     [Serializable]
@@ -152,15 +95,12 @@ namespace OnlineVideos
         public bool SubCategoriesDiscovered { get; set; }
 
         [XmlIgnore]
-        public Dictionary<string, Category> SubCategories { get; set; }
+        public List<Category> SubCategories { get; set; }
 
         [XmlIgnore]
         public Category ParentCategory { get; set; }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() { return Name; }
         
         #region IComparable<Category> Member
 
@@ -185,7 +125,7 @@ namespace OnlineVideos
     [Serializable]
     public class Group : Category
     {
-        public List<Channel> Channels { get; set; }        
+        public BindingList<Channel> Channels { get; set; }        
     }
 
     [Serializable]

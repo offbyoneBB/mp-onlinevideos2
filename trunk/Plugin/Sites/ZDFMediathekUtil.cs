@@ -35,7 +35,7 @@ namespace OnlineVideos.Sites
                 item.Name = convertUnicodeU(teaser.Titel);
                 item.Url = teaser.ID;
                 item.Thumb = teaser.Teaserbilder[0].Url;
-                site.Categories.Add(item.Name, item);
+                site.Categories.Add(item);
                 categoriesForSearching.Add(item.Name, item.Url);
             }
             site.DynamicCategoriesDiscovered = true;
@@ -125,7 +125,7 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
         {
             return categoriesForSearching;
         }

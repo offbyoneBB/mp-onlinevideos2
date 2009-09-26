@@ -80,7 +80,7 @@ namespace OnlineVideos.Sites
 
                 XmlNode node = chileNode.SelectSingleNode("name", nsMgr);
                 loRssItem.Name = node.InnerText;
-                site.Categories.Add(loRssItem.Name, loRssItem);
+                site.Categories.Add(loRssItem);
             }
             site.DynamicCategoriesDiscovered = true;
             return site.Categories.Count;
