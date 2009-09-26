@@ -84,7 +84,7 @@ namespace OnlineVideos
                 CategoryList.Items.Clear();
                 tvGroups.Nodes.Clear();
 
-                foreach (Category aCat in site.CategoriesArray)
+                foreach (Category aCat in site.Categories)
                 {
                     if (aCat is RssLink) CategoryList.Items.Add(aCat);
                     else if (aCat is Group)
@@ -151,7 +151,7 @@ namespace OnlineVideos
                 SiteSettings site = siteList.SelectedItem as SiteSettings;
                 RssLink link = CategoryList.SelectedItem as RssLink;
                 // remove old category from site
-                site.Categories.Remove(link.Name);
+                site.Categories.Remove(link);
                 // set new properties
                 link.Name = txtRssName.Text;
                 link.Url = txtRssUrl.Text;
@@ -159,7 +159,7 @@ namespace OnlineVideos
                 // reset the item in the listbox
                 CategoryList.Items[CategoryList.SelectedIndex] = link;
                 // add new category to the site
-                site.Categories.Add(link.Name, link);
+                site.Categories.Add(link);
                 // unselect
                 CategoryList.SelectedIndex = -1;
             }
@@ -168,18 +168,13 @@ namespace OnlineVideos
 		void BtnAddRssClick(object sender, EventArgs e)
 		{   
             SiteSettings site = siteList.SelectedItem as SiteSettings;
-            if (site.Categories.ContainsKey("new"))
-                MessageBox.Show("Please rename existing category with name: new", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            else
-            {
-                RssLink link = new RssLink();
-                link.Name = "new";
-                link.Url = "http://";
-                site.Categories.Add(link.Name, link);
-                CategoryList.Items.Add(link);
-                CategoryList.SelectedIndex = CategoryList.Items.Count - 1;
-                txtRssName.Focus();
-            }
+            RssLink link = new RssLink();
+            link.Name = "new";
+            link.Url = "http://";
+            site.Categories.Add(link);
+            CategoryList.Items.Add(link);
+            CategoryList.SelectedIndex = CategoryList.Items.Count - 1;
+            txtRssName.Focus();
 		}
 		
 		
@@ -189,7 +184,7 @@ namespace OnlineVideos
             {
                 SiteSettings site = siteList.SelectedItem as SiteSettings;
                 RssLink link = CategoryList.SelectedItem as RssLink;
-				site.Categories.Remove(link.Name);
+				site.Categories.Remove(link);
 				CategoryList.Items.RemoveAt(CategoryList.SelectedIndex);
 				txtRssName.Text = "";
 				txtRssUrl.Text = "";                
@@ -295,11 +290,11 @@ namespace OnlineVideos
                 {
                     SiteSettings site = siteList.SelectedItem as SiteSettings;
                     Group group = tvGroups.SelectedNode.Tag as Group;
-                    site.Categories.Remove(group.Name);
+                    site.Categories.Remove(group);
                     group.Name = tbxChannelName.Text;
                     group.Thumb = tbxChannelThumb.Text != "" ? tbxChannelThumb.Text : null;
                     tvGroups.SelectedNode.Text = tbxChannelName.Text;
-                    site.Categories.Add(group.Name, group);                    
+                    site.Categories.Add(group);                    
                 }
                 else
                 {
@@ -320,7 +315,7 @@ namespace OnlineVideos
                 {
                     Group group = tvGroups.SelectedNode.Tag as Group;
                     SiteSettings site = siteList.SelectedItem as SiteSettings;
-                    site.Categories.Remove(group.Name);
+                    site.Categories.Remove(group);
                     tvGroups.Nodes.Remove(tvGroups.SelectedNode);
                 }
                 else
@@ -338,19 +333,14 @@ namespace OnlineVideos
         private void btnAddGroup_Click(object sender, EventArgs e)
         {
             SiteSettings site = siteList.SelectedItem as SiteSettings;
-            if (site.Categories.ContainsKey("New"))
-                MessageBox.Show("Please rename existing category with name: New", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            else
-            {
-                Group g = new Group();
-                g.Name = "New";
-                site.Categories.Add(g.Name, g);
-                TreeNode node = new TreeNode("New");
-                node.Tag = g;
-                tvGroups.Nodes.Add(node);
-                tvGroups.SelectedNode = node;
-                tbxChannelName.Focus();
-            }
+            Group g = new Group();
+            g.Name = "New";
+            site.Categories.Add(g);
+            TreeNode node = new TreeNode("New");
+            node.Tag = g;
+            tvGroups.Nodes.Add(node);
+            tvGroups.SelectedNode = node;
+            tbxChannelName.Focus();
         }
 
         private void btnAddChannel_Click(object sender, EventArgs e)
@@ -358,7 +348,7 @@ namespace OnlineVideos
             Group group = tvGroups.SelectedNode.Tag as Group;
             Channel c = new Channel();
             c.StreamName = "New";
-            if (group.Channels == null) group.Channels = new List<Channel>();
+            if (group.Channels == null) group.Channels = new BindingList<Channel>();
             group.Channels.Add(c);
             TreeNode node = new TreeNode("New");
             node.Tag = c;
@@ -404,6 +394,7 @@ namespace OnlineVideos
             SiteSettings site = new SiteSettings();
             site.Name = "New";
             site.UtilName = "GenericSite";
+            site.IsEnabled = true;
             bindingSourceSite.Add(site);
             siteList.SelectedItem = site;
             txtSiteName.Focus();
@@ -457,7 +448,7 @@ namespace OnlineVideos
                     if (s.Sites != null)
                     {
                         foreach (SiteSettings site in s.Sites) sites.Add(site);
-                        if (s.Sites.Length > 0) siteList.SelectedItem = s.Sites[s.Sites.Length - 1];
+                        if (s.Sites.Count > 0) siteList.SelectedItem = s.Sites[s.Sites.Count - 1];
                     }
                 }
             }

@@ -377,8 +377,8 @@ namespace OnlineVideos
                     }
                     else
                     {
-                        if (selectedCategory == null) selectedCategory = selectedSite.Categories[facadeView.SelectedListItem.Label];
-                        else selectedCategory = selectedCategory.SubCategories[facadeView.SelectedListItem.Label];                        
+                        if (selectedCategory == null) selectedCategory = selectedSite.Categories[facadeView.SelectedListItemIndex-1];
+                        else selectedCategory = selectedCategory.SubCategories[facadeView.SelectedListItemIndex - 1];
 
                         if (selectedCategory.HasSubCategories)
                         {                            
@@ -662,7 +662,7 @@ namespace OnlineVideos
             RssLink cat = new RssLink();
             cat.Name = "dynamic";
             cat.Url = "favorites";
-            SelectedSite.Categories.Add(cat.Name, cat);
+            SelectedSite.Categories.Add(cat);
             OnlineVideoSettings.getInstance().moSiteList.Add(SelectedSite.Name, SelectedSite);
 
             if (!String.IsNullOrEmpty(settings.msDownloadDir))
@@ -687,7 +687,7 @@ namespace OnlineVideos
                 cat = new RssLink();
                 cat.Name = "All";
                 cat.Url = settings.msDownloadDir;
-                SelectedSite.Categories.Add(cat.Name, cat);
+                SelectedSite.Categories.Add(cat);
                 OnlineVideoSettings.getInstance().moSiteList.Add(SelectedSite.Name, SelectedSite);
             }
             try
@@ -801,7 +801,7 @@ namespace OnlineVideos
             int numCategoriesWithThumb = 0;
             List<String> imagesUrlList = new List<string>();
 
-            Dictionary<string, Category> categories = null;
+            IList<Category> categories = null;
 
             if (parentCategory == null)
             {
@@ -877,11 +877,11 @@ namespace OnlineVideos
 
                 categories = parentCategory.SubCategories;
             }
-
-            foreach (Category loCat in categories.Values)
+            
+            foreach (Category loCat in categories)
             {
                 loListItem = new GUIListItem(loCat.Name);
-                loListItem.IsFolder = true;
+                loListItem.IsFolder = true;                
                 MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                 // Favorite Catgories can have the same images as the home view
                 if (selectedSite.Util is Sites.FavoriteUtil)
@@ -1744,7 +1744,7 @@ namespace OnlineVideos
         {
             Log.Debug("Showing Search buttons");
             btnSearchCategories.Clear();
-            moSupportedSearchCategoryList = ((ISearch)selectedSite.Util).GetSearchableCategories(selectedSite.CategoriesArray);
+            moSupportedSearchCategoryList = ((ISearch)selectedSite.Util).GetSearchableCategories(selectedSite.Categories);
             GUIControl.AddItemLabelControl(GetID, btnSearchCategories.GetID, "All");
             foreach (String category in moSupportedSearchCategoryList.Keys)
             {

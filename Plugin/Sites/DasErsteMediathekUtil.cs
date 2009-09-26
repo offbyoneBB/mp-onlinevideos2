@@ -87,7 +87,7 @@ namespace OnlineVideos.Sites
                         uint count = 0;
                         if (uint.TryParse(str5.Substring(num2), out count)) item.EstimatedVideoCount = count;
                         item.Url = "http://mediathek.daserste.de" + str6 + "&goto=1";
-                        site.Categories.Add(item.Name, item);
+                        site.Categories.Add(item);
                     }
                 }
                 while (beginIndex > 0);

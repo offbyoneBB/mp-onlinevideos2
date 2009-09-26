@@ -27,29 +27,24 @@ namespace OnlineVideos.Sites
         
         public override int DiscoverDynamicCategories(SiteSettings site)
         {
-            Dictionary<string, List<Category>> dynamicOnes = new Dictionary<string, List<Category>>();
-
-            foreach(RssLink link in site.Categories.Values)
+            foreach(RssLink link in site.Categories)
             {
                 string data = GetWebData(link.Url);
                 if (subCategoriesAvailableRegEx.IsMatch(data))
                 {
-                    dynamicOnes.Add(link.Name, new List<Category>());
+                    link.HasSubCategories = true;
+                    link.SubCategories = new List<Category>();
                     Match match = subCategoriesRegEx.Match(data);
                     while (match.Success)
                     {
-                        dynamicOnes[link.Name].Add(new RssLink() { Name = string.Format("{0}: {1}", link.Name, System.Web.HttpUtility.HtmlDecode(match.Groups["name"].Value)), Url = link.Url.Substring(0, link.Url.LastIndexOf('/')+1) + match.Groups["url"].Value + ".html" });
+                        RssLink subCat = new RssLink() { Name = string.Format("{0}: {1}", link.Name, System.Web.HttpUtility.HtmlDecode(match.Groups["name"].Value)), Url = link.Url.Substring(0, link.Url.LastIndexOf('/')+1) + match.Groups["url"].Value + ".html" };
+                        subCat.ParentCategory = link;
+                        link.SubCategories.Add(subCat);
                         match = match.NextMatch();
                     }
+                    link.SubCategoriesDiscovered = true;
                 }
             }
-
-            foreach (KeyValuePair<string, List<Category>> o in dynamicOnes)
-            {
-                foreach (RssLink link in o.Value) if (!site.Categories.ContainsKey(link.Name)) site.Categories.Add(link.Name, link);                
-            }
-
-            foreach (string key in dynamicOnes.Keys) site.Categories.Remove(key);
 
             site.DynamicCategoriesDiscovered = true;
             return site.Categories.Count;

@@ -302,7 +302,7 @@ namespace OnlineVideos.Sites
                 RssLink item = new RssLink();
                 item.Name = cat.Key;
                 item.Url = String.Format(CATEGORY_FEED, cat.Value);
-                site.Categories.Add(item.Name, item);
+                site.Categories.Add(item);
             }
             site.DynamicCategoriesDiscovered = true;
             return categories.Count;
@@ -504,7 +504,7 @@ namespace OnlineVideos.Sites
 
         #region ISearch Members
 
-        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
         {
             return getYoutubeCategories();            
         }

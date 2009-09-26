@@ -220,22 +220,22 @@ namespace OnlineVideos.Sites
             RssLink link = new RssLink();
             link.Name = "Just Added";
             link.Url = urlJsonJustAdded;
-            site.Categories.Add(link.Name, link);
+            site.Categories.Add(link);
 
             link = new RssLink();
             link.Name = "Exclusive";
             link.Url = urlJsonExlusive;
-            site.Categories.Add(link.Name, link);
+            site.Categories.Add(link);
 
             link = new RssLink();
             link.Name = "Just HD";
             link.Url = urlJsonHD;
-            site.Categories.Add(link.Name, link);
+            site.Categories.Add(link);
 
             link = new RssLink();
             link.Name = "Most Popular";
             link.Url = urlJsonPop;
-            site.Categories.Add(link.Name, link);
+            site.Categories.Add(link);
 
             Dictionary<string, string> genresAndStudiosHash = new Dictionary<string, string>();
 
@@ -262,7 +262,7 @@ namespace OnlineVideos.Sites
                 link = new RssLink();
                 link.Name = aCat.Key;
                 link.Url = aCat.Value;
-                site.Categories.Add(link.Name, link);                
+                site.Categories.Add(link);                
             }
 
             site.DynamicCategoriesDiscovered = true;
@@ -733,7 +733,7 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
         {
             return new Dictionary<string, string>();
         }

@@ -182,7 +182,7 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(Category[] configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
             //foreach (RssLink category in configuredCategories) result.Add(category.Name, category.Url);

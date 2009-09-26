@@ -38,7 +38,7 @@ namespace OnlineVideos.Sites
                     RssLink cat = new RssLink();
                     cat.Name = "Season " + m.Groups["season"].Value;
                     cat.Url = "http://www.southpark.de" + m.Groups["url"].Value;
-                    site.Categories.Add(cat.Name, cat);
+                    site.Categories.Add(cat);
                     m = m.NextMatch();
                 }
 

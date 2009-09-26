@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 using System.Xml.Serialization;
+using System.ComponentModel;
 
 namespace OnlineVideos
 {
@@ -159,8 +160,8 @@ namespace OnlineVideos
                     if (System.IO.File.Exists(filename)) System.IO.File.Delete(filename);
 
                     AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-                    SiteSettings[] sites = new SiteSettings[moSiteList.Count];
-                    moSiteList.Values.CopyTo(sites, 0);
+                    BindingList<SiteSettings> sites = new BindingList<SiteSettings>();
+                    foreach (SiteSettings ss in moSiteList.Values) sites.Add(ss);
                     SerializableSettings s = new SerializableSettings();
                     s.Sites = sites;
                     System.Xml.Serialization.XmlSerializer ser = new System.Xml.Serialization.XmlSerializer(s.GetType());
