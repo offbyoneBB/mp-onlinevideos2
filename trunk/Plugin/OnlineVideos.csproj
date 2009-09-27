@@ -522,6 +522,7 @@
     <None Include="Resources\Down.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\DataSources\RssLink.datasource" />
     <None Include="Resources\ImportXml.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

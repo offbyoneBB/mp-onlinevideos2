@@ -69,24 +69,22 @@ namespace OnlineVideos
 
             // set bindings
             foreach (SiteSettings site in settings.moSiteList.Values) sites.Add(site);
-            bindingSourceSite.DataSource = sites;
-            siteList.DataSource = bindingSourceSite;
+            bindingSourceSiteSettings.DataSource = sites;
 		}
 		
 		void SiteListSelectedIndexChanged(object sender, EventArgs e)
-        {
+        {            
             SiteSettings site = siteList.SelectedItem as SiteSettings;
+            BindingList<RssLink> rssLinks = new BindingList<RssLink>();
+
+            tvGroups_AfterSelect(tvGroups, new TreeViewEventArgs(null, TreeViewAction.Unknown));
+            tvGroups.Nodes.Clear();                
+
             if (site != null)
-            {
-                CategoryList.SelectedIndex = -1;
-                tvGroups_AfterSelect(tvGroups, new TreeViewEventArgs(null, TreeViewAction.Unknown));
-
-                CategoryList.Items.Clear();
-                tvGroups.Nodes.Clear();
-
+            {                                                
                 foreach (Category aCat in site.Categories)
                 {
-                    if (aCat is RssLink) CategoryList.Items.Add(aCat);
+                    if (aCat is RssLink) rssLinks.Add(aCat as RssLink);
                     else if (aCat is Group)
                     {
                         TreeNode aGroupNode = new TreeNode(aCat.Name);
@@ -101,99 +99,59 @@ namespace OnlineVideos
                     }
                 }
                 tvGroups.ExpandAll();
-
-                btnAddRss.Enabled = true;
-                btnAddGroup.Enabled = true;
-
-                btnDeleteSite.Enabled = true;
-                btnSiteUp.Enabled = true;
-                btnSiteDown.Enabled = true;
             }
-            else
-            {
-                btnDeleteSite.Enabled = false;
-                btnSiteUp.Enabled = false;
-                btnSiteDown.Enabled = false;
-            }
+
+            bindingSourceRssLink.DataSource = rssLinks;
+            RssLinkListSelectedIndexChanged(this, EventArgs.Empty);
+
+            btnAddRss.Enabled = site != null;
+            btnAddGroup.Enabled = site != null;
+
+            btnDeleteSite.Enabled = site != null;
+            btnSiteUp.Enabled = site != null;
+            btnSiteDown.Enabled = site != null;
 		}
 		
-		void CategoryListSelectedIndexChanged(object sender, EventArgs e)
-		{
-            if (CategoryList.SelectedIndex > -1)
-            {                
-                RssLink link = CategoryList.SelectedItem as RssLink;
-                txtRssUrl.Text = link.Url;
-                txtRssName.Text = link.Name;
-                txtRssThumb.Text = link.Thumb;
-                txtRssUrl.Enabled = true;
-                txtRssName.Enabled = true;
-                txtRssThumb.Enabled = true;
-                btnSaveRss.Enabled = true;
-                btnDeleteRss.Enabled = true;
-            }
-            else
-            {
-                txtRssUrl.Text = "";
-                txtRssName.Text = "";
-                txtRssThumb.Text = "";
-                txtRssUrl.Enabled = false;
-                txtRssName.Enabled = false;
-                txtRssThumb.Enabled = false;
-                btnSaveRss.Enabled = false;
-                btnDeleteRss.Enabled = false;
-            }
+		void RssLinkListSelectedIndexChanged(object sender, EventArgs e)
+		{                        
+            // enable/disable all TextBoxes and Buttons for RssLink if one/none is selected
+            txtRssUrl.Enabled = RssLinkList.SelectedIndex > -1;
+            txtRssName.Enabled = RssLinkList.SelectedIndex > -1;
+            txtRssThumb.Enabled = RssLinkList.SelectedIndex > -1;
+            btnDeleteRss.Enabled = RssLinkList.SelectedIndex > -1;
 		}		
-		
-		void BtnRssSaveClick(object sender, EventArgs e)
-		{
-            if (CategoryList.SelectedIndex > -1)
-            {
-                SiteSettings site = siteList.SelectedItem as SiteSettings;
-                RssLink link = CategoryList.SelectedItem as RssLink;
-                // remove old category from site
-                site.Categories.Remove(link);
-                // set new properties
-                link.Name = txtRssName.Text;
-                link.Url = txtRssUrl.Text;
-                link.Thumb = txtRssThumb.Text != "" ? txtRssThumb.Text : null;
-                // reset the item in the listbox
-                CategoryList.Items[CategoryList.SelectedIndex] = link;
-                // add new category to the site
-                site.Categories.Add(link);
-                // unselect
-                CategoryList.SelectedIndex = -1;
-            }
-		}
-		
+				
 		void BtnAddRssClick(object sender, EventArgs e)
 		{   
             SiteSettings site = siteList.SelectedItem as SiteSettings;
-            RssLink link = new RssLink();
-            link.Name = "new";
-            link.Url = "http://";
+            RssLink link = new RssLink() { Name = "new", Url = "http://" };
             site.Categories.Add(link);
-            CategoryList.Items.Add(link);
-            CategoryList.SelectedIndex = CategoryList.Items.Count - 1;
+            ((CurrencyManager)BindingContext[bindingSourceRssLink]).List.Add(link);
+            RssLinkList.SelectedIndex = RssLinkList.Items.Count - 1;
             txtRssName.Focus();
 		}
-		
-		
+				
 		void BtnDeleteRssClick(object sender, EventArgs e)
 		{
-			if(CategoryList.SelectedIndex>-1)
+			if(RssLinkList.SelectedIndex > -1)
             {
                 SiteSettings site = siteList.SelectedItem as SiteSettings;
-                RssLink link = CategoryList.SelectedItem as RssLink;
-				site.Categories.Remove(link);
-				CategoryList.Items.RemoveAt(CategoryList.SelectedIndex);
-				txtRssName.Text = "";
-				txtRssUrl.Text = "";                
+                RssLink link = RssLinkList.SelectedItem as RssLink;
+                ((CurrencyManager)BindingContext[bindingSourceRssLink]).RemoveAt(RssLinkList.SelectedIndex);
+                site.Categories.Remove(link);
 			}			
 		}
 		
 		void ConfigurationFormClosing(object sender, FormClosingEventArgs e)
 		{
-            if (DialogResult == DialogResult.OK)
+            DialogResult dr = this.DialogResult;
+
+            if (DialogResult == DialogResult.Cancel)
+            {
+                dr = MessageBox.Show("If you want to save your changes press Yes.", "Save Changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            }
+
+            if (dr == DialogResult.OK || dr == DialogResult.Yes)
             {
                 OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
                 String lsFilter = txtFilters.Text;
@@ -213,13 +171,7 @@ namespace OnlineVideos
 
                 settings.Save();
             }
-		}        
-        
-        private void btnYahooConfig_Click(object sender, EventArgs e)
-        {
-            ConfigurationYahoo yahoo = new ConfigurationYahoo();
-            yahoo.ShowDialog();
-        }
+		}               
 
         private void chkUseAgeConfirmation_CheckedChanged(object sender, EventArgs e)
         {
@@ -365,6 +317,12 @@ namespace OnlineVideos
             }
         }
 
+        private void btnYahooConfig_Click(object sender, EventArgs e)
+        {
+            ConfigurationYahoo yahoo = new ConfigurationYahoo();
+            yahoo.ShowDialog();
+        }
+
         void SetInfosFromCodecs()
         {
             CodecConfiguration cc = OnlineVideoSettings.getInstance().CodecConfiguration;
@@ -395,7 +353,7 @@ namespace OnlineVideos
             site.Name = "New";
             site.UtilName = "GenericSite";
             site.IsEnabled = true;
-            bindingSourceSite.Add(site);
+            bindingSourceSiteSettings.Add(site);
             siteList.SelectedItem = site;
             txtSiteName.Focus();
         }
@@ -404,7 +362,7 @@ namespace OnlineVideos
         {
             OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
             SiteSettings site = siteList.SelectedItem as SiteSettings;            
-            bindingSourceSite.Remove(site);            
+            bindingSourceSiteSettings.Remove(site);            
         }
 
         private void btnSiteUp_Click(object sender, EventArgs e)

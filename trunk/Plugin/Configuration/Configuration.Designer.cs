@@ -43,9 +43,10 @@ namespace OnlineVideos
             this.cmbTrailerSize = new System.Windows.Forms.ComboBox();
             this.txtDownloadDir = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.CategoryList = new System.Windows.Forms.ListBox();
+            this.RssLinkList = new System.Windows.Forms.ListBox();
+            this.bindingSourceRssLink = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingSourceSiteSettings = new System.Windows.Forms.BindingSource(this.components);
             this.txtRssUrl = new System.Windows.Forms.TextBox();
-            this.btnSaveRss = new System.Windows.Forms.Button();
             this.label26 = new System.Windows.Forms.Label();
             this.txtRssName = new System.Windows.Forms.TextBox();
             this.label25 = new System.Windows.Forms.Label();
@@ -61,7 +62,6 @@ namespace OnlineVideos
             this.btnDeleteSite = new System.Windows.Forms.ToolStripButton();
             this.label18 = new System.Windows.Forms.Label();
             this.cbLanguages = new System.Windows.Forms.ComboBox();
-            this.bindingSourceSite = new System.Windows.Forms.BindingSource(this.components);
             this.cbSiteUtil = new System.Windows.Forms.ComboBox();
             this.tbxSearchUrl = new System.Windows.Forms.TextBox();
             this.lblSearchUrl = new System.Windows.Forms.Label();
@@ -140,6 +140,8 @@ namespace OnlineVideos
             this.chkFLVSplitterInstalled = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.toolStripContainer3.ContentPanel.SuspendLayout();
             this.toolStripContainer3.LeftToolStripPanel.SuspendLayout();
@@ -147,7 +149,6 @@ namespace OnlineVideos
             this.toolStripContainer3.SuspendLayout();
             this.toolStripSiteUpDown.SuspendLayout();
             this.toolStripSites.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSite)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageRssLinks.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
@@ -169,9 +170,10 @@ namespace OnlineVideos
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 168);
+            this.label4.Location = new System.Drawing.Point(6, 136);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(169, 17);
+            this.label4.Size = new System.Drawing.Size(126, 13);
             this.label4.TabIndex = 22;
             this.label4.Text = "AppleTrailers Max Quality";
             // 
@@ -181,78 +183,67 @@ namespace OnlineVideos
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbTrailerSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTrailerSize.FormattingEnabled = true;
-            this.cmbTrailerSize.Location = new System.Drawing.Point(300, 166);
-            this.cmbTrailerSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.cmbTrailerSize.Location = new System.Drawing.Point(225, 135);
+            this.cmbTrailerSize.Margin = new System.Windows.Forms.Padding(2);
             this.cmbTrailerSize.Name = "cmbTrailerSize";
-            this.cmbTrailerSize.Size = new System.Drawing.Size(322, 24);
+            this.cmbTrailerSize.Size = new System.Drawing.Size(242, 21);
             this.cmbTrailerSize.TabIndex = 21;
             // 
             // txtDownloadDir
             // 
             this.txtDownloadDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDownloadDir.Location = new System.Drawing.Point(300, 72);
-            this.txtDownloadDir.Margin = new System.Windows.Forms.Padding(4);
+            this.txtDownloadDir.Location = new System.Drawing.Point(225, 58);
             this.txtDownloadDir.Name = "txtDownloadDir";
-            this.txtDownloadDir.Size = new System.Drawing.Size(282, 22);
+            this.txtDownloadDir.Size = new System.Drawing.Size(212, 20);
             this.txtDownloadDir.TabIndex = 20;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 75);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Location = new System.Drawing.Point(6, 61);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(118, 17);
+            this.label3.Size = new System.Drawing.Size(90, 13);
             this.label3.TabIndex = 19;
             this.label3.Text = "Download Folder:";
             // 
-            // CategoryList
+            // RssLinkList
             // 
-            this.CategoryList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CategoryList.FormattingEnabled = true;
-            this.CategoryList.ItemHeight = 16;
-            this.CategoryList.Location = new System.Drawing.Point(0, 0);
-            this.CategoryList.Margin = new System.Windows.Forms.Padding(4);
-            this.CategoryList.Name = "CategoryList";
-            this.CategoryList.Size = new System.Drawing.Size(198, 244);
-            this.CategoryList.TabIndex = 6;
-            this.CategoryList.SelectedIndexChanged += new System.EventHandler(this.CategoryListSelectedIndexChanged);
+            this.RssLinkList.DataSource = this.bindingSourceRssLink;
+            this.RssLinkList.DisplayMember = "Name";
+            this.RssLinkList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RssLinkList.FormattingEnabled = true;
+            this.RssLinkList.Location = new System.Drawing.Point(0, 0);
+            this.RssLinkList.Name = "RssLinkList";
+            this.RssLinkList.Size = new System.Drawing.Size(148, 186);
+            this.RssLinkList.TabIndex = 6;
+            this.RssLinkList.SelectedIndexChanged += new System.EventHandler(this.RssLinkListSelectedIndexChanged);
+            // 
+            // bindingSourceRssLink
+            // 
+            this.bindingSourceRssLink.DataSource = typeof(OnlineVideos.RssLink);
+            // 
+            // bindingSourceSiteSettings
+            // 
+            this.bindingSourceSiteSettings.DataSource = typeof(OnlineVideos.SiteSettings);
             // 
             // txtRssUrl
             // 
             this.txtRssUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRssUrl.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceRssLink, "Url", true));
             this.txtRssUrl.Enabled = false;
-            this.txtRssUrl.Location = new System.Drawing.Point(325, 62);
-            this.txtRssUrl.Margin = new System.Windows.Forms.Padding(4);
+            this.txtRssUrl.Location = new System.Drawing.Point(244, 50);
             this.txtRssUrl.Name = "txtRssUrl";
-            this.txtRssUrl.Size = new System.Drawing.Size(289, 22);
+            this.txtRssUrl.Size = new System.Drawing.Size(218, 20);
             this.txtRssUrl.TabIndex = 16;
-            // 
-            // btnSaveRss
-            // 
-            this.btnSaveRss.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveRss.Enabled = false;
-            this.btnSaveRss.Image = global::OnlineVideos.Properties.Resources.Save;
-            this.btnSaveRss.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnSaveRss.Location = new System.Drawing.Point(452, 122);
-            this.btnSaveRss.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSaveRss.Name = "btnSaveRss";
-            this.btnSaveRss.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.btnSaveRss.Size = new System.Drawing.Size(162, 28);
-            this.btnSaveRss.TabIndex = 13;
-            this.btnSaveRss.Text = "Save RSS Link";
-            this.btnSaveRss.UseVisualStyleBackColor = true;
-            this.btnSaveRss.Click += new System.EventHandler(this.BtnRssSaveClick);
             // 
             // label26
             // 
             this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(214, 37);
-            this.label26.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label26.Location = new System.Drawing.Point(160, 30);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(77, 17);
+            this.label26.Size = new System.Drawing.Size(60, 13);
             this.label26.TabIndex = 9;
             this.label26.Text = "RSS Name";
             // 
@@ -260,20 +251,19 @@ namespace OnlineVideos
             // 
             this.txtRssName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRssName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceRssLink, "Name", true));
             this.txtRssName.Enabled = false;
-            this.txtRssName.Location = new System.Drawing.Point(325, 34);
-            this.txtRssName.Margin = new System.Windows.Forms.Padding(4);
+            this.txtRssName.Location = new System.Drawing.Point(244, 28);
             this.txtRssName.Name = "txtRssName";
-            this.txtRssName.Size = new System.Drawing.Size(289, 22);
+            this.txtRssName.Size = new System.Drawing.Size(218, 20);
             this.txtRssName.TabIndex = 15;
             // 
             // label25
             // 
             this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(214, 65);
-            this.label25.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label25.Location = new System.Drawing.Point(160, 53);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(58, 17);
+            this.label25.Size = new System.Drawing.Size(45, 13);
             this.label25.TabIndex = 10;
             this.label25.Text = "RSS Url";
             // 
@@ -296,11 +286,9 @@ namespace OnlineVideos
             this.groupBox1.Controls.Add(this.label28);
             this.groupBox1.Controls.Add(this.label27);
             this.groupBox1.Controls.Add(this.chkEnabled);
-            this.groupBox1.Location = new System.Drawing.Point(7, 7);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox1.Location = new System.Drawing.Point(5, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(628, 264);
+            this.groupBox1.Size = new System.Drawing.Size(471, 214);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Sites";
@@ -312,15 +300,17 @@ namespace OnlineVideos
             // toolStripContainer3.ContentPanel
             // 
             this.toolStripContainer3.ContentPanel.Controls.Add(this.siteList);
-            this.toolStripContainer3.ContentPanel.Size = new System.Drawing.Size(177, 217);
+            this.toolStripContainer3.ContentPanel.Margin = new System.Windows.Forms.Padding(2);
+            this.toolStripContainer3.ContentPanel.Size = new System.Drawing.Size(127, 172);
             // 
             // toolStripContainer3.LeftToolStripPanel
             // 
             this.toolStripContainer3.LeftToolStripPanel.Controls.Add(this.toolStripSiteUpDown);
-            this.toolStripContainer3.Location = new System.Drawing.Point(7, 22);
+            this.toolStripContainer3.Location = new System.Drawing.Point(5, 18);
+            this.toolStripContainer3.Margin = new System.Windows.Forms.Padding(2);
             this.toolStripContainer3.Name = "toolStripContainer3";
             this.toolStripContainer3.RightToolStripPanelVisible = false;
-            this.toolStripContainer3.Size = new System.Drawing.Size(201, 242);
+            this.toolStripContainer3.Size = new System.Drawing.Size(151, 197);
             this.toolStripContainer3.TabIndex = 24;
             this.toolStripContainer3.Text = "toolStripContainer3";
             // 
@@ -330,13 +320,13 @@ namespace OnlineVideos
             // 
             // siteList
             // 
+            this.siteList.DataSource = this.bindingSourceSiteSettings;
+            this.siteList.DisplayMember = "Name";
             this.siteList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.siteList.FormattingEnabled = true;
-            this.siteList.ItemHeight = 16;
             this.siteList.Location = new System.Drawing.Point(0, 0);
-            this.siteList.Margin = new System.Windows.Forms.Padding(4);
             this.siteList.Name = "siteList";
-            this.siteList.Size = new System.Drawing.Size(177, 212);
+            this.siteList.Size = new System.Drawing.Size(127, 160);
             this.siteList.TabIndex = 5;
             this.siteList.SelectedIndexChanged += new System.EventHandler(this.SiteListSelectedIndexChanged);
             // 
@@ -349,7 +339,7 @@ namespace OnlineVideos
             this.btnSiteDown});
             this.toolStripSiteUpDown.Location = new System.Drawing.Point(0, 0);
             this.toolStripSiteUpDown.Name = "toolStripSiteUpDown";
-            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 242);
+            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 172);
             this.toolStripSiteUpDown.Stretch = true;
             this.toolStripSiteUpDown.TabIndex = 0;
             // 
@@ -423,58 +413,52 @@ namespace OnlineVideos
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(218, 236);
-            this.label18.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label18.Location = new System.Drawing.Point(164, 192);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(72, 17);
+            this.label18.Size = new System.Drawing.Size(55, 13);
             this.label18.TabIndex = 23;
             this.label18.Text = "Language";
             // 
             // cbLanguages
             // 
-            this.cbLanguages.DataBindings.Add(new System.Windows.Forms.Binding("SelectedItem", this.bindingSourceSite, "Language", true));
+            this.cbLanguages.DataBindings.Add(new System.Windows.Forms.Binding("SelectedItem", this.bindingSourceSiteSettings, "Language", true));
             this.cbLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLanguages.FormattingEnabled = true;
-            this.cbLanguages.Location = new System.Drawing.Point(329, 233);
+            this.cbLanguages.Location = new System.Drawing.Point(247, 189);
+            this.cbLanguages.Margin = new System.Windows.Forms.Padding(2);
             this.cbLanguages.Name = "cbLanguages";
-            this.cbLanguages.Size = new System.Drawing.Size(69, 24);
+            this.cbLanguages.Size = new System.Drawing.Size(53, 21);
             this.cbLanguages.TabIndex = 22;
-            // 
-            // bindingSourceSite
-            // 
-            this.bindingSourceSite.DataSource = typeof(OnlineVideos.SiteSettings);
             // 
             // cbSiteUtil
             // 
             this.cbSiteUtil.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbSiteUtil.DataBindings.Add(new System.Windows.Forms.Binding("SelectedItem", this.bindingSourceSite, "UtilName", true));
+            this.cbSiteUtil.DataBindings.Add(new System.Windows.Forms.Binding("SelectedItem", this.bindingSourceSiteSettings, "UtilName", true));
             this.cbSiteUtil.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbSiteUtil.FormattingEnabled = true;
-            this.cbSiteUtil.Location = new System.Drawing.Point(329, 106);
-            this.cbSiteUtil.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.cbSiteUtil.Location = new System.Drawing.Point(247, 86);
+            this.cbSiteUtil.Margin = new System.Windows.Forms.Padding(2);
             this.cbSiteUtil.Name = "cbSiteUtil";
-            this.cbSiteUtil.Size = new System.Drawing.Size(291, 24);
+            this.cbSiteUtil.Size = new System.Drawing.Size(219, 21);
             this.cbSiteUtil.TabIndex = 21;
             // 
             // tbxSearchUrl
             // 
             this.tbxSearchUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxSearchUrl.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSite, "SearchUrl", true));
-            this.tbxSearchUrl.Location = new System.Drawing.Point(329, 204);
-            this.tbxSearchUrl.Margin = new System.Windows.Forms.Padding(4);
+            this.tbxSearchUrl.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSiteSettings, "SearchUrl", true));
+            this.tbxSearchUrl.Location = new System.Drawing.Point(247, 166);
             this.tbxSearchUrl.Name = "tbxSearchUrl";
-            this.tbxSearchUrl.Size = new System.Drawing.Size(291, 22);
+            this.tbxSearchUrl.Size = new System.Drawing.Size(219, 20);
             this.tbxSearchUrl.TabIndex = 20;
             // 
             // lblSearchUrl
             // 
             this.lblSearchUrl.AutoSize = true;
-            this.lblSearchUrl.Location = new System.Drawing.Point(218, 207);
-            this.lblSearchUrl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSearchUrl.Location = new System.Drawing.Point(164, 168);
             this.lblSearchUrl.Name = "lblSearchUrl";
-            this.lblSearchUrl.Size = new System.Drawing.Size(75, 17);
+            this.lblSearchUrl.Size = new System.Drawing.Size(57, 13);
             this.lblSearchUrl.TabIndex = 19;
             this.lblSearchUrl.Text = "Search Url";
             // 
@@ -482,32 +466,29 @@ namespace OnlineVideos
             // 
             this.txtPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPassword.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSite, "Password", true));
-            this.txtPassword.Location = new System.Drawing.Point(329, 172);
-            this.txtPassword.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPassword.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSiteSettings, "Password", true));
+            this.txtPassword.Location = new System.Drawing.Point(247, 140);
             this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(291, 22);
+            this.txtPassword.Size = new System.Drawing.Size(219, 20);
             this.txtPassword.TabIndex = 18;
             // 
             // txtUserId
             // 
             this.txtUserId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtUserId.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSite, "Username", true));
-            this.txtUserId.Location = new System.Drawing.Point(329, 141);
-            this.txtUserId.Margin = new System.Windows.Forms.Padding(4);
+            this.txtUserId.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSiteSettings, "Username", true));
+            this.txtUserId.Location = new System.Drawing.Point(247, 115);
             this.txtUserId.Name = "txtUserId";
-            this.txtUserId.Size = new System.Drawing.Size(291, 22);
+            this.txtUserId.Size = new System.Drawing.Size(219, 20);
             this.txtUserId.TabIndex = 17;
             // 
             // chkAgeConfirm
             // 
             this.chkAgeConfirm.AutoSize = true;
-            this.chkAgeConfirm.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.bindingSourceSite, "ConfirmAge", true));
-            this.chkAgeConfirm.Location = new System.Drawing.Point(329, 50);
-            this.chkAgeConfirm.Margin = new System.Windows.Forms.Padding(4);
+            this.chkAgeConfirm.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.bindingSourceSiteSettings, "ConfirmAge", true));
+            this.chkAgeConfirm.Location = new System.Drawing.Point(247, 41);
             this.chkAgeConfirm.Name = "chkAgeConfirm";
-            this.chkAgeConfirm.Size = new System.Drawing.Size(107, 21);
+            this.chkAgeConfirm.Size = new System.Drawing.Size(83, 17);
             this.chkAgeConfirm.TabIndex = 16;
             this.chkAgeConfirm.Text = "Confirm Age";
             this.chkAgeConfirm.UseVisualStyleBackColor = true;
@@ -515,20 +496,18 @@ namespace OnlineVideos
             // label30
             // 
             this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(218, 175);
-            this.label30.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label30.Location = new System.Drawing.Point(164, 142);
             this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(69, 17);
+            this.label30.Size = new System.Drawing.Size(53, 13);
             this.label30.TabIndex = 15;
             this.label30.Text = "Password";
             // 
             // label29
             // 
             this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(218, 143);
-            this.label29.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label29.Location = new System.Drawing.Point(164, 116);
             this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(49, 17);
+            this.label29.Size = new System.Drawing.Size(38, 13);
             this.label29.TabIndex = 14;
             this.label29.Text = "UserId";
             // 
@@ -536,41 +515,37 @@ namespace OnlineVideos
             // 
             this.txtSiteName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSiteName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSite, "Name", true));
-            this.txtSiteName.Location = new System.Drawing.Point(329, 77);
-            this.txtSiteName.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSiteName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSiteSettings, "Name", true));
+            this.txtSiteName.Location = new System.Drawing.Point(247, 63);
             this.txtSiteName.Name = "txtSiteName";
-            this.txtSiteName.Size = new System.Drawing.Size(291, 22);
+            this.txtSiteName.Size = new System.Drawing.Size(219, 20);
             this.txtSiteName.TabIndex = 11;
             // 
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(218, 109);
-            this.label28.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label28.Location = new System.Drawing.Point(164, 89);
             this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(60, 17);
+            this.label28.Size = new System.Drawing.Size(46, 13);
             this.label28.TabIndex = 10;
             this.label28.Text = "Site Util:";
             // 
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(218, 81);
-            this.label27.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label27.Location = new System.Drawing.Point(164, 66);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(77, 17);
+            this.label27.Size = new System.Drawing.Size(59, 13);
             this.label27.TabIndex = 9;
             this.label27.Text = "Site Name:";
             // 
             // chkEnabled
             // 
             this.chkEnabled.AutoSize = true;
-            this.chkEnabled.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.bindingSourceSite, "IsEnabled", true));
-            this.chkEnabled.Location = new System.Drawing.Point(218, 50);
-            this.chkEnabled.Margin = new System.Windows.Forms.Padding(4);
+            this.chkEnabled.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.bindingSourceSiteSettings, "IsEnabled", true));
+            this.chkEnabled.Location = new System.Drawing.Point(164, 41);
             this.chkEnabled.Name = "chkEnabled";
-            this.chkEnabled.Size = new System.Drawing.Size(82, 21);
+            this.chkEnabled.Size = new System.Drawing.Size(65, 17);
             this.chkEnabled.TabIndex = 8;
             this.chkEnabled.Text = "Enabled";
             this.chkEnabled.UseVisualStyleBackColor = true;
@@ -579,20 +554,18 @@ namespace OnlineVideos
             // 
             this.txtFilters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFilters.Location = new System.Drawing.Point(300, 136);
-            this.txtFilters.Margin = new System.Windows.Forms.Padding(4);
+            this.txtFilters.Location = new System.Drawing.Point(225, 110);
             this.txtFilters.Name = "txtFilters";
-            this.txtFilters.Size = new System.Drawing.Size(322, 22);
+            this.txtFilters.Size = new System.Drawing.Size(242, 20);
             this.txtFilters.TabIndex = 4;
             this.toolTip1.SetToolTip(this.txtFilters, "Comma seperated list of words that will be used to filter out videos.");
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 139);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(6, 113);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(206, 17);
+            this.label2.Size = new System.Drawing.Size(155, 13);
             this.label2.TabIndex = 3;
             this.label2.Text = "Filter out videos with these tags";
             // 
@@ -600,39 +573,35 @@ namespace OnlineVideos
             // 
             this.txtThumbLoc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtThumbLoc.Location = new System.Drawing.Point(300, 104);
-            this.txtThumbLoc.Margin = new System.Windows.Forms.Padding(4);
+            this.txtThumbLoc.Location = new System.Drawing.Point(225, 84);
             this.txtThumbLoc.Name = "txtThumbLoc";
-            this.txtThumbLoc.Size = new System.Drawing.Size(322, 22);
+            this.txtThumbLoc.Size = new System.Drawing.Size(242, 20);
             this.txtThumbLoc.TabIndex = 2;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 107);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(6, 87);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(136, 17);
+            this.label1.Size = new System.Drawing.Size(103, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Thumbnail Location:";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 43);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Location = new System.Drawing.Point(6, 35);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(145, 17);
+            this.label5.Size = new System.Drawing.Size(109, 13);
             this.label5.TabIndex = 23;
             this.label5.Text = "Use Age Confirmation";
             // 
             // chkUseAgeConfirmation
             // 
             this.chkUseAgeConfirmation.AutoSize = true;
-            this.chkUseAgeConfirmation.Location = new System.Drawing.Point(300, 43);
-            this.chkUseAgeConfirmation.Margin = new System.Windows.Forms.Padding(4);
+            this.chkUseAgeConfirmation.Location = new System.Drawing.Point(225, 35);
             this.chkUseAgeConfirmation.Name = "chkUseAgeConfirmation";
-            this.chkUseAgeConfirmation.Size = new System.Drawing.Size(18, 17);
+            this.chkUseAgeConfirmation.Size = new System.Drawing.Size(15, 14);
             this.chkUseAgeConfirmation.TabIndex = 24;
             this.chkUseAgeConfirmation.UseVisualStyleBackColor = true;
             this.chkUseAgeConfirmation.CheckedChanged += new System.EventHandler(this.chkUseAgeConfirmation_CheckedChanged);
@@ -643,11 +612,10 @@ namespace OnlineVideos
             this.btnSave.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnSave.Image = global::OnlineVideos.Properties.Resources.Save;
             this.btnSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnSave.Location = new System.Drawing.Point(386, 545);
-            this.btnSave.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSave.Location = new System.Drawing.Point(290, 440);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.btnSave.Size = new System.Drawing.Size(120, 28);
+            this.btnSave.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.btnSave.Size = new System.Drawing.Size(90, 25);
             this.btnSave.TabIndex = 25;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -655,10 +623,9 @@ namespace OnlineVideos
             // btnYahooConfig
             // 
             this.btnYahooConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnYahooConfig.Location = new System.Drawing.Point(455, 261);
-            this.btnYahooConfig.Margin = new System.Windows.Forms.Padding(4);
+            this.btnYahooConfig.Location = new System.Drawing.Point(341, 212);
             this.btnYahooConfig.Name = "btnYahooConfig";
-            this.btnYahooConfig.Size = new System.Drawing.Size(167, 28);
+            this.btnYahooConfig.Size = new System.Drawing.Size(125, 23);
             this.btnYahooConfig.TabIndex = 26;
             this.btnYahooConfig.Text = "Yahoo Configuration";
             this.btnYahooConfig.UseVisualStyleBackColor = true;
@@ -672,11 +639,11 @@ namespace OnlineVideos
             this.tabControl1.Controls.Add(this.tabPageRssLinks);
             this.tabControl1.Controls.Add(this.tabChannels);
             this.tabControl1.ImageList = this.imageList1;
-            this.tabControl1.Location = new System.Drawing.Point(7, 277);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabControl1.Location = new System.Drawing.Point(5, 225);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(628, 313);
+            this.tabControl1.Size = new System.Drawing.Size(471, 254);
             this.tabControl1.TabIndex = 27;
             // 
             // tabPageRssLinks
@@ -685,16 +652,15 @@ namespace OnlineVideos
             this.tabPageRssLinks.Controls.Add(this.txtRssThumb);
             this.tabPageRssLinks.Controls.Add(this.label19);
             this.tabPageRssLinks.Controls.Add(this.txtRssUrl);
-            this.tabPageRssLinks.Controls.Add(this.btnSaveRss);
             this.tabPageRssLinks.Controls.Add(this.label26);
             this.tabPageRssLinks.Controls.Add(this.txtRssName);
             this.tabPageRssLinks.Controls.Add(this.label25);
             this.tabPageRssLinks.ImageIndex = 0;
-            this.tabPageRssLinks.Location = new System.Drawing.Point(4, 25);
-            this.tabPageRssLinks.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPageRssLinks.Location = new System.Drawing.Point(4, 23);
+            this.tabPageRssLinks.Margin = new System.Windows.Forms.Padding(2);
             this.tabPageRssLinks.Name = "tabPageRssLinks";
-            this.tabPageRssLinks.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabPageRssLinks.Size = new System.Drawing.Size(620, 284);
+            this.tabPageRssLinks.Padding = new System.Windows.Forms.Padding(2);
+            this.tabPageRssLinks.Size = new System.Drawing.Size(463, 227);
             this.tabPageRssLinks.TabIndex = 0;
             this.tabPageRssLinks.Text = "RssLinks";
             this.tabPageRssLinks.UseVisualStyleBackColor = true;
@@ -707,13 +673,15 @@ namespace OnlineVideos
             // 
             // toolStripContainer1.ContentPanel
             // 
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.CategoryList);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(198, 245);
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.RssLinkList);
+            this.toolStripContainer1.ContentPanel.Margin = new System.Windows.Forms.Padding(2);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(148, 196);
             this.toolStripContainer1.LeftToolStripPanelVisible = false;
-            this.toolStripContainer1.Location = new System.Drawing.Point(6, 9);
+            this.toolStripContainer1.Location = new System.Drawing.Point(4, 7);
+            this.toolStripContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.toolStripContainer1.Name = "toolStripContainer1";
             this.toolStripContainer1.RightToolStripPanelVisible = false;
-            this.toolStripContainer1.Size = new System.Drawing.Size(198, 270);
+            this.toolStripContainer1.Size = new System.Drawing.Size(148, 221);
             this.toolStripContainer1.TabIndex = 34;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -759,20 +727,19 @@ namespace OnlineVideos
             // 
             this.txtRssThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRssThumb.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceRssLink, "Thumb", true));
             this.txtRssThumb.Enabled = false;
-            this.txtRssThumb.Location = new System.Drawing.Point(325, 92);
-            this.txtRssThumb.Margin = new System.Windows.Forms.Padding(4);
+            this.txtRssThumb.Location = new System.Drawing.Point(244, 75);
             this.txtRssThumb.Name = "txtRssThumb";
-            this.txtRssThumb.Size = new System.Drawing.Size(289, 22);
+            this.txtRssThumb.Size = new System.Drawing.Size(218, 20);
             this.txtRssThumb.TabIndex = 19;
             // 
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(214, 95);
-            this.label19.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label19.Location = new System.Drawing.Point(160, 77);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(74, 17);
+            this.label19.Size = new System.Drawing.Size(56, 13);
             this.label19.TabIndex = 18;
             this.label19.Text = "Thumb Url";
             // 
@@ -791,11 +758,11 @@ namespace OnlineVideos
             this.tabChannels.Controls.Add(this.label8);
             this.tabChannels.Controls.Add(this.tbxChannelName);
             this.tabChannels.ImageIndex = 1;
-            this.tabChannels.Location = new System.Drawing.Point(4, 25);
-            this.tabChannels.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabChannels.Location = new System.Drawing.Point(4, 23);
+            this.tabChannels.Margin = new System.Windows.Forms.Padding(2);
             this.tabChannels.Name = "tabChannels";
-            this.tabChannels.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabChannels.Size = new System.Drawing.Size(620, 284);
+            this.tabChannels.Padding = new System.Windows.Forms.Padding(2);
+            this.tabChannels.Size = new System.Drawing.Size(463, 227);
             this.tabChannels.TabIndex = 1;
             this.tabChannels.Text = "Channels";
             this.tabChannels.UseVisualStyleBackColor = true;
@@ -808,10 +775,12 @@ namespace OnlineVideos
             // toolStripContainer2.ContentPanel
             // 
             this.toolStripContainer2.ContentPanel.Controls.Add(this.tvGroups);
-            this.toolStripContainer2.ContentPanel.Size = new System.Drawing.Size(198, 248);
-            this.toolStripContainer2.Location = new System.Drawing.Point(6, 6);
+            this.toolStripContainer2.ContentPanel.Margin = new System.Windows.Forms.Padding(2);
+            this.toolStripContainer2.ContentPanel.Size = new System.Drawing.Size(148, 198);
+            this.toolStripContainer2.Location = new System.Drawing.Point(4, 5);
+            this.toolStripContainer2.Margin = new System.Windows.Forms.Padding(2);
             this.toolStripContainer2.Name = "toolStripContainer2";
-            this.toolStripContainer2.Size = new System.Drawing.Size(198, 273);
+            this.toolStripContainer2.Size = new System.Drawing.Size(148, 223);
             this.toolStripContainer2.TabIndex = 30;
             this.toolStripContainer2.Text = "toolStripContainer2";
             // 
@@ -823,9 +792,9 @@ namespace OnlineVideos
             // 
             this.tvGroups.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tvGroups.Location = new System.Drawing.Point(0, 0);
-            this.tvGroups.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tvGroups.Margin = new System.Windows.Forms.Padding(2);
             this.tvGroups.Name = "tvGroups";
-            this.tvGroups.Size = new System.Drawing.Size(198, 248);
+            this.tvGroups.Size = new System.Drawing.Size(148, 198);
             this.tvGroups.TabIndex = 0;
             this.tvGroups.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvGroups_AfterSelect);
             // 
@@ -880,29 +849,26 @@ namespace OnlineVideos
             this.tbxChannelThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxChannelThumb.Enabled = false;
-            this.tbxChannelThumb.Location = new System.Drawing.Point(325, 61);
-            this.tbxChannelThumb.Margin = new System.Windows.Forms.Padding(4);
+            this.tbxChannelThumb.Location = new System.Drawing.Point(244, 50);
             this.tbxChannelThumb.Name = "tbxChannelThumb";
-            this.tbxChannelThumb.Size = new System.Drawing.Size(288, 22);
+            this.tbxChannelThumb.Size = new System.Drawing.Size(217, 20);
             this.tbxChannelThumb.TabIndex = 29;
             // 
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(211, 64);
-            this.label20.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label20.Location = new System.Drawing.Point(158, 52);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(74, 17);
+            this.label20.Size = new System.Drawing.Size(56, 13);
             this.label20.TabIndex = 28;
             this.label20.Text = "Thumb Url";
             // 
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(211, 173);
-            this.label17.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label17.Location = new System.Drawing.Point(158, 141);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(74, 17);
+            this.label17.Size = new System.Drawing.Size(56, 13);
             this.label17.TabIndex = 26;
             this.label17.Text = "Thumb Url";
             // 
@@ -911,10 +877,9 @@ namespace OnlineVideos
             this.tbxStreamThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxStreamThumb.Enabled = false;
-            this.tbxStreamThumb.Location = new System.Drawing.Point(325, 170);
-            this.tbxStreamThumb.Margin = new System.Windows.Forms.Padding(4);
+            this.tbxStreamThumb.Location = new System.Drawing.Point(244, 138);
             this.tbxStreamThumb.Name = "tbxStreamThumb";
-            this.tbxStreamThumb.Size = new System.Drawing.Size(288, 22);
+            this.tbxStreamThumb.Size = new System.Drawing.Size(217, 20);
             this.tbxStreamThumb.TabIndex = 27;
             // 
             // btnSaveChannel
@@ -923,11 +888,10 @@ namespace OnlineVideos
             this.btnSaveChannel.Enabled = false;
             this.btnSaveChannel.Image = global::OnlineVideos.Properties.Resources.Save;
             this.btnSaveChannel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnSaveChannel.Location = new System.Drawing.Point(486, 200);
-            this.btnSaveChannel.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSaveChannel.Location = new System.Drawing.Point(364, 162);
             this.btnSaveChannel.Name = "btnSaveChannel";
-            this.btnSaveChannel.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.btnSaveChannel.Size = new System.Drawing.Size(127, 28);
+            this.btnSaveChannel.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.btnSaveChannel.Size = new System.Drawing.Size(95, 23);
             this.btnSaveChannel.TabIndex = 22;
             this.btnSaveChannel.Text = "Save";
             this.btnSaveChannel.UseVisualStyleBackColor = true;
@@ -936,10 +900,9 @@ namespace OnlineVideos
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(211, 142);
-            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label10.Location = new System.Drawing.Point(158, 115);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(75, 17);
+            this.label10.Size = new System.Drawing.Size(56, 13);
             this.label10.TabIndex = 20;
             this.label10.Text = "Stream Url";
             // 
@@ -948,19 +911,17 @@ namespace OnlineVideos
             this.tbxStreamUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxStreamUrl.Enabled = false;
-            this.tbxStreamUrl.Location = new System.Drawing.Point(325, 140);
-            this.tbxStreamUrl.Margin = new System.Windows.Forms.Padding(4);
+            this.tbxStreamUrl.Location = new System.Drawing.Point(244, 114);
             this.tbxStreamUrl.Name = "tbxStreamUrl";
-            this.tbxStreamUrl.Size = new System.Drawing.Size(288, 22);
+            this.tbxStreamUrl.Size = new System.Drawing.Size(217, 20);
             this.tbxStreamUrl.TabIndex = 21;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(211, 113);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Location = new System.Drawing.Point(158, 92);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(94, 17);
+            this.label9.Size = new System.Drawing.Size(71, 13);
             this.label9.TabIndex = 18;
             this.label9.Text = "Stream Name";
             // 
@@ -969,19 +930,17 @@ namespace OnlineVideos
             this.tbxStreamName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxStreamName.Enabled = false;
-            this.tbxStreamName.Location = new System.Drawing.Point(325, 110);
-            this.tbxStreamName.Margin = new System.Windows.Forms.Padding(4);
+            this.tbxStreamName.Location = new System.Drawing.Point(244, 89);
             this.tbxStreamName.Name = "tbxStreamName";
-            this.tbxStreamName.Size = new System.Drawing.Size(288, 22);
+            this.tbxStreamName.Size = new System.Drawing.Size(217, 20);
             this.tbxStreamName.TabIndex = 19;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(211, 34);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label8.Location = new System.Drawing.Point(158, 28);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(101, 17);
+            this.label8.Size = new System.Drawing.Size(77, 13);
             this.label8.TabIndex = 16;
             this.label8.Text = "Channel Name";
             // 
@@ -990,10 +949,9 @@ namespace OnlineVideos
             this.tbxChannelName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxChannelName.Enabled = false;
-            this.tbxChannelName.Location = new System.Drawing.Point(325, 31);
-            this.tbxChannelName.Margin = new System.Windows.Forms.Padding(4);
+            this.tbxChannelName.Location = new System.Drawing.Point(244, 25);
             this.tbxChannelName.Name = "tbxChannelName";
-            this.tbxChannelName.Size = new System.Drawing.Size(288, 22);
+            this.tbxChannelName.Size = new System.Drawing.Size(217, 20);
             this.tbxChannelName.TabIndex = 17;
             // 
             // imageList1
@@ -1006,9 +964,10 @@ namespace OnlineVideos
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(342, 228);
+            this.label6.Location = new System.Drawing.Point(256, 185);
+            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(28, 17);
+            this.label6.Size = new System.Drawing.Size(22, 13);
             this.label6.TabIndex = 28;
             this.label6.Text = "Pin";
             // 
@@ -1016,30 +975,28 @@ namespace OnlineVideos
             // 
             this.tbxPin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxPin.Location = new System.Drawing.Point(361, 41);
-            this.tbxPin.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tbxPin.Location = new System.Drawing.Point(271, 33);
+            this.tbxPin.Margin = new System.Windows.Forms.Padding(2);
             this.tbxPin.Name = "tbxPin";
             this.tbxPin.PasswordChar = '*';
-            this.tbxPin.Size = new System.Drawing.Size(261, 22);
+            this.tbxPin.Size = new System.Drawing.Size(197, 20);
             this.tbxPin.TabIndex = 29;
             // 
             // tbxScreenName
             // 
             this.tbxScreenName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxScreenName.Location = new System.Drawing.Point(300, 11);
-            this.tbxScreenName.Margin = new System.Windows.Forms.Padding(4);
+            this.tbxScreenName.Location = new System.Drawing.Point(225, 9);
             this.tbxScreenName.Name = "tbxScreenName";
-            this.tbxScreenName.Size = new System.Drawing.Size(322, 22);
+            this.tbxScreenName.Size = new System.Drawing.Size(242, 20);
             this.tbxScreenName.TabIndex = 31;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 14);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Location = new System.Drawing.Point(6, 11);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(173, 17);
+            this.label7.Size = new System.Drawing.Size(132, 13);
             this.label7.TabIndex = 30;
             this.label7.Text = "BasicHome Screen Name:";
             // 
@@ -1047,10 +1004,10 @@ namespace OnlineVideos
             // 
             this.btnBrowseForDlFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBrowseForDlFolder.AutoSize = true;
-            this.btnBrowseForDlFolder.Location = new System.Drawing.Point(589, 70);
-            this.btnBrowseForDlFolder.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnBrowseForDlFolder.Location = new System.Drawing.Point(441, 57);
+            this.btnBrowseForDlFolder.Margin = new System.Windows.Forms.Padding(2);
             this.btnBrowseForDlFolder.Name = "btnBrowseForDlFolder";
-            this.btnBrowseForDlFolder.Size = new System.Drawing.Size(33, 27);
+            this.btnBrowseForDlFolder.Size = new System.Drawing.Size(26, 23);
             this.btnBrowseForDlFolder.TabIndex = 32;
             this.btnBrowseForDlFolder.Text = "...";
             this.btnBrowseForDlFolder.UseVisualStyleBackColor = true;
@@ -1063,10 +1020,10 @@ namespace OnlineVideos
             this.mainTabControl.Controls.Add(this.tabPageCodecs);
             this.mainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainTabControl.Location = new System.Drawing.Point(0, 0);
-            this.mainTabControl.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.mainTabControl.Margin = new System.Windows.Forms.Padding(2);
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.SelectedIndex = 0;
-            this.mainTabControl.Size = new System.Drawing.Size(650, 625);
+            this.mainTabControl.Size = new System.Drawing.Size(488, 508);
             this.mainTabControl.TabIndex = 33;
             // 
             // tabGeneral
@@ -1095,11 +1052,11 @@ namespace OnlineVideos
             this.tabGeneral.Controls.Add(this.label4);
             this.tabGeneral.Controls.Add(this.label5);
             this.tabGeneral.Controls.Add(this.chkUseAgeConfirmation);
-            this.tabGeneral.Location = new System.Drawing.Point(4, 25);
-            this.tabGeneral.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabGeneral.Location = new System.Drawing.Point(4, 22);
+            this.tabGeneral.Margin = new System.Windows.Forms.Padding(2);
             this.tabGeneral.Name = "tabGeneral";
-            this.tabGeneral.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabGeneral.Size = new System.Drawing.Size(642, 596);
+            this.tabGeneral.Padding = new System.Windows.Forms.Padding(2);
+            this.tabGeneral.Size = new System.Drawing.Size(480, 482);
             this.tabGeneral.TabIndex = 0;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
@@ -1107,22 +1064,20 @@ namespace OnlineVideos
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(326, 44);
-            this.label21.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label21.Location = new System.Drawing.Point(244, 36);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(28, 17);
+            this.label21.Size = new System.Drawing.Size(22, 13);
             this.label21.TabIndex = 39;
             this.label21.Text = "Pin";
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.No;
             this.btnCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCancel.Location = new System.Drawing.Point(514, 545);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCancel.Location = new System.Drawing.Point(386, 440);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(120, 28);
+            this.btnCancel.Size = new System.Drawing.Size(90, 25);
             this.btnCancel.TabIndex = 38;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -1130,9 +1085,10 @@ namespace OnlineVideos
             // lblVersion
             // 
             this.lblVersion.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lblVersion.Location = new System.Drawing.Point(3, 577);
+            this.lblVersion.Location = new System.Drawing.Point(2, 466);
+            this.lblVersion.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(636, 17);
+            this.lblVersion.Size = new System.Drawing.Size(476, 14);
             this.lblVersion.TabIndex = 37;
             this.lblVersion.Text = "Version";
             this.lblVersion.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -1146,27 +1102,28 @@ namespace OnlineVideos
             this.cmbDasErsteQuality.Items.AddRange(new object[] {
             "Low",
             "High"});
-            this.cmbDasErsteQuality.Location = new System.Drawing.Point(300, 230);
+            this.cmbDasErsteQuality.Location = new System.Drawing.Point(225, 187);
+            this.cmbDasErsteQuality.Margin = new System.Windows.Forms.Padding(2);
             this.cmbDasErsteQuality.Name = "cmbDasErsteQuality";
-            this.cmbDasErsteQuality.Size = new System.Drawing.Size(322, 24);
+            this.cmbDasErsteQuality.Size = new System.Drawing.Size(242, 21);
             this.cmbDasErsteQuality.TabIndex = 36;
             // 
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(8, 233);
+            this.label16.Location = new System.Drawing.Point(6, 189);
+            this.label16.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(118, 17);
+            this.label16.Size = new System.Drawing.Size(88, 13);
             this.label16.TabIndex = 35;
             this.label16.Text = "Das Erste Quality";
             // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(8, 201);
-            this.label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label15.Location = new System.Drawing.Point(6, 163);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(143, 17);
+            this.label15.Size = new System.Drawing.Size(109, 13);
             this.label15.TabIndex = 34;
             this.label15.Text = "YouTube Max Quality";
             // 
@@ -1180,21 +1137,20 @@ namespace OnlineVideos
             "Normal",
             "High",
             "HD"});
-            this.cmbYoutubeQuality.Location = new System.Drawing.Point(300, 198);
-            this.cmbYoutubeQuality.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbYoutubeQuality.Location = new System.Drawing.Point(225, 161);
             this.cmbYoutubeQuality.Name = "cmbYoutubeQuality";
-            this.cmbYoutubeQuality.Size = new System.Drawing.Size(322, 24);
+            this.cmbYoutubeQuality.Size = new System.Drawing.Size(242, 21);
             this.cmbYoutubeQuality.TabIndex = 33;
             // 
             // tabSites
             // 
             this.tabSites.Controls.Add(this.groupBox1);
             this.tabSites.Controls.Add(this.tabControl1);
-            this.tabSites.Location = new System.Drawing.Point(4, 25);
-            this.tabSites.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabSites.Location = new System.Drawing.Point(4, 22);
+            this.tabSites.Margin = new System.Windows.Forms.Padding(2);
             this.tabSites.Name = "tabSites";
-            this.tabSites.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabSites.Size = new System.Drawing.Size(642, 596);
+            this.tabSites.Padding = new System.Windows.Forms.Padding(2);
+            this.tabSites.Size = new System.Drawing.Size(480, 482);
             this.tabSites.TabIndex = 1;
             this.tabSites.Text = "Sites";
             this.tabSites.UseVisualStyleBackColor = true;
@@ -1202,11 +1158,11 @@ namespace OnlineVideos
             // tabPageCodecs
             // 
             this.tabPageCodecs.Controls.Add(this.groupBoxSplitter);
-            this.tabPageCodecs.Location = new System.Drawing.Point(4, 25);
-            this.tabPageCodecs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPageCodecs.Location = new System.Drawing.Point(4, 22);
+            this.tabPageCodecs.Margin = new System.Windows.Forms.Padding(2);
             this.tabPageCodecs.Name = "tabPageCodecs";
-            this.tabPageCodecs.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabPageCodecs.Size = new System.Drawing.Size(642, 596);
+            this.tabPageCodecs.Padding = new System.Windows.Forms.Padding(2);
+            this.tabPageCodecs.Size = new System.Drawing.Size(480, 482);
             this.tabPageCodecs.TabIndex = 2;
             this.tabPageCodecs.Text = "Codecs";
             this.tabPageCodecs.UseVisualStyleBackColor = true;
@@ -1227,11 +1183,11 @@ namespace OnlineVideos
             this.groupBoxSplitter.Controls.Add(this.label12);
             this.groupBoxSplitter.Controls.Add(this.chkFLVSplitterInstalled);
             this.groupBoxSplitter.Controls.Add(this.label11);
-            this.groupBoxSplitter.Location = new System.Drawing.Point(8, 6);
-            this.groupBoxSplitter.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBoxSplitter.Location = new System.Drawing.Point(6, 5);
+            this.groupBoxSplitter.Margin = new System.Windows.Forms.Padding(2);
             this.groupBoxSplitter.Name = "groupBoxSplitter";
-            this.groupBoxSplitter.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBoxSplitter.Size = new System.Drawing.Size(626, 134);
+            this.groupBoxSplitter.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBoxSplitter.Size = new System.Drawing.Size(470, 109);
             this.groupBoxSplitter.TabIndex = 1;
             this.groupBoxSplitter.TabStop = false;
             this.groupBoxSplitter.Text = "Splitter";
@@ -1240,54 +1196,54 @@ namespace OnlineVideos
             // 
             this.tbxWMVSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxWMVSplitter.Location = new System.Drawing.Point(157, 103);
-            this.tbxWMVSplitter.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tbxWMVSplitter.Location = new System.Drawing.Point(118, 84);
+            this.tbxWMVSplitter.Margin = new System.Windows.Forms.Padding(2);
             this.tbxWMVSplitter.Name = "tbxWMVSplitter";
             this.tbxWMVSplitter.ReadOnly = true;
-            this.tbxWMVSplitter.Size = new System.Drawing.Size(464, 22);
+            this.tbxWMVSplitter.Size = new System.Drawing.Size(349, 20);
             this.tbxWMVSplitter.TabIndex = 11;
             // 
             // tbxAVISplitter
             // 
             this.tbxAVISplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxAVISplitter.Location = new System.Drawing.Point(157, 76);
-            this.tbxAVISplitter.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tbxAVISplitter.Location = new System.Drawing.Point(118, 62);
+            this.tbxAVISplitter.Margin = new System.Windows.Forms.Padding(2);
             this.tbxAVISplitter.Name = "tbxAVISplitter";
             this.tbxAVISplitter.ReadOnly = true;
-            this.tbxAVISplitter.Size = new System.Drawing.Size(464, 22);
+            this.tbxAVISplitter.Size = new System.Drawing.Size(349, 20);
             this.tbxAVISplitter.TabIndex = 10;
             // 
             // tbxMP4Splitter
             // 
             this.tbxMP4Splitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxMP4Splitter.Location = new System.Drawing.Point(157, 48);
-            this.tbxMP4Splitter.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tbxMP4Splitter.Location = new System.Drawing.Point(118, 39);
+            this.tbxMP4Splitter.Margin = new System.Windows.Forms.Padding(2);
             this.tbxMP4Splitter.Name = "tbxMP4Splitter";
             this.tbxMP4Splitter.ReadOnly = true;
-            this.tbxMP4Splitter.Size = new System.Drawing.Size(464, 22);
+            this.tbxMP4Splitter.Size = new System.Drawing.Size(349, 20);
             this.tbxMP4Splitter.TabIndex = 9;
             // 
             // tbxFLVSplitter
             // 
             this.tbxFLVSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxFLVSplitter.Location = new System.Drawing.Point(157, 20);
-            this.tbxFLVSplitter.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tbxFLVSplitter.Location = new System.Drawing.Point(118, 16);
+            this.tbxFLVSplitter.Margin = new System.Windows.Forms.Padding(2);
             this.tbxFLVSplitter.Name = "tbxFLVSplitter";
             this.tbxFLVSplitter.ReadOnly = true;
-            this.tbxFLVSplitter.Size = new System.Drawing.Size(464, 22);
+            this.tbxFLVSplitter.Size = new System.Drawing.Size(349, 20);
             this.tbxFLVSplitter.TabIndex = 8;
             // 
             // chkWMVSplitterInstalled
             // 
             this.chkWMVSplitterInstalled.AutoSize = true;
             this.chkWMVSplitterInstalled.Enabled = false;
-            this.chkWMVSplitterInstalled.Location = new System.Drawing.Point(133, 108);
-            this.chkWMVSplitterInstalled.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.chkWMVSplitterInstalled.Location = new System.Drawing.Point(100, 88);
+            this.chkWMVSplitterInstalled.Margin = new System.Windows.Forms.Padding(2);
             this.chkWMVSplitterInstalled.Name = "chkWMVSplitterInstalled";
-            this.chkWMVSplitterInstalled.Size = new System.Drawing.Size(18, 17);
+            this.chkWMVSplitterInstalled.Size = new System.Drawing.Size(15, 14);
             this.chkWMVSplitterInstalled.TabIndex = 7;
             this.chkWMVSplitterInstalled.UseVisualStyleBackColor = true;
             // 
@@ -1295,10 +1251,10 @@ namespace OnlineVideos
             // 
             this.chkAVISplitterInstalled.AutoSize = true;
             this.chkAVISplitterInstalled.Enabled = false;
-            this.chkAVISplitterInstalled.Location = new System.Drawing.Point(133, 80);
-            this.chkAVISplitterInstalled.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.chkAVISplitterInstalled.Location = new System.Drawing.Point(100, 65);
+            this.chkAVISplitterInstalled.Margin = new System.Windows.Forms.Padding(2);
             this.chkAVISplitterInstalled.Name = "chkAVISplitterInstalled";
-            this.chkAVISplitterInstalled.Size = new System.Drawing.Size(18, 17);
+            this.chkAVISplitterInstalled.Size = new System.Drawing.Size(15, 14);
             this.chkAVISplitterInstalled.TabIndex = 6;
             this.chkAVISplitterInstalled.UseVisualStyleBackColor = true;
             // 
@@ -1306,37 +1262,40 @@ namespace OnlineVideos
             // 
             this.chkMP4SplitterInstalled.AutoSize = true;
             this.chkMP4SplitterInstalled.Enabled = false;
-            this.chkMP4SplitterInstalled.Location = new System.Drawing.Point(133, 52);
-            this.chkMP4SplitterInstalled.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.chkMP4SplitterInstalled.Location = new System.Drawing.Point(100, 42);
+            this.chkMP4SplitterInstalled.Margin = new System.Windows.Forms.Padding(2);
             this.chkMP4SplitterInstalled.Name = "chkMP4SplitterInstalled";
-            this.chkMP4SplitterInstalled.Size = new System.Drawing.Size(18, 17);
+            this.chkMP4SplitterInstalled.Size = new System.Drawing.Size(15, 14);
             this.chkMP4SplitterInstalled.TabIndex = 5;
             this.chkMP4SplitterInstalled.UseVisualStyleBackColor = true;
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(5, 107);
+            this.label14.Location = new System.Drawing.Point(4, 87);
+            this.label14.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(65, 17);
+            this.label14.Size = new System.Drawing.Size(51, 13);
             this.label14.TabIndex = 4;
             this.label14.Text = "wmv | asf";
             // 
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(5, 79);
+            this.label13.Location = new System.Drawing.Point(4, 64);
+            this.label13.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(26, 17);
+            this.label13.Size = new System.Drawing.Size(21, 13);
             this.label13.TabIndex = 3;
             this.label13.Text = "avi";
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(5, 50);
+            this.label12.Location = new System.Drawing.Point(4, 41);
+            this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(109, 17);
+            this.label12.Size = new System.Drawing.Size(83, 13);
             this.label12.TabIndex = 2;
             this.label12.Text = "mp4 | m4v | mov";
             // 
@@ -1344,37 +1303,39 @@ namespace OnlineVideos
             // 
             this.chkFLVSplitterInstalled.AutoSize = true;
             this.chkFLVSplitterInstalled.Enabled = false;
-            this.chkFLVSplitterInstalled.Location = new System.Drawing.Point(133, 25);
-            this.chkFLVSplitterInstalled.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.chkFLVSplitterInstalled.Location = new System.Drawing.Point(100, 20);
+            this.chkFLVSplitterInstalled.Margin = new System.Windows.Forms.Padding(2);
             this.chkFLVSplitterInstalled.Name = "chkFLVSplitterInstalled";
-            this.chkFLVSplitterInstalled.Size = new System.Drawing.Size(18, 17);
+            this.chkFLVSplitterInstalled.Size = new System.Drawing.Size(15, 14);
             this.chkFLVSplitterInstalled.TabIndex = 1;
             this.chkFLVSplitterInstalled.UseVisualStyleBackColor = true;
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(5, 23);
+            this.label11.Location = new System.Drawing.Point(4, 19);
+            this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(22, 17);
+            this.label11.Size = new System.Drawing.Size(18, 13);
             this.label11.TabIndex = 0;
             this.label11.Text = "flv";
             // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(650, 625);
+            this.ClientSize = new System.Drawing.Size(488, 508);
             this.Controls.Add(this.mainTabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Configuration";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Online Videos Configuration";
             this.Load += new System.EventHandler(this.Configuration_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ConfigurationFormClosing);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.toolStripContainer3.ContentPanel.ResumeLayout(false);
@@ -1388,7 +1349,6 @@ namespace OnlineVideos
             this.toolStripSiteUpDown.PerformLayout();
             this.toolStripSites.ResumeLayout(false);
             this.toolStripSites.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSite)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageRssLinks.ResumeLayout(false);
             this.tabPageRssLinks.PerformLayout();
@@ -1425,7 +1385,7 @@ namespace OnlineVideos
         private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox txtRssUrl;
 		private System.Windows.Forms.TextBox txtRssName;
-		private System.Windows.Forms.ListBox CategoryList;
+		private System.Windows.Forms.ListBox RssLinkList;
 		private System.Windows.Forms.ListBox siteList;
 		private System.Windows.Forms.CheckBox chkEnabled;
 		private System.Windows.Forms.Label label27;
@@ -1438,8 +1398,7 @@ namespace OnlineVideos
 		private System.Windows.Forms.TextBox txtPassword;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label25;
-		private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.Button btnSaveRss;
+        private System.Windows.Forms.Label label26;
 		private System.Windows.Forms.TextBox txtFilters;
 		private System.Windows.Forms.TextBox txtThumbLoc;
 		private System.Windows.Forms.Label label1;
@@ -1505,7 +1464,7 @@ namespace OnlineVideos
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox tbxChannelThumb;
         private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.BindingSource bindingSourceSite;
+        private System.Windows.Forms.BindingSource bindingSourceSiteSettings;
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.ToolStrip toolStripRss;
         private System.Windows.Forms.ToolStripButton btnDeleteRss;
@@ -1527,5 +1486,6 @@ namespace OnlineVideos
         private System.Windows.Forms.ToolStripButton btnSiteUp;
         private System.Windows.Forms.ToolStripButton btnSiteDown;
         private System.Windows.Forms.ToolStripButton btnImportSite;
+        private System.Windows.Forms.BindingSource bindingSourceRssLink;
 	}
 }
