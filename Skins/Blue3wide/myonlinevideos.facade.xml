@@ -42,7 +42,9 @@
           <onright>50</onright>
           <imageFolder>Picture_cover.png</imageFolder>
           <imageFolderFocus>OnlineVideos/Picture_cover_focused.png</imageFolderFocus>
-          
+          <frameNoFocus>Picture_cover.png</frameNoFocus>
+          <frameFocus>OnlineVideos/Picture_cover_focused.png</frameFocus>
+
           <!-- smallicons -->
           <itemWidth>159</itemWidth>
           <itemHeight>117</itemHeight>
