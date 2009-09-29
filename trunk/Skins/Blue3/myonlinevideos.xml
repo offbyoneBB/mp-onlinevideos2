@@ -6,29 +6,182 @@
   <define>#header.label</define>
   <define>#header.hover</define>
   <controls>
-    <import>common.window.xml</import>
-    <import>common.facade.xml</import>
-    <import>common.time.xml</import>
+
+    <!-- *** WINDOW DEFAULTS *** -->
+    
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>720</width>
+      <height>576</height>
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <type>image</type>
+      <id>1</id>
+      <posX>60</posX>
+      <posY>10</posY>
+      <texture>#header.image</texture>
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <type>label</type>
+      <id>1</id>
+      <posX>220</posX>
+      <posY>25</posY>
+      <width>400</width>
+      <label>#header.label</label>
+      <font>font16</font>      
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>670</posX>
+      <posY>10</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font14</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>670</posX>
+      <posY>28</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font14</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>    
+    
     <import>myonlinevideos.details.xml</import>
+    <import>myonlinevideos.facade.xml</import>
+
+    <!-- *** Bottom part *** -->
+
+    <control>
+      <description>video rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>49</posX>
+      <posY>419</posY>
+      <width>160</width>
+      <height>124</height>
+      <texture>Picture_cover.png</texture>
+      <visible>!Control.IsVisible(51)</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>56</posX>
+      <posY>425</posY>
+      <width>145</width>
+      <height>111</height>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <visible>player.hasmedia | videoplayer.usingoverlays</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+    </control>
+    <control>
+      <id>500</id>
+      <type>image</type>
+      <posX>52</posX>
+      <posY>421</posY>
+      <width>152</width>
+      <height>119</height>
+      <centered>yes</centered>
+      <texture diffuse="Thumb_Mask.png">#selectedthumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>!videoplayer.usingoverlays + !player.hasmedia + !Control.IsVisible(51)</visible>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
+    </control>   
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>210</posX>
+      <posY>415</posY>
+      <width>460</width>
+      <label>#selecteditem</label>
+      <font>font14</font>
+      <textcolor>White</textcolor>
+      <visible>!Control.IsVisible(51)</visible>
+    </control>
+    <control>
+      <description>Length Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>210</posX>
+      <posY>435</posY>
+      <width>80</width>
+      <font>font12</font>
+      <label>299</label>
+      <textcolor>White</textcolor>
+      <visible>!Control.IsVisible(51)+control.hastext(501)</visible>
+    </control>
+    <control>
+      <description>Length</description>
+      <type>label</type>
+      <id>501</id>
+      <posX>290</posX>
+      <posY>435</posY>
+      <width>370</width>
+      <font>font12</font>
+      <label>#OnlineVideos.length</label>
+      <textcolor>White</textcolor>
+      <visible>!Control.IsVisible(51)</visible>
+    </control>
+    <control>
+      <description>Description</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>210</posX>
+      <posY>450</posY>
+      <width>440</width>
+      <height>126</height>
+      <colordiffuse>ffffffff</colordiffuse>      
+      <label>#OnlineVideos.desc</label>
+      <textcolor>White</textcolor>
+      <visible>!Control.IsVisible(51)</visible>
+    </control>
+
+    <!-- *** HIDDEN MENU *** -->
+    
     <control>
       <type>actiongroup</type>
       <description>action menu</description>
       <onexit>50</onexit>
       <buttonX>0</buttonX>
       <buttonY>0</buttonY>
-      <buttonwidth>60</buttonwidth>
-      <buttonheight>576</buttonheight>
       <textureFocus>Action_focus.png</textureFocus>
       <textureNoFocus>Action_nofocus.png</textureNoFocus>
-      <width>320</width>
-      <height>720</height>
       <dimColor>00ffffff</dimColor>
       <control>
         <type>image</type>
         <posX>15</posX>
         <posY>63</posY>
         <width>263</width>
-        <height>473</height>
+        <height>405</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
         <visible>!Control.HasFocus(50)</visible>
@@ -50,40 +203,31 @@
           <id>2</id>
           <label>101</label>
           <onright>50</onright>
-          <onup>17</onup>
-        </control>
-        <control>
-          <description>select category</description>
-          <type>selectbutton</type>
-          <id>9</id>
-          <onright>50</onright>
-          <label>2053</label>
-          <visible>no</visible>
+          <onup>17</onup>          
         </control>
         <control>
           <type>button</type>
           <description>Search</description>
           <id>10</id>
           <onright>50</onright>
-          <label>137</label>
-          <visible>no</visible>
+          <onup>2</onup>
+          <label>137</label>          
         </control>
         <control>
-          <type>button</type>
-          <description>Favorites</description>
-          <id>11</id>
+          <description>select category</description>
+          <type>selectbutton</type>
+          <id>9</id>
           <onright>50</onright>
-          <label>932</label>
-          <visible>no</visible>
-        </control>
+          <onup>10</onup>
+          <label>2053</label>          
+        </control>               
         <control>
           <type>selectbutton</type>
           <description>Max Results</description>
           <id>5</id>
           <onright>50</onright>
-          <onup>2</onup>
-          <label>Max Results</label>
-          <visible>no</visible>
+          <onup>9</onup>
+          <label>Max Results</label>          
         </control>
         <control>
           <type>selectbutton</type>
@@ -91,8 +235,7 @@
           <id>6</id>
           <onright>50</onright>
           <onup>5</onup>
-          <label>495</label>
-          <visible>no</visible>
+          <label>495</label>          
         </control>
         <control>
           <type>selectbutton</type>
@@ -100,8 +243,7 @@
           <id>7</id>
           <onright>50</onright>
           <onup>6</onup>
-          <label>Timeframe</label>
-          <visible>no</visible>
+          <label>Timeframe</label>          
         </control>
         <control>
           <type>button</type>
@@ -110,7 +252,6 @@
           <onright>50</onright>
           <onup>7</onup>
           <label>184</label>
-          <visible>no</visible>
         </control>
         <control>
           <type>button</type>
@@ -118,11 +259,9 @@
           <id>3</id>
           <onright>50</onright>
           <onup>8</onup>
-          <ondown>4</ondown>
           <label>1975</label>
           <animation effect="fade" time="200">WindowOpen</animation>
-          <animation effect="fade" time="200">WindowClose</animation>
-          <visible>no</visible>
+          <animation effect="fade" time="200">WindowClose</animation>          
         </control>
         <control>
           <type>button</type>
@@ -130,21 +269,25 @@
           <id>4</id>
           <onright>50</onright>
           <onup>3</onup>
-          <ondown>12</ondown>
           <label>30004</label>
           <animation effect="fade" time="200">WindowOpen</animation>
           <animation effect="fade" time="200">WindowClose</animation>
-          <visible>no</visible>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Favorites</description>
+          <id>11</id>
+          <onright>50</onright>
+          <onup>4</onup>
+          <label>932</label>          
         </control>
         <control>
           <type>button</type>
           <description>Do Age Check</description>
           <id>12</id>
           <onright>50</onright>
-          <onup>4</onup>
-          <ondown>2</ondown>
+          <onup>11</onup>          
           <label>Enter Pin</label>
-          <visible>no</visible>
         </control>
       </control>
     </control>
