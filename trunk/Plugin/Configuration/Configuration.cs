@@ -400,7 +400,7 @@ namespace OnlineVideos
 </Sites>
 </OnlineVideoSites>";
                     System.IO.StringReader sr = new System.IO.StringReader(xml);
-                    AppDomain.CurrentDomain.AssemblyResolve += OnlineVideoSettings.CurrentDomain_AssemblyResolve;
+                    //AppDomain.CurrentDomain.AssemblyResolve += OnlineVideoSettings.CurrentDomain_AssemblyResolve;
                     System.Xml.Serialization.XmlSerializer ser = new System.Xml.Serialization.XmlSerializer(typeof(SerializableSettings));
                     SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
                     if (s.Sites != null)
@@ -416,7 +416,7 @@ namespace OnlineVideos
             }
             finally
             {
-                AppDomain.CurrentDomain.AssemblyResolve -= OnlineVideoSettings.CurrentDomain_AssemblyResolve;
+                //AppDomain.CurrentDomain.AssemblyResolve -= OnlineVideoSettings.CurrentDomain_AssemblyResolve;
             }
         }        
 	}

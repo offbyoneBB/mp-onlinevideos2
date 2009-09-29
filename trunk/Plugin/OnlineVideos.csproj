@@ -28,21 +28,21 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>C:\Program Files %28x86%29\Team MediaPortal\MediaPortal\plugins\Windows\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>C:\Program Files %28x86%29\Team MediaPortal\MediaPortal\plugins\Windows\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <StartAction>Program</StartAction>
@@ -61,10 +61,10 @@
       <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\Databases.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Dialogs, Version=0.2.3.17915, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Dialogs, Version=1.0.4.17412, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\Dialogs.dll</HintPath>
       <Private>False</Private>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\plugins\Windows\Dialogs.dll</HintPath>
     </Reference>
     <Reference Include="DirectShowLib, Version=2.0.0.22244, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -527,6 +527,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"%25ProgramFiles%25\Microsoft SDKs\Windows\v6.0A\bin\sgen.exe" /a:"$(TargetPath)" /force /reference:"$(TargetDir)..\..\Core.dll" /reference:"$(TargetDir)..\..\Databases.dll" /reference:"$(TargetDir)Dialogs.dll" /reference:"$(TargetDir)..\..\Utils.dll" /type:OnlineVideos.SerializableSettings</PostBuildEvent>
+    <PostBuildEvent>"$(SolutionDir)Tools\sgen.exe" /a:"$(TargetPath)" /force /reference:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal\Core.dll" /reference:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal\Databases.dll" /reference:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal\Plugins\Windows\Dialogs.dll" /reference:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal\Utils.dll" /type:OnlineVideos.SerializableSettings
+
+"$(SolutionDir)Tools\ILMerge.exe" "$(TargetPath)" "$(TargetDir)$(TargetName).XmlSerializers.dll" /out:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal\Plugins\Windows\$(TargetFileName)" /lib:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal" /lib:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal\plugins\Windows"</PostBuildEvent>
   </PropertyGroup>
 </Project>
