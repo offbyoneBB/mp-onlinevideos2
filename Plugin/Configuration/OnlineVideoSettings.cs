@@ -115,11 +115,11 @@ namespace OnlineVideos
                 {
                     using (System.IO.FileStream fs = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read))
                     {
-                        AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+                        //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
                         System.Xml.Serialization.XmlSerializer ser = new System.Xml.Serialization.XmlSerializer(typeof(SerializableSettings));
                         SerializableSettings s = (SerializableSettings)ser.Deserialize(fs);
                         fs.Close();
-                        AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
+                        //AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
                         moSiteList.Clear();
                         foreach (SiteSettings site in s.Sites) moSiteList.Add(site.Name, site);
                     }
@@ -159,7 +159,7 @@ namespace OnlineVideos
                     string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
                     if (System.IO.File.Exists(filename)) System.IO.File.Delete(filename);
 
-                    AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+                    //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
                     BindingList<SiteSettings> sites = new BindingList<SiteSettings>();
                     foreach (SiteSettings ss in moSiteList.Values) sites.Add(ss);
                     SerializableSettings s = new SerializableSettings();
@@ -176,7 +176,7 @@ namespace OnlineVideos
                         fs.Close();
                     }
 
-                    AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
+                    //AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
                 }
             }
             catch (Exception ex)
@@ -185,6 +185,7 @@ namespace OnlineVideos
             }
         }
 
+        /*
         /// <summary>
         /// This Method was needed for the XmlSerializer to find the serialization assembly when the Configuration tool is used.
         /// </summary>
@@ -200,5 +201,6 @@ namespace OnlineVideos
             }
             return null;
         }
+        */
     }
 }
