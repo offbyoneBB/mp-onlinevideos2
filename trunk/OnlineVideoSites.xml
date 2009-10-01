@@ -450,6 +450,8 @@
         <Category xsi:type="RssLink" name="CNet">http://feeds2.feedburner.com/allcnetvideopodcasts</Category>
         <Category xsi:type="RssLink" name="DL.TV">http://feeds2.feedburner.com/ziffdavis/dltvwmvvideo</Category>
         <Category xsi:type="RssLink" name="n-tv Nachrichten">http://ntv-news.feedplace.de/rss</Category>
+        <Category xsi:type="RssLink" name="Discovery Channel Video Podcasts">http://www.discovery.com/radio/xml/discovery_video.xml</Category>
+        <Category xsi:type="RssLink" name="Discovery News (Video)">http://www.discovery.com/radio/xml/news_video.xml</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
             <Channel name="French Tv - Orange" thumb="http://www.broadbandtvnews.com/wp-content/uploads/2008/02/orange-logo.thumbnail.jpg">mms://livewm.orange.fr/live-multicanaux</Channel>
