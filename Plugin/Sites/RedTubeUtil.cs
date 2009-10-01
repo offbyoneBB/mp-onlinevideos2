@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Net;
 using System.IO;
 using MediaPortal.GUI.Library;
+using System.Collections.Specialized;
 
 namespace OnlineVideos.Sites
 {
@@ -16,9 +17,7 @@ namespace OnlineVideos.Sites
                             <img\s(?:(?!src).)*src=""(?<ImageUrl>[^""]*)""
                             (?:(?!<div\sclass=""time"">).)*<div\sclass=""time"">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<",
                             RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
-
-
-        //static Regex videoListRegEx = new Regex(@"<a\starget=_blank\shref='/(?<VideoUrl>\d{1,7})'\stitle=""(?<Title>[^""]*)""><img[^>]*src='(?<ImageUrl>[^']*)'", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex videoRegEx = new Regex(@"so\.addParam\(""flashvars"",""(?<flashvars>[^""]+)""\);", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         
         public override List<VideoInfo> getVideoList(Category category)
         {
@@ -37,7 +36,7 @@ namespace OnlineVideos.Sites
                     {
                         VideoInfo videoInfo = new VideoInfo();
                         videoInfo.Title = m.Groups["Title"].Value;
-                        videoInfo.VideoUrl = GetLink(m.Groups["VideoUrl"].Value);
+                        videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                         videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                         videoInfo.Length = m.Groups["Duration"].Value;
                         loVideoList.Add(videoInfo);
@@ -76,6 +75,26 @@ namespace OnlineVideos.Sites
                 }
             }
             return loVideoList;
+        }
+
+        public override string getUrl(VideoInfo video, SiteSettings foSite)
+        {
+            string result = "";
+
+            string data = GetWebData("http://www.redtube.com/" + video.VideoUrl, CookieContainer);
+            if (!string.IsNullOrEmpty(data))
+            {
+                Match m = videoRegEx.Match(data);
+                if (m.Success)
+                {
+                    string flashvarsString = m.Groups["flashvars"].Value;
+                    NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(flashvarsString);
+                    string param = paramsHash["hash_flv"];
+                    string leng = GetLink(video.VideoUrl);
+                    result = leng + param;
+                }
+            }
+            return result;
         }
         
         private string GetLink(string no)
@@ -124,8 +143,8 @@ namespace OnlineVideos.Sites
 
             // L9BB6X0ZX
 
-            dl = "http://dl.redtube.com//_videos_t4vn23s9jc5498tgj49icfj4678//";
-            dl += leng + "//";
+            dl = "http://ug54.redtube.com/467f9bca32b1989277b48582944f325afa3374/";
+            dl += leng + "/";
             dl += mapping + ".flv";
 
             // neu http://dl.redtube.com//_videos_t4vn23s9jc5498tgj49icfj4678//0000019//L9BB6X0ZX.flv
