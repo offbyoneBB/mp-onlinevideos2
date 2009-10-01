@@ -23,6 +23,8 @@
       <id>1</id>
       <posX>60</posX>
       <posY>10</posY>
+      <width>162</width>
+      <height>54</height>
       <texture>#header.image</texture>
     </control>
     <control>
