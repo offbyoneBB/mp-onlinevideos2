@@ -31,7 +31,9 @@ namespace OnlineVideos
         const string DOWNLOAD_DIR = "downloadDir";        
         const string FILTER = "filter";
         const string USE_AGECONFIRMATION = "useAgeConfirmation";
-        const string PIN_AGECONFIRMATION = "pinAgeConfirmation";
+        const string PIN_AGECONFIRMATION = "pinAgeConfirmation";        
+        
+        public bool ageHasBeenConfirmed = false;
 
         string bannerIconsDir = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\";
         public string BannerIconsDir { get { return bannerIconsDir; } }

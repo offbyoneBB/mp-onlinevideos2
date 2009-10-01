@@ -127,8 +127,7 @@ namespace OnlineVideos
         protected GUIFacadeControl.ViewMode? suggestedView;
         #endregion
 
-        #region state variables
-        bool ageHasBeenConfirmed = false;
+        #region state variables        
         State currentState = State.home;
 
         SiteSettings selectedSite;
@@ -200,11 +199,11 @@ namespace OnlineVideos
             base.OnPageLoad(); // let animations run
 
             // everytime the plugin is shown, after some other window was shown
-            if (ageHasBeenConfirmed && PreviousWindowId==0)
+            if (OnlineVideoSettings.getInstance().ageHasBeenConfirmed && PreviousWindowId == 0)
             {
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
                 Log.Debug("OnlineVideos Age Confirmed set to false.");
-                ageHasBeenConfirmed = false;
+                OnlineVideoSettings.getInstance().ageHasBeenConfirmed = false;
                 currentState = State.home;
             }
 
@@ -559,7 +558,7 @@ namespace OnlineVideos
                 {
                     if (pin == OnlineVideoSettings.getInstance().pinAgeConfirmation)
                     {
-                        ageHasBeenConfirmed = true;
+                        OnlineVideoSettings.getInstance().ageHasBeenConfirmed = true;
                         HideEnterPinButton();
                         DisplaySites();
                         GUIControl.FocusControl(GetID, facadeView.GetID);
@@ -755,7 +754,7 @@ namespace OnlineVideos
             {
                 SiteSettings aSite = OnlineVideoSettings.getInstance().moSiteList[name];
                 if (aSite.IsEnabled &&
-                    (!aSite.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || ageHasBeenConfirmed))
+                    (!aSite.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || OnlineVideoSettings.getInstance().ageHasBeenConfirmed))
                 {
                     GUIListItem loListItem = new GUIListItem(aSite.Name);
                     loListItem.Label2 = aSite.Language;
@@ -1524,7 +1523,7 @@ namespace OnlineVideos
                     ShowOrderButtons();
                     HideSearchButtons();
                     HideFavoriteButtons();
-                    if (OnlineVideoSettings.getInstance().useAgeConfirmation && !ageHasBeenConfirmed)
+                    if (OnlineVideoSettings.getInstance().useAgeConfirmation && !OnlineVideoSettings.getInstance().ageHasBeenConfirmed)
                         ShowEnterPinButton();
                     else
                         HideEnterPinButton();
