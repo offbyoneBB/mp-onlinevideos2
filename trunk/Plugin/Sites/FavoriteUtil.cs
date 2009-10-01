@@ -58,22 +58,25 @@ namespace OnlineVideos.Sites
 
             FavoritesDatabase db = FavoritesDatabase.getInstance();
             string[] lsSiteIds = db.getSiteIDs();
-            Dictionary<String, SiteSettings> loSiteList = OnlineVideoSettings.getInstance().moSiteList;
-            SiteSettings loSite;
-            RssLink cat;
+            Dictionary<String, SiteSettings> loSiteList = OnlineVideoSettings.getInstance().moSiteList;                        
             foreach (string lsSiteId in lsSiteIds)
             {
-                loSite = loSiteList[lsSiteId];
-                cat = new RssLink();
-                cat.Name = loSite.Name + " - Favorites";
-                cat.Url = "fav:" + loSite.Name;
-                site.Categories.Add(cat);
+                SiteSettings aSite = loSiteList[lsSiteId];
 
+                if (aSite.IsEnabled &&
+                   (!aSite.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || OnlineVideoSettings.getInstance().ageHasBeenConfirmed))
+                {
+                    RssLink cat = new RssLink();
+                    cat.Name = aSite.Name + " - Favorites";
+                    cat.Url = "fav:" + aSite.Name;
+                    site.Categories.Add(cat);
+                }
             }
-            cat = new RssLink();
+            /*
+            RssLink cat = new RssLink();
             cat.Name = "Search-Favorites";
             cat.Url = "fav:%{0}";
-            site.Categories.Add(cat);
+            site.Categories.Add(cat);*/
 
             // need to always get the categories, because when adding new fav video from a new site, a removing the last one for a site, the categories must be refreshed 
             site.DynamicCategoriesDiscovered = false; 

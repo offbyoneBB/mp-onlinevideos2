@@ -164,17 +164,25 @@ namespace OnlineVideos.Database
       
         for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
         {
-            VideoInfo video = new VideoInfo();
-        	video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
-        	video.ImageUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
-        	video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
-        	video.Tags = DatabaseUtility.Get(loResultSet, iRow, "VDO_TAGS");
-        	video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");
-        	video.VideoUrl = DatabaseUtility.Get(loResultSet,iRow,"VDO_URL");
-			video.SiteName = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");
-        	video.Other = DatabaseUtility.GetAsInt(loResultSet,iRow,"VDO_ID");
-        	Log.Info("Pulled {0} out of the database",video.Title);
-        	loFavoriteList.Add(video);        	
+            string sitename = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");
+            if (OnlineVideoSettings.getInstance().moSiteList.ContainsKey(sitename))
+            {
+                if (OnlineVideoSettings.getInstance().moSiteList[sitename].IsEnabled &&
+                   (!OnlineVideoSettings.getInstance().moSiteList[sitename].ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || OnlineVideoSettings.getInstance().ageHasBeenConfirmed))
+                {
+                    VideoInfo video = new VideoInfo();
+                    video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
+                    video.ImageUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
+                    video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
+                    video.Tags = DatabaseUtility.Get(loResultSet, iRow, "VDO_TAGS");
+                    video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");
+                    video.VideoUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_URL");
+                    video.SiteName = sitename;
+                    video.Other = DatabaseUtility.GetAsInt(loResultSet, iRow, "VDO_ID");
+                    Log.Info("Pulled {0} out of the database", video.Title);
+                    loFavoriteList.Add(video);
+                }
+            }
         }
         return loFavoriteList;
     }
