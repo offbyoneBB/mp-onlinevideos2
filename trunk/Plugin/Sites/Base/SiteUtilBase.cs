@@ -167,7 +167,7 @@ namespace OnlineVideos.Sites
                         return url;
                 }
                 else
-                    return httpWebresponse.ResponseUri.ToString();
+                    return httpWebresponse.ResponseUri.OriginalString;
             }
             catch (Exception ex)
             {
