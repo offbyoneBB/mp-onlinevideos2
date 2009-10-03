@@ -53,6 +53,19 @@ namespace OnlineVideos
         public SortedList<string, bool> videoExtensions = new SortedList<string, bool>();
         public CodecConfiguration CodecConfiguration;
 
+        XmlSerializerImplementation  _XmlSerImp;
+        public XmlSerializerImplementation XmlSerImp
+        {
+            get
+            {
+                if (_XmlSerImp == null)
+                {
+                    _XmlSerImp = (XmlSerializerImplementation)Activator.CreateInstance(GetType().Assembly.GetType("Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializerContract", false));
+                }
+                return _XmlSerImp;
+            }
+        }
+
         public static OnlineVideoSettings getInstance()
         {
             if (instance == null) instance = new OnlineVideoSettings();
@@ -117,11 +130,9 @@ namespace OnlineVideos
                 {
                     using (System.IO.FileStream fs = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read))
                     {
-                        //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-                        System.Xml.Serialization.XmlSerializer ser = new System.Xml.Serialization.XmlSerializer(typeof(SerializableSettings));
+                        System.Xml.Serialization.XmlSerializer ser = XmlSerImp.GetSerializer(typeof(SerializableSettings));
                         SerializableSettings s = (SerializableSettings)ser.Deserialize(fs);
                         fs.Close();
-                        //AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
                         moSiteList.Clear();
                         foreach (SiteSettings site in s.Sites) moSiteList.Add(site.Name, site);
                     }
@@ -131,7 +142,7 @@ namespace OnlineVideos
             {
                 Log.Error(e);
             }
-        }
+        }       
 
         public void Save()
         {
@@ -160,13 +171,12 @@ namespace OnlineVideos
                 {
                     string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
                     if (System.IO.File.Exists(filename)) System.IO.File.Delete(filename);
-
-                    //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+                    
                     BindingList<SiteSettings> sites = new BindingList<SiteSettings>();
                     foreach (SiteSettings ss in moSiteList.Values) sites.Add(ss);
                     SerializableSettings s = new SerializableSettings();
                     s.Sites = sites;
-                    System.Xml.Serialization.XmlSerializer ser = new System.Xml.Serialization.XmlSerializer(s.GetType());
+                    System.Xml.Serialization.XmlSerializer ser = XmlSerImp.GetSerializer(s.GetType());
                     XmlWriterSettings xmlSettings = new XmlWriterSettings();
                     xmlSettings.Encoding = System.Text.Encoding.UTF8;
                     xmlSettings.Indent = true;
@@ -176,33 +186,13 @@ namespace OnlineVideos
                         XmlWriter writer = XmlWriter.Create(fs, xmlSettings);
                         ser.Serialize(writer, s);
                         fs.Close();
-                    }
-
-                    //AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
+                    }                    
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
             }
-        }
-
-        /*
-        /// <summary>
-        /// This Method was needed for the XmlSerializer to find the serialization assembly when the Configuration tool is used.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        internal static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            foreach (System.Reflection.Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                if (asm.FullName == args.Name)
-                    return asm;
-            }
-            return null;
-        }
-        */
+        }     
     }
 }
