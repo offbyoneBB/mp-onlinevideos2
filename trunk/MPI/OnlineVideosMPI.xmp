@@ -5,7 +5,7 @@
 			<FileName>3sat.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\3sat.png</Source>
+			<Source>..\SiteImages\Banners\3sat.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>bd048f9c-2790-4b57-994f-890bc2f96ef9</Guid>
@@ -14,7 +14,7 @@
 			<FileName>3sat.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\3sat.png</Source>
+			<Source>..\SiteImages\Icons\3sat.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>9743e262-42a0-4ba9-81c7-81ecacd6222b</Guid>
@@ -23,7 +23,7 @@
 			<FileName>Apple Trailers.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Apple Trailers.png</Source>
+			<Source>..\SiteImages\Banners\Apple Trailers.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>148fe6e1-d44e-458d-a953-37fd50f927f8</Guid>
@@ -32,7 +32,7 @@
 			<FileName>Apple Trailers.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Apple Trailers.png</Source>
+			<Source>..\SiteImages\Icons\Apple Trailers.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>4a789505-8c66-4d34-a988-0a5af571989d</Guid>
@@ -41,7 +41,7 @@
 			<FileName>blip.tv.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\blip.tv.png</Source>
+			<Source>..\SiteImages\Banners\blip.tv.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>e6e21324-38c0-44de-97cb-9a3bb9883030</Guid>
@@ -50,7 +50,7 @@
 			<FileName>blip.tv.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\blip.tv.png</Source>
+			<Source>..\SiteImages\Icons\blip.tv.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>9f0a51fd-5413-4176-8835-9cdf3c61deb3</Guid>
@@ -59,7 +59,7 @@
 			<FileName>Break.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Break.png</Source>
+			<Source>..\SiteImages\Banners\Break.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>1f75fa50-1342-4bb0-a61b-167e05a40308</Guid>
@@ -68,7 +68,7 @@
 			<FileName>Break.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Break.png</Source>
+			<Source>..\SiteImages\Icons\Break.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>2abbe17b-8158-4e2c-8f11-e13d2222ef9f</Guid>
@@ -77,7 +77,7 @@
 			<FileName>button_online videos.png</FileName>
 			<Type>Media</Type>
 			<SubType>Xface</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Xface\Media\button_online videos.png</Source>
+			<Source>..\Skins\Xface\Media\button_online videos.png</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>5583d50c-2cbe-45a8-8e07-371a0c904cb7</Guid>
@@ -86,7 +86,7 @@
 			<FileName>buttonNF_online videos.png</FileName>
 			<Type>Media</Type>
 			<SubType>Xface</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Xface\Media\buttonNF_online videos.png</Source>
+			<Source>..\Skins\Xface\Media\buttonNF_online videos.png</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>18f71db3-a6fe-4d50-b92e-4f8fcc24df8e</Guid>
@@ -95,7 +95,7 @@
 			<FileName>CNN.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\CNN.png</Source>
+			<Source>..\SiteImages\Banners\CNN.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>127ada4e-f4b9-47e1-8946-a24f099255e8</Guid>
@@ -104,7 +104,7 @@
 			<FileName>CNN.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\CNN.png</Source>
+			<Source>..\SiteImages\Icons\CNN.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>70f4c365-0ef5-494c-a4c9-c8d15a6fbe3a</Guid>
@@ -113,7 +113,7 @@
 			<FileName>DailyMotion.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\DailyMotion.png</Source>
+			<Source>..\SiteImages\Banners\DailyMotion.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>815307fd-e823-49bd-9090-939e6655785e</Guid>
@@ -122,7 +122,7 @@
 			<FileName>DailyMotion.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\DailyMotion.png</Source>
+			<Source>..\SiteImages\Icons\DailyMotion.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>e86fefa6-75e4-4f11-a626-dfdbf6b3de71</Guid>
@@ -131,7 +131,7 @@
 			<FileName>Das Erste.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Das Erste.png</Source>
+			<Source>..\SiteImages\Banners\Das Erste.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>98abd64c-41ec-464f-9205-b30e90db89ed</Guid>
@@ -140,7 +140,7 @@
 			<FileName>Das Erste.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Das Erste.png</Source>
+			<Source>..\SiteImages\Icons\Das Erste.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>866351f4-47a3-4e20-b185-298752b9ba4a</Guid>
@@ -149,7 +149,7 @@
 			<FileName>Downloaded Videos.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Downloaded Videos.png</Source>
+			<Source>..\SiteImages\Banners\Downloaded Videos.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>add9a0b4-66f3-4cb3-9b88-a6c17224a111</Guid>
@@ -158,7 +158,7 @@
 			<FileName>Downloaded Videos.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Downloaded Videos.png</Source>
+			<Source>..\SiteImages\Icons\Downloaded Videos.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>75e5c3f4-a423-46f8-a6b2-ac375a7d95b0</Guid>
@@ -167,7 +167,7 @@
 			<FileName>Empflix.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Empflix.png</Source>
+			<Source>..\SiteImages\Banners\Empflix.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>28e47e30-d112-4bd1-b106-5293e3e49d99</Guid>
@@ -176,7 +176,7 @@
 			<FileName>Empflix.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Empflix.png</Source>
+			<Source>..\SiteImages\Icons\Empflix.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>b158f8e7-00ef-4835-8b24-5a0cbf5aae02</Guid>
@@ -185,7 +185,7 @@
 			<FileName>Favorites.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Favorites.png</Source>
+			<Source>..\SiteImages\Banners\Favorites.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>5c387811-4d3f-4bce-8ac2-1938a8966c70</Guid>
@@ -194,7 +194,7 @@
 			<FileName>Favorites.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Favorites.png</Source>
+			<Source>..\SiteImages\Icons\Favorites.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>980337ff-99dd-4c90-9c24-bf67d3c5d440</Guid>
@@ -203,7 +203,7 @@
 			<FileName>GameTrailers.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\GameTrailers.png</Source>
+			<Source>..\SiteImages\Banners\GameTrailers.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>ecd457d5-60e0-4ab7-8860-b2697ae320b8</Guid>
@@ -212,7 +212,7 @@
 			<FileName>GameTrailers.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\GameTrailers.png</Source>
+			<Source>..\SiteImages\Icons\GameTrailers.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>370e207c-97a0-4d52-a0d0-72f28fd4caac</Guid>
@@ -221,7 +221,7 @@
 			<FileName>hover_onlinevideos.png</FileName>
 			<Type>Media</Type>
 			<SubType>Xface</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Xface\Media\hover_onlinevideos.png</Source>
+			<Source>..\Skins\Xface\Media\hover_onlinevideos.png</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>c7ffb97a-951f-4011-85e0-4281536704f8</Guid>
@@ -230,7 +230,7 @@
 			<FileName>hover_OnlineVideos.png</FileName>
 			<Type>Media</Type>
 			<SubType>Blue3</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Blue3\Media\hover_OnlineVideos.png</Source>
+			<Source>..\Skins\Blue3\Media\hover_OnlineVideos.png</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>7284a63a-3f9d-413e-82d1-af435bfc60b8</Guid>
@@ -239,7 +239,7 @@
 			<FileName>hover_OnlineVideos.png</FileName>
 			<Type>Media</Type>
 			<SubType>Blue3wide</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Blue3wide\Media\hover_OnlineVideos.png</Source>
+			<Source>..\Skins\Blue3wide\Media\hover_OnlineVideos.png</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>bc744669-86f8-4b12-b234-e6ba16a8af01</Guid>
@@ -248,7 +248,7 @@
 			<FileName>Live Video.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Live Video.png</Source>
+			<Source>..\SiteImages\Banners\Live Video.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>bb9c923c-cd5b-4b9f-9bdb-1f6f533b3d51</Guid>
@@ -257,7 +257,7 @@
 			<FileName>Live Video.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Live Video.png</Source>
+			<Source>..\SiteImages\Icons\Live Video.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>b1fb65d5-6fa4-4ca7-ab6c-280ace76f0b7</Guid>
@@ -266,7 +266,7 @@
 			<FileName>MetaCafe.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\MetaCafe.png</Source>
+			<Source>..\SiteImages\Banners\MetaCafe.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>35cf5241-02b0-42d2-833a-8297111996b5</Guid>
@@ -275,7 +275,7 @@
 			<FileName>MetaCafe.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\MetaCafe.png</Source>
+			<Source>..\SiteImages\Icons\MetaCafe.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>0cb31b35-bdcc-41b0-84f7-8130e1e01697</Guid>
@@ -284,7 +284,7 @@
 			<FileName>Miro.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Miro.png</Source>
+			<Source>..\SiteImages\Banners\Miro.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>8ad83f73-8494-4f8d-b09f-e0d656f80037</Guid>
@@ -293,7 +293,7 @@
 			<FileName>Miro.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Miro.png</Source>
+			<Source>..\SiteImages\Icons\Miro.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>85c82af4-da6e-4434-bd91-480598297da3</Guid>
@@ -302,7 +302,7 @@
 			<FileName>MSNBC.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\MSNBC.png</Source>
+			<Source>..\SiteImages\Banners\MSNBC.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>2d7e051f-65dd-421e-ac05-7ccb1a2354f1</Guid>
@@ -311,7 +311,7 @@
 			<FileName>MSNBC.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\MSNBC.png</Source>
+			<Source>..\SiteImages\Icons\MSNBC.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>6e1ab3ef-f190-4e24-a371-cf5f19883c16</Guid>
@@ -320,7 +320,7 @@
 			<FileName>MusicTelevision.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\MusicTelevision.png</Source>
+			<Source>..\SiteImages\Banners\MusicTelevision.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>dac2addb-a781-460e-a9f8-d0f860eaa8ef</Guid>
@@ -329,7 +329,7 @@
 			<FileName>MusicTelevision.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\MusicTelevision.png</Source>
+			<Source>..\SiteImages\Icons\MusicTelevision.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>5fdf2373-30f3-4af4-8191-aa7a44fbe4a0</Guid>
@@ -338,7 +338,7 @@
 			<FileName>myonlinevideos.details.xml</FileName>
 			<Type>Skin</Type>
 			<SubType>Blue3</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Blue3\myonlinevideos.details.xml</Source>
+			<Source>..\Skins\Blue3\myonlinevideos.details.xml</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>0360855a-8756-46cf-af26-4902bddbe010</Guid>
@@ -347,7 +347,7 @@
 			<FileName>myonlinevideos.details.xml</FileName>
 			<Type>Skin</Type>
 			<SubType>Blue3wide</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Blue3wide\myonlinevideos.details.xml</Source>
+			<Source>..\Skins\Blue3wide\myonlinevideos.details.xml</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>006d3cb0-a42a-4813-9ffd-12919d522b7b</Guid>
@@ -356,7 +356,7 @@
 			<FileName>myonlinevideos.details.xml</FileName>
 			<Type>Skin</Type>
 			<SubType>Xface</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Xface\myonlinevideos.details.xml</Source>
+			<Source>..\Skins\Xface\myonlinevideos.details.xml</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>497314e5-352d-4bbf-814c-c21f2814518e</Guid>
@@ -365,7 +365,7 @@
 			<FileName>myonlinevideos.facade.xml</FileName>
 			<Type>Skin</Type>
 			<SubType>Blue3</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Blue3\myonlinevideos.facade.xml</Source>
+			<Source>..\Skins\Blue3\myonlinevideos.facade.xml</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>92383858-9cf0-403a-9102-4bf15d7625ce</Guid>
@@ -374,7 +374,7 @@
 			<FileName>myonlinevideos.facade.xml</FileName>
 			<Type>Skin</Type>
 			<SubType>Blue3wide</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Blue3wide\myonlinevideos.facade.xml</Source>
+			<Source>..\Skins\Blue3wide\myonlinevideos.facade.xml</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>c31a559b-da51-4870-b497-c8f39e4cddf8</Guid>
@@ -383,7 +383,7 @@
 			<FileName>myonlinevideos.facade.xml</FileName>
 			<Type>Skin</Type>
 			<SubType>Xface</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Xface\myonlinevideos.facade.xml</Source>
+			<Source>..\Skins\Xface\myonlinevideos.facade.xml</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>db9db640-7a1b-47d7-a60f-10d32ad4819e</Guid>
@@ -392,7 +392,7 @@
 			<FileName>myonlinevideos.window.xml</FileName>
 			<Type>Skin</Type>
 			<SubType>Xface</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Xface\myonlinevideos.window.xml</Source>
+			<Source>..\Skins\Xface\myonlinevideos.window.xml</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>d7dee445-238a-4d9d-90e6-ae4b4af5fdc3</Guid>
@@ -401,7 +401,7 @@
 			<FileName>myonlinevideos.xml</FileName>
 			<Type>Skin</Type>
 			<SubType>Blue3</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Blue3\myonlinevideos.xml</Source>
+			<Source>..\Skins\Blue3\myonlinevideos.xml</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>a1084b1d-e1e9-4c1d-a7a4-23d9384f39b3</Guid>
@@ -410,7 +410,7 @@
 			<FileName>myonlinevideos.xml</FileName>
 			<Type>Skin</Type>
 			<SubType>Blue3wide</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Blue3wide\myonlinevideos.xml</Source>
+			<Source>..\Skins\Blue3wide\myonlinevideos.xml</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>c8d779d1-3208-44d2-ae7f-992cf3b51139</Guid>
@@ -419,7 +419,7 @@
 			<FileName>myonlinevideos.xml</FileName>
 			<Type>Skin</Type>
 			<SubType>Xface</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Xface\myonlinevideos.xml</Source>
+			<Source>..\Skins\Xface\myonlinevideos.xml</Source>
 			<Id>02010</Id>
 			<Option />
 			<Guid>f83c0499-6457-4b96-b31b-722a956c2d2b</Guid>
@@ -428,7 +428,7 @@
 			<FileName>MyVideo.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\MyVideo.png</Source>
+			<Source>..\SiteImages\Banners\MyVideo.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>002e75e8-8689-4069-9366-8013669118f4</Guid>
@@ -437,7 +437,7 @@
 			<FileName>MyVideo.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\MyVideo.png</Source>
+			<Source>..\SiteImages\Icons\MyVideo.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>591577a6-f846-4320-b5b2-7b712e012a12</Guid>
@@ -446,7 +446,7 @@
 			<FileName>NASA.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\NASA.png</Source>
+			<Source>..\SiteImages\Banners\NASA.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>8f17887a-b64c-4e86-b205-cd618a2bc942</Guid>
@@ -455,7 +455,7 @@
 			<FileName>NASA.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\NASA.png</Source>
+			<Source>..\SiteImages\Icons\NASA.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>f9e0f2f2-1fa6-42e1-a05b-197549eda9eb</Guid>
@@ -464,7 +464,7 @@
 			<FileName>NBA.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\NBA.png</Source>
+			<Source>..\SiteImages\Banners\NBA.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>41f17986-a7dd-4c95-afba-f9917f4e9f5d</Guid>
@@ -473,7 +473,7 @@
 			<FileName>NBA.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\NBA.png</Source>
+			<Source>..\SiteImages\Icons\NBA.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>badcb071-eacf-4430-a0dd-4eb636bdebf8</Guid>
@@ -491,7 +491,7 @@
 			<FileName>OnlineVideos.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\OnlineVideos.png</Source>
+			<Source>..\SiteImages\Banners\OnlineVideos.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>11369256-4e7a-4250-96ec-a56f0c92f845</Guid>
@@ -500,7 +500,7 @@
 			<FileName>OnlineVideoSites.xml</FileName>
 			<Type>Other</Type>
 			<SubType>%Config%</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\OnlineVideoSites.xml</Source>
+			<Source>..\OnlineVideoSites.xml</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>2969c5c9-356e-42f1-9690-1be003ff1d6f</Guid>
@@ -509,7 +509,7 @@
 			<FileName>Picture_cover_focused.png</FileName>
 			<Type>Media</Type>
 			<SubType>Blue3</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Blue3\Media\OnlineVideos\Picture_cover_focused.png</Source>
+			<Source>..\Skins\Blue3\Media\OnlineVideos\Picture_cover_focused.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Picture_cover_focused.png|</Option>
 			<Guid>c6569a26-03ef-4058-b22e-d872e3809880</Guid>
@@ -518,7 +518,7 @@
 			<FileName>Picture_cover_focused.png</FileName>
 			<Type>Media</Type>
 			<SubType>Blue3wide</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\Skins\Blue3wide\Media\OnlineVideos\Picture_cover_focused.png</Source>
+			<Source>..\Skins\Blue3wide\Media\OnlineVideos\Picture_cover_focused.png</Source>
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Picture_cover_focused.png|</Option>
 			<Guid>c4535dc4-c7ce-46ab-889d-a2a4627370ed</Guid>
@@ -527,7 +527,7 @@
 			<FileName>RedTube.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\RedTube.png</Source>
+			<Source>..\SiteImages\Banners\RedTube.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>e956d974-1c63-42f4-85e8-be65f87f31b3</Guid>
@@ -536,7 +536,7 @@
 			<FileName>RedTube.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\RedTube.png</Source>
+			<Source>..\SiteImages\Icons\RedTube.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>1bd8d4f6-ac8f-4af0-9196-27b7162f0e91</Guid>
@@ -545,7 +545,7 @@
 			<FileName>Revision3.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Revision3.png</Source>
+			<Source>..\SiteImages\Banners\Revision3.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>140481ea-6601-4543-92ce-543ebf84907d</Guid>
@@ -554,7 +554,7 @@
 			<FileName>Revision3.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Revision3.png</Source>
+			<Source>..\SiteImages\Icons\Revision3.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>444c8a31-f28e-4ccd-a8de-02f333e2c98d</Guid>
@@ -563,7 +563,7 @@
 			<FileName>Snowboard Surf and Skate.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Snowboard Surf and Skate.png</Source>
+			<Source>..\SiteImages\Banners\Snowboard Surf and Skate.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>4ff2bbb6-55dc-4cd8-8b3d-291e51bb5904</Guid>
@@ -572,7 +572,7 @@
 			<FileName>Snowboard Surf and Skate.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Snowboard Surf and Skate.png</Source>
+			<Source>..\SiteImages\Icons\Snowboard Surf and Skate.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>58994f27-aaa7-4de4-999f-5417c83a607a</Guid>
@@ -581,7 +581,7 @@
 			<FileName>SouthPark.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\SouthPark.png</Source>
+			<Source>..\SiteImages\Banners\SouthPark.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>9edea5b5-eba2-445d-98f5-1069ea5bef5e</Guid>
@@ -590,7 +590,7 @@
 			<FileName>SouthPark.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\SouthPark.png</Source>
+			<Source>..\SiteImages\Icons\SouthPark.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>d08bd113-b330-4307-a2cd-ee09f2979b7f</Guid>
@@ -599,7 +599,7 @@
 			<FileName>SVTPlay.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\SVTPlay.png</Source>
+			<Source>..\SiteImages\Banners\SVTPlay.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>13a006d7-6d9d-4636-bafe-7ad99569aee5</Guid>
@@ -608,7 +608,7 @@
 			<FileName>SVTPlay.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\SVTPlay.png</Source>
+			<Source>..\SiteImages\Icons\SVTPlay.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>eca0cabf-2bab-43a5-bce3-02fb9727a081</Guid>
@@ -617,7 +617,7 @@
 			<FileName>TEDTalks.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\TEDTalks.png</Source>
+			<Source>..\SiteImages\Banners\TEDTalks.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>fe5bf95c-eab7-4c19-85fc-bd378573cca6</Guid>
@@ -626,7 +626,7 @@
 			<FileName>TEDTalks.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\TEDTalks.png</Source>
+			<Source>..\SiteImages\Icons\TEDTalks.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>179e6b3b-a4cc-4ecf-a8a0-65f24954327f</Guid>
@@ -635,7 +635,7 @@
 			<FileName>Tube8.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Tube8.png</Source>
+			<Source>..\SiteImages\Banners\Tube8.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>cf16fd34-fa5e-4d7d-8979-034ca02b835d</Guid>
@@ -644,7 +644,7 @@
 			<FileName>Tube8.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Tube8.png</Source>
+			<Source>..\SiteImages\Icons\Tube8.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>05cc72c2-14a2-459e-8a80-602cbcae4003</Guid>
@@ -653,7 +653,7 @@
 			<FileName>VeryFunnyAds.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\VeryFunnyAds.png</Source>
+			<Source>..\SiteImages\Banners\VeryFunnyAds.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>6b2e0073-9522-4ce3-81a2-618e7f6362ef</Guid>
@@ -662,7 +662,7 @@
 			<FileName>VeryFunnyAds.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\VeryFunnyAds.png</Source>
+			<Source>..\SiteImages\Icons\VeryFunnyAds.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>4c1f9fba-f54f-4ac9-a27c-ba77b1216783</Guid>
@@ -671,7 +671,7 @@
 			<FileName>Vodcasts.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\Vodcasts.png</Source>
+			<Source>..\SiteImages\Banners\Vodcasts.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>78daa584-99e5-4a71-98be-1781b7c699ba</Guid>
@@ -680,7 +680,7 @@
 			<FileName>Vodcasts.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\Vodcasts.png</Source>
+			<Source>..\SiteImages\Icons\Vodcasts.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>c3679066-263a-4802-ab90-6fa5d342f811</Guid>
@@ -689,7 +689,7 @@
 			<FileName>WDR.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\WDR.png</Source>
+			<Source>..\SiteImages\Banners\WDR.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>e55edee1-948b-4c92-bfc0-b48359c47ee4</Guid>
@@ -698,7 +698,7 @@
 			<FileName>WDR.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\WDR.png</Source>
+			<Source>..\SiteImages\Icons\WDR.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>c703244a-12d1-4f26-b385-b96f28eb6416</Guid>
@@ -707,7 +707,7 @@
 			<FileName>xHamster.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\xHamster.png</Source>
+			<Source>..\SiteImages\Banners\xHamster.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>18530bfa-5a77-4238-8960-95513786e666</Guid>
@@ -716,7 +716,7 @@
 			<FileName>xHamster.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\xHamster.png</Source>
+			<Source>..\SiteImages\Icons\xHamster.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>2505757d-eed2-49c8-8498-80c50c2ed2d6</Guid>
@@ -725,7 +725,7 @@
 			<FileName>YahooMusicVideos.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\YahooMusicVideos.png</Source>
+			<Source>..\SiteImages\Banners\YahooMusicVideos.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>0d259be2-d49c-4bb7-9498-bbb9d58b1058</Guid>
@@ -734,7 +734,7 @@
 			<FileName>YahooMusicVideos.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\YahooMusicVideos.png</Source>
+			<Source>..\SiteImages\Icons\YahooMusicVideos.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>0af2b858-556d-4c0a-9012-1fd20a6c37a5</Guid>
@@ -743,7 +743,7 @@
 			<FileName>YouPorn.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\YouPorn.png</Source>
+			<Source>..\SiteImages\Banners\YouPorn.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>d8f54f1b-26b5-48b1-8953-1d83606aa291</Guid>
@@ -752,7 +752,7 @@
 			<FileName>YouPorn.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\YouPorn.png</Source>
+			<Source>..\SiteImages\Icons\YouPorn.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>c6ba74e7-706e-4016-8583-becfc6b3d7c0</Guid>
@@ -761,7 +761,7 @@
 			<FileName>YouTube.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\YouTube.png</Source>
+			<Source>..\SiteImages\Banners\YouTube.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>ab9a726e-e8a2-4789-aba0-7a8f8000398d</Guid>
@@ -770,7 +770,7 @@
 			<FileName>YouTube.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\YouTube.png</Source>
+			<Source>..\SiteImages\Icons\YouTube.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>1dcd7e82-8089-4643-b8fe-23c9c36da94f</Guid>
@@ -779,7 +779,7 @@
 			<FileName>ZDF Mediatek.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Banners\ZDF Mediatek.png</Source>
+			<Source>..\SiteImages\Banners\ZDF Mediatek.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>e79310a2-0d9a-492d-adde-9d7c5907379d</Guid>
@@ -788,7 +788,7 @@
 			<FileName>ZDF Mediatek.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\SiteImages\Icons\ZDF Mediatek.png</Source>
+			<Source>..\SiteImages\Icons\ZDF Mediatek.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>4db704a0-30d2-4a8a-bf6b-328c8275cdc8</Guid>
@@ -800,7 +800,7 @@
 	<SetupGroupMappings />
 	<Option>
 		<BuildFileName />
-		<ProiectFileName>D:\Dokumente\Visual Studio Projects\MediaPortal\OnlineVideos\MPI\OnlineVideosMPI.xmp</ProiectFileName>
+		<ProiectFileName>..\MPI\OnlineVideosMPI.xmp</ProiectFileName>
 		<ProiectName>Online Videos</ProiectName>
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com/files/Download/MediaPortalInstaller(MPI)/Web/OnlineVideos/</UpdateURL>
