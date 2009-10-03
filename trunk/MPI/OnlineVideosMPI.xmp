@@ -804,7 +804,7 @@
 		<ProiectName>Online Videos</ProiectName>
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com/files/Download/MediaPortalInstaller(MPI)/Web/OnlineVideos/</UpdateURL>
-		<Version>0.9.9</Version>
+		<Version>0.9.10</Version>
 		<Description>Allows watching videos from various websites, by either using their RSS feeds or parsing the html. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, SVT, Break, CNN, VeryFunnyAds, MSNBC, YahooMusicVideos, Southpark.de, YouPorn, RedTube, xHamster, Tube8, Empflix and many more.</Description>
 		<Group>Web</Group>
 		<Release>Beta</Release>
@@ -900,7 +900,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>02-10-09</CreationDate>
+		<CreationDate>03-10-09</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
