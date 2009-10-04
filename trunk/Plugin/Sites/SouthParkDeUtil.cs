@@ -25,12 +25,12 @@ namespace OnlineVideos.Sites
 
         Regex episodePlayerRegEx = new Regex(@"swfobject.embedSWF\(""(?<url>[^""]*)""", RegexOptions.Compiled);
 
-        public override int DiscoverDynamicCategories(SiteSettings site)
+        public override int DiscoverDynamicCategories()
         {
             string data = GetWebData("http://www.southpark.de/alleepisoden/");
             if (!string.IsNullOrEmpty(data))
             {
-                site.Categories.Clear();
+                Settings.Categories.Clear();
 
                 Match m = seasonsRegEx.Match(data);
                 while (m.Success)
@@ -38,13 +38,13 @@ namespace OnlineVideos.Sites
                     RssLink cat = new RssLink();
                     cat.Name = "Season " + m.Groups["season"].Value;
                     cat.Url = "http://www.southpark.de" + m.Groups["url"].Value;
-                    site.Categories.Add(cat);
+                    Settings.Categories.Add(cat);
                     m = m.NextMatch();
                 }
 
-                site.DynamicCategoriesDiscovered = true;
+                Settings.DynamicCategoriesDiscovered = true;
             }
-            return site.Categories.Count;
+            return Settings.Categories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -69,12 +69,12 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override bool MultipleFilePlay()
+        public override bool MultipleFilePlay
         {
-            return true;
+            get { return true; }
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, SiteSettings foSite)
+        public override List<string> getMultipleVideoUrls(VideoInfo video)
         {
             List<string> result = new List<string>();
             string data = GetWebData(video.VideoUrl);
@@ -115,7 +115,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override string getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             string result = "";
             string data = GetWebData(video.VideoUrl);

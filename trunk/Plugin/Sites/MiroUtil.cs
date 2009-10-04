@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
-    public class MiroUtil : SiteUtilBase, ISearch
+    public class MiroUtil : SiteUtilBase
     {
         static Regex categoriesRegEx = new Regex(@"\{'url'\:\su'(?<url>[^']+)',\s'name'\:\su'(?<name>[^']+)'", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         static Regex subCategoriesRegEx = new Regex(@"<div\sclass=""searchResultContent"">\s*
@@ -70,12 +70,12 @@ namespace OnlineVideos.Sites
             return loVideoList;
         }
 
-        public override int DiscoverDynamicCategories(SiteSettings site)
+        public override int DiscoverDynamicCategories()
         {
             string catsString = GetWebData("https://www.miroguide.com/api/list_categories");
             if (!string.IsNullOrEmpty(catsString))
             {
-                site.Categories.Clear();
+                Settings.Categories.Clear();
                 Match m = categoriesRegEx.Match(catsString);
                 while (m.Success)
                 {
@@ -83,15 +83,15 @@ namespace OnlineVideos.Sites
                     rss.HasSubCategories = true;
                     rss.Name = m.Groups["name"].Value;
                     rss.Url = m.Groups["url"].Value;
-                    site.Categories.Add(rss);
+                    Settings.Categories.Add(rss);
                     m = m.NextMatch();
                 }
-                site.DynamicCategoriesDiscovered = true;
-            }            
-            return site.Categories.Count;
+                Settings.DynamicCategoriesDiscovered = true;
+            }
+            return Settings.Categories.Count;
         }
 
-        public override int DiscoverSubCategories(SiteSettings site, Category parentCategory)
+        public override int DiscoverSubCategories(Category parentCategory)
         {
             string catsString = GetWebData((parentCategory as RssLink).Url);
             parentCategory.SubCategories = new List<Category>();
@@ -116,25 +116,5 @@ namespace OnlineVideos.Sites
             }
             return parentCategory.SubCategories.Count;
         }
-
-
-        #region ISearch Member
-
-        public System.Collections.Generic.Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
-        {
-            return new System.Collections.Generic.Dictionary<string,string>();
-        }
-
-        public System.Collections.Generic.List<VideoInfo> Search(string searchUrl, string query)
-        {
-            return new System.Collections.Generic.List<VideoInfo>();
-        }
-
-        public System.Collections.Generic.List<VideoInfo> Search(string searchUrl, string query, string category)
-        {
-            return Search(searchUrl, query);
-        }
-
-        #endregion        
     }
 }

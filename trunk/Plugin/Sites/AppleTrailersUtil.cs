@@ -208,34 +208,34 @@ namespace OnlineVideos.Sites
 
         protected Dictionary<string, Trailer> Trailers = new Dictionary<string,Trailer>();
 
-        public override bool hasMultipleVideos()
+        public override bool HasMultipleVideos
         {
-            return true;
+            get { return true; }
         }
 
-        public override int DiscoverDynamicCategories(SiteSettings site)
+        public override int DiscoverDynamicCategories()
         {
-            site.Categories.Clear();
+            Settings.Categories.Clear();
 
             RssLink link = new RssLink();
             link.Name = "Just Added";
             link.Url = urlJsonJustAdded;
-            site.Categories.Add(link);
+            Settings.Categories.Add(link);
 
             link = new RssLink();
             link.Name = "Exclusive";
             link.Url = urlJsonExlusive;
-            site.Categories.Add(link);
+            Settings.Categories.Add(link);
 
             link = new RssLink();
             link.Name = "Just HD";
             link.Url = urlJsonHD;
-            site.Categories.Add(link);
+            Settings.Categories.Add(link);
 
             link = new RssLink();
             link.Name = "Most Popular";
             link.Url = urlJsonPop;
-            site.Categories.Add(link);
+            Settings.Categories.Add(link);
 
             Dictionary<string, string> genresAndStudiosHash = new Dictionary<string, string>();
 
@@ -262,11 +262,11 @@ namespace OnlineVideos.Sites
                 link = new RssLink();
                 link.Name = aCat.Key;
                 link.Url = aCat.Value;
-                site.Categories.Add(link);                
+                Settings.Categories.Add(link);                
             }
 
-            site.DynamicCategoriesDiscovered = true;
-            return site.Categories.Count;
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -308,7 +308,7 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        public override string getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             //return video.VideoUrl.Replace("http://movies.apple.com/", "http://apple.com/"); // doesn't work on avatar, but any other tested
             return string.Format("http://127.0.0.1:{0}/?url={1}", OnlineVideoSettings.APPLE_PROXY_PORT, System.Web.HttpUtility.UrlEncode(video.VideoUrl));
@@ -733,19 +733,19 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories()
         {
             return new Dictionary<string, string>();
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query)
+        public List<VideoInfo> Search(string query)
         {
-            return getVideoList(new RssLink() { Url = string.Format(searchUrl, query) });
+            return getVideoList(new RssLink() { Url = string.Format(Settings.SearchUrl, query) });
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string query, string category)
         {
-            return Search(searchUrl, query);
+            return Search(query);
         }
 
         #endregion

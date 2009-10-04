@@ -63,9 +63,9 @@ namespace OnlineVideos.Sites
             return loRssItems;
         }
         
-        public override int DiscoverDynamicCategories(SiteSettings site)
+        public override int DiscoverDynamicCategories()
         {
-            site.Categories.Clear();
+            Settings.Categories.Clear();
 
             XmlDocument doc = new XmlDocument();
             doc.Load(XmlReader.Create("http://www.tbs.com/veryfunnyads/getCollections.do?id=26322"));
@@ -80,10 +80,10 @@ namespace OnlineVideos.Sites
 
                 XmlNode node = chileNode.SelectSingleNode("name", nsMgr);
                 loRssItem.Name = node.InnerText;
-                site.Categories.Add(loRssItem);
+                Settings.Categories.Add(loRssItem);
             }
-            site.DynamicCategoriesDiscovered = true;
-            return site.Categories.Count;
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
         }
 
 		public override List<VideoInfo> getVideoList(Category category)
@@ -91,7 +91,7 @@ namespace OnlineVideos.Sites
             return parseEpisodes(((RssLink)category).Url);
 		}
 
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
 		{
             String lsHtml = GetWebData(String.Format("http://www.tbs.com/veryfunnyads/getPlaylistById.do?id={0}", video.VideoUrl));
             Regex regex = new Regex("<url>([^<]*)");

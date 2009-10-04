@@ -196,7 +196,7 @@ namespace OnlineVideos.Sites
         }
 
         // resolve url for video
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             string ret = video.VideoUrl;
             string data;
@@ -221,9 +221,9 @@ namespace OnlineVideos.Sites
             return ret;
         }
 
-        public override bool hasNextPage()
+        public override bool HasNextPage
         {
-            return nextPageAvailable;
+            get { return nextPageAvailable; }
         }
 
         public override List<VideoInfo> getNextPageVideos()
@@ -231,9 +231,9 @@ namespace OnlineVideos.Sites
             return Parse(nextPageUrl);
         }
 
-        public override bool hasPreviousPage()
+        public override bool HasPreviousPage
         {
-            return previousPageAvailable;
+            get { return previousPageAvailable; }
         }
 
         public override List<VideoInfo> getPreviousPageVideos()
@@ -243,19 +243,19 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories()
         {
             return new Dictionary<string, string>();
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query)
+        public List<VideoInfo> Search(string query)
         {
-            return Parse(string.Format(searchUrl, query));
+            return Parse(string.Format(Settings.SearchUrl, query));
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string query, string category)
         {
-            return Search(searchUrl, query);
+            return Search(query);
         }
 
         #endregion

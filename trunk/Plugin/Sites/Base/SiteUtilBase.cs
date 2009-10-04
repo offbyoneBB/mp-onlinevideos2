@@ -16,23 +16,14 @@ using MediaPortal.Configuration;
 
 namespace OnlineVideos.Sites
 {
+    /// <summary>
+    /// The abstract base class for all utilities.
+    /// </summary>
     public abstract class SiteUtilBase
-    {
-        public abstract List<VideoInfo> getVideoList(Category category);
-
-        string name = string.Empty;
-        public virtual string Name
-        {
-            get
-            {
-                if (name == string.Empty)
-                {
-                    name = GetType().Name;
-                    if (name.EndsWith("Util")) name = name.Substring(0, name.Length - 4);
-                }
-                return name;
-            }
-        }
+    {        
+        public abstract List<VideoInfo> getVideoList(Category category);        
+        
+        public virtual SiteSettings Settings { get; set; }
 
         public virtual List<VideoInfo> getSiteFavorites(String fsUser)
         {
@@ -44,26 +35,26 @@ namespace OnlineVideos.Sites
             return new List<VideoInfo>();
         }
 
-        public virtual int DiscoverDynamicCategories(SiteSettings site)
+        public virtual int DiscoverDynamicCategories()
         {
-            site.DynamicCategoriesDiscovered = true;
+            Settings.DynamicCategoriesDiscovered = true;
             return 0;
         }
 
-        public virtual int DiscoverSubCategories(SiteSettings site, Category parentCategory)
+        public virtual int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategoriesDiscovered = true;
             return 0;
         }
 
-        public virtual String getUrl(VideoInfo video, SiteSettings foSite)
+        public virtual String getUrl(VideoInfo video)
         {
             return video.VideoUrl;
         }
 
-        public virtual bool hasNextPage()
+        public virtual bool HasNextPage
         {
-            return false;
+            get { return false; }
         }
 
         public virtual List<VideoInfo> getNextPageVideos()
@@ -71,9 +62,9 @@ namespace OnlineVideos.Sites
             return new List<VideoInfo>();
         }
 
-        public virtual bool hasPreviousPage()
+        public virtual bool HasPreviousPage
         {
-            return false;
+            get { return false; }
         }
 
         public virtual List<VideoInfo> getPreviousPageVideos()
@@ -81,10 +72,10 @@ namespace OnlineVideos.Sites
             return new List<VideoInfo>();
         }
 
-        public virtual void AddFavorite(VideoInfo foVideo, SiteSettings site)
+        public virtual void AddFavorite(VideoInfo foVideo)
         {
             FavoritesDatabase db = FavoritesDatabase.getInstance();
-            db.addFavoriteVideo(foVideo, site.Name);
+            db.addFavoriteVideo(foVideo, Settings.Name);
         }
 
         public virtual bool RemoveFavorite(VideoInfo foVideo)
@@ -93,9 +84,9 @@ namespace OnlineVideos.Sites
             return db.removeFavoriteVideo(foVideo);
         }
 
-        public virtual bool hasMultipleVideos()
+        public virtual bool HasMultipleVideos
         {
-            return false;
+            get { return false; }
         }
 
         public virtual List<VideoInfo> getOtherVideoList(VideoInfo foVideo)
@@ -127,27 +118,29 @@ namespace OnlineVideos.Sites
             return isVideo;
         }        
 
-        public virtual bool MultipleFilePlay()
+        public virtual bool MultipleFilePlay
         {
-            return false;
+            get { return false; }
         }
 
-        public virtual List<String> getMultipleVideoUrls(VideoInfo video, SiteSettings foSite)
+        public virtual List<String> getMultipleVideoUrls(VideoInfo video)
         {
             return new List<String>();
         }
 
-        public virtual bool hasLoginSupport()
+        public virtual bool HasLoginSupport
         {
-            return false;
+            get { return false; }
         }
 
         public virtual string GetFileNameForDownload(VideoInfo video, string url)
         {
             string extension = System.IO.Path.GetExtension(url);
             string safeName = ImageDownloader.GetSaveFilename(video.Title);
-            return safeName + extension;            
+            return safeName + extension;
         }
+
+        # region static helper functions
 
         protected static string GetRedirectedUrl(string url)
         {            
@@ -176,7 +169,7 @@ namespace OnlineVideos.Sites
             return url;
         }
 
-        static string GetUrlFromResponse(HttpWebResponse httpWebresponse)
+        protected static string GetUrlFromResponse(HttpWebResponse httpWebresponse)
         {   
             StreamReader sr = new StreamReader(httpWebresponse.GetResponseStream());                        
             string content = sr.ReadToEnd();
@@ -257,5 +250,7 @@ namespace OnlineVideos.Sites
             }
             return urlList;
         }
+
+        #endregion
     }
 }

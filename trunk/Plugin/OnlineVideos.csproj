@@ -102,6 +102,7 @@
       <DependentUpon>ImExportXml.cs</DependentUpon>
     </Compile>
     <Compile Include="DownloadInfo.cs" />
+    <Compile Include="ImageDownloader.cs" />
     <Compile Include="Jayrock.Json\BooleanObject.cs" />
     <Compile Include="Jayrock.Json\Collections\KeyedCollection.cs" />
     <Compile Include="Jayrock.Json\Compat.cs" />
@@ -355,7 +356,6 @@
     <Compile Include="Google\GData\YouTube\youtuberequest.cs" />
     <Compile Include="Google\GData\YouTube\youtubeservice.cs" />
     <Compile Include="Configuration\OnlineVideoSettings.cs" />
-    <Compile Include="ImageDowloader.cs" />
     <Compile Include="Configuration\ConfigurationYahoo.cs">
       <SubType>Form</SubType>
     </Compile>

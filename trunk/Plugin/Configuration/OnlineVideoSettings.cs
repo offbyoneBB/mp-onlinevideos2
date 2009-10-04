@@ -37,35 +37,25 @@ namespace OnlineVideos
 
         string bannerIconsDir = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\";
         public string BannerIconsDir { get { return bannerIconsDir; } }
-
-        private static OnlineVideoSettings instance = new OnlineVideoSettings();
+        
         public string BasicHomeScreenName = "Online Videos";
         public String msThumbLocation;
         public String msDownloadDir;
         public String[] msFilterArray;
         public bool useAgeConfirmation = false;
         public string pinAgeConfirmation = "";
-        public Dictionary<String, SiteSettings> moSiteList = new Dictionary<String, SiteSettings>();
+
+        public BindingList<SiteSettings> SiteSettingsList { get; set; }
+        public Dictionary<string, Sites.SiteUtilBase> SiteList = new Dictionary<string,OnlineVideos.Sites.SiteUtilBase>();
+
         public Sites.AppleTrailersUtil.VideoQuality AppleTrailerSize = Sites.AppleTrailersUtil.VideoQuality.HD480;
         public Sites.YouTubeUtil.YoutubeVideoQuality YouTubeQuality = OnlineVideos.Sites.YouTubeUtil.YoutubeVideoQuality.High;
         public Sites.DasErsteMediathekUtil.DasErsteVideoQuality DasErsteQuality = OnlineVideos.Sites.DasErsteMediathekUtil.DasErsteVideoQuality.High;
 
         public SortedList<string, bool> videoExtensions = new SortedList<string, bool>();
-        public CodecConfiguration CodecConfiguration;
+        public CodecConfiguration CodecConfiguration;        
 
-        XmlSerializerImplementation  _XmlSerImp;
-        public XmlSerializerImplementation XmlSerImp
-        {
-            get
-            {
-                if (_XmlSerImp == null)
-                {
-                    _XmlSerImp = (XmlSerializerImplementation)Activator.CreateInstance(GetType().Assembly.GetType("Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializerContract", false));
-                }
-                return _XmlSerImp;
-            }
-        }
-
+        private static OnlineVideoSettings instance = new OnlineVideoSettings();
         public static OnlineVideoSettings getInstance()
         {
             if (instance == null) instance = new OnlineVideoSettings();
@@ -76,6 +66,19 @@ namespace OnlineVideos
         {
             Load();
             CodecConfiguration = new CodecConfiguration();
+        }
+
+        XmlSerializerImplementation _XmlSerImp;
+        public XmlSerializerImplementation XmlSerImp
+        {
+            get
+            {
+                if (_XmlSerImp == null)
+                {
+                    _XmlSerImp = (XmlSerializerImplementation)Activator.CreateInstance(GetType().Assembly.GetType("Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializerContract", false));
+                }
+                return _XmlSerImp;
+            }
         }
 
         void Load()
@@ -133,8 +136,7 @@ namespace OnlineVideos
                         System.Xml.Serialization.XmlSerializer ser = XmlSerImp.GetSerializer(typeof(SerializableSettings));
                         SerializableSettings s = (SerializableSettings)ser.Deserialize(fs);
                         fs.Close();
-                        moSiteList.Clear();
-                        foreach (SiteSettings site in s.Sites) moSiteList.Add(site.Name, site);
+                        SiteSettingsList = s.Sites;
                     }
                 }
             }
@@ -167,15 +169,13 @@ namespace OnlineVideos
                 }
 
                 // only save if there are sites - otherwise an error might have occured on load
-                if (moSiteList != null && moSiteList.Count > 0)
+                if (SiteSettingsList != null && SiteSettingsList.Count > 0)
                 {
                     string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
                     if (System.IO.File.Exists(filename)) System.IO.File.Delete(filename);
                     
-                    BindingList<SiteSettings> sites = new BindingList<SiteSettings>();
-                    foreach (SiteSettings ss in moSiteList.Values) sites.Add(ss);
                     SerializableSettings s = new SerializableSettings();
-                    s.Sites = sites;
+                    s.Sites = SiteSettingsList;
                     System.Xml.Serialization.XmlSerializer ser = XmlSerImp.GetSerializer(s.GetType());
                     XmlWriterSettings xmlSettings = new XmlWriterSettings();
                     xmlSettings.Encoding = System.Text.Encoding.UTF8;

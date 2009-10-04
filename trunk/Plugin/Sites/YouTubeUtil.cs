@@ -84,9 +84,9 @@ namespace OnlineVideos.Sites
         private CookieCollection moCookies;
         private Regex regexId = new Regex("/videos/(.+)");
 
-        public override bool hasLoginSupport()
+        public override bool HasLoginSupport
         {
-            return true;
+            get { return true; }
         }
 
         public override List<OnlineVideos.VideoInfo> getRelatedVideos(string fsId)
@@ -181,7 +181,7 @@ namespace OnlineVideos.Sites
             return loRssItemList;
         }
 
-        public override String getUrl(VideoInfo foVideo, SiteSettings foSite)
+        public override String getUrl(VideoInfo foVideo)
         {
             OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
             YoutubeVideoQuality qa = settings.YouTubeQuality;
@@ -294,7 +294,7 @@ namespace OnlineVideos.Sites
             return moCookies != null && moCookies["LOGIN_INFO"] != null;
         }
         
-        public override int DiscoverDynamicCategories(SiteSettings site)
+        public override int DiscoverDynamicCategories()
         {            
             Dictionary<String, String> categories = getYoutubeCategories();
             foreach (KeyValuePair<String, String> cat in categories)
@@ -302,9 +302,9 @@ namespace OnlineVideos.Sites
                 RssLink item = new RssLink();
                 item.Name = cat.Key;
                 item.Url = String.Format(CATEGORY_FEED, cat.Value);
-                site.Categories.Add(item);
+                Settings.Categories.Add(item);
             }
-            site.DynamicCategoriesDiscovered = true;
+            Settings.DynamicCategoriesDiscovered = true;
             return categories.Count;
         }
 
@@ -345,9 +345,9 @@ namespace OnlineVideos.Sites
             return categories;
         }
 
-        public override bool hasNextPage()
+        public override bool HasNextPage
         {
-            return nextPageAvailable;
+            get { return nextPageAvailable; }
         }
 
         public override List<VideoInfo> getNextPageVideos()
@@ -363,9 +363,9 @@ namespace OnlineVideos.Sites
             return parseGData(query);
         }
 
-        public override bool hasPreviousPage()
+        public override bool HasPreviousPage
         {
-            return previousPageAvailable;
+            get { return previousPageAvailable; }
         }
 
         public override List<VideoInfo> getPreviousPageVideos()
@@ -504,12 +504,12 @@ namespace OnlineVideos.Sites
 
         #region ISearch Members
 
-        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories()
         {
             return getYoutubeCategories();            
         }
 
-        public List<VideoInfo> Search(string searchUrl, string queryStr)
+        public List<VideoInfo> Search(string queryStr)
         {
             YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
             query.Query = queryStr;           
@@ -533,7 +533,7 @@ namespace OnlineVideos.Sites
 
         //}
 
-        public List<VideoInfo> Search(string searchUrl, string queryStr, string category)
+        public List<VideoInfo> Search(string queryStr, string category)
         {
             YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
             query.Query = queryStr;  
@@ -548,22 +548,22 @@ namespace OnlineVideos.Sites
 
         #region IFavorite Members
 
-        public List<VideoInfo> getFavorites(string fsUsername, string fsPassword)
+        public List<VideoInfo> getFavorites()
         {
-            if (fsUsername == null || fsUsername.Trim() == string.Empty) return new List<VideoInfo>();
+            if (string.IsNullOrEmpty(Settings.Username)) return new List<VideoInfo>();
 
             //service.setUserCredentials(fsUsername,fsPassword);
             
-            YouTubeQuery query =new YouTubeQuery(String.Format(FAVORITE_FEED,fsUsername));           
+            YouTubeQuery query =new YouTubeQuery(String.Format(FAVORITE_FEED,Settings.Username));           
         
             return parseGData(query);
         }               
 
-        public void addFavorite(VideoInfo video, string fsUsername, string fsPassword)
+        public void addFavorite(VideoInfo video)
         {
-            service.setUserCredentials(fsUsername, fsPassword);
+            service.setUserCredentials(Settings.Username, Settings.Password);
             YouTubeEntry entry = (YouTubeEntry)video.Other;
-            service.Insert(new Uri(String.Format(FAVORITE_FEED, fsUsername)), entry);
+            service.Insert(new Uri(String.Format(FAVORITE_FEED, Settings.Username)), entry);
         //    String lsPostUrl = "http://gdata.youtube.com/feeds/api/users/default/favorites";
         //    String authToken = getAuthToken(fsUsername, fsPassword);
         //    HttpWebRequest Request = (HttpWebRequest)WebRequest.Create(lsPostUrl);
@@ -589,7 +589,7 @@ namespace OnlineVideos.Sites
             //throw new Exception("");
         }
 
-        public void removeFavorite(VideoInfo video, string fsUsername, string fsPassword)
+        public void removeFavorite(VideoInfo video)
         {
             ((YouTubeEntry)video.Other).Delete();
             //String lsPostUrl = String.Format("http://gdata.youtube.com/feeds/api/users/{0}/favorites/{1}", fsUsername, "vjVQa1PpcFOKheU6YrMZmZ6GRqLUdhAz8qZtu8cCzBs");

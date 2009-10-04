@@ -28,7 +28,7 @@ namespace OnlineVideos.Sites
         Regex reFindStartTime = new Regex(@"starttime\svalue\s*=\s*[\""\'']?(?<starttime>[^""''>\s]*)");
         Regex reFindDuration = new Regex(@"duration\svalue\s*=\s*[\""\'']?(?<duration>[^""''>\s]*)");
 
-        public override int DiscoverDynamicCategories(SiteSettings site)
+        public override int DiscoverDynamicCategories()
         {
             SVTPlayCategory item;
 
@@ -45,46 +45,21 @@ namespace OnlineVideos.Sites
 
                 item.Name = System.Web.HttpUtility.HtmlDecode(match.Groups["Title"].Value);
                 item.Id = match.Groups["Id"].Value;
-                item.Url = match.Groups["Url"].Value;
-                item.Thumb = item.Id + "_p.jpg";
-                Log.Info("Setting CategoryImageUrl to: {0}", item.Thumb);
+                item.Url = match.Groups["Url"].Value;                
 
-                if (!System.IO.File.Exists(OnlineVideoSettings.getInstance().msThumbLocation + item.Thumb))
-                {
-                    try
-                    {
-                        ImageDownloader.downloadPoster(categoryImagesUrl + item.Id.Substring(0, 2) + "/" + item.Id.Substring(2, 2) + "/" + item.Id.Substring(4, 2) + "/" + match.Groups["CatPath"].Value.Substring(1) + "_a.jpg", item.Id, OnlineVideoSettings.getInstance().msThumbLocation);
-                    }
-                    catch
-                    {
-                        try
-                        {
-                            ImageDownloader.downloadPoster(categoryImagesUrl + item.Id.Substring(0, 2) + "/" + item.Id.Substring(2, 2) + "/" + item.Id.Substring(4, 2) + "/" + match.Groups["CatPath"].Value.Substring(1).Replace("_", "") + "_a.jpg", item.Id, OnlineVideoSettings.getInstance().msThumbLocation);
-                        }
-                        catch
-                        {
-                            try
-                            {
-                                ImageDownloader.downloadPoster(categoryImagesUrl + item.Id.Substring(0, 2) + "/" + item.Id.Substring(2, 2) + "/" + item.Id.Substring(4, 2) + "/a_" + match.Groups["CatPath"].Value.Substring(1).Replace("_", "") + "_168.jpg", item.Id, OnlineVideoSettings.getInstance().msThumbLocation);
-                            }
-                            catch
-                            {
-                                item.Thumb = "";
-                            }
-                        }
-                    }
-                }
-
-
+                item.Thumb = categoryImagesUrl + item.Id.Substring(0, 2) + "/" + item.Id.Substring(2, 2) + "/" + item.Id.Substring(4, 2) + "/" + match.Groups["CatPath"].Value.Substring(1) + "_a.jpg" + "|" +
+                             categoryImagesUrl + item.Id.Substring(0, 2) + "/" + item.Id.Substring(2, 2) + "/" + item.Id.Substring(4, 2) + "/" + match.Groups["CatPath"].Value.Substring(1).Replace("_", "") + "_a.jpg" + "|" +
+                             categoryImagesUrl + item.Id.Substring(0, 2) + "/" + item.Id.Substring(2, 2) + "/" + item.Id.Substring(4, 2) + "/a_" + match.Groups["CatPath"].Value.Substring(1).Replace("_", "") + "_168.jpg";
+                
                 // Add category to List
-                site.Categories.Add(item);
+                Settings.Categories.Add(item);
 
                 // Find next match if possible
                 match = match.NextMatch();
             }
 
-            site.DynamicCategoriesDiscovered = true;
-            return site.Categories.Count;
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
         }
 
         /// <summary>
@@ -294,21 +269,8 @@ namespace OnlineVideos.Sites
     }
 
     public class SVTPlayCategory : RssLink
-    {
-        private string imageUrl;
-        private string id;
-
-        public string Id
-        {
-            get
-            {
-                return id;
-            }
-            set
-            {
-                id = value;
-            }
-        }        
+    {        
+        public string Id { get; set; }
     }
 
 }

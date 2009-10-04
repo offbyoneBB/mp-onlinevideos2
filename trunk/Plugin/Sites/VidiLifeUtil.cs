@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites
         Regex loPathRegex = new Regex(@"so\.addVariable\('xml',\s'([^']+)'");
         Regex loFlvRegex = new Regex(@"<flv8>([^<]+)</flv8>");
 
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             string lsUrl = "";
         	String lsHtml = GetWebData(video.VideoUrl);

@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites
 	{
         static Regex idRegex = new Regex(@"vPlayer\('(\d{5,10})'", RegexOptions.Compiled);
 
-		public override string getUrl(OnlineVideos.VideoInfo video, OnlineVideos.SiteSettings foSite)
+		public override string getUrl(OnlineVideos.VideoInfo video)
 		{
             if (video.VideoUrl.Contains("/vp/"))
             {

@@ -56,7 +56,7 @@ namespace OnlineVideos.Sites
 			return loRssItemList;
 		}
 
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
 		{
             String lsHtml = GetWebData(video.VideoUrl);
 

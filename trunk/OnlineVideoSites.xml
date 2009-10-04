@@ -439,6 +439,15 @@
         <Category xsi:type="RssLink" name="HD Nation">http://revision3.com/hdnation/feed/quicktime-large/</Category>
       </Categories>
     </Site>
+    <Site name="Discovey Channel" util="GenericSite" agecheck="false" enabled="true">
+      <Categories>
+        <Category xsi:type="RssLink" name="Discovery Video" thumb="http://up2.podbean.com/image-logos/16961_logo.jpg">http://www.discovery.com/radio/xml/discovery_video.xml</Category>
+        <Category xsi:type="RssLink" name="Science Channel" thumb="http://up2.podbean.com/image-logos/16971_logo.jpg">http://www.discovery.com/radio/xml/sciencevideo.xml</Category>
+        <Category xsi:type="RssLink" name="Discovery News" thumb="http://up2.podbean.com/image-logos/16964_logo.jpg">http://www.discovery.com/radio/xml/news_video.xml</Category>
+        <Category xsi:type="RssLink" name="Discovery Space" thumb="http://up2.podbean.com/image-logos/43342_logo.jpg">http://www.discovery.com/radio/xml/DiscoverySpace.xml</Category>
+        <Category xsi:type="RssLink" name="Discovery Investigations">http://www.discovery.com/radio/xml/id_videopodcast.xml</Category>
+      </Categories>
+    </Site>
     <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true">
       <Username />
       <Password />
@@ -450,8 +459,7 @@
         <Category xsi:type="RssLink" name="CNet">http://feeds2.feedburner.com/allcnetvideopodcasts</Category>
         <Category xsi:type="RssLink" name="DL.TV">http://feeds2.feedburner.com/ziffdavis/dltvwmvvideo</Category>
         <Category xsi:type="RssLink" name="n-tv Nachrichten">http://ntv-news.feedplace.de/rss</Category>
-        <Category xsi:type="RssLink" name="Discovery Channel Video Podcasts">http://www.discovery.com/radio/xml/discovery_video.xml</Category>
-        <Category xsi:type="RssLink" name="Discovery News (Video)">http://www.discovery.com/radio/xml/news_video.xml</Category>
+        <Category xsi:type="RssLink" name="MotoGP Race Report" thumb="http://up2.podbean.com/image-logos/17774_logo.jpg">http://www.motogp.com/xml/en/sindication/podcast_video.xml</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
             <Channel name="French Tv - Orange" thumb="http://www.broadbandtvnews.com/wp-content/uploads/2008/02/orange-logo.thumbnail.jpg">mms://livewm.orange.fr/live-multicanaux</Channel>
@@ -511,8 +519,11 @@
         <Category xsi:type="RssLink" name="FUEL TV: FirstHand">http://podcasts.fuel.tv/xml/firsthand_itunes.rss</Category>
         <Category xsi:type="RssLink" name="Skateboard Mag PodCast">http://theskateboardmag.com/feeds/watch/</Category>
         <Category xsi:type="RssLink" name="BOARDRIDERS TV">http://www.boardriderstv.com/podcast/index.php</Category>
+        <Category xsi:type="RssLink" name="DVS Skate" thumb="http://up2.podbean.com/image-logos/17799_logo.gif">http://www.skate-more.com/podcasts/skatemore.xml</Category>
+        <Category xsi:type="RssLink" name="DC" thumb="http://up2.podbean.com/image-logos/17759_logo.jpg">http://feeds.feedburner.com/Dc-Skate</Category>
+        <Category xsi:type="RssLink" name="Vans Skate" thumb="http://up2.podbean.com/image-logos/17759_logo.jpg">http://skate.vans.com/skate_podcast.xml</Category>
       </Categories>
-    </Site>
+    </Site>   
     <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sw">
       <Username />
       <Password />

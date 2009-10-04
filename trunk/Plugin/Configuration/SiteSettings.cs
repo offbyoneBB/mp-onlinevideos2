@@ -22,7 +22,7 @@ namespace OnlineVideos
         public BindingList<SiteSettings> Sites { get; set; }
     }
 
-    [Serializable]    
+    [Serializable]
     public class SiteSettings
     {
         public SiteSettings()
@@ -34,18 +34,9 @@ namespace OnlineVideos
         [XmlAttribute("name")]
         public string Name { get; set; }
 
-        string utilName;
         [XmlAttribute("util")]
-        public string UtilName
-        {
-            get { return utilName; }
-            set { utilName = value; util = SiteUtilFactory.GetByName(value); }
-        }
-
-        SiteUtilBase util;
-        [XmlIgnore]
-        public SiteUtilBase Util { get { return util; } }
-        
+        public string UtilName { get; set; }
+       
         [XmlAttribute("agecheck")]
         public bool ConfirmAge { get; set; }
         
@@ -65,6 +56,8 @@ namespace OnlineVideos
         public string Password { get; set; }
 
         public string SearchUrl { get; set; }
+
+        public StringHash Configuration { get; set; }
 
         public BindingList<Category> Categories { get; set; }
                
@@ -140,4 +133,46 @@ namespace OnlineVideos
         [XmlAttribute("thumb")]
         public string Thumb { get; set; }
     }
+
+    #region HelperClass to Serialize a Dictionary of strings
+
+    [Serializable]
+    public class StringHash: Dictionary<string, string>, IXmlSerializable
+    {
+        public System.Xml.Schema.XmlSchema GetSchema()
+        {
+            return null;
+        } 
+
+        public void ReadXml(System.Xml.XmlReader reader)
+        {
+            bool wasEmpty = reader.IsEmptyElement;
+            reader.Read();
+            if (wasEmpty) return;            
+            while (reader.NodeType != System.Xml.XmlNodeType.EndElement)
+            {
+                string key = reader.GetAttribute("key");
+                reader.ReadStartElement("item");
+                string value = reader.ReadContentAsString();
+                reader.ReadEndElement();
+                this.Add(key, value);
+                reader.MoveToContent();
+            }            
+            reader.ReadEndElement();            
+        } 
+
+        public void WriteXml(System.Xml.XmlWriter writer)
+        {
+            foreach (string key in this.Keys)
+            {
+                writer.WriteStartElement("item");
+                writer.WriteAttributeString("key", key);
+                writer.WriteCData(this[key]);
+                writer.WriteEndElement();
+            }
+        }
+    }
+
+    #endregion
+
 }

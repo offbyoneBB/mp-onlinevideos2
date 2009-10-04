@@ -67,7 +67,7 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        public override int DiscoverDynamicCategories(SiteSettings site)
+        public override int DiscoverDynamicCategories()
         {
             if (settings == null)
             {
@@ -106,24 +106,24 @@ namespace OnlineVideos.Sites
                 provider.GetData(catserv);                
             }
 
-            site.Categories.Clear();
+            Settings.Categories.Clear();
 
             RssLink popularItem = new RssLink();
             popularItem.Name = "Popular";
             popularItem.Url = "popular";
-            site.Categories.Add(popularItem);
+            Settings.Categories.Add(popularItem);
 
             RssLink newItem = new RssLink();
             newItem.Name = "New";
             newItem.Url = "new";
-            site.Categories.Add(newItem);
+            Settings.Categories.Add(newItem);
 
             foreach (CategoryEntity cat in catserv.Items)
             {
                 RssLink loRssItem = new RssLink();
                 loRssItem.Name = cat.Name;
                 loRssItem.Url = cat.Id;
-                site.Categories.Add(loRssItem);
+                Settings.Categories.Add(loRssItem);
 
                 // create sub cats tree
                 if (cat.Childs != null && cat.Childs.Count > 0)
@@ -149,11 +149,11 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            site.DynamicCategoriesDiscovered = true;
-            return site.Categories.Count;
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
         }
 
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             RTMP_LIB.Link link = YahooRTMPLinkCatcher(video.VideoUrl);
             string resultUrl = string.Format("http://127.0.0.1:{5}/stream.flv?app={0}&tcUrl={1}&hostname={2}&port={3}&playpath={4}",
@@ -221,7 +221,7 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories()
         {
             Dictionary<string, string> loRssItems = new Dictionary<string, string>();
             if (catserv != null)
@@ -234,12 +234,12 @@ namespace OnlineVideos.Sites
             return loRssItems;
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query)
+        public List<VideoInfo> Search(string query)
         {
-            return Search(searchUrl, query, "");    
+            return Search(query, "");    
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string query, string category)
         {
             videoSearchList.Category = category;
             videoSearchList.Keyword = query;

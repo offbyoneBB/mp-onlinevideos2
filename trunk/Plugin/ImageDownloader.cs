@@ -197,9 +197,7 @@ namespace OnlineVideos
             int liIdx = 0;
             //List<String> loImageFileList = new List<String>(loImageUrlList.Count);
             WebClient client = new WebClient();
-
-            string imageLocation;
-            string thumbnailLocation;
+                        
             string name;
             foreach (String url in loImageUrlList)
             {                
@@ -209,49 +207,42 @@ namespace OnlineVideos
                     Log.Info("Received Request to stop Download");
                     break;
                 }
+                string imageLocation = "";
                 if (!string.IsNullOrEmpty(url))
                 {
-                    name = MediaPortal.Util.Utils.GetThumb(url);
-                    //Log.Info("1)lsThumb = "+lsThumb);
-                    name = System.IO.Path.GetFileNameWithoutExtension(name);
-                    imageLocation = lsThumbLocation + name + "L.jpg";
-                    thumbnailLocation = lsThumbLocation + name + ".jpg";
-                    if (System.IO.File.Exists(imageLocation) == false)
+                    string[] urls = url.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);                    
+                    foreach (string aFinalUrl in urls)
                     {
-                        Log.Info("downloading image :" + url);
+                        name = MediaPortal.Util.Utils.GetThumb(aFinalUrl);
+                        name = System.IO.Path.GetFileNameWithoutExtension(name);
+                        imageLocation = lsThumbLocation + name + "L.jpg";
+                        if (System.IO.File.Exists(imageLocation)) break;                                                
                         try
                         {
-                            client.DownloadFile(url, imageLocation);
+                            Log.Info("downloading image :" + aFinalUrl);
+                            client.DownloadFile(aFinalUrl, imageLocation);
+                            break;
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            Log.Error(ex);
-                            //continue;
-                        }
-                        //if (System.IO.File.Exists(thumbnailLocation) == false)
-                        //{
-                        //	//int iRotate = dbs.GetRotation(imageLocation);
-                        //    MediaPortal.Util.Picture.CreateThumbnail(imageLocation, thumbnailLocation, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-                        //	System.Threading.Thread.Sleep(25);
-                        //	System.IO.File.Delete(imageLocation);
-                        //}
+                            Log.Info("image not found : " + aFinalUrl);
+                            imageLocation = "";
+                        }                        
+                    }                    
+                }
+                _imageLocationList.Add(imageLocation);
 
-                    }
-                    //_imageLocationList.Add(thumbnailLocation);
-                    _imageLocationList.Add(imageLocation);
-                }
-                else
-                {
-                    _imageLocationList.Add("");
-                }
                 if (facadeView.Count <= liIdx)
                 {
                     break;
                 }
                 else
                 {
-                    facadeView[liIdx].RetrieveArt = true;
-                    facadeView[liIdx].RefreshCoverArt();
+                    if (imageLocation != "")
+                    {
+                        facadeView[liIdx].RetrieveArt = true;
+                        facadeView[liIdx].RefreshCoverArt();
+                    }
                 }
             }
             Log.Info("Setting imagesDone to true");

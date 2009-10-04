@@ -77,7 +77,7 @@ namespace OnlineVideos.Sites
             return loVideoList;
         }
 
-        public override string getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             string result = "";
 
@@ -173,18 +173,18 @@ namespace OnlineVideos.Sites
         //static Regex nextPageRegEx = new Regex(@"<a\sclass=p\shref='(?<url>/[^\?]*\?page=\d{1,5})'>Next</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);        
         string nextPageUrl = "";
         bool nextPageAvailable = false;
-        public override bool hasNextPage()
+        public override bool HasNextPage
         {
-            return nextPageAvailable;
+            get { return nextPageAvailable; }
         }
 
         static Regex previousPageRegEx = new Regex(@"<a\stitle=""Previous\spage""\shref=""(?<url>[^""]*page=\d{1,})"">Prev</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         //static Regex previousPageRegEx = new Regex(@"<a\sclass=p\shref='(?<url>/[^\?]*\?page=\d{1,5})'>Prev</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         string previousPageUrl = "";
         bool previousPageAvailable = false;
-        public override bool hasPreviousPage()
+        public override bool HasPreviousPage
         {
-            return previousPageAvailable;
+            get { return previousPageAvailable; }
         }
 
         public override List<VideoInfo> getNextPageVideos()
@@ -201,21 +201,19 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories()
         {
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            //foreach (RssLink category in configuredCategories) result.Add(category.Name, category.Url);
-            return result;
+            return new Dictionary<string, string>();
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query)
+        public List<VideoInfo> Search(string query)
         {
-            return Parse(GetWebData(string.Format(searchUrl, query), CookieContainer));
+            return Parse(GetWebData(string.Format(Settings.SearchUrl, query), CookieContainer));
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string query, string category)
         {
-            return Search(searchUrl, query);
+            return Search(query);
         }
 
         #endregion

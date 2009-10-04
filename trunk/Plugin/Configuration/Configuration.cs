@@ -14,8 +14,6 @@ namespace OnlineVideos
 	/// </summary>
 	public partial class Configuration : Form
 	{
-        BindingList<SiteSettings> sites = new BindingList<SiteSettings>();
-
 		public Configuration()
 		{
 			//
@@ -67,9 +65,8 @@ namespace OnlineVideos
             cultureNames.Sort();
             cbLanguages.Items.AddRange(cultureNames.ToArray());            
 
-            // set bindings
-            foreach (SiteSettings site in settings.moSiteList.Values) sites.Add(site);
-            bindingSourceSiteSettings.DataSource = sites;
+            // set bindings            
+            bindingSourceSiteSettings.DataSource = OnlineVideoSettings.getInstance().SiteSettingsList;
 		}
 		
 		void SiteListSelectedIndexChanged(object sender, EventArgs e)
@@ -128,6 +125,7 @@ namespace OnlineVideos
             site.Categories.Add(link);
             ((CurrencyManager)BindingContext[bindingSourceRssLink]).List.Add(link);
             RssLinkList.SelectedIndex = RssLinkList.Items.Count - 1;
+            RssLinkListSelectedIndexChanged(this, EventArgs.Empty);
             txtRssName.Focus();
 		}
 				
@@ -165,10 +163,6 @@ namespace OnlineVideos
                 settings.DasErsteQuality = (OnlineVideos.Sites.DasErsteMediathekUtil.DasErsteVideoQuality)cmbDasErsteQuality.SelectedIndex;
                 settings.useAgeConfirmation = chkUseAgeConfirmation.Checked;
                 settings.pinAgeConfirmation = tbxPin.Text;
-
-                settings.moSiteList.Clear();
-                foreach (SiteSettings site in sites) settings.moSiteList.Add(site.Name, site);
-
                 settings.Save();
             }
 		}               
@@ -368,21 +362,33 @@ namespace OnlineVideos
         private void btnSiteUp_Click(object sender, EventArgs e)
         {
             SiteSettings site = siteList.SelectedItem as SiteSettings;
-            int currentPos = sites.IndexOf(site);
-            sites.Remove(site);
-            if (currentPos == 0) sites.Add(site);
-            else sites.Insert(currentPos - 1, site);
-            siteList.SelectedItem = site;
+            siteList.SelectedIndex = -1;
+            bindingSourceSiteSettings.SuspendBinding();
+
+            int currentPos = OnlineVideoSettings.getInstance().SiteSettingsList.IndexOf(site);
+            OnlineVideoSettings.getInstance().SiteSettingsList.Remove(site);
+            if (currentPos == 0) OnlineVideoSettings.getInstance().SiteSettingsList.Add(site);
+            else OnlineVideoSettings.getInstance().SiteSettingsList.Insert(currentPos - 1, site);
+
+            bindingSourceSiteSettings.ResumeBinding();
+            bindingSourceSiteSettings.Position = OnlineVideoSettings.getInstance().SiteSettingsList.IndexOf(site); 
+            bindingSourceSiteSettings.ResetCurrentItem();
         }
 
         private void btnSiteDown_Click(object sender, EventArgs e)
         {
             SiteSettings site = siteList.SelectedItem as SiteSettings;
-            int currentPos = sites.IndexOf(site);
-            sites.Remove(site);
-            if (currentPos >= sites.Count) sites.Insert(0, site);
-            else sites.Insert(currentPos + 1, site);
-            siteList.SelectedItem = site;
+            siteList.SelectedIndex = -1;
+            bindingSourceSiteSettings.SuspendBinding();
+
+            int currentPos = OnlineVideoSettings.getInstance().SiteSettingsList.IndexOf(site);
+            OnlineVideoSettings.getInstance().SiteSettingsList.Remove(site);
+            if (currentPos >= OnlineVideoSettings.getInstance().SiteSettingsList.Count) OnlineVideoSettings.getInstance().SiteSettingsList.Insert(0, site);
+            else OnlineVideoSettings.getInstance().SiteSettingsList.Insert(currentPos + 1, site);
+
+            bindingSourceSiteSettings.ResumeBinding();
+            bindingSourceSiteSettings.Position = OnlineVideoSettings.getInstance().SiteSettingsList.IndexOf(site);
+            bindingSourceSiteSettings.ResetCurrentItem();
         }
 
         private void btnImportSite_Click(object sender, EventArgs e)
@@ -404,7 +410,7 @@ namespace OnlineVideos
                     SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
                     if (s.Sites != null)
                     {
-                        foreach (SiteSettings site in s.Sites) sites.Add(site);
+                        foreach (SiteSettings site in s.Sites) OnlineVideoSettings.getInstance().SiteSettingsList.Add(site);
                         if (s.Sites.Count > 0) siteList.SelectedItem = s.Sites[s.Sites.Count - 1];
                     }
                 }

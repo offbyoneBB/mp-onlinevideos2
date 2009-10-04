@@ -20,10 +20,10 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class FavoriteUtil : SiteUtilBase, ISearch
     {
-        public override string getUrl(VideoInfo video, SiteSettings foSite)
+        public override string getUrl(VideoInfo video)
         {
-            SiteSettings loSite = OnlineVideoSettings.getInstance().moSiteList[video.SiteName];
-            return loSite.Util.getUrl(video, loSite);
+            SiteUtilBase util = OnlineVideoSettings.getInstance().SiteList[video.SiteName];
+            return util.getUrl(video);
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -47,21 +47,20 @@ namespace OnlineVideos.Sites
             return loVideoList;
         }
 
-        public override int DiscoverDynamicCategories(SiteSettings site)
+        public override int DiscoverDynamicCategories()
         {
-            site.Categories.Clear();
+            Settings.Categories.Clear();
 
             RssLink all = new RssLink();
             all.Name = "All";
             all.Url = "fav:";
-            site.Categories.Add(all);
+            Settings.Categories.Add(all);
 
             FavoritesDatabase db = FavoritesDatabase.getInstance();
-            string[] lsSiteIds = db.getSiteIDs();
-            Dictionary<String, SiteSettings> loSiteList = OnlineVideoSettings.getInstance().moSiteList;                        
+            string[] lsSiteIds = db.getSiteIDs();            
             foreach (string lsSiteId in lsSiteIds)
             {
-                SiteSettings aSite = loSiteList[lsSiteId];
+                SiteSettings aSite = OnlineVideoSettings.getInstance().SiteList[lsSiteId].Settings;
 
                 if (aSite.IsEnabled &&
                    (!aSite.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || OnlineVideoSettings.getInstance().ageHasBeenConfirmed))
@@ -69,7 +68,7 @@ namespace OnlineVideos.Sites
                     RssLink cat = new RssLink();
                     cat.Name = aSite.Name + " - Favorites";
                     cat.Url = "fav:" + aSite.Name;
-                    site.Categories.Add(cat);
+                    Settings.Categories.Add(cat);
                 }
             }
             /*
@@ -79,33 +78,33 @@ namespace OnlineVideos.Sites
             site.Categories.Add(cat);*/
 
             // need to always get the categories, because when adding new fav video from a new site, a removing the last one for a site, the categories must be refreshed 
-            site.DynamicCategoriesDiscovered = false; 
-            return site.Categories.Count;
+            Settings.DynamicCategoriesDiscovered = false;
+            return Settings.Categories.Count;
         }
 
         public override bool RemoveFavorite(VideoInfo foVideo)
         {
             bool result = base.RemoveFavorite(foVideo);
-            if (result) OnlineVideoSettings.getInstance().moSiteList["Favorites"].DynamicCategoriesDiscovered = false;
+            if (result) Settings.DynamicCategoriesDiscovered = false;
             return result;
         }
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories()
         {
             return new Dictionary<string, string>();
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query)
+        public List<VideoInfo> Search(string query)
         {
             FavoritesDatabase db = FavoritesDatabase.getInstance();
             return db.searchFavoriteVideos(query);
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string query, string category)
         {
-            return Search(searchUrl, query);
+            return Search(query);
         }
 
         #endregion

@@ -13,7 +13,7 @@ namespace OnlineVideos.Sites
 {
     public class DailyMotionUtil : SiteUtilBase, ISearch
     {
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             String lsUrl = "";        	
         	String lsHtml = GetWebData(video.VideoUrl);
@@ -58,20 +58,20 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories()
         {
             return new Dictionary<string, string>();
         }
         
-        public List<VideoInfo> Search(string searchUrl, string query)
+        public List<VideoInfo> Search(string query)
         {            
-            string url = string.Format(searchUrl, query);
+            string url = string.Format(Settings.SearchUrl, query);
             return getVideoListFromRss(url);
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string query, string category)
         {
-            return Search(searchUrl, query);
+            return Search(query);
         }
 
         #endregion
