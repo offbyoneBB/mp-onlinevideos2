@@ -25,9 +25,9 @@ namespace OnlineVideos.Sites
         static Regex sectionPath1RegEx = new Regex(@"<div\sid=""nbaVideoFilePath"">(.+)</div>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         static Regex sectionPath2RegEx = new Regex(@"<div\sid=""nbaVideoFileMap"">(.+)</div>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         
-        public override int DiscoverDynamicCategories(SiteSettings site)
+        public override int DiscoverDynamicCategories()
         {
-            foreach(RssLink link in site.Categories)
+            foreach(RssLink link in Settings.Categories)
             {
                 string data = GetWebData(link.Url);
                 if (subCategoriesAvailableRegEx.IsMatch(data))
@@ -46,8 +46,8 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            site.DynamicCategoriesDiscovered = true;
-            return site.Categories.Count;
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -110,14 +110,14 @@ namespace OnlineVideos.Sites
         int pagesInCategory = 1;
         int currentPage = 1;
         string sectionBaseUrl = "";
-        public override bool hasNextPage()
+        public override bool HasNextPage
         {
-            return currentPage < pagesInCategory;
+            get { return currentPage < pagesInCategory; }
         }
                 
-        public override bool hasPreviousPage()
+        public override bool HasPreviousPage
         {
-            return currentPage > 1;
+            get { return currentPage > 1; }
         }
 
         public override List<VideoInfo> getNextPageVideos()

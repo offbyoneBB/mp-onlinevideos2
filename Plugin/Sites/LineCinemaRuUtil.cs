@@ -101,7 +101,7 @@ namespace OnlineVideos.Sites
 			return loRssItemList;
 		}
         
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
 		{
             String lsHtml = browseUrl(video.VideoUrl);
             int embedIndx = lsHtml.IndexOf("<EMBED ");

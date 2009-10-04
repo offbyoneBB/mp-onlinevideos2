@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites
 	/// </summary>
 	public class LiveVideoUtil : SiteUtilBase
 	{       
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             CookieContainer cookieContainer = new CookieContainer();
             String lsUrl = "";

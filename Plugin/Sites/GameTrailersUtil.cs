@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
         static string videoRegExp = @"<a\shref=""(http://www\.gametrailers\.com/download/[^""]+\.wmv)"">";
         static Regex loUrlRegex = new Regex(videoRegExp, RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             string lsUrl = "";
             string lsHtml = GetWebData(video.VideoUrl);

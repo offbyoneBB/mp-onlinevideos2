@@ -31,7 +31,7 @@ namespace OnlineVideos.Sites
             return Parse(GetWebData(((RssLink)category).Url));
         }
 
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             try
             {
@@ -63,16 +63,16 @@ namespace OnlineVideos.Sites
 
         string nextPageUrl = "";
         bool nextPageAvailable = false;
-        public override bool hasNextPage()
+        public override bool HasNextPage
         {
-            return nextPageAvailable;
+            get { return nextPageAvailable; }
         }
 
         string previousPageUrl = "";
         bool previousPageAvailable = false;
-        public override bool hasPreviousPage()
+        public override bool HasPreviousPage
         {
-            return previousPageAvailable;
+            get { return previousPageAvailable; }
         }
 
         public override List<VideoInfo> getNextPageVideos()
@@ -140,16 +140,16 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories()
         {
             return new Dictionary<string, string>();
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query)
+        public List<VideoInfo> Search(string query)
         {
             try
             {
-                string dataPage = GetWebDataFromPost(searchUrl, "what=" + query);
+                string dataPage = GetWebDataFromPost(Settings.SearchUrl, "what=" + query);
                 return Parse(dataPage);
             }
             catch (Exception ex)
@@ -160,9 +160,9 @@ namespace OnlineVideos.Sites
 
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string query, string category)
         {
-            return Search(searchUrl, query);
+            return Search(query);
         }
 
         #endregion

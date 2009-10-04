@@ -13,7 +13,7 @@ namespace OnlineVideos.Sites
 	public class CnnUtil: SiteUtilBase
 	{
 		
-		public override string getUrl(OnlineVideos.VideoInfo video, OnlineVideos.SiteSettings foSite)
+		public override string getUrl(OnlineVideos.VideoInfo video)
 		{
 			return String.Format("http://vid.cnn.com/cnn/big{0}_576x324_dl.flv",video.VideoUrl);
 		}

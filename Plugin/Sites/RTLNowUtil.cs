@@ -132,7 +132,7 @@ namespace OnlineVideos.Sites
             return (index + endTag.Length);
         }
 
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             string fsId = video.VideoUrl;
             fsId = "http://rtl-now.rtl.de/" + fsId;

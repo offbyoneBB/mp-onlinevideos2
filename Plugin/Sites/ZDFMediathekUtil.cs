@@ -26,23 +26,23 @@ namespace OnlineVideos.Sites
         }
         Dictionary<string, string> categoriesForSearching = new Dictionary<string, string>();
 
-        public override int DiscoverDynamicCategories(SiteSettings site)
+        public override int DiscoverDynamicCategories()
         {
-            site.Categories.Clear();
+            Settings.Categories.Clear();
             foreach (Teaser teaser in Agent.Inhalt(Kanaltyp.Sendungen, "Alle"))
             {
                 RssLink item = new RssLink();
                 item.Name = convertUnicodeU(teaser.Titel);
                 item.Url = teaser.ID;
                 item.Thumb = teaser.Teaserbilder[0].Url;
-                site.Categories.Add(item);
+                Settings.Categories.Add(item);
                 categoriesForSearching.Add(item.Name, item.Url);
             }
-            site.DynamicCategoriesDiscovered = true;
-            return site.Categories.Count;
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
         }
         
-        public override String getUrl(VideoInfo video, SiteSettings foSite)        
+        public override String getUrl(VideoInfo video)        
         {
             string fsId = video.VideoUrl;
             Beitrag beitrag = Agent.Beitrag(fsId);
@@ -125,20 +125,20 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories()
         {
             return categoriesForSearching;
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query)
+        public List<VideoInfo> Search(string query)
         {
             Suchergebnis suchergebnis = Agent.Suchergebnis(query, 1, 0x1869f, SortOption.Datum, false, "Alle", true, false, false, false, new DateTime(), new DateTime());
             return GetTeasersFromSuchergebnis(suchergebnis);            
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string query, string category)
         {
-            return Search(searchUrl, query);
+            return Search(query);
         }
 
         #endregion

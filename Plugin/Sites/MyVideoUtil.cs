@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
         static Regex videoUrlRegEx = new Regex(@"V=(http[^&]+\.flv)");
         static Regex infoRegEx = new Regex(@"\</a\>(?<desc>.*)Stichwörter\:.*Länge\:\s(?<duration>.*)\<br/\>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-        public override String getUrl(VideoInfo video, SiteSettings site)
+        public override String getUrl(VideoInfo video)
         {
             String lsUrl = "";
             HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(String.Format("http://www.myvideo.de/movie/{0}", video.VideoUrl));

@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites
 	/// </summary>
 	public class GenericSiteUtil : SiteUtilBase
 	{
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             string url = GetRedirectedUrl(video.VideoUrl);
             if (url.ToLower().EndsWith(".asx"))

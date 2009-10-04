@@ -183,7 +183,7 @@ namespace OnlineVideos.Sites
         }
 
         // resolve url for video
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             // so.addVariable('srv','18');
             // http://dl18.xhamster.com/flv2/97883_Blonde_whore_gets_het_mouth_fucked_FM14.flv
@@ -230,17 +230,17 @@ namespace OnlineVideos.Sites
         static Regex NextPageRegEx = new Regex(@"<SPAN\sclass=navNext><A\sHREF=""(?<url>.+)"">Next</A></SPAN>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         string nextPageUrl = "";
         bool nextPageAvailable = false;
-        public override bool hasNextPage()
+        public override bool HasNextPage
         {
-            return nextPageAvailable;
+            get { return nextPageAvailable; }
         }
 
         static Regex PreviousPageRegEx = new Regex(@"<SPAN\sclass=navPrev><A\sHREF=""(?<url>.+)"">Prev</A></SPAN>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         string previousPageUrl = "";
         bool previousPageAvailable = false;
-        public override bool hasPreviousPage()
+        public override bool HasPreviousPage
         {
-            return previousPageAvailable;
+            get { return previousPageAvailable; }
         }
 
         public override List<VideoInfo> getNextPageVideos()
@@ -257,19 +257,19 @@ namespace OnlineVideos.Sites
 
         #region ISearch Member
 
-        public Dictionary<string, string> GetSearchableCategories(IList<Category> configuredCategories)
+        public Dictionary<string, string> GetSearchableCategories()
         {
             return new Dictionary<string, string>();
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query)
+        public List<VideoInfo> Search(string query)
         {
-            return Parse(string.Format(searchUrl, query));
+            return Parse(string.Format(Settings.SearchUrl, query));
         }
 
-        public List<VideoInfo> Search(string searchUrl, string query, string category)
+        public List<VideoInfo> Search(string query, string category)
         {
-            return Search(searchUrl, query);
+            return Search(query);
         }
 
         #endregion

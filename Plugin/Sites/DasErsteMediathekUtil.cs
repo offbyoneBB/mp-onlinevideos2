@@ -59,9 +59,9 @@ namespace OnlineVideos.Sites
             return convertUnicodeU(convertUnicodeD(GetWebData(fsUrl)));
         }
 
-        public override int DiscoverDynamicCategories(SiteSettings site)        
+        public override int DiscoverDynamicCategories()        
         {
-            site.Categories.Clear();
+            Settings.Categories.Clear();
 
             string lsUrl = "http://mediathek.daserste.de/daserste/servlet/content/487872";
 
@@ -87,13 +87,13 @@ namespace OnlineVideos.Sites
                         uint count = 0;
                         if (uint.TryParse(str5.Substring(num2), out count)) item.EstimatedVideoCount = count;
                         item.Url = "http://mediathek.daserste.de" + str6 + "&goto=1";
-                        site.Categories.Add(item);
+                        Settings.Categories.Add(item);
                     }
                 }
                 while (beginIndex > 0);
             }
-            site.DynamicCategoriesDiscovered = true;
-            return site.Categories.Count;
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
         }        
 
         protected static int getTagValues(string source, string begTag, string endTag, out string value, int beginIndex)
@@ -128,7 +128,7 @@ namespace OnlineVideos.Sites
         Regex videoSearchRegExp_Low = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['1'\]\s*=\s*""(?<videoUrl>(http|rtmp|mms)://[^""]+)""");
         Regex videoSearchRegExp_High = new Regex(@"player.avaible_url\['(?<type>flashmedia|microsoftmedia)'\]\['2'\]\s*=\s*""(?<videoUrl>(http|rtmp|mms)://[^""]+)""");
         Regex cachedRegExp;
-        public override String getUrl(VideoInfo video, SiteSettings foSite)
+        public override String getUrl(VideoInfo video)
         {
             if (cachedRegExp == null)
             {
@@ -247,14 +247,14 @@ namespace OnlineVideos.Sites
             return getVideoListForCurrentCategory();
         }        
         
-        public override bool hasNextPage()
+        public override bool HasNextPage
         {
-            return lastQueriedCategoryHasNextPage;
+            get { return lastQueriedCategoryHasNextPage; }
         }        
 
-        public override bool hasPreviousPage()
+        public override bool HasPreviousPage
         {
-            return lastQueriedCategoryHasPreviousPage;
+            get { return lastQueriedCategoryHasPreviousPage; }
         }
 
         public override List<VideoInfo> getNextPageVideos()

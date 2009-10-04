@@ -8,8 +8,8 @@ namespace OnlineVideos
 {
 	public static class SiteUtilFactory
 	{
-        static Dictionary<String, SiteUtilBase> moSiteTable = new Dictionary<String, SiteUtilBase>();
-
+        static Dictionary<String, Type> utils = new Dictionary<String, Type>();
+       
 		static SiteUtilFactory()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -19,32 +19,38 @@ namespace OnlineVideos
             {
                 if (type.BaseType != null && type.BaseType == typeof(SiteUtilBase))
                 {
-                    SiteUtilBase site = (SiteUtilBase)Activator.CreateInstance(type);
-                    if (moSiteTable.ContainsKey(site.Name))
+                    string shortName = type.Name;
+                    if (shortName.EndsWith("Util")) shortName = shortName.Substring(0, shortName.Length - 4);
+
+                    if (utils.ContainsKey(shortName))
                     {
-                        Log.Error(string.Format("Unable to add site id {0} because it has already been added.", site.Name));
+                        Log.Error(string.Format("Unable to add util {0} because its shot name has already been added.", type.Name));
                     }
                     else
                     {
-                        moSiteTable.Add(site.Name, site);
+                        utils.Add(shortName, type);
                     }
                 }
             }
-		}		
+		}
 
-		public static SiteUtilBase GetByName(string name)
+        public static SiteUtilBase CreateFromShortName(string name, SiteSettings settings)
 		{
-            SiteUtilBase result = null;
-            if (moSiteTable.TryGetValue(name, out result))
-                return result;
+            Type result = null;
+            if (utils.TryGetValue(name, out result))
+            {                
+                SiteUtilBase util = (SiteUtilBase)Activator.CreateInstance(result);
+                util.Settings = settings;
+                return util;
+            }
             else
                 return null;
 		}
 
         public static string[] GetAllNames()
         {
-            string[] names = new string[moSiteTable.Count];
-            moSiteTable.Keys.CopyTo(names, 0);
+            string[] names = new string[utils.Count];
+            utils.Keys.CopyTo(names, 0);
             Array.Sort(names);
             return names;
         }
