@@ -7,6 +7,7 @@ using System.Net;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 using System.Text.RegularExpressions;
+using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -134,16 +135,16 @@ namespace OnlineVideos.Sites
                     videoInfo = new VideoInfo();
 
                     // Title
-                    if (!String.IsNullOrEmpty(rssItem.title))
-                        videoInfo.Title = rssItem.title;
+                    if (!String.IsNullOrEmpty(rssItem.Title))
+                        videoInfo.Title = rssItem.Title;
 
                     // VideoUrl AND ImageUrl
-                    if (!String.IsNullOrEmpty(rssItem.link))
+                    if (!String.IsNullOrEmpty(rssItem.Link))
                     {
-                        Log.Debug("RssItem.Link: {0}", rssItem.link);
+                        Log.Debug("RssItem.Link: {0}", rssItem.Link);
 
                         // Try to find video from rss link
-                        string rssLinkContent = GetWebWithCoockieData(rssItem.link);
+                        string rssLinkContent = GetWebWithCoockieData(rssItem.Link);
                         // Searches for href with .asx
                         Match asxMatch = reFindASX.Match(rssLinkContent);
                         if (asxMatch.Success)
@@ -226,12 +227,12 @@ namespace OnlineVideos.Sites
                     }
 
                     // Description
-                    if (!String.IsNullOrEmpty(rssItem.description))
-                        videoInfo.Description = rssItem.description;
+                    if (!String.IsNullOrEmpty(rssItem.Description))
+                        videoInfo.Description = rssItem.Description;
 
                     // Title2 (pubDate from rssItem)
-                    if (!String.IsNullOrEmpty(rssItem.pubDate))
-                        videoInfo.Title2 = rssItem.pubDate;
+                    if (!String.IsNullOrEmpty(rssItem.PubDate))
+                        videoInfo.Title2 = rssItem.PubDate;
 
                     Log.Debug("Adding videoInfo: {0}", videoInfo.ToString());
 
@@ -257,12 +258,12 @@ namespace OnlineVideos.Sites
         {
             try
             {
-                return RssWrapper.GetRssItems(GetWebWithCoockieData(fsUrl));
+                return RssDocument.Load(GetWebWithCoockieData(fsUrl)).Channel.Items;
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
-                return new List<RssItem>();
+                return new List<RssToolkit.Rss.RssItem>();
             }
         }
 

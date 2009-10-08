@@ -6,6 +6,7 @@ using System.Text;
 using System.Net;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -28,48 +29,50 @@ namespace OnlineVideos.Sites
 		{
             List<VideoInfo> loVideoList = new List<VideoInfo>();
             VideoInfo video;
-
             if (category is RssLink)
-            {
-                List<RssItem> loRssItemList = getRssDataItems(((RssLink)category).Url);
-                foreach (RssItem rssItem in loRssItemList)
+            {                
+                foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
                 {
                     video = new VideoInfo();
-                    if (!String.IsNullOrEmpty(rssItem.description))
+                    if (!String.IsNullOrEmpty(rssItem.Description))
                     {
-                        video.Description = rssItem.description;
+                        video.Description = rssItem.Description;
                     }
                     else
                     {
-                        video.Description = rssItem.mediaDescription;
+                        video.Description = rssItem.MediaDescription;
                     }
-                    if (!String.IsNullOrEmpty(rssItem.mediaThumbnail))
+                    if (rssItem.MediaThumbnails.Count > 0)
                     {
-                        video.ImageUrl = rssItem.mediaThumbnail;
+                        video.ImageUrl = rssItem.MediaThumbnails[0].Url;
                     }
-                    else if (!String.IsNullOrEmpty(rssItem.exInfoImage))
+                    else if (!string.IsNullOrEmpty(rssItem.GT_Image))
                     {
-                        video.ImageUrl = rssItem.exInfoImage;
+                        video.ImageUrl = rssItem.GT_Image;
+                    }
+                    else if (rssItem.MediaContents.Count > 0 && rssItem.MediaContents[0].MediaThumbnails.Count > 0)
+                    {
+                        video.ImageUrl = rssItem.MediaContents[0].MediaThumbnails[0].Url;
                     }
                     //get the video
-                    if (!String.IsNullOrEmpty(rssItem.enclosure) && isPossibleVideo(rssItem.enclosure))
+                    if (rssItem.Enclosure != null && isPossibleVideo(rssItem.Enclosure.Url))
                     {
-                        video.VideoUrl = rssItem.enclosure;
-                        video.Length = rssItem.enclosureDuration != null ? rssItem.enclosureDuration : rssItem.pubDate; // if no duration at least display the Publication date
+                        video.VideoUrl = rssItem.Enclosure.Url;
+                        video.Length = string.IsNullOrEmpty(rssItem.Enclosure.Length) ? rssItem.PubDate : rssItem.Enclosure.Length; // if no duration at least display the Publication date
                     }
-                    else if (rssItem.contentList.Count > 0)
+                    else if (rssItem.MediaContents.Count > 0)
                     {
-                        foreach (MediaContent content in rssItem.contentList)
+                        foreach (RssItem.MediaContent content in rssItem.MediaContents)
                         {
-                            if (isPossibleVideo(content.url))
+                            if (isPossibleVideo(content.Url))
                             {
-                                video.VideoUrl = content.url;
-                                video.Length = content.duration;
+                                video.VideoUrl = content.Url;
+                                video.Length = content.Duration.ToString();
                                 break;
                             }
                         }
                     }
-                    video.Title = rssItem.title;
+                    video.Title = rssItem.Title;
                     if (String.IsNullOrEmpty(video.VideoUrl) == false)
                     {
                         loVideoList.Add(video);

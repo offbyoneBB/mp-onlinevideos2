@@ -7,6 +7,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -61,18 +62,16 @@ namespace OnlineVideos.Sites
         }
 
         public override List<VideoInfo> getVideoList(Category category)
-		{
-            List<RssItem> loRssItemList = getRssDataItems((category as RssLink).Url);
-			List<VideoInfo> loVideoList = new List<VideoInfo>();
-			VideoInfo video;
-			foreach(RssItem rssItem in loRssItemList)
+		{            
+			List<VideoInfo> loVideoList = new List<VideoInfo>();			
+            foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
             {
-				video = new VideoInfo();
-				video.Description = rssItem.mediaDescription;
-				video.ImageUrl = rssItem.mediaThumbnail;
-				video.Title = rssItem.title;				
-				video.VideoUrl = rssItem.link;
-                if (rssItem.contentList.Count > 0) video.VideoUrl = rssItem.contentList[0].url;
+				VideoInfo video = new VideoInfo();
+				video.Description = rssItem.MediaDescription;
+				video.ImageUrl = rssItem.MediaThumbnails[0].Url;
+				video.Title = rssItem.Title;				
+				video.VideoUrl = rssItem.Link;
+                if (rssItem.MediaContents.Count > 0) video.VideoUrl = rssItem.MediaContents[0].Url;
 				loVideoList.Add(video);
 			}
 			return loVideoList;

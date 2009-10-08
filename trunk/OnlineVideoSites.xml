@@ -233,7 +233,7 @@
     <Site name="Break" util="Break" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
-      <SearchUrl>http://rss.break.com/tag/{0}/</SearchUrl>
+      <SearchUrl>http://rss.break.com/keyword/{0}/</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="Home Page">http://rss.break.com/channel/homepage/</Category>
         <Category xsi:type="RssLink" name="Movies">http://rss.break.com/channel/movies/</Category>

@@ -8,6 +8,7 @@ using System.Xml.XPath;
 using System.ComponentModel;
 using System.Threading;
 using MediaPortal.GUI.Library;
+using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -36,25 +37,19 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            return getVideoListFromRss(((RssLink)category).Url);
+            List<VideoInfo> loVideoList = new List<VideoInfo>();
+            foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
+            {
+                VideoInfo video = new VideoInfo();
+                video.Description = rssItem.Description;
+                video.ImageUrl = rssItem.MediaThumbnails[0].Url;
+                video.Title = rssItem.Title;
+                video.Length = rssItem.PubDateParsed.ToString("g");
+                video.VideoUrl = rssItem.Guid.Text;
+                loVideoList.Add(video);
+            }
+            return loVideoList;            
         }
-
-        List<VideoInfo> getVideoListFromRss(string url)
-		{
-            List<RssItem> loRssItemList = getRssDataItems(url);
-			List<VideoInfo> loVideoList = new List<VideoInfo>();
-			VideoInfo video;
-			foreach(RssItem rssItem in loRssItemList){
-				video = new VideoInfo();
-				video.Description = rssItem.description;
-				video.ImageUrl = rssItem.mediaThumbnail;
-				video.Title = rssItem.title;
-				video.Length = rssItem.contentList[0].duration;
-				video.VideoUrl = rssItem.guid;
-				loVideoList.Add(video);
-			}
-			return loVideoList;
-		}
 
         #region ISearch Member
 
@@ -66,7 +61,7 @@ namespace OnlineVideos.Sites
         public List<VideoInfo> Search(string query)
         {            
             string url = string.Format(Settings.SearchUrl, query);
-            return getVideoListFromRss(url);
+            return getVideoList(new RssLink() { Url = url });
         }
 
         public List<VideoInfo> Search(string query, string category)

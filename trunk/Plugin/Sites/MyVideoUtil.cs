@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.XPath;
 using System.ComponentModel;
 using System.Threading;
+using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -36,23 +37,21 @@ namespace OnlineVideos.Sites
         }
 
         public override List<VideoInfo> getVideoList(Category category)
-        {
-            string fsUrl = (category as RssLink).Url;
-            List<RssItem> loRssItemList = getRssDataItems(fsUrl);
-            List<VideoInfo> loVideoList = new List<VideoInfo>();
-            VideoInfo video;
-            foreach (RssItem rssItem in loRssItemList)
-            {
-                rssItem.description = rssItem.description.Replace("\n", "<br/>");
-                Match mInfo = infoRegEx.Match(rssItem.description);
-
-                video = new VideoInfo();
-                video.Description = mInfo.Groups["desc"].Value;
-                video.Length = mInfo.Groups["duration"].Value;
-                video.ImageUrl = rssItem.mediaThumbnail;
-                video.Title = rssItem.title;
-                video.VideoUrl = Regex.Match(rssItem.link, "watch/([\\d]*)").Groups[1].Value;
-                loVideoList.Add(video);
+        {            
+            List<VideoInfo> loVideoList = new List<VideoInfo>();            
+            foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
+            {                
+                Match mInfo = infoRegEx.Match(rssItem.Description);
+                if (mInfo.Success)
+                {
+                    VideoInfo video = new VideoInfo();
+                    video.Description = mInfo.Groups["desc"].Value.Replace("<br />", "\n").Trim();
+                    video.Length = mInfo.Groups["duration"].Value;
+                    video.ImageUrl = rssItem.MediaThumbnails[0].Url;
+                    video.Title = rssItem.MediaTitle;
+                    video.VideoUrl = Regex.Match(rssItem.Link, "watch/([\\d]*)").Groups[1].Value;
+                    loVideoList.Add(video);
+                }
             }
             return loVideoList;
         }

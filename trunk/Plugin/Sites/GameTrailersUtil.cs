@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.XPath;
 using System.ComponentModel;
 using System.Threading;
+using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -34,25 +35,23 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
 		{
-			List<RssItem> loRssItemList = getRssDataItems((category as RssLink).Url);
-			List<VideoInfo> loVideoList = new List<VideoInfo>();
-			VideoInfo video;
-			foreach(RssItem rssItem in loRssItemList){
-				video = new VideoInfo();
-				video.Description = rssItem.description;
-				video.ImageUrl = rssItem.exInfoImage;
-				video.Title = rssItem.title;
-                video.Other = rssItem.gameID;
-                if (rssItem.contentList != null && rssItem.contentList.Count > 0)
+			List<VideoInfo> loVideoList = new List<VideoInfo>();			
+            foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
+            {
+                VideoInfo video = new VideoInfo();
+				video.Description = rssItem.Description;
+				video.ImageUrl = rssItem.GT_Image;
+				video.Title = rssItem.Title;
+                video.Length = rssItem.PubDateParsed.ToString("g");
+                video.Other = rssItem.GT_GameId;                
+                foreach (RssItem.GT_File media in rssItem.GT_Files)
                 {
-                    foreach (MediaContent media in rssItem.contentList)
+                    if (!string.IsNullOrEmpty(media.Url) && media.Type=="wmv")
                     {
-                        if (!string.IsNullOrEmpty(media.url) && media.type=="wmv")
-                        {
-                            video.VideoUrl = media.url;                            
-                        }
+                        video.VideoUrl = media.Url;
+                        break;
                     }
-                }
+                }                
                 if (!(string.IsNullOrEmpty(video.VideoUrl))) loVideoList.Add(video);
 			}
 			return loVideoList;

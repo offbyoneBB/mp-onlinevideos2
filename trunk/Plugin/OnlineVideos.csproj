@@ -183,6 +183,36 @@
     <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Player\PlayerFactory.cs" />
     <Compile Include="Player\PlaylistPlayerWrapper.cs" />
+    <Compile Include="RssToolkit\Rss\Constants.cs" />
+    <Compile Include="RssToolkit\Rss\DocumentType.cs" />
+    <Compile Include="RssToolkit\Opml\OpmlBody.cs" />
+    <Compile Include="RssToolkit\Opml\OpmlDocument.cs" />
+    <Compile Include="RssToolkit\Opml\OpmlHead.cs" />
+    <Compile Include="RssToolkit\Opml\OpmlOutline.cs" />
+    <Compile Include="RssToolkit\Opml\OutlineInfo.cs" />
+    <Compile Include="RssToolkit\Rss\DownloadManager.cs" />
+    <Compile Include="RssToolkit\Rss\Pluralizer.cs" />
+    <Compile Include="RssToolkit\Rss\RssAggregationEventArgs.cs" />
+    <Compile Include="RssToolkit\Rss\RssAggregator.cs" />
+    <Compile Include="RssToolkit\Rss\RssCategory.cs" />
+    <Compile Include="RssToolkit\Rss\RssChannel.cs" />
+    <Compile Include="RssToolkit\Rss\RssCloud.cs" />
+    <Compile Include="RssToolkit\Rss\RssDocument.cs" />
+    <Compile Include="RssToolkit\Rss\RssDocumentBase.cs" />
+    <Compile Include="RssToolkit\Rss\RssDocumentHttpHandler.cs" />
+    <Compile Include="RssToolkit\Rss\RssEnclosure.cs" />
+    <Compile Include="RssToolkit\Rss\RssGuid.cs" />
+    <Compile Include="RssToolkit\Rss\RssHttpHandlerBase.cs" />
+    <Compile Include="RssToolkit\Rss\RssHttpHandlerHelper.cs" />
+    <Compile Include="RssToolkit\Rss\RssImage.cs" />
+    <Compile Include="RssToolkit\Rss\RssItem.cs" />
+    <Compile Include="RssToolkit\Rss\RssSeverityType.cs" />
+    <Compile Include="RssToolkit\Rss\RssSkipDays.cs" />
+    <Compile Include="RssToolkit\Rss\RssSkipHours.cs" />
+    <Compile Include="RssToolkit\Rss\RssSource.cs" />
+    <Compile Include="RssToolkit\Rss\RssTextInput.cs" />
+    <Compile Include="RssToolkit\Rss\RssXmlHelper.cs" />
+    <Compile Include="RssToolkit\Rss\RssXmlSchemaValidator.cs" />
     <Compile Include="RTMP_LIB\AMFObject.cs" />
     <Compile Include="RTMP_LIB\AMFObjectProperty.cs" />
     <Compile Include="RTMP_LIB\BouncyCastle\crypto\agreement\DHBasicAgreement.cs" />
@@ -367,7 +397,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Rss\RssWrapper.cs" />
     <Compile Include="Configuration\SiteSettings.cs" />
     <Compile Include="Sites\BreakUtil.cs" />
     <Compile Include="Sites\CnnUtil.cs" />
@@ -524,6 +553,14 @@
   <ItemGroup>
     <None Include="Properties\DataSources\RssLink.datasource" />
     <None Include="Resources\ImportXml.png" />
+    <EmbeddedResource Include="RssToolkit\Resources\Rss20.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RssToolkit\Resources\AtomToRss20.xsl" />
+    <EmbeddedResource Include="RssToolkit\Resources\RdfToRss20.xsl" />
+    <EmbeddedResource Include="RssToolkit\Resources\Rss20ToAtom.xsl" />
+    <EmbeddedResource Include="RssToolkit\Resources\Rss20ToOpml.xsl" />
+    <EmbeddedResource Include="RssToolkit\Resources\Rss20ToRdf.xsl" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

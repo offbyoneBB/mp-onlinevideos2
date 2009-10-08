@@ -12,6 +12,7 @@ using System.Xml.XPath;
 using System.ComponentModel;
 using System.Threading;
 using System.Web;
+using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -39,26 +40,20 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            return getVideoListFromRss(((RssLink)category).Url);
+            List<VideoInfo> loVideoList = new List<VideoInfo>();
+            foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
+            {
+                VideoInfo video = new VideoInfo();
+                video.Description = rssItem.MediaDescription;
+                video.ImageUrl = rssItem.MediaThumbnails[0].Url;
+                video.Title = rssItem.MediaTitle;
+                video.Length = rssItem.MediaContents[0].Duration.ToString();
+                //video.VideoUrl = Regex.Match(rssItem.link,@"watch/([\d]*)").Groups[1].Value;
+                video.VideoUrl = rssItem.Link;
+                loVideoList.Add(video);
+            }
+            return loVideoList;
         }
-
-        List<VideoInfo> getVideoListFromRss(string url)
-        {
-            List<RssItem> loRssItemList = getRssDataItems(url);
-			List<VideoInfo> loVideoList = new List<VideoInfo>();
-			VideoInfo video;
-			foreach(RssItem rssItem in loRssItemList){
-				video = new VideoInfo();
-				video.Description = rssItem.description;
-				video.ImageUrl = rssItem.mediaThumbnail;
-				video.Title = rssItem.title;
-				video.Length = rssItem.contentList[0].duration;
-				//video.VideoUrl = Regex.Match(rssItem.link,@"watch/([\d]*)").Groups[1].Value;
-                video.VideoUrl = rssItem.link;
-				loVideoList.Add(video);				
-			}
-			return loVideoList;
-		}
 
         #region ISearch Member
 
@@ -70,7 +65,7 @@ namespace OnlineVideos.Sites
         public List<VideoInfo> Search(string query)
         {
             string url = string.Format(Settings.SearchUrl, query);
-            return getVideoListFromRss(url);
+            return getVideoList(new RssLink() { Url = url });
         }
 
         public List<VideoInfo> Search(string query, string category)
