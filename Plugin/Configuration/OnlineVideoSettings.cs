@@ -91,8 +91,10 @@ namespace OnlineVideos
                     BasicHomeScreenName = xmlreader.GetValueAsString(SECTION, BASICHOMESCREEN_NAME, BasicHomeScreenName);
                     msThumbLocation = xmlreader.GetValueAsString(SECTION, THUMBNAIL_DIR, "");
                     msDownloadDir = xmlreader.GetValueAsString(SECTION, DOWNLOAD_DIR, "");
-                    useAgeConfirmation = xmlreader.GetValueAsBool(SECTION, USE_AGECONFIRMATION, false);
-                    pinAgeConfirmation = xmlreader.GetValueAsString(SECTION, PIN_AGECONFIRMATION, "");                                        
+                    // enable pin by default -> child protection
+                    useAgeConfirmation = xmlreader.GetValueAsBool(SECTION, USE_AGECONFIRMATION, true);
+                    // set a almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
+                    pinAgeConfirmation = xmlreader.GetValueAsString(SECTION, PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString()); 
                     lsTrailerSize = xmlreader.GetValueAsString(SECTION, TRAILER_SIZE, "hd480");
                     YouTubeQuality = (Sites.YouTubeUtil.YoutubeVideoQuality)xmlreader.GetValueAsInt(SECTION, YOUTUBEQUALITY, 1);
                     DasErsteQuality = (Sites.DasErsteMediathekUtil.DasErsteVideoQuality)xmlreader.GetValueAsInt(SECTION, DASERSTEQUALITY, 1);
