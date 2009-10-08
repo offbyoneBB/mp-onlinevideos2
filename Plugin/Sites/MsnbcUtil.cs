@@ -4,6 +4,7 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Text.RegularExpressions;
 using MediaPortal.GUI.Library;
+using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -33,24 +34,26 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            List<RssItem> loRssItemList = getRssDataItems(((RssLink)category).Url);
-            List<VideoInfo> loVideoList = new List<VideoInfo>();
-            VideoInfo video;            
-            foreach (RssItem rssItem in loRssItemList)
+            List<VideoInfo> loVideoList = new List<VideoInfo>();                
+            foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
             {
-                if (rssItem.contentList.Count == 0) continue;
-                if (rssItem.contentList[0].medium != "video") continue;
+                if (rssItem.MediaContents.Count == 0) continue;
+                if (rssItem.MediaContents[0].Medium != "video") continue;
 
-                video = new VideoInfo();
-                video.Description = rssItem.description;
-                video.ImageUrl = rssItem.contentList[0].url;
-                video.Title = rssItem.title.Replace("Video: ", "");
-                video.Length = rssItem.contentList[0].duration;
-                if (string.IsNullOrEmpty(video.Length)) video.Length = rssItem.pubDate;
-                video.VideoUrl = rssItem.guid;
+                VideoInfo video = new VideoInfo();
+                video.Description = GetPlainTextFromHtml(rssItem.Description);
+                video.ImageUrl = rssItem.MediaContents[0].Url;
+                video.Title = rssItem.Title.Replace("Video: ", "");
+                video.Length = rssItem.PubDateParsed.ToString("g");
+                video.VideoUrl = rssItem.Guid.Text;
                 loVideoList.Add(video);
             }
             return loVideoList;
+        }
+
+        string GetPlainTextFromHtml(string html)
+        {
+            return System.Text.RegularExpressions.Regex.Replace(html, @"(<[^>]+>)", "");
         }
 	}
 }

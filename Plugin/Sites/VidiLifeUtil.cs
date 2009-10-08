@@ -35,18 +35,16 @@ namespace OnlineVideos.Sites
         }
 
         public override List<VideoInfo> getVideoList(Category category)
-		{
-            List<RssItem> loRssItemList = getRssDataItems((category as RssLink).Url);
-			List<VideoInfo> loVideoList = new List<VideoInfo>();
-			VideoInfo video;
-			foreach(RssItem rssItem in loRssItemList)
+		{            
+			List<VideoInfo> loVideoList = new List<VideoInfo>();			
+            foreach (RssToolkit.Rss.RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
             {
-				video = new VideoInfo();
-				video.Description = rssItem.description;
-				video.ImageUrl = rssItem.mediaThumbnail;
-				video.Title = rssItem.title;				
-				video.VideoUrl = rssItem.link;
-				loVideoList.Add(video);		
+                VideoInfo video = new VideoInfo();
+				video.Description = rssItem.Description;
+				video.ImageUrl = rssItem.MediaThumbnails[0].Url;
+				video.Title = rssItem.Title;				
+				video.VideoUrl = rssItem.Link;
+				loVideoList.Add(video);
 			}
 			return loVideoList;
 		}        

@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Specialized;
 using System.Xml;
+using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -91,11 +92,11 @@ namespace OnlineVideos.Sites
                     data = GetWebData(playerUrl);
                     if (!string.IsNullOrEmpty(data))
                     {
-                        foreach (RssItem item in RssWrapper.GetRssItems(data))
+                        foreach (RssItem item in RssToolkit.Rss.RssDocument.Load(data).Channel.Items)
                         {
                             //if (!item.title.ToLower().Contains("vorspann"))
                             //{
-                                data = GetWebData(item.contentList[0].url);
+                                data = GetWebData(item.MediaGroups[0].MediaContents[0].Url);
                                 XmlDocument doc = new XmlDocument();
                                 doc.LoadXml(data);
                                 XmlNodeList list = doc.SelectNodes("//src");
@@ -132,8 +133,7 @@ namespace OnlineVideos.Sites
                     data = GetWebData(playerUrl);
                     if (!string.IsNullOrEmpty(data))
                     {
-                        List<RssItem> items = RssWrapper.GetRssItems(data);
-                        data = GetWebData(items[1].contentList[0].url);
+                        data = GetWebData(RssToolkit.Rss.RssDocument.Load(data).Channel.Items[1].MediaGroups[0].MediaContents[0].Url);
                         XmlDocument doc = new XmlDocument();
                         doc.LoadXml(data);
                         XmlNodeList list = doc.SelectNodes("//src");

@@ -92,32 +92,8 @@ namespace OnlineVideos.Sites
         public virtual List<VideoInfo> getOtherVideoList(VideoInfo foVideo)
         {
             return new List<VideoInfo>();
-        }
-
-        protected virtual List<RssItem> getRssDataItems(string fsUrl)
-        {
-            try
-            {
-                return RssWrapper.GetRssItems(GetWebData(fsUrl));
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-                return new List<RssItem>();
-            }
-        }
-        
-        public virtual bool isPossibleVideo(string fsUrl)
-        {
-            string extensionFile = System.IO.Path.GetExtension(fsUrl).ToLower();
-            bool isVideo = OnlineVideoSettings.getInstance().videoExtensions.ContainsKey(extensionFile);
-            if (!isVideo)
-            {
-                foreach (string anExt in OnlineVideoSettings.getInstance().videoExtensions.Keys) if (fsUrl.Contains(anExt)) { isVideo = true; break; }
-            }
-            return isVideo;
         }        
-
+        
         public virtual bool MultipleFilePlay
         {
             get { return false; }
@@ -139,6 +115,17 @@ namespace OnlineVideos.Sites
             string safeName = ImageDownloader.GetSaveFilename(video.Title);
             return safeName + extension;
         }
+
+        public virtual bool isPossibleVideo(string fsUrl)
+        {
+            string extensionFile = System.IO.Path.GetExtension(fsUrl).ToLower();
+            bool isVideo = OnlineVideoSettings.getInstance().videoExtensions.ContainsKey(extensionFile);
+            if (!isVideo)
+            {
+                foreach (string anExt in OnlineVideoSettings.getInstance().videoExtensions.Keys) if (fsUrl.Contains(anExt)) { isVideo = true; break; }
+            }
+            return isVideo;
+        }        
 
         # region static helper functions
 
@@ -239,9 +226,22 @@ namespace OnlineVideos.Sites
             return null;
         }
 
-        protected static List<String> ParseASX(String fsAsxUrl)
+        protected static RssToolkit.Rss.RssDocument GetWebDataAsRss(string url)
         {
-            String lsAsxData = GetWebData(fsAsxUrl).ToLower();
+            try
+            {
+                return RssToolkit.Rss.RssDocument.Load(GetWebData(url));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return new RssToolkit.Rss.RssDocument();
+            }
+        }
+
+        protected static List<String> ParseASX(string url)
+        {
+            string lsAsxData = GetWebData(url).ToLower();
             MatchCollection videoUrls = Regex.Matches(lsAsxData, @"<ref\s+href\s*=\s*\""(?<url>[^\""]*)");
             List<String> urlList = new List<String>();
             foreach (Match videoUrl in videoUrls)
