@@ -196,7 +196,7 @@ namespace OnlineVideos
         
         protected override void OnPageLoad()
         {
-            base.OnPageLoad(); // let animations run
+            base.OnPageLoad(); // let animations run            
 
             // everytime the plugin is shown, after some other window was shown
             if (OnlineVideoSettings.getInstance().ageHasBeenConfirmed && PreviousWindowId == 0)
@@ -1865,7 +1865,7 @@ namespace OnlineVideos
         protected void SwitchView()
         {
             if (facadeView == null) return;
-
+            
             string strLine = String.Empty;
             switch (currentView)
             {
@@ -1879,13 +1879,12 @@ namespace OnlineVideos
                     strLine = GUILocalizeStrings.Get(417);
                     break;                
             }
-            if (facadeView.View != currentView)
-            {
-                int rememberIndex = facadeView.SelectedListItemIndex;
-                facadeView.View = currentView;
-                facadeView.SelectedListItemIndex = rememberIndex;
-            }
             GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
+
+            // keep track of the currently selected item (is lost when switching view)
+            int rememberIndex = facadeView.SelectedListItemIndex;
+            facadeView.View = currentView; // explicitly set the view (fixes bug that facadeView.list isn't working at startup
+            if (rememberIndex > -1) GUIControl.SelectItemControl(GetID, facadeView.GetID, rememberIndex);
         }
 
         private void DisplayVideoInfo(VideoInfo foVideo)
