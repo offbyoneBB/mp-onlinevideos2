@@ -130,11 +130,10 @@ namespace OnlineVideos
         #region state variables        
         State currentState = State.home;
 
-        Sites.SiteUtilBase selectedSite;
         int selectedSiteIndex = 0;
+        Sites.SiteUtilBase selectedSite;
         
         Category selectedCategory;
-        int selectedCategoryIndex = 0;
 
         VideoInfo selectedVideo;
         int selectedVideoIndex = 0; // used to remember the position of the last selected Video
@@ -385,7 +384,6 @@ namespace OnlineVideos
                         }
                         else
                         {
-                            selectedCategoryIndex = facadeView.SelectedListItemIndex;
                             selectedVideo = null;
                             selectedVideoIndex = 0;
                             currentState = State.videos;
@@ -715,7 +713,6 @@ namespace OnlineVideos
 
         private void DisplaySites()
         {
-            selectedCategoryIndex = 0;
             selectedCategory = null;
             GUIControl.ClearControl(GetID, facadeView.GetID);
 
@@ -795,9 +792,7 @@ namespace OnlineVideos
         }
 
         private void DisplayCategories(Category parentCategory)
-        {
-            selectedCategory = parentCategory;
-
+        {            
             GUIControl.ClearControl(GetID, facadeView.GetID);
             GUIListItem loListItem;
             loListItem = new GUIListItem("..");
@@ -884,9 +879,13 @@ namespace OnlineVideos
 
                 categories = parentCategory.SubCategories;
             }
-            
-            foreach (Category loCat in categories)
+
+            int categoryIndexToSelect = categories.Count > 0 ? 1 : 0; // select the first category by default if there is one
+            for(int i = 0; i < categories.Count; i++)
             {
+                Category loCat = categories[i];
+                if (loCat == selectedCategory) categoryIndexToSelect = i + 1; // select the category that was previously selected
+
                 loListItem = new GUIListItem(loCat.Name);
                 loListItem.IsFolder = true;                
                 MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
@@ -935,12 +934,11 @@ namespace OnlineVideos
 
             suggestedView = null;
 
-            if (numCategoriesWithThumb > 0)
-                ImageDownloader.getImages(imagesUrlList, OnlineVideoSettings.getInstance().msThumbLocation, facadeView);
-            if (numCategoriesWithThumb < categories.Count / 2)
-                suggestedView = GUIFacadeControl.ViewMode.List;
+            if (numCategoriesWithThumb > 0) ImageDownloader.getImages(imagesUrlList, OnlineVideoSettings.getInstance().msThumbLocation, facadeView);
+            if (numCategoriesWithThumb < categories.Count / 2) suggestedView = GUIFacadeControl.ViewMode.List;
 
-            if (selectedCategoryIndex < facadeView.Count) facadeView.SelectedListItemIndex = selectedCategoryIndex;
+            selectedCategory = parentCategory;
+            facadeView.SelectedListItemIndex = categoryIndexToSelect;
         }
         
         private void FilterVideos()
