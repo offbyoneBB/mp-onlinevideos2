@@ -172,7 +172,10 @@ namespace OnlineVideos
             if (chkUseAgeConfirmation.Checked)
                 tbxPin.Enabled = true;
             else
+            {
                 tbxPin.Enabled = false;
+                MessageBox.Show("This will allow unprotected access to sexually explicit material. Please ensure that anyone given access to MediaPortal has reached the legal age for viewing such content!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
         }
 
         private void tvGroups_AfterSelect(object sender, TreeViewEventArgs e)
