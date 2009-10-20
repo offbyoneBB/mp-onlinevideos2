@@ -6,24 +6,42 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
+using System.Reflection;
 using System.Web;
-using System.Xml;
-using System.Xml.XPath;
 using OnlineVideos.Database;
 using MediaPortal.GUI.Library;
-using MediaPortal.Configuration;
 
 namespace OnlineVideos.Sites
 {
     /// <summary>
     /// The abstract base class for all utilities.
     /// </summary>
-    public abstract class SiteUtilBase
-    {        
-        public abstract List<VideoInfo> getVideoList(Category category);        
-        
-        public virtual SiteSettings Settings { get; set; }
+    public abstract class SiteUtilBase : ICustomTypeDescriptor
+    {
+        public virtual SiteSettings Settings { get; protected set; }
+
+        public virtual void Initialize(SiteSettings siteSettings)
+        {
+            Settings = siteSettings;
+
+            // apply custom settings if any are present
+            if (siteSettings.Configuration != null && siteSettings.Configuration.Count > 0)
+            {                
+                foreach (FieldInfo field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+                {
+                    if (siteSettings.Configuration.ContainsKey(field.Name))
+                    {
+                        object[] attrs = field.GetCustomAttributes(typeof(CategoryAttribute), false);
+                        if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosConfiguration")
+                        {
+                            field.SetValue(this, siteSettings.Configuration[field.Name]);                            
+                        }
+                    }
+                }                
+            }
+        }
+
+        public abstract List<VideoInfo> getVideoList(Category category);                       
 
         public virtual List<VideoInfo> getSiteFavorites(String fsUser)
         {
@@ -92,8 +110,8 @@ namespace OnlineVideos.Sites
         public virtual List<VideoInfo> getOtherVideoList(VideoInfo foVideo)
         {
             return new List<VideoInfo>();
-        }        
-        
+        }
+
         public virtual bool MultipleFilePlay
         {
             get { return false; }
@@ -125,7 +143,7 @@ namespace OnlineVideos.Sites
                 foreach (string anExt in OnlineVideoSettings.getInstance().videoExtensions.Keys) if (fsUrl.Contains(anExt)) { isVideo = true; break; }
             }
             return isVideo;
-        }        
+        }
 
         # region static helper functions
 
@@ -252,5 +270,185 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
+
+        #region ICustomTypeDescriptor Members
+
+        object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd)
+        {
+            return this;
+        }
+
+        AttributeCollection ICustomTypeDescriptor.GetAttributes()
+        {
+            return TypeDescriptor.GetAttributes(this, true);
+        }
+
+        string ICustomTypeDescriptor.GetClassName()
+        {
+            return TypeDescriptor.GetClassName(this, true);
+        }
+
+        string ICustomTypeDescriptor.GetComponentName()
+        {
+            return TypeDescriptor.GetComponentName(this, true);
+        }
+
+        TypeConverter ICustomTypeDescriptor.GetConverter()
+        {
+            return TypeDescriptor.GetConverter(this, true);
+        }
+
+        EventDescriptor ICustomTypeDescriptor.GetDefaultEvent()
+        {
+            return TypeDescriptor.GetDefaultEvent(this, true);
+        }
+
+        PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty()
+        {
+            return TypeDescriptor.GetDefaultProperty(this, true);
+        }
+
+        object ICustomTypeDescriptor.GetEditor(Type editorBaseType)
+        {
+            return TypeDescriptor.GetEditor(this, editorBaseType, true);
+        }
+
+        EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes)
+        {
+            return TypeDescriptor.GetEvents(this, attributes, true);
+        }
+
+        EventDescriptorCollection ICustomTypeDescriptor.GetEvents()
+        {
+            return TypeDescriptor.GetEvents(this, true);
+        }
+
+        PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties()
+        {
+            return ((ICustomTypeDescriptor)this).GetProperties(null);
+        }
+
+        #endregion
+
+        #region ICustomTypeDescriptor Implementation with Fields as Properties
+
+        private PropertyDescriptorCollection _propCache;
+        private FilterCache _filterCache;
+
+        PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(
+            Attribute[] attributes)
+        {
+            bool filtering = (attributes != null && attributes.Length > 0);
+            PropertyDescriptorCollection props = _propCache;
+            FilterCache cache = _filterCache;
+
+            // Use a cached version if possible
+            if (filtering && cache != null && cache.IsValid(attributes))
+                return cache.FilteredProperties;
+            else if (!filtering && props != null)
+                return props;
+
+            // Create the property collection and filter
+            props = new PropertyDescriptorCollection(null);
+            foreach (PropertyDescriptor prop in
+                TypeDescriptor.GetProperties(
+                this, attributes, true))
+            {
+                props.Add(prop);
+            }
+            foreach (FieldInfo field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                FieldPropertyDescriptor fieldDesc =
+                    new FieldPropertyDescriptor(field);
+                if (!filtering ||
+                    fieldDesc.Attributes.Contains(attributes))
+                    props.Add(fieldDesc);
+            }
+
+            // Store the computed properties
+            if (filtering)
+            {
+                cache = new FilterCache();
+                cache.Attributes = attributes;
+                cache.FilteredProperties = props;
+                _filterCache = cache;
+            }
+            else _propCache = props;
+
+            return props;
+        }
+
+        private class FieldPropertyDescriptor : PropertyDescriptor
+        {
+            private FieldInfo _field;
+
+            public FieldPropertyDescriptor(FieldInfo field)
+                : base(field.Name,
+                    (Attribute[])field.GetCustomAttributes(typeof(Attribute), true))
+            {
+                _field = field;
+            }
+
+            public FieldInfo Field { get { return _field; } }
+
+            public override bool Equals(object obj)
+            {
+                FieldPropertyDescriptor other = obj as FieldPropertyDescriptor;
+                return other != null && other._field.Equals(_field);
+            }
+
+            public override int GetHashCode() { return _field.GetHashCode(); }
+
+            public override bool IsReadOnly { get { return false; } }
+
+            public override void ResetValue(object component) { }
+
+            public override bool CanResetValue(object component) { return false; }
+
+            public override bool ShouldSerializeValue(object component)
+            {
+                return true;
+            }
+
+            public override Type ComponentType
+            {
+                get { return _field.DeclaringType; }
+            }
+
+            public override Type PropertyType { get { return _field.FieldType; } }
+
+            public override object GetValue(object component)
+            {
+                return _field.GetValue(component);
+            }
+
+            public override void SetValue(object component, object value)
+            {               
+                _field.SetValue(component, value);
+                OnValueChanged(component, EventArgs.Empty);
+            }
+        }
+
+        private class FilterCache
+        {
+            public Attribute[] Attributes;
+            public PropertyDescriptorCollection FilteredProperties;
+            public bool IsValid(Attribute[] other)
+            {
+                if (other == null || Attributes == null) return false;
+
+                if (Attributes.Length != other.Length) return false;
+
+                for (int i = 0; i < other.Length; i++)
+                {
+                    if (!Attributes[i].Match(other[i])) return false;
+                }
+
+                return true;
+            }
+        }
+
+        #endregion
     }
+
 }

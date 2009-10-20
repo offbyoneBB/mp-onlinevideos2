@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Xml;
@@ -16,15 +17,26 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class EmpflixUtil : SiteUtilBase, ISearch
     {
-        static string videoListRegExpString = @"<div.*a.href=""(?<VideoUrl>http://www.empflix.com/view.php\?id\=\d+)"".*<img\ssrc=""(?<ImageUrl>http://pic.*.empflix.com/images/thumb/.*\.jpg)"".*</div>[\s\r\n]*<div\sclass=""videoTitle"">.+\stitle=""(?<Title>.+)"".+</div>.*[\s\r\n]*.*<div\sclass=""videoLeft"">(?<Duration>.*)<br\s/>";
-        static string playlistUrlRegExpString = @"so.addVariable\('config',\s'(?<PlaylistUrl>[^']+)'\);";
-        static string nextPageRegExpString = @"<a\shref=""(?<url>.*)"">next\s&gt;&gt;</a>";
-        static string previousPageRegExpString = @"<a\shref=""(?<url>.*)"">&lt;&lt;\sprev</a>";
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos.")]
+        string videoListRegEx = @"<div.*a.href=""(?<VideoUrl>http://www.empflix.com/view.php\?id\=\d+)"".*<img\ssrc=""(?<ImageUrl>http://pic.*.empflix.com/images/thumb/.*\.jpg)"".*</div>[\s\r\n]*<div\sclass=""videoTitle"">.+\stitle=""(?<Title>.+)"".+</div>.*[\s\r\n]*.*<div\sclass=""videoLeft"">(?<Duration>.*)<br\s/>";
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a next page link.")]
+        string nextPageRegEx = @"<a\shref=""(?<url>.*)"">next\s&gt;&gt;</a>";
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link.")]
+        string prevPageRegEx = @"<a\shref=""(?<url>.*)"">&lt;&lt;\sprev</a>";
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page embedding a video for a link to the actual video.")]
+        string playlistUrlRegEx = @"so.addVariable\('config',\s'(?<url>[^']+)'\);";
 
-        static Regex videoListRegExp = new Regex(videoListRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        static Regex playlistUrlRegExp = new Regex(playlistUrlRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        static Regex nextPageRegExp = new Regex(nextPageRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        static Regex previousPageRegExp = new Regex(previousPageRegExpString, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        Regex regEx_VideoList, regEx_PlaylistUrl, regEx_NextPage, regEx_PrevPage;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+
+            regEx_VideoList = new Regex(videoListRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            regEx_PlaylistUrl = new Regex(playlistUrlRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            regEx_NextPage = new Regex(nextPageRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            regEx_PrevPage = new Regex(prevPageRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
@@ -38,10 +50,10 @@ namespace OnlineVideos.Sites
                 string dataPage = GetWebData(video.VideoUrl);
                 if (dataPage.Length > 0)
                 {
-                    Match m = playlistUrlRegExp.Match(dataPage);
+                    Match m = regEx_PlaylistUrl.Match(dataPage);
                     if (m.Success)
                     {
-                        string playlistUrl = "http://cdnt.empflix.com/" + m.Groups["PlaylistUrl"].Value;
+                        string playlistUrl = "http://cdnt.empflix.com/" + m.Groups["url"].Value;
                         playlistUrl = System.Web.HttpUtility.UrlDecode(playlistUrl);
                         dataPage = GetWebData(playlistUrl);
                         if (dataPage.Length > 0)
@@ -92,7 +104,7 @@ namespace OnlineVideos.Sites
             {
                 try
                 {
-                    Match m = videoListRegExp.Match(dataPage);
+                    Match m = regEx_VideoList.Match(dataPage);
                     while (m.Success)
                     {
                         VideoInfo videoInfo = new VideoInfo();
@@ -105,7 +117,7 @@ namespace OnlineVideos.Sites
                     }
                     
                     // check for previous page link
-                    Match mPrev = previousPageRegExp.Match(dataPage);
+                    Match mPrev = regEx_PrevPage.Match(dataPage);
                     if (mPrev.Success)
                     {
                         previousPageAvailable = true;
@@ -118,7 +130,7 @@ namespace OnlineVideos.Sites
                     }
                     
                     // check for next page link
-                    Match mNext = nextPageRegExp.Match(dataPage);
+                    Match mNext = regEx_NextPage.Match(dataPage);
                     if (mNext.Success)
                     {
                         nextPageAvailable = true;

@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace OnlineVideos
 {
@@ -422,6 +423,46 @@ namespace OnlineVideos
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }           
+        }
+
+        private void btnAdvanced_Click(object sender, EventArgs e)
+        {
+            SiteSettings siteSettings = (SiteSettings)bindingSourceSiteSettings.Current;
+            Sites.SiteUtilBase siteUtil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
+
+            ConfigurationAdvanced ca = new ConfigurationAdvanced();
+            ca.Text += " - " + siteSettings.UtilName;
+            ca.propertyGrid.SelectedObject = siteUtil;
+            if (ca.ShowDialog() == DialogResult.OK)
+            {
+                // find and set all configuration fields that are not default
+
+                // 1. build a list of all the Fields that are used for OnlineVideosConfiguration
+                List<FieldInfo> fieldInfos = new List<FieldInfo>();
+                foreach (FieldInfo field in siteUtil.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+                {
+                    object[] attrs = field.GetCustomAttributes(typeof(CategoryAttribute), false);
+                    if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosConfiguration")
+                    {
+                        fieldInfos.Add(field);
+                    }
+                }
+
+                // 2. get a "clean" site by creating it with empty SiteSettings
+                siteSettings.Configuration = new StringHash();
+                Sites.SiteUtilBase cleanSiteUtil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
+
+                // 3. compare and collect different settings
+                foreach (FieldInfo field in fieldInfos)
+                {
+                    object defaultValue = field.GetValue(cleanSiteUtil);
+                    object newValue = field.GetValue(siteUtil);
+                    if (defaultValue != newValue)
+                    {
+                        siteSettings.Configuration.Add(field.Name, newValue.ToString());
+                    }
+                }
+            }
         }        
 	}
 }
