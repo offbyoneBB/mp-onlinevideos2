@@ -140,6 +140,7 @@ namespace OnlineVideos
             this.chkFLVSplitterInstalled = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnAdvanced = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -271,6 +272,7 @@ namespace OnlineVideos
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.btnAdvanced);
             this.groupBox1.Controls.Add(this.toolStripContainer3);
             this.groupBox1.Controls.Add(this.label18);
             this.groupBox1.Controls.Add(this.cbLanguages);
@@ -1320,6 +1322,17 @@ namespace OnlineVideos
             this.label11.TabIndex = 0;
             this.label11.Text = "flv";
             // 
+            // btnAdvanced
+            // 
+            this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAdvanced.Location = new System.Drawing.Point(390, 37);
+            this.btnAdvanced.Name = "btnAdvanced";
+            this.btnAdvanced.Size = new System.Drawing.Size(75, 23);
+            this.btnAdvanced.TabIndex = 25;
+            this.btnAdvanced.Text = "Advanced";
+            this.btnAdvanced.UseVisualStyleBackColor = true;
+            this.btnAdvanced.Click += new System.EventHandler(this.btnAdvanced_Click);
+            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -1487,5 +1500,6 @@ namespace OnlineVideos
         private System.Windows.Forms.ToolStripButton btnSiteDown;
         private System.Windows.Forms.ToolStripButton btnImportSite;
         private System.Windows.Forms.BindingSource bindingSourceRssLink;
+        private System.Windows.Forms.Button btnAdvanced;
 	}
 }

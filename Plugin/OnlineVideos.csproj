@@ -95,6 +95,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\CodecConfiguration.cs" />
+    <Compile Include="Configuration\ConfigurationAdvanced.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\ConfigurationAdvanced.Designer.cs">
+      <DependentUpon>ConfigurationAdvanced.cs</DependentUpon>
+    </Compile>
     <Compile Include="Configuration\ImExportXml.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -556,6 +562,9 @@
     <EmbeddedResource Include="RssToolkit\Resources\Rss20.xsd" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Configuration\ConfigurationAdvanced.resx">
+      <DependentUpon>ConfigurationAdvanced.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="RssToolkit\Resources\AtomToRss20.xsl" />
     <EmbeddedResource Include="RssToolkit\Resources\RdfToRss20.xsl" />
     <EmbeddedResource Include="RssToolkit\Resources\Rss20ToAtom.xsl" />

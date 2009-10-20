@@ -58,6 +58,7 @@ namespace OnlineVideos
         public string SearchUrl { get; set; }
 
         public StringHash Configuration { get; set; }
+        public bool ShouldSerializeConfiguration() { return Configuration != null && Configuration.Count > 0; }
 
         public BindingList<Category> Categories { get; set; }
                

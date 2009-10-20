@@ -39,8 +39,8 @@ namespace OnlineVideos
             Type result = null;
             if (utils.TryGetValue(name, out result))
             {                
-                SiteUtilBase util = (SiteUtilBase)Activator.CreateInstance(result);
-                util.Settings = settings;
+                SiteUtilBase util = (SiteUtilBase)Activator.CreateInstance(result);                
+                util.Initialize(settings);
                 return util;
             }
             else
