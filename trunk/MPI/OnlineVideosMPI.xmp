@@ -513,16 +513,7 @@
 			<Id>02010</Id>
 			<Option>OutputFileName=\OnlineVideos\Picture_cover_focused.png|</Option>
 			<Guid>c6569a26-03ef-4058-b22e-d872e3809880</Guid>
-		</File>
-		<File>
-			<FileName>Picture_cover_focused.png</FileName>
-			<Type>Media</Type>
-			<SubType>Blue3wide</SubType>
-			<Source>..\Skins\Blue3wide\Media\OnlineVideos\Picture_cover_focused.png</Source>
-			<Id>02010</Id>
-			<Option>OutputFileName=\OnlineVideos\Picture_cover_focused.png|</Option>
-			<Guid>c4535dc4-c7ce-46ab-889d-a2a4627370ed</Guid>
-		</File>
+		</File>		
 		<File>
 			<FileName>RedTube.png</FileName>
 			<Type>Thumbs</Type>
