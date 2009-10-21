@@ -24,7 +24,8 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link.")]
         string prevPageRegEx = @"<a\shref=""(?<url>.*)"">&lt;&lt;\sprev</a>";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page embedding a video for a link to the actual video.")]
-        string playlistUrlRegEx = @"so.addVariable\('config',\s'(?<url>[^']+)'\);";
+        //string playlistUrlRegEx = @"so.addVariable\('config',\s'(?<url>[^']+)'\);";
+        string playlistUrlRegEx = @"so.addVariable\('file','(?<url>[^']+)'\);";
 
         Regex regEx_VideoList, regEx_PlaylistUrl, regEx_NextPage, regEx_PrevPage;
 
@@ -47,13 +48,14 @@ namespace OnlineVideos.Sites
         {
             try
             {
-                string dataPage = GetWebData(video.VideoUrl);
+                string dataPage = GetWebData(video.VideoUrl + "&player=old");
                 if (dataPage.Length > 0)
                 {
                     Match m = regEx_PlaylistUrl.Match(dataPage);
                     if (m.Success)
                     {
-                        string playlistUrl = "http://cdnt.empflix.com/" + m.Groups["url"].Value;
+                        return m.Groups["url"].Value;
+                        /*string playlistUrl = "http://cdnt.empflix.com/" + m.Groups["url"].Value;
                         playlistUrl = System.Web.HttpUtility.UrlDecode(playlistUrl);
                         dataPage = GetWebData(playlistUrl);
                         if (dataPage.Length > 0)
@@ -61,8 +63,8 @@ namespace OnlineVideos.Sites
                             XmlDocument doc = new XmlDocument();
                             doc.LoadXml(dataPage);
                             string result = doc.SelectSingleNode("//file").InnerText;
-                            return result + "&filetype=.flv";
-                        }
+                            return result +"&filetype=.flv";
+                        }*/
                     }
                 }
             }

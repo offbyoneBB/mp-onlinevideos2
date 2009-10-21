@@ -214,8 +214,8 @@ namespace OnlineVideos.Sites
                             {
                                 string l = data.Substring(x, y - x);
 
-                                ret = "http://dl" + s.ToString() + ".xhamster.com/flv2/" + l;
-                                Log.Debug("YouPorn - Found flv " + ret);
+                                ret = s.ToString() + "/flv2/" + l;
+                                Log.Debug("xHamster - Found flv " + ret);
                             }
                         }
                     }
