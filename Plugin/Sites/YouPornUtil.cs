@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Net;
 using System.IO;
 using MediaPortal.GUI.Library;
+using System.Web;
 
 namespace OnlineVideos.Sites
 {
@@ -218,7 +219,7 @@ namespace OnlineVideos.Sites
                                 cnt++;
                                 // add new entry
                                 VideoInfo loRssItem = new VideoInfo();
-                                loRssItem.Title = desc;
+                                loRssItem.Title = HttpUtility.HtmlDecode(desc);
                                 loRssItem.Length = duration;
                                 loRssItem.VideoUrl = url;                                    
                                 loRssItems.Add(loRssItem);

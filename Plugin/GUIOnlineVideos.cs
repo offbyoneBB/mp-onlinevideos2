@@ -1490,6 +1490,8 @@ namespace OnlineVideos
 
                 // Remove remaining HTML tags
                 fsStr = Regex.Replace(fsStr, @"<[^>]*>", "", RegexOptions.Multiline);
+
+                fsStr = fsStr.Trim();
             }
             return fsStr;
         }

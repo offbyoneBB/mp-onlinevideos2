@@ -58,7 +58,28 @@ namespace OnlineVideos.Sites
                     if (rssItem.Enclosure != null && isPossibleVideo(rssItem.Enclosure.Url))
                     {
                         video.VideoUrl = rssItem.Enclosure.Url;
-                        video.Length = string.IsNullOrEmpty(rssItem.Enclosure.Length) ? rssItem.PubDate : rssItem.Enclosure.Length; // if no duration at least display the Publication date
+
+                        if (!string.IsNullOrEmpty(rssItem.Enclosure.Length))
+                        {
+                            int bytesOrSeconds = 0;
+                            if (int.TryParse(rssItem.Enclosure.Length, out bytesOrSeconds))
+                            {
+                                if (bytesOrSeconds > 18000) // won't be longer than 5 hours if Length is guessed as seconds, so it's bytes
+                                    video.Length = (bytesOrSeconds / 1024).ToString("N0") + " KB";
+                                else
+                                    video.Length = rssItem.Enclosure.Length + " sec";
+                            }
+                            else
+                            {
+                                video.Length = rssItem.Enclosure.Length;
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(rssItem.PubDate))
+                        {
+                            if (video.Length != "") video.Length += " | ";
+                            video.Length += rssItem.PubDate;
+                        }
                     }
                     else if (rssItem.MediaContents.Count > 0)
                     {

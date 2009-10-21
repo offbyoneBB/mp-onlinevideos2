@@ -51,7 +51,7 @@ namespace OnlineVideos.Player
             using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
                 string audiorenderer = settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
-                base.audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(base.graphBuilder, audiorenderer, false);
+                DirectShowUtil.AddAudioRendererToGraph(base.graphBuilder, audiorenderer, false);
             }
 
             // add the source filter
@@ -125,7 +125,7 @@ namespace OnlineVideos.Player
             using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
                 string audiorenderer = settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
-                base.audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(base.graphBuilder, audiorenderer, false);
+                DirectShowUtil.AddAudioRendererToGraph(graphBuilder, audiorenderer, false);
             }
 
             // get the output pins of the WM ASF Reader
