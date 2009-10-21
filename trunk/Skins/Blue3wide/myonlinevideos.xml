@@ -9,12 +9,13 @@
     
     <!-- *** WINDOW DEFAULTS *** -->
     
-    <control>
-      <description>BG</description>
+     <control>
+      <description>BG2</description>
       <type>image</type>
       <id>1</id>
       <width>1280</width>
       <height>720</height>
+      <texture>background2.png</texture>      
     </control>
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -70,7 +71,7 @@
     </control>
     
     <import>myonlinevideos.details.xml</import>
-    <import>myonlinevideos.facade.xml</import>        
+    <import>myonlinevideos.facade.xml</import>           
     
     <!-- *** Bottom part *** -->
         
