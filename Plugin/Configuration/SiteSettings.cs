@@ -57,6 +57,9 @@ namespace OnlineVideos
 
         public string SearchUrl { get; set; }
 
+        public string Description { get; set; }
+        public bool ShouldSerializeDescription() { return !string.IsNullOrEmpty(Description); }
+
         public StringHash Configuration { get; set; }
         public bool ShouldSerializeConfiguration() { return Configuration != null && Configuration.Count > 0; }
 

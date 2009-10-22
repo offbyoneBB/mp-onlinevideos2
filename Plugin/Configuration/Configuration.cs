@@ -35,8 +35,7 @@ namespace OnlineVideos
 			txtThumbLoc.Text = settings.msThumbLocation;
             txtDownloadDir.Text = settings.msDownloadDir;
             txtFilters.Text = settings.msFilterArray != null ? string.Join(",", settings.msFilterArray) : "";
-            chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;
-            chkUseAgeConfirmation_CheckedChanged(chkUseAgeConfirmation, EventArgs.Empty);
+            chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;            
             tbxPin.Text = settings.pinAgeConfirmation;
             cmbYoutubeQuality.SelectedIndex = (int)settings.YouTubeQuality;
             cmbDasErsteQuality.SelectedIndex = (int)settings.DasErsteQuality;

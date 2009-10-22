@@ -632,12 +632,14 @@ namespace OnlineVideos
             UpdateViewState();
         }        
 
-        private void item_OnItemSelected(GUIListItem item, GUIControl parent)
+        private void OnSiteSelected(GUIListItem item, GUIControl parent)
         {
             GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-            if (filmstrip == null)
-                return;
-            filmstrip.InfoImageFileName = item.ThumbnailImage;
+            if (filmstrip != null) filmstrip.InfoImageFileName = item.ThumbnailImage;
+
+            string desc = OnlineVideoSettings.getInstance().SiteList[item.Label].Settings.Description;
+            if (!string.IsNullOrEmpty(desc)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", desc);
+            else GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
         }
         
         private void LoadSettings()
@@ -771,7 +773,7 @@ namespace OnlineVideos
                         loListItem.ThumbnailImage = image;                        
                         loListItem.IconImage = image;
                         loListItem.IconImageBig = image;
-                        loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+                        loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
                     }
                     else
                     {                        
@@ -1492,6 +1494,8 @@ namespace OnlineVideos
                 fsStr = Regex.Replace(fsStr, @"<[^>]*>", "", RegexOptions.Multiline);
 
                 fsStr = fsStr.Trim();
+
+                fsStr = System.Web.HttpUtility.HtmlDecode(fsStr);
             }
             return fsStr;
         }

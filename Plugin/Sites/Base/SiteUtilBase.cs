@@ -34,7 +34,21 @@ namespace OnlineVideos.Sites
                         object[] attrs = field.GetCustomAttributes(typeof(CategoryAttribute), false);
                         if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosConfiguration")
                         {
-                            field.SetValue(this, siteSettings.Configuration[field.Name]);                            
+                            try
+                            {
+                                if (field.FieldType.IsEnum)
+                                {
+                                    field.SetValue(this, Enum.Parse(field.FieldType, siteSettings.Configuration[field.Name]));
+                                }
+                                else
+                                {                                    
+                                    field.SetValue(this, Convert.ChangeType(siteSettings.Configuration[field.Name], field.FieldType));
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error("Could not set Configuration Value: {0}. Error: {1}", field.Name, ex.Message);
+                            }
                         }
                     }
                 }                
