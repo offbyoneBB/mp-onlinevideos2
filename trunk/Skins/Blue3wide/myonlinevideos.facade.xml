@@ -47,11 +47,14 @@
           <frameFocus>Thumb_frame_focus.png</frameFocus>          
           <showFrame>true</showFrame>          
           <dimColor>90ffffff</dimColor>
-          <thumbZoom>no</thumbZoom>
-          <enableFocusZoom>no</enableFocusZoom>          
+          
+          <enableFocusZoom>yes</enableFocusZoom>                    
+          <zoomXPixels>10</zoomXPixels>
+          <zoomYPixels>10</zoomYPixels>          
           <hideUnfocusTexture>no</hideUnfocusTexture>          
           <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>no</renderUnfocusText>
+          <renderUnfocusText>no</renderUnfocusText>                    
+          <thumbZoom>no</thumbZoom>
           
           <!-- smallicons -->
           <itemWidth>160</itemWidth>
