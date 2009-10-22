@@ -4,6 +4,7 @@
     <Site name="YouTube" util="YouTube" agecheck="false" enabled="true" lang="en">
       <Username />
       <Password />
+      <Description>Largest video site on the web. Available in any country. Quality can be set to Low, High or HD.</Description>
       <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="Top Rated">http://gdata.youtube.com/feeds/api/standardfeeds/top_rated</Category>

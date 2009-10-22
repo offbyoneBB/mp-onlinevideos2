@@ -73,12 +73,19 @@ namespace OnlineVideos.Sites
                             {
                                 video.Length = rssItem.Enclosure.Length;
                             }
-                        }
+                        }                        
 
                         if (!string.IsNullOrEmpty(rssItem.PubDate))
                         {
                             if (video.Length != "") video.Length += " | ";
-                            video.Length += rssItem.PubDate;
+                            try
+                            {
+                                video.Length += rssItem.PubDateParsed.ToString("g");
+                            }
+                            catch
+                            {
+                                video.Length += rssItem.PubDate;
+                            }                            
                         }
                     }
                     else if (rssItem.MediaContents.Count > 0)

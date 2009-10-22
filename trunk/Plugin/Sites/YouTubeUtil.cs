@@ -17,6 +17,9 @@ namespace OnlineVideos.Sites
 
     public class YouTubeUtil : SiteUtilBase, IFilter, ISearch, IFavorite
     {
+        [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
+        bool useDynamicCategories = true;
+
         static Regex PageStartIndex = new Regex(@"start-index=(?<item>[\d]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         static Regex swfJsonArgs = new Regex(@"var\sswfArgs\s=\s(?<json>\{.+\})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
@@ -295,7 +298,9 @@ namespace OnlineVideos.Sites
         }
         
         public override int DiscoverDynamicCategories()
-        {            
+        {
+            if (!useDynamicCategories) return base.DiscoverDynamicCategories();
+
             Dictionary<String, String> categories = getYoutubeCategories();
             foreach (KeyValuePair<String, String> cat in categories)
             {

@@ -17,8 +17,20 @@ namespace OnlineVideos.Sites
 {
     public class GameTrailersUtil : SiteUtilBase 
     {
-        static string videoRegExp = @"<a\shref=""(http://www\.gametrailers\.com/download/[^""]+\.wmv)"">";
-        static Regex loUrlRegex = new Regex(videoRegExp, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        public enum MediaType { mov, wmv };
+
+        string videoRegExp = @"<a\shref=""(http://www\.gametrailers\.com/download/[^""]+\.{0})"">";
+        Regex loUrlRegex;
+
+        [Category("OnlineVideosConfiguration"), Description("GT offers up to 4 different file types for the same trailer.")]
+        MediaType preferredMediaType = MediaType.wmv;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+
+            loUrlRegex = new Regex(string.Format(videoRegExp, preferredMediaType.ToString()), RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        }
 
         public override String getUrl(VideoInfo video)
         {
@@ -42,14 +54,15 @@ namespace OnlineVideos.Sites
 				video.Description = rssItem.Description;
 				video.ImageUrl = rssItem.GT_Image;
 				video.Title = rssItem.Title;
-                video.Length = rssItem.PubDateParsed.ToString("g");
+                try { video.Length= rssItem.PubDateParsed.ToString("g"); }
+                catch { video.Length = rssItem.PubDate; }
                 video.Other = rssItem.GT_GameId;                
                 foreach (RssItem.GT_File media in rssItem.GT_Files)
                 {
-                    if (!string.IsNullOrEmpty(media.Url) && media.Type=="wmv")
+                    if (media.Type != "mp4")
                     {
-                        video.VideoUrl = media.Url;
-                        break;
+                        if (!string.IsNullOrEmpty(media.Url)) video.VideoUrl = media.Url;
+                        if (media.Type == preferredMediaType.ToString()) break;
                     }
                 }                
                 if (!(string.IsNullOrEmpty(video.VideoUrl))) loVideoList.Add(video);
