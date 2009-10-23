@@ -15,25 +15,13 @@ namespace OnlineVideos.Sites
         string videoUrls = "http://api-media.mtvnservices.com/player/embed/includes/mediaGen.jhtml?uri={0}&ref=None";
         string genreVideosMethod = "http://api.mtvnservices.com/1/genre/{0}/videos/?sort=date_descending";
         string searchMethod = "http://api.mtvnservices.com/1/video/search/?term={0}&sort=date_descending";
+        int pageSize = 27;
 
-        public override string getUrl(VideoInfo video)
+        List<VideoInfo> GetVideoForCurrentCategory()
         {
-            string playlist = GetWebData(string.Format(videoUrls, new System.Uri(video.VideoUrl).AbsolutePath.Substring(1)));
-            if (playlist.Length > 0)
-            {
-                XmlDocument data = new XmlDocument();
-                data.LoadXml(playlist);
-                string url = ((XmlElement)data.SelectSingleNode("//rendition/src")).InnerText;
-                string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
-                return resultUrl;
-            }
-            return "";
-        }
-
-        public override List<VideoInfo> getVideoList(Category category)
-        {
-            string finalUrl = ((RssLink)category).Url + "&max-results=27&start-index=0";
+            string finalUrl = string.Format("{0}&max-results={1}&start-index={2}", currentCategory.Url, pageSize, currentStart);
             RssDocument rss = GetWebDataAsRss(finalUrl);
+            currentCategory.EstimatedVideoCount = (uint)rss.Channel.TotalResults;
             List<VideoInfo> videoList = new List<VideoInfo>();
             foreach (RssItem rssItem in rss.Channel.Items)
             {
@@ -51,6 +39,53 @@ namespace OnlineVideos.Sites
                 }
             }
             return videoList;
+        }
+        
+        RssLink currentCategory;
+        int currentStart = 0;
+
+        public override bool HasNextPage
+        {
+            get { return currentCategory != null && currentCategory.EstimatedVideoCount > currentStart; }
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            currentStart += pageSize;
+            return GetVideoForCurrentCategory();
+        }
+
+        public override bool HasPreviousPage
+        {
+            get { return currentCategory != null && currentStart > 0; }
+        }
+
+        public override List<VideoInfo> getPreviousPageVideos()
+        {
+            currentStart -= pageSize;
+            if (currentStart < 0) currentStart = 0;
+            return GetVideoForCurrentCategory();
+        }
+
+        public override List<VideoInfo> getVideoList(Category category)
+        {
+            currentCategory = category as RssLink;
+            currentStart = 0;
+            return GetVideoForCurrentCategory();
+        }
+
+        public override string getUrl(VideoInfo video)
+        {
+            string playlist = GetWebData(string.Format(videoUrls, new System.Uri(video.VideoUrl).AbsolutePath.Substring(1)));
+            if (playlist.Length > 0)
+            {
+                XmlDocument data = new XmlDocument();
+                data.LoadXml(playlist);
+                string url = ((XmlElement)data.SelectSingleNode("//rendition/src")).InnerText;
+                string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
+                return resultUrl;
+            }
+            return "";
         }
 
         public override int DiscoverDynamicCategories()
