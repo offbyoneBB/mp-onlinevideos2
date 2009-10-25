@@ -262,7 +262,25 @@
 			<Option />
 			<Guid>bc744669-86f8-4b12-b234-e6ba16a8af01</Guid>
 		</File>
-		<File>
+    <File>
+      <FileName>JustinTV.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\JustinTV.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>CC9D66FA-DE50-4b4d-94CC-6AC92246B5DD</Guid>
+    </File>
+    <File>
+      <FileName>JustinTV.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\JustinTV.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>B28720AD-D36C-4a31-A234-9537B0A53E14</Guid>
+    </File>    
+    <File>
 			<FileName>Live Video.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
