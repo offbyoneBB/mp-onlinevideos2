@@ -145,7 +145,25 @@
 			<Option />
 			<Guid>866351f4-47a3-4e20-b185-298752b9ba4a</Guid>
 		</File>
-		<File>
+    <File>
+      <FileName>Discovey Channel.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\Discovey Channel.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>CB3FDEA1-C7CB-4a31-8C51-FBBE36BCC009</Guid>
+    </File>
+    <File>
+      <FileName>Discovey Channel.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\Discovey Channel.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>51336342-345D-49d9-9572-909285E72254</Guid>
+    </File>
+    <File>
 			<FileName>Downloaded Videos.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
@@ -316,7 +334,25 @@
 			<Option />
 			<Guid>6e1ab3ef-f190-4e24-a371-cf5f19883c16</Guid>
 		</File>
-		<File>
+    <File>
+      <FileName>MTVMusicVideos.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\MTVMusicVideos.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>B7D4C194-3B5D-4262-B3F9-347EEF9925F1</Guid>
+    </File>
+    <File>
+      <FileName>MTVMusicVideos.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\MTVMusicVideos.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>C9CDDBDE-BDE2-4c42-A3C0-B99722A313DA</Guid>
+    </File>
+    <File>
 			<FileName>MusicTelevision.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
@@ -505,6 +541,24 @@
 			<Option />
 			<Guid>2969c5c9-356e-42f1-9690-1be003ff1d6f</Guid>
 		</File>
+    <File>
+      <FileName>OnlineTV by on-tv.ru.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\OnlineTV by on-tv.ru.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>A93876B4-DDED-4cbe-826D-09BEA8985F28</Guid>
+    </File>
+    <File>
+      <FileName>OnlineTV by on-tv.ru.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\OnlineTV by on-tv.ru.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>978159EB-FEE6-4581-A70B-A5C932A5E3EB</Guid>
+    </File>    
 		<File>
 			<FileName>Picture_cover_focused.png</FileName>
 			<Type>Media</Type>
