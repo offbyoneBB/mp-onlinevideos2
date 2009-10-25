@@ -499,6 +499,23 @@
       <SearchUrl />
       <Categories />
     </Site>
+    <Site name="JustinTV" util="JustinTV" agecheck="false" enabled="true" lang="en">
+      <Username />
+      <Password />
+      <SearchUrl>http://clipta.com/jtv_search/index_1.php?q={0}</SearchUrl>
+      <Categories>
+        <Category xsi:type="RssLink" name="Producers">http://api.justin.tv/api/stream/list.xml?category=featured</Category>
+        <Category xsi:type="RssLink" name="Social">http://api.justin.tv/api/stream/list.xml?category=social</Category>
+        <Category xsi:type="RssLink" name="Entertainment">http://api.justin.tv/api/stream/list.xml?category=entertainment</Category>
+        <Category xsi:type="RssLink" name="Gaming">http://api.justin.tv/api/stream/list.xml?category=gaming</Category>
+        <Category xsi:type="RssLink" name="Sports">http://api.justin.tv/api/stream/list.xml?category=sports</Category>
+        <Category xsi:type="RssLink" name="News &amp; Events">http://api.justin.tv/api/stream/list.xml?category=news</Category>
+        <Category xsi:type="RssLink" name="Animals">http://api.justin.tv/api/stream/list.xml?category=animals</Category>
+        <Category xsi:type="RssLink" name="Science &amp; Tech">http://api.justin.tv/api/stream/list.xml?category=science_tech</Category>
+        <Category xsi:type="RssLink" name="Educational">http://api.justin.tv/api/stream/list.xml?category=educational</Category>
+        <Category xsi:type="RssLink" name="Other">http://api.justin.tv/api/stream/list.xml?category=other</Category>
+      </Categories>
+    </Site>
     <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" player="WMP">
       <Username />
       <Password />

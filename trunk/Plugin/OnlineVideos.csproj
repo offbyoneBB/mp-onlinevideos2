@@ -412,6 +412,7 @@
     <Compile Include="Sites\Interfaces\IFavorite.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
     <Compile Include="Sites\Interfaces\ISearch.cs" />
+    <Compile Include="Sites\JustinTVUtil.cs" />
     <Compile Include="Sites\LineCinemaRuUtil.cs" />
     <Compile Include="Sites\LiveVideoUtil.cs" />
     <Compile Include="Sites\MiroUtil.cs" />
