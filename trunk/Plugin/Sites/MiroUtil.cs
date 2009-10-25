@@ -5,6 +5,9 @@ using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
+    /// <summary>
+    /// Miro API documentation: https://develop.participatoryculture.org/trac/democracy/wiki/MiroGuideApi
+    /// </summary>
     public class MiroUtil : SiteUtilBase
     {
         static Regex categoriesRegEx = new Regex(@"\{'url'\:\su'(?<url>[^']+)',\s'name'\:\su'(?<name>[^']+)'", RegexOptions.Compiled | RegexOptions.CultureInvariant);
