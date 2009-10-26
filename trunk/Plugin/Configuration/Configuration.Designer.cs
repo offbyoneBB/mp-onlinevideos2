@@ -59,9 +59,11 @@ namespace OnlineVideos
             this.label28 = new System.Windows.Forms.Label();
             this.txtSiteName = new System.Windows.Forms.TextBox();
             this.cbSiteUtil = new System.Windows.Forms.ComboBox();
+            this.chkAgeConfirm = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.btnAdvanced = new System.Windows.Forms.Button();
             this.toolStripContainer3 = new System.Windows.Forms.ToolStripContainer();
-            this.siteList = new System.Windows.Forms.ListBox();
+            this.siteList = new OnlineVideos.BindableCheckedListBox();
             this.toolStripSiteUpDown = new System.Windows.Forms.ToolStrip();
             this.btnSiteUp = new System.Windows.Forms.ToolStripButton();
             this.btnSiteDown = new System.Windows.Forms.ToolStripButton();
@@ -71,8 +73,6 @@ namespace OnlineVideos
             this.btnDeleteSite = new System.Windows.Forms.ToolStripButton();
             this.tbxSearchUrl = new System.Windows.Forms.TextBox();
             this.lblSearchUrl = new System.Windows.Forms.Label();
-            this.chkAgeConfirm = new System.Windows.Forms.CheckBox();
-            this.chkEnabled = new System.Windows.Forms.CheckBox();
             this.txtFilters = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtThumbLoc = new System.Windows.Forms.TextBox();
@@ -134,7 +134,6 @@ namespace OnlineVideos
             this.chkFLVSplitterInstalled = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -246,11 +245,9 @@ namespace OnlineVideos
             this.groupBox1.Controls.Add(this.descriptionTextBox);
             this.groupBox1.Controls.Add(this.label22);
             this.groupBox1.Controls.Add(this.tableLayoutPanel1);
-            this.groupBox1.Controls.Add(this.btnAdvanced);
             this.groupBox1.Controls.Add(this.toolStripContainer3);
             this.groupBox1.Controls.Add(this.tbxSearchUrl);
             this.groupBox1.Controls.Add(this.lblSearchUrl);
-            this.groupBox1.Controls.Add(this.chkEnabled);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(2, 2);
             this.groupBox1.Name = "groupBox1";
@@ -284,12 +281,13 @@ namespace OnlineVideos
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 4;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.propertyGridUserConfig, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.cbLanguages, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.label18, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.btnAdvanced, 1, 4);
             this.tableLayoutPanel1.Controls.Add(this.label27, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label28, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.txtSiteName, 1, 0);
@@ -311,11 +309,11 @@ namespace OnlineVideos
             // propertyGridUserConfig
             // 
             this.propertyGridUserConfig.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGridUserConfig.Location = new System.Drawing.Point(295, 3);
+            this.propertyGridUserConfig.Location = new System.Drawing.Point(246, 3);
             this.propertyGridUserConfig.Name = "propertyGridUserConfig";
             this.propertyGridUserConfig.PropertySort = System.Windows.Forms.PropertySort.NoSort;
             this.tableLayoutPanel1.SetRowSpan(this.propertyGridUserConfig, 5);
-            this.propertyGridUserConfig.Size = new System.Drawing.Size(194, 126);
+            this.propertyGridUserConfig.Size = new System.Drawing.Size(243, 126);
             this.propertyGridUserConfig.TabIndex = 29;
             this.propertyGridUserConfig.ToolbarVisible = false;
             // 
@@ -328,7 +326,7 @@ namespace OnlineVideos
             this.cbLanguages.Location = new System.Drawing.Point(85, 54);
             this.cbLanguages.Margin = new System.Windows.Forms.Padding(2);
             this.cbLanguages.Name = "cbLanguages";
-            this.cbLanguages.Size = new System.Drawing.Size(195, 21);
+            this.cbLanguages.Size = new System.Drawing.Size(146, 21);
             this.cbLanguages.TabIndex = 22;
             // 
             // label18
@@ -370,7 +368,7 @@ namespace OnlineVideos
             this.txtSiteName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSiteName.Location = new System.Drawing.Point(86, 3);
             this.txtSiteName.Name = "txtSiteName";
-            this.txtSiteName.Size = new System.Drawing.Size(193, 20);
+            this.txtSiteName.Size = new System.Drawing.Size(144, 20);
             this.txtSiteName.TabIndex = 11;
             // 
             // cbSiteUtil
@@ -382,15 +380,37 @@ namespace OnlineVideos
             this.cbSiteUtil.Location = new System.Drawing.Point(85, 28);
             this.cbSiteUtil.Margin = new System.Windows.Forms.Padding(2);
             this.cbSiteUtil.Name = "cbSiteUtil";
-            this.cbSiteUtil.Size = new System.Drawing.Size(195, 21);
+            this.cbSiteUtil.Size = new System.Drawing.Size(146, 21);
             this.cbSiteUtil.TabIndex = 21;
+            // 
+            // chkAgeConfirm
+            // 
+            this.chkAgeConfirm.AutoSize = true;
+            this.chkAgeConfirm.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.bindingSourceSiteSettings, "ConfirmAge", true));
+            this.chkAgeConfirm.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chkAgeConfirm.Location = new System.Drawing.Point(86, 81);
+            this.chkAgeConfirm.Name = "chkAgeConfirm";
+            this.chkAgeConfirm.Size = new System.Drawing.Size(144, 20);
+            this.chkAgeConfirm.TabIndex = 16;
+            this.chkAgeConfirm.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label4.Location = new System.Drawing.Point(3, 78);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(77, 26);
+            this.label4.TabIndex = 30;
+            this.label4.Text = "Confirm Age";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnAdvanced
             // 
-            this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAdvanced.Location = new System.Drawing.Point(619, 12);
+            this.btnAdvanced.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnAdvanced.Location = new System.Drawing.Point(86, 107);
             this.btnAdvanced.Name = "btnAdvanced";
-            this.btnAdvanced.Size = new System.Drawing.Size(75, 23);
+            this.btnAdvanced.Size = new System.Drawing.Size(144, 22);
             this.btnAdvanced.TabIndex = 25;
             this.btnAdvanced.Text = "Advanced";
             this.btnAdvanced.UseVisualStyleBackColor = true;
@@ -424,13 +444,14 @@ namespace OnlineVideos
             // 
             // siteList
             // 
+            this.siteList.CheckedMember = "IsEnabled";
             this.siteList.DataSource = this.bindingSourceSiteSettings;
             this.siteList.DisplayMember = "Name";
             this.siteList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.siteList.FormattingEnabled = true;
             this.siteList.Location = new System.Drawing.Point(0, 0);
             this.siteList.Name = "siteList";
-            this.siteList.Size = new System.Drawing.Size(172, 186);
+            this.siteList.Size = new System.Drawing.Size(172, 184);
             this.siteList.TabIndex = 5;
             this.siteList.SelectedIndexChanged += new System.EventHandler(this.SiteListSelectedIndexChanged);
             // 
@@ -532,28 +553,6 @@ namespace OnlineVideos
             this.lblSearchUrl.Size = new System.Drawing.Size(57, 13);
             this.lblSearchUrl.TabIndex = 19;
             this.lblSearchUrl.Text = "Search Url";
-            // 
-            // chkAgeConfirm
-            // 
-            this.chkAgeConfirm.AutoSize = true;
-            this.chkAgeConfirm.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.bindingSourceSiteSettings, "ConfirmAge", true));
-            this.chkAgeConfirm.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chkAgeConfirm.Location = new System.Drawing.Point(86, 81);
-            this.chkAgeConfirm.Name = "chkAgeConfirm";
-            this.chkAgeConfirm.Size = new System.Drawing.Size(193, 20);
-            this.chkAgeConfirm.TabIndex = 16;
-            this.chkAgeConfirm.UseVisualStyleBackColor = true;
-            // 
-            // chkEnabled
-            // 
-            this.chkEnabled.AutoSize = true;
-            this.chkEnabled.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.bindingSourceSiteSettings, "IsEnabled", true));
-            this.chkEnabled.Location = new System.Drawing.Point(210, 19);
-            this.chkEnabled.Name = "chkEnabled";
-            this.chkEnabled.Size = new System.Drawing.Size(65, 17);
-            this.chkEnabled.TabIndex = 8;
-            this.chkEnabled.Text = "Enabled";
-            this.chkEnabled.UseVisualStyleBackColor = true;
             // 
             // txtFilters
             // 
@@ -1257,17 +1256,6 @@ namespace OnlineVideos
             this.label11.TabIndex = 0;
             this.label11.Text = "flv";
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label4.Location = new System.Drawing.Point(3, 78);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(77, 26);
-            this.label4.TabIndex = 30;
-            this.label4.Text = "Confirm Age";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -1334,8 +1322,7 @@ namespace OnlineVideos
 		private System.Windows.Forms.TextBox txtRssUrl;
 		private System.Windows.Forms.TextBox txtRssName;
 		private System.Windows.Forms.ListBox RssLinkList;
-		private System.Windows.Forms.ListBox siteList;
-		private System.Windows.Forms.CheckBox chkEnabled;
+        private BindableCheckedListBox siteList;
 		private System.Windows.Forms.Label label27;
 		private System.Windows.Forms.Label label28;
         private System.Windows.Forms.TextBox txtSiteName;
