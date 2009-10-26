@@ -22,7 +22,7 @@ namespace OnlineVideos.Sites
         string videoRegExp = @"<a\shref=""(http://www\.gametrailers\.com/download/[^""]+\.{0})"">";
         Regex loUrlRegex;
 
-        [Category("OnlineVideosConfiguration"), Description("GT offers up to 4 different file types for the same trailer.")]
+        [Category("OnlineVideosUserConfiguration"), Description("GT offers up to 4 different file types for the same trailer.")]
         MediaType preferredMediaType = MediaType.wmv;
 
         public override void Initialize(SiteSettings siteSettings)
