@@ -1943,28 +1943,17 @@ namespace OnlineVideos
             bool refreshList = false;
 
             if (selectedSite is IFavorite)
-            {
-                if (string.IsNullOrEmpty(selectedSite.Settings.Password) || string.IsNullOrEmpty(selectedSite.Settings.Username))
+            {                
+                if (showingFavorites)
                 {
-                    GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                    dlg_error.SetHeading(PluginName());
-                    dlg_error.SetLine(1, "Please set your username and password in the Configuration");
-                    dlg_error.SetLine(2, String.Empty);
-                    dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                    Log.Info("Received request to remove video from favorites.");                         
+                    ((IFavorite)selectedSite).removeFavorite(loSelectedVideo);
+                    refreshList = true;
                 }
                 else
                 {
-                    if (showingFavorites)
-                    {
-                        Log.Info("Received request to remove video from favorites.");                         
-                        ((IFavorite)selectedSite).removeFavorite(loSelectedVideo);
-                        refreshList = true;
-                    }
-                    else
-                    {
-                        Log.Info("Received request to add video to favorites.");
-                        ((IFavorite)selectedSite).addFavorite(loSelectedVideo);
-                    }
+                    Log.Info("Received request to add video to favorites.");
+                    ((IFavorite)selectedSite).addFavorite(loSelectedVideo);
                 }
             }
             else

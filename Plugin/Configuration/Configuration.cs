@@ -20,7 +20,9 @@ namespace OnlineVideos
 			//
 			// The InitializeComponent() call is required for Windows Forms designer support.
 			//
-			InitializeComponent();			
+			InitializeComponent();
+
+            propertyGridUserConfig.BrowsableAttributes = new AttributeCollection(new CategoryAttribute("OnlineVideosUserConfiguration"));
 		}
 
 		public void Configuration_Load(object sender, EventArgs e)
@@ -37,20 +39,6 @@ namespace OnlineVideos
             txtFilters.Text = settings.msFilterArray != null ? string.Join(",", settings.msFilterArray) : "";
             chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;            
             tbxPin.Text = settings.pinAgeConfirmation;
-            cmbYoutubeQuality.SelectedIndex = (int)settings.YouTubeQuality;
-            cmbDasErsteQuality.SelectedIndex = (int)settings.DasErsteQuality;
-            // apple trailer quality selection
-            foreach (Sites.AppleTrailersUtil.VideoQuality size in Enum.GetValues(typeof(Sites.AppleTrailersUtil.VideoQuality)))
-            {
-                if (size != OnlineVideos.Sites.AppleTrailersUtil.VideoQuality.UNKNOWN)
-                {
-                    cmbTrailerSize.Items.Add(size);
-                    if (size == OnlineVideoSettings.getInstance().AppleTrailerSize)
-                    {
-                        cmbTrailerSize.SelectedIndex = cmbTrailerSize.Items.Count - 1;
-                    }
-                }
-			}
 
             /** fill "Sites" tab **/
             // utils combobox
@@ -96,6 +84,9 @@ namespace OnlineVideos
                     }
                 }
                 tvGroups.ExpandAll();
+
+                Sites.SiteUtilBase siteUtil = SiteUtilFactory.CreateFromShortName(site.UtilName, site);
+                propertyGridUserConfig.SelectedObject = siteUtil;
             }
 
             bindingSourceRssLink.DataSource = rssLinks;
@@ -158,9 +149,6 @@ namespace OnlineVideos
                 settings.msThumbLocation = txtThumbLoc.Text;
                 settings.BasicHomeScreenName = tbxScreenName.Text;                
                 settings.msDownloadDir = txtDownloadDir.Text;
-                settings.AppleTrailerSize = (Sites.AppleTrailersUtil.VideoQuality)cmbTrailerSize.SelectedItem;
-                settings.YouTubeQuality = (Sites.YouTubeUtil.YoutubeVideoQuality)cmbYoutubeQuality.SelectedIndex;
-                settings.DasErsteQuality = (OnlineVideos.Sites.DasErsteMediathekUtil.DasErsteVideoQuality)cmbDasErsteQuality.SelectedIndex;
                 settings.useAgeConfirmation = chkUseAgeConfirmation.Checked;
                 settings.pinAgeConfirmation = tbxPin.Text;
                 settings.Save();

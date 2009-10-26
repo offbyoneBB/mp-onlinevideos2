@@ -12,7 +12,10 @@ namespace OnlineVideos.Sites
 {    
     public class DasErsteMediathekUtil : SiteUtilBase
     {
-        public enum DasErsteVideoQuality { Low, High };
+        public enum VideoQuality { Low, High };
+
+        [Category("OnlineVideosUserConfiguration"), Description("Low or high quality for the videos according to bandwidth.")]
+        VideoQuality videoQuality = VideoQuality.High;
 
         protected string ConvertUmlaut(string strIN)
         {
@@ -132,7 +135,7 @@ namespace OnlineVideos.Sites
         {
             if (cachedRegExp == null)
             {
-                if (OnlineVideoSettings.getInstance().DasErsteQuality == DasErsteVideoQuality.Low)
+                if (videoQuality == VideoQuality.Low)
                     cachedRegExp = videoSearchRegExp_Low;
                 else
                     cachedRegExp = videoSearchRegExp_High;

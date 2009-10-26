@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Web;
 using System.Net;
@@ -207,6 +208,9 @@ namespace OnlineVideos.Sites
         private const string urlJsonStudio = urlBase + "home/feeds/studios.json";
 
         protected Dictionary<string, Trailer> Trailers = new Dictionary<string,Trailer>();
+
+        [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum quality for the trailer to be played.")]
+        VideoQuality trailerSize = VideoQuality.HD480;
 
         public override bool HasMultipleVideos
         {
@@ -704,8 +708,7 @@ namespace OnlineVideos.Sites
         {
             if (files == null || files.Count == 0) return "";
 
-            VideoQuality q = OnlineVideoSettings.getInstance().AppleTrailerSize;
-            if (files.ContainsKey(q)) return files[q].ToString();
+            if (files.ContainsKey(trailerSize)) return files[trailerSize].ToString();
             else
             {
                 VideoQuality[] vq = new VideoQuality[files.Count];

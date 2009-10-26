@@ -24,34 +24,58 @@ namespace OnlineVideos.Sites
         {
             Settings = siteSettings;
 
-            // apply custom settings if any are present
-            if (siteSettings.Configuration != null && siteSettings.Configuration.Count > 0)
-            {                
-                foreach (FieldInfo field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+            // apply custom settings
+            foreach (FieldInfo field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                object[] attrs = field.GetCustomAttributes(typeof(CategoryAttribute), false);
+                if (attrs.Length > 0)
                 {
-                    if (siteSettings.Configuration.ContainsKey(field.Name))
+                    if (((CategoryAttribute)attrs[0]).Category == "OnlineVideosConfiguration"
+                        && siteSettings.Configuration != null
+                        && siteSettings.Configuration.ContainsKey(field.Name))
                     {
-                        object[] attrs = field.GetCustomAttributes(typeof(CategoryAttribute), false);
-                        if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosConfiguration")
+                        try
                         {
-                            try
+                            if (field.FieldType.IsEnum)
                             {
-                                if (field.FieldType.IsEnum)
-                                {
-                                    field.SetValue(this, Enum.Parse(field.FieldType, siteSettings.Configuration[field.Name]));
-                                }
-                                else
-                                {                                    
-                                    field.SetValue(this, Convert.ChangeType(siteSettings.Configuration[field.Name], field.FieldType));
-                                }
+                                field.SetValue(this, Enum.Parse(field.FieldType, siteSettings.Configuration[field.Name]));
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                Log.Error("Could not set Configuration Value: {0}. Error: {1}", field.Name, ex.Message);
+                                field.SetValue(this, Convert.ChangeType(siteSettings.Configuration[field.Name], field.FieldType));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Could not set Configuration Value: {0}. Error: {1}", field.Name, ex.Message);
+                        }
+                    }
+                    else if (((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
+                    {
+                        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+                        {
+                            string value = xmlreader.GetValueAsString(OnlineVideoSettings.SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteSettings.Name).Replace(' ', '_'), field.Name), "NO_VALUE_FOUND");
+                            if (value != "NO_VALUE_FOUND")
+                            {
+                                try
+                                {
+                                    if (field.FieldType.IsEnum)
+                                    {
+                                        field.SetValue(this, Enum.Parse(field.FieldType, value));
+                                    }
+                                    else
+                                    {
+                                        field.SetValue(this, Convert.ChangeType(value, field.FieldType));
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Error("Could not set Configuration Value: {0}. Error: {1}", field.Name, ex.Message);
+                                }
                             }
                         }
                     }
-                }                
+                }
             }
         }
 
@@ -134,11 +158,6 @@ namespace OnlineVideos.Sites
         public virtual List<String> getMultipleVideoUrls(VideoInfo video)
         {
             return new List<String>();
-        }
-
-        public virtual bool HasLoginSupport
-        {
-            get { return false; }
         }
 
         public virtual string GetFileNameForDownload(VideoInfo video, string url)
@@ -437,9 +456,24 @@ namespace OnlineVideos.Sites
             }
 
             public override void SetValue(object component, object value)
-            {               
-                _field.SetValue(component, value);
-                OnValueChanged(component, EventArgs.Empty);
+            {
+                // only set if changed
+                if (_field.GetValue(component) != value)
+                {
+                    _field.SetValue(component, value);
+                    OnValueChanged(component, EventArgs.Empty);
+                    
+                    // if this field is a user config, set value also in MediaPortal config file
+                    object[] attrs = _field.GetCustomAttributes(typeof(CategoryAttribute), false);
+                    if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
+                    {
+                        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+                        {
+                            string siteName = (component as Sites.SiteUtilBase).Settings.Name;
+                            xmlreader.SetValue(OnlineVideoSettings.SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());
+                        }
+                    }
+                }
             }
         }
 
