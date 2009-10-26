@@ -94,6 +94,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\BindableCheckedListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Configuration\CodecConfiguration.cs" />
     <Compile Include="Configuration\ConfigurationAdvanced.cs">
       <SubType>Form</SubType>
