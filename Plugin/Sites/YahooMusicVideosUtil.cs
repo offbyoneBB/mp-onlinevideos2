@@ -1,33 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using YahooMusicEngine;
 using YahooMusicEngine.OnlineDataProvider;
 using YahooMusicEngine.Entities;
 using YahooMusicEngine.Services;
+using System.Drawing.Design;
+using System.Windows.Forms.Design;
 
 namespace OnlineVideos.Sites
 {
     public class YahooMusicVideosUtil : SiteUtilBase, ISearch
     {
-        YahooSettings settings;
+        public class UITokenEditor : UITypeEditor
+        {
+            IWindowsFormsEditorService editorService;
+
+            public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
+            {
+                return UITypeEditorEditStyle.Modal;
+            }
+
+            public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+            {
+                if (provider != null)
+                {
+                    editorService =
+                        provider.GetService(
+                        typeof(IWindowsFormsEditorService))
+                        as IWindowsFormsEditorService;
+                }
+
+                if (editorService != null)
+                {
+                    OnlineVideos.BrowserForm form = new BrowserForm();
+                    Yahoo.Authentication auth = new Yahoo.Authentication(YahooMusicVideosUtil.AppId, YahooMusicVideosUtil.SharedSecret);
+                    form.webBrowser1.Url = auth.GetUserLogOnAddress();
+                    editorService.ShowDialog(form);
+                    value = form.Token;
+                }
+
+                return value;
+            }
+
+        }
+
+        public enum Locale 
+        { 
+            [Description("United States")]us, 
+            [Description("United States (Español)")]e1, 
+            [Description("Canada")]ca, 
+            [Description("Mexico")]mx, 
+            [Description("Australia")]au, 
+            [Description("New Zealand")]nz 
+        };
+
+        protected const string AppId = "DeUZup_IkY7d17O2DzAMPoyxmc55_hTasA--";
+        protected const string SharedSecret = "d80b9a5766788713e1fadd73e752c7eb";
+
+        [Editor(typeof(UITokenEditor), typeof(UITypeEditor)),
+        //Category("OnlineVideosUserConfiguration"), 
+        Description("You can, but don't have to sign in with your Yahoo account to access user specific features this service.")]
+        string token = "";
+
+        [Category("OnlineVideosUserConfiguration"), Description("Language (Country) to use when accessing this service.")]
+        Locale locale = Locale.us;
+
+        [Category("OnlineVideosUserConfiguration"), Description("How each video title is displayed. These tags will be replaced: %artist% %title% %year% %rating%.")]
+        string format_Title = "%artist% - %title%";
+        
+        int pageSize = 27;
+        
         CategoryTreeService catserv;
         ServiceProvider provider;
         VideosForACategoryService videoInCatList = new VideosForACategoryService();
         SearchForVideosService videoSearchList = new SearchForVideosService();
         VideosForGivenPublishedListService videoPublishedList = new VideosForGivenPublishedListService();
 
-        public override List<VideoInfo> getVideoList(Category category)
+        List<VideoInfo> GetVideoForCurrentCategory()        
         {
-            string id = ((RssLink)category).Url;
+            string id = ((RssLink)currentCategory).Url;
 
             List<VideoInfo> videoList = new List<VideoInfo>();
 
             if (id == "popular" || id == "new")
             {
                 videoPublishedList.Id = id;
-                videoPublishedList.Count = settings.ItemCount;
+                videoPublishedList.Start = currentStart;
+                videoPublishedList.Count = pageSize;
                 provider.GetData(videoPublishedList);
+                ((RssLink)currentCategory).EstimatedVideoCount = (uint)videoPublishedList.Total;
 
                 foreach (VideoResponse vi in videoPublishedList.Items)
                 {
@@ -44,10 +107,10 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                CategoryEntity cat = catserv.Find(id);
-
+                //CategoryEntity cat = catserv.Find(id);
                 videoInCatList.Category = id;
-                videoInCatList.Count = settings.ItemCount;
+                videoInCatList.Start = currentStart;
+                videoInCatList.Count = pageSize;
                 provider.GetData(videoInCatList);
 
                 foreach (VideoResponse vi in videoInCatList.Items)
@@ -67,21 +130,48 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        public override int DiscoverDynamicCategories()
-        {
-            if (settings == null)
-            {
-                settings = new YahooSettings();
-                settings.Load();
-            }
+        RssLink currentCategory;
+        int currentStart = 1;
 
+        public override bool HasNextPage
+        {
+            get { return currentCategory != null && currentCategory.EstimatedVideoCount > currentStart; }
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            currentStart += pageSize;
+            return GetVideoForCurrentCategory();
+        }
+
+        public override bool HasPreviousPage
+        {
+            get { return currentCategory != null && currentStart > 1; }
+        }
+
+        public override List<VideoInfo> getPreviousPageVideos()
+        {
+            currentStart -= pageSize;
+            if (currentStart < 1) currentStart = 1;
+            return GetVideoForCurrentCategory();
+        }
+
+        public override List<VideoInfo> getVideoList(Category category)
+        {
+            currentCategory = category as RssLink;
+            currentStart = 1;
+            return GetVideoForCurrentCategory();
+        }
+
+        public override int DiscoverDynamicCategories()
+        {            
             if (provider == null)
             {
                 provider = new ServiceProvider();
-                provider.AppId = "DeUZup_IkY7d17O2DzAMPoyxmc55_hTasA--";
-                provider.SharedSecret = "d80b9a5766788713e1fadd73e752c7eb";
-                provider.Token = settings.Token;
-                provider.SetLocale(settings.Locale);
+                provider.AppId = AppId;
+                provider.SharedSecret = SharedSecret;
+                provider.Token = token;
+                provider.SetLocale(locale.ToString());
                 provider.Init();
             }
             else if (provider.Error)
@@ -121,8 +211,9 @@ namespace OnlineVideos.Sites
             foreach (CategoryEntity cat in catserv.Items)
             {
                 RssLink loRssItem = new RssLink();
-                loRssItem.Name = cat.Name;
+                loRssItem.Name = cat.Name;                
                 loRssItem.Url = cat.Id;
+                loRssItem.EstimatedVideoCount = (uint)cat.VideoCount;
                 Settings.Categories.Add(loRssItem);
 
                 // create sub cats tree
@@ -133,8 +224,9 @@ namespace OnlineVideos.Sites
                     loRssItem.SubCategories = new List<Category>();
 
                     RssLink general = new RssLink();
-                    general.Name = "General " + cat.Name;
+                    general.Name = cat.Name + " (Uncategorized)";
                     general.Url = cat.Id;
+                    general.EstimatedVideoCount = (uint)cat.VideoCount;
                     loRssItem.SubCategories.Add(general);
                     general.ParentCategory = loRssItem;
 
@@ -143,6 +235,7 @@ namespace OnlineVideos.Sites
                         RssLink subitem = new RssLink();
                         subitem.Name = subcat.Name;
                         subitem.Url = subcat.Id;
+                        subitem.EstimatedVideoCount = (uint)subcat.VideoCount;
                         loRssItem.SubCategories.Add(subitem);
                         subitem.ParentCategory = loRssItem;
                     }
@@ -207,9 +300,9 @@ namespace OnlineVideos.Sites
 
         string FormatTitle(VideoResponse vid)
         {
-            if (string.IsNullOrEmpty(settings.Format_Title))
+            if (string.IsNullOrEmpty(format_Title))
                 return vid.Artist.Name + " - " + vid.Video.Title;
-            string s = settings.Format_Title;
+            string s = format_Title;
             s = s.Replace("%title%", vid.Video.Title);
             s = s.Replace("%artist%", vid.Artist.Name);
             s = s.Replace("%year%", vid.Video.CopyrightYear.ToString());
@@ -240,10 +333,10 @@ namespace OnlineVideos.Sites
         }
 
         public List<VideoInfo> Search(string query, string category)
-        {
+        {            
             videoSearchList.Category = category;
             videoSearchList.Keyword = query;
-            videoSearchList.Count = settings.ItemCount;
+            videoSearchList.Count = 100;
             provider.GetData(videoSearchList);
 
             List<VideoInfo> loRssItemList = new List<VideoInfo>();
@@ -260,6 +353,8 @@ namespace OnlineVideos.Sites
                     loRssItemList.Add(loRssItem);
                 }
             }
+
+            currentCategory = null;
 
             return loRssItemList;            
 

@@ -24,8 +24,10 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link.")]
         string prevPageRegEx = @"<a\shref=""(?<url>.*)"">&lt;&lt;\sprev</a>";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page embedding a video for a link to the actual video.")]
-        //string playlistUrlRegEx = @"so.addVariable\('config',\s'(?<url>[^']+)'\);";
         string playlistUrlRegEx = @"so.addVariable\('file','(?<url>[^']+)'\);";
+
+        [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. Search is done via POST.")]
+        string searchUrl = "http://www.empflix.com/search.php";
 
         Regex regEx_VideoList, regEx_PlaylistUrl, regEx_NextPage, regEx_PrevPage;
 
@@ -163,7 +165,7 @@ namespace OnlineVideos.Sites
         {
             try
             {
-                string dataPage = GetWebDataFromPost(Settings.SearchUrl, "what=" + query);
+                string dataPage = GetWebDataFromPost(searchUrl, "what=" + query);
                 return Parse(dataPage);
             }
             catch (Exception ex)

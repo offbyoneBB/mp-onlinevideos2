@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Web;
 
@@ -10,6 +11,9 @@ namespace OnlineVideos.Sites
         public enum rtype { unknown, recorded, live };
 
         rtype rt = rtype.live;
+
+        [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
+        string searchUrl = "http://clipta.com/jtv_search/index_1.php?q={0}";
 
         public override string getUrl(VideoInfo video)
         {
@@ -81,7 +85,7 @@ namespace OnlineVideos.Sites
             VideoInfo info;
             if ((rt == rtype.unknown) || (rt == rtype.live))
             {
-                webData = SiteUtilBase.GetWebData(string.Format(Settings.SearchUrl, query) + "&type[]=live");
+                webData = SiteUtilBase.GetWebData(string.Format(searchUrl, query) + "&type[]=live");
                 if (webData.IndexOf("<LI class=\"sponsored_result\">") > -1)
                 {
                     str3 = webData.Substring(webData.IndexOf("<LI class=\"sponsored_result\">") + 0x1c, (webData.Length - 0x1c) - webData.IndexOf("<LI class=\"sponsored_result\">"));
@@ -138,7 +142,7 @@ namespace OnlineVideos.Sites
                     str3 = str3.Substring(str3.IndexOf("<LI class") + 9, (str3.Length - str3.IndexOf("<LI class")) - 9);
                 }
             }
-            webData = SiteUtilBase.GetWebData(string.Format(Settings.SearchUrl, query) + "&type[]=recorded");
+            webData = SiteUtilBase.GetWebData(string.Format(searchUrl, query) + "&type[]=recorded");
             if (webData.IndexOf("<LI class=\"sponsored_result\">") > -1)
             {
                 str2 = webData.Substring(webData.IndexOf("<LI class=\"sponsored_result\">") + 0x1c, (webData.Length - 0x1c) - webData.IndexOf("<LI class=\"sponsored_result\">"));

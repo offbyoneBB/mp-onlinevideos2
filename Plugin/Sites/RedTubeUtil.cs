@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
@@ -18,7 +19,10 @@ namespace OnlineVideos.Sites
                             (?:(?!<div\sclass=""time"">).)*<div\sclass=""time"">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<",
                             RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
         static Regex videoRegEx = new Regex(@"so\.addParam\(""flashvars"",""(?<flashvars>[^""]+)""\);", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        
+
+        [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
+        string searchUrl = "http://www.redtube.com/?search={0}";
+
         public override List<VideoInfo> getVideoList(Category category)
         {
             return Parse(GetWebData(((RssLink)category).Url, CookieContainer));
@@ -208,7 +212,7 @@ namespace OnlineVideos.Sites
 
         public List<VideoInfo> Search(string query)
         {
-            return Parse(GetWebData(string.Format(Settings.SearchUrl, query), CookieContainer));
+            return Parse(GetWebData(string.Format(searchUrl, query), CookieContainer));
         }
 
         public List<VideoInfo> Search(string query, string category)

@@ -14,6 +14,9 @@ namespace OnlineVideos.Sites
 {
     public class DailyMotionUtil : SiteUtilBase, ISearch
     {
+        [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
+        string searchUrl = "http://www.dailymotion.com/rss/relevance/search/{0}";
+
         public override String getUrl(VideoInfo video)
         {
             String lsUrl = "";        	
@@ -59,8 +62,8 @@ namespace OnlineVideos.Sites
         }
         
         public List<VideoInfo> Search(string query)
-        {            
-            string url = string.Format(Settings.SearchUrl, query);
+        {
+            string url = string.Format(searchUrl, query);
             return getVideoList(new RssLink() { Url = url });
         }
 

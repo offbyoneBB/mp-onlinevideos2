@@ -99,11 +99,6 @@ namespace YahooMusicEngine.OnlineDataProvider
       _avaiableLocales.Add(new LocaleEntity("Mexico", "mx", "8257040", "640680961", "es"));
       _avaiableLocales.Add(new LocaleEntity("Australia", "au", "1307669", "638583826", "en"));
       _avaiableLocales.Add(new LocaleEntity("New Zealand", "nz", "5300947", "638583833", "en"));
-      _avaiableLocales.Add(new LocaleEntity("United Kingdom", "uk", "1301655", "529531933", "uk"));
-      _avaiableLocales.Add(new LocaleEntity("Germany", "de", "1307668", "535823380", "de"));
-      _avaiableLocales.Add(new LocaleEntity("Spain", "es", "1307660", "534774806", "es"));
-      _avaiableLocales.Add(new LocaleEntity("Italy", "it", "1307667", "533726232", "it"));
-      _avaiableLocales.Add(new LocaleEntity("France", "fr", "1307665", "536871959", "fr"));
       SetLocale("us");
       Cache = new Dictionary<string, object>();
       SharedSecret = string.Empty;

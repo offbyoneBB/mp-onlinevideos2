@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.ComponentModel;
 using System.Text;
 using System.Net;
 using System.IO;
@@ -20,6 +21,9 @@ namespace OnlineVideos.Sites
 
         static Regex PreviousPageRegEx = new Regex(@"\<a\sclass=nounder\shref=""(?<url>[^\>]+)""\>&lt;\</a\>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         static Regex NextPageRegEx = new Regex(@"\<a\sclass=nounder\shref=""(?<url>[^\>]+)""\>&gt;\</a\>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+        [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
+        string searchUrl = "http://www.tube8.com/search.html?q={0}";
 
         public override List<VideoInfo> getVideoList(Category category)
         {
@@ -250,7 +254,7 @@ namespace OnlineVideos.Sites
 
         public List<VideoInfo> Search(string query)
         {
-            return Parse(string.Format(Settings.SearchUrl, query));
+            return Parse(string.Format(searchUrl, query));
         }
 
         public List<VideoInfo> Search(string query, string category)

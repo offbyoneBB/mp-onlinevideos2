@@ -209,6 +209,9 @@ namespace OnlineVideos.Sites
 
         protected Dictionary<string, Trailer> Trailers = new Dictionary<string,Trailer>();
 
+        [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
+        string searchUrl = "http://www.apple.com/trailers/home/scripts/quickfind.php?q={0}";
+
         [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum quality for the trailer to be played.")]
         VideoQuality trailerSize = VideoQuality.HD480;
 
@@ -743,7 +746,7 @@ namespace OnlineVideos.Sites
 
         public List<VideoInfo> Search(string query)
         {
-            return getVideoList(new RssLink() { Url = string.Format(Settings.SearchUrl, query) });
+            return getVideoList(new RssLink() { Url = string.Format(searchUrl, query) });
         }
 
         public List<VideoInfo> Search(string query, string category)

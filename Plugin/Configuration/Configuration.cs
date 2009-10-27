@@ -302,12 +302,6 @@ namespace OnlineVideos
             }
         }
 
-        private void btnYahooConfig_Click(object sender, EventArgs e)
-        {
-            ConfigurationYahoo yahoo = new ConfigurationYahoo();
-            yahoo.ShowDialog();
-        }
-
         void SetInfosFromCodecs()
         {
             CodecConfiguration cc = OnlineVideoSettings.getInstance().CodecConfiguration;

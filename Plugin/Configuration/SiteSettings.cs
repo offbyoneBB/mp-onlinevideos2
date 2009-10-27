@@ -49,9 +49,7 @@ namespace OnlineVideos
 
         [XmlAttribute("lang")]
         public string Language { get; set; }
-        public bool ShouldSerializeLanguage() { return !string.IsNullOrEmpty(Language); }       
-
-        public string SearchUrl { get; set; }
+        public bool ShouldSerializeLanguage() { return !string.IsNullOrEmpty(Language); }        
 
         public string Description { get; set; }
         public bool ShouldSerializeDescription() { return !string.IsNullOrEmpty(Description); }

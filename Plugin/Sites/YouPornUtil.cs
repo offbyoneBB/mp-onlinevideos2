@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
@@ -13,6 +14,9 @@ namespace OnlineVideos.Sites
     {
         static Regex PreviousPageRegEx = new Regex(@"<a\shref=""(?<url>.+page=\d+)"">&#171;.+</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         static Regex NextPageRegEx = new Regex(@"<a\shref=""(?<url>.+page=\d+)"">.+&#187;</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+        [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
+        string searchUrl = "http://www.youporn.com/search?type=straight&amp;query={0}";
 
         public override List<VideoInfo> getVideoList(Category category)
         {
@@ -364,7 +368,7 @@ namespace OnlineVideos.Sites
 
         public List<VideoInfo> Search(string query)
         {
-            return Parse(string.Format(Settings.SearchUrl, query));
+            return Parse(string.Format(searchUrl, query));
         }
 
         public List<VideoInfo> Search(string query, string category)
