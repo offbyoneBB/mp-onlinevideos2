@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
@@ -10,6 +11,9 @@ namespace OnlineVideos.Sites
 {
     public class xHamsterUtil : SiteUtilBase, ISearch
     {
+        [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
+        string searchUrl = "http://www.xhamster.com/search.php?q={0}";
+
         public override List<VideoInfo> getVideoList(Category category)
         {
             return Parse(((RssLink)category).Url);
@@ -264,7 +268,7 @@ namespace OnlineVideos.Sites
 
         public List<VideoInfo> Search(string query)
         {
-            return Parse(string.Format(Settings.SearchUrl, query));
+            return Parse(string.Format(searchUrl, query));
         }
 
         public List<VideoInfo> Search(string query, string category)

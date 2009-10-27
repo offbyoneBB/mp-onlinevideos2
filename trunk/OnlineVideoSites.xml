@@ -2,7 +2,6 @@
 <OnlineVideoSites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Sites>
     <Site name="YouTube" util="YouTube" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Description>Largest video site on the web. Available in any country. Quality can be set to Low, High or HD.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Top Rated">http://gdata.youtube.com/feeds/api/standardfeeds/top_rated</Category>
@@ -17,12 +16,10 @@
       </Categories>
     </Site>
     <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" lang="de">
-      <SearchUrl />
       <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>
       <Categories />
     </Site>
     <Site name="WDR" util="GenericSite" agecheck="false" enabled="true" lang="de">
-      <SearchUrl />
       <Description>Podcasts des Westdeutschen Rundfunks.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Sendung mit der Maus" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_maus.jpg">http://podcast.wdr.de/maus.xml</Category>
@@ -47,12 +44,10 @@
       </Categories>
     </Site>
     <Site name="ZDF Mediatek" util="ZDFMediathek" agecheck="false" enabled="true" lang="de">
-      <SearchUrl />
       <Description>Mediathek des Zweiten Deutschen Fernsehens.</Description>
       <Categories />
     </Site>
     <Site name="3sat" util="GenericSite" agecheck="false" enabled="false" lang="de">
-      <SearchUrl />
       <Description>Einziges öffentlich-rechtliches Gemeinschaftsprogramm des deutschen Sprachraums (ZDF – ORF – SRG – ARD)</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Kulturzeit">http://www.3sat.de/mediathek/rss/mediathek_Kulturzeit.xml</Category>
@@ -74,7 +69,6 @@
       </Categories>
     </Site>
     <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="Top 10 Today">http://www.myvideo.de/feeds/myVideo-Top10-daily.rss</Category>
         <Category xsi:type="RssLink" name="Top 10 Week">http://www.myvideo.de/feeds/myVideo-Top10-weekly.rss</Category>
@@ -83,15 +77,12 @@
       </Categories>
     </Site>
     <Site name="SouthPark" util="SouthParkDe" agecheck="false" enabled="true" lang="de">
-      <SearchUrl />
       <Categories />
     </Site>
     <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Categories />
     </Site>
     <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en">
-      <SearchUrl>http://www.metacafe.com/f/tags/{0}/rss.xml</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="New Videos">http://www.metacafe.com/rss/new_videos.rss</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.metacafe.com/rss/today_videos/rss.xml?sort=rank</Category>
@@ -112,7 +103,6 @@
       </Categories>
     </Site>
     <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true" lang="en">
-      <SearchUrl>http://www.dailymotion.com/rss/relevance/search/{0}</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="Front Page">http://www.dailymotion.com/rss</Category>
         <Category xsi:type="RssLink" name="Ads">http://www.dailymotion.com/rss/cluster/ads</Category>
@@ -140,7 +130,6 @@
       </Categories>
     </Site>
     <Site name="Live Video" util="LiveVideo" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="Featured Videos">http://rss.livevideo.com/rss/rss.ashx?v=Featured</Category>
         <Category xsi:type="RssLink" name="New Videos">http://rss.livevideo.com/rss/rss.ashx?v=Newest</Category>
@@ -166,7 +155,6 @@
       </Categories>
     </Site>
     <Site name="GameTrailers" util="GameTrailers" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="New Trailers">http://www.gametrailers.com/rss/newest.xml</Category>
         <Category xsi:type="RssLink" name="Newest DS">http://www.gametrailers.com/rss/newestds.xml</Category>
@@ -206,12 +194,10 @@
       </Categories>
     </Site>
     <Site name="Apple Trailers" util="AppleTrailers" agecheck="false" enabled="true" lang="en">
-      <SearchUrl>http://www.apple.com/trailers/home/scripts/quickfind.php?q={0}</SearchUrl>
       <Description>Trailers for all the latest movies from Apple. Most are avaliable in HD.</Description>
       <Categories />
     </Site>
     <Site name="Break" util="Break" agecheck="false" enabled="true" lang="en">
-      <SearchUrl>http://rss.break.com/keyword/{0}/</SearchUrl>
       <Description>Funny videos for young men.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Home Page">http://rss.break.com/channel/homepage/</Category>
@@ -223,7 +209,6 @@
       </Categories>
     </Site>
     <Site name="CNN" util="Cnn" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="Top Stories">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/top_stories.xml</Category>
         <Category xsi:type="RssLink" name="Most Popular">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/most_popular.xml</Category>
@@ -248,7 +233,6 @@
       </Categories>
     </Site>
     <Site name="NBA" util="Nba" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="Most Recent">http://www.nba.com/.element/ssi/sect/1.1/video/mostrecent.html</Category>
         <Category xsi:type="RssLink" name="Playoffs">http://www.nba.com/.element/ssi/sect/1.1/video/playoffs.html</Category>
@@ -262,12 +246,10 @@
       </Categories>
     </Site>
     <Site name="VeryFunnyAds" util="VeryFunnyAds" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Description>Video site showing funny television commercials from around the world.</Description>
       <Categories />
     </Site>
     <Site name="MSNBC" util="Msnbc" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="Today">http://rss.msnbc.msn.com/id/3032632/device/rss/rss.xml</Category>
         <Category xsi:type="RssLink" name="Nightly News">http://www.msnbc.msn.com/id/3032618/device/rss/rss.xml</Category>
@@ -280,7 +262,6 @@
       </Categories>
     </Site>
     <Site name="TEDTalks" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Description>Ideas Worth Spreading. Talks from renowned speakers around the world.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="All">http://feeds2.feedburner.com/TedtalksHD</Category>
@@ -325,7 +306,6 @@
       </Categories>
     </Site>
     <Site name="NASA" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="Group" name="NASA Live TV">
           <Channels>
@@ -357,7 +337,6 @@
       </Categories>
     </Site>
     <Site name="blip.tv" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="Most Popular">http://blip.tv/?1=1&amp;s=posts&amp;skin=rss</Category>
         <Category xsi:type="RssLink" name="Art">http://blip.tv/posts/view/?category=27&amp;category_name=Art&amp;skin=rss</Category>
@@ -391,7 +370,6 @@
       </Categories>
     </Site>
     <Site name="Revision3" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="Best of">http://revision3.com/bestof/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="CO-OP">http://revision3.com/coop/feed/quicktime-large/</Category>
@@ -419,7 +397,6 @@
       </Categories>
     </Site>
     <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true">
-      <SearchUrl />
       <Description>Sample site showing how to use custom feeds and streams.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="MSDN">http://channel9.msdn.com/rss.aspx?ShowID=1</Category>
@@ -442,15 +419,12 @@
       </Categories>
     </Site>
     <Site name="YahooMusicVideos" util="YahooMusicVideos" agecheck="false" enabled="true">
-      <SearchUrl />
       <Categories />
     </Site>
     <Site name="MTVMusicVideos" util="MtvMusicVideos" agecheck="false" enabled="true">
-      <SearchUrl />
       <Categories />
     </Site>
     <Site name="JustinTV" util="JustinTV" agecheck="false" enabled="true" lang="en">
-      <SearchUrl>http://clipta.com/jtv_search/index_1.php?q={0}</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="Producers">http://api.justin.tv/api/stream/list.xml?category=featured</Category>
         <Category xsi:type="RssLink" name="Social">http://api.justin.tv/api/stream/list.xml?category=social</Category>
@@ -465,7 +439,6 @@
       </Categories>
     </Site>
     <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" player="WMP">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="Group" name="RockTelevision" thumb="http://www.tv-port.net/wp-content/uploads/2009/05/rock-tv.jpg">
           <Channels>
@@ -481,7 +454,6 @@
       </Categories>
     </Site>
     <Site name="Snowboard Surf and Skate" util="GenericSite" agecheck="false" enabled="true">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="Group" name="Board Live TV">
           <Channels>
@@ -511,14 +483,12 @@
       </Categories>
     </Site>
     <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sw">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="Senaste nyheter">http://feeds.svtplay.se/v1/video/list/96244?expression=full&amp;mode=plain</Category>
         <Category xsi:type="RssLink" name="Senaste sportnytt">http://feeds.svtplay.se/v1/video/list/103738?expression=full&amp;mode=plain</Category>
       </Categories>
     </Site>
     <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="false" lang="ru">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="Все">http://linecinema.ru</Category>
         <Category xsi:type="RssLink" name="Боевик">http://linecinema.ru/news/1-0-1</Category>
@@ -543,13 +513,11 @@
       </Categories>
     </Site>
     <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" lang="ru">
-      <SearchUrl />
       <Categories>
         <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
       </Categories>
     </Site>
     <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true" lang="en">
-      <SearchUrl>http://www.youporn.com/search?type=straight&amp;query={0}</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="Browse">http://www.youporn.com/browse</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.youporn.com/top_rated</Category>
@@ -557,7 +525,6 @@
       </Categories>
     </Site>
     <Site name="RedTube" util="RedTube" agecheck="true" enabled="true" lang="en">
-      <SearchUrl>http://www.redtube.com/?search={0}</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="New">http://www.redtube.com/new</Category>
         <Category xsi:type="RssLink" name="Top">http://www.redtube.com/top</Category>
@@ -580,7 +547,6 @@
       </Categories>
     </Site>
     <Site name="xHamster" util="xHamster" agecheck="true" enabled="true" lang="en">
-      <SearchUrl>http://www.xhamster.com/search.php?q={0}</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="New">http://www.xhamster.com/</Category>
         <Category xsi:type="RssLink" name="Amateur">http://www.xhamster.com/channels/new-amateur-1.html</Category>
@@ -627,7 +593,6 @@
       </Categories>
     </Site>
     <Site name="Tube8" util="Tube8" agecheck="true" enabled="true" lang="en">
-      <SearchUrl>http://www.tube8.com/search.html?q={0}</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="Latest">http://www.tube8.com/latest.html</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.tube8.com/top.html</Category>
@@ -653,7 +618,6 @@
       </Categories>
     </Site>
     <Site name="Empflix" util="Empflix" agecheck="true" enabled="true" lang="en">
-      <SearchUrl>http://www.empflix.com/search.php</SearchUrl>
       <Categories>
         <Category xsi:type="RssLink" name="Top Rated">http://www.empflix.com/browse.php?category=tr</Category>
         <Category xsi:type="RssLink" name="Most Recent">http://www.empflix.com/browse.php?category=mr</Category>

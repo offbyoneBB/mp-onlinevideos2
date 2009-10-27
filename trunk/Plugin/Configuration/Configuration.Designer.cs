@@ -55,13 +55,13 @@ namespace OnlineVideos
             this.propertyGridUserConfig = new System.Windows.Forms.PropertyGrid();
             this.cbLanguages = new System.Windows.Forms.ComboBox();
             this.label18 = new System.Windows.Forms.Label();
+            this.btnAdvanced = new System.Windows.Forms.Button();
             this.label27 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
             this.txtSiteName = new System.Windows.Forms.TextBox();
             this.cbSiteUtil = new System.Windows.Forms.ComboBox();
             this.chkAgeConfirm = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.btnAdvanced = new System.Windows.Forms.Button();
             this.toolStripContainer3 = new System.Windows.Forms.ToolStripContainer();
             this.siteList = new OnlineVideos.BindableCheckedListBox();
             this.toolStripSiteUpDown = new System.Windows.Forms.ToolStrip();
@@ -71,8 +71,6 @@ namespace OnlineVideos
             this.btnImportSite = new System.Windows.Forms.ToolStripButton();
             this.btnAddSite = new System.Windows.Forms.ToolStripButton();
             this.btnDeleteSite = new System.Windows.Forms.ToolStripButton();
-            this.tbxSearchUrl = new System.Windows.Forms.TextBox();
-            this.lblSearchUrl = new System.Windows.Forms.Label();
             this.txtFilters = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtThumbLoc = new System.Windows.Forms.TextBox();
@@ -81,7 +79,6 @@ namespace OnlineVideos
             this.label5 = new System.Windows.Forms.Label();
             this.chkUseAgeConfirmation = new System.Windows.Forms.CheckBox();
             this.btnSave = new System.Windows.Forms.Button();
-            this.btnYahooConfig = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageRssLinks = new System.Windows.Forms.TabPage();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
@@ -246,8 +243,6 @@ namespace OnlineVideos
             this.groupBox1.Controls.Add(this.label22);
             this.groupBox1.Controls.Add(this.tableLayoutPanel1);
             this.groupBox1.Controls.Add(this.toolStripContainer3);
-            this.groupBox1.Controls.Add(this.tbxSearchUrl);
-            this.groupBox1.Controls.Add(this.lblSearchUrl);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(2, 2);
             this.groupBox1.Name = "groupBox1";
@@ -262,14 +257,15 @@ namespace OnlineVideos
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.descriptionTextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSiteSettings, "Description", true));
             this.descriptionTextBox.Location = new System.Drawing.Point(290, 178);
+            this.descriptionTextBox.Multiline = true;
             this.descriptionTextBox.Name = "descriptionTextBox";
-            this.descriptionTextBox.Size = new System.Drawing.Size(405, 20);
+            this.descriptionTextBox.Size = new System.Drawing.Size(405, 46);
             this.descriptionTextBox.TabIndex = 28;
             // 
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(207, 181);
+            this.label22.Location = new System.Drawing.Point(208, 196);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(60, 13);
             this.label22.TabIndex = 27;
@@ -340,6 +336,17 @@ namespace OnlineVideos
             this.label18.Text = "Language";
             this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // btnAdvanced
+            // 
+            this.btnAdvanced.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnAdvanced.Location = new System.Drawing.Point(86, 107);
+            this.btnAdvanced.Name = "btnAdvanced";
+            this.btnAdvanced.Size = new System.Drawing.Size(144, 22);
+            this.btnAdvanced.TabIndex = 25;
+            this.btnAdvanced.Text = "Advanced";
+            this.btnAdvanced.UseVisualStyleBackColor = true;
+            this.btnAdvanced.Click += new System.EventHandler(this.btnAdvanced_Click);
+            // 
             // label27
             // 
             this.label27.AutoSize = true;
@@ -405,17 +412,6 @@ namespace OnlineVideos
             this.label4.Text = "Confirm Age";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btnAdvanced
-            // 
-            this.btnAdvanced.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnAdvanced.Location = new System.Drawing.Point(86, 107);
-            this.btnAdvanced.Name = "btnAdvanced";
-            this.btnAdvanced.Size = new System.Drawing.Size(144, 22);
-            this.btnAdvanced.TabIndex = 25;
-            this.btnAdvanced.Text = "Advanced";
-            this.btnAdvanced.UseVisualStyleBackColor = true;
-            this.btnAdvanced.Click += new System.EventHandler(this.btnAdvanced_Click);
-            // 
             // toolStripContainer3
             // 
             this.toolStripContainer3.BottomToolStripPanelVisible = false;
@@ -464,7 +460,7 @@ namespace OnlineVideos
             this.btnSiteDown});
             this.toolStripSiteUpDown.Location = new System.Drawing.Point(0, 0);
             this.toolStripSiteUpDown.Name = "toolStripSiteUpDown";
-            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 186);
+            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 211);
             this.toolStripSiteUpDown.Stretch = true;
             this.toolStripSiteUpDown.TabIndex = 0;
             // 
@@ -535,25 +531,6 @@ namespace OnlineVideos
             this.btnDeleteSite.Text = "Delete";
             this.btnDeleteSite.Click += new System.EventHandler(this.btnDeleteSite_Click);
             // 
-            // tbxSearchUrl
-            // 
-            this.tbxSearchUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxSearchUrl.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSiteSettings, "SearchUrl", true));
-            this.tbxSearchUrl.Location = new System.Drawing.Point(290, 204);
-            this.tbxSearchUrl.Name = "tbxSearchUrl";
-            this.tbxSearchUrl.Size = new System.Drawing.Size(405, 20);
-            this.tbxSearchUrl.TabIndex = 20;
-            // 
-            // lblSearchUrl
-            // 
-            this.lblSearchUrl.AutoSize = true;
-            this.lblSearchUrl.Location = new System.Drawing.Point(207, 207);
-            this.lblSearchUrl.Name = "lblSearchUrl";
-            this.lblSearchUrl.Size = new System.Drawing.Size(57, 13);
-            this.lblSearchUrl.TabIndex = 19;
-            this.lblSearchUrl.Text = "Search Url";
-            // 
             // txtFilters
             // 
             this.txtFilters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -623,17 +600,6 @@ namespace OnlineVideos
             this.btnSave.TabIndex = 25;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
-            // 
-            // btnYahooConfig
-            // 
-            this.btnYahooConfig.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnYahooConfig.Location = new System.Drawing.Point(571, 136);
-            this.btnYahooConfig.Name = "btnYahooConfig";
-            this.btnYahooConfig.Size = new System.Drawing.Size(125, 23);
-            this.btnYahooConfig.TabIndex = 26;
-            this.btnYahooConfig.Text = "Yahoo Configuration";
-            this.btnYahooConfig.UseVisualStyleBackColor = true;
-            this.btnYahooConfig.Click += new System.EventHandler(this.btnYahooConfig_Click);
             // 
             // tabControl1
             // 
@@ -1024,7 +990,6 @@ namespace OnlineVideos
             this.tabGeneral.Controls.Add(this.lblVersion);
             this.tabGeneral.Controls.Add(this.label1);
             this.tabGeneral.Controls.Add(this.btnBrowseForDlFolder);
-            this.tabGeneral.Controls.Add(this.btnYahooConfig);
             this.tabGeneral.Controls.Add(this.txtThumbLoc);
             this.tabGeneral.Controls.Add(this.btnSave);
             this.tabGeneral.Controls.Add(this.tbxScreenName);
@@ -1345,9 +1310,6 @@ namespace OnlineVideos
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox chkUseAgeConfirmation;
         private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnYahooConfig;
-        private System.Windows.Forms.TextBox tbxSearchUrl;
-        private System.Windows.Forms.Label lblSearchUrl;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPageRssLinks;
         private System.Windows.Forms.TabPage tabChannels;
