@@ -11,6 +11,9 @@ using System.Windows.Forms.Design;
 
 namespace OnlineVideos.Sites
 {
+    /// <summary>
+    /// Api Documentation at : http://www.yahooapis.com/music/
+    /// </summary>
     public class YahooMusicVideosUtil : SiteUtilBase, ISearch
     {
         public class UITokenEditor : UITypeEditor

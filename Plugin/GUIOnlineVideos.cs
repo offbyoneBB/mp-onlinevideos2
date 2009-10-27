@@ -1526,7 +1526,8 @@ namespace OnlineVideos
                     SwitchView();
                     break;
                 case State.categories:
-                    GUIPropertyManager.SetProperty("#header.label", selectedSite.Settings.Name);
+                    string cat_headerlabel = selectedCategory != null ? selectedCategory.Name : selectedSite.Settings.Name;
+                    GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Settings.Name + ".png");
                     ShowFacade();
                     //HideFacadeViewAsButton();
