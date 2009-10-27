@@ -8,9 +8,7 @@ namespace OnlineVideos.Sites
 {
     public class JustinTVUtil : SiteUtilBase, ISearch
     {
-        public enum rtype { unknown, recorded, live };
-
-        rtype rt = rtype.live;
+        public enum rtype { unknown, recorded, live };        
 
         [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
         string searchUrl = "http://clipta.com/jtv_search/index_1.php?q={0}";
@@ -68,11 +66,21 @@ namespace OnlineVideos.Sites
 
         public Dictionary<string, string> GetSearchableCategories()
         {
-            return new Dictionary<string, string>();
+            Dictionary<string, string> result = new Dictionary<string, string>();            
+            result.Add("Live", "live");
+            result.Add("Recorded", "recorded");
+            return result;
         }
 
         public List<VideoInfo> Search(string query)
         {
+            return Search(query, "unknown");
+        }
+
+        public List<VideoInfo> Search(string query, string category)
+        {
+            rtype rt = (rtype)Enum.Parse(typeof(rtype), category);
+
             List<VideoInfo> list = new List<VideoInfo>();
             string webData = "";
             string str2 = "";
@@ -191,12 +199,7 @@ namespace OnlineVideos.Sites
                 }
                 str2 = str2.Substring(str2.IndexOf("<LI class") + 9, (str2.Length - str2.IndexOf("<LI class")) - 9);
             }
-            return list;
-        }
-
-        public List<VideoInfo> Search(string query, string category)
-        {
-            return Search(query);
+            return list;            
         }
 
         #endregion

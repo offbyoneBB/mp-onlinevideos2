@@ -193,7 +193,14 @@ namespace OnlineVideos.Sites
                 if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
                 {
                     if (httpWebresponse.ContentLength > 0 && httpWebresponse.ContentLength < 1024)
-                        return GetUrlFromResponse(httpWebresponse);
+                    {
+                        string content = new StreamReader(httpWebresponse.GetResponseStream()).ReadToEnd();                        
+                        if (httpWebresponse.ContentType.Contains("video/quicktime"))
+                        {
+                            return content.Split('\n')[1];
+                        }
+                        return httpWebresponse.ResponseUri.ToString();
+                    }
                     else
                         return url;
                 }
@@ -205,18 +212,7 @@ namespace OnlineVideos.Sites
                 Log.Error(ex);
             }
             return url;
-        }
-
-        protected static string GetUrlFromResponse(HttpWebResponse httpWebresponse)
-        {   
-            StreamReader sr = new StreamReader(httpWebresponse.GetResponseStream());                        
-            string content = sr.ReadToEnd();
-            if (httpWebresponse.ContentType.Contains("video/quicktime"))
-            {
-                return content.Split('\n')[1];
-            }
-            return httpWebresponse.ResponseUri.ToString();
-        }
+        }        
 
         protected static string GetWebData(string url, CookieContainer cc)
         {
