@@ -112,6 +112,8 @@ namespace OnlineVideos
             this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.tbxWebCacheTimeout = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblVersion = new System.Windows.Forms.Label();
@@ -131,8 +133,7 @@ namespace OnlineVideos
             this.chkFLVSplitterInstalled = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.label6 = new System.Windows.Forms.Label();
-            this.tbxWebCacheTimeout = new System.Windows.Forms.TextBox();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -159,6 +160,7 @@ namespace OnlineVideos
             this.tabSites.SuspendLayout();
             this.tabPageCodecs.SuspendLayout();
             this.groupBoxSplitter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // txtDownloadDir
@@ -167,7 +169,7 @@ namespace OnlineVideos
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDownloadDir.Location = new System.Drawing.Point(225, 58);
             this.txtDownloadDir.Name = "txtDownloadDir";
-            this.txtDownloadDir.Size = new System.Drawing.Size(440, 20);
+            this.txtDownloadDir.Size = new System.Drawing.Size(429, 20);
             this.txtDownloadDir.TabIndex = 20;
             // 
             // label3
@@ -539,7 +541,7 @@ namespace OnlineVideos
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilters.Location = new System.Drawing.Point(225, 110);
             this.txtFilters.Name = "txtFilters";
-            this.txtFilters.Size = new System.Drawing.Size(471, 20);
+            this.txtFilters.Size = new System.Drawing.Size(460, 20);
             this.txtFilters.TabIndex = 4;
             this.toolTip1.SetToolTip(this.txtFilters, "Comma seperated list of words that will be used to filter out videos.");
             // 
@@ -558,7 +560,7 @@ namespace OnlineVideos
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.txtThumbLoc.Location = new System.Drawing.Point(225, 84);
             this.txtThumbLoc.Name = "txtThumbLoc";
-            this.txtThumbLoc.Size = new System.Drawing.Size(471, 20);
+            this.txtThumbLoc.Size = new System.Drawing.Size(460, 20);
             this.txtThumbLoc.TabIndex = 2;
             // 
             // label1
@@ -595,7 +597,7 @@ namespace OnlineVideos
             this.btnSave.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnSave.Image = global::OnlineVideos.Properties.Resources.Save;
             this.btnSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnSave.Location = new System.Drawing.Point(510, 474);
+            this.btnSave.Location = new System.Drawing.Point(499, 474);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.btnSave.Size = new System.Drawing.Size(90, 25);
@@ -938,7 +940,7 @@ namespace OnlineVideos
             this.tbxPin.Margin = new System.Windows.Forms.Padding(2);
             this.tbxPin.Name = "tbxPin";
             this.tbxPin.PasswordChar = '*';
-            this.tbxPin.Size = new System.Drawing.Size(425, 20);
+            this.tbxPin.Size = new System.Drawing.Size(414, 20);
             this.tbxPin.TabIndex = 29;
             // 
             // tbxScreenName
@@ -947,7 +949,7 @@ namespace OnlineVideos
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxScreenName.Location = new System.Drawing.Point(225, 9);
             this.tbxScreenName.Name = "tbxScreenName";
-            this.tbxScreenName.Size = new System.Drawing.Size(471, 20);
+            this.tbxScreenName.Size = new System.Drawing.Size(460, 20);
             this.tbxScreenName.TabIndex = 31;
             // 
             // label7
@@ -963,7 +965,7 @@ namespace OnlineVideos
             // 
             this.btnBrowseForDlFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBrowseForDlFolder.AutoSize = true;
-            this.btnBrowseForDlFolder.Location = new System.Drawing.Point(670, 57);
+            this.btnBrowseForDlFolder.Location = new System.Drawing.Point(659, 57);
             this.btnBrowseForDlFolder.Margin = new System.Windows.Forms.Padding(2);
             this.btnBrowseForDlFolder.Name = "btnBrowseForDlFolder";
             this.btnBrowseForDlFolder.Size = new System.Drawing.Size(26, 23);
@@ -1014,6 +1016,27 @@ namespace OnlineVideos
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
+            // tbxWebCacheTimeout
+            // 
+            this.tbxWebCacheTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxWebCacheTimeout.Location = new System.Drawing.Point(225, 136);
+            this.tbxWebCacheTimeout.Name = "tbxWebCacheTimeout";
+            this.tbxWebCacheTimeout.Size = new System.Drawing.Size(460, 20);
+            this.tbxWebCacheTimeout.TabIndex = 41;
+            this.toolTip1.SetToolTip(this.tbxWebCacheTimeout, "WebRequests are cached internally. This number determines the minutes after which" +
+                    " the cached data becomes invalid. Set to 0 to disable.");
+            this.tbxWebCacheTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.tbxWebCacheTimeout_Validating);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 143);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(127, 13);
+            this.label6.TabIndex = 40;
+            this.label6.Text = "WebCache Timeout (min)";
+            // 
             // label21
             // 
             this.label21.AutoSize = true;
@@ -1026,9 +1049,10 @@ namespace OnlineVideos
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.CausesValidation = false;
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.No;
             this.btnCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCancel.Location = new System.Drawing.Point(606, 474);
+            this.btnCancel.Location = new System.Drawing.Point(595, 474);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 25);
             this.btnCancel.TabIndex = 38;
@@ -1225,25 +1249,9 @@ namespace OnlineVideos
             this.label11.TabIndex = 0;
             this.label11.Text = "flv";
             // 
-            // label6
+            // errorProvider1
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 143);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(127, 13);
-            this.label6.TabIndex = 40;
-            this.label6.Text = "WebCache Timeout (min)";
-            // 
-            // tbxWebCacheTimeout
-            // 
-            this.tbxWebCacheTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxWebCacheTimeout.Location = new System.Drawing.Point(225, 136);
-            this.tbxWebCacheTimeout.Name = "tbxWebCacheTimeout";
-            this.tbxWebCacheTimeout.Size = new System.Drawing.Size(471, 20);
-            this.tbxWebCacheTimeout.TabIndex = 41;
-            this.toolTip1.SetToolTip(this.tbxWebCacheTimeout, "WebRequests are cached internally. This number determines the minutes after which" +
-                    " the cached data becomes invalid. Set to 0 to disable.");
+            this.errorProvider1.ContainerControl = this;
             // 
             // Configuration
             // 
@@ -1302,6 +1310,7 @@ namespace OnlineVideos
             this.tabPageCodecs.ResumeLayout(false);
             this.groupBoxSplitter.ResumeLayout(false);
             this.groupBoxSplitter.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1407,5 +1416,6 @@ namespace OnlineVideos
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbxWebCacheTimeout;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
 	}
 }

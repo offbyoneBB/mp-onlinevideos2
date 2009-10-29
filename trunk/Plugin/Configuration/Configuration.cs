@@ -446,6 +446,18 @@ namespace OnlineVideos
                     }
                 }
             }
+        }
+
+        private void tbxWebCacheTimeout_Validating(object sender, CancelEventArgs e)
+        {
+            string error = null;
+            uint value = 0;
+            if (!uint.TryParse(tbxWebCacheTimeout.Text, out value))            
+            {
+                error = tbxWebCacheTimeout.Text + " is not a valid number!";
+                e.Cancel = true;
+            }
+            errorProvider1.SetError((Control)sender, error);
         }        
 	}
 }
