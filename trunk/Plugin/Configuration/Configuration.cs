@@ -39,6 +39,7 @@ namespace OnlineVideos
             txtFilters.Text = settings.msFilterArray != null ? string.Join(",", settings.msFilterArray) : "";
             chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;            
             tbxPin.Text = settings.pinAgeConfirmation;
+            tbxWebCacheTimeout.Text = settings.cacheTimeout.ToString();
 
             /** fill "Sites" tab **/
             // utils combobox
@@ -151,6 +152,7 @@ namespace OnlineVideos
                 settings.msDownloadDir = txtDownloadDir.Text;
                 settings.useAgeConfirmation = chkUseAgeConfirmation.Checked;
                 settings.pinAgeConfirmation = tbxPin.Text;
+                try { settings.cacheTimeout = int.Parse(tbxWebCacheTimeout.Text); } catch { }
                 settings.Save();
             }
 		}               

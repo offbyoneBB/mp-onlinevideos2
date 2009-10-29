@@ -30,6 +30,7 @@ namespace OnlineVideos
         const string FILTER = "filter";
         const string USE_AGECONFIRMATION = "useAgeConfirmation";
         const string PIN_AGECONFIRMATION = "pinAgeConfirmation";
+        const string CACHE_TIMEOUT = "cacheTimeout";
         
         public bool ageHasBeenConfirmed = false;
 
@@ -42,6 +43,7 @@ namespace OnlineVideos
         public String[] msFilterArray;
         public bool useAgeConfirmation = false;
         public string pinAgeConfirmation = "";
+        public int cacheTimeout = 30;
 
         public BindingList<SiteSettings> SiteSettingsList { get; set; }
         public Dictionary<string, Sites.SiteUtilBase> SiteList = new Dictionary<string,OnlineVideos.Sites.SiteUtilBase>();
@@ -78,8 +80,7 @@ namespace OnlineVideos
         void Load()
         {
             try
-            {
-                String lsTrailerSize;
+            {                
                 using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
                 {
                     BasicHomeScreenName = xmlreader.GetValueAsString(SECTION, BASICHOMESCREEN_NAME, BasicHomeScreenName);
@@ -88,7 +89,8 @@ namespace OnlineVideos
                     // enable pin by default -> child protection
                     useAgeConfirmation = xmlreader.GetValueAsBool(SECTION, USE_AGECONFIRMATION, true);
                     // set an almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
-                    pinAgeConfirmation = xmlreader.GetValueAsString(SECTION, PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());                     
+                    pinAgeConfirmation = xmlreader.GetValueAsString(SECTION, PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
+                    cacheTimeout = xmlreader.GetValueAsInt(SECTION, CACHE_TIMEOUT, 30);
                     String lsFilter = xmlreader.GetValueAsString(SECTION, FILTER, "");
                     msFilterArray = lsFilter != "" ? lsFilter.Split(new char[] { ',' }) : null;
 
@@ -151,6 +153,7 @@ namespace OnlineVideos
                     xmlwriter.SetValue(SECTION, DOWNLOAD_DIR, msDownloadDir);                    
                     xmlwriter.SetValueAsBool(SECTION, USE_AGECONFIRMATION, useAgeConfirmation);
                     xmlwriter.SetValue(SECTION, PIN_AGECONFIRMATION, pinAgeConfirmation);
+                    xmlwriter.SetValue(SECTION, CACHE_TIMEOUT, cacheTimeout);
                 }
 
                 // only save if there are sites - otherwise an error might have occured on load
