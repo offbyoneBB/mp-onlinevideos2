@@ -131,6 +131,8 @@ namespace OnlineVideos
             this.chkFLVSplitterInstalled = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.label6 = new System.Windows.Forms.Label();
+            this.tbxWebCacheTimeout = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -985,6 +987,8 @@ namespace OnlineVideos
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.tbxWebCacheTimeout);
+            this.tabGeneral.Controls.Add(this.label6);
             this.tabGeneral.Controls.Add(this.label21);
             this.tabGeneral.Controls.Add(this.btnCancel);
             this.tabGeneral.Controls.Add(this.lblVersion);
@@ -1221,6 +1225,26 @@ namespace OnlineVideos
             this.label11.TabIndex = 0;
             this.label11.Text = "flv";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 143);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(127, 13);
+            this.label6.TabIndex = 40;
+            this.label6.Text = "WebCache Timeout (min)";
+            // 
+            // tbxWebCacheTimeout
+            // 
+            this.tbxWebCacheTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxWebCacheTimeout.Location = new System.Drawing.Point(225, 136);
+            this.tbxWebCacheTimeout.Name = "tbxWebCacheTimeout";
+            this.tbxWebCacheTimeout.Size = new System.Drawing.Size(471, 20);
+            this.tbxWebCacheTimeout.TabIndex = 41;
+            this.toolTip1.SetToolTip(this.tbxWebCacheTimeout, "WebRequests are cached internally. This number determines the minutes after which" +
+                    " the cached data becomes invalid. Set to 0 to disable.");
+            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -1381,5 +1405,7 @@ namespace OnlineVideos
         private System.Windows.Forms.TextBox descriptionTextBox;
         private System.Windows.Forms.PropertyGrid propertyGridUserConfig;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox tbxWebCacheTimeout;
+        private System.Windows.Forms.Label label6;
 	}
 }

@@ -216,16 +216,23 @@ namespace OnlineVideos.Sites
 
         protected static string GetWebData(string url, CookieContainer cc)
         {
+            // try cache first
+            string cachedData = WebCache.Instance[url];
+            if (cachedData != null) return cachedData;
+
+            // request the data
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
             if (request == null) return "";
             request.UserAgent = OnlineVideoSettings.UserAgent;
             request.Timeout = 15000;
             if (cc != null) request.CookieContainer = cc;
-            WebResponse response = request.GetResponse();
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
             {
-                string str = reader.ReadToEnd();
-                return str.Trim();
+                string str = reader.ReadToEnd().Trim();
+                // add to cache if HTTP Status was 200
+                if (response.StatusCode == HttpStatusCode.OK) WebCache.Instance[url] = str;
+                return str;
             }
         }
 

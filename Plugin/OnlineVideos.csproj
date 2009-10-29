@@ -442,6 +442,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sites\ZDFMediathekUtil.cs" />
     <Compile Include="VideoInfo.cs" />
+    <Compile Include="WebCache.cs" />
     <Compile Include="Yahoo\Authentication\Authentication.cs" />
     <Compile Include="Yahoo\Authentication\AuthenticationException.cs" />
     <Compile Include="Yahoo\MusicEngine\Entities\AlbumEntity.cs" />
