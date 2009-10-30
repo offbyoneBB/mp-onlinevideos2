@@ -16,10 +16,10 @@
       </Categories>
     </Site>
     <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" lang="de">
-      <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>
-      <Categories />
+      <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>      
     </Site>
     <Site name="RTL Now" util="RTLNow" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>      
     </Site>
     <Site name="WDR" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Podcasts des Westdeutschen Rundfunks.</Description>
@@ -71,6 +71,7 @@
       </Categories>
     </Site>
     <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
+      <Description>Deutscher YouTube Clone.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Top 10 Today">http://www.myvideo.de/feeds/myVideo-Top10-daily.rss</Category>
         <Category xsi:type="RssLink" name="Top 10 Week">http://www.myvideo.de/feeds/myVideo-Top10-weekly.rss</Category>
@@ -372,6 +373,8 @@
       </Categories>
     </Site>
     <Site name="Revision3" util="GenericSite" agecheck="false" enabled="true" lang="en">
+      <Description>Revision3 is the leading television network for the internet generation. 
+      We create and produce all-original episodic community driven programs watched by a super-committed and passionate fan base</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Best of">http://revision3.com/bestof/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="CO-OP">http://revision3.com/coop/feed/quicktime-large/</Category>
@@ -399,7 +402,7 @@
       </Categories>
     </Site>
     <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true">
-      <Description>Sample site showing how to use custom feeds and streams.</Description>
+      <Description>Sample site showing how to include your own custom feeds and streams.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="MSDN">http://channel9.msdn.com/rss.aspx?ShowID=1</Category>
         <Category xsi:type="RssLink" name="Rocketboom">http://www.rocketboom.com/rss/hd.xml</Category>
