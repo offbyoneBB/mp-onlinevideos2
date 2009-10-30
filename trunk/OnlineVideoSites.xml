@@ -86,7 +86,7 @@
       <Categories />
     </Site>
     <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en">
-      <Description>Metacafe is an audience-driven video entertainment site that focuses on short-form original video.</Description>
+      <Description>Metacafe is an audience-driven video entertainment site that focuses on short-form original videos.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="New Videos">http://www.metacafe.com/rss/new_videos.rss</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.metacafe.com/rss/today_videos/rss.xml?sort=rank</Category>
@@ -378,7 +378,7 @@
     </Site>
     <Site name="Revision3" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Revision3 is the leading television network for the internet generation. 
-      We create and produce all-original episodic community driven programs watched by a super-committed and passionate fan base</Description>
+      We create and produce all-original episodic community driven programs watched by a super-committed and passionate fan base.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Best of">http://revision3.com/bestof/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="CO-OP">http://revision3.com/coop/feed/quicktime-large/</Category>
