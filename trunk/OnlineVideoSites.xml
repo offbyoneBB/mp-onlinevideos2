@@ -86,6 +86,7 @@
       <Categories />
     </Site>
     <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en">
+      <Description>Metacafe is an audience-driven video entertainment site that focuses on short-form original video.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="New Videos">http://www.metacafe.com/rss/new_videos.rss</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.metacafe.com/rss/today_videos/rss.xml?sort=rank</Category>
@@ -212,6 +213,7 @@
       </Categories>
     </Site>
     <Site name="CNN" util="Cnn" agecheck="false" enabled="true" lang="en">
+      <Description>Videos from the Cable News Network.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Top Stories">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/top_stories.xml</Category>
         <Category xsi:type="RssLink" name="Most Popular">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/most_popular.xml</Category>
@@ -236,6 +238,7 @@
       </Categories>
     </Site>
     <Site name="NBA" util="Nba" agecheck="false" enabled="true" lang="en">
+      <Description>Videos from the official site of the National Basketball Association.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Most Recent">http://www.nba.com/.element/ssi/sect/1.1/video/mostrecent.html</Category>
         <Category xsi:type="RssLink" name="Playoffs">http://www.nba.com/.element/ssi/sect/1.1/video/playoffs.html</Category>
@@ -340,6 +343,7 @@
       </Categories>
     </Site>
     <Site name="blip.tv" util="GenericSite" agecheck="false" enabled="true" lang="en">
+      <Description>Website focused on making independent Web shows sustainable.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Most Popular">http://blip.tv/?1=1&amp;s=posts&amp;skin=rss</Category>
         <Category xsi:type="RssLink" name="Art">http://blip.tv/posts/view/?category=27&amp;category_name=Art&amp;skin=rss</Category>
