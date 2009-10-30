@@ -622,6 +622,24 @@
 			<Option />
 			<Guid>444c8a31-f28e-4ccd-a8de-02f333e2c98d</Guid>
 		</File>
+    <File>
+      <FileName>RTL Now.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\RTL Now.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>2F46DB49-A78A-45f2-81B0-2A86E4CADF74</Guid>
+    </File>
+    <File>
+      <FileName>RTL Now.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\RTL Now.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>CC156B4E-7B9C-4499-AE0B-E6874B947807</Guid>
+    </File>        
 		<File>
 			<FileName>Snowboard Surf and Skate.png</FileName>
 			<Type>Thumbs</Type>
