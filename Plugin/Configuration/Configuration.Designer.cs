@@ -170,7 +170,7 @@ namespace OnlineVideos
             this.txtDownloadDir.Location = new System.Drawing.Point(225, 58);
             this.txtDownloadDir.Name = "txtDownloadDir";
             this.txtDownloadDir.Size = new System.Drawing.Size(429, 20);
-            this.txtDownloadDir.TabIndex = 20;
+            this.txtDownloadDir.TabIndex = 4;
             // 
             // label3
             // 
@@ -542,7 +542,7 @@ namespace OnlineVideos
             this.txtFilters.Location = new System.Drawing.Point(225, 110);
             this.txtFilters.Name = "txtFilters";
             this.txtFilters.Size = new System.Drawing.Size(460, 20);
-            this.txtFilters.TabIndex = 4;
+            this.txtFilters.TabIndex = 7;
             this.toolTip1.SetToolTip(this.txtFilters, "Comma seperated list of words that will be used to filter out videos.");
             // 
             // label2
@@ -561,7 +561,7 @@ namespace OnlineVideos
             this.txtThumbLoc.Location = new System.Drawing.Point(225, 84);
             this.txtThumbLoc.Name = "txtThumbLoc";
             this.txtThumbLoc.Size = new System.Drawing.Size(460, 20);
-            this.txtThumbLoc.TabIndex = 2;
+            this.txtThumbLoc.TabIndex = 6;
             // 
             // label1
             // 
@@ -587,7 +587,7 @@ namespace OnlineVideos
             this.chkUseAgeConfirmation.Location = new System.Drawing.Point(225, 36);
             this.chkUseAgeConfirmation.Name = "chkUseAgeConfirmation";
             this.chkUseAgeConfirmation.Size = new System.Drawing.Size(15, 14);
-            this.chkUseAgeConfirmation.TabIndex = 24;
+            this.chkUseAgeConfirmation.TabIndex = 2;
             this.chkUseAgeConfirmation.UseVisualStyleBackColor = true;
             this.chkUseAgeConfirmation.CheckedChanged += new System.EventHandler(this.chkUseAgeConfirmation_CheckedChanged);
             // 
@@ -601,7 +601,7 @@ namespace OnlineVideos
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.btnSave.Size = new System.Drawing.Size(90, 25);
-            this.btnSave.TabIndex = 25;
+            this.btnSave.TabIndex = 9;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             // 
@@ -941,7 +941,7 @@ namespace OnlineVideos
             this.tbxPin.Name = "tbxPin";
             this.tbxPin.PasswordChar = '*';
             this.tbxPin.Size = new System.Drawing.Size(414, 20);
-            this.tbxPin.TabIndex = 29;
+            this.tbxPin.TabIndex = 3;
             // 
             // tbxScreenName
             // 
@@ -950,7 +950,7 @@ namespace OnlineVideos
             this.tbxScreenName.Location = new System.Drawing.Point(225, 9);
             this.tbxScreenName.Name = "tbxScreenName";
             this.tbxScreenName.Size = new System.Drawing.Size(460, 20);
-            this.tbxScreenName.TabIndex = 31;
+            this.tbxScreenName.TabIndex = 1;
             // 
             // label7
             // 
@@ -969,7 +969,7 @@ namespace OnlineVideos
             this.btnBrowseForDlFolder.Margin = new System.Windows.Forms.Padding(2);
             this.btnBrowseForDlFolder.Name = "btnBrowseForDlFolder";
             this.btnBrowseForDlFolder.Size = new System.Drawing.Size(26, 23);
-            this.btnBrowseForDlFolder.TabIndex = 32;
+            this.btnBrowseForDlFolder.TabIndex = 5;
             this.btnBrowseForDlFolder.Text = "...";
             this.btnBrowseForDlFolder.UseVisualStyleBackColor = true;
             this.btnBrowseForDlFolder.Click += new System.EventHandler(this.btnBrowseForDlFolder_Click);
@@ -1023,7 +1023,7 @@ namespace OnlineVideos
             this.tbxWebCacheTimeout.Location = new System.Drawing.Point(225, 136);
             this.tbxWebCacheTimeout.Name = "tbxWebCacheTimeout";
             this.tbxWebCacheTimeout.Size = new System.Drawing.Size(460, 20);
-            this.tbxWebCacheTimeout.TabIndex = 41;
+            this.tbxWebCacheTimeout.TabIndex = 8;
             this.toolTip1.SetToolTip(this.tbxWebCacheTimeout, "WebRequests are cached internally. This number determines the minutes after which" +
                     " the cached data becomes invalid. Set to 0 to disable.");
             this.tbxWebCacheTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.tbxWebCacheTimeout_Validating);
@@ -1055,7 +1055,7 @@ namespace OnlineVideos
             this.btnCancel.Location = new System.Drawing.Point(595, 474);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 25);
-            this.btnCancel.TabIndex = 38;
+            this.btnCancel.TabIndex = 10;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
