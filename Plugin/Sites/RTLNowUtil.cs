@@ -12,8 +12,10 @@ namespace OnlineVideos.Sites
 {    
     public class RTLNowUtil : SiteUtilBase
     {
-        [Category("OnlineVideosConfiguration"), Description("Base url for RTL.")]
-        string baseUrl = "http://rtl-now.rtl.de";
+        public enum VideoQuality { Normal, High };
+
+        [Category("OnlineVideosUserConfiguration"), Description("Normal or high quality for the videos according to bandwidth.")]
+        VideoQuality videoQuality = VideoQuality.Normal;        
 
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for categories.")]
         string categoriesRegex = @"<div\sclass=""seriennavi""[^>]*>\s*
@@ -37,6 +39,8 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the playlist url for a video.")]
         string playlistRegex = @"data\:""(?<url>[^""]+)""";
+
+        string baseUrl = "http://rtl-now.rtl.de";
 
         Regex regEx_Categories;
         Regex regEx_Videos;
@@ -87,18 +91,38 @@ namespace OnlineVideos.Sites
                     xml.LoadXml(data);
                     url = xml.SelectSingleNode("//playlist/videoinfo/filename").InnerText;
                     if (url.StartsWith("rtmpe://")) url = url.Replace("rtmpe://", "rtmp://");
-                    string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&hostname={2}&tcUrl={3}&app={4}&swfurl={5}&swfsize={6}&swfhash={7}&pageurl={8}", 
-                        OnlineVideoSettings.RTMP_PROXY_PORT, 
-                        System.Web.HttpUtility.UrlEncode(url),
-                        "fms-hc1.rtl.de",
-                        "rtmp://fms-hc1.rtl.de/rtlnow/_definst_",
-                        "rtlnow/_definst_",
-                        "http://rtl-now.rtl.de/includes/rtlnow_videoplayer09_2.swf",
-                        "414239",
-                        "6a31c95d659eb33bfffc315e9da4cf74ed6498e599d2bacb31675968b355fbdf",
-                        "http://rtl-now.rtl.de/"
-                        );
-                    return resultUrl;
+
+                    if (videoQuality == VideoQuality.Normal)
+                    {                        
+                        string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&hostname={2}&tcUrl={3}&app={4}&swfurl={5}&swfsize={6}&swfhash={7}&pageurl={8}",
+                            OnlineVideoSettings.RTMP_PROXY_PORT,
+                            System.Web.HttpUtility.UrlEncode(url),
+                            "fms-hc1.rtl.de",
+                            "rtmp://fms-hc1.rtl.de/rtlnow/_definst_",
+                            "rtlnow/_definst_",
+                            "http://rtl-now.rtl.de/includes/rtlnow_videoplayer09_2.swf",
+                            "414239",
+                            "6a31c95d659eb33bfffc315e9da4cf74ed6498e599d2bacb31675968b355fbdf",
+                            "http://rtl-now.rtl.de/"
+                            );
+                        return resultUrl;
+                    }
+                    else
+                    {
+                        url = url.Replace("700k", "1500k");
+                        string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&hostname={2}&tcUrl={3}&app={4}&swfurl={5}&swfsize={6}&swfhash={7}&pageurl={8}",
+                            OnlineVideoSettings.RTMP_PROXY_PORT,
+                            System.Web.HttpUtility.UrlEncode(url),
+                            "fms-pay.rtl.de",
+                            "rtmp://fms-pay.rtl.de/rtlnow/_definst_",
+                            "rtlnow/_definst_",
+                            "http://rtl-now.rtl.de/includes/rtlnow_videoplayer09_2.swf",
+                            "414239",
+                            "6a31c95d659eb33bfffc315e9da4cf74ed6498e599d2bacb31675968b355fbdf",
+                            "http://rtl-now.rtl.de/"
+                            );
+                        return resultUrl;
+                    }               
                 }
             }
             return null;
