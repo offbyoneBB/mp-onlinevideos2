@@ -19,6 +19,8 @@
       <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>
       <Categories />
     </Site>
+    <Site name="RTL Now" util="RTLNow" agecheck="false" enabled="true" lang="de">
+    </Site>
     <Site name="WDR" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Podcasts des Westdeutschen Rundfunks.</Description>
       <Categories>

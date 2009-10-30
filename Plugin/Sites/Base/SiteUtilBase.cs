@@ -227,7 +227,9 @@ namespace OnlineVideos.Sites
             request.Timeout = 15000;
             if (cc != null) request.CookieContainer = cc;
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+            Encoding encoding = Encoding.Default;
+            if (!String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet);
+            using (StreamReader reader = new StreamReader(response.GetResponseStream(), encoding, true))
             {
                 string str = reader.ReadToEnd().Trim();
                 // add to cache if HTTP Status was 200
