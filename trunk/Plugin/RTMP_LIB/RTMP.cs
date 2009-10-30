@@ -1059,7 +1059,7 @@ namespace RTMP_LIB
 
             if (!FP9HandShake)
             {
-                for (int i = 0; i < RTMP_SIG_SIZE; i++)
+                for (int i = 8; i < RTMP_SIG_SIZE; i++) // first 8 bytes don't have to match (RTL)?
                     if (resp[i] != clientsig[i + 1])
                     {
                         Logger.Log("client signature does not match!");
