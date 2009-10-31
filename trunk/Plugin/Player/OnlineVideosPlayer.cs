@@ -90,7 +90,7 @@ namespace OnlineVideos.Player
             if (!this.Vmr9.IsVMR9Connected)
             {
                 base.mediaCtrl = null;
-                this.Cleanup();
+                CloseInterfaces();
                 return false;
             }
             this.Vmr9.SetDeinterlaceMode();
@@ -159,7 +159,7 @@ namespace OnlineVideos.Player
             if (!this.Vmr9.IsVMR9Connected)
             {
                 base.mediaCtrl = null;
-                this.Cleanup();
+                CloseInterfaces();
                 return false;
             }
             this.Vmr9.SetDeinterlaceMode();
@@ -227,7 +227,7 @@ namespace OnlineVideos.Player
                 {
                     //VMR9 is not supported, switch to overlay
                     mediaCtrl = null;
-                    Cleanup();
+                    CloseInterfaces();
                     return false;
                 }
                 Vmr9.SetDeinterlaceMode();
@@ -239,13 +239,6 @@ namespace OnlineVideos.Player
                 Log.Error("OnlineVideosPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
                 return false;
             }
-        }
-
-        System.Reflection.MethodInfo cleanupMethod = null;
-        private void Cleanup()
-        {
-            if (cleanupMethod == null) cleanupMethod = typeof(VideoPlayerVMR9).GetMethod("Cleanup", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            cleanupMethod.Invoke(this, null);
         }
 
         System.Reflection.FieldInfo vmr9Field = null;

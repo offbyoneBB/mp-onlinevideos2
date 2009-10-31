@@ -34,7 +34,6 @@ namespace OnlineVideos.Sites
 					String lsFileName = loMatch.Groups[1].Value;
 					String lsPathName = loMatch.Groups[2].Value;
 					lsUrl = lsUrl+lsPathName+"/"+lsFileName+".flv";
-					Log.Info("break flv url = {0}",lsUrl);
 				}
 			}
 			return lsUrl;
@@ -50,6 +49,7 @@ namespace OnlineVideos.Sites
                 video.ImageUrl = rssItem.Enclosure.Url;
                 video.Title = rssItem.Title;
                 video.VideoUrl = rssItem.Link;
+                if (!string.IsNullOrEmpty(rssItem.PubDate)) video.Length = rssItem.PubDateParsed.ToString("g");
                 loVideoList.Add(video);
             }
             return loVideoList;
