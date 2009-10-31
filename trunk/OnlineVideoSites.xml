@@ -88,9 +88,21 @@
     <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en">
       <Description>Metacafe is an audience-driven video entertainment site that focuses on short-form original videos.</Description>
       <Categories>
-        <Category xsi:type="RssLink" name="New Videos">http://www.metacafe.com/newest/rss.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated">http://www.metacafe.com/rss/today_videos/rss.xml?sort=rank</Category>
-        <Category xsi:type="RssLink" name="Top Discussed">http://www.metacafe.com/rss/today_videos/rss.xml?sort=discussed</Category>
+        <Category xsi:type="RssLink" name="Today's Videos">http://www.metacafe.com/rss/today_videos/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Art &amp; Animation">http://www.metacafe.com/api/videos/-/art_and_animation/</Category>
+        <Category xsi:type="RssLink" name="Comedy">http://www.metacafe.com/api/videos/-/comedy/</Category>
+        <Category xsi:type="RssLink" name="Cool Commercials">http://www.metacafe.com/api/videos/-/cool_commercials/</Category>
+        <Category xsi:type="RssLink" name="Entertainment">http://www.metacafe.com/api/videos/-/entertainment/</Category>
+        <Category xsi:type="RssLink" name="How To">http://www.metacafe.com/api/videos/-/how_to/</Category>
+        <Category xsi:type="RssLink" name="Music &amp; Dance">http://www.metacafe.com/api/videos/-/music_and_dance/</Category>
+        <Category xsi:type="RssLink" name="News &amp; Events">http://www.metacafe.com/api/videos/-/news_and_events/</Category>
+        <Category xsi:type="RssLink" name="People &amp; Stories">http://www.metacafe.com/api/videos/-/people_and_stories/</Category>
+        <Category xsi:type="RssLink" name="Pets and Animals">http://www.metacafe.com/api/videos/-/pets_and_animals/</Category>
+        <Category xsi:type="RssLink" name="Science &amp; Technology">http://www.metacafe.com/api/videos/-/science_and_tech/</Category>
+        <Category xsi:type="RssLink" name="Sports">http://www.metacafe.com/api/videos/-/sports/</Category>
+        <Category xsi:type="RssLink" name="Travel &amp; Outdoors">http://www.metacafe.com/api/videos/-/travel_and_outdoors/</Category>
+        <Category xsi:type="RssLink" name="Video Games">http://www.metacafe.com/api/videos/-/video_games/</Category>
+        <Category xsi:type="RssLink" name="Wheels &amp; Wings">http://www.metacafe.com/api/videos/-/wheels_and_wings/</Category>        
         <Category xsi:type="RssLink" name="Young Hollywood">http://www.metacafe.com/younghollywood/rss.xml</Category>
         <Category xsi:type="RssLink" name="Video Games">http://www.metacafe.com/video-games/rss.xml</Category>
         <Category xsi:type="RssLink" name="National Lampoon">http://www.metacafe.com/nationallampoon/rss.xml</Category>
