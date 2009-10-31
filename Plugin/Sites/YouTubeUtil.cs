@@ -42,7 +42,7 @@ namespace OnlineVideos.Sites
         private const String RELATED_VIDEO_FEED = "http://gdata.youtube.com/feeds/api/videos/{0}/related";
         private const String VIDEO_URL = "http://www.youtube.com/get_video?video_id={0}&t={1}";
         private const String CATEGORY_FEED = "http://gdata.youtube.com/feeds/api/videos/-/{0}";
-        private const String ALL_CATEGORIES_FEED = "http://gdata.youtube.com/schemas/2007/categories.cat?hl=en-US";
+        
         private YouTubeService service;
 
         public YouTubeUtil()
@@ -304,42 +304,25 @@ namespace OnlineVideos.Sites
             }
             Settings.DynamicCategoriesDiscovered = true;
             return categories.Count;
-        }
-
-        //private Dictionary<String, String> getYoutubeCategories()
-        //{
-        //    YouTubeQuery query = new YouTubeQuery(ALL_CATEGORIES_FEED);
-        //    YouTubeFeed feed = service.Query(query);
-        //    Dictionary<String, String> categories = new Dictionary<string, string>();
-        //    foreach (YouTubeCategory category in feed.Categories)
-        //    {
-        //        categories.Add(category.Label,category.Term);   
-        //    }
-        //    return categories;
-        //}
+        }        
 
         private Dictionary<String, String> getYoutubeCategories()
         {
-            XmlDocument doc = new XmlDocument();
-
+            Dictionary<String, String> categories = new Dictionary<string, string>();
             try
             {
-                doc.Load(XmlReader.Create("http://gdata.youtube.com/schemas/2007/categories.cat?hl=en-US"));
+                foreach (YouTubeCategory cat in YouTubeQuery.GetYouTubeCategories())
+                {
+                    if (cat.Assignable && ! cat.Deprecated)
+                    {
+                        categories.Add(cat.Label, cat.Term);
+                    }
+                }
             }
-            catch
+            catch (Exception ex)
             {
-
-                return null;
-            }
-            XmlNamespaceManager nsMgr = new XmlNamespaceManager(doc.NameTable);
-            nsMgr.AddNamespace("atom", "http://www.w3.org/2005/Atom");
-            XmlNodeList nodeList = doc.SelectNodes("/*/atom:category", nsMgr);
-            Log.Info("Youtube - dynamic Categories: " + nodeList.Count);
-            Dictionary<String, String> categories = new Dictionary<string, string>();
-            foreach (XmlNode node in nodeList)
-            {
-                categories.Add(node.Attributes["label"].Value, node.Attributes["term"].Value);
-            }
+                Log.Error("OnlineVideos : Error retrieving YouTube Categories: " + ex.Message);
+            }            
             return categories;
         }
 

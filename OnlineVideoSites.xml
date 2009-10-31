@@ -218,10 +218,18 @@
       <Categories>
         <Category xsi:type="RssLink" name="Home Page">http://rss.break.com/channel/homepage/</Category>
         <Category xsi:type="RssLink" name="Movies">http://rss.break.com/channel/movies/</Category>
-        <Category xsi:type="RssLink" name="Originals">http://rss.break.com/channel/break-originals/</Category>
+        <Category xsi:type="RssLink" name="Fights">http://rss.break.com/channel/fights/</Category>
         <Category xsi:type="RssLink" name="Cute Girls">http://rss.break.com/channel/cute-girls/</Category>
         <Category xsi:type="RssLink" name="Crazy Pet Tricks">http://rss.break.com/channel/crazy-pet-tricks/</Category>
         <Category xsi:type="RssLink" name="How To">http://rss.break.com/channel/how-to/</Category>
+        <Category xsi:type="RssLink" name="Pranks">http://rss.break.com/channel/pranks/</Category>
+        <Category xsi:type="RssLink" name="Epic Fails">http://rss.break.com/channel/epic-fails/</Category>
+        <Category xsi:type="RssLink" name="College Break">http://rss.break.com/channel/college-break/</Category>
+        <Category xsi:type="RssLink" name="Words &amp; Definitions">http://rss.break.com/channel/definitions/</Category>
+        <Category xsi:type="RssLink" name="G4 Web Soup">http://rss.break.com/channel/g4-web-soup/</Category>
+        <Category xsi:type="RssLink" name="Games">http://rss.break.com/channel/games/</Category>
+        <Category xsi:type="RssLink" name="Holy Taco">http://rss.break.com/channel/holy-taco/</Category>
+        <Category xsi:type="RssLink" name="Cage Potato">http://rss.break.com/channel/cage-potato/</Category>
       </Categories>
     </Site>
     <Site name="CNN" util="Cnn" agecheck="false" enabled="true" lang="en">
