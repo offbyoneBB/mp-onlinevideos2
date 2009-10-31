@@ -53,7 +53,7 @@ namespace OnlineVideos.Sites
                             if (isPossibleVideo(content.Url))
                             {
                                 video.VideoUrl = content.Url;
-                                if (content.Duration > 0) video.Length = content.Duration.ToString();
+                                if (!string.IsNullOrEmpty(content.Duration)) video.Length = content.Duration;
                                 break;
                             }
                         }

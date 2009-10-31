@@ -88,7 +88,7 @@
     <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en">
       <Description>Metacafe is an audience-driven video entertainment site that focuses on short-form original videos.</Description>
       <Categories>
-        <Category xsi:type="RssLink" name="New Videos">http://www.metacafe.com/rss/new_videos.rss</Category>
+        <Category xsi:type="RssLink" name="New Videos">http://www.metacafe.com/newest/rss.xml</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.metacafe.com/rss/today_videos/rss.xml?sort=rank</Category>
         <Category xsi:type="RssLink" name="Top Discussed">http://www.metacafe.com/rss/today_videos/rss.xml?sort=discussed</Category>
         <Category xsi:type="RssLink" name="Young Hollywood">http://www.metacafe.com/younghollywood/rss.xml</Category>

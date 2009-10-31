@@ -360,7 +360,7 @@ namespace RssToolkit.Rss
             /// The number of seconds the media object plays. It is an optional attribute.
             /// </summary>
             [XmlAttribute(AttributeName = "duration")]
-            public float Duration { get; set; }
+            public string Duration { get; set; }
 
             /// <summary>
             /// The width of the media object. It is an optional attribute.

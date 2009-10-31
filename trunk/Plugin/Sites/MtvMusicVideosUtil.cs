@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites
                 }                
                 if (rssItem.MediaContents.Count > 0)
                 {
-                    video.Length = ((int)rssItem.MediaContents[0].Duration).ToString();
+                    video.Length = ((int)float.Parse(rssItem.MediaContents[0].Duration, new System.Globalization.CultureInfo("en-us"))).ToString();
                     video.VideoUrl = rssItem.MediaContents[0].Url;
                     videoList.Add(video);
                 }

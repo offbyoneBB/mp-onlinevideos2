@@ -50,7 +50,7 @@ namespace OnlineVideos.Sites
                 video.Description = rssItem.MediaDescription;
                 video.ImageUrl = rssItem.MediaThumbnails[0].Url;
                 video.Title = rssItem.MediaTitle;
-                video.Length = rssItem.MediaContents[0].Duration.ToString();
+                video.Length = rssItem.MediaContents[0].Duration;
                 //video.VideoUrl = Regex.Match(rssItem.link,@"watch/([\d]*)").Groups[1].Value;
                 video.VideoUrl = rssItem.Link;
                 loVideoList.Add(video);
