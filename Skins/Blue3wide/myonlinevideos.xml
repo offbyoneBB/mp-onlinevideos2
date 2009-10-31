@@ -34,7 +34,7 @@
       <type>label</type>
       <id>1</id>
       <posX>300</posX>
-      <posY>25</posY>
+      <posY>45</posY>
       <width>700</width>
       <label>#header.label</label>
       <font>font15</font>

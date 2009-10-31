@@ -95,7 +95,7 @@ namespace OnlineVideos.Sites
                             if (isPossibleVideo(content.Url))
                             {
                                 video.VideoUrl = content.Url;
-                                video.Length = content.Duration.ToString();
+                                video.Length = content.Duration;
                                 break;
                             }
                         }

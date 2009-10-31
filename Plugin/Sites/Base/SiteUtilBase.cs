@@ -227,7 +227,7 @@ namespace OnlineVideos.Sites
             request.Timeout = 15000;
             if (cc != null) request.CookieContainer = cc;
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Encoding encoding = Encoding.Default;
+            Encoding encoding = Encoding.UTF8;
             if (!String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet);
             using (StreamReader reader = new StreamReader(response.GetResponseStream(), encoding, true))
             {
