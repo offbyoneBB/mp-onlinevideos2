@@ -16,10 +16,13 @@ using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
+    /// <summary>
+    /// rss feeds and api description here: http://help.metacafe.com/?page_id=181&pageToLoad=text
+    /// </summary>
     public class MetaCafeUtil : SiteUtilBase, ISearch
     {
         [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
-        string searchUrl = "http://www.metacafe.com/f/tags/{0}/rss.xml";
+        string searchUrl = "http://www.metacafe.com/tags/{0}/rss.xml";
 
         static Regex loRegex = new Regex(@"mediaURL=(.*)&PostRoll",
                                           RegexOptions.IgnoreCase

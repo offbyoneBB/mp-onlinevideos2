@@ -31,8 +31,10 @@ namespace OnlineVideos.Player
                 return BuildGraphForMMS();
             else if (currentFileLower.StartsWith("rtsp://"))
                 return BuildGraphForRTSP();
+            else if (currentFileLower.EndsWith(".m4v") || currentFileLower.EndsWith(".mp4") || currentFileLower.EndsWith(".mov") || currentFileLower.EndsWith(".flv"))
+                return BuildGraphWithFileSourceUrl();
             else
-                return base.GetInterfaces();                
+                return base.GetInterfaces();
         }
 
         bool BuildGraphForRTSP()
@@ -59,7 +61,7 @@ namespace OnlineVideos.Player
             if (sourceFilter == null) return false;
             int result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
             if (result != 0) return false;
-            
+
             IEnumPins enumPins;
             IPin[] sourceFilterPins = new IPin[2];
             int fetched;
@@ -161,9 +163,83 @@ namespace OnlineVideos.Player
                 return false;
             }
             this.Vmr9.SetDeinterlaceMode();
-
             return true;
-        }        
+        }
+
+        bool BuildGraphWithFileSourceUrl()
+        {            
+            try
+            {
+                graphBuilder = (IGraphBuilder)new FilterGraph();
+
+                // switch back to directx fullscreen mode
+                Log.Info("OnlineVideosPlayer: Enabling DX9 exclusive mode");
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+                GUIWindowManager.SendMessage(msg);
+
+                // add the VMR9 in the graph
+                // after enabeling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
+                Vmr9 = new VMR9Util();
+                Vmr9.AddVMR9(graphBuilder);
+                Vmr9.Enable(false);
+
+                // add the audio renderer
+                //using (Settings settings = new MPSettings()) // only available in 1.1+
+                using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                {
+                    string audiorenderer = settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+                    DirectShowUtil.AddAudioRendererToGraph(graphBuilder, audiorenderer, false);
+                }
+
+                // add the source filter manually
+                IBaseFilter sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "File Source (URL)");
+
+                // load the url with the source filter
+                int result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
+                if (result != 0) return false;
+
+                // get the output pin of the source filter
+                IEnumPins enumPins;
+                IPin[] sourceFilterPins = new IPin[1];
+                int fetched;
+                result = sourceFilter.EnumPins(out enumPins);
+                result = enumPins.Next(1, sourceFilterPins, out fetched);
+
+                // connect the pin automatically
+                base.graphBuilder.Render(sourceFilterPins[0]);                
+
+                // cleanup resources
+                DirectShowUtil.ReleaseComObject(sourceFilterPins[0]);
+                DirectShowUtil.ReleaseComObject(enumPins);
+                DirectShowUtil.ReleaseComObject(sourceFilter);                                
+
+                // set fields for playback
+                mediaCtrl = (IMediaControl)graphBuilder;
+                mediaEvt = (IMediaEventEx)graphBuilder;
+                mediaSeek = (IMediaSeeking)graphBuilder;
+                mediaPos = (IMediaPosition)graphBuilder;
+                basicAudio = graphBuilder as IBasicAudio;
+                DirectShowUtil.EnableDeInterlace(graphBuilder);
+                m_iVideoWidth = Vmr9.VideoWidth;
+                m_iVideoHeight = Vmr9.VideoHeight;
+
+                if (!Vmr9.IsVMR9Connected)
+                {
+                    //VMR9 is not supported, switch to overlay
+                    mediaCtrl = null;
+                    Cleanup();
+                    return false;
+                }
+                Vmr9.SetDeinterlaceMode();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Error.SetError("Unable to play movie", "Unable build graph for VMR9");
+                Log.Error("OnlineVideosPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+                return false;
+            }
+        }
 
         System.Reflection.MethodInfo cleanupMethod = null;
         private void Cleanup()
