@@ -541,6 +541,9 @@
         <Category xsi:type="RssLink" name="Отечественный">http://linecinema.ru/news/1-0-9</Category>
       </Categories>
     </Site>
+    <Site name="wwitv" util="WWitv" agecheck="false" enabled="true" lang="de">
+      <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country.</Description>
+    </Site>    
     <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" lang="ru">
       <Categories>
         <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>

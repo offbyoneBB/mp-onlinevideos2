@@ -432,6 +432,7 @@
     <Compile Include="Sites\Base\SiteUtilBase.cs" />
     <Compile Include="Sites\Base\SiteUtilFactory.cs" />
     <Compile Include="Sites\VidiLifeUtil.cs" />
+    <Compile Include="Sites\WWitvUtil.cs" />
     <Compile Include="Sites\xHamsterUtil.cs" />
     <Compile Include="Sites\YahooMusicVideosUtil.cs" />
     <Compile Include="Sites\YouPornUtil.cs" />
