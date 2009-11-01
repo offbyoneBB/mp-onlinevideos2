@@ -784,6 +784,24 @@
 			<Option />
 			<Guid>c703244a-12d1-4f26-b385-b96f28eb6416</Guid>
 		</File>
+    <File>
+      <FileName>wwitv.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\wwitv.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>53F503EB-31DE-4302-BEEA-4FB639EB6616</Guid>
+    </File>
+    <File>
+      <FileName>wwitv.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\wwitv.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>A89B33BF-9944-4092-9738-1BE6A1B5B077</Guid>
+    </File>        
 		<File>
 			<FileName>xHamster.png</FileName>
 			<Type>Thumbs</Type>
