@@ -1335,16 +1335,18 @@ namespace OnlineVideos
                      
                 // we use our own factory, so store the one currently used
                 IPlayerFactory savedFactory = g_Player.Factory;
-                g_Player.Factory = new OnlineVideos.Player.PlayerFactory(selectedSite.Settings.Player);
-                g_Player.Play(lsUrl);
+                g_Player.Factory = new OnlineVideos.Player.PlayerFactory(selectedSite.Settings.Player);                
+                bool playSuccess = g_Player.Play(lsUrl);
                 // restore the factory
                 g_Player.Factory = savedFactory;
 
-                if (g_Player.Player != null && g_Player.IsVideo)
+                if (playSuccess && g_Player.Player != null && g_Player.IsVideo)
                 {
                     playing = true;
                     GUIGraphicsContext.IsFullScreenVideo = true;
                     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+
+                    GUIPropertyManager.SetProperty("#Play.Current.Title", foListItem.Title);
 
                     if (foListItem.StartTime != String.Empty)
                     {
