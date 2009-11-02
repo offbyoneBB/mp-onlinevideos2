@@ -904,7 +904,7 @@
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com/files/Download/MediaPortalInstaller(MPI)/Web/OnlineVideos/</UpdateURL>
 		<Version>0.11.0</Version>
-		<Description>Allows watching videos from various websites, by either using their RSS feeds or parsing the html. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, SVT, Break, CNN, VeryFunnyAds, MSNBC, YahooMusicVideos, Southpark.de, RedTube, Tube8 and many more.</Description>
+		<Description>Allows watching videos from various websites, by either using their RSS feeds or parsing the html. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos Southpark.de and many more.</Description>
 		<Group>Web</Group>
 		<Release>Beta</Release>
 		<Script>//css_reference "core.dll";
@@ -993,13 +993,13 @@ class InstallScript : MPInstallerScript
 	</Option>
 	<Properties>
 		<MPMaxVersion>1.1.0.0</MPMaxVersion>
-		<MPMinVersion>1.0.1.0</MPMinVersion>
+		<MPMinVersion>1.0.2.0</MPMinVersion>
 		<MinExtensionVersion />
 		<MaxExtensionVersion />
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>25-10-09</CreationDate>
+		<CreationDate>02-11-09</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
