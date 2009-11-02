@@ -1284,9 +1284,11 @@ namespace OnlineVideos
                 PlayList videoList = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
                 videoList.Clear();                
                 List<String> loUrlList = selectedSite.getMultipleVideoUrls(foListItem);
+                int i = 0;
                 foreach (String url in loUrlList)
                 {
-                    PlayListItem item = new PlayListItem("", url);
+                    i++;
+                    PlayListItem item = new PlayListItem(string.Format("{0} - {1} / {2}", foListItem.Title, i.ToString(), loUrlList.Count), url);
                     videoList.Add(item);                   
                 }
 
@@ -1336,7 +1338,7 @@ namespace OnlineVideos
                 // we use our own factory, so store the one currently used
                 IPlayerFactory savedFactory = g_Player.Factory;
                 g_Player.Factory = new OnlineVideos.Player.PlayerFactory(selectedSite.Settings.Player);                
-                bool playSuccess = g_Player.Play(lsUrl);
+                bool playSuccess = g_Player.Play(lsUrl, g_Player.MediaType.Video);
                 // restore the factory
                 g_Player.Factory = savedFactory;
 
@@ -1346,6 +1348,8 @@ namespace OnlineVideos
                     GUIGraphicsContext.IsFullScreenVideo = true;
                     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
 
+                    // Process was needed before setting the title, because the event was sometimes swallowed otherwise
+                    GUIWindowManager.Process();
                     GUIPropertyManager.SetProperty("#Play.Current.Title", foListItem.Title);
 
                     if (foListItem.StartTime != String.Empty)

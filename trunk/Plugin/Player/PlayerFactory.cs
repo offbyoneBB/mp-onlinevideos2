@@ -14,7 +14,7 @@ namespace OnlineVideos.Player
         
         public IPlayer Create(string filename)
         {
-            return Create(filename, g_Player.MediaType.Unknown);
+            return Create(filename, g_Player.MediaType.Video);
         }  
 
         public IPlayer Create(string filename, g_Player.MediaType type)

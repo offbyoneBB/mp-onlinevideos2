@@ -14,12 +14,11 @@ namespace OnlineVideos.Player
 
         public bool Play(string strFile)
         {
-            if (g_Player.Playing) 
-                g_Player.Stop(true);
+            if (g_Player.Playing) g_Player.Stop(true);
 
             IPlayerFactory savedFactory = g_Player.Factory;
             g_Player.Factory = new OnlineVideos.Player.PlayerFactory(playerType);
-            bool result = g_Player.Play(strFile);
+            bool result = g_Player.Play(strFile, g_Player.MediaType.Video);
             g_Player.Factory = savedFactory;
 
             return result;
