@@ -24,7 +24,7 @@ namespace OnlineVideos.Player
                 case PlayerType.Internal:
                     return new OnlineVideosPlayer();
                 case PlayerType.WMP:
-                    return new AudioPlayerWMP9();
+                    return new WMPVideoPlayer();
                 default:
                     Uri uri = new Uri(filename);
 
@@ -34,7 +34,7 @@ namespace OnlineVideos.Player
                     }
                     else if (uri.PathAndQuery.Contains(".asx"))
                     {
-                        return new AudioPlayerWMP9();
+                        return new WMPVideoPlayer();
                     }
                     else
                     {
@@ -44,7 +44,7 @@ namespace OnlineVideos.Player
                             {
                                 if (anExt == ".wmv" && !string.IsNullOrEmpty(uri.Query))
                                 {
-                                    return new AudioPlayerWMP9();
+                                    return new WMPVideoPlayer();
                                 }
                                 else
                                 {
@@ -52,7 +52,7 @@ namespace OnlineVideos.Player
                                 }
                             }
                         }
-                        return new AudioPlayerWMP9();
+                        return new WMPVideoPlayer();
                     }
             }            
         }              

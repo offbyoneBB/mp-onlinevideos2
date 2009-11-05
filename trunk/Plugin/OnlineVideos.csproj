@@ -51,6 +51,11 @@
     <StartWorkingDirectory>C:\Program Files\Team MediaPortal\MediaPortal</StartWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AxInterop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\AxInterop.WMPLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Core, Version=0.2.3.17915, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
@@ -69,6 +74,11 @@
     <Reference Include="DirectShowLib, Version=2.0.0.22244, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\DirectShowLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Interop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\Interop.WMPLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System">
@@ -189,6 +199,7 @@
     <Compile Include="Jayrock.Json\Json\JsonWriterBracket.cs" />
     <Compile Include="Jayrock.Json\Mask.cs" />
     <Compile Include="Jayrock.Json\UnixTime.cs" />
+    <Compile Include="Player\WMPVideoPlayer.cs" />
     <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Player\PlayerFactory.cs" />
     <Compile Include="Player\PlaylistPlayerWrapper.cs" />
