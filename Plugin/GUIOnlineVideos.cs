@@ -127,7 +127,7 @@ namespace OnlineVideos
         protected GUIFacadeControl.ViewMode? suggestedView;
         #endregion
 
-        #region state variables        
+        #region state variables
         State currentState = State.home;
 
         int selectedSiteIndex = 0;
@@ -175,7 +175,7 @@ namespace OnlineVideos
         #endregion                
         
         #region GUIWindow Overrides
-
+        
         public override int GetID
         {
             get { return 4755; }
@@ -334,6 +334,24 @@ namespace OnlineVideos
                 OnShowPreviousMenu();
                 return;
             }
+            else if (action.wID == Action.ActionType.ACTION_KEY_PRESSED && facadeView.Visible && facadeView.Focus)
+            {
+                // search items (starting from current selected) by title and select first found one
+                char pressedChar = (char)action.m_key.KeyChar;
+                if (char.IsLetterOrDigit(pressedChar))
+                {
+                    string lowerChar = pressedChar.ToString().ToLower();
+                    for (int i = facadeView.SelectedListItemIndex+1; i < facadeView.Count; i++)
+                    {
+                        if (facadeView[i].Label.ToLower().StartsWith(lowerChar))
+                        {
+                            facadeView.SelectedListItemIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+
             base.OnAction(action);
         }
 
