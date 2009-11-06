@@ -16,7 +16,7 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the videos for a category.")]
         string videosRegex = @"<a\sclass=""travel""\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a>
-</td><td[^>]*><img\ssrc=""../img/live.gif""\swidth=""50""\sheight=""24""></td>
+</td><td[^>]*><img\ssrc=""../img/[^\.]+\.gif""\swidth=""50""\sheight=""24""></td>
 <td[^>]*>\s*
 <a\sclass=""m""\shref=""[^""]+"">(?<length>[^<]+)</a>\s*
 </td><td[^>]*><font[^>]*>(?<desc>[^>]*)</td></tr>";
