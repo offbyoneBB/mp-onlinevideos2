@@ -18,7 +18,7 @@ namespace OnlineVideos.Sites
     public class EmpflixUtil : SiteUtilBase, ISearch
     {
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos.")]
-        string videoListRegEx = @"<div.*a.href=""(?<VideoUrl>http://www.empflix.com/view.php\?id\=\d+)"".*<img\ssrc=""(?<ImageUrl>http://pic.*.empflix.com/images/thumb/.*\.jpg)"".*</div>[\s\r\n]*<div\sclass=""videoTitle"">.+\stitle=""(?<Title>.+)"".+</div>.*[\s\r\n]*.*<div\sclass=""videoLeft"">(?<Duration>.*)<br\s/>";
+        string videoListRegEx = @"<div.*a.href=""(?<VideoUrl>http://www.empflix.com/view.php\?id\=\d+)"".*<img\ssrc=""(?<ImageUrl>http://[^""]+\.jpg)"".*</div>[\s\r\n]*<div\sclass=""videoTitle"">.+\stitle=""(?<Title>.+)"".+</div>.*[\s\r\n]*.*<div\sclass=""videoLeft"">(?<Duration>.*)<br\s/>";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a next page link.")]
         string nextPageRegEx = @"<a\shref=""(?<url>.*)"">next\s&gt;&gt;</a>";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link.")]
