@@ -23,6 +23,8 @@ The videos/streams can be discovered by reading RSS feeds or parsing HTML. Only 
  * category view
  * videos view
  * details view
+ * side menu
+ * context menu
 
 = Configuration =
 
