@@ -2,7 +2,8 @@
 
 = Introduction =
 
-This plugin integrates websites that host videos or stream live tv into <a href="http://www.team-mediaportal.com/">MediaPortal</a>.<br/>Examples are <a href="http://www.youtube.com/">YouTube</a> and <a href="http://www.wwitv.com/">wwitv</a>.
+This plugin integrates websites that host videos or stream live tv into <a href="http://www.team-mediaportal.com/">MediaPortal</a>.
+Examples are <a href="http://www.youtube.com/">YouTube</a> and <a href="http://www.wwitv.com/">wwitv</a>.
 
 The videos/streams can be discovered by reading RSS feeds or parsing HTML. Only direct links to video files or streams can be played back, because they will be rendered using [http://wikipedia.org/wiki/DirectShow directshow]. This allows usage of your favorite codecs to control audio and video quality (e.g. using ffdshow you can upscale low quality videos, as well as upmix stereo sound and output to spdif).
 
@@ -18,10 +19,10 @@ The videos/streams can be discovered by reading RSS feeds or parsing HTML. Only 
 
 = User Interface =
 
-site view
-category view
-videos view
-details view
+ * site view
+ * category view
+ * videos view
+ * details view
 
 = Configuration =
 
