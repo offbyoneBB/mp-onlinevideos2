@@ -5,11 +5,11 @@
 This plugin integrates websites that host videos or stream live tv into <a href="http://www.team-mediaportal.com/">MediaPortal</a>.
 Examples are <a href="http://www.youtube.com/">YouTube</a> and <a href="http://www.wwitv.com/">wwitv</a>.
 
-The videos/streams can be discovered by reading RSS feeds or parsing HTML. Only direct links to video files or streams can be played back, because they will be rendered using [http://wikipedia.org/wiki/DirectShow directshow]. This allows usage of your favorite codecs to control audio and video quality (e.g. using ffdshow you can upscale low quality videos, as well as upmix stereo sound and output to spdif).
+The videos/streams can be discovered by reading RSS feeds or parsing HTML. Only direct links to video files or streams can be played back, because they will be rendered using [http://wikipedia.org/wiki/DirectShow directshow]. This allows usage of your favorite codecs to control audio and video quality (e.g. using ffdshow you can upscale low quality videos as well as upmix stereo sound and output to spdif).
 
 = Features =
 
- * thumbnails for sites, categories, videos
+ * thumbnails for sites, categories and videos/streams
  * pin to protect adult sites
  * search (on sites that support search)
  * browse paged lists with next/previous page
@@ -19,7 +19,9 @@ The videos/streams can be discovered by reading RSS feeds or parsing HTML. Only 
 
 = User Interface =
 
- * site view
+The main view of the plugin at first shows a list of all sites that can be viewed. By selecting a site you can dive into the categories for that site. If a category has subcategories (example Miro), by selecting a category you will dive into the subcategories recursivly, otherwise a list of videos in that category is shown. These 3 views all can be shown as a line-by-line list, small thumbs list or large thumbs list.
+
+ * site view<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg"/>
  * category view
  * videos view
  * details view
@@ -29,3 +31,5 @@ The videos/streams can be discovered by reading RSS feeds or parsing HTML. Only 
 = Configuration =
 
 = Customization =
+
+= Skinning Information =
