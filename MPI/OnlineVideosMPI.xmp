@@ -875,19 +875,19 @@
 			<Guid>1dcd7e82-8089-4643-b8fe-23c9c36da94f</Guid>
 		</File>
 		<File>
-			<FileName>ZDF Mediatek.png</FileName>
+			<FileName>ZDF Mediathek.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>..\SiteImages\Banners\ZDF Mediatek.png</Source>
+			<Source>..\SiteImages\Banners\ZDF Mediathek.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>e79310a2-0d9a-492d-adde-9d7c5907379d</Guid>
 		</File>
 		<File>
-			<FileName>ZDF Mediatek.png</FileName>
+			<FileName>ZDF Mediathek.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>..\SiteImages\Icons\ZDF Mediatek.png</Source>
+			<Source>..\SiteImages\Icons\ZDF Mediathek.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>4db704a0-30d2-4a8a-bf6b-328c8275cdc8</Guid>
