@@ -1181,12 +1181,15 @@ namespace OnlineVideos
                 loListItem = new GUIListItem(loVideoInfo.Title);
                 loListItem.Path = loVideoInfo.VideoUrl;
                 loListItem.ItemId = liIdx;
-                loListItem.RetrieveArt = false;
-                loListItem.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
                 loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
                 facadeView.Add(loListItem);
                 loImageUrlList.Add(loVideoInfo.ImageUrl);
-                if (!string.IsNullOrEmpty(loVideoInfo.ImageUrl)) numVideosWithThumb++;
+                if (!string.IsNullOrEmpty(loVideoInfo.ImageUrl))
+                {
+                    loListItem.RetrieveArt = false;
+                    loListItem.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+                    numVideosWithThumb++;
+                }
             }
 
             suggestedView = null;
