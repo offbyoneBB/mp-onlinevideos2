@@ -45,7 +45,7 @@
         <Category xsi:type="RssLink" name="Servicezeit: kompakt" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_szkompakt.jpg">http://podcast.wdr.de/szkompakt.xml</Category>
       </Categories>
     </Site>
-    <Site name="ZDF Mediatek" util="ZDFMediathek" agecheck="false" enabled="true" lang="de">
+    <Site name="ZDF Mediathek" util="ZDFMediathek" agecheck="false" enabled="true" lang="de">
       <Description>Mediathek des Zweiten Deutschen Fernsehens.</Description>
       <Categories />
     </Site>
