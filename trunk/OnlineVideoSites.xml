@@ -475,9 +475,9 @@
             <Channel name="90s">mms://194.116.83.15/90s</Channel>
             <Channel name="80s">mms://194.116.83.15/80s</Channel>
             <Channel name="70s">mms://194.116.83.15/70s</Channel>
-            <Channel name="Hard and Heavy">mms://194.116.83.15/Hard and Heavy</Channel>
+            <Channel name="Hard and Heavy">mms://194.116.83.15/Hard%20and%20Heavy</Channel>
             <Channel name="Prog Rock">mms://194.116.83.15/Prog</Channel>
-            <Channel name="Soft and Ballads">mms://194.116.83.15/Soft and Ballads</Channel>
+            <Channel name="Soft and Ballads">mms://194.116.83.15/Soft%20and%20Ballads</Channel>
           </Channels>
         </Category>
       </Categories>
