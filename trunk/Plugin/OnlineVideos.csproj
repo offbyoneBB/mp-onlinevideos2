@@ -415,6 +415,7 @@
     <Compile Include="Sites\BreakUtil.cs" />
     <Compile Include="Sites\CnnUtil.cs" />
     <Compile Include="Sites\DasErsteMediathekUtil.cs" />
+    <Compile Include="Sites\DreiSatUtil.cs" />
     <Compile Include="Sites\EmpflixUtil.cs" />
     <Compile Include="Sites\GameTrailersUtil.cs" />
     <Compile Include="Sites\Interfaces\IFavorite.cs" />

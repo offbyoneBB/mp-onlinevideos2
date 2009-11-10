@@ -375,6 +375,12 @@ namespace RssToolkit.Rss
             public int Height { get; set; }
 
             /// <summary>
+            /// The bitrate of the mediaobject. It is an optional attribute.
+            /// </summary>
+            [XmlAttribute(AttributeName = "bitrate")]
+            public int Bitrate { get; set; }
+
+            /// <summary>
             /// The primary language encapsulated in the media object. Language codes possible are detailed in RFC 3066. It is an optional attribute.
             /// </summary>
             [XmlAttribute(AttributeName = "lang")]

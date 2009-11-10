@@ -49,8 +49,8 @@
       <Description>Mediathek des Zweiten Deutschen Fernsehens.</Description>
       <Categories />
     </Site>
-    <Site name="3sat" util="GenericSite" agecheck="false" enabled="false" lang="de">
-      <Description>Einziges öffentlich-rechtliches Gemeinschaftsprogramm des deutschen Sprachraums (ZDF – ORF – SRG – ARD)</Description>
+    <Site name="3sat" util="DreiSat" agecheck="false" enabled="true" lang="de">
+      <Description>Einziges öffentlich-rechtliches Gemeinschaftsprogramm des deutschen Sprachraums (ZDF – ORF – SRG – ARD).</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Kulturzeit">http://www.3sat.de/mediathek/rss/mediathek_Kulturzeit.xml</Category>
         <Category xsi:type="RssLink" name="nano">http://www.3sat.de/mediathek/rss/mediathek_nano.xml</Category>

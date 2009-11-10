@@ -102,7 +102,7 @@ namespace OnlineVideos.Sites
                     item.Title = teaser.Title;
                     item.ImageUrl = teaser.Image173x120;
                     item.Description = teaser.Details;
-                    item.Length = string.Format("{0}:{1} min | {2}", Math.Floor(teaser.VideoLength.TotalMinutes).ToString(), teaser.VideoLength.Seconds.ToString("D2"), teaser.AirtimeDateTime.ToString("g"));
+                    item.Length = teaser.VideoLength.ToString() + " | " + teaser.AirtimeDateTime.ToString("g");
                     item.VideoUrl = teaser.ID;
                     item.Other = teaser.ChannelID;
                     list.Add(item);
