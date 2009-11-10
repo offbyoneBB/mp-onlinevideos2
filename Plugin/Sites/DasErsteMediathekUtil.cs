@@ -166,9 +166,9 @@ namespace OnlineVideos.Sites
                     resultUrl = string.Format("http://127.0.0.1:{5}/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}",
                         System.Web.HttpUtility.UrlEncode(uri.Host),
                         "1935",
-                        System.Web.HttpUtility.UrlEncode(uri.Segments[1]),
-                        System.Web.HttpUtility.UrlEncode("rtmpe://" + uri.Host + ":1935" + uri.Segments[0] + uri.Segments[1]),
-                        System.Web.HttpUtility.UrlEncode(uri.PathAndQuery.Substring((uri.Segments[0] + uri.Segments[1]).Length)),
+                        System.Web.HttpUtility.UrlEncode(uri.Segments[1].Trim(new char[] {'/'})),
+                        System.Web.HttpUtility.UrlEncode("rtmp://" + uri.Host + ":1935" + uri.Segments[0] + uri.Segments[1].Trim(new char[] { '/' })),
+                        System.Web.HttpUtility.UrlEncode(uri.LocalPath.Substring((uri.Segments[0] + uri.Segments[1]).Length)),
                         OnlineVideoSettings.RTMP_PROXY_PORT);
                 }
                 else

@@ -307,7 +307,7 @@ namespace OnlineVideos.Player
 
     private void LoadStreamingSettings()
     {
-      using (Settings xmlreader = new MPSettings())
+      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _bufferTime = xmlreader.GetValueAsInt("general", "streamingbuffer", 5000);
       }
