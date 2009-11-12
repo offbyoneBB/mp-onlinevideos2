@@ -14,21 +14,37 @@ The videos/streams can be discovered by reading RSS feeds or parsing HTML. Only 
  * search (on sites that support search)
  * browse paged lists with next/previous page
  * download videos
- * create favorites
+ * bookmark favorites
  * play all videos currently shown
 
 = User Interface =
 
-The main view of the plugin at first shows a list of all sites that can be viewed. By selecting a site you can dive into the categories for that site. If a category has subcategories (example Miro), by selecting a category you will dive into the subcategories recursivly, otherwise a list of videos in that category is shown. These 3 views all can be shown as a line-by-line list, small thumbs list or large thumbs list.
+The main view of the plugin at first shows a list of all sites that can be viewed. By selecting a site you can dive into the categories for that site. If a category has subcategories (e.g. Miro), by selecting a category you will dive into the subcategories recursivly, otherwise a list of videos for that category is shown. Each of these 3 views  can be shown as a list, small thumbs or large thumbs.
 
- * site view<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg"/>
+ * *site view* - will be shown first when entering the plugin<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg"/>
  * category view
  * videos view
- * details view
+ * *details view* - is only available on sites that have multiple choices for a video (currently only Apple Trailers)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg"/>
  * side menu
  * context menu
 
 = Configuration =
+
+The configuration form for the OnlineVideos plugin has three tabs. The first one offers some global settings like:
+ * name of the plugin in MediaPortal
+ * pin used for protection of sites with adult content
+ * folder where downloaded videos should be saved
+ * folder where thumbnails are saved
+ * timeout for cached data from the internet
+
+The second tab allows to edit site specific settings. You can:
+ * change the order of sites
+ * delete, disable, crreate and import sites
+ * change the name and description of a site
+ * edit settings that the util of that site exposes (e.g. Quality for videos on Youtube)
+ * add and delete categories, groups and streams (lower part)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png"/>
+
+The Codecs tab ist currently only an informational page, that can help fighting playback issues. Each codec should have a reference to a file. If you are missing some, you won't be able to play videos of that type.
 
 = Customization =
 
