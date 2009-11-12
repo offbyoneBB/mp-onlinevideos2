@@ -299,6 +299,24 @@
 			<Guid>b1fb65d5-6fa4-4ca7-ab6c-280ace76f0b7</Guid>
 		</File>
 		<File>
+			<FileName>Mdr.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\Mdr.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>EB5F6704-20EB-4ed8-B141-42D73B33B5C6</Guid>
+		</File>
+		<File>
+			<FileName>Mdr.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\Mdr.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>F54AF092-E665-423f-8346-4E7422042267</Guid>
+		</File>		
+		<File>
 			<FileName>MetaCafe.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
