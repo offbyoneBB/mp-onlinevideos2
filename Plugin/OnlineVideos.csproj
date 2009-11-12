@@ -424,6 +424,7 @@
     <Compile Include="Sites\JustinTVUtil.cs" />
     <Compile Include="Sites\LineCinemaRuUtil.cs" />
     <Compile Include="Sites\LiveVideoUtil.cs" />
+    <Compile Include="Sites\MdrUtil.cs" />
     <Compile Include="Sites\MiroUtil.cs" />
     <Compile Include="Sites\MtvMusicVideosUtil.cs" />
     <Compile Include="Sites\MyVideoUtil.cs" />

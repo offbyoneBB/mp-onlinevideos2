@@ -18,9 +18,9 @@
     <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" lang="de">
       <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>      
     </Site>
-    <Site name="RTL Now" util="RTLNow" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>      
-    </Site>
+    <Site name="MDR" util="Mdr" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen des MDR.</Description>      
+    </Site>    
     <Site name="WDR" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Podcasts des Westdeutschen Rundfunks.</Description>
       <Categories>
@@ -69,6 +69,9 @@
         <Category xsi:type="RssLink" name="Musik">http://www.3sat.de/mediathek/rss/mediathek_musik.xml</Category>
         <Category xsi:type="RssLink" name="Theater und Foyer ">http://www.3sat.de/mediathek/rss/mediathek_theater.xml</Category>
       </Categories>
+    </Site>
+    <Site name="RTL Now" util="RTLNow" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>
     </Site>
     <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
       <Description>Deutscher YouTube Clone.</Description>
