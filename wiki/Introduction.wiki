@@ -23,16 +23,18 @@ The main view of the plugin at first shows a list of all sites that can be viewe
 ==site view==
 The default view, that will be shown upon entering the plugin<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg"/>
 ==category view==
-==videos view==
-Example for the videos view with large icons. In the lower part, the title, a description and the runtime as well as the publication date (if known) are displayed.<br/>
+Shows a list of categories with thumbs.<br/>
+<img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png"/>
+==video view==
+Example for the video view with large icons. In the lower part, the title, a description and the runtime as well as the publication date (if known) of the selected clip are displayed.<br/>
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg"/>
-==details view== 
+==detail view== 
 This screen is only available on sites that have multiple choices for a video (currently only Apple Trailers)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg"/>
 ==side menu==
- * change view: list, small icon, large icon
- * search (and search in specific category, if available)
+ * change facade layout: list, small icon, large icon
+ * search (+category to search, if available) is available in category view
  * max results, sort method, timeframe, refresh
- * next / previous page
+ * next / previous page is available in video view
  * Favorites (displays your favorites from the current site, only YouTube currently)
  * Pin (enter the pin to enable adult content)
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg"/>
