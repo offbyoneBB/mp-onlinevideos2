@@ -90,39 +90,22 @@ namespace OnlineVideos.Sites
                     XmlDocument xml = new XmlDocument();
                     xml.LoadXml(data);
                     url = xml.SelectSingleNode("//playlist/videoinfo/filename").InnerText;
-                    if (url.StartsWith("rtmpe://")) url = url.Replace("rtmpe://", "rtmp://");
-
-                    if (videoQuality == VideoQuality.Normal)
-                    {                        
-                        string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&hostname={2}&tcUrl={3}&app={4}&swfurl={5}&swfsize={6}&swfhash={7}&pageurl={8}",
-                            OnlineVideoSettings.RTMP_PROXY_PORT,
-                            System.Web.HttpUtility.UrlEncode(url),
-                            "fms-hc1.rtl.de",
-                            "rtmp://fms-hc1.rtl.de/rtlnow/_definst_",
-                            "rtlnow/_definst_",
-                            "http://rtl-now.rtl.de/includes/rtlnow_videoplayer09_2.swf",
-                            "414239",
-                            "6a31c95d659eb33bfffc315e9da4cf74ed6498e599d2bacb31675968b355fbdf",
-                            "http://rtl-now.rtl.de/"
-                            );
-                        return resultUrl;
-                    }
-                    else
-                    {
-                        url = url.Replace("700k", "1500k");
-                        string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&hostname={2}&tcUrl={3}&app={4}&swfurl={5}&swfsize={6}&swfhash={7}&pageurl={8}",
-                            OnlineVideoSettings.RTMP_PROXY_PORT,
-                            System.Web.HttpUtility.UrlEncode(url),
-                            "fms-pay.rtl.de",
-                            "rtmp://fms-pay.rtl.de/rtlnow/_definst_",
-                            "rtlnow/_definst_",
-                            "http://rtl-now.rtl.de/includes/rtlnow_videoplayer09_2.swf",
-                            "414239",
-                            "6a31c95d659eb33bfffc315e9da4cf74ed6498e599d2bacb31675968b355fbdf",
-                            "http://rtl-now.rtl.de/"
-                            );
-                        return resultUrl;
-                    }               
+                    url = url.Replace("fms-hc1.rtl.de","fms.rtl.de").Replace(".flv", "");
+                    if (videoQuality == VideoQuality.High) url = url.Replace("700k", "1500k");
+                    Uri uri = new Uri(url);
+                    string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&hostname={2}&tcUrl={3}&app={4}&swfurl={5}&swfsize={6}&swfhash={7}&pageurl={8}&playpath={9}",
+                        OnlineVideoSettings.RTMP_PROXY_PORT,
+                        System.Web.HttpUtility.UrlEncode(url),
+                        "fms.rtl.de",
+                        url.Substring(0, url.LastIndexOf("/")),
+                        uri.LocalPath.Substring(1, uri.LocalPath.LastIndexOf("/")-1),
+                        "http://rtl-now.rtl.de/includes/rtlnow_videoplayer09_2.swf?ts=20090922",
+                        "414239",
+                        "6a31c95d659eb33bfffc315e9da4cf74ed6498e599d2bacb31675968b355fbdf",
+                        "http://rtl-now.rtl.de/",
+                        uri.LocalPath.Substring(uri.LocalPath.IndexOf("rtlnow") + 6)
+                        );
+                    return resultUrl;
                 }
             }
             return null;
