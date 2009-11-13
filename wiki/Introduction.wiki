@@ -1,14 +1,15 @@
 #summary Overall description of the OnlineVideos plugin for MediaPortal.
-
+= Table of Contents =
+<wiki:toc max_depth="2" />
+----
 = Introduction =
-
 This plugin integrates websites that host videos or stream live tv into <a href="http://www.team-mediaportal.com/">MediaPortal</a>.
 Examples are <a href="http://www.youtube.com/">YouTube</a> and <a href="http://www.wwitv.com/">wwitv</a>.
 
 The videos/streams can be discovered by reading RSS feeds or parsing HTML. Only direct links to video files or streams can be played back, because they will be rendered using [http://wikipedia.org/wiki/DirectShow directshow]. This allows usage of your favorite codecs to control audio and video quality (e.g. using ffdshow you can upscale low quality videos as well as upmix stereo sound and output to spdif).
 
+----
 = Features =
-
  * thumbnails for sites, categories and videos/streams
  * pin to protect adult sites
  * search (on sites that support search)
@@ -16,46 +17,47 @@ The videos/streams can be discovered by reading RSS feeds or parsing HTML. Only 
  * download videos
  * bookmark favorites
  * play all videos currently shown
-
+----
 = User Interface =
-
 The main view of the plugin at first shows a list of all sites that can be viewed. By selecting a site you can dive into the categories for that site. If a category has subcategories (e.g. Miro), by selecting a category you will dive into the subcategories recursivly, otherwise a list of videos for that category is shown. Each of these 3 views  can be shown as a list, small thumbs or large thumbs.
+==site view==
+The default view, that will be shown upon entering the plugin<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg"/>
+==category view==
+==videos view==
+==details view== 
+This screen is only available on sites that have multiple choices for a video (currently only Apple Trailers)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg"/>
+==side menu==
+ * change view: list, small icon, large icon
+ * search (and search in specific category, if available)
+ * max results, sort method, timeframe, refresh
+ * next / previous page
+ * Favorites (displays your favorites from the current site, only YouTube currently)
+ * Pin (enter the pin to enable adult content)
+<img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg"/>
+==context menu==
+ * play all videos currently showing
+ * add to favorites / delete from favorites (when displaying _Favorites_)
+ * show related videos (only on _YouTube_)
+ * download video
+ * delete file (only when showing _DownloadedVideos_)
+<img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg"/>
 
- * *site view* - will be shown first when entering the plugin<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg"/>
- * category view
- * videos view
- * *details view* - is only available on sites that have multiple choices for a video (currently only Apple Trailers)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg"/>
- * side menu
-  * change view: list, small icon, large icon
-  * search (and search in specific category, if available)
-  * max results, sort method, timeframe, refresh
-  * next / previous page
-  * Favorites (displays you favorites from the current site, only YouTube currently)
-  * Pin (enter the pin to enable adult content)
- * context menu
-  * play all
-  * add to favorites / delete from favorites (when displaying _Favorites_)
-  * related videos (only on _YouTube_)
-  * download video
-  * delete (only when showing _DownloadedVideos_)
-
+----
 = Configuration =
-
-The configuration form for the OnlineVideos plugin has three tabs. The first one offers some global settings like:
+The configuration form for the OnlineVideos plugin has three tabs. 
+==General==
  * displayed name of the plugin in MediaPortal
  * pin used for protection of sites with adult content
  * folder where downloaded videos should be saved
  * folder where thumbnails are saved
  * timeout for cached data from the internet
-
-The second tab allows to edit site specific settings. You can:
+==Sites==
  * change the order of sites
  * delete, disable, crreate and import sites
  * change the name and description of a site
  * edit settings that the util of that site exposes (e.g. quality for videos on YouTube)
  * add and delete categories, groups and streams (lower part)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png"/>
-The Codecs tab ist currently only an informational page, that can help fighting playback issues. Each codec should have a reference to a file. If you are missing some, you won't be able to play videos of that type.
+==Codecs== 
+This tab ist currently only an informational page, that can help fighting playback issues. Each codec should have a reference to a file. If you are missing some, you won't be able to play videos of that type.
 
-= Customization =
-
-= Skinning Information =
+----
