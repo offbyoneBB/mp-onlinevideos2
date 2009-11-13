@@ -26,12 +26,23 @@ The main view of the plugin at first shows a list of all sites that can be viewe
  * videos view
  * *details view* - is only available on sites that have multiple choices for a video (currently only Apple Trailers)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg"/>
  * side menu
+  * change view: list, small icon, large icon
+  * search (and search in specific category, if available)
+  * max results, sort method, timeframe, refresh
+  * next / previous page
+  * Favorites (displays you favorites from the current site, only YouTube currently)
+  * Pin (enter the pin to enable adult content)
  * context menu
+  * play all
+  * add to favorites / delete from favorites (when displaying _Favorites_)
+  * related videos (only on _YouTube_)
+  * download video
+  * delete (only when showing _DownloadedVideos_)
 
 = Configuration =
 
 The configuration form for the OnlineVideos plugin has three tabs. The first one offers some global settings like:
- * name of the plugin in MediaPortal
+ * displayed name of the plugin in MediaPortal
  * pin used for protection of sites with adult content
  * folder where downloaded videos should be saved
  * folder where thumbnails are saved
@@ -41,9 +52,8 @@ The second tab allows to edit site specific settings. You can:
  * change the order of sites
  * delete, disable, crreate and import sites
  * change the name and description of a site
- * edit settings that the util of that site exposes (e.g. Quality for videos on Youtube)
+ * edit settings that the util of that site exposes (e.g. quality for videos on YouTube)
  * add and delete categories, groups and streams (lower part)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png"/>
-
 The Codecs tab ist currently only an informational page, that can help fighting playback issues. Each codec should have a reference to a file. If you are missing some, you won't be able to play videos of that type.
 
 = Customization =
