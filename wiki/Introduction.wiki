@@ -23,7 +23,7 @@ The main view of the plugin at first shows a list of all sites that can be viewe
 ==site view==
 The default view, that will be shown upon entering the plugin<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg"/>
 ==category view==
-Shows a list of categories with thumbs.<br/>
+Shows a list of categories with thumbs. If the number of videos in a category is known, it will be displayed right aligned in the list mode.<br/>
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png"/>
 ==video view==
 Example for the video view with large icons. In the lower part, the title, a description and the runtime as well as the publication date (if known) of the selected clip are displayed.<br/>
