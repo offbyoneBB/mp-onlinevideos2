@@ -18,7 +18,11 @@ namespace OnlineVideos.Sites
     public class EmpflixUtil : SiteUtilBase, ISearch
     {
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos.")]
-        string videoListRegEx = @"<div.*a.href=""(?<VideoUrl>http://www.empflix.com/view.php\?id\=\d+)"".*<img\ssrc=""(?<ImageUrl>http://[^""]+\.jpg)"".*</div>[\s\r\n]*<div\sclass=""videoTitle"">.+\stitle=""(?<Title>.+)"".+</div>.*[\s\r\n]*.*<div\sclass=""videoLeft"">(?<Duration>.*)<br\s/>";
+        string videoListRegEx = @"<a\shref=""(?<VideoUrl>http\://www\.empflix\.com/view\.php\?id\=\d+)""\s*title=""(?<Title>[^""]+)""[^>]*>\s*
+<img\ssrc=""\s*(?<ImageUrl>http\://[^""]+)""[^>]*>\s*
+<p[^>]*>[^<]*</p></a>\s*
+<p\sclass=""length"">(?<Duration>[^<]*)</p>";
+
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a next page link.")]
         string nextPageRegEx = @"<a\shref=""(?<url>.*)"">next\s&gt;&gt;</a>";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link.")]
@@ -35,7 +39,7 @@ namespace OnlineVideos.Sites
         {
             base.Initialize(siteSettings);
 
-            regEx_VideoList = new Regex(videoListRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            regEx_VideoList = new Regex(videoListRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             regEx_PlaylistUrl = new Regex(playlistUrlRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
             regEx_NextPage = new Regex(nextPageRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
             regEx_PrevPage = new Regex(prevPageRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
