@@ -171,6 +171,11 @@ namespace OnlineVideos.Sites
             }
         }
 
+        public override string GetFileNameForDownload(VideoInfo video, string url)
+        {
+            return ImageDownloader.GetSaveFilename(video.Title) + ".flv";            
+        }
+
         #region Next|Previous Page
 
         static Regex nextPageRegEx = new Regex(@"<a\stitle=""Next\spage""\shref=""(?<url>[^""]*page=\d{1,})"">Next</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);

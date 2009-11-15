@@ -234,9 +234,9 @@ namespace OnlineVideos
         {
             int liSelected = facadeView.SelectedListItemIndex - 1;
 
-            if (selectedSite is Sites.AppleTrailersUtil && currentState == State.info) liSelected = infoList.SelectedListItemIndex - 1;
+            if (selectedSite.HasMultipleVideos && currentState == State.info) liSelected = infoList.SelectedListItemIndex - 1;
 
-            if (liSelected < 0 || currentState == State.home || currentState == State.categories || (selectedSite is Sites.AppleTrailersUtil && currentState == State.videos))
+            if (liSelected < 0 || currentState == State.home || currentState == State.categories || (selectedSite.HasMultipleVideos && currentState == State.videos))
             {
                 return;
             }
@@ -258,7 +258,7 @@ namespace OnlineVideos
                 {
                     dlgSel.Add(GUILocalizeStrings.Get(933)/*Remove from favorites*/);
                 }
-                if (selectedSite is Sites.YouTubeUtil)
+                if (selectedSite.HasRelatedVideos)
                 {
                     dlgSel.Add("Related Videos");
                 }
@@ -296,9 +296,10 @@ namespace OnlineVideos
                     }
                     break;
                 case 3:
-                    if (selectedSite is Sites.YouTubeUtil)
+                    if (selectedSite.HasRelatedVideos)
                     {
-                        getRelatedVideos(loSelectedVideo);
+                        moCurrentVideoList = selectedSite.getRelatedVideos(loSelectedVideo);
+                        DisplayCategoryVideos();
                     }
                     else
                     {
@@ -1393,7 +1394,7 @@ namespace OnlineVideos
             PlayList videoList = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
             videoList.Clear();
             List<VideoInfo> loVideoList;
-            if (selectedSite is Sites.AppleTrailersUtil)
+            if (selectedSite.HasMultipleVideos)
             {
                 loVideoList = moCurrentTrailerList;
             }
@@ -1986,23 +1987,19 @@ namespace OnlineVideos
             }
             else
             {
+                OnlineVideos.Database.FavoritesDatabase db = OnlineVideos.Database.FavoritesDatabase.getInstance();
+
                 if (showingFavorites || selectedSite is Sites.FavoriteUtil)
                 {
-                    selectedSite.RemoveFavorite(loSelectedVideo);
+                    db.removeFavoriteVideo(loSelectedVideo);
                     refreshList = true;
                 }
                 else
                 {
-                    selectedSite.AddFavorite(loSelectedVideo);
+                    db.addFavoriteVideo(loSelectedVideo, selectedSite.Settings.Name);
                 }
             }
             if (refreshList) refreshVideoList();
-        }
-
-        private void getRelatedVideos(VideoInfo loSelectedVideo)
-        {
-            moCurrentVideoList = selectedSite.getRelatedVideos(loSelectedVideo.VideoUrl);
-            DisplayCategoryVideos();
         }
 
         #endregion

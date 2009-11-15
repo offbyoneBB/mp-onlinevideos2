@@ -212,7 +212,7 @@ namespace OnlineVideos.Sites
                     link.VideoUrl = "http://mediathek.daserste.de" + str7;
                     link.ImageUrl = "http://mediathek.daserste.de" + str4;
                     link.Length = str6.Trim();
-                    link.Title = string.Format("{0} {1}", link.Length, str5.Trim());
+                    link.Title = str5.Trim();
                     listOfLinks.Add(link);
                 }
             }

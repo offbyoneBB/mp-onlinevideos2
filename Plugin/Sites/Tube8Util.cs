@@ -143,7 +143,7 @@ namespace OnlineVideos.Sites
                     g = GetDataPage(g);
                     loRssItem.VideoUrl = g.Data;    //video link
 
-                    g.Search = "alt";
+                    g.Search = "title";
                     g = GetDataPage(g);
                     loRssItem.Title = g.Data; // title
 

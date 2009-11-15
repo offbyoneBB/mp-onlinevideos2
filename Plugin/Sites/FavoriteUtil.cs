@@ -80,14 +80,7 @@ namespace OnlineVideos.Sites
             // need to always get the categories, because when adding new fav video from a new site, a removing the last one for a site, the categories must be refreshed 
             Settings.DynamicCategoriesDiscovered = false;
             return Settings.Categories.Count;
-        }
-
-        public override bool RemoveFavorite(VideoInfo foVideo)
-        {
-            bool result = base.RemoveFavorite(foVideo);
-            if (result) Settings.DynamicCategoriesDiscovered = false;
-            return result;
-        }
+        }        
 
         #region ISearch Member
 
