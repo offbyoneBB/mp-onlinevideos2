@@ -87,14 +87,20 @@ namespace OnlineVideos.Sites
 
         private CookieCollection moCookies;
         private Regex regexId = new Regex("/videos/(.+)");
-        
-        public override List<OnlineVideos.VideoInfo> getRelatedVideos(string fsId)
+
+        public override bool HasRelatedVideos
         {
+            get { return true; }
+        }
+
+        public override List<VideoInfo> getRelatedVideos(VideoInfo video)
+        {
+            string fsId = video.VideoUrl;
             YouTubeQuery query = new YouTubeQuery(String.Format(RELATED_VIDEO_FEED, fsId));
             return parseGData(query);
         }
 
-        public override List<VideoInfo> getSiteFavorites(String fsUser)
+        protected List<VideoInfo> getSiteFavorites(String fsUser)
         {
             //http://www.youtube.com/api2_rest?method=%s&dev_id=7WqJuRKeRtc&%s"   # usage   base_api %( method, extra)   eg base_api %( youtube.videos.get_detail, video_id=yyPHkJMlD0Q)
             //String lsUrl = "http://www.youtube.com/api2_rest?method=youtube.users.list_favorite_videos&dev_id=7WqJuRKeRtc&user="+fsUser;

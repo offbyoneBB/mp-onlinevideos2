@@ -18,8 +18,17 @@ namespace OnlineVideos.Sites
     /// </summary>
     public abstract class SiteUtilBase : ICustomTypeDescriptor
     {
+        /// <summary>
+        /// The <see cref="SiteSettings"/> as configured in the xml will be set after an instance of this class was created 
+        /// by the default implementation of the <see cref="Initialize"/> method.
+        /// </summary>
         public virtual SiteSettings Settings { get; protected set; }
 
+        /// <summary>
+        /// You should always call this implementation, even when overriding it. It is called after the instance has been created
+        /// in order to configure settings from the xml for this util.
+        /// </summary>
+        /// <param name="siteSettings"></param>
         public virtual void Initialize(SiteSettings siteSettings)
         {
             Settings = siteSettings;
@@ -79,82 +88,163 @@ namespace OnlineVideos.Sites
             }
         }
 
+        /// <summary>
+        /// This is the only function a subclass has to implement. It's called when a user selects a category in the GUI. 
+        /// It should return a list of videos for that category, reset the paging indexes, remember this category, whatever is needed to hold state.
+        /// </summary>
+        /// <param name="category">The <see cref="Category"/> that was selected by the user.</param>
+        /// <returns>a list of <see cref="VideoInfo"/> object for display</returns>
         public abstract List<VideoInfo> getVideoList(Category category);                       
-
-        public virtual List<VideoInfo> getSiteFavorites(String fsUser)
-        {
-            return new List<VideoInfo>();
-        }
-
-        public virtual List<VideoInfo> getRelatedVideos(String fsTags)
-        {
-            return new List<VideoInfo>();
-        }
-
+        
+        /// <summary>
+        /// If the site's categories can be retrieved dynamically, then it should be done in the implementation of this method.
+        /// The categories must be added to the <see cref="SiteSettings"/> retrieved from the <see cref="Settings"/> property of this class.
+        /// Once the categories are added you should set <see cref="SiteSettings.DynamicCategoriesDiscovered"/> to true, 
+        /// so this method won't be called each time the user enters this site in the GUI (unless youi want that behavior).<br/>
+        /// default: sets <see cref="SiteSettings.DynamicCategoriesDiscovered"/> to true
+        /// </summary>
+        /// <returns>The number of dynamic categories added. 0 means none found / added</returns>
         public virtual int DiscoverDynamicCategories()
         {
             Settings.DynamicCategoriesDiscovered = true;
             return 0;
         }
 
+        /// <summary>
+        /// If a category has sub-categories this function will be called when the user selects a category in the GUI.
+        /// This happens only when <see cref="Category.HasSubCategories"/> is true and <see cref="Category.SubCategoriesDiscovered"/> is false.
+        /// </summary>
+        /// <param name="parentCategory">the category that was selected by the user</param>
+        /// <returns>0 if no sub-categeories where found, otherwise the number of categories that were added to <see cref="Category.SubCategories"/></returns>
         public virtual int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategoriesDiscovered = true;
             return 0;
         }
 
+        /// <summary>
+        /// This function will be called when the user selects a video for playback. It should return the absolute url to the video file.<br/>
+        /// By default, the <see cref="VideoInfo.VideoUrl"/> fields value will be returned.
+        /// </summary>
+        /// <param name="video">The <see cref="VideoInfo"/> from the list of displayed videos that were returned by this instance previously.</param>
+        /// <returns>A valid url or filename.</returns>
         public virtual String getUrl(VideoInfo video)
         {
             return video.VideoUrl;
         }
 
+        /// <summary>
+        /// This will be called to find out if there is a next page for the videos that have just been returned 
+        /// by a call to <see cref="getVideoList"/>. If returns true, the menu entry for "next page" will be enabled, otherwise disabled.<br/>
+        /// Example: <see cref="MtvMusicVideosUtil"/><br/>
+        /// default: always false
+        /// </summary>
         public virtual bool HasNextPage
         {
             get { return false; }
         }
 
+        /// <summary>
+        /// This function should return the videos of the next page. No state is given, 
+        /// so the class implementation has to remember and set the current category and page itself.
+        /// It will only be called if <see cref="HasNextPage"/> returned true on the last call 
+        /// and after the user selected the menu entry for "next page".<br/>
+        /// Example: <see cref="MtvMusicVideosUtil"/><br/>
+        /// default: empty list
+        /// </summary>
+        /// <returns>a list of <see cref="VideoInfo"/> objects for the next page of the last queried category.</returns>
         public virtual List<VideoInfo> getNextPageVideos()
         {
             return new List<VideoInfo>();
         }
 
+        /// <summary>
+        /// This will be called to find out if there is a previous page for the videos that have just been returned 
+        /// by a call to <see cref="getVideoList"/>. If returns true, the menu entry for "previous page" will be enabled, otherwise disabled.<br/>
+        /// Example: <see cref="MtvMusicVideosUtil"/><br/>
+        /// default: always false
+        /// </summary>
         public virtual bool HasPreviousPage
         {
             get { return false; }
         }
 
+        /// <summary>
+        /// This function should return the videos of the previous page. No state is given, 
+        /// so the class implementation has to remember and set the current category and page itself.
+        /// It will only be called if <see cref="HasPreviousPage"/> returned true on the last call 
+        /// and after the user selected the menu entry for "previous page".<br/>
+        /// Example: <see cref="MtvMusicVideosUtil"/><br/>
+        /// default: empty list
+        /// </summary>
+        /// <returns>a list of <see cref="VideoInfo"/> objects for the previous page of the last queried category.</returns>
         public virtual List<VideoInfo> getPreviousPageVideos()
         {
             return new List<VideoInfo>();
         }
 
-        public virtual void AddFavorite(VideoInfo foVideo)
+        /// <summary>
+        /// Returns true, if the site supports querying for related videos (e.g. <see cref="YouTubeUtil"/>).
+        /// If true, a conext menu entry "show related videos" is added on a video.<br/>
+        /// default: false
+        /// </summary>
+        public virtual bool HasRelatedVideos
         {
-            FavoritesDatabase db = FavoritesDatabase.getInstance();
-            db.addFavoriteVideo(foVideo, Settings.Name);
+            get { return false; }
         }
 
-        public virtual bool RemoveFavorite(VideoInfo foVideo)
+        /// <summary>
+        /// This function should return a list if videos that are related to the given video (e.g. <see cref="YouTubeUtil"/>).
+        /// It will only be called when <see cref="HasRelatedVideos"/> returns true.<br/>
+        /// default: empty list
+        /// </summary>
+        /// <param name="video">The <see cref="VideoInfo"/> object, for which to get a list of related of videos.</param>
+        /// <returns>a list of <see cref="VideoInfo"/> objects that are related to the input video</returns>
+        public virtual List<VideoInfo> getRelatedVideos(VideoInfo video)
         {
-            FavoritesDatabase db = FavoritesDatabase.getInstance();
-            return db.removeFavoriteVideo(foVideo);
+            return new List<VideoInfo>();
         }
-
+        
+        /// <summary>
+        /// Returns true, if the site has multiple choices for a video (e.g. <see cref="AppleTrailersUtil"/>).
+        /// The GUI will show a details view with a selection of videos, taken from <see cref="getOtherVideoList"/>.<br/>
+        /// default: false
+        /// </summary>
         public virtual bool HasMultipleVideos
         {
             get { return false; }
         }
 
-        public virtual List<VideoInfo> getOtherVideoList(VideoInfo foVideo)
+        /// <summary>
+        /// This function will  be called to retreive a list of videos, that will be displayed in the details view, 
+        /// as choices for a given video (e.g. <see cref="AppleTrailersUtil"/>). 
+        /// It will only be called when <see cref="HasMultipleVideos"/> returns true.<br/>
+        /// default: empty list
+        /// </summary>
+        /// <param name="video">The base <see cref="VideoInfo"/> object, for which to get a choice of videos.</param>
+        /// <returns>a list of <see cref="VideoInfo"/> objects</returns>
+        public virtual List<VideoInfo> getOtherVideoList(VideoInfo video)
         {
             return new List<VideoInfo>();
         }
 
+        /// <summary>
+        /// Returns true, if the videos for this site are split in multiple parts, so a playlist has to be used for playback
+        /// (e.g. <see cref="SouthParkDeUtil"/>).<br/>
+        /// default: false
+        /// </summary>
         public virtual bool MultipleFilePlay
         {
             get { return false; }
         }
 
+        /// <summary>
+        /// This function will be called to get the multiple urls for playback of the video, 
+        /// if <see cref="MultipleFilePlay"/> is true (e.g. <see cref="SouthParkDeUtil"/>).<br/>
+        /// default: empty list
+        /// </summary>
+        /// <param name="video">The base <see cref="VideoInfo"/> object, for which to get a list of urls.</param>
+        /// <returns></returns>
         public virtual List<String> getMultipleVideoUrls(VideoInfo video)
         {
             return new List<String>();
@@ -162,7 +252,9 @@ namespace OnlineVideos.Sites
 
         public virtual string GetFileNameForDownload(VideoInfo video, string url)
         {
-            string extension = System.IO.Path.GetExtension(url);
+            string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] {'/'}));
+            if (extension == string.Empty) extension = System.IO.Path.GetExtension(url);
+            if (extension == ".f4v") extension = ".flv";
             string safeName = ImageDownloader.GetSaveFilename(video.Title);
             return safeName + extension;
         }
