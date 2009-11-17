@@ -36,6 +36,24 @@
 			<Id>04010</Id>
 			<Option />
 			<Guid>4a789505-8c66-4d34-a988-0a5af571989d</Guid>
+		</File>		
+		<File>
+			<FileName>Arte+7.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\Arte+7.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>39696836-E226-4b60-9D92-1D4015CCE869</Guid>
+		</File>
+		<File>
+			<FileName>Arte+7.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\Arte+7.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>A21F6CD6-AFB8-4d77-981F-4F9F27334CDE</Guid>
 		</File>
 		<File>
 			<FileName>blip.tv.png</FileName>
