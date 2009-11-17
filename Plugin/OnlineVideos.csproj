@@ -412,6 +412,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Configuration\SiteSettings.cs" />
+    <Compile Include="Sites\ArtePlus7Util.cs" />
     <Compile Include="Sites\BreakUtil.cs" />
     <Compile Include="Sites\CnnUtil.cs" />
     <Compile Include="Sites\DasErsteMediathekUtil.cs" />

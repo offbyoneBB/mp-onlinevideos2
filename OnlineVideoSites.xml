@@ -70,6 +70,9 @@
         <Category xsi:type="RssLink" name="Theater und Foyer ">http://www.3sat.de/mediathek/rss/mediathek_theater.xml</Category>
       </Categories>
     </Site>
+    <Site name="Arte+7" util="ArtePlus7" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen des Arte.</Description>      
+    </Site>    
     <Site name="RTL Now" util="RTLNow" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>
     </Site>
