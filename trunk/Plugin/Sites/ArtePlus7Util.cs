@@ -32,13 +32,18 @@ namespace OnlineVideos.Sites
 
         string playlistItemRegex = @"<REF\sHREF=""(?<url>[^""]+)""/>";
 
-        string baseUrl = "http://plus7.arte.tv/de/1697480,filter=emissions.html";
+        string subCategoryRegex = @"<h1><a\shref=""(?<url>[^""]+)""\sonfocus=""this.blur\(\)"">\s*<img\ssrc=""(?<img>[^""]+)""\salt=""(?<title>[^""]+)""";
+
+
+        //string baseUrl = "http://plus7.arte.tv/de/1697480,filter=emissions.html";
+        string baseUrl = "http://plus7.arte.tv/de/1697480.html";
 
         Regex regEx_CategoryUrl;
         Regex regEx_Category;
         Regex regEx_Videolist;
         Regex regEx_Playlist;
         Regex regEx_PlaylistItem;
+        Regex regEx_SubcategoryItem;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -49,15 +54,45 @@ namespace OnlineVideos.Sites
             regEx_Videolist = new Regex(videolistRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             regEx_Playlist = new Regex(playlistRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             regEx_PlaylistItem = new Regex(playlistItemRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
+            regEx_SubcategoryItem = new Regex(subCategoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
         }
 
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-
             string data = GetWebData(baseUrl);
+
+            if (!string.IsNullOrEmpty(data))
+            {
+                Match m = regEx_SubcategoryItem.Match(data);
+                while (m.Success)
+                {
+                    if (m.Groups["url"].Value.Contains("filter"))
+                    {
+                        RssLink cat = new RssLink();
+                        cat.HasSubCategories = true;
+                        cat.Name = m.Groups["title"].Value;
+                        cat.Url = m.Groups["url"].Value;
+                        cat.Url = "http://plus7.arte.tv" + cat.Url;
+
+                        Settings.Categories.Add(cat);
+                    }
+                    m = m.NextMatch();
+                }
+                Settings.DynamicCategoriesDiscovered = true;
+                return Settings.Categories.Count;
+            }
+            return 0;
+        }
+
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            string data = GetWebData((parentCategory as RssLink).Url);
             string categoryUrl = String.Empty;
 
+
+            parentCategory.SubCategories = new List<Category>();
             if (!string.IsNullOrEmpty(data))
             {
                 Match m = regEx_CategoryUrl.Match(data);
@@ -79,16 +114,19 @@ namespace OnlineVideos.Sites
                     while (m.Success)
                     {
                         RssLink cat = new RssLink();
+                        cat.SubCategoriesDiscovered = true;
+                        cat.HasSubCategories = false;
 
                         cat.Url = m.Groups["url"].Value;
                         cat.Url = "http://plus7.arte.tv" + cat.Url;
 
                         cat.Name = m.Groups["title"].Value;
 
-                        Settings.Categories.Add(cat);
+                        parentCategory.SubCategories.Add(cat);
+                        cat.ParentCategory = parentCategory;
                         m = m.NextMatch();
                     }
-                    Settings.DynamicCategoriesDiscovered = true;
+                    parentCategory.SubCategoriesDiscovered = true;
                     return Settings.Categories.Count;
                 }
             }
@@ -164,13 +202,13 @@ namespace OnlineVideos.Sites
             {
                 //re is kidding me.. -_-
                 Match m = regEx_Videolist.Match(data);
-                string xmlUrl ="";
+                string xmlUrl = "";
                 if (m.Success)
                 {
                     xmlUrl = m.Groups["url"].Value;
                     xmlUrl = "http://plus7.arte.tv" + xmlUrl;
                 }
-                
+
                 if (!string.IsNullOrEmpty(xmlUrl))
                 {
 
