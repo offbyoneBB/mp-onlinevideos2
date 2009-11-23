@@ -71,10 +71,13 @@
       </Categories>
     </Site>
     <Site name="Arte+7" util="ArtePlus7" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des Arte.</Description>      
+      <Description>Kostenlos verfügbare Sendungen des Senders Arte.</Description>      
     </Site>    
     <Site name="RTL Now" util="RTLNow" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>
+    </Site>
+    <Site name="Orf" util="Orf" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen des Orfs.</Description>      
     </Site>
     <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
       <Description>Deutscher YouTube Clone.</Description>
