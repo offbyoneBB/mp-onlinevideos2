@@ -59,6 +59,7 @@ namespace OnlineVideos.Sites
                     {
                         RssLink cat = new RssLink();
                         cat.Name = m.Groups["title"].Value;
+                        cat.Name = cat.Name.Replace("&amp;", "&");
                         cat.Url = m.Groups["url"].Value;
                         cat.Url = "http://tvthek.orf.at" + cat.Url;
 
@@ -107,6 +108,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = new VideoInfo();
                     video.Title = m.Groups["title"].Value;
+                    video.Title = video.Title.Replace("&amp;", "&");
                     video.VideoUrl = (category as RssLink).Url;
 
                     videos.Add(video);
