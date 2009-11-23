@@ -612,6 +612,24 @@
       <Id>04010</Id>
       <Option />
       <Guid>978159EB-FEE6-4581-A70B-A5C932A5E3EB</Guid>
+    </File>
+    <File>
+      <FileName>Orf.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\Orf.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>76D8F53E-B094-4531-85FB-729D0B423898</Guid>
+    </File>
+    <File>
+      <FileName>Orf.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\Orf.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>95BA7A9A-DE67-416a-BEE3-E3F1553773F5</Guid>
     </File>    
 		<File>
 			<FileName>Picture_cover_focused.png</FileName>
@@ -939,7 +957,7 @@
 		<ProiectName>Online Videos</ProiectName>
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com/files/Download/MediaPortalInstaller(MPI)/Web/OnlineVideos/</UpdateURL>
-		<Version>0.13.0</Version>
+		<Version>0.14.0</Version>
 		<Description>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</Description>
 		<Group>Web</Group>
 		<Release>Beta</Release>
@@ -1035,7 +1053,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>11-11-09</CreationDate>
+		<CreationDate>23-11-09</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>

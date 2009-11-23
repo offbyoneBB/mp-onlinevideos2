@@ -13,6 +13,19 @@ namespace OnlineVideos.Sites
     {
         [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
         string searchUrl = "http://www.xhamster.com/search.php?q={0}";
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the html page for the playback url.")]
+        string fileUrlRegEx = @"'srv':\s'(?<srv>[^']+)',\s*
+'[^']+':\s'[^']+',\s*
+'file':\s'(?<file>[^']+)'";
+
+        Regex regEx_FileUrl;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+
+            regEx_FileUrl = new Regex(fileUrlRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+        }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
@@ -189,44 +202,17 @@ namespace OnlineVideos.Sites
         // resolve url for video
         public override String getUrl(VideoInfo video)
         {
-            // so.addVariable('srv','18');
-            // http://dl18.xhamster.com/flv2/97883_Blonde_whore_gets_het_mouth_fucked_FM14.flv
-
-            string ret = video.VideoUrl;
-
-            int x;
-            int y;
             string data = GetWebData(video.VideoUrl);
-
             if (data.Length > 0)
             {
-                x = data.IndexOf("addVariable('srv'");
-                if (x != -1)
+                Match m = regEx_FileUrl.Match(data);
+                if (m.Success)
                 {
-                    x += 19;
-                    y = data.IndexOf("'", x);
-                    if (y != -1)
-                    {
-                        string s = data.Substring(x, y - x);
-
-                        x = data.IndexOf("addVariable('file'");
-                        if (x != -1)
-                        {
-                            x += 20;
-                            y = data.IndexOf("'", x);
-                            if (y != -1)
-                            {
-                                string l = data.Substring(x, y - x);
-
-                                ret = s.ToString() + "/flv2/" + l;
-                                Log.Debug("xHamster - Found flv " + ret);
-                            }
-                        }
-                    }
+                    string result_url = string.Format("{0}flv2/{1}", m.Groups["srv"], m.Groups["file"]);
+                    return result_url;
                 }
             }
-
-            return (ret);
+            return "";
         }
 
         #region Next|Previous Page

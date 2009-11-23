@@ -1367,11 +1367,19 @@ namespace OnlineVideos
                 if (playSuccess && g_Player.Player != null && g_Player.IsVideo)
                 {
                     playing = true;
+
                     GUIGraphicsContext.IsFullScreenVideo = true;
                     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
 
-                    // Process was needed before setting the title, because the event was sometimes swallowed otherwise
-                    GUIWindowManager.Process();
+                    // wait until the internal g_Player Code sets the title
+                    int maxWaits = 10;
+                    while (maxWaits > 0 && (GUIPropertyManager.GetProperty("#Play.Current.Title") == "" || !lsUrl.Contains(GUIPropertyManager.GetProperty("#Play.Current.Title"))))
+                    {
+                        maxWaits--;
+                        System.Diagnostics.Debug.WriteLine(maxWaits);
+                        GUIWindowManager.Process();
+                    }
+                    // and after that set our title
                     GUIPropertyManager.SetProperty("#Play.Current.Title", foListItem.Title);
 
                     if (foListItem.StartTime != String.Empty)

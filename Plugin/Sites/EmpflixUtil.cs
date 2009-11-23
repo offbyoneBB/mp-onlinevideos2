@@ -20,20 +20,22 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos.")]
         string videoListRegEx = @"<a\shref=""(?<VideoUrl>http\://www\.empflix\.com/view\.php\?id\=\d+)""\s*title=""(?<Title>[^""]+)""[^>]*>\s*
 <img\ssrc=""\s*(?<ImageUrl>http\://[^""]+)""[^>]*>\s*
-<p[^>]*>[^<]*</p></a>\s*
+(?:(?!<p).)*\s*
 <p\sclass=""length"">(?<Duration>[^<]*)</p>";
 
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a next page link.")]
-        string nextPageRegEx = @"<a\shref=""(?<url>.*)"">next\s&gt;&gt;</a>";
+        string nextPageRegEx = @"<a\sonclick=""killVideoThumbs\(\)\;""\shref=""(?<url>.*)"">next\s&gt;&gt;</a>";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link.")]
-        string prevPageRegEx = @"<a\shref=""(?<url>.*)"">&lt;&lt;\sprev</a>";
+        string prevPageRegEx = @"<a\sonclick=""killVideoThumbs\(\)\;""\shref=""(?<url>.*)"">&lt;&lt;\sprev</a>";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page embedding a video for a link to the actual video.")]
-        string playlistUrlRegEx = @"so.addVariable\('file','(?<url>[^']+)'\);";
+        string playlistUrlRegEx = @"so\.addVariable\('config',\s*'(?<url>[^']+)'\);";
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the playlist data for the playback url.")]
+        string fileUrlRegEx = @"<file>(?<url>[^<]+)</file>";
 
         [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. Search is done via POST.")]
         string searchUrl = "http://www.empflix.com/search.php";
 
-        Regex regEx_VideoList, regEx_PlaylistUrl, regEx_NextPage, regEx_PrevPage;
+        Regex regEx_VideoList, regEx_PlaylistUrl, regEx_NextPage, regEx_PrevPage, regEx_FileUrl;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -43,6 +45,7 @@ namespace OnlineVideos.Sites
             regEx_PlaylistUrl = new Regex(playlistUrlRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
             regEx_NextPage = new Regex(nextPageRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
             regEx_PrevPage = new Regex(prevPageRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            regEx_FileUrl = new Regex(fileUrlRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -54,23 +57,23 @@ namespace OnlineVideos.Sites
         {
             try
             {
-                string dataPage = GetWebData(video.VideoUrl + "&player=old");
+                string dataPage = GetWebData(video.VideoUrl);
                 if (dataPage.Length > 0)
                 {
                     Match m = regEx_PlaylistUrl.Match(dataPage);
                     if (m.Success)
-                    {
-                        return m.Groups["url"].Value;
-                        /*string playlistUrl = "http://cdnt.empflix.com/" + m.Groups["url"].Value;
+                    {                        
+                        string playlistUrl = m.Groups["url"].Value;
                         playlistUrl = System.Web.HttpUtility.UrlDecode(playlistUrl);
                         dataPage = GetWebData(playlistUrl);
                         if (dataPage.Length > 0)
                         {
-                            XmlDocument doc = new XmlDocument();
-                            doc.LoadXml(dataPage);
-                            string result = doc.SelectSingleNode("//file").InnerText;
-                            return result +"&filetype=.flv";
-                        }*/
+                            m = regEx_FileUrl.Match(dataPage);
+                            if (m.Success)
+                            {
+                                return m.Groups["url"].Value + "&filetype=.flv";
+                            }
+                        }
                     }
                 }
             }
