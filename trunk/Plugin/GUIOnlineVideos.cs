@@ -299,6 +299,7 @@ namespace OnlineVideos
                     if (selectedSite.HasRelatedVideos)
                     {
                         moCurrentVideoList = selectedSite.getRelatedVideos(loSelectedVideo);
+                        showingFavorites = false;
                         DisplayCategoryVideos();
                     }
                     else
@@ -347,7 +348,7 @@ namespace OnlineVideos
                         if (facadeView[i].Label.ToLower().StartsWith(lowerChar))
                         {
                             facadeView.SelectedListItemIndex = i;
-                            break;
+                            return;
                         }
                     }
                 }
