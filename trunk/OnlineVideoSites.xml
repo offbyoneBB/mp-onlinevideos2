@@ -72,7 +72,16 @@
     </Site>
     <Site name="Arte+7" util="ArtePlus7" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Senders Arte.</Description>      
-    </Site>    
+    </Site>   
+    <Site name="Sat1" util="Sat1" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen des Senders Sat1.</Description>      
+    </Site>
+    <Site name="Pro7" util="Pro7" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen des Senders Pro7.</Description>      
+    </Site>
+    <Site name="Kabel1" util="Kabel1" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen des Senders Kabel1.</Description>      
+    </Site>	
     <Site name="RTL Now" util="RTLNow" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>
     </Site>
