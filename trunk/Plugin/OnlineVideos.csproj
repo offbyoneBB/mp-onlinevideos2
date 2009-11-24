@@ -423,6 +423,7 @@
     <Compile Include="Sites\Interfaces\IFilter.cs" />
     <Compile Include="Sites\Interfaces\ISearch.cs" />
     <Compile Include="Sites\JustinTVUtil.cs" />
+    <Compile Include="Sites\Kabel1Util.cs" />
     <Compile Include="Sites\LineCinemaRuUtil.cs" />
     <Compile Include="Sites\LiveVideoUtil.cs" />
     <Compile Include="Sites\MdrUtil.cs" />
@@ -433,6 +434,7 @@
     <Compile Include="Sites\OnTVRuUtil.cs" />
     <Compile Include="Sites\MsnbcUtil.cs" />
     <Compile Include="Sites\OrfUtil.cs" />
+    <Compile Include="Sites\Pro7Util.cs" />
     <Compile Include="Sites\RedTubeUtil.cs" />
     <Compile Include="Sites\RTLNowUtil.cs" />
     <Compile Include="Sites\Sat1Util.cs" />
