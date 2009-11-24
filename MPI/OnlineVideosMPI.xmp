@@ -297,7 +297,25 @@
       <Id>04010</Id>
       <Option />
       <Guid>B28720AD-D36C-4a31-A234-9537B0A53E14</Guid>
-    </File>    
+    </File>
+    <File>
+      <FileName>Kabel1.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\Kabel1.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>67667190-6383-432f-8F83-D48AB16AC848</Guid>
+    </File>
+    <File>
+      <FileName>Kabel1.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\Kabel1.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>08B73564-1B20-44ec-BFC8-BA17EDBCC407</Guid>
+    </File>
     <File>
 			<FileName>Live Video.png</FileName>
 			<Type>Thumbs</Type>
@@ -630,6 +648,24 @@
       <Id>04010</Id>
       <Option />
       <Guid>95BA7A9A-DE67-416a-BEE3-E3F1553773F5</Guid>
+    </File>            
+    <File>
+      <FileName>Pro7.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\Pro7.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>EFAD7D89-0F7E-42ce-9C82-C1E80CAD2C64</Guid>
+    </File>
+    <File>
+      <FileName>Pro7.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\Pro7.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>ABC33D67-92FA-4004-8FAA-F817E962827C</Guid>
     </File>    
 		<File>
 			<FileName>Picture_cover_focused.png</FileName>
@@ -693,7 +729,25 @@
       <Id>04010</Id>
       <Option />
       <Guid>CC156B4E-7B9C-4499-AE0B-E6874B947807</Guid>
-    </File>        
+    </File>    
+    <File>
+      <FileName>Sat1.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\Sat1.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>2384FE1F-1A3D-4100-A694-8CFAA2C19F28</Guid>
+    </File>
+    <File>
+      <FileName>Sat1.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\Sat1.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>F511BA71-FAAE-4eff-A861-04E45578D0A2</Guid>
+    </File>    
 		<File>
 			<FileName>Snowboard Surf and Skate.png</FileName>
 			<Type>Thumbs</Type>
@@ -1053,7 +1107,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>23-11-09</CreationDate>
+		<CreationDate>24-11-09</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
