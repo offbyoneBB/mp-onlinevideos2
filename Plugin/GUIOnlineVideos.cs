@@ -18,6 +18,8 @@ namespace OnlineVideos
 
         public enum State { home = 0, categories = 1, videos = 2, info = 3 }
 
+        public enum VideosMode { Category = 0, Favorites = 1, Search = 2, Related = 3 }
+
         public const string PLUGIN_NAME = "Online Videos";
 
         BackgroundWorker worker;
@@ -140,9 +142,9 @@ namespace OnlineVideos
         int selectedClipIndex = 0;  // used to remember the position the last selected Trailer
         
         List<VideoInfo> moCurrentVideoList = new List<VideoInfo>();
-        List<VideoInfo> moCurrentTrailerList = new List<VideoInfo>();        
+        List<VideoInfo> moCurrentTrailerList = new List<VideoInfo>();
 
-        bool showingFavorites = false;
+        VideosMode currentVideosDisplayMode = VideosMode.Category;
 
         SiteOrder siteOrder = SiteOrder.AsInFile;
 
@@ -170,8 +172,7 @@ namespace OnlineVideos
 
         #region search variables
         private String msLastSearchQuery;
-        private String msLastSearchCategory;
-        private bool searchMode = false;        
+        private String msLastSearchCategory;        
         #endregion                
         
         #region GUIWindow Overrides
@@ -250,7 +251,7 @@ namespace OnlineVideos
 
                 dlgSel.Add(GUILocalizeStrings.Get(30003)); //Play All
 
-                if (showingFavorites == false && !(selectedSite is Sites.FavoriteUtil))
+                if (currentVideosDisplayMode != VideosMode.Favorites && !(selectedSite is Sites.FavoriteUtil))
                 {
                     if (!(selectedSite is Sites.DownloadedVideoUtil)) dlgSel.Add(GUILocalizeStrings.Get(930)/*Add to favorites*/);
                 }
@@ -260,7 +261,7 @@ namespace OnlineVideos
                 }
                 if (selectedSite.HasRelatedVideos)
                 {
-                    dlgSel.Add("Related Videos");
+                    dlgSel.Add(GUILocalizeStrings.Get(33011)); /*Related Videos*/
                 }
                 if (String.IsNullOrEmpty(OnlineVideoSettings.getInstance().msDownloadDir) == false)
                 {
@@ -299,8 +300,9 @@ namespace OnlineVideos
                     if (selectedSite.HasRelatedVideos)
                     {
                         moCurrentVideoList = selectedSite.getRelatedVideos(loSelectedVideo);
-                        showingFavorites = false;
+                        currentVideosDisplayMode = VideosMode.Related;
                         DisplayCategoryVideos();
+                        UpdateViewState();
                     }
                     else
                     {
@@ -630,8 +632,7 @@ namespace OnlineVideos
                 else DisplayCategories(selectedCategory.ParentCategory);
 
                 currentState = State.categories;
-                showingFavorites = false;
-                searchMode = false;
+                currentVideosDisplayMode = VideosMode.Category;
             }
             else if (currentState == State.info)
             {
@@ -995,7 +996,7 @@ namespace OnlineVideos
             worker = new BackgroundWorker();
             worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
             {                    
-                if (searchMode)
+                if (currentVideosDisplayMode == VideosMode.Search)
                 {
                     Log.Info("Filtering search result");
                     //filtering a search result
@@ -1056,7 +1057,7 @@ namespace OnlineVideos
 
                 if (UpdateVideoList(loListItems))
                 {
-                    searchMode = true;
+                    currentVideosDisplayMode = VideosMode.Search;
                     moCurrentVideoList = loListItems;
                     return true;
                 }
@@ -1066,62 +1067,60 @@ namespace OnlineVideos
 
         private void refreshVideoList()
         {
-            if (searchMode)
+            switch (currentVideosDisplayMode)
             {
-                SearchVideos(msLastSearchQuery);
-            }
-            else if (showingFavorites)
-            {
-                DisplayFavoriteVideos();
-            }
-            else
-            {                
-                GUIWaitCursor.Init();
-                GUIWaitCursor.Show();
+                case VideosMode.Search: SearchVideos(msLastSearchQuery); break;
+                case VideosMode.Favorites: DisplayFavoriteVideos(); break;
+                case VideosMode.Category:
 
-                bool success = false;
-                worker = new BackgroundWorker();
-                worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
-                {                    
-                    List<VideoInfo> loListItems = selectedSite.getVideoList(selectedCategory);                    
+                    GUIWaitCursor.Init();
+                    GUIWaitCursor.Show();
 
-                    if (loListItems != null && loListItems.Count > 0)
+                    bool success = false;
+                    worker = new BackgroundWorker();
+                    worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
                     {
-                        moCurrentVideoList.Clear();
-                        GUIControl.ClearControl(GetID, facadeView.GetID);
+                        List<VideoInfo> loListItems = selectedSite.getVideoList(selectedCategory);
 
-                        if (selectedSite.HasNextPage) ShowNextPageButton();
-                        else HideNextPageButton();
+                        if (loListItems != null && loListItems.Count > 0)
+                        {
+                            moCurrentVideoList.Clear();
+                            GUIControl.ClearControl(GetID, facadeView.GetID);
 
-                        if (selectedSite.HasPreviousPage) ShowPreviousPageButton();
-                        else HidePreviousPageButton();
+                            if (selectedSite.HasNextPage) ShowNextPageButton();
+                            else HideNextPageButton();
 
-                        UpdateVideoList(loListItems);
-                        moCurrentVideoList = loListItems;
-                        success = true;
-                    }
-                });
-                worker.RunWorkerAsync();
-                while (worker.IsBusy) GUIWindowManager.Process();
+                            if (selectedSite.HasPreviousPage) ShowPreviousPageButton();
+                            else HidePreviousPageButton();
 
-                GUIWaitCursor.Hide();
-                
-                if (!success)
-                {
-                    GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                    dlg_error.SetHeading(PluginName());
-                    dlg_error.SetLine(1, GUILocalizeStrings.Get(1036)/*No Videos found!*/); 
-                    dlg_error.SetLine(2, String.Empty);
-                    dlg_error.DoModal(GUIWindowManager.ActiveWindow);
-                    
-                    //if (selectedSite.UtilName == "Favorite")
-                    //{
+                            UpdateVideoList(loListItems);
+                            moCurrentVideoList = loListItems;
+                            success = true;
+                        }
+                    });
+                    worker.RunWorkerAsync();
+                    while (worker.IsBusy) GUIWindowManager.Process();
+
+                    GUIWaitCursor.Hide();
+
+                    if (!success)
+                    {
+                        GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                        dlg_error.SetHeading(PluginName());
+                        dlg_error.SetLine(1, GUILocalizeStrings.Get(1036)/*No Videos found!*/);
+                        dlg_error.SetLine(2, String.Empty);
+                        dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+
+                        //if (selectedSite.UtilName == "Favorite")
+                        //{
                         DisplayCategories(selectedCategory.ParentCategory);
-                    //}
-                    currentState = State.categories;
-                    UpdateViewState();
-                }
-            }
+                        //}
+                        currentState = State.categories;
+                        UpdateViewState();
+                    }
+
+                    break;
+            }           
         }       
 
         private void DisplayCategoryVideos()
@@ -1129,7 +1128,7 @@ namespace OnlineVideos
             List<VideoInfo> loListItems;            
             loListItems = moCurrentVideoList;            
             UpdateVideoList(loListItems);
-            moCurrentVideoList = loListItems;            
+            moCurrentVideoList = loListItems;
             if (selectedVideoIndex < facadeView.Count) facadeView.SelectedListItemIndex = selectedVideoIndex; //Reposition the cursor on the selected video
         }
 
@@ -1139,7 +1138,7 @@ namespace OnlineVideos
             if (UpdateVideoList(loVideoList))
             {
                 moCurrentVideoList = loVideoList;
-                showingFavorites = true;
+                currentVideosDisplayMode = VideosMode.Favorites;                
                 return true;
             }
             return false;
@@ -1580,10 +1579,13 @@ namespace OnlineVideos
                     SwitchView();
                     break;
                 case State.videos:
-                    string headerlabel = selectedCategory != null ? selectedCategory.Name : "";
-                    if (searchMode) headerlabel = GUILocalizeStrings.Get(283);
-                    else if (showingFavorites) headerlabel = GUILocalizeStrings.Get(932);
-                    GUIPropertyManager.SetProperty("#header.label", headerlabel);
+                    switch (currentVideosDisplayMode)
+                    {
+                        case VideosMode.Favorites: GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(932)); break;
+                        case VideosMode.Search: GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(283)); break;
+                        case VideosMode.Related: GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(33011)); break;
+                        default: GUIPropertyManager.SetProperty("#header.label", selectedCategory != null ? selectedCategory.Name : ""); break;
+                    }
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Settings.Name + ".png");
                     ShowFacade();
                     //ShowFacadeViewAsButton();
@@ -1982,7 +1984,7 @@ namespace OnlineVideos
 
             if (selectedSite is IFavorite)
             {                
-                if (showingFavorites)
+                if (currentVideosDisplayMode == VideosMode.Favorites)
                 {
                     Log.Info("Received request to remove video from favorites.");                         
                     ((IFavorite)selectedSite).removeFavorite(loSelectedVideo);
@@ -1998,7 +2000,7 @@ namespace OnlineVideos
             {
                 OnlineVideos.Database.FavoritesDatabase db = OnlineVideos.Database.FavoritesDatabase.getInstance();
 
-                if (showingFavorites || selectedSite is Sites.FavoriteUtil)
+                if (currentVideosDisplayMode == VideosMode.Favorites || selectedSite is Sites.FavoriteUtil)
                 {
                     db.removeFavoriteVideo(loSelectedVideo);
                     refreshList = true;
