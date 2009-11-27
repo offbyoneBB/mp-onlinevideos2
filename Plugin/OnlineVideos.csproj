@@ -199,6 +199,7 @@
     <Compile Include="Jayrock.Json\Json\JsonWriterBracket.cs" />
     <Compile Include="Jayrock.Json\Mask.cs" />
     <Compile Include="Jayrock.Json\UnixTime.cs" />
+    <Compile Include="MMSDownloader.cs" />
     <Compile Include="Player\WMPVideoPlayer.cs" />
     <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Player\PlayerFactory.cs" />
