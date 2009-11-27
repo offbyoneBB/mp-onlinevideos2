@@ -299,7 +299,19 @@ namespace OnlineVideos
                 case 3:
                     if (selectedSite.HasRelatedVideos)
                     {
-                        moCurrentVideoList = selectedSite.getRelatedVideos(loSelectedVideo);
+                        List<VideoInfo> relatedVideos = new List<VideoInfo>();
+                        GUIWaitCursor.Init(); GUIWaitCursor.Show();                        
+                        worker = new BackgroundWorker();
+                        worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+                        {
+                            relatedVideos = selectedSite.getRelatedVideos(loSelectedVideo);
+                        });
+                        worker.RunWorkerAsync();
+                        while (worker.IsBusy) GUIWindowManager.Process();
+
+                        GUIWaitCursor.Hide();
+
+                        moCurrentVideoList = relatedVideos;
                         currentVideosDisplayMode = VideosMode.Related;
                         DisplayCategoryVideos();
                         UpdateViewState();
@@ -1029,14 +1041,14 @@ namespace OnlineVideos
             SelectedSearchCategoryIndex = btnSearchCategories.SelectedItem;
             if (query != String.Empty)
             {
-                 String category = String.Empty;
+                String category = String.Empty;
 
                 GUIWaitCursor.Init();
                 GUIWaitCursor.Show();
 
                 worker = new BackgroundWorker();
                 worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
-                {                    
+                {
                     if (moSupportedSearchCategoryList.Count > 1 && !btnSearchCategories.SelectedLabel.Equals("All"))
                     {
                         category = moSupportedSearchCategoryList[btnSearchCategories.SelectedLabel];
@@ -1134,7 +1146,21 @@ namespace OnlineVideos
 
         private bool DisplayFavoriteVideos()
         {
-            List<VideoInfo> loVideoList = ((IFavorite)selectedSite).getFavorites();
+            List<VideoInfo> loVideoList = null;
+
+            GUIWaitCursor.Init();
+            GUIWaitCursor.Show();
+
+            worker = new BackgroundWorker();
+            worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+            {
+                loVideoList = ((IFavorite)selectedSite).getFavorites();
+            });
+            worker.RunWorkerAsync();
+            while (worker.IsBusy) GUIWindowManager.Process();
+
+            GUIWaitCursor.Hide();
+
             if (UpdateVideoList(loVideoList))
             {
                 moCurrentVideoList = loVideoList;
@@ -1155,7 +1181,7 @@ namespace OnlineVideos
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
             facadeView.Add(loListItem);
             // Check for received data
-            if (foVideos.Count == 0)
+            if (foVideos == null || foVideos.Count == 0)
             {
                 GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
                 dlg_error.SetHeading(PluginName());
