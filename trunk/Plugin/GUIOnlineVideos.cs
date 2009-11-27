@@ -1447,16 +1447,39 @@ namespace OnlineVideos
                 dlg.DoModal(GUIWindowManager.ActiveWindow);
                 return;
             }
-
-            string safeName = selectedSite.GetFileNameForDownload(video, url);
-            string localFileName = System.IO.Path.Combine(OnlineVideoSettings.getInstance().msDownloadDir, safeName);
-            string thumbFile = ImageDownloader.GetThumbFile(video.ImageUrl);
             
-            // download file
-            WebClient loClient = new WebClient();
-            loClient.Headers.Add("user-agent", OnlineVideoSettings.UserAgent);
-            loClient.DownloadFileCompleted += DownloadFileCompleted;
-            loClient.DownloadFileAsync(new Uri(url), localFileName, new DownloadInfo { Title = video.Title, DownloadedFile = localFileName, ThumbFile = thumbFile });
+            DownloadInfo downloadInfo = new DownloadInfo() 
+            { 
+                Url = url, 
+                Title = video.Title, 
+                LocalFile = System.IO.Path.Combine(OnlineVideoSettings.getInstance().msDownloadDir, selectedSite.GetFileNameForDownload(video, url)),
+                ThumbFile = ImageDownloader.GetThumbFile(video.ImageUrl) 
+            };
+
+            if (url.ToLower().StartsWith("mms://"))
+            {
+                System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
+                {
+                    Exception exception = MMSDownloadHelper.Download(o as DownloadInfo);
+                    if (exception == null) DownloadFileCompleted(this, new AsyncCompletedEventArgs(null, false, o as DownloadInfo));
+                    else
+                    {
+                        Log.Error("Error downloading {0}, Msg: ", url, exception.Message);
+                        DownloadFileCompleted(this, new AsyncCompletedEventArgs(exception, true, o as DownloadInfo));
+                    }
+                });
+                downloadThread.IsBackground = true;
+                downloadThread.Name = "OnlineVideosDownload";
+                downloadThread.Start(downloadInfo);
+            }
+            else
+            {
+                // download file from web
+                WebClient loClient = new WebClient();
+                loClient.Headers.Add("user-agent", OnlineVideoSettings.UserAgent);
+                loClient.DownloadFileCompleted += DownloadFileCompleted;
+                loClient.DownloadFileAsync(new Uri(url), downloadInfo.LocalFile, downloadInfo);
+            }
         }
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
@@ -1475,8 +1498,8 @@ namespace OnlineVideos
                 if (System.IO.File.Exists(downloadInfo.ThumbFile))
                 {
                     string localImageName = System.IO.Path.Combine(
-                        System.IO.Path.GetDirectoryName(downloadInfo.DownloadedFile),
-                        System.IO.Path.GetFileNameWithoutExtension(downloadInfo.DownloadedFile))
+                        System.IO.Path.GetDirectoryName(downloadInfo.LocalFile),
+                        System.IO.Path.GetFileNameWithoutExtension(downloadInfo.LocalFile))
                         + System.IO.Path.GetExtension(downloadInfo.ThumbFile);
                     System.IO.File.Copy(downloadInfo.ThumbFile, localImageName);
                 }
