@@ -42,6 +42,8 @@ namespace OnlineVideos.Sites
         private const String RELATED_VIDEO_FEED = "http://gdata.youtube.com/feeds/api/videos/{0}/related";
         private const String VIDEO_URL = "http://www.youtube.com/get_video?video_id={0}&t={1}";
         private const String CATEGORY_FEED = "http://gdata.youtube.com/feeds/api/videos/-/{0}";
+        private const String USER_PLAYLISTS_FEED = "http://gdata.youtube.com/feeds/api/users/[\\w]+/playlists";
+        private const String PLAYLIST_FEED = "http://gdata.youtube.com/feeds/api/playlists/{0}";
         
         private YouTubeService service;
 
@@ -298,6 +300,16 @@ namespace OnlineVideos.Sites
         
         public override int DiscoverDynamicCategories()
         {
+            // walk the categories and see if there are user playlists - they need to be set to have subcategories
+            foreach(RssLink link in Settings.Categories)
+            {
+                if (Regex.Match(link.Url, USER_PLAYLISTS_FEED).Success)
+                {
+                    link.HasSubCategories = true;
+                    link.SubCategoriesDiscovered = false;
+                }
+            }
+
             if (!useDynamicCategories) return base.DiscoverDynamicCategories();
 
             Dictionary<String, String> categories = getYoutubeCategories();
@@ -310,7 +322,29 @@ namespace OnlineVideos.Sites
             }
             Settings.DynamicCategoriesDiscovered = true;
             return categories.Count;
-        }        
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            parentCategory.SubCategories = new List<Category>();
+            YouTubeQuery ytq = new YouTubeQuery((parentCategory as RssLink).Url) { NumberToRetrieve = 50 };
+            YouTubeFeed feed = service.Query(ytq);
+            foreach(PlaylistsEntry entry in feed.Entries)
+            {
+                RssLink playlistLink = new RssLink();
+                playlistLink.Name = entry.Title.Text;
+                playlistLink.EstimatedVideoCount = (uint)entry.CountHint;
+                XmlExtension playlistExt = entry.FindExtension(YouTubeNameTable.PlaylistId, YouTubeNameTable.NSYouTube) as XmlExtension;                
+                if (playlistExt != null)
+                {
+                    playlistLink.Url = string.Format(PLAYLIST_FEED, playlistExt.Node.InnerText);
+                    parentCategory.SubCategories.Add(playlistLink);
+                    playlistLink.ParentCategory = parentCategory;                    
+                }                               
+            }
+            parentCategory.SubCategoriesDiscovered = true;
+            return parentCategory.SubCategories.Count;
+        }
 
         private Dictionary<String, String> getYoutubeCategories()
         {
@@ -490,10 +524,11 @@ namespace OnlineVideos.Sites
         #endregion
 
         #region ISearch Members
-
+        Dictionary<string, string> cachedSearchCategories = null;
         public Dictionary<string, string> GetSearchableCategories()
         {
-            return getYoutubeCategories();            
+            if (cachedSearchCategories == null) cachedSearchCategories = getYoutubeCategories();
+            return cachedSearchCategories;
         }
 
         public List<VideoInfo> Search(string queryStr)

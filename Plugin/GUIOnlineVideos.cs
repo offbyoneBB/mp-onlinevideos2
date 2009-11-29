@@ -834,10 +834,11 @@ namespace OnlineVideos
             loListItem.IsFolder = true;
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
             facadeView.Add(loListItem);
-
+            
             int numCategoriesWithThumb = 0;
             List<String> imagesUrlList = new List<string>();
 
+            suggestedView = null;
             IList<Category> categories = null;
 
             if (parentCategory == null)
@@ -915,62 +916,63 @@ namespace OnlineVideos
                 categories = parentCategory.SubCategories;
             }
 
-            int categoryIndexToSelect = categories.Count > 0 ? 1 : 0; // select the first category by default if there is one
-            for(int i = 0; i < categories.Count; i++)
+            int categoryIndexToSelect = (categories != null && categories.Count > 0) ? 1 : 0; // select the first category by default if there is one
+            if (categories != null)
             {
-                Category loCat = categories[i];
-                if (loCat == selectedCategory) categoryIndexToSelect = i + 1; // select the category that was previously selected
-
-                loListItem = new GUIListItem(loCat.Name);
-                loListItem.IsFolder = true;                
-                MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
-                // Favorite Categories can have the same images as the home view
-                if (selectedSite is Sites.FavoriteUtil)
+                for (int i = 0; i < categories.Count; i++)
                 {
-                    string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + ((RssLink)loCat).Url.Substring(4) + ".png";
-                    if (System.IO.File.Exists(image))
+                    Category loCat = categories[i];
+                    if (loCat == selectedCategory) categoryIndexToSelect = i + 1; // select the category that was previously selected
+
+                    loListItem = new GUIListItem(loCat.Name);
+                    loListItem.IsFolder = true;
+                    MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
+                    // Favorite Categories can have the same images as the home view
+                    if (selectedSite is Sites.FavoriteUtil)
                     {
-                        loListItem.ThumbnailImage = image;
-                        loListItem.IconImage = image;
-                        loListItem.IconImageBig = image;
-                        numCategoriesWithThumb++;
+                        string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + ((RssLink)loCat).Url.Substring(4) + ".png";
+                        if (System.IO.File.Exists(image))
+                        {
+                            loListItem.ThumbnailImage = image;
+                            loListItem.IconImage = image;
+                            loListItem.IconImageBig = image;
+                            numCategoriesWithThumb++;
+                        }
                     }
-                }                
-                else
-                {
-                    imagesUrlList.Add(loCat.Thumb);
-                    if (!string.IsNullOrEmpty(loCat.Thumb))
+                    else
                     {
-                        numCategoriesWithThumb++;
-                        loListItem.ItemId = imagesUrlList.Count;
-                        loListItem.RetrieveArt = false;
-                        loListItem.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+                        imagesUrlList.Add(loCat.Thumb);
+                        if (!string.IsNullOrEmpty(loCat.Thumb))
+                        {
+                            numCategoriesWithThumb++;
+                            loListItem.ItemId = imagesUrlList.Count;
+                            loListItem.RetrieveArt = false;
+                            loListItem.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+                        }
+                    }
+
+                    facadeView.Add(loListItem);
+
+                    if (loCat is RssLink)
+                    {
+                        RssLink link = loCat as RssLink;
+                        loListItem.Path = link.Url;
+                        if (link.EstimatedVideoCount > 0) loListItem.Label2 = link.EstimatedVideoCount.ToString();
+                    }
+                    else
+                    {
+                        loListItem.Path = loCat.Name;
+                    }
+
+                    if (loCat is Group)
+                    {
+                        loListItem.Label2 = (loCat as Group).Channels.Count.ToString();
                     }
                 }
 
-                facadeView.Add(loListItem);
-
-                if (loCat is RssLink)
-                {
-                    RssLink link = loCat as RssLink;
-                    loListItem.Path = link.Url;
-                    if (link.EstimatedVideoCount > 0) loListItem.Label2 = link.EstimatedVideoCount.ToString();
-                }
-                else
-                {
-                    loListItem.Path = loCat.Name;
-                }
-
-                if (loCat is Group)
-                {
-                    loListItem.Label2 = (loCat as Group).Channels.Count.ToString();
-                }
+                if (numCategoriesWithThumb > 0) ImageDownloader.getImages(imagesUrlList, OnlineVideoSettings.getInstance().msThumbLocation, facadeView);
+                if (numCategoriesWithThumb < categories.Count / 2) suggestedView = GUIFacadeControl.ViewMode.List;
             }
-
-            suggestedView = null;
-
-            if (numCategoriesWithThumb > 0) ImageDownloader.getImages(imagesUrlList, OnlineVideoSettings.getInstance().msThumbLocation, facadeView);
-            if (numCategoriesWithThumb < categories.Count / 2) suggestedView = GUIFacadeControl.ViewMode.List;
 
             selectedCategory = parentCategory;
             facadeView.SelectedListItemIndex = categoryIndexToSelect;
