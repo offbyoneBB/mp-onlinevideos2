@@ -34,22 +34,35 @@ namespace OnlineVideos.Sites
         {
             string[] groups = new string[] { "0-9|D", "E|K", "L|R", "S|V", "W|Z" };
             Settings.Categories.Clear();
-            foreach (string group in groups)
+
+            Teaser[][] teasers = new Teaser[5][];
+            System.Threading.ManualResetEvent[] threadWaitHandles = new System.Threading.ManualResetEvent[5];
+            for (int i = 0; i < groups.Length; i++)
             {
-                string[] startEnd = group.Split(new char[] { '|' });
-                var teaserlist = Agent.SendungenAbisZTeasers(ConfigurationHelper.GetSendungenAbisZServiceUrl(RestAgent.Configuration), startEnd[0], startEnd[1]);
-                foreach (var teaser in Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.SendungenAZ))
-                {                    
-                    RssLink item = new RssLink();
-                    item.Name = teaser.Title;
-                    item.EstimatedVideoCount = (uint)teaser.NumberOfTeasers;
-                    item.Url = teaser.ID;
-                    item.HasSubCategories = false;
-                    item.SubCategoriesDiscovered = true;
-                    item.Thumb = teaser.Image173x120;
-                    Settings.Categories.Add(item);
-                }
+                threadWaitHandles[i] = new System.Threading.ManualResetEvent(false);
+                new System.Threading.Thread(delegate(object o)
+                    {
+                        int o_i = (int)o;
+                        string[] startEnd = groups[o_i].Split(new char[] { '|' });
+                        var teaserlist = Agent.SendungenAbisZTeasers(ConfigurationHelper.GetSendungenAbisZServiceUrl(RestAgent.Configuration), startEnd[0], startEnd[1]);
+                        teasers[o_i] = Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.SendungenAZ);
+                        threadWaitHandles[o_i].Set();
+                    }) { IsBackground = true }.Start(i);
             }
+            System.Threading.WaitHandle.WaitAll(threadWaitHandles);
+            for (int i = 0; i < teasers.Length; i++)
+            foreach (var teaser in teasers[i])
+            {
+                RssLink item = new RssLink();
+                item.Name = teaser.Title;
+                item.EstimatedVideoCount = (uint)teaser.NumberOfTeasers;
+                item.Url = teaser.ID;
+                item.HasSubCategories = false;
+                item.SubCategoriesDiscovered = true;
+                item.Thumb = teaser.Image173x120;
+                Settings.Categories.Add(item);
+            }
+            
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
