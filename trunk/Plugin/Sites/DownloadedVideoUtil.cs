@@ -20,20 +20,37 @@ namespace OnlineVideos.Sites
                  
 		public override List<VideoInfo> getVideoList(Category category)
 		{
-		    List<VideoInfo>loVideoInfoList = new List<VideoInfo>();
-            string[]loVideoList = Directory.GetFiles(((RssLink)category).Url);
-            
-            VideoInfo loVideoInfo;
-            foreach (String lsVideo in loVideoList)
+            List<VideoInfo> loVideoInfoList = new List<VideoInfo>();
+            if (category is RssLink)
             {
-            	if(isPossibleVideo(lsVideo)){
-                	loVideoInfo = new VideoInfo();
-                	loVideoInfo.VideoUrl = lsVideo;
-                    loVideoInfo.ImageUrl = lsVideo.Substring(0,lsVideo.LastIndexOf(".")) + ".jpg";
+                string[] loVideoList = Directory.GetFiles(((RssLink)category).Url);
                 
-                	loVideoInfo.Title  = Utils.GetFilename(lsVideo);
-                	loVideoInfoList.Add(loVideoInfo);
-            	}
+                foreach (String lsVideo in loVideoList)
+                {
+                    if (isPossibleVideo(lsVideo))
+                    {
+                        VideoInfo loVideoInfo = new VideoInfo();
+                        loVideoInfo.VideoUrl = lsVideo;
+                        loVideoInfo.ImageUrl = lsVideo.Substring(0, lsVideo.LastIndexOf(".")) + ".jpg";
+
+                        loVideoInfo.Title = Utils.GetFilename(lsVideo);
+                        loVideoInfoList.Add(loVideoInfo);
+                    }
+                }
+            }
+            else
+            {
+                lock (GUIOnlineVideos.currentDownloads)
+                {
+                    foreach (DownloadInfo di in GUIOnlineVideos.currentDownloads.Values)
+                    {
+                        VideoInfo loVideoInfo = new VideoInfo();
+                        loVideoInfo.Title = di.Title;
+                        loVideoInfo.ImageUrl = di.ThumbFile;
+                        loVideoInfo.Description = string.Format("Download from url: {0} to file {1}", di.Url, di.LocalFile);
+                        loVideoInfoList.Add(loVideoInfo);
+                    }
+                }
             }
             return loVideoInfoList;
         }
