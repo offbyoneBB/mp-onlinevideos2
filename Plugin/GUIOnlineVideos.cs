@@ -131,25 +131,24 @@ namespace OnlineVideos
 
         #region state variables
         State currentState = State.home;
-
-        int selectedSiteIndex = 0;
-        Sites.SiteUtilBase selectedSite;
+        VideosMode currentVideosDisplayMode = VideosMode.Category;
+        SiteOrder siteOrder = SiteOrder.AsInFile;
         
+        Sites.SiteUtilBase selectedSite;        
         Category selectedCategory;
-
         VideoInfo selectedVideo;
+
+        int selectedSiteIndex = 0;  // used to remember the position of the last selected site
         int selectedVideoIndex = 0; // used to remember the position of the last selected Video
         int selectedClipIndex = 0;  // used to remember the position the last selected Trailer
         
         List<VideoInfo> moCurrentVideoList = new List<VideoInfo>();
         List<VideoInfo> moCurrentTrailerList = new List<VideoInfo>();
 
-        VideosMode currentVideosDisplayMode = VideosMode.Category;
-
-        SiteOrder siteOrder = SiteOrder.AsInFile;
-
         RTMP_LIB.HTTPServer rtmpServer;
         OnlineVideos.Sites.AppleProxyServer appleProxyServer;
+
+        internal static Dictionary<string, DownloadInfo> currentDownloads = new Dictionary<string,DownloadInfo>();
         #endregion
 
         #region filter variables
@@ -728,6 +727,8 @@ namespace OnlineVideos
                 cat.Name = "All";
                 cat.Url = settings.msDownloadDir;
                 SelectedSite.Categories.Add(cat);
+                Category currentDlsCat = new Category() { Name = "Downloading", Description = "Shows a list of downloads currently running." };
+                SelectedSite.Categories.Add(currentDlsCat);
                 settings.SiteList.Add(SelectedSite.Name, SiteUtilFactory.CreateFromShortName(SelectedSite.UtilName, SelectedSite));
             }
             try
@@ -1475,6 +1476,15 @@ namespace OnlineVideos
                 dlg.DoModal(GUIWindowManager.ActiveWindow);
                 return;
             }
+
+            if (currentDownloads.ContainsKey(url))
+            {
+                GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                dlg.SetHeading(GUILocalizeStrings.Get(257)/*ERROR*/);
+                dlg.SetText("Already downloading this file.");
+                dlg.DoModal(GUIWindowManager.ActiveWindow);
+                return;
+            }
             
             DownloadInfo downloadInfo = new DownloadInfo() 
             { 
@@ -1483,6 +1493,8 @@ namespace OnlineVideos
                 LocalFile = System.IO.Path.Combine(OnlineVideoSettings.getInstance().msDownloadDir, selectedSite.GetFileNameForDownload(video, url)),
                 ThumbFile = ImageDownloader.GetThumbFile(video.ImageUrl) 
             };
+
+            lock (GUIOnlineVideos.currentDownloads) currentDownloads.Add(url, downloadInfo); // make access threadsafe
 
             if (url.ToLower().StartsWith("mms://"))
             {
@@ -1512,16 +1524,18 @@ namespace OnlineVideos
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
+            DownloadInfo downloadInfo = e.UserState as DownloadInfo;
+            lock (GUIOnlineVideos.currentDownloads) currentDownloads.Remove(downloadInfo.Url); // make access threadsafe
+
             if (e.Error != null)
             {
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 loDlgNotify.SetHeading(GUILocalizeStrings.Get(257)/*ERROR*/);
-                loDlgNotify.SetText((e.UserState as DownloadInfo).Title);
+                loDlgNotify.SetText(string.Format("Download failed: {0}", downloadInfo.Title));
                 loDlgNotify.DoModal(GetID);
             }
             else
-            {
-                DownloadInfo downloadInfo = e.UserState as DownloadInfo;
+            {   
                 // save thumb for this video as well if it exists
                 if (System.IO.File.Exists(downloadInfo.ThumbFile))
                 {
