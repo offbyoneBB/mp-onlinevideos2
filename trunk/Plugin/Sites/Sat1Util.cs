@@ -147,11 +147,13 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videos = new List<VideoInfo>();
 
             DateTime startDate = DateTime.Today.Subtract(DateTime.Today.AddMonths(pastSearch).Subtract(DateTime.Today));
+            DateTime endDate = DateTime.Today.AddMonths(futureSearch);
             string start = string.Format("{0:00}{1:00}{2:00}", startDate.Year - 2000, startDate.Month, startDate.Day);
-            string end = string.Format("{0:00}{1:00}{2:00}", startDate.Year - 2000, startDate.AddMonths(pastSearch + futureSearch).Month, startDate.Day);
+            string end = string.Format("{0:00}{1:00}{2:00}", endDate.Year - 2000, endDate.Month, endDate.Day);
             
             string url = vidListBaseUrl + (category as RssLink).Url + "/" + start + "/" + end + "/listing.json";
             string data = GetWebData(url);
+            
 
             if (!string.IsNullOrEmpty(data))
             {
