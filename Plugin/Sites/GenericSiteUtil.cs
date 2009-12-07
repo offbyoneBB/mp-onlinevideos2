@@ -85,7 +85,7 @@ namespace OnlineVideos.Sites
                             }                            
                         }
                     }
-                    else if (rssItem.MediaContents.Count > 0)
+                    else if (rssItem.MediaContents.Count > 0) // try to get the first MediaContent
                     {
                         foreach (RssItem.MediaContent content in rssItem.MediaContents)
                         {
@@ -94,6 +94,21 @@ namespace OnlineVideos.Sites
                                 video.VideoUrl = content.Url;
                                 video.Length = content.Duration;
                                 break;
+                            }
+                        }
+                    }
+                    else if (rssItem.MediaGroups.Count > 0) // videos might be wrapped in groups, try to get the first MediaContent
+                    {
+                        foreach (RssItem.MediaGroup grp in rssItem.MediaGroups)
+                        {
+                            foreach (RssItem.MediaContent content in grp.MediaContents)
+                            {
+                                if (isPossibleVideo(content.Url))
+                                {
+                                    video.VideoUrl = content.Url;
+                                    video.Length = content.Duration;
+                                    break;
+                                }
                             }
                         }
                     }
