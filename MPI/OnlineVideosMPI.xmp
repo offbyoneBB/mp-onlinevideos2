@@ -20,6 +20,24 @@
 			<Guid>9743e262-42a0-4ba9-81c7-81ecacd6222b</Guid>
 		</File>
 		<File>
+			<FileName>5min.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\5min.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>9974A5E9-055F-4d25-AB1C-F27B06533543</Guid>
+		</File>
+		<File>
+			<FileName>5min.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\5min.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>45E12C71-DFFD-4e01-9A10-7752D543E25D</Guid>
+		</File>
+		<File>
 			<FileName>Apple Trailers.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
@@ -127,6 +145,24 @@
 			<Option />
 			<Guid>70f4c365-0ef5-494c-a4c9-c8d15a6fbe3a</Guid>
 		</File>
+		<File>
+			<FileName>CollegeHumor.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\CollegeHumor.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>03442F34-F88F-4c08-AE1E-97BE6FF985D7</Guid>
+		</File>
+		<File>
+			<FileName>CollegeHumor.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\CollegeHumor.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>DF759FCE-7724-41dc-B8D4-331D7DF35158</Guid>
+		</File>	
 		<File>
 			<FileName>DailyMotion.png</FileName>
 			<Type>Thumbs</Type>
@@ -1011,7 +1047,7 @@
 		<ProiectName>Online Videos</ProiectName>
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com/files/Download/MediaPortalInstaller(MPI)/Web/OnlineVideos/</UpdateURL>
-		<Version>0.14.0</Version>
+		<Version>0.15.0</Version>
 		<Description>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</Description>
 		<Group>Web</Group>
 		<Release>Beta</Release>
@@ -1107,7 +1143,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>24-11-09</CreationDate>
+		<CreationDate>07-12-09</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
