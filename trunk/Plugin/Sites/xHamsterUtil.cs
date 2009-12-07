@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites
         string searchUrl = "http://www.xhamster.com/search.php?q={0}";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the html page for the playback url.")]
         string fileUrlRegEx = @"'srv':\s'(?<srv>[^']+)',\s*
-'[^']+':\s'[^']+',\s*
+(?:'[^']+':\s'[^']+',\s*)?
 'file':\s'(?<file>[^']+)'";
 
         Regex regEx_FileUrl;
