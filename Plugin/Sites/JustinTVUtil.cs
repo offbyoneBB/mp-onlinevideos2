@@ -6,7 +6,7 @@ using System.Web;
 
 namespace OnlineVideos.Sites
 {
-    public class JustinTVUtil : SiteUtilBase, ISearch
+    public class JustinTVUtil : SiteUtilBase
     {
         public enum rtype { unknown, recorded, live };        
 
@@ -62,9 +62,11 @@ namespace OnlineVideos.Sites
             return list;
         }
 
-        #region ISearch Member
+        #region Search
 
-        public Dictionary<string, string> GetSearchableCategories()
+        public override bool CanSearch { get { return true; } }
+
+        public override Dictionary<string, string> GetSearchableCategories()
         {
             Dictionary<string, string> result = new Dictionary<string, string>();            
             result.Add("Live", "live");
@@ -72,12 +74,12 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public List<VideoInfo> Search(string query)
+        public override List<VideoInfo> Search(string query)
         {
             return Search(query, "unknown");
         }
 
-        public List<VideoInfo> Search(string query, string category)
+        public override List<VideoInfo> Search(string query, string category)
         {
             rtype rt = (rtype)Enum.Parse(typeof(rtype), category);
 

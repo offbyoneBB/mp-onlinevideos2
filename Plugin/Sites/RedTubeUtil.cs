@@ -10,7 +10,7 @@ using System.Collections.Specialized;
 
 namespace OnlineVideos.Sites
 {
-    public class RedTubeUtil : SiteUtilBase, ISearch
+    public class RedTubeUtil : SiteUtilBase
     {
         static Regex videoListRegEx = new Regex(
                             @"<div\sclass=""video"">\s*
@@ -208,21 +208,13 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        #region ISearch Member
+        #region Search
 
-        public Dictionary<string, string> GetSearchableCategories()
-        {
-            return new Dictionary<string, string>();
-        }
-
-        public List<VideoInfo> Search(string query)
+        public override bool CanSearch { get { return true; } }
+     
+        public override List<VideoInfo> Search(string query)
         {
             return Parse(GetWebData(string.Format(searchUrl, query), CookieContainer));
-        }
-
-        public List<VideoInfo> Search(string query, string category)
-        {
-            return Search(query);
         }
 
         #endregion

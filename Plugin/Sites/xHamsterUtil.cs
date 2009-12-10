@@ -9,7 +9,7 @@ using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
-    public class xHamsterUtil : SiteUtilBase, ISearch
+    public class xHamsterUtil : SiteUtilBase
     {
         [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
         string searchUrl = "http://www.xhamster.com/search.php?q={0}";
@@ -245,21 +245,13 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        #region ISearch Member
+        #region Search
 
-        public Dictionary<string, string> GetSearchableCategories()
-        {
-            return new Dictionary<string, string>();
-        }
+        public override bool CanSearch { get { return true; } }
 
-        public List<VideoInfo> Search(string query)
+        public override List<VideoInfo> Search(string query)
         {
             return Parse(string.Format(searchUrl, query));
-        }
-
-        public List<VideoInfo> Search(string query, string category)
-        {
-            return Search(query);
         }
 
         #endregion

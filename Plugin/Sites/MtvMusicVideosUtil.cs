@@ -10,7 +10,7 @@ namespace OnlineVideos.Sites
     /// <summary>
     /// API documentation at http://developer.mtvnservices.com/docs/Home
     /// </summary>
-    public class MtvMusicVideosUtil : SiteUtilBase, ISearch
+    public class MtvMusicVideosUtil : SiteUtilBase
     {
         string videoUrls = "http://api-media.mtvnservices.com/player/embed/includes/mediaGen.jhtml?uri={0}&ref=None";
         string genreVideosMethod = "http://api.mtvnservices.com/1/genre/{0}/videos/?sort=date_descending";
@@ -117,23 +117,15 @@ namespace OnlineVideos.Sites
             return safeName + ".flv";
         }
 
-        #region ISearch Member
+        #region Search
 
-        public Dictionary<string, string> GetSearchableCategories()
-        {
-            return new Dictionary<string, string>();
-        }
+        public override bool CanSearch { get { return true; } }
 
-        public List<VideoInfo> Search(string query)
+        public override List<VideoInfo> Search(string query)
         {
             //You must URL-escape all spaces, punctuation and quotes. The search term "buddy holly" would look like this %22buddy+holly%22 
             query = System.Web.HttpUtility.UrlEncode(query.Replace(" ", "+"));
             return getVideoList(new RssLink() { Url = string.Format(searchMethod, query) });
-        }
-
-        public List<VideoInfo> Search(string query, string category)
-        {
-            return Search(query);
         }
 
         #endregion

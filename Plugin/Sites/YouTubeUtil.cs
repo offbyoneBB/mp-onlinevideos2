@@ -15,7 +15,7 @@ using MediaPortal.GUI.Library;
 namespace OnlineVideos.Sites
 {
 
-    public class YouTubeUtil : SiteUtilBase, IFilter, ISearch, IFavorite
+    public class YouTubeUtil : SiteUtilBase, IFilter, IFavorite
     {
         public enum VideoQuality { Normal, High, HD, Unknow };
 
@@ -523,15 +523,18 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        #region ISearch Members
+        #region Search
+
+        public override bool CanSearch { get { return true; } }
+
         Dictionary<string, string> cachedSearchCategories = null;
-        public Dictionary<string, string> GetSearchableCategories()
+        public override Dictionary<string, string> GetSearchableCategories()
         {
             if (cachedSearchCategories == null) cachedSearchCategories = getYoutubeCategories();
             return cachedSearchCategories;
         }
 
-        public List<VideoInfo> Search(string queryStr)
+        public override List<VideoInfo> Search(string queryStr)
         {
             YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
             query.Query = queryStr;           
@@ -555,7 +558,7 @@ namespace OnlineVideos.Sites
 
         //}
 
-        public List<VideoInfo> Search(string queryStr, string category)
+        public override List<VideoInfo> Search(string queryStr, string category)
         {
             YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
             query.Query = queryStr;  

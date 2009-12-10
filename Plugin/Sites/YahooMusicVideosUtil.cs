@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites
     /// <summary>
     /// Api Documentation at : http://www.yahooapis.com/music/
     /// </summary>
-    public class YahooMusicVideosUtil : SiteUtilBase, ISearch
+    public class YahooMusicVideosUtil : SiteUtilBase
     {
         public class UITokenEditor : UITypeEditor
         {
@@ -315,9 +315,11 @@ namespace OnlineVideos.Sites
         }
 
 
-        #region ISearch Member
+        #region Search
 
-        public Dictionary<string, string> GetSearchableCategories()
+        public override bool CanSearch { get { return true; } }
+
+        public override Dictionary<string, string> GetSearchableCategories()
         {
             Dictionary<string, string> loRssItems = new Dictionary<string, string>();
             if (catserv != null)
@@ -330,12 +332,12 @@ namespace OnlineVideos.Sites
             return loRssItems;
         }
 
-        public List<VideoInfo> Search(string query)
+        public override List<VideoInfo> Search(string query)
         {
             return Search(query, "");    
         }
 
-        public List<VideoInfo> Search(string query, string category)
+        public override List<VideoInfo> Search(string query, string category)
         {            
             videoSearchList.Category = category;
             videoSearchList.Keyword = query;
