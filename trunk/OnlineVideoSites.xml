@@ -16,11 +16,13 @@
       </Categories>
     </Site>
     <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" lang="de">
-      <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>      
+      <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>
+      <Categories />
     </Site>
     <Site name="MDR" util="Mdr" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des MDR.</Description>      
-    </Site>    
+      <Description>Kostenlos verfügbare Sendungen des MDR.</Description>
+      <Categories />
+    </Site>
     <Site name="WDR" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Podcasts des Westdeutschen Rundfunks.</Description>
       <Categories>
@@ -71,22 +73,28 @@
       </Categories>
     </Site>
     <Site name="Arte+7" util="ArtePlus7" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des Senders Arte.</Description>      
-    </Site>   
+      <Description>Kostenlos verfügbare Sendungen des Senders Arte.</Description>
+      <Categories />
+    </Site>
     <Site name="Sat1" util="Sat1" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des Senders Sat1.</Description>      
+      <Description>Kostenlos verfügbare Sendungen des Senders Sat1.</Description>
+      <Categories />
     </Site>
     <Site name="Pro7" util="Pro7" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des Senders Pro7.</Description>      
+      <Description>Kostenlos verfügbare Sendungen des Senders Pro7.</Description>
+      <Categories />
     </Site>
     <Site name="Kabel1" util="Kabel1" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des Senders Kabel1.</Description>      
-    </Site>	
+      <Description>Kostenlos verfügbare Sendungen des Senders Kabel1.</Description>
+      <Categories />
+    </Site>
     <Site name="RTL Now" util="RTLNow" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>
+      <Categories />
     </Site>
     <Site name="Orf" util="Orf" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des Orfs.</Description>      
+      <Description>Kostenlos verfügbare Sendungen des Orfs.</Description>
+      <Categories />
     </Site>
     <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
       <Description>Deutscher YouTube Clone.</Description>
@@ -103,8 +111,13 @@
     <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en">
       <Categories />
     </Site>
-    <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en">
+    <Site name="MetaCafe" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Metacafe is an audience-driven video entertainment site that focuses on short-form original videos.</Description>
+      <Configuration>
+        <item key="searchUrl"><![CDATA[http://www.metacafe.com/tags/{0}/rss.xml]]></item>
+        <item key="fileUrlRegEx"><![CDATA[mediaURL=(?<url>[^&]*)]]></item>
+        <item key="fileUrlFormat"><![CDATA[{0}]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Today's Videos">http://www.metacafe.com/rss/today_videos/rss.xml</Category>
         <Category xsi:type="RssLink" name="Art &amp; Animation">http://www.metacafe.com/api/videos/-/art_and_animation/</Category>
@@ -120,7 +133,7 @@
         <Category xsi:type="RssLink" name="Sports">http://www.metacafe.com/api/videos/-/sports/</Category>
         <Category xsi:type="RssLink" name="Travel &amp; Outdoors">http://www.metacafe.com/api/videos/-/travel_and_outdoors/</Category>
         <Category xsi:type="RssLink" name="Video Games">http://www.metacafe.com/api/videos/-/video_games/</Category>
-        <Category xsi:type="RssLink" name="Wheels &amp; Wings">http://www.metacafe.com/api/videos/-/wheels_and_wings/</Category>        
+        <Category xsi:type="RssLink" name="Wheels &amp; Wings">http://www.metacafe.com/api/videos/-/wheels_and_wings/</Category>
         <Category xsi:type="RssLink" name="Young Hollywood">http://www.metacafe.com/younghollywood/rss.xml</Category>
         <Category xsi:type="RssLink" name="Video Games">http://www.metacafe.com/video-games/rss.xml</Category>
         <Category xsi:type="RssLink" name="National Lampoon">http://www.metacafe.com/nationallampoon/rss.xml</Category>
@@ -136,7 +149,12 @@
         <Category xsi:type="RssLink" name="MassageNerd">http://www.metacafe.com/channels/massagenerd/rss.xml</Category>
       </Categories>
     </Site>
-    <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true" lang="en">
+    <Site name="DailyMotion" util="GenericSite" agecheck="false" enabled="true" lang="en">
+      <Configuration>
+        <item key="searchUrl"><![CDATA[http://www.dailymotion.com/rss/relevance/search/{0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[addVariable\("video",\s"((?:(?!%40%40spark).)*)]]></item>
+        <item key="fileUrlFormat"><![CDATA[{0}&txe=.flv]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Front Page">http://www.dailymotion.com/rss</Category>
         <Category xsi:type="RssLink" name="Ads">http://www.dailymotion.com/rss/cluster/ads</Category>
@@ -231,8 +249,16 @@
       <Description>Trailers for all the latest movies from Apple. Most are avaliable in HD.</Description>
       <Categories />
     </Site>
-    <Site name="Break" util="Break" agecheck="false" enabled="true" lang="en">
+    <Site name="Break" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Funny videos for young men.</Description>
+      <Configuration>
+        <item key="searchUrl"><![CDATA[http://rss.break.com/keyword/{0}/]]></item>
+        <item key="fileUrlRegEx">
+          <![CDATA[sGlobalFileName='([^']*)';[^;]*;.+sGlobalContentFilePath='([^']*)'
+                                           (?:(?!var\svideoPath).)*
+                                           var\svideoPath\s*=\s*"([^"]+)"]]></item>
+        <item key="fileUrlFormat"><![CDATA[{2}{1}/{0}.flv]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Home Page">http://rss.break.com/channel/homepage/</Category>
         <Category xsi:type="RssLink" name="Movies">http://rss.break.com/channel/movies/</Category>
@@ -256,9 +282,11 @@
     </Site>
     <Site name="CollegeHumor" util="CollegeHumor" agecheck="false" enabled="true" lang="en">
       <Description>Funny videos from CollegeHumor.com.</Description>
+      <Categories />
     </Site>
     <Site name="5min" util="FiveMin" agecheck="false" enabled="true" lang="en">
       <Description>Free instructional videos.</Description>
+      <Categories />
     </Site>
     <Site name="CNN" util="Cnn" agecheck="false" enabled="true" lang="en">
       <Description>Videos from the Cable News Network.</Description>
@@ -431,20 +459,20 @@
         <Category xsi:type="RssLink" name="Digg Dialogg" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/diggdialogg/diggdialogg.jpg">http://revision3.com/diggdialogg/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="The Digg Reel" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/diggreel/diggreel.jpg">http://revision3.com/diggreel/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="Diggnation" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/diggnation/diggnation.jpg">http://revision3.com/diggnation/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Film Riot" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/filmriot/filmriot.jpg">http://revision3.com/filmriot/feed/quicktime-large/</Category>        
-        <Category xsi:type="RssLink" name="Hak5" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/hak5/hak5.jpg">http://revision3.com/hak5/feed/quicktime-large/</Category>        
-        <Category xsi:type="RssLink" name="HD Nation" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/hdnation/hdnation.jpg">http://revision3.com/hdnation/feed/quicktime-large/</Category>        
+        <Category xsi:type="RssLink" name="Film Riot" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/filmriot/filmriot.jpg">http://revision3.com/filmriot/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="Hak5" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/hak5/hak5.jpg">http://revision3.com/hak5/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="HD Nation" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/hdnation/hdnation.jpg">http://revision3.com/hdnation/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="iFanboy" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/ifanboy/ifanboy.jpg">http://revision3.com/ifanboy/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="INST MSGS" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/instmsgs/instmsgs.jpg">http://revision3.com/instmsgs/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="LandlineTV" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/landlinetv/landlinetv.jpg">http://revision3.com/landlinetv/feed/quicktime-large/</Category>        
+        <Category xsi:type="RssLink" name="LandlineTV" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/landlinetv/landlinetv.jpg">http://revision3.com/landlinetv/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="Pixel Perfect" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/pixelperfect/pixelperfect.jpg">http://revision3.com/pixelperfect/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="ROFL" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/rofl/rofl.jpg">http://revision3.com/rofl/feed/quicktime-large/</Category>        
+        <Category xsi:type="RssLink" name="ROFL" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/rofl/rofl.jpg">http://revision3.com/rofl/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="Scam School" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/scamschool/scamschool.jpg">http://revision3.com/scamschool/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="Systm" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/systm/systm.jpg">http://revision3.com/systm/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Tekzilla" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/tekzilla/tekzilla.jpg">http://revision3.com/tekzilla/feed/quicktime-large/</Category>        
+        <Category xsi:type="RssLink" name="Tekzilla" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/tekzilla/tekzilla.jpg">http://revision3.com/tekzilla/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="The Totally Rad Show" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/trs/trs.jpg">http://revision3.com/trs/feed/quicktime-large/</Category>
-        <Category xsi:type="RssLink" name="Web Zeroes" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/webzeroes/webzeroes.jpg">http://revision3.com/webzeroes/feed/quicktime-large/</Category>        
-        <Category xsi:type="RssLink" name="XLR8R TV" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/xlr8rtv/xlr8rtv.jpg">http://revision3.com/xlr8rtv/feed/quicktime-large/</Category>        
+        <Category xsi:type="RssLink" name="Web Zeroes" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/webzeroes/webzeroes.jpg">http://revision3.com/webzeroes/feed/quicktime-large/</Category>
+        <Category xsi:type="RssLink" name="XLR8R TV" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/xlr8rtv/xlr8rtv.jpg">http://revision3.com/xlr8rtv/feed/quicktime-large/</Category>
       </Categories>
     </Site>
     <Site name="Discovey Channel" util="GenericSite" agecheck="false" enabled="true">
@@ -574,16 +602,14 @@
     </Site>
     <Site name="wwitv" util="WWitv" agecheck="false" enabled="true" lang="de">
       <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country.</Description>
-    </Site>    
+      <Categories />
+    </Site>
     <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" lang="ru">
       <Categories>
         <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
       </Categories>
     </Site>
     <Site name="dr.dk TV" util="GenericSite" agecheck="false" enabled="false" lang="da">
-      <Username />
-      <Password />
-      <SearchUrl />
       <Categories>
         <Category xsi:type="Group" name="Live TV">
           <Channels>

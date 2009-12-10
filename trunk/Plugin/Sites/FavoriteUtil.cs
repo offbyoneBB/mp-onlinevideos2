@@ -18,7 +18,7 @@ namespace OnlineVideos.Sites
     /// <summary>
     /// Description of FavoriteUtil.
     /// </summary>
-    public class FavoriteUtil : SiteUtilBase, ISearch
+    public class FavoriteUtil : SiteUtilBase
     {
         public override string getUrl(VideoInfo video)
         {
@@ -82,22 +82,14 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }        
 
-        #region ISearch Member
+        #region Search
 
-        public Dictionary<string, string> GetSearchableCategories()
-        {
-            return new Dictionary<string, string>();
-        }
+        public override bool CanSearch { get { return true; } }
 
-        public List<VideoInfo> Search(string query)
+        public override List<VideoInfo> Search(string query)
         {
             FavoritesDatabase db = FavoritesDatabase.getInstance();
             return db.searchFavoriteVideos(query);
-        }
-
-        public List<VideoInfo> Search(string query, string category)
-        {
-            return Search(query);
         }
 
         #endregion

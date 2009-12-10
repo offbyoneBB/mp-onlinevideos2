@@ -11,7 +11,7 @@ using ZDFMediathek2009.Code.DTO;
 
 namespace OnlineVideos.Sites
 {
-    public class ZDFMediathekUtil : SiteUtilBase, ISearch
+    public class ZDFMediathekUtil : SiteUtilBase
     {
         [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum quality for the video to be played.")]
         videoFormitaetQuality videoQuality = videoFormitaetQuality.veryhigh;
@@ -124,22 +124,14 @@ namespace OnlineVideos.Sites
             return list;
         }
 
-        #region ISearch Member
+        #region Search
 
-        public Dictionary<string, string> GetSearchableCategories()
-        {
-            return new Dictionary<string,string>();
-        }
+        public override bool CanSearch { get { return true; } }
 
-        public List<VideoInfo> Search(string query)
+        public override List<VideoInfo> Search(string query)
         {
             var teaserlist = Agent.DetailsSuche(ConfigurationHelper.GetSucheServiceUrl(), query, 50, 0);
             return GetVideos(Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.Search));
-        }
-
-        public List<VideoInfo> Search(string query, string category)
-        {
-            return Search(query);
         }
 
         #endregion

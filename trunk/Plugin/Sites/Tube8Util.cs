@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
-    public class Tube8Util : SiteUtilBase, ISearch
+    public class Tube8Util : SiteUtilBase
     {
         string nextPageUrl = "";
         string previousPageUrl = "";
@@ -245,22 +245,14 @@ namespace OnlineVideos.Sites
             return Parse(previousPageUrl);
         }
 
-        #region ISearch Member
+        #region Search
 
-        public Dictionary<string, string> GetSearchableCategories()
-        {
-            return new Dictionary<string, string>();
-        }
+        public override bool CanSearch { get { return true; } }
 
-        public List<VideoInfo> Search(string query)
+        public override List<VideoInfo> Search(string query)
         {
             return Parse(string.Format(searchUrl, query));
-        }
-
-        public List<VideoInfo> Search(string query, string category)
-        {
-            return Search(query);
-        }
+        }      
 
         #endregion
     }

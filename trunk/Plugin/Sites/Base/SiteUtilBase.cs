@@ -250,6 +250,50 @@ namespace OnlineVideos.Sites
             return new List<String>();
         }
 
+        #region Search
+        /// <summary>
+        /// Returns true, if this site allows searching.<br/>
+        /// default: false
+        /// </summary>
+        public virtual bool CanSearch
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// Will be called to get the list of categories (names only) that can be chosen to search. 
+        /// The keys will be the names and the value will be given to the <see cref="Search"/> as parameter.<br/>
+        /// default: returns empty list, so no category specific search can be done
+        /// </summary>
+        /// <returns></returns>
+        public virtual Dictionary<string, string> GetSearchableCategories()
+        {
+            return new Dictionary<string, string>();
+        }
+
+        /// <summary>
+        /// Should return a list of <see cref="VideoInfo"/> for the given query.
+        /// </summary>
+        /// <param name="query">The user entered query.</param>
+        /// <returns>the list of videos matching that search query.</returns>
+        public virtual List<VideoInfo> Search(string query)
+        {
+            return new List<VideoInfo>();
+        }
+
+        /// <summary>
+        /// Should return a list of <see cref="VideoInfo"/> for the given query limited to the given category.<br/>
+        /// default: calls the Search overload without a category parameter
+        /// </summary>        
+        /// <param name="category">The category to search in.</param>
+        /// <param name="query">The user entered query.</param>
+        /// <returns>the list of videos matching that search query.</returns>
+        public virtual List<VideoInfo> Search(string query, string category)
+        {
+            return Search(query);
+        }
+        #endregion
+
         public virtual string GetFileNameForDownload(VideoInfo video, string url)
         {
             string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] {'/'}));

@@ -414,7 +414,6 @@
     </Compile>
     <Compile Include="Configuration\SiteSettings.cs" />
     <Compile Include="Sites\ArtePlus7Util.cs" />
-    <Compile Include="Sites\BreakUtil.cs" />
     <Compile Include="Sites\CnnUtil.cs" />
     <Compile Include="Sites\CollegeHumorUtil.cs" />
     <Compile Include="Sites\DasErsteMediathekUtil.cs" />
@@ -424,7 +423,6 @@
     <Compile Include="Sites\GameTrailersUtil.cs" />
     <Compile Include="Sites\Interfaces\IFavorite.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
-    <Compile Include="Sites\Interfaces\ISearch.cs" />
     <Compile Include="Sites\JustinTVUtil.cs" />
     <Compile Include="Sites\Kabel1Util.cs" />
     <Compile Include="Sites\LineCinemaRuUtil.cs" />
@@ -445,11 +443,9 @@
     <Compile Include="Sites\SVTPlayUtil.cs" />
     <Compile Include="Sites\Tube8Util.cs" />
     <Compile Include="Sites\VeryFunnyAdsUtil.cs" />
-    <Compile Include="Sites\DailyMotionUtil.cs" />
     <Compile Include="Sites\DownloadedVideoUtil.cs" />
     <Compile Include="Sites\FavoriteUtil.cs" />
     <Compile Include="Sites\GenericSiteUtil.cs" />
-    <Compile Include="Sites\MetaCafeUtil.cs" />
     <Compile Include="Sites\Base\SiteUtilBase.cs" />
     <Compile Include="Sites\Base\SiteUtilFactory.cs" />
     <Compile Include="Sites\VidiLifeUtil.cs" />

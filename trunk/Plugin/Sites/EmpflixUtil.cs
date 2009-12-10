@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites
     /// <summary>
     /// Description of EmpflixUtil.
     /// </summary>
-    public class EmpflixUtil : SiteUtilBase, ISearch
+    public class EmpflixUtil : SiteUtilBase
     {
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos.")]
         string videoListRegEx = @"<a\shref=""(?<VideoUrl>http\://www\.empflix\.com/view\.php\?id\=\d+)""\s*title=""(?<Title>[^""]+)""[^>]*>\s*
@@ -161,14 +161,11 @@ namespace OnlineVideos.Sites
             return loVideoList;
         }
 
-        #region ISearch Member
+        #region Search
 
-        public Dictionary<string, string> GetSearchableCategories()
-        {
-            return new Dictionary<string, string>();
-        }
+        public override bool CanSearch { get { return true; } }
 
-        public List<VideoInfo> Search(string query)
+        public override List<VideoInfo> Search(string query)
         {
             try
             {
@@ -181,11 +178,6 @@ namespace OnlineVideos.Sites
                 return new List<VideoInfo>();
             }
 
-        }
-
-        public List<VideoInfo> Search(string query, string category)
-        {
-            return Search(query);
         }
 
         #endregion

@@ -11,7 +11,7 @@ using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
-    public class AppleTrailersUtil : SiteUtilBase, ISearch
+    public class AppleTrailersUtil : SiteUtilBase
     {
         public struct IndexItem
         {
@@ -737,21 +737,13 @@ namespace OnlineVideos.Sites
         }
         */
 
-        #region ISearch Member
+        #region Search
 
-        public Dictionary<string, string> GetSearchableCategories()
-        {
-            return new Dictionary<string, string>();
-        }
+        public override bool CanSearch { get { return true; } }
 
-        public List<VideoInfo> Search(string query)
+        public override List<VideoInfo> Search(string query)
         {
             return getVideoList(new RssLink() { Url = string.Format(searchUrl, query) });
-        }
-
-        public List<VideoInfo> Search(string query, string category)
-        {
-            return Search(query);
         }
 
         #endregion
