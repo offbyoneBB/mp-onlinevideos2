@@ -893,6 +893,24 @@
 			<Guid>4c1f9fba-f54f-4ac9-a27c-ba77b1216783</Guid>
 		</File>
 		<File>
+			<FileName>Viasat.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\Viasat.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>E482C3DB-6A78-4bff-ABB8-591EEB18CA20</Guid>
+		</File>
+		<File>
+			<FileName>Viasat.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\Viasat.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>DB652E51-C3D6-48a1-BF7C-1F503852165A</Guid>
+		</File>		
+		<File>
 			<FileName>Vodcasts.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
@@ -1047,7 +1065,7 @@
 		<ProiectName>Online Videos</ProiectName>
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com/files/Download/MediaPortalInstaller(MPI)/Web/OnlineVideos/</UpdateURL>
-		<Version>0.15.0</Version>
+		<Version>0.16.0</Version>
 		<Description>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</Description>
 		<Group>Web</Group>
 		<Release>Beta</Release>
@@ -1143,7 +1161,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>07-12-09</CreationDate>
+		<CreationDate>13-12-09</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
