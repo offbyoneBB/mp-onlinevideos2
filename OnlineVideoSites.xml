@@ -253,8 +253,7 @@
       <Description>Funny videos for young men.</Description>
       <Configuration>
         <item key="searchUrl"><![CDATA[http://rss.break.com/keyword/{0}/]]></item>
-        <item key="fileUrlRegEx">
-          <![CDATA[sGlobalFileName='([^']*)';[^;]*;.+sGlobalContentFilePath='([^']*)'
+        <item key="fileUrlRegEx"><![CDATA[sGlobalFileName='([^']*)';[^;]*;.+sGlobalContentFilePath='([^']*)'
                                            (?:(?!var\svideoPath).)*
                                            var\svideoPath\s*=\s*"([^"]+)"]]></item>
         <item key="fileUrlFormat"><![CDATA[{2}{1}/{0}.flv]]></item>
@@ -575,6 +574,9 @@
         <Category xsi:type="RssLink" name="Senaste nyheter">http://feeds.svtplay.se/v1/video/list/96244?expression=full&amp;mode=plain</Category>
         <Category xsi:type="RssLink" name="Senaste sportnytt">http://feeds.svtplay.se/v1/video/list/103738?expression=full&amp;mode=plain</Category>
       </Categories>
+    </Site>
+    <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sw">
+      <Categories />
     </Site>
     <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="false" lang="ru">
       <Categories>
