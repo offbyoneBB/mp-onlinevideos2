@@ -90,6 +90,8 @@ namespace OnlineVideos.Sites
             {
                 doc = GetWebData("http://viastream.player.mtgnewmedia.se/xml/xmltoplayer.php?type=Products&clipid=" + video.VideoUrl);
             }
+
+            doc = System.Text.RegularExpressions.Regex.Replace(doc, "&(?!amp;)", "&amp;");
             XmlDocument xDoc = new XmlDocument();
             xDoc.LoadXml(doc);
 
