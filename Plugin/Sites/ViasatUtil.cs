@@ -27,7 +27,7 @@ namespace OnlineVideos.Sites
             Category channelCategory = parentCategory;
             while (channelCategory.ParentCategory != null) channelCategory = channelCategory.ParentCategory;
             ViasatChannel channel = (ViasatChannel)Enum.Parse(typeof(ViasatChannel), channelCategory.Name);            
-            string id = parentCategory is RssLink ? ((RssLink)parentCategory).Url : "";
+            string id = parentCategory is RssLink ? ((RssLink)parentCategory).Url : "0";
             string doc = "";
             if (channel != ViasatChannel.Sport)
             {
