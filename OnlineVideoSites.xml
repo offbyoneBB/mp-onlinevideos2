@@ -314,17 +314,7 @@
     </Site>
     <Site name="NBA" util="Nba" agecheck="false" enabled="true" lang="en">
       <Description>Videos from the official site of the National Basketball Association.</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="Most Recent">http://www.nba.com/.element/ssi/sect/1.1/video/mostrecent.html</Category>
-        <Category xsi:type="RssLink" name="Playoffs">http://www.nba.com/.element/ssi/sect/1.1/video/playoffs.html</Category>
-        <Category xsi:type="RssLink" name="Draft">http://www.nba.com/.element/ssi/sect/1.1/video/draft.html</Category>
-        <Category xsi:type="RssLink" name="Highlights">http://www.nba.com/.element/ssi/sect/1.1/video/highlights.html</Category>
-        <Category xsi:type="RssLink" name="Top Plays">http://www.nba.com/.element/ssi/sect/1.1/video/topplays.html</Category>
-        <Category xsi:type="RssLink" name="NBA TV">http://www.nba.com/.element/ssi/sect/1.1/video/nbatv.html</Category>
-        <Category xsi:type="RssLink" name="TNT OT">http://www.nba.com/.element/ssi/sect/1.1/video/tntot.html</Category>
-        <Category xsi:type="RssLink" name="Features">http://www.nba.com/.element/ssi/sect/1.1/video/featured.html</Category>
-        <Category xsi:type="RssLink" name="Barkley Zone">http://www.nba.com/.element/ssi/sect/1.1/video/barkleyzone.html</Category>
-      </Categories>
+      <Categories />
     </Site>
     <Site name="MSNBC" util="Msnbc" agecheck="false" enabled="true" lang="en">
       <Categories>
