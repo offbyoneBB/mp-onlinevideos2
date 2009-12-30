@@ -360,12 +360,19 @@ namespace OnlineVideos.Sites
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
             if (request == null) return "";
             request.UserAgent = OnlineVideoSettings.UserAgent;
+            request.Accept = "*/*";
+            request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
             request.Timeout = 15000;
             if (cc != null) request.CookieContainer = cc;
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream responseStream;
+            if (response.ContentEncoding.ToLower().Contains("gzip"))
+                responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+            else
+                responseStream = response.GetResponseStream();
             Encoding encoding = Encoding.UTF8;
             if (!String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet);
-            using (StreamReader reader = new StreamReader(response.GetResponseStream(), encoding, true))
+            using (StreamReader reader = new StreamReader(responseStream, encoding, true))
             {
                 string str = reader.ReadToEnd().Trim();
                 // add to cache if HTTP Status was 200

@@ -16,44 +16,39 @@ namespace OnlineVideos.Sites
     /// Description of NbaUtil.
     /// </summary>
     public class NbaUtil : SiteUtilBase
-    {
-        static Regex subCategoriesAvailableRegEx = new Regex(@"<div\sid=""nbaSubNav""", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        static Regex subCategoriesRegEx = new Regex(@"\s<li><a\sid=""(?<url>.+)\#subNav""\shref=""javascript\:void\(0\)\;"">(?<name>.+)</a></li>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        static Regex videosRegEx = new Regex(@"loadVideoArray\(\snew\sArray\((\s+'(?<url>[^']+)'[^']+)*\)\)\;", RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.ExplicitCapture);
-
-        static Regex amountPagesInSectionRegEx = new Regex(@"<div\sid=""nbaVideoFileCount"">(\d+)</div>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        static Regex sectionPath1RegEx = new Regex(@"<div\sid=""nbaVideoFilePath"">(.+)</div>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        static Regex sectionPath2RegEx = new Regex(@"<div\sid=""nbaVideoFileMap"">(.+)</div>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        
+    {        
         public override int DiscoverDynamicCategories()
         {
-            foreach(RssLink link in Settings.Categories)
+            string js = GetWebData("http://i.cdn.turner.com/nba/nba/z/.e/js/pkg/video/652.js");
+            string json = Regex.Match(js, @"var\snbaChannelConfig=(?<json>.+)").Groups["json"].Value;
+            JsonObject nbaChannelConfig = Jayrock.Json.Conversion.JsonConvert.Import(json) as JsonObject;
+            if (nbaChannelConfig != null)
             {
-                string data = GetWebData(link.Url);
-                if (subCategoriesAvailableRegEx.IsMatch(data))
-                {
-                    link.HasSubCategories = true;
-                    link.SubCategories = new List<Category>();
-                    Match match = subCategoriesRegEx.Match(data);
-                    while (match.Success)
+                List<Category> cats = new List<Category>();
+                foreach (DictionaryEntry jo in nbaChannelConfig)
+                {                    
+                    string name = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jo.Key.ToString().Replace("/", ": "));
+                    Category mainCategory = new Category() { Name = name, HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = new List<Category>() };
+                    JsonArray subCats = jo.Value as JsonArray;
+                    foreach(JsonObject subJo in jo.Value as JsonArray)
                     {
-                        RssLink subCat = new RssLink() { Name = string.Format("{0}: {1}", link.Name, System.Web.HttpUtility.HtmlDecode(match.Groups["name"].Value)), Url = link.Url.Substring(0, link.Url.LastIndexOf('/')+1) + match.Groups["url"].Value + ".html" };
-                        subCat.ParentCategory = link;
-                        link.SubCategories.Add(subCat);
-                        match = match.NextMatch();
+                        RssLink subCategory = new RssLink() { Name = subJo["display"].ToString(), ParentCategory = mainCategory, Url = subJo["search_string"].ToString() };
+                        mainCategory.SubCategories.Add(subCategory);                        
                     }
-                    link.SubCategoriesDiscovered = true;
+                    cats.Add(mainCategory);
                 }
-            }
-
+                cats.Sort();
+                Settings.Categories.Clear();
+                foreach(Category cat in cats) Settings.Categories.Add(cat);
+            }            
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            currentPage = 1; pagesInCategory = 1; sectionBaseUrl = ""; // reset next/prev fields
-            return getVideoList(((RssLink)category).Url);
+            currentPage = 1; pagesInCategory = 1; sectionBaseUrl = ((RssLink)category).Url; // reset next/prev fields
+            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=1&npp=" + nPerPage + "&" + ((RssLink)category).Url + "&season=0910&sort=recent");
         }
 
         List<VideoInfo> getVideoList(string inUrl)
@@ -61,52 +56,32 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videos = new List<VideoInfo>();
 
             string data = GetWebData(inUrl);
-
-            // prepare next previous infos
-            Match m = amountPagesInSectionRegEx.Match(data);
-            if (m.Success)
+            string json = Regex.Match(data, "<textarea id=\"jsCode\">(?<json>.+)</textarea>", RegexOptions.Singleline).Groups["json"].Value;
+            JsonObject jsonData = Jayrock.Json.Conversion.JsonConvert.Import(json) as JsonObject;
+            int NumVideosTotal = ((JsonNumber)((JsonObject)jsonData["metaResults"])["advvideo"]).ToInt32();
+            pagesInCategory = NumVideosTotal / nPerPage;
+            foreach (JsonObject jo in ((JsonArray)jsonData["results"])[0] as JsonArray)
             {
-                pagesInCategory = int.Parse(m.Groups[1].Value);
+                VideoInfo vi = new VideoInfo();
+                vi.VideoUrl = jo["id"].ToString().Replace("/video","");
+                vi.VideoUrl = "http://nba.cdn.turner.com/nba/big" + vi.VideoUrl.Substring(0, vi.VideoUrl.LastIndexOf("/"))+"_nba_576x324.flv";
+                vi.Title = jo["title"].ToString();
+                vi.Description = ((JsonObject)((JsonObject)jo["metadata"])["media"])["excerpt"].ToString();
+                vi.ImageUrl = ((JsonObject)((JsonObject)((JsonObject)jo["metadata"])["media"])["thumbnail"])["url"].ToString();
+                vi.Length = ((JsonObject)((JsonObject)jo["metadata"])["video"])["length"].ToString();
+                vi.Length += " | " + UNIXTimeToDateTime(long.Parse(jo["mediaDateUts"].ToString())).ToString("g");
 
-                m = sectionPath1RegEx.Match(data);
-                if (m.Success) sectionBaseUrl = "http://www.nba.com/" + m.Groups[1].Value;
-
-                m = sectionPath2RegEx.Match(data);
-                if (m.Success) sectionBaseUrl += m.Groups[1].Value;
-            }
-
-            m = videosRegEx.Match(data);
-            if (m.Success)
-            {
-                foreach (Capture c in m.Groups["url"].Captures)
-                {
-                    VideoInfo vi = new VideoInfo();
-
-                    string jsonUrl = c.Value;
-                    if (!jsonUrl.StartsWith("/"))
-                        jsonUrl = "/video/" + jsonUrl;
-                    if (!jsonUrl.EndsWith(".json")) 
-                        jsonUrl += ".json";
-
-                    jsonUrl = "http://www.nba.com" + jsonUrl;
-                    JsonObject jsonData = (JsonObject)GetWebDataAsJson(jsonUrl);
-                    vi.Title = (string)jsonData["headline"];
-                    vi.Description = (string)jsonData["description"];
-                    vi.Length = (string)jsonData["dateCreated"];
-                    if ((jsonData["images"] as JsonArray).Count > 2)
-                    {
-                        vi.ImageUrl = (string)((jsonData["images"] as JsonArray)[2] as JsonObject)["resource"];
-                    }
-
-                    vi.VideoUrl = string.Format("http://nba.cdn.turner.com/nba/big{0}_nba_{1}.flv", (string)jsonData["location"], (string)((JsonArray)jsonData["sizes"])[0]);
-
-                    videos.Add(vi);
-                }                
-            }
-
+                videos.Add(vi);
+            }            
             return videos;
         }
 
+        static DateTime UNIXTimeToDateTime(double unixTime)
+        {
+            return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTime).ToLocalTime();
+        } 
+
+        int nPerPage = 15;
         int pagesInCategory = 1;
         int currentPage = 1;
         string sectionBaseUrl = "";
@@ -123,13 +98,13 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getNextPageVideos()
         {
             currentPage++;
-            return getVideoList(sectionBaseUrl + currentPage.ToString() + ".html");
+            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + (currentPage * nPerPage).ToString() + "&npp=" + nPerPage + "&" + sectionBaseUrl + "&season=0910&sort=recent");
         }
 
         public override List<VideoInfo> getPreviousPageVideos()
         {
             currentPage--;
-            return getVideoList(sectionBaseUrl + currentPage.ToString() + ".html");
+            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + (currentPage * nPerPage).ToString() + "&npp=" + nPerPage + "&" + sectionBaseUrl + "&season=0910&sort=recent");
         }
     }
 }
