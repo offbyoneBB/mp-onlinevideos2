@@ -654,6 +654,25 @@
         <Category xsi:type="RssLink" name="Univers">http://vpodcast.dr.dk/feeds/universrss.xml</Category>
       </Categories>
     </Site>
+    <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" lang="nl" player="WMP">
+      <Categories>
+        <Category xsi:type="RssLink" name="All">http://tvtutti.nl/alle/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Nieuws">http://tvtutti.nl/nieuws/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Informatief">http://tvtutti.nl/informatief-documentaire/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Entertainment">http://tvtutti.nl/entertainment-show/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Serie">http://tvtutti.nl/series-soaps/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Spel">http://tvtutti.nl/spelletje-game/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Sport">http://tvtutti.nl/sport/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Kids">http://tvtutti.nl/kids-jeugd/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Kunst">http://tvtutti.nl/kunst-cultuur/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Muziek">http://tvtutti.nl/muziek/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Comedy">http://tvtutti.nl/comedy-humor/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Film">http://tvtutti.nl/film-dvd/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Natuur">http://tvtutti.nl/natuur/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Auto">http://tvtutti.nl/auto-motor/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+        <Category xsi:type="RssLink" name="Religie">http://tvtutti.nl/religie-geloof/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
+      </Categories>
+    </Site>
     <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true" lang="en">
       <Categories>
         <Category xsi:type="RssLink" name="Browse">http://www.youporn.com/browse</Category>
