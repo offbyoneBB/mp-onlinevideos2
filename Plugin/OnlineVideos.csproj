@@ -46,39 +46,39 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <StartAction>Program</StartAction>
-    <StartProgram>C:\Program Files\Team MediaPortal\MediaPortal\mediaportal.exe</StartProgram>
+    <StartProgram>$(ProgramFiles)\Team MediaPortal\MediaPortal\mediaportal.exe</StartProgram>
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
-    <StartWorkingDirectory>C:\Program Files\Team MediaPortal\MediaPortal</StartWorkingDirectory>
+    <StartWorkingDirectory>$(ProgramFiles)\Team MediaPortal\MediaPortal</StartWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AxInterop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\AxInterop.WMPLib.dll</HintPath>
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\AxInterop.WMPLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Core, Version=0.2.3.17915, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Databases, Version=0.2.3.17915, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\Databases.dll</HintPath>
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Databases.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Dialogs, Version=1.0.4.17412, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\Dialogs.dll</HintPath>
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\Dialogs.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DirectShowLib, Version=2.0.0.22244, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\DirectShowLib.dll</HintPath>
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\DirectShowLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Interop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\Interop.WMPLib.dll</HintPath>
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Interop.WMPLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System">
@@ -99,7 +99,7 @@
     </Reference>
     <Reference Include="Utils, Version=0.2.3.17915, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\Utils.dll</HintPath>
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Utils.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
