@@ -96,6 +96,10 @@
       <Description>Kostenlos verfügbare Sendungen des Orfs.</Description>
       <Categories />
     </Site>
+    <Site name="SF1" util="Sf1" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen des SF1.</Description>
+      <Categories />
+    </Site>
     <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
       <Description>Deutscher YouTube Clone.</Description>
       <Categories>
