@@ -784,6 +784,24 @@
       <Option />
       <Guid>F511BA71-FAAE-4eff-A861-04E45578D0A2</Guid>
     </File>    
+    <File>
+      <FileName>SF1.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\SF1.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>146B4119-3528-4647-8162-A46279DA9F8C</Guid>
+    </File>
+    <File>
+      <FileName>SF1.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\SF1.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>743072A4-0F8D-4bd1-B54C-0ADD57990438</Guid>
+    </File>
 		<File>
 			<FileName>Snowboard Surf and Skate.png</FileName>
 			<Type>Thumbs</Type>
@@ -873,6 +891,24 @@
 			<Id>04010</Id>
 			<Option />
 			<Guid>05cc72c2-14a2-459e-8a80-602cbcae4003</Guid>
+		</File>
+		<File>
+			<FileName>tvtutti.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\tvtutti.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>25E03D3E-4306-445e-8355-BC8D3DD79ACC</Guid>
+		</File>
+		<File>
+			<FileName>tvtutti.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\tvtutti.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>454A9930-068A-4ad9-896E-7ECBE4E4043B</Guid>
 		</File>
 		<File>
 			<FileName>VeryFunnyAds.png</FileName>
@@ -1161,7 +1197,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>13-12-09</CreationDate>
+		<CreationDate>03-01-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
