@@ -1099,7 +1099,7 @@ namespace OnlineVideos
 
                         if (loListItems != null && loListItems.Count > 0)
                         {
-                            moCurrentVideoList.Clear();
+                            moCurrentVideoList = new List<VideoInfo>();
                             GUIControl.ClearControl(GetID, facadeView.GetID);
 
                             if (selectedSite.HasNextPage) ShowNextPageButton();
