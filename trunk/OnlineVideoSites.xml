@@ -23,6 +23,10 @@
       <Description>Kostenlos verfügbare Sendungen des MDR.</Description>
       <Categories />
     </Site>
+    <Site name="NDR" util="Ndr" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen des NDR.</Description>
+      <Categories />
+    </Site>
     <Site name="WDR" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Podcasts des Westdeutschen Rundfunks.</Description>
       <Categories>
