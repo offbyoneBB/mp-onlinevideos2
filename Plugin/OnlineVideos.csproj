@@ -432,6 +432,7 @@
     <Compile Include="Sites\MtvMusicVideosUtil.cs" />
     <Compile Include="Sites\MyVideoUtil.cs" />
     <Compile Include="Sites\NbaUtil.cs" />
+    <Compile Include="Sites\NdrUtil.cs" />
     <Compile Include="Sites\OnTVRuUtil.cs" />
     <Compile Include="Sites\MsnbcUtil.cs" />
     <Compile Include="Sites\OrfUtil.cs" />
