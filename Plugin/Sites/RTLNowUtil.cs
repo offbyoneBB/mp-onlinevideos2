@@ -17,14 +17,10 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Normal or high quality for the videos according to bandwidth.")]
         VideoQuality videoQuality = VideoQuality.Normal;        
 
+        //<a href="/30-minuten-deutschland.php"><img src="/img_08/free_short.jpg" border="0" alt="30 Minuten Deutschland"></a>
+
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for categories.")]
-        string categoriesRegex = @"<div\sclass=""seriennavi""[^>]*>\s*
-<div\sclass=""neutralnavi"">\s*
-<a[^>]*><img[^>]*></a>\s*
-</div>\s*
-<div\sclass=""seriennavi_link"">\s*
-<a\shref=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)</a>\s*
-</div>";
+        string categoriesRegex = @"<a\shref=""(?<url>[^""]+)""><img\ssrc=""(?<image>[^""]+)""\sborder=""0""\salt=""(?<title>[^""]+)""></a>";
 
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the videos for a category.")]
         string videosRegex = @"<div\sclass=""title""[^>]*>\s*
@@ -38,7 +34,7 @@ namespace OnlineVideos.Sites
 </div>";
 
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the playlist url for a video.")]
-        string playlistRegex = @"data\:""(?<url>[^""]+)""";
+        string playlistRegex = @"data\:""(?<url>[^""]+)"",";
 
         string baseUrl = "http://rtl-now.rtl.de";
 
@@ -65,12 +61,15 @@ namespace OnlineVideos.Sites
                 Match m = regEx_Categories.Match(data);
                 while (m.Success)
                 {
-                    RssLink cat = new RssLink();
-                    cat.Url = m.Groups["url"].Value;
-                    if (!cat.Url.StartsWith("http://")) cat.Url = baseUrl + cat.Url;
-                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+                    if (!m.Groups["image"].Value.Contains("blank.gif"))
+                    {
+                        RssLink cat = new RssLink();
+                        cat.Url = m.Groups["url"].Value;
+                        if (!cat.Url.StartsWith("http://")) cat.Url = baseUrl + cat.Url;
+                        cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+                        Settings.Categories.Add(cat);
+                    }
                     m = m.NextMatch();
-                    Settings.Categories.Add(cat);
                 }
                 Settings.DynamicCategoriesDiscovered = true;
             }
@@ -89,22 +88,31 @@ namespace OnlineVideos.Sites
                     data = GetWebData(url);
                     XmlDocument xml = new XmlDocument();
                     xml.LoadXml(data);
-                    url = xml.SelectSingleNode("//playlist/videoinfo/filename").InnerText;
-                    url = url.Replace("fms-hc1.rtl.de","fms.rtl.de").Replace(".flv", "");
-                    if (videoQuality == VideoQuality.High) url = url.Replace("700k", "1500k");
-                    Uri uri = new Uri(url);
+
+                    string rtmpeUrl = xml.SelectSingleNode("//playlist/videoinfo/filename").InnerText;
+                    string host = rtmpeUrl.Substring(rtmpeUrl.IndexOf("//") + 2, rtmpeUrl.IndexOf("/", rtmpeUrl.IndexOf("//") + 2) - rtmpeUrl.IndexOf("//") - 2);
+                    string tcUrl = rtmpeUrl.Substring(0, rtmpeUrl.IndexOf("rtlnow") + 6);
+                    string playpath = rtmpeUrl.Substring(rtmpeUrl.IndexOf("rtlnow") + 7);
+                    if (playpath.Contains(".f4v"))
+                    {
+                        playpath = "MP4:" + playpath;
+                    }
+                    else
+                    {
+                        playpath = playpath.Substring(0, playpath.Length - 4);
+                    }
                     string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&hostname={2}&tcUrl={3}&app={4}&swfurl={5}&swfsize={6}&swfhash={7}&pageurl={8}&playpath={9}",
-                        OnlineVideoSettings.RTMP_PROXY_PORT,
-                        System.Web.HttpUtility.UrlEncode(url),
-                        "fms.rtl.de",
-                        url.Substring(0, url.LastIndexOf("/")),
-                        uri.LocalPath.Substring(1, uri.LocalPath.LastIndexOf("/")-1),
-                        "http://rtl-now.rtl.de/includes/rtlnow_videoplayer09_2.swf?ts=20090922",
-                        "414239",
-                        "6a31c95d659eb33bfffc315e9da4cf74ed6498e599d2bacb31675968b355fbdf",
-                        "http://rtl-now.rtl.de/",
-                        uri.LocalPath.Substring(uri.LocalPath.IndexOf("rtlnow") + 6)
-                        );
+                                        OnlineVideoSettings.RTMP_PROXY_PORT,
+                                        rtmpeUrl, //rtmpUrl
+                                        host, //host
+                                        tcUrl, //tcUrl
+                                        "rtlnow", //app
+                                        "http://rtl-now.rtl.de/includes/rtlnow_videoplayer09_2.swf", //swfurl
+                                        "414239",
+                                        "6a31c95d659eb33bfffc315e9da4cf74ed6498e599d2bacb31675968b355fbdf",
+                                        video.VideoUrl, //pageUrl
+                                        playpath //playpath
+                                        );
                     return resultUrl;
                 }
             }
