@@ -96,6 +96,10 @@
       <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>
       <Categories />
     </Site>
+    <Site name="Vox Now" util="VoxNow" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen des Vox.</Description>
+      <Categories />
+    </Site>
     <Site name="Orf" util="Orf" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Orfs.</Description>
       <Categories />
