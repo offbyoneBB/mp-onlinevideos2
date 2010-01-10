@@ -1,19 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.ComponentModel;
-using System.IO;
-using System.Net;
-using System.Xml;
-using System.Text;
 using System.Text.RegularExpressions;
-using MediaPortal.GUI.Library;
-using MediaPortal.Configuration;
 
 namespace OnlineVideos.Sites
 {
     /// <summary>
-    /// Description of EmpflixUtil.
+    /// Utility used to browse videos of empflix.com
     /// </summary>
     public class EmpflixUtil : SiteUtilBase
     {
@@ -55,34 +48,75 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
-            try
+            string dataPage = GetWebData(video.VideoUrl);
+            if (dataPage.Length > 0)
             {
-                string dataPage = GetWebData(video.VideoUrl);
-                if (dataPage.Length > 0)
+                Match m = regEx_PlaylistUrl.Match(dataPage);
+                if (m.Success)
                 {
-                    Match m = regEx_PlaylistUrl.Match(dataPage);
-                    if (m.Success)
-                    {                        
-                        string playlistUrl = m.Groups["url"].Value;
-                        playlistUrl = System.Web.HttpUtility.UrlDecode(playlistUrl);
-                        dataPage = GetWebData(playlistUrl);
-                        if (dataPage.Length > 0)
+                    string playlistUrl = m.Groups["url"].Value;
+                    playlistUrl = System.Web.HttpUtility.UrlDecode(playlistUrl);
+                    dataPage = GetWebData(playlistUrl);
+                    if (dataPage.Length > 0)
+                    {
+                        m = regEx_FileUrl.Match(dataPage);
+                        if (m.Success)
                         {
-                            m = regEx_FileUrl.Match(dataPage);
-                            if (m.Success)
-                            {
-                                return m.Groups["url"].Value + "&filetype=.flv";
-                            }
+                            return m.Groups["url"].Value + "&filetype=.flv";
                         }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-            }
             return video.VideoUrl;
         }
+
+        List<VideoInfo> Parse(string data)
+        {
+            List<VideoInfo> loVideoList = new List<VideoInfo>();
+            if (data.Length > 0)
+            {
+                Match m = regEx_VideoList.Match(data);
+                while (m.Success)
+                {
+                    VideoInfo videoInfo = new VideoInfo();
+                    videoInfo.Title = m.Groups["Title"].Value;
+                    videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
+                    videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+                    videoInfo.Length = m.Groups["Duration"].Value;
+                    loVideoList.Add(videoInfo);
+                    m = m.NextMatch();
+                }
+
+                // check for previous page link
+                Match mPrev = regEx_PrevPage.Match(data);
+                if (mPrev.Success)
+                {
+                    previousPageAvailable = true;
+                    previousPageUrl = mPrev.Groups["url"].Value;
+                }
+                else
+                {
+                    previousPageAvailable = false;
+                    previousPageUrl = "";
+                }
+
+                // check for next page link
+                Match mNext = regEx_NextPage.Match(data);
+                if (mNext.Success)
+                {
+                    nextPageAvailable = true;
+                    nextPageUrl = mNext.Groups["url"].Value;
+                }
+                else
+                {
+                    nextPageAvailable = false;
+                    nextPageUrl = "";
+                }
+            }
+            return loVideoList;
+        }
+
+        #region Next/Previous Page
 
         string nextPageUrl = "";
         bool nextPageAvailable = false;
@@ -108,58 +142,7 @@ namespace OnlineVideos.Sites
             return Parse(GetWebData("http://www.empflix.com/" + previousPageUrl));
         }
 
-        List<VideoInfo> Parse(string dataPage)
-        {
-            List<VideoInfo> loVideoList = new List<VideoInfo>();
-            if (dataPage.Length > 0)
-            {
-                try
-                {
-                    Match m = regEx_VideoList.Match(dataPage);
-                    while (m.Success)
-                    {
-                        VideoInfo videoInfo = new VideoInfo();
-                        videoInfo.Title = m.Groups["Title"].Value;
-                        videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
-                        videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                        videoInfo.Length = m.Groups["Duration"].Value;
-                        loVideoList.Add(videoInfo);
-                        m = m.NextMatch();
-                    }
-                    
-                    // check for previous page link
-                    Match mPrev = regEx_PrevPage.Match(dataPage);
-                    if (mPrev.Success)
-                    {
-                        previousPageAvailable = true;
-                        previousPageUrl = mPrev.Groups["url"].Value;
-                    }
-                    else
-                    {
-                        previousPageAvailable = false;
-                        previousPageUrl = "";
-                    }
-                    
-                    // check for next page link
-                    Match mNext = regEx_NextPage.Match(dataPage);
-                    if (mNext.Success)
-                    {
-                        nextPageAvailable = true;
-                        nextPageUrl = mNext.Groups["url"].Value;
-                    }
-                    else
-                    {
-                        nextPageAvailable = false;
-                        nextPageUrl = "";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex);
-                }
-            }
-            return loVideoList;
-        }
+        #endregion
 
         #region Search
 
@@ -167,17 +150,8 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> Search(string query)
         {
-            try
-            {
-                string dataPage = GetWebDataFromPost(searchUrl, "what=" + query);
-                return Parse(dataPage);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-                return new List<VideoInfo>();
-            }
-
+            string dataPage = GetWebDataFromPost(searchUrl, "what=" + query);
+            return Parse(dataPage);
         }
 
         #endregion
