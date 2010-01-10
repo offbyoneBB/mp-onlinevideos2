@@ -1356,7 +1356,7 @@ namespace OnlineVideos
             }
             else
             {
-                String lsUrl = "";
+                string lsUrl = "";
                 try
                 {
                     GUIWaitCursor.Init();
@@ -1364,7 +1364,15 @@ namespace OnlineVideos
                     worker = new BackgroundWorker();
                     worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
                     {
-                        lsUrl = selectedSite.getUrl(foListItem);
+                        try
+                        {
+                            lsUrl = selectedSite.getUrl(foListItem);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex);
+                        }
+                        
                     });
                     worker.RunWorkerAsync();
                     while (worker.IsBusy) GUIWindowManager.Process();                

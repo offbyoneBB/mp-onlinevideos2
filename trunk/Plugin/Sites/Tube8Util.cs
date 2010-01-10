@@ -1,17 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.ComponentModel;
-using System.Text;
-using System.Net;
-using System.IO;
-using System.Diagnostics;
-using System.Threading;
-using MediaPortal.GUI.Library;
 using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
+    /// <summary>
+    /// Utility used to browse videos of tube8.com
+    /// </summary>
     public class Tube8Util : SiteUtilBase
     {
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos.")]
@@ -48,92 +44,78 @@ namespace OnlineVideos.Sites
             return Parse(((RssLink)category).Url);
         }
 
+        public override String getUrl(VideoInfo video)
+        {
+            string dataPage = GetWebData(video.VideoUrl);
+            if (dataPage.Length > 0)
+            {
+                Match m = regEx_PlaylistUrl.Match(dataPage);
+                if (m.Success) return m.Groups["url"].Value;
+            }
+            return video.VideoUrl;
+        }
+
         List<VideoInfo> Parse(string url)
         {
             List<VideoInfo> loVideoList = new List<VideoInfo>();
             string data = GetWebData(url);
             if (data.Length > 0)
             {
-                try
+                Match m = regEx_VideoList.Match(data);
+                while (m.Success)
                 {
-                    Match m = regEx_VideoList.Match(data);
-                    while (m.Success)
-                    {
-                        VideoInfo videoInfo = new VideoInfo();
-                        videoInfo.Title = m.Groups["Title"].Value;
-                        videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
-                        videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                        videoInfo.Length = m.Groups["Duration"].Value;
-                        loVideoList.Add(videoInfo);
-                        m = m.NextMatch();
-                    }
+                    VideoInfo videoInfo = new VideoInfo();
+                    videoInfo.Title = m.Groups["Title"].Value;
+                    videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
+                    videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+                    videoInfo.Length = m.Groups["Duration"].Value;
+                    loVideoList.Add(videoInfo);
+                    m = m.NextMatch();
+                }
 
-                    // check for previous page link
-                    Match mPrev = regEx_PrevPage.Match(data);
-                    if (mPrev.Success)
-                    {
-                        previousPageAvailable = true;
-                        previousPageUrl = mPrev.Groups["url"].Value;
+                // check for previous page link
+                Match mPrev = regEx_PrevPage.Match(data);
+                if (mPrev.Success)
+                {
+                    previousPageAvailable = true;
+                    previousPageUrl = mPrev.Groups["url"].Value;
 
-                        if (!Uri.IsWellFormedUriString(previousPageUrl, System.UriKind.Absolute))
+                    if (!Uri.IsWellFormedUriString(previousPageUrl, System.UriKind.Absolute))
+                    {
+                        Uri uri = null;
+                        if (Uri.TryCreate(new Uri(url), previousPageUrl, out uri))
                         {
-                            Uri uri = null;
-                            if (Uri.TryCreate(new Uri(url), previousPageUrl, out uri))
-                            {
-                                previousPageUrl = uri.ToString();
-                            }
-                            else
-                            {
-                                previousPageAvailable = false;
-                                previousPageUrl = "";
-                            }
+                            previousPageUrl = uri.ToString();
+                        }
+                        else
+                        {
+                            previousPageAvailable = false;
+                            previousPageUrl = "";
                         }
                     }
-                    else
-                    {
-                        previousPageAvailable = false;
-                        previousPageUrl = "";
-                    }
-
-                    // check for next page link
-                    Match mNext = regEx_NextPage.Match(data);
-                    if (mNext.Success)
-                    {
-                        nextPageAvailable = true;
-                        nextPageUrl = mNext.Groups["url"].Value;
-                    }
-                    else
-                    {
-                        nextPageAvailable = false;
-                        nextPageUrl = "";
-                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Log.Error(ex);
+                    previousPageAvailable = false;
+                    previousPageUrl = "";
+                }
+
+                // check for next page link
+                Match mNext = regEx_NextPage.Match(data);
+                if (mNext.Success)
+                {
+                    nextPageAvailable = true;
+                    nextPageUrl = mNext.Groups["url"].Value;
+                }
+                else
+                {
+                    nextPageAvailable = false;
+                    nextPageUrl = "";
                 }
             }
             return loVideoList;
         }
 
-        public override String getUrl(VideoInfo video)
-        {
-            try
-            {
-                string dataPage = GetWebData(video.VideoUrl);
-                if (dataPage.Length > 0)
-                {
-                    Match m = regEx_PlaylistUrl.Match(dataPage);
-                    if (m.Success) return m.Groups["url"].Value;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-            }
-            return video.VideoUrl;
-        }
-               
         #region Next/Previous Page
 
         string nextPageUrl = "";
@@ -169,7 +151,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> Search(string query)
         {
             return Parse(string.Format(searchUrl, query));
-        }      
+        }
 
         #endregion
     }
