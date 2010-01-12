@@ -35,7 +35,14 @@ namespace OnlineVideos.Sites
                 break;
             }
             string str4 = str3.Replace("rtmp://", "").Replace("/app", "");
-            return string.Format("http://localhost:20004/stream.flv?hostname={0}&port={1}&app={2}&swfUrl={3}&playpath={4}&tcUrl={5}", new object[] { HttpUtility.UrlEncode(str4), "1935", "app", HttpUtility.UrlEncode("http://www-cdn.justin.tv/widgets/live_site_player.r2c0a479831b1f4fcdf53f6daf9c7e7c22aa0c791.sw"), HttpUtility.UrlEncode(str2), HttpUtility.UrlEncode(str3 + "/" + str2) });
+            return string.Format("http://127.0.0.1:{6}/stream.flv?hostname={0}&port={1}&app={2}&swfUrl={3}&playpath={4}&tcUrl={5}", new object[] { 
+                HttpUtility.UrlEncode(str4), 
+                "1935", 
+                "app", 
+                HttpUtility.UrlEncode("http://www-cdn.justin.tv/widgets/live_site_player.r7d3ed44c4594caafa272b91a2de339eb03325273.swf"), 
+                HttpUtility.UrlEncode(str2), 
+                HttpUtility.UrlEncode(str3 + "/" + str2), 
+                OnlineVideoSettings.RTMP_PROXY_PORT });
         }
 
         public override List<VideoInfo> getVideoList(Category category)
