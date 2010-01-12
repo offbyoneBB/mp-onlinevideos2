@@ -16,7 +16,7 @@ namespace OnlineVideos
     {
         public enum SiteOrder { AsInFile = 0, Name = 1, Language = 2 }
 
-        public enum State { home = 0, categories = 1, videos = 2, info = 3 }
+        public enum State { sites = 0, categories = 1, videos = 2, details = 3 }
 
         public enum VideosMode { Category = 0, Favorites = 1, Search = 2, Related = 3 }
 
@@ -128,7 +128,12 @@ namespace OnlineVideos
         #endregion
 
         #region state variables
-        State currentState = State.home;
+        State currentState = State.sites;
+        public State CurrentState
+        {
+            get { return currentState; }
+            set { currentState = value; GUIPropertyManager.SetProperty("#OnlineVideos.state", value.ToString()); }
+        }
         VideosMode currentVideosDisplayMode = VideosMode.Category;
         SiteOrder siteOrder = SiteOrder.AsInFile;
         
@@ -188,6 +193,7 @@ namespace OnlineVideos
             if (appleProxyServer == null) appleProxyServer = new OnlineVideos.Sites.AppleProxyServer(OnlineVideoSettings.APPLE_PROXY_PORT);
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", " ");
             GUIPropertyManager.SetProperty("#OnlineVideos.length", " ");
+            CurrentState = State.sites;
             return result;
         }
         
@@ -201,21 +207,21 @@ namespace OnlineVideos
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
                 Log.Debug("OnlineVideos Age Confirmed set to false.");
                 OnlineVideoSettings.getInstance().ageHasBeenConfirmed = false;
-                currentState = State.home;
+                CurrentState = State.sites;
             }
 
-            Log.Debug("OnPageLoad. CurrentState:" + currentState);
-            if (currentState == State.home)
+            Log.Debug("OnPageLoad. CurrentState:" + CurrentState);
+            if (CurrentState == State.sites)
             {
                 DisplaySites();
                 SwitchView();
             }
-            else if (currentState == State.categories)
+            else if (CurrentState == State.categories)
             {
                 DisplayCategories(null);
                 SwitchView();
             }
-            else if (currentState == State.videos)
+            else if (CurrentState == State.videos)
             {
                 DisplayCategoryVideos();
                 SwitchView();
@@ -232,9 +238,9 @@ namespace OnlineVideos
         {
             int liSelected = facadeView.SelectedListItemIndex - 1;
 
-            if (selectedSite.HasMultipleVideos && currentState == State.info) liSelected = infoList.SelectedListItemIndex - 1;
+            if (selectedSite.HasMultipleVideos && CurrentState == State.details) liSelected = infoList.SelectedListItemIndex - 1;
 
-            if (liSelected < 0 || currentState == State.home || currentState == State.categories || (selectedSite.HasMultipleVideos && currentState == State.videos))
+            if (liSelected < 0 || CurrentState == State.sites || CurrentState == State.categories || (selectedSite.HasMultipleVideos && CurrentState == State.videos))
             {
                 return;
             }
@@ -268,7 +274,7 @@ namespace OnlineVideos
             dlgSel.DoModal(GetID);
             int liSelectedIdx = dlgSel.SelectedId;
             VideoInfo loSelectedVideo;
-            if (currentState == State.videos)
+            if (CurrentState == State.videos)
             {
                 loSelectedVideo = moCurrentVideoList[liSelected];
             }
@@ -328,7 +334,7 @@ namespace OnlineVideos
 
         public override void OnAction(Action action)
         {
-            if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && currentState != State.home)
+            if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && CurrentState != State.sites)
             {
                 // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
                 GUIControl focusedControl = GetControl(GetFocusControlId());
@@ -391,14 +397,14 @@ namespace OnlineVideos
 
             if (control == facadeView && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
-                if (currentState == State.home)
+                if (CurrentState == State.sites)
                 {
                     selectedSite = OnlineVideoSettings.getInstance().SiteList[facadeView.SelectedListItem.Path];
                     selectedSiteIndex = facadeView.SelectedListItemIndex;                    
                     DisplayCategories(null);
-                    currentState = State.categories;
+                    CurrentState = State.categories;
                 }
-                else if (currentState == State.categories)
+                else if (CurrentState == State.categories)
                 {
                     if (facadeView.SelectedListItemIndex == 0)
                     {
@@ -417,7 +423,7 @@ namespace OnlineVideos
                         {
                             selectedVideo = null;
                             selectedVideoIndex = 0;
-                            currentState = State.videos;
+                            CurrentState = State.videos;
                             HideFacade();
                             refreshVideoList();
                             // if there were no videos found select the parent category
@@ -425,7 +431,7 @@ namespace OnlineVideos
                         }
                     }
                 }
-                else if (currentState == State.videos)
+                else if (CurrentState == State.videos)
                 {
                     Log.Info("Set the stopDownload to true 2");
                     ImageDownloader._stopDownload = true;
@@ -438,7 +444,7 @@ namespace OnlineVideos
                         selectedVideoIndex = facadeView.SelectedListItemIndex;
                         if (selectedSite.HasMultipleVideos)
                         {
-                            currentState = State.info;
+                            CurrentState = State.details;
                             DisplayVideoDetails(moCurrentVideoList[facadeView.SelectedListItemIndex - 1]);
                         }
                         else
@@ -450,7 +456,7 @@ namespace OnlineVideos
                 }                
                 UpdateViewState();
             }
-            else if (control == infoList && actionType == Action.ActionType.ACTION_SELECT_ITEM && currentState == State.info)
+            else if (control == infoList && actionType == Action.ActionType.ACTION_SELECT_ITEM && CurrentState == State.details)
             {
                 ImageDownloader._stopDownload = true;
                 if (infoList.SelectedListItemIndex == 0)
@@ -533,7 +539,7 @@ namespace OnlineVideos
             else if (control == btnOrderBy)
             {
                 GUIControl.SelectItemControl(GetID, btnOrderBy.GetID, btnOrderBy.SelectedItem);
-                if (currentState == State.home) siteOrder = (SiteOrder)btnOrderBy.SelectedItem;
+                if (CurrentState == State.sites) siteOrder = (SiteOrder)btnOrderBy.SelectedItem;
             }
             else if (control == btnTimeFrame)
             {
@@ -543,9 +549,9 @@ namespace OnlineVideos
             {
                 GUIControl.UnfocusControl(GetID, btnUpdate.GetID);
 
-                switch (currentState)
+                switch (CurrentState)
                 {
-                    case State.home: DisplaySites(); break;
+                    case State.sites: DisplaySites(); break;
                     case State.videos: FilterVideos(); break;                    
                 }
                 UpdateViewState();
@@ -565,7 +571,7 @@ namespace OnlineVideos
                         msLastSearchQuery = query;
                         if (SearchVideos(query))
                         {
-                            currentState = State.videos;
+                            CurrentState = State.videos;
                             UpdateViewState();
                         }
                     }
@@ -576,7 +582,7 @@ namespace OnlineVideos
                 GUIControl.FocusControl(GetID, facadeView.GetID);
                 if (DisplayFavoriteVideos())
                 {
-                    currentState = State.videos;
+                    CurrentState = State.videos;
                     UpdateViewState();
                 }
             }
@@ -617,13 +623,13 @@ namespace OnlineVideos
 
         private void OnShowPreviousMenu()
         {
-            Log.Info("OnShowPreviousMenu CurrentState:" + currentState);
-            if (currentState == State.categories)
+            Log.Info("OnShowPreviousMenu CurrentState:" + CurrentState);
+            if (CurrentState == State.categories)
             {
                 if (selectedCategory == null)
                 {
                     DisplaySites();
-                    currentState = State.home;
+                    CurrentState = State.sites;
                 }
                 else
                 {
@@ -632,7 +638,7 @@ namespace OnlineVideos
                     else DisplayCategories(selectedCategory.ParentCategory);
                 }
             }
-            else if (currentState == State.videos)
+            else if (CurrentState == State.videos)
             {
                 Log.Info("Set the stopDownload to true 3");
                 ImageDownloader._stopDownload = true;
@@ -640,10 +646,10 @@ namespace OnlineVideos
                 if (selectedCategory == null || selectedCategory.ParentCategory == null) DisplayCategories(null);
                 else DisplayCategories(selectedCategory.ParentCategory);
 
-                currentState = State.categories;
+                CurrentState = State.categories;
                 currentVideosDisplayMode = VideosMode.Category;
             }
-            else if (currentState == State.info)
+            else if (CurrentState == State.details)
             {
                 ///------------------------------------------------------------------------
                 /// 2009-05-31 MichelC
@@ -657,7 +663,7 @@ namespace OnlineVideos
                 ImageDownloader._stopDownload = true;
                 DisplayCategoryVideos();
                 SwitchView();                
-                currentState = State.videos;
+                CurrentState = State.videos;
             }            
             UpdateViewState();
         }        
@@ -1128,7 +1134,7 @@ namespace OnlineVideos
                         //{
                         DisplayCategories(selectedCategory.ParentCategory);
                         //}
-                        currentState = State.categories;
+                        CurrentState = State.categories;
                         UpdateViewState();
                     }
 
@@ -1190,7 +1196,7 @@ namespace OnlineVideos
                 dlg_error.SetLine(2, String.Empty);
                 dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                 
-                currentState = State.categories;
+                CurrentState = State.categories;
                 DisplayCategories(selectedCategory == null ? null : selectedCategory.ParentCategory);
                 UpdateViewState();
                 return false;
@@ -1253,7 +1259,7 @@ namespace OnlineVideos
                 dlg_error.SetLine(1, "Unable to load moviedetails");
                 dlg_error.SetLine(2, String.Empty);
                 dlg_error.DoModal(GUIWindowManager.ActiveWindow);
-                currentState = State.videos;
+                CurrentState = State.videos;
                 DisplayCategoryVideos();
                 return;
             }
@@ -1610,9 +1616,9 @@ namespace OnlineVideos
         private void UpdateViewState()
         {
             Log.Info("Updating View State");
-            switch (currentState)
+            switch (CurrentState)
             {
-                case State.home:
+                case State.sites:
                     GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(2143)/*Home*/);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
                     ShowFacade();
@@ -1671,7 +1677,7 @@ namespace OnlineVideos
                     currentView = suggestedView != null ? suggestedView.Value : currentVideoView;                    
                     SwitchView();
                     break;
-                case State.info:
+                case State.details:
                     GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Settings.Name + ".png");
                     HideFacade();
@@ -1686,7 +1692,7 @@ namespace OnlineVideos
                     DisplayVideoInfo(null);
                     break;
             }
-            if (currentState == State.info)
+            if (CurrentState == State.details)
             {
                 infoList.Focus = true;
                 GUIControl.FocusControl(GetID, infoList.GetID);
@@ -1958,17 +1964,17 @@ namespace OnlineVideos
                     currentView = GUIFacadeControl.ViewMode.List;
                     break;
             }
-            if (currentState == State.home)
+            if (CurrentState == State.sites)
             {
                 currentSiteView = currentView;
                 SwitchView();
             }
-            else if (currentState == State.categories)
+            else if (CurrentState == State.categories)
             {
                 currentCategoryView = currentView;
                 SwitchView();
             }
-            else if (currentState == State.videos)
+            else if (CurrentState == State.videos)
             {
                 currentVideoView = currentView;
                 SwitchView();
