@@ -32,7 +32,7 @@ namespace OnlineVideos.Sites
         int[] fmtOptionsQualitySorted = new int[] { 37,22,35,18,34,5,0,17,13 };
 
         static Regex PageStartIndex = new Regex(@"start-index=(?<item>[\d]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        static Regex swfJsonArgs = new Regex(@"var\sswfArgs\s=\s(?<json>\{.+\})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         private List<int> steps;
         private Dictionary<String, String> orderByList;
@@ -202,6 +202,9 @@ namespace OnlineVideos.Sites
                 Token = Items["token"];
             if (Token == "" && Items.ContainsKey("t"))
                 Token = Items["t"];
+            if (Token == "")
+                return "";
+
             if (Items.ContainsKey("fmt_map"))
             {
                 FmtMap = System.Web.HttpUtility.UrlDecode(Items["fmt_map"]).Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
