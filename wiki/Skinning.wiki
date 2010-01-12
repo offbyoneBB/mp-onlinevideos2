@@ -1,0 +1,21 @@
+#summary A guide what elements make up this plugin and can/must be used from the skin.
+
+= Properties set in the code =
+{{{
+#header.label
+#header.image
+
+
+#Play.Current.Title
+
+
+#OnlineVideos.desc
+#OnlineVideos.length
+
+
+#OnlineVideos.movieposter
+#OnlineVideos.trailerdesc
+#OnlineVideos.genre
+#OnlineVideos.releasedate
+#OnlineVideos.cast
+}}}
