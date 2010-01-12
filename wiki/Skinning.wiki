@@ -1,4 +1,4 @@
-#summary A guide what elements make up this plugin and can/must be used from the skin.
+#summary A guide what elements make up this plugin and can and must be used from the skin.
 
 = Properties set in the code =
 {{{
@@ -6,13 +6,16 @@
 #header.image
 
 
-#Play.Current.Title
+#Play.Current.Title ( set when playing a video to display the title instead of url )
+
+
+#OnlineVideos.state ( values: sites, categories, videos, details )
 
 
 #OnlineVideos.desc
 #OnlineVideos.length
 
-
+only on the details screen:
 #OnlineVideos.movieposter
 #OnlineVideos.trailerdesc
 #OnlineVideos.genre
