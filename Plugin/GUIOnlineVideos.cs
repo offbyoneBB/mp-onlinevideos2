@@ -91,8 +91,6 @@ namespace OnlineVideos
         #endregion
 
         #region Skin Controls
-        [SkinControlAttribute(1)]
-        protected GUIImage logoImage = null;
         [SkinControlAttribute(2)]
         protected GUIButtonControl btnViewAs = null;
         [SkinControlAttribute(3)]
@@ -1262,7 +1260,7 @@ namespace OnlineVideos
 
             moCurrentTrailerList.Clear();
             GUIControl.ClearControl(GetID, facadeView.GetID);
-            GUIControl.ClearControl(GetID, 51);
+            GUIControl.ClearControl(GetID, infoList.GetID);
             GUIListItem loListItem = new GUIListItem("..");
             loListItem.IsFolder = true;
             loListItem.ItemId = 0;
@@ -1733,8 +1731,7 @@ namespace OnlineVideos
 
         private void ShowVideoDetails()
         {            
-            GUIPropertyManager.SetProperty("#OnlineVideos.movieposter", ImageDownloader.downloadPoster(selectedVideo.Tags, selectedVideo.Title, OnlineVideoSettings.getInstance().msThumbLocation));
-            GUIPropertyManager.SetProperty("#OnlineVideos.movietitle", selectedVideo.Title);
+            GUIPropertyManager.SetProperty("#OnlineVideos.movieposter", ImageDownloader.downloadPoster(selectedVideo.Tags, selectedVideo.Title, OnlineVideoSettings.getInstance().msThumbLocation));            
             GUIPropertyManager.SetProperty("#OnlineVideos.trailerdesc", selectedVideo.Description);
             Sites.AppleTrailersUtil.Trailer info = selectedVideo.Other as Sites.AppleTrailersUtil.Trailer;
             if (info != null)
@@ -2007,22 +2004,11 @@ namespace OnlineVideos
         {
             if (foVideo == null)
             {
-                GUIPropertyManager.SetProperty("#OnlineVideos.videotitle", String.Empty);
-                GUIPropertyManager.SetProperty("#OnlineVideos.tags", String.Empty);
                 GUIPropertyManager.SetProperty("#OnlineVideos.length", String.Empty);
                 GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
             }
             else
             {
-                GUIPropertyManager.SetProperty("#OnlineVideos.videotitle", foVideo.Title);
-                if (String.IsNullOrEmpty(foVideo.Tags))
-                {
-                    GUIPropertyManager.SetProperty("#OnlineVideos.tags", "None");
-                }
-                else
-                {
-                    GUIPropertyManager.SetProperty("#OnlineVideos.tags", foVideo.Tags);
-                }
                 if (String.IsNullOrEmpty(foVideo.Length))
                 {
                     GUIPropertyManager.SetProperty("#OnlineVideos.length", "None");

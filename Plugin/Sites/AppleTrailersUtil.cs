@@ -103,8 +103,8 @@ namespace OnlineVideos.Sites
             public class StringList : List<string>
             {
                 public override string ToString()
-                {
-                    return ToString(", ");
+                {                    
+                    return Count > 0 ? ToString(", ") : " ";
                 }
 
                 /// <summary>
