@@ -348,9 +348,14 @@ namespace OnlineVideos.Sites
                 Log.Error(ex);
             }
             return url;
-        }        
+        }
 
         protected static string GetWebData(string url, CookieContainer cc)
+        {
+            return GetWebData(url, cc, null);
+        }
+
+        protected static string GetWebData(string url, CookieContainer cc,string referer)
         {
             // try cache first
             string cachedData = WebCache.Instance[url];
@@ -362,6 +367,8 @@ namespace OnlineVideos.Sites
             request.UserAgent = OnlineVideoSettings.UserAgent;
             request.Accept = "*/*";
             request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+            if (!String.IsNullOrEmpty(referer))
+                request.Referer = referer;
             request.Timeout = 15000;
             if (cc != null) request.CookieContainer = cc;
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();

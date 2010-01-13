@@ -21,7 +21,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the playlist data for the playback url.")]
         string fileUrlRegEx = "";
 
-        [Category("OnlineVideosConfiguration"), Description("FormatString taht will take the groups from the fileUrlRegEx as parameters.")]
+        [Category("OnlineVideosConfiguration"), Description("FormatString that will take the groups from the fileUrlRegEx as parameters.")]
         string fileUrlFormat = "";
 
         Regex regEx_FileUrl;
