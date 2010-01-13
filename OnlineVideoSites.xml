@@ -681,6 +681,10 @@
         <Category xsi:type="RssLink" name="Religie">http://tvtutti.nl/religie-geloof/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
       </Categories>
     </Site>
+    <Site name="TurboNick" util="TurboNick" agecheck="false" enabled="true" lang="nl">
+      <Categories>
+      </Categories>
+    </Site>
     <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true" lang="en">
       <Categories>
         <Category xsi:type="RssLink" name="Browse">http://www.youporn.com/browse</Category>
