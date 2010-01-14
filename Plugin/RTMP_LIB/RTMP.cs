@@ -75,11 +75,14 @@ namespace RTMP_LIB
 
         int m_nBufferMS = 300;        
         int m_stream_id; // returned in _result from invoking createStream            
-        int m_nBWCheckCounter;        
+        int m_nBWCheckCounter;
+        int m_nServerBW;
+        int m_nClientBW;
+        byte m_nClientBW2;
         RTMPPacket[] m_vecChannelsIn = new RTMPPacket[64];
         RTMPPacket[] m_vecChannelsOut = new RTMPPacket[64];
         uint[] m_channelTimestamp = new uint[64]; // abs timestamp of last packet
-        Stack<string> m_methodCalls = new Stack<string>(); //remote method calls queue
+        Queue<string> m_methodCalls = new Queue<string>(); //remote method calls queue
 
         public bool Connect(Link link)
         {
@@ -92,7 +95,7 @@ namespace RTMP_LIB
             tcpClient = new TcpClient(Link.hostname, Link.port);
             networkStream = tcpClient.GetStream();
 
-            if (!HandShake(Link.protocol == RTMP_PROTOCOL_RTMPE || Link.protocol == RTMP_PROTOCOL_RTMPTE)) return false;
+            if (!HandShake(Link.useFP9Handshake || Link.protocol == RTMP_PROTOCOL_RTMPE || Link.protocol == RTMP_PROTOCOL_RTMPTE)) return false;
             if (!SendConnectPacket()) return false;
 
             return true;
@@ -130,11 +133,11 @@ namespace RTMP_LIB
                         break;
                     case 0x05:
                         // server bw
-                        //CLog::Log(LOGDEBUG,"%s, received: server BW", __FUNCTION__);
+                        HandleServerBW(packet);
                         break;
                     case 0x06:
                         // client bw
-                        //CLog::Log(LOGDEBUG,"%s, received: client BW", __FUNCTION__);
+                        HandleClientBW(packet);
                         break;
                     case 0x08:
                         // audio data
@@ -181,7 +184,16 @@ namespace RTMP_LIB
             // Chunk Basic Header (1, 2 or 3 bytes)
             // the two most significant bits hold the chunk type
             // value in the 6 least significant bits gives the chunk stream id (0,1,2 are reserved): 0 -> 3 byte header | 1 -> 2 byte header | 2 -> low level protocol message | 3-63 -> stream id
-            byte type = ReadByte(); bytesReadTotal++;
+            byte[] singleByteToReadBuffer = new byte[1];
+            if (ReadN(singleByteToReadBuffer, 0, 1) != 1)
+            {
+                Logger.Log("failed to read RTMP packet header");
+                packet = null;
+                return false;
+            }
+
+            byte type = singleByteToReadBuffer[0]; bytesReadTotal++;
+
             byte headerType = (byte)((type & 0xc0) >> 6);
             byte channel = (byte)(type & 0x3f);
             uint nSize = packetSize[headerType];
@@ -267,7 +279,7 @@ namespace RTMP_LIB
             return true;
         }
 
-        void Close()
+        public void Close()
         {
             if (networkStream != null) networkStream.Close(1000);
             if (tcpClient != null && tcpClient.Connected) tcpClient.Close();
@@ -282,6 +294,9 @@ namespace RTMP_LIB
             CombinedBitrates = 0;
 
             m_nBWCheckCounter = 0;
+            m_nClientBW = 2500000;
+            m_nClientBW2 = 2;
+            m_nServerBW = 2500000;
             bytesReadTotal = 0;
             lastSentBytesRead = 0;
 
@@ -305,6 +320,7 @@ namespace RTMP_LIB
             packet.m_packetType = 0x14; // INVOKE
             packet.AllocPacket(4096);
 
+            Logger.Log("Sending Connect");
             List<byte> enc = new List<byte>();
             EncodeString(enc, "connect");
             EncodeNumber(enc, 1.0);
@@ -312,7 +328,7 @@ namespace RTMP_LIB
             EncodeString(enc, "app", Link.app);
             EncodeNumber(enc, "objectEncoding", 0.0);
             EncodeBoolean(enc, "fpad", false);
-            EncodeString(enc, "flashVer", "WIN 9,0,115,0");//EncodeString(enc, "flashVer", "WIN 10,0,22,87");            
+            EncodeString(enc, "flashVer", "WIN 10,0,22,87");//EncodeString(enc, "flashVer", "WIN 9,0,115,0");
             if (!string.IsNullOrEmpty(Link.swfUrl)) EncodeString(enc, "swfUrl", Link.swfUrl);
             EncodeString(enc, "tcUrl", Link.tcUrl);                        
             EncodeNumber(enc, "audioCodecs", 1639.0);//EncodeNumber(enc, "audioCodecs", 3191.0);
@@ -323,7 +339,7 @@ namespace RTMP_LIB
             enc.Add(0); enc.Add(0); enc.Add(0x09); // end of object - 0x00 0x00 0x09
 
             Array.Copy(enc.ToArray(), packet.m_body, enc.Count);
-            packet.m_nBodySize = (uint)enc.Count; // todo : hier muss 0 1 2 oder 3 stehen
+            packet.m_nBodySize = (uint)enc.Count;
 
             return SendRTMP(packet);
         }
@@ -410,7 +426,7 @@ namespace RTMP_LIB
 
             return SendRTMP(packet);
         }
-
+        
         bool SendBytesReceived()
         {
             RTMPPacket packet = new RTMPPacket();
@@ -442,7 +458,7 @@ namespace RTMP_LIB
             packet.m_nBodySize = 4;
 
             List<byte> bytesToSend = new List<byte>();
-            EncodeInt32(bytesToSend, 0x001312d0); // hard coded for now
+            EncodeInt32(bytesToSend, m_nServerBW); // was hard coded : 0x001312d0
             packet.m_body = bytesToSend.ToArray();
             return SendRTMP(packet);
         }
@@ -454,6 +470,7 @@ namespace RTMP_LIB
             packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
             packet.m_packetType = 0x14; // INVOKE
 
+            Logger.Log(string.Format("createStream: {0}", dStreamId));
             packet.AllocPacket(256); // should be enough
             List<byte> enc = new List<byte>();
             EncodeString(enc, "createStream");
@@ -466,7 +483,48 @@ namespace RTMP_LIB
             return SendRTMP(packet);
         }
 
-        bool SendRTMP(RTMPPacket packet)
+        bool SendFCSubscribe()
+        {
+            RTMPPacket packet = new RTMPPacket();
+            packet.m_nChannel = 0x03;   // control channel (invoke)
+            packet.m_headerType = RTMP_PACKET_SIZE_MEDIUM;
+            packet.m_packetType = 0x14; // INVOKE
+
+            Logger.Log(string.Format("Sending FCSubscribe: {0}", Link.subscribepath));
+            List<byte> enc = new List<byte>();
+            EncodeString(enc, "FCSubscribe");
+            EncodeNumber(enc, 4.0);
+            enc.Add(0x05); // NULL
+            EncodeString(enc, Link.subscribepath);
+
+            packet.m_nBodySize = (uint)enc.Count;
+            packet.m_body = enc.ToArray();
+
+            return SendRTMP(packet);
+        }
+
+        bool SendAuth()
+        {
+            RTMPPacket packet = new RTMPPacket();
+            packet.m_nChannel = 0x03;   // control channel (invoke)
+            packet.m_headerType = RTMP_PACKET_SIZE_LARGE;
+            packet.m_packetType = 0x14; // INVOKE
+
+            Logger.Log("Sending " + Link.authObjName);
+            List<byte> enc = new List<byte>();
+            EncodeString(enc, Link.authObjName);
+            EncodeNumber(enc, 0.0d);
+            enc.Add(0x05); // NULL
+            EncodeString(enc, Link.auth);            
+
+            packet.m_nBodySize = (uint)enc.Count;
+            packet.m_body = enc.ToArray();
+
+            return SendRTMP(packet, false);
+        }
+
+        bool SendRTMP(RTMPPacket packet) { return SendRTMP(packet, true); }
+        bool SendRTMP(RTMPPacket packet, bool queue)
         {
             RTMPPacket prevPacket = m_vecChannelsOut[packet.m_nChannel];
             if (packet.m_headerType != RTMP_PACKET_SIZE_LARGE)
@@ -498,20 +556,31 @@ namespace RTMP_LIB
             }
 
             if (nSize > 8)
-                EncodeInt32LE(header, packet.m_nInfoField2);
-
-            WriteN(header.ToArray(), 0, (int)nSize);
-
+                EncodeInt32LE(header, packet.m_nInfoField2);            
+            
+            uint hSize = nSize;
+            byte[] headerBuffer = header.ToArray();
             nSize = packet.m_nBodySize;
             byte[] buffer = packet.m_body;
             uint bufferOffset = 0;
-            while (nSize > 0)
+            while (nSize+hSize > 0)
             {
                 uint nChunkSize = packet.m_packetType == 0x14 ? (uint)ChunkSize : packet.m_nBodySize;                
                 if (nSize < ChunkSize)
                     nChunkSize = nSize;
 
-                WriteN(buffer, (int)bufferOffset, (int)nChunkSize);
+                if (hSize > 0)
+                {
+                    byte[] combinedBuffer = new byte[headerBuffer.Length + nChunkSize];
+                    Array.Copy(headerBuffer, combinedBuffer, headerBuffer.Length);
+                    Array.Copy(buffer, (int)bufferOffset, combinedBuffer, headerBuffer.Length, (int)nChunkSize);
+                    WriteN(combinedBuffer, 0, combinedBuffer.Length);
+                    hSize = 0;
+                }
+                else
+                {
+                    WriteN(buffer, (int)bufferOffset, (int)nChunkSize);
+                }
 
                 nSize -= nChunkSize;
                 bufferOffset += nChunkSize;
@@ -519,12 +588,13 @@ namespace RTMP_LIB
                 if (nSize > 0)
                 {
                     byte sep = (byte)(0xc0 | packet.m_nChannel);
-                    WriteByte(sep);
+                    hSize = 1;
+                    headerBuffer = new byte[1] { sep };
                 }
             }
 
-            if (packet.m_packetType == 0x14) // we invoked a remote method, keep it in call queue till result arrives
-                m_methodCalls.Push(ReadString(packet.m_body, 1));
+            if (packet.m_packetType == 0x14 && queue) // we invoked a remote method, keep it in call queue till result arrives
+                m_methodCalls.Enqueue(ReadString(packet.m_body, 1));
 
             m_vecChannelsOut[packet.m_nChannel] = packet;
             m_vecChannelsOut[packet.m_nChannel].m_body = null;
@@ -572,6 +642,22 @@ namespace RTMP_LIB
             }
         }
 
+        void HandleServerBW(RTMPPacket packet)
+        {
+            m_nServerBW = ReadInt32(packet.m_body, 0);
+            Logger.Log(string.Format("HandleServerBW: server BW = {0}", m_nServerBW));
+        }
+
+        void HandleClientBW(RTMPPacket packet)
+        {
+            m_nClientBW = ReadInt32(packet.m_body, 0);
+            if (packet.m_nBodySize > 4)
+                m_nClientBW2 = packet.m_body[4];
+            else
+                m_nClientBW2 = 0;
+            Logger.Log(string.Format("HandleClientBW: client BW = {0} {1}", m_nClientBW, m_nClientBW2));
+        }
+
         void HandleInvoke(RTMPPacket packet)
         {
             if (packet.m_body[0] != 0x02) // make sure it is a string method name we start with
@@ -594,15 +680,17 @@ namespace RTMP_LIB
 
             if (method == "_result")
             {
-                string methodInvoked = m_methodCalls.Pop();                
+                string methodInvoked = m_methodCalls.Dequeue();                
 
                 Logger.Log(string.Format("received result for method call <{0}>", methodInvoked));
 
                 if (methodInvoked == "connect")
                 {
                     SendServerBW();
-                    SendPing(3, 0, 300);
+                    if (!string.IsNullOrEmpty(Link.auth)) SendAuth();
+                    if (!string.IsNullOrEmpty(Link.subscribepath)) SendFCSubscribe();                    
                     SendCreateStream(2.0d);
+                    SendPing(3, 0, 300);
                 }
                 else if (methodInvoked == "createStream")
                 {
@@ -692,15 +780,17 @@ namespace RTMP_LIB
                 obj.FindMatchingProperty("audiodatarate", props, 1);
                 if (props.Count > 0)
                 {
-                    CombinedBitrates += (int)props[0].GetNumber();
-                    Logger.Log(string.Format("audiodatarate: {0}", Duration));
+                    int audiodatarate = (int)props[0].GetNumber();
+                    CombinedBitrates += audiodatarate;
+                    Logger.Log(string.Format("audiodatarate: {0}", audiodatarate));
                 }
                 props.Clear();
                 obj.FindMatchingProperty("videodatarate", props, 1);
                 if (props.Count > 0)
                 {
-                    CombinedBitrates += (int)props[0].GetNumber();
-                    Logger.Log(string.Format("audiodatarate: {0}", Duration));
+                    int videodatarate = (int)props[0].GetNumber();
+                    CombinedBitrates += videodatarate;
+                    Logger.Log(string.Format("videodatarate: {0}", videodatarate));
                 }
             }
         }
@@ -970,7 +1060,9 @@ namespace RTMP_LIB
 
             WriteN(clientsig, 0, RTMP_SIG_SIZE + 1);
 
-            byte type = ReadByte(); // 0x03 or 0x06
+            byte[] singleByteToReadBuffer = new byte[1];
+            if (ReadN(singleByteToReadBuffer, 0, 1) != 1) return false;
+            byte type = singleByteToReadBuffer[0]; // 0x03 or 0x06
 
             Logger.Log(string.Format("Type Answer   : {0}", type.ToString("X2")));
 
@@ -1298,14 +1390,14 @@ namespace RTMP_LIB
 
         int ReadN(byte[] buffer, int offset, int size)
         {            
-            // wait (max) one second until data is available
-            int i = 1000;
+            // wait (max) 5 seconds until data is available
+            int i = 50;
             while (tcpClient.Available < size && i > 0)
             {
                 i--;
-                System.Threading.Thread.Sleep(10);
+                System.Threading.Thread.Sleep(100);
             }
-            if (tcpClient.Available < size) throw new Exception("No Data Available");
+            if (tcpClient.Available < size) return 0;// throw new Exception(string.Format("No Data Available (trying to read {0} byte)", size));
 
             byte[] data = new byte[size];
             int read = networkStream.Read(data, 0, size);
@@ -1313,7 +1405,7 @@ namespace RTMP_LIB
             // decrypt if needed
             if (read > 0 && Link.rc4In != null)
             {
-                Link.rc4In.ProcessBytes(data, 0, size, buffer, offset);                
+                Link.rc4In.ProcessBytes(data, 0, size, buffer, offset);
             }
             else
             {
@@ -1321,14 +1413,7 @@ namespace RTMP_LIB
             }
 
             return read;
-        }
-
-        byte ReadByte()
-        {
-            byte[] buffer = new byte[1];
-            ReadN(buffer, 0, 1);
-            return buffer[0];
-        }
+        }        
 
         void WriteN(byte[] buffer, int offset, int size)
         {            

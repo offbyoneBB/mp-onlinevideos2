@@ -20,7 +20,7 @@ namespace RTMP_LIB
         public void HandleRequest(HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
         {          
             Logger.Log("Request");
-                
+            RTMP rtmp = null;
             try
             {
                 NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(new Uri(new Uri("http://127.0.0.1"), request.URI).Query);
@@ -32,13 +32,17 @@ namespace RTMP_LIB
                 if (!string.IsNullOrEmpty(paramsHash["hostname"])) link.hostname = paramsHash["hostname"];
                 if (!string.IsNullOrEmpty(paramsHash["port"])) link.port = int.Parse(paramsHash["port"]);
                 if (!string.IsNullOrEmpty(paramsHash["playpath"])) link.playpath = paramsHash["playpath"];
+                if (!string.IsNullOrEmpty(paramsHash["subscribepath"])) link.subscribepath = paramsHash["subscribepath"];
                 if (!string.IsNullOrEmpty(paramsHash["pageurl"])) link.pageUrl = paramsHash["pageurl"];
                 if (!string.IsNullOrEmpty(paramsHash["swfurl"])) link.swfUrl = paramsHash["swfurl"];
                 if (!string.IsNullOrEmpty(paramsHash["swfsize"])) link.SWFSize = int.Parse(paramsHash["swfsize"]);
-                if (!string.IsNullOrEmpty(paramsHash["swfhash"])) link.SWFHash = Link.ArrayFromHexString(paramsHash["swfhash"]);              
+                if (!string.IsNullOrEmpty(paramsHash["swfhash"])) link.SWFHash = Link.ArrayFromHexString(paramsHash["swfhash"]);
+                if (!string.IsNullOrEmpty(paramsHash["usefp9"])) link.useFP9Handshake = bool.Parse(paramsHash["usefp9"]);
+                if (!string.IsNullOrEmpty(paramsHash["authobj"])) link.authObjName = paramsHash["authobj"];
+                if (!string.IsNullOrEmpty(paramsHash["auth"])) link.auth = paramsHash["auth"];
                 if (link.tcUrl != null && link.tcUrl.ToLower().StartsWith("rtmpe")) link.protocol = RTMP.RTMP_PROTOCOL_RTMPE;
 
-                RTMP rtmp = new RTMP();
+                rtmp = new RTMP();
                 bool connected = rtmp.Connect(link);
                 if (connected)
                 {
@@ -47,14 +51,14 @@ namespace RTMP_LIB
 
                     Stream responseStream = null;
                     FLVStream fs = new FLVStream();
-                    fs.WriteFLV(rtmp, delegate() 
+                    fs.WriteFLV(rtmp, delegate()
                     {
-                        // we must set a content lenght for the File Source filter, otherwise it thinks we have no content
+                        // we must set a content length for the File Source filter, otherwise it thinks we have no content
                         // but don't set a lenght if it is our user agent, so a download will always be complete
-                        if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.UserAgent) 
-                            response.ContentLength = fs.EstimatedLength; 
-                        responseStream = response.Send(); 
-                        return responseStream; 
+                        if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.UserAgent)
+                            response.ContentLength = fs.EstimatedLength;
+                        responseStream = response.Send();
+                        return responseStream;
                     });
 
                     long zeroBytes = fs.EstimatedLength - fs.Length;
@@ -66,17 +70,21 @@ namespace RTMP_LIB
                         zeroBytes -= chunk;
                     }
 
-                    responseStream.Close();
+                    if (responseStream != null) responseStream.Close();
                 }
                 else
                 {
                     response.StatusAndReason = HybridDSP.Net.HTTP.HTTPServerResponse.HTTPStatus.HTTP_INTERNAL_SERVER_ERROR;
-                    response.Send().Close();                    
-                }              
+                    response.Send().Close();
+                }
             }
             catch (Exception ex)
             {
-                Logger.Log(ex.ToString());
+                Logger.Log(ex.ToString());                
+            }
+            finally
+            {
+                if (rtmp != null) rtmp.Close();
             }
 
             Logger.Log("Request finished.");

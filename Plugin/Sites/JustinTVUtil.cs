@@ -27,22 +27,29 @@ namespace OnlineVideos.Sites
             set.ReadXml("http://live.justin.tv/find/live_user_" + video.VideoUrl + ".xml");
             DataTable table = set.Tables["node"];
             int num = 0;
+            string token = "";
             while (num < table.Rows.Count)
             {
                 str2 = table.Rows[num]["play"].ToString();
                 str3 = table.Rows[num]["connect"].ToString();
+                token = table.Rows[num]["token"].ToString();
                 table.Rows[num]["token"].ToString().Substring(0, table.Rows[num]["token"].ToString().IndexOf(":"));
                 break;
             }
             string str4 = str3.Replace("rtmp://", "").Replace("/app", "");
-            return string.Format("http://127.0.0.1:{6}/stream.flv?hostname={0}&port={1}&app={2}&swfUrl={3}&playpath={4}&tcUrl={5}", new object[] { 
+            // todo : send token as NetStream.Authenticate.UsherToken after connect packet in rtmp
+            return string.Format("http://127.0.0.1:{6}/stream.flv?hostname={0}&port={1}&app={2}&swfUrl={3}&playpath={4}&tcUrl={5}&pageurl={7}&usefp9=true&authobj={8}&auth={9}&subscribepath={10}", new object[] { 
                 HttpUtility.UrlEncode(str4), 
                 "1935", 
                 "app", 
                 HttpUtility.UrlEncode("http://www-cdn.justin.tv/widgets/live_site_player.r7d3ed44c4594caafa272b91a2de339eb03325273.swf"), 
                 HttpUtility.UrlEncode(str2), 
-                HttpUtility.UrlEncode(str3 + "/" + str2), 
-                OnlineVideoSettings.RTMP_PROXY_PORT });
+                HttpUtility.UrlEncode(str3), 
+                OnlineVideoSettings.RTMP_PROXY_PORT,
+                HttpUtility.UrlEncode("http://www.justin.tv/"+ video.VideoUrl),
+                HttpUtility.UrlEncode("NetStream.Authenticate.UsherToken"),
+                HttpUtility.UrlEncode(token),
+                HttpUtility.UrlEncode(str2) });
         }
 
         public override List<VideoInfo> getVideoList(Category category)
