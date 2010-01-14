@@ -10,6 +10,11 @@ namespace RTMP_LIB
         public int port;
         public int protocol;
         public string playpath;
+        public string subscribepath;
+
+        public string authObjName;
+
+        public bool useFP9Handshake;
 
         public string tcUrl;
         public string swfUrl;

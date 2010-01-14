@@ -12,13 +12,7 @@ namespace OnlineVideos.Sites
 {    
     public class RTLNowUtil : SiteUtilBase
     {
-        public enum VideoQuality { Normal, High };
-
-        [Category("OnlineVideosUserConfiguration"), Description("Normal or high quality for the videos according to bandwidth.")]
-        VideoQuality videoQuality = VideoQuality.Normal;        
-
         //<a href="/30-minuten-deutschland.php"><img src="/img_08/free_short.jpg" border="0" alt="30 Minuten Deutschland"></a>
-
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for categories.")]
         string categoriesRegex = @"<a\shref=""(?<url>[^""]+)""><img\ssrc=""(?<image>[^""]+)""\sborder=""0""\salt=""(?<title>[^""]+)""></a>";
 
