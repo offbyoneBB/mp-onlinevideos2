@@ -48,7 +48,7 @@ namespace RTMP_LIB
                     {
                         if (rtmp.CombinedTracksLength > 0)
                         {
-                            EstimatedLength = rtmp.CombinedTracksLength + (rtmp.CombinedTracksLength / rtmp.ChunkSize) * 11;
+                            EstimatedLength = rtmp.CombinedTracksLength + (rtmp.CombinedTracksLength / rtmp.InChunkSize) * 11;
                         }
                         else if (rtmp.CombinedBitrates > 0)
                         {
@@ -84,17 +84,17 @@ namespace RTMP_LIB
             if (rtmp.GetNextMediaPacket(out packet))
             {
                 // skip video info/command packets
-                if (packet.m_packetType == 0x09 && packet.m_nBodySize == 2 && ((packet.m_body[0] & 0xf0) == 0x50))
+                if (packet.PacketType == PacketType.Video && packet.m_nBodySize == 2 && ((packet.m_body[0] & 0xf0) == 0x50))
                 {
                     return 0;
                 }
 
-                if (packet.m_packetType == 0x09 && packet.m_nBodySize <= 5)
+                if (packet.PacketType == PacketType.Video && packet.m_nBodySize <= 5)
                 {
                     //Log(LOGWARNING, "ignoring too small video packet: size: %d", nPacketLen);
                     return 0;
                 }
-                if (packet.m_packetType == 0x08 && packet.m_nBodySize <= 1)
+                if (packet.PacketType == PacketType.Audio && packet.m_nBodySize <= 1)
                 {
                     //Log(LOGWARNING, "ignoring too small audio packet: size: %d", nPacketLen);
                     return 0;
@@ -102,12 +102,12 @@ namespace RTMP_LIB
 
                 // calculate packet size and reallocate buffer if necessary
                 uint size = (uint)(packet.m_nBodySize
-                    + ((packet.m_packetType == 0x08 || packet.m_packetType == 0x09 || packet.m_packetType == 0x12) ? 11 : 0)
-                    + (packet.m_packetType != 0x16 ? 4 : 0));
+                    + ((packet.PacketType == PacketType.Audio || packet.PacketType == PacketType.Video || packet.PacketType == PacketType.Metadata) ? 11 : 0)
+                    + (packet.PacketType != PacketType.FlvTags ? 4 : 0));
 
                 // audio (0x08), video (0x09) or metadata (0x12) packets :
                 // construct 11 byte header then add rtmp packet's data
-                if (packet.m_packetType == 0x08 || packet.m_packetType == 0x09 || packet.m_packetType == 0x12)
+                if (packet.PacketType == PacketType.Audio || packet.PacketType == PacketType.Video || packet.PacketType == PacketType.Metadata)
                 {
                     // set data type
                     //*dataType |= (((packet.m_packetType == 0x08)<<2)|(packet.m_packetType == 0x09));
@@ -115,7 +115,7 @@ namespace RTMP_LIB
                     nTimeStamp = (uint)packet.m_nTimeStamp;
                     prevTagSize = 11 + packet.m_nBodySize;
 
-                    stream.WriteByte(packet.m_packetType);
+                    stream.WriteByte((byte)packet.PacketType);
 
                     List<byte> somebytes = new List<byte>();
                     RTMP.EncodeInt24(somebytes, (int)packet.m_nBodySize);
@@ -137,7 +137,7 @@ namespace RTMP_LIB
                 uint len = packet.m_nBodySize;
 
                 // correct tagSize and obtain timestamp if we have an FLV stream
-                if (packet.m_packetType == 0x16)
+                if (packet.PacketType == PacketType.FlvTags)
                 {
                     uint pos = 0;
 
@@ -195,7 +195,7 @@ namespace RTMP_LIB
                 stream.Write(packet.m_body, 0, (int)packet.m_nBodySize);
                 //ptr += len;
 
-                if (packet.m_packetType != 0x16)
+                if (packet.PacketType != PacketType.FlvTags)
                 {
                     // FLV tag packets contain their own prevTagSize
                     List<byte> somemorebytes = new List<byte>();
