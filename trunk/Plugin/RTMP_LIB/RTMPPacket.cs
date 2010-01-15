@@ -4,14 +4,8 @@ namespace RTMP_LIB
 {
     public class RTMPPacket
     {
-        const int RTMP_PACKET_TYPE_AUDIO = 0x08;
-        const int RTMP_PACKET_TYPE_VIDEO = 0x09;
-        const int RTMP_PACKET_TYPE_INFO = 0x12;
-
-        const int RTMP_MAX_HEADER_SIZE = 12;
-
-        public byte m_headerType;
-        public byte m_packetType;
+        public HeaderType HeaderType;
+        public PacketType PacketType;
         public byte m_nChannel;
         public int m_nInfoField1; // first 3 bytes
         public int m_nInfoField2; // last  4 bytes in a long header        
@@ -35,8 +29,8 @@ namespace RTMP_LIB
 
         public void Reset()
         {
-            m_headerType = 0;
-            m_packetType = 0;
+            HeaderType = 0;
+            PacketType = 0;
             m_nChannel = 0;
             m_nInfoField1 = 0;
             m_nInfoField2 = 0;
@@ -66,7 +60,7 @@ namespace RTMP_LIB
 
         public void Dump()
         {
-            Logger.Log(string.Format("RTMP PACKET: packet type: 0x%02x. channel: 0x%02x. info 1: %d info 2: %d. Body size: %lu. body: 0x%02x", m_packetType, m_nChannel, m_nInfoField1, m_nInfoField2, m_nBodySize, m_body != null ? m_body[0].ToString() : "0"));
+            Logger.Log(string.Format("RTMP PACKET: packet type: 0x%02x. channel: 0x%02x. info 1: %d info 2: %d. Body size: %lu. body: 0x%02x", PacketType, m_nChannel, m_nInfoField1, m_nInfoField2, m_nBodySize, m_body != null ? m_body[0].ToString() : "0"));
         }
 
     }

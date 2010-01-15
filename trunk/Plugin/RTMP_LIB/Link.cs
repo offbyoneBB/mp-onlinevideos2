@@ -8,7 +8,8 @@ namespace RTMP_LIB
 
         public string hostname;
         public int port;
-        public int protocol;
+        public Protocol protocol;
+        
         public string playpath;
         public string subscribepath;
 
@@ -21,6 +22,12 @@ namespace RTMP_LIB
         public string pageUrl;
         public string app;
         public string auth;
+
+        /// <summary>
+        /// How to build the swf Hash:
+        /// if swf is compressed, decompress with http://flasm.sourceforge.net/
+        /// $ openssl sha -sha256 -hmac "Genuine Adobe Flash Player001" file.swf
+        /// </summary>
         public byte[] SWFHash;
         public int SWFSize;
         public string flashVer;

@@ -70,7 +70,7 @@ namespace RTMP_LIB
 
             if (bDecodeName)
             {
-                short nNameSize = RTMP.ReadInt16(pBuffer, bufferOffset);
+                ushort nNameSize = RTMP.ReadInt16(pBuffer, bufferOffset);
                 if (nNameSize > nSize - (short)sizeof(short))
                     return -1;
 
@@ -102,7 +102,7 @@ namespace RTMP_LIB
                     break;
                 case 0x02: //AMF_STRING:
                     {
-                        short nStringSize = RTMP.ReadInt16(pBuffer, bufferOffset + 1);
+                        ushort nStringSize = RTMP.ReadInt16(pBuffer, bufferOffset + 1);
                         if (nSize < nStringSize + (int)sizeof(short))
                             return -1;
                         m_strVal = RTMP.ReadString(pBuffer, bufferOffset + 1);
