@@ -613,6 +613,10 @@
         <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
       </Categories>
     </Site>
+    <Site name="OnsNetNuenen" util="OnsNetNuenen" agecheck="false" enabled="true" lang="nl">
+      <Categories>
+      </Categories>
+    </Site>
     <Site name="dr.dk TV" util="GenericSite" agecheck="false" enabled="false" lang="da">
       <Categories>
         <Category xsi:type="Group" name="Live TV">

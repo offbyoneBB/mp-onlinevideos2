@@ -667,6 +667,24 @@
       <Option />
       <Guid>978159EB-FEE6-4581-A70B-A5C932A5E3EB</Guid>
     </File>
+		<File>
+			<FileName>onsnetnuenen.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\onsnetnuenen.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>C5F04624-18E8-4784-A05E-90D55BCAF1FB</Guid>
+		</File>
+		<File>
+			<FileName>onsnetnuenen.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\onsnetnuenen.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>D73521B3-2A03-4316-A917-A491EAA5888C</Guid>
+		</File>
     <File>
       <FileName>Orf.png</FileName>
       <Type>Thumbs</Type>
