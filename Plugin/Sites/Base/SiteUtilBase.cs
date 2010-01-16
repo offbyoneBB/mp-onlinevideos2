@@ -327,13 +327,11 @@ namespace OnlineVideos.Sites
                 HttpWebResponse httpWebresponse = request.GetResponse() as HttpWebResponse;
                 if (httpWebresponse == null) return url;
 
-                // always read the full content, if not then the second call to GetRedirectedUrl will result in a time-out
-                string content = new StreamReader(httpWebresponse.GetResponseStream()).ReadToEnd();
-                
                 if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
                 {
                     if (httpWebresponse.ContentLength > 0 && httpWebresponse.ContentLength < 1024)
                     {
+                        string content = new StreamReader(httpWebresponse.GetResponseStream()).ReadToEnd();
                         if (httpWebresponse.ContentType.Contains("video/quicktime"))
                         {
                             return content.Split('\n')[1];
