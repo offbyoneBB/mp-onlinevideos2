@@ -1030,7 +1030,10 @@ namespace OnlineVideos
                 }
                 else
                 {
-                    loListItems = ((IFilter)selectedSite).filterVideoList(selectedCategory, miMaxResult, msOrderBy, msTimeFrame);
+                    if (selectedSite.HasFilterCategories) // just for setting the category
+                        loListItems = selectedSite.Search(string.Empty, moSupportedSearchCategoryList[btnSearchCategories.SelectedLabel]);
+                    if (selectedSite is IFilter)
+                        loListItems = ((IFilter)selectedSite).filterVideoList(selectedCategory, miMaxResult, msOrderBy, msTimeFrame);
                 }
             });
             worker.RunWorkerAsync();
@@ -1671,6 +1674,7 @@ namespace OnlineVideos
                     HideVideoDetails();
                     if (selectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
                     HideSearchButtons();
+                    if (selectedSite.HasFilterCategories) ShowCategoryButton();
                     HideFavoriteButtons();                    
                     HideEnterPinButton();
                     DisplayVideoInfo(selectedVideo);
@@ -1871,6 +1875,23 @@ namespace OnlineVideos
                 Log.Info("restoring search category...");
                 GUIControl.SelectItemControl(GetID, btnSearchCategories.GetID, SelectedSearchCategoryIndex);
                 Log.Info("Search category restored to " + btnSearchCategories.SelectedLabel);
+            }
+        }
+
+        private void ShowCategoryButton()
+        {
+            Log.Debug("Showing Category button");
+            btnSearchCategories.Clear();
+            moSupportedSearchCategoryList = selectedSite.GetSearchableCategories();
+            foreach (String category in moSupportedSearchCategoryList.Keys)
+                GUIControl.AddItemLabelControl(GetID, btnSearchCategories.GetID, category);
+            if (moSupportedSearchCategoryList.Count > 1)
+            {
+                GUIControl.ShowControl(GetID, btnSearchCategories.GetID);
+                GUIControl.EnableControl(GetID, btnSearchCategories.GetID);
+
+                GUIControl.ShowControl(GetID, btnUpdate.GetID);
+                GUIControl.EnableControl(GetID, btnUpdate.GetID);
             }
         }
 

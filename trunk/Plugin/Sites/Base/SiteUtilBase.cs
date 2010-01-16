@@ -261,9 +261,19 @@ namespace OnlineVideos.Sites
         }
 
         /// <summary>
+        /// Returns true, if this site has categories to filter on, f.e. newest, highest rating.<br/>
+        /// default: false
+        /// </summary>
+        public virtual bool HasFilterCategories
+        {
+            get { return false; }
+        }
+
+        /// <summary>
         /// Will be called to get the list of categories (names only) that can be chosen to search. 
         /// The keys will be the names and the value will be given to the <see cref="Search"/> as parameter.<br/>
         /// default: returns empty list, so no category specific search can be done
+        /// This is also used if HasFilterCategories returns true
         /// </summary>
         /// <returns></returns>
         public virtual Dictionary<string, string> GetSearchableCategories()
