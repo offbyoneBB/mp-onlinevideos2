@@ -685,6 +685,10 @@
       <Categories>
       </Categories>
     </Site>
+    <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" lang="nl">
+      <Categories>
+      </Categories>
+    </Site>
     <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true" lang="en">
       <Categories>
         <Category xsi:type="RssLink" name="Browse">http://www.youporn.com/browse</Category>
