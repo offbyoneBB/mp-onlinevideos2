@@ -18,7 +18,7 @@ namespace OnlineVideos.Sites
         private string categoryRegex = @"<li\sclass=""[^\s]+\sSubMenuItem[^""]+""><a\shref=""(?<url>[^""]+)""\s+><span>(?<title>[^<]+)</span>";
         private string videoListRegex = @"<div\sclass=""VideoThumbnail""><a\shref=""\#""\s+onclick=""getElementById\('VideoFrame'\)\.src='(?<url>[^']+)';""><img\ssrc=""(?<thumb>[^""]+)""\swidth=""[^""]+""\sheight=""[^""]+""\stitle=""(?<title>[^""]+)""";
         private string subCategoryRegex = @"<option\s+value=""(?<id>[^""]+)""[^>]*>(?<title>[^<]+)</option>";
-        private string mainPageRegex = @"<div\sclass=""NewVideoThumb""><a\shref=""index\.php\?cid=(?<id>[^&]+)&[^<]+<img\swidth=""[^""]+""\ssrc=""(?<thumb>[^""]+)""\stitle=""(?<title>[^""]+)""";
+        private string mainPageRegex = @"<div\sclass=""(New|Search)VideoThumb""><a\shref=""index\.php\?cid=(?<id>[^&]+)&[^<]+<img\swidth=""[^""]+""\ssrc=""(?<thumb>[^""]+)""\stitle=""(?<title>[^""]+)""";
 
         public OnsNetNuenenUtil()
         {
@@ -129,17 +129,24 @@ namespace OnlineVideos.Sites
             }
         }
 
+        public override bool CanSearch
+        {
+            get { return true; }
+        }
+
+        public override List<VideoInfo> Search(string query)
+        {
+            return getPagedVideoList(String.Format("!http://onsnet.video4all.nl/corp/?page=54&site=4&search=1&srch_str={0}&x=0&y=0&submit_frmSearch=1", query));
+        }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
             RssLink rssLink = (RssLink)category;
-            return getPagedVideoList(rssLink);
+            return getPagedVideoList(rssLink.Url);
         }
 
-        private List<VideoInfo> getPagedVideoList(RssLink category)
+        private List<VideoInfo> getPagedVideoList(string url)
         {
-            string url = category.Url;
-
             Regex regEx = null;
             if (url.StartsWith("!"))
             {
@@ -158,7 +165,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = new VideoInfo();
 
-                    video.Title = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+                    video.Title = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(m.Groups["title"].Value));
                     if (HttpUtility.HtmlDecode(m.Groups["url"].Value) == String.Empty)
                         video.VideoUrl = baseUrl + "src/getVideo.php?tp=flv&cid=" + m.Groups["id"].Value + "&tid=328";
                     else
