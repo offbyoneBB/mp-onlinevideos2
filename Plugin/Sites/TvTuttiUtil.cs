@@ -5,7 +5,6 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using System.Net;
-using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -17,6 +16,7 @@ namespace OnlineVideos.Sites
         private Dictionary<String, String> timeFrameList;
         private List<int> steps;
         private Dictionary<String, String> source;
+        private Dictionary<String, String> orderBy;
 
         private string currentTimeFrame = null;
         private string currentSource = null;
@@ -33,6 +33,9 @@ namespace OnlineVideos.Sites
             timeFrameList.Add("Afgelopen 30 dagen", "30d");
             timeFrameList.Add("Alle", "all");
             steps = new List<int>();
+
+            orderBy = new Dictionary<string, string>();
+
             source = new Dictionary<string, string>();
             source.Add(defaultSource, String.Empty);
             source.Add("Veronica", "15");
@@ -104,7 +107,12 @@ namespace OnlineVideos.Sites
             return getPagedVideoList(bareCategory);
         }
 
-
+        public override List<VideoInfo> Search(string query, string category)
+        {
+            currentSource = category;
+            return null;
+            //return getPagedVideoList(bareCategory);
+        }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
@@ -201,14 +209,16 @@ namespace OnlineVideos.Sites
                                 }
                                 else
                                     if (rel.StartsWith("http://www.sbs6.nl/") ||
-                                        rel.StartsWith("http://www.net5.nl/"))
+                                        rel.StartsWith("http://www.net5.nl/") ||
+                                        rel.StartsWith("http://www.veronicatv.nl"))
                                     {
                                         string data = GetWebData(rel);
                                         if (!String.IsNullOrEmpty(data))
                                             video.VideoUrl = GetSubString(data, "http://asx.sbsnet.nl/", "\">");
                                     }
                                     else
-                                    { }
+                                    { 
+                                    }
 
                         }
                         //video.Description = video.VideoUrl;
@@ -228,12 +238,20 @@ namespace OnlineVideos.Sites
 
         }
 
+        public override bool HasFilterCategories
+        {
+            get { return true; }
+        }
+
+        public override Dictionary<string, string> GetSearchableCategories()
+        {
+            return source;
+        }
 
         public List<VideoInfo> filterVideoList(Category category, int maxResult, string orderBy, string timeFrame)
         {
             pageNr = 1;
             currentTimeFrame = timeFrame;
-            currentSource = orderBy;
             return getPagedVideoList(category);
         }
 
@@ -241,7 +259,6 @@ namespace OnlineVideos.Sites
         {
             pageNr = 1;
             currentTimeFrame = timeFrame;
-            currentSource = orderBy;
             return getPagedVideoList(bareCategory);
         }
 
@@ -257,7 +274,7 @@ namespace OnlineVideos.Sites
 
         public Dictionary<string, string> getOrderbyList()
         {
-            return source;
+            return orderBy;
         }
 
         public Dictionary<string, string> getTimeFrameList()
