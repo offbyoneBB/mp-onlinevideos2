@@ -13,7 +13,6 @@ namespace OnlineVideos.Sites
 {
     public class OnsNetNuenenUtil : SiteUtilBase
     {
-        private bool asFlv = false;
         private string baseUrl = "http://onsnet.video4all.nl/";
         private string categoryRegex = @"<li\sclass=""[^\s]+\sSubMenuItem[^""]+""><a\shref=""(?<url>[^""]+)""\s+><span>(?<title>[^<]+)</span>";
         private string videoListRegex = @"<div\sclass=""VideoThumbnail""><a\shref=""\#""\s+onclick=""getElementById\('VideoFrame'\)\.src='(?<url>[^']+)';""><img\ssrc=""(?<thumb>[^""]+)""\swidth=""[^""]+""\sheight=""[^""]+""\stitle=""(?<title>[^""]+)""";
@@ -112,21 +111,7 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string url = video.VideoUrl;
-            if (asFlv)
-            {
-                url = url.Replace(@"/win_video.php?tra=yes&tit=no&cid=", @"/getVideo.php?tp=flv&cid=") + "&tid=328";
-                string xmlData = GetWebData(url);
-                XmlDocument tdoc = new XmlDocument();
-                tdoc.Load(XmlReader.Create(new StringReader(xmlData)));
-                XmlNode source = tdoc.SelectSingleNode("result/entry");
-                return source.Attributes["url"].Value;
-            }
-            else
-            {
-                url = url.Replace(@"/win_video.php?tra=yes&tit=no&cid=", @"/getVideo.php?tp=wmv&cid=") + "&lvl=3&tid=328";
-                //lvl=quality, 3=highest
-                return ParseASX(url)[0];
-            }
+            return ParseASX(url)[0];
         }
 
         public override bool CanSearch
@@ -167,9 +152,13 @@ namespace OnlineVideos.Sites
 
                     video.Title = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(m.Groups["title"].Value));
                     if (HttpUtility.HtmlDecode(m.Groups["url"].Value) == String.Empty)
-                        video.VideoUrl = baseUrl + "src/getVideo.php?tp=flv&cid=" + m.Groups["id"].Value + "&tid=328";
+                        video.VideoUrl = baseUrl + "src/getVideo.php?tp=wmv&cid=" + m.Groups["id"].Value + "&lvl=3&tid=328";
                     else
+                    {
                         video.VideoUrl = baseUrl.TrimEnd('/') + HttpUtility.HtmlDecode(m.Groups["url"].Value);
+                        video.VideoUrl = video.VideoUrl.Replace(@"/win_video.php?tra=yes&tit=no&cid=", @"/getVideo.php?tp=wmv&cid=") +
+                            "&lvl=3&tid=328";
+                    }
                     video.ImageUrl = baseUrl.TrimEnd('/') + HttpUtility.HtmlDecode(m.Groups["thumb"].Value);
                     videos.Add(video);
                     m = m.NextMatch();
