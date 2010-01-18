@@ -1332,7 +1332,7 @@ namespace OnlineVideos
         }
 
         private void Play(VideoInfo foListItem)
-        {            
+        {
             bool playing = false;            
             if (selectedSite.MultipleFilePlay)
             {
@@ -2100,5 +2100,64 @@ namespace OnlineVideos
         }
 
         #endregion
+         
+        /// <summary>
+        /// This method should be used to call methods from site utils that might take a few seconds.
+        /// It makes sure only on thread at a time executes and has a timeout for the execution.
+        /// It also catches Execeptions from the utils and writes errors to the log.
+        /// </summary>
+        /// <param name="task">a delegate pointing to the (anonymous) method to invoke.</param>
+        /// <returns>true, if execution finished successfully before the timeout.</returns>
+        bool ExecuteInBackgroundAndWait(System.Threading.ThreadStart task)
+        {
+            lock (this) // make sure only one task at a time can be executed in background
+            {
+                bool success = false;
+                try
+                {
+                    GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor in MediaPortal
+                    DateTime end = DateTime.Now.AddSeconds(10); // point in time until we wait for the execution of this task
+                    bool? result = null; // while this is null the task has not finished, true indicates successfull completion and false and error (or canceled due to timeout)
+
+                    System.Threading.Thread backgroundThread = new System.Threading.Thread(delegate()
+                        {
+                            try
+                            {
+                                task.Invoke();
+                                result = true;
+                            }
+                            catch (System.Threading.ThreadAbortException)
+                            {
+                                Log.Error("Timeout waiting for results.");
+                                result = false;
+                            }
+                            catch (Exception threadException)
+                            {
+                                Log.Error(threadException);
+                                result = false;
+                            }
+                        }
+                        ) { Name = "OnlineVideos", IsBackground = true };
+                    backgroundThread.Start();
+
+                    while (result == null)
+                    {
+                        GUIWindowManager.Process();
+                        if (DateTime.Now > end) backgroundThread.Abort();
+                    }
+                    success = result.Value;
+                }
+                catch (Exception ex)
+                {
+                    success = false;
+                    Log.Error(ex);
+                }
+                finally
+                {
+                    GUIWaitCursor.Hide();
+                }
+                return success;
+            }
+        }
     }
 }
