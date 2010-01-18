@@ -513,7 +513,7 @@
     <Site name="MTVMusicVideos" util="MtvMusicVideos" agecheck="false" enabled="true">
       <Categories />
     </Site>
-    <Site name="JustinTV" util="JustinTV" agecheck="false" enabled="true" lang="en">
+    <Site name="JustinTV" util="JustinTV" agecheck="false" enabled="false" lang="en">
       <Categories>
         <Category xsi:type="RssLink" name="Producers">http://api.justin.tv/api/stream/list.xml?category=featured</Category>
         <Category xsi:type="RssLink" name="Social">http://api.justin.tv/api/stream/list.xml?category=social</Category>
