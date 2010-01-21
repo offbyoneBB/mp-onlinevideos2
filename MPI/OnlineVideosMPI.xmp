@@ -425,6 +425,24 @@
 			<Guid>85c82af4-da6e-4434-bd91-480598297da3</Guid>
 		</File>
 		<File>
+			<FileName>Movies4Men.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\Movies4Men.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>90FF3548-E7DA-44B2-95AC-BBBA38334FDB</Guid>
+		</File>
+		<File>
+			<FileName>Movies4Men.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\Movies4Men.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>9295DF73-0A0E-4B8C-8BB2-BD259C58F28F</Guid>
+		</File>
+		<File>
 			<FileName>MSNBC.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>

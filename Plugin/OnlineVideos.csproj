@@ -429,6 +429,7 @@
     <Compile Include="Sites\LiveVideoUtil.cs" />
     <Compile Include="Sites\MdrUtil.cs" />
     <Compile Include="Sites\MiroUtil.cs" />
+    <Compile Include="Sites\Movies4Men.cs" />
     <Compile Include="Sites\MtvMusicVideosUtil.cs" />
     <Compile Include="Sites\MyVideoUtil.cs" />
     <Compile Include="Sites\NbaUtil.cs" />
