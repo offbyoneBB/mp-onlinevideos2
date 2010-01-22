@@ -378,18 +378,18 @@ namespace OnlineVideos.Sites
             request.UserAgent = OnlineVideoSettings.UserAgent;
             request.Accept = "*/*";
             request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
-            if (!String.IsNullOrEmpty(referer))
-                request.Referer = referer;
-            request.Timeout = 15000;
-            if (cc != null) request.CookieContainer = cc;
+            if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set refere if give
+            if (cc != null) request.CookieContainer = cc; // set cookies if given
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream responseStream;
-            if (response.ContentEncoding.ToLower().Contains("gzip"))
+            if (response.ContentEncoding.ToLower().Contains("gzip"))            
                 responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+            else if (response.ContentEncoding.ToLower().Contains("deflate"))
+                responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
             else
                 responseStream = response.GetResponseStream();
             Encoding encoding = Encoding.UTF8;
-            if (!String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet);
+            if (!String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }) );
             using (StreamReader reader = new StreamReader(responseStream, encoding, true))
             {
                 string str = reader.ReadToEnd().Trim();

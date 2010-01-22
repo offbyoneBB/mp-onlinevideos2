@@ -22,8 +22,6 @@ namespace OnlineVideos
 
         public const string PLUGIN_NAME = "Online Videos";
 
-        BackgroundWorker worker;
-
         #region IShowPlugin Implementation
 
         public bool ShowDefaultHome()
@@ -303,21 +301,17 @@ namespace OnlineVideos
                     if (selectedSite.HasRelatedVideos)
                     {
                         List<VideoInfo> relatedVideos = new List<VideoInfo>();
-                        GUIWaitCursor.Init(); GUIWaitCursor.Show();                        
-                        worker = new BackgroundWorker();
-                        worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+                        if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                         {
                             relatedVideos = selectedSite.getRelatedVideos(loSelectedVideo);
-                        });
-                        worker.RunWorkerAsync();
-                        while (worker.IsBusy) GUIWindowManager.Process();
-
-                        GUIWaitCursor.Hide();
-
-                        moCurrentVideoList = relatedVideos;
-                        currentVideosDisplayMode = VideosMode.Related;
-                        DisplayCategoryVideos();
-                        UpdateViewState();
+                        }, "getting related videos"))
+                        {
+                            selectedVideoIndex = 0;
+                            moCurrentVideoList = relatedVideos;
+                            currentVideosDisplayMode = VideosMode.Related;
+                            DisplayCategoryVideos();
+                            UpdateViewState();
+                        }
                     }
                     else
                     {
@@ -393,7 +387,7 @@ namespace OnlineVideos
 
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
-            if (worker != null && worker.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+            if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
 
             if (control == facadeView && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
@@ -475,61 +469,46 @@ namespace OnlineVideos
             {
                 ChangeFacadeView();
             }
-
             else if (control == btnNext)
             {
-                moCurrentVideoList = null;
-
-                GUIWaitCursor.Init();
-                GUIWaitCursor.Show();
-                worker = new BackgroundWorker();
-                worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+                List<VideoInfo> nextPageVideos = new List<VideoInfo>();
+                if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    moCurrentVideoList = selectedSite.getNextPageVideos();
-                });
-                worker.RunWorkerAsync();
-                while (worker.IsBusy) GUIWindowManager.Process();
+                    nextPageVideos = selectedSite.getNextPageVideos();
+                }, "getting next page videos"))
+                {
+                    selectedVideoIndex = 0;
+                    moCurrentVideoList = nextPageVideos;
+                    DisplayCategoryVideos();
+                    UpdateViewState();
 
-                GUIWaitCursor.Hide();
+                    if (selectedSite.HasNextPage) ShowNextPageButton();
+                    else HideNextPageButton();
 
-                selectedVideoIndex = 0;
-                DisplayCategoryVideos();
-                UpdateViewState();
-
-                if (selectedSite.HasNextPage) ShowNextPageButton();
-                else HideNextPageButton();
-
-                if (selectedSite.HasPreviousPage) ShowPreviousPageButton();
-                else HidePreviousPageButton();
-
+                    if (selectedSite.HasPreviousPage) ShowPreviousPageButton();
+                    else HidePreviousPageButton();
+                }
                 GUIControl.UnfocusControl(GetID, btnNext.GetID);
             }
             else if (control == btnPrevious)
             {
-                moCurrentVideoList = null;
-
-                GUIWaitCursor.Init();
-                GUIWaitCursor.Show();
-                worker = new BackgroundWorker();
-                worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+                List<VideoInfo> previousPageVideos = new List<VideoInfo>();
+                if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    moCurrentVideoList = selectedSite.getPreviousPageVideos();
-                });
-                worker.RunWorkerAsync();
-                while (worker.IsBusy) GUIWindowManager.Process();
+                    previousPageVideos = selectedSite.getPreviousPageVideos();
+                }, "getting previous page videos"))
+                {
+                    selectedVideoIndex = 0;
+                    moCurrentVideoList = previousPageVideos;
+                    DisplayCategoryVideos();
+                    UpdateViewState();
 
-                GUIWaitCursor.Hide();
+                    if (selectedSite.HasNextPage) ShowNextPageButton();
+                    else HideNextPageButton();
 
-                selectedVideoIndex = 0;
-                DisplayCategoryVideos();
-                UpdateViewState();
-
-                if (selectedSite.HasNextPage) ShowNextPageButton();
-                else HideNextPageButton();
-
-                if (selectedSite.HasPreviousPage) ShowPreviousPageButton();
-                else HidePreviousPageButton();
-
+                    if (selectedSite.HasPreviousPage) ShowPreviousPageButton();
+                    else HidePreviousPageButton();
+                }
                 GUIControl.UnfocusControl(GetID, btnPrevious.GetID);
             }
             else if (control == btnMaxResult)
@@ -850,72 +829,39 @@ namespace OnlineVideos
             {
                 if (!selectedSite.Settings.DynamicCategoriesDiscovered)
                 {
-                    try
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                     {
-                        GUIWaitCursor.Init();
-                        GUIWaitCursor.Show();
-                        worker = new BackgroundWorker();
-                        worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
-                            {
-                                Log.Info("Looking for dynamic categories for {0}", selectedSite.Settings.Name);
-                                try
-                                {
-                                    int foundCategories = selectedSite.DiscoverDynamicCategories();
-                                    Log.Info("Found {0} dynamic categories.", foundCategories);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Log.Error("Error looking for dynamic categories: " + ex.ToString());
-                                }
-                            });
-                        worker.RunWorkerAsync();
-                        while (worker.IsBusy) GUIWindowManager.Process();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex);
-                    }
-                    finally
-                    {
-                        GUIWaitCursor.Hide();
-                    }
+                        Log.Info("Looking for dynamic categories for {0}", selectedSite.Settings.Name);
+                        try
+                        {
+                            int foundCategories = selectedSite.DiscoverDynamicCategories();
+                            Log.Info("Found {0} dynamic categories.", foundCategories);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Error looking for dynamic categories: " + ex.ToString());
+                        }
+                    }, "getting dynamic categories");
                 }
-
                 categories = selectedSite.Settings.Categories;
             }
             else
             {
                 if (!parentCategory.SubCategoriesDiscovered)
                 {
-                    try
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                     {
-                        GUIWaitCursor.Init();
-                        GUIWaitCursor.Show();
-                        worker = new BackgroundWorker();
-                        worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+                        Log.Info("Looking for sub categories of site {0} in {1}", selectedSite.Settings.Name, parentCategory.Name);
+                        try
                         {
-                            Log.Info("Looking for sub categories for {0} in {1}", selectedSite.Settings.Name, parentCategory.Name);
-                            try
-                            {
-                                int foundCategories = selectedSite.DiscoverSubCategories(parentCategory);
-                                Log.Info("Found {0} sub categories.", foundCategories);
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error("Error looking for sub categories: " + ex.ToString());
-                            }
-                        });
-                        worker.RunWorkerAsync();
-                        while (worker.IsBusy) GUIWindowManager.Process();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex);
-                    }
-                    finally
-                    {
-                        GUIWaitCursor.Hide();
-                    }
+                            int foundCategories = selectedSite.DiscoverSubCategories(parentCategory);
+                            Log.Info("Found {0} sub categories.", foundCategories);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Error looking for sub categories: " + ex.ToString());
+                        }
+                    }, "getting dynamic subcategories");
                 }
 
                 categories = parentCategory.SubCategories;
@@ -1007,81 +953,66 @@ namespace OnlineVideos
             }
             catch (Exception) { }
 
-            GUIWaitCursor.Init();
-            GUIWaitCursor.Show();
-
-            List<VideoInfo> loListItems = new List<VideoInfo>();
-
-            worker = new BackgroundWorker();
-            worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
-            {                    
+            List<VideoInfo> filteredVideos = new List<VideoInfo>();
+            if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+            {
                 if (currentVideosDisplayMode == VideosMode.Search)
                 {
                     Log.Info("Filtering search result");
                     //filtering a search result
                     if (String.IsNullOrEmpty(msLastSearchCategory))
                     {
-                        loListItems = ((IFilter)selectedSite).filterSearchResultList(msLastSearchQuery, miMaxResult, msOrderBy, msTimeFrame);
+                        filteredVideos = ((IFilter)selectedSite).filterSearchResultList(msLastSearchQuery, miMaxResult, msOrderBy, msTimeFrame);
                     }
                     else
                     {
-                        loListItems = ((IFilter)selectedSite).filterSearchResultList(msLastSearchQuery, msLastSearchCategory, miMaxResult, msOrderBy, msTimeFrame);
+                        filteredVideos = ((IFilter)selectedSite).filterSearchResultList(msLastSearchQuery, msLastSearchCategory, miMaxResult, msOrderBy, msTimeFrame);
                     }
                 }
                 else
                 {
                     if (selectedSite.HasFilterCategories) // just for setting the category
-                        loListItems = selectedSite.Search(string.Empty, moSupportedSearchCategoryList[btnSearchCategories.SelectedLabel]);
+                        filteredVideos = selectedSite.Search(string.Empty, moSupportedSearchCategoryList[btnSearchCategories.SelectedLabel]);
                     if (selectedSite is IFilter)
-                        loListItems = ((IFilter)selectedSite).filterVideoList(selectedCategory, miMaxResult, msOrderBy, msTimeFrame);
+                        filteredVideos = ((IFilter)selectedSite).filterVideoList(selectedCategory, miMaxResult, msOrderBy, msTimeFrame);
                 }
-            });
-            worker.RunWorkerAsync();
-            while (worker.IsBusy) GUIWindowManager.Process();
-
-            GUIWaitCursor.Hide();
-
-            UpdateVideoList(loListItems);
-            moCurrentVideoList = loListItems;
+            }, "getting filtered videos"))
+            {
+                selectedVideoIndex = 0;
+                moCurrentVideoList = filteredVideos;
+                UpdateVideoList(filteredVideos);
+                UpdateViewState();
+            }
         }
 
         private bool SearchVideos(String query)
-        {
-            List<VideoInfo> loListItems = null;
+        {            
             SelectedSearchCategoryIndex = btnSearchCategories.SelectedItem;
             if (query != String.Empty)
             {
-                String category = String.Empty;
-
-                GUIWaitCursor.Init();
-                GUIWaitCursor.Show();
-
-                worker = new BackgroundWorker();
-                worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+                List<VideoInfo> searchResultVideos = null;
+                if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
                     if (moSupportedSearchCategoryList.Count > 1 && !btnSearchCategories.SelectedLabel.Equals("All"))
                     {
-                        category = moSupportedSearchCategoryList[btnSearchCategories.SelectedLabel];
+                        string category = moSupportedSearchCategoryList[btnSearchCategories.SelectedLabel];
                         Log.Info("Searching for {0} in category {1}", query, category);
                         msLastSearchCategory = category;
-                        loListItems = selectedSite.Search(query, category);
+                        searchResultVideos = selectedSite.Search(query, category);
                     }
                     else
                     {
                         Log.Info("Searching for {0} in all categories ", query);
-                        loListItems = selectedSite.Search(query);
+                        searchResultVideos = selectedSite.Search(query);
                     }
-                });
-                worker.RunWorkerAsync();
-                while (worker.IsBusy) GUIWindowManager.Process();
-
-                GUIWaitCursor.Hide();
-
-                if (UpdateVideoList(loListItems))
+                }, "getting search results"))
                 {
-                    currentVideosDisplayMode = VideosMode.Search;
-                    moCurrentVideoList = loListItems;
-                    return true;
+                    if (UpdateVideoList(searchResultVideos))
+                    {
+                        currentVideosDisplayMode = VideosMode.Search;
+                        moCurrentVideoList = searchResultVideos;
+                        return true;
+                    }
                 }
             }
             return false;
@@ -1094,53 +1025,29 @@ namespace OnlineVideos
                 case VideosMode.Search: SearchVideos(msLastSearchQuery); break;
                 case VideosMode.Favorites: DisplayFavoriteVideos(); break;
                 case VideosMode.Category:
-
-                    GUIWaitCursor.Init();
-                    GUIWaitCursor.Show();
-
-                    bool success = false;
-                    worker = new BackgroundWorker();
-                    worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+                    List<VideoInfo> categoryVideos = new List<VideoInfo>();
+                    if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                     {
-                        List<VideoInfo> loListItems = selectedSite.getVideoList(selectedCategory);
-
-                        if (loListItems != null && loListItems.Count > 0)
+                        categoryVideos = selectedSite.getVideoList(selectedCategory);
+                    }, "getting category videos"))
+                    {
+                        if (UpdateVideoList(categoryVideos))
                         {
-                            moCurrentVideoList = new List<VideoInfo>();
-                            GUIControl.ClearControl(GetID, facadeView.GetID);
+                            moCurrentVideoList = categoryVideos;
 
                             if (selectedSite.HasNextPage) ShowNextPageButton();
                             else HideNextPageButton();
 
                             if (selectedSite.HasPreviousPage) ShowPreviousPageButton();
-                            else HidePreviousPageButton();
-
-                            UpdateVideoList(loListItems);
-                            moCurrentVideoList = loListItems;
-                            success = true;
+                            else HidePreviousPageButton();                            
                         }
-                    });
-                    worker.RunWorkerAsync();
-                    while (worker.IsBusy) GUIWindowManager.Process();
-
-                    GUIWaitCursor.Hide();
-
-                    if (!success)
+                    }
+                    else
                     {
-                        GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                        dlg_error.SetHeading(PluginName());
-                        dlg_error.SetLine(1, GUILocalizeStrings.Get(1036)/*No Videos found!*/);
-                        dlg_error.SetLine(2, String.Empty);
-                        dlg_error.DoModal(GUIWindowManager.ActiveWindow);
-
-                        //if (selectedSite.UtilName == "Favorite")
-                        //{
-                        DisplayCategories(selectedCategory.ParentCategory);
-                        //}
+                        DisplayCategories(selectedCategory.ParentCategory);                        
                         CurrentState = State.categories;
                         UpdateViewState();
                     }
-
                     break;
             }           
         }       
@@ -1157,25 +1064,17 @@ namespace OnlineVideos
         private bool DisplayFavoriteVideos()
         {
             List<VideoInfo> loVideoList = null;
-
-            GUIWaitCursor.Init();
-            GUIWaitCursor.Show();
-
-            worker = new BackgroundWorker();
-            worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+            if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
                 loVideoList = ((IFavorite)selectedSite).getFavorites();
-            });
-            worker.RunWorkerAsync();
-            while (worker.IsBusy) GUIWindowManager.Process();
-
-            GUIWaitCursor.Hide();
-
-            if (UpdateVideoList(loVideoList))
+            }, "getting favorite videos"))
             {
-                moCurrentVideoList = loVideoList;
-                currentVideosDisplayMode = VideosMode.Favorites;                
-                return true;
+                if (UpdateVideoList(loVideoList))
+                {
+                    moCurrentVideoList = loVideoList;
+                    currentVideosDisplayMode = VideosMode.Favorites;
+                    return true;
+                }
             }
             return false;
         }
@@ -1242,26 +1141,11 @@ namespace OnlineVideos
         {
             selectedVideo = foVideo;
             List<VideoInfo> loVideoList = null;
-
-            bool success = false;
-            GUIWaitCursor.Init();
-            GUIWaitCursor.Show();
-            worker = new BackgroundWorker();
-            worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
+            if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()            
             {
                 loVideoList = selectedSite.getOtherVideoList(foVideo);
-                success = true;
-            });
-            worker.RunWorkerAsync();
-            while (worker.IsBusy) GUIWindowManager.Process();
-            GUIWaitCursor.Hide();
-            if (!success)
+            },"getting video details"))            
             {
-                GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                dlg_error.SetHeading(PluginName());
-                dlg_error.SetLine(1, "Unable to load moviedetails");
-                dlg_error.SetLine(2, String.Empty);
-                dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                 CurrentState = State.videos;
                 DisplayCategoryVideos();
                 return;
@@ -1364,30 +1248,12 @@ namespace OnlineVideos
             else
             {
                 string lsUrl = "";
-                try
+                if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    GUIWaitCursor.Init();
-                    GUIWaitCursor.Show();
-                    worker = new BackgroundWorker();
-                    worker.DoWork += new DoWorkEventHandler(delegate(object o, DoWorkEventArgs e)
-                    {
-                        try
-                        {
-                            lsUrl = selectedSite.getUrl(foListItem);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex);
-                        }
-                        
-                    });
-                    worker.RunWorkerAsync();
-                    while (worker.IsBusy) GUIWindowManager.Process();                
-                }
-                catch { }
-                finally
+                    lsUrl = selectedSite.getUrl(foListItem);
+                }, "getting url for video"))
                 {
-                    GUIWaitCursor.Hide();
+                    return;
                 }
 
                 if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)) )
@@ -2099,65 +1965,6 @@ namespace OnlineVideos
             if (refreshList) refreshVideoList();
         }
 
-        #endregion
-         
-        /// <summary>
-        /// This method should be used to call methods from site utils that might take a few seconds.
-        /// It makes sure only on thread at a time executes and has a timeout for the execution.
-        /// It also catches Execeptions from the utils and writes errors to the log.
-        /// </summary>
-        /// <param name="task">a delegate pointing to the (anonymous) method to invoke.</param>
-        /// <returns>true, if execution finished successfully before the timeout.</returns>
-        bool ExecuteInBackgroundAndWait(System.Threading.ThreadStart task)
-        {
-            lock (this) // make sure only one task at a time can be executed in background
-            {
-                bool success = false;
-                try
-                {
-                    GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor in MediaPortal
-                    DateTime end = DateTime.Now.AddSeconds(10); // point in time until we wait for the execution of this task
-                    bool? result = null; // while this is null the task has not finished, true indicates successfull completion and false and error (or canceled due to timeout)
-
-                    System.Threading.Thread backgroundThread = new System.Threading.Thread(delegate()
-                        {
-                            try
-                            {
-                                task.Invoke();
-                                result = true;
-                            }
-                            catch (System.Threading.ThreadAbortException)
-                            {
-                                Log.Error("Timeout waiting for results.");
-                                result = false;
-                            }
-                            catch (Exception threadException)
-                            {
-                                Log.Error(threadException);
-                                result = false;
-                            }
-                        }
-                        ) { Name = "OnlineVideos", IsBackground = true };
-                    backgroundThread.Start();
-
-                    while (result == null)
-                    {
-                        GUIWindowManager.Process();
-                        if (DateTime.Now > end) backgroundThread.Abort();
-                    }
-                    success = result.Value;
-                }
-                catch (Exception ex)
-                {
-                    success = false;
-                    Log.Error(ex);
-                }
-                finally
-                {
-                    GUIWaitCursor.Hide();
-                }
-                return success;
-            }
-        }
+        #endregion         
     }
 }
