@@ -49,10 +49,13 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string url = GetRedirectedUrl(video.VideoUrl);
-            if (url.ToLower().EndsWith(".asx"))
+            /*
+             if (url.ToLower().StartsWith("http://asx") ||
+                url.ToLower().StartsWith("http://cgi"))
             {
                 url = ParseASX(url)[0];
             }
+             */
             return url;
         }
         /// <summary>
@@ -201,25 +204,17 @@ namespace OnlineVideos.Sites
                             if (rel.StartsWith("http://player.omroep.nl/?aflID="))
                                 video.VideoUrl = GetPlayerOmroepUrl(rel);
                             else
-                                if (rel.StartsWith("http://www.rtl.nl"))
+                            {
+                                string data = GetWebData(rel);
+                                if (!String.IsNullOrEmpty(data))
                                 {
-                                    string data = GetWebData(rel);
-                                    if (!String.IsNullOrEmpty(data))
-                                        video.VideoUrl = GetSubString(data, "http://av.rtl.nl/", "'}");
+                                    video.VideoUrl = GetSubString(data, "http://av.rtl.nl/", "'}");
+                                    if (String.IsNullOrEmpty(video.VideoUrl))
+                                        video.VideoUrl = GetSubString(data, "http://asx.sbsnet.nl/", "\">");
+                                    if (String.IsNullOrEmpty(video.VideoUrl))
+                                        video.VideoUrl = rel;
                                 }
-                                else
-                                    if (rel.StartsWith("http://www.sbs6.nl/") ||
-                                        rel.StartsWith("http://www.net5.nl/") ||
-                                        rel.StartsWith("http://www.veronicatv.nl"))
-                                    {
-                                        string data = GetWebData(rel);
-                                        if (!String.IsNullOrEmpty(data))
-                                            video.VideoUrl = GetSubString(data, "http://asx.sbsnet.nl/", "\">");
-                                    }
-                                    else
-                                    { 
-                                    }
-
+                            }
                         }
                         //video.Description = video.VideoUrl;
                         if (video.VideoUrl != String.Empty) videos.Add(video);
