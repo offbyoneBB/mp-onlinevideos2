@@ -146,6 +146,24 @@
 			<Guid>18f71db3-a6fe-4d50-b92e-4f8fcc24df8e</Guid>
 		</File>
 		<File>
+			<FileName>cinemassacre.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\cinemassacre.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>8634EA78-7A43-4D3D-ABB4-1479C9EE17BB</Guid>
+		</File>
+		<File>
+			<FileName>cinemassacre.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\cinemassacre.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>0758E20B-4EBC-4491-BCC1-CF74E885CDA5</Guid>
+		</File>
+		<File>
 			<FileName>CNN.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
