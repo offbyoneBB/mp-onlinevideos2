@@ -291,6 +291,16 @@
       <Description>Video site showing funny television commercials from around the world.</Description>
       <Categories />
     </Site>
+    <Site name="Cinemassacre" util="Cinemassacre" agecheck="false" enabled="true" lang="en">
+      <Categories>
+        <Category xsi:type="RssLink" name="AVGN">http://www.cinemassacre.com/new/?page_id=13</Category>
+        <Category xsi:type="RssLink" name="You Know What’s Bullshit">http://www.cinemassacre.com/new/?page_id=2479</Category>
+        <Category xsi:type="RssLink" name="Cinemassacre’s Top 10’s and Movie Reviews">http://www.cinemassacre.com/new/?page_id=23</Category>
+        <Category xsi:type="RssLink" name="Cinemassacre’s Monster Madness 3: 2009">http://www.cinemassacre.com/new/?page_id=1373</Category>
+        <Category xsi:type="RssLink" name="Board James">http://www.cinemassacre.com/new/?page_id=1174</Category>
+        <Category xsi:type="RssLink" name="Filmography">http://www.cinemassacre.com/new/?page_id=1375</Category>
+      </Categories>
+    </Site>
     <Site name="CollegeHumor" util="CollegeHumor" agecheck="false" enabled="true" lang="en">
       <Description>Funny videos from CollegeHumor.com.</Description>
       <Categories />

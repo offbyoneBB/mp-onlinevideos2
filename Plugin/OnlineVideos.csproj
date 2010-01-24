@@ -416,6 +416,7 @@
     <Compile Include="Configuration\SiteSettings.cs" />
     <Compile Include="Sites\ArtePlus7Util.cs" />
     <Compile Include="Sites\BBCiPlayerUtil.cs" />
+    <Compile Include="Sites\CinemassacreUtil.cs" />
     <Compile Include="Sites\CnnUtil.cs" />
     <Compile Include="Sites\CollegeHumorUtil.cs" />
     <Compile Include="Sites\DasErsteMediathekUtil.cs" />
