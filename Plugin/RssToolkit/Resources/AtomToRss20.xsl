@@ -40,7 +40,7 @@
           <xsl:value-of select="child::*[name()='title']"/>
         </xsl:element>
         <xsl:element name="link">
-          <xsl:value-of select="//*[name()='link']/@href"/>
+          <xsl:value-of select="child::*[name()='link']/@href"/>
         </xsl:element>
         <xsl:element name="guid">
           <xsl:value-of select="child::*[name()='id']"/>
@@ -52,9 +52,10 @@
           <xsl:value-of select="child::*[name()='content']"/>
         </xsl:element>
         <xsl:element name="pubDate">
-          <xsl:value-of select="child::*[name()='modified']"/>
+          <xsl:value-of select="child::*[name()='modified' or name()='updated']"/>
         </xsl:element>
         <xsl:apply-templates select="media:*"/>
+        <xsl:apply-templates select="*/media:*"/>
       </xsl:element>
     </xsl:for-each>
   </xsl:template>

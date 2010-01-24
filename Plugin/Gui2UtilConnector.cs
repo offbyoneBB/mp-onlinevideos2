@@ -41,6 +41,9 @@ namespace OnlineVideos
                 {
                     GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor in MediaPortal
                     DateTime end = DateTime.Now.AddSeconds(OnlineVideoSettings.getInstance().utilTimeout); // point in time until we wait for the execution of this task
+                    #if DEBUG
+                        if (System.Diagnostics.Debugger.IsAttached) end = DateTime.Now.AddYears(1); // basically disable timeout when debugging
+                    #endif
                     Thread backgroundThread = new Thread(delegate()
                         {
                             try

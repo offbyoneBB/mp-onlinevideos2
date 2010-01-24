@@ -315,6 +315,7 @@ namespace OnlineVideos.Sites
 
         public virtual bool isPossibleVideo(string fsUrl)
         {
+            if (string.IsNullOrEmpty(fsUrl)) return false;
             string extensionFile = System.IO.Path.GetExtension(fsUrl).ToLower();
             bool isVideo = OnlineVideoSettings.getInstance().videoExtensions.ContainsKey(extensionFile);
             if (!isVideo)
@@ -366,7 +367,12 @@ namespace OnlineVideos.Sites
             return GetWebData(url, cc, null);
         }
 
-        protected static string GetWebData(string url, CookieContainer cc,string referer)
+        protected static string GetWebData(string url, CookieContainer cc, string referer)
+        {
+            return GetWebData(url, cc, referer, null);
+        }
+
+        protected static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy)
         {
             // try cache first
             string cachedData = WebCache.Instance[url];
@@ -380,6 +386,7 @@ namespace OnlineVideos.Sites
             request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
             if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set refere if give
             if (cc != null) request.CookieContainer = cc; // set cookies if given
+            if (proxy != null) request.Proxy = proxy;
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream responseStream;
             if (response.ContentEncoding.ToLower().Contains("gzip"))            
