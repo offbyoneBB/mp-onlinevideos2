@@ -382,6 +382,13 @@ namespace RTMP_LIB
             if (!string.IsNullOrEmpty(Link.pageUrl)) EncodeString(enc, "pageUrl", Link.pageUrl);
             enc.Add(0); enc.Add(0); enc.Add(0x09); // end of object - 0x00 0x00 0x09
 
+            // add auth string
+            if (!string.IsNullOrEmpty(Link.auth))
+            {
+                EncodeBoolean(enc, true);
+                EncodeString(enc, Link.auth);
+            }
+
             Array.Copy(enc.ToArray(), packet.m_body, enc.Count);
             packet.m_nBodySize = (uint)enc.Count;
 
