@@ -74,6 +74,24 @@
 			<Guid>A21F6CD6-AFB8-4d77-981F-4F9F27334CDE</Guid>
 		</File>
 		<File>
+			<FileName>BBC iPlayer.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\BBC iPlayer.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>6EC88695-A69B-4673-B1F3-76E09224EBB0</Guid>
+		</File>
+		<File>
+			<FileName>BBC iPlayer.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\BBC iPlayer.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>8A4A2AEB-3A42-4bbe-BD8B-57354F3912A8</Guid>
+		</File>
+		<File>
 			<FileName>blip.tv.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
@@ -1173,7 +1191,7 @@
 		<ProiectName>Online Videos</ProiectName>
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com/files/Download/MediaPortalInstaller(MPI)/Web/OnlineVideos/</UpdateURL>
-		<Version>0.16.0</Version>
+		<Version>0.17.0</Version>
 		<Description>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</Description>
 		<Group>Web</Group>
 		<Release>Beta</Release>
@@ -1269,7 +1287,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>18-01-10</CreationDate>
+		<CreationDate>24-01-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
