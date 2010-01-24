@@ -105,6 +105,7 @@ namespace OnlineVideos.Sites
                 m = m.NextMatch();
             }
 
+            parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
         }
 
