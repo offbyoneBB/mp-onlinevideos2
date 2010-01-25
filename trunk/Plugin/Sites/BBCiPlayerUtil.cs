@@ -16,7 +16,7 @@ namespace OnlineVideos.Sites
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/emp/playlist");
             string id = doc.SelectSingleNode("//ns1:item[@kind='programme']/@identifier", nsmRequest).Value;
 
-            System.Net.WebProxy proxy = null;  //new System.Net.WebProxy("127.0.0.1", 8118);
+            System.Net.WebProxy proxy = null; // new System.Net.WebProxy("127.0.0.1", 8118);
 
             doc = new XmlDocument();
             doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + id, null, null, proxy)); //uk only
@@ -25,16 +25,9 @@ namespace OnlineVideos.Sites
 
             List<string> urls = new List<string>();
             foreach(XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
-            {
-                XmlElement connectionElem = null;
-                foreach(XmlElement aConElem in mediaElem.SelectNodes("ns1:connection", nsmRequest))
+            {                
+                foreach (XmlElement connectionElem in mediaElem.SelectNodes("ns1:connection", nsmRequest))
                 {
-                    connectionElem = aConElem;
-                    if (connectionElem.Attributes["kind"].Value == "akamai") break;
-                }
-                if (connectionElem != null)
-                {
-                    
                     if (Array.BinarySearch<string>(new string[] {"http","sis"}, connectionElem.Attributes["kind"].Value)>=0)
                     {
                         // http
@@ -51,20 +44,20 @@ namespace OnlineVideos.Sites
                         string SWFPlayer = "http://www.bbc.co.uk/emp/9player.swf?revision=7276";
                         string PlayPath = identifier;
 
-                        if (mediaElem.Attributes["encoding"].Value == "h264")
+                        if (connectionElem.Attributes["kind"].Value == "limelight")
+                        {
+                            application = connectionElem.Attributes["application"].Value + "?" + auth;
+                            PlayPath = identifier + "?" + auth;
+                            SWFPlayer = "http://www.bbc.co.uk/emp/9player.swf?revision=10344_10753";
+                        }
+                        else if (mediaElem.Attributes["encoding"].Value == "h264")
                         {
                             PlayPath = identifier;                
                             identifier = PlayPath.Substring("mp4:".Length);
                             SWFPlayer = "http://www.bbc.co.uk/emp/9player.swf?revision=10344_10753";
                         }
-                        else if (connectionElem.Attributes["kind"].Value == "limelight")
-                        {
-                            application = connectionElem.Attributes["application"].Value;
-                            PlayPath = auth;
-                            SWFPlayer = "http://www.bbc.co.uk/emp/9player.swf?revision=10344_10753";
-                        }
 
-                        string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?hostname={1}&port={2}&app={3}&tcUrl={4}&playpath={5}&swfurl={6}&auth={7}",
+                        string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?hostname={1}&port={2}&app={3}&tcUrl={4}&playpath={5}&swfurl={6}",
                             OnlineVideoSettings.RTMP_PROXY_PORT,
                             System.Web.HttpUtility.UrlEncode(server),
                             "1935",
@@ -78,7 +71,7 @@ namespace OnlineVideos.Sites
                     }
                 }                
             }
-
+            urls.Sort();
             return urls[0];
         }
 
