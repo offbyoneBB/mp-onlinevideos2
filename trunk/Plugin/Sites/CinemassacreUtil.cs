@@ -64,6 +64,10 @@ namespace OnlineVideos.Sites
             for (int i = 0; i < videoUrlRegex.Length; i++)
                 regEx_VideoUrl[i] = new Regex(videoUrlRegex[i], RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
+        }
+
+        public override int DiscoverDynamicCategories()
+        {
             foreach (Category cat in Settings.Categories)
             {
                 string url = ((RssLink)cat).Url;
@@ -71,8 +75,9 @@ namespace OnlineVideos.Sites
                 if (!string.IsNullOrEmpty(data))
                     cat.HasSubCategories = data.IndexOf(@"id=""pagine2""") >= 0;
             }
-        }
 
+            return base.DiscoverDynamicCategories();
+        }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
