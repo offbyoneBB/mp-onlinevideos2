@@ -81,7 +81,7 @@ namespace OnlineVideos.Sites
             string videoId = url.Substring(p2 + 1, p1 - p2 - 1);
             string xmlData = GetWebData(String.Format(@"http://www.nickelodeon.nl/feeds/turbonick/mediaGen.php?id={0}", videoId));
             XmlDocument tdoc = new XmlDocument();
-            tdoc.Load(XmlReader.Create(new StringReader(xmlData)));
+            tdoc.LoadXml(xmlData);
             XmlNodeList sources = tdoc.SelectNodes("//rendition");
             int HighestBitrate = 0;
             string theOne = null;
