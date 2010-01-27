@@ -148,7 +148,7 @@ namespace OnlineVideos.Sites
                     if (!String.IsNullOrEmpty(step2))
                     {
                         XmlDocument tdoc = new XmlDocument();
-                        tdoc.Load(XmlReader.Create(new StringReader(step2)));
+                        tdoc.LoadXml(step2);
                         XmlNode final = tdoc.SelectSingleNode("/media_export_player/aflevering/streams/stream[@compressie_kwaliteit='bb' and @compressie_formaat='wmv']");
                         if (final != null)
                             return final.InnerText;
@@ -169,7 +169,7 @@ namespace OnlineVideos.Sites
             {
                 XmlDocument doc = new XmlDocument();
                 webData = "<root>" + webData + "</root>";
-                doc.Load(XmlReader.Create(new StringReader(webData)));
+                doc.LoadXml(webData);
                 XmlNodeList episodes = doc.SelectNodes("/root/ul/li/div[@class=\"episodebox\"]");
 
                 foreach (XmlNode node in episodes)

@@ -150,7 +150,16 @@ namespace OnlineVideos.Sites
             }
 
             if (video.VideoUrl.IndexOf("spike.com") >= 0)
-                return "unsupported " + video.VideoUrl;
+            {
+                int p = video.VideoUrl.LastIndexOf('/');
+                string id = video.VideoUrl.Substring(p + 1);
+                string url = String.Format(@"http://www.spike.com/ui/xml/mediaplayer/mediagen.groovy?videoId={0}", id);
+                string data2 = GetWebData(url);
+
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(data2);
+                return url = doc.SelectSingleNode("//rendition/src").InnerText;
+            }
 
             if (!String.IsNullOrEmpty(lsUrl))
             {
@@ -210,7 +219,7 @@ namespace OnlineVideos.Sites
             data = data.Replace("</p>", String.Empty);
 
             XmlDocument doc = new XmlDocument();
-            doc.Load(XmlReader.Create(new StringReader(data)));
+            doc.LoadXml(data);
             XmlNodeList episodes = doc.SelectNodes("//td");
 
 
