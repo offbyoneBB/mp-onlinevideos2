@@ -47,7 +47,7 @@ namespace OnlineVideos
                     Thread backgroundThread = new Thread(delegate()
                         {
                             try
-                            {
+                            {                                
                                 task.Invoke();
                                 result = true;
                             }
@@ -81,13 +81,12 @@ namespace OnlineVideos
                     GUIWaitCursor.Hide(); // hide the wait cursor
                     if (result != true)   // show an error message if task was not completed successfully
                     {
-                        GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                        dlg_error.SetHeading(GUIOnlineVideos.PLUGIN_NAME);
+                        GUIDialogNotify dlg_error = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                        dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
                         if (result.HasValue)
-                            dlg_error.SetLine(1, GUILocalizeStrings.Get(257)/*ERROR*/);
+                            dlg_error.SetText(string.Format("{0}: {1}", GUILocalizeStrings.Get(257)/*ERROR*/, taskdescription));
                         else
-                            dlg_error.SetLine(1, "Timeout");
-                        dlg_error.SetLine(2, taskdescription);
+                            dlg_error.SetText(string.Format("{0}: {1}", "Timeout", taskdescription));
                         dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                     }
                     Monitor.Exit(this);

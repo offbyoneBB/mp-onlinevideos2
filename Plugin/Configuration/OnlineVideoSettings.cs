@@ -16,7 +16,8 @@ namespace OnlineVideos
         public const string UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3";
         public const int RTMP_PROXY_PORT = 30004;
         public const int APPLE_PROXY_PORT = 30005;
-        
+        public const string PLUGIN_NAME = "Online Videos";
+
         public const string SECTION = "onlinevideos";
         public const string SITEVIEW_MODE = "siteview";
         public const string SITEVIEW_ORDER = "siteview_order";
