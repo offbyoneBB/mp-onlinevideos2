@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using RssToolkit.Rss;
 
 namespace OnlineVideos
@@ -17,7 +18,31 @@ namespace OnlineVideos
         
         /// <summary>This field is only used by the <see cref="FavoriteUtil"/> to store the Name of the Site where this Video came from.</summary>
         public string SiteName = "";
-                
+
+        public void CleanDescription()
+        {
+            if (!string.IsNullOrEmpty(Description))
+            {
+                // Replace &nbsp; with space
+                Description = Regex.Replace(Description, @"&nbsp;", " ", RegexOptions.Multiline);
+
+                // Remove double spaces
+                Description = Regex.Replace(Description, @"  +", "", RegexOptions.Multiline);
+
+                // Replace <br/> with \n
+                Description = Regex.Replace(Description, @"< *br */*>", "\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
+
+                // Remove remaining HTML tags                
+                Description = Regex.Replace(Description, @"<[^>]*>", "", RegexOptions.Multiline);
+
+                // Remove whitespace at the beginning and end
+                Description = Description.Trim();
+
+                // decode HTML escape character
+                Description = System.Web.HttpUtility.HtmlDecode(Description);
+            }            
+        }
+        
         public override string ToString()
         {
             return string.Format("Title:{0}\nDesc:{1}\nVidUrl:{2}\nImgUrl:{3}\nLength:{4}\nTags:{5}", Title, Description, VideoUrl, ImageUrl, Length, Tags);
