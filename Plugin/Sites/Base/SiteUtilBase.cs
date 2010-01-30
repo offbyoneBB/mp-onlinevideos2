@@ -302,6 +302,16 @@ namespace OnlineVideos.Sites
         {
             return Search(query);
         }
+
+        /// <summary>
+        /// Should return the title of the current page, which will be put in #header.label at state=videos
+        /// </summary>
+        /// <returns>the title of the current page</returns>
+        public virtual string getCurrentVideosTitle()
+        {
+            return null;
+        }
+
         #endregion
 
         public virtual string GetFileNameForDownload(VideoInfo video, string url)
