@@ -1527,7 +1527,11 @@ namespace OnlineVideos
                         case VideosMode.Favorites: GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(932)); break;
                         case VideosMode.Search: GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(283)); break;
                         case VideosMode.Related: GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(33011)); break;
-                        default: GUIPropertyManager.SetProperty("#header.label", selectedCategory != null ? selectedCategory.Name : ""); break;
+                        default:
+                            {
+                                string proposedLabel = selectedSite.getCurrentVideosTitle();
+                                GUIPropertyManager.SetProperty("#header.label", proposedLabel != null ? proposedLabel : selectedCategory != null ? selectedCategory.Name : ""); break;
+                            }
                     }
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Settings.Name + ".png");
                     ShowFacade();
