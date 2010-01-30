@@ -62,6 +62,7 @@ namespace OnlineVideos.Sites
                     cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
                     string url = baseUrl + m.Groups["url"].Value;
                     cat.Url = url;
+                    cat.Thumb = m.Groups["img"].Value;
                     Settings.Categories.Add(cat);
                     m = m.NextMatch();
                 }
