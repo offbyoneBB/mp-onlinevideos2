@@ -372,17 +372,27 @@ namespace OnlineVideos.Sites
             return url;
         }
 
+        protected static string GetWebData(string url)
+        {
+            return GetWebData(url, null, null, null, false);
+        }
+
         protected static string GetWebData(string url, CookieContainer cc)
         {
-            return GetWebData(url, cc, null);
+            return GetWebData(url, cc, null, null, false);
         }
 
         protected static string GetWebData(string url, CookieContainer cc, string referer)
         {
-            return GetWebData(url, cc, referer, null);
+            return GetWebData(url, cc, referer, null, false);
         }
 
         protected static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy)
+        {
+            return GetWebData(url, cc, referer, proxy, false);
+        }
+
+        protected static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy, bool forceUTF8)
         {
             // try cache first
             string cachedData = WebCache.Instance[url];
@@ -406,7 +416,7 @@ namespace OnlineVideos.Sites
             else
                 responseStream = response.GetResponseStream();
             Encoding encoding = Encoding.UTF8;
-            if (!String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }) );
+            if (!forceUTF8 && !String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
             using (StreamReader reader = new StreamReader(responseStream, encoding, true))
             {
                 string str = reader.ReadToEnd().Trim();
@@ -416,11 +426,6 @@ namespace OnlineVideos.Sites
             }
         }
 
-        protected static string GetWebData(string url)
-        {
-            return GetWebData(url, null);
-        }
-        
         protected static string GetWebDataFromPost(string url, string postData)
         {
             byte[] data = Encoding.UTF8.GetBytes(postData);
