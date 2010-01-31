@@ -127,7 +127,7 @@ namespace OnlineVideos.Sites
             return getPagedVideoList(category);
         }
 
-        private string GetPlayerOmroepUrl(string Url)
+        public static string GetPlayerOmroepUrl(string Url)
         {
             int aflID = Convert.ToInt32(Url.Split('=')[1]);
             CookieContainer cc = new CookieContainer();

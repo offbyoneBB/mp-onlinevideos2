@@ -103,13 +103,19 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string url = GetRedirectedUrl(video.VideoUrl);
+
             string data = GetWebData(url);
+            string s=GetSubString(data,@"<center><iframe src=""",@"""");
+            if (s != string.Empty && (s.StartsWith(@"http://player.omroep.nl/")))
+                return TvTuttiUtil.GetPlayerOmroepUrl(s);
+
             if (!string.IsNullOrEmpty(data))
             {
                 Match m = regEx_GetUrl.Match(data);
                 if (m.Success)
                 {
-                    return ParseASX(m.Groups["url"].Value)[0];
+                    //return ParseASX(m.Groups["url"].Value)[0];
+                    return m.Groups["url"].Value;
                 }
             }
             return null;
@@ -181,10 +187,11 @@ namespace OnlineVideos.Sites
             url = String.Format(url, FilterCategory);
             string referer = url.Replace("/video/videotab/type/", "/videos/");
             referer = referer.Replace("/page/", "/");
-            string webData = GetWebData(url, null, referer);
+            string webData = GetWebData(url, null, referer,null,true);
             List<VideoInfo> videos = new List<VideoInfo>();
             if (!string.IsNullOrEmpty(webData))
             {
+
                 Match m = regEx_VideoList.Match(webData);
                 while (m.Success)
                 {
@@ -193,11 +200,8 @@ namespace OnlineVideos.Sites
                     video.Title = HttpUtility.HtmlDecode(m.Groups["title"].Value);
                     video.VideoUrl = baseUrl + m.Groups["url"].Value;
                     video.ImageUrl = baseUrl + m.Groups["thumb"].Value;
-                    string descr = m.Groups["description"].Value;
-                    descr = descr.Replace(@"<br />", ". ");
-                    descr = descr.Replace("  ", " ");
-
-                    video.Description = descr;
+                    video.Description = m.Groups["description"].Value;
+                    video.CleanDescription();
                     videos.Add(video);
                     m = m.NextMatch();
                 }
