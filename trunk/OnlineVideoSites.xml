@@ -701,6 +701,10 @@
       <Categories>
       </Categories>
     </Site>
+    <Site name="Nos" util="NOS" agecheck="false" enabled="true" lang="nl">
+      <Categories>
+      </Categories>
+    </Site>
     <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" lang="nl" player="WMP">
       <Categories>
         <Category xsi:type="RssLink" name="All">http://tvtutti.nl/alle/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
