@@ -677,6 +677,24 @@
 			<Guid>badcb071-eacf-4430-a0dd-4eb636bdebf8</Guid>
 		</File>
 		<File>
+			<FileName>NOS.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\NOS.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>33496EBE-1D75-40EC-BC86-67F1B6F72397</Guid>
+		</File>
+		<File>
+			<FileName>NOS.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\NOS.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>8B43F1CF-B905-430D-8EC0-92766793B774</Guid>
+		</File>
+		<File>
 			<FileName>OnlineVideos.dll</FileName>
 			<Type>Plugin</Type>
 			<SubType>Window</SubType>
