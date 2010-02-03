@@ -326,6 +326,24 @@
 			<Guid>370e207c-97a0-4d52-a0d0-72f28fd4caac</Guid>
 		</File>
 		<File>
+			<FileName>Hardwareinfo.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\Hardwareinfo.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>58A81BF6-F9E9-4297-BD83-4CCF29F3BC54</Guid>
+		</File>
+		<File>
+			<FileName>Hardwareinfo.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\Hardwareinfo.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>5DA8C0AF-9EF8-463F-B1C4-125A4F7F5B97</Guid>
+		</File>
+		<File>
 			<FileName>hover_onlinevideos.png</FileName>
 			<Type>Media</Type>
 			<SubType>Xface</SubType>

@@ -424,6 +424,7 @@
     <Compile Include="Sites\EmpflixUtil.cs" />
     <Compile Include="Sites\FiveMin.cs" />
     <Compile Include="Sites\GameTrailersUtil.cs" />
+    <Compile Include="Sites\HardwareInfoUtil.cs" />
     <Compile Include="Sites\Interfaces\IFavorite.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
     <Compile Include="Sites\JustinTVUtil.cs" />

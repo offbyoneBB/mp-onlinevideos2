@@ -697,6 +697,11 @@
         <Category xsi:type="RssLink" name="Univers">http://vpodcast.dr.dk/feeds/universrss.xml</Category>
       </Categories>
     </Site>
+    <Site name="HardwareInfo" util="HardwareInfo" agecheck="false" enabled="true" lang="nl">
+      <Categories>
+        <Category xsi:type="RssLink" name="Laatste videos">http://www.hardware.info/nl-NL/video/</Category>
+      </Categories>
+    </Site>
     <Site name="Movies4Men" util="Movies4Men" agecheck="false" enabled="true" lang="en">
       <Categories>
       </Categories>
