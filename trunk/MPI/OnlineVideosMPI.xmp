@@ -1017,6 +1017,24 @@
 			<Id>04010</Id>
 			<Option />
 			<Guid>F2129670-3C39-420E-97D6-9E6B91C3A366</Guid>
+		</File>  
+		<File>
+			<FileName>TvGorge.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\TvGorge.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>BF477CA8-532A-461C-8EDD-AE501BD8CD25</Guid>
+		</File>
+		<File>
+			<FileName>TvGorge.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\TvGorge.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>39F53937-85A8-44EC-8561-243266C09C62</Guid>
 		</File>
 		<File>
 			<FileName>tvtutti.png</FileName>

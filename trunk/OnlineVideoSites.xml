@@ -120,6 +120,10 @@
     <Site name="SouthPark" util="SouthParkDe" agecheck="false" enabled="true" lang="de">
       <Categories />
     </Site>
+    <Site name="TvGorge" util="TvGorge" agecheck="false" enabled="true" lang="en">
+      <Categories>
+      </Categories>
+    </Site>
     <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en">
       <Categories />
     </Site>
