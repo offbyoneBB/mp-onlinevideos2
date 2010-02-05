@@ -577,6 +577,18 @@ namespace OnlineVideos
 
         #region new methods
 
+        private void ShowAndEnable(int iControlId)
+        {
+            GUIControl.ShowControl(GetID, iControlId);
+            GUIControl.EnableControl(GetID, iControlId);
+        }
+
+        private void HideAndDisable(int iControlId)
+        {
+            GUIControl.HideControl(GetID, iControlId);
+            GUIControl.DisableControl(GetID, iControlId);
+        }
+
         private void LoadSettings()
         {
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -1582,28 +1594,17 @@ namespace OnlineVideos
 
         private void HideVideoDetails()
         {
-            GUIControl.HideControl(GetID, 23);
-            GUIControl.DisableControl(GetID, 23);
-            GUIControl.HideControl(GetID, 24);
-            GUIControl.DisableControl(GetID, 24);
-            GUIControl.HideControl(GetID, 51);
-            GUIControl.DisableControl(GetID, 51);
-            GUIControl.HideControl(GetID, 52);
-            GUIControl.DisableControl(GetID, 52);
-            GUIControl.HideControl(GetID, 53);
-            GUIControl.DisableControl(GetID, 53);
-            GUIControl.HideControl(GetID, 54);
-            GUIControl.DisableControl(GetID, 54);
-            GUIControl.HideControl(GetID, 55);
-            GUIControl.DisableControl(GetID, 55);
-            GUIControl.HideControl(GetID, 56);
-            GUIControl.DisableControl(GetID, 56);
-            GUIControl.HideControl(GetID, 57);
-            GUIControl.DisableControl(GetID, 57);
-            GUIControl.HideControl(GetID, 58);
-            GUIControl.DisableControl(GetID, 58);
-            GUIControl.HideControl(GetID, 59);
-            GUIControl.DisableControl(GetID, 59);
+            HideAndDisable(23);
+            HideAndDisable(24);
+            HideAndDisable(51);
+            HideAndDisable(52);
+            HideAndDisable(53);
+            HideAndDisable(54);
+            HideAndDisable(55);
+            HideAndDisable(56);
+            HideAndDisable(57);
+            HideAndDisable(58);
+            HideAndDisable(59);
         }
 
         private void ShowVideoDetails()
@@ -1616,49 +1617,41 @@ namespace OnlineVideos
                 GUIPropertyManager.SetProperty("#OnlineVideos.genre", info.Genres.ToString());
                 GUIPropertyManager.SetProperty("#OnlineVideos.releasedate", info.ReleaseDate.ToShortDateString());
                 GUIPropertyManager.SetProperty("#OnlineVideos.cast", info.Cast.ToString());
+                ShowAndEnable(52);
+                ShowAndEnable(53);
+                ShowAndEnable(54);
+                ShowAndEnable(55);
+                ShowAndEnable(56);
+                ShowAndEnable(57);
             }
-            GUIControl.ShowControl(GetID, 23);
-            GUIControl.EnableControl(GetID, 23);
-            GUIControl.ShowControl(GetID, 24);
-            GUIControl.EnableControl(GetID, 24);
-            GUIControl.ShowControl(GetID, 51);
-            GUIControl.EnableControl(GetID, 51);
-            GUIControl.ShowControl(GetID, 52);
-            GUIControl.EnableControl(GetID, 52);
-            GUIControl.ShowControl(GetID, 53);
-            GUIControl.EnableControl(GetID, 53);
-            GUIControl.ShowControl(GetID, 54);
-            GUIControl.EnableControl(GetID, 54);
-            GUIControl.ShowControl(GetID, 55);
-            GUIControl.EnableControl(GetID, 55);
-            GUIControl.ShowControl(GetID, 56);
-            GUIControl.EnableControl(GetID, 56);
-            GUIControl.ShowControl(GetID, 57);
-            GUIControl.EnableControl(GetID, 57);
-            GUIControl.ShowControl(GetID, 58);
-            GUIControl.EnableControl(GetID, 58);
-            GUIControl.ShowControl(GetID, 59);
-            GUIControl.EnableControl(GetID, 59);
+            else
+            {
+                HideAndDisable(52);
+                HideAndDisable(53);
+                HideAndDisable(54);
+                HideAndDisable(55);
+                HideAndDisable(56);
+                HideAndDisable(57);
+            }
+            ShowAndEnable(23);
+            ShowAndEnable(24);
+            ShowAndEnable(51);
+            ShowAndEnable(58);
+            ShowAndEnable(59);
         }
 
         private void ShowOrderButtons()
         {
-            GUIControl.ShowControl(GetID, GUI_btnOrderBy.GetID);
-            GUIControl.EnableControl(GetID, GUI_btnOrderBy.GetID);
-            GUIControl.ShowControl(GetID, GUI_btnUpdate.GetID);
-            GUIControl.EnableControl(GetID, GUI_btnUpdate.GetID);
+            ShowAndEnable(GUI_btnOrderBy.GetID);
+            ShowAndEnable(GUI_btnUpdate.GetID);
         }
 
         private void HideFilterButtons()
         {
-            GUIControl.DisableControl(GetID, GUI_btnMaxResult.GetID);
-            GUIControl.HideControl(GetID, GUI_btnMaxResult.GetID);
-            GUIControl.DisableControl(GetID, GUI_btnTimeFrame.GetID);
-            GUIControl.HideControl(GetID, GUI_btnTimeFrame.GetID);
-            GUIControl.DisableControl(GetID, GUI_btnOrderBy.GetID);
-            GUIControl.HideControl(GetID, GUI_btnOrderBy.GetID);
-            GUIControl.DisableControl(GetID, GUI_btnUpdate.GetID);
-            GUIControl.HideControl(GetID, GUI_btnUpdate.GetID);
+            HideAndDisable(GUI_btnMaxResult.GetID);
+            HideAndDisable(GUI_btnTimeFrame.GetID);
+            HideAndDisable(GUI_btnOrderBy.GetID);
+            HideAndDisable(GUI_btnUpdate.GetID);
         }
 
         private void ShowFilterButtons()
@@ -1684,15 +1677,10 @@ namespace OnlineVideos
                 GUIControl.AddItemLabelControl(GetID, GUI_btnTimeFrame.GetID, time);
             }
 
-            GUIControl.ShowControl(GetID, GUI_btnMaxResult.GetID);
-            GUIControl.ShowControl(GetID, GUI_btnOrderBy.GetID);
-            GUIControl.ShowControl(GetID, GUI_btnTimeFrame.GetID);
-            GUIControl.ShowControl(GetID, GUI_btnUpdate.GetID);
-
-            GUIControl.EnableControl(GetID, GUI_btnMaxResult.GetID);
-            GUIControl.EnableControl(GetID, GUI_btnOrderBy.GetID);
-            GUIControl.EnableControl(GetID, GUI_btnTimeFrame.GetID);
-            GUIControl.EnableControl(GetID, GUI_btnUpdate.GetID);
+            ShowAndEnable(GUI_btnMaxResult.GetID);
+            ShowAndEnable(GUI_btnOrderBy.GetID);
+            ShowAndEnable(GUI_btnTimeFrame.GetID);
+            ShowAndEnable(GUI_btnUpdate.GetID);
 
             if (SelectedMaxResultIndex > -1)
             {
@@ -1713,11 +1701,9 @@ namespace OnlineVideos
             Log.Debug("Hiding Search buttons");
 
             //disable the buttons to allow remote navigation
-            GUIControl.DisableControl(GetID, GUI_btnSearchCategories.GetID);
-            GUIControl.DisableControl(GetID, GUI_btnSearch.GetID);
 
-            GUIControl.HideControl(GetID, GUI_btnSearchCategories.GetID);
-            GUIControl.HideControl(GetID, GUI_btnSearch.GetID);
+            HideAndDisable(GUI_btnSearchCategories.GetID);
+            HideAndDisable(GUI_btnSearch.GetID);
         }
 
         private void ShowSearchButtons()
@@ -1732,11 +1718,9 @@ namespace OnlineVideos
             }
             if (moSupportedSearchCategoryList.Count > 1)
             {
-                GUIControl.ShowControl(GetID, GUI_btnSearchCategories.GetID);
-                GUIControl.EnableControl(GetID, GUI_btnSearchCategories.GetID);
+                ShowAndEnable(GUI_btnSearchCategories.GetID);
             }
-            GUIControl.ShowControl(GetID, GUI_btnSearch.GetID);
-            GUIControl.EnableControl(GetID, GUI_btnSearch.GetID);
+            ShowAndEnable(GUI_btnSearch.GetID);
             if (SelectedSearchCategoryIndex > -1)
             {
                 Log.Info("restoring search category...");
@@ -1754,11 +1738,8 @@ namespace OnlineVideos
                 GUIControl.AddItemLabelControl(GetID, GUI_btnSearchCategories.GetID, category);
             if (moSupportedSearchCategoryList.Count > 1)
             {
-                GUIControl.ShowControl(GetID, GUI_btnSearchCategories.GetID);
-                GUIControl.EnableControl(GetID, GUI_btnSearchCategories.GetID);
-
-                GUIControl.ShowControl(GetID, GUI_btnUpdate.GetID);
-                GUIControl.EnableControl(GetID, GUI_btnUpdate.GetID);
+                ShowAndEnable(GUI_btnSearchCategories.GetID);
+                ShowAndEnable(GUI_btnUpdate.GetID);
             }
         }
 
@@ -1766,76 +1747,64 @@ namespace OnlineVideos
         {
             Log.Debug("Hiding Favorite buttons");
             //disable the buttons to allow remote navigation
-            GUIControl.DisableControl(GetID, GUI_btnFavorite.GetID);
-            GUIControl.HideControl(GetID, GUI_btnFavorite.GetID);
+            HideAndDisable(GUI_btnFavorite.GetID);
         }
 
         private void ShowFavoriteButtons()
         {
-            GUIControl.ShowControl(GetID, GUI_btnFavorite.GetID);
-            GUIControl.EnableControl(GetID, GUI_btnFavorite.GetID);
+            ShowAndEnable(GUI_btnFavorite.GetID);
         }
 
         void HideFacade()
         {
-            GUIControl.DisableControl(GetID, GUI_facadeView.GetID);
-            GUIControl.HideControl(GetID, GUI_facadeView.GetID);
+            HideAndDisable(GUI_facadeView.GetID);
         }
 
         void ShowFacade()
         {
-            GUIControl.ShowControl(GetID, GUI_facadeView.GetID);
-            GUIControl.EnableControl(GetID, GUI_facadeView.GetID);
+            ShowAndEnable(GUI_facadeView.GetID);
         }
 
         /*
         void HideFacadeViewAsButton()
         {
-            GUIControl.DisableControl(GetID, btnViewAs.GetID);
-            GUIControl.HideControl(GetID, btnViewAs.GetID);
+            HideAndDisable(GetID, btnViewAs.GetID);
         }
 
         void ShowFacadeViewAsButton()
         {
-            GUIControl.ShowControl(GetID, btnViewAs.GetID);
-            GUIControl.EnableControl(GetID, btnViewAs.GetID);
+            ShowAndEnable(btnViewAs.GetID);
         }
         */
 
         void HideNextPageButton()
         {
-            GUIControl.DisableControl(GetID, GUI_btnNext.GetID);
-            GUIControl.HideControl(GetID, GUI_btnNext.GetID);
+            HideAndDisable(GUI_btnNext.GetID);
         }
 
         void ShowNextPageButton()
         {
-            GUIControl.ShowControl(GetID, GUI_btnNext.GetID);
-            GUIControl.EnableControl(GetID, GUI_btnNext.GetID);
+            ShowAndEnable(GUI_btnNext.GetID);
         }
 
         void HidePreviousPageButton()
         {
-            GUIControl.DisableControl(GetID, GUI_btnPrevious.GetID);
-            GUIControl.HideControl(GetID, GUI_btnPrevious.GetID);
+            HideAndDisable(GUI_btnPrevious.GetID);
         }
 
         void ShowPreviousPageButton()
         {
-            GUIControl.ShowControl(GetID, GUI_btnPrevious.GetID);
-            GUIControl.EnableControl(GetID, GUI_btnPrevious.GetID);
+            ShowAndEnable(GUI_btnPrevious.GetID);
         }
 
         void HideEnterPinButton()
         {
-            GUIControl.HideControl(GetID, GUI_btnEnterPin.GetID);
-            GUIControl.DisableControl(GetID, GUI_btnEnterPin.GetID);
+            HideAndDisable(GUI_btnEnterPin.GetID);
         }
 
         void ShowEnterPinButton()
         {
-            GUIControl.ShowControl(GetID, GUI_btnEnterPin.GetID);
-            GUIControl.EnableControl(GetID, GUI_btnEnterPin.GetID);
+            ShowAndEnable(GUI_btnEnterPin.GetID);
         }
 
         private void ToggleFacadeViewMode()

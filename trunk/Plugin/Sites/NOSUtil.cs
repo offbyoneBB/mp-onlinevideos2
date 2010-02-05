@@ -290,7 +290,7 @@ namespace OnlineVideos.Sites
                 url = url + currentCat;
             url = url.Replace("$DATE", day);
 
-            string webData = GetWebData(url);
+            string webData = GetWebData(url,null,null,null,true);
             string title = GetSubString(webData, @"id=""article"">", "</h1>");
             title = title.Replace("<h1>", String.Empty);
             title = title.Replace("<span>", String.Empty);
