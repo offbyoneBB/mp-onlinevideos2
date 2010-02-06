@@ -43,5 +43,7 @@ namespace HybridDSP.Net.HTTP
         /// <param name="request">The request to handle.</param>
         /// <param name="response">The response to operate on.</param>
         void HandleRequest(HTTPServerRequest request, HTTPServerResponse response);
+
+        bool DetectInvalidPackageHeader();
     }
 }
