@@ -113,11 +113,13 @@ namespace OnlineVideos.Sites
                 {
                     video.Title = "WMV (" + m.Groups["bitrate"].Value + "K)";
                     video.VideoUrl = m.Groups["url"].Value.Substring(0,m.Groups["url"].Value.IndexOf("?"));
+                    video.VideoUrl = video.VideoUrl.Replace("\\/", "/");
                 }
                 else
                 {
                     video.Title = "FLV (" + m.Groups["bitrate"].Value + "K)";
                     video.VideoUrl = m.Groups["url"].Value;
+                    video.VideoUrl = video.VideoUrl.Replace("\\/","/");
                 }
                 if( !video.VideoUrl.Contains("no streaming"))videoList.Add(video);
                 m = m.NextMatch();
