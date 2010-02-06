@@ -16,8 +16,7 @@ namespace OnlineVideos.Sites
     public class VoxNowUtil : SiteUtilBase
     {
 
-        //                <div class="seriennavi_link"> <a href="/auf-und-davon.php"  alt="Auf und davon">Auf und davon</a>
-        string CategoryRegex = @"<div\sclass=""seriennavi_link"">\s*<a\shref=""(?<url>[^""]+)""\s*alt=""(?<dummy>[^""]+)"">(?<title>[^<]+)</a>";
+        string CategoryRegex = @">FREE\s\|</a>\s*</div>\s*<div\sstyle=""""\sclass=""seriennavi_link"">\s*<a\shref=""(?<url>[^""]+)""\sstyle="""">(?<title>[^<]+)</a>";
 
         //<a href="aufunddavon.php?film_id=20616&player=1&season=0&na=1">Daniela Katzenberger: Wie alles begann</a> </div>		<div class="season">0.</div><div class="number"></div><div class="time">27.12.2009 15:15</div><div class="buy">    <a href=aufunddavon.php?container_id=32628&player=1&season=0>kostenlos</a>
         string VideoListRegex = @"<a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a>\s*</div>\s*<div\sclass=""season"">(?<dummy>[^<]+)</div><div\sclass=""number"">(?<dummy2>[^>]+)><div\sclass=""time"">(?<dummy3>[^<]+)</div><div\sclass=""buy"">\s*<a\shref=(?<dummy3>[^>]+)>kostenlos</a>";
@@ -50,7 +49,7 @@ namespace OnlineVideos.Sites
                 while (m.Success)
                 {
                     RssLink cat = new RssLink();
-                    cat.Url = baseUrl + m.Groups["url"].Value;
+                    cat.Url = baseUrl + "/" + m.Groups["url"].Value;
                     cat.Name = m.Groups["title"].Value;
                     Settings.Categories.Add(cat);
                     m = m.NextMatch();

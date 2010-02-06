@@ -12,9 +12,14 @@ namespace OnlineVideos.Sites
 {    
     public class RTLNowUtil : SiteUtilBase
     {
-        //<a href="/30-minuten-deutschland.php"><img src="/img_08/free_short.jpg" border="0" alt="30 Minuten Deutschland"></a>
+        /*	  <div id="" class="seriennavi_free" style=""><a href="5-gegen-jauch.php" style="">FREE |</a>
+	  </div>
+	  <div style="" class="seriennavi_link">
+	    <a href="5-gegen-jauch.php" style="">5 gegen Jauch</a>
+	  </div>
+        */
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for categories.")]
-        string categoriesRegex = @"<a\shref=""(?<url>[^""]+)""><img\ssrc=""(?<image>[^""]+)""\sborder=""0""\salt=""(?<title>[^""]+)""></a>";
+        string categoriesRegex = @">FREE\s\|</a>\s*</div>\s*<div\sstyle=""""\sclass=""seriennavi_link"">\s*<a\shref=""(?<url>[^""]+)""\sstyle="""">(?<title>[^<]+)</a>";
 
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the videos for a category.")]
         string videosRegex = @"<div\sclass=""title""[^>]*>\s*
@@ -55,14 +60,12 @@ namespace OnlineVideos.Sites
                 Match m = regEx_Categories.Match(data);
                 while (m.Success)
                 {
-                    if (!m.Groups["image"].Value.Contains("blank.gif"))
-                    {
                         RssLink cat = new RssLink();
                         cat.Url = m.Groups["url"].Value;
-                        if (!cat.Url.StartsWith("http://")) cat.Url = baseUrl + cat.Url;
+                        if (!cat.Url.StartsWith("http://")) cat.Url = baseUrl + "/" + cat.Url;
                         cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
                         Settings.Categories.Add(cat);
-                    }
+
                     m = m.NextMatch();
                 }
                 Settings.DynamicCategoriesDiscovered = true;
