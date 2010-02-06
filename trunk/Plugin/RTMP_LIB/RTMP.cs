@@ -135,6 +135,7 @@ namespace RTMP_LIB
         RTMPPacket[] m_vecChannelsOut = new RTMPPacket[64];
         uint[] m_channelTimestamp = new uint[64]; // abs timestamp of last packet
         Queue<string> m_methodCalls = new Queue<string>(); //remote method calls queue
+        public bool invalidRTMPHeader = false;
 
         public bool Connect(Link link)
         {
@@ -164,6 +165,7 @@ namespace RTMP_LIB
             bool bHasMediaPacket = false;
             while (!bHasMediaPacket && IsConnected() && ReadPacket(out packet))
             {
+                
                 if (!packet.IsReady())
                 {                    
                     continue;
@@ -391,7 +393,7 @@ namespace RTMP_LIB
 
             Array.Copy(enc.ToArray(), packet.m_body, enc.Count);
             packet.m_nBodySize = (uint)enc.Count;
-
+            
             return SendRTMP(packet);
         }
 
@@ -688,6 +690,7 @@ namespace RTMP_LIB
 
             m_vecChannelsOut[packet.m_nChannel] = packet;
             m_vecChannelsOut[packet.m_nChannel].m_body = null;
+            
             return true;
         }
 

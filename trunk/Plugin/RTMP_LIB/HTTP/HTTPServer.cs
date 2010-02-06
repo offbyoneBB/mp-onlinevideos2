@@ -263,6 +263,8 @@ namespace HybridDSP.Net.HTTP
                                         response.SendContinue();
 
                                     handler.HandleRequest(request, response);
+                                    if (handler.DetectInvalidPackageHeader()) break;
+
                                     session.KeepAlive = response.KeepAlive && session.CanKeepAlive && _params.KeepAlive;
 
                                     while (session.HasMoreRequests)

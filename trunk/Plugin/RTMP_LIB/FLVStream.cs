@@ -41,6 +41,12 @@ namespace RTMP_LIB
             do
             {
                 nRead = WriteStream(rtmp, ms, out timeStammp);
+
+                if (nRead == -1)
+                {
+                    rtmp.invalidRTMPHeader = true;
+                    break;
+                }
                 packets++;
                 if (packets > 10 && ms.Length > httpChunkSize)
                 {
@@ -83,6 +89,7 @@ namespace RTMP_LIB
 
             if (rtmp.GetNextMediaPacket(out packet))
             {
+                
                 // skip video info/command packets
                 if (packet.PacketType == PacketType.Video && packet.m_nBodySize == 2 && ((packet.m_body[0] & 0xf0) == 0x50))
                 {
@@ -208,7 +215,7 @@ namespace RTMP_LIB
 
                 return (int)size;
             }
-
+            
             return -1; // no more media packets
         }
     }

@@ -17,6 +17,11 @@ namespace RTMP_LIB
 
     public class RequestHandler : HybridDSP.Net.HTTP.IHTTPRequestHandler
     {
+        private bool invalidHeader = false;
+        public bool DetectInvalidPackageHeader()
+        {
+            return invalidHeader;
+        }
         public void HandleRequest(HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
         {          
             Logger.Log("Request");
@@ -44,6 +49,7 @@ namespace RTMP_LIB
 
                 rtmp = new RTMP();
                 bool connected = rtmp.Connect(link);
+                
                 if (connected)
                 {
                     response.ContentType = "video/x-flv";
@@ -51,16 +57,20 @@ namespace RTMP_LIB
 
                     Stream responseStream = null;
                     FLVStream fs = new FLVStream();
+                    
                     fs.WriteFLV(rtmp, delegate()
                     {
                         // we must set a content length for the File Source filter, otherwise it thinks we have no content
                         // but don't set a lenght if it is our user agent, so a download will always be complete
                         if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.UserAgent)
                             response.ContentLength = fs.EstimatedLength;
+                        
                         responseStream = response.Send();
                         return responseStream;
                     });
 
+                    invalidHeader = rtmp.invalidRTMPHeader;
+                    
                     long zeroBytes = fs.EstimatedLength - fs.Length;
                     while (zeroBytes > 0)
                     {
@@ -69,7 +79,6 @@ namespace RTMP_LIB
                         responseStream.Write(buffer, 0, chunk);
                         zeroBytes -= chunk;
                     }
-
                     if (responseStream != null) responseStream.Close();
                 }
                 else
