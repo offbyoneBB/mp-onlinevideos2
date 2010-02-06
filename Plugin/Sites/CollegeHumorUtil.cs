@@ -21,12 +21,13 @@ namespace OnlineVideos.Sites
         int pageCounter = 0;
         string pageUrl = "";
 
-        //<li><a href="/videos" onclick="navTrack('main/videos/all/recent');">Recent</a></li>
-        string categoryRegex = @"<li><a\shref=""(?<url>[^""]+)""\sonclick=""navTrack\('(?<rubrik>[^']+)'\);"">(?<title>[^<]+)</a>";
+        //<li><a href="/videos">Recent</a></li>
+        string categoryRegex = @"<li><a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a>";
 
-        /*	<a href="/video:1925322" class="video_link" title="Senator Misspeaks About Gays" onclick="enter_context('YTozOntpOjA7czoxMzoicmVjZW50X3ZpZGVvcyI7aToxO2E6NDp7czoxMjoiY29udGV4dF9uYW1lIjtzOjEzOiJSZWNlbnQgVmlkZW9zIjtzOjg6ImJhc2VfdXJsIjtzOjc6Ii92aWRlb3MiO3M6ODoiY2F0ZWdvcnkiO047czoxMzoiY29udF9hdXRvcGxheSI7YjowO31pOjI7aToyMDt9');">
-		<img src="http://6.media.collegehumor.com/collegehumor/ch6/6/b/collegehumor.e0b5e3b63a071f3c41f5403b9a896888.png" alt="" class="media_thumb" alt="funny video - Senator Misspeaks About Gays" width="150" height="113" />*/
-        string videoListRegex = @"<a\shref=""(?<url>[^""]+)""\sclass=""video_link""\stitle=""(?<title>[^""]+)""\sonclick=""enter_context(?<dummy>[^<]+)<img\ssrc=""(?<thumb>[^""]+)""\salt=";
+        /*	<a href="/video:1928558" class="video_link" title="The iPad is a Comedy Gold Mi" data-json="{context: 'YTozOntpOjA7czoxMzoidmlld2VkX3ZpZGVvcyI7aToxO2E6NTp7czoxMjoiY29udGV4dF9uYW1lIjtzOjI5OiJNb3N0IFZpZXdlZCBWaWRlb3MgVGhpcyBNb250aCI7czo5OiJkYXlfcmFuZ2UiO2k6MzA7czo4OiJjYXRlZ29yeSI7TjtzOjg6ImJhc2VfdXJsIjtzOjMwOiIvdmlkZW9zL21vc3Qtdmlld2VkL3RoaXMtbW9udGgiO3M6MTM6ImNvbnRfYXV0b3BsYXkiO2I6MDt9aToyO2k6MjA7fQ%3D%3D'}">
+		<img src="http://2.media.collegehumor.com/collegehumor/ch6/3/8/collegehumor.4ec89e13138f8e4751bf3da861d003e5.jpg" alt="" class="media_thumb" alt="funny video - The iPad is a Comedy Gold Mine" width="150" height="113" />
+        */
+        string videoListRegex = @"<a\shref=""(?<url>[^""]+)""\sclass=""video_link""\stitle=""(?<title>[^""]+)""\sdata-json=""{context[^<]*<img\ssrc=""(?<thumb>[^""]+)""\salt=";
 
         //<span class="ellipses">&hellip;</span><a href="/videos/page:610">610</a>
         string maxPagesRegex = @"<span\sclass=""ellipses"">&hellip;</span><a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a>";
