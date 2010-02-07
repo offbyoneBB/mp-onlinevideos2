@@ -120,7 +120,7 @@ namespace OnlineVideos.Sites
 
                 if (parentCategory.Other != null)
                 {
-                    
+
                     string pngName = (string)parentCategory.Other;
                     try
                     {
@@ -153,7 +153,7 @@ namespace OnlineVideos.Sites
                     {
                         Log.Info("image not found : " + pngName);
                     }
-                    
+
                 }
                 parentCategory.SubCategoriesDiscovered = true;
             }
@@ -179,7 +179,7 @@ namespace OnlineVideos.Sites
                     string url = nd.ParentNode.SelectSingleNode("filename").InnerText;
                     if (url.StartsWith("rtmp"))
                         return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
-                        //return url;
+                    //return url;
                 }
             }
             return null;
