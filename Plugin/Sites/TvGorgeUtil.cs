@@ -125,8 +125,8 @@ namespace OnlineVideos.Sites
 
                     if (!int.TryParse(m.Groups["episode"].Value, out nr))
                         nr = 0;
-
-                    videos.Add(nr, video);
+                    if (!videos.ContainsKey(nr))
+                        videos.Add(nr, video);
                     m = m.NextMatch();
                 }
 
