@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using RssToolkit.Rss;
 using System.Xml;
@@ -8,6 +9,9 @@ namespace OnlineVideos.Sites
 {
     public class BBCiPlayerUtil : SiteUtilBase
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
+        string proxy = null;
+
         public override string getUrl(VideoInfo video)
         {
             XmlDocument doc = new XmlDocument();
@@ -16,10 +20,11 @@ namespace OnlineVideos.Sites
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/emp/playlist");
             string id = doc.SelectSingleNode("//ns1:item[@kind='programme']/@identifier", nsmRequest).Value;
 
-            System.Net.WebProxy proxy = null; // new System.Net.WebProxy("127.0.0.1", 8118);
+            System.Net.WebProxy proxyObj = null; // new System.Net.WebProxy("127.0.0.1", 8118);
+            if (!string.IsNullOrEmpty(proxy)) proxyObj = new System.Net.WebProxy(proxy);
 
             doc = new XmlDocument();
-            doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + id, null, null, proxy)); //uk only
+            doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + id, null, null, proxyObj)); //uk only
             nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
