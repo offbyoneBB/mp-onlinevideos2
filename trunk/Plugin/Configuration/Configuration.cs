@@ -41,6 +41,7 @@ namespace OnlineVideos
             tbxPin.Text = settings.pinAgeConfirmation;
             tbxWebCacheTimeout.Text = settings.cacheTimeout.ToString();
             tbxUtilTimeout.Text = settings.utilTimeout.ToString();
+            tbxWMPBuffer.Text = settings.wmpbuffer.ToString();
 
             /** fill "Sites" tab **/
             // utils combobox
@@ -449,29 +450,17 @@ namespace OnlineVideos
                 }
             }
         }
-
-        private void tbxWebCacheTimeout_Validating(object sender, CancelEventArgs e)
+        
+        private void CheckValidNumber(object sender, CancelEventArgs e)
         {
             string error = null;
             uint value = 0;
-            if (!uint.TryParse(tbxWebCacheTimeout.Text, out value))            
+            if (!uint.TryParse((sender as TextBox).Text, out value))
             {
-                error = tbxWebCacheTimeout.Text + " is not a valid number!";
+                error = (sender as TextBox).Text + " is not a valid number!";
                 e.Cancel = true;
             }
-            errorProvider1.SetError((Control)sender, error);
+            errorProvider1.SetError(sender as TextBox, error);
         }
-
-        private void tbxUtilTimeout_Validating(object sender, CancelEventArgs e)
-        {
-            string error = null;
-            uint value = 0;
-            if (!uint.TryParse(tbxUtilTimeout.Text, out value))
-            {
-                error = tbxUtilTimeout.Text + " is not a valid number!";
-                e.Cancel = true;
-            }
-            errorProvider1.SetError((Control)sender, error);
-        }        
 	}
 }
