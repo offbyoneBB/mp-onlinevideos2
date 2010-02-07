@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites
 		
 		public override string getUrl(OnlineVideos.VideoInfo video)
 		{
-			return String.Format("http://vid.cnn.com/cnn/big{0}_576x324_dl.flv",video.VideoUrl);
+            return String.Format("http://ht.cdn.turner.com/cnn/big{0}_640x360_dl.flv", video.VideoUrl);
 		}
 		
         public override List<VideoInfo> getVideoList(Category category)
