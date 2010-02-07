@@ -778,6 +778,10 @@ namespace OnlineVideos.Sites
 
         class RequestHandler : HybridDSP.Net.HTTP.IHTTPRequestHandler
         {
+            public bool DetectInvalidPackageHeader()
+            {
+                return false;
+            }
             public void HandleRequest(HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
             {
                 string url = System.Web.HttpUtility.ParseQueryString(new Uri(new Uri("http://127.0.0.1"), request.URI).Query)["url"];
