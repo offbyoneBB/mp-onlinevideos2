@@ -893,6 +893,24 @@
       <Guid>F511BA71-FAAE-4eff-A861-04E45578D0A2</Guid>
     </File>    
     <File>
+      <FileName>SesameStreet.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\SesameStreet.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>77FB24CD-F104-4ADB-869F-4BC645F85E39</Guid>
+    </File>
+    <File>
+      <FileName>SesameStreet.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\SesameStreet.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>17DA7505-A4D6-41BB-BB95-344A02ED88C5</Guid>
+    </File>    
+    <File>
       <FileName>SF1.png</FileName>
       <Type>Thumbs</Type>
       <SubType>OnlineVideos\Banners</SubType>

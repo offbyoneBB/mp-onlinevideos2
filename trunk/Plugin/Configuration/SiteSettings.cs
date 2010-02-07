@@ -91,6 +91,9 @@ namespace OnlineVideos
         [XmlIgnore]
         public Category ParentCategory { get; set; }
 
+        [XmlIgnore]
+        public object Other { get; set; }
+
         public override string ToString() { return Name; }
         
         #region IComparable<Category> Member
