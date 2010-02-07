@@ -17,37 +17,48 @@ namespace OnlineVideos.Sites
 {
     public class GameTrailersUtil : SiteUtilBase 
     {
-        public enum MediaType { mov, wmv };
-
-        string videoRegExp = @"<a\shref=""(http://www\.gametrailers\.com/download/[^""]+\.{0})"">";
-        Regex loUrlRegex;
+        public enum MediaType { mov, wmv,flv };
 
         [Category("OnlineVideosUserConfiguration"), Description("GT offers up to 4 different file types for the same trailer.")]
-        MediaType preferredMediaType = MediaType.wmv;
+        MediaType preferredMediaType = MediaType.flv;
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-
-            loUrlRegex = new Regex(string.Format(videoRegExp, preferredMediaType.ToString()), RegexOptions.Compiled | RegexOptions.CultureInvariant);
         }
 
         public override String getUrl(VideoInfo video)
         {
+            string xmlUrl = "http://www.gametrailers.com/neo/?page=xml.mediaplayer.Mediagen&movieId=";
+            string data;
+            int idx1 = video.VideoUrl.LastIndexOf("/")+1;
+            int idx2 = video.VideoUrl.IndexOf(".", idx1);
+            xmlUrl = xmlUrl + video.VideoUrl.Substring(idx1, idx2 - idx1);
             string lsUrl = "";
-            string lsHtml = GetWebData(video.VideoUrl);
 
-            Match urlField = loUrlRegex.Match(lsHtml);
-            if (urlField.Success)
+            if (!string.IsNullOrEmpty(xmlUrl))
             {
-                lsUrl = urlField.Groups[1].Value;
+                data = String.Empty;
+                data = GetWebData(xmlUrl);
+
+                if (!string.IsNullOrEmpty(data))
+                {
+
+                    XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(data);
+                    XmlElement root = doc.DocumentElement;
+                    XmlNodeList list;
+                    list = root.SelectNodes("./video/item/rendition/src");
+                    lsUrl = root.SelectSingleNode("./video/item/rendition/src").InnerText;
+                }
             }
+
             return lsUrl;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
 		{
-			List<VideoInfo> loVideoList = new List<VideoInfo>();			
+			List<VideoInfo> loVideoList = new List<VideoInfo>();
             foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
             {
                 VideoInfo video = new VideoInfo();
