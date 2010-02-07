@@ -33,6 +33,7 @@ namespace OnlineVideos
         const string PIN_AGECONFIRMATION = "pinAgeConfirmation";
         const string CACHE_TIMEOUT = "cacheTimeout";
         const string UTIL_TIMEOUT = "utilTimeout";
+        const string WMP_BUFFER = "wmpbuffer";
         
         public bool ageHasBeenConfirmed = false;
 
@@ -47,6 +48,7 @@ namespace OnlineVideos
         public string pinAgeConfirmation = "";
         public int cacheTimeout = 30; // minutes
         public int utilTimeout = 15; // seconds
+        public int wmpbuffer = 5000; // milliseconds
 
         public BindingList<SiteSettings> SiteSettingsList { get; set; }
         public Dictionary<string, Sites.SiteUtilBase> SiteList = new Dictionary<string,OnlineVideos.Sites.SiteUtilBase>();
@@ -95,7 +97,8 @@ namespace OnlineVideos
                     pinAgeConfirmation = xmlreader.GetValueAsString(SECTION, PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
                     cacheTimeout = xmlreader.GetValueAsInt(SECTION, CACHE_TIMEOUT, 30);
                     utilTimeout = xmlreader.GetValueAsInt(SECTION, UTIL_TIMEOUT, 15);
-                    String lsFilter = xmlreader.GetValueAsString(SECTION, FILTER, "");
+                    wmpbuffer = xmlreader.GetValueAsInt(SECTION, WMP_BUFFER, 5000);
+                    string lsFilter = xmlreader.GetValueAsString(SECTION, FILTER, "");
                     msFilterArray = lsFilter != "" ? lsFilter.Split(new char[] { ',' }) : null;
 
                     // read the video extensions configured in MediaPortal
@@ -159,6 +162,7 @@ namespace OnlineVideos
                     xmlwriter.SetValue(SECTION, PIN_AGECONFIRMATION, pinAgeConfirmation);
                     xmlwriter.SetValue(SECTION, CACHE_TIMEOUT, cacheTimeout);
                     xmlwriter.SetValue(SECTION, UTIL_TIMEOUT, utilTimeout);
+                    xmlwriter.SetValue(SECTION, WMP_BUFFER, wmpbuffer);
                 }
 
                 // only save if there are sites - otherwise an error might have occured on load
