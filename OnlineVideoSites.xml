@@ -295,6 +295,10 @@
       <Description>Video site showing funny television commercials from around the world.</Description>
       <Categories />
     </Site>
+    <Site name="Sesamestreet" util="SesameStreet" agecheck="false" enabled="true" lang="en">
+      <Description></Description>
+      <Categories />
+    </Site>
     <Site name="Cinemassacre" util="Cinemassacre" agecheck="false" enabled="true" lang="en">
       <Categories>
         <Category xsi:type="RssLink" name="AVGN">http://www.cinemassacre.com/new/?page_id=13</Category>
