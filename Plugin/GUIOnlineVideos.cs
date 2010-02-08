@@ -744,6 +744,10 @@ namespace OnlineVideos
 
         private void DisplayCategories(Category parentCategory)
         {
+            // whenever categories are displayed, reset the selected video index, 
+            // so re-entering another category won't restore a previously selected video
+            selectedVideoIndex = 0; 
+
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
             GUIListItem loListItem;
             loListItem = new GUIListItem("..");
