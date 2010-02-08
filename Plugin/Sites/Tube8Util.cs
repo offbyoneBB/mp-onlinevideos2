@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites
 <a\shref=""(?<VideoUrl>[^""]+)"">\s*
 <img\s(?:(?!src).)*src=""(?<ImageUrl>[^""]+)""\s*/></a>\s*
 <h2><a\shref=""[^""]*""\stitle=""(?<Title>[^""]+)"">\s*
-(?:(?!<span).)*<span[^>]*>(?<Duration>[^<]*)</span>";
+(?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>";
 
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a next page link.")]
         string nextPageRegEx = @"<li\sclass=""button-pag[^""]*""><a\shref=""(?<url>[^""]+)"">NEXT";
