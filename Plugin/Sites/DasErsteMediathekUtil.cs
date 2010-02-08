@@ -15,24 +15,61 @@ namespace OnlineVideos.Sites
         VideoQuality videoQuality = VideoQuality.High;
         */
 
-        public override int DiscoverDynamicCategories()
-        {
-            Settings.Categories.Clear();
-            string dataPage = GetWebData("http://www.ardmediathek.de/ard/servlet/");
-
-            string categories_Regex = @"<div\sclass=""mt-reset\smt-categories"">\s*
+        [Category("OnlineVideosConfiguration")]
+        string categoriesRegEx = @"<div\sclass=""mt-reset\smt-categories"">\s*
 <ul>\s*
 (?:<li><a\shref=""(?<Url>[^""]+)""[^>]*>(?<Title>[^<]+)</a></li>\s*)+
 </ul>\s*
 </div>";
-            Regex regex_Categories = new Regex(categories_Regex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+        [Category("OnlineVideosConfiguration")]
+        string subcategoriesRegEx = @"<div\sclass=""mt-media_item"">\s*
+<div\sclass=""mt-image"">\s*
+<img\ssrc=""(?<ImageUrl>[^""]+)""[^/]*/>\s*
+</div>\s*
+<h3\sclass=""mt-title""><a\shref=""(?<Url>[^""]+)""\s[^>]*>(?<Title>[^<]+)</a></h3>";
+        [Category("OnlineVideosConfiguration")]
+        string extraSubCatPagesRegEx = @"<option\svalue=""(?<Url>[^""]+)"">[^<]*</option>";
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos.")]
+        string videoListRegEx = @"<div\sclass=""mt-media_item"">\s*
+<div\sclass=""mt-image"">\s*
+<span\sclass=""mt-icon\smt-icon_video""></span>\s*
+<img\ssrc=""(?<ImageUrl>[^""]+)""\s[^/]*/>\s*
+</div>\s*
+<h3\sclass=""mt-title""><a\shref=""(?<Url>[^""]+)""[^>]*>(?<Title>[^<]+)</a></h3>\s*
+<p[^>]*>[^<]*</p>\s*
+<p\sclass=""mt-airtime_channel""><span\sclass=""mt-airtime"">(?<Duration>[^<]+)</span>";
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a next page link.")]
+        string nextPageRegEx = @"<a\s+href=""(?<NextPageUrl>[^""]+)""\s[^>]*>Weiter</a>";
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link.")]
+        string prevPageRegEx = @"<a\s+href=""(?<PrevPageUrl>[^""]+)""\s[^>]*>Zurück</a>";
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for playback urls.")]
+        string videoUrlOptionsRegEx = @"mediaCollection.addMediaStream\((?<Info>[^)]+)";
 
-            Match m = regex_Categories.Match(dataPage);
+        Regex regEx_Categories, regEx_Subcategories, regEx_VideoList, regEx_extraSubCatPages, regEx_NextPage, regEx_PrevPage, regEx_VideoUrlOptions;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+
+            regEx_Categories = new Regex(categoriesRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            regEx_Subcategories = new Regex(subcategoriesRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            regEx_VideoList = new Regex(videoListRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            regEx_extraSubCatPages = new Regex(extraSubCatPagesRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            regEx_NextPage = new Regex(nextPageRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            regEx_PrevPage = new Regex(prevPageRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            regEx_VideoUrlOptions = new Regex(videoUrlOptionsRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        }
+
+        public override int DiscoverDynamicCategories()
+        {
+            Settings.Categories.Clear();
+            string dataPage = GetWebData("http://www.ardmediathek.de/ard/servlet/");
+            Match m = regEx_Categories.Match(dataPage);
             if(m.Success)
             {
                 for (int i = 0; i < m.Groups["Title"].Captures.Count; i++)
                 {
-                    RssLink item = new RssLink() { HasSubCategories = true };
+                    RssLink item = new RssLink() { HasSubCategories = true, SubCategories = new List<Category>() };
                     item.Name = HttpUtility.HtmlDecode(m.Groups["Title"].Captures[i].Value);
                     item.Url = m.Groups["Url"].Captures[i].Value;
                     item.Url = item.Url.Substring(item.Url.IndexOf("?"));
@@ -46,33 +83,21 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            parentCategory.SubCategories = new List<Category>();
-
             string dataPage = GetWebData(((RssLink)parentCategory).Url);
 
             List<string> additionalPageUrls = new List<string>();
-            string additionalPages_Regex = @"<option\svalue=""(?<Url>[^""]+)"">[^<]*</option>";
-            Regex regex_AdditionalPages = new Regex(additionalPages_Regex, RegexOptions.Compiled | RegexOptions.CultureInvariant);
-            Match mPage = regex_AdditionalPages.Match(dataPage);
+            Match mPage = regEx_extraSubCatPages.Match(dataPage);
             while (mPage.Success)
             {
                 additionalPageUrls.Add(mPage.Groups["Url"].Value);
                 mPage = mPage.NextMatch();
             }
-
-            string subcategories_Regex = @"<div\sclass=""mt-media_item"">\s*
-<div\sclass=""mt-image"">\s*
-<img\ssrc=""(?<ImageUrl>[^""]+)""[^/]*/>\s*
-</div>\s*
-<h3\sclass=""mt-title""><a\shref=""(?<Url>[^""]+)""\s[^>]*>(?<Title>[^<]+)</a></h3>";                        
-            Regex regex_Subcategories = new Regex(subcategories_Regex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
-
-            Match m = regex_Subcategories.Match(dataPage);
+            Match m = regEx_Subcategories.Match(dataPage);
             while (m.Success)
             {
                 RssLink subCat = new RssLink()
                 {
-                    Name = m.Groups["Title"].Value,
+                    Name = HttpUtility.HtmlDecode(m.Groups["Title"].Value),
                     Url = m.Groups["Url"].Value,                    
                     Thumb = "http://www.ardmediathek.de" + m.Groups["ImageUrl"].Value,
                     ParentCategory = parentCategory
@@ -94,7 +119,7 @@ namespace OnlineVideos.Sites
                         {
                             int o_i = (int)o;
                             string addDataPage = GetWebData("http://www.ardmediathek.de" + additionalPageUrls[o_i]);
-                            Match addM = regex_Subcategories.Match(addDataPage);
+                            Match addM = regEx_Subcategories.Match(addDataPage);
                             if (o_i > 0) System.Threading.WaitHandle.WaitAny(new System.Threading.ManualResetEvent[] { threadWaitHandles[o_i - 1] });
                             while (addM.Success)
                             {
@@ -125,11 +150,8 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string dataPage = GetWebData(video.VideoUrl);
-
-            Dictionary<int, Dictionary<int, string>> urls = new Dictionary<int, Dictionary<int, string>>();
-
-            Regex regex_Options = new Regex(@"mediaCollection.addMediaStream\((?<Info>[^)]+)");
-            Match match = regex_Options.Match(dataPage);
+            Dictionary<int, Dictionary<int, string>> urls = new Dictionary<int, Dictionary<int, string>>();            
+            Match match = regEx_VideoUrlOptions.Match(dataPage);
             while (match.Success)
             {
                 string[] infos = match.Groups["Info"].Value.Split(new char[] { ',' });
@@ -178,20 +200,8 @@ namespace OnlineVideos.Sites
         protected List<VideoInfo> getVideoListForCurrentCategory()
         {
             List<VideoInfo> listOfLinks = new List<VideoInfo>();
-
             string dataPage = GetWebData(lastQueriedCategoryUrl);
-
-            string videoList_Regex = @"<div\sclass=""mt-media_item"">\s*
-<div\sclass=""mt-image"">\s*
-<span\sclass=""mt-icon\smt-icon_video""></span>\s*
-<img\ssrc=""(?<ImageUrl>[^""]+)""\s[^/]*/>\s*
-</div>\s*
-<h3\sclass=""mt-title""><a\shref=""(?<Url>[^""]+)""[^>]*>(?<Title>[^<]+)</a></h3>\s*
-<p[^>]*>[^<]*</p>\s*
-<p\sclass=""mt-airtime_channel""><span\sclass=""mt-airtime"">(?<Duration>[^<]+)</span>";
-            Regex regex_VideoList = new Regex(videoList_Regex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
-
-            Match m = regex_VideoList.Match(dataPage);
+            Match m = regEx_VideoList.Match(dataPage);
             while (m.Success)
             {
                 VideoInfo videoInfo = new VideoInfo();
@@ -202,15 +212,10 @@ namespace OnlineVideos.Sites
                 listOfLinks.Add(videoInfo);
                 m = m.NextMatch();
             }
-
-            string nextPageRegExp = @"<a\s+href=""(?<NextPageUrl>[^""]+)""\s[^>]*>Weiter</a>";
-            string prevPageRegExp = @"<a\s+href=""(?<PrevPageUrl>[^""]+)""\s[^>]*>Zurück</a>";
-            Regex regex_NextPage = new Regex(nextPageRegExp, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
-            Regex regex_PrevPage = new Regex(prevPageRegExp, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
             
-            Match mN = regex_NextPage.Match(dataPage);
+            Match mN = regEx_NextPage.Match(dataPage);
             lastQueriedCategoryHasNextPage = mN.Success;
-            Match mP = regex_PrevPage.Match(dataPage);
+            Match mP = regEx_PrevPage.Match(dataPage);
             lastQueriedCategoryHasPreviousPage = mP.Success;
 
             return listOfLinks;            
