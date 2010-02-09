@@ -14,9 +14,10 @@ namespace OnlineVideos.Sites
     {
         private string baseUrl = "http://tvgorge.com";
 
-        private string categoryRegex = @"<li><a\shref=""(?<url>[^""]+)""[^>]+>(?<title>[^<]+)<";
-        private string seasonRegex = @"<li><a\shref=""(?<url>[^""]+)"".*?style=[^>]+>(?<title>[^<]+)<";
-        private string videoListRegex = @"<div\sclass=""episode"">\s+<a\shref=""(?<url>[^""]+)""[^<]+<img\ssrc=""(?<thumb>[^""]+)"".*?<h3><[^>]+>(?<title>[^<]+)<.*?->[^>]+>[^\s]+\s(?<season>[^<]+)<.*?->[^>]+>[^\s]+\s(?<episode>[^<]+)<.*?<p>\s+(?<descr>[^<]+)<";
+        private string categoryRegex = @"<li><a\shref=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<";
+        private string seasonRegex = @"<h3[^<]+<a\shref=""(?<url>[^""]+)""[^>]+>(?<title>[^<]+)<";
+        private string videoListRegex = @"<div\sclass=""episode"">\s*<h4>\s*<a\shref=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<.*?<img\ssrc=""(?<thumb>[^""]+)"".*?Aired On:</span>\s*(?<date>[^<]+)<.*?<p>\s*(?<descr>[^<]+)<.*?Episode\s*(?<episode>[^\s]+)";
+        //;
         private string urlRegex = @",file:""(?<url>[^""]+)""";
 
         public TvGorgeUtil()
@@ -35,15 +36,15 @@ namespace OnlineVideos.Sites
             regEx_Category = new Regex(categoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             regEx_Season = new Regex(seasonRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             regEx_GetUrl = new Regex(urlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
-            regEx_VideoList = new Regex(videoListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            regEx_VideoList = new Regex(videoListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline);
         }
 
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
 
-            string data = GetWebData(baseUrl);
-            data = GetSubString(data, "section clear", "section clear");
+            string data = GetWebData(baseUrl+@"/watch-tv-online");
+            data = GetSubString(data, "content-box-bg", "bottom-content-box");
             if (!string.IsNullOrEmpty(data))
             {
 
@@ -70,7 +71,7 @@ namespace OnlineVideos.Sites
 
             SortedDictionary<int, Category> categories = new SortedDictionary<int, Category>();
             string webData = GetWebData(url);
-            webData = GetSubString(webData, "section clear", "section clear");
+            webData = GetSubString(webData, "<ul>", "</ul>");
 
 
             if (!string.IsNullOrEmpty(webData))
@@ -120,7 +121,6 @@ namespace OnlineVideos.Sites
                     video.VideoUrl = baseUrl + m.Groups["url"].Value;
                     video.ImageUrl = m.Groups["thumb"].Value;
                     video.Description = HttpUtility.HtmlDecode(m.Groups["descr"].Value);
-                    video.CleanDescription();
                     int nr;
 
                     if (!int.TryParse(m.Groups["episode"].Value, out nr))
