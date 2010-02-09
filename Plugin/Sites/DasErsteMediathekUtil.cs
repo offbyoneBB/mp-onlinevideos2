@@ -7,10 +7,9 @@ using System.Web;
 namespace OnlineVideos.Sites
 {    
     public class DasErsteMediathekUtil : SiteUtilBase
-    {
+    {        
+        public enum VideoQuality { Low, High, Max };
         /*
-        public enum VideoQuality { Low, High };
-
         [Category("OnlineVideosUserConfiguration"), Description("Low or high quality for the videos according to bandwidth.")]
         VideoQuality videoQuality = VideoQuality.High;
         */
@@ -149,52 +148,54 @@ namespace OnlineVideos.Sites
         
         public override String getUrl(VideoInfo video)
         {
-            string dataPage = GetWebData(video.VideoUrl);
-            Dictionary<int, Dictionary<int, string>> urls = new Dictionary<int, Dictionary<int, string>>();            
-            Match match = regEx_VideoUrlOptions.Match(dataPage);
-            while (match.Success)
+            if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
             {
-                string[] infos = match.Groups["Info"].Value.Split(new char[] { ',' });
-                int type = int.Parse(infos[0].Trim(new char[] { '"', ' ' }));
-                int quality = int.Parse(infos[1].Trim(new char[] { '"', ' ' }));
-                string resultUrl = "";
-                if (infos[infos.Length - 2].Contains("rtmp"))
+                string dataPage = GetWebData(video.VideoUrl);
+                video.PlaybackOptions = new Dictionary<string, string>();
+                Match match = regEx_VideoUrlOptions.Match(dataPage);
+                while (match.Success)
                 {
-                    Uri uri = new Uri(infos[infos.Length - 2].Trim(new char[] { '"', ' ' }));
-                    if (uri.Host == "gffstream.fcod.llnwd.net")
+                    string[] infos = match.Groups["Info"].Value.Split(new char[] { ',' });
+                    int type = int.Parse(infos[0].Trim(new char[] { '"', ' ' }));
+                    VideoQuality quality = (VideoQuality)int.Parse(infos[1].Trim(new char[] { '"', ' ' }));
+                    string resultUrl = "";
+                    if (infos[infos.Length - 2].Contains("rtmp"))
                     {
-                        resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}",
-                            OnlineVideoSettings.RTMP_PROXY_PORT,
-                            HttpUtility.UrlEncode(uri.OriginalString + "/" + infos[infos.Length - 1].Trim(new char[] { '"', ' ' })));
+                        Uri uri = new Uri(infos[infos.Length - 2].Trim(new char[] { '"', ' ' }));
+                        if (uri.Host == "gffstream.fcod.llnwd.net")
+                        {
+                            resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}",
+                                OnlineVideoSettings.RTMP_PROXY_PORT,
+                                HttpUtility.UrlEncode(uri.OriginalString + "/" + infos[infos.Length - 1].Trim(new char[] { '"', ' ' })));
+                        }
+                        else
+                        {
+                            resultUrl = string.Format("http://127.0.0.1:{5}/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}",
+                                HttpUtility.UrlEncode(uri.Host),
+                                "1935",
+                                HttpUtility.UrlEncode(uri.Segments[1].Trim(new char[] { '/' })),
+                                HttpUtility.UrlEncode("rtmp://" + uri.Host + ":1935" + uri.Segments[0] + uri.Segments[1].Trim(new char[] { '/' })),
+                                HttpUtility.UrlEncode(infos[infos.Length - 1].Trim(new char[] { '"', ' ' })),
+                                OnlineVideoSettings.RTMP_PROXY_PORT);
+                        }
+                        video.PlaybackOptions.Add(string.Format("{0} | rtmp:// | {1}", quality.ToString().PadRight(4, ' '), infos[infos.Length - 1].Contains("mp4:") ? ".mp4" : ".flv"), resultUrl);
                     }
                     else
                     {
-                        resultUrl = string.Format("http://127.0.0.1:{5}/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}",
-                            HttpUtility.UrlEncode(uri.Host),
-                            "1935",
-                            HttpUtility.UrlEncode(uri.Segments[1].Trim(new char[] { '/' })),
-                            HttpUtility.UrlEncode("rtmp://" + uri.Host + ":1935" + uri.Segments[0] + uri.Segments[1].Trim(new char[] { '/' })),
-                            HttpUtility.UrlEncode(infos[infos.Length - 1].Trim(new char[] { '"', ' ' })),
-                            OnlineVideoSettings.RTMP_PROXY_PORT);
+                        resultUrl = infos[infos.Length - 1].Trim(new char[] { '"', ' ' });
+                        //if (resultUrl.EndsWith(".asx")) resultUrl = ParseASX(resultUrl)[0];
+                        if (!resultUrl.EndsWith(".mp3"))
+                        {
+                            Uri uri = new Uri(resultUrl);
+                            video.PlaybackOptions.Add(string.Format("{0} | {1}:// | {2}", quality.ToString().PadRight(4, ' '), uri.Scheme, System.IO.Path.GetExtension(resultUrl)), resultUrl);
+                        }
                     }
+                    match = match.NextMatch();
                 }
-                else
-                {
-                    resultUrl = infos[infos.Length - 1].Trim(new char[] { '"', ' ' });
-                    if (resultUrl.EndsWith(".asx"))
-                    {
-                        resultUrl = ParseASX(resultUrl)[0];
-                    }
-                }
-                if (!urls.ContainsKey(type)) urls.Add(type, new Dictionary<int, string>());
-                if (!urls[type].ContainsKey(quality)) urls[type].Add(quality, "");
-                urls[type][quality] = resultUrl;
-                match = match.NextMatch();
-            }            
-            List<int> qualities = new List<int>();
-            foreach(int quality in urls[0].Keys) qualities.Add(quality);
-            qualities.Sort();
-            return urls[0][qualities[qualities.Count-1]];
+            }
+            var enumer = video.PlaybackOptions.GetEnumerator();
+            enumer.MoveNext();
+            return enumer.Current.Value;
         }
 
         protected List<VideoInfo> getVideoListForCurrentCategory()

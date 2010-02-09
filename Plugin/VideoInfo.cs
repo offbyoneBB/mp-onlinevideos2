@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using RssToolkit.Rss;
 
@@ -15,6 +16,7 @@ namespace OnlineVideos
         public string Tags = "";
         public string StartTime = "";
         public object Other;
+        public Dictionary<string, string> PlaybackOptions;
         
         /// <summary>This field is only used by the <see cref="FavoriteUtil"/> to store the Name of the Site where this Video came from.</summary>
         public string SiteName = "";

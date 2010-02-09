@@ -1298,6 +1298,9 @@ namespace OnlineVideos
                     return;
                 }
 
+                if (foListItem.PlaybackOptions != null) lsUrl = DisplayPlaybackOptions(foListItem);
+                if (lsUrl == "-1") return;
+
                 if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
                 {
                     GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
@@ -1923,6 +1926,30 @@ namespace OnlineVideos
                     db.addFavoriteVideo(loSelectedVideo, selectedSite.Settings.Name);
                 }
             }
+        }
+
+        private string DisplayPlaybackOptions(VideoInfo videoInfo)
+        {
+            // with no options set, return the VideoUrl field
+            if (videoInfo.PlaybackOptions == null || videoInfo.PlaybackOptions.Count == 0) return videoInfo.VideoUrl;
+            // with just one option set, return that options url
+            if (videoInfo.PlaybackOptions.Count == 1)
+            {
+                var enumer = videoInfo.PlaybackOptions.GetEnumerator();
+                enumer.MoveNext();
+                return enumer.Current.Value;
+            }
+            // show a list of available options and let the user decide
+            GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+            dlgSel.Reset();
+            if (dlgSel != null)
+            {
+                dlgSel.SetHeading(GUILocalizeStrings.Get(2201)/*Select Source*/);
+                foreach(string key in videoInfo.PlaybackOptions.Keys) dlgSel.Add(key);
+            }
+            dlgSel.DoModal(GetID);
+            if (dlgSel.SelectedId == -1) return "-1";
+            return videoInfo.PlaybackOptions[dlgSel.SelectedLabelText];
         }
 
         #endregion
