@@ -224,7 +224,6 @@ namespace OnlineVideos.Sites
                     video.VideoUrl = m.Groups["url"].Value;
                     video.ImageUrl = baseUrl + m.Groups["thumb"].Value;
                     video.Description = HttpUtility.HtmlDecode(m.Groups["descr"].Value);
-                    video.CleanDescription();
                     videos.Add(video);
                     m = m.NextMatch();
                 }

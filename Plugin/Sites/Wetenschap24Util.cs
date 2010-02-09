@@ -201,7 +201,6 @@ namespace OnlineVideos.Sites
                     video.VideoUrl = baseUrl + m.Groups["url"].Value;
                     video.ImageUrl = baseUrl + m.Groups["thumb"].Value;
                     video.Description = m.Groups["description"].Value;
-                    video.CleanDescription();
                     videos.Add(video);
                     m = m.NextMatch();
                 }
