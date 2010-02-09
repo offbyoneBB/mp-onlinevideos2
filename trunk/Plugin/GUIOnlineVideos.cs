@@ -550,7 +550,7 @@ namespace OnlineVideos
                     if (pin == OnlineVideoSettings.getInstance().pinAgeConfirmation)
                     {
                         OnlineVideoSettings.getInstance().ageHasBeenConfirmed = true;
-                        HideEnterPinButton();
+                        HideAndDisable(GUI_btnEnterPin.GetID);
                         DisplaySites();
                         GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
                     }
@@ -1213,23 +1213,8 @@ namespace OnlineVideos
 
         void OnVideoItemSelected(GUIListItem item, GUIControl parent)
         {
-            if (item.ItemId == 0)
-            {
-                SetVideoInfoGuiProperties(null);
-            }
-            else
-            {
-                SetVideoInfoGuiProperties(currentVideoList[item.ItemId - 1]);
-            }
-            /*12/16/08
-			if(currentView == View.FilmStrip){
-				GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-				if (filmstrip == null)
-					return;
-				filmstrip.InfoImageFileName = item.ThumbnailImage;
-                filmstrip.InfoImageFileName = item.Label;
-			}
-            */
+            if (item.ItemId == 0) SetVideoInfoGuiProperties(null);
+            else SetVideoInfoGuiProperties(currentVideoList[item.ItemId - 1]);
         }
 
         private bool GetUserInputString(ref string sString, bool password)
@@ -1358,8 +1343,14 @@ namespace OnlineVideos
             bool firstAdded = false;
             foreach (VideoInfo loVideo in loVideoList)
             {
-                // todo : in Background
-                string lsUrl = selectedSite.getUrl(loVideo);
+                string lsUrl = "";
+                if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                {
+                    lsUrl = selectedSite.getUrl(loVideo);
+                }, "getting url for video"))
+                {
+                    continue;
+                }
                 PlayListItem item = new PlayListItem(loVideo.Title, lsUrl);
                 videoList.Add(item);
                 Log.Info("GUIOnlineVideos.playAll:Added {0} to playlist", loVideo.Title);
@@ -1506,19 +1497,18 @@ namespace OnlineVideos
                 case State.sites:
                     GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(2143)/*Home*/);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
-                    ShowFacade();
-                    //ShowFacadeViewAsButton();
-                    HideNextPageButton();
-                    HidePreviousPageButton();
+                    ShowAndEnable(GUI_facadeView.GetID);
+                    HideAndDisable(GUI_btnNext.GetID);
+                    HideAndDisable(GUI_btnPrevious.GetID);
                     HideVideoDetails();
                     HideFilterButtons();
                     ShowOrderButtons();
                     HideSearchButtons();
-                    HideFavoriteButtons();
+                    HideAndDisable(GUI_btnFavorite.GetID);
                     if (OnlineVideoSettings.getInstance().useAgeConfirmation && !OnlineVideoSettings.getInstance().ageHasBeenConfirmed)
-                        ShowEnterPinButton();
+                        ShowAndEnable(GUI_btnEnterPin.GetID);
                     else
-                        HideEnterPinButton();
+                        HideAndDisable(GUI_btnEnterPin.GetID);
                     SetVideoInfoGuiProperties(null);
                     currentView = currentSiteView;
                     SetFacadeViewMode();
@@ -1527,15 +1517,14 @@ namespace OnlineVideos
                     string cat_headerlabel = selectedCategory != null ? selectedCategory.Name : selectedSite.Settings.Name;
                     GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Settings.Name + ".png");
-                    ShowFacade();
-                    //HideFacadeViewAsButton();
-                    HideNextPageButton();
-                    HidePreviousPageButton();
+                    ShowAndEnable(GUI_facadeView.GetID);
+                    HideAndDisable(GUI_btnNext.GetID);
+                    HideAndDisable(GUI_btnPrevious.GetID);
                     HideVideoDetails();
                     HideFilterButtons();
                     if (selectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
-                    if (selectedSite is IFavorite) ShowFavoriteButtons(); else HideFavoriteButtons();
-                    HideEnterPinButton();
+                    if (selectedSite is IFavorite) ShowAndEnable(GUI_btnFavorite.GetID); else HideAndDisable(GUI_btnFavorite.GetID);
+                    HideAndDisable(GUI_btnEnterPin.GetID);
                     SetVideoInfoGuiProperties(null);
                     currentView = suggestedView != null ? suggestedView.Value : currentCategoryView;
                     SetFacadeViewMode();
@@ -1553,16 +1542,15 @@ namespace OnlineVideos
                             }
                     }
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Settings.Name + ".png");
-                    ShowFacade();
-                    //ShowFacadeViewAsButton();
-                    if (selectedSite.HasNextPage) ShowNextPageButton(); else HideNextPageButton();
-                    if (selectedSite.HasPreviousPage) ShowPreviousPageButton(); else HidePreviousPageButton();
+                    ShowAndEnable(GUI_facadeView.GetID);
+                    if (selectedSite.HasNextPage) ShowAndEnable(GUI_btnNext.GetID); else HideAndDisable(GUI_btnNext.GetID);
+                    if (selectedSite.HasPreviousPage) ShowAndEnable(GUI_btnPrevious.GetID); else HideAndDisable(GUI_btnPrevious.GetID);
                     HideVideoDetails();
                     if (selectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
                     HideSearchButtons();
                     if (selectedSite.HasFilterCategories) ShowCategoryButton();
-                    HideFavoriteButtons();
-                    HideEnterPinButton();
+                    HideAndDisable(GUI_btnFavorite.GetID);
+                    HideAndDisable(GUI_btnEnterPin.GetID);
                     SetVideoInfoGuiProperties(selectedVideo);
                     currentView = suggestedView != null ? suggestedView.Value : currentVideoView;
                     SetFacadeViewMode();
@@ -1570,15 +1558,14 @@ namespace OnlineVideos
                 case State.details:
                     GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Settings.Name + ".png");
-                    HideFacade();
-                    //HideFacadeViewAsButton();
-                    HideNextPageButton();
-                    HidePreviousPageButton();
+                    HideAndDisable(GUI_facadeView.GetID);
+                    HideAndDisable(GUI_btnNext.GetID);
+                    HideAndDisable(GUI_btnPrevious.GetID);
                     ShowVideoDetails();
                     HideFilterButtons();
                     HideSearchButtons();
-                    HideFavoriteButtons();
-                    HideEnterPinButton();
+                    HideAndDisable(GUI_btnFavorite.GetID);
+                    HideAndDisable(GUI_btnEnterPin.GetID);
                     SetVideoInfoGuiProperties(null);
                     break;
             }
@@ -1706,9 +1693,6 @@ namespace OnlineVideos
         private void HideSearchButtons()
         {
             Log.Debug("Hiding Search buttons");
-
-            //disable the buttons to allow remote navigation
-
             HideAndDisable(GUI_btnSearchCategories.GetID);
             HideAndDisable(GUI_btnSearch.GetID);
         }
@@ -1749,71 +1733,7 @@ namespace OnlineVideos
                 ShowAndEnable(GUI_btnUpdate.GetID);
             }
         }
-
-        private void HideFavoriteButtons()
-        {
-            Log.Debug("Hiding Favorite buttons");
-            //disable the buttons to allow remote navigation
-            HideAndDisable(GUI_btnFavorite.GetID);
-        }
-
-        private void ShowFavoriteButtons()
-        {
-            ShowAndEnable(GUI_btnFavorite.GetID);
-        }
-
-        void HideFacade()
-        {
-            HideAndDisable(GUI_facadeView.GetID);
-        }
-
-        void ShowFacade()
-        {
-            ShowAndEnable(GUI_facadeView.GetID);
-        }
-
-        /*
-        void HideFacadeViewAsButton()
-        {
-            HideAndDisable(GetID, btnViewAs.GetID);
-        }
-
-        void ShowFacadeViewAsButton()
-        {
-            ShowAndEnable(btnViewAs.GetID);
-        }
-        */
-
-        void HideNextPageButton()
-        {
-            HideAndDisable(GUI_btnNext.GetID);
-        }
-
-        void ShowNextPageButton()
-        {
-            ShowAndEnable(GUI_btnNext.GetID);
-        }
-
-        void HidePreviousPageButton()
-        {
-            HideAndDisable(GUI_btnPrevious.GetID);
-        }
-
-        void ShowPreviousPageButton()
-        {
-            ShowAndEnable(GUI_btnPrevious.GetID);
-        }
-
-        void HideEnterPinButton()
-        {
-            HideAndDisable(GUI_btnEnterPin.GetID);
-        }
-
-        void ShowEnterPinButton()
-        {
-            ShowAndEnable(GUI_btnEnterPin.GetID);
-        }
-
+                       
         private void ToggleFacadeViewMode()
         {
             switch (currentView)
