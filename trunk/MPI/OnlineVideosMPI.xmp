@@ -1377,7 +1377,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>24-01-10</CreationDate>
+		<CreationDate>11-02-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
