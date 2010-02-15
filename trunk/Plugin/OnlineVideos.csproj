@@ -436,9 +436,9 @@
     <Compile Include="Sites\CollegeHumorUtil.cs" />
     <Compile Include="Sites\DasErsteMediathekUtil.cs" />
     <Compile Include="Sites\DreiSatUtil.cs" />
-    <Compile Include="Sites\EmpflixUtil.cs" />
     <Compile Include="Sites\FiveMin.cs" />
     <Compile Include="Sites\GameTrailersUtil.cs" />
+    <Compile Include="Sites\GenericRegexUtil.cs" />
     <Compile Include="Sites\HardwareInfoUtil.cs" />
     <Compile Include="Sites\Interfaces\IFavorite.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
@@ -466,7 +466,6 @@
     <Compile Include="Sites\Sf1Util.cs" />
     <Compile Include="Sites\SouthParkDeUtil.cs" />
     <Compile Include="Sites\SVTPlayUtil.cs" />
-    <Compile Include="Sites\Tube8Util.cs" />
     <Compile Include="Sites\TurboNickUtil.cs" />
     <Compile Include="Sites\TvGorgeUtil.cs" />
     <Compile Include="Sites\TvTuttiUtil.cs" />
@@ -481,7 +480,6 @@
     <Compile Include="Sites\VoxNowUtil.cs" />
     <Compile Include="Sites\Wetenschap24Util.cs" />
     <Compile Include="Sites\WWitvUtil.cs" />
-    <Compile Include="Sites\xHamsterUtil.cs" />
     <Compile Include="Sites\YahooMusicVideosUtil.cs" />
     <Compile Include="Sites\YouPornUtil.cs" />
     <Compile Include="Sites\YouTubeUtil.cs" />

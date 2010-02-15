@@ -39,8 +39,7 @@ namespace OnlineVideos.Sites
         private Dictionary<String, String> timeFrameList;
         private YouTubeQuery _LastPerformedQuery;
         private const String CLIENT_ID = "ytapi-GregZ-OnlineVideos-s2skvsf5-0";
-        private const String DEVELOPER_KEY = "AI39si5x-6x0Nybb_MvpC3vpiF8xBjpGgfq-HTbyxWP26hdlnZ3bTYyERHys8wyYsbx3zc5f9bGYj0_qfybCp-wyBF-9R5-5kA";
-        private const String FAVORITE_FEED = "http://gdata.youtube.com/feeds/api/users/{0}/favorites";
+        private const String DEVELOPER_KEY = "AI39si5x-6x0Nybb_MvpC3vpiF8xBjpGgfq-HTbyxWP26hdlnZ3bTYyERHys8wyYsbx3zc5f9bGYj0_qfybCp-wyBF-9R5-5kA";        
         private const String RELATED_VIDEO_FEED = "http://gdata.youtube.com/feeds/api/videos/{0}/related";
         private const String VIDEO_URL = "http://www.youtube.com/get_video?video_id={0}&t={1}";
         private const String CATEGORY_FEED = "http://gdata.youtube.com/feeds/api/videos/-/{0}";
@@ -106,13 +105,8 @@ namespace OnlineVideos.Sites
 
         protected List<VideoInfo> getSiteFavorites(String fsUser)
         {
-            //http://www.youtube.com/api2_rest?method=%s&dev_id=7WqJuRKeRtc&%s"   # usage   base_api %( method, extra)   eg base_api %( youtube.videos.get_detail, video_id=yyPHkJMlD0Q)
-            //String lsUrl = "http://www.youtube.com/api2_rest?method=youtube.users.list_favorite_videos&dev_id=7WqJuRKeRtc&user="+fsUser;
-            YouTubeQuery query = new YouTubeQuery(String.Format(FAVORITE_FEED, fsUser));
-            //return parseRestXML(lsUrl);
+            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateFavoritesUri(fsUser));            
             return parseGData(query);
-            //String lsXMLResponse = getHTMLData(lsUrl);
-            //Log.Info(lsXMLResponse);
         }
 
         public List<VideoInfo> parseGData(YouTubeQuery query)
@@ -637,11 +631,7 @@ namespace OnlineVideos.Sites
         public List<VideoInfo> getFavorites()
         {
             if (string.IsNullOrEmpty(username)) return new List<VideoInfo>();
-
-            //service.setUserCredentials(fsUsername,fsPassword);
-            
-            YouTubeQuery query =new YouTubeQuery(String.Format(FAVORITE_FEED, username));           
-        
+            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateFavoritesUri(username));        
             return parseGData(query);
         }               
 
@@ -651,7 +641,7 @@ namespace OnlineVideos.Sites
             {
                 service.setUserCredentials(username, password);
                 YouTubeEntry entry = (YouTubeEntry)video.Other;
-                service.Insert(new Uri(String.Format(FAVORITE_FEED, username)), entry);
+                service.Insert(new Uri(YouTubeQuery.CreateFavoritesUri(username)), entry);
                 //    String lsPostUrl = "http://gdata.youtube.com/feeds/api/users/default/favorites";
                 //    String authToken = getAuthToken(fsUsername, fsPassword);
                 //    HttpWebRequest Request = (HttpWebRequest)WebRequest.Create(lsPostUrl);
