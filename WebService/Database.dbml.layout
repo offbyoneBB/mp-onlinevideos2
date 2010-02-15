@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Database">
+  <DataContextMoniker Name="/OnlineVideosDataContext" />
+  <nestedChildShapes>
+    <classShape Id="4c4c070d-3869-484e-b80d-9586923ef237" absoluteBounds="0.5, 0.5, 2, 2.3478011067708335">
+      <DataClassMoniker Name="/OnlineVideosDataContext/Site" />
+      <nestedChildShapes>
+        <elementListCompartment Id="da538c8e-3749-45e3-8cb5-26966288609c" absoluteBounds="0.5149999999999999, 0.96, 1.9700000000000002, 1.7878011067708333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="1ac6f24d-53af-49d4-95a2-69e771d217fa" absoluteBounds="3.625, 0.5, 2, 1.3862939453125">
+      <DataClassMoniker Name="/OnlineVideosDataContext/User" />
+      <nestedChildShapes>
+        <elementListCompartment Id="bbd84f30-dc77-4230-8e8b-5a8b930130ad" absoluteBounds="3.6399999999999997, 0.96, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(3.625 : 1.19314697265625); (2.5 : 1.19314697265625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/OnlineVideosDataContext/User/User_Site" />
+      <nodes>
+        <classShapeMoniker Id="1ac6f24d-53af-49d4-95a2-69e771d217fa" />
+        <classShapeMoniker Id="4c4c070d-3869-484e-b80d-9586923ef237" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="5ecda64b-b36d-47d8-a73b-5f4a85bd9da0" absoluteBounds="3.75, 2.5, 2, 1.7708968098958327">
+      <DataClassMoniker Name="/OnlineVideosDataContext/Report" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f57a9fa4-6726-4c05-96e9-c8cb5bddea9c" absoluteBounds="3.7649999999999997, 2.96, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.5 : 2.22439647265625); (5.71875 : 2.22439647265625); (5.71875 : 2.5)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/OnlineVideosDataContext/Site/Site_Report" />
+      <nodes>
+        <classShapeMoniker Id="4c4c070d-3869-484e-b80d-9586923ef237" />
+        <classShapeMoniker Id="5ecda64b-b36d-47d8-a73b-5f4a85bd9da0" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

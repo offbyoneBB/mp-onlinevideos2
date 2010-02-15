@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database EntityNamespace="OnlineVideos.WebService.Database" ContextNamespace="OnlineVideos.WebService.Database" Class="OnlineVideosDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=(local)\SQLEXPRESS;Initial Catalog=OnlineVideos;Integrated Security=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="OnlineVideosDB" Provider="System.Data.SqlClient" />
+  <Table Name="" Member="Site">
+    <Type Name="Site">
+      <Column Name="XML" Type="string" DbType="nvarchar(max)" CanBeNull="false" IsDelayLoaded="true" />
+      <Column Name="State" Type="SiteState" DbType="tinyint" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="nvarchar(200)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Owner_FK" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
+      <Column Name="LastUpdated" Type="System.DateTime" CanBeNull="false" />
+      <Column Name="Language" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="nvarchar(max)" CanBeNull="false" />
+      <Column Member="IsAdult" Type="System.Boolean" CanBeNull="false" />
+      <Association Name="User_Site" Member="Owner" ThisKey="Owner_FK" OtherKey="Email" Type="User" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="" Member="User">
+    <Type Name="User">
+      <Column Name="Email" Type="System.String" DbType="nvarchar(200)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
+      <Column Name="IsAdmin" Type="System.Boolean" CanBeNull="false" />
+      <Association Name="User_Site" Member="Sites" ThisKey="Email" OtherKey="Owner_FK" Type="Site" />
+    </Type>
+  </Table>
+  <Table Name="" Member="Report">
+    <Type Name="Report">
+      <Column Name="Site_FK" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" CanBeNull="false" />
+      <Column Name="Id" Type="System.Int32" IsReadOnly="true" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Message" Type="System.String" DbType="nvarchar(max)" CanBeNull="false" />
+      <Column Name="Type" Type="ReportType" DbType="tinyint" CanBeNull="false" />
+      <Association Name="Site_Report" Member="Site" ThisKey="Site_FK" OtherKey="Name" Type="Site" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>
