@@ -121,8 +121,7 @@
       <Categories />
     </Site>
     <Site name="TvGorge" util="TvGorge" agecheck="false" enabled="true" lang="en">
-      <Categories>
-      </Categories>
+      <Categories />
     </Site>
     <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en">
       <Categories />
@@ -296,7 +295,6 @@
       <Categories />
     </Site>
     <Site name="Sesamestreet" util="SesameStreet" agecheck="false" enabled="true" lang="en">
-      <Description></Description>
       <Categories />
     </Site>
     <Site name="Cinemassacre" util="Cinemassacre" agecheck="false" enabled="true" lang="en">
@@ -343,7 +341,7 @@
       </Categories>
     </Site>
     <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en">
-      <Description>The BBC iPlayer allows to catch up on the last 7 days of BBC TV (only available in the UK).</Description>      
+      <Description>The BBC iPlayer allows to catch up on the last 7 days of BBC TV (only available in the UK).</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Children's" thumb="http://node1.bbcimg.co.uk/iplayer/images/episode/b00qbvzr_178_100.jpg">http://feeds.bbc.co.uk/iplayer/categories/childrens/list</Category>
         <Category xsi:type="RssLink" name="Comedy" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00qh128_178_100.jpg">http://feeds.bbc.co.uk/iplayer/categories/comedy/tv/list</Category>
@@ -362,7 +360,7 @@
         <Category xsi:type="RssLink" name="Scotland" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00q2qmh_178_100.jpg">http://feeds.bbc.co.uk/iplayer/categories/scotland/tv/list</Category>
         <Category xsi:type="RssLink" name="Wales" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00q9zjy_178_100.jpg">http://feeds.bbc.co.uk/iplayer/categories/wales/tv/list</Category>
       </Categories>
-    </Site>    
+    </Site>
     <Site name="NBA" util="Nba" agecheck="false" enabled="true" lang="en">
       <Description>Videos from the official site of the National Basketball Association.</Description>
       <Categories />
@@ -653,8 +651,7 @@
       </Categories>
     </Site>
     <Site name="OnsNetNuenen" util="OnsNetNuenen" agecheck="false" enabled="true" lang="nl">
-      <Categories>
-      </Categories>
+      <Categories />
     </Site>
     <Site name="dr.dk TV" util="GenericSite" agecheck="false" enabled="false" lang="da">
       <Categories>
@@ -711,14 +708,12 @@
       </Categories>
     </Site>
     <Site name="Movies4Men" util="Movies4Men" agecheck="false" enabled="true" lang="en">
-      <Categories>
-      </Categories>
+      <Categories />
     </Site>
     <Site name="Nos" util="NOS" agecheck="false" enabled="true" lang="nl">
-      <Categories>
-      </Categories>
+      <Categories />
     </Site>
-    <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" lang="nl" player="WMP">
+    <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" player="WMP" lang="nl">
       <Categories>
         <Category xsi:type="RssLink" name="All">http://tvtutti.nl/alle/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
         <Category xsi:type="RssLink" name="Nieuws">http://tvtutti.nl/nieuws/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
@@ -738,12 +733,10 @@
       </Categories>
     </Site>
     <Site name="TurboNick" util="TurboNick" agecheck="false" enabled="true" lang="nl">
-      <Categories>
-      </Categories>
+      <Categories />
     </Site>
-    <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" lang="nl" player="WMP">
-      <Categories>
-      </Categories>
+    <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" player="WMP" lang="nl">
+      <Categories />
     </Site>
     <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true" lang="en">
       <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
@@ -775,7 +768,22 @@
         <Category xsi:type="RssLink" name="Wildcrazy">http://www.redtube.com/redtube/wildcrazy</Category>
       </Categories>
     </Site>
-    <Site name="xHamster" util="xHamster" agecheck="true" enabled="true" lang="en">
+    <Site name="xHamster" util="GenericRegex" agecheck="true" enabled="true" lang="en">
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[<img\ssrc='(?<ImageUrl>[^']+)'[^/]*/>(?:(?!<div).)*
+<div\sclass="moduleFeaturedTitle">\s*
+<a\shref="(?<VideoUrl>[^"]+)">(?<Title>[^<]+)</a>\s*
+</div>\s*
+<div\sclass="moduleFeaturedDetails">Runtime:\s*(?<Duration>[^<]+)<]]></item>
+        <item key="nextPageRegEx"><![CDATA[<SPAN\sclass=navNext><A\sHREF="(?<url>.+)">Next</A></SPAN>]]></item>
+        <item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
+        <item key="fileUrlRegEx"><![CDATA['srv':\s'(?<m0>[^']+)',\s*
+(?:'[^']+':\s'[^']+',\s*)?
+'file':\s'(?<m1>[^']+)']]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}flv2/{1}]]></item>
+        <item key="searchUrl"><![CDATA[http://www.xhamster.com/search.php?q={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="New">http://www.xhamster.com/</Category>
         <Category xsi:type="RssLink" name="Amateur">http://www.xhamster.com/channels/new-amateur-1.html</Category>
@@ -821,7 +829,20 @@
         <Category xsi:type="RssLink" name="Webcams">http://www.xhamster.com/channels/new-webcams-1.html</Category>
       </Categories>
     </Site>
-    <Site name="Tube8" util="Tube8" agecheck="true" enabled="true" lang="en">
+    <Site name="Tube8" util="GenericRegex" agecheck="true" enabled="true" lang="en">
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[<div\sid="video_i\d+">\s*
+<a\shref="(?<VideoUrl>[^"]+)">\s*
+<img\s(?:(?!\ssrc).)*\ssrc="(?<ImageUrl>[^"]+)"\s*/></a>\s*
+<h2><a\shref="[^"]*"\stitle="(?<Title>[^"]+)">\s*
+(?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li\sclass="button-pag[^"]*"><a\shref="(?<url>[^"]+)">NEXT]]></item>
+        <item key="prevPageRegEx"><![CDATA[<li\sclass="button-pag[^"]*"><a\shref="(?<url>[^"]+)">PREVIOUS]]></item>
+        <item key="fileUrlRegEx"><![CDATA[var\svideourl="(?<m0>[^"]+)"]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
+        <item key="searchUrl"><![CDATA[http://www.tube8.com/search.html?q={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.tube8.com]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Latest">http://www.tube8.com/latest.html</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.tube8.com/top.html</Category>
@@ -846,7 +867,21 @@
         <Category xsi:type="RssLink" name="Teen">http://www.tube8.com/cat/teen/3.html</Category>
       </Categories>
     </Site>
-    <Site name="Empflix" util="Empflix" agecheck="true" enabled="true" lang="en">
+    <Site name="Empflix" util="GenericRegex" agecheck="true" enabled="true" lang="en">
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>http\://www\.empflix\.com/view\.php\?id\=\d+)"\s*title="(?<Title>[^"]+)"[^>]*>\s*
+<img\ssrc="\s*(?<ImageUrl>http\://[^"]+)"[^>]*>\s*
+(?:(?!<p).)*\s*
+<p\sclass="length">(?<Duration>[^<]*)</p>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\sonclick="killVideoThumbs\(\)\;"\shref="(?<url>.*)">next\s&gt;&gt;</a>]]></item>
+        <item key="prevPageRegEx"><![CDATA[<a\sonclick="killVideoThumbs\(\)\;"\shref="(?<url>.*)">&lt;&lt;\sprev</a>]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[so\.addVariable\('config',\s*'(?<url>[^']+)'\);]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<file>(?<m0>[^<]+)</file>]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}&filetype=.flv]]></item>
+        <item key="searchUrl"><![CDATA[http://www.empflix.com/search.php]]></item>
+        <item key="searchPostString"><![CDATA[what={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.empflix.com]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Top Rated">http://www.empflix.com/browse.php?category=tr</Category>
         <Category xsi:type="RssLink" name="Most Recent">http://www.empflix.com/browse.php?category=mr</Category>

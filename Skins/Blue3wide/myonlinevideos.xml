@@ -207,7 +207,7 @@
         <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="250" end="-300,0" reversible="false">hidden</animation>
         <posX>50</posX>
-        <posY>110</posY>
+        <posY>105</posY>
         <layout>StackLayout</layout>
         <visible>!Control.HasFocus(50)</visible>
         <control>
@@ -218,7 +218,7 @@
           <onright>50</onright>
           <onup>17</onup>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
@@ -230,7 +230,7 @@
           <onup>2</onup>
           <label>137</label>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
@@ -242,7 +242,7 @@
           <onup>10</onup>
           <label>2053</label>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>        
@@ -254,7 +254,7 @@
           <onup>9</onup>
           <label>Max Results</label>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
@@ -266,7 +266,7 @@
           <onup>5</onup>
           <label>495</label>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
@@ -278,7 +278,7 @@
           <onup>6</onup>
           <label>Timeframe</label>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
@@ -290,7 +290,7 @@
           <onup>7</onup>
           <label>184</label>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
@@ -304,7 +304,7 @@
           <animation effect="fade" time="200">WindowOpen</animation>
           <animation effect="fade" time="200">WindowClose</animation>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
@@ -318,7 +318,7 @@
           <animation effect="fade" time="200">WindowOpen</animation>
           <animation effect="fade" time="200">WindowClose</animation>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
@@ -330,7 +330,7 @@
           <onup>4</onup>
           <label>932</label>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>
@@ -343,7 +343,7 @@
           <ondown>13</ondown>
           <label>Enter Pin</label>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
         </control>        
@@ -356,7 +356,7 @@
           <ondown>2</ondown>
           <label>Update Sites</label>
           <font>font11</font>
-          <height>40</height>
+          <height>37</height>
           <textYOff>3</textYOff>
           <hyperlink>4756</hyperlink>
           <visible>!Control.HasFocus(50)</visible>
