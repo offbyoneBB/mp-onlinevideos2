@@ -229,7 +229,6 @@
           <onright>50</onright>
           <onup>2</onup>
           <label>137</label>
-          <visible>no</visible>
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
@@ -242,7 +241,6 @@
           <onright>50</onright>
           <onup>10</onup>
           <label>2053</label>
-          <visible>no</visible>
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
@@ -255,7 +253,6 @@
           <onright>50</onright>
           <onup>9</onup>
           <label>Max Results</label>
-          <visible>no</visible>
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
@@ -268,7 +265,6 @@
           <onright>50</onright>
           <onup>5</onup>
           <label>495</label>
-          <visible>no</visible>
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
@@ -281,7 +277,6 @@
           <onright>50</onright>
           <onup>6</onup>
           <label>Timeframe</label>
-          <visible>no</visible>
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
@@ -294,7 +289,6 @@
           <onright>50</onright>
           <onup>7</onup>
           <label>184</label>
-          <visible>no</visible>
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
@@ -309,7 +303,6 @@
           <label>1975</label>
           <animation effect="fade" time="200">WindowOpen</animation>
           <animation effect="fade" time="200">WindowClose</animation>
-          <visible>no</visible>
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
@@ -324,7 +317,6 @@
           <label>30004</label>
           <animation effect="fade" time="200">WindowOpen</animation>
           <animation effect="fade" time="200">WindowClose</animation>
-          <visible>no</visible>
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
@@ -337,7 +329,6 @@
           <onright>50</onright>
           <onup>4</onup>
           <label>932</label>
-          <visible>no</visible>
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
@@ -349,14 +340,27 @@
           <id>12</id>
           <onright>50</onright>
           <onup>11</onup>
-          <ondown>2</ondown>
+          <ondown>13</ondown>
           <label>Enter Pin</label>
-          <visible>no</visible>
           <font>font11</font>
           <height>40</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
-        </control>
+        </control>        
+        <control>
+          <type>button</type>
+          <description>Update Sites</description>
+          <id>13</id>
+          <onright>50</onright>
+          <onup>12</onup>
+          <ondown>2</ondown>
+          <label>Update Sites</label>
+          <font>font11</font>
+          <height>40</height>
+          <textYOff>3</textYOff>
+          <hyperlink>4756</hyperlink>
+          <visible>!Control.HasFocus(50)</visible>
+        </control>        
       </control>
     </control>    
   </controls>

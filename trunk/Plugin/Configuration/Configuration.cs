@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
+using System.Xml;
 
 namespace OnlineVideos
 {
@@ -99,6 +100,8 @@ namespace OnlineVideos
             btnAddGroup.Enabled = site != null;
 
             btnDeleteSite.Enabled = site != null;
+            btnReportSite.Enabled = site != null;
+            btnPublishSite.Enabled = site != null;
             btnSiteUp.Enabled = site != null;
             btnSiteDown.Enabled = site != null;
 		}
@@ -461,6 +464,68 @@ namespace OnlineVideos
                 e.Cancel = true;
             }
             errorProvider1.SetError(sender as TextBox, error);
+        }
+
+        private void btnPublishSite_Click(object sender, EventArgs e)
+        {
+            OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
+            SiteSettings site = siteList.SelectedItem as SiteSettings;
+            if (string.IsNullOrEmpty(settings.email) || string.IsNullOrEmpty(settings.password))
+            {
+                if (MessageBox.Show("Do you want to register an Email now?", "Registration required!", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    RegisterEmail reFrm = new RegisterEmail();
+                    reFrm.tbxEmail.Text = settings.email;
+                    reFrm.tbxPassword.Text = settings.password;
+                    if (reFrm.ShowDialog() == DialogResult.OK)
+                    {
+                        settings.email = reFrm.tbxEmail.Text;
+                        settings.password = reFrm.tbxPassword.Text;
+                    }
+                }
+                return;
+            }
+            // set current Time to last updated in the xml, so it can be compared later
+            DateTime lastUdpBkp = site.LastUpdated;
+            site.LastUpdated = DateTime.Now;
+            System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.getInstance().XmlSerImp.GetSerializer(typeof(SerializableSettings));
+            SerializableSettings s = new SerializableSettings() { Sites = new BindingList<SiteSettings>() };
+            s.Sites.Add(site);
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            ser.Serialize(ms, s);
+            ms.Position = 0;
+            System.Xml.XmlDocument siteDoc = new System.Xml.XmlDocument();
+            siteDoc.Load(ms);
+            XmlWriterSettings xmlSettings = new XmlWriterSettings();
+            xmlSettings.Encoding = System.Text.Encoding.UTF8;
+            xmlSettings.Indent = true;
+            xmlSettings.OmitXmlDeclaration = true;
+            StringBuilder sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            siteDoc.SelectSingleNode("//Site").WriteTo(writer);
+            writer.Flush();
+            string siteXmlString = sb.ToString();
+            bool success = false;
+            try
+            {
+                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                string msg = "";
+                success = ws.SubmitSite(settings.email, settings.password, siteXmlString, out msg);
+                MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            // if the site was not submitted, restore old last updated date, so saving won't write the wrong value
+            if (!success) site.LastUpdated = lastUdpBkp;
+        }
+
+        private void btnReportSite_Click(object sender, EventArgs e)
+        {
+            SiteSettings site = siteList.SelectedItem as SiteSettings;
+            SubmitSiteReport ssrFrm = new SubmitSiteReport() { SiteName = site.Name };
+            ssrFrm.ShowDialog();
         }
 	}
 }

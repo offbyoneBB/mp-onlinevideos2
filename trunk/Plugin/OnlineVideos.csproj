@@ -90,9 +90,11 @@
     <Reference Include="System.Drawing">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Private>False</Private>
@@ -120,8 +122,21 @@
     <Compile Include="Configuration\ImExportXml.Designer.cs">
       <DependentUpon>ImExportXml.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\RegisterEmail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\RegisterEmail.Designer.cs">
+      <DependentUpon>RegisterEmail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\SubmitSiteReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\SubmitSiteReport.Designer.cs">
+      <DependentUpon>SubmitSiteReport.cs</DependentUpon>
+    </Compile>
     <Compile Include="DownloadInfo.cs" />
     <Compile Include="Gui2UtilConnector.cs" />
+    <Compile Include="GUISiteUpdater.cs" />
     <Compile Include="ImageDownloader.cs" />
     <Compile Include="Jayrock.Json\BooleanObject.cs" />
     <Compile Include="Jayrock.Json\Collections\KeyedCollection.cs" />
@@ -476,6 +491,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sites\ZDFMediathekUtil.cs" />
     <Compile Include="VideoInfo.cs" />
+    <Compile Include="Web References\OnlineVideosWebservice\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
     <Compile Include="WebCache.cs" />
     <Compile Include="Yahoo\Authentication\Authentication.cs" />
     <Compile Include="Yahoo\Authentication\AuthenticationException.cs" />
@@ -614,17 +634,60 @@
   <ItemGroup>
     <None Include="Properties\DataSources\RssLink.datasource" />
     <None Include="Resources\ImportXml.png" />
+    <None Include="Web References\OnlineVideosWebservice\OnlineVideos.wsdl" />
     <EmbeddedResource Include="RssToolkit\Resources\Rss20.xsd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration\ConfigurationAdvanced.resx">
       <DependentUpon>ConfigurationAdvanced.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\RegisterEmail.resx">
+      <DependentUpon>RegisterEmail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\SubmitSiteReport.resx">
+      <DependentUpon>SubmitSiteReport.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="RssToolkit\Resources\AtomToRss20.xsl" />
     <EmbeddedResource Include="RssToolkit\Resources\RdfToRss20.xsl" />
     <EmbeddedResource Include="RssToolkit\Resources\Rss20ToAtom.xsl" />
     <EmbeddedResource Include="RssToolkit\Resources\Rss20ToOpml.xsl" />
     <EmbeddedResource Include="RssToolkit\Resources\Rss20ToRdf.xsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx">
+      <UrlBehavior>Static</UrlBehavior>
+      <RelPath>Web References\OnlineVideosWebservice\</RelPath>
+      <UpdateFromURL>http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedSettingsPropName>OnlineVideos_OnlineVideosWebservice_OnlineVideosService</CachedSettingsPropName>
+      <CachedAppSettingsObjectName>
+      </CachedAppSettingsObjectName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\OnlineVideosWebservice\OnlineVideos.disco" />
+    <None Include="Web References\OnlineVideosWebservice\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\OnlineVideosWebservice\Report.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\OnlineVideosWebservice\Site.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PublishToWeb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NewReport.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

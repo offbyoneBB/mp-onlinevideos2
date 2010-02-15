@@ -34,6 +34,8 @@ namespace OnlineVideos
         const string CACHE_TIMEOUT = "cacheTimeout";
         const string UTIL_TIMEOUT = "utilTimeout";
         const string WMP_BUFFER = "wmpbuffer";
+        const string EMAIL = "email";
+        const string PASSWORD = "password";
         
         public bool ageHasBeenConfirmed = false;
 
@@ -49,6 +51,8 @@ namespace OnlineVideos
         public int cacheTimeout = 30; // minutes
         public int utilTimeout = 15; // seconds
         public int wmpbuffer = 5000; // milliseconds
+        public string email = "";
+        public string password = "";
 
         public BindingList<SiteSettings> SiteSettingsList { get; set; }
         public Dictionary<string, Sites.SiteUtilBase> SiteList = new Dictionary<string,OnlineVideos.Sites.SiteUtilBase>();
@@ -98,6 +102,8 @@ namespace OnlineVideos
                     cacheTimeout = xmlreader.GetValueAsInt(SECTION, CACHE_TIMEOUT, 30);
                     utilTimeout = xmlreader.GetValueAsInt(SECTION, UTIL_TIMEOUT, 15);
                     wmpbuffer = xmlreader.GetValueAsInt(SECTION, WMP_BUFFER, 5000);
+                    email = xmlreader.GetValueAsString(SECTION, EMAIL, "");
+                    password = xmlreader.GetValueAsString(SECTION, PASSWORD, "");
                     string lsFilter = xmlreader.GetValueAsString(SECTION, FILTER, "");
                     msFilterArray = lsFilter != "" ? lsFilter.Split(new char[] { ',' }) : null;
 
@@ -152,8 +158,8 @@ namespace OnlineVideos
                 {
                     String lsFilterList = "";                    
                     if (msFilterArray != null && msFilterArray.Length > 0) lsFilterList = string.Join(",", msFilterArray);
-                    
-                    xmlwriter.SetValue(SECTION, FILTER, lsFilterList);
+
+                    if (!string.IsNullOrEmpty(lsFilterList)) xmlwriter.SetValue(SECTION, FILTER, lsFilterList);
                     xmlwriter.SetValue(SECTION, BASICHOMESCREEN_NAME, BasicHomeScreenName);
                     xmlwriter.SetValue(SECTION, THUMBNAIL_DIR, msThumbLocation);
                     Log.Info("OnlineVideoSettings - download Dir:" + msDownloadDir);
@@ -163,6 +169,8 @@ namespace OnlineVideos
                     xmlwriter.SetValue(SECTION, CACHE_TIMEOUT, cacheTimeout);
                     xmlwriter.SetValue(SECTION, UTIL_TIMEOUT, utilTimeout);
                     xmlwriter.SetValue(SECTION, WMP_BUFFER, wmpbuffer);
+                    if (!string.IsNullOrEmpty(email)) xmlwriter.SetValue(SECTION, EMAIL, email);
+                    if (!string.IsNullOrEmpty(password)) xmlwriter.SetValue(SECTION, PASSWORD, password);
                 }
 
                 // only save if there are sites - otherwise an error might have occured on load

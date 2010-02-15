@@ -71,6 +71,8 @@ namespace OnlineVideos
             this.btnImportSite = new System.Windows.Forms.ToolStripButton();
             this.btnAddSite = new System.Windows.Forms.ToolStripButton();
             this.btnDeleteSite = new System.Windows.Forms.ToolStripButton();
+            this.btnPublishSite = new System.Windows.Forms.ToolStripButton();
+            this.btnReportSite = new System.Windows.Forms.ToolStripButton();
             this.txtFilters = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtThumbLoc = new System.Windows.Forms.TextBox();
@@ -468,7 +470,7 @@ namespace OnlineVideos
             this.btnSiteDown});
             this.toolStripSiteUpDown.Location = new System.Drawing.Point(0, 0);
             this.toolStripSiteUpDown.Name = "toolStripSiteUpDown";
-            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 211);
+            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 186);
             this.toolStripSiteUpDown.Stretch = true;
             this.toolStripSiteUpDown.TabIndex = 0;
             // 
@@ -502,10 +504,12 @@ namespace OnlineVideos
             this.toolStripSites.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnImportSite,
             this.btnAddSite,
-            this.btnDeleteSite});
+            this.btnDeleteSite,
+            this.btnPublishSite,
+            this.btnReportSite});
             this.toolStripSites.Location = new System.Drawing.Point(3, 0);
             this.toolStripSites.Name = "toolStripSites";
-            this.toolStripSites.Size = new System.Drawing.Size(72, 25);
+            this.toolStripSites.Size = new System.Drawing.Size(149, 25);
             this.toolStripSites.TabIndex = 0;
             // 
             // btnImportSite
@@ -538,6 +542,28 @@ namespace OnlineVideos
             this.btnDeleteSite.Size = new System.Drawing.Size(23, 22);
             this.btnDeleteSite.Text = "Delete";
             this.btnDeleteSite.Click += new System.EventHandler(this.btnDeleteSite_Click);
+            // 
+            // btnPublishSite
+            // 
+            this.btnPublishSite.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnPublishSite.Enabled = false;
+            this.btnPublishSite.Image = global::OnlineVideos.Properties.Resources.PublishToWeb;
+            this.btnPublishSite.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnPublishSite.Name = "btnPublishSite";
+            this.btnPublishSite.Size = new System.Drawing.Size(23, 22);
+            this.btnPublishSite.Text = "Publish to Web";
+            this.btnPublishSite.Click += new System.EventHandler(this.btnPublishSite_Click);
+            // 
+            // btnReportSite
+            // 
+            this.btnReportSite.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnReportSite.Enabled = false;
+            this.btnReportSite.Image = global::OnlineVideos.Properties.Resources.NewReport;
+            this.btnReportSite.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnReportSite.Name = "btnReportSite";
+            this.btnReportSite.Size = new System.Drawing.Size(23, 22);
+            this.btnReportSite.Text = "Write report";
+            this.btnReportSite.Click += new System.EventHandler(this.btnReportSite_Click);
             // 
             // txtFilters
             // 
@@ -1470,5 +1496,7 @@ namespace OnlineVideos
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox tbxWMPBuffer;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.ToolStripButton btnPublishSite;
+        private System.Windows.Forms.ToolStripButton btnReportSite;
 	}
 }

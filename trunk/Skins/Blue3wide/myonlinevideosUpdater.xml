@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>4756</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label</define>
+  <define>#header.image</define>
+  <controls>
+    
+    <!-- *** WINDOW DEFAULTS *** -->
+
+    <control><!-- *** This is only needed for compatibility with 1.02 *** -->
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1280</width>
+      <height>720</height>
+    </control>
+     <control>
+      <description>BG2</description>
+      <type>image</type>
+      <id>1</id>
+      <width>1280</width>
+      <height>720</height>
+      <texture>background2.png</texture>      
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <type>image</type>
+      <id>1</id>
+      <posX>80</posX>
+      <posY>12</posY>
+      <width>210</width>
+      <height>70</height>
+      <texture>#header.image</texture>
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <type>label</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>45</posY>
+      <width>700</width>
+      <label>#header.label</label>
+      <font>font15</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1200</posX>
+      <posY>15</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <background>Backslide.png</background>      
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1200</posX>
+      <posY>40</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>listcontrol</description>
+      <type>listcontrol</type>
+      <id>50</id>
+      <posX>80</posX>
+      <width>1120</width>
+      <posY>85</posY>
+      <height>520</height>
+      <spinPosX>1180</spinPosX>
+      <spinPoxY>670</spinPoxY>
+      <scrollOffset>2</scrollOffset>
+      <textXOff3>700</textXOff3>
+      <PinIconXOff>12</PinIconXOff>
+      <PinIconYOff>8</PinIconYOff>
+      <IconXOff>50</IconXOff>
+      <textXOff>60</textXOff>
+    </control>
+        
+    <control>
+      <id>500</id>
+      <type>image</type>
+      <posX>79</posX>
+      <posY>555</posY>
+      <width>214</width>
+      <height>119</height>
+      <centered>yes</centered>
+      <texture diffuse="Thumb_Mask.png">#selectedthumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>551</posY>
+      <width>880</width>
+      <label>#selecteditem</label>
+      <font>font11</font>
+      <textcolor>White</textcolor>      
+    </control>    
+    <control>
+      <description>Owner Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>579</posY>
+      <width>120</width>
+      <font>font10</font>
+      <label>Creator</label>
+      <textcolor>White</textcolor>
+      <visible>control.hastext(501)</visible>
+    </control>
+    <control>
+      <description>Owner</description>
+      <type>label</type>
+      <id>501</id>
+      <posX>420</posX>
+      <posY>579</posY>
+      <width>780</width>
+      <font>font10</font>
+      <label>#OnlineVideos.owner</label>
+      <textcolor>White</textcolor>
+    </control>
+    <control>
+      <description>Description</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>604</posY>
+      <width>780</width>
+      <height>116</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <font>font10</font>
+      <label>#OnlineVideos.desc</label>
+      <textcolor>White</textcolor>
+    </control>
+  </controls>
+</window>

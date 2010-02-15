@@ -746,6 +746,7 @@
       </Categories>
     </Site>
     <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true" lang="en">
+      <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Browse">http://www.youporn.com/browse</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.youporn.com/top_rated</Category>
