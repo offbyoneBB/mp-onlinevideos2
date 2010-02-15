@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="RegisterEmail">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RegisterEmailResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="RegisterEmailResult" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="infoMessage" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SubmitSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="siteXml" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SubmitSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="SubmitSiteResult" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="infoMessage" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SubmitReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="siteName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="message" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="type" type="tns:ReportType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="ReportType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Suggestion" />
+          <s:enumeration value="Broken" />
+          <s:enumeration value="ConfirmedBroken" />
+          <s:enumeration value="RejectedBroken" />
+          <s:enumeration value="Fixed" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="SubmitReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="SubmitReportResult" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="infoMessage" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReports">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="siteName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetReportsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetReportsResult" type="tns:ArrayOfReport" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfReport">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Report" nillable="true" type="tns:Report" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Report">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Site_FK" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Date" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Type" type="tns:ReportType" />
+          <s:element minOccurs="0" maxOccurs="1" name="Site" type="tns:Site" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Site">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="XML" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="State" type="tns:SiteState" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Owner_FK" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LastUpdated" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Language" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsAdult" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Owner" type="tns:User" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="SiteState">
+        <s:restriction base="s:string">
+          <s:enumeration value="Working" />
+          <s:enumeration value="Reported" />
+          <s:enumeration value="Broken" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="User">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Email" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsAdmin" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Sites" type="tns:ArrayOfSite" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfSite">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Site" nillable="true" type="tns:Site" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetSitesOverview">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetSitesOverviewResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSitesOverviewResult" type="tns:ArrayOfSite" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSiteXml">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="siteName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSiteXmlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSiteXmlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="RegisterEmailSoapIn">
+    <wsdl:part name="parameters" element="tns:RegisterEmail" />
+  </wsdl:message>
+  <wsdl:message name="RegisterEmailSoapOut">
+    <wsdl:part name="parameters" element="tns:RegisterEmailResponse" />
+  </wsdl:message>
+  <wsdl:message name="SubmitSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:SubmitSite" />
+  </wsdl:message>
+  <wsdl:message name="SubmitSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:SubmitSiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="SubmitReportSoapIn">
+    <wsdl:part name="parameters" element="tns:SubmitReport" />
+  </wsdl:message>
+  <wsdl:message name="SubmitReportSoapOut">
+    <wsdl:part name="parameters" element="tns:SubmitReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetReportsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetReports" />
+  </wsdl:message>
+  <wsdl:message name="GetReportsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetReportsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSitesOverviewSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSitesOverview" />
+  </wsdl:message>
+  <wsdl:message name="GetSitesOverviewSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSitesOverviewResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSiteXmlSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSiteXml" />
+  </wsdl:message>
+  <wsdl:message name="GetSiteXmlSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSiteXmlResponse" />
+  </wsdl:message>
+  <wsdl:portType name="OnlineVideosServiceSoap">
+    <wsdl:operation name="RegisterEmail">
+      <wsdl:input message="tns:RegisterEmailSoapIn" />
+      <wsdl:output message="tns:RegisterEmailSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SubmitSite">
+      <wsdl:input message="tns:SubmitSiteSoapIn" />
+      <wsdl:output message="tns:SubmitSiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SubmitReport">
+      <wsdl:input message="tns:SubmitReportSoapIn" />
+      <wsdl:output message="tns:SubmitReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReports">
+      <wsdl:input message="tns:GetReportsSoapIn" />
+      <wsdl:output message="tns:GetReportsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSitesOverview">
+      <wsdl:input message="tns:GetSitesOverviewSoapIn" />
+      <wsdl:output message="tns:GetSitesOverviewSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSiteXml">
+      <wsdl:input message="tns:GetSiteXmlSoapIn" />
+      <wsdl:output message="tns:GetSiteXmlSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="OnlineVideosServiceSoap" type="tns:OnlineVideosServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="RegisterEmail">
+      <soap:operation soapAction="http://tempuri.org/RegisterEmail" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitSite">
+      <soap:operation soapAction="http://tempuri.org/SubmitSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitReport">
+      <soap:operation soapAction="http://tempuri.org/SubmitReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReports">
+      <soap:operation soapAction="http://tempuri.org/GetReports" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSitesOverview">
+      <soap:operation soapAction="http://tempuri.org/GetSitesOverview" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSiteXml">
+      <soap:operation soapAction="http://tempuri.org/GetSiteXml" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="OnlineVideosServiceSoap12" type="tns:OnlineVideosServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="RegisterEmail">
+      <soap12:operation soapAction="http://tempuri.org/RegisterEmail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitSite">
+      <soap12:operation soapAction="http://tempuri.org/SubmitSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitReport">
+      <soap12:operation soapAction="http://tempuri.org/SubmitReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReports">
+      <soap12:operation soapAction="http://tempuri.org/GetReports" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSitesOverview">
+      <soap12:operation soapAction="http://tempuri.org/GetSitesOverview" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSiteXml">
+      <soap12:operation soapAction="http://tempuri.org/GetSiteXml" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OnlineVideosService">
+    <wsdl:port name="OnlineVideosServiceSoap" binding="tns:OnlineVideosServiceSoap">
+      <soap:address location="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx" />
+    </wsdl:port>
+    <wsdl:port name="OnlineVideosServiceSoap12" binding="tns:OnlineVideosServiceSoap12">
+      <soap12:address location="http://87.106.7.69/OnlineVideosWebService/OnlineVideos.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

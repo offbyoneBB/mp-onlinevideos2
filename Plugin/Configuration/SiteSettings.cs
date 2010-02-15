@@ -49,7 +49,11 @@ namespace OnlineVideos
 
         [XmlAttribute("lang")]
         public string Language { get; set; }
-        public bool ShouldSerializeLanguage() { return !string.IsNullOrEmpty(Language); }        
+        public bool ShouldSerializeLanguage() { return !string.IsNullOrEmpty(Language); }
+
+        [XmlAttribute("lastUpdated")]
+        public DateTime LastUpdated { get; set; }
+        public bool ShouldSerializeLastUpdated() { return LastUpdated > new DateTime(2000,1,1); }
 
         public string Description { get; set; }
         public bool ShouldSerializeDescription() { return !string.IsNullOrEmpty(Description); }
