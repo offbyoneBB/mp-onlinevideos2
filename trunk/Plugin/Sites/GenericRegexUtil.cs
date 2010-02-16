@@ -8,7 +8,9 @@ namespace OnlineVideos.Sites
 {
     public class GenericRegexUtil : SiteUtilBase
     {
-        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration'.")]
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for dynamic categories. Group names: 'url', 'title'. Will not be used if not set.")]
+        string dynamicCategoriesRegEx;
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration', 'Description'.")]
         string videoListRegEx;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a next page link. Group should be named 'url'.")]
         string nextPageRegEx;
@@ -27,17 +29,47 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Url used for prepending relative links.")]
         string baseUrl;
 
-        Regex regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_PlaylistUrl, regEx_FileUrl;
+        Regex regEx_dynamicCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_PlaylistUrl, regEx_FileUrl;
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
 
+            if (!string.IsNullOrEmpty(dynamicCategoriesRegEx)) regEx_dynamicCategories = new Regex(dynamicCategoriesRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             if (!string.IsNullOrEmpty(videoListRegEx)) regEx_VideoList = new Regex(videoListRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             if (!string.IsNullOrEmpty(nextPageRegEx)) regEx_NextPage = new Regex(nextPageRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             if (!string.IsNullOrEmpty(prevPageRegEx)) regEx_PrevPage = new Regex(prevPageRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             if (!string.IsNullOrEmpty(playlistUrlRegEx)) regEx_PlaylistUrl = new Regex(playlistUrlRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             if (!string.IsNullOrEmpty(fileUrlRegEx)) regEx_FileUrl = new Regex(fileUrlRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+        }
+
+        public override int DiscoverDynamicCategories()
+        {
+            if (regEx_dynamicCategories == null)
+            {
+                Settings.DynamicCategoriesDiscovered = true;
+            }
+            else
+            {
+                Settings.Categories.Clear();
+
+                string data = GetWebData(baseUrl);
+                if (!string.IsNullOrEmpty(data))
+                {
+                    Match m = regEx_dynamicCategories.Match(data);
+                    while (m.Success)
+                    {
+                        RssLink cat = new RssLink();
+                        cat.Url = m.Groups["url"].Value;
+                        if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;                        
+                        cat.Name = m.Groups["title"].Value.Trim();
+                        m = m.NextMatch();
+                        Settings.Categories.Add(cat);
+                    }
+                    Settings.DynamicCategoriesDiscovered = true;
+                }
+            }
+            return Settings.Categories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -80,62 +112,69 @@ namespace OnlineVideos.Sites
                     videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                     videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                     videoInfo.Length = m.Groups["Duration"].Value;
+                    videoInfo.Description = m.Groups["Description"].Value;
                     videoList.Add(videoInfo);
                     m = m.NextMatch();
                 }
-                
-                // check for previous page link
-                Match mPrev = regEx_PrevPage.Match(data);
-                if (mPrev.Success)
-                {
-                    previousPageAvailable = true;
-                    previousPageUrl = mPrev.Groups["url"].Value;
 
-                    if (!Uri.IsWellFormedUriString(previousPageUrl, System.UriKind.Absolute))
+                if (regEx_PrevPage != null)
+                {
+                    // check for previous page link
+                    Match mPrev = regEx_PrevPage.Match(data);
+                    if (mPrev.Success)
                     {
-                        Uri uri = null;
-                        if (Uri.TryCreate(new Uri(url), previousPageUrl, out uri))
+                        previousPageAvailable = true;
+                        previousPageUrl = mPrev.Groups["url"].Value;
+
+                        if (!Uri.IsWellFormedUriString(previousPageUrl, System.UriKind.Absolute))
                         {
-                            previousPageUrl = uri.ToString();
-                        }
-                        else
-                        {
-                            previousPageAvailable = false;
-                            previousPageUrl = "";
+                            Uri uri = null;
+                            if (Uri.TryCreate(new Uri(url), previousPageUrl, out uri))
+                            {
+                                previousPageUrl = uri.ToString();
+                            }
+                            else
+                            {
+                                previousPageAvailable = false;
+                                previousPageUrl = "";
+                            }
                         }
                     }
-                }
-                else
-                {
-                    previousPageAvailable = false;
-                    previousPageUrl = "";
-                }
-
-                // check for next page link
-                Match mNext = regEx_NextPage.Match(data);
-                if (mNext.Success)
-                {
-                    nextPageAvailable = true;
-                    nextPageUrl = mNext.Groups["url"].Value;
-
-                    if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute))
+                    else
                     {
-                        Uri uri = null;
-                        if (Uri.TryCreate(new Uri(url), nextPageUrl, out uri))
-                        {
-                            nextPageUrl = uri.ToString();
-                        }
-                        else
-                        {
-                            previousPageAvailable = false;
-                            nextPageUrl = "";
-                        }
+                        previousPageAvailable = false;
+                        previousPageUrl = "";
                     }
                 }
-                else
+
+                if (regEx_NextPage != null)
                 {
-                    nextPageAvailable = false;
-                    nextPageUrl = "";
+                    // check for next page link
+                    Match mNext = regEx_NextPage.Match(data);
+                    if (mNext.Success)
+                    {
+                        nextPageAvailable = true;
+                        nextPageUrl = mNext.Groups["url"].Value;
+
+                        if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute))
+                        {
+                            Uri uri = null;
+                            if (Uri.TryCreate(new Uri(url), nextPageUrl, out uri))
+                            {
+                                nextPageUrl = uri.ToString();
+                            }
+                            else
+                            {
+                                previousPageAvailable = false;
+                                nextPageUrl = "";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        nextPageAvailable = false;
+                        nextPageUrl = "";
+                    }
                 }
             }
 
@@ -172,7 +211,7 @@ namespace OnlineVideos.Sites
 
         #region Search
 
-        public override bool CanSearch { get { return true; } }
+        public override bool CanSearch { get { return !string.IsNullOrEmpty(searchUrl); } }
 
         public override List<VideoInfo> Search(string query)
         {
