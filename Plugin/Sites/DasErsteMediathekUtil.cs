@@ -23,7 +23,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration")]
         string subcategoriesRegEx = @"<div\sclass=""mt-media_item"">\s*
 <div\sclass=""mt-image"">\s*
-<img\ssrc=""(?<ImageUrl>[^""]+)""[^/]*/>\s*
+<img\ssrc=""(?<ImageUrl>[^""]+)""[^>]*>\s*
 </div>\s*
 <h3\sclass=""mt-title""><a\shref=""(?<Url>[^""]+)""\s[^>]*>(?<Title>[^<]+)</a></h3>";
         [Category("OnlineVideosConfiguration")]
