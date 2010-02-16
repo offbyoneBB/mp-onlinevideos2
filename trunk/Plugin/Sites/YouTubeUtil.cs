@@ -190,11 +190,14 @@ namespace OnlineVideos.Sites
             p++;
             int q=youtubeUrl.IndexOf('&',p);
             if (q <0) q = youtubeUrl.Length;
-            return ConvertUrl(youtubeUrl.Substring(p,q-p),VideoQuality.HD);
+            Dictionary<string, string> playbackOptions = null;
+            return ConvertUrl(youtubeUrl.Substring(p,q-p),VideoQuality.HD, out playbackOptions);
         }
 
-        private static String ConvertUrl(String videoId, VideoQuality videoQuality)
+        private static String ConvertUrl(String videoId, VideoQuality videoQuality, out Dictionary<string, string> playbackOptions)
         {
+            playbackOptions = null;
+
             Dictionary<string, string> Items = new Dictionary<string, string>();
             GetVideInfo(videoId, Items);
 
@@ -222,6 +225,7 @@ namespace OnlineVideos.Sites
             }
 
             string lsUrl = "";
+            playbackOptions = FmtMapToPlaybackOptions(FmtMap, Token, videoId);
             if (FmtMap == null || FmtMap.Length == 0) // no or empty fmt_map
             {
                 lsUrl = string.Format("http://youtube.com/get_video?video_id={0}&t={1}&ext=.flv", videoId, Token);
@@ -250,9 +254,41 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo foVideo)
         {
-            String lsUrl = ConvertUrl(foVideo.VideoUrl,videoQuality);
+            String lsUrl = ConvertUrl(foVideo.VideoUrl, videoQuality, out foVideo.PlaybackOptions);
             Log.Info("youtube video url={0}", lsUrl);
             return lsUrl;
+        }
+
+        static Dictionary<string, string> FmtMapToPlaybackOptions(string[] fmtMap, string token, string videoId)
+        {
+            if (fmtMap == null || fmtMap.Length < 2) return null;
+
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            foreach (string fmtValue in fmtMap)
+            {
+                int fmtValueInt = int.Parse(fmtValue.Substring(0, fmtValue.IndexOf("/")));
+                switch (fmtValueInt)
+                {
+                    case 0:
+                    case 5:
+                    case 34:
+                        result.Add("320x240 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "flv")); break;
+                    case 13:
+                    case 17:
+                        result.Add("176x144 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
+                    case 18:
+                        result.Add("480x360 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
+                    case 35:
+                        result.Add("640x480 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "flv")); break;
+                    case 22:
+                        result.Add("1280x720 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
+                    case 37:
+                        result.Add("1920x1080 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
+                    default:
+                        result.Add("Unknown | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .???", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}", videoId, token, fmtValueInt)); break;
+                }                
+            }
+            return result;
         }
 
         static string MapFtmValueToExtension(string fmt)
@@ -265,7 +301,7 @@ namespace OnlineVideos.Sites
             // fmt=18 -> mp4:  480x360 (H264) / AAC 2.0 44KHz
             // fmt=22 -> mp4: 1280x720 (H264) / AAC 2.0 44KHz
             // fmt=34 -> flv:  320x240 (flv?) / ??? 2.0 44KHz (default now)
-            // fmt=35 -> flv:  640x380 (flv?) / ??? 2.0 44KHz
+            // fmt=35 -> flv:  640x480 (flv?) / ??? 2.0 44KHz
             // fmt=37 -> mp4: 1080p
             switch (fmt)
             {
