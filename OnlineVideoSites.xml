@@ -641,8 +641,19 @@
         <Category xsi:type="RssLink" name="Отечественный">http://linecinema.ru/news/1-0-9</Category>
       </Categories>
     </Site>
-    <Site name="wwitv" util="WWitv" agecheck="false" enabled="true">
+    <Site name="wwitv" util="GenericRegex" agecheck="false" enabled="true">
       <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<a\sclass="rb"\shref="(?<url>[^"]+)"[^>]*>(?<title>[^<]+)</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\sclass="travel"\shref="(?<VideoUrl>[^"]+)">(?<Title>[^<]+)</a>
+</td><td[^>]*><img\ssrc="../img/[^\.]+\.gif"\swidth="50"\sheight="24"></td>
+<td[^>]*>\s*
+<a\sclass="m"\shref="[^"]+">(?<Duration>[^<]+)</a>\s*
+</td><td[^>]*><font[^>]*>(?<Description>[^>]*)</td></tr>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<param\sname="src"\svalue="(?<m0>[^"]+)"\s*/>]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.wwitv.com]]></item>
+      </Configuration>
       <Categories />
     </Site>
     <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" lang="ru">
