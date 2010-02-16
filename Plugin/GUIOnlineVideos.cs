@@ -1283,7 +1283,7 @@ namespace OnlineVideos
                     return;
                 }
 
-                if (foListItem.PlaybackOptions != null) lsUrl = DisplayPlaybackOptions(foListItem);
+                if (foListItem.PlaybackOptions != null) lsUrl = DisplayPlaybackOptions(foListItem, lsUrl);
                 if (lsUrl == "-1") return;
 
                 if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
@@ -1382,6 +1382,9 @@ namespace OnlineVideos
             {
                 return;
             }
+
+            if (video.PlaybackOptions != null) url = DisplayPlaybackOptions(video, url);
+            if (url == "-1") return;
 
             if (String.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
             {
@@ -1848,7 +1851,7 @@ namespace OnlineVideos
             }
         }
 
-        private string DisplayPlaybackOptions(VideoInfo videoInfo)
+        private string DisplayPlaybackOptions(VideoInfo videoInfo, string defaultUrl)
         {
             // with no options set, return the VideoUrl field
             if (videoInfo.PlaybackOptions == null || videoInfo.PlaybackOptions.Count == 0) return videoInfo.VideoUrl;
@@ -1870,7 +1873,7 @@ namespace OnlineVideos
                 foreach (string key in videoInfo.PlaybackOptions.Keys)
                 {
                     dlgSel.Add(key);
-                    if (videoInfo.PlaybackOptions[key] == videoInfo.VideoUrl) defaultOption = option;
+                    if (videoInfo.PlaybackOptions[key] == defaultUrl) defaultOption = option;
                     option++;
                 }
             }
