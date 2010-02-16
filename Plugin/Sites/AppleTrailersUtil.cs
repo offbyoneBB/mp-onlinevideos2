@@ -63,7 +63,7 @@ namespace OnlineVideos.Sites
             private TimeSpan _length = TimeSpan.Zero;
             private string _thumb = string.Empty;
 
-            public Dictionary<VideoQuality, Uri> Size = new Dictionary<VideoQuality, Uri>();
+            public Dictionary<string, string> PlaybackOptions = new Dictionary<string, string>();
 
             public string Label
             {
@@ -308,17 +308,12 @@ namespace OnlineVideos.Sites
                 newVideo.Description = trailer.Description;
                 newVideo.Length = v.Duration.ToString();
                 newVideo.ImageUrl = trailer.Thumb;
-                newVideo.VideoUrl = GetTrailerUrlForConfiguredResolution(v.Size);
+                newVideo.PlaybackOptions = v.PlaybackOptions;
+                newVideo.VideoUrl = GetTrailerUrlForConfiguredResolution(newVideo.PlaybackOptions);
                 videoList.Add(newVideo);
             }
             
             return videoList;
-        }
-
-        public override String getUrl(VideoInfo video)
-        {
-            //return video.VideoUrl.Replace("http://movies.apple.com/", "http://apple.com/"); // doesn't work on avatar, but any other tested
-            return string.Format("http://127.0.0.1:{0}/?url={1}", OnlineVideoSettings.APPLE_PROXY_PORT, System.Web.HttpUtility.UrlEncode(video.VideoUrl));
         }
 
         private List<IndexItem> fetchIndex(string url)
@@ -478,7 +473,7 @@ namespace OnlineVideos.Sites
                                 trailer.Media.Add(video);
                             }                            
                             // Add the current quality to the video
-                            video.Size[quality] = new Uri(/*FixTrailerUrl(*/videourl/*,quality)*/);
+                            video.PlaybackOptions[quality.ToString()] = string.Format("http://127.0.0.1:{0}/?url={1}", OnlineVideoSettings.APPLE_PROXY_PORT, System.Web.HttpUtility.UrlEncode(videourl));
                             // Set the duration of the video
                             video.Duration = new TimeSpan(0, 0, duration);
 
@@ -707,14 +702,14 @@ namespace OnlineVideos.Sites
             return _data;
         }
 
-        string GetTrailerUrlForConfiguredResolution(Dictionary<VideoQuality, Uri> files)
+        string GetTrailerUrlForConfiguredResolution(Dictionary<string, string> files)
         {
             if (files == null || files.Count == 0) return "";
 
-            if (files.ContainsKey(trailerSize)) return files[trailerSize].ToString();
+            if (files.ContainsKey(trailerSize.ToString())) return files[trailerSize.ToString()];
             else
             {
-                VideoQuality[] vq = new VideoQuality[files.Count];
+                string[] vq = new string[files.Count];
                 files.Keys.CopyTo(vq, 0);
                 if (vq.Length > 1) return files[vq[vq.Length - 1]].ToString();
                 else return files[vq[0]].ToString();
