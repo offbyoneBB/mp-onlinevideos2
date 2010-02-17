@@ -1,93 +1,34 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 using System;
-using System.ComponentModel;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
-using Microsoft.Win32;
+using MediaPortal.Player;
 using AxWMPLib;
 using WMPLib;
-using _WMPOCXEvents_BufferingEventHandler = AxWMPLib._WMPOCXEvents_BufferingEventHandler;
-using _WMPOCXEvents_PlayStateChangeEventHandler = AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler;
-using MediaPortal.Player;
+using ExternalOSDLibrary;
 
 namespace OnlineVideos.Player
 {
     public class WMPVideoPlayer : IPlayer
     {
-        public enum PlayState
-        {
-            Init,
-            Playing,
-            Paused,
-            Ended
-        }
-
+        public enum PlayState { Init, Playing, Paused, Ended };
+        
+        private static AxWindowsMediaPlayer _wmp10Player = null;
         private string _currentFile = "";
         private PlayState _graphState = PlayState.Init;
         private bool _isFullScreen = false;
-        private bool _isCDA = false;
-        private int _positionX = 10, _positionY = 10, _videoWidth = 100, _videoHeight = 100;
-        private static AxWindowsMediaPlayer _wmp10Player = null;
+        private int _positionX = 10, _positionY = 10, _videoWidth = 100, _videoHeight = 100;        
         private bool _needUpdate = true;
         private bool _notifyPlaying = true;
         private bool _bufferCompleted = true;
+        private OSDController _osd;
+        private bool _osdActive = false;
 
         private static void CreateInstance()
         {
-            // disable auto windows mediaplayer auto cd-play
-            if (_wmp10Player != null)
-            {
-                return;
-            }
-            try
-            {
-                UInt32 dwValue = (UInt32)0;
-                using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\MediaPlayer\Preferences", true)
-                  )
-                {
-                    subkey.SetValue("CDAutoPlay", (Int32)dwValue);
-
-                    // enable metadata lookup for CD's
-                    dwValue = (UInt32)Convert.ToInt32(subkey.GetValue("MetadataRetrieval"));
-                    dwValue |= 1;
-                    subkey.SetValue("MetadataRetrieval", (Int32)dwValue);
-                }
-            }
-            catch (Exception)
-            {
-            }
+            if (_wmp10Player != null) return; // single instance
 
             _wmp10Player = new AxWindowsMediaPlayer();
-
-
             _wmp10Player.BeginInit();
             GUIGraphicsContext.form.SuspendLayout();
             _wmp10Player.Enabled = true;
@@ -101,28 +42,19 @@ namespace OnlineVideos.Player
 
             GUIGraphicsContext.form.Controls.Add(_wmp10Player);
 
-            try
-            {
-                _wmp10Player.EndInit();
-            }
-            catch (COMException)
-            {
-            }
+            try { _wmp10Player.EndInit(); } catch { }
 
             _wmp10Player.uiMode = "none";
             _wmp10Player.windowlessVideo = true;
-
             _wmp10Player.enableContextMenu = false;
             _wmp10Player.Ctlenabled = false;
             _wmp10Player.ClientSize = new Size(0, 0);
             _wmp10Player.Visible = false;
             GUIGraphicsContext.form.ResumeLayout(false);
         }
-
-
+        
         public override bool Play(string strFile)
         {
-            _isCDA = false;
             _graphState = PlayState.Init;
             _currentFile = strFile;
 
@@ -134,112 +66,31 @@ namespace OnlineVideos.Player
             GC.Collect();
             CreateInstance();            
 
-            if (_wmp10Player == null)
-            {
-                return false;
-            }
-            if (_wmp10Player.cdromCollection == null)
-            {
-                return false;
-            }
+            if (_wmp10Player == null) return false;
+            
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
 
-            _wmp10Player.PlayStateChange += new _WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
+            _wmp10Player.PlayStateChange += OnPlayStateChange;
+            _wmp10Player.Buffering += OnBuffering;
 
-            _wmp10Player.Buffering += new _WMPOCXEvents_BufferingEventHandler(OnBuffering);
+            if (_osd == null)
+            {
+                _osd = OSDController.getInstance();
+                GUIWindowManager.OnNewAction += GUIWindowManager_OnNewAction;
+            }
 
             //_wmp10Player.enableContextMenu = false;
             //_wmp10Player.Ctlenabled = false;
-            if (strFile.IndexOf("cdda:") >= 0)
-            {
-                string strTrack = strFile.Substring(5);
-                int iTrack = Convert.ToInt32(strTrack);
-                if (_wmp10Player.cdromCollection.count <= 0)
-                {
-                    return false;
-                }
-                if (_wmp10Player.cdromCollection.Item(0).Playlist == null)
-                {
-                    return false;
-                }
-                if (iTrack > _wmp10Player.cdromCollection.Item(0).Playlist.count)
-                {
-                    return false;
-                }
-                _wmp10Player.currentMedia = _wmp10Player.cdromCollection.Item(0).Playlist.get_Item(iTrack - 1);
-                if (_wmp10Player.currentMedia == null)
-                {
-                    return false;
-                }
-                _isCDA = true;
-                Log.Info("WMPVideoPlayer: play track:{0}/{1}", iTrack, _wmp10Player.cdromCollection.Item(0).Playlist.count);
-            }
-            else if (strFile.IndexOf(".cda") >= 0)
-            {
-                string strTrack = "";
-                int pos = strFile.IndexOf(".cda");
-                if (pos >= 0)
-                {
-                    pos--;
-                    while (Char.IsDigit(strFile[pos]) && pos > 0)
-                    {
-                        strTrack = strFile[pos] + strTrack;
-                        pos--;
-                    }
-                }
+            Log.Info("WMPVideoPlayer:play {0}", strFile);
+            _wmp10Player.URL = strFile;
 
-                if (_wmp10Player.cdromCollection.count <= 0)
-                {
-                    return false;
-                }
-                string strDrive = strFile.Substring(0, 1);
-                strDrive += ":";
-                int iCdRomDriveNr = 0;
-                while ((_wmp10Player.cdromCollection.Item(iCdRomDriveNr).driveSpecifier != strDrive) &&
-                       (iCdRomDriveNr < _wmp10Player.cdromCollection.count))
-                {
-                    iCdRomDriveNr++;
-                }
-
-                int iTrack = Convert.ToInt32(strTrack);
-                if (_wmp10Player.cdromCollection.Item(iCdRomDriveNr).Playlist == null)
-                {
-                    return false;
-                }
-                int tracks = _wmp10Player.cdromCollection.Item(iCdRomDriveNr).Playlist.count;
-                if (iTrack > tracks)
-                {
-                    return false;
-                }
-                _wmp10Player.currentMedia = _wmp10Player.cdromCollection.Item(iCdRomDriveNr).Playlist.get_Item(iTrack - 1);
-                if (_wmp10Player.currentMedia == null)
-                {
-                    return false;
-                }
-                /*
-                string strStart=strFile.Substring(0,2)+@"\";
-                int ipos=strFile.LastIndexOf("+");
-                if (ipos >0) strStart += strFile.Substring(ipos+1);
-                strFile=strStart;
-                _currentFile=strFile;
-                Log.Info("WMPVideoPlayer:play {0}", strFile);*/
-                //_wmp10Player.URL=strFile;
-                _currentFile = strFile;
-                _isCDA = true;
-            }
-            else
-            {
-                Log.Info("WMPVideoPlayer:play {0}", strFile);
-                _wmp10Player.URL = strFile;
-            }
             _wmp10Player.network.bufferingTime = OnlineVideoSettings.getInstance().wmpbuffer;
             _wmp10Player.Ctlcontrols.play();
             _wmp10Player.ClientSize = new Size(0, 0);
             _wmp10Player.Visible = false;
 
             // When file is internetstream
-            if (_wmp10Player.URL.StartsWith("http") || _wmp10Player.URL.StartsWith("mms") ||
-                _wmp10Player.URL.StartsWith("HTTP") || _wmp10Player.URL.StartsWith("MMS"))
+            if (_wmp10Player.URL.ToLower().StartsWith("http") || _wmp10Player.URL.ToLower().StartsWith("mms"))
             {
                 _bufferCompleted = false;
                 using (WaitCursor waitcursor = new WaitCursor())
@@ -249,9 +100,9 @@ namespace OnlineVideos.Player
                     {
                         {
                             // if true then could not load stream 
-                            if (_wmp10Player.playState.Equals(WMPPlayState.wmppsReady))
+                            if (_wmp10Player.playState.Equals(WMPPlayState.wmppsPlaying))
                             {
-                                _bufferCompleted = true;
+                                _bufferCompleted = true;                                
                             }
                             if (GUIGraphicsContext.Overlay)
                             {
@@ -288,6 +139,22 @@ namespace OnlineVideos.Player
             return true;
         }
 
+        void GUIWindowManager_OnNewAction(Action action)
+        {
+            if (_graphState == PlayState.Playing || _graphState == PlayState.Paused)
+            {
+                switch (action.wID)
+                {
+                    case Action.ActionType.ACTION_BIG_STEP_FORWARD:
+                    case Action.ActionType.ACTION_BIG_STEP_BACK:
+                    case Action.ActionType.ACTION_STEP_BACK:
+                    case Action.ActionType.ACTION_STEP_FORWARD:
+                        if (!_osdActive) { _osd.Activate(); _osdActive = true; }
+                        break;
+                }
+            }
+        }
+
         private void OnPlayStateChange(object sender, _WMPOCXEvents_PlayStateChangeEvent e)
         {
             if (_wmp10Player == null)
@@ -297,7 +164,8 @@ namespace OnlineVideos.Player
             switch (_wmp10Player.playState)
             {
                 case WMPPlayState.wmppsStopped:
-                    SongEnded(false);
+                case WMPPlayState.wmppsMediaEnded:
+                    PlaybackEnded(false);
                     break;
             }
         }
@@ -323,7 +191,7 @@ namespace OnlineVideos.Player
             }
         }
 
-        private void SongEnded(bool bManualStop)
+        private void PlaybackEnded(bool bManualStop)
         {
             // this is triggered only if movie has ended
             // ifso, stop the movie which will trigger MovieStopped
@@ -334,14 +202,14 @@ namespace OnlineVideos.Player
             //}
             Log.Info("WMPVideoPlayer:ended {0} {1}", _currentFile, bManualStop);
             _currentFile = "";
-            _isCDA = false;
-
+            if (_osdActive) { _osd.Deactivate(); _osdActive = false; }
             if (_wmp10Player != null)
             {
                 _bufferCompleted = true;
                 _wmp10Player.ClientSize = new Size(0, 0);
                 _wmp10Player.Visible = false;
-                _wmp10Player.PlayStateChange -= new _WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
+                _wmp10Player.PlayStateChange -= OnPlayStateChange;
+                _wmp10Player.Buffering -= OnBuffering;
             }
             //GUIGraphicsContext.IsFullScreenVideo=false;
             GUIGraphicsContext.IsPlaying = false;
@@ -403,11 +271,13 @@ namespace OnlineVideos.Player
             }
             if (_graphState == PlayState.Paused)
             {
+                if (_osdActive) { _osd.Deactivate(); _osdActive = false; }
                 _graphState = PlayState.Playing;
                 _wmp10Player.Ctlcontrols.play();
             }
             else if (_graphState == PlayState.Playing)
             {
+                if (!_osdActive) { _osd.Activate(); _osdActive = true; }
                 _wmp10Player.Ctlcontrols.pause();
                 if (_wmp10Player.playState == WMPPlayState.wmppsPaused)
                 {
@@ -428,7 +298,7 @@ namespace OnlineVideos.Player
 
         public override bool Stopped
         {
-            get { return (_graphState == PlayState.Init); }
+            get { return (_graphState == PlayState.Init || _graphState == PlayState.Ended); }
         }
 
         public override string CurrentFile
@@ -447,7 +317,7 @@ namespace OnlineVideos.Player
                 _wmp10Player.Ctlcontrols.stop();
                 _wmp10Player.ClientSize = new Size(0, 0);
                 _wmp10Player.Visible = false;
-                SongEnded(true);
+                PlaybackEnded(true);
             }
         }
 
@@ -474,7 +344,6 @@ namespace OnlineVideos.Player
             }
         }
 
-
         public override bool HasVideo
         {
             get { return true; }
@@ -487,7 +356,7 @@ namespace OnlineVideos.Player
 
         public override bool IsCDA
         {
-            get { return _isCDA; }
+            get { return false; }
         }
 
         #region IDisposable Members
@@ -588,6 +457,9 @@ namespace OnlineVideos.Player
             {
                 return;
             }
+
+            if (_osd != null) _osd.UpdateGUI();
+
             if (GUIGraphicsContext.BlankScreen ||
                 (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
             {
@@ -605,7 +477,6 @@ namespace OnlineVideos.Player
                 //_wmp10Player.uiMode = "none";
                 _wmp10Player.Visible = true;
             }
-
 
             if (CurrentPosition >= 10.0)
             {
@@ -755,6 +626,7 @@ namespace OnlineVideos.Player
                 {
                     _wmp10Player.Ctlcontrols.currentPosition = dTime;
                 }
+                if (_osdActive) { _osd.Deactivate(); _osdActive = false; }
             }
         }
 
@@ -831,8 +703,7 @@ namespace OnlineVideos.Player
                 {
                     if (value < 0)
                     {
-                        _wmp10Player.Ctlcontrols.currentPosition += (double)value;
-                        VMR9Util.g_vmr9.EVRProvidePlaybackRate(1.0);
+                        _wmp10Player.Ctlcontrols.currentPosition += (double)value;                        
                     }
                     else
                     {
@@ -842,8 +713,7 @@ namespace OnlineVideos.Player
                         }
                         catch (Exception)
                         {
-                        }
-                        VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
+                        }                        
                     }
                 }
             }

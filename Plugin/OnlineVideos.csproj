@@ -71,6 +71,11 @@
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\Dialogs.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="WindowPlugins, Version=1.0.4.17412, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\WindowPlugins.dll</HintPath>
+      <Private>False</Private>
+    </Reference>    
     <Reference Include="DirectShowLib, Version=2.0.0.22244, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\DirectShowLib.dll</HintPath>
@@ -216,6 +221,28 @@
     <Compile Include="Jayrock.Json\Mask.cs" />
     <Compile Include="Jayrock.Json\UnixTime.cs" />
     <Compile Include="MMSDownloader.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\BaseWindow.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\DialogWindow.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\BaseElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ButtonElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\CheckMarkElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\FadeLabelElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ImageCache.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ImageElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\LabelElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ListElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ProgressControlElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\SliderElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\TextScrollUpElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ToggleButtonElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\VerticalScrollbarElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\VolumeBarElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\FullscreenWindow.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\OSDController.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\OSDForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Player\ExternalOSDLibrary\OSDWindow.cs" />
     <Compile Include="Player\WMPVideoPlayer.cs" />
     <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Player\PlayerFactory.cs" />
