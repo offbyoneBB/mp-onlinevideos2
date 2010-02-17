@@ -20,12 +20,14 @@ namespace OnlineVideos.Sites
         private string voetbalListPopRegex = @"<a.*?href=""(?<url>[^""]+)""><img\ssrc=""(?<thumb>[^""]+)"".*?href=.*?>(?<title>[^<]+)<.*?<p>(?<descr>.+?)</b>.*?<p>(?<descr2>.+?)</b>";
         private string voetbalListLatestRegex = @"<a.*?href=""(?<url>[^""]+)""><img\ssrc=""(?<thumb>[^""]+)"".*?href=[^>]+>(?<title>[^<]+)</a><br\s/><br\s/>(?<descr>[^<]+)<";
         private string voetbalSubRegex = @"<a\shref=""(?<url>[^""]+)""[^>]+>(?<title>[^<]+)<";
+        private string os2010ListRegex = @"<li\sid="".*?<a\shref=""(?<url>[^""]+)"".*?<span[^>]*>(?<title>[^<]+)<";
 
         private string baseVoetbalUrl = null;
 
         private string Pop = "POP";
         private string Latest = "LATEST";
         private string Live = "LIVE";
+        private string Os2010 = "os2010";
 
         // Todo: search for voetbal. (should use baseVoetbalUrl)
 
@@ -39,6 +41,7 @@ namespace OnlineVideos.Sites
         private Regex regEx_VoetbalPop;
         private Regex regEx_VoetbalLatest;
         private Regex regEx_VoetbalSub;
+        private Regex regEx_os2010List;
 
         private string currentPageTitle;
 
@@ -66,11 +69,13 @@ namespace OnlineVideos.Sites
             }
 
             regEx_SubCategory = new Regex(subCategoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
-            regEx_VideoList = new Regex(videoListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
+            regEx_VideoList = new Regex(videoListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
             regEx_VideoUrl = new Regex(videoUrlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             regEx_VoetbalPop = new Regex(voetbalListPopRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
             regEx_VoetbalLatest = new Regex(voetbalListLatestRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
             regEx_VoetbalSub = new Regex(voetbalSubRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+
+            regEx_os2010List = new Regex(os2010ListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
         }
 
         public override int DiscoverDynamicCategories()
@@ -184,19 +189,31 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl);
-            Match m = regEx_VideoUrl.Match(webData);
-            if (m.Success)
+            if (Os2010.Equals(video.Other))
             {
-                string url = m.Groups["url"].Value;
-                string xmlData = GetWebData(url);
-                string src = GetSubString(xmlData, @"<location>", @"</location>");
+                string xmlData = GetWebData(video.VideoUrl);
+                string src = GetSubString(xmlData, @"<location><![CDATA[", @"]");
                 if (!String.IsNullOrEmpty(src))
                     return src;
                 else
-                    return url;
+                    return video.VideoUrl;
             }
+            else
+            {
+                Match m = regEx_VideoUrl.Match(webData);
+                if (m.Success)
+                {
+                    string url = m.Groups["url"].Value;
+                    string xmlData = GetWebData(url);
+                    string src = GetSubString(xmlData, @"<location>", @"</location>");
+                    if (!String.IsNullOrEmpty(src))
+                        return src;
+                    else
+                        return url;
+                }
 
-            return video.VideoUrl;
+                return video.VideoUrl;
+            }
         }
 
         public override string getCurrentVideosTitle()
@@ -281,6 +298,26 @@ namespace OnlineVideos.Sites
                 video.Title = "Politiek24";
                 video.VideoUrl = @"http://www.omroep.nl/live/thema/nos_politiek24-bb.asx";
                 videos.Add(video);
+
+                string osData = GetWebData(@"http://nos.nl/os2010/");
+                Match m = regEx_os2010List.Match(osData);
+                while (m.Success)
+                {
+                    video = new VideoInfo();
+                    video.Title = "OS2010 " + m.Groups["title"].Value;
+                    string osurl = baseUrl + m.Groups["url"].Value;
+                    string liveOsData = GetWebData(osurl);
+                    video.Title = video.Title + " " + GetSubString(liveOsData, @"<h1><span>", @"</h1>");
+                    video.Title = Regex.Replace(video.Title, @"<[^>]*>", "", RegexOptions.Multiline);
+
+                    //<h1><span>Kanaal Multi 4 </span> Nu: Snowboarden - kwal. halfpipe (m)</h1>
+
+                    liveOsData = GetSubString(liveOsData, @"SterCommercials('", @"'");
+                    video.VideoUrl = liveOsData;
+                    video.Other = Os2010;
+                    videos.Add(video);
+                    m = m.NextMatch();
+                }
 
                 return videos;
             }
