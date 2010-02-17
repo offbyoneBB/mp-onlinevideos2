@@ -7,17 +7,22 @@ using System.Xml;
 using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
-{
+{       
     public class SouthParkDeUtil : SiteUtilBase
     {
-        Regex seasonsRegEx = new Regex(@"href=""(?<url>/episodenguide/staffel/(?<season>\d{1,2})/)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+        public enum VideoQuality { low, high }
+
+        VideoQuality videoQuality = VideoQuality.high;
+
+        Regex seasonsRegEx = new Regex(@"href=""(?<url>/guide/episoden/staffel/(?<season>\d{1,2})/)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
         Regex episodesRegEx = new Regex(@"<li\sclass=""grid_item"">\s*
 <div\sclass=""image"">\s*
 (?:(?!<img).)*
 <img\ssrc=""(?<thumb>[^""]*)""
 (?:(?!<a).)*
-<a\sclass=""overlay""\shref=""/episodenguide/folge/(?<episode>\d{3,4})/"">\s*
+<a\sclass=""overlay""\shref=""/guide/episoden/(?<episode>\d{3,4})/"">\s*
 <span\sclass=""epnumber"">[^<]*</span>\s*
 <span\sclass=""title\septitle"">(?<title>[^<]*)</span>\s*
 <span\sclass=""epdate"">(?<airdate>[^<]*)</span>\s*
@@ -25,6 +30,9 @@ namespace OnlineVideos.Sites
 </a>", RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 
         Regex episodePlayerRegEx = new Regex(@"swfobject.embedSWF\(""(?<url>[^""]*)""", RegexOptions.Compiled);
+
+
+
 
         public override int DiscoverDynamicCategories()
         {
@@ -99,9 +107,34 @@ namespace OnlineVideos.Sites
                                 data = GetWebData(item.MediaGroups[0].MediaContents[0].Url);
                                 XmlDocument doc = new XmlDocument();
                                 doc.LoadXml(data);
+
                                 XmlNodeList list = doc.SelectNodes("//src");
-                                string url = list[list.Count - 1].InnerText; // todo : quality selection in configuration
+                                string url = list[0].InnerText;
+                                int bitrate = Convert.ToInt32(list[0].ParentNode.Attributes[1].Value);
+                                string videoType = list[0].ParentNode.Attributes[4].Value;
+                                for (int i = 0; i < list.Count; i++)
+                                {
+                                    if (videoQuality == VideoQuality.high)
+                                    {
+                                        if(bitrate < Convert.ToInt32(list[i].ParentNode.Attributes[1].Value)){
+                                            bitrate = Convert.ToInt32(list[i].ParentNode.Attributes[1].Value);
+                                            url = list[i].InnerText;
+                                            videoType = list[i].ParentNode.Attributes[4].Value;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if(bitrate > Convert.ToInt32(list[i].ParentNode.Attributes[1].Value)){
+                                            bitrate = Convert.ToInt32(list[i].ParentNode.Attributes[1].Value);
+                                            url = list[i].InnerText;
+                                            videoType = list[i].ParentNode.Attributes[4].Value;
+                                        }
+                                    }
+                                }
+                                if (url.Contains("intro")) continue;
+                                
                                 if (url.StartsWith("rtmpe://")) url = url.Replace("rtmpe://", "rtmp://");
+                                
                                 string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfsize={2}&swfhash={3}",
                                     OnlineVideoSettings.RTMP_PROXY_PORT,
                                     System.Web.HttpUtility.UrlEncode(url)
@@ -136,6 +169,7 @@ namespace OnlineVideos.Sites
                         data = GetWebData(RssToolkit.Rss.RssDocument.Load(data).Channel.Items[1].MediaGroups[0].MediaContents[0].Url);
                         XmlDocument doc = new XmlDocument();
                         doc.LoadXml(data);
+
                         XmlNodeList list = doc.SelectNodes("//src");
                         string url = list[list.Count - 1].InnerText; // todo : quality selection in configuration
                         if (url.StartsWith("rtmpe://")) url = url.Replace("rtmpe://", "rtmp://");
