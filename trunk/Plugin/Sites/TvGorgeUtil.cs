@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
 
-            string data = GetWebData(baseUrl+@"/watch-tv-online");
+            string data = GetWebData(baseUrl + @"/watch-tv-online");
             data = GetSubString(data, "content-box-bg", "bottom-content-box");
             if (!string.IsNullOrEmpty(data))
             {
@@ -102,7 +102,14 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
-            return GetSubString(data, @"url: '", "'");
+            string id = GetSubString(data, @"var aiv = """, @":");
+            data = GetWebData(String.Format(@"http://tvgorge.com/includes/ajax/ad1s.php?ai={0}", id));
+            string url = GetSubString(data, @"streamer=", "&");
+            return String.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfurl={2}",
+                    OnlineVideoSettings.RTMP_PROXY_PORT,
+                    System.Web.HttpUtility.UrlEncode(url + "/" + id),
+                    @"http://tvgorge.com/ad1zs/adplayer.swf"
+                    );
         }
 
         public override List<VideoInfo> getVideoList(Category category)
