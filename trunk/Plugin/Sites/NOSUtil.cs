@@ -299,7 +299,7 @@ namespace OnlineVideos.Sites
                 video.VideoUrl = @"http://www.omroep.nl/live/thema/nos_politiek24-bb.asx";
                 videos.Add(video);
 
-                string osData = GetWebData(@"http://nos.nl/os2010/");
+                string osData = GetWebData(@"http://nos.nl/os2010/live/");
                 Match m = regEx_os2010List.Match(osData);
                 while (m.Success)
                 {
