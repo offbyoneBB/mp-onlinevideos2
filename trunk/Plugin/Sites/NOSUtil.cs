@@ -307,7 +307,7 @@ namespace OnlineVideos.Sites
                     video.Title = "OS2010 " + m.Groups["title"].Value;
                     string osurl = baseUrl + m.Groups["url"].Value;
                     string liveOsData = GetWebData(osurl);
-                    video.Title = video.Title + " " + GetSubString(liveOsData, @"<h1><span>", @"</h1>");
+                    video.Title = video.Title + " " + HttpUtility.HtmlDecode(GetSubString(liveOsData, @"<h1><span>", @"</h1>"));
                     video.Title = Regex.Replace(video.Title, @"<[^>]*>", "", RegexOptions.Multiline);
 
                     //<h1><span>Kanaal Multi 4 </span> Nu: Snowboarden - kwal. halfpipe (m)</h1>
