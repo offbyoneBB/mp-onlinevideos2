@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.IO;
+using System.Xml;
 
 namespace OnlineVideos.Sites
 {
@@ -189,31 +190,27 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl);
-            if (Os2010.Equals(video.Other))
-            {
-                string xmlData = GetWebData(video.VideoUrl);
-                string src = GetSubString(xmlData, @"<location><![CDATA[", @"]");
-                if (!String.IsNullOrEmpty(src))
-                    return src;
-                else
-                    return video.VideoUrl;
-            }
-            else
+            string url;
+            url = video.VideoUrl;
+            if (!Os2010.Equals(video.Other))
             {
                 Match m = regEx_VideoUrl.Match(webData);
                 if (m.Success)
-                {
-                    string url = m.Groups["url"].Value;
-                    string xmlData = GetWebData(url);
-                    string src = GetSubString(xmlData, @"<location>", @"</location>");
-                    if (!String.IsNullOrEmpty(src))
-                        return src;
-                    else
-                        return url;
-                }
-
-                return video.VideoUrl;
+                    url = m.Groups["url"].Value;
             }
+
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(GetWebData(url));
+            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
+            nsmRequest.AddNamespace("a", "http://xspf.org/ns/0/");
+
+            XmlNode node = doc.SelectSingleNode(@"//a:location", nsmRequest);
+            if (node != null)
+                url = node.InnerText;
+            if (!String.IsNullOrEmpty(url))
+                return url;
+            else
+                return video.VideoUrl;
         }
 
         public override string getCurrentVideosTitle()
