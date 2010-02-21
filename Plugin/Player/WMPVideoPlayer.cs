@@ -164,8 +164,18 @@ namespace OnlineVideos.Player
             switch (_wmp10Player.playState)
             {
                 case WMPPlayState.wmppsStopped:
-                case WMPPlayState.wmppsMediaEnded:
                     PlaybackEnded(false);
+                    break;
+                case WMPPlayState.wmppsMediaEnded:
+                    if (_wmp10Player.currentMedia.isMemberOf(_wmp10Player.currentPlaylist))
+                    {
+                        if (_wmp10Player.currentMedia.get_isIdentical(_wmp10Player.currentPlaylist.get_Item(_wmp10Player.currentPlaylist.count - 1)))
+                        {
+                            PlaybackEnded(false);
+                        }
+                    }
+                    else
+                        PlaybackEnded(false);
                     break;
             }
         }
