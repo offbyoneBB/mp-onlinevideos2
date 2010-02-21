@@ -370,6 +370,33 @@
 			<Option />
 			<Guid>bc744669-86f8-4b12-b234-e6ba16a8af01</Guid>
 		</File>
+		<File>
+			<FileName>Broken.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>..\Skins\Blue3wide\Media\OnlineVideos\Broken.png</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>DF492E12-4591-4689-95C9-DD499410B3C7</Guid>
+		</File>
+		<File>
+			<FileName>Reported.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>..\Skins\Blue3wide\Media\OnlineVideos\Reported.png</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>D6D9ED2E-C6C8-4c8d-9D31-F7930B59F800</Guid>
+		</File>
+		<File>
+			<FileName>Working.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>..\Skins\Blue3wide\Media\OnlineVideos\Working.png</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>8D7410A5-F280-44bf-9ABC-36050C0BBA43</Guid>
+		</File>		
     <File>
       <FileName>JustinTV.png</FileName>
       <Type>Thumbs</Type>
@@ -1290,7 +1317,7 @@
 		<ProiectName>Online Videos</ProiectName>
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com/files/Download/MediaPortalInstaller(MPI)/Web/OnlineVideos/</UpdateURL>
-		<Version>0.17.0</Version>
+		<Version>0.18.0</Version>
 		<Description>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</Description>
 		<Group>Web</Group>
 		<Release>Beta</Release>
@@ -1386,7 +1413,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>11-02-10</CreationDate>
+		<CreationDate>21-02-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
