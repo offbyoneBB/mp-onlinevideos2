@@ -392,9 +392,9 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             // walk the categories and see if there are user playlists - they need to be set to have subcategories
-            foreach(RssLink link in Settings.Categories)
+            foreach(Category link in Settings.Categories)
             {
-                if (Regex.Match(link.Url, USER_PLAYLISTS_FEED).Success)
+                if ((link is RssLink) && Regex.Match(((RssLink)link).Url, USER_PLAYLISTS_FEED).Success)
                 {
                     link.HasSubCategories = true;
                     link.SubCategoriesDiscovered = false;
