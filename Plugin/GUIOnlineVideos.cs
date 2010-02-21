@@ -1865,9 +1865,9 @@ namespace OnlineVideos
             int defaultOption = -1;
             // show a list of available options and let the user decide
             GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-            dlgSel.Reset();            
             if (dlgSel != null)
             {
+                dlgSel.Reset();
                 dlgSel.SetHeading(GUILocalizeStrings.Get(2201)/*Select Source*/);
                 int option = 0;
                 foreach (string key in videoInfo.PlaybackOptions.Keys)

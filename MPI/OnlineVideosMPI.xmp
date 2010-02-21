@@ -632,6 +632,15 @@
 			<Guid>c8d779d1-3208-44d2-ae7f-992cf3b51139</Guid>
 		</File>
 		<File>
+			<FileName>myonlinevideosUpdater.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>Blue3wide</SubType>
+			<Source>..\Skins\Blue3wide\myonlinevideosUpdater.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>5BE60E04-3B60-44d6-BEC9-07E792F8D667</Guid>
+		</File>		
+		<File>
 			<FileName>myonlinevideos.xml</FileName>
 			<Type>Skin</Type>
 			<SubType>Xface</SubType>
