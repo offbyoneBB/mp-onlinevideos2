@@ -48,7 +48,8 @@ namespace OnlineVideos
                     }
                     if (System.IO.File.Exists(codec.CodecFile))
                     {                        
-                        codec.Version = FileVersionInfo.GetVersionInfo(codec.CodecFile).FileVersion.Replace(',', '.');
+                        FileVersionInfo info = FileVersionInfo.GetVersionInfo(codec.CodecFile);
+                        codec.Version = string.Format("{0}.{1}.{2}.{3}", info.ProductMajorPart, info.ProductMinorPart, info.ProductBuildPart, info.ProductPrivatePart);
                         codec.IsInstalled = true;
                     }
                 }

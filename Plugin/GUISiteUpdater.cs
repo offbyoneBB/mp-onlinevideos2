@@ -163,7 +163,12 @@ namespace OnlineVideos
                 {
                     case "Add to my sites": 
                         SiteSettings newSite = GetRemoteSite(site.Name);
-                        if (newSite != null) OnlineVideoSettings.getInstance().SiteSettingsList.Add(newSite);
+                        if (newSite != null)
+                        {
+                            OnlineVideoSettings.getInstance().SiteSettingsList.Add(newSite);
+                            OnlineVideoSettings.getInstance().SaveSites();
+                            OnlineVideoSettings.getInstance().BuildSiteList();
+                        }
                         break;
                     case "Update my site":
                         SiteSettings site2Update = GetRemoteSite(site.Name);
@@ -174,6 +179,8 @@ namespace OnlineVideos
                                 if (OnlineVideoSettings.getInstance().SiteSettingsList[i].Name == site2Update.Name)
                                 {
                                     OnlineVideoSettings.getInstance().SiteSettingsList[i] = site2Update;
+                                    OnlineVideoSettings.getInstance().SaveSites();
+                                    OnlineVideoSettings.getInstance().BuildSiteList();
                                     break;
                                 }
                             }
@@ -253,15 +260,24 @@ namespace OnlineVideos
                 siteXml = ws.GetSiteXml(name);
             }, "getting site xml from webservice"))
             {
-                System.IO.StringReader sr = new System.IO.StringReader(siteXml);
-                System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.getInstance().XmlSerImp.GetSerializer(typeof(SerializableSettings));
-                SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
-                if (s.Sites != null && s.Sites.Count > 0)
-                {
-                    return s.Sites[0];
+                if (siteXml.Length > 0)
+                {                    
+                    siteXml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<OnlineVideoSites xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+<Sites>
+" + siteXml + @"
+</Sites>
+</OnlineVideoSites>";
+                    System.IO.StringReader sr = new System.IO.StringReader(siteXml);
+                    System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.getInstance().XmlSerImp.GetSerializer(typeof(SerializableSettings));
+                    SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
+                    if (s.Sites != null && s.Sites.Count > 0)
+                    {
+                        return s.Sites[0];
+                    }
                 }
             }
             return null;
-        }
+        }        
     }
 }
