@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Xml;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
@@ -54,8 +55,8 @@ namespace OnlineVideos
         public string email = "";
         public string password = "";
 
-        public BindingList<SiteSettings> SiteSettingsList { get; set; }
-        public Dictionary<string, Sites.SiteUtilBase> SiteList = new Dictionary<string,OnlineVideos.Sites.SiteUtilBase>();
+        public BindingList<SiteSettings> SiteSettingsList { get; protected set; }
+        public Dictionary<string, Sites.SiteUtilBase> SiteList { get; protected set; }
         
         public SortedList<string, bool> videoExtensions = new SortedList<string, bool>();
         public CodecConfiguration CodecConfiguration;        
@@ -69,6 +70,8 @@ namespace OnlineVideos
 
         private OnlineVideoSettings()
         {
+            SiteSettingsList = new BindingList<SiteSettings>();
+            SiteList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
             Load();
             CodecConfiguration = new CodecConfiguration();
         }
@@ -93,8 +96,15 @@ namespace OnlineVideos
                 using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
                 {
                     BasicHomeScreenName = xmlreader.GetValueAsString(SECTION, BASICHOMESCREEN_NAME, BasicHomeScreenName);
+                    
                     msThumbLocation = xmlreader.GetValueAsString(SECTION, THUMBNAIL_DIR, "");
+                    try { if (!Directory.Exists(msThumbLocation)) Directory.CreateDirectory(msThumbLocation); }
+                    catch (Exception e) { Log.Error("Failed to create thumb dir: {0}", e.ToString()); }
+                    
                     msDownloadDir = xmlreader.GetValueAsString(SECTION, DOWNLOAD_DIR, "");
+                    try { if (Directory.Exists(msDownloadDir)) Directory.CreateDirectory(msDownloadDir); }
+                    catch (Exception e) { Log.Error("Failed to create download dir: {0}", e.ToString()); }
+
                     // enable pin by default -> child protection
                     useAgeConfirmation = xmlreader.GetValueAsBool(SECTION, USE_AGECONFIRMATION, true);
                     // set an almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
@@ -128,13 +138,13 @@ namespace OnlineVideos
                 if (!msThumbLocation.EndsWith(@"\")) msThumbLocation = msThumbLocation + @"\";
 
                 string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
-                if (!System.IO.File.Exists(filename))
+                if (!File.Exists(filename))
                 {
                     Log.Error("ConfigFile {0} was not found!", filename);
                 }
                 else
                 {
-                    using (System.IO.FileStream fs = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                    using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
                     {
                         System.Xml.Serialization.XmlSerializer ser = XmlSerImp.GetSerializer(typeof(SerializableSettings));
                         SerializableSettings s = (SerializableSettings)ser.Deserialize(fs);
@@ -147,7 +157,46 @@ namespace OnlineVideos
             {
                 Log.Error(e);
             }
-        }       
+        }
+
+        public void BuildSiteList()
+        {
+            SiteList.Clear();
+            foreach (SiteSettings siteSettings in SiteSettingsList)
+            {
+                // only need enabled sites
+                if (siteSettings.IsEnabled)
+                {
+                    SiteList.Add(siteSettings.Name, SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings));
+                }
+            }
+            //create a favorites site
+            SiteSettings SelectedSite = new SiteSettings();
+            SelectedSite.Name = "Favorites";
+            SelectedSite.UtilName = "Favorite";
+            SelectedSite.IsEnabled = true;
+            RssLink cat = new RssLink();
+            cat.Name = "dynamic";
+            cat.Url = "favorites";
+            SelectedSite.Categories.Add(cat);
+            SiteList.Add(SelectedSite.Name, SiteUtilFactory.CreateFromShortName(SelectedSite.UtilName, SelectedSite));
+
+            if (!String.IsNullOrEmpty(msDownloadDir))
+            {                
+                //add a downloaded videos site
+                SelectedSite = new SiteSettings();
+                SelectedSite.Name = "Downloaded Videos";
+                SelectedSite.UtilName = "DownloadedVideo";
+                SelectedSite.IsEnabled = true;
+                cat = new RssLink();
+                cat.Name = "All";
+                cat.Url = msDownloadDir;
+                SelectedSite.Categories.Add(cat);
+                Category currentDlsCat = new Category() { Name = "Downloading", Description = "Shows a list of downloads currently running." };
+                SelectedSite.Categories.Add(currentDlsCat);
+                SiteList.Add(SelectedSite.Name, SiteUtilFactory.CreateFromShortName(SelectedSite.UtilName, SelectedSite));
+            }
+        }
 
         public void Save()
         {
@@ -173,31 +222,36 @@ namespace OnlineVideos
                     if (!string.IsNullOrEmpty(password)) xmlwriter.SetValue(SECTION, PASSWORD, password);
                 }
 
-                // only save if there are sites - otherwise an error might have occured on load
-                if (SiteSettingsList != null && SiteSettingsList.Count > 0)
-                {
-                    string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
-                    if (System.IO.File.Exists(filename)) System.IO.File.Delete(filename);
-                    
-                    SerializableSettings s = new SerializableSettings();
-                    s.Sites = SiteSettingsList;
-                    System.Xml.Serialization.XmlSerializer ser = XmlSerImp.GetSerializer(s.GetType());
-                    XmlWriterSettings xmlSettings = new XmlWriterSettings();
-                    xmlSettings.Encoding = System.Text.Encoding.UTF8;
-                    xmlSettings.Indent = true;
-
-                    using (System.IO.FileStream fs = new System.IO.FileStream(filename, System.IO.FileMode.Create))
-                    {
-                        XmlWriter writer = XmlWriter.Create(fs, xmlSettings);
-                        ser.Serialize(writer, s);
-                        fs.Close();
-                    }                    
-                }
+                SaveSites();
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
             }
-        }     
+        }
+
+        public void SaveSites()
+        {
+            // only save if there are sites - otherwise an error might have occured on load
+            if (SiteSettingsList != null && SiteSettingsList.Count > 0)
+            {
+                string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
+                if (File.Exists(filename)) File.Delete(filename);
+
+                SerializableSettings s = new SerializableSettings();
+                s.Sites = SiteSettingsList;
+                System.Xml.Serialization.XmlSerializer ser = XmlSerImp.GetSerializer(s.GetType());
+                XmlWriterSettings xmlSettings = new XmlWriterSettings();
+                xmlSettings.Encoding = System.Text.Encoding.UTF8;
+                xmlSettings.Indent = true;
+
+                using (FileStream fs = new FileStream(filename, FileMode.Create))
+                {
+                    XmlWriter writer = XmlWriter.Create(fs, xmlSettings);
+                    ser.Serialize(writer, s);
+                    fs.Close();
+                }
+            }
+        }
     }
 }

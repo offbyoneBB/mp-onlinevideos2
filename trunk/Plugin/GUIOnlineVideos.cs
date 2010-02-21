@@ -235,7 +235,7 @@ namespace OnlineVideos
 
             int liSelected = GUI_facadeView.SelectedListItemIndex - 1;
 
-            if (selectedSite.HasMultipleVideos && CurrentState == State.details) liSelected = GUI_infoList.SelectedListItemIndex - 1;
+            if (CurrentState == State.details && selectedSite.HasMultipleVideos) liSelected = GUI_infoList.SelectedListItemIndex - 1;
 
             if (liSelected < 0 || CurrentState == State.sites || CurrentState == State.categories || (selectedSite.HasMultipleVideos && CurrentState == State.videos))
             {
@@ -597,69 +597,8 @@ namespace OnlineVideos
                 siteOrder = (SiteOrder)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_ORDER, 0);
                 currentVideoView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
                 currentCategoryView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
-            }
-            OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
-            // build the list of configured sites with utils
-            foreach (SiteSettings siteSettings in settings.SiteSettingsList)
-            {
-                // only need enabled sites
-                if (siteSettings.IsEnabled)
-                {
-                    settings.SiteList.Add(siteSettings.Name, SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings));
-                }
-            }
-            //create a favorites site
-            SiteSettings SelectedSite = new SiteSettings();
-            SelectedSite.Name = "Favorites";
-            SelectedSite.UtilName = "Favorite";
-            SelectedSite.IsEnabled = true;
-            RssLink cat = new RssLink();
-            cat.Name = "dynamic";
-            cat.Url = "favorites";
-            SelectedSite.Categories.Add(cat);
-            settings.SiteList.Add(SelectedSite.Name, SiteUtilFactory.CreateFromShortName(SelectedSite.UtilName, SelectedSite));
-
-            if (!String.IsNullOrEmpty(settings.msDownloadDir))
-            {
-                try
-                {
-                    if (System.IO.Directory.Exists(settings.msDownloadDir) == false)
-                    {
-                        System.IO.Directory.CreateDirectory(settings.msDownloadDir);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Error("Failed to create download dir");
-                    Log.Error(e);
-                }
-                //add a downloaded videos site
-                SelectedSite = new SiteSettings();
-                SelectedSite.Name = "Downloaded Videos";
-                SelectedSite.UtilName = "DownloadedVideo";
-                SelectedSite.IsEnabled = true;
-                cat = new RssLink();
-                cat.Name = "All";
-                cat.Url = settings.msDownloadDir;
-                SelectedSite.Categories.Add(cat);
-                Category currentDlsCat = new Category() { Name = "Downloading", Description = "Shows a list of downloads currently running." };
-                SelectedSite.Categories.Add(currentDlsCat);
-                settings.SiteList.Add(SelectedSite.Name, SiteUtilFactory.CreateFromShortName(SelectedSite.UtilName, SelectedSite));
-            }
-            try
-            {
-                if (System.IO.Directory.Exists(settings.msThumbLocation) == false)
-                {
-                    Log.Info("Thumb dir does not exist.");
-                    System.IO.Directory.CreateDirectory(settings.msThumbLocation);
-                    Log.Info("thumb dir created");
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error("Failed to create thumb dir");
-                Log.Error(e);
-            }
+            }            
+            OnlineVideoSettings.getInstance().BuildSiteList();            
         }
 
         private void DisplaySites()
