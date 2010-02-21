@@ -338,14 +338,15 @@ namespace OnlineVideos.Sites
         # region static helper functions
 
         protected static string GetRedirectedUrl(string url)
-        {            
+        {
+            HttpWebResponse httpWebresponse = null;
             try
             {
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;                
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return url;
                 request.UserAgent = OnlineVideoSettings.UserAgent;
                 request.Timeout = 15000;
-                HttpWebResponse httpWebresponse = request.GetResponse() as HttpWebResponse;
+                httpWebresponse = request.GetResponse() as HttpWebResponse;
                 if (httpWebresponse == null) return url;
 
                 if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
@@ -368,6 +369,10 @@ namespace OnlineVideos.Sites
             catch (Exception ex)
             {
                 Log.Error(ex);
+            }
+            finally
+            {
+                if (httpWebresponse != null) httpWebresponse.Close();
             }
             return url;
         }
