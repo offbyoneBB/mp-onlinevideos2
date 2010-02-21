@@ -1290,22 +1290,28 @@ namespace OnlineVideos
                 {
                     continue;
                 }
-                PlayListItem item = new PlayListItem(loVideo.Title, lsUrl);
-                videoList.Add(item);
-                Log.Info("GUIOnlineVideos.playAll:Added {0} to playlist", loVideo.Title);
-                if (!firstAdded)
+
+                if (firstAdded && !g_Player.Playing) break; // not playing anymore -> stop adding
+
+                if (!String.IsNullOrEmpty(lsUrl) && (Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
                 {
-                    firstAdded = true;
-                    PlayListPlayer.SingletonPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
-                    if (PlayListPlayer.SingletonPlayer.Play(0))
+                    PlayListItem item = new PlayListItem(loVideo.Title, lsUrl);
+                    videoList.Add(item);
+                    Log.Info("GUIOnlineVideos.playAll:Added {0} to playlist", loVideo.Title);
+                    if (!firstAdded)
                     {
-                        playing = true;
-                    }
-                    if (playing)
-                    {
-                        Log.Info("GUIOnlineVideos.playAll:Playing first video.");
-                        GUIGraphicsContext.IsFullScreenVideo = true;
-                        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                        firstAdded = true;
+                        PlayListPlayer.SingletonPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
+                        if (PlayListPlayer.SingletonPlayer.Play(0))
+                        {
+                            playing = true;
+                        }
+                        if (playing)
+                        {
+                            Log.Info("GUIOnlineVideos.playAll:Playing first video.");
+                            GUIGraphicsContext.IsFullScreenVideo = true;
+                            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                        }
                     }
                 }
             }
