@@ -318,7 +318,7 @@ namespace OnlineVideos.Sites
         {
             string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] {'/'}));
             if (extension == string.Empty) extension = System.IO.Path.GetExtension(url);
-            if (extension == ".f4v") extension = ".flv";
+            if (extension == ".f4v" || extension == ".fid") extension = ".flv";
             string safeName = ImageDownloader.GetSaveFilename(video.Title);
             return safeName + extension;
         }
