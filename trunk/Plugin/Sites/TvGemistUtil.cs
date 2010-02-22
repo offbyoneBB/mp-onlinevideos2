@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Net;
-//using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
@@ -49,7 +49,7 @@ namespace OnlineVideos.Sites
             specifics.regex_SubCat = specifics.getRegex(@"<a\s.*?href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<");
 
             specifics.videoListStart = @"<tbody id=""afleveringen"">";
-            specifics.regex_VideoList = specifics.getRegex(@"<tr.*?height=[^>]*>(?<title>[^<]*)<.*?onclick=""document[^>]*>\s*(?<airdate>[^\(]+)\(<a\shref=""(?<url>[^""]+)""");
+            specifics.regex_VideoList = specifics.getRegex(@"<tr.*?height=[^>]*>\s*(?<title>[^<]*)<.*?onclick=""document[^>]*>\s*(?<airdate>.*?)\(<a\shref=""(?<url>[^&]+)&");
             specifics.cc = new CookieContainer();
             regex_NedSub = specifics.getRegex(@"style=""overflow.*?<a\s.*?href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<.*?<td[^>]*>(?<airdate>[^<]*)<");
             regex_NedVidList = specifics.getRegex(@"<tr.*?height[^>]*>(?<title>[^<]*)<.*?href=[^>]*>(?<descr>[^<]+)<.*?</span>.*?href=""(?<url>[^""]+)""");
@@ -147,7 +147,7 @@ namespace OnlineVideos.Sites
                 string webData = GetWebData(pageNr == 1 ? url : url + @"/page=" + pageNr.ToString(), specifics.cc);
                 if (specifics.cc != null)
                 {
-                    CookieCollection ccol = specifics.cc.GetCookies(new Uri(specifics.baseUrl.Insert(7, "tmp") + '/'));
+                    CookieCollection ccol = specifics.cc.GetCookies(new Uri(specifics.baseUrl.Insert(7, "tmp.") + '/'));
                     CookieContainer newcc = new CookieContainer();
                     foreach (Cookie cook in ccol)
                         newcc.Add(cook);
@@ -370,13 +370,15 @@ namespace OnlineVideos.Sites
                     {
                         VideoInfo video = new VideoInfo();
                         video.Title = HttpUtility.HtmlDecode(m.Groups["episode"].Value);
+                        if (String.IsNullOrEmpty(video.Title))
+                            video.Title = "No name";
                         video.ImageUrl = m.Groups["thumb"].Value;
                         if (!String.IsNullOrEmpty(video.ImageUrl))
                             video.ImageUrl = specifics.baseUrl + video.ImageUrl;
                         video.VideoUrl = specifics.baseUrl + m.Groups["url"].Value;
-                        video.Description = m.Groups["descr"].Value + " " +
+                        video.Description = HttpUtility.HtmlDecode(m.Groups["descr"].Value + " " +
                             //m.Groups["episode"].Value + " " + 
-                            m.Groups["airdate"].Value;
+                            m.Groups["airdate"].Value);
                         video.Other = specifics.source;
                         if (specifics.source == Source.RtlGemist)
                         {
@@ -408,7 +410,9 @@ namespace OnlineVideos.Sites
         {
             if (Source.RtlGemist.Equals(video.Other)) return video.VideoUrl;
             if (Source.UitzendingGemist.Equals(video.Other))
-                return TvTuttiUtil.GetPlayerOmroepUrl(video.VideoUrl);
+            {
+                return TvTuttiUtil.GetPlayerOmroepUrl(video.VideoUrl.Replace(@"http://www.uitzendinggemist.nl/index.php/aflevering?", @"http://player.omroep.nl/?"));
+            }
 
             string webData = GetWebData(video.VideoUrl);
             string url = GetSubString(webData, @"class=""wmv-player-holder"" href=""", @"""");
