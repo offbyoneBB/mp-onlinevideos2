@@ -38,11 +38,11 @@ This screen is only available on sites that have multiple choices for a video (c
  * Favorites (displays your favorites from the current site, only YouTube currently)
  * Pin (enter the pin to enable adult content)
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg"/>
-==context menu==
+==context menu (video view)==
  * play all videos currently showing
  * add to favorites / delete from favorites (when displaying _Favorites_)
  * show related videos (only on _YouTube_)
- * download video
+ * download video (only visible when download folder was set in config)
  * delete file (only when showing _DownloadedVideos_)
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg"/>
 
