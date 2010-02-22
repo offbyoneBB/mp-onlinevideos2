@@ -84,7 +84,7 @@ namespace OnlineVideos
         public string Description { get; set; }
 
         [XmlIgnore]
-        public bool HasSubCategories { get; set; }
+        public virtual bool HasSubCategories { get; set; }
 
         [XmlIgnore]
         public bool SubCategoriesDiscovered { get; set; }

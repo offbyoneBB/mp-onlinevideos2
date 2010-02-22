@@ -75,7 +75,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\WindowPlugins.dll</HintPath>
       <Private>False</Private>
-    </Reference>    
+    </Reference>
     <Reference Include="DirectShowLib, Version=2.0.0.22244, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\DirectShowLib.dll</HintPath>
@@ -494,6 +494,7 @@
     <Compile Include="Sites\SouthParkDeUtil.cs" />
     <Compile Include="Sites\SVTPlayUtil.cs" />
     <Compile Include="Sites\TurboNickUtil.cs" />
+    <Compile Include="Sites\TvGemistUtil.cs" />
     <Compile Include="Sites\TvGorgeUtil.cs" />
     <Compile Include="Sites\TvTuttiUtil.cs" />
     <Compile Include="Sites\VeryFunnyAdsUtil.cs" />
