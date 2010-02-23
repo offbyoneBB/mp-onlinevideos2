@@ -213,21 +213,33 @@ namespace OnlineVideos
                     string[] urls = url.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);                    
                     foreach (string aFinalUrl in urls)
                     {
-                        name = MediaPortal.Util.Utils.GetThumb(aFinalUrl);
-                        name = System.IO.Path.GetFileNameWithoutExtension(name);
-                        imageLocation = lsThumbLocation + name + "L.jpg";
-                        if (System.IO.File.Exists(imageLocation)) break;                                                
-                        try
+                        if (System.IO.Path.IsPathRooted(aFinalUrl))
                         {
-                            Log.Info("downloading image :" + aFinalUrl);
-                            client.DownloadFile(aFinalUrl, imageLocation);
-                            break;
+                            if (System.IO.File.Exists(aFinalUrl))
+                            {
+                                imageLocation = aFinalUrl;
+                                break;
+                            }
                         }
-                        catch (Exception)
+                        else
                         {
-                            Log.Info("image not found : " + aFinalUrl);
-                            imageLocation = "";
-                        }                        
+                            // gets a CRC code for the given url and returns a file path: thums_dir\crc.jpg
+                            name = MediaPortal.Util.Utils.GetThumb(aFinalUrl);
+                            name = System.IO.Path.GetFileNameWithoutExtension(name);
+                            imageLocation = lsThumbLocation + name + "L.jpg";
+                            if (System.IO.File.Exists(imageLocation)) break;
+                            try
+                            {
+                                Log.Info("downloading image :" + aFinalUrl);
+                                client.DownloadFile(aFinalUrl, imageLocation);
+                                break;
+                            }
+                            catch (Exception)
+                            {
+                                Log.Info("image not found : " + aFinalUrl);
+                                imageLocation = "";
+                            }
+                        }
                     }                    
                 }
                 _imageLocationList.Add(imageLocation);
