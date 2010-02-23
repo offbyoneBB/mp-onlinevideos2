@@ -17,22 +17,27 @@ namespace OnlineVideos.Sites
 {
     public class MyVideoUtil : SiteUtilBase
     {
-        static Regex videoUrlRegEx = new Regex(@"V=(http[^&]+\.flv)");
-        static Regex infoRegEx = new Regex(@"\</a\>(?<desc>.*)Stichwörter\:.*Länge\:\s(?<duration>[0-9\:]+)\<br/\>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to get the actual file url from the video link.")]
+        string videoUrlRegEx = @"V=(http[^&]+\.flv)";
+
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the rss item description.")]
+        string infoRegEx = @"\</a\>(?<desc>.*)Stichwörter\:.*Länge\:\s(?<duration>[0-9\:]+)\<br/\>";
+
+        Regex regEx_VideoUrl, regEx_Info;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+
+            if (!string.IsNullOrEmpty(videoUrlRegEx)) regEx_VideoUrl = new Regex(videoUrlRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            if (!string.IsNullOrEmpty(infoRegEx)) regEx_Info = new Regex(infoRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        }
 
         public override String getUrl(VideoInfo video)
         {
-            String lsUrl = "";
-            HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(String.Format("http://www.myvideo.de/movie/{0}", video.VideoUrl));
-            webrequest.UserAgent = OnlineVideoSettings.UserAgent;
-            webrequest.KeepAlive = false;
-            webrequest.Method = "GET";
-            webrequest.ContentType = "text/html";
-            webrequest.AllowAutoRedirect = true;
-            webrequest.MaximumAutomaticRedirections = 2;
-            HttpWebResponse webresponse = (HttpWebResponse)webrequest.GetResponse();            
-            Match m = videoUrlRegEx.Match(webresponse.ResponseUri.ToString());
-            if (m.Success) lsUrl = m.Groups[1].Value;
+            string lsUrl = GetRedirectedUrl(video.VideoUrl);
+            Match m = regEx_VideoUrl.Match(lsUrl);
+            if (m.Success) lsUrl = System.Web.HttpUtility.UrlDecode(m.Groups[1].Value);
             return lsUrl;
         }
 
@@ -40,8 +45,8 @@ namespace OnlineVideos.Sites
         {            
             List<VideoInfo> loVideoList = new List<VideoInfo>();            
             foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
-            {                
-                Match mInfo = infoRegEx.Match(rssItem.Description);
+            {
+                Match mInfo = regEx_Info.Match(rssItem.Description);
                 if (mInfo.Success)
                 {
                     VideoInfo video = new VideoInfo();
@@ -49,7 +54,7 @@ namespace OnlineVideos.Sites
                     video.Length = mInfo.Groups["duration"].Value;                    
                     video.ImageUrl = rssItem.MediaThumbnails[0].Url;
                     video.Title = rssItem.MediaTitle;
-                    video.VideoUrl = Regex.Match(rssItem.Link, "watch/([\\d]*)").Groups[1].Value;
+                    video.VideoUrl = string.Format("http://www.myvideo.de/movie/{0}", Regex.Match(rssItem.Link, "watch/([\\d]*)").Groups[1].Value);
                     loVideoList.Add(video);
                 }
             }

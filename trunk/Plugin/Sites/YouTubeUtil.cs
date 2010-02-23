@@ -41,7 +41,6 @@ namespace OnlineVideos.Sites
         private const String CLIENT_ID = "ytapi-GregZ-OnlineVideos-s2skvsf5-0";
         private const String DEVELOPER_KEY = "AI39si5x-6x0Nybb_MvpC3vpiF8xBjpGgfq-HTbyxWP26hdlnZ3bTYyERHys8wyYsbx3zc5f9bGYj0_qfybCp-wyBF-9R5-5kA";        
         private const String RELATED_VIDEO_FEED = "http://gdata.youtube.com/feeds/api/videos/{0}/related";
-        private const String VIDEO_URL = "http://www.youtube.com/get_video?video_id={0}&t={1}";
         private const String CATEGORY_FEED = "http://gdata.youtube.com/feeds/api/videos/-/{0}";
         private const String USER_PLAYLISTS_FEED = "http://gdata.youtube.com/feeds/api/users/[\\w]+/playlists";
         private const String PLAYLIST_FEED = "http://gdata.youtube.com/feeds/api/playlists/{0}";
