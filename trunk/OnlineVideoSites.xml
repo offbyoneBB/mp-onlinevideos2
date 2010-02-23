@@ -116,7 +116,7 @@
         <Category xsi:type="RssLink" name="Top 10 Month">http://www.myvideo.de/feeds/myVideo-Top10-monthly.rss</Category>
         <Category xsi:type="RssLink" name="Top 10 Alltime">http://www.myvideo.de/feeds/myVideo-Top10-alltime.rss</Category>
         <Category xsi:type="RssLink" name="Top 10 Music Charts">http://www.myvideo.de/feeds/myVideo-Top10-music_charts.rss</Category>
-        <Category xsi:type="RssLink" name="Top 10 Entertainment">http://www.myvideo.de/feeds/myVideo-Top10_entertainment.rss</Category>        
+        <Category xsi:type="RssLink" name="Top 10 Entertainment">http://www.myvideo.de/feeds/myVideo-Top10_entertainment.rss</Category>
       </Categories>
     </Site>
     <Site name="SouthPark" util="SouthParkDe" agecheck="false" enabled="true" lang="de">
@@ -751,8 +751,21 @@
     <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" player="WMP" lang="nl">
       <Categories />
     </Site>
-    <Site name="YouPorn" util="YouPorn" agecheck="true" enabled="true" lang="en">
+    <Site name="YouPorn" util="GenericRegex" agecheck="true" enabled="true" lang="en">
       <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[<a[^>]+>\s*<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>\s*</a>\s*
+<h1><a\shref="(?<VideoUrl>/watch/[^"]+)">(?<Title>[^<]+)</a></h1>\s*
+<div\sclass="duration_views">\s*
+<h2>(?<Duration>\d+<span>:</span>\d+)</h2>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+page=\d+)">[^<]+&#187;</a>]]></item>
+        <item key="prevPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+page=\d+)">&#171;[^<]+</a>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<a\shref="(?<m0>http://download.youporn.com/download[^"]+)">]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}.flv]]></item>
+        <item key="searchUrl"><![CDATA[http://www.youporn.com/search?type=straight&amp;query={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.youporn.com]]></item>
+        <item key="cookies"><![CDATA[age_check=1]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Browse">http://www.youporn.com/browse</Category>
         <Category xsi:type="RssLink" name="Top Rated">http://www.youporn.com/top_rated</Category>

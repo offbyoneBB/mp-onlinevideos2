@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Net;
 
 namespace OnlineVideos.Sites
 {
@@ -28,6 +29,8 @@ namespace OnlineVideos.Sites
         string searchPostString;
         [Category("OnlineVideosConfiguration"), Description("Url used for prepending relative links.")]
         string baseUrl;
+        [Category("OnlineVideosConfiguration"), Description("Cookies that need to be send with each request. Comma-separated list of name=value. Domain will be taken from the base url.")]
+        string cookies;
 
         Regex regEx_dynamicCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_PlaylistUrl, regEx_FileUrl;
 
@@ -53,7 +56,7 @@ namespace OnlineVideos.Sites
             {
                 Settings.Categories.Clear();
 
-                string data = GetWebData(baseUrl);
+                string data = GetWebData(baseUrl, GetCookie());
                 if (!string.IsNullOrEmpty(data))
                 {
                     Match m = regEx_dynamicCategories.Match(data);
@@ -80,12 +83,12 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             if (!Uri.IsWellFormedUriString(video.VideoUrl, System.UriKind.Absolute)) video.VideoUrl = new Uri(new Uri(baseUrl), video.VideoUrl).AbsoluteUri;
-            string dataPage = GetWebData(video.VideoUrl);
+            string dataPage = GetWebData(video.VideoUrl, GetCookie());
             // extra step if needed
             if (regEx_PlaylistUrl != null)
             {
                 Match mPlaylist = regEx_PlaylistUrl.Match(dataPage);
-                if (mPlaylist.Success) dataPage = GetWebData(HttpUtility.UrlDecode(mPlaylist.Groups["url"].Value));
+                if (mPlaylist.Success) dataPage = GetWebData(HttpUtility.UrlDecode(mPlaylist.Groups["url"].Value), GetCookie());
                 else return "";
             }
             Match m = regEx_FileUrl.Match(dataPage);
@@ -101,7 +104,7 @@ namespace OnlineVideos.Sites
         List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
-            if (string.IsNullOrEmpty(data)) data = GetWebData(url);
+            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie());
             if (data.Length > 0)
             {
                 Match m = regEx_VideoList.Match(data);
@@ -111,7 +114,7 @@ namespace OnlineVideos.Sites
                     videoInfo.Title = System.Web.HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                     videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                     videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                    videoInfo.Length = m.Groups["Duration"].Value;
+                    videoInfo.Length = Regex.Replace(m.Groups["Duration"].Value, "(<[^>]+>)", "");
                     videoInfo.Description = m.Groups["Description"].Value;
                     videoList.Add(videoInfo);
                     m = m.NextMatch();
@@ -226,5 +229,24 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
+
+        CookieContainer GetCookie()
+        {
+            if (string.IsNullOrEmpty(cookies)) return null;
+
+            CookieContainer cc = new CookieContainer();
+            string[] myCookies = cookies.Split(new char[] { ',' });
+            foreach (string aCookie in myCookies)
+            {
+                string[] name_value = aCookie.Split(new char[] { '=' });
+                Cookie c = new Cookie();
+                c.Name = name_value[0];
+                c.Value = name_value[1];
+                c.Expires = DateTime.Now.AddHours(1);
+                c.Domain = new Uri(baseUrl).Host;
+                cc.Add(c);
+            }
+            return cc;
+        }
     }
 }
