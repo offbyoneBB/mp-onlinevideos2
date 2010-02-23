@@ -508,7 +508,6 @@
     <Compile Include="Sites\VoxNowUtil.cs" />
     <Compile Include="Sites\Wetenschap24Util.cs" />
     <Compile Include="Sites\YahooMusicVideosUtil.cs" />
-    <Compile Include="Sites\YouPornUtil.cs" />
     <Compile Include="Sites\YouTubeUtil.cs" />
     <Compile Include="GUIOnlineVideos.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
