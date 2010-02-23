@@ -115,6 +115,8 @@
         <Category xsi:type="RssLink" name="Top 10 Week">http://www.myvideo.de/feeds/myVideo-Top10-weekly.rss</Category>
         <Category xsi:type="RssLink" name="Top 10 Month">http://www.myvideo.de/feeds/myVideo-Top10-monthly.rss</Category>
         <Category xsi:type="RssLink" name="Top 10 Alltime">http://www.myvideo.de/feeds/myVideo-Top10-alltime.rss</Category>
+        <Category xsi:type="RssLink" name="Top 10 Music Charts">http://www.myvideo.de/feeds/myVideo-Top10-music_charts.rss</Category>
+        <Category xsi:type="RssLink" name="Top 10 Entertainment">http://www.myvideo.de/feeds/myVideo-Top10_entertainment.rss</Category>        
       </Categories>
     </Site>
     <Site name="SouthPark" util="SouthParkDe" agecheck="false" enabled="true" lang="de">
