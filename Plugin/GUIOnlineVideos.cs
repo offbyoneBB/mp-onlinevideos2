@@ -199,10 +199,15 @@ namespace OnlineVideos
             // everytime the plugin is shown, after some other window was shown
             if (OnlineVideoSettings.getInstance().ageHasBeenConfirmed && PreviousWindowId == 0)
             {
-                // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
-                Log.Debug("OnlineVideos Age Confirmed set to false.");
+                // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last                
                 OnlineVideoSettings.getInstance().ageHasBeenConfirmed = false;
-                CurrentState = State.sites;
+                Log.Debug("OnlineVideos Age Confirmed set to false.");
+                if (selectedSite != null && selectedSite.Settings.ConfirmAge)
+                {                     
+                    CurrentState = State.sites;
+                    selectedSite = null;
+                    selectedSiteIndex = 0;
+                }
             }
 
             Log.Debug("OnPageLoad. CurrentState:" + CurrentState);
@@ -562,13 +567,30 @@ namespace OnlineVideos
 
         protected override void OnPageDestroy(int newWindowId)
         {
-            // Save view
-            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            // only handle if not just going to a full screen video
+            if (newWindowId != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
             {
-                xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_MODE, (int)currentSiteView);
-                xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_ORDER, (int)siteOrder);
-                xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.VIDEOVIEW_MODE, (int)currentVideoView);
-                xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.CATEGORYVIEW_MODE, (int)currentCategoryView);
+                // Save view
+                using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                {
+                    xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_MODE, (int)currentSiteView);
+                    xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_ORDER, (int)siteOrder);
+                    xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.VIDEOVIEW_MODE, (int)currentVideoView);
+                    xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.CATEGORYVIEW_MODE, (int)currentCategoryView);
+                }
+
+                // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
+                if (OnlineVideoSettings.getInstance().ageHasBeenConfirmed)
+                {
+                    OnlineVideoSettings.getInstance().ageHasBeenConfirmed = false;
+                    Log.Debug("OnlineVideos Age Confirmed set to false.");
+                    if (selectedSite != null && selectedSite.Settings.ConfirmAge)
+                    {
+                        CurrentState = State.sites;
+                        selectedSite = null;
+                        selectedSiteIndex = 0;
+                    }
+                }
             }
             base.OnPageDestroy(newWindowId);
         }
