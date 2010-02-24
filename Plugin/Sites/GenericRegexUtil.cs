@@ -67,7 +67,7 @@ namespace OnlineVideos.Sites
                         RssLink cat = new RssLink();
                         cat.Url = m.Groups["url"].Value;
                         if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;                        
-                        cat.Name = m.Groups["title"].Value.Trim();
+                        cat.Name = System.Web.HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
                         m = m.NextMatch();
                         Settings.Categories.Add(cat);
                     }
