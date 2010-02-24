@@ -309,8 +309,18 @@
         <Category xsi:type="RssLink" name="Filmography">http://www.cinemassacre.com/new/?page_id=1375</Category>
       </Categories>
     </Site>
-    <Site name="CollegeHumor" util="CollegeHumor" agecheck="false" enabled="true" lang="en">
+    <Site name="CollegeHumor" util="GenericRegex" agecheck="false" enabled="true" lang="en">
       <Description>Funny videos from CollegeHumor.com.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[(?<=<li\sid="nav-b">(?:(?!<ul>).)*<ul>\s*(<li[^>]*>(<a[^>]*>[^<]*</a>)?[^<]*</li>\s*)*)<li><a\shref="(?<url>[^"]+)">(?<title>[^<]+)</a></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]+)"\sclass="video_link"\stitle="(?<Title>[^"]+)"\sdata-json="{context[^<]*<img\ssrc="(?<ImageUrl>[^"]+)"\salt=]]></item>
+        <item key="videoUrlFormatString"><![CDATA[moogaloop{0}]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><span\sclass="next">Next</span></a>]]></item>
+        <item key="prevPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><span\sclass="previous">Previous</span></a>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<file>(?<m0>[^<]+)</file>]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.collegehumor.com/]]></item>
+      </Configuration>
       <Categories />
     </Site>
     <Site name="5min" util="FiveMin" agecheck="false" enabled="true" lang="en">
