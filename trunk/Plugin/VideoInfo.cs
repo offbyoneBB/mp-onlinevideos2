@@ -25,6 +25,9 @@ namespace OnlineVideos
         {
             if (!string.IsNullOrEmpty(Description))
             {
+                // decode HTML escape character
+                Description = System.Web.HttpUtility.HtmlDecode(Description);
+
                 // Replace &nbsp; with space
                 Description = Regex.Replace(Description, @"&nbsp;", " ", RegexOptions.Multiline);
 
@@ -39,9 +42,6 @@ namespace OnlineVideos
 
                 // Remove whitespace at the beginning and end
                 Description = Description.Trim();
-
-                // decode HTML escape character
-                Description = System.Web.HttpUtility.HtmlDecode(Description);
             }            
         }
         
@@ -68,7 +68,7 @@ namespace OnlineVideos
 
         public static VideoInfo FromRssItem(RssItem rssItem, bool useLink, System.Predicate<string> isPossibleVideo)
         {
-            VideoInfo video = new VideoInfo();
+            VideoInfo video = new VideoInfo() { PlaybackOptions = new Dictionary<string, string>() };
 
             // Title - prefer from MediaTitle tag if available
             if (!String.IsNullOrEmpty(rssItem.MediaTitle)) video.Title = rssItem.MediaTitle;
@@ -96,6 +96,9 @@ namespace OnlineVideos
                 video.ImageUrl = rssItem.Enclosure.Url;
             }
 
+            if (rssItem.Blip_Runtime != 0) video.Length = TimeSpan.FromSeconds(rssItem.Blip_Runtime).ToString();
+            if (string.IsNullOrEmpty(video.Length)) video.Length = GetDuration(rssItem.iT_Duration);
+
             // if we are forced to use the Link of the RssItem, just set the video link
             if (useLink) video.VideoUrl = rssItem.Link;
 
@@ -104,7 +107,7 @@ namespace OnlineVideos
             {
                 video.VideoUrl = useLink ? rssItem.Link : rssItem.Enclosure.Url;
 
-                if (!string.IsNullOrEmpty(rssItem.Enclosure.Length))
+                if (string.IsNullOrEmpty(video.Length) && !string.IsNullOrEmpty(rssItem.Enclosure.Length))
                 {
                     int bytesOrSeconds = 0;
                     if (int.TryParse(rssItem.Enclosure.Length, out bytesOrSeconds))
@@ -112,7 +115,7 @@ namespace OnlineVideos
                         if (bytesOrSeconds > 18000) // won't be longer than 5 hours if Length is guessed as seconds, so it's bytes
                             video.Length = (bytesOrSeconds / 1024).ToString("N0") + " KB";
                         else
-                            video.Length = rssItem.Enclosure.Length + " sec";
+                            video.Length = TimeSpan.FromSeconds(bytesOrSeconds).ToString();
                     }
                     else
                     {
@@ -120,34 +123,22 @@ namespace OnlineVideos
                     }
                 }
             }
-            else if (rssItem.MediaContents.Count > 0) // try to get the first MediaContent
+            if (rssItem.MediaContents.Count > 0) // try to get the first MediaContent
             {
                 foreach (RssItem.MediaContent content in rssItem.MediaContents)
                 {
-                    if (isPossibleVideo(content.Url) || useLink)
-                    {
-                        video.VideoUrl = useLink ? rssItem.Link : content.Url;
-                        uint seconds = 0;
-                        if (uint.TryParse(content.Duration, out seconds)) video.Length = TimeSpan.FromSeconds(seconds).ToString();
-                        else video.Length = content.Duration;
-                        break;
-                    }
+                    if (!useLink && isPossibleVideo(content.Url)) AddToPlaybackOption(video.PlaybackOptions, content);
+                    if (string.IsNullOrEmpty(video.Length)) video.Length = GetDuration(content.Duration);
                 }
             }
-            else if (rssItem.MediaGroups.Count > 0) // videos might be wrapped in groups, try to get the first MediaContent
+            if (rssItem.MediaGroups.Count > 0) // videos might be wrapped in groups, try to get the first MediaContent
             {
                 foreach (RssItem.MediaGroup grp in rssItem.MediaGroups)
                 {
                     foreach (RssItem.MediaContent content in grp.MediaContents)
                     {
-                        if (isPossibleVideo(content.Url) || useLink)
-                        {
-                            video.VideoUrl = useLink ? rssItem.Link : content.Url;
-                            uint seconds = 0;
-                            if (uint.TryParse(content.Duration, out seconds)) video.Length = TimeSpan.FromSeconds(seconds).ToString();
-                            else video.Length = content.Duration;
-                            break;
-                        }
+                        if (!useLink && isPossibleVideo(content.Url)) AddToPlaybackOption(video.PlaybackOptions, content);
+                        if (string.IsNullOrEmpty(video.Length)) video.Length = GetDuration(content.Duration);
                     }
                 }
             }
@@ -165,8 +156,34 @@ namespace OnlineVideos
                     video.Length += rssItem.PubDate;
                 }
             }
-
+            
             return video;
+        }
+
+        static void AddToPlaybackOption(Dictionary<string, string> playbackOptions, RssItem.MediaContent content)
+        {
+            if (!playbackOptions.ContainsValue(content.Url))
+                playbackOptions.Add(
+                    string.Format("{0}x{1} ({2}) | {3}:// | {4}", 
+                        content.Width, 
+                        content.Height,
+                        content.Bitrate != 0 ? 
+                            content.Bitrate.ToString() + " kbps" : 
+                            (content.FileSize != 0 ? (content.FileSize / 1024).ToString("N0") + " KB" : ""), 
+                        new Uri(content.Url).Scheme, 
+                        System.IO.Path.GetExtension(content.Url)), 
+                    content.Url);
+        }
+
+        static string GetDuration(string duration)
+        {
+            if (!string.IsNullOrEmpty(duration))
+            {
+                uint seconds = 0;
+                if (uint.TryParse(duration, out seconds)) return TimeSpan.FromSeconds(seconds).ToString();
+                else return duration;
+            }
+            return "";
         }
     }    
 }

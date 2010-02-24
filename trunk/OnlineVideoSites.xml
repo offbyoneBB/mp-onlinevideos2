@@ -55,7 +55,7 @@
       <Description>Mediathek des Zweiten Deutschen Fernsehens.</Description>
       <Categories />
     </Site>
-    <Site name="3sat" util="DreiSat" agecheck="false" enabled="true" lang="de">
+    <Site name="3sat" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Einziges öffentlich-rechtliches Gemeinschaftsprogramm des deutschen Sprachraums (ZDF – ORF – SRG – ARD).</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Kulturzeit">http://www.3sat.de/mediathek/rss/mediathek_Kulturzeit.xml</Category>
@@ -531,8 +531,7 @@
         <Category xsi:type="RssLink" name="Rocketboom">http://www.rocketboom.com/rss/hd.xml</Category>
         <Category xsi:type="RssLink" name="Crave">http://feeds2.feedburner.com/cnet/crave</Category>
         <Category xsi:type="RssLink" name="CNet">http://feeds2.feedburner.com/allcnetvideopodcasts</Category>
-        <Category xsi:type="RssLink" name="DL.TV">http://feeds2.feedburner.com/ziffdavis/dltvwmvvideo</Category>
-        <Category xsi:type="RssLink" name="n-tv Nachrichten">http://ntv-news.feedplace.de/rss</Category>
+        <Category xsi:type="RssLink" name="DL.TV">http://feeds2.feedburner.com/ziffdavis/dltvwmvvideo</Category>        
         <Category xsi:type="RssLink" name="MotoGP Race Report" thumb="http://up2.podbean.com/image-logos/17774_logo.jpg">http://www.motogp.com/xml/en/sindication/podcast_video.xml</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>

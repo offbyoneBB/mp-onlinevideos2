@@ -1821,7 +1821,7 @@ namespace OnlineVideos
         private string DisplayPlaybackOptions(VideoInfo videoInfo, string defaultUrl)
         {
             // with no options set, return the VideoUrl field
-            if (videoInfo.PlaybackOptions == null || videoInfo.PlaybackOptions.Count == 0) return videoInfo.VideoUrl;
+            if (videoInfo.PlaybackOptions == null || videoInfo.PlaybackOptions.Count == 0) return defaultUrl;
             // with just one option set, return that options url
             if (videoInfo.PlaybackOptions.Count == 1)
             {

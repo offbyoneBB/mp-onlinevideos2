@@ -229,6 +229,26 @@ namespace RssToolkit.Rss
             }
         }
 
+        #region Blip specific
+
+        /// <summary>
+        /// The number of seconds the media object plays.
+        /// </summary>
+        [XmlElement(ElementName = "runtime", Namespace = "http://blip.tv/dtd/blip/1.0")]
+        public int Blip_Runtime { get; set; }
+
+        #endregion
+
+        #region iTunes specific
+
+        /// <summary>
+        /// The number of seconds the media object plays.
+        /// </summary>
+        [XmlElement(ElementName = "duration", Namespace = "http://www.itunes.com/dtds/podcast-1.0.dtd")]
+        public string iT_Duration { get; set; }
+
+        #endregion        
+
         #region GameTrailers specific
 
         /// <summary>
@@ -379,6 +399,12 @@ namespace RssToolkit.Rss
             /// </summary>
             [XmlAttribute(AttributeName = "bitrate")]
             public int Bitrate { get; set; }
+
+            /// <summary>
+            /// The size in bytes of the mediaobject. It is an optional attribute.
+            /// </summary>
+            [XmlAttribute(AttributeName = "fileSize")]
+            public int FileSize { get; set; }            
 
             /// <summary>
             /// The primary language encapsulated in the media object. Language codes possible are detailed in RFC 3066. It is an optional attribute.
