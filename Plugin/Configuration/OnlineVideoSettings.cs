@@ -127,9 +127,12 @@ namespace OnlineVideos
                     }
 
                     if (!videoExtensions.ContainsKey(".asf")) videoExtensions.Add(".asf", false);
+                    if (!videoExtensions.ContainsKey(".asx")) videoExtensions.Add(".asx", false);
                     if (!videoExtensions.ContainsKey(".flv")) videoExtensions.Add(".flv", false);
                     if (!videoExtensions.ContainsKey(".m4v")) videoExtensions.Add(".m4v", false);
+                    if (!videoExtensions.ContainsKey(".mov")) videoExtensions.Add(".mov", false);
                     if (!videoExtensions.ContainsKey(".mp4")) videoExtensions.Add(".mp4", false);
+                    if (!videoExtensions.ContainsKey(".wmv")) videoExtensions.Add(".wmv", false);
                 }
 
                 // set a default thumbnail location, and fix any existing one to include the last \
