@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
         public enum MediaQuality { medium, high };
 
         string catRegex = @"<option\svalue=""(?<url>[^""]+)"">(?<title>[^<]+)</option>";
-        string videolistRegex = @"title=""Diese\sSendung\sempfehlen.""></a></div>\s*<h3\sclass=""title"">\s*<span>(?<title>[^<]+)</span>";
+        string videolistRegex = @"</a></div>\s*<h3\sclass=""title"">\s*<span>(?<title>[^<]+)</span>";
         string videolistRegex2 = @"<li><a\shref=""(?<url>[^""]+)""\stitle=""(?<alt>[^""]+)"">(?<title>[^<]+)</a>";
         string videolistRegex3 = @"<li><a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a>";
         string playlistRegex = @"<div\sid=""btn_playlist""\sstyle=""(?<style>[^""]+)"">\s*<a\shref=""(?<url>[^""]+)""\sid=""open_playlist""";
@@ -62,6 +62,15 @@ namespace OnlineVideos.Sites
                         cat.Name = cat.Name.Replace("&amp;", "&");
                         cat.Url = m.Groups["url"].Value;
                         cat.Url = "http://tvthek.orf.at" + cat.Url;
+
+                        Settings.Categories.Add(cat);
+                    }
+                    else if (m.Groups["url"].Value.StartsWith("http:"))
+                    {
+                        RssLink cat = new RssLink();
+                        cat.Name = m.Groups["title"].Value;
+                        cat.Name = cat.Name.Replace("&amp;", "&");
+                        cat.Url = m.Groups["url"].Value;
 
                         Settings.Categories.Add(cat);
                     }
