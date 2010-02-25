@@ -223,43 +223,26 @@
         <Category xsi:type="RssLink" name="Video Games">http://rss.livevideo.com/rss/rss.ashx?catid=15</Category>
       </Categories>
     </Site>
-    <Site name="GameTrailers" util="GameTrailers" agecheck="false" enabled="true" lang="en">
+    <Site name="GameTrailers" util="GenericSite" agecheck="false" enabled="true" lang="en">
+      <Configuration>
+        <item key="fileUrlRegEx"><![CDATA[<src>([^<]+)</src>]]></item>
+        <item key="fileUrlFormat"><![CDATA[{0}]]></item>
+        <item key="videoUrlRegEx"><![CDATA[http://.+/(\d{4,10}).html.*]]></item>
+        <item key="videoUrlFormatString"><![CDATA[http://www.gametrailers.com/neo/?page=xml.mediaplayer.Mediagen&movieId={0}]]></item>
+      </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="New Trailers">http://www.gametrailers.com/rss/newest.xml</Category>
-        <Category xsi:type="RssLink" name="Newest DS">http://www.gametrailers.com/rss/newestds.xml</Category>
-        <Category xsi:type="RssLink" name="Newest Nintendo">http://www.gametrailers.com/rss/newestnintendo.xml</Category>
-        <Category xsi:type="RssLink" name="Newest PC">http://www.gametrailers.com/rss/newestpc.xml</Category>
-        <Category xsi:type="RssLink" name="Newest PS2">http://www.gametrailers.com/rss/newestps2.xml</Category>
-        <Category xsi:type="RssLink" name="Newest PS3">http://www.gametrailers.com/rss/newestps3.xml</Category>
-        <Category xsi:type="RssLink" name="Newest PSP">http://www.gametrailers.com/rss/newestpsp.xml</Category>
-        <Category xsi:type="RssLink" name="Newest Sony">http://www.gametrailers.com/rss/newestsony.xml</Category>
-        <Category xsi:type="RssLink" name="Newest Xb360">http://www.gametrailers.com/rss/newestxb360.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20">http://www.gametrailers.com/rss/top20.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 DS">http://www.gametrailers.com/rss/top20ds.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 GBA">http://www.gametrailers.com/rss/top20gba.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 GC">http://www.gametrailers.com/rss/top20gc.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 NGage">http://www.gametrailers.com/rss/top20ngage.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 Nintendo">http://www.gametrailers.com/rss/top20nintendo.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 PC">http://www.gametrailers.com/rss/top20pc.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 PS2">http://www.gametrailers.com/rss/top20ps2.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 PS3">http://www.gametrailers.com/rss/top20ps3.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 PSP">http://www.gametrailers.com/rss/top20psp.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 Sony">http://www.gametrailers.com/rss/top20sony.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 Xbox360">http://www.gametrailers.com/rss/top20xb360.xml</Category>
-        <Category xsi:type="RssLink" name="Top 20 Xbox">http://www.gametrailers.com/rss/top20xbox.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated">http://www.gametrailers.com/rss/toprated.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated DS">http://www.gametrailers.com/rss/topratedds.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated GBA">http://www.gametrailers.com/rss/topratedgba.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated GC">http://www.gametrailers.com/rss/topratedgc.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated NGage">http://www.gametrailers.com/rss/topratedngage.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated Nintendo">http://www.gametrailers.com/rss/topratednintendo.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated PC">http://www.gametrailers.com/rss/topratedpc.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated PS2">http://www.gametrailers.com/rss/topratedps2.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated PS3">http://www.gametrailers.com/rss/topratedps3.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated PSP">http://www.gametrailers.com/rss/topratedpsp.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated Sony">http://www.gametrailers.com/rss/topratedsony.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated Xb360">http://www.gametrailers.com/rss/topratedxb360.xml</Category>
-        <Category xsi:type="RssLink" name="Top Rated Xbox">http://www.gametrailers.com/rss/topratedxbox.xml</Category>
+        <Category xsi:type="RssLink" name="All">http://www.gametrailers.com/rssgenerate.php?quality[either]=on&amp;orderby=newest&amp;limit=100</Category>                
+        <Category xsi:type="RssLink" name="PC">http://www.gametrailers.com/rssgenerate.php?favplats[pc]=pc&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
+        <Category xsi:type="RssLink" name="PS3">http://www.gametrailers.com/rssgenerate.php?favplats[ps3]=ps3&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
+        <Category xsi:type="RssLink" name="PS2">http://www.gametrailers.com/rssgenerate.php?favplats[ps2]=ps2&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
+        <Category xsi:type="RssLink" name="PSP">http://www.gametrailers.com/rssgenerate.php?favplats[psp]=psp&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>        
+        <Category xsi:type="RssLink" name="Xbox360">http://www.gametrailers.com/rssgenerate.php?favplats[xb360]=xb360&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
+        <Category xsi:type="RssLink" name="Xbox">http://www.gametrailers.com/rssgenerate.php?favplats[xbox]=xbox&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
+        <Category xsi:type="RssLink" name="Wii">http://www.gametrailers.com/rssgenerate.php?favplats[wii]=wii&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
+        <Category xsi:type="RssLink" name="GameCube">http://www.gametrailers.com/rssgenerate.php?favplats[gc]=gc&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>        
+        <Category xsi:type="RssLink" name="Game Boy Advance">http://www.gametrailers.com/rssgenerate.php?favplats[gba]=gba&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
+        <Category xsi:type="RssLink" name="Nintendo DS">http://www.gametrailers.com/rssgenerate.php?favplats[ds]=ds&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>        
+        <Category xsi:type="RssLink" name="Mobile">http://www.gametrailers.com/rssgenerate.php?favplats[mob]=mob&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>                        
       </Categories>
     </Site>
     <Site name="Apple Trailers" util="AppleTrailers" agecheck="false" enabled="true" lang="en">

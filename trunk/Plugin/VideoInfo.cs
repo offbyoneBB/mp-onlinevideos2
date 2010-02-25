@@ -79,7 +79,11 @@ namespace OnlineVideos
             else video.Description = rssItem.Description;
 
             // Try to find a thumbnail
-            if (rssItem.MediaThumbnails.Count > 0)
+            if (!string.IsNullOrEmpty(rssItem.GT_Image))
+            {
+                video.ImageUrl = rssItem.GT_Image;
+            }
+            else if (rssItem.MediaThumbnails.Count > 0)
             {
                 video.ImageUrl = rssItem.MediaThumbnails[0].Url;
             }
