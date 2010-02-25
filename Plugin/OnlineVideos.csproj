@@ -461,7 +461,6 @@
     <Compile Include="Sites\CinemassacreUtil.cs" />
     <Compile Include="Sites\CnnUtil.cs" />
     <Compile Include="Sites\DasErsteMediathekUtil.cs" />
-    <Compile Include="Sites\FiveMin.cs" />
     <Compile Include="Sites\GameTrailersUtil.cs" />
     <Compile Include="Sites\GenericRegexUtil.cs" />
     <Compile Include="Sites\HardwareInfoUtil.cs" />

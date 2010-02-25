@@ -170,7 +170,8 @@ namespace OnlineVideos
                 // only need enabled sites
                 if (siteSettings.IsEnabled)
                 {
-                    SiteList.Add(siteSettings.Name, SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings));
+                    Sites.SiteUtilBase siteutil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
+                    if (siteutil != null) SiteList.Add(siteSettings.Name, siteutil);
                 }
             }
             //create a favorites site

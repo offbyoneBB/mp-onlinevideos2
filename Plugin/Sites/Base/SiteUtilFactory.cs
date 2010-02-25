@@ -38,13 +38,16 @@ namespace OnlineVideos
 		{
             Type result = null;
             if (utils.TryGetValue(name, out result))
-            {                
-                SiteUtilBase util = (SiteUtilBase)Activator.CreateInstance(result);                
+            {
+                SiteUtilBase util = (SiteUtilBase)Activator.CreateInstance(result);
                 util.Initialize(settings);
                 return util;
             }
             else
+            {
+                Log.Error(string.Format("SiteUtil with name: {0} not found!", name));
                 return null;
+            }
 		}
 
         public static string[] GetAllNames()
