@@ -15,33 +15,45 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class GenericSiteUtil : SiteUtilBase
     {
-        [Category("OnlineVideosConfiguration"), Description("FormatString for the Url used for getting the results of a search.")]
-        string searchUrl = "";
-
-        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the playlist data for the playback url.")]
-        string fileUrlRegEx = "";
-
+        [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
+        string searchUrl;
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page retrieved from the video url that was found in the rss.")]
+        string fileUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("FormatString that will take the groups from the fileUrlRegEx as parameters.")]
-        string fileUrlFormat = "";
+        string fileUrlFormat;
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to match on the video url retrieved for the item in the rss. Only used if set.")]
+        string videoUrlRegEx;
+        [Category("OnlineVideosConfiguration"), Description("Format string applied to the video url of an item that was found in the rss. If videoUrlRegEx is set those groups will be taken as parameters.")]
+        string videoUrlFormatString = "{0}";
 
-        Regex regEx_FileUrl;
+        Regex regEx_FileUrl, regEx_VideoUrl;
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
 
-            if (!string.IsNullOrEmpty(fileUrlRegEx)) regEx_FileUrl = new Regex(fileUrlRegEx,
-                                          RegexOptions.IgnoreCase
-                                        | RegexOptions.CultureInvariant
-                                        | RegexOptions.Multiline
-                                        | RegexOptions.Singleline
-                                        | RegexOptions.IgnorePatternWhitespace
-                                        | RegexOptions.Compiled);
+            if (!string.IsNullOrEmpty(fileUrlRegEx)) regEx_FileUrl = new Regex(fileUrlRegEx, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+            if (!string.IsNullOrEmpty(videoUrlRegEx)) regEx_VideoUrl = new Regex(videoUrlRegEx, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
         }
 
         public override String getUrl(VideoInfo video)
         {
             string resultUrl = "";
+
+            if (regEx_VideoUrl != null)
+            {
+                Match m = regEx_VideoUrl.Match(video.VideoUrl);
+                if (m.Success)
+                {
+                    string[] regExGroupValues = new string[m.Groups.Count - 1];
+                    for (int i = 1; i < m.Groups.Count; i++) regExGroupValues[i - 1] = m.Groups[i].Value;
+                    video.VideoUrl = HttpUtility.UrlDecode(string.Format(videoUrlFormatString, regExGroupValues));
+                }
+            }
+            else
+            {
+                string.Format(videoUrlFormatString, video.VideoUrl);
+            }
 
             if (regEx_FileUrl == null)
             {
