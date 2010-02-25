@@ -559,6 +559,30 @@
         </Category>
       </Categories>
     </Site>
+    <Site name="BUNCHTV" util="GenericRegex" agecheck="false" enabled="true" lang="de">
+      <Description>Videoconten from bunch.tv.</Description>
+      <Configuration>
+		<item key="videoItemXml"><![CDATA[/root/bunchTvPlaylist/bunchTvClip]]></item>
+		<item key="videoTitleXml"><![CDATA[title]]></item>
+		<item key="videoThumbXml"><![CDATA[thumbnail_large]]></item>
+		<item key="videoUrlXml"><![CDATA[streaminName]]></item>
+		<item key="videoDescriptionXml"><![CDATA[description]]></item>
+		<item key="videoDurationXml"><![CDATA[duration]]></item>
+		<item key="videoUrlFormatString"><![CDATA[http://streaming04.exozet.com/bunchtv-streaming/{0}]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Hiphop">http://bunch.tv/xml/playlist/13119/playlist.xml</Category>
+        <Category xsi:type="RssLink" name="Reggae Funk n Soul">http://bunch.tv/xml/playlist/19587/playlist.xml</Category>
+		<Category xsi:type="RssLink" name="Metal">http://bunch.tv/xml/playlist/13117/playlist.xml</Category>
+		<Category xsi:type="RssLink" name="Independent">http://bunch.tv/xml/playlist/13120/playlist.xml</Category>
+		<Category xsi:type="RssLink" name="Electronic">http://bunch.tv/xml/playlist/13118/playlist.xml</Category>
+		<Category xsi:type="RssLink" name="Games">http://bunch.tv/xml/playlist/3929/playlist.xml</Category>
+		<Category xsi:type="RssLink" name="Cinema">http://bunch.tv/xml/playlist/19541/playlist.xml</Category>
+		<Category xsi:type="RssLink" name="Sports">http://bunch.tv/xml/playlist/19534/playlist.xml</Category>
+		<Category xsi:type="RssLink" name="Travel">http://bunch.tv/xml/playlist/27270/playlist.xml</Category>
+		<Category xsi:type="RssLink" name="Festivals">http://bunch.tv/xml/playlist/27372/playlist.xml</Category>
+      </Categories>
+    </Site>
     <Site name="YahooMusicVideos" util="YahooMusicVideos" agecheck="false" enabled="true">
       <Categories />
     </Site>

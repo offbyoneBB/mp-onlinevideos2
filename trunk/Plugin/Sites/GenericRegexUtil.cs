@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Net;
+using System.Xml;
 
 namespace OnlineVideos.Sites
 {
@@ -35,6 +36,18 @@ namespace OnlineVideos.Sites
         string baseUrl;
         [Category("OnlineVideosConfiguration"), Description("Cookies that need to be send with each request. Comma-separated list of name=value. Domain will be taken from the base url.")]
         string cookies;
+        [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoItem for videoList.")]
+        string videoItemXml;
+        [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoTitle for videoList.")]
+        string videoTitleXml;
+        [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoThumb for videoList.")]
+        string videoThumbXml;
+        [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoUrl for videoList.")]
+        string videoUrlXml;
+        [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoDuration for videoList.")]
+        string videoDurationXml;
+        [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoDescription for videoList.")]
+        string videoDescriptionXml;
 
         Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_PlaylistUrl, regEx_FileUrl;
 
@@ -144,17 +157,44 @@ namespace OnlineVideos.Sites
             if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie());
             if (data.Length > 0)
             {
-                Match m = regEx_VideoList.Match(data);
-                while (m.Success)
+                if (regEx_VideoList != null)
                 {
-                    VideoInfo videoInfo = new VideoInfo();
-                    videoInfo.Title = System.Web.HttpUtility.HtmlDecode(m.Groups["Title"].Value);
-                    videoInfo.VideoUrl = string.Format(videoUrlFormatString, m.Groups["VideoUrl"].Value);
-                    videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                    videoInfo.Length = Regex.Replace(m.Groups["Duration"].Value, "(<[^>]+>)", "");
-                    videoInfo.Description = m.Groups["Description"].Value;
-                    videoList.Add(videoInfo);
-                    m = m.NextMatch();
+                    Match m = regEx_VideoList.Match(data);
+                    while (m.Success)
+                    {
+                        VideoInfo videoInfo = new VideoInfo();
+                        videoInfo.Title = System.Web.HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+                        videoInfo.VideoUrl = string.Format(videoUrlFormatString, m.Groups["VideoUrl"].Value);
+                        videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+                        videoInfo.Length = Regex.Replace(m.Groups["Duration"].Value, "(<[^>]+>)", "");
+                        videoInfo.Description = m.Groups["Description"].Value;
+                        videoList.Add(videoInfo);
+                        m = m.NextMatch();
+                    }
+                }
+                else
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(data);
+                    
+                    if (!string.IsNullOrEmpty(videoItemXml))
+                    {
+                        XmlNodeList videoItems = doc.SelectNodes(videoItemXml);
+                        for (int i = 0; i < videoItems.Count; i++)
+                        {
+                            if (!string.IsNullOrEmpty(videoTitleXml) && !string.IsNullOrEmpty(videoUrlXml))
+                            {
+                                VideoInfo videoInfo = new VideoInfo();
+                                videoInfo.Title = System.Web.HttpUtility.HtmlDecode(videoItems[i].SelectSingleNode(videoTitleXml).InnerText);
+                                videoInfo.VideoUrl = string.Format(videoUrlFormatString, videoItems[i].SelectSingleNode(videoUrlXml).InnerText);
+                                if (!string.IsNullOrEmpty(videoThumbXml)) videoInfo.ImageUrl = videoItems[i].SelectSingleNode(videoThumbXml).InnerText;
+                                if (!string.IsNullOrEmpty(videoDurationXml)) videoInfo.Length = Regex.Replace(videoItems[i].SelectSingleNode(videoDurationXml).InnerText, "(<[^>]+>)", "");
+                                if (!string.IsNullOrEmpty(videoDescriptionXml)) videoInfo.Description = videoItems[i].SelectSingleNode(videoDescriptionXml).InnerText;
+                                videoList.Add(videoInfo);
+                            }
+                        }
+                        
+                    }
                 }
 
                 if (regEx_PrevPage != null)
