@@ -132,8 +132,8 @@
       <Description>Metacafe is an audience-driven video entertainment site that focuses on short-form original videos.</Description>
       <Configuration>
         <item key="searchUrl"><![CDATA[http://www.metacafe.com/tags/{0}/rss.xml]]></item>
-        <item key="fileUrlRegEx"><![CDATA[mediaURL=(?<url>[^&]*)]]></item>
-        <item key="fileUrlFormat"><![CDATA[{0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[mediaURL=(?<m0>[^&]*)]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Today's Videos">http://www.metacafe.com/rss/today_videos/rss.xml</Category>
@@ -169,8 +169,8 @@
     <Site name="DailyMotion" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Configuration>
         <item key="searchUrl"><![CDATA[http://www.dailymotion.com/rss/relevance/search/{0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[addVariable\("video",\s"((?:(?!%40%40spark).)*)]]></item>
-        <item key="fileUrlFormat"><![CDATA[{0}&txe=.flv]]></item>
+        <item key="fileUrlRegEx"><![CDATA[addVariable\("video",\s*"(?<m0>(?:(?!%40%40spark).)*)]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}&txe=.flv]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Front Page">http://www.dailymotion.com/rss</Category>
@@ -225,24 +225,24 @@
     </Site>
     <Site name="GameTrailers" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Configuration>
-        <item key="fileUrlRegEx"><![CDATA[<src>([^<]+)</src>]]></item>
-        <item key="fileUrlFormat"><![CDATA[{0}]]></item>
-        <item key="videoUrlRegEx"><![CDATA[http://.+/(\d{4,10}).html.*]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<src>(?<m0>[^<]+)</src>]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
+        <item key="videoUrlRegEx"><![CDATA[http://.+/(?<m0>\d{4,10}).html.*]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://www.gametrailers.com/neo/?page=xml.mediaplayer.Mediagen&movieId={0}]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="All">http://www.gametrailers.com/rssgenerate.php?quality[either]=on&amp;orderby=newest&amp;limit=100</Category>                
+        <Category xsi:type="RssLink" name="All">http://www.gametrailers.com/rssgenerate.php?quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
         <Category xsi:type="RssLink" name="PC">http://www.gametrailers.com/rssgenerate.php?favplats[pc]=pc&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
         <Category xsi:type="RssLink" name="PS3">http://www.gametrailers.com/rssgenerate.php?favplats[ps3]=ps3&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
         <Category xsi:type="RssLink" name="PS2">http://www.gametrailers.com/rssgenerate.php?favplats[ps2]=ps2&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="PSP">http://www.gametrailers.com/rssgenerate.php?favplats[psp]=psp&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>        
+        <Category xsi:type="RssLink" name="PSP">http://www.gametrailers.com/rssgenerate.php?favplats[psp]=psp&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
         <Category xsi:type="RssLink" name="Xbox360">http://www.gametrailers.com/rssgenerate.php?favplats[xb360]=xb360&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
         <Category xsi:type="RssLink" name="Xbox">http://www.gametrailers.com/rssgenerate.php?favplats[xbox]=xbox&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
         <Category xsi:type="RssLink" name="Wii">http://www.gametrailers.com/rssgenerate.php?favplats[wii]=wii&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="GameCube">http://www.gametrailers.com/rssgenerate.php?favplats[gc]=gc&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>        
+        <Category xsi:type="RssLink" name="GameCube">http://www.gametrailers.com/rssgenerate.php?favplats[gc]=gc&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
         <Category xsi:type="RssLink" name="Game Boy Advance">http://www.gametrailers.com/rssgenerate.php?favplats[gba]=gba&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="Nintendo DS">http://www.gametrailers.com/rssgenerate.php?favplats[ds]=ds&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>        
-        <Category xsi:type="RssLink" name="Mobile">http://www.gametrailers.com/rssgenerate.php?favplats[mob]=mob&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>                        
+        <Category xsi:type="RssLink" name="Nintendo DS">http://www.gametrailers.com/rssgenerate.php?favplats[ds]=ds&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
+        <Category xsi:type="RssLink" name="Mobile">http://www.gametrailers.com/rssgenerate.php?favplats[mob]=mob&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
       </Categories>
     </Site>
     <Site name="Apple Trailers" util="AppleTrailers" agecheck="false" enabled="true" lang="en">
@@ -253,10 +253,10 @@
       <Description>Funny videos for young men.</Description>
       <Configuration>
         <item key="searchUrl"><![CDATA[http://rss.break.com/keyword/{0}/]]></item>
-        <item key="fileUrlRegEx"><![CDATA[sGlobalFileName='([^']*)';[^;]*;.+sGlobalContentFilePath='([^']*)'
+        <item key="fileUrlRegEx"><![CDATA[sGlobalFileName='(?<m0>[^']*)';[^;]*;.+sGlobalContentFilePath='(?<m1>[^']*)'
                                            (?:(?!var\svideoPath).)*
-                                           var\svideoPath\s*=\s*"([^"]+)"]]></item>
-        <item key="fileUrlFormat"><![CDATA[{2}{1}/{0}.flv]]></item>
+                                           var\svideoPath\s*=\s*"(?<m2>[^"]+)"]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{2}{1}/{0}.flv]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Home Page">http://rss.break.com/channel/homepage/</Category>
@@ -292,7 +292,7 @@
         <Category xsi:type="RssLink" name="Filmography">http://www.cinemassacre.com/new/?page_id=1375</Category>
       </Categories>
     </Site>
-    <Site name="CollegeHumor" util="GenericRegex" agecheck="false" enabled="true" lang="en">
+    <Site name="CollegeHumor" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Funny videos from CollegeHumor.com.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[(?<=<li\sid="nav-b">(?:(?!<ul>).)*<ul>\s*(<li[^>]*>(<a[^>]*>[^<]*</a>)?[^<]*</li>\s*)*)<li><a\shref="(?<url>[^"]+)">(?<title>[^<]+)</a></li>]]></item>
@@ -308,7 +308,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="5min" util="GenericRegex" agecheck="false" enabled="true" lang="en">
+    <Site name="5min" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Free instructional videos.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\s*style="background-image:\surl\('(?<thumb>[^']+)'\);"\s*>\s*<a\shref="(?<url>[^"]+)">\s*(?<title>[^<]+)</a>]]></item>
@@ -461,10 +461,7 @@
         <Category xsi:type="RssLink" name="What's Up?" thumb="http://up2.podbean.com/image-logos/19917_logo.jpg">http://www.nasa.gov/rss/whatsup_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="Exploration" thumb="http://www.nasa.gov/images/content/176376main_exp_itunes.jpg">http://www.nasa.gov/rss/exploration_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="Jet Propulsion Laboratory HD" thumb="http://up2.podbean.com/image-logos/18643_logo.jpg">http://www.jpl.nasa.gov/multimedia/rss/podfeed-hd.xml</Category>
-        <Category xsi:type="RssLink" name="Science at NASA" thumb="http://science.nasa.gov/images/HomeXtra/itunes.jpg">http://science.nasa.gov/podcast.xml</Category>
         <Category xsi:type="RssLink" name="NASA Chandra X-ray Observatory Podcasts" thumb="http://chandra.harvard.edu/resources/podcasts/graphics/SDimage_300.jpg">http://chandra.harvard.edu/resources/podcasts/podcasts.xml</Category>
-        <Category xsi:type="RssLink" name="SDO: Solar Dynamics Observatory - Stepping Stones to SDO" thumb="http://www.friulinelweb.it/sole/sdo.jpg">http://sdo.gsfc.nasa.gov/xml/SDOcast.php</Category>
-        <Category xsi:type="RssLink" name="GLASTcast HD: The Extreme Universe" thumb="http://svs.gsfc.nasa.gov/vis/iTunes/f003_GLASTcast_HD_200x200.jpg">http://svs.gsfc.nasa.gov/vis/iTunes/f0003_index.html</Category>
         <Category xsi:type="RssLink" name="NASA Goddard Shorts HD" thumb="http://svs.gsfc.nasa.gov/vis/iTunes/GoddardShortsHD_logo.jpg">http://svs.gsfc.nasa.gov/vis/iTunes/f0004.xml</Category>
       </Categories>
     </Site>
@@ -559,28 +556,28 @@
         </Category>
       </Categories>
     </Site>
-    <Site name="BUNCHTV" util="GenericRegex" agecheck="false" enabled="true" lang="de">
-      <Description>Videoconten from bunch.tv.</Description>
+    <Site name="BUNCHTV" util="GenericSite" agecheck="false" enabled="true" lang="de">
+      <Description>Videocontent from bunch.tv.</Description>
       <Configuration>
-		<item key="videoItemXml"><![CDATA[/root/bunchTvPlaylist/bunchTvClip]]></item>
-		<item key="videoTitleXml"><![CDATA[title]]></item>
-		<item key="videoThumbXml"><![CDATA[thumbnail_large]]></item>
-		<item key="videoUrlXml"><![CDATA[streaminName]]></item>
-		<item key="videoDescriptionXml"><![CDATA[description]]></item>
-		<item key="videoDurationXml"><![CDATA[duration]]></item>
-		<item key="videoUrlFormatString"><![CDATA[http://streaming04.exozet.com/bunchtv-streaming/{0}]]></item>
+        <item key="videoItemXml"><![CDATA[/root/bunchTvPlaylist/bunchTvClip]]></item>
+        <item key="videoTitleXml"><![CDATA[title]]></item>
+        <item key="videoThumbXml"><![CDATA[thumbnail_large]]></item>
+        <item key="videoUrlXml"><![CDATA[streaminName]]></item>
+        <item key="videoDescriptionXml"><![CDATA[description]]></item>
+        <item key="videoDurationXml"><![CDATA[duration]]></item>
+        <item key="videoUrlFormatString"><![CDATA[http://streaming04.exozet.com/bunchtv-streaming/{0}]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Hiphop">http://bunch.tv/xml/playlist/13119/playlist.xml</Category>
         <Category xsi:type="RssLink" name="Reggae Funk n Soul">http://bunch.tv/xml/playlist/19587/playlist.xml</Category>
-		<Category xsi:type="RssLink" name="Metal">http://bunch.tv/xml/playlist/13117/playlist.xml</Category>
-		<Category xsi:type="RssLink" name="Independent">http://bunch.tv/xml/playlist/13120/playlist.xml</Category>
-		<Category xsi:type="RssLink" name="Electronic">http://bunch.tv/xml/playlist/13118/playlist.xml</Category>
-		<Category xsi:type="RssLink" name="Games">http://bunch.tv/xml/playlist/3929/playlist.xml</Category>
-		<Category xsi:type="RssLink" name="Cinema">http://bunch.tv/xml/playlist/19541/playlist.xml</Category>
-		<Category xsi:type="RssLink" name="Sports">http://bunch.tv/xml/playlist/19534/playlist.xml</Category>
-		<Category xsi:type="RssLink" name="Travel">http://bunch.tv/xml/playlist/27270/playlist.xml</Category>
-		<Category xsi:type="RssLink" name="Festivals">http://bunch.tv/xml/playlist/27372/playlist.xml</Category>
+        <Category xsi:type="RssLink" name="Metal">http://bunch.tv/xml/playlist/13117/playlist.xml</Category>
+        <Category xsi:type="RssLink" name="Independent">http://bunch.tv/xml/playlist/13120/playlist.xml</Category>
+        <Category xsi:type="RssLink" name="Electronic">http://bunch.tv/xml/playlist/13118/playlist.xml</Category>
+        <Category xsi:type="RssLink" name="Games">http://bunch.tv/xml/playlist/3929/playlist.xml</Category>
+        <Category xsi:type="RssLink" name="Cinema">http://bunch.tv/xml/playlist/19541/playlist.xml</Category>
+        <Category xsi:type="RssLink" name="Sports">http://bunch.tv/xml/playlist/19534/playlist.xml</Category>
+        <Category xsi:type="RssLink" name="Travel">http://bunch.tv/xml/playlist/27270/playlist.xml</Category>
+        <Category xsi:type="RssLink" name="Festivals">http://bunch.tv/xml/playlist/27372/playlist.xml</Category>
       </Categories>
     </Site>
     <Site name="YahooMusicVideos" util="YahooMusicVideos" agecheck="false" enabled="true">
@@ -680,7 +677,7 @@
         <Category xsi:type="RssLink" name="Отечественный">http://linecinema.ru/news/1-0-9</Category>
       </Categories>
     </Site>
-    <Site name="wwitv" util="GenericRegex" agecheck="false" enabled="true">
+    <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true">
       <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<a\sclass="rb"\shref="(?<url>[^"]+)"[^>]*>(?<title>[^<]+)</a>]]></item>
@@ -788,7 +785,7 @@
     <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" player="WMP" lang="nl">
       <Categories />
     </Site>
-    <Site name="YouPorn" util="GenericRegex" agecheck="true" enabled="true" lang="en">
+    <Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<a[^>]+>\s*<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>\s*</a>\s*
@@ -831,7 +828,7 @@
         <Category xsi:type="RssLink" name="Wildcrazy">http://www.redtube.com/redtube/wildcrazy</Category>
       </Categories>
     </Site>
-    <Site name="xHamster" util="GenericRegex" agecheck="true" enabled="true" lang="en">
+    <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<img\ssrc='(?<ImageUrl>[^']+)'[^/]*/>(?:(?!<div).)*
 <div\sclass="moduleFeaturedTitle">\s*
@@ -892,7 +889,7 @@
         <Category xsi:type="RssLink" name="Webcams">http://www.xhamster.com/channels/new-webcams-1.html</Category>
       </Categories>
     </Site>
-    <Site name="Tube8" util="GenericRegex" agecheck="true" enabled="true" lang="en">
+    <Site name="Tube8" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<div\sid="video_i\d+">\s*
 <a\shref="(?<VideoUrl>[^"]+)">\s*
@@ -930,7 +927,7 @@
         <Category xsi:type="RssLink" name="Teen">http://www.tube8.com/cat/teen/3.html</Category>
       </Categories>
     </Site>
-    <Site name="Empflix" util="GenericRegex" agecheck="true" enabled="true" lang="en">
+    <Site name="Empflix" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>http\://www\.empflix\.com/view\.php\?id\=\d+)"\s*title="(?<Title>[^"]+)"[^>]*>\s*
 <img\ssrc="\s*(?<ImageUrl>http\://[^"]+)"[^>]*>\s*
