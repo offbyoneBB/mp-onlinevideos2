@@ -13,6 +13,8 @@ namespace OnlineVideos.Sites
     {
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for dynamic categories. Group names: 'url', 'title'. Will not be used if not set.")]
         string dynamicCategoriesRegEx;
+        [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the dynamicCategoriesRegEx.")]
+        string dynamicCategoryUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for dynamic categories. Group names: 'url', 'title'. Will be used on the web pages resulting from the links from the dynamicCategoriesRegEx. Will not be used if not set.")]
         string dynamicSubCategoriesRegEx;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration', 'Description'.")]
@@ -85,6 +87,7 @@ namespace OnlineVideos.Sites
                     {
                         RssLink cat = new RssLink();
                         cat.Url = m.Groups["url"].Value;
+                        if (!string.IsNullOrEmpty(dynamicCategoryUrlFormatString)) cat.Url = string.Format(dynamicCategoryUrlFormatString, cat.Url);
                         if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
                         cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
                         if (regEx_dynamicSubCategories != null) cat.HasSubCategories = true;

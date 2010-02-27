@@ -491,7 +491,6 @@
     <Compile Include="Sites\TvGemistUtil.cs" />
     <Compile Include="Sites\TvGorgeUtil.cs" />
     <Compile Include="Sites\TvTuttiUtil.cs" />
-    <Compile Include="Sites\VeryFunnyAdsUtil.cs" />
     <Compile Include="Sites\DownloadedVideoUtil.cs" />
     <Compile Include="Sites\FavoriteUtil.cs" />
     <Compile Include="Sites\GenericSiteUtil.cs" />
