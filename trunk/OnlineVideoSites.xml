@@ -275,8 +275,21 @@
         <Category xsi:type="RssLink" name="Cage Potato">http://rss.break.com/channel/cage-potato/</Category>
       </Categories>
     </Site>
-    <Site name="VeryFunnyAds" util="VeryFunnyAds" agecheck="false" enabled="true" lang="en">
+    <Site name="VeryFunnyAds" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Video site showing funny television commercials from around the world.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<collection\s+id='(?<url>\d{3,8})'[^>]*>\s*<name><!\[CDATA\[(?<title>[^\]]+)\]\]></name>]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://tbs.com/veryfunnyads/getCollectionById.do?offset=0&id={0}&sort=&limit=50&daysback=]]></item>
+        <item key="videoUrlFormatString"><![CDATA[http://www.tbs.com/veryfunnyads/getPlaylistById.do?id={0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<url>(?<m0>[^<]*)]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.tbs.com/veryfunnyads/getCollections.do?id=26322]]></item>
+        <item key="videoItemXml"><![CDATA[/episodes/episode]]></item>
+        <item key="videoTitleXml"><![CDATA[title]]></item>
+        <item key="videoThumbXml"><![CDATA[fullSizeStillUrl]]></item>
+        <item key="videoUrlXml"><![CDATA[segments/segment/@id]]></item>
+        <item key="videoDescriptionXml"><![CDATA[description]]></item>
+      </Configuration>
       <Categories />
     </Site>
     <Site name="Sesamestreet" util="SesameStreet" agecheck="false" enabled="true" lang="en">
