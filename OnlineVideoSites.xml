@@ -331,8 +331,17 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="CNN" util="Cnn" agecheck="false" enabled="true" lang="en">
+    <Site name="CNN" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Videos from the Cable News Network.</Description>
+      <Configuration>
+        <item key="videoUrlRegEx"><![CDATA[(/video)?(?<m0>.+)]]></item>
+        <item key="videoUrlFormatString"><![CDATA[http://ht.cdn.turner.com/cnn/big{0}_640x360_dl.flv]]></item>
+        <item key="videoItemXml"><![CDATA[//cnn_video/video]]></item>
+        <item key="videoTitleXml"><![CDATA[tease_txt]]></item>
+        <item key="videoThumbXml"><![CDATA[image_url]]></item>
+        <item key="videoUrlXml"><![CDATA[video_id]]></item>
+        <item key="videoDurationXml"><![CDATA[vid_duration]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Top Stories">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/top_stories.xml</Category>
         <Category xsi:type="RssLink" name="Most Popular">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/most_popular.xml</Category>
