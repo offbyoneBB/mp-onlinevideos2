@@ -128,6 +128,24 @@
 			<Guid>2abbe17b-8158-4e2c-8f11-e13d2222ef9f</Guid>
 		</File>
 		<File>
+			<FileName>BUNCHTV.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\BUNCHTV.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>21EEF91C-970E-4588-ADEA-52D624CF5B73</Guid>
+		</File>
+		<File>
+			<FileName>BUNCHTV.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\BUNCHTV.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>296759CA-28E2-42e1-8B41-474D683CADC5</Guid>
+		</File>
+		<File>
 			<FileName>button_online videos.png</FileName>
 			<Type>Media</Type>
 			<SubType>Xface</SubType>
@@ -1413,7 +1431,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>21-02-10</CreationDate>
+		<CreationDate>28-02-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
