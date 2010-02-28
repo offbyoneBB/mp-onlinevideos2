@@ -160,7 +160,16 @@ namespace OnlineVideos
                     video.Length += rssItem.PubDate;
                 }
             }
-            
+
+            // if only one url found as playbackoptions but nothing set a video url -> set the one option directly as url
+            if (video.PlaybackOptions.Count == 1 && string.IsNullOrEmpty(video.VideoUrl))
+            {
+                var enumer = video.PlaybackOptions.GetEnumerator();
+                enumer.MoveNext();
+                video.VideoUrl = enumer.Current.Value;
+                video.PlaybackOptions = null;
+            }
+
             return video;
         }
 

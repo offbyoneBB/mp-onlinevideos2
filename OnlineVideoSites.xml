@@ -204,10 +204,10 @@
         <Category xsi:type="RssLink" name="New Videos">http://rss.livevideo.com/rss/rss.ashx?v=Newest</Category>
         <Category xsi:type="RssLink" name="Most Viewed Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostViewed</Category>
         <Category xsi:type="RssLink" name="Most Discussed Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostDiscussed</Category>
-        <Category xsi:type="RssLink" name="Most Hit Votes Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostHit</Category>
-        <Category xsi:type="RssLink" name="Most Miss Votes Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostMiss</Category>
+        <Category xsi:type="RssLink" name="Most Hit Votes Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostHit</Category>        
         <Category xsi:type="RssLink" name="Arts &amp; Animation">http://rss.livevideo.com/rss/rss.ashx?catid=1</Category>
         <Category xsi:type="RssLink" name="Auto &amp; Vehicles">http://rss.livevideo.com/rss/rss.ashx?catid=6</Category>
+        <Category xsi:type="RssLink" name="Business &amp; Commercial">http://rss.livevideo.com/rss/rss.ashx?catid=19 </Category>
         <Category xsi:type="RssLink" name="Comedy">http://rss.livevideo.com/rss/rss.ashx?catid=7</Category>
         <Category xsi:type="RssLink" name="Entertainment">http://rss.livevideo.com/rss/rss.ashx?catid=8</Category>
         <Category xsi:type="RssLink" name="Extreme">http://rss.livevideo.com/rss/rss.ashx?catid=3</Category>
