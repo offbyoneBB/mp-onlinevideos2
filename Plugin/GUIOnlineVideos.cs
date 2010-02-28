@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
+using System.Text.RegularExpressions;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -203,7 +204,7 @@ namespace OnlineVideos
                 OnlineVideoSettings.getInstance().ageHasBeenConfirmed = false;
                 Log.Debug("OnlineVideos Age Confirmed set to false.");
                 if (selectedSite != null && selectedSite.Settings.ConfirmAge)
-                {                     
+                {
                     CurrentState = State.sites;
                     selectedSite = null;
                     selectedSiteIndex = 0;
@@ -223,7 +224,7 @@ namespace OnlineVideos
             }
             else if (CurrentState == State.videos)
             {
-                SetVideoListToFacade(currentVideoList, true);
+                SetVideoListToFacade(currentVideoList);
                 SetFacadeViewMode();
             }
             else
@@ -246,7 +247,6 @@ namespace OnlineVideos
             {
                 return;
             }
-            GUIListItem loListItem = GUI_facadeView.SelectedListItem;
             GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
             dlgSel.Reset();
 
@@ -324,6 +324,7 @@ namespace OnlineVideos
         {
             if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && CurrentState != State.sites)
             {
+                currentFilter = null;
                 if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
 
                 // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
@@ -347,21 +348,57 @@ namespace OnlineVideos
             {
                 // search items (starting from current selected) by title and select first found one
                 char pressedChar = (char)action.m_key.KeyChar;
-                if (char.IsLetterOrDigit(pressedChar))
+                if (CurrentState == State.categories && (char.IsDigit(pressedChar) || pressedChar == '\b'))
                 {
-                    string lowerChar = pressedChar.ToString().ToLower();
-                    for (int i = GUI_facadeView.SelectedListItemIndex + 1; i < GUI_facadeView.Count; i++)
+                    string currentPattern = currentFilter == null ? String.Empty : currentPattern = currentFilter.ToString();
+                    switch (pressedChar)
                     {
-                        if (GUI_facadeView[i].Label.ToLower().StartsWith(lowerChar))
+                        case '1': currentPattern += "[1]"; break;
+                        case '2': currentPattern += "[2|a|b|c]"; break;
+                        case '3': currentPattern += "[3|d|e|f]"; break;
+                        case '4': currentPattern += "[4|g|h|i]"; break;
+                        case '5': currentPattern += "[5|j|k|l]"; break;
+                        case '6': currentPattern += "[6|m|n|o]"; break;
+                        case '7': currentPattern += "[7|q|r|s]"; break;
+                        case '8': currentPattern += "[8|t|u|v]"; break;
+                        case '9': currentPattern += "[9|w|x|y|z]"; break;
+                        case '0': currentPattern += "[0|\\s]"; break;
+                        case '\b': if (!String.IsNullOrEmpty(currentPattern))
+                                currentPattern = currentPattern.Substring(0, currentPattern.LastIndexOf('[')); break;
+                    }
+                    if (String.IsNullOrEmpty(currentPattern))
+                        currentFilter = null;
+                    else
+                    {
+                        currentFilter = new Regex(currentPattern, RegexOptions.IgnoreCase);
+                    }
+
+                    string cat_headerlabel = selectedCategory != null ? selectedCategory.Name : selectedSite.Settings.Name;
+                    if (currentFilter != null)
+                        cat_headerlabel = cat_headerlabel + " " + currentFilter.ToString().Replace("|", String.Empty).Replace("][", ",");
+                    GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
+                    DisplayCategories(selectedCategory);
+                    return;
+                }
+                else
+                {
+                    if (char.IsLetterOrDigit(pressedChar))
+                    {
+                        string lowerChar = pressedChar.ToString().ToLower();
+                        for (int i = GUI_facadeView.SelectedListItemIndex + 1; i < GUI_facadeView.Count; i++)
                         {
-                            GUI_facadeView.SelectedListItemIndex = i;
-                            return;
+                            if (GUI_facadeView[i].Label.ToLower().StartsWith(lowerChar))
+                            {
+                                GUI_facadeView.SelectedListItemIndex = i;
+                                return;
+                            }
                         }
                     }
                 }
             }
             else if (action.wID == Action.ActionType.ACTION_NEXT_ITEM && currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
             {
+                currentFilter = null;
                 if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
 
                 if (GUI_btnNext.IsEnabled)
@@ -372,6 +409,7 @@ namespace OnlineVideos
             }
             else if (action.wID == Action.ActionType.ACTION_PREV_ITEM && currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
             {
+                currentFilter = null;
                 if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
 
                 if (GUI_btnPrevious.IsEnabled)
@@ -404,9 +442,9 @@ namespace OnlineVideos
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
             if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
-
             if (control == GUI_facadeView && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
+                currentFilter = null;
                 if (CurrentState == State.sites)
                 {
                     selectedSite = OnlineVideoSettings.getInstance().SiteList[GUI_facadeView.SelectedListItem.Path];
@@ -423,8 +461,11 @@ namespace OnlineVideos
                     else
                     {
                         Category categoryToRestoreOnError = selectedCategory;
-                        if (selectedCategory == null) selectedCategory = selectedSite.Settings.Categories[GUI_facadeView.SelectedListItemIndex - 1];
-                        else selectedCategory = selectedCategory.SubCategories[GUI_facadeView.SelectedListItemIndex - 1];
+                        //if (selectedCategory == null) 
+                            selectedCategory = (GUI_facadeView.SelectedListItem as OnlineVideosItem).item as Category;
+                        //selectedSite.Settings.Categories[GUI_facadeView.SelectedListItemIndex - 1];
+                        //else 
+                            //selectedCategory = selectedCategory.SubCategories[GUI_facadeView.SelectedListItemIndex - 1];
 
                         if (selectedCategory.HasSubCategories)
                         {
@@ -619,8 +660,8 @@ namespace OnlineVideos
                 siteOrder = (SiteOrder)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_ORDER, 0);
                 currentVideoView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
                 currentCategoryView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
-            }            
-            OnlineVideoSettings.getInstance().BuildSiteList();            
+            }
+            OnlineVideoSettings.getInstance().BuildSiteList();
         }
 
         private void DisplaySites()
@@ -673,10 +714,11 @@ namespace OnlineVideos
                 if (aSite.Settings.IsEnabled &&
                     (!aSite.Settings.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || OnlineVideoSettings.getInstance().ageHasBeenConfirmed))
                 {
-                    GUIListItem loListItem = new GUIListItem(aSite.Settings.Name);
+                    OnlineVideosItem loListItem = new OnlineVideosItem(aSite.Settings.Name);
                     loListItem.Label2 = aSite.Settings.Language;
                     loListItem.Path = aSite.Settings.Name;
                     loListItem.IsFolder = true;
+                    loListItem.item = aSite;
                     string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Settings.Name + ".png";
                     if (System.IO.File.Exists(image))
                     {
@@ -703,16 +745,27 @@ namespace OnlineVideos
             GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
         }
 
+        private Regex currentFilter = null;
+        private bool isInFilter(Category loCat)
+        {
+            if (currentFilter == null)
+                return true;
+            Match m = currentFilter.Match(loCat.Name);
+            return m.Success;
+        }
+
         private void DisplayCategories(Category parentCategory)
         {
             // whenever categories are displayed, reset the selected video index, 
             // so re-entering another category won't restore a previously selected video
-            selectedVideoIndex = 0; 
+            selectedVideoIndex = 0;
 
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
-            GUIListItem loListItem;
-            loListItem = new GUIListItem("..");
+            OnlineVideosItem loListItem;
+            loListItem = new OnlineVideosItem("..");
             loListItem.IsFolder = true;
+            //loListItem.item = 
+
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
             GUI_facadeView.Add(loListItem);
 
@@ -770,51 +823,54 @@ namespace OnlineVideos
                 for (int i = 0; i < categories.Count; i++)
                 {
                     Category loCat = categories[i];
-                    if (loCat == selectedCategory) categoryIndexToSelect = i + 1; // select the category that was previously selected
-
-                    loListItem = new GUIListItem(loCat.Name);
-                    loListItem.IsFolder = true;
-                    MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
-                    // Favorite Categories can have the same images as the home view
-                    if (selectedSite is Sites.FavoriteUtil)
+                    if (isInFilter(loCat))
                     {
-                        string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + ((RssLink)loCat).Url.Substring(4) + ".png";
-                        if (System.IO.File.Exists(image))
+                        loListItem = new OnlineVideosItem(loCat.Name);
+                        loListItem.IsFolder = true;
+                        MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
+                        // Favorite Categories can have the same images as the home view
+                        if (selectedSite is Sites.FavoriteUtil)
                         {
-                            loListItem.ThumbnailImage = image;
-                            loListItem.IconImage = image;
-                            loListItem.IconImageBig = image;
-                            numCategoriesWithThumb++;
+                            string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + ((RssLink)loCat).Url.Substring(4) + ".png";
+                            if (System.IO.File.Exists(image))
+                            {
+                                loListItem.ThumbnailImage = image;
+                                loListItem.IconImage = image;
+                                loListItem.IconImageBig = image;
+                                numCategoriesWithThumb++;
+                            }
                         }
-                    }
-                    else
-                    {
-                        imagesUrlList.Add(loCat.Thumb);
-                        if (!string.IsNullOrEmpty(loCat.Thumb))
+                        else
                         {
-                            numCategoriesWithThumb++;
-                            loListItem.ItemId = imagesUrlList.Count;
-                            loListItem.RetrieveArt = false;
-                            loListItem.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+                            imagesUrlList.Add(loCat.Thumb);
+                            if (!string.IsNullOrEmpty(loCat.Thumb))
+                            {
+                                numCategoriesWithThumb++;
+                                loListItem.ItemId = imagesUrlList.Count;
+                                loListItem.RetrieveArt = false;
+                                loListItem.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+                            }
                         }
-                    }
 
-                    GUI_facadeView.Add(loListItem);
+                        loListItem.item = loCat;
+                        if (loCat == selectedCategory) categoryIndexToSelect = GUI_facadeView.Count; // select the category that was previously selected
+                        GUI_facadeView.Add(loListItem);
 
-                    if (loCat is RssLink)
-                    {
-                        RssLink link = loCat as RssLink;
-                        loListItem.Path = link.Url;
-                        if (link.EstimatedVideoCount > 0) loListItem.Label2 = link.EstimatedVideoCount.ToString();
-                    }
-                    else
-                    {
-                        loListItem.Path = loCat.Name;
-                    }
+                        if (loCat is RssLink)
+                        {
+                            RssLink link = loCat as RssLink;
+                            loListItem.Path = link.Url;
+                            if (link.EstimatedVideoCount > 0) loListItem.Label2 = link.EstimatedVideoCount.ToString();
+                        }
+                        else
+                        {
+                            loListItem.Path = loCat.Name;
+                        }
 
-                    if (loCat is Group)
-                    {
-                        loListItem.Label2 = (loCat as Group).Channels.Count.ToString();
+                        if (loCat is Group)
+                        {
+                            loListItem.Label2 = (loCat as Group).Channels.Count.ToString();
+                        }
                     }
                 }
 
@@ -838,7 +894,7 @@ namespace OnlineVideos
                 currentTrailerList.Clear();
                 GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
                 GUIControl.ClearControl(GetID, GUI_infoList.GetID);
-                GUIListItem loListItem = new GUIListItem("..");
+                OnlineVideosItem loListItem = new OnlineVideosItem("..");
                 loListItem.IsFolder = true;
                 loListItem.ItemId = 0;
                 MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
@@ -848,9 +904,10 @@ namespace OnlineVideos
                 {
                     liIdx++;
                     loVideoInfo.CleanDescription();
-                    loListItem = new GUIListItem(loVideoInfo.Title2);
+                    loListItem = new OnlineVideosItem(loVideoInfo.Title2);
                     loListItem.Path = loVideoInfo.VideoUrl;
                     loListItem.ItemId = liIdx;
+                    loListItem.item = loVideoInfo;
                     GUI_infoList.Add(loListItem);
                     currentTrailerList.Add(loVideoInfo);
                 }
@@ -867,7 +924,7 @@ namespace OnlineVideos
                 categoryVideos = selectedSite.getVideoList(selectedCategory);
             }, "getting category videos"))
             {
-                if (SetVideoListToFacade(categoryVideos, false))
+                if (SetVideoListToFacade(categoryVideos))
                 {
                     CurrentState = State.videos;
                     currentVideosDisplayMode = VideosMode.Category;
@@ -891,7 +948,7 @@ namespace OnlineVideos
                 favoriteVideos = ((IFavorite)selectedSite).getFavorites();
             }, "getting favorite videos"))
             {
-                if (SetVideoListToFacade(favoriteVideos, false))
+                if (SetVideoListToFacade(favoriteVideos))
                 {
                     currentVideosDisplayMode = VideosMode.Favorites;
                     return true;
@@ -922,7 +979,7 @@ namespace OnlineVideos
                     }
                 }, "getting search results"))
                 {
-                    if (SetVideoListToFacade(searchResultVideos, false))
+                    if (SetVideoListToFacade(searchResultVideos))
                     {
                         currentVideosDisplayMode = VideosMode.Search;
                         return true;
@@ -942,7 +999,7 @@ namespace OnlineVideos
                     relatedVideos = selectedSite.getRelatedVideos(video);
                 }, "getting related videos"))
                 {
-                    if (SetVideoListToFacade(relatedVideos, false))
+                    if (SetVideoListToFacade(relatedVideos))
                     {
                         currentVideosDisplayMode = VideosMode.Related;
                         return true;
@@ -1001,7 +1058,7 @@ namespace OnlineVideos
                 }
             }, "getting filtered videos"))
             {
-                if (SetVideoListToFacade(filteredVideos, false))
+                if (SetVideoListToFacade(filteredVideos))
                 {
                     return true;
                 }
@@ -1017,7 +1074,7 @@ namespace OnlineVideos
                 nextPageVideos = selectedSite.getNextPageVideos();
             }, "getting next page videos"))
             {
-                if (SetVideoListToFacade(nextPageVideos, false))
+                if (SetVideoListToFacade(nextPageVideos))
                 {
                     return true;
                 }
@@ -1033,7 +1090,7 @@ namespace OnlineVideos
                 previousPageVideos = selectedSite.getPreviousPageVideos();
             }, "getting previous page videos"))
             {
-                if (SetVideoListToFacade(previousPageVideos, false))
+                if (SetVideoListToFacade(previousPageVideos))
                 {
                     return true;
                 }
@@ -1041,7 +1098,7 @@ namespace OnlineVideos
             return false;
         }
 
-        private bool SetVideoListToFacade(List<VideoInfo> foVideos, bool restoreSelectedIndex)
+        private bool SetVideoListToFacade(List<VideoInfo> foVideos)
         {
             // Check for received data
             if (foVideos == null || foVideos.Count == 0)
@@ -1054,13 +1111,14 @@ namespace OnlineVideos
                 return false;
             }
             // add the first item that will go to the previous menu
-            GUIListItem loListItem;
+            OnlineVideosItem loListItem;
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
-            loListItem = new GUIListItem("..");
+            loListItem = new OnlineVideosItem("..");
             loListItem.IsFolder = true;
             loListItem.ItemId = 0;
             loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
+            //loListItem.item = 
             GUI_facadeView.Add(loListItem);
             // add the items
             List<String> loImageUrlList = new List<string>();
@@ -1074,9 +1132,10 @@ namespace OnlineVideos
                 {
                     continue;
                 }
-                loListItem = new GUIListItem(loVideoInfo.Title);
+                loListItem = new OnlineVideosItem(loVideoInfo.Title);
                 loListItem.Path = loVideoInfo.VideoUrl;
                 loListItem.ItemId = liIdx;
+                loListItem.item = loVideoInfo;
                 loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
                 GUI_facadeView.Add(loListItem);
                 loImageUrlList.Add(loVideoInfo.ImageUrl);
@@ -1145,7 +1204,7 @@ namespace OnlineVideos
                 ///------------------------------------------------------------------------
 
                 ImageDownloader._stopDownload = true;
-                SetVideoListToFacade(currentVideoList, true);
+                SetVideoListToFacade(currentVideoList);
                 CurrentState = State.videos;
                 SetFacadeViewMode();
             }
@@ -1703,7 +1762,7 @@ namespace OnlineVideos
                 ShowAndEnable(GUI_btnUpdate.GetID);
             }
         }
-                       
+
         private void ToggleFacadeViewMode()
         {
             switch (currentView)
@@ -1851,5 +1910,12 @@ namespace OnlineVideos
         }
 
         #endregion
+    }
+
+    public class OnlineVideosItem : GUIListItem
+    {
+        public OnlineVideosItem(string strLabel) : base(strLabel) { }
+
+        public object item; //siteutil, category or video
     }
 }
