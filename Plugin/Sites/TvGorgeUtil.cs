@@ -99,17 +99,40 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
+
         public override String getUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
-            string id = GetSubString(data, @"var aiv = """, @":");
-            data = GetWebData(String.Format(@"http://tvgorge.com/includes/ajax/ad1s.php?ai={0}", id));
+
+            string tmpurl = "http://www.zshare.net/" + GetSubString(data, @"src=""http://www.zshare.net/", @"""");
+
+            CookieContainer cc = new CookieContainer();
+            data = GetWebData(tmpurl, cc);
+            CookieCollection ccol = cc.GetCookies(new Uri("http://tmp.zshare.net"));
+            data = GetSubString(data, @"name=""flashvars"" value=""", "&player");
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            string[] tmp = data.Split('&');
+            foreach (string s in tmp)
+            {
+                string[] t = s.Split('=');
+                dic[t[0]] = t[1];
+
+            }
+            string hash = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(dic["filename"] + "tr35MaX25P7aY3R", "MD5").ToLower();
+            string turl = @"http://" + dic["serverid"] + ".zshare.net/stream/" + dic["hash"] + '/' + dic["fileid"] + '/' +
+                dic["datetime"] + '/' + dic["filename"] + '/' + hash + '/' + dic["hnic"];
+            foreach (Cookie cook in ccol)
+                CookieHelper.SetIECookie(String.Format("http://{0}.zshare.net", dic["serverid"]), cook);
+
+            return turl;
+            /*data = GetWebData(String.Format(@"http://tvgorge.com/includes/ajax/ad1s.php?ai={0}", id));
             string url = GetSubString(data, @"streamer=", "&");
             return String.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfurl={2}",
                     OnlineVideoSettings.RTMP_PROXY_PORT,
-                    System.Web.HttpUtility.UrlEncode(url + "/" + id),
+                    System.Web.HttpUtility.UrlEncode(url + "/" + ""),
                     @"http://tvgorge.com/ad1zs/adplayer.swf"
                     );
+             */
         }
 
         public override List<VideoInfo> getVideoList(Category category)
