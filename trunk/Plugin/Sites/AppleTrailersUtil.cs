@@ -377,7 +377,7 @@ namespace OnlineVideos.Sites
             nsmgr.AddNamespace("a", xmlNamespace);
 
             // Poster Image URL
-            XmlNode Poster = Root.SelectSingleNode("//a:PictureView/@url[contains(.,'/posters/')]", nsmgr);
+            XmlNode Poster = Root.SelectSingleNode("//a:PictureView/@url", nsmgr);
             if (Poster.Value.Length > 0)
             {
                 Log.Info("[MyTrailers][Apple Trailers] Added 1 poster.");

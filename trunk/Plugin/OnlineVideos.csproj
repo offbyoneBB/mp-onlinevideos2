@@ -139,6 +139,7 @@
     <Compile Include="Configuration\SubmitSiteReport.Designer.cs">
       <DependentUpon>SubmitSiteReport.cs</DependentUpon>
     </Compile>
+    <Compile Include="CookieHelper.cs" />
     <Compile Include="DownloadInfo.cs" />
     <Compile Include="Gui2UtilConnector.cs" />
     <Compile Include="GUISiteUpdater.cs" />
