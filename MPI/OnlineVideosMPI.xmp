@@ -470,6 +470,42 @@
 			<Guid>b1fb65d5-6fa4-4ca7-ab6c-280ace76f0b7</Guid>
 		</File>
 		<File>
+			<FileName>NDR.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\NDR.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>{7926806D-38D0-45fe-A153-BDB24E25A374}</Guid>
+		</File>
+		<File>
+			<FileName>NDR.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\NDR.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>{8E8D7D31-76DB-4249-B75B-F439208B29F4}</Guid>
+		</File>		
+		<File>
+			<FileName>Vox Now.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\Vox Now.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>{5A27D89F-CEFE-4185-90AB-F3DC2B540148}</Guid>
+		</File>
+		<File>
+			<FileName>Vox Now.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\Vox Now.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>{343C199E-9F9F-4f3e-A419-AE217D6D4B57}</Guid>
+		</File>		
+		<File>
 			<FileName>Mdr.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
@@ -1431,7 +1467,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>28-02-10</CreationDate>
+		<CreationDate>02-03-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
