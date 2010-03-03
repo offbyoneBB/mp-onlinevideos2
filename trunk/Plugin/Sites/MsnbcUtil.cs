@@ -41,7 +41,7 @@ namespace OnlineVideos.Sites
                 if (rssItem.MediaContents[0].Medium != "video") continue;
 
                 VideoInfo video = new VideoInfo();
-                video.Description = GetPlainTextFromHtml(rssItem.Description);
+                video.Description = rssItem.Description;
                 video.ImageUrl = rssItem.MediaContents[0].Url;
                 video.Title = rssItem.Title.Replace("Video: ", "");
                 video.Length = rssItem.PubDateParsed.ToString("g");
@@ -49,11 +49,6 @@ namespace OnlineVideos.Sites
                 loVideoList.Add(video);
             }
             return loVideoList;
-        }
-
-        string GetPlainTextFromHtml(string html)
-        {
-            return System.Text.RegularExpressions.Regex.Replace(html, @"(<[^>]+>)", "");
         }
 	}
 }

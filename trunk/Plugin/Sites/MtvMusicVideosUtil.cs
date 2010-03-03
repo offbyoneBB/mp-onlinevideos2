@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using RssToolkit.Rss;
-using System.IO;
+using System.ComponentModel;
 
 namespace OnlineVideos.Sites
 {
@@ -12,9 +12,11 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class MtvMusicVideosUtil : SiteUtilBase
     {
-        string videoUrls = "http://api-media.mtvnservices.com/player/embed/includes/mediaGen.jhtml?uri={0}&ref=None";
-        string genreVideosMethod = "http://api.mtvnservices.com/1/genre/{0}/videos/?sort=date_descending";
-        string searchMethod = "http://api.mtvnservices.com/1/video/search/?term={0}&sort=date_descending";
+        [Category("OnlineVideosConfiguration"), Description("Format string applied to the video url of an item that was found in the rss.")]
+        string videoUrlFormatString = "http://api-media.mtvnservices.com/player/embed/includes/mediaGen.jhtml?uri={0}&ref=None";
+        [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
+        string searchUrl = "http://api.mtvnservices.com/1/video/search/?term={0}&sort=date_descending";
+        [Category("OnlineVideosUserConfiguration"), Description("Defines number of videos to display per page.")]
         int pageSize = 27;
 
         List<VideoInfo> GetVideoForCurrentCategory()
@@ -40,7 +42,36 @@ namespace OnlineVideos.Sites
             }
             return videoList;
         }
-        
+
+        public override List<VideoInfo> getVideoList(Category category)
+        {
+            currentCategory = category as RssLink;
+            currentStart = 0;
+            return GetVideoForCurrentCategory();
+        }
+
+        public override string getUrl(VideoInfo video)
+        {
+            string playlist = GetWebData(string.Format(videoUrlFormatString, new System.Uri(video.VideoUrl).AbsolutePath.Substring(1)));
+            if (playlist.Length > 0)
+            {
+                XmlDocument data = new XmlDocument();
+                data.LoadXml(playlist);
+                string url = ((XmlElement)data.SelectSingleNode("//rendition/src")).InnerText;
+                string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
+                return resultUrl;
+            }
+            return "";
+        }
+
+        public override string GetFileNameForDownload(VideoInfo video, string url)
+        {
+            string safeName = ImageDownloader.GetSaveFilename(video.Title);
+            return safeName + ".flv";
+        }
+
+        #region Next/Previous Page
+
         RssLink currentCategory;
         int currentStart = 0;
 
@@ -67,55 +98,7 @@ namespace OnlineVideos.Sites
             return GetVideoForCurrentCategory();
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
-        {
-            currentCategory = category as RssLink;
-            currentStart = 0;
-            return GetVideoForCurrentCategory();
-        }
-
-        public override string getUrl(VideoInfo video)
-        {
-            string playlist = GetWebData(string.Format(videoUrls, new System.Uri(video.VideoUrl).AbsolutePath.Substring(1)));
-            if (playlist.Length > 0)
-            {
-                XmlDocument data = new XmlDocument();
-                data.LoadXml(playlist);
-                string url = ((XmlElement)data.SelectSingleNode("//rendition/src")).InnerText;
-                string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
-                return resultUrl;
-            }
-            return "";
-        }
-
-        public override int DiscoverDynamicCategories()
-        {
-            Settings.Categories.Clear();
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "world_reggae"), Name = "World/Reggae", HasSubCategories = false, SubCategoriesDiscovered = true });
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "pop"), Name = "Pop", HasSubCategories = false, SubCategoriesDiscovered = true });            
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "metal"), Name = "Metal", HasSubCategories = false, SubCategoriesDiscovered = true });                        
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "environmental"), Name = "Environmental", HasSubCategories = false, SubCategoriesDiscovered = true });                       
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "latin"), Name = "Latin", HasSubCategories = false, SubCategoriesDiscovered = true });            
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "randb"), Name = "R&B", HasSubCategories = false, SubCategoriesDiscovered = true });            
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "rock"), Name = "Rock", HasSubCategories = false, SubCategoriesDiscovered = true });                        
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "easy_listening"), Name = "Easy", HasSubCategories = false, SubCategoriesDiscovered = true });            
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "jazz"), Name = "Jazz", HasSubCategories = false, SubCategoriesDiscovered = true });            
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "country"), Name = "Country", HasSubCategories = false, SubCategoriesDiscovered = true });            
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "hip_hop"), Name = "Hip-Hop", HasSubCategories = false, SubCategoriesDiscovered = true });            
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "classical"), Name = "Classical", HasSubCategories = false, SubCategoriesDiscovered = true });                       
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "electronic_dance"), Name = "Electronic / Dance", HasSubCategories = false, SubCategoriesDiscovered = true });            
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "blues_folk"), Name = "Blues / Folk", HasSubCategories = false, SubCategoriesDiscovered = true });            
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "alternative"), Name = "Alternative", HasSubCategories = false, SubCategoriesDiscovered = true });            
-            Settings.Categories.Add(new RssLink() { Url = string.Format(genreVideosMethod, "soundtracks_musicals"), Name = "Soundtracks / Musicals", HasSubCategories = false, SubCategoriesDiscovered = true });
-            Settings.DynamicCategoriesDiscovered = true;
-            return Settings.Categories.Count;
-        }
-
-        public override string GetFileNameForDownload(VideoInfo video, string url)
-        {
-            string safeName = ImageDownloader.GetSaveFilename(video.Title);
-            return safeName + ".flv";
-        }
+        #endregion        
 
         #region Search
 
@@ -125,7 +108,7 @@ namespace OnlineVideos.Sites
         {
             //You must URL-escape all spaces, punctuation and quotes. The search term "buddy holly" would look like this %22buddy+holly%22 
             query = System.Web.HttpUtility.UrlEncode(query.Replace(" ", "+"));
-            return getVideoList(new RssLink() { Url = string.Format(searchMethod, query) });
+            return getVideoList(new RssLink() { Url = string.Format(searchUrl, query) });
         }
 
         #endregion
