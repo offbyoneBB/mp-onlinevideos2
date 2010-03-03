@@ -370,6 +370,13 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TVGemist.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{42437A2A-03A5-4EEA-BDC6-49A622759475}-TVGemist.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVGemist.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\tvgorge.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{686b5668-d04e-41f3-8624-5e6f29d69dda}-tvgorge.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvgorge.png</DestinationFilename>
@@ -856,6 +863,13 @@
               <LocalFileName>..\SiteImages\Banners\TurboNick.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c81a3cb5-7a09-445f-bac6-4c8ca62a6ab1}-TurboNick.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TurboNick.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\TVGemist.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{FBFC6CB6-E70B-45BF-92EB-88DEE21E00C5}-TVGemist.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVGemist.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
