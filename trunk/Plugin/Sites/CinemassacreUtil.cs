@@ -182,6 +182,15 @@ namespace OnlineVideos.Sites
                         return rss.Substring(p, q - p);
                     }
                     else
+                        if (lsUrl.StartsWith("http://www.gametrailers.com/download/"))
+                        {
+                            string name = lsUrl.Split('/')[5];
+                            return @"http://trailers-ll.gametrailers.com/gt_vault/3000/" + Path.ChangeExtension(name, ".flv");
+                            //"http://www.gametrailers.com/download/61549/t_screwattack_avgn_ninjag_gt_int5h.wmv"
+                            // ->
+                            //http://trailers-ll.gametrailers.com/gt_vault/3000/t_screwattack_avgn_ninjag_gt_int5h.flv
+                        }
+                        else
                         if (lsUrl.StartsWith(@"http://www.gametrailers.com/remote_wrap.php?mid="))
                         {
                             string id = lsUrl.Substring(48);

@@ -208,7 +208,7 @@ namespace OnlineVideos.Sites
                                 string data = GetWebData(rel);
                                 if (!String.IsNullOrEmpty(data))
                                 {
-                                    video.VideoUrl = GetSubString(data, "http://av.rtl.nl/", "'}");
+                                    video.VideoUrl = GetSubString(data, "http://av.rtl.nl/", "'");
                                     if (String.IsNullOrEmpty(video.VideoUrl))
                                         video.VideoUrl = GetSubString(data, "http://asx.sbsnet.nl/", "\">");
                                     if (String.IsNullOrEmpty(video.VideoUrl))

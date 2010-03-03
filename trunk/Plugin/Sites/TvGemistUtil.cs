@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Net;
-using MediaPortal.GUI.Library;
+//using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
@@ -42,7 +42,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Uitzending Gemist";
             cat.Url = @"http://www.uitzendinggemist.nl/";
-            cat.Thumb = @"http://u.omroep.nl/b/graphic/2010-02/100x75_ug-logo100.png";
+            cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/uitzendinggemist.png";
             cat.HasSubCategories = true;
             specifics = new pagedTest(Source.UitzendingGemist);
             specifics.baseUrl = @"http://www.uitzendinggemist.nl";
@@ -62,7 +62,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Rtl Gemist";
             cat.Url = @"http://rtl.nl/experience/rtlnl/";
-            cat.Thumb = @"http://www.rtl.nl/service/gemist/components/vaste_componenten_v2/gemist_logo.jpg";
+            cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/rtlgemist.png";
             cat.HasSubCategories = true;
             specifics = new test(Source.RtlGemist);
             specifics.baseUrl = @"http://www.rtl.nl/";
@@ -79,7 +79,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Net5 Gemist";
             cat.Url = @"http://www.net5.nl/web/show/id=95681/langid=43";
-            cat.Thumb = @"http://www.net5.nl/design/channel/net5/pix/global/header/g-logo.gif";
+            cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/net5gemist.png";
             cat.HasSubCategories = true;
             specifics = new test(Source.Rest);
             specifics.baseUrl = @"http://www.net5.nl";
@@ -96,7 +96,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "SBS6 Gemist";
             cat.Url = @"http://www.sbs6.nl/web/show/id=73863/langid=43";
-            cat.Thumb = @"http://www.sbs6.nl/design/channel/sbs6/pix/global/header/g-logo.gif";
+            cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/sbsgemist.png";
             cat.HasSubCategories = true;
             specifics = new test(Source.Rest);
             specifics.baseUrl = @"http://www.sbs6.nl";
@@ -113,7 +113,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Veronica Gemist";
             cat.Url = @"http://www.veronicatv.nl/web/show/id=96520/langid=43";
-            cat.Thumb = @"http://www.veronicatv.nl/design/channel/veronicatv/pix/global/header/g-logo.gif";
+            cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/veronicagemist.png";
             cat.HasSubCategories = true;
             specifics = new test(Source.Veronica);
             specifics.baseUrl = @"http://www.veronicatv.nl";
@@ -376,7 +376,7 @@ namespace OnlineVideos.Sites
             {
                 pageNr++;
                 string webData;
-                Log.Info("getting page {0} of category {1}", pageNr, category.Name);
+                //Log.Info("getting page {0} of category {1}", pageNr, category.Name);
                 webData = GetWebData(pageNr == 1 ? url : url + @"/page=" + pageNr.ToString(), specifics.cc);
                 if (specifics.source == Source.UitzendingGemist)
                 {
