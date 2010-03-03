@@ -799,6 +799,10 @@
     <Site name="Nos" util="NOS" agecheck="false" enabled="true" lang="nl">
       <Categories />
     </Site>
+    <Site name="TvGemist" util="TvGemist" agecheck="false" enabled="true" lang="nl" player="WMP">
+      <Description></Description>
+      <Categories />
+    </Site>
     <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" player="WMP" lang="nl">
       <Categories>
         <Category xsi:type="RssLink" name="All">http://tvtutti.nl/alle/page-{0}/period-{1}/source-{2}/?type=episodes</Category>

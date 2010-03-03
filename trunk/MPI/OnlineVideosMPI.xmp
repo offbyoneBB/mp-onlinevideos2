@@ -1127,6 +1127,24 @@
 			<Guid>F2129670-3C39-420E-97D6-9E6B91C3A366</Guid>
 		</File>  
 		<File>
+			<FileName>TVGemist.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\TVGemist.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>160DFC50-2335-4A6A-99EE-46A299EEAE51</Guid>
+		</File>
+		<File>
+			<FileName>TVGemist.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\TVGemist.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>F8A64917-4872-4AAA-ABAD-E0064166EAE7</Guid>
+		</File>
+		<File>
 			<FileName>TvGorge.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
