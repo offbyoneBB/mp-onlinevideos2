@@ -1321,7 +1321,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
     <Author>offbyone</Author>
     <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
     <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
-    <UpdateUrl />
+    <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
       <Minor>17</Minor>
@@ -1331,31 +1331,31 @@ Click Next to continue or Cancel to exit Setup.</Value>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
     <VersionDescription />
     <DevelopmentStatus>Beta</DevelopmentStatus>
-    <OnlineLocation />
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos.0.17.0.0.mpe1</OnlineLocation>
     <ReleaseDate>2010-03-03T19:01:51.84375+02:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>F:\devel\vs2005\onlinevideos\MPEI\OnlineVideos.[Version].mpe1</Location>
     <Params>
       <Items>
         <SectionParam Name="Icon">
-          <Value />
+          <Value>..\Plugin\OnlineVideos.png</Value>
           <ValueType>File</ValueType>
           <Description>The icon file of the package (jpg,png,bmp)</Description>
         </SectionParam>
         <SectionParam Name="Online Icon">
-          <Value />
+          <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/Plugin/OnlineVideos.png</Value>
           <ValueType>String</ValueType>
           <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
         </SectionParam>
         <SectionParam Name="Configuration file">
-          <Value />
+          <Value>%Plugins%\Windows\OnlineVideos.dll</Value>
           <ValueType>Template</ValueType>
           <Description>The file used to configure the extension.
  If have .exe extension the will be executed
  If have .dll extension used like MP plugin configuration</Description>
         </SectionParam>
         <SectionParam Name="Online Screenshots">
-          <Value />
+          <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
           <ValueType>String</ValueType>
           <Description>Online stored screenshot urls separated by ; </Description>
         </SectionParam>
@@ -2518,6 +2518,13 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f5a63d6c-1d21-4c96-9d4c-ed5065837be5}-OnlineVideos.png</ZipFileName>
+        <DestinationFilename />
       </FileItem>
     </Items>
   </UniqueFileList>
