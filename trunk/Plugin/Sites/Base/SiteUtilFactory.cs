@@ -12,23 +12,33 @@ namespace OnlineVideos
        
 		static SiteUtilFactory()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Log.Debug("Assembly name: {0}", assembly.GetName().Name);
-            Type[] typeArray = assembly.GetTypes();
-            foreach (Type type in typeArray)
+            List<Assembly> assemblies = new List<Assembly>();
+            Assembly onlineVideosMainDll = Assembly.GetExecutingAssembly();
+            assemblies.Add(onlineVideosMainDll);
+            string[] dllFilesToCheck = System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(onlineVideosMainDll.Location), "OnlineVideos.*.dll");
+            foreach (string aDll in dllFilesToCheck)
             {
-                if (type.BaseType != null && type.BaseType == typeof(SiteUtilBase))
+                assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(aDll)));
+            }            
+            foreach (Assembly assembly in assemblies)
+            {
+                Log.Debug("OnlineVideos looking for SiteUtils in Assembly: {0}", assembly.GetName().Name);
+                Type[] typeArray = assembly.GetExportedTypes();
+                foreach (Type type in typeArray)
                 {
-                    string shortName = type.Name;
-                    if (shortName.EndsWith("Util")) shortName = shortName.Substring(0, shortName.Length - 4);
+                    if (type.BaseType != null && type.IsSubclassOf(typeof(SiteUtilBase)))
+                    {
+                        string shortName = type.Name;
+                        if (shortName.EndsWith("Util")) shortName = shortName.Substring(0, shortName.Length - 4);
 
-                    if (utils.ContainsKey(shortName))
-                    {
-                        Log.Error(string.Format("Unable to add util {0} because its shot name has already been added.", type.Name));
-                    }
-                    else
-                    {
-                        utils.Add(shortName, type);
+                        if (utils.ContainsKey(shortName))
+                        {
+                            Log.Error(string.Format("Unable to add util {0} because its short name has already been added.", type.Name));
+                        }
+                        else
+                        {
+                            utils.Add(shortName, type);
+                        }
                     }
                 }
             }
