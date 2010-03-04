@@ -146,7 +146,6 @@ namespace OnlineVideos.Sites
 
                             string imageLocation = lsThumbLocation + name + "L.jpg";
                             newPng.Save(imageLocation);
-                            ImageDownloader._imageLocationList.Add(imageLocation);
                         }
                     }
                     catch (Exception)

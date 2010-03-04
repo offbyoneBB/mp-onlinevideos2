@@ -10,8 +10,7 @@ namespace OnlineVideos
 {
     public static class ImageDownloader
     {
-        public static bool _stopDownload = false;
-        public static List<String> _imageLocationList = new List<String>();
+        public static bool StopDownload { get; set; }
 
         public static string GetSaveFilename(string input)
         {
@@ -29,6 +28,7 @@ namespace OnlineVideos
 
         public static string GetThumbFile(string url)
         {
+            // gets a CRC code for the given url and returns a file path: thums_dir\crc.jpg
             string name = MediaPortal.Util.Utils.GetThumb(url);
             name = System.IO.Path.GetFileNameWithoutExtension(name) + "L.jpg";
             return System.IO.Path.Combine(OnlineVideoSettings.getInstance().msThumbLocation, name);
@@ -46,45 +46,33 @@ namespace OnlineVideos
             return file;
         }
 
-        public static void GetImages(List<String> imageUrlList, String ThumbLocation, GUIFacadeControl facadeView)
+        public static void GetImages(GUIFacadeControl facadeView)
         {
-            Log.Info("Getting images");
-            BackgroundWorker worker = new BackgroundWorker();
-            Object[] loParms = new Object[4];
-            loParms[0] = facadeView;
-            loParms[1] = imageUrlList;
-            loParms[2] = ThumbLocation;
+            Log.Info("OnlineVideos ImageDownloader: Getting images in backgroundthread.");
+            BackgroundWorker worker = new BackgroundWorker();            
             worker.DoWork += new DoWorkEventHandler(DownloadImages);
-            worker.RunWorkerAsync(loParms);
+            worker.RunWorkerAsync(facadeView);
         }
 
         static void DownloadImages(object sender, DoWorkEventArgs e)
         {
             System.Threading.Thread.CurrentThread.Name = "OnlineVideosImageDownloader";
-            Object[] loArguments = (Object[])e.Argument;
-            GUIFacadeControl facadeView = (GUIFacadeControl)loArguments[0];
-            List<String> loImageUrlList = (List<String>)loArguments[1];
-            String lsThumbLocation = (String)loArguments[2];
-            Log.Info("Downloading images to " + lsThumbLocation);
-            _imageLocationList.Clear();
-            _stopDownload = false;
-            int liIdx = 0;
-            string name;
-            // todo speedup:
-            // 1. Walk all and set the ones that already exists
-            // 2. Download missing ones multithreaded (5 at a time)
-            foreach (String url in loImageUrlList)
-            {                
-                liIdx++;
-                if (_stopDownload)
+            GUIFacadeControl facadeView = (GUIFacadeControl)e.Argument;
+            StopDownload = false;            
+            List<OnlineVideosItem> itemsNeedingDownload = new List<OnlineVideosItem>();
+            for(int liIdx = 0; liIdx < facadeView.Count;liIdx++)
+            {
+                if (StopDownload || facadeView.Count <= liIdx)
                 {
-                    Log.Info("Received Request to stop Download");
+                    Log.Info("Received request to stop downloading thumbs.");
                     break;
                 }
-                string imageLocation = "";
-                if (!string.IsNullOrEmpty(url))
+                OnlineVideosItem item = facadeView[liIdx] as OnlineVideosItem;                
+                if (item != null && !string.IsNullOrEmpty(item.ThumbUrl))
                 {
-                    string[] urls = url.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);                    
+                    bool canBeDownloaded = false;
+                    string imageLocation = "";
+                    string[] urls = item.ThumbUrl.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (string aFinalUrl in urls)
                     {
                         if (System.IO.Path.IsPathRooted(aFinalUrl))
@@ -92,41 +80,77 @@ namespace OnlineVideos
                             if (System.IO.File.Exists(aFinalUrl))
                             {
                                 imageLocation = aFinalUrl;
+                                break;
                             }
                         }
                         else
                         {
-                            // gets a CRC code for the given url and returns a file path: thums_dir\crc.jpg
-                            name = MediaPortal.Util.Utils.GetThumb(aFinalUrl);
-                            name = System.IO.Path.GetFileNameWithoutExtension(name);
-                            imageLocation = lsThumbLocation + name + "L.jpg";
-                            if (!System.IO.File.Exists(imageLocation))
+                            string thumbFile = GetThumbFile(aFinalUrl);
+                            if (System.IO.File.Exists(thumbFile))
                             {
-                                Log.Info(string.Format("Downloading Image from {0} to {1}", aFinalUrl, name + "L.jpg"));
-                                if (!DownloadAndCheckImage(aFinalUrl, imageLocation))
-                                {
-                                    Log.Info("Image not found : " + aFinalUrl);
-                                    imageLocation = "";
-                                }
+                                imageLocation = thumbFile;
+                                break;
+                            }
+                            else
+                            {
+                                canBeDownloaded = true;
                             }
                         }
-                    }                    
-                }
-                _imageLocationList.Add(imageLocation);
-
-                if (facadeView.Count <= liIdx)
-                {
-                    break;
-                }
-                else
-                {
+                    }
                     if (imageLocation != "")
                     {
-                        facadeView[liIdx].RetrieveArt = true;
-                        facadeView[liIdx].RefreshCoverArt();
+                        item.ThumbnailImage = imageLocation;
+                        item.IconImage = imageLocation;
+                        item.IconImageBig = imageLocation;
+                    }
+                    else
+                    {
+                        if (canBeDownloaded) itemsNeedingDownload.Add(item);
                     }
                 }
             }
+            // split the downloads in 5+ groups and do multithreaded downloading
+            int groupSize = (int)Math.Max(1, Math.Floor((double)itemsNeedingDownload.Count / 5));
+            int groups = (int)Math.Ceiling((double)itemsNeedingDownload.Count / groupSize);
+            for (int i = 0; i < groups; i++)
+            {
+                new System.Threading.Thread(delegate(object o)
+                {
+                    List<OnlineVideosItem> myItems = (List<OnlineVideosItem>)o;
+                    foreach (OnlineVideosItem item in myItems)
+                    {
+                        if (StopDownload)
+                        {
+                            Log.Info("Received request to stop downloading thumbs.");
+                            break;
+                        }
+                        string[] urls = item.ThumbUrl.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (string aFinalUrl in urls)
+                        {
+                            if (!System.IO.Path.IsPathRooted(aFinalUrl)) // only urls
+                            {
+                                string thumbFile = GetThumbFile(aFinalUrl);
+                                Log.Debug(string.Format("Downloading Image from {0} to {1}", aFinalUrl, thumbFile));
+                                if (DownloadAndCheckImage(aFinalUrl, thumbFile))
+                                {
+                                    item.ThumbnailImage = thumbFile;
+                                    item.IconImage = thumbFile;
+                                    item.IconImageBig = thumbFile;
+                                    break;
+                                }
+                                else
+                                {
+                                    Log.Info("Image not found : " + aFinalUrl);
+                                }
+                            }
+                        }
+                    }
+                }) 
+                { 
+                    IsBackground = true, 
+                    Name = "OnlineVideosImageDownloader" + i.ToString() 
+                }.Start(itemsNeedingDownload.GetRange(groupSize * i, groupSize * (i + 1) > itemsNeedingDownload.Count ? itemsNeedingDownload.Count - groupSize * i : groupSize));
+            }            
         }
 
         static bool DownloadAndCheckImage(string url, string file)

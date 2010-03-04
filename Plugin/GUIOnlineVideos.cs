@@ -462,7 +462,7 @@ namespace OnlineVideos
                     {
                         Category categoryToRestoreOnError = selectedCategory;
                         //if (selectedCategory == null) 
-                            selectedCategory = (GUI_facadeView.SelectedListItem as OnlineVideosItem).item as Category;
+                            selectedCategory = (GUI_facadeView.SelectedListItem as OnlineVideosItem).Item as Category;
                         //selectedSite.Settings.Categories[GUI_facadeView.SelectedListItemIndex - 1];
                         //else 
                             //selectedCategory = selectedCategory.SubCategories[GUI_facadeView.SelectedListItemIndex - 1];
@@ -480,7 +480,7 @@ namespace OnlineVideos
                 else if (CurrentState == State.videos)
                 {
                     Log.Info("Set the stopDownload to true 2");
-                    ImageDownloader._stopDownload = true;
+                    ImageDownloader.StopDownload = true;
                     if (GUI_facadeView.SelectedListItemIndex == 0)
                     {
                         ShowPreviousMenu();
@@ -506,7 +506,7 @@ namespace OnlineVideos
             }
             else if (control == GUI_infoList && actionType == Action.ActionType.ACTION_SELECT_ITEM && CurrentState == State.details)
             {
-                ImageDownloader._stopDownload = true;
+                ImageDownloader.StopDownload = true;
                 if (GUI_infoList.SelectedListItemIndex == 0)
                 {
                     ShowPreviousMenu();
@@ -718,7 +718,7 @@ namespace OnlineVideos
                     loListItem.Label2 = aSite.Settings.Language;
                     loListItem.Path = aSite.Settings.Name;
                     loListItem.IsFolder = true;
-                    loListItem.item = aSite;
+                    loListItem.Item = aSite;
                     string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Settings.Name + ".png";
                     if (System.IO.File.Exists(image))
                     {
@@ -759,22 +759,18 @@ namespace OnlineVideos
             // whenever categories are displayed, reset the selected video index, 
             // so re-entering another category won't restore a previously selected video
             selectedVideoIndex = 0;
-
+            
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
+
+            // add the first item that will go to the previous menu
             OnlineVideosItem loListItem;
             loListItem = new OnlineVideosItem("..");
             loListItem.IsFolder = true;
-            //loListItem.item = 
-
+            loListItem.ItemId = 0;
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
             GUI_facadeView.Add(loListItem);
 
-            int numCategoriesWithThumb = 0;
-            List<String> imagesUrlList = new List<string>();
-
-            suggestedView = null;
             IList<Category> categories = null;
-
             if (parentCategory == null)
             {
                 if (!selectedSite.Settings.DynamicCategoriesDiscovered)
@@ -818,6 +814,8 @@ namespace OnlineVideos
             }
 
             int categoryIndexToSelect = (categories != null && categories.Count > 0) ? 1 : 0; // select the first category by default if there is one
+            int numCategoriesWithThumb = 0;
+            suggestedView = null;
             if (categories != null)
             {
                 for (int i = 0; i < categories.Count; i++)
@@ -827,6 +825,7 @@ namespace OnlineVideos
                     {
                         loListItem = new OnlineVideosItem(loCat.Name);
                         loListItem.IsFolder = true;
+                        loListItem.ItemId = i + 1;
                         MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                         // Favorite Categories can have the same images as the home view
                         if (selectedSite is Sites.FavoriteUtil)
@@ -842,17 +841,14 @@ namespace OnlineVideos
                         }
                         else
                         {
-                            imagesUrlList.Add(loCat.Thumb);
                             if (!string.IsNullOrEmpty(loCat.Thumb))
                             {
-                                numCategoriesWithThumb++;
-                                loListItem.ItemId = imagesUrlList.Count;
-                                loListItem.RetrieveArt = false;
-                                loListItem.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+                                numCategoriesWithThumb++;                                
+                                loListItem.ThumbUrl = loCat.Thumb;
                             }
                         }
 
-                        loListItem.item = loCat;
+                        loListItem.Item = loCat;
                         if (loCat == selectedCategory) categoryIndexToSelect = GUI_facadeView.Count; // select the category that was previously selected
                         GUI_facadeView.Add(loListItem);
 
@@ -874,7 +870,7 @@ namespace OnlineVideos
                     }
                 }
 
-                if (numCategoriesWithThumb > 0) ImageDownloader.GetImages(imagesUrlList, OnlineVideoSettings.getInstance().msThumbLocation, GUI_facadeView);
+                if (numCategoriesWithThumb > 0) ImageDownloader.GetImages(GUI_facadeView);
                 if (numCategoriesWithThumb <= categories.Count / 2) suggestedView = GUIFacadeControl.ViewMode.List;
             }
 
@@ -907,7 +903,7 @@ namespace OnlineVideos
                     loListItem = new OnlineVideosItem(loVideoInfo.Title2);
                     loListItem.Path = loVideoInfo.VideoUrl;
                     loListItem.ItemId = liIdx;
-                    loListItem.item = loVideoInfo;
+                    loListItem.Item = loVideoInfo;
                     GUI_infoList.Add(loListItem);
                     currentTrailerList.Add(loVideoInfo);
                 }
@@ -1118,38 +1114,31 @@ namespace OnlineVideos
             loListItem.ItemId = 0;
             loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
-            //loListItem.item = 
             GUI_facadeView.Add(loListItem);
             // add the items
-            List<String> loImageUrlList = new List<string>();
             int numVideosWithThumb = 0;
             int liIdx = 0;
             foreach (VideoInfo loVideoInfo in foVideos)
             {
                 liIdx++;
                 loVideoInfo.CleanDescription();
-                if (FilterOut(loVideoInfo.Title) || FilterOut(loVideoInfo.Description))
-                {
-                    continue;
-                }
+                if (FilterOut(loVideoInfo.Title) || FilterOut(loVideoInfo.Description)) continue;
                 loListItem = new OnlineVideosItem(loVideoInfo.Title);
                 loListItem.Path = loVideoInfo.VideoUrl;
                 loListItem.ItemId = liIdx;
-                loListItem.item = loVideoInfo;
+                loListItem.Item = loVideoInfo;                
                 loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
-                GUI_facadeView.Add(loListItem);
-                loImageUrlList.Add(loVideoInfo.ImageUrl);
+                GUI_facadeView.Add(loListItem);                
                 if (!string.IsNullOrEmpty(loVideoInfo.ImageUrl))
                 {
-                    loListItem.RetrieveArt = false;
-                    loListItem.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
                     numVideosWithThumb++;
+                    loListItem.ThumbUrl = loVideoInfo.ImageUrl;
                 }
             }
             // fall back to list view if there are no items with thumbs
             suggestedView = null;
             if (numVideosWithThumb > 0)
-                ImageDownloader.GetImages(loImageUrlList, OnlineVideoSettings.getInstance().msThumbLocation, GUI_facadeView);
+                ImageDownloader.GetImages(GUI_facadeView);
             else
                 suggestedView = GUIFacadeControl.ViewMode.List;
 
@@ -1176,7 +1165,7 @@ namespace OnlineVideos
                 }
                 else
                 {
-                    ImageDownloader._stopDownload = true;
+                    ImageDownloader.StopDownload = true;
                     if (selectedCategory.ParentCategory == null) DisplayCategories(null);
                     else DisplayCategories(selectedCategory.ParentCategory);
                 }
@@ -1184,7 +1173,7 @@ namespace OnlineVideos
             else if (CurrentState == State.videos)
             {
                 Log.Info("Set the stopDownload to true 3");
-                ImageDownloader._stopDownload = true;
+                ImageDownloader.StopDownload = true;
 
                 if (selectedCategory == null || selectedCategory.ParentCategory == null) DisplayCategories(null);
                 else DisplayCategories(selectedCategory.ParentCategory);
@@ -1203,7 +1192,7 @@ namespace OnlineVideos
                 GUI_infoList.Focus = false;
                 ///------------------------------------------------------------------------
 
-                ImageDownloader._stopDownload = true;
+                ImageDownloader.StopDownload = true;
                 SetVideoListToFacade(currentVideoList);
                 CurrentState = State.videos;
                 SetFacadeViewMode();
@@ -1220,17 +1209,7 @@ namespace OnlineVideos
             if (!string.IsNullOrEmpty(desc)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", desc);
             else GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
         }
-
-        void OnRetrieveCoverArt(GUIListItem item)
-        {
-            if (ImageDownloader._imageLocationList.Count > item.ItemId - 1)
-            {
-                item.ThumbnailImage = ImageDownloader._imageLocationList[item.ItemId - 1];
-                item.IconImage = ImageDownloader._imageLocationList[item.ItemId - 1];
-                item.IconImageBig = ImageDownloader._imageLocationList[item.ItemId - 1];
-            }
-        }
-
+        
         void OnVideoItemSelected(GUIListItem item, GUIControl parent)
         {
             if (item.ItemId == 0) SetVideoInfoGuiProperties(null);
@@ -1912,10 +1891,21 @@ namespace OnlineVideos
         #endregion
     }
 
+    /// <summary>
+    /// Extends a <see cref="GUIListItem"/> with properties only used in OnlineVideos.
+    /// </summary>
     public class OnlineVideosItem : GUIListItem
     {
         public OnlineVideosItem(string strLabel) : base(strLabel) { }
 
-        public object item; //siteutil, category or video
+        /// <summary>
+        /// The <see cref="SiteUtilBase"/>, <see cref="Category"/> or <see cref="VideoInfo"/> that belongs to this object.
+        /// </summary>
+        public object Item { get; set; }
+
+        /// <summary>
+        /// The url for the thumbnail for this item. It will be downloaded and set by the <see cref="ImageDownloader"/>.
+        /// </summary>
+        public string ThumbUrl { get; set; }
     }
 }
