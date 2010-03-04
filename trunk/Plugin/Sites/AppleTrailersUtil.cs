@@ -364,12 +364,11 @@ namespace OnlineVideos.Sites
                 return trailer;
 
             string url = key.Replace("/trailers/", urlXMLDetails) + "index.xml";
-            //Log.Info("[MyTrailers][Apple Trailers] XML details URL: {0}", url); 
 
             XmlNode Root = GetXml(url);
             if (Root == null)
             {
-                Log.Error("[MyTrailers][Apple Trailers] No XML Found.");
+                Log.Error("Apple Trailers: No XML Found.");
                 return null;
             }
 
@@ -377,11 +376,12 @@ namespace OnlineVideos.Sites
             nsmgr.AddNamespace("a", xmlNamespace);
 
             // Poster Image URL
-            XmlNode Poster = Root.SelectSingleNode("//a:PictureView/@url", nsmgr);
-            if (Poster.Value.Length > 0)
+            XmlNode Poster = Root.SelectSingleNode("//a:PictureView/@url[contains(.,'poster')]", nsmgr);
+            if (Poster != null && Poster.Value.Length > 0)
             {
-                Log.Info("[MyTrailers][Apple Trailers] Added 1 poster.");
                 trailer.Poster = Poster.Value;
+                if (!trailer.Poster.StartsWith("http://")) trailer.Poster = "http://trailers.apple.com" + trailer.Poster;
+                Log.Debug("Apple Trailers poster url:" + trailer.Poster);
             }
 
             // Plot / Description (fuzzy)
@@ -423,7 +423,7 @@ namespace OnlineVideos.Sites
                 Root = GetXml(urlDetails);
                 if (Root == null)
                 {
-                    Log.Error("[MyTrailers][Apple Trailers] No XML Found for trailer page: {0}", urlDetails);
+                    Log.Error("Apple Trailers: No XML Found for trailer page: {0}", urlDetails);
                     continue;
                 }
 
@@ -491,7 +491,7 @@ namespace OnlineVideos.Sites
 
                 }
             }
-            Log.Info("[MyTrailers][Apple Trailers] Added {0} trailers.", trailer.Media.Count.ToString());
+            Log.Info("Apple Trailers: Added {0} trailers.", trailer.Media.Count.ToString());
             trailer.State = Trailer.InfoState.DETAIL;
             return trailer;
         }
@@ -504,7 +504,7 @@ namespace OnlineVideos.Sites
 
             if (!(jsonData is JsonArray)) jsonData = (jsonData as JsonObject)["results"]; // when search was used
 
-            Log.Info("[MyTrailers][Apple Trailers] Found {0} items.", (jsonData as JsonArray).Count.ToString());
+            Log.Info("Apple Trailers: Found {0} items.", (jsonData as JsonArray).Count.ToString());
 
             foreach (JsonObject trailer in jsonData as JsonArray)
             {
@@ -695,7 +695,7 @@ namespace OnlineVideos.Sites
                 {
                     Log.Error("{0}", ex.Message);
                     if (tryCount == maxRetries)
-                        Log.Error("[MyTrailers] Error connecting to {0} . Reached retry limit of {1}", url, maxRetries);
+                        Log.Error("Apple Trailers: Error connecting to {0} . Reached retry limit of {1}", url, maxRetries);
                 }
             }
 

@@ -57,9 +57,11 @@ namespace OnlineVideos.Sites
             {
                 XmlDocument data = new XmlDocument();
                 data.LoadXml(playlist);
-                string url = ((XmlElement)data.SelectSingleNode("//rendition/src")).InnerText;
-                string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
-                return resultUrl;
+                string url = ((XmlElement)data.SelectSingleNode("//src")).InnerText;
+                if (!url.EndsWith(".swf")) // country block
+                    return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", 
+                        OnlineVideoSettings.RTMP_PROXY_PORT, 
+                        System.Web.HttpUtility.UrlEncode(url));                
             }
             return "";
         }

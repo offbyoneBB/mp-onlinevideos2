@@ -10,124 +10,8 @@ namespace OnlineVideos
 {
     public static class ImageDownloader
     {
-        public static bool _imagesDone = false;
         public static bool _stopDownload = false;
         public static List<String> _imageLocationList = new List<String>();
-
-        #region OldCode
-        /*
-        public static void DownloadImages(object sender, DoWorkEventArgs e)
-        {
-            _stopDownload = false;
-            _imagesDone = false;
-            _imageLocationList = new List<String>();
-            Object[] loArguments = (Object[])e.Argument;
-            GUIFacadeControl facadeView = (GUIFacadeControl)loArguments[0];
-            List<String> loImageUrlList = (List<String>)loArguments[1];
-            String lsThumbLocation = (String)loArguments[2];
-
-
-            Log.Info("OnlineVideos thumbnails will be saved in {0}", lsThumbLocation);
-            //int liSelectedIndex = Convert.ToInt32(loArguments[2]);
-            int liIdx = 0;
-            List<String> loImageFileList = new List<String>(loImageUrlList.Count);
-            foreach (String lsUrl in loImageUrlList)
-            {
-                Log.Info("Getting image :" + lsUrl);
-                liIdx++;
-                if (lsUrl == String.Empty)
-                {
-                    continue;
-                }
-                if (_stopDownload)
-                {
-                    break;
-                }
-                string lsThumb = MediaPortal.Util.Utils.GetThumb(lsUrl);
-                //Log.Info("1)lsThumb = "+lsThumb);
-                lsThumb = System.IO.Path.GetFileName(lsThumb);
-                //Log.Info("2)lsThumb = "+lsThumb);
-                string lsThumbsDir = lsThumbLocation;
-                if (System.IO.Directory.Exists(lsThumbsDir) == false)
-                {
-                    System.IO.Directory.CreateDirectory(lsThumbsDir);
-                }
-                lsThumb = lsThumbsDir + lsThumb;
-                //Log.Info("3)lsThumb = "+lsThumb);
-                //Log.Info(lsThumb);
-                if (System.IO.File.Exists(lsThumb) == false)
-                {
-                    //Log.Info("lsThumb doesn't exist");
-                    String lsFilename = System.IO.Path.GetFileName(lsThumb);
-                    //moLog.Info("Filename will be {0}", lsFilename);
-                    MediaPortal.Util.Utils.DownLoadImage(lsUrl, lsThumb);
-                    System.Threading.Thread.Sleep(25);
-                }
-                if (System.IO.File.Exists(lsThumb))
-                {
-                    //Log.Info("lsThumb exist now");
-                    //facadeView[liIdx].IconImageBig = lsThumb;
-                    loImageFileList.Add(lsThumb);
-                }
-                else
-                {
-                    //Log.Info("lsThumb couldn't be created");
-                    loImageFileList.Add("");
-                    //facadeView[liIdx].IconImageBig = "";
-                }
-                //facadeView[liIdx].ThumbnailImage = lsThumb;
-                _imageLocationList.Add(lsThumb);
-                facadeView[liIdx].ItemId = liIdx;
-                //Log.Info("Set item {0} with image {1}", facadeView[liIdx].ItemId,facadeView[liIdx].ThumbnailImage);
-                facadeView[liIdx].RetrieveArt = true;
-                facadeView[liIdx].RefreshCoverArt();
-
-            }
-            
-            foreach (String lsFileName in loImageFileList)
-            {
-                liIdx++;
-                facadeView[liIdx].IconImageBig = lsFileName;
-                facadeView[liIdx].
-
-            }
-            
-            _imagesDone = true;
-            //facadeView.SelectedListItemIndex = liSelectedIndex;
-
-            //GUIControl.SelectItemControl(4755, facadeView.GetID, liSelectedIndex);
-
-        }
-        
-        public static String DownloadImage(String fsUrl,String fsThumbLocation){
-            string lsThumb = MediaPortal.Util.Utils.GetThumb(fsUrl);
-                lsThumb = System.IO.Path.GetFileName(lsThumb);
-                string lsThumbsDir = fsThumbLocation;
-                if (System.IO.Directory.Exists(lsThumbsDir) ==false)
-                {
-                    System.IO.Directory.CreateDirectory(lsThumbsDir);
-                }
-                lsThumb =lsThumbsDir + lsThumb;
-                //Log.Info(lsThumb);
-                if (System.IO.File.Exists(lsThumb) == false)
-                {
-                    String lsFilename = System.IO.Path.GetFileName(lsThumb);
-                    //moLog.Info("Filename will be {0}", lsFilename);
-                    MediaPortal.Util.Utils.DownLoadImage(fsUrl, lsThumb);
-                }
-                if (System.IO.File.Exists(lsThumb))
-                {
-                    //facadeView[liIdx].IconImageBig = lsThumb;
-                    return lsThumb;
-                }
-                else
-                {
-                    return "";
-                    //facadeView[liIdx].IconImageBig = "";
-                }
-        }
-         */
-        #endregion
 
         public static string GetSaveFilename(string input)
         {
@@ -143,19 +27,26 @@ namespace OnlineVideos
             return safe;
         }
 
-        public static string downloadPoster(String fsUrl, String fsMovieName, string fsLocation)
+        public static string GetThumbFile(string url)
         {
-            String lsPosterLocation = fsLocation + GetSaveFilename(fsMovieName) + "_p.jpg";
-            if (System.IO.File.Exists(lsPosterLocation) == false)
-            {
-                WebClient client = new WebClient();
-                Log.Info("downloading Poster image :" + fsUrl);
-                client.DownloadFile(fsUrl, lsPosterLocation);
-            }
-            return lsPosterLocation;
+            string name = MediaPortal.Util.Utils.GetThumb(url);
+            name = System.IO.Path.GetFileNameWithoutExtension(name) + "L.jpg";
+            return System.IO.Path.Combine(OnlineVideoSettings.getInstance().msThumbLocation, name);
         }
 
-        public static void getImages(List<String> imageUrlList, String ThumbLocation, GUIFacadeControl facadeView)
+        public static string DownloadPoster(string url, string name)
+        {
+            string file = System.IO.Path.Combine(OnlineVideoSettings.getInstance().msThumbLocation, GetSaveFilename(name) + "_p.jpg");
+            if (!System.IO.File.Exists(file))
+            {
+                Log.Info("downloading Poster image :" + url);
+                if (DownloadAndCheckImage(url, file)) return file;
+                else return "";
+            }
+            return file;
+        }
+
+        public static void GetImages(List<String> imageUrlList, String ThumbLocation, GUIFacadeControl facadeView)
         {
             Log.Info("Getting images");
             BackgroundWorker worker = new BackgroundWorker();
@@ -163,42 +54,25 @@ namespace OnlineVideos
             loParms[0] = facadeView;
             loParms[1] = imageUrlList;
             loParms[2] = ThumbLocation;
-            worker.DoWork += new DoWorkEventHandler(DownloadImages2);
-            //_imagesDone = false;
+            worker.DoWork += new DoWorkEventHandler(DownloadImages);
             worker.RunWorkerAsync(loParms);
         }
 
-        public static string GetThumbFile(string url)
-        {
-            string name = MediaPortal.Util.Utils.GetThumb(url);
-            name = System.IO.Path.GetFileNameWithoutExtension(name)+ "L.jpg";
-            return System.IO.Path.Combine(OnlineVideoSettings.getInstance().msThumbLocation, name);
-        }
-
-        public static void DownloadImages2(object sender, DoWorkEventArgs e)
+        static void DownloadImages(object sender, DoWorkEventArgs e)
         {
             System.Threading.Thread.CurrentThread.Name = "OnlineVideosImageDownloader";
-
-            //Log.Info("Using thumb directory:{0}", _imageDirectory);
-            Log.Info("Downloading images");
-            _imageLocationList.Clear();
-            _imagesDone = false;
-            _stopDownload = false;
-            //List<String> imageList = (List<String>)e.Argument;
-            //NameValueCollection imgNameUrlList = (NameValueCollection)e.Argument;
             Object[] loArguments = (Object[])e.Argument;
             GUIFacadeControl facadeView = (GUIFacadeControl)loArguments[0];
             List<String> loImageUrlList = (List<String>)loArguments[1];
             String lsThumbLocation = (String)loArguments[2];
-
-
-            Log.Info("OnlineVideos thumbnails will be saved in {0}", lsThumbLocation);
-            //int liSelectedIndex = Convert.ToInt32(loArguments[2]);
+            Log.Info("Downloading images to " + lsThumbLocation);
+            _imageLocationList.Clear();
+            _stopDownload = false;
             int liIdx = 0;
-            //List<String> loImageFileList = new List<String>(loImageUrlList.Count);
-            WebClient client = new WebClient();
-                        
             string name;
+            // todo speedup:
+            // 1. Walk all and set the ones that already exists
+            // 2. Download missing ones multithreaded (5 at a time)
             foreach (String url in loImageUrlList)
             {                
                 liIdx++;
@@ -218,7 +92,6 @@ namespace OnlineVideos
                             if (System.IO.File.Exists(aFinalUrl))
                             {
                                 imageLocation = aFinalUrl;
-                                break;
                             }
                         }
                         else
@@ -227,17 +100,14 @@ namespace OnlineVideos
                             name = MediaPortal.Util.Utils.GetThumb(aFinalUrl);
                             name = System.IO.Path.GetFileNameWithoutExtension(name);
                             imageLocation = lsThumbLocation + name + "L.jpg";
-                            if (System.IO.File.Exists(imageLocation)) break;
-                            try
+                            if (!System.IO.File.Exists(imageLocation))
                             {
-                                Log.Info("downloading image :" + aFinalUrl);
-                                client.DownloadFile(aFinalUrl, imageLocation);
-                                break;
-                            }
-                            catch (Exception)
-                            {
-                                Log.Info("image not found : " + aFinalUrl);
-                                imageLocation = "";
+                                Log.Info(string.Format("Downloading Image from {0} to {1}", aFinalUrl, name + "L.jpg"));
+                                if (!DownloadAndCheckImage(aFinalUrl, imageLocation))
+                                {
+                                    Log.Info("Image not found : " + aFinalUrl);
+                                    imageLocation = "";
+                                }
                             }
                         }
                     }                    
@@ -257,9 +127,31 @@ namespace OnlineVideos
                     }
                 }
             }
-            Log.Info("Setting imagesDone to true");
-            _imagesDone = true;
         }
 
+        static bool DownloadAndCheckImage(string url, string file)
+        {
+            try
+            {
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                if (request == null) return false;
+                request.UserAgent = OnlineVideoSettings.UserAgent;
+                request.Accept = "*/*";
+                request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                System.IO.Stream responseStream;
+                if (response.ContentEncoding.ToLower().Contains("gzip"))
+                    responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                else if (response.ContentEncoding.ToLower().Contains("deflate"))
+                    responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                else
+                    responseStream = response.GetResponseStream();
+                System.Drawing.Image image = System.Drawing.Image.FromStream(responseStream, true, true);
+                image.Save(file, System.Drawing.Imaging.ImageFormat.Jpeg);
+                image.Dispose();
+                return true;
+            }
+            catch { return false; }
+        }
     }
 }
