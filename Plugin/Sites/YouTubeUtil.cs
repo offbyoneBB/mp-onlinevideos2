@@ -14,7 +14,6 @@ using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
-
     public class YouTubeUtil : SiteUtilBase, IFilter, IFavorite
     {
         public enum VideoQuality { Low, High, HD };
@@ -25,6 +24,8 @@ namespace OnlineVideos.Sites
         string username = "";
         [Category("OnlineVideosUserConfiguration"), Description("Your YouTube password. Used for favorites.")]
         string password = "";
+        [Category("OnlineVideosUserConfiguration"), Description("Defines the default number of videos to display per page.")]
+        int pageSize = 27;
 
         [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
         bool useDynamicCategories = true;
@@ -34,18 +35,18 @@ namespace OnlineVideos.Sites
         static Regex PageStartIndex = new Regex(@"start-index=(?<item>[\d]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
+        private YouTubeService service;
         private List<int> steps;
         private Dictionary<String, String> orderByList;
         private Dictionary<String, String> timeFrameList;
         private YouTubeQuery _LastPerformedQuery;
-        private const String CLIENT_ID = "ytapi-GregZ-OnlineVideos-s2skvsf5-0";
-        private const String DEVELOPER_KEY = "AI39si5x-6x0Nybb_MvpC3vpiF8xBjpGgfq-HTbyxWP26hdlnZ3bTYyERHys8wyYsbx3zc5f9bGYj0_qfybCp-wyBF-9R5-5kA";        
-        private const String RELATED_VIDEO_FEED = "http://gdata.youtube.com/feeds/api/videos/{0}/related";
-        private const String CATEGORY_FEED = "http://gdata.youtube.com/feeds/api/videos/-/{0}";
-        private const String USER_PLAYLISTS_FEED = "http://gdata.youtube.com/feeds/api/users/[\\w]+/playlists";
-        private const String PLAYLIST_FEED = "http://gdata.youtube.com/feeds/api/playlists/{0}";
-        
-        private YouTubeService service;
+
+        const string CLIENT_ID = "ytapi-GregZ-OnlineVideos-s2skvsf5-0";
+        const string DEVELOPER_KEY = "AI39si5x-6x0Nybb_MvpC3vpiF8xBjpGgfq-HTbyxWP26hdlnZ3bTYyERHys8wyYsbx3zc5f9bGYj0_qfybCp-wyBF-9R5-5kA";
+        const string RELATED_VIDEO_FEED = "http://gdata.youtube.com/feeds/api/videos/{0}/related";
+        const string CATEGORY_FEED = "http://gdata.youtube.com/feeds/api/videos/-/{0}";
+        const string USER_PLAYLISTS_FEED = "http://gdata.youtube.com/feeds/api/users/[\\w]+/playlists";
+        const string PLAYLIST_FEED = "http://gdata.youtube.com/feeds/api/playlists/{0}";                
 
         public YouTubeUtil()
         {
@@ -77,28 +78,14 @@ namespace OnlineVideos.Sites
             }            
 
             service = new YouTubeService("OnlineVideos", CLIENT_ID, DEVELOPER_KEY);
-            
-
-            //orderByList.Add("")
         }
 
-        string nextPageUrl = "";
-        string previousPageUrl = "";
-        bool nextPageAvailable = false;
-        bool previousPageAvailable = false;
-
-        private CookieCollection moCookies;
-        private Regex regexId = new Regex("/videos/(.+)");
-
-        public override bool HasRelatedVideos
-        {
-            get { return true; }
-        }
+        public override bool HasRelatedVideos { get { return true; } }
 
         public override List<VideoInfo> getRelatedVideos(VideoInfo video)
         {
             string fsId = video.VideoUrl;
-            YouTubeQuery query = new YouTubeQuery(String.Format(RELATED_VIDEO_FEED, fsId));
+            YouTubeQuery query = new YouTubeQuery(String.Format(RELATED_VIDEO_FEED, fsId)) { NumberToRetrieve = pageSize };
             return parseGData(query);
         }
 
@@ -176,11 +163,8 @@ namespace OnlineVideos.Sites
             {
                 return getSiteFavorites(fsUrl.Substring(4));
             }
-            YouTubeQuery query = new YouTubeQuery(fsUrl);
-            List<VideoInfo> loRssItemList = parseGData(query);
-            //List<VideoInfo> loVideoList = new List<VideoInfo>();
-            //VideoInfo video;			
-            return loRssItemList;
+            YouTubeQuery query = new YouTubeQuery(fsUrl) { NumberToRetrieve = pageSize };
+            return parseGData(query);
         }
 
         public static String ConvertUrl(String youtubeUrl)
@@ -315,7 +299,7 @@ namespace OnlineVideos.Sites
             }
         }
         
-        public static void GetVideInfo(string videoId,Dictionary<string, string> Items )
+        public static void GetVideInfo(string videoId, Dictionary<string, string> Items)
         {
             WebClient client = new WebClient();
             client.CachePolicy = new System.Net.Cache.RequestCachePolicy();
@@ -346,48 +330,9 @@ namespace OnlineVideos.Sites
                     }
                 }
             }
-            catch
-            {
-            }
+            catch {}
         }
 
-        public bool login(String fsUser, String fsPassword)
-        {
-            HttpWebRequest Request = (HttpWebRequest)WebRequest.Create("http://www.youtube.com/login?next=/");
-            //HttpWebRequest Request = (HttpWebRequest)WebRequest.Create("https://www.google.com/youtube/accounts/ClientLogin");
-            Request.Method = "POST";
-            Request.ContentType = "application/x-www-form-urlencoded";
-            Request.CookieContainer = new CookieContainer();
-
-
-            Stream RequestStream = Request.GetRequestStream();
-            ASCIIEncoding ASCIIEncoding = new ASCIIEncoding();
-            //Byte [] PostData = ASCIIEncoding.GetBytes("username=" + fsUser +"&password="+ fsPassword);
-
-            Byte[] PostData = ASCIIEncoding.GetBytes("current_form=loginForm&next=%%2F&username=" + fsUser + "&password=" + fsPassword + "&action_login=Log+In");
-            //Byte [] PostData = ASCIIEncoding.GetBytes("Email="+fsUser+"&Passwd="+fsPassword+"&service=youtube&source=MP-OnlineVideos");
-            RequestStream.Write(PostData, 0, PostData.Length);
-            RequestStream.Close();
-            HttpWebResponse response = (HttpWebResponse)Request.GetResponse();
-            //StreamReader Reader  = new StreamReader(Request.GetResponse().GetResponseStream());
-            //String ResultHTML = Reader.ReadToEnd();
-            response.Cookies = Request.CookieContainer.GetCookies(Request.RequestUri);
-            moCookies = response.Cookies;
-            //	Log.Info("Found {0} cookies after login ",response.Cookies.Count);
-
-            //foreach(Cookie cky in response.Cookies)
-            //{
-            //	Log.Info(cky.Name + " = " + cky.Value +" expires on "+cky.Expires);
-            //}
-            response.Close();
-            return isLoggedIn();
-        }
-
-        private bool isLoggedIn()
-        {
-            return moCookies != null && moCookies["LOGIN_INFO"] != null;
-        }
-        
         public override int DiscoverDynamicCategories()
         {
             // walk the categories and see if there are user playlists - they need to be set to have subcategories
@@ -456,6 +401,13 @@ namespace OnlineVideos.Sites
             return categories;
         }
 
+        #region Paging
+
+        string nextPageUrl = "";
+        string previousPageUrl = "";
+        bool nextPageAvailable = false;
+        bool previousPageAvailable = false;
+
         public override bool HasNextPage
         {
             get { return nextPageAvailable; }
@@ -464,13 +416,8 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getNextPageVideos()
         {
             YouTubeQuery query = _LastPerformedQuery;
-
             Match mIndex = PageStartIndex.Match(nextPageUrl);
-            if (mIndex.Success)
-            {
-                query.StartIndex = Convert.ToInt16(mIndex.Groups["item"].Value);
-            }
-
+            if (mIndex.Success) query.StartIndex = Convert.ToInt16(mIndex.Groups["item"].Value);
             return parseGData(query);
         }
 
@@ -482,15 +429,87 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getPreviousPageVideos()
         {
             YouTubeQuery query = _LastPerformedQuery;
-
             Match mIndex = PageStartIndex.Match(previousPageUrl);
-            if (mIndex.Success)
-            {
-                query.StartIndex = Convert.ToInt16(mIndex.Groups["item"].Value);
-            }
-
+            if (mIndex.Success) query.StartIndex = Convert.ToInt16(mIndex.Groups["item"].Value);
             return parseGData(query);
         }
+
+        #endregion
+
+        #region Search
+
+        public override bool CanSearch { get { return true; } }
+
+        Dictionary<string, string> cachedSearchCategories = null;
+        public override Dictionary<string, string> GetSearchableCategories()
+        {
+            if (cachedSearchCategories == null) cachedSearchCategories = getYoutubeCategories();
+            return cachedSearchCategories;
+        }
+
+        public override List<VideoInfo> Search(string queryStr)
+        {
+            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri) { NumberToRetrieve = pageSize };
+            query.Query = queryStr;
+            return parseGData(query);            
+        }        
+        public override List<VideoInfo> Search(string queryStr, string category)
+        {
+            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri) { NumberToRetrieve = pageSize };
+            query.Query = queryStr;  
+            AtomCategory category1 = new AtomCategory(category, YouTubeNameTable.CategorySchema);
+            query.Categories.Add(new QueryCategory(category1));
+            return parseGData(query);
+        }
+
+        #endregion
+
+        #region IFavorite Members
+
+        public List<VideoInfo> getFavorites()
+        {
+            if (string.IsNullOrEmpty(username)) return new List<VideoInfo>();
+            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateFavoritesUri(username));        
+            return parseGData(query);
+        }               
+
+        public void addFavorite(VideoInfo video)
+        {
+            if (CheckUsernameAndPassword())
+            {
+                service.setUserCredentials(username, password);
+                YouTubeEntry entry = (YouTubeEntry)video.Other;
+                service.Insert(new Uri(YouTubeQuery.CreateFavoritesUri(username)), entry);                
+            }
+        }
+
+        public void removeFavorite(VideoInfo video)
+        {
+            if (CheckUsernameAndPassword())
+            {
+                service.setUserCredentials(username, password);
+                ((YouTubeEntry)video.Other).Delete();               
+            }
+        }
+
+        bool CheckUsernameAndPassword()
+        {
+            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(username))
+            {
+                MediaPortal.Dialogs.GUIDialogOK dlg_error = (MediaPortal.Dialogs.GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                dlg_error.SetHeading("YouTube");
+                dlg_error.SetLine(1, "Please set your username and password in the Configuration");
+                dlg_error.SetLine(2, String.Empty);
+                dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        #endregion        
 
         #region IFilter Members
 
@@ -594,7 +613,7 @@ namespace OnlineVideos.Sites
                 query.Time = (YouTubeQuery.UploadTime)Enum.Parse(typeof(YouTubeQuery.UploadTime), timeFrame, true);
             }
             return parseGData(query);
-        } 
+        }
 
         public List<int> getResultSteps()
         {
@@ -612,177 +631,5 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
-
-        #region Search
-
-        public override bool CanSearch { get { return true; } }
-
-        Dictionary<string, string> cachedSearchCategories = null;
-        public override Dictionary<string, string> GetSearchableCategories()
-        {
-            if (cachedSearchCategories == null) cachedSearchCategories = getYoutubeCategories();
-            return cachedSearchCategories;
-        }
-
-        public override List<VideoInfo> Search(string queryStr)
-        {
-            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
-            query.Query = queryStr;           
-            List<VideoInfo> loRssItemList = parseGData(query);            
-            return loRssItemList;
-            
-        }
-        
-        //private String buildSearchUrl(string query, string category)
-        //{
-        //    String searchUrl;
-        //    if (!String.IsNullOrEmpty(category))
-        //    {
-        //        searchUrl = String.Format("http://gdata.youtube.com/feeds/api/videos?vq={0}&category={1}", query, category);
-        //    }
-        //    else
-        //    {
-        //        searchUrl = String.Format("http://gdata.youtube.com/feeds/api/videos?vq={0}", query);
-        //    }
-        //    return searchUrl;
-
-        //}
-
-        public override List<VideoInfo> Search(string queryStr, string category)
-        {
-            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
-            query.Query = queryStr;  
-            AtomCategory category1 = new AtomCategory(category, YouTubeNameTable.CategorySchema);
-            query.Categories.Add(new QueryCategory(category1));            
-            
-            List<VideoInfo> loRssItemList = parseGData(query);
-            return loRssItemList;
-        }
-
-        #endregion
-
-        #region IFavorite Members
-
-        public List<VideoInfo> getFavorites()
-        {
-            if (string.IsNullOrEmpty(username)) return new List<VideoInfo>();
-            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateFavoritesUri(username));        
-            return parseGData(query);
-        }               
-
-        public void addFavorite(VideoInfo video)
-        {
-            if (CheckUsernameAndPassword())
-            {
-                service.setUserCredentials(username, password);
-                YouTubeEntry entry = (YouTubeEntry)video.Other;
-                service.Insert(new Uri(YouTubeQuery.CreateFavoritesUri(username)), entry);
-                //    String lsPostUrl = "http://gdata.youtube.com/feeds/api/users/default/favorites";
-                //    String authToken = getAuthToken(fsUsername, fsPassword);
-                //    HttpWebRequest Request = (HttpWebRequest)WebRequest.Create(lsPostUrl);
-                //    Request.Method = "POST";
-                //    Request.ContentType = "application/atom+xml";
-                //    Request.Headers.Add(
-                //        HttpRequestHeader.Authorization, "GoogleLogin auth=" + authToken);
-                //    Request.Headers.Add("X-GData-Client: " + CLIENT_ID);
-                //    Request.Headers.Add("X-GData-Key: key=" + DEVELOPER_KEY);
-                //    Request.Headers.Add("GData-Version","2");
-                //    ASCIIEncoding ASCIIEncoding = new ASCIIEncoding();
-                //    Byte [] PostData = ASCIIEncoding.GetBytes(String.Format("<?xml version=\"1.0\" encoding=\"UTF-8\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>{0}</id></entry>","J2N0t4OEUbc"));
-                //     Stream RequestStream = Request.GetRequestStream();
-                //    RequestStream.Write(PostData, 0, PostData.Length);
-                //    RequestStream.Close();
-
-
-                //HttpWebResponse response = (HttpWebResponse)Request.GetResponse();
-                //StreamReader Reader  = new StreamReader(response.GetResponseStream());
-                //String lsResponse = Reader.ReadToEnd();
-                //Log.Info("Youtube authorization token:"+lsResponse);
-                //response.Close();
-                //throw new Exception("");
-            }
-        }
-
-        public void removeFavorite(VideoInfo video)
-        {
-            if (CheckUsernameAndPassword())
-            {
-                service.setUserCredentials(username, password);
-                ((YouTubeEntry)video.Other).Delete();
-                //String lsPostUrl = String.Format("http://gdata.youtube.com/feeds/api/users/{0}/favorites/{1}", fsUsername, "vjVQa1PpcFOKheU6YrMZmZ6GRqLUdhAz8qZtu8cCzBs");
-                //String authToken = getAuthToken(fsUsername, fsPassword);
-                //HttpWebRequest Request = (HttpWebRequest)WebRequest.Create(lsPostUrl);
-                //Request.Method = "DELETE";
-                //Request.ContentType = "application/atom+xml";
-                //Request.Headers.Add(
-                //    HttpRequestHeader.Authorization, "GoogleLogin auth=" + authToken);
-                //Request.Headers.Add("X-GData-Client: " + CLIENT_ID);
-                //Request.Headers.Add("X-GData-Key: key=" + DEVELOPER_KEY);
-                //Request.Headers.Add("GData-Version", "2");
-
-                //HttpWebResponse response = (HttpWebResponse)Request.GetResponse();
-                //StreamReader Reader = new StreamReader(response.GetResponseStream());
-                //String lsResponse = Reader.ReadToEnd();
-                //Log.Info("Youtube authorization token:" + lsResponse);
-                //response.Close();
-            }
-        }
-
-        bool CheckUsernameAndPassword()
-        {
-            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(username))
-            {
-                MediaPortal.Dialogs.GUIDialogOK dlg_error = (MediaPortal.Dialogs.GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                dlg_error.SetHeading("YouTube");
-                dlg_error.SetLine(1, "Please set your username and password in the Configuration");
-                dlg_error.SetLine(2, String.Empty);
-                dlg_error.DoModal(GUIWindowManager.ActiveWindow);
-
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        #endregion
-
-        //private String getAuthToken(String fsUsername, String fsPassword)
-        //{
-        //    String lsClientLoginUrl = "https://www.google.com/youtube/accounts/ClientLogin";
-        //    HttpWebRequest Request = (HttpWebRequest)WebRequest.Create(lsClientLoginUrl);
-        //    Request.Method = "POST";
-        //    Request.ContentType = "application/x-www-form-urlencoded";
-        //    //Request.CookieContainer = new CookieContainer();
-			
-        //    //Request.CookieContainer.Add(moCookies);
-			
-        //    //Stream RequestStream  = Request.GetRequestStream();
-        //    ASCIIEncoding ASCIIEncoding  =  new ASCIIEncoding();
-            
-        //    Byte [] PostData = ASCIIEncoding.GetBytes(
-        //        "Email="+fsUsername+
-        //        "&Passwd="+fsPassword+
-        //        "&service=youtube"+
-        //        "&source=OnlineVideos");
-        //    /*
-                //    Stream RequestStream = Request.GetRequestStream();
-        //    RequestStream.Write(PostData, 0, PostData.Length);
-        //    RequestStream.Close();
-            
-        
-        //HttpWebResponse response = (HttpWebResponse)Request.GetResponse();
-        //StreamReader Reader  = new StreamReader(response.GetResponseStream());
-        //String lsResponse = Reader.ReadToEnd();
-        //Log.Info("Youtube authorization token:"+lsResponse);
-        //response.Close();
-        //Regex authRegex = new Regex("Auth=([^\n]*)");
-        //return authRegex.Match(lsResponse).Groups[1].Value;
-
-        ////return lsResponse;
-        //}
-
     }
-
 }

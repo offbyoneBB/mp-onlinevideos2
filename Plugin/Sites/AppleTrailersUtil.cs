@@ -667,41 +667,6 @@ namespace OnlineVideos.Sites
             return null;
         }        
 
-        public static new string GetWebData(string url)
-        {
-            string _data = string.Empty;
-
-            int tryCount = 0;
-            int maxRetries = 3;
-            int timeout = 0;
-            int timeoutIncrement = 5000;
-
-            while (_data == string.Empty && tryCount < maxRetries)
-            {
-                try
-                {
-                    tryCount++;
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                    request.Timeout = timeout + (timeoutIncrement * tryCount);
-                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                    Stream resultData = response.GetResponseStream();
-                    StreamReader reader = new StreamReader(resultData, Encoding.UTF8, true);
-                    _data = reader.ReadToEnd().Replace('\0', ' ');
-                    resultData.Close();
-                    reader.Close();
-                    response.Close();
-                }
-                catch (WebException ex)
-                {
-                    Log.Error("{0}", ex.Message);
-                    if (tryCount == maxRetries)
-                        Log.Error("Apple Trailers: Error connecting to {0} . Reached retry limit of {1}", url, maxRetries);
-                }
-            }
-
-            return _data;
-        }
-
         string GetTrailerUrlForConfiguredResolution(Dictionary<string, string> files)
         {
             if (files == null || files.Count == 0) return "";
@@ -715,23 +680,7 @@ namespace OnlineVideos.Sites
                 else return files[vq[0]].ToString();
             }
         }
-
-        /*
-        string FixTrailerUrl(string url, VideoQuality quality)
-        {
-            switch(quality)
-            {
-                case VideoQuality.SMALL: url = url.Replace("h320.mov", "h.320.mov"); break;
-                case VideoQuality.MEDIUM: url = url.Replace("h480.mov", "h.480.mov"); break;
-                case VideoQuality.LARGE: url = url.Replace("h640w.mov", "h.640.mov"); break;
-                case VideoQuality.HD480: url = url.Replace("h480p.mov", "480p.mov"); break;
-                case VideoQuality.HD720: url = url.Replace("h720p.mov", "720p.mov"); break;
-                case VideoQuality.FULLHD: url = url.Replace("h1080p.mov", "1080p.mov"); break;
-            }
-            return url;
-        }
-        */
-
+      
         #region Search
 
         public override bool CanSearch { get { return true; } }

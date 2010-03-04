@@ -462,7 +462,7 @@ namespace OnlineVideos
                     {
                         Category categoryToRestoreOnError = selectedCategory;
                         //if (selectedCategory == null) 
-                            selectedCategory = (GUI_facadeView.SelectedListItem as OnlineVideosItem).Item as Category;
+                            selectedCategory = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Category;
                         //selectedSite.Settings.Categories[GUI_facadeView.SelectedListItemIndex - 1];
                         //else 
                             //selectedCategory = selectedCategory.SubCategories[GUI_facadeView.SelectedListItemIndex - 1];
@@ -714,7 +714,7 @@ namespace OnlineVideos
                 if (aSite.Settings.IsEnabled &&
                     (!aSite.Settings.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || OnlineVideoSettings.getInstance().ageHasBeenConfirmed))
                 {
-                    OnlineVideosItem loListItem = new OnlineVideosItem(aSite.Settings.Name);
+                    OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem(aSite.Settings.Name);
                     loListItem.Label2 = aSite.Settings.Language;
                     loListItem.Path = aSite.Settings.Name;
                     loListItem.IsFolder = true;
@@ -763,8 +763,8 @@ namespace OnlineVideos
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
 
             // add the first item that will go to the previous menu
-            OnlineVideosItem loListItem;
-            loListItem = new OnlineVideosItem("..");
+            OnlineVideosGuiListItem loListItem;
+            loListItem = new OnlineVideosGuiListItem("..");
             loListItem.IsFolder = true;
             loListItem.ItemId = 0;
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
@@ -823,7 +823,7 @@ namespace OnlineVideos
                     Category loCat = categories[i];
                     if (isInFilter(loCat))
                     {
-                        loListItem = new OnlineVideosItem(loCat.Name);
+                        loListItem = new OnlineVideosGuiListItem(loCat.Name);
                         loListItem.IsFolder = true;
                         loListItem.ItemId = i + 1;
                         MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
@@ -890,7 +890,7 @@ namespace OnlineVideos
                 currentTrailerList.Clear();
                 GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
                 GUIControl.ClearControl(GetID, GUI_infoList.GetID);
-                OnlineVideosItem loListItem = new OnlineVideosItem("..");
+                OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem("..");
                 loListItem.IsFolder = true;
                 loListItem.ItemId = 0;
                 MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
@@ -899,8 +899,7 @@ namespace OnlineVideos
                 foreach (VideoInfo loVideoInfo in loVideoList)
                 {
                     liIdx++;
-                    loVideoInfo.CleanDescription();
-                    loListItem = new OnlineVideosItem(loVideoInfo.Title2);
+                    loListItem = new OnlineVideosGuiListItem(loVideoInfo.Title2);
                     loListItem.Path = loVideoInfo.VideoUrl;
                     loListItem.ItemId = liIdx;
                     loListItem.Item = loVideoInfo;
@@ -1107,9 +1106,9 @@ namespace OnlineVideos
                 return false;
             }
             // add the first item that will go to the previous menu
-            OnlineVideosItem loListItem;
+            OnlineVideosGuiListItem loListItem;
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
-            loListItem = new OnlineVideosItem("..");
+            loListItem = new OnlineVideosGuiListItem("..");
             loListItem.IsFolder = true;
             loListItem.ItemId = 0;
             loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
@@ -1123,7 +1122,7 @@ namespace OnlineVideos
                 liIdx++;
                 loVideoInfo.CleanDescription();
                 if (FilterOut(loVideoInfo.Title) || FilterOut(loVideoInfo.Description)) continue;
-                loListItem = new OnlineVideosItem(loVideoInfo.Title);
+                loListItem = new OnlineVideosGuiListItem(loVideoInfo.Title);
                 loListItem.Path = loVideoInfo.VideoUrl;
                 loListItem.ItemId = liIdx;
                 loListItem.Item = loVideoInfo;                
@@ -1889,23 +1888,5 @@ namespace OnlineVideos
         }
 
         #endregion
-    }
-
-    /// <summary>
-    /// Extends a <see cref="GUIListItem"/> with properties only used in OnlineVideos.
-    /// </summary>
-    public class OnlineVideosItem : GUIListItem
-    {
-        public OnlineVideosItem(string strLabel) : base(strLabel) { }
-
-        /// <summary>
-        /// The <see cref="SiteUtilBase"/>, <see cref="Category"/> or <see cref="VideoInfo"/> that belongs to this object.
-        /// </summary>
-        public object Item { get; set; }
-
-        /// <summary>
-        /// The url for the thumbnail for this item. It will be downloaded and set by the <see cref="ImageDownloader"/>.
-        /// </summary>
-        public string ThumbUrl { get; set; }
     }
 }
