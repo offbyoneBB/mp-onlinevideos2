@@ -23,7 +23,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration")]
         string subcategoriesRegEx = @"<div\sclass=""mt-media_item"">\s*
 <div\sclass=""mt-image"">\s*
-<img\ssrc=""(?<ImageUrl>[^""]+)""[^>]*>\s*
+<img\s(data-)?src=""(?<ImageUrl>[^""]+)""[^>]*>\s*
 </div>\s*
 <h3\sclass=""mt-title""><a\shref=""(?<Url>[^""]+)""\s[^>]*>(?<Title>[^<]+)</a></h3>";
         [Category("OnlineVideosConfiguration")]
@@ -32,7 +32,7 @@ namespace OnlineVideos.Sites
         string videoListRegEx = @"<div\sclass=""mt-media_item"">\s*
 <div\sclass=""mt-image"">\s*
 <span\sclass=""mt-icon\smt-icon_video""></span>\s*
-<img\ssrc=""(?<ImageUrl>[^""]+)""\s[^/]*/>\s*
+<img\s(data-)?src=""(?<ImageUrl>[^""]+)""\s[^/]*/>\s*
 </div>\s*
 <h3\sclass=""mt-title""><a\shref=""(?<Url>[^""]+)""[^>]*>(?<Title>[^<]+)</a></h3>\s*
 <p[^>]*>[^<]*</p>\s*
@@ -182,12 +182,21 @@ namespace OnlineVideos.Sites
                     }
                     else
                     {
-                        resultUrl = infos[infos.Length - 1].Trim(new char[] { '"', ' ' });
-                        //if (resultUrl.EndsWith(".asx")) resultUrl = ParseASX(resultUrl)[0];
+                        resultUrl = infos[infos.Length - 1].Trim(new char[] { '"', ' ' });                        
                         if (!resultUrl.EndsWith(".mp3"))
                         {
-                            Uri uri = new Uri(resultUrl);
-                            video.PlaybackOptions.Add(string.Format("{0} | {1}:// | {2}", quality.ToString().PadRight(4, ' '), uri.Scheme, System.IO.Path.GetExtension(resultUrl)), resultUrl);
+                            try
+                            {
+                                Uri uri = new Uri(resultUrl);
+                                video.PlaybackOptions.Add(string.Format("{0} | {1}:// | {2}", quality.ToString().PadRight(4, ' '), uri.Scheme, System.IO.Path.GetExtension(resultUrl)), resultUrl);
+                                if (resultUrl.EndsWith(".asx"))
+                                {
+                                    resultUrl = ParseASX(resultUrl)[0];
+                                    uri = new Uri(resultUrl);
+                                    video.PlaybackOptions.Add(string.Format("{0} | {1}:// | {2}", quality.ToString().PadRight(4, ' '), uri.Scheme, System.IO.Path.GetExtension(resultUrl)), resultUrl);
+                                }                            
+                            }
+                            catch { }
                         }
                     }
                     match = match.NextMatch();

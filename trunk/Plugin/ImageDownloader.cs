@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using MediaPortal.GUI.Library;
-using System.Web;
 using System.Net;
 
 namespace OnlineVideos
@@ -47,27 +45,11 @@ namespace OnlineVideos
         }
 
         public static void GetImages(GUIFacadeControl facadeView)
-        {
-            Log.Info("OnlineVideos ImageDownloader: Getting images in backgroundthread.");
-            BackgroundWorker worker = new BackgroundWorker();            
-            worker.DoWork += new DoWorkEventHandler(DownloadImages);
-            worker.RunWorkerAsync(facadeView);
-        }
-
-        static void DownloadImages(object sender, DoWorkEventArgs e)
-        {
-            System.Threading.Thread.CurrentThread.Name = "OnlineVideosImageDownloader";
-            GUIFacadeControl facadeView = (GUIFacadeControl)e.Argument;
-            StopDownload = false;            
-            List<OnlineVideosItem> itemsNeedingDownload = new List<OnlineVideosItem>();
+        {            
+            List<OnlineVideosGuiListItem> itemsNeedingDownload = new List<OnlineVideosGuiListItem>();
             for(int liIdx = 0; liIdx < facadeView.Count;liIdx++)
-            {
-                if (StopDownload || facadeView.Count <= liIdx)
-                {
-                    Log.Info("Received request to stop downloading thumbs.");
-                    break;
-                }
-                OnlineVideosItem item = facadeView[liIdx] as OnlineVideosItem;                
+            {                
+                OnlineVideosGuiListItem item = facadeView[liIdx] as OnlineVideosGuiListItem;                
                 if (item != null && !string.IsNullOrEmpty(item.ThumbUrl))
                 {
                     bool canBeDownloaded = false;
@@ -109,6 +91,7 @@ namespace OnlineVideos
                     }
                 }
             }
+            StopDownload = false;
             // split the downloads in 5+ groups and do multithreaded downloading
             int groupSize = (int)Math.Max(1, Math.Floor((double)itemsNeedingDownload.Count / 5));
             int groups = (int)Math.Ceiling((double)itemsNeedingDownload.Count / groupSize);
@@ -116,8 +99,8 @@ namespace OnlineVideos
             {
                 new System.Threading.Thread(delegate(object o)
                 {
-                    List<OnlineVideosItem> myItems = (List<OnlineVideosItem>)o;
-                    foreach (OnlineVideosItem item in myItems)
+                    List<OnlineVideosGuiListItem> myItems = (List<OnlineVideosGuiListItem>)o;
+                    foreach (OnlineVideosGuiListItem item in myItems)
                     {
                         if (StopDownload)
                         {
