@@ -139,6 +139,7 @@ namespace OnlineVideos
                 if (String.IsNullOrEmpty(msThumbLocation)) msThumbLocation = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\";                
                 msThumbLocation = msThumbLocation.Replace("/", @"\");
                 if (!msThumbLocation.EndsWith(@"\")) msThumbLocation = msThumbLocation + @"\";
+                Log.Info("OnlineVideos Thumbnails will be store in  " + msThumbLocation);
 
                 string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
                 if (!File.Exists(filename))
