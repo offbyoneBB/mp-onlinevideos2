@@ -874,7 +874,7 @@ namespace OnlineVideos
                     }
                 }
 
-                if (numCategoriesWithThumb > 0) ImageDownloader.getImages(imagesUrlList, OnlineVideoSettings.getInstance().msThumbLocation, GUI_facadeView);
+                if (numCategoriesWithThumb > 0) ImageDownloader.GetImages(imagesUrlList, OnlineVideoSettings.getInstance().msThumbLocation, GUI_facadeView);
                 if (numCategoriesWithThumb <= categories.Count / 2) suggestedView = GUIFacadeControl.ViewMode.List;
             }
 
@@ -1149,7 +1149,7 @@ namespace OnlineVideos
             // fall back to list view if there are no items with thumbs
             suggestedView = null;
             if (numVideosWithThumb > 0)
-                ImageDownloader.getImages(loImageUrlList, OnlineVideoSettings.getInstance().msThumbLocation, GUI_facadeView);
+                ImageDownloader.GetImages(loImageUrlList, OnlineVideoSettings.getInstance().msThumbLocation, GUI_facadeView);
             else
                 suggestedView = GUIFacadeControl.ViewMode.List;
 
@@ -1632,7 +1632,7 @@ namespace OnlineVideos
 
         private void ShowVideoDetails()
         {
-            GUIPropertyManager.SetProperty("#OnlineVideos.movieposter", ImageDownloader.downloadPoster(selectedVideo.Tags, selectedVideo.Title, OnlineVideoSettings.getInstance().msThumbLocation));
+            GUIPropertyManager.SetProperty("#OnlineVideos.movieposter", ImageDownloader.DownloadPoster(selectedVideo.Tags, selectedVideo.Title));
             GUIPropertyManager.SetProperty("#OnlineVideos.trailerdesc", selectedVideo.Description);
             Sites.AppleTrailersUtil.Trailer info = selectedVideo.Other as Sites.AppleTrailersUtil.Trailer;
             if (info != null)
