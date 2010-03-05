@@ -211,7 +211,6 @@ namespace OnlineVideos.Sites
                             if (matchFileUrl.Groups["m" + i.ToString()].Success)
                                 groupValues.Add(HttpUtility.UrlDecode(matchFileUrl.Groups["m" + i.ToString()].Value));
                         resultUrl = string.Format(fileUrlFormatString, groupValues.ToArray());
-                        System.Windows.Forms.MessageBox.Show(resultUrl);
                     }
                     else return ""; // if no match, return empty url -> error
                     
