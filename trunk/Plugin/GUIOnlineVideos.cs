@@ -189,6 +189,7 @@ namespace OnlineVideos
             if (proxyApple == null) proxyApple = new OnlineVideos.Sites.AppleProxyServer(OnlineVideoSettings.APPLE_PROXY_PORT);
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", " ");
             GUIPropertyManager.SetProperty("#OnlineVideos.length", " ");
+            GUIPropertyManager.SetProperty("#OnlineVideos.filter", " ");
             CurrentState = State.sites;
             return result;
         }
