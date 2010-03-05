@@ -1,9 +1,5 @@
 using System;
 using System.Text.RegularExpressions;
-using System.Net;
-using System.Text;
-using System.Xml;
-using System.IO;
 using System.ComponentModel;
 using System.Collections.Generic;
 using Google.GData.Client;
@@ -29,54 +25,31 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
         bool useDynamicCategories = true;
-
-        static int[] fmtOptionsQualitySorted = new int[] { 37,22,35,18,34,5,0,17,13 };
-
-        static Regex PageStartIndex = new Regex(@"start-index=(?<item>[\d]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        
         static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         private YouTubeService service;
-        private List<int> steps;
+        private List<int> steps = new List<int>() { 10, 20, 30, 40, 50 };
         private Dictionary<String, String> orderByList;
-        private Dictionary<String, String> timeFrameList;
-        private YouTubeQuery _LastPerformedQuery;
+        private Dictionary<String, String> timeFrameList = new Dictionary<string, string>();
+        private YouTubeQuery lastPerformedQuery;
+
+        static readonly int[] fmtOptionsQualitySorted = new int[] { 37, 22, 35, 18, 34, 5, 0, 17, 13 };
 
         const string CLIENT_ID = "ytapi-GregZ-OnlineVideos-s2skvsf5-0";
-        const string DEVELOPER_KEY = "AI39si5x-6x0Nybb_MvpC3vpiF8xBjpGgfq-HTbyxWP26hdlnZ3bTYyERHys8wyYsbx3zc5f9bGYj0_qfybCp-wyBF-9R5-5kA";
-        const string RELATED_VIDEO_FEED = "http://gdata.youtube.com/feeds/api/videos/{0}/related";
-        const string CATEGORY_FEED = "http://gdata.youtube.com/feeds/api/videos/-/{0}";
+        const string DEVELOPER_KEY = "AI39si5x-6x0Nybb_MvpC3vpiF8xBjpGgfq-HTbyxWP26hdlnZ3bTYyERHys8wyYsbx3zc5f9bGYj0_qfybCp-wyBF-9R5-5kA";        
         const string USER_PLAYLISTS_FEED = "http://gdata.youtube.com/feeds/api/users/[\\w]+/playlists";
         const string PLAYLIST_FEED = "http://gdata.youtube.com/feeds/api/playlists/{0}";                
-
-        public YouTubeUtil()
+        
+        public override void Initialize(SiteSettings siteSettings)
         {
-            steps = new List<int>();
-            steps.Add(10);
-            steps.Add(20);
-            steps.Add(30);
-            steps.Add(40);
-            steps.Add(50);
-            orderByList = new Dictionary<String, String>();
-            orderByList.Add("Relevance", "relevance");
-            orderByList.Add("Published", "published");
-            orderByList.Add("View Count", "viewCount");
-            orderByList.Add("Rating", "rating");
+            base.Initialize(siteSettings);
 
-            timeFrameList = new Dictionary<string, string>();
-            foreach(String name in Enum.GetNames(typeof(YouTubeQuery.UploadTime))){
-                if(name.Equals("ThisWeek",StringComparison.InvariantCultureIgnoreCase)){
-                    timeFrameList.Add("This Week",name);
-                }else if(name.Equals("ThisMonth",StringComparison.InvariantCultureIgnoreCase)){
-                    timeFrameList.Add("This Month",name);
-                }else if(name.Equals("Today",StringComparison.InvariantCultureIgnoreCase)){
-                    timeFrameList.Add("Today",name);
-                }else if(name.Equals("AllTime",StringComparison.InvariantCultureIgnoreCase)){
-                    timeFrameList.Add("All Time",name);
-                }else{
-                    timeFrameList.Add(name,name);
-                }
-            }            
-
+            orderByList = new Dictionary<String, String>() {{"Relevance", "relevance"},
+                                                            {"Published", "published"},
+                                                            {"View Count", "viewCount"},
+                                                            {"Rating", "rating"}};
+            foreach (string name in Enum.GetNames(typeof(YouTubeQuery.UploadTime))) timeFrameList.Add(Utils.ToFriendlyCase(name), name);
             service = new YouTubeService("OnlineVideos", CLIENT_ID, DEVELOPER_KEY);
         }
 
@@ -84,90 +57,130 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getRelatedVideos(VideoInfo video)
         {
-            string fsId = video.VideoUrl;
-            YouTubeQuery query = new YouTubeQuery(String.Format(RELATED_VIDEO_FEED, fsId)) { NumberToRetrieve = pageSize };
+            YouTubeQuery query = new YouTubeQuery() { Uri = new Uri((video.Other as YouTubeEntry).RelatedVideosUri.Content), NumberToRetrieve = pageSize };
             return parseGData(query);
-        }
-
-        protected List<VideoInfo> getSiteFavorites(String fsUser)
-        {
-            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateFavoritesUri(fsUser));            
-            return parseGData(query);
-        }
-
-        public List<VideoInfo> parseGData(YouTubeQuery query)
-        {           
-
-            YouTubeFeed feed = service.Query(query);
-
-            List<VideoInfo> loRssItems = new List<VideoInfo>();
-
-            // check for previous page link
-            if (feed.PrevChunk != null)
-            {
-                previousPageAvailable = true;
-                previousPageUrl = feed.PrevChunk;
-            }
-            else
-            {
-                previousPageAvailable = false;
-                previousPageUrl = "";
-            }
-
-            // check for next page link
-            if (feed.NextChunk != null)
-            {
-                nextPageAvailable = true;
-                nextPageUrl = feed.NextChunk;
-            }
-            else
-            {
-                nextPageAvailable = false;
-                nextPageUrl = "";
-            }
-
-            foreach (YouTubeEntry entry in feed.Entries)
-            {
-                loRssItems.Add(getVideoInfo(entry));
-            }
-            _LastPerformedQuery = query;
-
-            return loRssItems;
-        }
-
-        public VideoInfo getVideoInfo(YouTubeEntry entry)
-        {
-            VideoInfo video = new VideoInfo();
-            video.Other = entry;
-
-            video.Description = entry.Media.Description != null ? entry.Media.Description.Value : "";
-            int maxHeight = 0;
-            foreach (MediaThumbnail thumbnail in entry.Media.Thumbnails)
-            {
-                if (Int32.Parse(thumbnail.Height) > maxHeight)
-                {
-                    video.ImageUrl = thumbnail.Url;
-                }
-            }
-            video.Length = entry.Media.Duration != null ? entry.Media.Duration.Seconds : "";
-            video.Title = entry.Title.Text;            
-            video.VideoUrl = entry.Media.VideoId.Value;
-            return video;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
             string fsUrl = ((RssLink)category).Url;
-
-            if (fsUrl.StartsWith("fav:"))
-            {
-                return getSiteFavorites(fsUrl.Substring(4));
-            }
-            YouTubeQuery query = new YouTubeQuery(fsUrl) { NumberToRetrieve = pageSize };
+            YouTubeQuery query;
+            if (fsUrl.StartsWith("fav:")) query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateFavoritesUri(fsUrl.Substring(4))) };
+            else query = new YouTubeQuery() { Uri = new Uri(fsUrl) };
+            query.NumberToRetrieve = pageSize;
             return parseGData(query);
         }
 
-        public static String ConvertUrl(String youtubeUrl)
+        public override String getUrl(VideoInfo foVideo)
+        {
+            return ConvertUrl(foVideo.VideoUrl, videoQuality, out foVideo.PlaybackOptions);            
+        }
+
+        public override int DiscoverDynamicCategories()
+        {
+            // walk the categories and see if there are user playlists - they need to be set to have subcategories
+            foreach (Category link in Settings.Categories)
+            {
+                if ((link is RssLink) && Regex.Match(((RssLink)link).Url, USER_PLAYLISTS_FEED).Success)
+                {
+                    link.HasSubCategories = true;
+                    link.SubCategoriesDiscovered = false;
+                }
+            }
+
+            if (!useDynamicCategories) return base.DiscoverDynamicCategories();
+
+            Dictionary<String, String> categories = getYoutubeCategories();
+            foreach (KeyValuePair<String, String> cat in categories)
+            {
+                RssLink item = new RssLink();
+                item.Name = cat.Key;
+                YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
+                query.Categories.Add(new QueryCategory(cat.Value, QueryCategoryOperator.AND));
+                item.Url = query.Uri.ToString();
+                Settings.Categories.Add(item);
+            }
+            Settings.DynamicCategoriesDiscovered = true;
+            return categories.Count;
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            parentCategory.SubCategories = new List<Category>();
+            YouTubeQuery ytq = new YouTubeQuery((parentCategory as RssLink).Url) { NumberToRetrieve = 50 };
+            YouTubeFeed feed = service.Query(ytq);
+            foreach (PlaylistsEntry entry in feed.Entries)
+            {
+                RssLink playlistLink = new RssLink();
+                playlistLink.Name = entry.Title.Text;
+                playlistLink.EstimatedVideoCount = (uint)entry.CountHint;
+                XmlExtension playlistExt = entry.FindExtension(YouTubeNameTable.PlaylistId, YouTubeNameTable.NSYouTube) as XmlExtension;
+                if (playlistExt != null)
+                {
+                    playlistLink.Url = string.Format(PLAYLIST_FEED, playlistExt.Node.InnerText);
+                    parentCategory.SubCategories.Add(playlistLink);
+                    playlistLink.ParentCategory = parentCategory;
+                }
+            }
+            parentCategory.SubCategoriesDiscovered = true;
+            return parentCategory.SubCategories.Count;
+        }
+       
+        List<VideoInfo> parseGData(YouTubeQuery query)
+        {
+            List<VideoInfo> loRssItems = new List<VideoInfo>();
+
+            YouTubeFeed feed = service.Query(query);
+            hasPreviousPage = !string.IsNullOrEmpty(feed.PrevChunk);
+            hasNextPage = !string.IsNullOrEmpty(feed.NextChunk);
+            foreach (YouTubeEntry entry in feed.Entries)
+            {
+                VideoInfo video = new VideoInfo();
+                video.Other = entry;
+                video.Description = entry.Media.Description != null ? entry.Media.Description.Value : "";
+                // get the largest thumbnail
+                int maxHeight = 0; 
+                foreach (MediaThumbnail thumbnail in entry.Media.Thumbnails)
+                {
+                    int height = int.Parse(thumbnail.Height);
+                    if (height > maxHeight)
+                    {
+                        video.ImageUrl = thumbnail.Url;
+                        maxHeight = height;
+                    }
+                }
+                video.Length = entry.Media.Duration != null ? TimeSpan.FromSeconds(int.Parse(entry.Media.Duration.Seconds)).ToString() : "";
+                video.Length += (video.Length != "" ? " | " : "") + entry.Published.ToString("g");
+                video.Title = entry.Title.Text;
+                video.VideoUrl = entry.Media.VideoId.Value;
+                loRssItems.Add(video);
+            }
+            lastPerformedQuery = query;
+
+            return loRssItems;
+        }
+
+        Dictionary<string, string> getYoutubeCategories()
+        {
+            Dictionary<String, String> categories = new Dictionary<string, string>();
+            try
+            {
+                foreach (YouTubeCategory cat in YouTubeQuery.GetYouTubeCategories())
+                {
+                    if (cat.Assignable && !cat.Deprecated)
+                    {
+                        categories.Add(cat.Label, cat.Term);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("OnlineVideos : Error retrieving YouTube Categories: " + ex.Message);
+            }
+            return categories;
+        }
+
+        public static string ConvertUrl(string youtubeUrl)
         {
             int p=youtubeUrl.LastIndexOf('/');
             p++;
@@ -177,12 +190,12 @@ namespace OnlineVideos.Sites
             return ConvertUrl(youtubeUrl.Substring(p,q-p),VideoQuality.HD, out playbackOptions);
         }
 
-        private static String ConvertUrl(String videoId, VideoQuality videoQuality, out Dictionary<string, string> playbackOptions)
+        static string ConvertUrl(string videoId, VideoQuality videoQuality, out Dictionary<string, string> playbackOptions)
         {
             playbackOptions = null;
 
             Dictionary<string, string> Items = new Dictionary<string, string>();
-            GetVideInfo(videoId, Items);
+            GetVideoParamHash(videoId, Items);
 
             string Token = "";
             string[] FmtMap = null;
@@ -232,13 +245,6 @@ namespace OnlineVideos.Sites
                 lsUrl = string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, Token, FmtMap[index].Substring(0, FmtMap[index].IndexOf("/")), MapFtmValueToExtension(FmtMap[index]));
             }
 
-            return lsUrl;
-        }
-
-        public override String getUrl(VideoInfo foVideo)
-        {
-            String lsUrl = ConvertUrl(foVideo.VideoUrl, videoQuality, out foVideo.PlaybackOptions);
-            Log.Info("youtube video url={0}", lsUrl);
             return lsUrl;
         }
 
@@ -299,25 +305,15 @@ namespace OnlineVideos.Sites
             }
         }
         
-        public static void GetVideInfo(string videoId, Dictionary<string, string> Items)
-        {
-            WebClient client = new WebClient();
-            client.CachePolicy = new System.Net.Cache.RequestCachePolicy();
-            client.UseDefaultCredentials = true;
-            client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        static void GetVideoParamHash(string videoId, Dictionary<string, string> Items)
+        {            
             try
             {                
-                string contents = client.DownloadString(string.Format("http://youtube.com/get_video_info?video_id={0}", videoId));
-                string[] elemest = (contents).Split('&');
-
-                foreach (string s in elemest)
-                {
-                    Items.Add(s.Split('=')[0], s.Split('=')[1]);
-                }
-
+                string contents = GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}", videoId));
+                foreach (string s in contents.Split('&')) Items.Add(s.Split('=')[0], s.Split('=')[1]);
                 if (Items["status"] == "fail")
                 {
-                    contents = client.DownloadString(string.Format("http://www.youtube.com/watch?v={0}", videoId));
+                    contents = GetWebData(string.Format("http://www.youtube.com/watch?v={0}", videoId));
                     Match m = swfJsonArgs.Match(contents);
                     if (m.Success)
                     {
@@ -333,105 +329,31 @@ namespace OnlineVideos.Sites
             catch {}
         }
 
-        public override int DiscoverDynamicCategories()
-        {
-            // walk the categories and see if there are user playlists - they need to be set to have subcategories
-            foreach(Category link in Settings.Categories)
-            {
-                if ((link is RssLink) && Regex.Match(((RssLink)link).Url, USER_PLAYLISTS_FEED).Success)
-                {
-                    link.HasSubCategories = true;
-                    link.SubCategoriesDiscovered = false;
-                }
-            }
-
-            if (!useDynamicCategories) return base.DiscoverDynamicCategories();
-
-            Dictionary<String, String> categories = getYoutubeCategories();
-            foreach (KeyValuePair<String, String> cat in categories)
-            {
-                RssLink item = new RssLink();
-                item.Name = cat.Key;
-                item.Url = String.Format(CATEGORY_FEED, cat.Value);
-                Settings.Categories.Add(item);
-            }
-            Settings.DynamicCategoriesDiscovered = true;
-            return categories.Count;
-        }
-
-        public override int DiscoverSubCategories(Category parentCategory)
-        {
-            parentCategory.SubCategories = new List<Category>();
-            YouTubeQuery ytq = new YouTubeQuery((parentCategory as RssLink).Url) { NumberToRetrieve = 50 };
-            YouTubeFeed feed = service.Query(ytq);
-            foreach(PlaylistsEntry entry in feed.Entries)
-            {
-                RssLink playlistLink = new RssLink();
-                playlistLink.Name = entry.Title.Text;
-                playlistLink.EstimatedVideoCount = (uint)entry.CountHint;
-                XmlExtension playlistExt = entry.FindExtension(YouTubeNameTable.PlaylistId, YouTubeNameTable.NSYouTube) as XmlExtension;                
-                if (playlistExt != null)
-                {
-                    playlistLink.Url = string.Format(PLAYLIST_FEED, playlistExt.Node.InnerText);
-                    parentCategory.SubCategories.Add(playlistLink);
-                    playlistLink.ParentCategory = parentCategory;                    
-                }                               
-            }
-            parentCategory.SubCategoriesDiscovered = true;
-            return parentCategory.SubCategories.Count;
-        }
-
-        private Dictionary<String, String> getYoutubeCategories()
-        {
-            Dictionary<String, String> categories = new Dictionary<string, string>();
-            try
-            {
-                foreach (YouTubeCategory cat in YouTubeQuery.GetYouTubeCategories())
-                {
-                    if (cat.Assignable && ! cat.Deprecated)
-                    {
-                        categories.Add(cat.Label, cat.Term);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error("OnlineVideos : Error retrieving YouTube Categories: " + ex.Message);
-            }            
-            return categories;
-        }
-
         #region Paging
 
-        string nextPageUrl = "";
-        string previousPageUrl = "";
-        bool nextPageAvailable = false;
-        bool previousPageAvailable = false;
+        bool hasNextPage;
+        bool hasPreviousPage;
 
         public override bool HasNextPage
         {
-            get { return nextPageAvailable; }
+            get { return hasNextPage; }
         }
 
         public override List<VideoInfo> getNextPageVideos()
         {
-            YouTubeQuery query = _LastPerformedQuery;
-            Match mIndex = PageStartIndex.Match(nextPageUrl);
-            if (mIndex.Success) query.StartIndex = Convert.ToInt16(mIndex.Groups["item"].Value);
-            return parseGData(query);
+            lastPerformedQuery.StartIndex += lastPerformedQuery.NumberToRetrieve;
+            return parseGData(lastPerformedQuery);
         }
 
         public override bool HasPreviousPage
         {
-            get { return previousPageAvailable; }
+            get { return hasPreviousPage; }
         }
 
         public override List<VideoInfo> getPreviousPageVideos()
         {
-            YouTubeQuery query = _LastPerformedQuery;
-            Match mIndex = PageStartIndex.Match(previousPageUrl);
-            if (mIndex.Success) query.StartIndex = Convert.ToInt16(mIndex.Groups["item"].Value);
-            return parseGData(query);
+            lastPerformedQuery.StartIndex -= lastPerformedQuery.NumberToRetrieve;
+            return parseGData(lastPerformedQuery);
         }
 
         #endregion
@@ -456,9 +378,8 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> Search(string queryStr, string category)
         {
             YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri) { NumberToRetrieve = pageSize };
-            query.Query = queryStr;  
-            AtomCategory category1 = new AtomCategory(category, YouTubeNameTable.CategorySchema);
-            query.Categories.Add(new QueryCategory(category1));
+            query.Categories.Add(new QueryCategory(category, QueryCategoryOperator.AND));
+            query.Query = queryStr;            
             return parseGData(query);
         }
 
@@ -469,7 +390,7 @@ namespace OnlineVideos.Sites
         public List<VideoInfo> getFavorites()
         {
             if (string.IsNullOrEmpty(username)) return new List<VideoInfo>();
-            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateFavoritesUri(username));        
+            YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateFavoritesUri(username)), NumberToRetrieve = pageSize };
             return parseGData(query);
         }               
 
@@ -513,122 +434,42 @@ namespace OnlineVideos.Sites
 
         #region IFilter Members
 
-        //private String buildFilterUrl(string catUrl, int maxResult, string orderBy, string timeFrame)
-        //{
-        //    if (catUrl == null)
-        //    {
-        //        catUrl = "";
-        //    }
-        //    String newCatUrl = catUrl;
-        //    if (catUrl.IndexOf("time=", StringComparison.CurrentCultureIgnoreCase) > 0)
-        //    {
-        //        Regex timeRgx = new Regex(@"\?.*time=([^&]*)");
-        //        newCatUrl = timeRgx.Replace(catUrl, new MatchEvaluator(delegate(Match match) { return timeFrame; }));
-        //    }
-        //    else
-        //    {
-        //        if (catUrl.Contains("?"))
-        //        {
-        //            newCatUrl += "&";
-        //        }
-        //        else
-        //        {
-        //            newCatUrl += "?";
-        //        }
-        //        newCatUrl += "time=" + timeFrame;
-        //    }
-        //    if (catUrl.IndexOf("orderby=", StringComparison.CurrentCultureIgnoreCase) > 0)
-        //    {
-        //        Regex timeRgx = new Regex(@"\?.*orderby=([^&]*)");
-        //        newCatUrl = timeRgx.Replace(catUrl, new MatchEvaluator(delegate(Match match) { return orderBy; }));
-        //    }
-        //    else
-        //    {
-        //        newCatUrl += "&orderby=" + orderBy;
-        //    }
-        //    if (catUrl.IndexOf("max-results=", StringComparison.CurrentCultureIgnoreCase) > 0)
-        //    {
-        //        Regex timeRgx = new Regex(@"\?.*max-results=([^&]*)");
-        //        newCatUrl = timeRgx.Replace(catUrl, new MatchEvaluator(delegate(Match match) { return maxResult + ""; }));
-        //    }
-        //    else
-        //    {
-        //        newCatUrl += "&max-results=" + maxResult;
-        //    }
-        //    return newCatUrl;
-        //}
-
         public List<VideoInfo> filterVideoList(Category category, int maxResult, string orderBy, string timeFrame)
         {
-            YouTubeQuery query = _LastPerformedQuery;
-            query.StartIndex = 1;
-            query.NumberToRetrieve = maxResult;
-            query.OrderBy = orderBy;
-
-            ///-------------------------------------------------------------------------------------------------
-            /// 2009-06-09 MichelC
-            /// Youtube doesn't allow the following parameter for Recently Featured clips and return and error.
-            ///-------------------------------------------------------------------------------------------------
+            lastPerformedQuery.StartIndex = 1;
+            lastPerformedQuery.NumberToRetrieve = maxResult;
+            lastPerformedQuery.OrderBy = orderBy;
+            // Youtube doesn't allow the following parameter for Recently Featured clips and returns an error
             if (category.Name != "Recently Featured")
             {
-                if (Enum.IsDefined(typeof(YouTubeQuery.UploadTime), timeFrame))
-                {
-                    query.Time = (YouTubeQuery.UploadTime)Enum.Parse(typeof(YouTubeQuery.UploadTime), timeFrame, true);
-                }
+                lastPerformedQuery.Time = (YouTubeQuery.UploadTime)Enum.Parse(typeof(YouTubeQuery.UploadTime), timeFrame, true);
             }
-
-            return parseGData(query);
-            //String filteredUrl = buildFilterUrl(catUrl, maxResult, orderBy, timeFrame); 
-            //Log.Info("Youtube Filtered url:" + filteredUrl);
-            //return getVideoList(filteredUrl);
+            return parseGData(lastPerformedQuery);
         }
 
         public List<VideoInfo> filterSearchResultList(string queryStr, int maxResult, string orderBy, string timeFrame)
         {
-            //String filteredUrl = buildFilterUrl(buildSearchUrl(query,String.Empty), maxResult, orderBy, timeFrame);
-            //Log.Info("Youtube Filtered url:" + filteredUrl);
-            //return getVideoList(filteredUrl);
-            YouTubeQuery query = _LastPerformedQuery;
-            query.StartIndex = 1;
-            query.NumberToRetrieve = maxResult;
-            query.OrderBy = orderBy;
-            if (Enum.IsDefined(typeof(YouTubeQuery.UploadTime), timeFrame))
-            {
-                query.Time = (YouTubeQuery.UploadTime)Enum.Parse(typeof(YouTubeQuery.UploadTime), timeFrame, true);
-            }
-            return parseGData(query);
+            lastPerformedQuery.StartIndex = 1;
+            lastPerformedQuery.NumberToRetrieve = maxResult;
+            lastPerformedQuery.OrderBy = orderBy;
+            lastPerformedQuery.Time = (YouTubeQuery.UploadTime)Enum.Parse(typeof(YouTubeQuery.UploadTime), timeFrame, true);
+            return parseGData(lastPerformedQuery);
         }
 
         public List<VideoInfo> filterSearchResultList(string queryStr, string category, int maxResult, string orderBy, string timeFrame)
         {
-            //String filteredUrl = buildFilterUrl(buildSearchUrl(query, category), maxResult, orderBy, timeFrame);
-            //Log.Info("Youtube Filtered url:" + filteredUrl);
-            //return getVideoList(filteredUrl);
-            YouTubeQuery query = _LastPerformedQuery;
-            query.StartIndex = 1;
-            query.NumberToRetrieve = maxResult;
-            query.OrderBy = orderBy;
-            if (Enum.IsDefined(typeof(YouTubeQuery.UploadTime), timeFrame))
-            {
-                query.Time = (YouTubeQuery.UploadTime)Enum.Parse(typeof(YouTubeQuery.UploadTime), timeFrame, true);
-            }
-            return parseGData(query);
+            lastPerformedQuery.StartIndex = 1;
+            lastPerformedQuery.NumberToRetrieve = maxResult;
+            lastPerformedQuery.OrderBy = orderBy;
+            lastPerformedQuery.Time = (YouTubeQuery.UploadTime)Enum.Parse(typeof(YouTubeQuery.UploadTime), timeFrame, true);
+            return parseGData(lastPerformedQuery);
         }
 
-        public List<int> getResultSteps()
-        {
-            return steps;
-        }
+        public List<int> getResultSteps() { return steps; }
 
-        public Dictionary<string, String> getOrderbyList()
-        {
-            return orderByList;
-        }
+        public Dictionary<string, String> getOrderbyList() { return orderByList; }
 
-        public Dictionary<string, String> getTimeFrameList()
-        {
-            return timeFrameList;
-        }
+        public Dictionary<string, String> getTimeFrameList() { return timeFrameList; }
 
         #endregion
     }

@@ -1,23 +1,12 @@
 using System;
-using MediaPortal.GUI.Library;
-using System.Text.RegularExpressions;
 using System.IO;
 using System.Text;
-using MediaPortal.Player;
 using System.Collections.Generic;
-using MediaPortal.GUI.View ;
-using MediaPortal.Dialogs;
-using MediaPortal.Util;
-using System.Xml;
-using System.Xml.XPath;
-using System.ComponentModel;
-using System.Threading;
 
 namespace OnlineVideos.Sites
 {
     public class DownloadedVideoUtil : SiteUtilBase 
-    {
-                 
+    {                 
 		public override List<VideoInfo> getVideoList(Category category)
 		{
             List<VideoInfo> loVideoInfoList = new List<VideoInfo>();
@@ -33,7 +22,7 @@ namespace OnlineVideos.Sites
                         loVideoInfo.VideoUrl = lsVideo;
                         loVideoInfo.ImageUrl = lsVideo.Substring(0, lsVideo.LastIndexOf(".")) + ".jpg";
 
-                        loVideoInfo.Title = Utils.GetFilename(lsVideo);
+                        loVideoInfo.Title = MediaPortal.Util.Utils.GetFilename(lsVideo);
                         loVideoInfoList.Add(loVideoInfo);
                     }
                 }

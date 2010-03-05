@@ -509,6 +509,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sites\ZDFMediathekUtil.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="VideoInfo.cs" />
     <Compile Include="Web References\OnlineVideosWebservice\Reference.cs">
       <AutoGen>True</AutoGen>
