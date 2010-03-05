@@ -325,133 +325,85 @@ namespace OnlineVideos
 
         public override void OnAction(Action action)
         {
-          if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && CurrentState != State.sites)
-          {
-            currentFilter = null;
-            if (Gui2UtilConnector.Instance.IsBusy)
-              return; // wait for any background action e.g. dynamic category discovery to finish
-
-            // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
-            GUIControl focusedControl = GetControl(GetFocusControlId());
-            if (focusedControl != null)
+            if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && CurrentState != State.sites)
             {
-              if (focusedControl.Type == "button" || focusedControl.Type == "selectbutton")
-              {
-                int focusedControlId = GetFocusControlId();
-                if (focusedControlId >= 0)
+                currentFilter.Clear();
+                if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+
+                // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
+                GUIControl focusedControl = GetControl(GetFocusControlId());
+                if (focusedControl != null)
                 {
-                  GUIControl.UnfocusControl(GetID, focusedControlId);
+                    if (focusedControl.Type == "button" || focusedControl.Type == "selectbutton")
+                    {
+                        int focusedControlId = GetFocusControlId();
+                        if (focusedControlId >= 0)
+                        {
+                            GUIControl.UnfocusControl(GetID, focusedControlId);
+                        }
+                    }
                 }
-              }
-            }
 
-            ShowPreviousMenu();
-            return;
-          }
-          else if (action.wID == Action.ActionType.ACTION_KEY_PRESSED && GUI_facadeView.Visible && GUI_facadeView.Focus)
-          {
-            // search items (starting from current selected) by title and select first found one
-            char pressedChar = (char) action.m_key.KeyChar;
-            if (CurrentState == State.categories && (char.IsDigit(pressedChar) || pressedChar == '\b'))
-            {
-              string currentPattern = currentFilter == null ? String.Empty : currentPattern = currentFilter.ToString();
-              switch (pressedChar)
-              {
-                case '1':
-                  currentPattern += "[1]";
-                  break;
-                case '2':
-                  currentPattern += "[2|a|b|c]";
-                  break;
-                case '3':
-                  currentPattern += "[3|d|e|f]";
-                  break;
-                case '4':
-                  currentPattern += "[4|g|h|i]";
-                  break;
-                case '5':
-                  currentPattern += "[5|j|k|l]";
-                  break;
-                case '6':
-                  currentPattern += "[6|m|n|o]";
-                  break;
-                case '7':
-                  currentPattern += "[7|q|r|s]";
-                  break;
-                case '8':
-                  currentPattern += "[8|t|u|v]";
-                  break;
-                case '9':
-                  currentPattern += "[9|w|x|y|z]";
-                  break;
-                case '0':
-                  currentPattern += "[0|\\s]";
-                  break;
-                case '\b':
-                  if (!String.IsNullOrEmpty(currentPattern))
-                    currentPattern = currentPattern.Substring(0, currentPattern.LastIndexOf('['));
-                  break;
-              }
-              if (String.IsNullOrEmpty(currentPattern))
-                currentFilter = null;
-              else
-              {
-                currentFilter = new Regex(currentPattern, RegexOptions.IgnoreCase);
-              }
-
-              string cat_headerlabel = selectedCategory != null ? selectedCategory.Name : selectedSite.Settings.Name;
-              if (currentFilter != null)
-                cat_headerlabel = cat_headerlabel + " " +
-                                  currentFilter.ToString().Replace("|", String.Empty).Replace("][", ",");
-              GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
-              DisplayCategories(selectedCategory);
-              return;
+                ShowPreviousMenu();
+                return;
             }
-            else
+            else if (action.wID == Action.ActionType.ACTION_KEY_PRESSED && GUI_facadeView.Visible && GUI_facadeView.Focus)
             {
-              if (char.IsLetterOrDigit(pressedChar))
-              {
-                string lowerChar = pressedChar.ToString().ToLower();
-                for (int i = GUI_facadeView.SelectedListItemIndex + 1; i < GUI_facadeView.Count; i++)
+                // search items (starting from current selected) by title and select first found one
+                char pressedChar = (char)action.m_key.KeyChar;
+                if (char.IsDigit(pressedChar) || pressedChar == '\b')
                 {
-                  if (GUI_facadeView[i].Label.ToLower().StartsWith(lowerChar))
-                  {
-                    GUI_facadeView.SelectedListItemIndex = i;
+                    currentFilter.Add(pressedChar);
+                    if (CurrentState == State.sites)
+                        DisplaySites();
+                    else if (CurrentState == State.categories)
+                        DisplayCategories(selectedCategory);
+                    else if (CurrentState == State.videos)
+                        SetVideoListToFacade(currentVideoList);
+
+                    //?DisplayCategories(selectedCategory);
                     return;
-                  }
                 }
-              }
+                else
+                {
+                    if (char.IsLetterOrDigit(pressedChar))
+                    {
+                        string lowerChar = pressedChar.ToString().ToLower();
+                        for (int i = GUI_facadeView.SelectedListItemIndex + 1; i < GUI_facadeView.Count; i++)
+                        {
+                            if (GUI_facadeView[i].Label.ToLower().StartsWith(lowerChar))
+                            {
+                                GUI_facadeView.SelectedListItemIndex = i;
+                                return;
+                            }
+                        }
+                    }
+                }
             }
-          }
-          else if (action.wID == Action.ActionType.ACTION_NEXT_ITEM && currentState == State.videos &&
-                   GUI_facadeView.Visible && GUI_facadeView.Focus)
-          {
-            currentFilter = null;
-            if (Gui2UtilConnector.Instance.IsBusy)
-              return; // wait for any background action e.g. dynamic category discovery to finish
-
-            if (GUI_btnNext.IsEnabled)
+            else if (action.wID == Action.ActionType.ACTION_NEXT_ITEM && currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
             {
-              DisplayVideos_NextPage();
-              UpdateViewState();
-            }
-          }
-          else if (action.wID == Action.ActionType.ACTION_PREV_ITEM && currentState == State.videos &&
-                   GUI_facadeView.Visible && GUI_facadeView.Focus)
-          {
-            currentFilter = null;
-            if (Gui2UtilConnector.Instance.IsBusy)
-              return; // wait for any background action e.g. dynamic category discovery to finish
+                currentFilter.Clear();
+                if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
 
-            if (GUI_btnPrevious.IsEnabled)
-            {
-              DisplayVideos_PreviousPage();
-              UpdateViewState();
+                if (GUI_btnNext.IsEnabled)
+                {
+                    DisplayVideos_NextPage();
+                    UpdateViewState();
+                }
             }
-          }
-          // direct translation not working with select button   
-          GUI_btnOrderBy.Label = Translation.SortOptions;
-          base.OnAction(action);
+            else if (action.wID == Action.ActionType.ACTION_PREV_ITEM && currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
+            {
+                currentFilter.Clear();
+                if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+
+                if (GUI_btnPrevious.IsEnabled)
+                {
+                    DisplayVideos_PreviousPage();
+                    UpdateViewState();
+                }
+            }
+
+            base.OnAction(action);
         }
 
       public override bool OnMessage(GUIMessage message)
@@ -478,7 +430,7 @@ namespace OnlineVideos
             if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
             if (control == GUI_facadeView && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
-                currentFilter = null;
+                currentFilter.Clear();
                 if (CurrentState == State.sites)
                 {
                     selectedSite = OnlineVideoSettings.getInstance().SiteList[GUI_facadeView.SelectedListItem.Path];
@@ -741,6 +693,7 @@ namespace OnlineVideos
                     break;
             }
 
+            currentFilter.StartMatching();
             foreach (string name in names)
             {
                 Sites.SiteUtilBase aSite = OnlineVideoSettings.getInstance().SiteList[name];
@@ -764,7 +717,8 @@ namespace OnlineVideos
                     {
                         MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                     }
-                    GUI_facadeView.Add(loListItem);
+                    if (currentFilter.Matches(name))
+                        GUI_facadeView.Add(loListItem);
                 }
             }
             SelectedMaxResultIndex = -1;
@@ -775,17 +729,11 @@ namespace OnlineVideos
             if (selectedSiteIndex < GUI_facadeView.Count) GUI_facadeView.SelectedListItemIndex = selectedSiteIndex;
 
             GUIPropertyManager.SetProperty("#header.label", Translation.Home /*Home*/);
+            GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
         }
 
-        private Regex currentFilter = null;
-        private bool isInFilter(Category loCat)
-        {
-            if (currentFilter == null)
-                return true;
-            Match m = currentFilter.Match(loCat.Name);
-            return m.Success;
-        }
+        private SmsT9Filter currentFilter = new SmsT9Filter();
 
         private void DisplayCategories(Category parentCategory)
         {
@@ -849,12 +797,13 @@ namespace OnlineVideos
             int categoryIndexToSelect = (categories != null && categories.Count > 0) ? 1 : 0; // select the first category by default if there is one
             int numCategoriesWithThumb = 0;
             suggestedView = null;
+            currentFilter.StartMatching();
             if (categories != null)
             {
                 for (int i = 0; i < categories.Count; i++)
                 {
                     Category loCat = categories[i];
-                    if (isInFilter(loCat))
+                    if (currentFilter.Matches(loCat.Name))
                     {
                         loListItem = new OnlineVideosGuiListItem(loCat.Name);
                         loListItem.IsFolder = true;
@@ -906,6 +855,8 @@ namespace OnlineVideos
                 if (numCategoriesWithThumb > 0) ImageDownloader.GetImages(GUI_facadeView);
                 if (numCategoriesWithThumb <= categories.Count / 2) suggestedView = GUIFacadeControl.ViewMode.List;
             }
+
+            GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
 
             selectedCategory = parentCategory;
             GUI_facadeView.SelectedListItemIndex = categoryIndexToSelect;
@@ -1146,15 +1097,20 @@ namespace OnlineVideos
             loListItem.ItemId = 0;
             loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
+            //loListItem.item = 
             GUI_facadeView.Add(loListItem);
             // add the items
             int numVideosWithThumb = 0;
             int liIdx = 0;
+            currentFilter.StartMatching();
             foreach (VideoInfo loVideoInfo in foVideos)
             {
                 liIdx++;
                 loVideoInfo.CleanDescription();
-                if (FilterOut(loVideoInfo.Title) || FilterOut(loVideoInfo.Description)) continue;
+                if (!currentFilter.Matches(loVideoInfo.Title) || FilterOut(loVideoInfo.Title) || FilterOut(loVideoInfo.Description))
+                {
+                    continue;
+                }
                 loListItem = new OnlineVideosGuiListItem(loVideoInfo.Title);
                 loListItem.Path = loVideoInfo.VideoUrl;
                 loListItem.ItemId = liIdx;
@@ -1182,6 +1138,7 @@ namespace OnlineVideos
             else
                 selectedVideoIndex = 0;
 
+            GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             return true;
         }
 
@@ -1921,5 +1878,90 @@ namespace OnlineVideos
         }
 
         #endregion
+    }
+ 
+    public class SmsT9Filter
+    {
+        private Regex filter = null;
+        private string numbers = String.Empty;
+
+        private SortedDictionary<string, object> matches;
+
+        public bool Matches(string name)
+        {
+            if (filter == null)
+                return true;
+            Match m = filter.Match(name);
+
+            bool match = m.Success;
+            while (m.Success)
+            {
+                string s = m.Captures[0].ToString().ToLower();
+                if (!matches.ContainsKey(s))
+                    matches.Add(s, null);
+                m = m.NextMatch();
+            }
+
+            return match;
+        }
+
+        public void Add(char c)
+        {
+            string currentPattern = filter == null ? String.Empty : currentPattern = filter.ToString();
+
+            switch (c)
+            {
+                case '1': currentPattern += "[1]"; numbers = numbers + c; break;
+                case '2': currentPattern += "[2|a|b|c]"; numbers = numbers + c; break;
+                case '3': currentPattern += "[3|d|e|f]"; numbers = numbers + c; break;
+                case '4': currentPattern += "[4|g|h|i]"; numbers = numbers + c; break;
+                case '5': currentPattern += "[5|j|k|l]"; numbers = numbers + c; break;
+                case '6': currentPattern += "[6|m|n|o]"; numbers = numbers + c; break;
+                case '7': currentPattern += "[7|q|r|s]"; numbers = numbers + c; break;
+                case '8': currentPattern += "[8|t|u|v]"; numbers = numbers + c; break;
+                case '9': currentPattern += "[9|w|x|y|z]"; numbers = numbers + c; break;
+                case '0': currentPattern += "[0|\\s]"; numbers = numbers + c; break;
+                case '\b': if (!String.IsNullOrEmpty(currentPattern))
+                    {
+                        numbers = numbers.Substring(0, numbers.Length - 1);
+                        currentPattern = currentPattern.Substring(0, currentPattern.LastIndexOf('['));
+                    }
+                    break;
+            }
+            if (String.IsNullOrEmpty(currentPattern))
+                filter = null;
+            else
+                filter = new Regex(currentPattern, RegexOptions.IgnoreCase);
+        }
+
+        public void Clear()
+        {
+            filter = null;
+            numbers = String.Empty;
+        }
+
+
+        public void StartMatching()
+        {
+            matches = new SortedDictionary<string, object>();
+        }
+
+        public override string ToString()
+        {
+            string hlabel = numbers;
+            if (filter != null)
+            {
+                hlabel = hlabel + " {";
+                string m = String.Empty;
+                foreach (string s in matches.Keys)
+                    m = m + ',' + s;
+                if (String.IsNullOrEmpty(m))
+                    hlabel = hlabel + '}';
+                else
+                    hlabel = hlabel + m.Substring(1) + '}';
+            }
+
+            return hlabel;
+        }
     }
 }
