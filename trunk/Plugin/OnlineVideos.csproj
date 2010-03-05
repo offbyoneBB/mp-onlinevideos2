@@ -490,6 +490,7 @@
     <Compile Include="Sites\SouthParkDeUtil.cs" />
     <Compile Include="Sites\SVTPlayUtil.cs" />
     <Compile Include="Sites\TurboNickUtil.cs" />
+    <Compile Include="Sites\TVEUtil.cs" />
     <Compile Include="Sites\TvGemistUtil.cs" />
     <Compile Include="Sites\TvGorgeUtil.cs" />
     <Compile Include="Sites\TvTuttiUtil.cs" />
