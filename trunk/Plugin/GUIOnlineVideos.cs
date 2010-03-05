@@ -196,11 +196,11 @@ namespace OnlineVideos
 
         protected override void OnPageLoad()
         {
-          base.OnPageLoad(); // let animations run            
+            base.OnPageLoad(); // let animations run            
 
-          Translation.TranslateSkin();
+            Translation.TranslateSkin();
 
-          // everytime the plugin is shown, after some other window was shown
+            // everytime the plugin is shown, after some other window was shown
             if (OnlineVideoSettings.getInstance().ageHasBeenConfirmed && PreviousWindowId == 0)
             {
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last                
@@ -261,15 +261,15 @@ namespace OnlineVideos
 
                 if (currentVideosDisplayMode != VideosMode.Favorites && !(selectedSite is Sites.FavoriteUtil))
                 {
-                  if (!(selectedSite is Sites.DownloadedVideoUtil)) dlgSel.Add(Translation.AddToFavourites); //GUILocalizeStrings.Get(930)/*Add to favorites*/
+                    if (!(selectedSite is Sites.DownloadedVideoUtil)) dlgSel.Add(Translation.AddToFavourites); //GUILocalizeStrings.Get(930)/*Add to favorites*/
                 }
                 else
                 {
-                  dlgSel.Add(Translation.RemoveFromFavorites); //GUILocalizeStrings.Get(933)/*Remove from favorites*/
+                    dlgSel.Add(Translation.RemoveFromFavorites); //GUILocalizeStrings.Get(933)/*Remove from favorites*/
                 }
                 if (selectedSite.HasRelatedVideos)
                 {
-                  dlgSel.Add(Translation.RelatedVideos);//GUILocalizeStrings.Get(33011) /*Related Videos*/
+                    dlgSel.Add(Translation.RelatedVideos);//GUILocalizeStrings.Get(33011) /*Related Videos*/
                 }
                 if (String.IsNullOrEmpty(OnlineVideoSettings.getInstance().msDownloadDir) == false)
                 {
@@ -406,7 +406,7 @@ namespace OnlineVideos
             base.OnAction(action);
         }
 
-      public override bool OnMessage(GUIMessage message)
+        public override bool OnMessage(GUIMessage message)
         {
             switch (message.Message)
             {
@@ -448,10 +448,10 @@ namespace OnlineVideos
                     {
                         Category categoryToRestoreOnError = selectedCategory;
                         //if (selectedCategory == null) 
-                            selectedCategory = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Category;
+                        selectedCategory = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Category;
                         //selectedSite.Settings.Categories[GUI_facadeView.SelectedListItemIndex - 1];
                         //else 
-                            //selectedCategory = selectedCategory.SubCategories[GUI_facadeView.SelectedListItemIndex - 1];
+                        //selectedCategory = selectedCategory.SubCategories[GUI_facadeView.SelectedListItemIndex - 1];
 
                         if (selectedCategory.HasSubCategories)
                         {
@@ -740,7 +740,7 @@ namespace OnlineVideos
             // whenever categories are displayed, reset the selected video index, 
             // so re-entering another category won't restore a previously selected video
             selectedVideoIndex = 0;
-            
+
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
 
             // add the first item that will go to the previous menu
@@ -825,7 +825,7 @@ namespace OnlineVideos
                         {
                             if (!string.IsNullOrEmpty(loCat.Thumb))
                             {
-                                numCategoriesWithThumb++;                                
+                                numCategoriesWithThumb++;
                                 loListItem.ThumbUrl = loCat.Thumb;
                             }
                         }
@@ -1114,9 +1114,9 @@ namespace OnlineVideos
                 loListItem = new OnlineVideosGuiListItem(loVideoInfo.Title);
                 loListItem.Path = loVideoInfo.VideoUrl;
                 loListItem.ItemId = liIdx;
-                loListItem.Item = loVideoInfo;                
+                loListItem.Item = loVideoInfo;
                 loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
-                GUI_facadeView.Add(loListItem);                
+                GUI_facadeView.Add(loListItem);
                 if (!string.IsNullOrEmpty(loVideoInfo.ImageUrl))
                 {
                     numVideosWithThumb++;
@@ -1198,7 +1198,7 @@ namespace OnlineVideos
             if (!string.IsNullOrEmpty(desc)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", desc);
             else GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
         }
-        
+
         void OnVideoItemSelected(GUIListItem item, GUIControl parent)
         {
             if (item.ItemId == 0) SetVideoInfoGuiProperties(null);
@@ -1492,7 +1492,7 @@ namespace OnlineVideos
             switch (CurrentState)
             {
                 case State.sites:
-                    GUIPropertyManager.SetProperty("#header.label",Translation.Home/*Home*/);
+                    GUIPropertyManager.SetProperty("#header.label", Translation.Home/*Home*/);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
@@ -1879,7 +1879,7 @@ namespace OnlineVideos
 
         #endregion
     }
- 
+
     public class SmsT9Filter
     {
         private Regex filter = null;
