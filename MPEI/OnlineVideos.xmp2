@@ -969,6 +969,34 @@
               <ZipFileName>Installer{CopyFile}\{b23dd063-ac46-46c0-97bf-a61d5bb12011}-ZDF Mediathek.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ZDF Mediathek.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\kino.de.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{87235512-0f73-46a5-b02f-9b98551b2355}-kino.de.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\kino.de.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\spiegel.de.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ed9e09f9-0858-4b56-9466-207579496452}-spiegel.de.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\spiegel.de.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\kino.de.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c2eed3ba-f89f-4fce-8506-aad3af7508e2}-kino.de.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\kino.de.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\spiegel.de.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2ee26a41-fdff-4240-9338-9080996d7575}-spiegel.de.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\spiegel.de.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1214,6 +1242,22 @@
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos.dll</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
+      <GroupItem Name="Language">
+        <DisplayName>Language</DisplayName>
+        <DefaulChecked>true</DefaulChecked>
+        <Description>Language</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\en-US.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{cf05e3df-2476-44f1-91e8-06c57bfaa3d2}-en-US.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\en-US.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1731,6 +1775,13 @@ Click Next to continue or Cancel to exit Setup.</Value>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TVGemist.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{42437A2A-03A5-4EEA-BDC6-49A622759475}-TVGemist.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVGemist.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\tvgorge.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{686b5668-d04e-41f3-8624-5e6f29d69dda}-tvgorge.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvgorge.png</DestinationFilename>
@@ -2221,6 +2272,13 @@ Click Next to continue or Cancel to exit Setup.</Value>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\TVGemist.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{FBFC6CB6-E70B-45BF-92EB-88DEE21E00C5}-TVGemist.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVGemist.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\tvgorge.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{2d848627-676b-4a9b-8412-5315b4addd0c}-tvgorge.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tvgorge.png</DestinationFilename>
@@ -2315,6 +2373,34 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <LocalFileName>..\SiteImages\Banners\ZDF Mediathek.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b23dd063-ac46-46c0-97bf-a61d5bb12011}-ZDF Mediathek.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ZDF Mediathek.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\kino.de.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{87235512-0f73-46a5-b02f-9b98551b2355}-kino.de.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\kino.de.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\spiegel.de.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ed9e09f9-0858-4b56-9466-207579496452}-spiegel.de.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\spiegel.de.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\kino.de.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c2eed3ba-f89f-4fce-8506-aad3af7508e2}-kino.de.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\kino.de.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\spiegel.de.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2ee26a41-fdff-4240-9338-9080996d7575}-spiegel.de.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\spiegel.de.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -2533,11 +2619,18 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos.dll</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\en-US.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{cf05e3df-2476-44f1-91e8-06c57bfaa3d2}-en-US.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\en-US.xml</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f5a63d6c-1d21-4c96-9d4c-ed5065837be5}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{a86516f5-db5c-4eec-a2a3-5ee4e2d8b75d}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
@@ -2562,6 +2655,16 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <DestinationFilename>%Skin%\</DestinationFilename>
         <Folder>..\Skins</Folder>
         <Group>Skins</Group>
+        <Recursive>true</Recursive>
+      </FolderGroup>
+      <FolderGroup InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName />
+        <ZipFileName>Installer{CopyFile}\{cbad33a3-521c-4204-b0e2-a5f96fe0ff39}-</ZipFileName>
+        <DestinationFilename>%Language%\</DestinationFilename>
+        <Folder>..\Language</Folder>
+        <Group>Language</Group>
         <Recursive>true</Recursive>
       </FolderGroup>
     </FolderGroups>

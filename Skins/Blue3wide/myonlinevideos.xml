@@ -158,7 +158,7 @@
       <posY>579</posY>
       <width>120</width>
       <font>font10</font>
-      <label>299</label>
+      <label>#OnlineVideos.Translation.Runtime.Label</label>
       <textcolor>White</textcolor>
       <visible>!Control.IsVisible(51)+control.hastext(501)</visible>
     </control>
@@ -225,7 +225,7 @@
           <description>View-As</description>
           <type>button</type>
           <id>2</id>
-          <label>101</label>          
+          <label>#OnlineVideos.Translation.LayoutList.Label</label>          
           <onright>50</onright>
           <onup>17</onup>
           <font>font11</font>
@@ -239,7 +239,7 @@
           <id>10</id>
           <onright>50</onright>
           <onup>2</onup>
-          <label>137</label>
+          <label>#OnlineVideos.Translation.Search.Label</label>
           <font>font11</font>
           <height>37</height>
           <textYOff>3</textYOff>
@@ -251,7 +251,7 @@
           <id>9</id>
           <onright>50</onright>
           <onup>10</onup>
-          <label>2053</label>
+          <label>#OnlineVideos.Translation.Category.Label</label>
           <font>font11</font>
           <height>37</height>
           <textYOff>3</textYOff>
@@ -263,7 +263,7 @@
           <id>5</id>
           <onright>50</onright>
           <onup>9</onup>
-          <label>Max Results</label>
+          <label>#OnlineVideos.Translation.MaxResults.Label</label>
           <font>font11</font>
           <height>37</height>
           <textYOff>3</textYOff>
@@ -275,7 +275,7 @@
           <id>6</id>
           <onright>50</onright>
           <onup>5</onup>
-          <label>495</label>
+          <label>#OnlineVideos.Translation.SortOptions.Label</label>
           <font>font11</font>
           <height>37</height>
           <textYOff>3</textYOff>
@@ -287,7 +287,7 @@
           <id>7</id>
           <onright>50</onright>
           <onup>6</onup>
-          <label>Timeframe</label>
+          <label>#OnlineVideos.Translation.Timeframe.Label</label>
           <font>font11</font>
           <height>37</height>
           <textYOff>3</textYOff>
@@ -299,7 +299,7 @@
           <id>8</id>
           <onright>50</onright>
           <onup>7</onup>
-          <label>184</label>
+          <label>#OnlineVideos.Translation.Refresh.Label</label>
           <font>font11</font>
           <height>37</height>
           <textYOff>3</textYOff>
@@ -311,7 +311,7 @@
           <id>3</id>
           <onright>50</onright>
           <onup>8</onup>
-          <label>1975</label>
+          <label>#OnlineVideos.Translation.NextPage.Label</label>
           <animation effect="fade" time="200">WindowOpen</animation>
           <animation effect="fade" time="200">WindowClose</animation>
           <font>font11</font>
@@ -325,7 +325,7 @@
           <id>4</id>
           <onright>50</onright>
           <onup>3</onup>
-          <label>30004</label>
+          <label>#OnlineVideos.Translation.PreviousPage.Label</label>
           <animation effect="fade" time="200">WindowOpen</animation>
           <animation effect="fade" time="200">WindowClose</animation>
           <font>font11</font>
@@ -339,7 +339,7 @@
           <id>11</id>
           <onright>50</onright>
           <onup>4</onup>
-          <label>932</label>
+          <label>#OnlineVideos.Translation.Favourites.Label</label>
           <font>font11</font>
           <height>37</height>
           <textYOff>3</textYOff>
@@ -352,7 +352,7 @@
           <onright>50</onright>
           <onup>11</onup>
           <ondown>13</ondown>
-          <label>Enter Pin</label>
+          <label>#OnlineVideos.Translation.EnterPin.Label</label>
           <font>font11</font>
           <height>37</height>
           <textYOff>3</textYOff>
@@ -365,7 +365,7 @@
           <onright>50</onright>
           <onup>12</onup>
           <ondown>2</ondown>
-          <label>Update Sites</label>
+          <label>#OnlineVideos.Translation.UpdateSites.Label</label>
           <font>font11</font>
           <height>37</height>
           <textYOff>3</textYOff>

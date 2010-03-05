@@ -196,9 +196,11 @@ namespace OnlineVideos
 
         protected override void OnPageLoad()
         {
-            base.OnPageLoad(); // let animations run            
+          base.OnPageLoad(); // let animations run            
 
-            // everytime the plugin is shown, after some other window was shown
+          Translation.TranslateSkin();
+
+          // everytime the plugin is shown, after some other window was shown
             if (OnlineVideoSettings.getInstance().ageHasBeenConfirmed && PreviousWindowId == 0)
             {
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last                
@@ -253,25 +255,25 @@ namespace OnlineVideos
 
             if (dlgSel != null)
             {
-                dlgSel.SetHeading(498);  // Actions
+                dlgSel.SetHeading(Translation.Actions);  // Actions
 
-                dlgSel.Add(GUILocalizeStrings.Get(30003)); //Play All
+                dlgSel.Add(Translation.PlayAll); //Play All //GUILocalizeStrings.Get(30003)
 
                 if (currentVideosDisplayMode != VideosMode.Favorites && !(selectedSite is Sites.FavoriteUtil))
                 {
-                    if (!(selectedSite is Sites.DownloadedVideoUtil)) dlgSel.Add(GUILocalizeStrings.Get(930)/*Add to favorites*/);
+                  if (!(selectedSite is Sites.DownloadedVideoUtil)) dlgSel.Add(Translation.AddToFavourites); //GUILocalizeStrings.Get(930)/*Add to favorites*/
                 }
                 else
                 {
-                    dlgSel.Add(GUILocalizeStrings.Get(933)/*Remove from favorites*/);
+                  dlgSel.Add(Translation.RemoveFromFavorites); //GUILocalizeStrings.Get(933)/*Remove from favorites*/
                 }
                 if (selectedSite.HasRelatedVideos)
                 {
-                    dlgSel.Add(GUILocalizeStrings.Get(33011)); /*Related Videos*/
+                  dlgSel.Add(Translation.RelatedVideos);//GUILocalizeStrings.Get(33011) /*Related Videos*/
                 }
                 if (String.IsNullOrEmpty(OnlineVideoSettings.getInstance().msDownloadDir) == false)
                 {
-                    if (selectedSite is Sites.DownloadedVideoUtil) dlgSel.Add(GUILocalizeStrings.Get(117)/*Delete*/); else dlgSel.Add(GUILocalizeStrings.Get(190)/*Save*/);
+                    if (selectedSite is Sites.DownloadedVideoUtil) dlgSel.Add(Translation.Delete/*Delete*/); else dlgSel.Add(Translation.Save/*Save*/);
                 }
             }
             dlgSel.DoModal(GetID);
@@ -323,107 +325,136 @@ namespace OnlineVideos
 
         public override void OnAction(Action action)
         {
-            if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && CurrentState != State.sites)
-            {
-                currentFilter = null;
-                if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+          if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && CurrentState != State.sites)
+          {
+            currentFilter = null;
+            if (Gui2UtilConnector.Instance.IsBusy)
+              return; // wait for any background action e.g. dynamic category discovery to finish
 
-                // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
-                GUIControl focusedControl = GetControl(GetFocusControlId());
-                if (focusedControl != null)
+            // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
+            GUIControl focusedControl = GetControl(GetFocusControlId());
+            if (focusedControl != null)
+            {
+              if (focusedControl.Type == "button" || focusedControl.Type == "selectbutton")
+              {
+                int focusedControlId = GetFocusControlId();
+                if (focusedControlId >= 0)
                 {
-                    if (focusedControl.Type == "button" || focusedControl.Type == "selectbutton")
-                    {
-                        int focusedControlId = GetFocusControlId();
-                        if (focusedControlId >= 0)
-                        {
-                            GUIControl.UnfocusControl(GetID, focusedControlId);
-                        }
-                    }
+                  GUIControl.UnfocusControl(GetID, focusedControlId);
                 }
-
-                ShowPreviousMenu();
-                return;
+              }
             }
-            else if (action.wID == Action.ActionType.ACTION_KEY_PRESSED && GUI_facadeView.Visible && GUI_facadeView.Focus)
-            {
-                // search items (starting from current selected) by title and select first found one
-                char pressedChar = (char)action.m_key.KeyChar;
-                if (CurrentState == State.categories && (char.IsDigit(pressedChar) || pressedChar == '\b'))
-                {
-                    string currentPattern = currentFilter == null ? String.Empty : currentPattern = currentFilter.ToString();
-                    switch (pressedChar)
-                    {
-                        case '1': currentPattern += "[1]"; break;
-                        case '2': currentPattern += "[2|a|b|c]"; break;
-                        case '3': currentPattern += "[3|d|e|f]"; break;
-                        case '4': currentPattern += "[4|g|h|i]"; break;
-                        case '5': currentPattern += "[5|j|k|l]"; break;
-                        case '6': currentPattern += "[6|m|n|o]"; break;
-                        case '7': currentPattern += "[7|q|r|s]"; break;
-                        case '8': currentPattern += "[8|t|u|v]"; break;
-                        case '9': currentPattern += "[9|w|x|y|z]"; break;
-                        case '0': currentPattern += "[0|\\s]"; break;
-                        case '\b': if (!String.IsNullOrEmpty(currentPattern))
-                                currentPattern = currentPattern.Substring(0, currentPattern.LastIndexOf('[')); break;
-                    }
-                    if (String.IsNullOrEmpty(currentPattern))
-                        currentFilter = null;
-                    else
-                    {
-                        currentFilter = new Regex(currentPattern, RegexOptions.IgnoreCase);
-                    }
 
-                    string cat_headerlabel = selectedCategory != null ? selectedCategory.Name : selectedSite.Settings.Name;
-                    if (currentFilter != null)
-                        cat_headerlabel = cat_headerlabel + " " + currentFilter.ToString().Replace("|", String.Empty).Replace("][", ",");
-                    GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
-                    DisplayCategories(selectedCategory);
+            ShowPreviousMenu();
+            return;
+          }
+          else if (action.wID == Action.ActionType.ACTION_KEY_PRESSED && GUI_facadeView.Visible && GUI_facadeView.Focus)
+          {
+            // search items (starting from current selected) by title and select first found one
+            char pressedChar = (char) action.m_key.KeyChar;
+            if (CurrentState == State.categories && (char.IsDigit(pressedChar) || pressedChar == '\b'))
+            {
+              string currentPattern = currentFilter == null ? String.Empty : currentPattern = currentFilter.ToString();
+              switch (pressedChar)
+              {
+                case '1':
+                  currentPattern += "[1]";
+                  break;
+                case '2':
+                  currentPattern += "[2|a|b|c]";
+                  break;
+                case '3':
+                  currentPattern += "[3|d|e|f]";
+                  break;
+                case '4':
+                  currentPattern += "[4|g|h|i]";
+                  break;
+                case '5':
+                  currentPattern += "[5|j|k|l]";
+                  break;
+                case '6':
+                  currentPattern += "[6|m|n|o]";
+                  break;
+                case '7':
+                  currentPattern += "[7|q|r|s]";
+                  break;
+                case '8':
+                  currentPattern += "[8|t|u|v]";
+                  break;
+                case '9':
+                  currentPattern += "[9|w|x|y|z]";
+                  break;
+                case '0':
+                  currentPattern += "[0|\\s]";
+                  break;
+                case '\b':
+                  if (!String.IsNullOrEmpty(currentPattern))
+                    currentPattern = currentPattern.Substring(0, currentPattern.LastIndexOf('['));
+                  break;
+              }
+              if (String.IsNullOrEmpty(currentPattern))
+                currentFilter = null;
+              else
+              {
+                currentFilter = new Regex(currentPattern, RegexOptions.IgnoreCase);
+              }
+
+              string cat_headerlabel = selectedCategory != null ? selectedCategory.Name : selectedSite.Settings.Name;
+              if (currentFilter != null)
+                cat_headerlabel = cat_headerlabel + " " +
+                                  currentFilter.ToString().Replace("|", String.Empty).Replace("][", ",");
+              GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
+              DisplayCategories(selectedCategory);
+              return;
+            }
+            else
+            {
+              if (char.IsLetterOrDigit(pressedChar))
+              {
+                string lowerChar = pressedChar.ToString().ToLower();
+                for (int i = GUI_facadeView.SelectedListItemIndex + 1; i < GUI_facadeView.Count; i++)
+                {
+                  if (GUI_facadeView[i].Label.ToLower().StartsWith(lowerChar))
+                  {
+                    GUI_facadeView.SelectedListItemIndex = i;
                     return;
+                  }
                 }
-                else
-                {
-                    if (char.IsLetterOrDigit(pressedChar))
-                    {
-                        string lowerChar = pressedChar.ToString().ToLower();
-                        for (int i = GUI_facadeView.SelectedListItemIndex + 1; i < GUI_facadeView.Count; i++)
-                        {
-                            if (GUI_facadeView[i].Label.ToLower().StartsWith(lowerChar))
-                            {
-                                GUI_facadeView.SelectedListItemIndex = i;
-                                return;
-                            }
-                        }
-                    }
-                }
+              }
             }
-            else if (action.wID == Action.ActionType.ACTION_NEXT_ITEM && currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
+          }
+          else if (action.wID == Action.ActionType.ACTION_NEXT_ITEM && currentState == State.videos &&
+                   GUI_facadeView.Visible && GUI_facadeView.Focus)
+          {
+            currentFilter = null;
+            if (Gui2UtilConnector.Instance.IsBusy)
+              return; // wait for any background action e.g. dynamic category discovery to finish
+
+            if (GUI_btnNext.IsEnabled)
             {
-                currentFilter = null;
-                if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
-
-                if (GUI_btnNext.IsEnabled)
-                {
-                    DisplayVideos_NextPage();
-                    UpdateViewState();
-                }
+              DisplayVideos_NextPage();
+              UpdateViewState();
             }
-            else if (action.wID == Action.ActionType.ACTION_PREV_ITEM && currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
+          }
+          else if (action.wID == Action.ActionType.ACTION_PREV_ITEM && currentState == State.videos &&
+                   GUI_facadeView.Visible && GUI_facadeView.Focus)
+          {
+            currentFilter = null;
+            if (Gui2UtilConnector.Instance.IsBusy)
+              return; // wait for any background action e.g. dynamic category discovery to finish
+
+            if (GUI_btnPrevious.IsEnabled)
             {
-                currentFilter = null;
-                if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
-
-                if (GUI_btnPrevious.IsEnabled)
-                {
-                    DisplayVideos_PreviousPage();
-                    UpdateViewState();
-                }
+              DisplayVideos_PreviousPage();
+              UpdateViewState();
             }
-
-            base.OnAction(action);
+          }
+          // direct translation not working with select button   
+          GUI_btnOrderBy.Label = Translation.SortOptions;
+          base.OnAction(action);
         }
 
-        public override bool OnMessage(GUIMessage message)
+      public override bool OnMessage(GUIMessage message)
         {
             switch (message.Message)
             {
@@ -439,6 +470,8 @@ namespace OnlineVideos
             }
             return base.OnMessage(message);
         }
+
+
 
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
@@ -603,7 +636,6 @@ namespace OnlineVideos
                     }
                 }
             }
-
             base.OnClicked(controlId, control, actionType);
         }
 
@@ -672,9 +704,9 @@ namespace OnlineVideos
 
             // set order by options
             GUI_btnOrderBy.Clear();
-            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, GUILocalizeStrings.Get(886)); //Default
-            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, GUILocalizeStrings.Get(103)); //Name
-            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, GUILocalizeStrings.Get(304)); //Language
+            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Default); //Default
+            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.SortByName); //Name
+            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.SortByLanguage); //Language
             GUI_btnOrderBy.SelectedItem = (int)siteOrder;
 
             // get names in right order
@@ -742,7 +774,7 @@ namespace OnlineVideos
 
             if (selectedSiteIndex < GUI_facadeView.Count) GUI_facadeView.SelectedListItemIndex = selectedSiteIndex;
 
-            GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(2143)/*Home*/);
+            GUIPropertyManager.SetProperty("#header.label", Translation.Home /*Home*/);
             GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
         }
 
@@ -1101,7 +1133,7 @@ namespace OnlineVideos
             {
                 GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
                 dlg_error.SetHeading(PluginName());
-                dlg_error.SetLine(1, GUILocalizeStrings.Get(1036)/*No Videos found!*/);
+                dlg_error.SetLine(1, Translation.NoVideoFound/*No Videos found!*/);
                 dlg_error.SetLine(2, String.Empty);
                 dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                 return false;
@@ -1246,8 +1278,8 @@ namespace OnlineVideos
                 if (loUrlList == null || loUrlList.Count == 0)
                 {
                     GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    dlg.SetHeading(GUILocalizeStrings.Get(257)/*ERROR*/);
-                    dlg.SetText("Unable to play the video. No URL.");
+                    dlg.SetHeading(Translation.Error/*ERROR*/);
+                    dlg.SetText(Translation.UnableToPlayVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                     return;
                 }
@@ -1288,8 +1320,8 @@ namespace OnlineVideos
                 if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
                 {
                     GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    dlg.SetHeading(GUILocalizeStrings.Get(257)/*ERROR*/);
-                    dlg.SetText("Unable to play the video. Invalid URL.");
+                    dlg.SetHeading(Translation.Error/*ERROR*/);
+                    dlg.SetText(Translation.UnableToPlayVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                     return;
                 }
@@ -1394,8 +1426,8 @@ namespace OnlineVideos
             if (String.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                dlg.SetHeading(GUILocalizeStrings.Get(257)/*ERROR*/);
-                dlg.SetText("Unable to download the video. Invalid URL.");
+                dlg.SetHeading(Translation.Error/*ERROR*/);
+                dlg.SetText(Translation.UnableToDownloadVideo);
                 dlg.DoModal(GUIWindowManager.ActiveWindow);
                 return;
             }
@@ -1403,8 +1435,8 @@ namespace OnlineVideos
             if (currentDownloads.ContainsKey(url))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                dlg.SetHeading(GUILocalizeStrings.Get(257)/*ERROR*/);
-                dlg.SetText("Already downloading this file.");
+                dlg.SetHeading(Translation.Error/*ERROR*/);
+                dlg.SetText(Translation.AlreadyDownloading);
                 dlg.DoModal(GUIWindowManager.ActiveWindow);
                 return;
             }
@@ -1453,8 +1485,8 @@ namespace OnlineVideos
             if (e.Error != null)
             {
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                loDlgNotify.SetHeading(GUILocalizeStrings.Get(257)/*ERROR*/);
-                loDlgNotify.SetText(string.Format("Download failed: {0}", downloadInfo.Title));
+                loDlgNotify.SetHeading(Translation.Error/*ERROR*/);
+                loDlgNotify.SetText(string.Format(Translation.DownloadFailed, downloadInfo.Title));
                 loDlgNotify.DoModal(GetID);
             }
             else
@@ -1470,7 +1502,7 @@ namespace OnlineVideos
                 }
 
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                loDlgNotify.SetHeading("Download Complete");
+                loDlgNotify.SetHeading(Translation.DownloadFailed);
                 loDlgNotify.SetText((e.UserState as DownloadInfo).Title);
                 loDlgNotify.DoModal(GetID);
             }
@@ -1503,7 +1535,7 @@ namespace OnlineVideos
             switch (CurrentState)
             {
                 case State.sites:
-                    GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(2143)/*Home*/);
+                    GUIPropertyManager.SetProperty("#header.label",Translation.Home/*Home*/);
                     GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
@@ -1540,9 +1572,9 @@ namespace OnlineVideos
                 case State.videos:
                     switch (currentVideosDisplayMode)
                     {
-                        case VideosMode.Favorites: GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(932)); break;
-                        case VideosMode.Search: GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(283)); break;
-                        case VideosMode.Related: GUIPropertyManager.SetProperty("#header.label", GUILocalizeStrings.Get(33011)); break;
+                        case VideosMode.Favorites: GUIPropertyManager.SetProperty("#header.label", Translation.Favourites); break;
+                        case VideosMode.Search: GUIPropertyManager.SetProperty("#header.label", Translation.SearchResults); break;
+                        case VideosMode.Related: GUIPropertyManager.SetProperty("#header.label", Translation.RelatedVideos); break;
                         default:
                             {
                                 string proposedLabel = selectedSite.getCurrentVideosTitle();
@@ -1770,13 +1802,13 @@ namespace OnlineVideos
             switch (currentView)
             {
                 case GUIFacadeControl.ViewMode.List:
-                    strLine = GUILocalizeStrings.Get(101);
+                    strLine = Translation.LayoutList;
                     break;
                 case GUIFacadeControl.ViewMode.SmallIcons:
-                    strLine = GUILocalizeStrings.Get(100);
+                    strLine = Translation.LayoutIcons;
                     break;
                 case GUIFacadeControl.ViewMode.LargeIcons:
-                    strLine = GUILocalizeStrings.Get(417);
+                    strLine = Translation.LayoutBigIcons;
                     break;
             }
             GUIControl.SetControlLabel(GetID, GUI_btnViewAs.GetID, strLine);
@@ -1798,7 +1830,7 @@ namespace OnlineVideos
             {
                 if (String.IsNullOrEmpty(foVideo.Length))
                 {
-                    GUIPropertyManager.SetProperty("#OnlineVideos.length", "None");
+                    GUIPropertyManager.SetProperty("#OnlineVideos.length", Translation.None);
                 }
                 else
                 {
@@ -1815,7 +1847,7 @@ namespace OnlineVideos
                 }
                 if (String.IsNullOrEmpty(foVideo.Description))
                 {
-                    GUIPropertyManager.SetProperty("#OnlineVideos.desc", "None");
+                    GUIPropertyManager.SetProperty("#OnlineVideos.desc", Translation.None);
                 }
                 else
                 {
@@ -1873,7 +1905,7 @@ namespace OnlineVideos
             if (dlgSel != null)
             {
                 dlgSel.Reset();
-                dlgSel.SetHeading(GUILocalizeStrings.Get(2201)/*Select Source*/);
+                dlgSel.SetHeading(Translation.SelectSource /*Select Source*/);
                 int option = 0;
                 foreach (string key in videoInfo.PlaybackOptions.Keys)
                 {

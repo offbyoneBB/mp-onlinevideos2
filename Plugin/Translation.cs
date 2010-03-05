@@ -1,0 +1,306 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Xml;
+using System.Text.RegularExpressions;
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using MediaPortal.Localisation;
+
+namespace OnlineVideos
+{
+  public static class Translation
+  {
+    #region Private variables
+
+    //private static Logger logger = LogManager.GetCurrentClassLogger();
+    private static Dictionary<string, string> _translations;
+    private static readonly string _path = string.Empty;
+    private static readonly DateTimeFormatInfo _info;
+
+    #endregion
+
+    #region Constructor
+
+    static Translation()
+    {
+      string lang;
+
+      try
+      {
+        lang = GUILocalizeStrings.GetCultureName(GUILocalizeStrings.CurrentLanguage());
+        _info = DateTimeFormatInfo.GetInstance(CultureInfo.CurrentUICulture);
+      }
+      catch (Exception)
+      {
+        lang = CultureInfo.CurrentUICulture.Name;
+        _info = DateTimeFormatInfo.GetInstance(CultureInfo.CurrentUICulture);
+      }
+
+      Log.Info("Using language " + lang);
+
+      _path = Config.GetSubFolder(Config.Dir.Language, "OnlineVideos");
+
+      if (!Directory.Exists(_path))
+        Directory.CreateDirectory(_path);
+
+      LoadTranslations(lang);
+    }
+
+    public static void SetProperty(string property, string value)
+    {
+      if (property == null)
+        return;
+
+      //// If the value is empty always add a space
+      //// otherwise the property will keep 
+      //// displaying it's previous value
+      if (String.IsNullOrEmpty(value))
+        value = " ";
+
+      GUIPropertyManager.SetProperty(property, value);
+    }
+
+    #endregion
+
+    #region Public Properties
+
+    /// <summary>
+    /// Gets the translated strings collection in the active language
+    /// </summary>
+    public static Dictionary<string, string> Strings
+    {
+      get
+      {
+        if (_translations == null)
+        {
+          _translations = new Dictionary<string, string>();
+          Type transType = typeof(Translation);
+          FieldInfo[] fields = transType.GetFields(BindingFlags.Public | BindingFlags.Static);
+          foreach (FieldInfo field in fields)
+          {
+            _translations.Add(field.Name, field.GetValue(transType).ToString());
+          }
+        }
+        return _translations;
+      }
+    }
+
+    #endregion
+
+    #region Public Methods
+
+    public static int LoadTranslations(string lang)
+    {
+      XmlDocument doc = new XmlDocument();
+      Dictionary<string, string> TranslatedStrings = new Dictionary<string, string>();
+      string langPath = "";
+      try
+      {
+        langPath = Path.Combine(_path, lang + ".xml");
+        doc.Load(langPath);
+      }
+      catch (Exception e)
+      {
+        if (lang == "en")
+          return 0; // otherwise we are in an endless loop!
+
+        if (e.GetType() == typeof(FileNotFoundException))
+          Log.Warn("Cannot find translation file {0}.  Failing back to English", langPath);
+        else
+        {
+          Log.Error("Error in translation xml file: {0}. Failing back to English", lang);
+          Log.Error(e);
+        }
+
+        return LoadTranslations("en");
+      }
+      foreach (XmlNode stringEntry in doc.DocumentElement.ChildNodes)
+      {
+        if (stringEntry.NodeType == XmlNodeType.Element)
+          try
+          {
+            TranslatedStrings.Add(stringEntry.Attributes.GetNamedItem("Field").Value, stringEntry.InnerText);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Error in Translation Engine");
+            Log.Error(ex);
+          }
+      }
+
+      Type TransType = typeof(Translation);
+      FieldInfo[] fieldInfos = TransType.GetFields(BindingFlags.Public | BindingFlags.Static);
+      foreach (FieldInfo fi in fieldInfos)
+      {
+        if (TranslatedStrings != null && TranslatedStrings.ContainsKey(fi.Name))
+          TransType.InvokeMember(fi.Name, BindingFlags.SetField, null, TransType, new object[] { TranslatedStrings[fi.Name] });
+        else
+          Log.Info("Translation not found for field: {0}.  Using hard-coded English default.", fi.Name);
+      }
+      return TranslatedStrings.Count;
+    }
+
+    public static string GetByName(string name)
+    {
+      if (!Strings.ContainsKey(name))
+        return name;
+
+      return Strings[name];
+    }
+
+    public static string GetByName(string name, params object[] args)
+    {
+      return String.Format(GetByName(name), args);
+    }
+
+    /// <summary>
+    /// Takes an input string and replaces all ${named} variables with the proper translation if available
+    /// </summary>
+    /// <param name="input">a string containing ${named} variables that represent the translation keys</param>
+    /// <returns>translated input string</returns>
+    public static string ParseString(string input)
+    {
+      Regex replacements = new Regex(@"\$\{([^\}]+)\}");
+      MatchCollection matches = replacements.Matches(input);
+      foreach (Match match in matches)
+      {
+        input = input.Replace(match.Value, GetByName(match.Groups[1].Value));
+      }
+      return input;
+    }
+
+
+    public static void TranslateSkin()
+    {
+      Log.Error("Translating skin");
+      foreach (string name in Translation.Strings.Keys)
+      {
+        SetProperty("#OnlineVideos.Translation." + name + ".Label", Translation.Strings[name]);
+      }
+    }
+
+    //public static string GetMediaType(MediaType mediaType)
+    //{
+    //  switch (mediaType)
+    //  {
+    //    case MyAlarm.MediaType.File:
+    //      return File;
+
+    //    case MyAlarm.MediaType.PlayList:
+    //      return Playlist;
+
+    //    case MyAlarm.MediaType.Message:
+    //      return Message;
+
+    //    default:
+    //      return String.Empty;
+    //  }
+    //}
+
+    public static string GetDayName(DayOfWeek dayOfWeek)
+    {
+      return _info.GetDayName(dayOfWeek);
+    }
+    public static string GetShortestDayName(DayOfWeek dayOfWeek)
+    {
+      return _info.GetShortestDayName(dayOfWeek);
+    }
+
+    #endregion
+
+    #region Translations / Strings
+
+    /// <summary>
+    /// These will be loaded with the language files content
+    /// if the selected lang file is not found, it will first try to load en(us).xml as a backup
+    /// if that also fails it will use the hardcoded strings as a last resort.
+    /// </summary>
+    
+
+    // A
+    public static string AlreadyDownloading = "Already downloading this file.";
+    public static string Actions = "Actions";
+    public static string Actors = "Actors";
+    public static string AddToFavourites = "Add to favourites";
+
+    // C
+    public static string Category = "Category";
+
+    // D
+    public static string DateOfRelease = "Date of Release:";
+    public static string DownloadFailed = "Download failed: {0}";
+    public static string DownloadComplete = "Download Complete";
+    public static string Delete = "Delete";
+    public static string Default = "Default";
+
+    // E
+    public static string Error = "Error";
+    public static string EnterPin = "EnterPin";
+
+    // F
+    public static string Favourites = "Favourites";
+
+    // G
+    public static string Genre = "Genre";
+
+    // H
+    public static string Home = "Home";
+
+    // I
+
+    // L
+    public static string LayoutList = "Layout: List";
+    public static string LayoutIcons = "Layout: Icons";
+    public static string LayoutBigIcons = "Layout: Big Icons";
+
+    // M
+    public static string MaxResults = "Max Results";
+    
+    // N
+    public static string NextPage = "Next page";
+    public static string None = "None";
+    public static string NoVideoFound = "No video found";
+    
+    // O
+
+    // P
+    public static string PlayAll = "Play all";
+    public static string PlotOutline = "Plot outline:";
+    public static string PreviousPage = "Previous page";
+    
+    // R
+    public static string RemoveFromFavorites = "Remove from favorites";
+    public static string Refresh = "Refresh";
+    public static string RelatedVideos = "Related Videos";
+    public static string Runtime = "Runtime:";
+
+    // S
+    public static string Save = "Save";
+    public static string SearchResults = "Search results";
+    public static string SelectSource = "Select source";
+    public static string SortByName = "Sort by: Name";
+    public static string SortOptions = "Sort options";
+    public static string SortByLanguage = "Language";
+    public static string Search = "Search";
+
+    // T
+    public static string Timeframe = "Timeframe";
+
+    // U
+    public static string UpdateSites = "UpdateSites";
+    public static string UnableToPlayVideo = "Unable to play the video. No URL.";
+    public static string UnableToDownloadVideo = "Unable to download the video. Invalid URL.";
+
+    // V
+
+    // W
+
+    // Y
+
+    #endregion
+
+  }
+}
