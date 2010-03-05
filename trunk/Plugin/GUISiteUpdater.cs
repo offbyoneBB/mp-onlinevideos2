@@ -37,30 +37,37 @@ namespace OnlineVideos
 
         protected override void OnPageLoad()
         {
-            base.OnPageLoad();
+          foreach (string name in Translation.Strings.Keys)
+          {
+            Translation.SetProperty("#OnlineVideos.Translation." + name + ".Label", Translation.Strings[name]);
+          }
 
-            if (GUI_btnFilter.SubItemCount == 0)
+          base.OnPageLoad();
+
+          if (GUI_btnFilter.SubItemCount == 0)
+          {
+            foreach (string aFilterOption in Enum.GetNames(typeof (FilterOption)))
             {
-                foreach (string aFilterOption in Enum.GetNames(typeof(FilterOption)))
-                {
-                    GUIControl.AddItemLabelControl(GetID, GUI_btnFilter.GetID, aFilterOption);
-                }
+              GUIControl.AddItemLabelControl(GetID, GUI_btnFilter.GetID, aFilterOption);
             }
-            if (GUI_btnSort.SubItemCount == 0)
+          }
+          if (GUI_btnSort.SubItemCount == 0)
+          {
+            foreach (string aSortOption in Enum.GetNames(typeof (SortOption)))
             {
-                foreach (string aSortOption in Enum.GetNames(typeof(SortOption)))
-                {
-                    GUIControl.AddItemLabelControl(GetID, GUI_btnSort.GetID, aSortOption.Replace("_",", "));
-                }
+              GUIControl.AddItemLabelControl(GetID, GUI_btnSort.GetID, aSortOption.Replace("_", ", "));
             }
+          }
 
-            GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.getInstance().BasicHomeScreenName + " Updater");
-            GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
+          GUIPropertyManager.SetProperty("#header.label",
+                                         OnlineVideoSettings.getInstance().BasicHomeScreenName + " Updater");
+          GUIPropertyManager.SetProperty("#header.image",
+                                         OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
 
-            DisplayOnlineSites();
+          DisplayOnlineSites();
         }
 
-        void DisplayOnlineSites()
+      void DisplayOnlineSites()
         {
             GUIPropertyManager.SetProperty("#OnlineVideos.owner", String.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
@@ -69,7 +76,7 @@ namespace OnlineVideos
             {
                 if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                    OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
                     onlineSites = ws.GetSitesOverview();
                     lastSitesRetrievalTime = DateTime.Now;
                 }, "getting site overview from webservice"))
