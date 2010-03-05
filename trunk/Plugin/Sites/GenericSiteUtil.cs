@@ -17,22 +17,30 @@ namespace OnlineVideos.Sites
         string dynamicCategoryUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for dynamic categories. Group names: 'url', 'title'. Will be used on the web pages resulting from the links from the dynamicCategoriesRegEx. Will not be used if not set.")]
         string dynamicSubCategoriesRegEx;
+        [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the dynamicSubCategoriesRegEx.")]
+        string dynamicSubCategoryUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration', 'Description'.")]
         string videoListRegEx;
+        [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the videoListRegEx.")]
+        string videoListRegExFormatString;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to match on the video url retrieved as a result of the 'VideoUrl' match of the videoListRegEx. Groups should be named 'm0', 'm1' and so on. Only used if set.")]
         string videoUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the video url of an item that was found in the rss. If videoUrlRegEx is set those groups will be taken as parameters.")]
         string videoUrlFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a next page link. Group should be named 'url'.")]
         string nextPageRegEx;
+        [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the nextPageRegEx.")]
+        string nextPageRegExUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link. Group should be named 'url'.")]
         string prevPageRegEx;
+        [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the prevPageRegEx.")]
+        string prevPageRegExUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a link that points to another file holding the actual playback url. Group should be named 'url'. If this is not set, the fileUrlRegEx will be used directly, otherwise first this and afterwards the fileUrlRegEx on the result.")]
         string playlistUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for the playback url. Groups should be named 'm0', 'm1' and so on.")]
         string fileUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string used with the groups of the regex matches of the fileUrlRegEx to create the Url for playback.")]
-        string fileUrlFormatString;
+        string fileUrlFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
         string searchUrl;
         [Category("OnlineVideosConfiguration"), Description("Format string that should be sent as post data for getting the results of a search. {0} will be replaced with the query. If this is not set, search will be executed normal as GET.")]
@@ -75,6 +83,12 @@ namespace OnlineVideos.Sites
             if (regEx_dynamicCategories == null)
             {
                 Settings.DynamicCategoriesDiscovered = true;
+
+                if (Settings.Categories.Count > 0 && regEx_dynamicSubCategories != null)
+                {
+                    for (int i = 0; i < Settings.Categories.Count; i++)
+                        Settings.Categories[i].HasSubCategories = true;
+                }
             }
             else
             {
@@ -111,6 +125,7 @@ namespace OnlineVideos.Sites
                 {
                     RssLink cat = new RssLink();
                     cat.Url = m.Groups["url"].Value;
+                    if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
                     if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
                     cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
                     cat.ParentCategory = parentCategory;
@@ -164,6 +179,7 @@ namespace OnlineVideos.Sites
             {
                 if (!string.IsNullOrEmpty(videoUrlFormatString)) resultUrl = string.Format(videoUrlFormatString, resultUrl);
             }
+            
             // 2. create an absolute Uri using the baseUrl if the current one is not and a baseUrl was given
             if (!string.IsNullOrEmpty(baseUrl) && !Uri.IsWellFormedUriString(resultUrl, UriKind.Absolute))
             {
@@ -195,8 +211,10 @@ namespace OnlineVideos.Sites
                             if (matchFileUrl.Groups["m" + i.ToString()].Success)
                                 groupValues.Add(HttpUtility.UrlDecode(matchFileUrl.Groups["m" + i.ToString()].Value));
                         resultUrl = string.Format(fileUrlFormatString, groupValues.ToArray());
+                        System.Windows.Forms.MessageBox.Show(resultUrl);
                     }
                     else return ""; // if no match, return empty url -> error
+                    
                 }
             }
             return resultUrl;
@@ -216,6 +234,7 @@ namespace OnlineVideos.Sites
                         VideoInfo videoInfo = new VideoInfo();
                         videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                         videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
+                        if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
                         videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                         videoInfo.Length = Regex.Replace(m.Groups["Duration"].Value, "(<[^>]+>)", "");
                         videoInfo.Description = m.Groups["Description"].Value;
@@ -260,7 +279,7 @@ namespace OnlineVideos.Sites
                     {
                         previousPageAvailable = true;
                         previousPageUrl = mPrev.Groups["url"].Value;
-
+                        if (!string.IsNullOrEmpty(prevPageRegExUrlFormatString)) previousPageUrl = string.Format(prevPageRegExUrlFormatString, previousPageUrl);
                         if (!Uri.IsWellFormedUriString(previousPageUrl, System.UriKind.Absolute))
                         {
                             Uri uri = null;
@@ -290,7 +309,7 @@ namespace OnlineVideos.Sites
                     {
                         nextPageAvailable = true;
                         nextPageUrl = mNext.Groups["url"].Value;
-
+                        if (!string.IsNullOrEmpty(nextPageRegExUrlFormatString)) nextPageUrl = string.Format(nextPageRegExUrlFormatString, nextPageUrl);
                         if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute))
                         {
                             Uri uri = null;
