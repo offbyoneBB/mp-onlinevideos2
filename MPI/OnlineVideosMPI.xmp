@@ -1127,6 +1127,24 @@
 			<Guid>F2129670-3C39-420E-97D6-9E6B91C3A366</Guid>
 		</File>  
 		<File>
+			<FileName>TVE.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\TVE.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>F7F9BD74-CCFF-419D-B229-2EC5EA3DE27D</Guid>
+		</File>
+		<File>
+			<FileName>TVE.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\TVE.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>612B2896-8950-4A62-A251-1BBE682EF69C</Guid>
+		</File>
+		<File>
 			<FileName>TVGemist.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>

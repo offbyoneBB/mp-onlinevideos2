@@ -370,6 +370,13 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TVE.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{42437A2A-03A5-4EEA-BDC6-49A622759475}-TVE.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVE.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\TVGemist.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{42437A2A-03A5-4EEA-BDC6-49A622759475}-TVGemist.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVGemist.png</DestinationFilename>
@@ -471,41 +478,6 @@
               <LocalFileName>..\SiteImages\Icons\ZDF Mediathek.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c78788e5-db6e-4504-88b3-337c57121899}-ZDF Mediathek.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ZDF Mediathek.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Tvgemist\net5gemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{3ae84543-86c3-460f-9dd2-f0881d3ea47f}-net5gemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\net5gemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Tvgemist\rtlgemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{3ffc97c8-2ec7-4760-95e4-01a9453708e8}-rtlgemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\rtlgemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Tvgemist\sbsgemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c569bf3d-1da2-4b67-af47-5c4788162ab0}-sbsgemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\sbsgemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Tvgemist\uitzendinggemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{ee528524-f2d9-4dfa-91d8-ab2a6e2b5604}-uitzendinggemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\uitzendinggemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Tvgemist\veronicagemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c2980ec3-82d2-4ac0-a8a0-4e757af44301}-veronicagemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\veronicagemist.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -863,6 +835,13 @@
               <LocalFileName>..\SiteImages\Banners\TurboNick.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c81a3cb5-7a09-445f-bac6-4c8ca62a6ab1}-TurboNick.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TurboNick.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\TVE.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{66A697BD-5ED1-4E57-9FE6-9928229C004F}-TVE.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVE.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1876,41 +1855,6 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <LocalFileName>..\SiteImages\Icons\ZDF Mediathek.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c78788e5-db6e-4504-88b3-337c57121899}-ZDF Mediathek.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ZDF Mediathek.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Tvgemist\net5gemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{3ae84543-86c3-460f-9dd2-f0881d3ea47f}-net5gemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\net5gemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Tvgemist\rtlgemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{3ffc97c8-2ec7-4760-95e4-01a9453708e8}-rtlgemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\rtlgemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Tvgemist\sbsgemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c569bf3d-1da2-4b67-af47-5c4788162ab0}-sbsgemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\sbsgemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Tvgemist\uitzendinggemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{ee528524-f2d9-4dfa-91d8-ab2a6e2b5604}-uitzendinggemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\uitzendinggemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Tvgemist\veronicagemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c2980ec3-82d2-4ac0-a8a0-4e757af44301}-veronicagemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\veronicagemist.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
