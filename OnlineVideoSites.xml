@@ -250,14 +250,14 @@
       <Configuration>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"\sclass="showroomFontColor_kino">(?<title>[^<]+)</a>]]></item>
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]+)"><img\ssrc='(?<ImageUrl>[^']+)'\sstyle='border:\snone;\smargin:\s3px'\salt="(?<Title>[^"]+)"]]></item>
-		<item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><img\sclass="nav_arrow"\ssrc="/showroom/pix/kino/arr_double_right.png"\s/></a>]]></item>
-		<item key="prevPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><img\sclass="nav_arrow"\ssrc="/showroom/pix/kino/arr_double_left.png"\s/></a>]]></item>
-		<item key="playlistUrlRegEx"><![CDATA[flashvars.initItemXML\s\=\s"(?<url>[^"]*)"]]></item>
-		<item key="fileUrlRegEx"><![CDATA[<url>(?<m0>[^<]*)</url>]]></item>
-		<item key="baseUrl"><![CDATA[http://www.kino.de]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><img\sclass="nav_arrow"\ssrc="/showroom/pix/kino/arr_double_right.png"\s/></a>]]></item>
+        <item key="prevPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><img\sclass="nav_arrow"\ssrc="/showroom/pix/kino/arr_double_left.png"\s/></a>]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[flashvars.initItemXML\s\=\s"(?<url>[^"]*)"]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<url>(?<m0>[^<]*)</url>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.kino.de]]></item>
       </Configuration>
-	  <Categories>
-	    <Category xsi:type="RssLink" name="Filmtrailer">http://www.kino.de/showroom/trailer/film</Category>
+      <Categories>
+        <Category xsi:type="RssLink" name="Filmtrailer">http://www.kino.de/showroom/trailer/film</Category>
         <Category xsi:type="RssLink" name="Gamestrailer">http://www.kino.de/showroom/trailer/games</Category>
       </Categories>
     </Site>
