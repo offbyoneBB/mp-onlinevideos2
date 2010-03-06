@@ -403,6 +403,7 @@ namespace OnlineVideos
                 }
             }
 
+            GUI_btnOrderBy.Label = Translation.SortOptions;
             base.OnAction(action);
         }
 

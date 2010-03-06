@@ -91,43 +91,47 @@ namespace OnlineVideos.Database
     }
     public bool addFavoriteVideo(OnlineVideos.VideoInfo foVideo, string siteName)
     {
-            
-     //check if the video is already in the favorite list
-      //lsSQL = string.Format("select SONG_ID from FAVORITE_VIDEOS where SONG_ID='{0}' AND COUNTRY='{1}' and FAVORITE_ID=''", foVideo.songId, foVideo.countryId, lsFavID);
-      //loResultSet = m_db.Execute(lsSQL);
-      //if (loResultSet.Rows.Count > 0)
-      //{
-      //    return false;
-      //}
-      Log.Info("inserting favorite:");
-      Log.Info("desc:" +foVideo.Description);
-      Log.Info("image:"+foVideo.ImageUrl);
-      Log.Info("tags:"+foVideo.Tags);
-      Log.Info("title:"+foVideo.Title);
-      Log.Info("url"+foVideo.VideoUrl);
-      
-      DatabaseUtility.RemoveInvalidChars(ref foVideo.Description);
-      DatabaseUtility.RemoveInvalidChars(ref foVideo.ImageUrl);
-      DatabaseUtility.RemoveInvalidChars(ref foVideo.Tags);
-      DatabaseUtility.RemoveInvalidChars(ref foVideo.Title);
-      DatabaseUtility.RemoveInvalidChars(ref foVideo.VideoUrl);
-      
-      string lsSQL = string.Format("insert into FAVORITE_VIDEOS(VDO_NM,VDO_URL,VDO_DESC,VDO_TAGS,VDO_LENGTH,VDO_IMG_URL,VDO_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')", foVideo.Title,foVideo.VideoUrl, foVideo.Description,foVideo.Tags,foVideo.Length, foVideo.ImageUrl, siteName);
-      m_db.Execute(lsSQL);
-      if (m_db.ChangedRows() > 0)
-      {
-      	Log.Info("Favorite {0} inserted successfully into database",foVideo.Title);
-        return true;
-      }
-      else
-      {
-      		Log.Info("Favorite {0} failed to insert into database",foVideo.Title);
-        return false;
-      }
-    }
-      
 
-    public bool removeFavoriteVideo(VideoInfo foVideo)
+        //check if the video is already in the favorite list
+        //lsSQL = string.Format("select SONG_ID from FAVORITE_VIDEOS where SONG_ID='{0}' AND COUNTRY='{1}' and FAVORITE_ID=''", foVideo.songId, foVideo.countryId, lsFavID);
+        //loResultSet = m_db.Execute(lsSQL);
+        //if (loResultSet.Rows.Count > 0)
+        //{
+        //    return false;
+        //}
+        Log.Info("inserting favorite:");
+        Log.Info("desc:" + foVideo.Description);
+        Log.Info("image:" + foVideo.ImageUrl);
+        Log.Info("tags:" + foVideo.Tags);
+        Log.Info("title:" + foVideo.Title);
+        Log.Info("url" + foVideo.VideoUrl);
+
+        foVideo.Description = DatabaseUtility.RemoveInvalidChars(foVideo.Description);
+        foVideo.ImageUrl = DatabaseUtility.RemoveInvalidChars(foVideo.ImageUrl);
+        foVideo.Tags = DatabaseUtility.RemoveInvalidChars(foVideo.Tags);
+        foVideo.Title = DatabaseUtility.RemoveInvalidChars(foVideo.Title);
+        foVideo.VideoUrl = DatabaseUtility.RemoveInvalidChars(foVideo.VideoUrl);
+
+        string lsSQL =
+            string.Format(
+                "insert into FAVORITE_VIDEOS(VDO_NM,VDO_URL,VDO_DESC,VDO_TAGS,VDO_LENGTH,VDO_IMG_URL,VDO_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
+                foVideo.Title, foVideo.VideoUrl, foVideo.Description, foVideo.Tags, foVideo.Length, foVideo.ImageUrl,
+                siteName);
+        m_db.Execute(lsSQL);
+        if (m_db.ChangedRows() > 0)
+        {
+            Log.Info("Favorite {0} inserted successfully into database", foVideo.Title);
+            return true;
+        }
+        else
+        {
+            Log.Info("Favorite {0} failed to insert into database", foVideo.Title);
+            return false;
+        }
+    }
+
+
+      public bool removeFavoriteVideo(VideoInfo foVideo)
     {    	     
       String lsSQL = string.Format("delete from FAVORITE_VIDEOS where VDO_ID='{0}' ", foVideo.Other.ToString());
       m_db.Execute(lsSQL);
