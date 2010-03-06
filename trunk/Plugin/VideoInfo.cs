@@ -1,25 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using OnlineVideos.Sites;
 using RssToolkit.Rss;
 
 namespace OnlineVideos
 {
     public class VideoInfo
     {
-        public string Title;
-        public string Title2;
-        public string Description = "";
-        public string VideoUrl = "";
-        public string ImageUrl = "";
-        public string Length;
-        public string Tags = "";
-        public string StartTime = "";
-        public object Other;
+        public string Title { get; set; }
+        public string Title2 { get; set; }
+        public string Description { get; set; }
+        public string VideoUrl { get; set; }
+        public string ImageUrl { get; set; }
+        public string Length { get; set; }
+        public string Tags { get; set; }
+        public string StartTime { get; set; }
+        public object Other { get; set; }
         public Dictionary<string, string> PlaybackOptions;
         
         /// <summary>This field is only used by the <see cref="FavoriteUtil"/> to store the Name of the Site where this Video came from.</summary>
-        public string SiteName = "";
+        public string SiteName { get; set; }
+
+        public VideoInfo()
+        {
+            Title = string.Empty;
+            Title2 = string.Empty;
+            Description = string.Empty;
+            VideoUrl = string.Empty;
+            ImageUrl = string.Empty;
+            Length = string.Empty;
+            Tags = string.Empty;
+            StartTime = string.Empty;
+            SiteName = string.Empty;
+        }
 
         public void CleanDescription()
         {

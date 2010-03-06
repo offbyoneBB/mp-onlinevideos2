@@ -7,6 +7,8 @@ using MediaPortal.Configuration;
 using System.Xml.Serialization;
 using System.ComponentModel;
 
+using OnlineVideos.Sites;
+
 namespace OnlineVideos
 {
     /// <summary>
@@ -150,7 +152,7 @@ namespace OnlineVideos
                 {
                     using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
                     {
-                        System.Xml.Serialization.XmlSerializer ser = XmlSerImp.GetSerializer(typeof(SerializableSettings));
+                        XmlSerializer ser = XmlSerImp.GetSerializer(typeof(SerializableSettings));
                         SerializableSettings s = (SerializableSettings)ser.Deserialize(fs);
                         fs.Close();
                         SiteSettingsList = s.Sites;
@@ -160,6 +162,23 @@ namespace OnlineVideos
             catch (Exception e)
             {
                 Log.Error(e);
+            }
+        }
+
+        public void LoadScriptSites()
+        {
+            Log.Error("Loading script files");
+            if (Directory.Exists(Config.GetSubFolder(Config.Dir.Config, "scripts\\OnlineVideos")))
+            {
+                FileInfo[] fileInfos = Config.GetSubDirectoryInfo(Config.Dir.Config, "scripts\\OnlineVideos").GetFiles("*.xml");
+                foreach (var fileInfo in fileInfos)
+                {
+                    Log.Error("Script loaded for {0}", fileInfo.FullName);
+                    ScriptUtil scriptUtil = new ScriptUtil();
+                    scriptUtil.scriptFile = fileInfo.FullName;
+                    scriptUtil.Initialize(new SiteSettings());
+                    SiteList.Add(scriptUtil.Settings.Name, scriptUtil);
+                }
             }
         }
 
@@ -175,6 +194,9 @@ namespace OnlineVideos
                     if (siteutil != null) SiteList.Add(siteSettings.Name, siteutil);
                 }
             }
+
+            LoadScriptSites();
+
             //create a favorites site
             SiteSettings SelectedSite = new SiteSettings();
             SelectedSite.Name = "Favorites";
