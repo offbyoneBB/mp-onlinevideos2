@@ -61,6 +61,8 @@ namespace OnlineVideos.Sites
         string videoDurationXml;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoDescription for videoList.")]
         string videoDescriptionXml;
+        [Category("OnlineVideosConfiguration"), Description("Boolean used for forcing UTF8 encoding on received data.")]
+        bool forceUTF8Encoding;
 
         Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_VideoUrl, regEx_PlaylistUrl, regEx_FileUrl;
 
@@ -222,7 +224,7 @@ namespace OnlineVideos.Sites
         List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
-            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie());
+            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(),null,null,forceUTF8Encoding);
             if (data.Length > 0)
             {
                 if (regEx_VideoList != null)
