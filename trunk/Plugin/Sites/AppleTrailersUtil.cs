@@ -13,38 +13,6 @@ namespace OnlineVideos.Sites
 {
     public class AppleTrailersUtil : SiteUtilBase
     {
-        public struct IndexItem
-        {
-            public string Key;
-            public bool Folder;
-            public string Image;
-            public string Label;
-
-            public IndexItem(string label)
-            {
-                Label = label;
-                Folder = false;
-                Key = string.Empty;
-                Image = string.Empty;
-            }
-
-            public IndexItem(string label, string key)
-            {
-                Key = key;
-                Label = label;
-                Folder = false;
-                Image = string.Empty;
-            }
-
-            public IndexItem(string label, string key, bool folder)
-            {
-                Key = key;
-                Label = label;
-                Folder = folder;
-                Image = string.Empty;
-            }
-        }
-
         public enum VideoQuality
         {
             UNKNOWN,
@@ -122,6 +90,7 @@ namespace OnlineVideos.Sites
 
             public enum InfoState
             {
+                SEARCH,
                 INDEX,
                 DETAIL
             }            
@@ -190,7 +159,7 @@ namespace OnlineVideos.Sites
 
         }
 
-        private const string urlBase = "http://www.apple.com/trailers/";
+        private const string urlBase = "http://trailers.apple.com/trailers/";
 
         private const string xmlNamespace = "http://www.apple.com/itms/";
         private const string urlXMLIndexAll = urlBase + "home/xml/widgets/indexall.xml";
@@ -244,49 +213,98 @@ namespace OnlineVideos.Sites
             link.Url = urlJsonPop;
             Settings.Categories.Add(link);
 
-            Dictionary<string, string> genresAndStudiosHash = new Dictionary<string, string>();
+            link = new RssLink();
+            link.Name = "Genres";
+            link.Url = urlJsonGenre;
+            link.HasSubCategories = true;
+            Settings.Categories.Add(link);
 
-            List<string> trailers = getJsonTrailerIndex(urlJsonGenre);
-            foreach (string trailer in trailers)
-            {
-                Trailer t = Trailers[trailer];
-                string genre = HttpUtility.HtmlDecode(t.Genres[0]);
-                string key = "/featured/genre/" + genre;
-                if (!genresAndStudiosHash.ContainsKey(genre)) genresAndStudiosHash.Add(genre, key);
-            }
-
-            trailers = getJsonTrailerIndex(urlJsonStudio);
-            foreach (string trailer in trailers)
-            {
-                Trailer t = Trailers[trailer];
-                string studio = HttpUtility.HtmlDecode(t.Studio);
-                string key = "/featured/studio/" + studio;
-                if (!genresAndStudiosHash.ContainsKey(studio)) genresAndStudiosHash.Add(studio, key);
-            }
-
-            foreach(KeyValuePair<string,string> aCat in genresAndStudiosHash)
-            {
-                link = new RssLink();
-                link.Name = aCat.Key;
-                link.Url = aCat.Value;
-                Settings.Categories.Add(link);                
-            }
+            link = new RssLink();
+            link.Name = "Studios";
+            link.Url = urlJsonStudio;
+            link.HasSubCategories = true;
+            Settings.Categories.Add(link);
 
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
 
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            Dictionary<string, string> genresAndStudiosHash = new Dictionary<string, string>();
+
+            parentCategory.SubCategories = new List<Category>();
+
+            List<string> trailers = getJsonTrailerIndex((parentCategory as RssLink).Url);
+
+            foreach (string trailer in trailers)
+            {
+                switch (parentCategory.Name)
+                {
+                    case "Genres":
+                        foreach (string genre in Trailers[trailer].Genres)
+                        {
+                            if (!genresAndStudiosHash.ContainsKey(genre)) genresAndStudiosHash.Add(genre, "/featured/genre/" + genre);
+                        }
+                        break;
+                    case "Studios":
+                        string studio = Trailers[trailer].Studio;
+                        string key = "/featured/studio/" + studio;
+                        if (!genresAndStudiosHash.ContainsKey(studio)) genresAndStudiosHash.Add(studio, key);
+                        break;
+                }
+            }
+
+            foreach(KeyValuePair<string,string> aCat in genresAndStudiosHash)
+            {
+                RssLink link = new RssLink();
+                link.Name = aCat.Key;
+                link.Url = aCat.Value;
+                link.ParentCategory = parentCategory;
+                parentCategory.SubCategories.Add(link);
+            }
+
+            parentCategory.SubCategoriesDiscovered = true;
+
+            return parentCategory.SubCategories.Count;
+        }
+
         public override List<VideoInfo> getVideoList(Category category)
         {
             List<VideoInfo> result = new List<VideoInfo>();
-            foreach(IndexItem item in fetchIndex(((RssLink)category).Url))
+
+            string url = ((RssLink)category).Url;
+            string queryUrl = url;
+            if (queryUrl.Contains("/featured/genre")) queryUrl = urlJsonGenre;
+            else if (queryUrl.Contains("/featured/studio")) queryUrl = urlJsonStudio;
+
+            List<string> trailers = getJsonTrailerIndex(queryUrl);
+
+            string genre = string.Empty;
+            string studio = string.Empty;
+            if (url.Contains("/featured/genre/"))
+                genre = url.Substring(url.LastIndexOf('/') + 1);
+
+            if (url.Contains("/featured/studio/"))
+                studio = url.Substring(url.LastIndexOf('/') + 1);
+
+            foreach (string trailer in trailers)
             {
+                Trailer t = Trailers[trailer];
+
+                if (!String.IsNullOrEmpty(genre) && (!t.Genres.Contains(genre)))
+                    continue;
+                if (!String.IsNullOrEmpty(studio) && (t.Studio != studio))
+                    continue;
+
                 VideoInfo v = new VideoInfo();
-                v.Title = item.Label;
-                v.VideoUrl = item.Key;
-                v.ImageUrl = item.Image;
+                v.Title = t.Title;
+                v.VideoUrl = trailer;
+                v.ImageUrl = t.Thumb;
+                v.Length = t.ReleaseDate != DateTime.MinValue ? t.ReleaseDate.ToShortDateString() : "";
                 result.Add(v);
             }
+
             return result;
         }
 
@@ -315,45 +333,7 @@ namespace OnlineVideos.Sites
             
             return videoList;
         }
-
-        private List<IndexItem> fetchIndex(string url)
-        {
-            List<IndexItem> items = new List<IndexItem>();
-
-            string queryUrl = url;
-            if (queryUrl.Contains("/featured/genre")) queryUrl = urlJsonGenre;
-            else if (queryUrl.Contains("/featured/studio")) queryUrl = urlJsonStudio;
-
-            List<string> trailers = getJsonTrailerIndex(queryUrl);
-
-            string genre = string.Empty;
-            string studio = string.Empty;
-            if (url.Contains("/featured/genre/"))
-                genre = url.Substring(url.LastIndexOf('/') + 1);
-
-            if (url.Contains("/featured/studio/"))
-                studio = url.Substring(url.LastIndexOf('/') + 1);
-
-            foreach (string trailer in trailers)
-            {
-                Trailer t = Trailers[trailer];
-
-                if (!String.IsNullOrEmpty(genre) && (!t.Genres.Contains(genre)))
-                    continue;
-                if (!String.IsNullOrEmpty(studio) && (t.Studio != studio))
-                    continue;
-
-                IndexItem item = new IndexItem();
-                item.Key = trailer;
-                item.Label = HttpUtility.HtmlDecode(t.Title);
-                item.Image = t.Thumb;
-
-                items.Add(item);
-            }
-
-            return items;
-        }
-
+        
         private Trailer fetchDetails(string key)
         {
             Trailer trailer;
@@ -391,13 +371,20 @@ namespace OnlineVideos.Sites
                 trailer.Description = HttpUtility.HtmlDecode(trlPlot[2].InnerText.Trim());
             }
 
+            // Genres
+            XmlNodeList trlGenre = Root.SelectNodes("//a:TextView/*[contains(text(),'Genre')]/a:GotoURL", nsmgr);
+            foreach (XmlNode genre in trlGenre)
+            {
+                string newgenre = HttpUtility.HtmlDecode(genre.InnerText.Trim());
+                if (!trailer.Genres.Contains(newgenre)) trailer.Genres.Add(newgenre);
+            }
+
             // Cast
             XmlNodeList trlCast = Root.SelectNodes("//a:VBoxView/a:TextView[@styleSet='basic10']/a:SetFontStyle", nsmgr);
             foreach (XmlNode actor in trlCast)
             {
                 string newactor = HttpUtility.HtmlDecode(actor.InnerText.Trim());
-                if (!trailer.Cast.Contains(newactor))
-                    trailer.Cast.Add(newactor);
+                if (!trailer.Cast.Contains(newactor)) trailer.Cast.Add(newactor);
             }
 
             // Find all the trailer pages for this movie.
@@ -502,7 +489,13 @@ namespace OnlineVideos.Sites
 
             object jsonData = GetWebDataAsJson(url);
 
-            if (!(jsonData is JsonArray)) jsonData = (jsonData as JsonObject)["results"]; // when search was used
+            bool isSearchResult = false;
+            // when search was used
+            if (!(jsonData is JsonArray))
+            {
+                jsonData = (jsonData as JsonObject)["results"];
+                isSearchResult = true;
+            }
 
             Log.Info("Apple Trailers: Found {0} items.", (jsonData as JsonArray).Count.ToString());
 
@@ -511,32 +504,43 @@ namespace OnlineVideos.Sites
                 string key = (string)trailer["location"];
 
                 // no key no movie.. nothing to see here move along
-                if (string.IsNullOrEmpty(key))
-                    continue;
+                if (string.IsNullOrEmpty(key)) continue;
 
-                // If this Trailer exists just add the key to the 
-                // list and don't fill the object.
-                if (Trailers.ContainsKey(key))
-                {
-                    trailers.Add(key);
-                    continue;
-                }
-
-                // Little sanitiy check
-                // if we do not have a title we probably don't have a movie
-                string title = (string)trailer["title"];
-                if (string.IsNullOrEmpty(title))
-                    continue;
+                // Little sanity check: if we do not have a title we probably don't have a movie
+                if (string.IsNullOrEmpty((string)trailer["title"])) continue;
 
                 // Get/Create Trailer object                
-                if (!Trailers.ContainsKey(key)) Trailers.Add(key, new Trailer());
-                Trailer newTrailer = Trailers[key];
-                newTrailer.Title = HttpUtility.HtmlDecode(title);
-                newTrailer.Studio = (string)trailer["studio"];
-                string poster = (string)trailer["poster"];
-                newTrailer.Poster = getLargePoster(poster);
-                newTrailer.Thumb = poster;
+                Trailer newTrailer;
+                if (Trailers.TryGetValue(key, out newTrailer))
+                {
+                    // If this Trailer already exists (but not from search result) just add the key to the list and don't fill the object.                    
+                    if (newTrailer.State != Trailer.InfoState.SEARCH)
+                    {
+                        trailers.Add(key);
+                        continue;
+                    }
+                }
+                else
+                {
+                    newTrailer = new Trailer();
+                    Trailers.Add(key, newTrailer);
+                }
+
+                newTrailer.State = isSearchResult ? Trailer.InfoState.SEARCH : Trailer.InfoState.INDEX;
+                newTrailer.Title = Utils.ReplaceEscapedUnicodeCharacter(HttpUtility.HtmlDecode((string)trailer["title"]));
+                newTrailer.Studio = HttpUtility.HtmlDecode((string)trailer["studio"]);
                 newTrailer.Rating = (string)trailer["rating"];
+
+                // thumbnail
+                string poster = (string)trailer["poster"];
+
+                if (poster.StartsWith("/trailers/")) poster = poster.Replace("/trailers/", urlBase);
+                else if (poster.StartsWith("/moviesxml/s/")) poster = poster.Replace("/moviesxml/s/", urlXMLPoster);
+
+                newTrailer.Poster = getLargePoster(poster);                
+                string secondaryThumb = key.Replace("/trailers/", urlBase) + "images/poster.jpg";
+                newTrailer.Thumb = poster + (secondaryThumb != poster ? "|" + secondaryThumb : "");
+                
                 try
                 {
                     newTrailer.ReleaseDate = DateTime.Parse((string)trailer["releasedate"]);
@@ -555,7 +559,7 @@ namespace OnlineVideos.Sites
                 {
                     foreach (string genre in trailer["genre"] as JsonArray)
                     {
-                        newTrailer.Genres.Add(genre.ToString());
+                        if (genre.Length > 3) newTrailer.Genres.Add(HttpUtility.HtmlDecode(genre.ToString()));
                     }
                 }
                 catch { }
@@ -566,7 +570,7 @@ namespace OnlineVideos.Sites
                 {
                     foreach (string actor in trailer["actors"] as JsonArray)
                     {
-                        newTrailer.Cast.Add(HttpUtility.HtmlDecode(actor.ToString()));
+                        newTrailer.Cast.Add(HttpUtility.HtmlDecode(actor.Trim(new char[] { ',', ' ' })));
                     }
                 }
                 catch { }
