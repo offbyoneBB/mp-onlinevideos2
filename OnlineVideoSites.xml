@@ -623,6 +623,7 @@
         <item key="videoDescriptionXml"><![CDATA[description]]></item>
         <item key="videoDurationXml"><![CDATA[duration]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://streaming04.exozet.com/bunchtv-streaming/{0}]]></item>
+        <item key="forceUTF8Encoding">true</item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Hiphop">http://bunch.tv/xml/playlist/13119/playlist.xml</Category>
