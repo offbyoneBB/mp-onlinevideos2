@@ -1793,7 +1793,7 @@ namespace OnlineVideos
                 else
                 {
                     double ldLength;
-                    if (Double.TryParse(foVideo.Length, out ldLength))
+                    if (double.TryParse(foVideo.Length, System.Globalization.NumberStyles.None | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.CreateSpecificCulture("en-US"), out ldLength))
                     {
                         TimeSpan t = TimeSpan.FromSeconds(ldLength);
                         GUIPropertyManager.SetProperty("#OnlineVideos.length", t.ToString());
