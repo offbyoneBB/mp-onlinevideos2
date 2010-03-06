@@ -823,6 +823,10 @@
         <Category xsi:type="RssLink" name="Univers">http://vpodcast.dr.dk/feeds/universrss.xml</Category>
       </Categories>
     </Site>
+    <Site name="TVE" util="TVE" agecheck="false" enabled="true" lang="es">
+      <Description>Las series y programas de TVE, cuando quieras en rtve.es</Description>
+      <Categories />
+    </Site>
     <Site name="HardwareInfo" util="HardwareInfo" agecheck="false" enabled="true" lang="nl">
       <Categories>
         <Category xsi:type="RssLink" name="Laatste videos">http://www.hardware.info/nl-NL/video/</Category>
