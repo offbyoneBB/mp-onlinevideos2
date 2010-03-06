@@ -4,12 +4,6 @@ Supported actions
 
 === get_categories ===
 Input params: 
- * base_url : the page url is used paging, should be initialize by the script  
-{{{
-    <if test="${base_url}=">    
-		<set name="${base_url}" value="http://www.tbs.com/veryfunnyads/getCollections.do?id=26322"/>
-    </if>
-}}}
 
 === get_videolist ===
 Input params: 
