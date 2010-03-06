@@ -175,7 +175,7 @@ namespace OnlineVideos
                 {
                     Log.Error("Script loaded for {0}", fileInfo.FullName);
                     ScriptUtil scriptUtil = new ScriptUtil();
-                    scriptUtil.scriptFile = fileInfo.FullName;
+                    scriptUtil.ScriptFile = fileInfo.FullName;
                     scriptUtil.Initialize(new SiteSettings());
                     SiteList.Add(scriptUtil.Settings.Name, scriptUtil);
                 }

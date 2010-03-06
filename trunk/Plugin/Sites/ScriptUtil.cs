@@ -14,14 +14,34 @@ namespace OnlineVideos.Sites
     public class ScriptUtil : SiteUtilBase
     {
         [Category("OnlineVideosConfiguration"), System.ComponentModel.Description("Script file used for site scraping")]
-        public string scriptFile;
+        public string ScriptFile;
+
+        private int _currentPageNumber = 0;
+        private Category _currentCategory = null;
+        private string _currentSiteUrl = string.Empty;
 
         private ScriptableScraper _scraper;
+
+        public override bool HasNextPage
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool HasPreviousPage
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            _scraper = new ScriptableScraper(new FileInfo(scriptFile));
+            _scraper = new ScriptableScraper(new FileInfo(ScriptFile));
             base.Settings.IsEnabled = true;
             base.Settings.Language = _scraper.Language;
             base.Settings.Name = _scraper.Name;
@@ -32,6 +52,7 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
             Dictionary<string, string> paramList = new Dictionary<string, string>();
+
             Dictionary<string, string> results;
             results = _scraper.Execute("get_categories", paramList);
             int count = 0;
@@ -68,19 +89,26 @@ namespace OnlineVideos.Sites
         /// <returns>a list of <see cref="VideoInfo"/> object for display</returns>
         public override List<VideoInfo> getVideoList(Category category)
         {
+            if (_currentCategory != null && category != _currentCategory)
+            {
+                _currentSiteUrl = string.Empty;
+                _currentPageNumber = 0;
+            }
+            _currentCategory = category;
+
             List<VideoInfo> loVideoList = new List<VideoInfo>();
             Dictionary<string, string> paramList = new Dictionary<string, string>();
-            Dictionary<string, string> results;
-            RssLink rssLink = category as RssLink;
-            if (rssLink == null)
-                return loVideoList;
-            foreach (PropertyInfo prop in rssLink.GetType().GetProperties())
-            {
-                if (prop.GetValue(category, null) != null)
-                    paramList.Add("category." + prop.Name.ToLower(), prop.GetValue(category, null).ToString());
-            }
-            results = _scraper.Execute("get_videolist", paramList);
+
+            addDefaultParam(paramList);
+            addCategoryToParams(category, paramList);
+
+
+            Dictionary<string, string> results = _scraper.Execute("get_videolist", paramList);
+
             int count = 0;
+            
+            pharseReturnedValues(results);
+
             while (results.ContainsKey("video[" + count + "].title"))
             {
                 string prefix = "video[" + count + "].";
@@ -115,5 +143,76 @@ namespace OnlineVideos.Sites
             results.TryGetValue("videourl", out url);
             return url;
         }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            Dictionary<string, string> paramList = new Dictionary<string, string>();
+            Dictionary<string, string> results;
+            addDefaultParam(paramList);
+            
+            if (_currentCategory != null)
+                addCategoryToParams(_currentCategory, paramList);
+
+            results = _scraper.Execute("get_next_videolist", paramList);
+            pharseReturnedValues(results);
+
+            return getVideoList(_currentCategory);
+        }
+
+        public override List<VideoInfo> getPreviousPageVideos()
+        {
+            Dictionary<string, string> paramList = new Dictionary<string, string>();
+            Dictionary<string, string> results;
+            addDefaultParam(paramList);
+
+            if (_currentCategory != null)
+                addCategoryToParams(_currentCategory, paramList);
+
+            results = _scraper.Execute("get_prev_videolist", paramList);
+            pharseReturnedValues(results);
+
+            return getVideoList(_currentCategory);
+        }
+
+        public override List<VideoInfo> Search(string query)
+        {
+            return base.Search(query);
+        }
+
+
+        #region private methods
+
+        static void addCategoryToParams(Category category, IDictionary<string, string> paramList)
+        {
+            RssLink rssLink = category as RssLink;
+            if (rssLink == null)
+                return ;
+            foreach (PropertyInfo prop in rssLink.GetType().GetProperties())
+            {
+                if (prop.GetValue(category, null) != null)
+                    paramList.Add("category." + prop.Name.ToLower(), prop.GetValue(category, null).ToString());
+            }
+        }
+
+        void addDefaultParam(IDictionary<string, string> paramList)
+        {
+            paramList.Add("current.pagenumber", _currentPageNumber.ToString());
+            paramList.Add("current.pageurl", _currentSiteUrl);
+        }
+
+        void pharseReturnedValues(IDictionary<string, string> paramList)
+        {
+            paramList.TryGetValue("current.pageurl", out _currentSiteUrl);
+            
+            string value;
+            if (paramList.TryGetValue("current.pagenumber", out value))
+            {
+                int i = 0;
+                if (int.TryParse(value, out i))
+                    _currentPageNumber = i;
+            }
+        }
+
+        #endregion
     }
 }

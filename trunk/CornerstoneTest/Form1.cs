@@ -18,7 +18,7 @@ namespace CornerstoneTest
         public Form1()
         {
             InitializeComponent();
-            scriptUtil.scriptFile = @"f:\devel\scraper\sitesc.xml";
+            scriptUtil.ScriptFile = @"f:\devel\scraper\sitesc.xml";
             scriptUtil.Initialize(new SiteSettings());
         }
 
