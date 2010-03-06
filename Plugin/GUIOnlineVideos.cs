@@ -1918,7 +1918,7 @@ namespace OnlineVideos
                 case '4': currentPattern += "[4|g|h|i]"; numbers = numbers + c; break;
                 case '5': currentPattern += "[5|j|k|l]"; numbers = numbers + c; break;
                 case '6': currentPattern += "[6|m|n|o]"; numbers = numbers + c; break;
-                case '7': currentPattern += "[7|q|r|s]"; numbers = numbers + c; break;
+                case '7': currentPattern += "[7|p|q|r|s]"; numbers = numbers + c; break;
                 case '8': currentPattern += "[8|t|u|v]"; numbers = numbers + c; break;
                 case '9': currentPattern += "[9|w|x|y|z]"; numbers = numbers + c; break;
                 case '0': currentPattern += "[0|\\s]"; numbers = numbers + c; break;
