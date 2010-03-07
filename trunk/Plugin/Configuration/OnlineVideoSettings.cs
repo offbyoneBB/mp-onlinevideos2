@@ -199,25 +199,19 @@ namespace OnlineVideos
 
             //create a favorites site
             SiteSettings SelectedSite = new SiteSettings();
-            SelectedSite.Name = "Favorites";
+            SelectedSite.Name = Translation.Favourites;
             SelectedSite.UtilName = "Favorite";
             SelectedSite.IsEnabled = true;
-            RssLink cat = new RssLink();
-            cat.Name = "dynamic";
-            cat.Url = "favorites";
-            SelectedSite.Categories.Add(cat);
             SiteList.Add(SelectedSite.Name, SiteUtilFactory.CreateFromShortName(SelectedSite.UtilName, SelectedSite));
 
             if (!String.IsNullOrEmpty(msDownloadDir))
             {                
                 //add a downloaded videos site
                 SelectedSite = new SiteSettings();
-                SelectedSite.Name = "Downloaded Videos";
+                SelectedSite.Name = Translation.DownloadedVideos;
                 SelectedSite.UtilName = "DownloadedVideo";
                 SelectedSite.IsEnabled = true;
-                cat = new RssLink();
-                cat.Name = "All";
-                cat.Url = msDownloadDir;
+                RssLink cat = new RssLink() { Name = "All", Url = msDownloadDir };
                 SelectedSite.Categories.Add(cat);
                 Category currentDlsCat = new Category() { Name = "Downloading", Description = "Shows a list of downloads currently running." };
                 SelectedSite.Categories.Add(currentDlsCat);

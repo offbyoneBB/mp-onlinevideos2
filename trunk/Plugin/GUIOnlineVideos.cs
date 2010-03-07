@@ -713,8 +713,15 @@ namespace OnlineVideos
                     loListItem.Path = aSite.Settings.Name;
                     loListItem.IsFolder = true;
                     loListItem.Item = aSite;
+                    // use Icon with the same name as the Site
                     string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Settings.Name + ".png";
-                    if (System.IO.File.Exists(image))
+                    if (!System.IO.File.Exists(image))
+                    {
+                        // if that does not exsist, try Icon with the same name as the Util
+                        image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Settings.UtilName + ".png";
+                        if (!System.IO.File.Exists(image)) image = string.Empty;
+                    }
+                    if (!string.IsNullOrEmpty(image))
                     {
                         loListItem.ThumbnailImage = image;
                         loListItem.IconImage = image;
@@ -1519,7 +1526,7 @@ namespace OnlineVideos
                 case State.categories:
                     string cat_headerlabel = selectedCategory != null ? selectedCategory.Name : selectedSite.Settings.Name;
                     GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
-                    GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Settings.Name + ".png");
+                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(selectedSite));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
                     HideAndDisable(GUI_btnPrevious.GetID);
@@ -1544,7 +1551,7 @@ namespace OnlineVideos
                                 GUIPropertyManager.SetProperty("#header.label", proposedLabel != null ? proposedLabel : selectedCategory != null ? selectedCategory.Name : ""); break;
                             }
                     }
-                    GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Settings.Name + ".png");
+                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(selectedSite));
                     ShowAndEnable(GUI_facadeView.GetID);
                     if (selectedSite.HasNextPage) ShowAndEnable(GUI_btnNext.GetID); else HideAndDisable(GUI_btnNext.GetID);
                     if (selectedSite.HasPreviousPage) ShowAndEnable(GUI_btnPrevious.GetID); else HideAndDisable(GUI_btnPrevious.GetID);
@@ -1560,7 +1567,7 @@ namespace OnlineVideos
                     break;
                 case State.details:
                     GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
-                    GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + selectedSite.Settings.Name + ".png");
+                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(selectedSite));
                     HideAndDisable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
                     HideAndDisable(GUI_btnPrevious.GetID);
@@ -1881,6 +1888,19 @@ namespace OnlineVideos
             dlgSel.DoModal(GetID);
             if (dlgSel.SelectedId == -1) return "-1";
             return videoInfo.PlaybackOptions[dlgSel.SelectedLabelText];
+        }
+
+        private string GetBannerForSite(Sites.SiteUtilBase site)
+        {
+            // use Banner with the same name as the Site
+            string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + site.Settings.Name + ".png";
+            if (!System.IO.File.Exists(image))
+            {
+                // if that does not exsist, try Banner with the same name as the Util
+                image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + site.Settings.UtilName + ".png";
+                if (!System.IO.File.Exists(image)) image = string.Empty;
+            }
+            return image;
         }
 
         #endregion

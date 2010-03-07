@@ -18,6 +18,7 @@
     <string Field="Download">Download</string>
     <string Field="DownloadFailed">Download failed: {0}</string>
     <string Field="DownloadComplete">Download Complete</string>
+    <string Field="DownloadedVideos">Downloaded Videos</string>
     <string Field="Delete">Delete</string>
     <string Field="Default">Default</string>
 
