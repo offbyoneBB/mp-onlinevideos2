@@ -234,6 +234,7 @@ namespace OnlineVideos
     public static string Download = "Download";
     public static string DownloadFailed = "Download failed: {0}";
     public static string DownloadComplete = "Download Complete";
+    public static string DownloadedVideos = "Downloaded Videos";
     public static string Delete = "Delete";
     public static string Default = "Default";
 

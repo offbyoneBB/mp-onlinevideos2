@@ -272,19 +272,19 @@
       <Guid>51336342-345D-49d9-9572-909285E72254</Guid>
     </File>
     <File>
-			<FileName>Downloaded Videos.png</FileName>
+			<FileName>DownloadedVideo.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>..\SiteImages\Banners\Downloaded Videos.png</Source>
+			<Source>..\SiteImages\Banners\DownloadedVideo.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>add9a0b4-66f3-4cb3-9b88-a6c17224a111</Guid>
 		</File>
 		<File>
-			<FileName>Downloaded Videos.png</FileName>
+			<FileName>DownloadedVideo.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>..\SiteImages\Icons\Downloaded Videos.png</Source>
+			<Source>..\SiteImages\Icons\DownloadedVideo.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>75e5c3f4-a423-46f8-a6b2-ac375a7d95b0</Guid>
@@ -308,19 +308,19 @@
 			<Guid>b158f8e7-00ef-4835-8b24-5a0cbf5aae02</Guid>
 		</File>
 		<File>
-			<FileName>Favorites.png</FileName>
+			<FileName>Favorite.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>..\SiteImages\Banners\Favorites.png</Source>
+			<Source>..\SiteImages\Banners\Favorite.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>5c387811-4d3f-4bce-8ac2-1938a8966c70</Guid>
 		</File>
 		<File>
-			<FileName>Favorites.png</FileName>
+			<FileName>Favorite.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>..\SiteImages\Icons\Favorites.png</Source>
+			<Source>..\SiteImages\Icons\Favorite.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>980337ff-99dd-4c90-9c24-bf67d3c5d440</Guid>
@@ -432,6 +432,24 @@
       <Id>04010</Id>
       <Option />
       <Guid>B28720AD-D36C-4a31-A234-9537B0A53E14</Guid>
+    </File>
+    <File>
+      <FileName>kino.de.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\kino.de.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>51060601-068E-4654-92DC-D4F2235187B0</Guid>
+    </File>
+    <File>
+      <FileName>kino.de.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\kino.de.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>4CE916BD-F948-46cf-821C-AEA50EC97A9B</Guid>
     </File>
     <File>
       <FileName>Kabel1.png</FileName>
@@ -1054,6 +1072,24 @@
 			<Option />
 			<Guid>d08bd113-b330-4307-a2cd-ee09f2979b7f</Guid>
 		</File>
+    <File>
+			<FileName>spiegel.de.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\spiegel.de.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>C45E3F52-C1C5-404b-BF0C-28D6D0DCEA69</Guid>
+		</File>
+		<File>
+			<FileName>spiegel.de.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\spiegel.de.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>F4E0B409-D99A-4fa1-91A5-0097E1D530A6</Guid>
+		</File>
 		<File>
 			<FileName>SVTPlay.png</FileName>
 			<Type>Thumbs</Type>
@@ -1503,7 +1539,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>02-03-10</CreationDate>
+		<CreationDate>07-03-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>

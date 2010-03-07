@@ -18,6 +18,7 @@
     <string Field="Download">Herunterladen</string>
     <string Field="DownloadFailed">Herunterladen fehlgeschlagen: {0}</string>
     <string Field="DownloadComplete">Herunterladen beendet</string>
+    <string Field="DownloadedVideos">Heruntergeladene Videos</string>
     <string Field="Delete">Löschen</string>
     <string Field="Default">Standard</string>
 
@@ -75,7 +76,7 @@
     <string Field="Timeout">Zeitüberschreitung</string>
 
     <!-- U -->
-    <string Field="UpdateSites">Sites aktualisieren</string>
+    <string Field="UpdateSites">Plugin aktualisieren</string>
     <string Field="UnableToPlayVideo">Video kann nicht wiedergegeben werden. Keine URL.</string>
     <string Field="UnableToDownloadVideo">Video kann nicht heruntergeladen werden. Ungültige URL.</string>
 
