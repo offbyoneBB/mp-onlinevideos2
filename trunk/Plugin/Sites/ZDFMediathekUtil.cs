@@ -50,6 +50,9 @@ namespace OnlineVideos.Sites
                     }) { IsBackground = true }.Start(i);
             }
             System.Threading.WaitHandle.WaitAll(threadWaitHandles);
+            
+            Settings.Categories.Add(new Category() { Name = "Sendung Verpasst", HasSubCategories = true, Description = "Sendungen der letzten 7 Tage." });
+            
             for (int i = 0; i < teasers.Length; i++)
             foreach (var teaser in teasers[i])
             {
@@ -61,10 +64,32 @@ namespace OnlineVideos.Sites
                 item.SubCategoriesDiscovered = true;
                 item.Thumb = teaser.Image173x120;
                 Settings.Categories.Add(item);
-            }
-            
+            }            
+
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            if (parentCategory.SubCategories != null &&
+                parentCategory.SubCategories.Count > 0 &&
+                parentCategory.SubCategories[0].Name == DateTime.Today.ToString("dddd, d.M.yyy"))
+            { /* no need to rediscover if day hasn't changed */ }
+            else
+            {
+                parentCategory.SubCategories = new List<Category>();
+                for (int i = 0; i <= 7; i++)
+                {
+                    parentCategory.SubCategories.Add(new RssLink()
+                    {
+                        Name = DateTime.Today.AddDays(-i).ToString("dddd, d.M.yyy"),
+                        Url = string.Format("enddate={0}&startdate={0}", DateTime.Today.AddDays(-i).ToString("ddMMyy")),
+                        ParentCategory = parentCategory
+                    });
+                }
+            }
+            return parentCategory.SubCategories.Count;
         }
        
         public override String getUrl(VideoInfo video)        
@@ -99,8 +124,16 @@ namespace OnlineVideos.Sites
         }        
 
         public override List<VideoInfo> getVideoList(Category category)
-        {            
-            var teaserlist = Agent.Aktuellste(ConfigurationHelper.GetAktuellsteServiceUrl(RestAgent.Configuration), (category as RssLink).Url, 50, 0, false);
+        {
+            teaserlist teaserlist;
+            if ((category as RssLink).ParentCategory != null)
+            {
+                teaserlist = Agent.SendungVerpasst(ConfigurationHelper.GetSendungVerpasstServiceUrl(RestAgent.Configuration), 50, 0, (category as RssLink).Url);                
+            }
+            else
+            {
+                teaserlist = Agent.Aktuellste(ConfigurationHelper.GetAktuellsteServiceUrl(RestAgent.Configuration), (category as RssLink).Url, 50, 0, false);
+            }
             return GetVideos(Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.CurrentBroadcasts));
         }
 
