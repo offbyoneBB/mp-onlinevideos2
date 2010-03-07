@@ -83,7 +83,7 @@ namespace OnlineVideos.Sites
             cat.HasSubCategories = true;
             specifics = new test(Source.Rest);
             specifics.baseUrl = @"http://www.net5.nl";
-            specifics.subCatStart = @"class=""mo-a""";
+            specifics.subCatStart = @"class=""mo-a";
             specifics.subCatEnd = @"class=""clearer""";
             specifics.regex_SubCat = specifics.getRegex(@"<a\s*href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<");
 
@@ -117,7 +117,7 @@ namespace OnlineVideos.Sites
             cat.HasSubCategories = true;
             specifics = new test(Source.Veronica);
             specifics.baseUrl = @"http://www.veronicatv.nl";
-            specifics.subCatStart = @"class=""mo-a"""; // was: mo-b
+            specifics.subCatStart = @"class=""mo-a"; // was: mo-b
             specifics.subCatEnd = @"class=""bottom""";
             specifics.regex_SubCat = specifics.getRegex(subCategoryRegexSbsVeronica);
 

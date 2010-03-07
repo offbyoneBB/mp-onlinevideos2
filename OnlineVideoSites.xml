@@ -317,6 +317,7 @@
       <Categories />
     </Site>
     <Site name="Cinemassacre" util="Cinemassacre" agecheck="false" enabled="true" lang="en">
+      <Description>Video site from cinemassacre productions.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="AVGN">http://www.cinemassacre.com/new/?page_id=13</Category>
         <Category xsi:type="RssLink" name="You Know What’s Bullshit">http://www.cinemassacre.com/new/?page_id=2479</Category>
@@ -850,12 +851,15 @@
       <Categories />
     </Site>
     <Site name="Nos" util="NOS" agecheck="false" enabled="true" lang="nl">
+      <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
       <Categories />
     </Site>
     <Site name="TvGemist" util="TvGemist" agecheck="false" enabled="true" player="WMP" lang="nl">
+      <Description>Alle uitzendingen van Nederland 1,2,3, Rtl 4,5,6,7,8, Net5, Sbs6 en Veronica</Description>
       <Categories />
     </Site>
     <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" player="WMP" lang="nl">
+      <Description>TV Tutti: alle programma’s van Uitzending Gemist, RTL, SBS6, Net5, Veronica</Description>
       <Categories>
         <Category xsi:type="RssLink" name="All">http://tvtutti.nl/alle/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
         <Category xsi:type="RssLink" name="Nieuws">http://tvtutti.nl/nieuws/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
