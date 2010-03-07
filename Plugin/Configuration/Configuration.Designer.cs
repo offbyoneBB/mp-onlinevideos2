@@ -49,6 +49,7 @@ namespace OnlineVideos
             this.txtRssName = new System.Windows.Forms.TextBox();
             this.label25 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.iconSite = new System.Windows.Forms.PictureBox();
             this.descriptionTextBox = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -143,6 +144,7 @@ namespace OnlineVideos
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.iconSite)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.toolStripContainer3.ContentPanel.SuspendLayout();
             this.toolStripContainer3.LeftToolStripPanel.SuspendLayout();
@@ -249,6 +251,7 @@ namespace OnlineVideos
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.iconSite);
             this.groupBox1.Controls.Add(this.descriptionTextBox);
             this.groupBox1.Controls.Add(this.label22);
             this.groupBox1.Controls.Add(this.tableLayoutPanel1);
@@ -260,6 +263,15 @@ namespace OnlineVideos
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Sites";
+            // 
+            // iconSite
+            // 
+            this.iconSite.Location = new System.Drawing.Point(214, 147);
+            this.iconSite.Name = "iconSite";
+            this.iconSite.Size = new System.Drawing.Size(60, 60);
+            this.iconSite.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.iconSite.TabIndex = 29;
+            this.iconSite.TabStop = false;
             // 
             // descriptionTextBox
             // 
@@ -275,7 +287,7 @@ namespace OnlineVideos
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(208, 196);
+            this.label22.Location = new System.Drawing.Point(208, 211);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(60, 13);
             this.label22.TabIndex = 27;
@@ -509,7 +521,7 @@ namespace OnlineVideos
             this.btnReportSite});
             this.toolStripSites.Location = new System.Drawing.Point(3, 0);
             this.toolStripSites.Name = "toolStripSites";
-            this.toolStripSites.Size = new System.Drawing.Size(149, 25);
+            this.toolStripSites.Size = new System.Drawing.Size(118, 25);
             this.toolStripSites.TabIndex = 0;
             // 
             // btnImportSite
@@ -1346,6 +1358,7 @@ namespace OnlineVideos
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.iconSite)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.toolStripContainer3.ContentPanel.ResumeLayout(false);
@@ -1498,5 +1511,6 @@ namespace OnlineVideos
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.ToolStripButton btnPublishSite;
         private System.Windows.Forms.ToolStripButton btnReportSite;
+        private System.Windows.Forms.PictureBox iconSite;
 	}
 }
