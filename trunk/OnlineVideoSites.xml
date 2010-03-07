@@ -2,7 +2,7 @@
 <OnlineVideoSites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Sites>
     <Site name="YouTube" util="YouTube" agecheck="false" enabled="true" lang="en">
-      <Description>Largest video site on the web. Available in any country. Quality can be set to Low, High or HD.</Description>
+      <Description>Largest video sharing site on the web. Available in any country.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Top Rated">http://gdata.youtube.com/feeds/api/standardfeeds/top_rated</Category>
         <Category xsi:type="RssLink" name="Recently Added">http://gdata.youtube.com/feeds/api/videos?orderby=published</Category>
@@ -20,15 +20,15 @@
       <Categories />
     </Site>
     <Site name="MDR" util="Mdr" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des MDR.</Description>
+      <Description>Kostenlos verfügbare Sendungen aus der Mediathek des Mitteldeutschen Rundfunks (MDR).</Description>
       <Categories />
     </Site>
     <Site name="NDR" util="Ndr" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des NDR.</Description>
+      <Description>Kostenlos verfügbare Sendungen aus der NDR Mediathek.</Description>
       <Categories />
     </Site>
     <Site name="WDR" util="GenericSite" agecheck="false" enabled="true" lang="de">
-      <Description>Podcasts des Westdeutschen Rundfunks.</Description>
+      <Description>Podcasts des Westdeutschen Rundfunks (WDR).</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Sendung mit der Maus" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_maus.jpg">http://podcast.wdr.de/maus.xml</Category>
         <Category xsi:type="RssLink" name="Tiere suchen ein Zuhause" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_tieresucheneinzuhause.jpg">http://podcast.wdr.de/sztiere.xml</Category>
@@ -77,7 +77,7 @@
       </Categories>
     </Site>
     <Site name="Arte+7" util="ArtePlus7" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des Senders Arte.</Description>
+      <Description>Eine Auswahl der Sendungen des ARTE-Programms steht nach der Fernsehausstrahlung weitere sieben Tage lang kostenfrei per Streaming im Internet zur Verfügung. </Description>
       <Categories />
     </Site>
     <Site name="Sat1" util="Sat1" agecheck="false" enabled="true" lang="de">
@@ -101,11 +101,11 @@
       <Categories />
     </Site>
     <Site name="Orf" util="Orf" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des Orfs.</Description>
+      <Description>Kostenlos verfügbare Sendungen aus der TV-Thek des Österreichischen Rundfunks (ORF).</Description>
       <Categories />
     </Site>
     <Site name="SF1" util="Sf1" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen des SF1.</Description>
+      <Description>Videoportal des Schweizer Fernsehens (SF).</Description>
       <Categories />
     </Site>
     <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
@@ -120,12 +120,15 @@
       </Categories>
     </Site>
     <Site name="SouthPark" util="SouthParkDe" agecheck="false" enabled="true" lang="de">
+      <Description>Alle SouthPark Folgen komplett und auf Deutsch.</Description>
       <Categories />
     </Site>
     <Site name="TvGorge" util="TvGorge" agecheck="false" enabled="true" lang="en">
+      <Description>Watch full episodes of your favourite TV shows.</Description>
       <Categories />
     </Site>
     <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en">
+      <Description>Miro combines and categorizes collections of video channels from thousands of sources.</Description>
       <Categories />
     </Site>
     <Site name="MetaCafe" util="GenericSite" agecheck="false" enabled="true" lang="en">
@@ -167,6 +170,7 @@
       </Categories>
     </Site>
     <Site name="DailyMotion" util="GenericSite" agecheck="false" enabled="true" lang="en">
+      <Description>Dailymotion is a video sharing service website, based in Paris (France).</Description>
       <Configuration>
         <item key="searchUrl"><![CDATA[http://www.dailymotion.com/rss/relevance/search/{0}]]></item>
         <item key="fileUrlRegEx"><![CDATA[addVariable\("video",\s*"(?<m0>(?:(?!%40%40spark).)*)]]></item>
@@ -204,7 +208,7 @@
         <Category xsi:type="RssLink" name="New Videos">http://rss.livevideo.com/rss/rss.ashx?v=Newest</Category>
         <Category xsi:type="RssLink" name="Most Viewed Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostViewed</Category>
         <Category xsi:type="RssLink" name="Most Discussed Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostDiscussed</Category>
-        <Category xsi:type="RssLink" name="Most Hit Votes Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostHit</Category>        
+        <Category xsi:type="RssLink" name="Most Hit Votes Videos">http://rss.livevideo.com/rss/rss.ashx?v=MostHit</Category>
         <Category xsi:type="RssLink" name="Arts &amp; Animation">http://rss.livevideo.com/rss/rss.ashx?catid=1</Category>
         <Category xsi:type="RssLink" name="Auto &amp; Vehicles">http://rss.livevideo.com/rss/rss.ashx?catid=6</Category>
         <Category xsi:type="RssLink" name="Business &amp; Commercial">http://rss.livevideo.com/rss/rss.ashx?catid=19 </Category>
@@ -224,6 +228,7 @@
       </Categories>
     </Site>
     <Site name="GameTrailers" util="GenericSite" agecheck="false" enabled="true" lang="en">
+      <Description>Watch trailers, reviews, interviews and ingame footage for games from all the major platforms.</Description>
       <Configuration>
         <item key="fileUrlRegEx"><![CDATA[<src>(?<m0>[^<]+)</src>]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
@@ -246,7 +251,7 @@
       </Categories>
     </Site>
     <Site name="kino.de" util="GenericSite" agecheck="false" enabled="true" lang="de">
-      <Description>Movie- and Gametrailer from kino.de.</Description>
+      <Description>Trailer für Kinofilme und Videospiele.</Description>
       <Configuration>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"\sclass="showroomFontColor_kino">(?<title>[^<]+)</a>]]></item>
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]+)"><img\ssrc='(?<ImageUrl>[^']+)'\sstyle='border:\snone;\smargin:\s3px'\salt="(?<Title>[^"]+)"]]></item>
@@ -420,6 +425,7 @@
       <Categories />
     </Site>
     <Site name="MSNBC" util="Msnbc" agecheck="false" enabled="true" lang="en">
+      <Description>MSNBC is a cable news channel based in the United States and a partnership of Microsoft and NBC Universal.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Today">http://rss.msnbc.msn.com/id/3032632/device/rss/rss.xml</Category>
         <Category xsi:type="RssLink" name="Nightly News">http://www.msnbc.msn.com/id/3032618/device/rss/rss.xml</Category>
@@ -476,6 +482,7 @@
       </Categories>
     </Site>
     <Site name="NASA" util="GenericSite" agecheck="false" enabled="true" lang="en">
+      <Description>A collection of live streams and vodcasts from the National Aeronautics and Space Administration.</Description>
       <Categories>
         <Category xsi:type="Group" name="NASA Live TV">
           <Channels>
@@ -504,7 +511,7 @@
       </Categories>
     </Site>
     <Site name="spiegel.de" util="GenericSite" agecheck="false" enabled="true" lang="de">
-      <Description>Videos from spiegel.de</Description>
+      <Description>Videos des deutschen Newsportals spiegel.de</Description>
       <Configuration>
         <item key="fileUrlRegEx"><![CDATA[videoid:\s*"(?<m0>[^"]*)",]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://video.spiegel.de/flash/{0}_996x560_H264_1400.mp4]]></item>
@@ -557,8 +564,7 @@
       </Categories>
     </Site>
     <Site name="Revision3" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <Description>Revision3 is the leading television network for the internet generation. 
-      We create and produce all-original episodic community driven programs watched by a super-committed and passionate fan base.</Description>
+      <Description>Revision3 is the leading television network for the internet generation. We create and produce all-original episodic community driven programs watched by a super-committed and passionate fan base.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Best of" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/bestof/bestof.jpg">http://revision3.com/bestof/feed/quicktime-large/</Category>
         <Category xsi:type="RssLink" name="AppJudgment" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/appjudgment/appjudgment.jpg">http://revision3.com/appjudgment/feed/quicktime-large/</Category>
@@ -584,6 +590,7 @@
       </Categories>
     </Site>
     <Site name="Discovey Channel" util="GenericSite" agecheck="false" enabled="true" lang="en">
+      <Description>American TV Channel dedicated to documentaries about popular science, technology, and history.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Discovery Video" thumb="http://up2.podbean.com/image-logos/16961_logo.jpg">http://www.discovery.com/radio/xml/discovery_video.xml</Category>
         <Category xsi:type="RssLink" name="Science Channel" thumb="http://up2.podbean.com/image-logos/16971_logo.jpg">http://www.discovery.com/radio/xml/sciencevideo.xml</Category>
@@ -623,7 +630,7 @@
         <item key="videoDescriptionXml"><![CDATA[description]]></item>
         <item key="videoDurationXml"><![CDATA[duration]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://streaming04.exozet.com/bunchtv-streaming/{0}]]></item>
-        <item key="forceUTF8Encoding">true</item>
+        <item key="forceUTF8Encoding"><![CDATA[true]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Hiphop">http://bunch.tv/xml/playlist/13119/playlist.xml</Category>
@@ -638,10 +645,12 @@
         <Category xsi:type="RssLink" name="Festivals">http://bunch.tv/xml/playlist/27372/playlist.xml</Category>
       </Categories>
     </Site>
-    <Site name="YahooMusicVideos" util="YahooMusicVideos" agecheck="false" enabled="true">
+    <Site name="YahooMusicVideos" util="YahooMusicVideos" agecheck="false" enabled="true" lang="en">
+      <Description>Music videos hosted by Yahoo. Many videos are IP restricted to certain countries.</Description>
       <Categories />
     </Site>
-    <Site name="MTVMusicVideos" util="MtvMusicVideos" agecheck="false" enabled="true">
+    <Site name="MTVMusicVideos" util="MtvMusicVideos" agecheck="false" enabled="true" lang="en">
+      <Description>Music Videos provided by MTV.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="World/Reggae">http://api.mtvnservices.com/1/genre/world_reggae/videos/?sort=date_descending</Category>
         <Category xsi:type="RssLink" name="Pop">http://api.mtvnservices.com/1/genre/pop/videos/?sort=date_descending</Category>
@@ -660,7 +669,7 @@
         <Category xsi:type="RssLink" name="Alternative">http://api.mtvnservices.com/1/genre/alternative/videos/?sort=date_descending</Category>
         <Category xsi:type="RssLink" name="Soundtracks / Musicals">http://api.mtvnservices.com/1/genre/soundtracks_musicals/videos/?sort=date_descending</Category>
       </Categories>
-      </Site>
+    </Site>
     <Site name="JustinTV" util="JustinTV" agecheck="false" enabled="false" lang="en">
       <Categories>
         <Category xsi:type="RssLink" name="Producers">http://api.justin.tv/api/stream/list.xml?category=featured</Category>
@@ -843,8 +852,7 @@
     <Site name="Nos" util="NOS" agecheck="false" enabled="true" lang="nl">
       <Categories />
     </Site>
-    <Site name="TvGemist" util="TvGemist" agecheck="false" enabled="true" lang="nl" player="WMP">
-      <Description></Description>
+    <Site name="TvGemist" util="TvGemist" agecheck="false" enabled="true" player="WMP" lang="nl">
       <Categories />
     </Site>
     <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" player="WMP" lang="nl">
@@ -894,6 +902,7 @@
       </Categories>
     </Site>
     <Site name="RedTube" util="RedTube" agecheck="true" enabled="true" lang="en">
+      <Description>The home of free porn videos.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="New">http://www.redtube.com/new</Category>
         <Category xsi:type="RssLink" name="Top">http://www.redtube.com/top</Category>
@@ -916,6 +925,7 @@
       </Categories>
     </Site>
     <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
+      <Description>xHamster - just porn, no bullshit.</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<img\ssrc='(?<ImageUrl>[^']+)'[^/]*/>(?:(?!<div).)*
 <div\sclass="moduleFeaturedTitle">\s*
@@ -977,6 +987,7 @@
       </Categories>
     </Site>
     <Site name="Tube8" util="GenericSite" agecheck="true" enabled="true" lang="en">
+      <Description>A Huge selection of hardcore videos is what makes Tube8 the best porn tube site. The site contains 100% user-uploaded free porn.</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<div\sid="video_i\d+">\s*
 <a\shref="(?<VideoUrl>[^"]+)">\s*

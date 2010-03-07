@@ -67,7 +67,9 @@ namespace OnlineVideos
             BindingList<RssLink> rssLinks = new BindingList<RssLink>();
 
             tvGroups_AfterSelect(tvGroups, new TreeViewEventArgs(null, TreeViewAction.Unknown));
-            tvGroups.Nodes.Clear();                
+            tvGroups.Nodes.Clear();
+
+            iconSite.Image = null;
 
             if (site != null)
             {                                                
@@ -91,6 +93,9 @@ namespace OnlineVideos
 
                 Sites.SiteUtilBase siteUtil = SiteUtilFactory.CreateFromShortName(site.UtilName, site);
                 propertyGridUserConfig.SelectedObject = siteUtil;
+
+                string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + site.Name + ".png";
+                if (System.IO.File.Exists(image)) iconSite.ImageLocation = image;
             }
 
             bindingSourceRssLink.DataSource = rssLinks;
