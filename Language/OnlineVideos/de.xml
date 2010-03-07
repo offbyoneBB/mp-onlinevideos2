@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <!-- Online Videos translation file -->
 <!-- German (Germany) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
 <strings>
 
     <!-- A -->
-    <string Field="AlreadyDownloading">Video lädt bereits herunter.</string>
+    <string Field="AlreadyDownloading">Video lÃ¤dt bereits herunter.</string>
     <string Field="Actions">Aktionen</string>
     <string Field="Actors">Darsteller</string>
-    <string Field="AddToFavourites">Zu den Favoriten hinzufügen</string>
+    <string Field="AddToFavourites">Zu den Favoriten hinzufÃ¼gen</string>
 
     <!-- C -->
     <string Field="Category">Rubrik</string>
@@ -18,7 +18,7 @@
     <string Field="Download">Herunterladen</string>
     <string Field="DownloadFailed">Herunterladen fehlgeschlagen: {0}</string>
     <string Field="DownloadComplete">Herunterladen beendet</string>
-    <string Field="Delete">Löschen</string>
+    <string Field="Delete">LÃ¶schen</string>
     <string Field="Default">Standard</string>
 
     <!-- E -->
@@ -39,13 +39,13 @@
     <!-- L -->
     <string Field="LayoutList">Ansicht: Liste</string>
     <string Field="LayoutIcons">Ansicht: Symbole klein</string>
-    <string Field="LayoutBigIcons">Ansicht: Symbole groß</string>
+    <string Field="LayoutBigIcons">Ansicht: Symbole groÃŸ</string>
 
     <!-- M -->
     <string Field="MaxResults">Max. Ergebnisse</string>
     
     <!-- N -->
-    <string Field="NextPage">Nächste Seite</string>
+    <string Field="NextPage">NÃ¤chste Seite</string>
     <string Field="None">None</string>
     <string Field="NoVideoFound">Keine Videos gefunden</string>
     
@@ -59,25 +59,25 @@
     <!-- R -->
     <string Field="RemoveFromFavorites">Von den Favoriten entfernen</string>
     <string Field="Refresh">Ansicht aktualisieren</string>
-    <string Field="RelatedVideos">Ähnliche Videos</string>
+    <string Field="RelatedVideos">Ã„hnliche Videos</string>
     <string Field="Runtime">Laufzeit:</string>
 
     <!-- S -->
     <string Field="SearchResults">Suchergebnisse</string>
-    <string Field="SelectSource">Quelle wählen</string>
-    <string Field="SortByName">Sortiere nach Name</string>
+    <string Field="SelectSource">Quelle wÃ¤hlen</string>
     <string Field="SortOptions">Sortierung</string>
-    <string Field="SortByLanguage">Sortiere nach Sprache</string>
+    <string Field="SortByName">Sort. nach Name</string>
+    <string Field="SortByLanguage">Sort. nach Sprache</string>
     <string Field="Search">Suchen</string>
 
     <!-- T -->
     <string Field="Timeframe">Zeitraum</string>
-    <string Field="Timeout">Zeitüberschreitung</string>
+    <string Field="Timeout">ZeitÃ¼berschreitung</string>
 
     <!-- U -->
     <string Field="UpdateSites">Sites aktualisieren</string>
     <string Field="UnableToPlayVideo">Video kann nicht wiedergegeben werden. Keine URL.</string>
-    <string Field="UnableToDownloadVideo">Video kann nicht heruntergeladen werden. Ungültige URL.</string>
+    <string Field="UnableToDownloadVideo">Video kann nicht heruntergeladen werden. UngÃ¼ltige URL.</string>
 
     <!-- V -->
 

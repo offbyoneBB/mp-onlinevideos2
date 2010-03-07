@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- Online Videos translation file -->
 <!-- English (US) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
@@ -65,9 +65,9 @@
     <!-- S -->
     <string Field="SearchResults">Search results</string>
     <string Field="SelectSource">Select source</string>
-    <string Field="SortByName">Sort by: Name</string>
     <string Field="SortOptions">Sort options</string>
-    <string Field="SortByLanguage">Language</string>
+    <string Field="SortByName">Sort by: Name</string>
+    <string Field="SortByLanguage">Sort by: Language</string>
     <string Field="Search">Search</string>
 
     <!-- T -->
