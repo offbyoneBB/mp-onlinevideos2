@@ -822,27 +822,11 @@ namespace OnlineVideos
                         loListItem.IsFolder = true;
                         loListItem.ItemId = i + 1;
                         MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
-                        // Favorite Categories can have the same images as the home view
-                        if (selectedSite is Sites.FavoriteUtil)
+                        if (!string.IsNullOrEmpty(loCat.Thumb))
                         {
-                            string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + ((RssLink)loCat).Url.Substring(4) + ".png";
-                            if (System.IO.File.Exists(image))
-                            {
-                                loListItem.ThumbnailImage = image;
-                                loListItem.IconImage = image;
-                                loListItem.IconImageBig = image;
-                                numCategoriesWithThumb++;
-                            }
+                            numCategoriesWithThumb++;
+                            loListItem.ThumbUrl = loCat.Thumb;
                         }
-                        else
-                        {
-                            if (!string.IsNullOrEmpty(loCat.Thumb))
-                            {
-                                numCategoriesWithThumb++;
-                                loListItem.ThumbUrl = loCat.Thumb;
-                            }
-                        }
-
                         loListItem.Item = loCat;
                         if (loCat == selectedCategory) categoryIndexToSelect = GUI_facadeView.Count; // select the category that was previously selected
                         GUI_facadeView.Add(loListItem);

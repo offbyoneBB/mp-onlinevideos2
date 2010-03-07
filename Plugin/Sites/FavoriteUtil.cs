@@ -66,16 +66,12 @@ namespace OnlineVideos.Sites
                    (!aSite.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || OnlineVideoSettings.getInstance().ageHasBeenConfirmed))
                 {
                     RssLink cat = new RssLink();
-                    cat.Name = aSite.Name + " - Favorites";
+                    cat.Name = aSite.Name + " - " + Translation.Favourites;
                     cat.Url = "fav:" + aSite.Name;
+                    cat.Thumb = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Name + ".png";
                     Settings.Categories.Add(cat);
                 }
             }
-            /*
-            RssLink cat = new RssLink();
-            cat.Name = "Search-Favorites";
-            cat.Url = "fav:%{0}";
-            site.Categories.Add(cat);*/
 
             // need to always get the categories, because when adding new fav video from a new site, a removing the last one for a site, the categories must be refreshed 
             Settings.DynamicCategoriesDiscovered = false;
