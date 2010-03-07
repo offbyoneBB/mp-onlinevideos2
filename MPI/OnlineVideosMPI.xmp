@@ -847,6 +847,24 @@
 			<Option />
 			<Guid>2969c5c9-356e-42f1-9690-1be003ff1d6f</Guid>
 		</File>
+		<File>
+			<FileName>en.xml</FileName>
+			<Type>Other</Type>
+			<SubType>%Language%</SubType>
+			<Source>..\Language\OnlineVideos\en.xml</Source>
+			<Id>04010</Id>
+			<Option>OutputFileName=\OnlineVideos\en.xml|</Option>
+			<Guid>3D7200BE-9745-403a-9E7B-39E7B2259985</Guid>
+		</File>
+		<File>
+			<FileName>de.xml</FileName>
+			<Type>Other</Type>
+			<SubType>%Language%</SubType>
+			<Source>..\Language\OnlineVideos\de.xml</Source>
+			<Id>04010</Id>
+			<Option>OutputFileName=\OnlineVideos\de.xml|</Option>
+			<Guid>21DB6869-B87D-4619-BB73-5C51704931B9</Guid>
+		</File>		
     <File>
       <FileName>OnlineTV by on-tv.ru.png</FileName>
       <Type>Thumbs</Type>
