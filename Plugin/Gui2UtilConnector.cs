@@ -84,9 +84,9 @@ namespace OnlineVideos
                         GUIDialogNotify dlg_error = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                         dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
                         if (result.HasValue)
-                            dlg_error.SetText(string.Format("{0}: {1}", GUILocalizeStrings.Get(257)/*ERROR*/, taskdescription));
+                            dlg_error.SetText(string.Format("{0}: {1}", Translation.Error/*GUILocalizeStrings.Get(257)/*ERROR*/, taskdescription));
                         else
-                            dlg_error.SetText(string.Format("{0}: {1}", "Timeout", taskdescription));
+                            dlg_error.SetText(string.Format("{0}: {1}", Translation.Timeout, taskdescription));
                         dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                     }
                     Monitor.Exit(this);

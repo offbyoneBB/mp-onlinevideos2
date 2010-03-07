@@ -231,6 +231,7 @@ namespace OnlineVideos
 
     // D
     public static string DateOfRelease = "Date of Release:";
+    public static string Download = "Download";
     public static string DownloadFailed = "Download failed: {0}";
     public static string DownloadComplete = "Download Complete";
     public static string Delete = "Delete";
@@ -238,10 +239,10 @@ namespace OnlineVideos
 
     // E
     public static string Error = "Error";
-    public static string EnterPin = "EnterPin";
+    public static string EnterPin = "Enter Pin";
 
     // F
-    public static string Favourites = "Favourites";
+    public static string Favourites = "Favorites";
 
     // G
     public static string Genre = "Genre";
@@ -278,7 +279,6 @@ namespace OnlineVideos
     public static string Runtime = "Runtime:";
 
     // S
-    public static string Save = "Save";
     public static string SearchResults = "Search results";
     public static string SelectSource = "Select source";
     public static string SortByName = "Sort by: Name";
@@ -288,9 +288,10 @@ namespace OnlineVideos
 
     // T
     public static string Timeframe = "Timeframe";
+    public static string Timeout = "Timeout";
 
     // U
-    public static string UpdateSites = "UpdateSites";
+    public static string UpdateSites = "Update Sites";
     public static string UnableToPlayVideo = "Unable to play the video. No URL.";
     public static string UnableToDownloadVideo = "Unable to download the video. Invalid URL.";
 
