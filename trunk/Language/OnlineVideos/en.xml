@@ -8,13 +8,14 @@
     <string Field="AlreadyDownloading">Already downloading this file.</string>
     <string Field="Actions">Actions</string>
     <string Field="Actors">Actors</string>
-    <string Field="AddToFavourites">Add to favourites</string>
+    <string Field="AddToFavourites">Add to favorites</string>
 
     <!-- C -->
     <string Field="Category">Category</string>
 
     <!-- D -->
     <string Field="DateOfRelease">Date of Release:</string>
+    <string Field="Download">Download</string>
     <string Field="DownloadFailed">Download failed: {0}</string>
     <string Field="DownloadComplete">Download Complete</string>
     <string Field="Delete">Delete</string>
@@ -22,10 +23,10 @@
 
     <!-- E -->
     <string Field="Error">Error</string>
-    <string Field="EnterPin">EnterPin</string>
+    <string Field="EnterPin">Enter Pin</string>
 
     <!-- F -->
-    <string Field="Favourites">Favourites</string>
+    <string Field="Favourites">Favorites</string>
 
     <!-- G -->
     <string Field="Genre">Genre</string>
@@ -62,7 +63,6 @@
     <string Field="Runtime">Runtime:</string>
 
     <!-- S -->
-    <string Field="Save">Save</string>
     <string Field="SearchResults">Search results</string>
     <string Field="SelectSource">Select source</string>
     <string Field="SortByName">Sort by: Name</string>
@@ -72,9 +72,10 @@
 
     <!-- T -->
     <string Field="Timeframe">Timeframe</string>
+    <string Field="Timeout">Timeout</string>
 
     <!-- U -->
-    <string Field="UpdateSites">UpdateSites</string>
+    <string Field="UpdateSites">Update Sites</string>
     <string Field="UnableToPlayVideo">Unable to play the video. No URL.</string>
     <string Field="UnableToDownloadVideo">Unable to download the video. Invalid URL.</string>
 

@@ -33,7 +33,7 @@ namespace OnlineVideos
 
         public string Author()
         {
-            return "GregMac45|offbyone";
+            return "offbyone";
         }
 
         public bool CanEnable()
@@ -124,6 +124,7 @@ namespace OnlineVideos
         #endregion
 
         #region state variables
+        bool firstLoadDone = false;
         State currentState = State.sites;
         public State CurrentState
         {
@@ -146,6 +147,8 @@ namespace OnlineVideos
 
         RTMP_LIB.HTTPServer proxyRtmp;
         OnlineVideos.Sites.AppleProxyServer proxyApple;
+
+        private SmsT9Filter currentFilter = new SmsT9Filter();
 
         internal static Dictionary<string, DownloadInfo> currentDownloads = new Dictionary<string, DownloadInfo>();
         #endregion
@@ -184,9 +187,6 @@ namespace OnlineVideos
         public override bool Init()
         {
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
-            LoadSettings();
-            if (proxyRtmp == null) proxyRtmp = new RTMP_LIB.HTTPServer(OnlineVideoSettings.RTMP_PROXY_PORT);
-            if (proxyApple == null) proxyApple = new OnlineVideos.Sites.AppleProxyServer(OnlineVideoSettings.APPLE_PROXY_PORT);
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", " ");
             GUIPropertyManager.SetProperty("#OnlineVideos.length", " ");
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", " ");
@@ -196,9 +196,16 @@ namespace OnlineVideos
 
         protected override void OnPageLoad()
         {
-            base.OnPageLoad(); // let animations run            
+            if (!firstLoadDone)
+            {
+                Translation.TranslateSkin();
+                LoadSettings();
+                proxyRtmp = new RTMP_LIB.HTTPServer(OnlineVideoSettings.RTMP_PROXY_PORT);
+                proxyApple = new OnlineVideos.Sites.AppleProxyServer(OnlineVideoSettings.APPLE_PROXY_PORT);
+                firstLoadDone = true;
+            }
 
-            Translation.TranslateSkin();
+            base.OnPageLoad(); // let animations run
 
             // everytime the plugin is shown, after some other window was shown
             if (OnlineVideoSettings.getInstance().ageHasBeenConfirmed && PreviousWindowId == 0)
@@ -273,7 +280,7 @@ namespace OnlineVideos
                 }
                 if (String.IsNullOrEmpty(OnlineVideoSettings.getInstance().msDownloadDir) == false)
                 {
-                    if (selectedSite is Sites.DownloadedVideoUtil) dlgSel.Add(Translation.Delete/*Delete*/); else dlgSel.Add(Translation.Save/*Save*/);
+                    if (selectedSite is Sites.DownloadedVideoUtil) dlgSel.Add(Translation.Delete/*Delete*/); else dlgSel.Add(Translation.Download/*Save*/);
                 }
             }
             dlgSel.DoModal(GetID);
@@ -732,9 +739,7 @@ namespace OnlineVideos
             GUIPropertyManager.SetProperty("#header.label", Translation.Home /*Home*/);
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
-        }
-
-        private SmsT9Filter currentFilter = new SmsT9Filter();
+        }        
 
         private void DisplayCategories(Category parentCategory)
         {
@@ -1460,7 +1465,7 @@ namespace OnlineVideos
                 }
 
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                loDlgNotify.SetHeading(Translation.DownloadFailed);
+                loDlgNotify.SetHeading(Translation.DownloadComplete);
                 loDlgNotify.SetText((e.UserState as DownloadInfo).Title);
                 loDlgNotify.DoModal(GetID);
             }
@@ -1879,90 +1884,5 @@ namespace OnlineVideos
         }
 
         #endregion
-    }
-
-    public class SmsT9Filter
-    {
-        private Regex filter = null;
-        private string numbers = String.Empty;
-
-        private SortedDictionary<string, object> matches;
-
-        public bool Matches(string name)
-        {
-            if (filter == null)
-                return true;
-            Match m = filter.Match(name);
-
-            bool match = m.Success;
-            while (m.Success)
-            {
-                string s = m.Captures[0].ToString().ToLower();
-                if (!matches.ContainsKey(s))
-                    matches.Add(s, null);
-                m = m.NextMatch();
-            }
-
-            return match;
-        }
-
-        public void Add(char c)
-        {
-            string currentPattern = filter == null ? String.Empty : currentPattern = filter.ToString();
-
-            switch (c)
-            {
-                case '1': currentPattern += "[1]"; numbers = numbers + c; break;
-                case '2': currentPattern += "[2|a|b|c]"; numbers = numbers + c; break;
-                case '3': currentPattern += "[3|d|e|f]"; numbers = numbers + c; break;
-                case '4': currentPattern += "[4|g|h|i]"; numbers = numbers + c; break;
-                case '5': currentPattern += "[5|j|k|l]"; numbers = numbers + c; break;
-                case '6': currentPattern += "[6|m|n|o]"; numbers = numbers + c; break;
-                case '7': currentPattern += "[7|p|q|r|s]"; numbers = numbers + c; break;
-                case '8': currentPattern += "[8|t|u|v]"; numbers = numbers + c; break;
-                case '9': currentPattern += "[9|w|x|y|z]"; numbers = numbers + c; break;
-                case '0': currentPattern += "[0|\\s]"; numbers = numbers + c; break;
-                case '\b': if (!String.IsNullOrEmpty(currentPattern))
-                    {
-                        numbers = numbers.Substring(0, numbers.Length - 1);
-                        currentPattern = currentPattern.Substring(0, currentPattern.LastIndexOf('['));
-                    }
-                    break;
-            }
-            if (String.IsNullOrEmpty(currentPattern))
-                filter = null;
-            else
-                filter = new Regex(currentPattern, RegexOptions.IgnoreCase);
-        }
-
-        public void Clear()
-        {
-            filter = null;
-            numbers = String.Empty;
-        }
-
-
-        public void StartMatching()
-        {
-            matches = new SortedDictionary<string, object>();
-        }
-
-        public override string ToString()
-        {
-            string hlabel = numbers;
-            if (filter != null)
-            {
-                hlabel = hlabel + " {";
-                string m = String.Empty;
-                foreach (string s in matches.Keys)
-                    m = m + ',' + s;
-                if (String.IsNullOrEmpty(m))
-                    hlabel = hlabel + '}';
-                else
-                    hlabel = hlabel + m.Substring(1) + '}';
-            }
-
-            return hlabel;
-        }
     }
 }
