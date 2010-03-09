@@ -4,7 +4,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 
 namespace OnlineVideos
-{    
+{
     public class GUISiteUpdater : GUIWindow
     {
         enum FilterOption { All, Reported, Broken, Working, Updatable };
@@ -31,47 +31,44 @@ namespace OnlineVideos
         public override bool Init()
         {
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideosUpdater.xml");
-            GUIPropertyManager.SetProperty("#OnlineVideos.owner", " ");            
+            GUIPropertyManager.SetProperty("#OnlineVideos.owner", " ");
             return result;
         }
 
         protected override void OnPageLoad()
         {
-          foreach (string name in Translation.Strings.Keys)
-          {
-            Translation.SetProperty("#OnlineVideos.Translation." + name + ".Label", Translation.Strings[name]);
-          }
+            Translation.TranslateSkin();
 
-          base.OnPageLoad();
+            base.OnPageLoad();
 
-          if (GUI_btnFilter.SubItemCount == 0)
-          {
-            foreach (string aFilterOption in Enum.GetNames(typeof (FilterOption)))
+            if (GUI_btnFilter.SubItemCount == 0)
             {
-              GUIControl.AddItemLabelControl(GetID, GUI_btnFilter.GetID, aFilterOption);
+                foreach (string aFilterOption in Enum.GetNames(typeof(FilterOption)))
+                {
+                    GUIControl.AddItemLabelControl(GetID, GUI_btnFilter.GetID, aFilterOption);
+                }
             }
-          }
-          if (GUI_btnSort.SubItemCount == 0)
-          {
-            foreach (string aSortOption in Enum.GetNames(typeof (SortOption)))
+            if (GUI_btnSort.SubItemCount == 0)
             {
-              GUIControl.AddItemLabelControl(GetID, GUI_btnSort.GetID, aSortOption.Replace("_", ", "));
+                foreach (string aSortOption in Enum.GetNames(typeof(SortOption)))
+                {
+                    GUIControl.AddItemLabelControl(GetID, GUI_btnSort.GetID, aSortOption.Replace("_", ", "));
+                }
             }
-          }
 
-          GUIPropertyManager.SetProperty("#header.label",
-                                         OnlineVideoSettings.getInstance().BasicHomeScreenName + " Updater");
-          GUIPropertyManager.SetProperty("#header.image",
-                                         OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
+            GUIPropertyManager.SetProperty("#header.label",
+                                           OnlineVideoSettings.getInstance().BasicHomeScreenName + " Updater");
+            GUIPropertyManager.SetProperty("#header.image",
+                                           OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
 
-          DisplayOnlineSites();
+            DisplayOnlineSites();
         }
 
-      void DisplayOnlineSites()
+        void DisplayOnlineSites()
         {
             GUIPropertyManager.SetProperty("#OnlineVideos.owner", String.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
-            
+
             if (DateTime.Now - lastSitesRetrievalTime > TimeSpan.FromMinutes(10)) // only get sites every 10 minutes
             {
                 if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
@@ -85,7 +82,7 @@ namespace OnlineVideos
                 }
             }
 
-            if (onlineSites == null || onlineSites.Length == 0) return;            
+            if (onlineSites == null || onlineSites.Length == 0) return;
 
             GUIControl.ClearControl(GetID, GUI_infoList.GetID);
 
@@ -168,7 +165,7 @@ namespace OnlineVideos
             {
                 switch (dlgSel.SelectedLabelText)
                 {
-                    case "Add to my sites": 
+                    case "Add to my sites":
                         SiteSettings newSite = GetRemoteSite(site.Name);
                         if (newSite != null)
                         {
@@ -208,8 +205,8 @@ namespace OnlineVideos
                     return site.State == OnlineVideos.OnlineVideosWebservice.SiteState.Reported;
                 case FilterOption.Broken:
                     return site.State == OnlineVideos.OnlineVideosWebservice.SiteState.Broken;
-                case FilterOption.Updatable:                     
-                    foreach(SiteSettings localSite in OnlineVideoSettings.getInstance().SiteSettingsList)                    
+                case FilterOption.Updatable:
+                    foreach (SiteSettings localSite in OnlineVideoSettings.getInstance().SiteSettingsList)
                     {
                         if (localSite.Name == site.Name)
                         {
@@ -245,7 +242,7 @@ namespace OnlineVideos
                         return site1.Name.CompareTo(site2.Name);
                     }
                     else return langCompResult2;
-            }            
+            }
             return 0;
         }
 
@@ -268,7 +265,7 @@ namespace OnlineVideos
             }, "getting site xml from webservice"))
             {
                 if (siteXml.Length > 0)
-                {                    
+                {
                     siteXml = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <OnlineVideoSites xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
 <Sites>
@@ -285,6 +282,6 @@ namespace OnlineVideos
                 }
             }
             return null;
-        }        
+        }
     }
 }

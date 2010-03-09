@@ -1527,7 +1527,7 @@ namespace OnlineVideos
                     switch (currentVideosDisplayMode)
                     {
                         case VideosMode.Favorites: GUIPropertyManager.SetProperty("#header.label", Translation.Favourites); break;
-                        case VideosMode.Search: GUIPropertyManager.SetProperty("#header.label", Translation.SearchResults); break;
+                        case VideosMode.Search: GUIPropertyManager.SetProperty("#header.label", Translation.SearchResults + " [" + lastSearchQuery + "]"); break;
                         case VideosMode.Related: GUIPropertyManager.SetProperty("#header.label", Translation.RelatedVideos); break;
                         default:
                             {
