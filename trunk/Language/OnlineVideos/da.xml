@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Online Videos translation file -->
+<!-- Danish (da) -->
+<!-- Note: English is the fallback for any strings not found in other languages -->
+<!-- Provided by steffansp 8. marts 2010 -->
+<strings>
+
+    <!-- A -->
+    <string Field="AlreadyDownloading">Already downloading this file.</string>
+    <string Field="Actions">Handlinger</string>
+    <string Field="Actors">Skuespillere</string>
+    <string Field="AddToFavourites">Tilføj til favoritter</string>
+
+    <!-- C -->
+    <string Field="Category">Kategori</string>
+
+    <!-- D -->
+    <string Field="DateOfRelease">Udgivelses dato:</string>
+    <string Field="Download">Hent</string>
+    <string Field="DownloadFailed">Hentning fejlede: {0}</string>
+    <string Field="DownloadComplete">Hentning færdig</string>
+    <string Field="Delete">Slet</string>
+    <string Field="Default">Normal</string>
+
+    <!-- E -->
+    <string Field="Error">Fejl</string>
+    <string Field="EnterPin">Skriv password</string>
+
+    <!-- F -->
+    <string Field="Favourites">Favoritter</string>
+
+    <!-- G -->
+    <string Field="Genre">Genre</string>
+
+    <!-- H -->
+    <string Field="Home">Hjem</string>
+
+    <!-- I -->
+
+    <!-- L -->
+    <string Field="LayoutList">Layout: Liste</string>
+    <string Field="LayoutIcons">Layout: Ikoner</string>
+    <string Field="LayoutBigIcons">Layout: Store ikoner</string>
+
+    <!-- M -->
+    <string Field="MaxResults">Max resultater</string>
+    
+    <!-- N -->
+    <string Field="NextPage">Næste side</string>
+    <string Field="None">Ingen</string>
+    <string Field="NoVideoFound">Ingen video blev fundet</string>
+    
+    <!-- O -->
+
+    <!-- P -->
+    <string Field="PlayAll">Afspil alle</string>
+    <string Field="PlotOutline">Resume:</string>
+    <string Field="PreviousPage">Forrige side</string>
+    
+    <!-- R -->
+    <string Field="RemoveFromFavorites">Fjern fra favoritter</string>
+    <string Field="Refresh">Opdater</string>
+    <string Field="RelatedVideos">Beslægtede videoer</string>
+    <string Field="Runtime">Spilletid:</string>
+
+    <!-- S -->
+    <string Field="SearchResults">Søgeresultater</string>
+    <string Field="SelectSource">Vælg kilde</string>
+    <string Field="SortByName">Søg efter: Navn</string>
+    <string Field="SortOptions">Sorterings muligheder</string>
+    <string Field="SortByLanguage">Sprog</string>
+    <string Field="Search">Søg</string>
+
+    <!-- T -->
+    <string Field="Timeframe">Tidsramme</string>
+    <string Field="Timeout">Timeout</string>
+
+    <!-- U -->
+    <string Field="UpdateSites">Updater sider</string>
+    <string Field="UnableToPlayVideo">Videoen kunne ikke afspilles. Ingen URL.</string>
+    <string Field="UnableToDownloadVideo">Videoen kunne ikke hentes. Ugyldig URL.</string>
+
+    <!-- V -->
+
+    <!-- W -->
+
+    <!-- Y -->
+ 
+</strings>
