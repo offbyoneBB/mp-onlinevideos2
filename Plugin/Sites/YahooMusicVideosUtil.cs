@@ -59,20 +59,19 @@ namespace OnlineVideos.Sites
             [Description("New Zealand")]nz 
         };
 
-        protected const string AppId = "DeUZup_IkY7d17O2DzAMPoyxmc55_hTasA--";
-        protected const string SharedSecret = "d80b9a5766788713e1fadd73e752c7eb";
+        const string AppId = "DeUZup_IkY7d17O2DzAMPoyxmc55_hTasA--";
+        const string SharedSecret = "d80b9a5766788713e1fadd73e752c7eb";
 
         [Editor(typeof(UITokenEditor), typeof(UITypeEditor)),
         //Category("OnlineVideosUserConfiguration"), 
-        Description("You can, but don't have to sign in with your Yahoo account to access user specific features this service.")]
+        Description("You can, but don't have to sign in with your Yahoo account to access user specific features of this service.")]
         string token = "";
 
         [Category("OnlineVideosUserConfiguration"), Description("Language (Country) to use when accessing this service.")]
         Locale locale = Locale.us;
-
         [Category("OnlineVideosUserConfiguration"), Description("How each video title is displayed. These tags will be replaced: %artist% %title% %year% %rating%.")]
         string format_Title = "%artist% - %title%";
-        
+        [Category("OnlineVideosUserConfiguration"), Description("Defines number of videos to display per page.")]
         int pageSize = 27;
         
         CategoryTreeService catserv;
@@ -131,32 +130,6 @@ namespace OnlineVideos.Sites
             }
 
             return videoList;
-        }
-
-        RssLink currentCategory;
-        int currentStart = 1;
-
-        public override bool HasNextPage
-        {
-            get { return currentCategory != null && currentCategory.EstimatedVideoCount > currentStart; }
-        }
-
-        public override List<VideoInfo> getNextPageVideos()
-        {
-            currentStart += pageSize;
-            return GetVideoForCurrentCategory();
-        }
-
-        public override bool HasPreviousPage
-        {
-            get { return currentCategory != null && currentStart > 1; }
-        }
-
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            currentStart -= pageSize;
-            if (currentStart < 1) currentStart = 1;
-            return GetVideoForCurrentCategory();
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -260,16 +233,6 @@ namespace OnlineVideos.Sites
                 System.Web.HttpUtility.UrlEncode(link.playpath),
                 OnlineVideoSettings.RTMP_PROXY_PORT);
             return resultUrl;
-
-            /*
-            VideoPlayer player = new VideoPlayer(video.VideoUrl);
-            player.AutoStart = true;
-            if (settings.Bandwith != 0) player.Bandwidth = settings.Bandwith;
-            player.Ympsc = provider.Locale.Ympsc;
-            player.EID = provider.Locale.EID;
-            player.VideoIds.Clear();            
-            return player.VideoPlayerUrl;
-            */
         }
 
         public override string GetFileNameForDownload(VideoInfo video, string url)
@@ -314,6 +277,35 @@ namespace OnlineVideos.Sites
             return s;
         }
 
+        #region Next/Previous Page
+
+        RssLink currentCategory;
+        int currentStart = 1;
+
+        public override bool HasNextPage
+        {
+            get { return currentCategory != null && currentCategory.EstimatedVideoCount > currentStart; }
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            currentStart += pageSize;
+            return GetVideoForCurrentCategory();
+        }
+
+        public override bool HasPreviousPage
+        {
+            get { return currentCategory != null && currentStart > 1; }
+        }
+
+        public override List<VideoInfo> getPreviousPageVideos()
+        {
+            currentStart -= pageSize;
+            if (currentStart < 1) currentStart = 1;
+            return GetVideoForCurrentCategory();
+        }
+
+        #endregion
 
         #region Search
 
