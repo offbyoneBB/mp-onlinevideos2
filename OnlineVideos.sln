@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CornerstoneTest", "CornerstoneTest\CornerstoneTest.csproj", "{F88965B6-68AA-4EE0-9415-2572330F8B33}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SiteUtilProjects", "SiteUtilProjects", "{6B73364F-8850-4FD8-87DF-CA29321DF24E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.offbyone", "SiteUtilProjects\OnlineVideos.Sites.offbyone\OnlineVideos.Sites.offbyone.csproj", "{022D3A7F-676E-4741-95D3-6E5D0223BFE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,8 +34,17 @@ Global
 		{F88965B6-68AA-4EE0-9415-2572330F8B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F88965B6-68AA-4EE0-9415-2572330F8B33}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F88965B6-68AA-4EE0-9415-2572330F8B33}.Release|x86.ActiveCfg = Release|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 	EndGlobalSection
 EndGlobal

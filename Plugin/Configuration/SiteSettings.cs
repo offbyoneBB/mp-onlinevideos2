@@ -64,7 +64,7 @@ namespace OnlineVideos
         public BindingList<Category> Categories { get; set; }
                
         [XmlIgnore]
-        internal bool DynamicCategoriesDiscovered { get; set; }        
+        public bool DynamicCategoriesDiscovered { get; set; }        
         
         public override string ToString() { return Name; }
     }

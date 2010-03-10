@@ -483,7 +483,6 @@
     <Compile Include="Sites\Cornerstone\ScriptableScraper.cs" />
     <Compile Include="Sites\Cornerstone\Tools\AdvancedStringComparer.cs" />
     <Compile Include="Sites\Cornerstone\Tools\WebGrabber.cs" />
-    <Compile Include="Sites\DasErsteMediathekUtil.cs" />
     <Compile Include="Sites\HardwareInfoUtil.cs" />
     <Compile Include="Sites\Interfaces\IFavorite.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
