@@ -848,12 +848,12 @@
 			<Guid>2969c5c9-356e-42f1-9690-1be003ff1d6f</Guid>
 		</File>
 		<File>
-			<FileName>en.xml</FileName>
+			<FileName>en-US.xml</FileName>
 			<Type>Other</Type>
 			<SubType>%Language%</SubType>
-			<Source>..\Language\OnlineVideos\en.xml</Source>
+			<Source>..\Language\OnlineVideos\en-US.xml</Source>
 			<Id>04010</Id>
-			<Option>OutputFileName=\OnlineVideos\en.xml|</Option>
+			<Option>OutputFileName=\OnlineVideos\en-US.xml|</Option>
 			<Guid>3D7200BE-9745-403a-9E7B-39E7B2259985</Guid>
 		</File>
 		<File>
@@ -865,6 +865,15 @@
 			<Option>OutputFileName=\OnlineVideos\de.xml|</Option>
 			<Guid>21DB6869-B87D-4619-BB73-5C51704931B9</Guid>
 		</File>		
+		<File>
+			<FileName>da.xml</FileName>
+			<Type>Other</Type>
+			<SubType>%Language%</SubType>
+			<Source>..\Language\OnlineVideos\da.xml</Source>
+			<Id>04010</Id>
+			<Option>OutputFileName=\OnlineVideos\da.xml|</Option>
+			<Guid>29596D5B-BFF5-4976-9012-4E18856306F5</Guid>
+		</File>				
     <File>
       <FileName>OnlineTV by on-tv.ru.png</FileName>
       <Type>Thumbs</Type>
@@ -1557,7 +1566,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>07-03-10</CreationDate>
+		<CreationDate>10-03-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>

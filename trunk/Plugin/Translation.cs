@@ -104,18 +104,18 @@ namespace OnlineVideos
       }
       catch (Exception e)
       {
-        if (lang == "en")
+          if (lang == "en-US")
           return 0; // otherwise we are in an endless loop!
 
         if (e.GetType() == typeof(FileNotFoundException))
-          Log.Warn("Cannot find translation file {0}.  Failing back to English", langPath);
+          Log.Warn("Cannot find translation file {0}.  Failing back to English (US)", langPath);
         else
         {
-          Log.Error("Error in translation xml file: {0}. Failing back to English", lang);
+          Log.Error("Error in translation xml file: {0}. Failing back to English (US)", lang);
           Log.Error(e);
         }
 
-        return LoadTranslations("en");
+        return LoadTranslations("en-US");
       }
       foreach (XmlNode stringEntry in doc.DocumentElement.ChildNodes)
       {
