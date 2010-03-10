@@ -117,32 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="NewFolderHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NewFolder.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ErrorCookieNotSet" xml:space="preserve">
+    <value>Cookie is not set.</value>
   </data>
-  <data name="PublishToWeb" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PublishToWeb.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ErrorCookieParse" xml:space="preserve">
+    <value>Error parsing cookie.</value>
   </data>
-  <data name="ImportXml" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ImportXml.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ErrorNetwork" xml:space="preserve">
+    <value>Network error.</value>
   </data>
-  <data name="delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Delete.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ErrorTimeoutOutOfRange" xml:space="preserve">
+    <value>The value specified is less than zero and is not Timeout.Infinite.</value>
   </data>
-  <data name="Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Down.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ErrorTimeoutParse" xml:space="preserve">
+    <value>Error parsing timeout.</value>
   </data>
-  <data name="Add" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Add.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ErrorTokenNotSet" xml:space="preserve">
+    <value>Token is not set.</value>
   </data>
-  <data name="Save" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Save.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ErrorUnknown" xml:space="preserve">
+    <value>Unknown error.</value>
   </data>
-  <data name="Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Up.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NewReport" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NewReport.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ErrorWssIdNotSet" xml:space="preserve">
+    <value>WssId is not set.</value>
   </data>
 </root>

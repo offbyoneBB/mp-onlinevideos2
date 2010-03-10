@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OnlineVideos.Properties {
+namespace OnlineVideos.Sites.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace OnlineVideos.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("OnlineVideos.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("OnlineVideos.Sites.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,66 +60,75 @@ namespace OnlineVideos.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap Add {
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cookie is not set. ähnelt.
+        /// </summary>
+        internal static string ErrorCookieNotSet {
             get {
-                object obj = ResourceManager.GetObject("Add", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("ErrorCookieNotSet", resourceCulture);
             }
         }
         
-        internal static System.Drawing.Bitmap delete {
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error parsing cookie. ähnelt.
+        /// </summary>
+        internal static string ErrorCookieParse {
             get {
-                object obj = ResourceManager.GetObject("delete", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("ErrorCookieParse", resourceCulture);
             }
         }
         
-        internal static System.Drawing.Bitmap Down {
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Network error. ähnelt.
+        /// </summary>
+        internal static string ErrorNetwork {
             get {
-                object obj = ResourceManager.GetObject("Down", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("ErrorNetwork", resourceCulture);
             }
         }
         
-        internal static System.Drawing.Bitmap ImportXml {
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The value specified is less than zero and is not Timeout.Infinite. ähnelt.
+        /// </summary>
+        internal static string ErrorTimeoutOutOfRange {
             get {
-                object obj = ResourceManager.GetObject("ImportXml", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("ErrorTimeoutOutOfRange", resourceCulture);
             }
         }
         
-        internal static System.Drawing.Bitmap NewFolderHS {
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error parsing timeout. ähnelt.
+        /// </summary>
+        internal static string ErrorTimeoutParse {
             get {
-                object obj = ResourceManager.GetObject("NewFolderHS", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("ErrorTimeoutParse", resourceCulture);
             }
         }
         
-        internal static System.Drawing.Bitmap NewReport {
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Token is not set. ähnelt.
+        /// </summary>
+        internal static string ErrorTokenNotSet {
             get {
-                object obj = ResourceManager.GetObject("NewReport", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("ErrorTokenNotSet", resourceCulture);
             }
         }
         
-        internal static System.Drawing.Bitmap PublishToWeb {
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unknown error. ähnelt.
+        /// </summary>
+        internal static string ErrorUnknown {
             get {
-                object obj = ResourceManager.GetObject("PublishToWeb", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("ErrorUnknown", resourceCulture);
             }
         }
         
-        internal static System.Drawing.Bitmap Save {
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die WssId is not set. ähnelt.
+        /// </summary>
+        internal static string ErrorWssIdNotSet {
             get {
-                object obj = ResourceManager.GetObject("Save", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap Up {
-            get {
-                object obj = ResourceManager.GetObject("Up", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("ErrorWssIdNotSet", resourceCulture);
             }
         }
     }

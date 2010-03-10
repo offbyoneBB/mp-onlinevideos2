@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.XPath;
 using System.Text.RegularExpressions;
-using MediaPortal.GUI.Library;
 using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites

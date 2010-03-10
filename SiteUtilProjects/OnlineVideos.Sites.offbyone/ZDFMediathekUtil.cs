@@ -1,6 +1,4 @@
-﻿using MediaPortal.Configuration;
-using MediaPortal.Profile;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;

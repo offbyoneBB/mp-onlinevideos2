@@ -22,5 +22,10 @@ namespace OnlineVideos
                     return ((char)Int32.Parse(match.Value.Substring(2), System.Globalization.NumberStyles.HexNumber)).ToString();
                 });
         }
+
+        public static DateTime UNIXTimeToDateTime(double unixTime)
+        {
+            return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTime).ToLocalTime();
+        }
     }
 }
