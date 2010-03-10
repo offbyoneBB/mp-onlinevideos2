@@ -167,13 +167,13 @@ namespace OnlineVideos
 
         public void LoadScriptSites()
         {
-            Log.Error("Loading script files");
+            Log.Info("Loading script files");
             if (Directory.Exists(Config.GetSubFolder(Config.Dir.Config, "scripts\\OnlineVideos")))
             {
                 FileInfo[] fileInfos = Config.GetSubDirectoryInfo(Config.Dir.Config, "scripts\\OnlineVideos").GetFiles("*.xml");
                 foreach (var fileInfo in fileInfos)
                 {
-                    Log.Error("Script loaded for {0}", fileInfo.FullName);
+                    Log.Info("Script loaded for {0}", fileInfo.FullName);
                     ScriptUtil scriptUtil = new ScriptUtil();
                     scriptUtil.ScriptFile = fileInfo.FullName;
                     scriptUtil.Initialize(new SiteSettings());
