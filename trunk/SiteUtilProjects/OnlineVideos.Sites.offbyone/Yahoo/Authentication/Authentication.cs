@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 using System.Diagnostics;
-using OnlineVideos.Properties;
+using OnlineVideos.Sites.Properties;
 
 namespace Yahoo
 {

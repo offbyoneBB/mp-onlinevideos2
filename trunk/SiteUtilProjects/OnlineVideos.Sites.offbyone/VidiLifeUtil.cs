@@ -1,5 +1,4 @@
 using System;
-using MediaPortal.GUI.Library;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Text;

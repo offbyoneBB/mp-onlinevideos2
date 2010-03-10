@@ -1,16 +1,7 @@
 using System;
-using MediaPortal.GUI.Library;
-using System.Text.RegularExpressions;
-using System.Net;
-using System.Text;
-using MediaPortal.Player;
 using System.Collections.Generic;
-using MediaPortal.GUI.View;
-using MediaPortal.Dialogs;
-using System.Xml;
-using System.Xml.XPath;
 using System.ComponentModel;
-using System.Threading;
+using System.Text.RegularExpressions;
 using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites

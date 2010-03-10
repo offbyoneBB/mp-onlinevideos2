@@ -117,7 +117,7 @@ namespace OnlineVideos
         public string Url { get; set; }
         
         [XmlIgnore]
-        internal uint EstimatedVideoCount  { get; set; }
+        public uint EstimatedVideoCount  { get; set; }
     }
 
     [Serializable]

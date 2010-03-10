@@ -155,16 +155,16 @@ namespace OnlineVideos.Sites
                 provider.Error = false;
                 provider.Init();
             }
-
+            /*
             if (provider.Error)
             {
                 MediaPortal.Dialogs.GUIDialogNotify dlg = (MediaPortal.Dialogs.GUIDialogNotify)MediaPortal.GUI.Library.GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                dlg.SetHeading(MediaPortal.GUI.Library.GUILocalizeStrings.Get(257)/*ERROR*/);
+                dlg.SetHeading(MediaPortal.GUI.Library.GUILocalizeStrings.Get(257));
                 dlg.SetText("Yahoo Authentication Token invalid. Please check Configuration.");
                 dlg.DoModal(MediaPortal.GUI.Library.GUIWindowManager.ActiveWindow);
                 return 0;
             }
-
+            */
             if (catserv == null)
             {
                 catserv = new CategoryTreeService();

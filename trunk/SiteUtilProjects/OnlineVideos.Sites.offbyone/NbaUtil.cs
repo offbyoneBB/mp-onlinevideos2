@@ -7,8 +7,6 @@ using System.Net;
 using System.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
-using MediaPortal.GUI.Library;
-using MediaPortal.Configuration;
 using Jayrock.Json;
 
 namespace OnlineVideos.Sites
@@ -73,17 +71,12 @@ namespace OnlineVideos.Sites
                 vi.Description = ((JsonObject)((JsonObject)jo["metadata"])["media"])["excerpt"].ToString();
                 vi.ImageUrl = ((JsonObject)((JsonObject)((JsonObject)jo["metadata"])["media"])["thumbnail"])["url"].ToString();
                 vi.Length = ((JsonObject)((JsonObject)jo["metadata"])["video"])["length"].ToString();
-                vi.Length += " | " + UNIXTimeToDateTime(long.Parse(jo["mediaDateUts"].ToString())).ToString("g");
+                vi.Length += " | " + OnlineVideos.Utils.UNIXTimeToDateTime(long.Parse(jo["mediaDateUts"].ToString())).ToString("g");
 
                 videos.Add(vi);
             }            
             return videos;
-        }
-
-        static DateTime UNIXTimeToDateTime(double unixTime)
-        {
-            return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTime).ToLocalTime();
-        }
+        }        
 
         #region Paging
 

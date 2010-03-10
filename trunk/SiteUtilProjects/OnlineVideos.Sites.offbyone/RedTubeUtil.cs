@@ -4,8 +4,6 @@ using System.ComponentModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
-using System.IO;
-using MediaPortal.GUI.Library;
 using System.Collections.Specialized;
 
 namespace OnlineVideos.Sites
@@ -33,49 +31,42 @@ namespace OnlineVideos.Sites
             List<VideoInfo> loVideoList = new List<VideoInfo>();
             if (dataPage.Length > 0)
             {
-                try
+                Match m = videoListRegEx.Match(dataPage);
+                while (m.Success)
                 {
-                    Match m = videoListRegEx.Match(dataPage);
-                    while (m.Success)
-                    {
-                        VideoInfo videoInfo = new VideoInfo();
-                        videoInfo.Title = m.Groups["Title"].Value;
-                        videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
-                        videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                        videoInfo.Length = m.Groups["Duration"].Value;
-                        loVideoList.Add(videoInfo);
-                        m = m.NextMatch();
-                    }
-
-                    // check for previous page link
-                    Match mPrev = previousPageRegEx.Match(dataPage);
-                    if (mPrev.Success)
-                    {
-                        previousPageAvailable = true;
-                        previousPageUrl = mPrev.Groups["url"].Value;
-                    }
-                    else
-                    {
-                        previousPageAvailable = false;
-                        previousPageUrl = "";
-                    }
-
-                    // check for next page link
-                    Match mNext = nextPageRegEx.Match(dataPage);
-                    if (mNext.Success)
-                    {
-                        nextPageAvailable = true;
-                        nextPageUrl = mNext.Groups["url"].Value;
-                    }
-                    else
-                    {
-                        nextPageAvailable = false;
-                        nextPageUrl = "";
-                    }
+                    VideoInfo videoInfo = new VideoInfo();
+                    videoInfo.Title = m.Groups["Title"].Value;
+                    videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
+                    videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+                    videoInfo.Length = m.Groups["Duration"].Value;
+                    loVideoList.Add(videoInfo);
+                    m = m.NextMatch();
                 }
-                catch (Exception ex)
+
+                // check for previous page link
+                Match mPrev = previousPageRegEx.Match(dataPage);
+                if (mPrev.Success)
                 {
-                    Log.Error(ex);
+                    previousPageAvailable = true;
+                    previousPageUrl = mPrev.Groups["url"].Value;
+                }
+                else
+                {
+                    previousPageAvailable = false;
+                    previousPageUrl = "";
+                }
+
+                // check for next page link
+                Match mNext = nextPageRegEx.Match(dataPage);
+                if (mNext.Success)
+                {
+                    nextPageAvailable = true;
+                    nextPageUrl = mNext.Groups["url"].Value;
+                }
+                else
+                {
+                    nextPageAvailable = false;
+                    nextPageUrl = "";
                 }
             }
             return loVideoList;
