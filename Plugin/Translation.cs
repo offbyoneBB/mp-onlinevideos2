@@ -175,7 +175,7 @@ namespace OnlineVideos
 
     public static void TranslateSkin()
     {
-      Log.Error("Translating skin");
+      Log.Info("Translating skin");
       foreach (string name in Translation.Strings.Keys)
       {
         SetProperty("#OnlineVideos.Translation." + name + ".Label", Translation.Strings[name]);
