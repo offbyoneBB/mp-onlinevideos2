@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using MediaPortal.GUI.Library;
 
 //written by Hersh Shafer (hershs@gmail.com)
 namespace OnlineVideos.Sites

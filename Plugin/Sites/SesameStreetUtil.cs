@@ -7,7 +7,6 @@ using System.IO;
 using System.Web;
 using System.Net;
 using System.Text.RegularExpressions;
-using MediaPortal.GUI.Library;
 using System.Drawing;
 
 namespace OnlineVideos.Sites

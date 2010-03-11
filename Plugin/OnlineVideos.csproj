@@ -222,6 +222,7 @@
     <Compile Include="Jayrock.Json\Json\JsonWriterBracket.cs" />
     <Compile Include="Jayrock.Json\Mask.cs" />
     <Compile Include="Jayrock.Json\UnixTime.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="MMSDownloader.cs" />
     <Compile Include="OnlineVideosGuiListItem.cs" />
     <Compile Include="Player\ExternalOSDLibrary\BaseWindow.cs" />

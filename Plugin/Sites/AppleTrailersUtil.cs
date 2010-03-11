@@ -7,7 +7,6 @@ using System.Net;
 using System.Text;
 using System.Xml;
 using Jayrock.Json;
-using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {

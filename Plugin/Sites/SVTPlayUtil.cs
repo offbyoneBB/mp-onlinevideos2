@@ -4,8 +4,6 @@ using System.Collections;
 using System.Xml;
 using System.Text;
 using System.Net;
-using MediaPortal.GUI.Library;
-using MediaPortal.Configuration;
 using System.Text.RegularExpressions;
 using RssToolkit.Rss;
 

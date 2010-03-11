@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Net;
-//using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
