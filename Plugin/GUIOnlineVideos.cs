@@ -1596,29 +1596,16 @@ namespace OnlineVideos
         private void ShowVideoDetails()
         {
             GUIPropertyManager.SetProperty("#OnlineVideos.movieposter", ImageDownloader.DownloadPoster(selectedVideo.Tags, selectedVideo.Title));
-            GUIPropertyManager.SetProperty("#OnlineVideos.trailerdesc", selectedVideo.Description);
-            Sites.AppleTrailersUtil.Trailer info = selectedVideo.Other as Sites.AppleTrailersUtil.Trailer;
-            if (info != null)
-            {
-                GUIPropertyManager.SetProperty("#OnlineVideos.genre", info.Genres.ToString());
-                GUIPropertyManager.SetProperty("#OnlineVideos.releasedate", info.ReleaseDate.ToShortDateString());
-                GUIPropertyManager.SetProperty("#OnlineVideos.cast", info.Cast.ToString());
-                ShowAndEnable(52);
-                ShowAndEnable(53);
-                ShowAndEnable(54);
-                ShowAndEnable(55);
-                ShowAndEnable(56);
-                ShowAndEnable(57);
-            }
-            else
-            {
-                HideAndDisable(52);
-                HideAndDisable(53);
-                HideAndDisable(54);
-                HideAndDisable(55);
-                HideAndDisable(56);
-                HideAndDisable(57);
-            }
+            GUIPropertyManager.SetProperty("#OnlineVideos.trailerdesc", selectedVideo.Description);            
+            GUIPropertyManager.SetProperty("#OnlineVideos.genre", selectedVideo.Genres);
+            GUIPropertyManager.SetProperty("#OnlineVideos.releasedate", selectedVideo.Length);
+            GUIPropertyManager.SetProperty("#OnlineVideos.cast", selectedVideo.Cast);
+            ShowAndEnable(52);
+            ShowAndEnable(53);
+            ShowAndEnable(54);
+            ShowAndEnable(55);
+            ShowAndEnable(56);
+            ShowAndEnable(57);
             ShowAndEnable(23);
             ShowAndEnable(24);
             ShowAndEnable(51);
