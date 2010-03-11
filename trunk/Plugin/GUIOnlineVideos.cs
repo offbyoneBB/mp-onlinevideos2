@@ -146,7 +146,6 @@ namespace OnlineVideos
         List<VideoInfo> currentTrailerList = new List<VideoInfo>();
 
         RTMP_LIB.HTTPServer proxyRtmp;
-        OnlineVideos.Sites.AppleProxyServer proxyApple;
 
         private SmsT9Filter currentFilter = new SmsT9Filter();
 
@@ -200,8 +199,7 @@ namespace OnlineVideos
             {
                 Translation.TranslateSkin();
                 LoadSettings();
-                proxyRtmp = new RTMP_LIB.HTTPServer(OnlineVideoSettings.RTMP_PROXY_PORT);
-                proxyApple = new OnlineVideos.Sites.AppleProxyServer(OnlineVideoSettings.APPLE_PROXY_PORT);
+                proxyRtmp = new RTMP_LIB.HTTPServer(OnlineVideoSettings.RTMP_PROXY_PORT);                
                 firstLoadDone = true;
             }
 
@@ -212,7 +210,7 @@ namespace OnlineVideos
             {
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last                
                 OnlineVideoSettings.getInstance().ageHasBeenConfirmed = false;
-                Log.Debug("OnlineVideos Age Confirmed set to false.");
+                Log.Debug("Age Confirmed set to false.");
                 if (selectedSite != null && selectedSite.Settings.ConfirmAge)
                 {
                     CurrentState = State.sites;
@@ -617,7 +615,7 @@ namespace OnlineVideos
                 if (OnlineVideoSettings.getInstance().ageHasBeenConfirmed)
                 {
                     OnlineVideoSettings.getInstance().ageHasBeenConfirmed = false;
-                    Log.Debug("OnlineVideos Age Confirmed set to false.");
+                    Log.Debug("Age Confirmed set to false.");
                     if (selectedSite != null && selectedSite.Settings.ConfirmAge)
                     {
                         CurrentState = State.sites;
