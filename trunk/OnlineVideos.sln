@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+# Visual C# Express 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos", "Plugin\OnlineVideos.csproj", "{E0D9D390-CDD6-4B98-86F3-6EB04A958882}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{28BEFB3A-C1A1-427F-B156-83157F30EA3C}"
@@ -13,6 +13,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SiteUtilProjects", "SiteUtilProjects", "{6B73364F-8850-4FD8-87DF-CA29321DF24E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.offbyone", "SiteUtilProjects\OnlineVideos.Sites.offbyone\OnlineVideos.Sites.offbyone.csproj", "{022D3A7F-676E-4741-95D3-6E5D0223BFE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.hioctane", "SiteUtilProjects\OnlineVideos.Sites.hioctane\OnlineVideos.Sites.hioctane.csproj", "{6562D25F-C02C-46B3-BD7C-63090C5CBFA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +42,12 @@ Global
 		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|x86.ActiveCfg = Release|Any CPU
+		{6562D25F-C02C-46B3-BD7C-63090C5CBFA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6562D25F-C02C-46B3-BD7C-63090C5CBFA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6562D25F-C02C-46B3-BD7C-63090C5CBFA7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6562D25F-C02C-46B3-BD7C-63090C5CBFA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6562D25F-C02C-46B3-BD7C-63090C5CBFA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6562D25F-C02C-46B3-BD7C-63090C5CBFA7}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

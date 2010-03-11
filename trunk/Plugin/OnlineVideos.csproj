@@ -459,7 +459,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Configuration\SiteSettings.cs" />
-    <Compile Include="Sites\ArtePlus7Util.cs" />
     <Compile Include="Sites\CinemassacreUtil.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\ByteArray.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\DynamicList.cs" />
@@ -485,21 +484,13 @@
     <Compile Include="Sites\HardwareInfoUtil.cs" />
     <Compile Include="Sites\Interfaces\IFavorite.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
-    <Compile Include="Sites\Kabel1Util.cs" />
     <Compile Include="Sites\LineCinemaRuUtil.cs" />
-    <Compile Include="Sites\MdrUtil.cs" />
     <Compile Include="Sites\Movies4Men.cs" />
-    <Compile Include="Sites\NdrUtil.cs" />
     <Compile Include="Sites\NOSUtil.cs" />
     <Compile Include="Sites\OnsNetNuenenUtil.cs" />
     <Compile Include="Sites\OnTVRuUtil.cs" />
-    <Compile Include="Sites\OrfUtil.cs" />
-    <Compile Include="Sites\Pro7Util.cs" />
-    <Compile Include="Sites\RTLNowUtil.cs" />
-    <Compile Include="Sites\Sat1Util.cs" />
     <Compile Include="Sites\ScriptUtil.cs" />
     <Compile Include="Sites\SesameStreetUtil.cs" />
-    <Compile Include="Sites\Sf1Util.cs" />
     <Compile Include="Sites\SVTPlayUtil.cs" />
     <Compile Include="Sites\TurboNickUtil.cs" />
     <Compile Include="Sites\TVEUtil.cs" />
@@ -511,7 +502,6 @@
     <Compile Include="Sites\GenericSiteUtil.cs" />
     <Compile Include="Sites\Base\SiteUtilBase.cs" />
     <Compile Include="Sites\Base\SiteUtilFactory.cs" />
-    <Compile Include="Sites\VoxNowUtil.cs" />
     <Compile Include="Sites\Wetenschap24Util.cs" />
     <Compile Include="Sites\YouTubeUtil.cs" />
     <Compile Include="GUIOnlineVideos.cs">
