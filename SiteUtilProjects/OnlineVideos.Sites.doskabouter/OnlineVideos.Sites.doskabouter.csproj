@@ -33,10 +33,23 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HardwareInfoUtil.cs" />
+    <Compile Include="Movies4Men.cs" />
+    <Compile Include="NOSUtil.cs" />
+    <Compile Include="OnsNetNuenenUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SesameStreetUtil.cs" />
+    <Compile Include="TurboNickUtil.cs" />
+    <Compile Include="TVEUtil.cs" />
+    <Compile Include="TvGemistUtil.cs" />
+    <Compile Include="TvGorgeUtil.cs" />
+    <Compile Include="TvTuttiUtil.cs" />
+    <Compile Include="Wetenschap24Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Plugin\OnlineVideos.csproj">
