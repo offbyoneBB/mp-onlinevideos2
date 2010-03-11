@@ -254,19 +254,19 @@
 			<Guid>866351f4-47a3-4e20-b185-298752b9ba4a</Guid>
 		</File>
     <File>
-      <FileName>Discovey Channel.png</FileName>
+      <FileName>Discovery Channel.png</FileName>
       <Type>Thumbs</Type>
       <SubType>OnlineVideos\Banners</SubType>
-      <Source>..\SiteImages\Banners\Discovey Channel.png</Source>
+      <Source>..\SiteImages\Banners\Discovery Channel.png</Source>
       <Id>04010</Id>
       <Option />
       <Guid>CB3FDEA1-C7CB-4a31-8C51-FBBE36BCC009</Guid>
     </File>
     <File>
-      <FileName>Discovey Channel.png</FileName>
+      <FileName>Discovery Channel.png</FileName>
       <Type>Thumbs</Type>
       <SubType>OnlineVideos\Icons</SubType>
-      <Source>..\SiteImages\Icons\Discovey Channel.png</Source>
+      <Source>..\SiteImages\Icons\Discovery Channel.png</Source>
       <Id>04010</Id>
       <Option />
       <Guid>51336342-345D-49d9-9572-909285E72254</Guid>
@@ -829,6 +829,33 @@
 			<Option />
 			<Guid>4a55c598-29fc-42f1-a85d-399398cfa935</Guid>
 		</File>
+    <File>
+			<FileName>OnlineVideos.Sites.offbyone.dll</FileName>
+			<Type>Plugin</Type>
+			<SubType>Window</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.Sites.offbyone.dll</Source>
+			<Id>01010</Id>
+			<Option />
+			<Guid>1DC2C69B-9690-4670-B336-7B218EF934BD</Guid>
+		</File>
+		<File>
+			<FileName>OnlineVideos.Sites.hioctane.dll</FileName>
+			<Type>Plugin</Type>
+			<SubType>Window</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.Sites.hioctane.dll</Source>
+			<Id>01010</Id>
+			<Option />
+			<Guid>7D7B108F-3FC7-4fa7-A422-DCC3605E7FE8</Guid>
+		</File>
+		<File>
+			<FileName>OnlineVideos.Sites.doskabouter.dll</FileName>
+			<Type>Plugin</Type>
+			<SubType>Window</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.Sites.doskabouter.dll</Source>
+			<Id>01010</Id>
+			<Option />
+			<Guid>5E86E758-7710-4b2c-8ADC-419DC09C6361</Guid>
+		</File>
 		<File>
 			<FileName>OnlineVideos.png</FileName>
 			<Type>Thumbs</Type>
@@ -873,7 +900,16 @@
 			<Id>04010</Id>
 			<Option>OutputFileName=\OnlineVideos\da.xml|</Option>
 			<Guid>29596D5B-BFF5-4976-9012-4E18856306F5</Guid>
-		</File>				
+		</File>
+    <File>
+			<FileName>nl.xml</FileName>
+			<Type>Other</Type>
+			<SubType>%Language%</SubType>
+			<Source>..\Language\OnlineVideos\nl.xml</Source>
+			<Id>04010</Id>
+			<Option>OutputFileName=\OnlineVideosnl.xml|</Option>
+			<Guid>540A1BD5-6F3C-417c-9D6B-8569534DB285</Guid>
+		</File>
     <File>
       <FileName>OnlineTV by on-tv.ru.png</FileName>
       <Type>Thumbs</Type>
@@ -1566,7 +1602,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>10-03-10</CreationDate>
+		<CreationDate>12-03-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
