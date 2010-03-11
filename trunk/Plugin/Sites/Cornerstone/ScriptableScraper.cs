@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using MediaPortal.GUI.Library;
 using System.Xml;
 using System.Web;
 using System.Net;

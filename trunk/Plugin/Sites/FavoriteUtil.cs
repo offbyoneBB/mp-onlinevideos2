@@ -8,10 +8,6 @@ using System.Xml.XPath;
 using System.ComponentModel;
 using System.Threading;
 using OnlineVideos.Database;
-using MediaPortal.GUI.Library;
-using MediaPortal.GUI.View;
-using MediaPortal.Dialogs;
-using MediaPortal.Util;
 
 namespace OnlineVideos.Sites
 {
