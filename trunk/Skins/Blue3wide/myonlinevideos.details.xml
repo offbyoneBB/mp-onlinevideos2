@@ -43,7 +43,7 @@
       <id>52</id>
       <posX>450</posX>
       <posY>118</posY>
-      <label>>#OnlineVideos.Translation.Actors.Label</label>
+      <label>#OnlineVideos.Translation.Actors.Label</label>
       <visible>no</visible>
       <textcolor>ffb2d4f5</textcolor>
     </control>
