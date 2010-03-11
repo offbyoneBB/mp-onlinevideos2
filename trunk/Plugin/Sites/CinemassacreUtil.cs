@@ -24,7 +24,6 @@ namespace OnlineVideos.Sites
         January 6, 2010<br />
         Run time: 17:56</td>
          */
-        private string videoListRegex = @"<a\shref=""(?<url>[^""]+)""\s[^<]+<img\ssrc=""(?<thumb>[^""]+)"".*?target=""_self"">(?<title>[^<]+)<.*?Run\stime:\s(?<duration>[^<]+)<";
 
         /* list:  
         <p class="date">August 15, 2009</p>
@@ -35,13 +34,12 @@ namespace OnlineVideos.Sites
         <p><a href="http://www.cinemassacre.com/new/?p=2831" target="_self"><strong><strong>78 Wayne&#8217;s World </strong></strong></a></p>
 
          */
-        private string videoListListRegex = @"<a\shref=""(?<url>[^""]+)[^>]+>(?:<strong>)*?(?<title>[^<]+)<";
+        private string videoListRegex = @"<a\shref=""(?<url>[^""]+)[^>]+>(?:<strong>)*(<img.*?src=""(?<thumb>[^""]+)[^>]*>)?(?<title>[^<]*)<";
 
         private string[] videoUrlRegex = new String[3];
 
         private Regex regEx_Category;
         private Regex regEx_VideoList;
-        private Regex regEx_VideoListList;
         private Regex[] regEx_VideoUrl = new Regex[3];
 
         public override void Initialize(SiteSettings siteSettings)
@@ -60,7 +58,6 @@ namespace OnlineVideos.Sites
 
             regEx_Category = new Regex(categoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
             regEx_VideoList = new Regex(videoListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
-            regEx_VideoListList = new Regex(videoListListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
             for (int i = 0; i < videoUrlRegex.Length; i++)
                 regEx_VideoUrl[i] = new Regex(videoUrlRegex[i], RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
@@ -191,30 +188,30 @@ namespace OnlineVideos.Sites
                             //http://trailers-ll.gametrailers.com/gt_vault/3000/t_screwattack_avgn_ninjag_gt_int5h.flv
                         }
                         else
-                        if (lsUrl.StartsWith(@"http://www.gametrailers.com/remote_wrap.php?mid="))
-                        {
-                            string id = lsUrl.Substring(48);
-                            string s = @"http://mosii.gametrailers.com/getmediainfo4.php?mid=" + id;
-                            string data2 = GetWebDataFromPost(s, "");
-                            string[] parameters = data2.Split('&');
-                            string umHostOverride = null;
-                            string umFileName = null;
-                            foreach (string param in parameters)
+                            if (lsUrl.StartsWith(@"http://www.gametrailers.com/remote_wrap.php?mid="))
                             {
-                                string[] nameValue = param.Split('=');
-                                if (nameValue.Length == 2)
+                                string id = lsUrl.Substring(48);
+                                string s = @"http://mosii.gametrailers.com/getmediainfo4.php?mid=" + id;
+                                string data2 = GetWebDataFromPost(s, "");
+                                string[] parameters = data2.Split('&');
+                                string umHostOverride = null;
+                                string umFileName = null;
+                                foreach (string param in parameters)
                                 {
-                                    if (nameValue[0].Equals("umhostoverride")) umHostOverride = nameValue[1];
-                                    if (nameValue[0].Equals("umfilename")) umFileName = HttpUtility.UrlDecode(nameValue[1]) + ".flv";
+                                    string[] nameValue = param.Split('=');
+                                    if (nameValue.Length == 2)
+                                    {
+                                        if (nameValue[0].Equals("umhostoverride")) umHostOverride = nameValue[1];
+                                        if (nameValue[0].Equals("umfilename")) umFileName = HttpUtility.UrlDecode(nameValue[1]) + ".flv";
+                                    }
                                 }
+                                if (!String.IsNullOrEmpty(umHostOverride) && !String.IsNullOrEmpty(umFileName))
+                                    return "http://" + umHostOverride + "/gt_vault/" + umFileName;
+                                else
+                                    return lsUrl;
                             }
-                            if (!String.IsNullOrEmpty(umHostOverride) && !String.IsNullOrEmpty(umFileName))
-                                return "http://" + umHostOverride + "/gt_vault/" + umFileName;
                             else
                                 return lsUrl;
-                        }
-                        else
-                            return lsUrl;
             }
             else
                 return video.VideoUrl;
@@ -267,7 +264,13 @@ namespace OnlineVideos.Sites
                             if (s.ToLower().StartsWith("\nrun time: "))
                                 video.Length = s.Substring(11);
                             else
-                                video.Description += ' ' + s;
+                            {
+                                s = s.Trim('\n');
+                                if (String.IsNullOrEmpty(video.Title))
+                                    video.Title = s;
+                                else
+                                    video.Description += ' ' + s;
+                            }
                         }
 
                     if (video.VideoUrl != String.Empty)
@@ -291,13 +294,14 @@ namespace OnlineVideos.Sites
 
             string data = webData.Substring(0, i);
 
-            Match m = regEx_VideoListList.Match(data);
+            Match m = regEx_VideoList.Match(data);
             while (m.Success)
             {
                 VideoInfo video = new VideoInfo();
                 video.Title = HttpUtility.HtmlDecode(m.Groups["title"].Value);
                 video.VideoUrl = m.Groups["url"].Value;
-                if (video.VideoUrl != String.Empty)
+                video.ImageUrl = m.Groups["thumb"].Value;
+                if (video.VideoUrl != String.Empty && video.Title != String.Empty)
                     videos.Add(video);
                 m = m.NextMatch();
             }
