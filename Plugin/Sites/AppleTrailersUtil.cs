@@ -183,6 +183,9 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum quality for the trailer to be played.")]
         VideoQuality trailerSize = VideoQuality.HD480;
 
+        const int APPLE_PROXY_PORT = 30005;
+        AppleProxyServer proxyApple;
+
         public override bool HasMultipleVideos
         {
             get { return true; }
@@ -190,6 +193,8 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
+            if (proxyApple == null) proxyApple = new OnlineVideos.Sites.AppleProxyServer(APPLE_PROXY_PORT);
+
             Settings.Categories.Clear();
 
             RssLink link = new RssLink();
@@ -459,7 +464,7 @@ namespace OnlineVideos.Sites
                                 trailer.Media.Add(video);
                             }                            
                             // Add the current quality to the video
-                            video.PlaybackOptions[quality.ToString()] = string.Format("http://127.0.0.1:{0}/?url={1}", OnlineVideoSettings.APPLE_PROXY_PORT, System.Web.HttpUtility.UrlEncode(videourl));
+                            video.PlaybackOptions[quality.ToString()] = string.Format("http://127.0.0.1:{0}/?url={1}", APPLE_PROXY_PORT, System.Web.HttpUtility.UrlEncode(videourl));
                             // Set the duration of the video
                             video.Duration = new TimeSpan(0, 0, duration);
 

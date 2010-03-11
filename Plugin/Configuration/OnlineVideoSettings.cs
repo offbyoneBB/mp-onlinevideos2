@@ -17,8 +17,7 @@ namespace OnlineVideos
     public class OnlineVideoSettings
     {
         public const string UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3";
-        public const int RTMP_PROXY_PORT = 30004;
-        public const int APPLE_PROXY_PORT = 30005;
+        public const int RTMP_PROXY_PORT = 30004;        
         public const string PLUGIN_NAME = "Online Videos";
 
         public const string SECTION = "onlinevideos";
@@ -141,7 +140,7 @@ namespace OnlineVideos
                 if (String.IsNullOrEmpty(msThumbLocation)) msThumbLocation = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\";                
                 msThumbLocation = msThumbLocation.Replace("/", @"\");
                 if (!msThumbLocation.EndsWith(@"\")) msThumbLocation = msThumbLocation + @"\";
-                Log.Info("OnlineVideos Thumbnails will be store in  " + msThumbLocation);
+                Log.Info("Thumbnails will be stored in  " + msThumbLocation);
 
                 string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
                 if (!File.Exists(filename))
@@ -232,7 +231,7 @@ namespace OnlineVideos
                     if (!string.IsNullOrEmpty(lsFilterList)) xmlwriter.SetValue(SECTION, FILTER, lsFilterList);
                     xmlwriter.SetValue(SECTION, BASICHOMESCREEN_NAME, BasicHomeScreenName);
                     xmlwriter.SetValue(SECTION, THUMBNAIL_DIR, msThumbLocation);
-                    Log.Info("OnlineVideoSettings - download Dir:" + msDownloadDir);
+                    Log.Info("OnlineVideoSettings - download dir: " + msDownloadDir);
                     xmlwriter.SetValue(SECTION, DOWNLOAD_DIR, msDownloadDir);                    
                     xmlwriter.SetValueAsBool(SECTION, USE_AGECONFIRMATION, useAgeConfirmation);
                     xmlwriter.SetValue(SECTION, PIN_AGECONFIRMATION, pinAgeConfirmation);

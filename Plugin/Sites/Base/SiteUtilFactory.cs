@@ -22,7 +22,7 @@ namespace OnlineVideos
             }            
             foreach (Assembly assembly in assemblies)
             {
-                Log.Debug("OnlineVideos looking for SiteUtils in Assembly: {0}", assembly.GetName().Name);
+                Log.Debug("Looking for SiteUtils in Assembly: {0}", assembly.GetName().Name);
                 Type[] typeArray = assembly.GetExportedTypes();
                 foreach (Type type in typeArray)
                 {

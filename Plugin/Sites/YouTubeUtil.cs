@@ -175,7 +175,7 @@ namespace OnlineVideos.Sites
             }
             catch (Exception ex)
             {
-                Log.Error("OnlineVideos : Error retrieving YouTube Categories: " + ex.Message);
+                Log.Error("Error retrieving YouTube Categories: " + ex.Message);
             }
             return categories;
         }
