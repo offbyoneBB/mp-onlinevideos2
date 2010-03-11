@@ -590,7 +590,7 @@
         <Category xsi:type="RssLink" name="XLR8R TV" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/xlr8rtv/xlr8rtv.jpg">http://revision3.com/xlr8rtv/feed/quicktime-large/</Category>
       </Categories>
     </Site>
-    <Site name="Discovey Channel" util="GenericSite" agecheck="false" enabled="true" lang="en">
+    <Site name="Discovery Channel" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>American TV Channel dedicated to documentaries about popular science, technology, and history.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Discovery Video" thumb="http://up2.podbean.com/image-logos/16961_logo.jpg">http://www.discovery.com/radio/xml/discovery_video.xml</Category>
