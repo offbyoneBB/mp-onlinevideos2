@@ -339,7 +339,6 @@
     <Compile Include="RTMP_LIB\Log.cs" />
     <Compile Include="RTMP_LIB\RTMP.cs" />
     <Compile Include="RTMP_LIB\RTMPPacket.cs" />
-    <Compile Include="Sites\AppleTrailersUtil.cs" />
     <Compile Include="Configuration\BrowserForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -485,14 +484,11 @@
     <Compile Include="Sites\HardwareInfoUtil.cs" />
     <Compile Include="Sites\Interfaces\IFavorite.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
-    <Compile Include="Sites\LineCinemaRuUtil.cs" />
     <Compile Include="Sites\Movies4Men.cs" />
     <Compile Include="Sites\NOSUtil.cs" />
     <Compile Include="Sites\OnsNetNuenenUtil.cs" />
-    <Compile Include="Sites\OnTVRuUtil.cs" />
     <Compile Include="Sites\ScriptUtil.cs" />
     <Compile Include="Sites\SesameStreetUtil.cs" />
-    <Compile Include="Sites\SVTPlayUtil.cs" />
     <Compile Include="Sites\TurboNickUtil.cs" />
     <Compile Include="Sites\TVEUtil.cs" />
     <Compile Include="Sites\TvGemistUtil.cs" />

@@ -15,6 +15,8 @@ namespace OnlineVideos
         public string ImageUrl { get; set; }
         public string Length { get; set; }
         public string Tags { get; set; }
+        public string Genres { get; set; }
+        public string Cast { get; set; }
         public string StartTime { get; set; }
         public object Other { get; set; }
         public Dictionary<string, string> PlaybackOptions;

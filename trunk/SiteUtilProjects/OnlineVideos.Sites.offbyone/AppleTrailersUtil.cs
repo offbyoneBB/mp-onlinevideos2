@@ -318,7 +318,8 @@ namespace OnlineVideos.Sites
 
             Trailer trailer = fetchDetails(video.VideoUrl);
 
-            video.Other = trailer;
+            video.Cast = trailer.Cast.ToString();
+            video.Genres = trailer.Genres.ToString();
             video.Description = trailer.Description;
             video.Tags = trailer.Poster;
 

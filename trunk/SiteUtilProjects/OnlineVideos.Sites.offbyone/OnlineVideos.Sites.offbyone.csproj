@@ -39,15 +39,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppleTrailersUtil.cs" />
     <Compile Include="BBCiPlayerUtil.cs" />
     <Compile Include="DasErsteMediathekUtil.cs" />
     <Compile Include="JustinTVUtil.cs" />
+    <Compile Include="LineCinemaRuUtil.cs" />
     <Compile Include="LiveVideoUtil.cs" />
     <Compile Include="MiroUtil.cs" />
     <Compile Include="MsnbcUtil.cs" />
     <Compile Include="MtvMusicVideosUtil.cs" />
     <Compile Include="MyVideoUtil.cs" />
     <Compile Include="NbaUtil.cs" />
+    <Compile Include="OnTVRuUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -56,6 +59,7 @@
     </Compile>
     <Compile Include="RedTubeUtil.cs" />
     <Compile Include="SouthParkDeUtil.cs" />
+    <Compile Include="SVTPlayUtil.cs" />
     <Compile Include="ViasatUtil.cs" />
     <Compile Include="VidiLifeUtil.cs" />
     <Compile Include="YahooMusicVideosUtil.cs" />
