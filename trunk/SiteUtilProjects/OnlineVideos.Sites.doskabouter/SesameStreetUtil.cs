@@ -128,8 +128,7 @@ namespace OnlineVideos.Sites
                         Stream responseStream = response.GetResponseStream();
                         Bitmap png = new Bitmap(responseStream);
 
-                        string bareFinalUrl = System.IO.Path.ChangeExtension(pngName, String.Empty);
-                        string lsThumbLocation = OnlineVideoSettings.getInstance().msThumbLocation;
+                        string bareFinalUrl = System.IO.Path.ChangeExtension(pngName, String.Empty);                        
                         int newHeight = png.Height / nWithImage;
                         for (int i = 0; i < nWithImage; i++)
                         {
@@ -139,11 +138,8 @@ namespace OnlineVideos.Sites
                             g.Dispose();
 
                             string finalUrl = bareFinalUrl + '_' + i.ToString() + ".PNG";
-                            categories[i].Thumb = finalUrl;
-                            string name = MediaPortal.Util.Utils.GetThumb(finalUrl);
-                            name = System.IO.Path.GetFileNameWithoutExtension(name);
-
-                            string imageLocation = lsThumbLocation + name + "L.jpg";
+                            categories[i].Thumb = finalUrl;                            
+                            string imageLocation = ImageDownloader.GetThumbFile(finalUrl);
                             newPng.Save(imageLocation);
                         }
                     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace OnlineVideos
 {
-    interface IFilter
+    public interface IFilter
     {
         List<VideoInfo> filterVideoList(Category category, int maxResult, String orderBy, String timeFrame);
         List<VideoInfo> filterSearchResultList(String query, int maxResult, String orderBy, String timeFrame);

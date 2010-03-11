@@ -481,25 +481,14 @@
     <Compile Include="Sites\Cornerstone\ScriptableScraper.cs" />
     <Compile Include="Sites\Cornerstone\Tools\AdvancedStringComparer.cs" />
     <Compile Include="Sites\Cornerstone\Tools\WebGrabber.cs" />
-    <Compile Include="Sites\HardwareInfoUtil.cs" />
     <Compile Include="Sites\Interfaces\IFavorite.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
-    <Compile Include="Sites\Movies4Men.cs" />
-    <Compile Include="Sites\NOSUtil.cs" />
-    <Compile Include="Sites\OnsNetNuenenUtil.cs" />
     <Compile Include="Sites\ScriptUtil.cs" />
-    <Compile Include="Sites\SesameStreetUtil.cs" />
-    <Compile Include="Sites\TurboNickUtil.cs" />
-    <Compile Include="Sites\TVEUtil.cs" />
-    <Compile Include="Sites\TvGemistUtil.cs" />
-    <Compile Include="Sites\TvGorgeUtil.cs" />
-    <Compile Include="Sites\TvTuttiUtil.cs" />
     <Compile Include="Sites\DownloadedVideoUtil.cs" />
     <Compile Include="Sites\FavoriteUtil.cs" />
     <Compile Include="Sites\GenericSiteUtil.cs" />
     <Compile Include="Sites\Base\SiteUtilBase.cs" />
     <Compile Include="Sites\Base\SiteUtilFactory.cs" />
-    <Compile Include="Sites\Wetenschap24Util.cs" />
     <Compile Include="Sites\YouTubeUtil.cs" />
     <Compile Include="GUIOnlineVideos.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

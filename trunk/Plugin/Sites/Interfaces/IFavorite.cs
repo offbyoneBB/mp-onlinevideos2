@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace OnlineVideos
 {
-    interface IFavorite
+    public interface IFavorite
     {
         List<VideoInfo> getFavorites();
         void addFavorite(VideoInfo video);
