@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.offbyone
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.hioctane", "SiteUtilProjects\OnlineVideos.Sites.hioctane\OnlineVideos.Sites.hioctane.csproj", "{6562D25F-C02C-46B3-BD7C-63090C5CBFA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.doskabouter", "SiteUtilProjects\OnlineVideos.Sites.doskabouter\OnlineVideos.Sites.doskabouter.csproj", "{D43B3A93-FDF8-4B5C-8BD0-714FBBF9AF31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,12 @@ Global
 		{6562D25F-C02C-46B3-BD7C-63090C5CBFA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6562D25F-C02C-46B3-BD7C-63090C5CBFA7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6562D25F-C02C-46B3-BD7C-63090C5CBFA7}.Release|x86.ActiveCfg = Release|Any CPU
+		{D43B3A93-FDF8-4B5C-8BD0-714FBBF9AF31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D43B3A93-FDF8-4B5C-8BD0-714FBBF9AF31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D43B3A93-FDF8-4B5C-8BD0-714FBBF9AF31}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D43B3A93-FDF8-4B5C-8BD0-714FBBF9AF31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D43B3A93-FDF8-4B5C-8BD0-714FBBF9AF31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D43B3A93-FDF8-4B5C-8BD0-714FBBF9AF31}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,5 +63,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{022D3A7F-676E-4741-95D3-6E5D0223BFE4} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{6562D25F-C02C-46B3-BD7C-63090C5CBFA7} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
+		{D43B3A93-FDF8-4B5C-8BD0-714FBBF9AF31} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 	EndGlobalSection
 EndGlobal
