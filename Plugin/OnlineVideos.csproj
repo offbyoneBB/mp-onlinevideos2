@@ -224,6 +224,7 @@
     <Compile Include="Jayrock.Json\UnixTime.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MMSDownloader.cs" />
+    <Compile Include="OnlineVideosException.cs" />
     <Compile Include="OnlineVideosGuiListItem.cs" />
     <Compile Include="Player\ExternalOSDLibrary\BaseWindow.cs" />
     <Compile Include="Player\ExternalOSDLibrary\DialogWindow.cs" />
