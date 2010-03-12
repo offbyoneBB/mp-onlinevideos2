@@ -184,8 +184,9 @@ namespace OnlineVideos.Sites
         {
             int p=youtubeUrl.LastIndexOf('/');
             p++;
-            int q=youtubeUrl.IndexOf('&',p);
-            if (q <0) q = youtubeUrl.Length;
+            int q=youtubeUrl.IndexOf('?',p);
+            if (q < 0) youtubeUrl.IndexOf('&', p);
+            if (q < 0) q = youtubeUrl.Length;
             Dictionary<string, string> playbackOptions = null;
             return ConvertUrl(youtubeUrl.Substring(p,q-p),VideoQuality.HD, out playbackOptions);
         }

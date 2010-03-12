@@ -728,6 +728,7 @@ namespace OnlineVideos
                     }
                     else
                     {
+                        Log.Debug("Icon {0} for site {1} not found", OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Settings.Name + ".png", aSite.Settings.Name);
                         MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                     }
                     if (currentFilter.Matches(name))
@@ -1079,7 +1080,7 @@ namespace OnlineVideos
             //loListItem.item = 
             GUI_facadeView.Add(loListItem);
             // add the items
-            int numVideosWithThumb = 0;
+            Dictionary<string, bool> imageHash = new Dictionary<string, bool>();            
             int liIdx = 0;
             currentFilter.StartMatching();
             foreach (VideoInfo loVideoInfo in foVideos)
@@ -1098,17 +1099,14 @@ namespace OnlineVideos
                 GUI_facadeView.Add(loListItem);
                 if (!string.IsNullOrEmpty(loVideoInfo.ImageUrl))
                 {
-                    numVideosWithThumb++;
+                    imageHash[loVideoInfo.ImageUrl] = true;
                     loListItem.ThumbUrl = loVideoInfo.ImageUrl;
                 }
             }
             // fall back to list view if there are no items with thumbs
+            if (imageHash.Count > 0) ImageDownloader.GetImages(GUI_facadeView);
             suggestedView = null;
-            if (numVideosWithThumb > 0)
-                ImageDownloader.GetImages(GUI_facadeView);
-            else
-                suggestedView = GUIFacadeControl.ViewMode.List;
-
+            if (imageHash.Count == 0 || (foVideos.Count > 1 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.ViewMode.List;
             currentVideoList = foVideos;
 
             // position the cursor on the selected video if restore index was true
