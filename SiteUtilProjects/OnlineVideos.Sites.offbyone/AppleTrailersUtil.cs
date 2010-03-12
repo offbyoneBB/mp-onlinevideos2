@@ -184,17 +184,22 @@ namespace OnlineVideos.Sites
         VideoQuality trailerSize = VideoQuality.HD480;
 
         const int APPLE_PROXY_PORT = 30005;
-        AppleProxyServer proxyApple;
+        static AppleProxyServer proxyApple;
 
         public override bool HasMultipleVideos
         {
             get { return true; }
         }
 
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+
+            if (proxyApple == null) proxyApple = new OnlineVideos.Sites.AppleProxyServer(APPLE_PROXY_PORT);
+        }
+
         public override int DiscoverDynamicCategories()
         {
-            if (proxyApple == null) proxyApple = new OnlineVideos.Sites.AppleProxyServer(APPLE_PROXY_PORT);
-
             Settings.Categories.Clear();
 
             RssLink link = new RssLink();

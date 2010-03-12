@@ -76,7 +76,7 @@
     <string Field="Timeout">Zeitüberschreitung</string>
 
     <!-- U -->
-    <string Field="UpdateSites">Plugin aktualisieren</string>
+    <string Field="UpdateSites">Seiten verwalten</string>
     <string Field="UnableToPlayVideo">Video kann nicht wiedergegeben werden. Keine URL.</string>
     <string Field="UnableToDownloadVideo">Video kann nicht heruntergeladen werden. Ungültige URL.</string>
 
