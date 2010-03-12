@@ -36,6 +36,7 @@ namespace OnlineVideos
             if (Monitor.TryEnter(this))
             {
                 isBusy = true;
+                OnlineVideosException error = null;
                 bool? result = null; // while this is null the task has not finished (or later on timeouted), true indicates successfull completion and false error                
                 try
                 {
@@ -58,6 +59,7 @@ namespace OnlineVideos
                             }
                             catch (Exception threadException)
                             {
+                                error = threadException as OnlineVideosException;
                                 Log.Error(threadException);
                                 result = false;
                             }
@@ -81,13 +83,24 @@ namespace OnlineVideos
                     GUIWaitCursor.Hide(); // hide the wait cursor
                     if (result != true)   // show an error message if task was not completed successfully
                     {
-                        GUIDialogNotify dlg_error = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                        dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
-                        if (result.HasValue)
-                            dlg_error.SetText(string.Format("{0}: {1}", Translation.Error/*GUILocalizeStrings.Get(257)/*ERROR*/, taskdescription));
+                        if (error != null)
+                        {
+                            MediaPortal.Dialogs.GUIDialogOK dlg_error = (MediaPortal.Dialogs.GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                            dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                            dlg_error.SetLine(1, string.Format("{0} {1}", Translation.Error, taskdescription));
+                            dlg_error.SetLine(2, error.Message);
+                            dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                        }
                         else
-                            dlg_error.SetText(string.Format("{0}: {1}", Translation.Timeout, taskdescription));
-                        dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                        {
+                            GUIDialogNotify dlg_error = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                            dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                            if (result.HasValue)
+                                dlg_error.SetText(string.Format("{0} {1}", Translation.Error, taskdescription));
+                            else
+                                dlg_error.SetText(string.Format("{0} {1}", Translation.Timeout, taskdescription));
+                            dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                        }
                     }
                     Monitor.Exit(this);
                     isBusy = false;

@@ -770,15 +770,8 @@ namespace OnlineVideos
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                     {
                         Log.Info("Looking for dynamic categories for {0}", selectedSite.Settings.Name);
-                        try
-                        {
-                            int foundCategories = selectedSite.DiscoverDynamicCategories();
-                            Log.Info("Found {0} dynamic categories.", foundCategories);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error("Error looking for dynamic categories: " + ex.ToString());
-                        }
+                        int foundCategories = selectedSite.DiscoverDynamicCategories();
+                        Log.Info("Found {0} dynamic categories.", foundCategories);
                     }, "getting dynamic categories");
                 }
                 categories = selectedSite.Settings.Categories;
@@ -790,18 +783,10 @@ namespace OnlineVideos
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                     {
                         Log.Info("Looking for sub categories of site {0} in {1}", selectedSite.Settings.Name, parentCategory.Name);
-                        try
-                        {
-                            int foundCategories = selectedSite.DiscoverSubCategories(parentCategory);
-                            Log.Info("Found {0} sub categories.", foundCategories);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error("Error looking for sub categories: " + ex.ToString());
-                        }
+                        int foundCategories = selectedSite.DiscoverSubCategories(parentCategory);
+                        Log.Info("Found {0} sub categories.", foundCategories);
                     }, "getting dynamic subcategories");
                 }
-
                 categories = parentCategory.SubCategories;
             }
 
@@ -1077,10 +1062,9 @@ namespace OnlineVideos
             // Check for received data
             if (foVideos == null || foVideos.Count == 0)
             {
-                GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                dlg_error.SetHeading(PluginName());
-                dlg_error.SetLine(1, Translation.NoVideoFound/*No Videos found!*/);
-                dlg_error.SetLine(2, String.Empty);
+                GUIDialogNotify dlg_error = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                dlg_error.SetText(Translation.NoVideoFound);
                 dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                 return false;
             }

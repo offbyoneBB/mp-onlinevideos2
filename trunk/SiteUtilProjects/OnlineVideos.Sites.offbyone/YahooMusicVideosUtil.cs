@@ -8,6 +8,7 @@ using YahooMusicEngine.Entities;
 using YahooMusicEngine.Services;
 using System.Drawing.Design;
 using System.Windows.Forms.Design;
+using System.Windows.Forms;
 
 namespace OnlineVideos.Sites
 {
@@ -38,15 +39,31 @@ namespace OnlineVideos.Sites
                 if (editorService != null)
                 {
                     OnlineVideos.BrowserForm form = new BrowserForm();
+                    form.webBrowser1.DocumentCompleted += WebBrowserDocumentCompleted;
                     Yahoo.Authentication auth = new Yahoo.Authentication(YahooMusicVideosUtil.AppId, YahooMusicVideosUtil.SharedSecret);
                     form.webBrowser1.Url = auth.GetUserLogOnAddress();
                     editorService.ShowDialog(form);
-                    value = form.Token;
+                    value = Token;
                 }
 
                 return value;
             }
 
+            string Token;
+
+            private void WebBrowserDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+            {
+                Token = string.Empty;
+                if (e.Url.DnsSafeHost.Contains("extra.hu"))
+                {
+                    try
+                    {
+                        Token = System.Web.HttpUtility.ParseQueryString(e.Url.Query)["token"];
+                        ((sender as WebBrowser).Parent as Form).Close();
+                    }
+                    catch {}
+                }
+            }
         }
 
         public enum Locale 
@@ -62,8 +79,8 @@ namespace OnlineVideos.Sites
         const string AppId = "DeUZup_IkY7d17O2DzAMPoyxmc55_hTasA--";
         const string SharedSecret = "d80b9a5766788713e1fadd73e752c7eb";
 
-        [Editor(typeof(UITokenEditor), typeof(UITypeEditor)),
-        //Category("OnlineVideosUserConfiguration"), 
+        [Editor("OnlineVideos.Sites.YahooMusicVideosUtil+UITokenEditor", typeof(UITypeEditor)),
+        Category("OnlineVideosUserConfiguration"), 
         Description("You can, but don't have to sign in with your Yahoo account to access user specific features of this service.")]
         string token = "";
 
@@ -140,7 +157,7 @@ namespace OnlineVideos.Sites
         }
 
         public override int DiscoverDynamicCategories()
-        {            
+        {
             if (provider == null)
             {
                 provider = new ServiceProvider();
@@ -155,16 +172,10 @@ namespace OnlineVideos.Sites
                 provider.Error = false;
                 provider.Init();
             }
-            /*
             if (provider.Error)
             {
-                MediaPortal.Dialogs.GUIDialogNotify dlg = (MediaPortal.Dialogs.GUIDialogNotify)MediaPortal.GUI.Library.GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                dlg.SetHeading(MediaPortal.GUI.Library.GUILocalizeStrings.Get(257));
-                dlg.SetText("Yahoo Authentication Token invalid. Please check Configuration.");
-                dlg.DoModal(MediaPortal.GUI.Library.GUIWindowManager.ActiveWindow);
-                return 0;
+                throw new OnlineVideosException("Yahoo Authentication Token invalid. Please check Configuration.");
             }
-            */
             if (catserv == null)
             {
                 catserv = new CategoryTreeService();
