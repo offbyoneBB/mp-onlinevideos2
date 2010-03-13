@@ -8,7 +8,7 @@ namespace OnlineVideos
     public class GUISiteUpdater : GUIWindow
     {
         enum FilterOption { All, Reported, Broken, Working, Updatable };
-        enum SortOption { Updated, Name, Lang_Name, Lang_Updated };
+        enum SortOption { SortByUpdated, SortByName, SortByLanguage_SortByName, SortByLanguage_SortByUpdated };
 
         [SkinControlAttribute(50)]
         protected GUIListControl GUI_infoList = null;
@@ -18,6 +18,8 @@ namespace OnlineVideos
         protected GUISelectButtonControl GUI_btnFilter = null;
         [SkinControlAttribute(504)]
         protected GUISelectButtonControl GUI_btnSort = null;
+        [SkinControlAttribute(505)]
+        protected GUIButtonControl GUI_btnFullUpdate = null;
 
         OnlineVideosWebservice.Site[] onlineSites = null;
         DateTime lastSitesRetrievalTime = DateTime.MinValue;
@@ -45,19 +47,21 @@ namespace OnlineVideos
             {
                 foreach (string aFilterOption in Enum.GetNames(typeof(FilterOption)))
                 {
-                    GUIControl.AddItemLabelControl(GetID, GUI_btnFilter.GetID, aFilterOption);
+                    GUIControl.AddItemLabelControl(GetID, GUI_btnFilter.GetID, Translation.Strings[aFilterOption]);
                 }
             }
             if (GUI_btnSort.SubItemCount == 0)
             {
                 foreach (string aSortOption in Enum.GetNames(typeof(SortOption)))
                 {
-                    GUIControl.AddItemLabelControl(GetID, GUI_btnSort.GetID, aSortOption.Replace("_", ", "));
+                    string[] singled = aSortOption.Split('_');
+                    for(int i = 0; i<singled.Length;i++) singled[i] = Translation.Strings[singled[i]];                    
+                    GUIControl.AddItemLabelControl(GetID, GUI_btnSort.GetID, string.Join(", ", singled));
                 }
             }
 
             GUIPropertyManager.SetProperty("#header.label",
-                                           OnlineVideoSettings.getInstance().BasicHomeScreenName + " Updater");
+                                           OnlineVideoSettings.getInstance().BasicHomeScreenName + ": " + Translation.UpdateSites);
             GUIPropertyManager.SetProperty("#header.image",
                                            OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
 
@@ -120,6 +124,13 @@ namespace OnlineVideos
             }
         }
 
+        public override void OnAction(Action action)
+        {
+            GUI_btnSort.Label = Translation.SortOptions;
+            GUI_btnFilter.Label = Translation.Filter;
+            base.OnAction(action);
+        }
+
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
             if (control == GUI_btnUpdate)
@@ -139,6 +150,10 @@ namespace OnlineVideos
             {
                 ShowOptionsForSite(GUI_infoList.SelectedListItem.TVTag as OnlineVideosWebservice.Site);
             }
+            else if (control == GUI_btnFullUpdate)
+            {
+                AutoUpdate();
+            }
 
             base.OnClicked(controlId, control, actionType);
         }
@@ -147,56 +162,86 @@ namespace OnlineVideos
         {
             SiteSettings localSite = GetLocalSite(site.Name);
 
+            bool shouldShow = false;
             GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
             if (dlgSel != null)
             {
                 dlgSel.Reset();
-                dlgSel.SetHeading("Options");
+                dlgSel.SetHeading(Translation.Actions);
 
                 if (localSite == null)
-                    dlgSel.Add("Add to my sites");
+                {
+                    dlgSel.Add(new GUIListItem(Translation.AddToMySites) { ItemId = 0 });
+                    shouldShow = true;
+                }
                 else
                 {
-                    if (localSite.LastUpdated < site.LastUpdated) dlgSel.Add("Update my site");
+                    if (localSite.LastUpdated < site.LastUpdated)
+                    {
+                        dlgSel.Add(new GUIListItem(Translation.UpdateMySite) { ItemId = 1 });
+                        dlgSel.Add(new GUIListItem(Translation.UpdateMySiteSkipCategories) { ItemId = 2 });
+                        shouldShow = true;
+                    }
                 }
             }
+
+            if (!shouldShow) return;
+
             dlgSel.DoModal(GetID);
-            if (dlgSel.SelectedId != -1)
+            switch (dlgSel.SelectedId)
             {
-                switch (dlgSel.SelectedLabelText)
-                {
-                    case "Add to my sites":
-                        SiteSettings newSite = GetRemoteSite(site.Name);
-                        if (newSite != null)
+                case 0://Add to my sites
+                    SiteSettings newSite = GetRemoteSite(site.Name);
+                    if (newSite != null)
+                    {
+                        OnlineVideoSettings.getInstance().SiteSettingsList.Add(newSite);
+                        OnlineVideoSettings.getInstance().SaveSites();
+                        OnlineVideoSettings.getInstance().BuildSiteList();
+                    }
+                    break;
+                case 1://Update my site
+                    SiteSettings site2Update = GetRemoteSite(site.Name);
+                    if (site2Update != null)
+                    {
+                        for (int i = 0; i < OnlineVideoSettings.getInstance().SiteSettingsList.Count; i++)
                         {
-                            OnlineVideoSettings.getInstance().SiteSettingsList.Add(newSite);
-                            OnlineVideoSettings.getInstance().SaveSites();
-                            OnlineVideoSettings.getInstance().BuildSiteList();
-                        }
-                        break;
-                    case "Update my site":
-                        SiteSettings site2Update = GetRemoteSite(site.Name);
-                        if (site2Update != null)
-                        {
-                            for (int i = 0; i < OnlineVideoSettings.getInstance().SiteSettingsList.Count; i++)
+                            if (OnlineVideoSettings.getInstance().SiteSettingsList[i].Name == site2Update.Name)
                             {
-                                if (OnlineVideoSettings.getInstance().SiteSettingsList[i].Name == site2Update.Name)
-                                {
-                                    OnlineVideoSettings.getInstance().SiteSettingsList[i] = site2Update;
-                                    OnlineVideoSettings.getInstance().SaveSites();
-                                    OnlineVideoSettings.getInstance().BuildSiteList();
-                                    break;
-                                }
+                                OnlineVideoSettings.getInstance().SiteSettingsList[i] = site2Update;
+                                OnlineVideoSettings.getInstance().SaveSites();
+                                OnlineVideoSettings.getInstance().BuildSiteList();
+                                break;
                             }
                         }
-                        break;
-                }
+                    }
+                    break;
+                case 3://Update my site (skip categories)
+                    SiteSettings siteRemote = GetRemoteSite(site.Name);
+                    if (siteRemote != null)
+                    {
+                        for (int i = 0; i < OnlineVideoSettings.getInstance().SiteSettingsList.Count; i++)
+                        {
+                            if (OnlineVideoSettings.getInstance().SiteSettingsList[i].Name == siteRemote.Name)
+                            {
+                                siteRemote.Categories = OnlineVideoSettings.getInstance().SiteSettingsList[i].Categories;
+                                OnlineVideoSettings.getInstance().SiteSettingsList[i] = siteRemote;
+                                OnlineVideoSettings.getInstance().SaveSites();
+                                OnlineVideoSettings.getInstance().BuildSiteList();
+                                break;
+                            }
+                        }
+                    }
+                    break;
             }
+        }
+
+        void AutoUpdate()
+        {
         }
 
         bool SitePassesFilter(OnlineVideosWebservice.Site site)
         {
-            FilterOption fo = (FilterOption)Enum.Parse(typeof(FilterOption), GUI_btnFilter.SelectedLabel);
+            FilterOption fo = (FilterOption)GUI_btnFilter.SelectedItem;
             switch (fo)
             {
                 case FilterOption.Working:
@@ -221,21 +266,21 @@ namespace OnlineVideos
 
         int CompareSiteForSort(OnlineVideosWebservice.Site site1, OnlineVideosWebservice.Site site2)
         {
-            SortOption so = (SortOption)Enum.Parse(typeof(SortOption), GUI_btnSort.SelectedLabel.Replace(", ", "_"));
+            SortOption so = (SortOption)GUI_btnSort.SelectedItem;
             switch (so)
             {
-                case SortOption.Updated:
+                case SortOption.SortByUpdated:
                     return site1.LastUpdated.CompareTo(site2.LastUpdated);
-                case SortOption.Name:
+                case SortOption.SortByName:
                     return site1.Name.CompareTo(site2.Name);
-                case SortOption.Lang_Updated:
+                case SortOption.SortByLanguage_SortByUpdated:
                     int langCompResult = site1.Language.CompareTo(site2.Language);
                     if (langCompResult == 0)
                     {
                         return site1.LastUpdated.CompareTo(site2.LastUpdated);
                     }
                     else return langCompResult;
-                case SortOption.Lang_Name:
+                case SortOption.SortByLanguage_SortByName:
                     int langCompResult2 = site1.Language.CompareTo(site2.Language);
                     if (langCompResult2 == 0)
                     {

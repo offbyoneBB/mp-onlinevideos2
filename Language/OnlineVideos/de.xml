@@ -1,89 +1,57 @@
-ï»¿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
-<!-- German (Germany) -->
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Moving Pictures translation file -->
+<!-- German -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
 <strings>
-
-    <!-- A -->
-    <string Field="AlreadyDownloading">Video lÃ¤dt bereits herunter.</string>
-    <string Field="Actions">Aktionen</string>
-    <string Field="Actors">Darsteller</string>
-    <string Field="AddToFavourites">Zu den Favoriten hinzufÃ¼gen</string>
-
-    <!-- C -->
-    <string Field="Category">Rubrik</string>
-
-    <!-- D -->
-    <string Field="DateOfRelease">Erscheinungsdatum:</string>
-    <string Field="Download">Herunterladen</string>
-    <string Field="DownloadFailed">Herunterladen fehlgeschlagen: {0}</string>
-    <string Field="DownloadComplete">Herunterladen beendet</string>
-    <string Field="DownloadedVideos">Heruntergeladene Videos</string>
-    <string Field="Delete">LÃ¶schen</string>
-    <string Field="Default">Standard</string>
-
-    <!-- E -->
-    <string Field="Error">Fehler</string>
-    <string Field="EnterPin">Pin eingeben</string>
-
-    <!-- F -->
-    <string Field="Favourites">Favoriten</string>
-
-    <!-- G -->
-    <string Field="Genre">Genre</string>
-
-    <!-- H -->
-    <string Field="Home">Home</string>
-
-    <!-- I -->
-
-    <!-- L -->
-    <string Field="LayoutList">Ansicht: Liste</string>
-    <string Field="LayoutIcons">Ansicht: Symbole klein</string>
-    <string Field="LayoutBigIcons">Ansicht: Symbole groÃŸ</string>
-
-    <!-- M -->
-    <string Field="MaxResults">Max. Ergebnisse</string>
-    
-    <!-- N -->
-    <string Field="NextPage">NÃ¤chste Seite</string>
-    <string Field="None">None</string>
-    <string Field="NoVideoFound">Keine Videos gefunden</string>
-    
-    <!-- O -->
-
-    <!-- P -->
-    <string Field="PlayAll">Alle abspielen</string>
-    <string Field="PlotOutline">Handlung:</string>
-    <string Field="PreviousPage">Vorherige Seite</string>
-    
-    <!-- R -->
-    <string Field="RemoveFromFavorites">Von den Favoriten entfernen</string>
-    <string Field="Refresh">Ansicht aktualisieren</string>
-    <string Field="RelatedVideos">Ã„hnliche Videos</string>
-    <string Field="Runtime">Laufzeit:</string>
-
-    <!-- S -->
-    <string Field="SearchResults">Suchergebnisse</string>
-    <string Field="SelectSource">Quelle wÃ¤hlen</string>
-    <string Field="SortOptions">Sortierung</string>
-    <string Field="SortByName">Sort. nach Name</string>
-    <string Field="SortByLanguage">Sort. nach Sprache</string>
-    <string Field="Search">Suchen</string>
-
-    <!-- T -->
-    <string Field="Timeframe">Zeitraum</string>
-    <string Field="Timeout">ZeitÃ¼berschreitung</string>
-
-    <!-- U -->
-    <string Field="UpdateSites">Seiten verwalten</string>
-    <string Field="UnableToPlayVideo">Video kann nicht wiedergegeben werden. Keine URL.</string>
-    <string Field="UnableToDownloadVideo">Video kann nicht heruntergeladen werden. UngÃ¼ltige URL.</string>
-
-    <!-- V -->
-
-    <!-- W -->
-
-    <!-- Y -->
- 
+  <string Field="AlreadyDownloading">Video lädt bereits herunter.</string>
+  <string Field="Actions">Aktionen</string>
+  <string Field="Actors">Darsteller:</string>
+  <string Field="All">Alle</string>
+  <string Field="AddToFavourites">Zu den Favoriten hinzufügen</string>
+  <string Field="AutoUpdate">Autom. Aktualisierung</string>
+  <string Field="Broken">Defekt</string>
+  <string Field="Category">Rubrik</string>
+  <string Field="Creator">Ersteller</string>
+  <string Field="DateOfRelease">Erscheinungsdatum:</string>
+  <string Field="Download">Herunterladen</string>
+  <string Field="DownloadFailed">Herunterladen fehlgeschlagen: {0}</string>
+  <string Field="DownloadComplete">Herunterladen beendet</string>
+  <string Field="DownloadedVideos">Heruntergeladene Videos</string>
+  <string Field="Delete">Löschen</string>
+  <string Field="Default">Standard</string>
+  <string Field="Error">Fehler</string>
+  <string Field="EnterPin">Pin eingeben</string>
+  <string Field="Favourites">Favoriten</string>
+  <string Field="Filter">Filter</string>
+  <string Field="Genre">Genre:</string>
+  <string Field="Home">Home</string>
+  <string Field="LayoutList">Ansicht: Liste</string>
+  <string Field="LayoutIcons">Ansicht: Symbole klein</string>
+  <string Field="LayoutBigIcons">Ansicht: Symbole groß</string>
+  <string Field="MaxResults">Max. Ergebnisse</string>
+  <string Field="NextPage">Nächste Seite</string>
+  <string Field="None">None</string>
+  <string Field="NoVideoFound">Keine Videos gefunden</string>
+  <string Field="PlayAll">Alle abspielen</string>
+  <string Field="PlotOutline">Handlung:</string>
+  <string Field="PreviousPage">Vorherige Seite</string>
+  <string Field="RemoveFromFavorites">Von den Favoriten entfernen</string>
+  <string Field="Refresh">Ansicht aktualisieren</string>
+  <string Field="RelatedVideos">Ähnliche Videos</string>
+  <string Field="Reported">Gemeldet</string>
+  <string Field="Runtime">Laufzeit:</string>
+  <string Field="SearchResults">Suchergebnisse</string>
+  <string Field="SelectSource">Quelle wählen</string>
+  <string Field="SortOptions">Sortierung</string>
+  <string Field="SortByName">Name</string>
+  <string Field="SortByLanguage">Sprache</string>
+  <string Field="SortByUpdated">Aktualisiert</string>
+  <string Field="Search">Suchen</string>
+  <string Field="Timeframe">Zeitraum</string>
+  <string Field="Timeout">Zeitüberschreitung</string>
+  <string Field="UpdateSites">Seiten verwalten</string>
+  <string Field="Updatable">Aktualisierbar</string>
+  <string Field="UnableToPlayVideo">Video kann nicht wiedergegeben werden. Keine URL.</string>
+  <string Field="UnableToDownloadVideo">Video kann nicht heruntergeladen werden. Ungültige URL.</string>
+  <string Field="Working">Funktionierend</string>
 </strings>
