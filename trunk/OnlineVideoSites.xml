@@ -519,15 +519,15 @@
         <Category xsi:type="RssLink" name="50th Anniversary Moments" thumb="http://www.nasa.gov/images/content/243003main_moments_it.jpg">http://www.nasa.gov/rss/moments_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="NASA Mission Update" thumb="http://www.nasa.gov/images/content/378393main_update_spitzer_100.jpg">http://www.nasa.gov/rss/mission_update_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="NASA 360" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Nasa360logo.jpg/250px-Nasa360logo.jpg">http://www.nasa.gov/rss/nasa360_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="NASA Edge" thumb="http://up2.podbean.com/image-logos/19916_logo.jpg">http://www.nasa.gov/rss/NASAEdge_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="NASA Edge" thumb="http://oea.larc.nasa.gov/NE-bug-144x135.jpg">http://www.nasa.gov/rss/NASAEdge_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="Last Mission to Hubble" thumb="http://www.spacetelescope.org/updates/screen/update0708.jpg">http://www.nasa.gov/rss/hubble_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="Shuttle &amp; Station" thumb="http://up2.podbean.com/image-logos/18693_logo.jpg">http://www.nasa.gov/rss/shuttle_station_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="Solar System" thumb="http://up2.podbean.com/image-logos/19928_logo.jpg">http://www.nasa.gov/rss/solar_system_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="Universe" thumb="http://up2.podbean.com/image-logos/18695_logo.jpg">http://www.nasa.gov/rss/universe_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Shuttle &amp; Station" thumb="http://a1.phobos.apple.com/eu/r10/Podcasts/75/a8/51/fdr.nwtxsguf.170x170-75.jpg">http://www.nasa.gov/rss/shuttle_station_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Solar System" thumb="http://up6.podbean.com/image-logos/18692_logo.jpg">http://www.nasa.gov/rss/solar_system_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Universe" thumb="http://up6.podbean.com/image-logos/18695_logo.jpg">http://www.nasa.gov/rss/universe_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="Earth" thumb="http://www.nasa.gov/images/content/176375main_e_itunes.jpg">http://www.nasa.gov/rss/Earth_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="What's Up?" thumb="http://up2.podbean.com/image-logos/19917_logo.jpg">http://www.nasa.gov/rss/whatsup_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="What's Up?" thumb="http://up6.podbean.com/image-logos/19917_logo.jpg">http://www.nasa.gov/rss/whatsup_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="Exploration" thumb="http://www.nasa.gov/images/content/176376main_exp_itunes.jpg">http://www.nasa.gov/rss/exploration_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="Jet Propulsion Laboratory HD" thumb="http://up2.podbean.com/image-logos/18643_logo.jpg">http://www.jpl.nasa.gov/multimedia/rss/podfeed-hd.xml</Category>
+        <Category xsi:type="RssLink" name="Jet Propulsion Laboratory HD" thumb="http://up6.podbean.com/image-logos/18643_logo.jpg">http://www.jpl.nasa.gov/multimedia/rss/podfeed-hd.xml</Category>
         <Category xsi:type="RssLink" name="NASA Chandra X-ray Observatory Podcasts" thumb="http://chandra.harvard.edu/resources/podcasts/graphics/SDimage_300.jpg">http://chandra.harvard.edu/resources/podcasts/podcasts.xml</Category>
         <Category xsi:type="RssLink" name="NASA Goddard Shorts HD" thumb="http://svs.gsfc.nasa.gov/vis/iTunes/GoddardShortsHD_logo.jpg">http://svs.gsfc.nasa.gov/vis/iTunes/f0004.xml</Category>
       </Categories>
@@ -611,14 +611,14 @@
         <Category xsi:type="RssLink" name="XLR8R TV" thumb="http://bitcast-a.bitgravity.com/revision3/images/shows/xlr8rtv/xlr8rtv.jpg">http://revision3.com/xlr8rtv/feed/quicktime-large/</Category>
       </Categories>
     </Site>
-    <Site name="Discovey Channel" util="GenericSite" agecheck="false" enabled="true" lang="en">
+    <Site name="Discovery Channel" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>American TV Channel dedicated to documentaries about popular science, technology, and history.</Description>
       <Categories>
-        <Category xsi:type="RssLink" name="Discovery Video" thumb="http://up2.podbean.com/image-logos/16961_logo.jpg">http://www.discovery.com/radio/xml/discovery_video.xml</Category>
-        <Category xsi:type="RssLink" name="Science Channel" thumb="http://up2.podbean.com/image-logos/16971_logo.jpg">http://www.discovery.com/radio/xml/sciencevideo.xml</Category>
-        <Category xsi:type="RssLink" name="Discovery News" thumb="http://up2.podbean.com/image-logos/16964_logo.jpg">http://www.discovery.com/radio/xml/news_video.xml</Category>
-        <Category xsi:type="RssLink" name="Discovery Space" thumb="http://up2.podbean.com/image-logos/43342_logo.jpg">http://www.discovery.com/radio/xml/DiscoverySpace.xml</Category>
-        <Category xsi:type="RssLink" name="Discovery Investigations">http://www.discovery.com/radio/xml/id_videopodcast.xml</Category>
+        <Category xsi:type="RssLink" name="Discovery Video" thumb="http://www.discovery.com/radio/gallery/DSCVideo_NewLogo.jpg">http://www.discovery.com/radio/xml/discovery_video.xml</Category>
+        <Category xsi:type="RssLink" name="Science Channel" thumb="http://www.discovery.com/radio/gallery/NewSCI_podcast.jpg">http://www.discovery.com/radio/xml/sciencevideo.xml</Category>
+        <Category xsi:type="RssLink" name="Discovery News" thumb="http://www.discovery.com/radio/gallery/DiscoveryNewsNEW_logo.jpg">http://www.discovery.com/radio/xml/news_video.xml</Category>
+        <Category xsi:type="RssLink" name="Discovery Space" thumb="http://www.discovery.com/radio/gallery/DSC_Space.jpg">http://www.discovery.com/radio/xml/DiscoverySpace.xml</Category>
+        <Category xsi:type="RssLink" name="Discovery Investigations" thumb="http://www.discovery.com/radio/gallery/ID.jpg">http://www.discovery.com/radio/xml/id_videopodcast.xml</Category>
       </Categories>
     </Site>
     <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true">
