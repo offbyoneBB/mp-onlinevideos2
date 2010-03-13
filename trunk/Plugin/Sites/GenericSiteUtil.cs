@@ -12,57 +12,57 @@ namespace OnlineVideos.Sites
     public class GenericSiteUtil : SiteUtilBase
     {
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for dynamic categories. Group names: 'url', 'title'. Will not be used if not set.")]
-        string dynamicCategoriesRegEx;
+        protected string dynamicCategoriesRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the dynamicCategoriesRegEx.")]
-        string dynamicCategoryUrlFormatString;
+        protected string dynamicCategoryUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for dynamic categories. Group names: 'url', 'title'. Will be used on the web pages resulting from the links from the dynamicCategoriesRegEx. Will not be used if not set.")]
-        string dynamicSubCategoriesRegEx;
+        protected string dynamicSubCategoriesRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the dynamicSubCategoriesRegEx.")]
-        string dynamicSubCategoryUrlFormatString;
+        protected string dynamicSubCategoryUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration', 'Description'.")]
-        string videoListRegEx;
+        protected string videoListRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the videoListRegEx.")]
-        string videoListRegExFormatString;
+        protected string videoListRegExFormatString;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to match on the video url retrieved as a result of the 'VideoUrl' match of the videoListRegEx. Groups should be named 'm0', 'm1' and so on. Only used if set.")]
-        string videoUrlRegEx;
+        protected string videoUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the video url of an item that was found in the rss. If videoUrlRegEx is set those groups will be taken as parameters.")]
-        string videoUrlFormatString = "{0}";
+        protected string videoUrlFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a next page link. Group should be named 'url'.")]
-        string nextPageRegEx;
+        protected string nextPageRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the nextPageRegEx.")]
-        string nextPageRegExUrlFormatString;
+        protected string nextPageRegExUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link. Group should be named 'url'.")]
-        string prevPageRegEx;
+        protected string prevPageRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the prevPageRegEx.")]
-        string prevPageRegExUrlFormatString;
+        protected string prevPageRegExUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a link that points to another file holding the actual playback url. Group should be named 'url'. If this is not set, the fileUrlRegEx will be used directly, otherwise first this and afterwards the fileUrlRegEx on the result.")]
-        string playlistUrlRegEx;
+        protected string playlistUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for the playback url. Groups should be named 'm0', 'm1' and so on.")]
-        string fileUrlRegEx;
+        protected string fileUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string used with the groups of the regex matches of the fileUrlRegEx to create the Url for playback.")]
-        string fileUrlFormatString = "{0}";
+        protected string fileUrlFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
-        string searchUrl;
+        protected string searchUrl;
         [Category("OnlineVideosConfiguration"), Description("Format string that should be sent as post data for getting the results of a search. {0} will be replaced with the query. If this is not set, search will be executed normal as GET.")]
-        string searchPostString;
+        protected string searchPostString;
         [Category("OnlineVideosConfiguration"), Description("Url used for prepending relative links.")]
-        string baseUrl;
+        protected string baseUrl;
         [Category("OnlineVideosConfiguration"), Description("Cookies that need to be send with each request. Comma-separated list of name=value. Domain will be taken from the base url.")]
-        string cookies;
+        protected string cookies;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoItem for videoList.")]
-        string videoItemXml;
+        protected string videoItemXml;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoTitle for videoList.")]
-        string videoTitleXml;
+        protected string videoTitleXml;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoThumb for videoList.")]
-        string videoThumbXml;
+        protected string videoThumbXml;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoUrl for videoList.")]
-        string videoUrlXml;
+        protected string videoUrlXml;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoDuration for videoList.")]
-        string videoDurationXml;
+        protected string videoDurationXml;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoDescription for videoList.")]
-        string videoDescriptionXml;
+        protected string videoDescriptionXml;
         [Category("OnlineVideosConfiguration"), Description("Boolean used for forcing UTF8 encoding on received data.")]
-        bool forceUTF8Encoding;
+        protected bool forceUTF8Encoding;
 
         Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_VideoUrl, regEx_PlaylistUrl, regEx_FileUrl;
 
@@ -236,6 +236,7 @@ namespace OnlineVideos.Sites
                         videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                         videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                         if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
+                        if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
                         videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                         videoInfo.Length = Regex.Replace(m.Groups["Duration"].Value, "(<[^>]+>)", "");
                         videoInfo.Description = m.Groups["Description"].Value;
