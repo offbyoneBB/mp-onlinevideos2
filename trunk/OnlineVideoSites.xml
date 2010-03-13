@@ -92,16 +92,23 @@
       <Description>Kostenlos verfügbare Sendungen des Senders Kabel1.</Description>
       <Categories />
     </Site>
-    <Site name="RTL Now" util="RTLNow" agecheck="false" enabled="true" lang="de">
+    <Site name="RTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[>FREE\s\|</a>\s*</div>\s*<div\sstyle=""\sclass="seriennavi_link">\s*<a\shref="(?<url>[^"]+)"\sstyle="">(?<title>[^<]+)</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]+)">(?<Title>[^<]+)</a>\s*</div>\s*<div\sclass="season">[^<]+</div><div\sclass="number">[^>]+><div\sclass="time">(?<Description>[^<]+)</div><div\sclass="buy">\s*<a\shref=[^>]+>kostenlos</a>]]></item>
+        <item key="baseUrl"><![CDATA[http://rtl-now.rtl.de]]></item>
+        <item key="app"><![CDATA[rtlnow]]></item>
+      </Configuration>
       <Categories />
     </Site>
-    <Site name="Vox Now" util="VoxNow" agecheck="false" enabled="true" lang="de">
+    <Site name="Vox Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Vox.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[>FREE\s\|</a>\s*</div>\s*<div\sstyle=""\sclass="seriennavi_link">\s*<a\shref="(?<url>[^"]+)"\sstyle="">(?<title>[^<]+)</a>]]></item>
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]+)">(?<Title>[^<]+)</a>\s*</div>\s*<div\sclass="season">[^<]+</div><div\sclass="number">[^>]+><div\sclass="time">(?<Description>[^<]+)</div><div\sclass="buy">\s*<a\shref=[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://www.voxnow.de]]></item>
+        <item key="app"><![CDATA[voxnow]]></item>
       </Configuration>
       <Categories />
     </Site>
