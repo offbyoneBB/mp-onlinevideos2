@@ -125,6 +125,10 @@
     </Site>
     <Site name="Orf" util="Orf" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen aus der TV-Thek des Österreichischen Rundfunks (ORF).</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<option\svalue="(?<url>[^"]+)">(?<title>[^<]+)</option>]]></item>
+        <item key="baseUrl"><![CDATA[http://tvthek.orf.at/]]></item>
+      </Configuration>
       <Categories />
     </Site>
     <Site name="SF1" util="Sf1" agecheck="false" enabled="true" lang="de">
