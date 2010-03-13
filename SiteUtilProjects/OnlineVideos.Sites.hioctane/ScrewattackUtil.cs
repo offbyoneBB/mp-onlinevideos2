@@ -6,11 +6,6 @@ namespace OnlineVideos.Sites
 {
     public class ScrewattackUtil : GenericSiteUtil
     {
-
-        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration', 'Description'.")]
-        string videoListRegEx;
-        [Category("OnlineVideosConfiguration"), Description("Url used for prepending relative links.")]
-        string baseUrl;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videoUrl. Group names: 'vid', 'pid'.")]
         string urlRegEx;
 
