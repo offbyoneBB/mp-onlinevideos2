@@ -19,8 +19,6 @@ namespace OnlineVideos.Sites
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            base.videoListRegEx = this.videoListRegEx;
-            base.baseUrl = this.baseUrl;
             regEx_Url = new Regex(urlRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
         }
 
