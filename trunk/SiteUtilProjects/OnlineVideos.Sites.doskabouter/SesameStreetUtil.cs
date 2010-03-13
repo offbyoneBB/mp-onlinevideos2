@@ -123,24 +123,31 @@ namespace OnlineVideos.Sites
                     string pngName = (string)parentCategory.Other;
                     try
                     {
-                        WebRequest request = WebRequest.Create(pngName);
-                        WebResponse response = request.GetResponse();
-                        Stream responseStream = response.GetResponseStream();
-                        Bitmap png = new Bitmap(responseStream);
+                        Bitmap png = null;
 
                         string bareFinalUrl = System.IO.Path.ChangeExtension(pngName, String.Empty);                        
-                        int newHeight = png.Height / nWithImage;
                         for (int i = 0; i < nWithImage; i++)
                         {
-                            Bitmap newPng = new Bitmap(png.Width, newHeight);
-                            Graphics g = Graphics.FromImage(newPng);
-                            g.DrawImage(png, 0, -i * newHeight);
-                            g.Dispose();
-
                             string finalUrl = bareFinalUrl + '_' + i.ToString() + ".PNG";
-                            categories[i].Thumb = finalUrl;                            
+                            categories[i].Thumb = finalUrl;
                             string imageLocation = ImageDownloader.GetThumbFile(finalUrl);
-                            newPng.Save(imageLocation);
+                            if (!File.Exists(imageLocation))
+                            {
+                                if (png == null)
+                                {
+                                    WebRequest request = WebRequest.Create(pngName);
+                                    WebResponse response = request.GetResponse();
+                                    Stream responseStream = response.GetResponseStream();
+                                    png = new Bitmap(responseStream);
+                                }
+                                int newHeight = png.Height / nWithImage;
+                                Bitmap newPng = new Bitmap(png.Width, newHeight);
+                                Graphics g = Graphics.FromImage(newPng);
+                                g.DrawImage(png, 0, -i * newHeight);
+                                g.Dispose();
+
+                                newPng.Save(imageLocation);
+                            }
                         }
                     }
                     catch (Exception)
