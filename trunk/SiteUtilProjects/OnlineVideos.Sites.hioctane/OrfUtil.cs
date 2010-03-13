@@ -13,20 +13,16 @@ using System.IO;
 
 namespace OnlineVideos.Sites
 {
-    public class OrfUtil : SiteUtilBase
+    public class OrfUtil : GenericSiteUtil
     {
         public enum MediaType { flv, wmv };
         public enum MediaQuality { medium, high };
 
-        string catRegex = @"<option\svalue=""(?<url>[^""]+)"">(?<title>[^<]+)</option>";
         string videolistRegex = @"</a></div>\s*<h3\sclass=""title"">\s*<span>(?<title>[^<]+)</span>";
         string videolistRegex2 = @"<li><a\shref=""(?<url>[^""]+)""\stitle=""(?<alt>[^""]+)"">(?<title>[^<]+)</a>";
         string videolistRegex3 = @"<li><a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a>";
         string playlistRegex = @"<div\sid=""btn_playlist""\sstyle=""(?<style>[^""]+)"">\s*<a\shref=""(?<url>[^""]+)""\sid=""open_playlist""";
 
-        string baseUrl = "http://tvthek.orf.at/";
-
-        Regex regEx_Category;
         Regex regEx_Videolist;
         Regex regEx_Videolist2;
         Regex regEx_Videolist3;
@@ -35,51 +31,11 @@ namespace OnlineVideos.Sites
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-
-            regEx_Category = new Regex(catRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             regEx_Videolist = new Regex(videolistRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             regEx_Videolist2 = new Regex(videolistRegex2, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             regEx_Videolist3 = new Regex(videolistRegex3, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             regEx_Playlist = new Regex(playlistRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
 
-        }
-
-        public override int DiscoverDynamicCategories()
-        {
-            Settings.Categories.Clear();
-            string data = GetWebData(baseUrl);
-
-            if (!string.IsNullOrEmpty(data))
-            {
-                Match m = regEx_Category.Match(data);
-                while (m.Success)
-                {
-                    
-                    if (m.Groups["url"].Value.StartsWith("/"))
-                    {
-                        RssLink cat = new RssLink();
-                        cat.Name = m.Groups["title"].Value;
-                        cat.Name = cat.Name.Replace("&amp;", "&");
-                        cat.Url = m.Groups["url"].Value;
-                        cat.Url = "http://tvthek.orf.at" + cat.Url;
-
-                        Settings.Categories.Add(cat);
-                    }
-                    else if (m.Groups["url"].Value.StartsWith("http:"))
-                    {
-                        RssLink cat = new RssLink();
-                        cat.Name = m.Groups["title"].Value;
-                        cat.Name = cat.Name.Replace("&amp;", "&");
-                        cat.Url = m.Groups["url"].Value;
-
-                        Settings.Categories.Add(cat);
-                    }
-                    m = m.NextMatch();
-                }
-                Settings.DynamicCategoriesDiscovered = true;
-                return Settings.Categories.Count;
-            }
-            return 0;
         }
 
         public override bool MultipleFilePlay
