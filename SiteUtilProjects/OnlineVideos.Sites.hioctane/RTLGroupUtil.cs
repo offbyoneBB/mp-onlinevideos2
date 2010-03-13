@@ -13,7 +13,7 @@ using System.IO;
 
 namespace OnlineVideos.Sites
 {
-    public class VoxNowUtil : GenericSiteUtil
+    public class RTLGroupUtil : GenericSiteUtil
     {
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for dynamic categories. Group names: 'url', 'title'. Will not be used if not set.")]
         string dynamicCategoriesRegEx;
@@ -21,6 +21,8 @@ namespace OnlineVideos.Sites
         string baseUrl;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration', 'Description'.")]
         string videoListRegEx;
+        [Category("OnlineVideosConfiguration"), Description("Value used to RTMPe Verification")]
+        string app;
 
         public override String getUrl(VideoInfo video)
         {
@@ -40,8 +42,8 @@ namespace OnlineVideos.Sites
                         XmlElement root = doc.DocumentElement;
                         string rtmpeUrl = root.SelectSingleNode("./playlist/videoinfo/filename").InnerText;
                         string host = rtmpeUrl.Substring(rtmpeUrl.IndexOf("//") + 2, rtmpeUrl.IndexOf("/", rtmpeUrl.IndexOf("//") + 2) - rtmpeUrl.IndexOf("//") - 2);
-                        string tcUrl = rtmpeUrl.Substring(0, rtmpeUrl.IndexOf("voxnow")+6);
-                        string playpath = rtmpeUrl.Substring(rtmpeUrl.IndexOf("voxnow") + 7);
+                        string tcUrl = rtmpeUrl.Substring(0, rtmpeUrl.IndexOf(app) + 6);
+                        string playpath = rtmpeUrl.Substring(rtmpeUrl.IndexOf(app) + 7);
                         if (playpath.Contains(".f4v"))
                             playpath = "MP4:" + playpath;
                         else
@@ -52,8 +54,8 @@ namespace OnlineVideos.Sites
                                             rtmpeUrl, //rtmpUrl
                                             host, //host
                                             tcUrl, //tcUrl
-                                            "voxnow", //app
-                                            "http://www.voxnow.de/includes/rtlnow_videoplayer09_2.swf", //swfurl
+                                            app, //app
+                                            baseUrl + "/includes/rtlnow_videoplayer09_2.swf", //swfurl
                                             "414239",
                                             "6a31c95d659eb33bfffc315e9da4cf74ed6498e599d2bacb31675968b355fbdf",
                                             video.VideoUrl, //pageUrl
