@@ -97,7 +97,17 @@
       <animation effect="zoom" time="250" start="75" center="0,0">focus</animation>
       <animation effect="slide" time="250" start="185,0">focus</animation>
     </control>
-        
+
+    <control>
+      <description>selected thumb border</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>78</posX>
+      <posY>553</posY>
+      <width>219</width>
+      <height>124</height>
+      <texture>Picture_cover.png</texture>      
+    </control>        
     <control>
       <type>image</type>
       <posX>79</posX>
@@ -125,7 +135,7 @@
       <posY>579</posY>
       <width>120</width>
       <font>font10</font>
-      <label>Creator</label>
+      <label>#OnlineVideos.Translation.Creator.Label</label>
       <textcolor>White</textcolor>
       <visible>control.hastext(501)</visible>
     </control>
@@ -186,7 +196,7 @@
         <id>502</id>
         <onright>50</onright>
         <onup>17</onup>          
-        <label>184</label>
+        <label>#OnlineVideos.Translation.Refresh.Label</label>
         <font>font11</font>
         <height>37</height>
         <textYOff>3</textYOff>
@@ -198,7 +208,7 @@
         <id>503</id>
         <onright>50</onright>
         <onup>502</onup>
-        <label>Filter</label>
+        <label>#OnlineVideos.Translation.Filter.Label</label>
         <font>font11</font>
         <height>37</height>
         <textYOff>3</textYOff>
@@ -210,13 +220,25 @@
         <id>504</id>
         <onright>50</onright>
         <onup>503</onup>
-        <ondown>50</ondown>
-        <label>495</label>
+        <ondown>505</ondown>
+        <label>#OnlineVideos.Translation.SortOptions.Label</label>
         <font>font11</font>
         <height>37</height>
         <textYOff>3</textYOff>
         <visible>!Control.HasFocus(50)</visible>
-      </control>        
+      </control>   
+       <control>
+        <type>button</type>
+        <description>autoupdate button</description>
+        <id>505</id>
+        <onright>50</onright>
+        <onup>504</onup>          
+        <ondown>50</ondown>
+        <label>#OnlineVideos.Translation.AutoUpdate.Label</label>
+        <font>font11</font>
+        <height>37</height>
+        <textYOff>3</textYOff>        
+      </control>         
     </control>    
     
   </controls>

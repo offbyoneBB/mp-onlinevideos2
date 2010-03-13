@@ -409,6 +409,9 @@ namespace OnlineVideos
             }
 
             GUI_btnOrderBy.Label = Translation.SortOptions;
+            GUI_btnMaxResult.Label = Translation.MaxResults;
+            GUI_btnSearchCategories.Label = Translation.Category;
+            GUI_btnTimeFrame.Label = Translation.Timeframe;
             base.OnAction(action);
         }
 
@@ -428,8 +431,6 @@ namespace OnlineVideos
             }
             return base.OnMessage(message);
         }
-
-
 
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
