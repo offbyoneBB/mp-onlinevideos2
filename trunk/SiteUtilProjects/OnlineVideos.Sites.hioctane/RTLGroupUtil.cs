@@ -1,26 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
-using System.Windows.Forms;
-using System.Net;
-using System.IO;
 
 namespace OnlineVideos.Sites
 {
     public class RTLGroupUtil : GenericSiteUtil
     {
-        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for dynamic categories. Group names: 'url', 'title'. Will not be used if not set.")]
-        string dynamicCategoriesRegEx;
-        [Category("OnlineVideosConfiguration"), Description("Url used for prepending relative links.")]
-        string baseUrl;
-        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration', 'Description'.")]
-        string videoListRegEx;
         [Category("OnlineVideosConfiguration"), Description("Value used to RTMPe Verification")]
         string app;
 
