@@ -6,7 +6,6 @@ using Google.GData.Client;
 using Google.GData.Extensions;
 using Google.GData.YouTube;
 using Google.GData.Extensions.MediaRss;
-using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
@@ -291,12 +290,7 @@ namespace OnlineVideos.Sites
         {
             if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(username))
             {
-                MediaPortal.Dialogs.GUIDialogOK dlg_error = (MediaPortal.Dialogs.GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                dlg_error.SetHeading("YouTube");
-                dlg_error.SetLine(1, "Please set your username and password in the Configuration");
-                dlg_error.SetLine(2, String.Empty);
-                dlg_error.DoModal(GUIWindowManager.ActiveWindow);
-                return false;
+                throw new OnlineVideosException("Please set your username and password in the Configuration");
             }
             else
             {
