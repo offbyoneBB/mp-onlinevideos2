@@ -61,7 +61,7 @@ namespace OnlineVideos
             bindingSourceSiteSettings.DataSource = OnlineVideoSettings.getInstance().SiteSettingsList;
 		}
 		
-		void SiteListSelectedIndexChanged(object sender, EventArgs e)
+		void SiteListSelectedValueChanged(object sender, EventArgs e)
         {            
             SiteSettings site = siteList.SelectedItem as SiteSettings;
             BindingList<RssLink> rssLinks = new BindingList<RssLink>();
@@ -510,12 +510,18 @@ namespace OnlineVideos
             siteDoc.SelectSingleNode("//Site").WriteTo(writer);
             writer.Flush();
             string siteXmlString = sb.ToString();
+            byte[] icon = null;
+            if (System.IO.File.Exists(OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + site.Name + ".png"))
+                icon = System.IO.File.ReadAllBytes(OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + site.Name + ".png");
+            byte[] banner = null;
+            if (System.IO.File.Exists(OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners\" + site.Name + ".png"))
+                banner = System.IO.File.ReadAllBytes(OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners\" + site.Name + ".png");
             bool success = false;
             try
             {
                 OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
                 string msg = "";
-                success = ws.SubmitSite(settings.email, settings.password, siteXmlString, out msg);
+                success = ws.SubmitSite(settings.email, settings.password, siteXmlString, icon, banner, out msg);
                 MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
             }
             catch (Exception ex)

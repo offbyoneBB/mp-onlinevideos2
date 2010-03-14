@@ -41,6 +41,10 @@ namespace OnlineVideos.OnlineVideosWebservice {
         
         private System.Threading.SendOrPostCallback GetSiteXmlOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetSiteIconOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetSiteBannerOperationCompleted;
+        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
@@ -98,6 +102,12 @@ namespace OnlineVideos.OnlineVideosWebservice {
         public event GetSiteXmlCompletedEventHandler GetSiteXmlCompleted;
         
         /// <remarks/>
+        public event GetSiteIconCompletedEventHandler GetSiteIconCompleted;
+        
+        /// <remarks/>
+        public event GetSiteBannerCompletedEventHandler GetSiteBannerCompleted;
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/RegisterEmail", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public bool RegisterEmail(string email, out string infoMessage) {
             object[] results = this.Invoke("RegisterEmail", new object[] {
@@ -129,29 +139,33 @@ namespace OnlineVideos.OnlineVideosWebservice {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitSite", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool SubmitSite(string email, string password, string siteXml, out string infoMessage) {
+        public bool SubmitSite(string email, string password, string siteXml, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] icon, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] banner, out string infoMessage) {
             object[] results = this.Invoke("SubmitSite", new object[] {
                         email,
                         password,
-                        siteXml});
+                        siteXml,
+                        icon,
+                        banner});
             infoMessage = ((string)(results[1]));
             return ((bool)(results[0]));
         }
         
         /// <remarks/>
-        public void SubmitSiteAsync(string email, string password, string siteXml) {
-            this.SubmitSiteAsync(email, password, siteXml, null);
+        public void SubmitSiteAsync(string email, string password, string siteXml, byte[] icon, byte[] banner) {
+            this.SubmitSiteAsync(email, password, siteXml, icon, banner, null);
         }
         
         /// <remarks/>
-        public void SubmitSiteAsync(string email, string password, string siteXml, object userState) {
+        public void SubmitSiteAsync(string email, string password, string siteXml, byte[] icon, byte[] banner, object userState) {
             if ((this.SubmitSiteOperationCompleted == null)) {
                 this.SubmitSiteOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSubmitSiteOperationCompleted);
             }
             this.InvokeAsync("SubmitSite", new object[] {
                         email,
                         password,
-                        siteXml}, this.SubmitSiteOperationCompleted, userState);
+                        siteXml,
+                        icon,
+                        banner}, this.SubmitSiteOperationCompleted, userState);
         }
         
         private void OnSubmitSiteOperationCompleted(object arg) {
@@ -277,6 +291,66 @@ namespace OnlineVideos.OnlineVideosWebservice {
             if ((this.GetSiteXmlCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetSiteXmlCompleted(this, new GetSiteXmlCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetSiteIcon", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")]
+        public byte[] GetSiteIcon(string siteName) {
+            object[] results = this.Invoke("GetSiteIcon", new object[] {
+                        siteName});
+            return ((byte[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetSiteIconAsync(string siteName) {
+            this.GetSiteIconAsync(siteName, null);
+        }
+        
+        /// <remarks/>
+        public void GetSiteIconAsync(string siteName, object userState) {
+            if ((this.GetSiteIconOperationCompleted == null)) {
+                this.GetSiteIconOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetSiteIconOperationCompleted);
+            }
+            this.InvokeAsync("GetSiteIcon", new object[] {
+                        siteName}, this.GetSiteIconOperationCompleted, userState);
+        }
+        
+        private void OnGetSiteIconOperationCompleted(object arg) {
+            if ((this.GetSiteIconCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetSiteIconCompleted(this, new GetSiteIconCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetSiteBanner", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")]
+        public byte[] GetSiteBanner(string siteName) {
+            object[] results = this.Invoke("GetSiteBanner", new object[] {
+                        siteName});
+            return ((byte[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetSiteBannerAsync(string siteName) {
+            this.GetSiteBannerAsync(siteName, null);
+        }
+        
+        /// <remarks/>
+        public void GetSiteBannerAsync(string siteName, object userState) {
+            if ((this.GetSiteBannerOperationCompleted == null)) {
+                this.GetSiteBannerOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetSiteBannerOperationCompleted);
+            }
+            this.InvokeAsync("GetSiteBanner", new object[] {
+                        siteName}, this.GetSiteBannerOperationCompleted, userState);
+        }
+        
+        private void OnGetSiteBannerOperationCompleted(object arg) {
+            if ((this.GetSiteBannerCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetSiteBannerCompleted(this, new GetSiteBannerCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -756,6 +830,58 @@ namespace OnlineVideos.OnlineVideosWebservice {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    public delegate void GetSiteIconCompletedEventHandler(object sender, GetSiteIconCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetSiteIconCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetSiteIconCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public byte[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((byte[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    public delegate void GetSiteBannerCompletedEventHandler(object sender, GetSiteBannerCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "2.0.50727.4927")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetSiteBannerCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetSiteBannerCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public byte[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((byte[])(this.results[0]));
             }
         }
     }

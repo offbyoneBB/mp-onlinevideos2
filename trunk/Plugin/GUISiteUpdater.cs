@@ -164,6 +164,7 @@ namespace OnlineVideos
 
             bool shouldShow = false;
             GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+            dlgSel.ShowQuickNumbers = false;
             if (dlgSel != null)
             {
                 dlgSel.Reset();
@@ -171,15 +172,15 @@ namespace OnlineVideos
 
                 if (localSite == null)
                 {
-                    dlgSel.Add(new GUIListItem(Translation.AddToMySites) { ItemId = 0 });
+                    dlgSel.Add(Translation.AddToMySites);
                     shouldShow = true;
                 }
                 else
                 {
                     if (localSite.LastUpdated < site.LastUpdated)
                     {
-                        dlgSel.Add(new GUIListItem(Translation.UpdateMySite) { ItemId = 1 });
-                        dlgSel.Add(new GUIListItem(Translation.UpdateMySiteSkipCategories) { ItemId = 2 });
+                        dlgSel.Add(Translation.UpdateMySite);
+                        dlgSel.Add(Translation.UpdateMySiteSkipCategories);
                         shouldShow = true;
                     }
                 }
@@ -188,9 +189,10 @@ namespace OnlineVideos
             if (!shouldShow) return;
 
             dlgSel.DoModal(GetID);
-            switch (dlgSel.SelectedId)
+
+            if (dlgSel.SelectedLabelText == Translation.AddToMySites)
             {
-                case 0://Add to my sites
+                
                     SiteSettings newSite = GetRemoteSite(site.Name);
                     if (newSite != null)
                     {
@@ -198,40 +200,41 @@ namespace OnlineVideos
                         OnlineVideoSettings.getInstance().SaveSites();
                         OnlineVideoSettings.getInstance().BuildSiteList();
                     }
-                    break;
-                case 1://Update my site
-                    SiteSettings site2Update = GetRemoteSite(site.Name);
-                    if (site2Update != null)
+            }
+            else if (dlgSel.SelectedLabelText == Translation.UpdateMySite)
+            {
+                SiteSettings site2Update = GetRemoteSite(site.Name);
+                if (site2Update != null)
+                {
+                    for (int i = 0; i < OnlineVideoSettings.getInstance().SiteSettingsList.Count; i++)
                     {
-                        for (int i = 0; i < OnlineVideoSettings.getInstance().SiteSettingsList.Count; i++)
+                        if (OnlineVideoSettings.getInstance().SiteSettingsList[i].Name == site2Update.Name)
                         {
-                            if (OnlineVideoSettings.getInstance().SiteSettingsList[i].Name == site2Update.Name)
-                            {
-                                OnlineVideoSettings.getInstance().SiteSettingsList[i] = site2Update;
-                                OnlineVideoSettings.getInstance().SaveSites();
-                                OnlineVideoSettings.getInstance().BuildSiteList();
-                                break;
-                            }
+                            OnlineVideoSettings.getInstance().SiteSettingsList[i] = site2Update;
+                            OnlineVideoSettings.getInstance().SaveSites();
+                            OnlineVideoSettings.getInstance().BuildSiteList();
+                            break;
                         }
                     }
-                    break;
-                case 3://Update my site (skip categories)
-                    SiteSettings siteRemote = GetRemoteSite(site.Name);
-                    if (siteRemote != null)
+                }
+            }
+            else if (dlgSel.SelectedLabelText == Translation.UpdateMySiteSkipCategories)
+            {
+                SiteSettings siteRemote = GetRemoteSite(site.Name);
+                if (siteRemote != null)
+                {
+                    for (int i = 0; i < OnlineVideoSettings.getInstance().SiteSettingsList.Count; i++)
                     {
-                        for (int i = 0; i < OnlineVideoSettings.getInstance().SiteSettingsList.Count; i++)
+                        if (OnlineVideoSettings.getInstance().SiteSettingsList[i].Name == siteRemote.Name)
                         {
-                            if (OnlineVideoSettings.getInstance().SiteSettingsList[i].Name == siteRemote.Name)
-                            {
-                                siteRemote.Categories = OnlineVideoSettings.getInstance().SiteSettingsList[i].Categories;
-                                OnlineVideoSettings.getInstance().SiteSettingsList[i] = siteRemote;
-                                OnlineVideoSettings.getInstance().SaveSites();
-                                OnlineVideoSettings.getInstance().BuildSiteList();
-                                break;
-                            }
+                            siteRemote.Categories = OnlineVideoSettings.getInstance().SiteSettingsList[i].Categories;
+                            OnlineVideoSettings.getInstance().SiteSettingsList[i] = siteRemote;
+                            OnlineVideoSettings.getInstance().SaveSites();
+                            OnlineVideoSettings.getInstance().BuildSiteList();
+                            break;
                         }
                     }
-                    break;
+                }
             }
         }
 
@@ -270,14 +273,14 @@ namespace OnlineVideos
             switch (so)
             {
                 case SortOption.SortByUpdated:
-                    return site1.LastUpdated.CompareTo(site2.LastUpdated);
+                    return site2.LastUpdated.CompareTo(site1.LastUpdated);
                 case SortOption.SortByName:
                     return site1.Name.CompareTo(site2.Name);
                 case SortOption.SortByLanguage_SortByUpdated:
                     int langCompResult = site1.Language.CompareTo(site2.Language);
                     if (langCompResult == 0)
                     {
-                        return site1.LastUpdated.CompareTo(site2.LastUpdated);
+                        return site2.LastUpdated.CompareTo(site1.LastUpdated);
                     }
                     else return langCompResult;
                 case SortOption.SortByLanguage_SortByName:
@@ -303,9 +306,10 @@ namespace OnlineVideos
         SiteSettings GetRemoteSite(string name)
         {
             string siteXml = "";
+            OnlineVideosWebservice.OnlineVideosService ws = null;
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
                 siteXml = ws.GetSiteXml(name);
             }, "getting site xml from webservice"))
             {
@@ -322,11 +326,52 @@ namespace OnlineVideos
                     SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
                     if (s.Sites != null && s.Sites.Count > 0)
                     {
+                        DownloadImages(s.Sites[0].Name, ws);
                         return s.Sites[0];
                     }
                 }
             }
             return null;
+        }
+
+        void DownloadImages(string siteName, OnlineVideosWebservice.OnlineVideosService ws)
+        {
+            try
+            {
+                byte[] icon = null;
+                if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                {
+                    icon = ws.GetSiteIcon(siteName);
+                }, "getting site icon from webservice"))
+                {
+                    if (icon != null && icon.Length > 0)
+                    {
+                        System.IO.File.WriteAllBytes(OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + siteName + ".png", icon);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
+            try
+            {
+                byte[] banner = null;
+                if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                {
+                    banner = ws.GetSiteBanner(siteName);
+                }, "getting site banner from webservice"))
+                {
+                    if (banner != null && banner.Length > 0)
+                    {
+                        System.IO.File.WriteAllBytes(OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners\" + siteName + ".png", banner);
+                    }
+                }                
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
         }
     }
 }
