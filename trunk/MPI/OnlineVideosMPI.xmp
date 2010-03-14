@@ -1190,6 +1190,24 @@
 			<Guid>179e6b3b-a4cc-4ecf-a8a0-65f24954327f</Guid>
 		</File>
 		<File>
+			<FileName>ThatGuyWithTheGlasses.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\ThatGuyWithTheGlasses.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>33634CA0-A3C9-4F47-8BF4-030A36899BB1</Guid>
+		</File>
+		<File>
+			<FileName>ThatGuyWithTheGlasses.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\ThatGuyWithTheGlasses.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>E71AD83C-6B74-424A-B9B8-8C09268970AD</Guid>
+		</File>
+		<File>
 			<FileName>Tube8.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>

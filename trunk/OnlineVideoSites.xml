@@ -364,6 +364,16 @@
     <Site name="Sesamestreet" util="SesameStreet" agecheck="false" enabled="true" lang="en">
       <Categories />
     </Site>
+    <Site name="ThatGuyWithTheGlasses" util="ThatGuyWithTheGlasses" agecheck="false" enabled="true" lang="en">
+      <Description>That guy with the glasses</Description>
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[<tr\sclass="sectiontable.*?href="(?<VideoUrl>[^"]*)[^>]*>\s*(?<Title>[^<]*).*?<td\s*headers[^>]*>\s*(?<Description>[^<]*)]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<embed.*?src="(?<m0>[^"]*)"]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
+        <item key="baseUrl"><![CDATA[http://thatguywiththeglasses.com]]></item>
+      </Configuration>
+      <Categories />
+    </Site>
     <Site name="Cinemassacre" util="Cinemassacre" agecheck="false" enabled="true" lang="en">
       <Description>Video site from cinemassacre productions.</Description>
       <Categories>
