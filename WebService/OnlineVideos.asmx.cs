@@ -59,7 +59,7 @@ namespace OnlineVideos.WebService
         }
 
         [WebMethod]
-        public bool SubmitSite(string email, string password, string siteXml, out string infoMessage)
+        public bool SubmitSite(string email, string password, string siteXml, byte[] icon, byte[] banner, out string infoMessage)
         {
             // is the given site xml at least valid xml?
             XmlDocument xml = new XmlDocument();
@@ -119,6 +119,7 @@ namespace OnlineVideos.WebService
                             site.State = SiteState.Working;
                             dc.SubmitChanges();
                             infoMessage = "Site successfully updated!";
+                            infoMessage += SaveImages(siteName, icon, banner);
                             return true;
                         }
                         else
@@ -144,6 +145,7 @@ namespace OnlineVideos.WebService
                         dc.Site.InsertOnSubmit(site);
                         dc.SubmitChanges();
                         infoMessage = "Site successfully added!";
+                        infoMessage += SaveImages(siteName, icon, banner);
                         return true;
                     }
                 }
@@ -250,6 +252,32 @@ namespace OnlineVideos.WebService
             return "";
         }
 
+        [WebMethod]
+        public byte[] GetSiteIcon(string siteName)
+        {
+            try
+            {
+                return System.IO.File.ReadAllBytes(Server.MapPath("~/Icons/") + siteName + ".png");
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        [WebMethod]
+        public byte[] GetSiteBanner(string siteName)
+        {
+            try
+            {
+                return System.IO.File.ReadAllBytes(Server.MapPath("~/Banners/") + siteName + ".png");
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         #region Helper
 
         static readonly char[] RandomChars = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
@@ -285,6 +313,67 @@ namespace OnlineVideos.WebService
             {
                 return false;
             }
+        }
+
+        string SaveImages(string siteName, byte[] icon, byte[] banner)
+        {
+            string message = "";
+            if (icon != null && icon.Length > 0)
+            {
+                try
+                {
+                    System.Drawing.Image iconImage = System.Drawing.Image.FromStream(new System.IO.MemoryStream(icon));
+                    if (iconImage.Width == iconImage.Height)
+                    {
+                        if (iconImage.RawFormat.Guid == System.Drawing.Imaging.ImageFormat.Png.Guid)
+                        {
+                            System.IO.File.WriteAllBytes(Server.MapPath("~/Icons/") + siteName + ".png", icon);
+                            message += "Icon saved!";
+                        }
+                        else
+                        {
+                            message += "Icon not saved! Must be PNG!";
+                        }
+                    }
+                    else
+                    {
+                        message += "Icon not saved! Height must be equal to width!";
+                    }
+                }
+                catch
+                {
+                    message += "Icon invalid!";
+                }
+                message += " ";
+            }
+            if (banner != null && banner.Length > 0)
+            {
+                try
+                {
+                    System.Drawing.Image bannerImage = System.Drawing.Image.FromStream(new System.IO.MemoryStream(banner));
+                    if (bannerImage.Width == 3 * bannerImage.Height)
+                    {
+                        if (bannerImage.RawFormat.Guid == System.Drawing.Imaging.ImageFormat.Png.Guid)
+                        {
+                            System.IO.File.WriteAllBytes(Server.MapPath("~/Banners/") + siteName + ".png", banner);                            
+                            message += "Banner saved!";
+                        }
+                        else
+                        {
+                            message += "Banner not saved! Must be PNG!";
+                        }
+                    }
+                    else
+                    {
+                        message += "Banner not saved! Width must be 3 times height!";
+                    }
+                }
+                catch
+                {
+                    message += "Banner invalid!";
+                }
+            }            
+            return message;
         }
 
         #endregion

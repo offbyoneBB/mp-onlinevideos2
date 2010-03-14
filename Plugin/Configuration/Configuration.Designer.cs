@@ -470,8 +470,8 @@ namespace OnlineVideos
             this.siteList.Location = new System.Drawing.Point(0, 0);
             this.siteList.Name = "siteList";
             this.siteList.Size = new System.Drawing.Size(172, 184);
-            this.siteList.TabIndex = 5;
-            this.siteList.SelectedIndexChanged += new System.EventHandler(this.SiteListSelectedIndexChanged);
+            this.siteList.TabIndex = 5;            
+            this.siteList.SelectedValueChanged += new System.EventHandler(this.SiteListSelectedValueChanged);
             // 
             // toolStripSiteUpDown
             // 
