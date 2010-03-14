@@ -162,8 +162,9 @@ namespace OnlineVideos.Sites
             {
                 if (lsUrl.ToLower().Contains("youtube.com"))
                 {
-                    return YouTubeUtil.ConvertUrl(lsUrl);
-                    //return lsUrl;
+                    video.VideoUrl = lsUrl;
+                    video.GetYouTubePlaybackOptions();
+                    return "";                    
                 }
                 else
                     if (lsUrl.StartsWith("http://blip.tv/play"))
