@@ -214,5 +214,112 @@ namespace OnlineVideos
             }
             return "";
         }
+
+        #region YouTube Helper
+
+        static readonly int[] fmtOptionsQualitySorted = new int[] { 37, 22, 35, 18, 34, 5, 0, 17, 13 };
+        static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+        public void GetYouTubePlaybackOptions()
+        {
+            if (PlaybackOptions != null) return; // don't do this twice
+
+            string videoId = VideoUrl;
+            if (videoId.ToLower().Contains("youtube.com"))
+            {
+                // get an Id from the Url
+                int p = videoId.LastIndexOf('/') + 1;
+                int q = videoId.IndexOf('?', p);
+                if (q < 0) videoId.IndexOf('&', p);
+                if (q < 0) q = videoId.Length;
+                videoId = videoId.Substring(p, q - p);
+            }
+
+            Dictionary<string, string> Items = new Dictionary<string, string>();
+            try
+            {
+                string contents = Sites.SiteUtilBase.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}", videoId));
+                foreach (string s in contents.Split('&')) Items.Add(s.Split('=')[0], s.Split('=')[1]);
+                if (Items["status"] == "fail")
+                {
+                    contents = Sites.SiteUtilBase.GetWebData(string.Format("http://www.youtube.com/watch?v={0}", videoId));
+                    Match m = swfJsonArgs.Match(contents);
+                    if (m.Success)
+                    {
+                        Items.Clear();
+                        object data = Jayrock.Json.Conversion.JsonConvert.Import(m.Groups["json"].Value);
+                        foreach (string z in (data as Jayrock.Json.JsonObject).Names)
+                        {
+                            Items.Add(z, (data as Jayrock.Json.JsonObject)[z].ToString());
+                        }
+                    }
+                }
+            }
+            catch { }
+
+
+            string Token = "";
+            string[] FmtMap = null;
+
+            if (Items.ContainsKey("token"))
+                Token = Items["token"];
+            if (Token == "" && Items.ContainsKey("t"))
+                Token = Items["t"];
+            if (Token != "")
+            {
+                if (Items.ContainsKey("fmt_map"))
+                {
+                    FmtMap = System.Web.HttpUtility.UrlDecode(Items["fmt_map"]).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    Array.Sort(FmtMap, new Comparison<string>(delegate(string a, string b)
+                    {
+                        int a_i = int.Parse(a.Substring(0, a.IndexOf("/")));
+                        int b_i = int.Parse(b.Substring(0, b.IndexOf("/")));
+                        int index_a = Array.IndexOf(fmtOptionsQualitySorted, a_i);
+                        int index_b = Array.IndexOf(fmtOptionsQualitySorted, b_i);
+                        return index_b.CompareTo(index_a);
+                    }));
+                }                
+                PlaybackOptions = FmtMapToPlaybackOptions(FmtMap, Token, videoId);
+                if (PlaybackOptions.Count == 0) // no or empty fmt_map -> add a default url
+                {
+                    PlaybackOptions.Add("", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&ext=.flv", videoId, Token));
+                }
+            }
+        }
+
+        static Dictionary<string, string> FmtMapToPlaybackOptions(string[] fmtMap, string token, string videoId)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            if (fmtMap != null && fmtMap.Length > 0)
+            {
+                foreach (string fmtValue in fmtMap)
+                {
+                    int fmtValueInt = int.Parse(fmtValue.Substring(0, fmtValue.IndexOf("/")));
+                    switch (fmtValueInt)
+                    {
+                        case 0:
+                        case 5:
+                        case 34:
+                            result.Add("320x240 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "flv")); break;
+                        case 13:
+                        case 17:
+                            result.Add("176x144 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
+                        case 18:
+                            result.Add("480x360 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
+                        case 35:
+                            result.Add("640x480 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "flv")); break;
+                        case 22:
+                            result.Add("1280x720 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
+                        case 37:
+                            result.Add("1920x1080 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
+                        default:
+                            result.Add("Unknown | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .???", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}", videoId, token, fmtValueInt)); break;
+                    }
+                }
+            }
+            return result;
+        }
+               
+        #endregion
     }    
 }

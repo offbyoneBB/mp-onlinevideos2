@@ -24,17 +24,13 @@ namespace OnlineVideos.Sites
         int pageSize = 27;
 
         [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
-        bool useDynamicCategories = true;
-        
-        static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        bool useDynamicCategories = true;               
 
         private YouTubeService service;
         private List<int> steps = new List<int>() { 10, 20, 30, 40, 50 };
         private Dictionary<String, String> orderByList;
         private Dictionary<String, String> timeFrameList = new Dictionary<string, string>();
-        private YouTubeQuery lastPerformedQuery;
-
-        static readonly int[] fmtOptionsQualitySorted = new int[] { 37, 22, 35, 18, 34, 5, 0, 17, 13 };
+        private YouTubeQuery lastPerformedQuery;        
 
         const string CLIENT_ID = "ytapi-GregZ-OnlineVideos-s2skvsf5-0";
         const string DEVELOPER_KEY = "AI39si5x-6x0Nybb_MvpC3vpiF8xBjpGgfq-HTbyxWP26hdlnZ3bTYyERHys8wyYsbx3zc5f9bGYj0_qfybCp-wyBF-9R5-5kA";        
@@ -71,9 +67,36 @@ namespace OnlineVideos.Sites
             return parseGData(query);
         }
 
-        public override String getUrl(VideoInfo foVideo)
+        public override string getUrl(VideoInfo foVideo)
         {
-            return ConvertUrl(foVideo.VideoUrl, videoQuality, out foVideo.PlaybackOptions);            
+            foVideo.GetYouTubePlaybackOptions();
+
+            if (foVideo.PlaybackOptions == null || foVideo.PlaybackOptions.Count == 0)
+            {
+                return ""; // no url to play available
+            }
+            else if (foVideo.PlaybackOptions.Count == 1 || videoQuality == VideoQuality.Low)
+            {
+                //user wants low quality or only one playback option -> use first
+                string[] values = new string[foVideo.PlaybackOptions.Count];
+                foVideo.PlaybackOptions.Values.CopyTo(values, 0);
+                return values[0];
+            }
+            else if (videoQuality == VideoQuality.HD)
+            {
+                // take highest available quality
+                string[] values = new string[foVideo.PlaybackOptions.Count];
+                foVideo.PlaybackOptions.Values.CopyTo(values, 0);
+                return values[values.Length - 1];
+            }
+            else // choose a high quality from options (highest below the HD formats (37 22)
+            {
+                string[] keys = new string[foVideo.PlaybackOptions.Count];
+                foVideo.PlaybackOptions.Keys.CopyTo(keys, 0);
+                int index = keys.Length - 1;
+                while (index > 0 && (!keys[index].EndsWith(".flv"))) index--;
+                return foVideo.PlaybackOptions[keys[index]];
+            }
         }
 
         public override int DiscoverDynamicCategories()
@@ -178,156 +201,6 @@ namespace OnlineVideos.Sites
                 Log.Error("Error retrieving YouTube Categories: " + ex.Message);
             }
             return categories;
-        }
-
-        public static string ConvertUrl(string youtubeUrl)
-        {
-            int p=youtubeUrl.LastIndexOf('/');
-            p++;
-            int q=youtubeUrl.IndexOf('?',p);
-            if (q < 0) youtubeUrl.IndexOf('&', p);
-            if (q < 0) q = youtubeUrl.Length;
-            Dictionary<string, string> playbackOptions = null;
-            return ConvertUrl(youtubeUrl.Substring(p,q-p),VideoQuality.HD, out playbackOptions);
-        }
-
-        static string ConvertUrl(string videoId, VideoQuality videoQuality, out Dictionary<string, string> playbackOptions)
-        {
-            playbackOptions = null;
-
-            Dictionary<string, string> Items = new Dictionary<string, string>();
-            GetVideoParamHash(videoId, Items);
-
-            string Token = "";
-            string[] FmtMap = null;
-
-            if (Items.ContainsKey("token"))
-                Token = Items["token"];
-            if (Token == "" && Items.ContainsKey("t"))
-                Token = Items["t"];
-            if (Token == "")
-                return "";
-
-            if (Items.ContainsKey("fmt_map"))
-            {
-                FmtMap = System.Web.HttpUtility.UrlDecode(Items["fmt_map"]).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                Array.Sort(FmtMap, new Comparison<string>(delegate(string a, string b)
-                {
-                    int a_i = int.Parse(a.Substring(0, a.IndexOf("/")));
-                    int b_i = int.Parse(b.Substring(0, b.IndexOf("/")));
-                    int index_a = Array.IndexOf(fmtOptionsQualitySorted, a_i);
-                    int index_b = Array.IndexOf(fmtOptionsQualitySorted, b_i);
-                    return index_b.CompareTo(index_a);
-                }));
-            }
-
-            string lsUrl = "";
-            playbackOptions = FmtMapToPlaybackOptions(FmtMap, Token, videoId);
-            if (FmtMap == null || FmtMap.Length == 0) // no or empty fmt_map
-            {
-                lsUrl = string.Format("http://youtube.com/get_video?video_id={0}&t={1}&ext=.flv", videoId, Token);
-            }
-            else if (FmtMap.Length == 1) // only one fmt_map option available
-            {
-                lsUrl = string.Format("http://youtube.com/get_video?video_id={0}&t={1}&ext=.{2}", videoId, Token, MapFtmValueToExtension(FmtMap[0]));
-            }
-            else if (videoQuality == VideoQuality.Low) //user wants low quality -> use first available option
-            {
-                lsUrl = string.Format("http://youtube.com/get_video?video_id={0}&t={1}&ext=.{2}", videoId, Token, MapFtmValueToExtension(FmtMap[0]));
-            }
-            else if (videoQuality == VideoQuality.HD) // take highest available quality
-            {
-                lsUrl = string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, Token, FmtMap[FmtMap.Length - 1].Substring(0, FmtMap[FmtMap.Length - 1].IndexOf("/")), MapFtmValueToExtension(FmtMap[FmtMap.Length - 1]));
-            }
-            else // choose a high quality from options (highest below the HD formats (37 22)
-            {
-                int index = FmtMap.Length - 1;
-                while (index > 0 && (FmtMap[index].StartsWith("37") || FmtMap[index].StartsWith("22"))) index--;
-                lsUrl = string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, Token, FmtMap[index].Substring(0, FmtMap[index].IndexOf("/")), MapFtmValueToExtension(FmtMap[index]));
-            }
-
-            return lsUrl;
-        }
-
-        static Dictionary<string, string> FmtMapToPlaybackOptions(string[] fmtMap, string token, string videoId)
-        {
-            if (fmtMap == null || fmtMap.Length < 2) return null;
-
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            foreach (string fmtValue in fmtMap)
-            {
-                int fmtValueInt = int.Parse(fmtValue.Substring(0, fmtValue.IndexOf("/")));
-                switch (fmtValueInt)
-                {
-                    case 0:
-                    case 5:
-                    case 34:
-                        result.Add("320x240 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "flv")); break;
-                    case 13:
-                    case 17:
-                        result.Add("176x144 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
-                    case 18:
-                        result.Add("480x360 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
-                    case 35:
-                        result.Add("640x480 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "flv")); break;
-                    case 22:
-                        result.Add("1280x720 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
-                    case 37:
-                        result.Add("1920x1080 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}&ext=.{3}", videoId, token, fmtValueInt, "mp4")); break;
-                    default:
-                        result.Add("Unknown | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .???", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}", videoId, token, fmtValueInt)); break;
-                }                
-            }
-            return result;
-        }
-
-        static string MapFtmValueToExtension(string fmt)
-        {
-            // Note the following formats for reference (2009-10-16)
-            // fmt=0  -> flv:  320x240 (flv1) / mp3 1.0 22KHz (same as fmt=5)
-            // fmt=5  -> flv:  320x240 (flv1) / mp3 1.0 22KHz
-            // fmt=13 -> 3gp:  176x144 (mpg4) / ??? 2.0  8KHz
-            // fmt=17 -> 3gp:  176x144 (mpg4) / ??? 1.0 22KHz
-            // fmt=18 -> mp4:  480x360 (H264) / AAC 2.0 44KHz
-            // fmt=22 -> mp4: 1280x720 (H264) / AAC 2.0 44KHz
-            // fmt=34 -> flv:  320x240 (flv?) / ??? 2.0 44KHz (default now)
-            // fmt=35 -> flv:  640x480 (flv?) / ??? 2.0 44KHz
-            // fmt=37 -> mp4: 1080p
-            switch (fmt)
-            {
-                case "13":
-                case "17":
-                case "18":
-                case "22":
-                case "37":
-                    return "mp4";
-                default:
-                    return "flv";
-            }
-        }
-        
-        static void GetVideoParamHash(string videoId, Dictionary<string, string> Items)
-        {            
-            try
-            {                
-                string contents = GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}", videoId));
-                foreach (string s in contents.Split('&')) Items.Add(s.Split('=')[0], s.Split('=')[1]);
-                if (Items["status"] == "fail")
-                {
-                    contents = GetWebData(string.Format("http://www.youtube.com/watch?v={0}", videoId));
-                    Match m = swfJsonArgs.Match(contents);
-                    if (m.Success)
-                    {
-                        Items.Clear();
-                        object data = Jayrock.Json.Conversion.JsonConvert.Import(m.Groups["json"].Value);
-                        foreach (string z in (data as Jayrock.Json.JsonObject).Names)
-                        {
-                            Items.Add(z,(data as Jayrock.Json.JsonObject)[z].ToString());
-                        }
-                    }
-                }
-            }
-            catch {}
         }
 
         #region Paging

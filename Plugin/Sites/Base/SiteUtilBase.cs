@@ -377,7 +377,7 @@ namespace OnlineVideos.Sites
             return url;
         }
 
-        protected static string GetWebData(string url)
+        protected internal static string GetWebData(string url)
         {
             return GetWebData(url, null, null, null, false);
         }
