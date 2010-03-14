@@ -106,6 +106,7 @@
     <Compile Include="Yahoo\MusicEngine\Services\Video\VideosForAGivenArtistLetterService.cs" />
     <Compile Include="Yahoo\MusicEngine\Services\Video\VideosForGivenPublishedListService.cs" />
     <Compile Include="Yahoo\MusicEngine\VideoPlayer.cs" />
+    <Compile Include="YouTubeUtil.cs" />
     <Compile Include="ZDFMediathekUtil.cs" />
     <Compile Include="ZDF\ConfigurationHelper.cs" />
     <Compile Include="ZDF\DTO\channellist.cs" />

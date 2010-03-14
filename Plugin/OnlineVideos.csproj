@@ -460,7 +460,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Configuration\SiteSettings.cs" />
-    <Compile Include="Sites\CinemassacreUtil.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\ByteArray.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\DynamicList.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\IDynamic.cs" />
@@ -490,7 +489,6 @@
     <Compile Include="Sites\GenericSiteUtil.cs" />
     <Compile Include="Sites\Base\SiteUtilBase.cs" />
     <Compile Include="Sites\Base\SiteUtilFactory.cs" />
-    <Compile Include="Sites\YouTubeUtil.cs" />
     <Compile Include="GUIOnlineVideos.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>

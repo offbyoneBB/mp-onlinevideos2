@@ -1785,13 +1785,21 @@ namespace OnlineVideos
                 if (currentVideosDisplayMode == VideosMode.Favorites)
                 {
                     Log.Info("Received request to remove video from favorites.");
-                    ((IFavorite)selectedSite).removeFavorite(loSelectedVideo);
-                    DisplayVideos_Favorite(); // retrieve favorites again and show the updated list
+                    if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                    {
+                        ((IFavorite)selectedSite).removeFavorite(loSelectedVideo);
+                    }, "removing from favorites"))
+                    {
+                        DisplayVideos_Favorite(); // retrieve favorites again and show the updated list
+                    }
                 }
                 else
                 {
                     Log.Info("Received request to add video to favorites.");
-                    ((IFavorite)selectedSite).addFavorite(loSelectedVideo);
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                    {
+                        ((IFavorite)selectedSite).addFavorite(loSelectedVideo);
+                    }, "adding to favorites");
                 }
             }
             else
