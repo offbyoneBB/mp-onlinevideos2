@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.IO;
 using MediaPortal.GUI.Library;
 using OnlineVideos.Sites;
 
@@ -15,7 +16,7 @@ namespace OnlineVideos
             List<Assembly> assemblies = new List<Assembly>();
             Assembly onlineVideosMainDll = Assembly.GetExecutingAssembly();
             assemblies.Add(onlineVideosMainDll);
-            string[] dllFilesToCheck = System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(onlineVideosMainDll.Location), "OnlineVideos.*.dll");
+            string[] dllFilesToCheck = Directory.GetFiles(Path.Combine(Path.GetDirectoryName(onlineVideosMainDll.Location), "OnlineVideos"), "OnlineVideos.Sites.*.dll");
             foreach (string aDll in dllFilesToCheck)
             {
                 assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(aDll)));

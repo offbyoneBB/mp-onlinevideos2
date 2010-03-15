@@ -833,27 +833,27 @@
 			<FileName>OnlineVideos.Sites.offbyone.dll</FileName>
 			<Type>Plugin</Type>
 			<SubType>Window</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.Sites.offbyone.dll</Source>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</Source>
 			<Id>01010</Id>
-			<Option />
+			<Option>OutputFileName=\OnlineVideos\OnlineVideos.Sites.offbyone.dll|</Option>
 			<Guid>1DC2C69B-9690-4670-B336-7B218EF934BD</Guid>
 		</File>
 		<File>
 			<FileName>OnlineVideos.Sites.hioctane.dll</FileName>
 			<Type>Plugin</Type>
 			<SubType>Window</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.Sites.hioctane.dll</Source>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</Source>
 			<Id>01010</Id>
-			<Option />
+			<Option>OutputFileName=\OnlineVideos\OnlineVideos.Sites.hioctane.dll|</Option>
 			<Guid>7D7B108F-3FC7-4fa7-A422-DCC3605E7FE8</Guid>
 		</File>
 		<File>
 			<FileName>OnlineVideos.Sites.doskabouter.dll</FileName>
 			<Type>Plugin</Type>
 			<SubType>Window</SubType>
-			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.Sites.doskabouter.dll</Source>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</Source>
 			<Id>01010</Id>
-			<Option />
+			<Option>OutputFileName=\OnlineVideos\OnlineVideos.Sites.doskabouter.dll|</Option>
 			<Guid>5E86E758-7710-4b2c-8ADC-419DC09C6361</Guid>
 		</File>
 		<File>
@@ -1620,7 +1620,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>12-03-10</CreationDate>
+		<CreationDate>15-03-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
