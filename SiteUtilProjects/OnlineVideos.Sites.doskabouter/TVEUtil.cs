@@ -60,7 +60,7 @@ namespace OnlineVideos.Sites
                     else
                         cat.Url = baseUrl + cat.Url;
 
-                    cat.HasSubCategories = (parentCategory.Other == null);
+                    cat.HasSubCategories = (parentCategory.Other == null) && cat.Name != "Recomendados";
                     cat.ParentCategory = parentCategory;
                     cat.Other = 1;
                     categories.Add(cat);
@@ -78,7 +78,7 @@ namespace OnlineVideos.Sites
             string webData = GetWebData(video.VideoUrl);
             string url = GetSubString(webData, "<location>", "</location>");
             if (url.StartsWith("rtmp"))
-                return url.Replace(@"rtmp://stream.rtve.es/stream/resources/alacarta", @"http://www.rtve.es/resources");
+                return url.Replace(@"rtmp://stream.rtve.es/stream/resources", @"http://www.rtve.es/resources");
             return url;
         }
 
