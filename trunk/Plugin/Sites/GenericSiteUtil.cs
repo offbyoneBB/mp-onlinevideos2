@@ -64,7 +64,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Boolean used for forcing UTF8 encoding on received data.")]
         protected bool forceUTF8Encoding;
 
-        Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_VideoUrl, regEx_PlaylistUrl, regEx_FileUrl;
+        protected Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_VideoUrl, regEx_PlaylistUrl, regEx_FileUrl;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -221,7 +221,7 @@ namespace OnlineVideos.Sites
             return resultUrl;
         }
 
-        List<VideoInfo> Parse(string url, string data)
+        protected List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
             if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(),null,null,forceUTF8Encoding);
@@ -340,15 +340,15 @@ namespace OnlineVideos.Sites
 
         #region Next/Previous Page
 
-        string nextPageUrl = "";
-        bool nextPageAvailable = false;
+        protected string nextPageUrl = "";
+        protected bool nextPageAvailable = false;
         public override bool HasNextPage
         {
             get { return nextPageAvailable; }
         }
 
-        string previousPageUrl = "";
-        bool previousPageAvailable = false;
+        protected string previousPageUrl = "";
+        protected bool previousPageAvailable = false;
         public override bool HasPreviousPage
         {
             get { return previousPageAvailable; }
@@ -386,7 +386,7 @@ namespace OnlineVideos.Sites
 
         #region Cookie
 
-        CookieContainer GetCookie()
+        protected CookieContainer GetCookie()
         {
             if (string.IsNullOrEmpty(cookies)) return null;
 
