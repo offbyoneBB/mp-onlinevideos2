@@ -37,9 +37,10 @@
   </Table>
   <Table Name="" Member="Dll">
     <Type Name="Dll">
-      <Column Member="Name" Type="System.String" DbType="nvarchar(200)" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Member="LastUpdated" Type="System.DateTime" CanBeNull="false" />
-      <Column Member="Owner_FK" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="nvarchar(200)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="LastUpdated" Type="System.DateTime" CanBeNull="false" />
+      <Column Name="Owner_FK" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
+      <Column Member="MD5" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
       <Association Name="Dll_Site" Member="Sites" ThisKey="Name" OtherKey="RequiredDll" Type="Site" />
       <Association Name="User_Dll" Member="Owner" ThisKey="Owner_FK" OtherKey="Email" Type="User" IsForeignKey="true" />
     </Type>

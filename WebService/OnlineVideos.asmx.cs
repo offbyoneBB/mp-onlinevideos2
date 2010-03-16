@@ -189,6 +189,11 @@ namespace OnlineVideos.WebService
                         infoMessage = "Wrong password!";
                         return false;
                     }
+                    // write the file and calc its MD5 hash
+                    System.IO.File.WriteAllBytes(Server.MapPath("~/Dlls/") + name + ".dll", data);
+                    System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                    byte[] md5Hash = md5.ComputeHash(data);
+                    string md5String = BitConverter.ToString(md5Hash).Replace("-", "").ToLower();
                     // does the dll already exist?
                     if (dc.Dll.Any(d => d.Name == name))
                     {
@@ -196,7 +201,7 @@ namespace OnlineVideos.WebService
                         Dll dll = dc.Dll.First(d => d.Name == name);
                         if (dll.Owner.Email == user.Email || user.IsAdmin)
                         {
-                            System.IO.File.WriteAllBytes(Server.MapPath("~/Dlls/") + name + ".dll", data);
+                            dll.MD5 = md5String;
                             dll.LastUpdated = DateTime.Now;
                             dc.SubmitChanges();
                             infoMessage = "Dll successfully updated!";
@@ -213,11 +218,11 @@ namespace OnlineVideos.WebService
                         // insert new dll
                         Dll newDll = new Dll()
                         {
+                            MD5 = md5String,
                             LastUpdated = DateTime.Now,
                             Name = name,
                             Owner = user
-                        };
-                        System.IO.File.WriteAllBytes(Server.MapPath("~/Dlls/") + name + ".dll", data);
+                        };                        
                         dc.Dll.InsertOnSubmit(newDll);
                         dc.SubmitChanges();
                         infoMessage = "Dll successfully added!";
@@ -313,7 +318,7 @@ namespace OnlineVideos.WebService
                 using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
                 {
                     if (!dc.DatabaseExists()) { dc.CreateDatabase(); dc.SubmitChanges(); }
-                    var s = from a in dc.Dll select new { Name = a.Name, LastUpdated = a.LastUpdated, Owner_FK = a.Owner_FK };
+                    var s = from a in dc.Dll select new { Name = a.Name, LastUpdated = a.LastUpdated, Owner_FK = a.Owner_FK, MD5 = a.MD5 };
                     return (List<Dll>)s.ToList().ToNonAnonymousList(typeof(Dll));
                 }
             }
@@ -324,14 +329,19 @@ namespace OnlineVideos.WebService
         }
 
         [WebMethod]
-        public string GetDllOwner(string dllName)
+        public string GetDllOwner(string dllName, out string MD5)
         {
+            MD5 = null;
             try
             {
                 using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
-                {
+                {                    
                     var result = dc.Dll.Where(d => d.Name == dllName);
-                    if (result.Any()) return result.First().Owner_FK;
+                    if (result.Any())
+                    {
+                        MD5 = result.First().MD5;
+                        return result.First().Owner_FK;
+                    }
                     else return null;
                 }
             }

@@ -18,11 +18,12 @@ namespace OnlineVideos
             Assembly onlineVideosMainDll = Assembly.GetExecutingAssembly();
             assemblies.Add(onlineVideosMainDll);
             onlineVideosMainDllName = onlineVideosMainDll.GetName().Name;
-            string[] dllFilesToCheck = Directory.GetFiles(Path.Combine(Path.GetDirectoryName(onlineVideosMainDll.Location), "OnlineVideos"), "OnlineVideos.Sites.*.dll");
-            foreach (string aDll in dllFilesToCheck)
+            string dirWithExtraDlls = Path.Combine(Path.GetDirectoryName(onlineVideosMainDll.Location), "OnlineVideos");
+            if (Directory.Exists(dirWithExtraDlls))
             {
-                assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(aDll)));
-            }            
+                string[] dllFilesToCheck = Directory.GetFiles(dirWithExtraDlls, "OnlineVideos.Sites.*.dll");
+                foreach (string aDll in dllFilesToCheck) assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(aDll)));
+            }
             foreach (Assembly assembly in assemblies)
             {
                 Log.Debug("Looking for SiteUtils in Assembly: {0}", assembly.GetName().Name);

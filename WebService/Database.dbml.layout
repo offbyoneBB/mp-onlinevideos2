@@ -14,7 +14,7 @@
         <elementListCompartment Id="bbd84f30-dc77-4230-8e8b-5a8b930130ad" absoluteBounds="3.6399999999999997, 0.96, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(4.375 : 1.8862939453125); (4.375 : 3)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(4.375 : 1.8862939453125); (4.375 : 3)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/OnlineVideosDataContext/User/User_Site" />
       <nodes>
         <classShapeMoniker Id="1ac6f24d-53af-49d4-95a2-69e771d217fa" />
@@ -27,20 +27,20 @@
         <elementListCompartment Id="f57a9fa4-6726-4c05-96e9-c8cb5bddea9c" absoluteBounds="6.265, 3.835, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(5.125 : 4.26044840494792); (6.25 : 4.26044840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.125 : 4.26044840494792); (6.25 : 4.26044840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/OnlineVideosDataContext/Site/Site_Report" />
       <nodes>
         <classShapeMoniker Id="4c4c070d-3869-484e-b80d-9586923ef237" />
         <classShapeMoniker Id="5ecda64b-b36d-47d8-a73b-5f4a85bd9da0" />
       </nodes>
     </associationConnector>
-    <classShape Id="188235af-4b50-446f-913c-a34b971ce764" absoluteBounds="0.5, 1.625, 2, 1.3862939453124996">
+    <classShape Id="188235af-4b50-446f-913c-a34b971ce764" absoluteBounds="0.5, 1.625, 2, 1.5785953776041666">
       <DataClassMoniker Name="/OnlineVideosDataContext/Dll" />
       <nestedChildShapes>
-        <elementListCompartment Id="c43b436c-f6e1-43e4-8ae7-7ec0d17fba4e" absoluteBounds="0.515, 2.085, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="c43b436c-f6e1-43e4-8ae7-7ec0d17fba4e" absoluteBounds="0.515, 2.085, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(1.5 : 3.0112939453125); (1.5 : 4.27005126953125); (3.125 : 4.27005126953125)]" fixedFrom="Algorithm" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(1.5 : 3.20359537760417); (1.5 : 4.27005126953125); (3.125 : 4.27005126953125)]" fixedFrom="Algorithm" fixedTo="NotFixed">
       <AssociationMoniker Name="/OnlineVideosDataContext/Dll/Dll_Site" />
       <nodes>
         <classShapeMoniker Id="188235af-4b50-446f-913c-a34b971ce764" />

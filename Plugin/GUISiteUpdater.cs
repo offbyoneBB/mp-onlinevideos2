@@ -315,26 +315,18 @@ namespace OnlineVideos
             {
                 if (siteXml.Length > 0)
                 {
-                    siteXml = @"<?xml version=""1.0"" encoding=""utf-8""?>
-<OnlineVideoSites xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-<Sites>
-" + siteXml + @"
-</Sites>
-</OnlineVideoSites>";
-                    System.IO.StringReader sr = new System.IO.StringReader(siteXml);
-                    System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.getInstance().XmlSerImp.GetSerializer(typeof(SerializableSettings));
-                    SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
-                    if (s.Sites != null && s.Sites.Count > 0)
+                    IList<SiteSettings> sitesFromWeb = Utils.SiteSettingsFromXml(siteXml);
+                    if (sitesFromWeb != null && sitesFromWeb.Count > 0)
                     {
-                        DownloadImages(s.Sites[0].Name, ws);
-                        return s.Sites[0];
+                        DownloadImages(sitesFromWeb[0].Name, ws);
+                        return sitesFromWeb[0];
                     }
                 }
             }
             return null;
         }
 
-        void DownloadImages(string siteName, OnlineVideosWebservice.OnlineVideosService ws)
+        public static void DownloadImages(string siteName, OnlineVideosWebservice.OnlineVideosService ws)
         {
             try
             {

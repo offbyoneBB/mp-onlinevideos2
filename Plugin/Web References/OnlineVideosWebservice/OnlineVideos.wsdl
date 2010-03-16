@@ -155,6 +155,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="LastUpdated" type="s:dateTime" />
           <s:element minOccurs="0" maxOccurs="1" name="Owner_FK" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MD5" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Sites" type="tns:ArrayOfSite" />
           <s:element minOccurs="0" maxOccurs="1" name="Owner" type="tns:User" />
         </s:sequence>
@@ -190,6 +191,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="GetDllOwnerResult" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="MD5" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>

@@ -395,21 +395,12 @@ namespace OnlineVideos
             {
                 ImExportXml dialog = new ImExportXml();
                 if (dialog.ShowDialog() == DialogResult.OK)
-                {                    
-                    string xml = dialog.txtXml.Text;
-                    xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
-<OnlineVideoSites xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-<Sites>
-" + xml + @"
-</Sites>
-</OnlineVideoSites>";
-                    System.IO.StringReader sr = new System.IO.StringReader(xml);
-                    System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.getInstance().XmlSerImp.GetSerializer(typeof(SerializableSettings));
-                    SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
-                    if (s.Sites != null)
+                {                                        
+                    IList<SiteSettings> sitesFromDlg = Utils.SiteSettingsFromXml(dialog.txtXml.Text);
+                    if (sitesFromDlg != null)
                     {
-                        foreach (SiteSettings site in s.Sites) OnlineVideoSettings.getInstance().SiteSettingsList.Add(site);
-                        if (s.Sites.Count > 0) siteList.SelectedItem = s.Sites[s.Sites.Count - 1];
+                        foreach (SiteSettings site in sitesFromDlg) OnlineVideoSettings.getInstance().SiteSettingsList.Add(site);
+                        if (sitesFromDlg.Count > 0) siteList.SelectedItem = sitesFromDlg[sitesFromDlg.Count - 1];
                     }
                 }
             }
@@ -524,19 +515,29 @@ namespace OnlineVideos
                 string msg = "";
                 if (!string.IsNullOrEmpty(dll))
                 {
+                    string location = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "OnlineVideos\\") + dll + ".dll";
+                    byte[] data = null;
                     // check webservice if we need to submit the dll (set useremail = dll owner, or dll not on server)
                     bool dllFound = false;
                     bool userIsOwner = false;
-                    string owner = ws.GetDllOwner(dll);
+                    bool dllsAreEqual = false;
+                    string md5RemoteDll = null;
+                    string owner = ws.GetDllOwner(dll, out md5RemoteDll);
                     dllFound = !string.IsNullOrEmpty(owner);
                     if (dllFound) userIsOwner = owner == settings.email;
-                    if (!dllFound || userIsOwner)
+                    if (dllFound && userIsOwner)
                     {
-                        string info = dllFound ? "DLL found on server, do you want to update the existing one?" : "Do you want to upload the required dll?";
+                        data = System.IO.File.ReadAllBytes(location);
+                        System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();                        
+                        string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
+                        dllsAreEqual = md5RemoteDll == md5LocalDll;
+                    }
+                    if (!dllFound || (userIsOwner && !dllsAreEqual))
+                    {
+                        string info = dllFound ? "DLL found on server differs from your local file, do you want to update the existing one?" : "Do you want to upload the required dll?";
                         if (MessageBox.Show(info, "DLL required", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                         {
-                            string location = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "OnlineVideos\\") + dll + ".dll";
-                            byte[] data = System.IO.File.ReadAllBytes(location);
+                            if (data == null) data = System.IO.File.ReadAllBytes(location);
                             success = ws.SubmitDll(settings.email, settings.password, dll, data, out msg);
                             MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
                         }
