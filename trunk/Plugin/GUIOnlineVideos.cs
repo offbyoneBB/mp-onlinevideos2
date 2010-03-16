@@ -751,7 +751,11 @@ namespace OnlineVideos
                         MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                     }
                     if (currentFilter.Matches(name))
+                    {
+                        if (loListItem.Item == selectedSite)
+                            selectedSiteIndex = GUI_facadeView.Count;
                         GUI_facadeView.Add(loListItem);
+                    }
                 }
             }
             SelectedMaxResultIndex = -1;
