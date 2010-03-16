@@ -198,6 +198,7 @@ namespace OnlineVideos
             if (!firstLoadDone)
             {
                 Translation.TranslateSkin();
+                AutoUpdate();
                 LoadSettings();
                 proxyRtmp = new RTMP_LIB.HTTPServer(OnlineVideoSettings.RTMP_PROXY_PORT);
                 firstLoadDone = true;
@@ -1879,6 +1880,79 @@ namespace OnlineVideos
             }
             return image;
         }
+        
+        private void AutoUpdate()
+        {
+            MediaPortal.Dialogs.GUIDialogYesNo dlg = (MediaPortal.Dialogs.GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+            dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+            dlg.SetLine(1, "Perform automatic update?");
+            dlg.SetLine(2, "This will update all your current sites.");
+            dlg.DoModal(GUIWindowManager.ActiveWindow);
+            if (dlg.IsConfirmed)
+            {                
+                if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                {
+                    OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+                    OnlineVideosWebservice.Site[] onlineSites = ws.GetSitesOverview();
+                    bool saveRequired = false;
+                    Dictionary<string, bool> requiredDlls = new Dictionary<string, bool>();
+                    for (int i = 0; i < OnlineVideoSettings.getInstance().SiteSettingsList.Count;i++)
+                    {
+                        SiteSettings localSite = OnlineVideoSettings.getInstance().SiteSettingsList[i];
+                        OnlineVideosWebservice.Site remoteSite = Array.Find(onlineSites, delegate(OnlineVideosWebservice.Site site) { return site.Name == localSite.Name; });
+                        if (remoteSite != null)
+                        {
+                            if (localSite.LastUpdated < remoteSite.LastUpdated)
+                            {
+                                string siteXml = ws.GetSiteXml(remoteSite.Name);
+                                if (siteXml.Length > 0)
+                                {
+                                    IList<SiteSettings> sitesFromWeb = Utils.SiteSettingsFromXml(siteXml);
+                                    if (sitesFromWeb != null && sitesFromWeb.Count > 0)
+                                    {
+                                        if (!string.IsNullOrEmpty(remoteSite.RequiredDll)) requiredDlls[remoteSite.RequiredDll] = true;
+                                        SiteSettings updatedSite = sitesFromWeb[0];
+                                        OnlineVideoSettings.getInstance().SiteSettingsList[i] = updatedSite;
+                                        GUISiteUpdater.DownloadImages(updatedSite.Name, ws);
+                                        saveRequired = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (saveRequired) OnlineVideoSettings.getInstance().SaveSites();
+                    if (requiredDlls.Count > 0)
+                    {
+                        OnlineVideosWebservice.Dll[] onlineDlls = ws.GetDllsOverview();
+                        foreach (OnlineVideosWebservice.Dll anOnlineDll in onlineDlls)
+                        {
+                            if (requiredDlls.ContainsKey(anOnlineDll.Name))
+                            {
+                                // update or dl dll if needed
+                                string location = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\") + anOnlineDll.Name + ".dll";
+                                bool donwload = true;
+                                if (System.IO.File.Exists(location))
+                                {
+                                    byte[] data = null;
+                                    data = System.IO.File.ReadAllBytes(location);
+                                    System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                                    string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
+                                    if (md5LocalDll == anOnlineDll.MD5) donwload = false;
+                                }
+                                if (donwload)
+                                {
+                                    byte[] onlineDllData = ws.GetDll(anOnlineDll.Name);
+                                    if (onlineDllData != null && onlineDllData.Length > 0) System.IO.File.WriteAllBytes(location, onlineDllData);
+                                }
+                            }
+                        }
+                    }
+                }, "performing automatic update"))
+                {                    
+                    
+                }
+            }
+        }        
 
         #endregion
     }

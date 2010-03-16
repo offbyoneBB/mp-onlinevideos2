@@ -27,5 +27,19 @@ namespace OnlineVideos
         {
             return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTime).ToLocalTime();
         }
+
+        public static IList<SiteSettings> SiteSettingsFromXml(string siteXml)
+        {
+            siteXml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<OnlineVideoSites xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+<Sites>
+" + siteXml + @"
+</Sites>
+</OnlineVideoSites>";
+            System.IO.StringReader sr = new System.IO.StringReader(siteXml);
+            System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.getInstance().XmlSerImp.GetSerializer(typeof(SerializableSettings));
+            SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
+            return s.Sites;            
+        }
     }
 }
