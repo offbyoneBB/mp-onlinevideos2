@@ -519,9 +519,30 @@ namespace OnlineVideos
             bool success = false;
             try
             {
-                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                string dll = SiteUtilFactory.RequiredDll(site.UtilName);
+                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();                
                 string msg = "";
-                success = ws.SubmitSite(settings.email, settings.password, siteXmlString, icon, banner, out msg);
+                if (!string.IsNullOrEmpty(dll))
+                {
+                    // check webservice if we need to submit the dll (set useremail = dll owner, or dll not on server)
+                    bool dllFound = false;
+                    bool userIsOwner = false;
+                    string owner = ws.GetDllOwner(dll);
+                    dllFound = !string.IsNullOrEmpty(owner);
+                    if (dllFound) userIsOwner = owner == settings.email;
+                    if (!dllFound || userIsOwner)
+                    {
+                        string info = dllFound ? "DLL found on server, do you want to update the existing one?" : "Do you want to upload the required dll?";
+                        if (MessageBox.Show(info, "DLL required", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            string location = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "OnlineVideos\\") + dll + ".dll";
+                            byte[] data = System.IO.File.ReadAllBytes(location);
+                            success = ws.SubmitDll(settings.email, settings.password, dll, data, out msg);
+                            MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+                        }
+                    }
+                }
+                success = ws.SubmitSite(settings.email, settings.password, siteXmlString, icon, banner, dll, out msg);
                 MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
             }
             catch (Exception ex)

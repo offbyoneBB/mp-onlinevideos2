@@ -596,6 +596,9 @@
     <None Include="Web References\OnlineVideosWebservice\Site.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\OnlineVideosWebservice\Dll.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\PublishToWeb.png" />
