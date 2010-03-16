@@ -10,12 +10,14 @@ namespace OnlineVideos
 	public static class SiteUtilFactory
 	{
         static Dictionary<String, Type> utils = new Dictionary<String, Type>();
+        static string onlineVideosMainDllName;
        
 		static SiteUtilFactory()
         {
             List<Assembly> assemblies = new List<Assembly>();
             Assembly onlineVideosMainDll = Assembly.GetExecutingAssembly();
             assemblies.Add(onlineVideosMainDll);
+            onlineVideosMainDllName = onlineVideosMainDll.GetName().Name;
             string[] dllFilesToCheck = Directory.GetFiles(Path.Combine(Path.GetDirectoryName(onlineVideosMainDll.Location), "OnlineVideos"), "OnlineVideos.Sites.*.dll");
             foreach (string aDll in dllFilesToCheck)
             {
@@ -60,6 +62,21 @@ namespace OnlineVideos
                 return null;
             }
 		}
+
+        public static string RequiredDll(string name)
+        {
+            Type result = null;
+            if (utils.TryGetValue(name, out result))
+            {
+                string dll = result.Assembly.GetName().Name;
+                return dll != onlineVideosMainDllName ? dll : null;
+            }
+            else
+            {
+                Log.Error(string.Format("SiteUtil with name: {0} not found!", name));
+                return null;
+            }
+        }
 
         public static string[] GetAllNames()
         {

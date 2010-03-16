@@ -59,7 +59,7 @@ namespace OnlineVideos.WebService
         }
 
         [WebMethod]
-        public bool SubmitSite(string email, string password, string siteXml, byte[] icon, byte[] banner, out string infoMessage)
+        public bool SubmitSite(string email, string password, string siteXml, byte[] icon, byte[] banner, string requiredDll, out string infoMessage)
         {
             // is the given site xml at least valid xml?
             XmlDocument xml = new XmlDocument();
@@ -104,6 +104,15 @@ namespace OnlineVideos.WebService
                         infoMessage = "Wrong password!";
                         return false;
                     }
+                    // is the requiredDll available on the server?
+                    if (!string.IsNullOrEmpty(requiredDll))
+                    {
+                        if (!dc.Dll.Any(d => d.Name == requiredDll))
+                        {
+                            infoMessage = "Required Dll not found on Server!";
+                            return false;
+                        }
+                    }
                     // does the site already exist?
                     if (dc.Site.Any(s => s.Name == siteName))
                     {
@@ -116,6 +125,7 @@ namespace OnlineVideos.WebService
                             site.IsAdult = isAdult;
                             site.LastUpdated = DateTime.Now;
                             site.XML = siteXml;
+                            site.RequiredDll = requiredDll;
                             site.State = SiteState.Working;
                             dc.SubmitChanges();
                             infoMessage = "Site successfully updated!";
@@ -139,6 +149,7 @@ namespace OnlineVideos.WebService
                             IsAdult = isAdult,
                             LastUpdated = DateTime.Now,
                             XML = siteXml,
+                            RequiredDll = requiredDll,
                             Owner = user,
                             State = SiteState.Working
                         };
@@ -146,6 +157,70 @@ namespace OnlineVideos.WebService
                         dc.SubmitChanges();
                         infoMessage = "Site successfully added!";
                         infoMessage += SaveImages(siteName, icon, banner);
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                infoMessage = ex.Message;
+                return false;
+            }
+        }
+
+        [WebMethod]
+        public bool SubmitDll(string email, string password, string name, byte[] data, out string infoMessage)
+        {
+            try
+            {
+                using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
+                {
+                    if (!dc.DatabaseExists()) { dc.CreateDatabase(); dc.SubmitChanges(); }
+                    // does the user exist?
+                    if (!dc.User.Any(u => u.Email == email))
+                    {
+                        infoMessage = "Email not registered!";
+                        return false;
+                    }
+                    User user = dc.User.First(u => u.Email == email);
+                    // is the correct password given?
+                    if (user.Password != password)
+                    {
+                        infoMessage = "Wrong password!";
+                        return false;
+                    }
+                    // does the dll already exist?
+                    if (dc.Dll.Any(d => d.Name == name))
+                    {
+                        // need to update                        
+                        Dll dll = dc.Dll.First(d => d.Name == name);
+                        if (dll.Owner.Email == user.Email || user.IsAdmin)
+                        {
+                            System.IO.File.WriteAllBytes(Server.MapPath("~/Dlls/") + name + ".dll", data);
+                            dll.LastUpdated = DateTime.Now;
+                            dc.SubmitChanges();
+                            infoMessage = "Dll successfully updated!";
+                            return true;
+                        }
+                        else
+                        {
+                            infoMessage = "Only the owner or an admin can update existing dlls!";
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        // insert new dll
+                        Dll newDll = new Dll()
+                        {
+                            LastUpdated = DateTime.Now,
+                            Name = name,
+                            Owner = user
+                        };
+                        System.IO.File.WriteAllBytes(Server.MapPath("~/Dlls/") + name + ".dll", data);
+                        dc.Dll.InsertOnSubmit(newDll);
+                        dc.SubmitChanges();
+                        infoMessage = "Dll successfully added!";
                         return true;
                     }
                 }
@@ -220,13 +295,49 @@ namespace OnlineVideos.WebService
                 using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
                 {
                     if (!dc.DatabaseExists()) { dc.CreateDatabase(); dc.SubmitChanges(); }
-                    var s = from a in dc.Site select new { Description = a.Description, Language = a.Language, IsAdult = a.IsAdult, LastUpdated = a.LastUpdated, Name = a.Name, State = a.State, Owner_FK = a.Owner_FK };
+                    var s = from a in dc.Site select new { Description = a.Description, Language = a.Language, IsAdult = a.IsAdult, LastUpdated = a.LastUpdated, Name = a.Name, State = a.State, Owner_FK = a.Owner_FK, RequiredDll = a.RequiredDll };
                     return (List<Site>)s.ToList().ToNonAnonymousList(typeof(Site));
                 }
             }
             catch 
             {
                 return new List<Site>();
+            }
+        }
+
+        [WebMethod]
+        public List<Dll> GetDllsOverview()
+        {
+            try
+            {
+                using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
+                {
+                    if (!dc.DatabaseExists()) { dc.CreateDatabase(); dc.SubmitChanges(); }
+                    var s = from a in dc.Dll select new { Name = a.Name, LastUpdated = a.LastUpdated, Owner_FK = a.Owner_FK };
+                    return (List<Dll>)s.ToList().ToNonAnonymousList(typeof(Dll));
+                }
+            }
+            catch
+            {
+                return new List<Dll>();
+            }
+        }
+
+        [WebMethod]
+        public string GetDllOwner(string dllName)
+        {
+            try
+            {
+                using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
+                {
+                    var result = dc.Dll.Where(d => d.Name == dllName);
+                    if (result.Any()) return result.First().Owner_FK;
+                    else return null;
+                }
+            }
+            catch
+            {
+                return null;
             }
         }
 
@@ -271,6 +382,19 @@ namespace OnlineVideos.WebService
             try
             {
                 return System.IO.File.ReadAllBytes(Server.MapPath("~/Banners/") + siteName + ".png");
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        [WebMethod]
+        public byte[] GetDll(string name)
+        {
+            try
+            {
+                return System.IO.File.ReadAllBytes(Server.MapPath("~/Dlls/") + name + ".dll");
             }
             catch
             {

@@ -10,8 +10,10 @@
       <Column Name="LastUpdated" Type="System.DateTime" CanBeNull="false" />
       <Column Name="Language" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
       <Column Name="Description" Type="System.String" DbType="nvarchar(max)" CanBeNull="false" />
-      <Column Member="IsAdult" Type="System.Boolean" CanBeNull="false" />
+      <Column Name="IsAdult" Type="System.Boolean" CanBeNull="false" />
+      <Column Name="RequiredDll" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
       <Association Name="User_Site" Member="Owner" ThisKey="Owner_FK" OtherKey="Email" Type="User" IsForeignKey="true" />
+      <Association Name="Dll_Site" Member="Dll" ThisKey="RequiredDll" OtherKey="Name" Type="Dll" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="" Member="User">
@@ -20,6 +22,7 @@
       <Column Name="Password" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
       <Column Name="IsAdmin" Type="System.Boolean" CanBeNull="false" />
       <Association Name="User_Site" Member="Sites" ThisKey="Email" OtherKey="Owner_FK" Type="Site" />
+      <Association Name="User_Dll" Member="Dlls" ThisKey="Email" OtherKey="Owner_FK" Type="Dll" />
     </Type>
   </Table>
   <Table Name="" Member="Report">
@@ -30,6 +33,15 @@
       <Column Name="Message" Type="System.String" DbType="nvarchar(max)" CanBeNull="false" />
       <Column Name="Type" Type="ReportType" DbType="tinyint" CanBeNull="false" />
       <Association Name="Site_Report" Member="Site" ThisKey="Site_FK" OtherKey="Name" Type="Site" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="" Member="Dll">
+    <Type Name="Dll">
+      <Column Member="Name" Type="System.String" DbType="nvarchar(200)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Member="LastUpdated" Type="System.DateTime" CanBeNull="false" />
+      <Column Member="Owner_FK" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
+      <Association Name="Dll_Site" Member="Sites" ThisKey="Name" OtherKey="RequiredDll" Type="Site" />
+      <Association Name="User_Dll" Member="Owner" ThisKey="Owner_FK" OtherKey="Email" Type="User" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>
