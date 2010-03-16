@@ -199,7 +199,7 @@ namespace OnlineVideos
             {
                 Translation.TranslateSkin();
                 LoadSettings();
-                proxyRtmp = new RTMP_LIB.HTTPServer(OnlineVideoSettings.RTMP_PROXY_PORT);                
+                proxyRtmp = new RTMP_LIB.HTTPServer(OnlineVideoSettings.RTMP_PROXY_PORT);
                 firstLoadDone = true;
             }
 
@@ -330,84 +330,101 @@ namespace OnlineVideos
 
         public override void OnAction(Action action)
         {
-            if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && CurrentState != State.sites)
+            switch (action.wID)
             {
-                currentFilter.Clear();
-                if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
-
-                // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
-                GUIControl focusedControl = GetControl(GetFocusControlId());
-                if (focusedControl != null)
-                {
-                    if (focusedControl.Type == "button" || focusedControl.Type == "selectbutton")
+                case Action.ActionType.ACTION_PREVIOUS_MENU:
+                    if (currentState == State.sites && !currentFilter.IsEmpty())
                     {
-                        int focusedControlId = GetFocusControlId();
-                        if (focusedControlId >= 0)
-                        {
-                            GUIControl.UnfocusControl(GetID, focusedControlId);
-                        }
-                    }
-                }
-
-                ShowPreviousMenu();
-                return;
-            }
-            else if (action.wID == Action.ActionType.ACTION_KEY_PRESSED && GUI_facadeView.Visible && GUI_facadeView.Focus)
-            {
-                // search items (starting from current selected) by title and select first found one
-                char pressedChar = (char)action.m_key.KeyChar;
-                if (char.IsDigit(pressedChar) || pressedChar == '\b')
-                {
-                    currentFilter.Add(pressedChar);
-                    if (CurrentState == State.sites)
+                        currentFilter.Clear();
                         DisplaySites();
-                    else if (CurrentState == State.categories)
-                        DisplayCategories(selectedCategory);
-                    else if (CurrentState == State.videos)
-                        SetVideoListToFacade(currentVideoList);
-
-                    //?DisplayCategories(selectedCategory);
-                    return;
-                }
-                else
-                {
-                    if (char.IsLetterOrDigit(pressedChar))
+                        return;
+                    }
+                    if (CurrentState != State.sites)
                     {
-                        string lowerChar = pressedChar.ToString().ToLower();
-                        for (int i = GUI_facadeView.SelectedListItemIndex + 1; i < GUI_facadeView.Count; i++)
+                        currentFilter.Clear();
+                        if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+
+                        // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
+                        GUIControl focusedControl = GetControl(GetFocusControlId());
+                        if (focusedControl != null)
                         {
-                            if (GUI_facadeView[i].Label.ToLower().StartsWith(lowerChar))
+                            if (focusedControl.Type == "button" || focusedControl.Type == "selectbutton")
                             {
-                                GUI_facadeView.SelectedListItemIndex = i;
-                                return;
+                                int focusedControlId = GetFocusControlId();
+                                if (focusedControlId >= 0)
+                                {
+                                    GUIControl.UnfocusControl(GetID, focusedControlId);
+                                }
+                            }
+                        }
+
+                        ShowPreviousMenu();
+                        return;
+                    }
+                    break;
+                case Action.ActionType.ACTION_KEY_PRESSED:
+                    if (GUI_facadeView.Visible && GUI_facadeView.Focus)
+                    {
+                        // search items (starting from current selected) by title and select first found one
+                        char pressedChar = (char)action.m_key.KeyChar;
+                        if (char.IsDigit(pressedChar) || pressedChar == '\b')
+                        {
+                            currentFilter.Add(pressedChar);
+                            if (CurrentState == State.sites)
+                                DisplaySites();
+                            else if (CurrentState == State.categories)
+                                DisplayCategories(selectedCategory);
+                            else if (CurrentState == State.videos)
+                                SetVideoListToFacade(currentVideoList);
+
+                            //?DisplayCategories(selectedCategory);
+                            return;
+                        }
+                        else
+                        {
+                            if (char.IsLetterOrDigit(pressedChar))
+                            {
+                                string lowerChar = pressedChar.ToString().ToLower();
+                                for (int i = GUI_facadeView.SelectedListItemIndex + 1; i < GUI_facadeView.Count; i++)
+                                {
+                                    if (GUI_facadeView[i].Label.ToLower().StartsWith(lowerChar))
+                                    {
+                                        GUI_facadeView.SelectedListItemIndex = i;
+                                        return;
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
-            else if (action.wID == Action.ActionType.ACTION_NEXT_ITEM && currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
-            {
-                currentFilter.Clear();
-                if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+                    break;
+                case Action.ActionType.ACTION_NEXT_ITEM:
+                    if (currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
+                    {
+                        currentFilter.Clear();
+                        if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
 
-                if (GUI_btnNext.IsEnabled)
-                {
-                    DisplayVideos_NextPage();
-                    UpdateViewState();
-                }
-            }
-            else if (action.wID == Action.ActionType.ACTION_PREV_ITEM && currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
-            {
-                currentFilter.Clear();
-                if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+                        if (GUI_btnNext.IsEnabled)
+                        {
+                            DisplayVideos_NextPage();
+                            UpdateViewState();
+                        }
+                    }
+                    break;
+                case Action.ActionType.ACTION_PREV_ITEM:
+                    if (currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
+                    {
+                        currentFilter.Clear();
+                        if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
 
-                if (GUI_btnPrevious.IsEnabled)
-                {
-                    DisplayVideos_PreviousPage();
-                    UpdateViewState();
-                }
-            }
+                        if (GUI_btnPrevious.IsEnabled)
+                        {
+                            DisplayVideos_PreviousPage();
+                            UpdateViewState();
+                        }
+                    }
+                    break;
 
+            }
             GUI_btnOrderBy.Label = Translation.SortOptions;
             GUI_btnMaxResult.Label = Translation.MaxResults;
             GUI_btnSearchCategories.Label = Translation.Category;
@@ -746,7 +763,7 @@ namespace OnlineVideos
             GUIPropertyManager.SetProperty("#header.label", Translation.Home /*Home*/);
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
-        }        
+        }
 
         private void DisplayCategories(Category parentCategory)
         {
@@ -1081,7 +1098,7 @@ namespace OnlineVideos
             //loListItem.item = 
             GUI_facadeView.Add(loListItem);
             // add the items
-            Dictionary<string, bool> imageHash = new Dictionary<string, bool>();            
+            Dictionary<string, bool> imageHash = new Dictionary<string, bool>();
             int liIdx = 0;
             currentFilter.StartMatching();
             foreach (VideoInfo loVideoInfo in foVideos)
@@ -1579,7 +1596,7 @@ namespace OnlineVideos
         private void ShowVideoDetails()
         {
             GUIPropertyManager.SetProperty("#OnlineVideos.movieposter", ImageDownloader.DownloadPoster(selectedVideo.Tags, selectedVideo.Title));
-            GUIPropertyManager.SetProperty("#OnlineVideos.trailerdesc", selectedVideo.Description);            
+            GUIPropertyManager.SetProperty("#OnlineVideos.trailerdesc", selectedVideo.Description);
             GUIPropertyManager.SetProperty("#OnlineVideos.genre", selectedVideo.Genres);
             GUIPropertyManager.SetProperty("#OnlineVideos.releasedate", selectedVideo.Length);
             GUIPropertyManager.SetProperty("#OnlineVideos.cast", selectedVideo.Cast);

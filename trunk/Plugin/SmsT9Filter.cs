@@ -64,6 +64,10 @@ namespace OnlineVideos
             numbers = String.Empty;
         }
 
+        public bool IsEmpty()
+        {
+            return filter == null;
+        }
 
         public void StartMatching()
         {
