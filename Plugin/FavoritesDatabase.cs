@@ -169,12 +169,12 @@ namespace OnlineVideos.Database
         for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
         {
             string sitename = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");
-            if (OnlineVideoSettings.getInstance().SiteList.ContainsKey(sitename))
+            if (OnlineVideoSettings.Instance.SiteList.ContainsKey(sitename))
             {
-                SiteSettings aSite = OnlineVideoSettings.getInstance().SiteList[sitename].Settings;
+                SiteSettings aSite = OnlineVideoSettings.Instance.SiteList[sitename].Settings;
 
                 if (aSite.IsEnabled &&
-                   (!aSite.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || OnlineVideoSettings.getInstance().ageHasBeenConfirmed))
+                   (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
                 {
                     VideoInfo video = new VideoInfo();
                     video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");

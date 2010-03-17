@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
+using MediaPortal.Configuration;
 
 namespace OnlineVideos
 {
@@ -61,9 +62,9 @@ namespace OnlineVideos
             }
 
             GUIPropertyManager.SetProperty("#header.label",
-                                           OnlineVideoSettings.getInstance().BasicHomeScreenName + ": " + Translation.UpdateSites);
+                                           OnlineVideoSettings.Instance.BasicHomeScreenName + ": " + Translation.ManageSites);
             GUIPropertyManager.SetProperty("#header.image",
-                                           OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
+                                           Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
 
             DisplayOnlineSites();
         }
@@ -96,13 +97,13 @@ namespace OnlineVideos
 
             foreach (OnlineVideosWebservice.Site site in filteredsortedSites)
             {
-                if (!site.IsAdult || !OnlineVideoSettings.getInstance().useAgeConfirmation || OnlineVideoSettings.getInstance().ageHasBeenConfirmed)
+                if (!site.IsAdult || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed)
                 {
                     GUIListItem loListItem = new GUIListItem(site.Name);
                     loListItem.TVTag = site;
                     loListItem.Label2 = site.Language;
                     loListItem.Label3 = site.LastUpdated.ToString("dd.MM.yy HH:mm");
-                    string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + site.Name + ".png";
+                    string image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + site.Name + ".png";
                     if (System.IO.File.Exists(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
                     loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
                     loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
@@ -152,7 +153,7 @@ namespace OnlineVideos
             }
             else if (control == GUI_btnFullUpdate)
             {
-                AutoUpdate();
+                FullUpdate();
             }
 
             base.OnClicked(controlId, control, actionType);
@@ -162,7 +163,6 @@ namespace OnlineVideos
         {
             SiteSettings localSite = GetLocalSite(site.Name);
 
-            bool shouldShow = false;
             GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
             dlgSel.ShowQuickNumbers = false;
             if (dlgSel != null)
@@ -173,21 +173,17 @@ namespace OnlineVideos
                 if (localSite == null)
                 {
                     dlgSel.Add(Translation.AddToMySites);
-                    shouldShow = true;
                 }
                 else
                 {
                     if (localSite.LastUpdated < site.LastUpdated)
                     {
                         dlgSel.Add(Translation.UpdateMySite);
-                        dlgSel.Add(Translation.UpdateMySiteSkipCategories);
-                        shouldShow = true;
+                        dlgSel.Add(Translation.UpdateMySiteSkipCategories);                        
                     }
+                    dlgSel.Add(Translation.RemoveFromMySites);
                 }
             }
-
-            if (!shouldShow) return;
-
             dlgSel.DoModal(GetID);
 
             if (dlgSel.SelectedLabelText == Translation.AddToMySites)
@@ -196,9 +192,9 @@ namespace OnlineVideos
                     SiteSettings newSite = GetRemoteSite(site.Name);
                     if (newSite != null)
                     {
-                        OnlineVideoSettings.getInstance().SiteSettingsList.Add(newSite);
-                        OnlineVideoSettings.getInstance().SaveSites();
-                        OnlineVideoSettings.getInstance().BuildSiteList();
+                        OnlineVideoSettings.Instance.SiteSettingsList.Add(newSite);
+                        OnlineVideoSettings.Instance.SaveSites();
+                        OnlineVideoSettings.Instance.BuildSiteList();
                     }
             }
             else if (dlgSel.SelectedLabelText == Translation.UpdateMySite)
@@ -206,13 +202,13 @@ namespace OnlineVideos
                 SiteSettings site2Update = GetRemoteSite(site.Name);
                 if (site2Update != null)
                 {
-                    for (int i = 0; i < OnlineVideoSettings.getInstance().SiteSettingsList.Count; i++)
+                    for (int i = 0; i < OnlineVideoSettings.Instance.SiteSettingsList.Count; i++)
                     {
-                        if (OnlineVideoSettings.getInstance().SiteSettingsList[i].Name == site2Update.Name)
+                        if (OnlineVideoSettings.Instance.SiteSettingsList[i].Name == site2Update.Name)
                         {
-                            OnlineVideoSettings.getInstance().SiteSettingsList[i] = site2Update;
-                            OnlineVideoSettings.getInstance().SaveSites();
-                            OnlineVideoSettings.getInstance().BuildSiteList();
+                            OnlineVideoSettings.Instance.SiteSettingsList[i] = site2Update;
+                            OnlineVideoSettings.Instance.SaveSites();
+                            OnlineVideoSettings.Instance.BuildSiteList();
                             break;
                         }
                     }
@@ -223,23 +219,30 @@ namespace OnlineVideos
                 SiteSettings siteRemote = GetRemoteSite(site.Name);
                 if (siteRemote != null)
                 {
-                    for (int i = 0; i < OnlineVideoSettings.getInstance().SiteSettingsList.Count; i++)
+                    for (int i = 0; i < OnlineVideoSettings.Instance.SiteSettingsList.Count; i++)
                     {
-                        if (OnlineVideoSettings.getInstance().SiteSettingsList[i].Name == siteRemote.Name)
+                        if (OnlineVideoSettings.Instance.SiteSettingsList[i].Name == siteRemote.Name)
                         {
-                            siteRemote.Categories = OnlineVideoSettings.getInstance().SiteSettingsList[i].Categories;
-                            OnlineVideoSettings.getInstance().SiteSettingsList[i] = siteRemote;
-                            OnlineVideoSettings.getInstance().SaveSites();
-                            OnlineVideoSettings.getInstance().BuildSiteList();
+                            siteRemote.Categories = OnlineVideoSettings.Instance.SiteSettingsList[i].Categories;
+                            OnlineVideoSettings.Instance.SiteSettingsList[i] = siteRemote;
+                            OnlineVideoSettings.Instance.SaveSites();
+                            OnlineVideoSettings.Instance.BuildSiteList();
                             break;
                         }
                     }
                 }
             }
+            else if (dlgSel.SelectedLabelText == Translation.RemoveFromMySites)
+            {
+                OnlineVideoSettings.Instance.SiteSettingsList.Remove(localSite);
+                OnlineVideoSettings.Instance.SaveSites();
+                OnlineVideoSettings.Instance.BuildSiteList();
+            }
         }
 
-        void AutoUpdate()
+        void FullUpdate()
         {
+            // update and add all sites and dlls, so the user has everthing the server currently has
         }
 
         bool SitePassesFilter(OnlineVideosWebservice.Site site)
@@ -254,7 +257,7 @@ namespace OnlineVideos
                 case FilterOption.Broken:
                     return site.State == OnlineVideos.OnlineVideosWebservice.SiteState.Broken;
                 case FilterOption.Updatable:
-                    foreach (SiteSettings localSite in OnlineVideoSettings.getInstance().SiteSettingsList)
+                    foreach (SiteSettings localSite in OnlineVideoSettings.Instance.SiteSettingsList)
                     {
                         if (localSite.Name == site.Name)
                         {
@@ -296,7 +299,7 @@ namespace OnlineVideos
 
         SiteSettings GetLocalSite(string name)
         {
-            foreach (SiteSettings localSite in OnlineVideoSettings.getInstance().SiteSettingsList)
+            foreach (SiteSettings localSite in OnlineVideoSettings.Instance.SiteSettingsList)
             {
                 if (localSite.Name == name) return localSite;
             }
@@ -338,7 +341,7 @@ namespace OnlineVideos
                 {
                     if (icon != null && icon.Length > 0)
                     {
-                        System.IO.File.WriteAllBytes(OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + siteName + ".png", icon);
+                        System.IO.File.WriteAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + siteName + ".png", icon);
                     }
                 }
             }
@@ -356,7 +359,7 @@ namespace OnlineVideos
                 {
                     if (banner != null && banner.Length > 0)
                     {
-                        System.IO.File.WriteAllBytes(OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners\" + siteName + ".png", banner);
+                        System.IO.File.WriteAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + siteName + ".png", banner);
                     }
                 }                
             }

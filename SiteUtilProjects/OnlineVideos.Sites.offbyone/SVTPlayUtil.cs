@@ -86,7 +86,7 @@ namespace OnlineVideos.Sites
             HttpWebRequest request = WebRequest.Create(fsUrl) as HttpWebRequest;
             if (request == null) return "";
             request.CookieContainer = cookieContainer;
-            request.UserAgent = OnlineVideoSettings.UserAgent;
+            request.UserAgent = OnlineVideoSettings.USERAGENT;
             request.Timeout = 20000;
             WebResponse response = request.GetResponse();
             using (System.IO.StreamReader reader = new System.IO.StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))

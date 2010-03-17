@@ -29,12 +29,12 @@ namespace OnlineVideos
             // gets a CRC code for the given url and returns a file path: thums_dir\crc.jpg
             string name = MediaPortal.Util.Utils.GetThumb(url);
             name = System.IO.Path.GetFileNameWithoutExtension(name) + "L.jpg";
-            return System.IO.Path.Combine(OnlineVideoSettings.getInstance().msThumbLocation, name);
+            return System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, name);
         }
 
         public static string DownloadPoster(string url, string name)
         {
-            string file = System.IO.Path.Combine(OnlineVideoSettings.getInstance().msThumbLocation, GetSaveFilename(name) + "_p.jpg");
+            string file = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, GetSaveFilename(name) + "_p.jpg");
             if (!System.IO.File.Exists(file))
             {
                 Log.Info("downloading Poster image :" + url);
@@ -142,7 +142,7 @@ namespace OnlineVideos
             {
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return false;
-                request.UserAgent = OnlineVideoSettings.UserAgent;
+                request.UserAgent = OnlineVideoSettings.USERAGENT;
                 request.Accept = "*/*";
                 request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();

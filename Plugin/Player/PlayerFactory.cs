@@ -38,7 +38,7 @@ namespace OnlineVideos.Player
                     }
                     else
                     {
-                        foreach (string anExt in OnlineVideoSettings.getInstance().videoExtensions.Keys)
+                        foreach (string anExt in OnlineVideoSettings.Instance.VideoExtensions.Keys)
                         {
                             if (uri.PathAndQuery.Contains(anExt))
                             {

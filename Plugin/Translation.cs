@@ -224,10 +224,9 @@ namespace OnlineVideos
     public static string AlreadyDownloading = "Already downloading this file.";
     public static string All = "All";
     public static string Actions = "Actions";    
-    public static string Actors = "Actors";
+    public static string Actors = "Actors:";
     public static string AddToMySites = "Add to my sites";
-    public static string AddToFavourites = "Add to favourites";
-    public static string AutoUpdate = "Automatic Update";
+    public static string AddToFavourites = "Add to favourites";    
     
     // B
     public static string Broken = "Broken";
@@ -252,12 +251,12 @@ namespace OnlineVideos
     // F
     public static string Favourites = "Favorites";
     public static string Filter = "Filter";
+    public static string FullUpdate = "Full Update";
 
     // G
-    public static string Genre = "Genre";
+    public static string Genre = "Genre:";
 
     // H
-    public static string Home = "Home";
 
     // I
 
@@ -267,6 +266,7 @@ namespace OnlineVideos
     public static string LayoutBigIcons = "Layout: Big Icons";
 
     // M
+    public static string ManageSites = "Manage Sites";
     public static string MaxResults = "Max Results";
     
     // N
@@ -280,6 +280,7 @@ namespace OnlineVideos
     public static string PlayAll = "Play all";
     public static string PlotOutline = "Plot outline:";
     public static string PreviousPage = "Previous page";
+    public static string PerformAutomaticUpdate = "Perform automatic update?";
     
     // R
     public static string RemoveFromFavorites = "Remove from favorites";
@@ -287,6 +288,7 @@ namespace OnlineVideos
     public static string RelatedVideos = "Related Videos";
     public static string Reported = "Reported";
     public static string Runtime = "Runtime:";
+    public static string RemoveFromMySites = "Remove from my sites";
 
     // S
     public static string SearchResults = "Search results";
@@ -302,10 +304,10 @@ namespace OnlineVideos
     public static string Timeout = "Timeout";
 
     // U
-    public static string UpdateSites = "Update Sites";
     public static string Updatable = "Updatable";
     public static string UpdateMySite = "Update my site";
     public static string UpdateMySiteSkipCategories = "Update my site (skip categories)";
+    public static string UpdateAllYourSites = "This will update all your current sites.";
     public static string UnableToPlayVideo = "Unable to play the video. No URL.";
     public static string UnableToDownloadVideo = "Unable to download the video. Invalid URL.";
 

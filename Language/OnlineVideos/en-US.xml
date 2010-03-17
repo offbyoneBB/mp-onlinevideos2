@@ -8,9 +8,9 @@
   <string Field="AlreadyDownloading">Already downloading this file.</string>
   <string Field="Actions">Actions</string>
   <string Field="Actors">Actors:</string>
+  <string Field="AddToMySites">Add to my sites</string>
   <string Field="All">All</string>
-  <string Field="AddToFavourites">Add to favorites</string>
-  <string Field="AutoUpdate">Automatic Update</string>
+  <string Field="AddToFavourites">Add to favorites</string>  
 
   <!-- B -->
   <string Field="Broken">Broken</string>
@@ -35,12 +35,12 @@
   <!-- F -->
   <string Field="Favourites">Favorites</string>
   <string Field="Filter">Filter</string>
+  <string Field="FullUpdate">Full Update</string>
 
   <!-- G -->
   <string Field="Genre">Genre:</string>
 
   <!-- H -->
-  <string Field="Home">Home</string>
 
   <!-- I -->
 
@@ -50,6 +50,7 @@
   <string Field="LayoutBigIcons">Layout: Big Icons</string>
 
   <!-- M -->
+  <string Field="ManageSites">Manage Sites</string>
   <string Field="MaxResults">Max Results</string>
 
   <!-- N -->
@@ -63,6 +64,7 @@
   <string Field="PlayAll">Play all</string>
   <string Field="PlotOutline">Plot outline:</string>
   <string Field="PreviousPage">Previous page</string>
+  <string Field="PerformAutomaticUpdate">Perform automatic update?</string>
 
   <!-- R -->
   <string Field="RemoveFromFavorites">Remove from favorites</string>
@@ -70,6 +72,7 @@
   <string Field="RelatedVideos">Related Videos</string>
   <string Field="Reported">Reported</string>
   <string Field="Runtime">Runtime:</string>
+  <string Field="RemoveFromMySites">Remove from my sites</string>
 
   <!-- S -->
   <string Field="SearchResults">Search results</string>
@@ -84,9 +87,11 @@
   <string Field="Timeframe">Timeframe</string>
   <string Field="Timeout">Timeout</string>
 
-  <!-- U -->
-  <string Field="UpdateSites">Update Sites</string>
-  <string Field="Updatable">Updatable</string>  
+  <!-- U -->  
+  <string Field="Updatable">Updatable</string>
+  <string Field="UpdateMySite">Update my site</string>
+  <string Field="UpdateMySiteSkipCategories">Update my site (skip categories)</string>
+  <string Field="UpdateAllYourSites">This will update all your current sites.</string>
   <string Field="UnableToPlayVideo">Unable to play the video. No URL.</string>
   <string Field="UnableToDownloadVideo">Unable to download the video. Invalid URL.</string>
 
