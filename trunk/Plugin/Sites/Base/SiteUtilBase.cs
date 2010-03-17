@@ -63,7 +63,7 @@ namespace OnlineVideos.Sites
                     {
                         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
                         {
-                            string value = xmlreader.GetValueAsString(OnlineVideoSettings.SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteSettings.Name).Replace(' ', '_'), field.Name), "NO_VALUE_FOUND");
+                            string value = xmlreader.GetValueAsString(OnlineVideoSettings.CFG_SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteSettings.Name).Replace(' ', '_'), field.Name), "NO_VALUE_FOUND");
                             if (value != "NO_VALUE_FOUND")
                             {
                                 try
@@ -327,10 +327,10 @@ namespace OnlineVideos.Sites
         {
             if (string.IsNullOrEmpty(fsUrl)) return false;
             string extensionFile = System.IO.Path.GetExtension(fsUrl).ToLower();
-            bool isVideo = OnlineVideoSettings.getInstance().videoExtensions.ContainsKey(extensionFile);
+            bool isVideo = OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extensionFile);
             if (!isVideo)
             {
-                foreach (string anExt in OnlineVideoSettings.getInstance().videoExtensions.Keys) if (fsUrl.Contains(anExt)) { isVideo = true; break; }
+                foreach (string anExt in OnlineVideoSettings.Instance.VideoExtensions.Keys) if (fsUrl.Contains(anExt)) { isVideo = true; break; }
             }
             return isVideo;
         }
@@ -344,7 +344,7 @@ namespace OnlineVideos.Sites
             {
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return url;
-                request.UserAgent = OnlineVideoSettings.UserAgent;
+                request.UserAgent = OnlineVideoSettings.USERAGENT;
                 request.Timeout = 15000;
                 httpWebresponse = request.GetResponse() as HttpWebResponse;
                 if (httpWebresponse == null) return url;
@@ -406,7 +406,7 @@ namespace OnlineVideos.Sites
             // request the data
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
             if (request == null) return "";
-            request.UserAgent = OnlineVideoSettings.UserAgent;
+            request.UserAgent = OnlineVideoSettings.USERAGENT;
             request.Accept = "*/*";
             request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
             if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set refere if give
@@ -438,7 +438,7 @@ namespace OnlineVideos.Sites
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
-            request.UserAgent = OnlineVideoSettings.UserAgent;
+            request.UserAgent = OnlineVideoSettings.USERAGENT;
             request.Timeout = 15000;
             request.ContentLength = data.Length;
             request.ProtocolVersion = HttpVersion.Version10;
@@ -663,7 +663,7 @@ namespace OnlineVideos.Sites
                         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
                         {
                             string siteName = (component as Sites.SiteUtilBase).Settings.Name;
-                            xmlreader.SetValue(OnlineVideoSettings.SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());
+                            xmlreader.SetValue(OnlineVideoSettings.CFG_SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());
                         }
                     }
                 }

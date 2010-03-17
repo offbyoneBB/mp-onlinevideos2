@@ -53,7 +53,7 @@ namespace OnlineVideos
 
         public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
         {
-            strButtonText = OnlineVideoSettings.getInstance().BasicHomeScreenName;
+            strButtonText = OnlineVideoSettings.Instance.BasicHomeScreenName;
             strButtonImage = String.Empty;
             strButtonImageFocus = String.Empty;
             strPictureImage = @"hover_OnlineVideos.png";
@@ -197,8 +197,9 @@ namespace OnlineVideos
         {
             if (!firstLoadDone)
             {
-                Translation.TranslateSkin();
-                AutoUpdate();
+                GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.PLUGIN_NAME);
+                Translation.TranslateSkin();                
+                if (OnlineVideoSettings.Instance.updateOnStart != false) AutoUpdate(!OnlineVideoSettings.Instance.updateOnStart.HasValue);
                 LoadSettings();
                 proxyRtmp = new RTMP_LIB.HTTPServer(OnlineVideoSettings.RTMP_PROXY_PORT);
                 firstLoadDone = true;
@@ -207,10 +208,10 @@ namespace OnlineVideos
             base.OnPageLoad(); // let animations run
 
             // everytime the plugin is shown, after some other window was shown
-            if (OnlineVideoSettings.getInstance().ageHasBeenConfirmed && PreviousWindowId == 0)
+            if (OnlineVideoSettings.Instance.ageHasBeenConfirmed && PreviousWindowId == 0)
             {
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last                
-                OnlineVideoSettings.getInstance().ageHasBeenConfirmed = false;
+                OnlineVideoSettings.Instance.ageHasBeenConfirmed = false;
                 Log.Debug("Age Confirmed set to false.");
                 if (selectedSite != null && selectedSite.Settings.ConfirmAge)
                 {
@@ -277,7 +278,7 @@ namespace OnlineVideos
                 {
                     dlgSel.Add(Translation.RelatedVideos);//GUILocalizeStrings.Get(33011) /*Related Videos*/
                 }
-                if (String.IsNullOrEmpty(OnlineVideoSettings.getInstance().msDownloadDir) == false)
+                if (String.IsNullOrEmpty(OnlineVideoSettings.Instance.DownloadDir) == false)
                 {
                     if (selectedSite is Sites.DownloadedVideoUtil) dlgSel.Add(Translation.Delete/*Delete*/); else dlgSel.Add(Translation.Download/*Save*/);
                 }
@@ -458,7 +459,7 @@ namespace OnlineVideos
                 currentFilter.Clear();
                 if (CurrentState == State.sites)
                 {
-                    selectedSite = OnlineVideoSettings.getInstance().SiteList[GUI_facadeView.SelectedListItem.Path];
+                    selectedSite = OnlineVideoSettings.Instance.SiteList[GUI_facadeView.SelectedListItem.Path];
                     selectedSiteIndex = GUI_facadeView.SelectedListItemIndex;
                     DisplayCategories(null);
                     CurrentState = State.categories;
@@ -604,9 +605,9 @@ namespace OnlineVideos
                 string pin = String.Empty;
                 if (GetUserInputString(ref pin, true))
                 {
-                    if (pin == OnlineVideoSettings.getInstance().pinAgeConfirmation)
+                    if (pin == OnlineVideoSettings.Instance.pinAgeConfirmation)
                     {
-                        OnlineVideoSettings.getInstance().ageHasBeenConfirmed = true;
+                        OnlineVideoSettings.Instance.ageHasBeenConfirmed = true;
                         HideAndDisable(GUI_btnEnterPin.GetID);
                         DisplaySites();
                         GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
@@ -624,16 +625,16 @@ namespace OnlineVideos
                 // Save view
                 using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
                 {
-                    xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_MODE, (int)currentSiteView);
-                    xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_ORDER, (int)siteOrder);
-                    xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.VIDEOVIEW_MODE, (int)currentVideoView);
-                    xmlwriter.SetValue(OnlineVideoSettings.SECTION, OnlineVideoSettings.CATEGORYVIEW_MODE, (int)currentCategoryView);
+                    xmlwriter.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_MODE, (int)currentSiteView);
+                    xmlwriter.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_ORDER, (int)siteOrder);
+                    xmlwriter.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_VIDEOVIEW_MODE, (int)currentVideoView);
+                    xmlwriter.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_CATEGORYVIEW_MODE, (int)currentCategoryView);
                 }
 
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
-                if (OnlineVideoSettings.getInstance().ageHasBeenConfirmed)
+                if (OnlineVideoSettings.Instance.ageHasBeenConfirmed)
                 {
-                    OnlineVideoSettings.getInstance().ageHasBeenConfirmed = false;
+                    OnlineVideoSettings.Instance.ageHasBeenConfirmed = false;
                     Log.Debug("Age Confirmed set to false.");
                     if (selectedSite != null && selectedSite.Settings.ConfirmAge)
                     {
@@ -666,12 +667,12 @@ namespace OnlineVideos
         {
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
-                currentSiteView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
-                siteOrder = (SiteOrder)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.SITEVIEW_ORDER, 0);
-                currentVideoView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
-                currentCategoryView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.SECTION, OnlineVideoSettings.CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
+                currentSiteView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
+                siteOrder = (SiteOrder)xmlreader.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_ORDER, 0);
+                currentVideoView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
+                currentCategoryView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
             }
-            OnlineVideoSettings.getInstance().BuildSiteList();
+            OnlineVideoSettings.Instance.BuildSiteList();
         }
 
         private void DisplaySites()
@@ -687,16 +688,16 @@ namespace OnlineVideos
             GUI_btnOrderBy.SelectedItem = (int)siteOrder;
 
             // get names in right order
-            string[] names = new string[OnlineVideoSettings.getInstance().SiteList.Count];
+            string[] names = new string[OnlineVideoSettings.Instance.SiteList.Count];
             switch (siteOrder)
             {
                 case SiteOrder.Name:
-                    OnlineVideoSettings.getInstance().SiteList.Keys.CopyTo(names, 0);
+                    OnlineVideoSettings.Instance.SiteList.Keys.CopyTo(names, 0);
                     Array.Sort(names);
                     break;
                 case SiteOrder.Language:
                     Dictionary<string, List<string>> sitenames = new Dictionary<string, List<string>>();
-                    foreach (Sites.SiteUtilBase aSite in OnlineVideoSettings.getInstance().SiteList.Values)
+                    foreach (Sites.SiteUtilBase aSite in OnlineVideoSettings.Instance.SiteList.Values)
                     {
                         string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "zzzzz" : aSite.Settings.Language; // puts empty lang at the end
                         List<string> listForLang = null;
@@ -714,16 +715,16 @@ namespace OnlineVideos
                     }
                     break;
                 default:
-                    OnlineVideoSettings.getInstance().SiteList.Keys.CopyTo(names, 0);
+                    OnlineVideoSettings.Instance.SiteList.Keys.CopyTo(names, 0);
                     break;
             }
 
             currentFilter.StartMatching();
             foreach (string name in names)
             {
-                Sites.SiteUtilBase aSite = OnlineVideoSettings.getInstance().SiteList[name];
+                Sites.SiteUtilBase aSite = OnlineVideoSettings.Instance.SiteList[name];
                 if (aSite.Settings.IsEnabled &&
-                    (!aSite.Settings.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || OnlineVideoSettings.getInstance().ageHasBeenConfirmed))
+                    (!aSite.Settings.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
                 {
                     OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem(aSite.Settings.Name);
                     loListItem.Label2 = aSite.Settings.Language;
@@ -731,11 +732,11 @@ namespace OnlineVideos
                     loListItem.IsFolder = true;
                     loListItem.Item = aSite;
                     // use Icon with the same name as the Site
-                    string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Settings.Name + ".png";
+                    string image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Settings.Name + ".png";
                     if (!System.IO.File.Exists(image))
                     {
                         // if that does not exsist, try Icon with the same name as the Util
-                        image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Settings.UtilName + ".png";
+                        image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Settings.UtilName + ".png";
                         if (!System.IO.File.Exists(image)) image = string.Empty;
                     }
                     if (!string.IsNullOrEmpty(image))
@@ -747,7 +748,7 @@ namespace OnlineVideos
                     }
                     else
                     {
-                        Log.Debug("Icon {0} for site {1} not found", OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Settings.Name + ".png", aSite.Settings.Name);
+                        Log.Debug("Icon {0} for site {1} not found", Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Settings.Name + ".png", aSite.Settings.Name);
                         MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                     }
                     if (currentFilter.Matches(name))
@@ -765,7 +766,7 @@ namespace OnlineVideos
 
             if (selectedSiteIndex < GUI_facadeView.Count) GUI_facadeView.SelectedListItemIndex = selectedSiteIndex;
 
-            GUIPropertyManager.SetProperty("#header.label", Translation.Home /*Home*/);
+            GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.Instance.BasicHomeScreenName);
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
         }
@@ -948,7 +949,7 @@ namespace OnlineVideos
                 List<VideoInfo> searchResultVideos = null;
                 if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    if (moSupportedSearchCategoryList.Count > 1 && !GUI_btnSearchCategories.SelectedLabel.Equals("All"))
+                    if (moSupportedSearchCategoryList.Count > 1 && GUI_btnSearchCategories.SelectedLabel != Translation.All)
                     {
                         string category = moSupportedSearchCategoryList[GUI_btnSearchCategories.SelectedLabel];
                         Log.Info("Searching for {0} in category {1}", query, category);
@@ -1194,7 +1195,7 @@ namespace OnlineVideos
             GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
             if (filmstrip != null) filmstrip.InfoImageFileName = item.ThumbnailImage;
 
-            string desc = OnlineVideoSettings.getInstance().SiteList[item.Label].Settings.Description;
+            string desc = OnlineVideoSettings.Instance.SiteList[item.Label].Settings.Description;
             if (!string.IsNullOrEmpty(desc)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", desc);
             else GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
         }
@@ -1402,7 +1403,7 @@ namespace OnlineVideos
             {
                 Url = url,
                 Title = video.Title,
-                LocalFile = System.IO.Path.Combine(OnlineVideoSettings.getInstance().msDownloadDir, selectedSite.GetFileNameForDownload(video, url)),
+                LocalFile = System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, selectedSite.GetFileNameForDownload(video, url)),
                 ThumbFile = ImageDownloader.GetThumbFile(video.ImageUrl)
             };
 
@@ -1428,7 +1429,7 @@ namespace OnlineVideos
             {
                 // download file from web
                 WebClient loClient = new WebClient();
-                loClient.Headers.Add("user-agent", OnlineVideoSettings.UserAgent);
+                loClient.Headers.Add("user-agent", OnlineVideoSettings.USERAGENT);
                 loClient.DownloadFileCompleted += OnDownloadFileCompleted;
                 loClient.DownloadFileAsync(new Uri(url), downloadInfo.LocalFile, downloadInfo);
             }
@@ -1471,9 +1472,9 @@ namespace OnlineVideos
             {
                 return false;
             }
-            if (OnlineVideoSettings.getInstance().msFilterArray != null)
+            if (OnlineVideoSettings.Instance.FilterArray != null)
             {
-                foreach (String lsFilter in OnlineVideoSettings.getInstance().msFilterArray)
+                foreach (String lsFilter in OnlineVideoSettings.Instance.FilterArray)
                 {
                     if (fsStr.IndexOf(lsFilter, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
@@ -1492,8 +1493,8 @@ namespace OnlineVideos
             switch (CurrentState)
             {
                 case State.sites:
-                    GUIPropertyManager.SetProperty("#header.label", Translation.Home/*Home*/);
-                    GUIPropertyManager.SetProperty("#header.image", OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/OnlineVideos.png");
+                    GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.Instance.BasicHomeScreenName);
+                    GUIPropertyManager.SetProperty("#header.image", Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
                     HideAndDisable(GUI_btnPrevious.GetID);
@@ -1502,7 +1503,7 @@ namespace OnlineVideos
                     ShowOrderButtons();
                     HideSearchButtons();
                     HideAndDisable(GUI_btnFavorite.GetID);
-                    if (OnlineVideoSettings.getInstance().useAgeConfirmation && !OnlineVideoSettings.getInstance().ageHasBeenConfirmed)
+                    if (OnlineVideoSettings.Instance.useAgeConfirmation && !OnlineVideoSettings.Instance.ageHasBeenConfirmed)
                         ShowAndEnable(GUI_btnEnterPin.GetID);
                     else
                         HideAndDisable(GUI_btnEnterPin.GetID);
@@ -1686,7 +1687,7 @@ namespace OnlineVideos
             Log.Debug("Showing Search buttons");
             GUI_btnSearchCategories.Clear();
             moSupportedSearchCategoryList = selectedSite.GetSearchableCategories();
-            GUIControl.AddItemLabelControl(GetID, GUI_btnSearchCategories.GetID, "All");
+            GUIControl.AddItemLabelControl(GetID, GUI_btnSearchCategories.GetID, Translation.All);
             foreach (String category in moSupportedSearchCategoryList.Keys)
             {
                 GUIControl.AddItemLabelControl(GetID, GUI_btnSearchCategories.GetID, category);
@@ -1875,24 +1876,29 @@ namespace OnlineVideos
         private string GetBannerForSite(Sites.SiteUtilBase site)
         {
             // use Banner with the same name as the Site
-            string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + site.Settings.Name + ".png";
+            string image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + site.Settings.Name + ".png";
             if (!System.IO.File.Exists(image))
             {
                 // if that does not exsist, try Banner with the same name as the Util
-                image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners/" + site.Settings.UtilName + ".png";
+                image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + site.Settings.UtilName + ".png";
                 if (!System.IO.File.Exists(image)) image = string.Empty;
             }
             return image;
         }
         
-        private void AutoUpdate()
+        private void AutoUpdate(bool ask)
         {
-            MediaPortal.Dialogs.GUIDialogYesNo dlg = (MediaPortal.Dialogs.GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-            dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
-            dlg.SetLine(1, "Perform automatic update?");
-            dlg.SetLine(2, "This will update all your current sites.");
-            dlg.DoModal(GUIWindowManager.ActiveWindow);
-            if (dlg.IsConfirmed)
+            bool doUpdate = !ask;
+            if (ask)
+            {
+                MediaPortal.Dialogs.GUIDialogYesNo dlg = (MediaPortal.Dialogs.GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                dlg.SetLine(1, Translation.PerformAutomaticUpdate);
+                dlg.SetLine(2, Translation.UpdateAllYourSites);
+                dlg.DoModal(GUIWindowManager.ActiveWindow);
+                doUpdate = dlg.IsConfirmed;
+            }
+            if (doUpdate)
             {                
                 if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
@@ -1900,9 +1906,9 @@ namespace OnlineVideos
                     OnlineVideosWebservice.Site[] onlineSites = ws.GetSitesOverview();
                     bool saveRequired = false;
                     Dictionary<string, bool> requiredDlls = new Dictionary<string, bool>();
-                    for (int i = 0; i < OnlineVideoSettings.getInstance().SiteSettingsList.Count;i++)
+                    for (int i = 0; i < OnlineVideoSettings.Instance.SiteSettingsList.Count;i++)
                     {
-                        SiteSettings localSite = OnlineVideoSettings.getInstance().SiteSettingsList[i];
+                        SiteSettings localSite = OnlineVideoSettings.Instance.SiteSettingsList[i];
                         OnlineVideosWebservice.Site remoteSite = Array.Find(onlineSites, delegate(OnlineVideosWebservice.Site site) { return site.Name == localSite.Name; });
                         if (remoteSite != null)
                         {
@@ -1916,7 +1922,7 @@ namespace OnlineVideos
                                     {
                                         if (!string.IsNullOrEmpty(remoteSite.RequiredDll)) requiredDlls[remoteSite.RequiredDll] = true;
                                         SiteSettings updatedSite = sitesFromWeb[0];
-                                        OnlineVideoSettings.getInstance().SiteSettingsList[i] = updatedSite;
+                                        OnlineVideoSettings.Instance.SiteSettingsList[i] = updatedSite;
                                         GUISiteUpdater.DownloadImages(updatedSite.Name, ws);
                                         saveRequired = true;
                                     }
@@ -1924,7 +1930,7 @@ namespace OnlineVideos
                             }
                         }
                     }
-                    if (saveRequired) OnlineVideoSettings.getInstance().SaveSites();
+                    if (saveRequired) OnlineVideoSettings.Instance.SaveSites();
                     if (requiredDlls.Count > 0)
                     {
                         OnlineVideosWebservice.Dll[] onlineDlls = ws.GetDllsOverview();
@@ -1932,7 +1938,7 @@ namespace OnlineVideos
                         {
                             if (requiredDlls.ContainsKey(anOnlineDll.Name))
                             {
-                                // update or dl dll if needed
+                                // update or download dll if needed
                                 string location = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\") + anOnlineDll.Name + ".dll";
                                 bool donwload = true;
                                 if (System.IO.File.Exists(location))

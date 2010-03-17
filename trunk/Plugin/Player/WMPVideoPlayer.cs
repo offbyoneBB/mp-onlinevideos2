@@ -84,7 +84,7 @@ namespace OnlineVideos.Player
             Log.Info("WMPVideoPlayer:play {0}", strFile);
             _wmp10Player.URL = strFile;
 
-            _wmp10Player.network.bufferingTime = OnlineVideoSettings.getInstance().wmpbuffer;
+            _wmp10Player.network.bufferingTime = OnlineVideoSettings.Instance.wmpbuffer;
             _wmp10Player.Ctlcontrols.play();
             _wmp10Player.ClientSize = new Size(0, 0);
             _wmp10Player.Visible = false;

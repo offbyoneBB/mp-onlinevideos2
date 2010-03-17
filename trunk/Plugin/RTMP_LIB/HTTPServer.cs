@@ -62,7 +62,7 @@ namespace RTMP_LIB
                     {
                         // we must set a content length for the File Source filter, otherwise it thinks we have no content
                         // but don't set a lenght if it is our user agent, so a download will always be complete
-                        if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.UserAgent)
+                        if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.USERAGENT)
                             response.ContentLength = fs.EstimatedLength;
                         
                         responseStream = response.Send();

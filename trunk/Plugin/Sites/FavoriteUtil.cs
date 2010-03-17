@@ -8,6 +8,7 @@ using System.Xml.XPath;
 using System.ComponentModel;
 using System.Threading;
 using OnlineVideos.Database;
+using MediaPortal.Configuration;
 
 namespace OnlineVideos.Sites
 {
@@ -18,7 +19,7 @@ namespace OnlineVideos.Sites
     {
         public override string getUrl(VideoInfo video)
         {
-            SiteUtilBase util = OnlineVideoSettings.getInstance().SiteList[video.SiteName];
+            SiteUtilBase util = OnlineVideoSettings.Instance.SiteList[video.SiteName];
             return util.getUrl(video);
         }
 
@@ -56,15 +57,15 @@ namespace OnlineVideos.Sites
             string[] lsSiteIds = db.getSiteIDs();            
             foreach (string lsSiteId in lsSiteIds)
             {
-                SiteSettings aSite = OnlineVideoSettings.getInstance().SiteList[lsSiteId].Settings;
+                SiteSettings aSite = OnlineVideoSettings.Instance.SiteList[lsSiteId].Settings;
 
                 if (aSite.IsEnabled &&
-                   (!aSite.ConfirmAge || !OnlineVideoSettings.getInstance().useAgeConfirmation || OnlineVideoSettings.getInstance().ageHasBeenConfirmed))
+                   (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
                 {
                     RssLink cat = new RssLink();
                     cat.Name = aSite.Name + " - " + Translation.Favourites;
                     cat.Url = "fav:" + aSite.Name;
-                    cat.Thumb = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + aSite.Name + ".png";
+                    cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Name + ".png";
                     Settings.Categories.Add(cat);
                 }
             }

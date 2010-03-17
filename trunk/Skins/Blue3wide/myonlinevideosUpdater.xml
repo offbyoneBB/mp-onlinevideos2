@@ -229,12 +229,12 @@
       </control>   
        <control>
         <type>button</type>
-        <description>autoupdate button</description>
+        <description>full update button</description>
         <id>505</id>
         <onright>50</onright>
         <onup>504</onup>          
         <ondown>50</ondown>
-        <label>#OnlineVideos.Translation.AutoUpdate.Label</label>
+        <label>#OnlineVideos.Translation.FullUpdate.Label</label>
         <font>font11</font>
         <height>37</height>
         <textYOff>3</textYOff>        

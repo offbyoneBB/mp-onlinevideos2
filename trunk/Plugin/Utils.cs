@@ -37,7 +37,7 @@ namespace OnlineVideos
 </Sites>
 </OnlineVideoSites>";
             System.IO.StringReader sr = new System.IO.StringReader(siteXml);
-            System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.getInstance().XmlSerImp.GetSerializer(typeof(SerializableSettings));
+            System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.Instance.XmlSerImp.GetSerializer(typeof(SerializableSettings));
             SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
             return s.Sites;            
         }

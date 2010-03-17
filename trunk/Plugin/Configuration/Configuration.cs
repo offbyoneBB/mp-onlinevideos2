@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Xml;
+using MediaPortal.Configuration;
 
 namespace OnlineVideos
 {
@@ -32,12 +33,12 @@ namespace OnlineVideos
             SetInfosFromCodecs();
 
             /** fill "General" tab **/
-            OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
+            OnlineVideoSettings settings = OnlineVideoSettings.Instance;
             lblVersion.Text = "Version: " + new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version.ToString();            
             tbxScreenName.Text = settings.BasicHomeScreenName;
-			txtThumbLoc.Text = settings.msThumbLocation;
-            txtDownloadDir.Text = settings.msDownloadDir;
-            txtFilters.Text = settings.msFilterArray != null ? string.Join(",", settings.msFilterArray) : "";
+			txtThumbLoc.Text = settings.ThumbsDir;
+            txtDownloadDir.Text = settings.DownloadDir;
+            txtFilters.Text = settings.FilterArray != null ? string.Join(",", settings.FilterArray) : "";
             chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;            
             tbxPin.Text = settings.pinAgeConfirmation;
             tbxWebCacheTimeout.Text = settings.cacheTimeout.ToString();
@@ -58,7 +59,7 @@ namespace OnlineVideos
             cbLanguages.Items.AddRange(cultureNames.ToArray());            
 
             // set bindings            
-            bindingSourceSiteSettings.DataSource = OnlineVideoSettings.getInstance().SiteSettingsList;
+            bindingSourceSiteSettings.DataSource = OnlineVideoSettings.Instance.SiteSettingsList;
 		}
 		
 		void SiteListSelectedValueChanged(object sender, EventArgs e)
@@ -94,7 +95,7 @@ namespace OnlineVideos
                 Sites.SiteUtilBase siteUtil = SiteUtilFactory.CreateFromShortName(site.UtilName, site);
                 propertyGridUserConfig.SelectedObject = siteUtil;
 
-                string image = OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + site.Name + ".png";
+                string image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + site.Name + ".png";
                 if (System.IO.File.Exists(image)) iconSite.ImageLocation = image;
             }
 
@@ -153,13 +154,13 @@ namespace OnlineVideos
 
             if (dr == DialogResult.OK || dr == DialogResult.Yes)
             {
-                OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
+                OnlineVideoSettings settings = OnlineVideoSettings.Instance;
                 String lsFilter = txtFilters.Text;
                 String[] lsFilterArray = lsFilter.Split(new char[] { ',' });
-                settings.msFilterArray = lsFilterArray;
-                settings.msThumbLocation = txtThumbLoc.Text;
+                settings.FilterArray = lsFilterArray;
+                settings.ThumbsDir = txtThumbLoc.Text;
                 settings.BasicHomeScreenName = tbxScreenName.Text;                
-                settings.msDownloadDir = txtDownloadDir.Text;
+                settings.DownloadDir = txtDownloadDir.Text;
                 settings.useAgeConfirmation = chkUseAgeConfirmation.Checked;
                 settings.pinAgeConfirmation = tbxPin.Text;
                 try { settings.cacheTimeout = int.Parse(tbxWebCacheTimeout.Text); } catch { }
@@ -317,7 +318,7 @@ namespace OnlineVideos
 
         void SetInfosFromCodecs()
         {
-            CodecConfiguration cc = OnlineVideoSettings.getInstance().CodecConfiguration;
+            CodecConfiguration cc = OnlineVideoSettings.Instance.CodecConfiguration;
 
             chkFLVSplitterInstalled.Checked = cc.MPC_HC_FLVSplitter.IsInstalled;
             tbxFLVSplitter.Text = cc.MPC_HC_FLVSplitter.IsInstalled  ? string.Format("{0} | {1}", cc.MPC_HC_FLVSplitter.CodecFile, cc.MPC_HC_FLVSplitter.Version) : "";
@@ -339,8 +340,7 @@ namespace OnlineVideos
         }
 
         private void btnAddSite_Click(object sender, EventArgs e)
-        {
-            OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
+        {            
             SiteSettings site = new SiteSettings();
             site.Name = "New";
             site.UtilName = "GenericSite";
@@ -352,7 +352,6 @@ namespace OnlineVideos
 
         private void btnDeleteSite_Click(object sender, EventArgs e)
         {
-            OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
             SiteSettings site = siteList.SelectedItem as SiteSettings;            
             bindingSourceSiteSettings.Remove(site);            
         }
@@ -363,13 +362,13 @@ namespace OnlineVideos
             siteList.SelectedIndex = -1;
             bindingSourceSiteSettings.SuspendBinding();
 
-            int currentPos = OnlineVideoSettings.getInstance().SiteSettingsList.IndexOf(site);
-            OnlineVideoSettings.getInstance().SiteSettingsList.Remove(site);
-            if (currentPos == 0) OnlineVideoSettings.getInstance().SiteSettingsList.Add(site);
-            else OnlineVideoSettings.getInstance().SiteSettingsList.Insert(currentPos - 1, site);
+            int currentPos = OnlineVideoSettings.Instance.SiteSettingsList.IndexOf(site);
+            OnlineVideoSettings.Instance.SiteSettingsList.Remove(site);
+            if (currentPos == 0) OnlineVideoSettings.Instance.SiteSettingsList.Add(site);
+            else OnlineVideoSettings.Instance.SiteSettingsList.Insert(currentPos - 1, site);
 
             bindingSourceSiteSettings.ResumeBinding();
-            bindingSourceSiteSettings.Position = OnlineVideoSettings.getInstance().SiteSettingsList.IndexOf(site); 
+            bindingSourceSiteSettings.Position = OnlineVideoSettings.Instance.SiteSettingsList.IndexOf(site); 
             bindingSourceSiteSettings.ResetCurrentItem();
         }
 
@@ -379,13 +378,13 @@ namespace OnlineVideos
             siteList.SelectedIndex = -1;
             bindingSourceSiteSettings.SuspendBinding();
 
-            int currentPos = OnlineVideoSettings.getInstance().SiteSettingsList.IndexOf(site);
-            OnlineVideoSettings.getInstance().SiteSettingsList.Remove(site);
-            if (currentPos >= OnlineVideoSettings.getInstance().SiteSettingsList.Count) OnlineVideoSettings.getInstance().SiteSettingsList.Insert(0, site);
-            else OnlineVideoSettings.getInstance().SiteSettingsList.Insert(currentPos + 1, site);
+            int currentPos = OnlineVideoSettings.Instance.SiteSettingsList.IndexOf(site);
+            OnlineVideoSettings.Instance.SiteSettingsList.Remove(site);
+            if (currentPos >= OnlineVideoSettings.Instance.SiteSettingsList.Count) OnlineVideoSettings.Instance.SiteSettingsList.Insert(0, site);
+            else OnlineVideoSettings.Instance.SiteSettingsList.Insert(currentPos + 1, site);
 
             bindingSourceSiteSettings.ResumeBinding();
-            bindingSourceSiteSettings.Position = OnlineVideoSettings.getInstance().SiteSettingsList.IndexOf(site);
+            bindingSourceSiteSettings.Position = OnlineVideoSettings.Instance.SiteSettingsList.IndexOf(site);
             bindingSourceSiteSettings.ResetCurrentItem();
         }
 
@@ -399,7 +398,7 @@ namespace OnlineVideos
                     IList<SiteSettings> sitesFromDlg = Utils.SiteSettingsFromXml(dialog.txtXml.Text);
                     if (sitesFromDlg != null)
                     {
-                        foreach (SiteSettings site in sitesFromDlg) OnlineVideoSettings.getInstance().SiteSettingsList.Add(site);
+                        foreach (SiteSettings site in sitesFromDlg) OnlineVideoSettings.Instance.SiteSettingsList.Add(site);
                         if (sitesFromDlg.Count > 0) siteList.SelectedItem = sitesFromDlg[sitesFromDlg.Count - 1];
                     }
                 }
@@ -464,7 +463,7 @@ namespace OnlineVideos
 
         private void btnPublishSite_Click(object sender, EventArgs e)
         {
-            OnlineVideoSettings settings = OnlineVideoSettings.getInstance();
+            OnlineVideoSettings settings = OnlineVideoSettings.Instance;
             SiteSettings site = siteList.SelectedItem as SiteSettings;
             if (string.IsNullOrEmpty(settings.email) || string.IsNullOrEmpty(settings.password))
             {
@@ -484,7 +483,7 @@ namespace OnlineVideos
             // set current Time to last updated in the xml, so it can be compared later
             DateTime lastUdpBkp = site.LastUpdated;
             site.LastUpdated = DateTime.Now;
-            System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.getInstance().XmlSerImp.GetSerializer(typeof(SerializableSettings));
+            System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.Instance.XmlSerImp.GetSerializer(typeof(SerializableSettings));
             SerializableSettings s = new SerializableSettings() { Sites = new BindingList<SiteSettings>() };
             s.Sites.Add(site);
             System.IO.MemoryStream ms = new System.IO.MemoryStream();
@@ -502,11 +501,11 @@ namespace OnlineVideos
             writer.Flush();
             string siteXmlString = sb.ToString();
             byte[] icon = null;
-            if (System.IO.File.Exists(OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + site.Name + ".png"))
-                icon = System.IO.File.ReadAllBytes(OnlineVideoSettings.getInstance().BannerIconsDir + @"Icons\" + site.Name + ".png");
+            if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + site.Name + ".png"))
+                icon = System.IO.File.ReadAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + site.Name + ".png");
             byte[] banner = null;
-            if (System.IO.File.Exists(OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners\" + site.Name + ".png"))
-                banner = System.IO.File.ReadAllBytes(OnlineVideoSettings.getInstance().BannerIconsDir + @"Banners\" + site.Name + ".png");
+            if (System.IO.File.Exists(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + site.Name + ".png"))
+                banner = System.IO.File.ReadAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + site.Name + ".png");
             bool success = false;
             try
             {
