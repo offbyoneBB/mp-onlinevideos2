@@ -198,7 +198,7 @@ namespace OnlineVideos
             if (!firstLoadDone)
             {
                 GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.PLUGIN_NAME);
-                Translation.TranslateSkin();                
+                Translation.TranslateSkin();
                 if (OnlineVideoSettings.Instance.updateOnStart != false) AutoUpdate(!OnlineVideoSettings.Instance.updateOnStart.HasValue);
                 LoadSettings();
                 proxyRtmp = new RTMP_LIB.HTTPServer(OnlineVideoSettings.RTMP_PROXY_PORT);
@@ -335,15 +335,19 @@ namespace OnlineVideos
             switch (action.wID)
             {
                 case Action.ActionType.ACTION_PREVIOUS_MENU:
-                    if (currentState == State.sites && !currentFilter.IsEmpty())
+                    if (!currentFilter.IsEmpty())
                     {
                         currentFilter.Clear();
-                        DisplaySites();
+                        switch (CurrentState)
+                        {
+                            case State.sites: DisplaySites(); break;
+                            case State.categories: DisplayCategories(selectedCategory); break;
+                            case State.videos: SetVideoListToFacade(currentVideoList); break;
+                        }
                         return;
                     }
                     if (CurrentState != State.sites)
                     {
-                        currentFilter.Clear();
                         if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
 
                         // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
@@ -372,12 +376,12 @@ namespace OnlineVideos
                         if (char.IsDigit(pressedChar) || pressedChar == '\b')
                         {
                             currentFilter.Add(pressedChar);
-                            if (CurrentState == State.sites)
-                                DisplaySites();
-                            else if (CurrentState == State.categories)
-                                DisplayCategories(selectedCategory);
-                            else if (CurrentState == State.videos)
-                                SetVideoListToFacade(currentVideoList);
+                            switch (CurrentState)
+                            {
+                                case State.sites: DisplaySites(); break;
+                                case State.categories: DisplayCategories(selectedCategory); break;
+                                case State.videos: SetVideoListToFacade(currentVideoList); break;
+                            }
 
                             //?DisplayCategories(selectedCategory);
                             return;
@@ -1885,7 +1889,7 @@ namespace OnlineVideos
             }
             return image;
         }
-        
+
         private void AutoUpdate(bool ask)
         {
             bool doUpdate = !ask;
@@ -1899,14 +1903,14 @@ namespace OnlineVideos
                 doUpdate = dlg.IsConfirmed;
             }
             if (doUpdate)
-            {                
+            {
                 if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
                     OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
                     OnlineVideosWebservice.Site[] onlineSites = ws.GetSitesOverview();
                     bool saveRequired = false;
                     Dictionary<string, bool> requiredDlls = new Dictionary<string, bool>();
-                    for (int i = 0; i < OnlineVideoSettings.Instance.SiteSettingsList.Count;i++)
+                    for (int i = 0; i < OnlineVideoSettings.Instance.SiteSettingsList.Count; i++)
                     {
                         SiteSettings localSite = OnlineVideoSettings.Instance.SiteSettingsList[i];
                         OnlineVideosWebservice.Site remoteSite = Array.Find(onlineSites, delegate(OnlineVideosWebservice.Site site) { return site.Name == localSite.Name; });
@@ -1958,11 +1962,11 @@ namespace OnlineVideos
                         }
                     }
                 }, "performing automatic update"))
-                {                    
-                    
+                {
+
                 }
             }
-        }        
+        }
 
         #endregion
     }
