@@ -1978,7 +1978,31 @@ namespace OnlineVideos
                                         if (!string.IsNullOrEmpty(remoteSite.RequiredDll)) requiredDlls[remoteSite.RequiredDll] = true;
                                         SiteSettings updatedSite = sitesFromWeb[0];
                                         OnlineVideoSettings.Instance.SiteSettingsList[i] = updatedSite;
-                                        GUISiteUpdater.DownloadImages(updatedSite.Name, ws);
+                                        try
+                                        {
+                                            byte[] icon = ws.GetSiteIcon(updatedSite.Name);
+                                            if (icon != null && icon.Length > 0)
+                                            {
+                                                System.IO.File.WriteAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + updatedSite.Name + ".png", icon);
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Log.Error("Error getting Icon for site {0}: {1}", updatedSite.Name, ex.ToString());
+                                        }
+                                        try
+                                        {
+                                            byte[] banner = ws.GetSiteBanner(updatedSite.Name);
+                                            if (banner != null && banner.Length > 0)
+                                            {
+                                                System.IO.File.WriteAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + updatedSite.Name + ".png", banner);
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Log.Error("Error getting Banner for site {0}: {1}", updatedSite.Name, ex.ToString());
+                                        }
+
                                         saveRequired = true;
                                     }
                                 }
@@ -1986,11 +2010,12 @@ namespace OnlineVideos
                         }
                         if (dlgPrgrs != null) dlgPrgrs.Percentage = 10 + (70 * (i+1) / OnlineVideoSettings.Instance.SiteSettingsList.Count);
                     }
-                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Saving local site list");
-                    if (saveRequired) OnlineVideoSettings.Instance.SaveSites();
-                    if (dlgPrgrs != null) dlgPrgrs.Percentage = 85;                    
                     if (requiredDlls.Count > 0)
                     {
+                        // create target directory if needed
+                        string dllDir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
+                        if (!System.IO.Directory.Exists(dllDir)) System.IO.Directory.CreateDirectory(dllDir);
+
                         if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Retrieving remote dll list");
                         OnlineVideosWebservice.Dll[] onlineDlls = ws.GetDllsOverview();
                         for (int i = 0; i < onlineDlls.Length; i++)
@@ -2000,7 +2025,7 @@ namespace OnlineVideos
                             if (requiredDlls.ContainsKey(anOnlineDll.Name))
                             {
                                 // update or download dll if needed
-                                string location = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\") + anOnlineDll.Name + ".dll";
+                                string location = dllDir + anOnlineDll.Name + ".dll";
                                 bool download = true;
                                 if (System.IO.File.Exists(location))
                                 {
@@ -2016,11 +2041,12 @@ namespace OnlineVideos
                                     if (onlineDllData != null && onlineDllData.Length > 0) System.IO.File.WriteAllBytes(location, onlineDllData);
                                 }
                             }
-                            if (dlgPrgrs != null) dlgPrgrs.Percentage = 85 + (15 * (i + 1) / onlineDlls.Length);
+                            if (dlgPrgrs != null) dlgPrgrs.Percentage = 80 + (15 * (i + 1) / onlineDlls.Length);
                         }
                     }
-                    if (dlgPrgrs != null) dlgPrgrs.Percentage = 100;
-                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Done");
+                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Saving local site list");
+                    if (saveRequired) OnlineVideoSettings.Instance.SaveSites();
+                    if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, "Done"); }
                 }, "performing automatic update"))
                 {
 

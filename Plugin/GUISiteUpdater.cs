@@ -340,7 +340,7 @@ namespace OnlineVideos
             return null;
         }
 
-        public static void DownloadImages(string siteName, OnlineVideosWebservice.OnlineVideosService ws)
+        static void DownloadImages(string siteName, OnlineVideosWebservice.OnlineVideosService ws)
         {
             try
             {
