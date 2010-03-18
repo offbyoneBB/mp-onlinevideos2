@@ -22,7 +22,8 @@ namespace OnlineVideos.WebService
     {        
         [WebMethod]
         public bool RegisterEmail(string email, out string infoMessage)
-        {            
+        {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
             try
             {
                 using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
@@ -61,6 +62,8 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public bool SubmitSite(string email, string password, string siteXml, byte[] icon, byte[] banner, string requiredDll, out string infoMessage)
         {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
+
             // is the given site xml at least valid xml?
             XmlDocument xml = new XmlDocument();
             string siteName = "";
@@ -171,6 +174,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public bool SubmitDll(string email, string password, string name, byte[] data, out string infoMessage)
         {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
             try
             {
                 using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
@@ -240,6 +244,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public bool SubmitReport(string siteName, string message, ReportType type, out string infoMessage)
         {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
             try
             {
                 using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
@@ -277,6 +282,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public List<Report> GetReports(string siteName)
         {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
             try
             {
                 using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
@@ -295,6 +301,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public List<Site> GetSitesOverview()
         {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
             try
             {
                 using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
@@ -313,6 +320,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public List<Dll> GetDllsOverview()
         {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
             try
             {
                 using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
@@ -331,6 +339,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public string GetDllOwner(string dllName, out string MD5)
         {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
             MD5 = null;
             try
             {
@@ -354,6 +363,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public string GetSiteXml(string siteName)
         {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
             try
             {
                 using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
@@ -376,6 +386,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public byte[] GetSiteIcon(string siteName)
         {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
             try
             {
                 return System.IO.File.ReadAllBytes(Server.MapPath("~/Icons/") + siteName + ".png");
@@ -389,6 +400,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public byte[] GetSiteBanner(string siteName)
         {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
             try
             {
                 return System.IO.File.ReadAllBytes(Server.MapPath("~/Banners/") + siteName + ".png");
@@ -402,6 +414,7 @@ namespace OnlineVideos.WebService
         [WebMethod]
         public byte[] GetDll(string name)
         {
+            NLog.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().Name).Info(Context.Request.UserHostName);
             try
             {
                 return System.IO.File.ReadAllBytes(Server.MapPath("~/Dlls/") + name + ".dll");
