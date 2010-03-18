@@ -177,6 +177,13 @@ namespace OnlineVideos
 
         #region GUIWindow Overrides
 
+        #if !MP102
+        public override string GetModuleName()
+        {
+            return PluginName();
+        }
+        #endif
+
         public override int GetID
         {
             get { return 4755; }
@@ -195,6 +202,9 @@ namespace OnlineVideos
 
         protected override void OnPageLoad()
         {
+            #if MP102
+            GUIPropertyManager.SetProperty("#currentmodule", PluginName());
+            #endif
             if (!firstLoadDone)
             {
                 GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.PLUGIN_NAME);
@@ -258,30 +268,27 @@ namespace OnlineVideos
                 return;
             }
             GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+            if (dlgSel == null) return;
             dlgSel.Reset();
+            dlgSel.SetHeading(Translation.Actions);
 
-            if (dlgSel != null)
+            dlgSel.Add(Translation.PlayAll);
+
+            if (currentVideosDisplayMode != VideosMode.Favorites && !(selectedSite is Sites.FavoriteUtil))
             {
-                dlgSel.SetHeading(Translation.Actions);  // Actions
-
-                dlgSel.Add(Translation.PlayAll); //Play All //GUILocalizeStrings.Get(30003)
-
-                if (currentVideosDisplayMode != VideosMode.Favorites && !(selectedSite is Sites.FavoriteUtil))
-                {
-                    if (!(selectedSite is Sites.DownloadedVideoUtil)) dlgSel.Add(Translation.AddToFavourites); //GUILocalizeStrings.Get(930)/*Add to favorites*/
-                }
-                else
-                {
-                    dlgSel.Add(Translation.RemoveFromFavorites); //GUILocalizeStrings.Get(933)/*Remove from favorites*/
-                }
-                if (selectedSite.HasRelatedVideos)
-                {
-                    dlgSel.Add(Translation.RelatedVideos);//GUILocalizeStrings.Get(33011) /*Related Videos*/
-                }
-                if (String.IsNullOrEmpty(OnlineVideoSettings.Instance.DownloadDir) == false)
-                {
-                    if (selectedSite is Sites.DownloadedVideoUtil) dlgSel.Add(Translation.Delete/*Delete*/); else dlgSel.Add(Translation.Download/*Save*/);
-                }
+                if (!(selectedSite is Sites.DownloadedVideoUtil)) dlgSel.Add(Translation.AddToFavourites); //GUILocalizeStrings.Get(930)/*Add to favorites*/
+            }
+            else
+            {
+                dlgSel.Add(Translation.RemoveFromFavorites); //GUILocalizeStrings.Get(933)/*Remove from favorites*/
+            }
+            if (selectedSite.HasRelatedVideos)
+            {
+                dlgSel.Add(Translation.RelatedVideos);//GUILocalizeStrings.Get(33011) /*Related Videos*/
+            }
+            if (String.IsNullOrEmpty(OnlineVideoSettings.Instance.DownloadDir) == false)
+            {
+                if (selectedSite is Sites.DownloadedVideoUtil) dlgSel.Add(Translation.Delete/*Delete*/); else dlgSel.Add(Translation.Download/*Save*/);
             }
             dlgSel.DoModal(GetID);
             int liSelectedIdx = dlgSel.SelectedId;
@@ -325,9 +332,7 @@ namespace OnlineVideos
                 case 4:
                     SaveVideo(loSelectedVideo);
                     break;
-
             }
-            base.OnShowContextMenu();
         }
 
         public override void OnAction(Action action)
@@ -1092,9 +1097,13 @@ namespace OnlineVideos
             if (foVideos == null || foVideos.Count == 0)
             {
                 GUIDialogNotify dlg_error = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
-                dlg_error.SetText(Translation.NoVideoFound);
-                dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                if (dlg_error != null)
+                {
+                    dlg_error.Reset();
+                    dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                    dlg_error.SetText(Translation.NoVideoFound);
+                    dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                }
                 return false;
             }
             // add the first item that will go to the previous menu
@@ -1213,6 +1222,7 @@ namespace OnlineVideos
         private bool GetUserInputString(ref string sString, bool password)
         {
             VirtualKeyboard keyBoard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+            if (keyBoard == null) return false;
             keyBoard.Reset();
             keyBoard.IsSearchKeyboard = true;
             keyBoard.Text = sString;
@@ -1240,9 +1250,13 @@ namespace OnlineVideos
                 if (loUrlList == null || loUrlList.Count == 0)
                 {
                     GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    dlg.SetHeading(Translation.Error/*ERROR*/);
-                    dlg.SetText(Translation.UnableToPlayVideo);
-                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                    if (dlg != null)
+                    {
+                        dlg.Reset();
+                        dlg.SetHeading(Translation.Error/*ERROR*/);
+                        dlg.SetText(Translation.UnableToPlayVideo);
+                        dlg.DoModal(GUIWindowManager.ActiveWindow);
+                    }
                     return;
                 }
 
@@ -1282,9 +1296,13 @@ namespace OnlineVideos
                 if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
                 {
                     GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    dlg.SetHeading(Translation.Error/*ERROR*/);
-                    dlg.SetText(Translation.UnableToPlayVideo);
-                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                    if (dlg != null)
+                    {
+                        dlg.Reset();
+                        dlg.SetHeading(Translation.Error/*ERROR*/);
+                        dlg.SetText(Translation.UnableToPlayVideo);
+                        dlg.DoModal(GUIWindowManager.ActiveWindow);
+                    }
                     return;
                 }
                 // stop player if currently playing some other video
@@ -1388,18 +1406,26 @@ namespace OnlineVideos
             if (String.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                dlg.SetHeading(Translation.Error/*ERROR*/);
-                dlg.SetText(Translation.UnableToDownloadVideo);
-                dlg.DoModal(GUIWindowManager.ActiveWindow);
+                if (dlg != null)
+                {
+                    dlg.Reset();
+                    dlg.SetHeading(Translation.Error);
+                    dlg.SetText(Translation.UnableToDownloadVideo);
+                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                }
                 return;
             }
 
             if (currentDownloads.ContainsKey(url))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                dlg.SetHeading(Translation.Error/*ERROR*/);
-                dlg.SetText(Translation.AlreadyDownloading);
-                dlg.DoModal(GUIWindowManager.ActiveWindow);
+                if (dlg != null)
+                {
+                    dlg.Reset();
+                    dlg.SetHeading(Translation.Error);
+                    dlg.SetText(Translation.AlreadyDownloading);
+                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                }
                 return;
             }
 
@@ -1447,9 +1473,13 @@ namespace OnlineVideos
             if (e.Error != null)
             {
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                loDlgNotify.SetHeading(Translation.Error/*ERROR*/);
-                loDlgNotify.SetText(string.Format(Translation.DownloadFailed, downloadInfo.Title));
-                loDlgNotify.DoModal(GetID);
+                if (loDlgNotify != null)
+                {
+                    loDlgNotify.Reset();
+                    loDlgNotify.SetHeading(Translation.Error);
+                    loDlgNotify.SetText(string.Format(Translation.DownloadFailed, downloadInfo.Title));
+                    loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+                }
             }
             else
             {
@@ -1464,9 +1494,13 @@ namespace OnlineVideos
                 }
 
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                loDlgNotify.SetHeading(Translation.DownloadComplete);
-                loDlgNotify.SetText((e.UserState as DownloadInfo).Title);
-                loDlgNotify.DoModal(GetID);
+                if (loDlgNotify != null)
+                {
+                    loDlgNotify.Reset();
+                    loDlgNotify.SetHeading(Translation.DownloadComplete);
+                    loDlgNotify.SetText((e.UserState as DownloadInfo).Title);
+                    loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+                }
             }
         }
 
@@ -1895,24 +1929,41 @@ namespace OnlineVideos
             bool doUpdate = !ask;
             if (ask)
             {
-                MediaPortal.Dialogs.GUIDialogYesNo dlg = (MediaPortal.Dialogs.GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
-                dlg.SetLine(1, Translation.PerformAutomaticUpdate);
-                dlg.SetLine(2, Translation.UpdateAllYourSites);
-                dlg.DoModal(GUIWindowManager.ActiveWindow);
-                doUpdate = dlg.IsConfirmed;
+                GUIDialogYesNo dlg = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                if (dlg != null)
+                {
+                    dlg.Reset();
+                    dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                    dlg.SetLine(1, Translation.PerformAutomaticUpdate);
+                    dlg.SetLine(2, Translation.UpdateAllYourSites);
+                    dlg.DoModal(GetID);
+                    doUpdate = dlg.IsConfirmed;
+                }
             }
             if (doUpdate)
             {
+                GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+                if (dlgPrgrs != null)
+                {
+                    dlgPrgrs.Reset();
+                    dlgPrgrs.DisplayProgressBar = true;
+                    dlgPrgrs.ShowWaitCursor = false;                    
+                    dlgPrgrs.DisableCancel(true);
+                    dlgPrgrs.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                    dlgPrgrs.StartModal(GetID);
+                }
                 if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
+                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Retrieving remote site list");
                     OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
                     OnlineVideosWebservice.Site[] onlineSites = ws.GetSitesOverview();
+                    if (dlgPrgrs != null) dlgPrgrs.Percentage = 10;
                     bool saveRequired = false;
                     Dictionary<string, bool> requiredDlls = new Dictionary<string, bool>();
                     for (int i = 0; i < OnlineVideoSettings.Instance.SiteSettingsList.Count; i++)
-                    {
+                    {                        
                         SiteSettings localSite = OnlineVideoSettings.Instance.SiteSettingsList[i];
+                        if (dlgPrgrs != null) dlgPrgrs.SetLine(1, localSite.Name);
                         OnlineVideosWebservice.Site remoteSite = Array.Find(onlineSites, delegate(OnlineVideosWebservice.Site site) { return site.Name == localSite.Name; });
                         if (remoteSite != null)
                         {
@@ -1933,38 +1984,48 @@ namespace OnlineVideos
                                 }
                             }
                         }
+                        if (dlgPrgrs != null) dlgPrgrs.Percentage = 10 + (70 * (i+1) / OnlineVideoSettings.Instance.SiteSettingsList.Count);
                     }
+                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Saving local site list");
                     if (saveRequired) OnlineVideoSettings.Instance.SaveSites();
+                    if (dlgPrgrs != null) dlgPrgrs.Percentage = 85;                    
                     if (requiredDlls.Count > 0)
                     {
+                        if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Retrieving remote dll list");
                         OnlineVideosWebservice.Dll[] onlineDlls = ws.GetDllsOverview();
-                        foreach (OnlineVideosWebservice.Dll anOnlineDll in onlineDlls)
+                        for (int i = 0; i < onlineDlls.Length; i++)
                         {
+                            OnlineVideosWebservice.Dll anOnlineDll = onlineDlls[i];
+                            if (dlgPrgrs != null) dlgPrgrs.SetLine(1, anOnlineDll.Name);
                             if (requiredDlls.ContainsKey(anOnlineDll.Name))
                             {
                                 // update or download dll if needed
                                 string location = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\") + anOnlineDll.Name + ".dll";
-                                bool donwload = true;
+                                bool download = true;
                                 if (System.IO.File.Exists(location))
                                 {
                                     byte[] data = null;
                                     data = System.IO.File.ReadAllBytes(location);
                                     System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
                                     string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
-                                    if (md5LocalDll == anOnlineDll.MD5) donwload = false;
+                                    if (md5LocalDll == anOnlineDll.MD5) download = false;
                                 }
-                                if (donwload)
+                                if (download)
                                 {
                                     byte[] onlineDllData = ws.GetDll(anOnlineDll.Name);
                                     if (onlineDllData != null && onlineDllData.Length > 0) System.IO.File.WriteAllBytes(location, onlineDllData);
                                 }
                             }
+                            if (dlgPrgrs != null) dlgPrgrs.Percentage = 85 + (15 * (i + 1) / onlineDlls.Length);
                         }
                     }
+                    if (dlgPrgrs != null) dlgPrgrs.Percentage = 100;
+                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Done");
                 }, "performing automatic update"))
                 {
 
                 }
+                dlgPrgrs.Close();
             }
         }
 

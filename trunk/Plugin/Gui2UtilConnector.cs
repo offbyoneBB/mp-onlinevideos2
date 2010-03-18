@@ -20,8 +20,7 @@ namespace OnlineVideos
         }
         #endregion
 
-        protected bool isBusy = false;
-        internal bool IsBusy { get { return isBusy; } }
+        internal bool IsBusy { get; private set; }
 
         /// <summary>
         /// This method should be used to call methods from site utils that might take a few seconds.
@@ -35,7 +34,7 @@ namespace OnlineVideos
             // make sure only one background task can be executed at a time
             if (Monitor.TryEnter(this))
             {
-                isBusy = true;
+                IsBusy = true;
                 OnlineVideosException error = null;
                 bool? result = null; // while this is null the task has not finished (or later on timeouted), true indicates successfull completion and false error                
                 try
@@ -46,25 +45,24 @@ namespace OnlineVideos
                         if (System.Diagnostics.Debugger.IsAttached) end = DateTime.Now.AddYears(1); // basically disable timeout when debugging
                     #endif
                     Thread backgroundThread = new Thread(delegate()
-                        {
-                            try
-                            {                                
-                                task.Invoke();
-                                result = true;
-                            }
-                            catch (ThreadAbortException)
-                            {
-                                Log.Error("Timeout waiting for results.");
-                                Thread.ResetAbort();
-                            }
-                            catch (Exception threadException)
-                            {
-                                error = threadException as OnlineVideosException;
-                                Log.Error(threadException);
-                                result = false;
-                            }
+                    {
+                        try
+                        {                                
+                            task.Invoke();
+                            result = true;
                         }
-                        ) { Name = "OnlineVideos", IsBackground = true };
+                        catch (ThreadAbortException)
+                        {
+                            Log.Error("Timeout waiting for results.");
+                            Thread.ResetAbort();
+                        }
+                        catch (Exception threadException)
+                        {
+                            error = threadException as OnlineVideosException;
+                            Log.Error(threadException);
+                            result = false;
+                        }
+                    }) { Name = "OnlineVideos", IsBackground = true };
                     backgroundThread.Start();
 
                     while (result == null)
@@ -86,24 +84,32 @@ namespace OnlineVideos
                         if (error != null)
                         {
                             MediaPortal.Dialogs.GUIDialogOK dlg_error = (MediaPortal.Dialogs.GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                            dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
-                            dlg_error.SetLine(1, string.Format("{0} {1}", Translation.Error, taskdescription));
-                            dlg_error.SetLine(2, error.Message);
-                            dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                            if (dlg_error != null)
+                            {
+                                dlg_error.Reset();
+                                dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                                dlg_error.SetLine(1, string.Format("{0} {1}", Translation.Error, taskdescription));
+                                dlg_error.SetLine(2, error.Message);
+                                dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                            }
                         }
                         else
                         {
                             GUIDialogNotify dlg_error = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                            dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
-                            if (result.HasValue)
-                                dlg_error.SetText(string.Format("{0} {1}", Translation.Error, taskdescription));
-                            else
-                                dlg_error.SetText(string.Format("{0} {1}", Translation.Timeout, taskdescription));
-                            dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                            if (dlg_error != null)
+                            {
+                                dlg_error.Reset();
+                                dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                                if (result.HasValue)
+                                    dlg_error.SetText(string.Format("{0} {1}", Translation.Error, taskdescription));
+                                else
+                                    dlg_error.SetText(string.Format("{0} {1}", Translation.Timeout, taskdescription));
+                                dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                            }
                         }
                     }
                     Monitor.Exit(this);
-                    isBusy = false;
+                    IsBusy = false;
                 }
                 return result == true;
             }
