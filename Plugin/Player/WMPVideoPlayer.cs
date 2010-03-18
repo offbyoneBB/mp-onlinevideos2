@@ -359,10 +359,12 @@ namespace OnlineVideos.Player
             get { return true; }
         }
 
+        #if !MP102
         public override bool HasViz
         {
             get { return true; }
         }
+        #endif
 
         public override bool IsCDA
         {

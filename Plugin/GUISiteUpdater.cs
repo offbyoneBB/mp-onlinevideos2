@@ -27,7 +27,7 @@ namespace OnlineVideos
 
         public override int GetID
         {
-            get { return 4756; }
+            get { return 4757; }
             set { base.GetID = value; }
         }
 
@@ -38,8 +38,19 @@ namespace OnlineVideos
             return result;
         }
 
+        #if !MP102
+        public override string GetModuleName()
+        {
+            return OnlineVideoSettings.PLUGIN_NAME;
+        }
+        #endif
+
         protected override void OnPageLoad()
         {
+            #if MP102
+            GUIPropertyManager.SetProperty("#currentmodule", OnlineVideoSettings.PLUGIN_NAME);
+            #endif
+
             Translation.TranslateSkin();
 
             base.OnPageLoad();
@@ -242,7 +253,7 @@ namespace OnlineVideos
 
         void FullUpdate()
         {
-            // update and add all sites and dlls, so the user has everthing the server currently has
+            // update and add all sites and dlls, so the user has everything the server currently has
         }
 
         bool SitePassesFilter(OnlineVideosWebservice.Site site)
