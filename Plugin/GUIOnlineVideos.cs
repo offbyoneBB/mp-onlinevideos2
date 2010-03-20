@@ -1796,6 +1796,9 @@ namespace OnlineVideos
             }
             GUIControl.SetControlLabel(GetID, GUI_btnViewAs.GetID, strLine);
 
+            //set object count label
+            GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(CurrentState == State.sites ? GUI_facadeView.Count : GUI_facadeView.Count - 1));
+
             // keep track of the currently selected item (is lost when switching view)
             int rememberIndex = GUI_facadeView.SelectedListItemIndex;
             GUI_facadeView.View = currentView; // explicitly set the view (fixes bug that facadeView.list isn't working at startup
