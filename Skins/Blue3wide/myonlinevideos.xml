@@ -205,7 +205,7 @@
         <posX>20</posX>
         <posY>78</posY>
         <width>340</width>
-        <height>485</height>
+        <height>475</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
         <visible>!Control.HasFocus(50)</visible>
@@ -218,7 +218,7 @@
         <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="250" end="-300,0" reversible="false">hidden</animation>
         <posX>50</posX>
-        <posY>105</posY>
+        <posY>102</posY>
         <layout>StackLayout</layout>
         <visible>!Control.HasFocus(50)</visible>
         <control>

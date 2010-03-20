@@ -606,6 +606,9 @@
   <ItemGroup>
     <None Include="Resources\NewReport.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="OnlineVideoSites.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(SolutionDir)Tools\sgen.exe" /a:"$(TargetPath)" /force /reference:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal\Core.dll" /reference:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal\Databases.dll" /reference:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal\Plugins\Windows\Dialogs.dll" /reference:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal\Utils.dll" /type:OnlineVideos.SerializableSettings

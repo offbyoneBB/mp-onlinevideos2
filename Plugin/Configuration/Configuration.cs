@@ -44,6 +44,8 @@ namespace OnlineVideos
             tbxWebCacheTimeout.Text = settings.cacheTimeout.ToString();
             tbxUtilTimeout.Text = settings.utilTimeout.ToString();
             tbxWMPBuffer.Text = settings.wmpbuffer.ToString();
+            if (settings.updateOnStart != null) chkDoAutoUpdate.Checked = settings.updateOnStart.Value;
+            else chkDoAutoUpdate.CheckState = CheckState.Indeterminate;
 
             /** fill "Sites" tab **/
             // utils combobox
@@ -165,6 +167,8 @@ namespace OnlineVideos
                 settings.pinAgeConfirmation = tbxPin.Text;
                 try { settings.cacheTimeout = int.Parse(tbxWebCacheTimeout.Text); } catch { }
                 try { settings.utilTimeout = int.Parse(tbxUtilTimeout.Text); } catch { }
+                if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) settings.updateOnStart = null;
+                else settings.updateOnStart = chkDoAutoUpdate.Checked;
                 settings.Save();
             }
 		}               

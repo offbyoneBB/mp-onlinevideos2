@@ -106,8 +106,6 @@ namespace OnlineVideos
             filteredsortedSites = filteredsortedSites.FindAll(SitePassesFilter);
             filteredsortedSites.Sort(CompareSiteForSort);
 
-            System.Globalization.CultureInfo ci = System.Globalization.CultureInfo.CreateSpecificCulture(MediaPortal.GUI.Library.GUILocalizeStrings.GetCultureName(MediaPortal.GUI.Library.GUILocalizeStrings.CurrentLanguage()));
-
             foreach (OnlineVideosWebservice.Site site in filteredsortedSites)
             {
                 if (!site.IsAdult || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed)
@@ -115,7 +113,7 @@ namespace OnlineVideos
                     GUIListItem loListItem = new GUIListItem(site.Name);
                     loListItem.TVTag = site;
                     loListItem.Label2 = site.Language;
-                    loListItem.Label3 = site.LastUpdated.ToString("g", ci);
+                    loListItem.Label3 = site.LastUpdated.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
                     string image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + site.Name + ".png";
                     if (System.IO.File.Exists(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
                     loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";

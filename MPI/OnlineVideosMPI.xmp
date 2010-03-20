@@ -866,15 +866,6 @@
 			<Guid>11369256-4e7a-4250-96ec-a56f0c92f845</Guid>
 		</File>
 		<File>
-			<FileName>OnlineVideoSites.xml</FileName>
-			<Type>Other</Type>
-			<SubType>%Config%</SubType>
-			<Source>..\OnlineVideoSites.xml</Source>
-			<Id>04010</Id>
-			<Option />
-			<Guid>2969c5c9-356e-42f1-9690-1be003ff1d6f</Guid>
-		</File>
-		<File>
 			<FileName>en-US.xml</FileName>
 			<Type>Other</Type>
 			<SubType>%Language%</SubType>
@@ -1620,7 +1611,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>15-03-10</CreationDate>
+		<CreationDate>20-03-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>

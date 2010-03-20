@@ -115,6 +115,8 @@ namespace OnlineVideos
             this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.label23 = new System.Windows.Forms.Label();
+            this.chkDoAutoUpdate = new System.Windows.Forms.CheckBox();
             this.tbxWMPBuffer = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
             this.tbxUtilTimeout = new System.Windows.Forms.TextBox();
@@ -470,7 +472,7 @@ namespace OnlineVideos
             this.siteList.Location = new System.Drawing.Point(0, 0);
             this.siteList.Name = "siteList";
             this.siteList.Size = new System.Drawing.Size(172, 184);
-            this.siteList.TabIndex = 5;            
+            this.siteList.TabIndex = 5;
             this.siteList.SelectedValueChanged += new System.EventHandler(this.SiteListSelectedValueChanged);
             // 
             // toolStripSiteUpDown
@@ -482,7 +484,7 @@ namespace OnlineVideos
             this.btnSiteDown});
             this.toolStripSiteUpDown.Location = new System.Drawing.Point(0, 0);
             this.toolStripSiteUpDown.Name = "toolStripSiteUpDown";
-            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 186);
+            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 211);
             this.toolStripSiteUpDown.Stretch = true;
             this.toolStripSiteUpDown.TabIndex = 0;
             // 
@@ -1031,6 +1033,8 @@ namespace OnlineVideos
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.label23);
+            this.tabGeneral.Controls.Add(this.chkDoAutoUpdate);
             this.tabGeneral.Controls.Add(this.tbxWMPBuffer);
             this.tabGeneral.Controls.Add(this.label16);
             this.tabGeneral.Controls.Add(this.tbxUtilTimeout);
@@ -1061,6 +1065,29 @@ namespace OnlineVideos
             this.tabGeneral.TabIndex = 0;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(6, 211);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(125, 13);
+            this.label23.TabIndex = 46;
+            this.label23.Text = "Update Sites on first load";
+            // 
+            // chkDoAutoUpdate
+            // 
+            this.chkDoAutoUpdate.AutoSize = true;
+            this.chkDoAutoUpdate.Checked = true;
+            this.chkDoAutoUpdate.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.chkDoAutoUpdate.Location = new System.Drawing.Point(225, 210);
+            this.chkDoAutoUpdate.Name = "chkDoAutoUpdate";
+            this.chkDoAutoUpdate.Size = new System.Drawing.Size(15, 14);
+            this.chkDoAutoUpdate.TabIndex = 45;
+            this.chkDoAutoUpdate.ThreeState = true;
+            this.toolTip1.SetToolTip(this.chkDoAutoUpdate, "If checked plugin will perform an autoupdate the first time it is started each Me" +
+                    "diaPortal Session. If indeterminated, plugin will ask.");
+            this.chkDoAutoUpdate.UseVisualStyleBackColor = true;
             // 
             // tbxWMPBuffer
             // 
@@ -1512,5 +1539,7 @@ namespace OnlineVideos
         private System.Windows.Forms.ToolStripButton btnPublishSite;
         private System.Windows.Forms.ToolStripButton btnReportSite;
         private System.Windows.Forms.PictureBox iconSite;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.CheckBox chkDoAutoUpdate;
 	}
 }
