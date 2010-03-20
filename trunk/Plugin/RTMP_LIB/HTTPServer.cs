@@ -23,7 +23,8 @@ namespace RTMP_LIB
             return invalidHeader;
         }
         public void HandleRequest(HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
-        {          
+        {
+            Thread.CurrentThread.Name = "RTMPProxy";
             Logger.Log("Request");
             RTMP rtmp = null;
             try

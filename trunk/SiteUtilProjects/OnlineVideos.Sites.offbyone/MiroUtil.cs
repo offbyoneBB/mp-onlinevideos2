@@ -67,8 +67,9 @@ namespace OnlineVideos.Sites
                     rss.Name = m.Groups["name"].Value;
                     rss.Url = System.Web.HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(new System.Uri(m.Groups["url"].Value).Query))[0];
                     rss.Description = m.Groups["desc"].Value;
-                    string feedId = m.Groups["mirourl"].Value.Substring(m.Groups["mirourl"].Value.LastIndexOf('/') + 1); 
-                    rss.Thumb = string.Format("http://s3.miroguide.com/static/media/thumbnails/97x65/{0}.jpeg", feedId);
+                    string feedId = m.Groups["mirourl"].Value.Substring(m.Groups["mirourl"].Value.LastIndexOf('/') + 1);
+                    rss.Thumb = string.Format("http://s3.miroguide.com/static/media/thumbnails/200x133/{0}.jpeg", feedId)
+                    + "|" + string.Format("http://s3.miroguide.com/static/media/thumbnails/97x65/{0}.jpeg", feedId);
                     parentCategory.SubCategories.Add(rss);
                     rss.ParentCategory = parentCategory;
                     m = m.NextMatch();

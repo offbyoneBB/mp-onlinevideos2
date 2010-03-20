@@ -8,84 +8,22 @@ using System.Collections.Specialized;
 
 namespace OnlineVideos.Sites
 {
-    public class RedTubeUtil : SiteUtilBase
-    {
-        static Regex videoListRegEx = new Regex(
-                            @"<div\sclass=""video"">\s*
-                            <a\shref=""/(?<VideoUrl>\d{1,})""\stitle=""(?<Title>[^""]*)""[^>]*>\s*
-                            <img\s(?:(?!src).)*src=""(?<ImageUrl>[^""]*)""
-                            (?:(?!<div\sclass=""time"">).)*<div\sclass=""time"">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<",
-                            RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        static Regex videoRegEx = new Regex(@"so\.addParam\(""flashvars"",""(?<flashvars>[^""]+)""\);", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-
-        [Category("OnlineVideosConfiguration"), Description("Url used for getting the results of a search. {0} will be replaced with the query.")]
-        string searchUrl = "http://www.redtube.com/?search={0}";
-
-        public override List<VideoInfo> getVideoList(Category category)
-        {
-            return Parse(GetWebData(((RssLink)category).Url, CookieContainer));
-        }
-
-        List<VideoInfo> Parse(string dataPage)
-        {
-            List<VideoInfo> loVideoList = new List<VideoInfo>();
-            if (dataPage.Length > 0)
-            {
-                Match m = videoListRegEx.Match(dataPage);
-                while (m.Success)
-                {
-                    VideoInfo videoInfo = new VideoInfo();
-                    videoInfo.Title = m.Groups["Title"].Value;
-                    videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
-                    videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                    videoInfo.Length = m.Groups["Duration"].Value;
-                    loVideoList.Add(videoInfo);
-                    m = m.NextMatch();
-                }
-
-                // check for previous page link
-                Match mPrev = previousPageRegEx.Match(dataPage);
-                if (mPrev.Success)
-                {
-                    previousPageAvailable = true;
-                    previousPageUrl = mPrev.Groups["url"].Value;
-                }
-                else
-                {
-                    previousPageAvailable = false;
-                    previousPageUrl = "";
-                }
-
-                // check for next page link
-                Match mNext = nextPageRegEx.Match(dataPage);
-                if (mNext.Success)
-                {
-                    nextPageAvailable = true;
-                    nextPageUrl = mNext.Groups["url"].Value;
-                }
-                else
-                {
-                    nextPageAvailable = false;
-                    nextPageUrl = "";
-                }
-            }
-            return loVideoList;
-        }
-
+    public class RedTubeUtil : GenericSiteUtil
+    {       
         public override String getUrl(VideoInfo video)
         {
             string result = "";
 
-            string data = GetWebData("http://www.redtube.com/" + video.VideoUrl, CookieContainer);
+            string data = GetWebData(video.VideoUrl, base.GetCookie());
             if (!string.IsNullOrEmpty(data))
             {
-                Match m = videoRegEx.Match(data);
+                Match m = regEx_FileUrl.Match(data);
                 if (m.Success)
                 {
                     string flashvarsString = m.Groups["flashvars"].Value;
                     NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(flashvarsString);
                     string param = paramsHash["hash_flv"];
-                    string leng = GetLink(video.VideoUrl);
+                    string leng = GetLink(video.VideoUrl.Substring(video.VideoUrl.LastIndexOf('/')+1));
                     result = leng + param;
                 }
             }
@@ -148,66 +86,6 @@ namespace OnlineVideos.Sites
             // http://thumbs.redtube.com/_thumbs/0000019/0019791/0019791_016.jpg
 
             return dl;
-
-        }
-
-        CookieContainer CookieContainer
-        {
-            get
-            {
-                Cookie c = new Cookie() { Name = "pp", Value = "1", Expires = DateTime.Now.AddHours(1), Domain = "www.redtube.com" };
-                CookieContainer cc = new CookieContainer();
-                cc.Add(c);
-                return cc;
-            }
-        }
-
-        public override string GetFileNameForDownload(VideoInfo video, string url)
-        {
-            return ImageDownloader.GetSaveFilename(video.Title) + ".flv";            
-        }
-
-        #region Next|Previous Page
-
-        static Regex nextPageRegEx = new Regex(@"<a\stitle=""Next\spage""\shref=""(?<url>[^""]*page=\d{1,})"">Next</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        //static Regex nextPageRegEx = new Regex(@"<a\sclass=p\shref='(?<url>/[^\?]*\?page=\d{1,5})'>Next</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);        
-        string nextPageUrl = "";
-        bool nextPageAvailable = false;
-        public override bool HasNextPage
-        {
-            get { return nextPageAvailable; }
-        }
-
-        static Regex previousPageRegEx = new Regex(@"<a\stitle=""Previous\spage""\shref=""(?<url>[^""]*page=\d{1,})"">Prev</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        //static Regex previousPageRegEx = new Regex(@"<a\sclass=p\shref='(?<url>/[^\?]*\?page=\d{1,5})'>Prev</a>", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        string previousPageUrl = "";
-        bool previousPageAvailable = false;
-        public override bool HasPreviousPage
-        {
-            get { return previousPageAvailable; }
-        }
-
-        public override List<VideoInfo> getNextPageVideos()
-        {
-            return Parse(GetWebData("http://www.redtube.com" + nextPageUrl, CookieContainer));
-        }
-
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            return Parse(GetWebData("http://www.redtube.com" + previousPageUrl, CookieContainer));
-        }
-
-        #endregion
-
-        #region Search
-
-        public override bool CanSearch { get { return true; } }
-     
-        public override List<VideoInfo> Search(string query)
-        {
-            return Parse(GetWebData(string.Format(searchUrl, query), CookieContainer));
-        }
-
-        #endregion
+        } 
     }
 }

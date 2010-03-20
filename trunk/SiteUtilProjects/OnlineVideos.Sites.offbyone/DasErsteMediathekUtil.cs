@@ -188,12 +188,12 @@ namespace OnlineVideos.Sites
                             try
                             {
                                 Uri uri = new Uri(resultUrl);
-                                video.PlaybackOptions.Add(string.Format("{0} | {1}:// | {2}", quality.ToString().PadRight(4, ' '), uri.Scheme, System.IO.Path.GetExtension(resultUrl)), resultUrl);
+                                video.PlaybackOptions.Add(string.Format("{0} | {1}:// | {2}", quality.ToString().PadRight(4, ' '), uri.Scheme, System.IO.Path.GetExtension(resultUrl)), uri.AbsoluteUri);
                                 if (resultUrl.EndsWith(".asx"))
                                 {
                                     resultUrl = ParseASX(resultUrl)[0];
                                     uri = new Uri(resultUrl);
-                                    video.PlaybackOptions.Add(string.Format("{0} | {1}:// | {2}", quality.ToString().PadRight(4, ' '), uri.Scheme, System.IO.Path.GetExtension(resultUrl)), resultUrl);
+                                    video.PlaybackOptions.Add(string.Format("{0} | {1}:// | {2}", quality.ToString().PadRight(4, ' '), uri.Scheme, System.IO.Path.GetExtension(resultUrl)), uri.AbsoluteUri);
                                 }                            
                             }
                             catch { }

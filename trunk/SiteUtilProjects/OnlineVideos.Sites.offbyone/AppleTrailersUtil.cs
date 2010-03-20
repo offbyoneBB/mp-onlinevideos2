@@ -24,45 +24,22 @@ namespace OnlineVideos.Sites
         }
 
         public class Video
-        {
-            private string _label;
-            private DateTime _date = DateTime.MinValue;
-            private TimeSpan _length = TimeSpan.Zero;
-            private string _thumb = string.Empty;
-
-            public Dictionary<string, string> PlaybackOptions = new Dictionary<string, string>();
-
-            public string Label
-            {
-                get { return _label; }
-                set { _label = value; }
-            }
-
-            public DateTime Date
-            {
-                get { return _date; }
-                set { _date = value; }
-            }
-
-            public TimeSpan Duration
-            {
-                get { return _length; }
-                set { _length = value; }
-            }
-
-            public string Thumb
-            {
-                get { return _thumb; }
-                set { _thumb = value; }
-            }
-
+        {            
             public Video(string Label)
             {
-                _label = Label;
+                this.Label = Label;
+                this.Date = DateTime.MinValue;
+                this.Duration = TimeSpan.Zero;
+                this.Thumb = string.Empty;
+                this.Description = string.Empty;
+                this.PlaybackOptions = new Dictionary<string, string>();
             }
-
+            public string Label { get; set; }
+            public DateTime Date { get; set; }
+            public TimeSpan Duration { get; set; }
+            public string Thumb { get; set; }
             public string Description { get; set; }
-
+            public Dictionary<string, string> PlaybackOptions { get; set; }
         }
 
         public class Trailer

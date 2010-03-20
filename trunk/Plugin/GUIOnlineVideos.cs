@@ -1583,7 +1583,7 @@ namespace OnlineVideos
                     if (selectedSite.HasPreviousPage) ShowAndEnable(GUI_btnPrevious.GetID); else HideAndDisable(GUI_btnPrevious.GetID);
                     HideVideoDetails();
                     if (selectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
-                    HideSearchButtons();
+                    if (selectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
                     if (selectedSite.HasFilterCategories) ShowCategoryButton();
                     HideAndDisable(GUI_btnFavorite.GetID);
                     HideAndDisable(GUI_btnEnterPin.GetID);

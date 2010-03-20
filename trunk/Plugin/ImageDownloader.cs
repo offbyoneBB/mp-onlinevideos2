@@ -120,11 +120,7 @@ namespace OnlineVideos
                                     item.IconImage = thumbFile;
                                     item.IconImageBig = thumbFile;
                                     break;
-                                }
-                                else
-                                {
-                                    Log.Info("Image not found : " + aFinalUrl);
-                                }
+                                }                                
                             }
                         }
                     }
@@ -158,7 +154,11 @@ namespace OnlineVideos
                 image.Dispose();
                 return true;
             }
-            catch { return false; }
+            catch (Exception ex)
+            {
+                Log.Debug("Invalid Image: {0} {1}", url, ex.ToString());
+                return false; 
+            }
         }
     }
 }
