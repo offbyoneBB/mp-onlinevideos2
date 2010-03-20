@@ -32,7 +32,7 @@ namespace OnlineVideos.Sites
             SVTPlayCategory item;
 
             // Get Alfabeticlisting of shows (categories) from site
-            string listPageContent = GetWebWithCoockieData(listPage);
+            string listPageContent = GetWebData(listPage, GetCookie());
 
             // Regex will find all anchor tags with href like 'href="/t/'
             Match match = reFindCategories.Match(listPageContent);
@@ -67,7 +67,7 @@ namespace OnlineVideos.Sites
         /// </summary>
         /// <param name="fsUrl"></param>
         /// <returns></returns>
-        protected static string GetWebWithCoockieData(string fsUrl)
+        protected CookieContainer GetCookie()
         {
             CookieContainer cookieContainer = new CookieContainer();
             Cookie cookie = new Cookie("hasflash", "false");
@@ -82,18 +82,7 @@ namespace OnlineVideos.Sites
             cookie = new Cookie("prefferedformat", "1"); // Windows media
             cookie.Domain = "svtplay.se";
             cookieContainer.Add(cookie);
-
-            HttpWebRequest request = WebRequest.Create(fsUrl) as HttpWebRequest;
-            if (request == null) return "";
-            request.CookieContainer = cookieContainer;
-            request.UserAgent = OnlineVideoSettings.USERAGENT;
-            request.Timeout = 20000;
-            WebResponse response = request.GetResponse();
-            using (System.IO.StreamReader reader = new System.IO.StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8))
-            {
-                string str = reader.ReadToEnd();
-                return str.Trim();
-            }
+            return cookieContainer;
         }
 
         /// <summary>
@@ -142,13 +131,13 @@ namespace OnlineVideos.Sites
                         Log.Debug("RssItem.Link: {0}", rssItem.Link);
 
                         // Try to find video from rss link
-                        string rssLinkContent = GetWebWithCoockieData(rssItem.Link);
+                        string rssLinkContent = GetWebData(rssItem.Link, GetCookie());
                         // Searches for href with .asx
                         Match asxMatch = reFindASX.Match(rssLinkContent);
                         if (asxMatch.Success)
                         {
                             Log.Debug("Found ASXlink: {0}", asxMatch.Groups["HRef"].Value);
-                            string asxContent = GetWebWithCoockieData(asxMatch.Groups["HRef"].Value);
+                            string asxContent = GetWebData(asxMatch.Groups["HRef"].Value, GetCookie());
                             Log.Debug("ASXContent: {0}", asxContent);
 
                             // Find URL for video in ASX
@@ -256,7 +245,7 @@ namespace OnlineVideos.Sites
         {
             try
             {
-                return RssDocument.Load(GetWebWithCoockieData(fsUrl)).Channel.Items;
+                return RssDocument.Load(GetWebData(fsUrl, GetCookie())).Channel.Items;
             }
             catch (Exception ex)
             {

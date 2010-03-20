@@ -965,6 +965,19 @@
     </Site>
     <Site name="RedTube" util="RedTube" agecheck="true" enabled="true" lang="en">
       <Description>The home of free porn videos.</Description>
+      <Configuration>
+        <item key="videoListRegEx">
+          <![CDATA[<div\sclass="video">\s*
+<a\shref="/(?<VideoUrl>\d{1,})"\stitle="(?<Title>[^"]*)"[^>]*>\s*
+<img\s(?:(?!src).)*src="(?<ImageUrl>[^"]*)"
+(?:(?!<div\sclass="time">).)*<div\sclass="time">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\stitle="Next\spage"\shref="(?<url>[^"]*page=\d{1,})">Next</a>]]></item>
+        <item key="prevPageRegEx"><![CDATA[<a\stitle="Previous\spage"\shref="(?<url>[^"]*page=\d{1,})">Prev</a>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[so\.addParam\("flashvars","(?<flashvars>[^"]+)"\);]]></item>
+        <item key="searchUrl"><![CDATA[http://www.redtube.com/?search={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.redtube.com]]></item>
+        <item key="cookies"><![CDATA[pp=1]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="New">http://www.redtube.com/new</Category>
         <Category xsi:type="RssLink" name="Top">http://www.redtube.com/top</Category>

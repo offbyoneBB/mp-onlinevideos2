@@ -1,29 +1,42 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
 	/// <summary>
-	/// Description of CnnUtil.
+    /// Description of MsnbcUtil.
 	/// </summary>
 	public class MsnbcUtil: SiteUtilBase
 	{
-        static Regex idRegex = new Regex(@"vPlayer\('(\d{5,10})'", RegexOptions.Compiled);
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the video id from an html page.")]
+        string idRegEx = @"vPlayer\('(\d{5,10})'";
+        [Category("OnlineVideosConfiguration"), Description("Format string applied to the video url of an item that was found in the rss.")]
+        string videoUrlFormatString = "http://www.msnbc.msn.com/id/{0}/displaymode/1157/?t=.flv";
+
+        Regex regEx_Id;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+
+            regEx_Id = new Regex(idRegEx, RegexOptions.Compiled);
+        }
 
 		public override string getUrl(OnlineVideos.VideoInfo video)
 		{
             if (video.VideoUrl.Contains("/vp/"))
             {
-                return String.Format("http://www.msnbc.msn.com/id/{0}/displaymode/1157/?t=.flv", video.VideoUrl.Substring(video.VideoUrl.LastIndexOf("#") + 1));
+                return String.Format(videoUrlFormatString, video.VideoUrl.Substring(video.VideoUrl.LastIndexOf("#") + 1));
             }
             else
             {
                 string data = GetWebData(video.VideoUrl);
-                Match m = idRegex.Match(data);
+                Match m = regEx_Id.Match(data);
                 if (m.Success)
-                    return String.Format("http://www.msnbc.msn.com/id/{0}/displaymode/1157/?t=.flv", m.Groups[1].Value);
+                    return String.Format(videoUrlFormatString, m.Groups[1].Value);
                 else
                     return "";
             }
@@ -41,7 +54,7 @@ namespace OnlineVideos.Sites
                 video.Description = rssItem.Description;
                 video.ImageUrl = rssItem.MediaContents[0].Url;
                 video.Title = rssItem.Title.Replace("Video: ", "");
-                video.Length = rssItem.PubDateParsed.ToString("g");
+                video.Length = rssItem.PubDateParsed.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
                 video.VideoUrl = rssItem.Guid.Text;
                 loVideoList.Add(video);
             }
