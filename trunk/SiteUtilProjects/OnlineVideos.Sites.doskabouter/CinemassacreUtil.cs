@@ -164,7 +164,7 @@ namespace OnlineVideos.Sites
                 {
                     video.VideoUrl = lsUrl;
                     video.GetYouTubePlaybackOptions();
-                    return "";                    
+                    return "";
                 }
                 else
                     if (lsUrl.StartsWith("http://blip.tv/play"))
@@ -302,7 +302,8 @@ namespace OnlineVideos.Sites
                 video.Title = HttpUtility.HtmlDecode(m.Groups["title"].Value);
                 video.VideoUrl = m.Groups["url"].Value;
                 video.ImageUrl = m.Groups["thumb"].Value;
-                if (video.VideoUrl != String.Empty && video.Title != String.Empty)
+                if (video.VideoUrl != String.Empty &&
+                    (video.Title != String.Empty || video.ImageUrl != String.Empty))
                     videos.Add(video);
                 m = m.NextMatch();
             }
