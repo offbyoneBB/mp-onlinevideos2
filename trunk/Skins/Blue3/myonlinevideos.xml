@@ -40,7 +40,20 @@
       <textcolor>ffa9d0f7</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-    </control>
+    </control>    
+    <control>
+      <description>Filter</description>
+      <type>label</type>
+      <id>1</id>      
+      <posX>220</posX>
+      <posY>50</posY>
+      <width>700</width>
+      <label>#OnlineVideos.filter</label>
+      <font>font10</font>
+      <textcolor>ffa9d0f7</textcolor>      
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>    
     <control>
       <description>Date</description>
       <type>label</type>
@@ -137,7 +150,7 @@
       <posY>435</posY>
       <width>80</width>
       <font>font12</font>
-      <label>299</label>
+      <label>#OnlineVideos.Translation.Runtime.Label</label>
       <textcolor>White</textcolor>
       <visible>!Control.IsVisible(51)+control.hastext(501)</visible>
     </control>
@@ -166,6 +179,19 @@
       <textcolor>White</textcolor>
       <visible>!Control.IsVisible(51)</visible>
     </control>
+    <control>
+      <description>Number of Items Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>660</posX>
+      <posY>415</posY>
+      <label>#itemcount</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
 
     <!-- *** HIDDEN MENU *** -->
     
@@ -182,8 +208,8 @@
         <type>image</type>
         <posX>15</posX>
         <posY>63</posY>
-        <width>263</width>
-        <height>405</height>
+        <width>255</width>
+        <height>356</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
         <visible>!Control.HasFocus(50)</visible>
@@ -196,14 +222,15 @@
         <animation effect="slide" time="450" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="450" end="-300,0" reversible="false">hidden</animation>
         <posX>40</posX>
-        <posY>97</posY>
+        <posY>80</posY>
         <layout>StackLayout</layout>
         <visible>!Control.HasFocus(50)</visible>
         <control>
           <description>View-As</description>
           <type>button</type>
           <id>2</id>
-          <label>101</label>
+          <label>#OnlineVideos.Translation.LayoutList.Label</label>  
+          <height>28</height>
           <onright>50</onright>
           <onup>17</onup>          
         </control>
@@ -213,7 +240,8 @@
           <id>10</id>
           <onright>50</onright>
           <onup>2</onup>
-          <label>137</label>          
+          <label>#OnlineVideos.Translation.Search.Label</label>
+          <height>28</height>
         </control>
         <control>
           <description>select category</description>
@@ -221,7 +249,8 @@
           <id>9</id>
           <onright>50</onright>
           <onup>10</onup>
-          <label>2053</label>          
+          <label>#OnlineVideos.Translation.Category.Label</label>
+          <height>28</height>
         </control>               
         <control>
           <type>selectbutton</type>
@@ -229,7 +258,8 @@
           <id>5</id>
           <onright>50</onright>
           <onup>9</onup>
-          <label>Max Results</label>          
+          <label>#OnlineVideos.Translation.MaxResults.Label</label>
+          <height>28</height>
         </control>
         <control>
           <type>selectbutton</type>
@@ -237,7 +267,8 @@
           <id>6</id>
           <onright>50</onright>
           <onup>5</onup>
-          <label>495</label>          
+          <label>#OnlineVideos.Translation.SortOptions.Label</label>
+          <height>28</height>
         </control>
         <control>
           <type>selectbutton</type>
@@ -245,7 +276,8 @@
           <id>7</id>
           <onright>50</onright>
           <onup>6</onup>
-          <label>Timeframe</label>          
+          <label>#OnlineVideos.Translation.Timeframe.Label</label>
+          <height>28</height>
         </control>
         <control>
           <type>button</type>
@@ -253,7 +285,8 @@
           <id>8</id>
           <onright>50</onright>
           <onup>7</onup>
-          <label>184</label>
+          <label>#OnlineVideos.Translation.Refresh.Label</label>
+          <height>28</height>
         </control>
         <control>
           <type>button</type>
@@ -261,7 +294,8 @@
           <id>3</id>
           <onright>50</onright>
           <onup>8</onup>
-          <label>1975</label>
+          <label>#OnlineVideos.Translation.NextPage.Label</label>
+          <height>28</height>
           <animation effect="fade" time="200">WindowOpen</animation>
           <animation effect="fade" time="200">WindowClose</animation>          
         </control>
@@ -271,7 +305,8 @@
           <id>4</id>
           <onright>50</onright>
           <onup>3</onup>
-          <label>30004</label>
+          <label>#OnlineVideos.Translation.PreviousPage.Label</label>
+          <height>28</height>
           <animation effect="fade" time="200">WindowOpen</animation>
           <animation effect="fade" time="200">WindowClose</animation>
         </control>
@@ -281,7 +316,8 @@
           <id>11</id>
           <onright>50</onright>
           <onup>4</onup>
-          <label>932</label>          
+          <label>#OnlineVideos.Translation.Favourites.Label</label>
+          <height>28</height>
         </control>
         <control>
           <type>button</type>
@@ -289,8 +325,22 @@
           <id>12</id>
           <onright>50</onright>
           <onup>11</onup>          
-          <label>Enter Pin</label>
-        </control>
+          <label>#OnlineVideos.Translation.EnterPin.Label</label>
+          <height>28</height>
+        </control>        
+        <control>
+          <type>button</type>
+          <description>Update Sites</description>
+          <id>13</id>
+          <onright>50</onright>
+          <onup>12</onup>
+          <ondown>2</ondown>
+          <label>#OnlineVideos.Translation.ManageSites.Label</label>          
+          <height>28</height>
+          <textYOff>3</textYOff>
+          <hyperlink>4757</hyperlink>
+          <visible>!Control.HasFocus(50)</visible>
+        </control>                     
       </control>
     </control>
   </controls>
