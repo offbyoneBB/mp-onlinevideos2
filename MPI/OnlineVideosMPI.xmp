@@ -415,6 +415,33 @@
 			<Option />
 			<Guid>8D7410A5-F280-44bf-9ABC-36050C0BBA43</Guid>
 		</File>		
+		<File>
+			<FileName>Broken.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3</SubType>
+			<Source>..\Skins\Blue3\Media\OnlineVideos\Broken.png</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>198B1F9C-00A3-46a3-8100-29A88C14B8B8</Guid>
+		</File>
+		<File>
+			<FileName>Reported.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3</SubType>
+			<Source>..\Skins\Blue3\Media\OnlineVideos\Reported.png</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>3DDE1DE1-28A0-426e-B674-7050576518C9</Guid>
+		</File>
+		<File>
+			<FileName>Working.png</FileName>
+			<Type>Media</Type>
+			<SubType>Blue3</SubType>
+			<Source>..\Skins\Blue3\Media\OnlineVideos\Working.png</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>8D896607-95E4-48fb-ACED-D70824250044</Guid>
+		</File>		
     <File>
       <FileName>JustinTV.png</FileName>
       <Type>Thumbs</Type>
@@ -739,6 +766,15 @@
 			<Option />
 			<Guid>5BE60E04-3B60-44d6-BEC9-07E792F8D667</Guid>
 		</File>		
+    <File>
+			<FileName>myonlinevideosUpdater.xml</FileName>
+			<Type>Skin</Type>
+			<SubType>Blue3</SubType>
+			<Source>..\Skins\Blue3\myonlinevideosUpdater.xml</Source>
+			<Id>02010</Id>
+			<Option />
+			<Guid>13EA2DB0-7C22-450f-9C21-CCFAEB23D8D1</Guid>
+		</File>
 		<File>
 			<FileName>myonlinevideos.xml</FileName>
 			<Type>Skin</Type>
@@ -1053,7 +1089,25 @@
       <Id>04010</Id>
       <Option />
       <Guid>F511BA71-FAAE-4eff-A861-04E45578D0A2</Guid>
-    </File>    
+    </File>
+    <File>
+      <FileName>screwattack.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Banners</SubType>
+      <Source>..\SiteImages\Banners\screwattack.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>33F0CB34-106C-4cdc-AC6C-8FE7FB3EE9CD</Guid>
+    </File>
+    <File>
+      <FileName>screwattack.png</FileName>
+      <Type>Thumbs</Type>
+      <SubType>OnlineVideos\Icons</SubType>
+      <Source>..\SiteImages\Icons\screwattack.png</Source>
+      <Id>04010</Id>
+      <Option />
+      <Guid>3DE80E94-B00E-47d1-95E2-72AAD7E1AE3C</Guid>
+    </File>
     <File>
       <FileName>SesameStreet.png</FileName>
       <Type>Thumbs</Type>
@@ -1611,7 +1665,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>20-03-10</CreationDate>
+		<CreationDate>21-03-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>

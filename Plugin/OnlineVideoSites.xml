@@ -150,7 +150,7 @@
       <Description>Alle SouthPark Folgen komplett und auf Deutsch.</Description>
       <Categories />
     </Site>
-    <Site name="TvGorge" util="TvGorge" agecheck="false" enabled="true" lang="en">
+    <Site name="TvGorge" util="TvGorge" agecheck="false" enabled="false" lang="en">
       <Description>Watch full episodes of your favourite TV shows.</Description>
       <Categories />
     </Site>

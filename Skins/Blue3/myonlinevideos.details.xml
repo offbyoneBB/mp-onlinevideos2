@@ -43,7 +43,7 @@
       <id>52</id>
       <posX>260</posX>
       <posY>97</posY>
-      <label>344</label>
+      <label>#OnlineVideos.Translation.Actors.Label</label>
       <visible>no</visible>
       <textcolor>ffb2d4f5</textcolor>
     </control>
@@ -65,7 +65,7 @@
       <id>54</id>
       <posX>50</posX>
       <posY>400</posY>
-      <label>172</label>
+      <label>#OnlineVideos.Translation.DateOfRelease.Label</label>
       <visible>no</visible>
       <textcolor>ffb2d4f5</textcolor>
     </control>
@@ -85,7 +85,7 @@
       <id>56</id>
       <posX>50</posX>
       <posY>460</posY>
-      <label>174</label>
+      <label>#OnlineVideos.Translation.Genre.Label</label>
       <visible>no</visible>
       <textcolor>ffb2d4f5</textcolor>
     </control>
@@ -107,7 +107,7 @@
       <posX>260</posX>
       <posY>260</posY>
       <visible>no</visible>
-      <label>203</label>
+      <label>#OnlineVideos.Translation.PlotOutline.Label</label>
       <textcolor>ffb2d4f5</textcolor>
     </control>
     <control>
