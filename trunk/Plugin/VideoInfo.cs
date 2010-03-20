@@ -169,7 +169,7 @@ namespace OnlineVideos
                 if (!string.IsNullOrEmpty(video.Length)) video.Length += " | ";
                 try
                 {
-                    video.Length += rssItem.PubDateParsed.ToString("g");
+                    video.Length += rssItem.PubDateParsed.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
                 }
                 catch
                 {

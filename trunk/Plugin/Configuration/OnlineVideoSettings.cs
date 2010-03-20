@@ -2,9 +2,11 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Collections.Generic;
-using MediaPortal.Configuration;
-using System.Xml.Serialization;
 using System.ComponentModel;
+using System.Globalization;
+using System.Xml.Serialization;
+using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 using OnlineVideos.Sites;
 
 namespace OnlineVideos
@@ -56,6 +58,7 @@ namespace OnlineVideos
         public Dictionary<string, Sites.SiteUtilBase> SiteList { get; protected set; }
         public SortedList<string, bool> VideoExtensions { get; protected set; }
         public CodecConfiguration CodecConfiguration { get; protected set; }
+        public CultureInfo MediaPortalLocale { get; protected set; }
 
         public bool ageHasBeenConfirmed = false;
 
@@ -73,6 +76,15 @@ namespace OnlineVideos
 
         private OnlineVideoSettings()
         {
+            try
+            {
+                MediaPortalLocale = CultureInfo.CreateSpecificCulture(GUILocalizeStrings.GetCultureName(GUILocalizeStrings.CurrentLanguage()));
+            }
+            catch (Exception ex)
+            {
+                MediaPortalLocale = CultureInfo.CurrentUICulture;
+                Log.Error(ex);                
+            }
             SiteSettingsList = new BindingList<SiteSettings>();
             SiteList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
             Load();
@@ -148,7 +160,14 @@ namespace OnlineVideos
                 string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
                 if (!File.Exists(filename))
                 {
-                    Log.Error("ConfigFile {0} was not found!", filename);
+                    Log.Info("ConfigFile {0} was not found using embedded resource.", filename);
+                    using (Stream fs = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.OnlineVideoSites.xml"))
+                    {
+                        XmlSerializer ser = XmlSerImp.GetSerializer(typeof(SerializableSettings));
+                        SerializableSettings s = (SerializableSettings)ser.Deserialize(fs);
+                        fs.Close();
+                        SiteSettingsList = s.Sites;
+                    }
                 }
                 else
                 {
