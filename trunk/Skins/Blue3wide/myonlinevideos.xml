@@ -187,6 +187,19 @@
       <label>#OnlineVideos.desc</label>
       <textcolor>White</textcolor>
       <visible>!Control.IsVisible(51)</visible>
+    </control>    
+    <control>
+      <description>Number of Items Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1195</posX>
+      <posY>551</posY>
+      <label>#itemcount</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     
     <!-- *** HIDDEN MENU *** -->
