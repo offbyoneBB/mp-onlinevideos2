@@ -123,6 +123,9 @@ namespace OnlineVideos
             }
 
             if (GUI_infoList.Count > 0) GUIControl.SelectItemControl(GetID, GUI_infoList.GetID, 0);
+
+            //set object count label
+            GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(GUI_infoList.Count));
         }
 
         private void OnSiteSelected(GUIListItem item, GUIControl parent)
