@@ -127,8 +127,8 @@ namespace OnlineVideos.WebService
                             site.Description = desc;
                             site.IsAdult = isAdult;
                             site.LastUpdated = DateTime.Now;
-                            site.XML = siteXml;
-                            site.RequiredDll = requiredDll;
+                            if (site.XML != siteXml) site.XML = siteXml;
+                            if (site.RequiredDll != requiredDll) site.RequiredDll = requiredDll;
                             site.State = SiteState.Working;
                             dc.SubmitChanges();
                             infoMessage = "Site successfully updated!";

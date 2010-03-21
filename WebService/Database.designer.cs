@@ -165,7 +165,7 @@ namespace OnlineVideos.WebService.Database
 			OnCreated();
 		}
 		
-		[Column(Storage="_XML", DbType="nvarchar(max)", CanBeNull=false)]
+		[Column(Storage="_XML", AutoSync=AutoSync.Always, DbType="nvarchar(max)", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string XML
 		{
 			get
@@ -185,7 +185,7 @@ namespace OnlineVideos.WebService.Database
 			}
 		}
 		
-		[Column(Storage="_State", DbType="tinyint", CanBeNull=false)]
+		[Column(Storage="_State", AutoSync=AutoSync.Always, DbType="tinyint", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public SiteState State
 		{
 			get
@@ -205,7 +205,7 @@ namespace OnlineVideos.WebService.Database
 			}
 		}
 		
-		[Column(Storage="_Name", DbType="nvarchar(200)", CanBeNull=false, IsPrimaryKey=true)]
+		[Column(Storage="_Name", AutoSync=AutoSync.Always, DbType="nvarchar(200)", CanBeNull=false, IsPrimaryKey=true, UpdateCheck=UpdateCheck.Never)]
 		public string Name
 		{
 			get
@@ -225,7 +225,7 @@ namespace OnlineVideos.WebService.Database
 			}
 		}
 		
-		[Column(Storage="_Owner_FK", DbType="nvarchar(200)", CanBeNull=false)]
+		[Column(Storage="_Owner_FK", AutoSync=AutoSync.Always, DbType="nvarchar(200)", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string Owner_FK
 		{
 			get
@@ -249,7 +249,7 @@ namespace OnlineVideos.WebService.Database
 			}
 		}
 		
-		[Column(Storage="_LastUpdated")]
+		[Column(Storage="_LastUpdated", AutoSync=AutoSync.Always, UpdateCheck=UpdateCheck.Never)]
 		public System.DateTime LastUpdated
 		{
 			get
@@ -269,7 +269,7 @@ namespace OnlineVideos.WebService.Database
 			}
 		}
 		
-		[Column(Storage="_Language", DbType="nvarchar(200)", CanBeNull=false)]
+		[Column(Storage="_Language", AutoSync=AutoSync.Always, DbType="nvarchar(200)", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string Language
 		{
 			get
@@ -289,7 +289,7 @@ namespace OnlineVideos.WebService.Database
 			}
 		}
 		
-		[Column(Storage="_Description", DbType="nvarchar(max)", CanBeNull=false)]
+		[Column(Storage="_Description", AutoSync=AutoSync.Always, DbType="nvarchar(max)", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string Description
 		{
 			get
@@ -309,7 +309,7 @@ namespace OnlineVideos.WebService.Database
 			}
 		}
 		
-		[Column(Storage="_IsAdult")]
+		[Column(Storage="_IsAdult", AutoSync=AutoSync.Always, UpdateCheck=UpdateCheck.Never)]
 		public bool IsAdult
 		{
 			get
@@ -329,7 +329,7 @@ namespace OnlineVideos.WebService.Database
 			}
 		}
 		
-		[Column(Storage="_RequiredDll", DbType="nvarchar(200)", CanBeNull=false)]
+		[Column(Storage="_RequiredDll", AutoSync=AutoSync.Always, DbType="nvarchar(200)", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		public string RequiredDll
 		{
 			get
