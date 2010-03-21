@@ -3,15 +3,15 @@
   <Connection Mode="WebSettings" ConnectionString="Data Source=(local)\SQLEXPRESS;Initial Catalog=OnlineVideos;Integrated Security=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="OnlineVideosDB" Provider="System.Data.SqlClient" />
   <Table Name="" Member="Site">
     <Type Name="Site">
-      <Column Name="XML" Type="string" DbType="nvarchar(max)" CanBeNull="false" IsDelayLoaded="true" />
-      <Column Name="State" Type="SiteState" DbType="tinyint" CanBeNull="false" />
-      <Column Name="Name" Type="System.String" DbType="nvarchar(200)" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Owner_FK" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
-      <Column Name="LastUpdated" Type="System.DateTime" CanBeNull="false" />
-      <Column Name="Language" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
-      <Column Name="Description" Type="System.String" DbType="nvarchar(max)" CanBeNull="false" />
-      <Column Name="IsAdult" Type="System.Boolean" CanBeNull="false" />
-      <Column Name="RequiredDll" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
+      <Column Name="XML" AutoSync="Always" Type="string" DbType="nvarchar(max)" CanBeNull="false" UpdateCheck="Never" IsDelayLoaded="true" />
+      <Column Name="State" AutoSync="Always" Type="SiteState" DbType="tinyint" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Name" AutoSync="Always" Type="System.String" DbType="nvarchar(200)" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Owner_FK" AutoSync="Always" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="LastUpdated" AutoSync="Always" Type="System.DateTime" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Language" AutoSync="Always" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Description" AutoSync="Always" Type="System.String" DbType="nvarchar(max)" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="IsAdult" AutoSync="Always" Type="System.Boolean" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="RequiredDll" AutoSync="Always" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" UpdateCheck="Never" />
       <Association Name="User_Site" Member="Owner" ThisKey="Owner_FK" OtherKey="Email" Type="User" IsForeignKey="true" />
       <Association Name="Dll_Site" Member="Dll" ThisKey="RequiredDll" OtherKey="Name" Type="Dll" IsForeignKey="true" />
     </Type>
@@ -40,7 +40,7 @@
       <Column Name="Name" Type="System.String" DbType="nvarchar(200)" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="LastUpdated" Type="System.DateTime" CanBeNull="false" />
       <Column Name="Owner_FK" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
-      <Column Member="MD5" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
+      <Column Name="MD5" Type="System.String" DbType="nvarchar(200)" CanBeNull="false" />
       <Association Name="Dll_Site" Member="Sites" ThisKey="Name" OtherKey="RequiredDll" Type="Site" />
       <Association Name="User_Dll" Member="Owner" ThisKey="Owner_FK" OtherKey="Email" Type="User" IsForeignKey="true" />
     </Type>
