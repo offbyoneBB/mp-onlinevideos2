@@ -1970,6 +1970,9 @@ namespace OnlineVideos
                         OnlineVideosWebservice.Site remoteSite = Array.Find(onlineSites, delegate(OnlineVideosWebservice.Site site) { return site.Name == localSite.Name; });
                         if (remoteSite != null)
                         {
+                            // remember what dlls are required and check for changed dlls later (regardless of lastUpdated on site)
+                            if (!string.IsNullOrEmpty(remoteSite.RequiredDll)) requiredDlls[remoteSite.RequiredDll] = true;
+
                             if (localSite.LastUpdated < remoteSite.LastUpdated)
                             {
                                 string siteXml = ws.GetSiteXml(remoteSite.Name);
@@ -1977,8 +1980,7 @@ namespace OnlineVideos
                                 {
                                     IList<SiteSettings> sitesFromWeb = Utils.SiteSettingsFromXml(siteXml);
                                     if (sitesFromWeb != null && sitesFromWeb.Count > 0)
-                                    {
-                                        if (!string.IsNullOrEmpty(remoteSite.RequiredDll)) requiredDlls[remoteSite.RequiredDll] = true;
+                                    {                                        
                                         SiteSettings updatedSite = sitesFromWeb[0];
                                         OnlineVideoSettings.Instance.SiteSettingsList[i] = updatedSite;
                                         try
@@ -2054,7 +2056,7 @@ namespace OnlineVideos
                 {
 
                 }
-                dlgPrgrs.Close();
+                if (dlgPrgrs != null) dlgPrgrs.Close();
             }
         }
 
