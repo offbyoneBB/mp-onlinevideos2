@@ -394,7 +394,7 @@
 			<SubType>Blue3wide</SubType>
 			<Source>..\Skins\Blue3wide\Media\OnlineVideos\Broken.png</Source>
 			<Id>02010</Id>
-			<Option />
+			<Option>OutputFileName=\OnlineVideos\Broken.png|</Option>
 			<Guid>DF492E12-4591-4689-95C9-DD499410B3C7</Guid>
 		</File>
 		<File>
@@ -403,7 +403,7 @@
 			<SubType>Blue3wide</SubType>
 			<Source>..\Skins\Blue3wide\Media\OnlineVideos\Reported.png</Source>
 			<Id>02010</Id>
-			<Option />
+			<Option>OutputFileName=\OnlineVideos\Reported.png|</Option>
 			<Guid>D6D9ED2E-C6C8-4c8d-9D31-F7930B59F800</Guid>
 		</File>
 		<File>
@@ -412,7 +412,7 @@
 			<SubType>Blue3wide</SubType>
 			<Source>..\Skins\Blue3wide\Media\OnlineVideos\Working.png</Source>
 			<Id>02010</Id>
-			<Option />
+			<Option>OutputFileName=\OnlineVideos\Working.png|</Option>
 			<Guid>8D7410A5-F280-44bf-9ABC-36050C0BBA43</Guid>
 		</File>		
 		<File>
@@ -421,7 +421,7 @@
 			<SubType>Blue3</SubType>
 			<Source>..\Skins\Blue3\Media\OnlineVideos\Broken.png</Source>
 			<Id>02010</Id>
-			<Option />
+			<Option>OutputFileName=\OnlineVideos\Broken.png|</Option>
 			<Guid>198B1F9C-00A3-46a3-8100-29A88C14B8B8</Guid>
 		</File>
 		<File>
@@ -430,7 +430,7 @@
 			<SubType>Blue3</SubType>
 			<Source>..\Skins\Blue3\Media\OnlineVideos\Reported.png</Source>
 			<Id>02010</Id>
-			<Option />
+			<Option>OutputFileName=\OnlineVideos\Reported.png|</Option>
 			<Guid>3DDE1DE1-28A0-426e-B674-7050576518C9</Guid>
 		</File>
 		<File>
@@ -439,7 +439,7 @@
 			<SubType>Blue3</SubType>
 			<Source>..\Skins\Blue3\Media\OnlineVideos\Working.png</Source>
 			<Id>02010</Id>
-			<Option />
+			<Option>OutputFileName=\OnlineVideos\Working.png|</Option>
 			<Guid>8D896607-95E4-48fb-ACED-D70824250044</Guid>
 		</File>		
     <File>
@@ -934,7 +934,7 @@
 			<SubType>%Language%</SubType>
 			<Source>..\Language\OnlineVideos\nl.xml</Source>
 			<Id>04010</Id>
-			<Option>OutputFileName=\OnlineVideosnl.xml|</Option>
+			<Option>OutputFileName=\OnlineVideos\nl.xml|</Option>
 			<Guid>540A1BD5-6F3C-417c-9D6B-8569534DB285</Guid>
 		</File>
     <File>
@@ -1665,7 +1665,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>21-03-10</CreationDate>
+		<CreationDate>23-03-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
