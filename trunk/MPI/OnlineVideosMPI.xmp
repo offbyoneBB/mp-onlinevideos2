@@ -1091,19 +1091,19 @@
       <Guid>F511BA71-FAAE-4eff-A861-04E45578D0A2</Guid>
     </File>
     <File>
-      <FileName>screwattack.png</FileName>
+      <FileName>screwattack.com.png</FileName>
       <Type>Thumbs</Type>
       <SubType>OnlineVideos\Banners</SubType>
-      <Source>..\SiteImages\Banners\screwattack.png</Source>
+      <Source>..\SiteImages\Banners\screwattack.com.png</Source>
       <Id>04010</Id>
       <Option />
       <Guid>33F0CB34-106C-4cdc-AC6C-8FE7FB3EE9CD</Guid>
     </File>
     <File>
-      <FileName>screwattack.png</FileName>
+      <FileName>screwattack.com.png</FileName>
       <Type>Thumbs</Type>
       <SubType>OnlineVideos\Icons</SubType>
-      <Source>..\SiteImages\Icons\screwattack.png</Source>
+      <Source>..\SiteImages\Icons\screwattack.com.png</Source>
       <Id>04010</Id>
       <Option />
       <Guid>3DE80E94-B00E-47d1-95E2-72AAD7E1AE3C</Guid>

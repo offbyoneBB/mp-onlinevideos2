@@ -660,7 +660,7 @@
         <Category xsi:type="RssLink" name="Discovery Investigations" thumb="http://www.discovery.com/radio/gallery/ID.jpg">http://www.discovery.com/radio/xml/id_videopodcast.xml</Category>
       </Categories>
     </Site>
-    <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true">
+    <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Sample site showing how to include your own custom feeds and streams.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="MSDN">http://channel9.msdn.com/rss.aspx?ShowID=1</Category>
