@@ -21,8 +21,11 @@ namespace OnlineVideos
         public object Other { get; set; }
         public Dictionary<string, string> PlaybackOptions;
         
-        /// <summary>This field is only used by the <see cref="FavoriteUtil"/> to store the Name of the Site where this Video came from.</summary>
+        /// <summary>This property is only used by the <see cref="FavoriteUtil"/> to store the Name of the Site where this Video came from.</summary>
         public string SiteName { get; set; }
+
+        /// <summary>This property is set by the <see cref="ImageDownloader"/> to the file after downloading from <see cref="ImageUrl"/>.</summary>
+        public string ThumbnailImage { get; set; }
 
         public VideoInfo()
         {

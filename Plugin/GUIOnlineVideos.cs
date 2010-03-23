@@ -137,6 +137,7 @@ namespace OnlineVideos
         Sites.SiteUtilBase selectedSite;
         Category selectedCategory;
         VideoInfo selectedVideo;
+        VideoInfo playingVideo;
 
         int selectedSiteIndex = 0;  // used to remember the position of the last selected site
         int selectedVideoIndex = 0; // used to remember the position of the last selected Video
@@ -228,6 +229,29 @@ namespace OnlineVideos
                     CurrentState = State.sites;
                     selectedSite = null;
                     selectedSiteIndex = 0;
+                }
+            }
+
+            if (playingVideo != null)
+            {
+                if (g_Player.Player is OnlineVideos.Player.OnlineVideosPlayer || g_Player.Player is OnlineVideos.Player.WMPVideoPlayer)
+                {
+                    SetGuiProperties(playingVideo);
+                }
+                else
+                {
+                    playingVideo = null;
+                }
+            }
+            else
+            {
+                if (PlayListPlayer.SingletonPlayer.g_Player is Player.PlaylistPlayerWrapper)
+                {
+                    PlayListItem plsItem = PlayListPlayer.SingletonPlayer.GetCurrentItem();
+                    if (plsItem is Player.PlayListItemWrapper)
+                    {
+                        SetGuiProperties((plsItem as Player.PlayListItemWrapper).Video);
+                    }
                 }
             }
 
@@ -519,7 +543,7 @@ namespace OnlineVideos
                         else
                         {
                             //play the video
-                            Play(currentVideoList[GUI_facadeView.SelectedListItemIndex - 1]);
+                            Play((GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo);
                         }
                     }
                 }
@@ -536,7 +560,7 @@ namespace OnlineVideos
                 {
                     selectedClipIndex = GUI_infoList.SelectedListItemIndex;
                     //play the video
-                    Play(currentTrailerList[GUI_infoList.SelectedListItemIndex - 1]);
+                    Play((GUI_infoList.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo);
                 }
                 UpdateViewState();
             }
@@ -1232,7 +1256,7 @@ namespace OnlineVideos
             return keyBoard.IsConfirmed;
         }
 
-        private void Play(VideoInfo foListItem)
+        private void Play(VideoInfo video)
         {
             bool playing = false;
             string lsUrl = "";
@@ -1241,7 +1265,7 @@ namespace OnlineVideos
                 List<String> loUrlList = null;
                 if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    loUrlList = selectedSite.getMultipleVideoUrls(foListItem);
+                    loUrlList = selectedSite.getMultipleVideoUrls(video);
                 }, "getting multiple urls for video"))
                 {
                     return;
@@ -1272,7 +1296,7 @@ namespace OnlineVideos
                 foreach (String url in loUrlList)
                 {
                     i++;
-                    PlayListItem item = new PlayListItem(string.Format("{0} - {1} / {2}", foListItem.Title, i.ToString(), loUrlList.Count), url);
+                    PlayListItem item = new PlayListItem(string.Format("{0} - {1} / {2}", video.Title, i.ToString(), loUrlList.Count), url);
                     videoList.Add(item);
                 }
                 lsUrl = loUrlList[0];
@@ -1284,13 +1308,13 @@ namespace OnlineVideos
             {
                 if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    lsUrl = selectedSite.getUrl(foListItem);
+                    lsUrl = selectedSite.getUrl(video);
                 }, "getting url for video"))
                 {
                     return;
                 }
 
-                if (foListItem.PlaybackOptions != null) lsUrl = DisplayPlaybackOptions(foListItem, lsUrl);
+                if (video.PlaybackOptions != null) lsUrl = DisplayPlaybackOptions(video, lsUrl);
                 if (lsUrl == "-1") return;
 
                 if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
@@ -1318,27 +1342,19 @@ namespace OnlineVideos
 
             if (playing && g_Player.Player != null && g_Player.IsVideo)
             {
-                GUIGraphicsContext.IsFullScreenVideo = true;
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
-
-                // wait until the internal g_Player Code sets the title
-                int maxWaits = 10;
-                while (maxWaits > 0 && (GUIPropertyManager.GetProperty("#Play.Current.Title") == "" || !lsUrl.Contains(GUIPropertyManager.GetProperty("#Play.Current.Title"))))
+                if (!string.IsNullOrEmpty(video.StartTime))
                 {
-                    maxWaits--;
-                    System.Diagnostics.Debug.WriteLine(maxWaits);
-                    GUIWindowManager.Process();
-                }
-                // and after that set our title
-                GUIPropertyManager.SetProperty("#Play.Current.Title", foListItem.Title);
-
-                if (foListItem.StartTime != String.Empty)
-                {
-                    Log.Info("Found starttime: {0}", foListItem.StartTime);
-                    double seconds = foListItem.GetSecondsFromStartTime();
+                    Log.Info("Found starttime: {0}", video.StartTime);
+                    double seconds = video.GetSecondsFromStartTime();
                     Log.Info("SeekingAbsolute: {0}", seconds);
                     g_Player.SeekAbsolute(seconds);
                 }
+
+                GUIGraphicsContext.IsFullScreenVideo = true;
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+
+                if (selectedSite.HasMultipleVideos) playingVideo = selectedVideo;
+                else playingVideo = video;
             }
         }
 
@@ -1367,7 +1383,7 @@ namespace OnlineVideos
 
                 if (!String.IsNullOrEmpty(lsUrl) && (Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
                 {
-                    PlayListItem item = new PlayListItem(loVideo.Title, lsUrl);
+                    Player.PlayListItemWrapper item = new Player.PlayListItemWrapper(loVideo.Title, lsUrl) { Type = PlayListItem.PlayListItemType.VideoStream, Video = loVideo };
                     videoList.Add(item);
                     Log.Info("GUIOnlineVideos.playAll:Added {0} to playlist", loVideo.Title);
                     if (!firstAdded)
@@ -1925,6 +1941,17 @@ namespace OnlineVideos
                 if (!System.IO.File.Exists(image)) image = string.Empty;
             }
             return image;
+        }
+
+        internal static void SetGuiProperties(VideoInfo video)
+        {
+            Log.Info("Setting Video Properties.");
+            if (!string.IsNullOrEmpty(video.Title)) GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title);
+            if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
+            if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
+            if (!string.IsNullOrEmpty(video.Genres)) GUIPropertyManager.SetProperty("#Play.Current.Genre", video.Genres);
+            if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Length);
+            if (!string.IsNullOrEmpty(video.Cast)) GUIPropertyManager.SetProperty("#Play.Current.Cast", video.Cast);
         }
 
         private void AutoUpdate(bool ask)

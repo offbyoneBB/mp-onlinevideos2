@@ -305,7 +305,7 @@
         <item key="fileUrlRegEx"><![CDATA[sGlobalFileName='(?<m0>[^']*)';[^;]*;.+sGlobalContentFilePath='(?<m1>[^']*)'
                                            (?:(?!var\svideoPath).)*
                                            var\svideoPath\s*=\s*"(?<m2>[^"]+)"
-                                           (?:(?!flashVars\.icon\s=\s).)*flashVars\.icon\s=\s"(?<m3>[^"]+)";]]></item>
+                                           (?:(?!flashVars\.icon\s=\s).)*flashVars\.icon\s=\s"(?<m3>[^"]+)"]]></item>
         <item key="fileUrlFormatString"><![CDATA[{2}{1}/{0}.flv?{3}]]></item>
       </Configuration>
       <Categories>
