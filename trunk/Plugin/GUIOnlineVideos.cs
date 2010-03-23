@@ -1355,6 +1355,12 @@ namespace OnlineVideos
 
                 if (selectedSite.HasMultipleVideos) playingVideo = selectedVideo;
                 else playingVideo = video;
+
+                new System.Threading.Thread(delegate()
+                {
+                    System.Threading.Thread.Sleep(2000);
+                    GUIOnlineVideos.SetGuiProperties(playingVideo);
+                }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
             }
         }
 
