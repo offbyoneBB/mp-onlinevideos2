@@ -822,7 +822,7 @@
         <Category xsi:type="RssLink" name="Отечественный">http://linecinema.ru/news/1-0-9</Category>
       </Categories>
     </Site>
-    <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true">
+    <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true" lang="--">
       <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<a\sclass="rb"\shref="(?<url>[^"]+)"[^>]*>(?<title>[^<]+)</a>]]></item>
@@ -1103,6 +1103,7 @@
       </Categories>
     </Site>
     <Site name="Empflix" util="GenericSite" agecheck="true" enabled="true" lang="en">
+      <Description>Full Free Porn movies.</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>http\://www\.empflix\.com/view\.php\?id\=\d+)"\s*title="(?<Title>[^"]+)"[^>]*>\s*
 <img\ssrc="\s*(?<ImageUrl>http\://[^"]+)"[^>]*>\s*
