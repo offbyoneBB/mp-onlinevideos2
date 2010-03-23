@@ -57,6 +57,7 @@ namespace OnlineVideos
                 string name = ci.Name.IndexOf('-') >= 0 ? ci.Name.Substring(0, ci.Name.IndexOf('-')) : ci.Name;
                 if (!cultureNames.Contains(name)) cultureNames.Add(name);
             }
+            cultureNames.Add("--");
             cultureNames.Sort();
             cbLanguages.Items.AddRange(cultureNames.ToArray());            
 
