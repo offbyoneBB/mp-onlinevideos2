@@ -57,6 +57,7 @@
   <string Field="NextPage">Next page</string>
   <string Field="None">None</string>
   <string Field="NoVideoFound">No video found</string>
+  <string Field="NewDllRequired">New dll required!</string>
 
   <!-- O -->
 
@@ -73,6 +74,7 @@
   <string Field="Reported">Reported</string>
   <string Field="Runtime">Runtime:</string>
   <string Field="RemoveFromMySites">Remove from my sites</string>
+  <string Field="RestartMediaPortalAndAutomaticUpdate">Restart MediaPortal and use automatic update!</string>
 
   <!-- S -->
   <string Field="SearchResults">Search results</string>
