@@ -342,8 +342,8 @@ namespace OnlineVideos
                 {
                     dlg.Reset();
                     dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
-                    dlg.SetLine(1, "New dll required!");
-                    dlg.SetLine(2, "Restart MediaPortal and use automatic update!");
+                    dlg.SetLine(1, Translation.NewDllRequired);
+                    dlg.SetLine(2, Translation.RestartMediaPortalAndAutomaticUpdate);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                 }
             }

@@ -273,6 +273,7 @@ namespace OnlineVideos
     public static string NextPage = "Next page";
     public static string None = "None";
     public static string NoVideoFound = "No video found";
+    public static string NewDllRequired = "New dll required!";
     
     // O
 
@@ -289,6 +290,7 @@ namespace OnlineVideos
     public static string Reported = "Reported";
     public static string Runtime = "Runtime:";
     public static string RemoveFromMySites = "Remove from my sites";
+    public static string RestartMediaPortalAndAutomaticUpdate = "Restart MediaPortal and use automatic update!";
 
     // S
     public static string SearchResults = "Search results";
