@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Online Videos translation file -->
-<!-- Dutch (nl)-->
+<!-- Moving Pictures translation file -->
+<!-- Dutch -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<!-- Provided by doskabouter 10. march 2010 -->
 <strings>
   <string Field="AlreadyDownloading">Al bezig met downloaden</string>
   <string Field="Actions">Akties</string>
@@ -34,6 +33,7 @@
   <string Field="NextPage">Volgende pagina</string>
   <string Field="None">Niets</string>
   <string Field="NoVideoFound">Geen video gevonden</string>
+  <string Field="NewDllRequired">Nieuwe dll nodig!</string>
   <string Field="PlayAll">Alles afspelen</string>
   <string Field="PlotOutline">Samenvatting</string>
   <string Field="PreviousPage">Vorige pagina</string>
@@ -44,6 +44,7 @@
   <string Field="Reported">Gerapporteerd</string>
   <string Field="Runtime">Duur:</string>
   <string Field="RemoveFromMySites">Verwijderen uit mijn sites</string>
+  <string Field="RestartMediaPortalAndAutomaticUpdate">Herstart MediaPortal en voer een automatische update uit!</string>
   <string Field="SearchResults">Zoekresultaten</string>
   <string Field="SelectSource">Kies bron</string>
   <string Field="SortOptions">Sorteeropties</string>
