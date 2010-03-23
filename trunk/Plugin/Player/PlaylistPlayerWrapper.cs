@@ -17,9 +17,16 @@ namespace OnlineVideos.Player
             if (g_Player.Playing) g_Player.Stop(true);
 
             IPlayerFactory savedFactory = g_Player.Factory;
-            g_Player.Factory = new OnlineVideos.Player.PlayerFactory(playerType);
+            g_Player.Factory = new OnlineVideos.Player.PlayerFactory(playerType);            
             bool result = g_Player.Play(strFile, g_Player.MediaType.Video);
             g_Player.Factory = savedFactory;
+
+            if (result)
+                new System.Threading.Thread(delegate()
+                    {
+                        System.Threading.Thread.Sleep(2000);
+                        GUIOnlineVideos.SetGuiProperties((MediaPortal.Playlists.PlayListPlayer.SingletonPlayer.GetCurrentItem() as Player.PlayListItemWrapper).Video);
+                    }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
 
             return result;
         }
@@ -90,5 +97,12 @@ namespace OnlineVideos.Player
                 return g_Player.Playing;
             }
         }
+    }
+
+    public class PlayListItemWrapper : MediaPortal.Playlists.PlayListItem
+    {
+        public PlayListItemWrapper(string description, string fileName) : base(description, fileName) { }
+
+        public VideoInfo Video { get; set; }
     }
 }

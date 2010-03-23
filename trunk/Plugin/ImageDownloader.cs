@@ -84,6 +84,7 @@ namespace OnlineVideos
                         item.ThumbnailImage = imageLocation;
                         item.IconImage = imageLocation;
                         item.IconImageBig = imageLocation;
+                        if (item.Item is VideoInfo) (item.Item as VideoInfo).ThumbnailImage = imageLocation;
                     }
                     else
                     {
@@ -119,6 +120,7 @@ namespace OnlineVideos
                                     item.ThumbnailImage = thumbFile;
                                     item.IconImage = thumbFile;
                                     item.IconImageBig = thumbFile;
+                                    if (item.Item is VideoInfo) (item.Item as VideoInfo).ThumbnailImage = thumbFile;
                                     break;
                                 }                                
                             }
