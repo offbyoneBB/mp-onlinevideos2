@@ -111,30 +111,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Discovey Channel.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{cccdd083-5da2-4f84-b9d3-4a544d8487e3}-Discovey Channel.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Discovey Channel.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Downloaded Videos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{451717e8-41d9-45f4-ba5a-8c61594afd47}-Downloaded Videos.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Downloaded Videos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Empflix.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{90305221-d1de-4192-a849-572ad7464c50}-Empflix.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Empflix.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Favorites.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{01d092b9-a64f-4de9-a2a5-6b932a5821b7}-Favorites.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Favorites.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -573,30 +552,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Discovey Channel.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{744f0a0e-17c9-4e9d-98d3-f3d0a20bec1c}-Discovey Channel.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Discovey Channel.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Downloaded Videos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c445fd2e-78ae-4b16-a0f9-fe655917faa9}-Downloaded Videos.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Downloaded Videos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\Empflix.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{3304adf8-911d-4747-880d-0fb98727e89e}-Empflix.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Empflix.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Favorites.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{8e471f0c-aca4-4d2b-86e9-815425537641}-Favorites.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Favorites.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -976,6 +934,76 @@
               <ZipFileName>Installer{CopyFile}\{2ee26a41-fdff-4240-9338-9080996d7575}-spiegel.de.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\spiegel.de.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Discovery Channel.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b959c783-028f-4923-af84-9f48357c32d0}-Discovery Channel.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Discovery Channel.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\DownloadedVideo.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{cafd8895-c320-4fd7-99c9-f6b5e91f38fc}-DownloadedVideo.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\DownloadedVideo.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Favorite.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{7145a50f-786a-4d1d-81e7-d8514ddb5bbb}-Favorite.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Favorite.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\screwattack.com.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f99959f6-d063-4d48-8d77-d70007e10827}-screwattack.com.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\screwattack.com.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\ThatGuyWithTheGlasses.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b8e68d5f-2dd7-40ab-9223-43c1677e85ac}-ThatGuyWithTheGlasses.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ThatGuyWithTheGlasses.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Discovery Channel.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{7be96f3c-b408-44a2-b912-5057d79c7a7e}-Discovery Channel.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Discovery Channel.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\DownloadedVideo.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0ad0848b-7ecb-4e79-92af-aa6b89802f4c}-DownloadedVideo.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\DownloadedVideo.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Favorite.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ec5882d0-f9f2-4a9b-898b-ec6d1d6aa950}-Favorite.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Favorite.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\screwattack.com.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{00400b3b-f7a7-40a4-9a25-9fef927bffc7}-screwattack.com.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\screwattack.com.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\ThatGuyWithTheGlasses.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ae94b9a3-a337-4428-9a16-ccfc41dde43e}-ThatGuyWithTheGlasses.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ThatGuyWithTheGlasses.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1188,22 +1216,33 @@
               <ZipFileName>Installer{CopyFile}\{c43a5a3c-9074-4df6-bebd-729ff4a548e3}-Picture_cover_focused.png</ZipFileName>
               <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Picture_cover_focused.png</DestinationFilename>
             </FileItem>
-          </Items>
-        </Files>
-      </GroupItem>
-      <GroupItem Name="Config ">
-        <ParentGroup />
-        <DisplayName>Config</DisplayName>
-        <DefaulChecked>true</DefaulChecked>
-        <Description>Config </Description>
-        <Files>
-          <Items>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\OnlineVideoSites.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{8088498a-ff02-42f8-bd79-cea189275305}-OnlineVideoSites.xml</ZipFileName>
-              <DestinationFilename>%Config%\OnlineVideoSites.xml</DestinationFilename>
+              <LocalFileName>..\Skins\Blue3\myonlinevideosUpdater.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{7d8ecef2-740e-4f7e-ada7-2f7ce6057051}-myonlinevideosUpdater.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\myonlinevideosUpdater.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Broken.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4b85930a-ca0c-4592-9375-4af9707ad018}-Broken.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Broken.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Reported.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3d2b2a36-932f-4401-bdac-16037a83f719}-Reported.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Reported.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Working.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c9279b04-e461-40ac-863f-7c4f64dccbfa}-Working.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Working.png</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1222,6 +1261,27 @@
               <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos.dll</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1237,6 +1297,27 @@
               <LocalFileName>..\Language\OnlineVideos\en-US.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{cf05e3df-2476-44f1-91e8-06c57bfaa3d2}-en-US.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\en-US.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\da.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{8ebcd672-b5de-4d32-9fe8-1076b39fdcd0}-da.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\da.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\de.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5fb6b72d-9c28-45ef-973a-b0f5a96bb776}-de.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\de.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\nl.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{07f4420c-e3ac-4d49-aaa1-c01a27df5792}-nl.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\nl.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1361,17 +1442,22 @@ Click Next to continue or Cancel to exit Setup.</Value>
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>17</Minor>
+      <Minor>18</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
-    <VersionDescription />
+    <VersionDescription>Added another GUI to manage sites (add, remove, update)
+Added Automatic Update on Plugin first Load
+Forgetting the Pin when exiting OnlineVideos fixed
+Plugin GUI now Localized
+Added SMS T9 style filtering in all views 
+Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
     <DevelopmentStatus>Beta</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos.0.17.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2010-03-03T19:01:51.84375+02:00</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos.0.18.0.0.mpe1</OnlineLocation>
+    <ReleaseDate>2010-03-03T18:01:51.84375+01:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
-    <Location>F:\devel\vs2005\onlinevideos\MPEI\OnlineVideos.[Version].mpe1</Location>
+    <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.[Version].mpe1</Location>
     <Params>
       <Items>
         <SectionParam Name="Icon">
@@ -1495,30 +1581,9 @@ Click Next to continue or Cancel to exit Setup.</Value>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Discovey Channel.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{cccdd083-5da2-4f84-b9d3-4a544d8487e3}-Discovey Channel.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Discovey Channel.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Downloaded Videos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{451717e8-41d9-45f4-ba5a-8c61594afd47}-Downloaded Videos.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Downloaded Videos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\Empflix.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{90305221-d1de-4192-a849-572ad7464c50}-Empflix.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Empflix.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Favorites.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{01d092b9-a64f-4de9-a2a5-6b932a5821b7}-Favorites.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Favorites.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -1754,6 +1819,13 @@ Click Next to continue or Cancel to exit Setup.</Value>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TVE.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{42437A2A-03A5-4EEA-BDC6-49A622759475}-TVE.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVE.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\TVGemist.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{42437A2A-03A5-4EEA-BDC6-49A622759475}-TVGemist.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVGemist.png</DestinationFilename>
@@ -1950,30 +2022,9 @@ Click Next to continue or Cancel to exit Setup.</Value>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Discovey Channel.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{744f0a0e-17c9-4e9d-98d3-f3d0a20bec1c}-Discovey Channel.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Discovey Channel.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Downloaded Videos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c445fd2e-78ae-4b16-a0f9-fe655917faa9}-Downloaded Videos.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Downloaded Videos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\Empflix.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{3304adf8-911d-4747-880d-0fb98727e89e}-Empflix.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Empflix.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Favorites.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{8e471f0c-aca4-4d2b-86e9-815425537641}-Favorites.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Favorites.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -2216,6 +2267,13 @@ Click Next to continue or Cancel to exit Setup.</Value>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\TVE.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{66A697BD-5ED1-4E57-9FE6-9928229C004F}-TVE.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVE.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\TVGemist.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{FBFC6CB6-E70B-45BF-92EB-88DEE21E00C5}-TVGemist.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVGemist.png</DestinationFilename>
@@ -2345,6 +2403,76 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <LocalFileName>..\SiteImages\Banners\spiegel.de.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{2ee26a41-fdff-4240-9338-9080996d7575}-spiegel.de.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\spiegel.de.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Discovery Channel.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b959c783-028f-4923-af84-9f48357c32d0}-Discovery Channel.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Discovery Channel.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\DownloadedVideo.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{cafd8895-c320-4fd7-99c9-f6b5e91f38fc}-DownloadedVideo.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\DownloadedVideo.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Favorite.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7145a50f-786a-4d1d-81e7-d8514ddb5bbb}-Favorite.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Favorite.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\screwattack.com.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f99959f6-d063-4d48-8d77-d70007e10827}-screwattack.com.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\screwattack.com.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\ThatGuyWithTheGlasses.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b8e68d5f-2dd7-40ab-9223-43c1677e85ac}-ThatGuyWithTheGlasses.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ThatGuyWithTheGlasses.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Discovery Channel.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7be96f3c-b408-44a2-b912-5057d79c7a7e}-Discovery Channel.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Discovery Channel.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\DownloadedVideo.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0ad0848b-7ecb-4e79-92af-aa6b89802f4c}-DownloadedVideo.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\DownloadedVideo.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Favorite.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ec5882d0-f9f2-4a9b-898b-ec6d1d6aa950}-Favorite.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Favorite.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\screwattack.com.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{00400b3b-f7a7-40a4-9a25-9fef927bffc7}-screwattack.com.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\screwattack.com.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\ThatGuyWithTheGlasses.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ae94b9a3-a337-4428-9a16-ccfc41dde43e}-ThatGuyWithTheGlasses.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ThatGuyWithTheGlasses.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -2549,12 +2677,33 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <ZipFileName>Installer{CopyFile}\{c43a5a3c-9074-4df6-bebd-729ff4a548e3}-Picture_cover_focused.png</ZipFileName>
         <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Picture_cover_focused.png</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\OnlineVideoSites.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{8088498a-ff02-42f8-bd79-cea189275305}-OnlineVideoSites.xml</ZipFileName>
-        <DestinationFilename>%Config%\OnlineVideoSites.xml</DestinationFilename>
+        <LocalFileName>..\Skins\Blue3\myonlinevideosUpdater.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7d8ecef2-740e-4f7e-ada7-2f7ce6057051}-myonlinevideosUpdater.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\myonlinevideosUpdater.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Broken.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4b85930a-ca0c-4592-9375-4af9707ad018}-Broken.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Broken.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Reported.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3d2b2a36-932f-4401-bdac-16037a83f719}-Reported.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Reported.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Working.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c9279b04-e461-40ac-863f-7c4f64dccbfa}-Working.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Working.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -2563,6 +2712,27 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos.dll</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
@@ -2570,11 +2740,32 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <ZipFileName>Installer{CopyFile}\{cf05e3df-2476-44f1-91e8-06c57bfaa3d2}-en-US.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\en-US.xml</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\da.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{8ebcd672-b5de-4d32-9fe8-1076b39fdcd0}-da.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\da.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\de.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5fb6b72d-9c28-45ef-973a-b0f5a96bb776}-de.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\de.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\nl.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{07f4420c-e3ac-4d49-aaa1-c01a27df5792}-nl.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\nl.xml</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{a86516f5-db5c-4eec-a2a3-5ee4e2d8b75d}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{5c9d1946-1e78-4dd8-bfb4-71b8107a7191}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
@@ -2612,8 +2803,8 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <Recursive>true</Recursive>
       </FolderGroup>
     </FolderGroups>
-    <ProjectFilename>F:\devel\vs2005\onlinevideos\MPEI\OnlineVideos.xmp2</ProjectFilename>
-    <UpdatePath1>F:\devel\vs2005\onlinevideos\MPEI\update.xml</UpdatePath1>
+    <ProjectFilename>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.xmp2</ProjectFilename>
+    <UpdatePath1>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\update.xml</UpdatePath1>
     <UpdatePath2 />
     <UpdatePath3 />
   </ProjectSettings>
