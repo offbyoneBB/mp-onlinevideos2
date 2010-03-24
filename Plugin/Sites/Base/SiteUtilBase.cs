@@ -337,7 +337,7 @@ namespace OnlineVideos.Sites
 
         # region static helper functions
 
-        protected static string GetRedirectedUrl(string url)
+        public static string GetRedirectedUrl(string url)
         {
             HttpWebResponse httpWebresponse = null;
             try
@@ -377,27 +377,27 @@ namespace OnlineVideos.Sites
             return url;
         }
 
-        protected internal static string GetWebData(string url)
+        public static string GetWebData(string url)
         {
             return GetWebData(url, null, null, null, false);
         }
 
-        protected static string GetWebData(string url, CookieContainer cc)
+        public static string GetWebData(string url, CookieContainer cc)
         {
             return GetWebData(url, cc, null, null, false);
         }
 
-        protected static string GetWebData(string url, CookieContainer cc, string referer)
+        public static string GetWebData(string url, CookieContainer cc, string referer)
         {
             return GetWebData(url, cc, referer, null, false);
         }
 
-        protected static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy)
+        public static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy)
         {
             return GetWebData(url, cc, referer, proxy, false);
         }
 
-        protected static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy, bool forceUTF8)
+        public static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy, bool forceUTF8)
         {
             // try cache first
             string cachedData = WebCache.Instance[url];
