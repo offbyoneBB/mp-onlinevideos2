@@ -185,7 +185,7 @@ namespace OnlineVideos.Sites
             {
                 if (!string.IsNullOrEmpty(videoUrlFormatString)) resultUrl = string.Format(videoUrlFormatString, resultUrl);
             }
-            
+
             // 2. create an absolute Uri using the baseUrl if the current one is not and a baseUrl was given
             if (!string.IsNullOrEmpty(baseUrl) && !Uri.IsWellFormedUriString(resultUrl, UriKind.Absolute))
             {
@@ -219,7 +219,7 @@ namespace OnlineVideos.Sites
                         resultUrl = string.Format(fileUrlFormatString, groupValues.ToArray());
                     }
                     else return ""; // if no match, return empty url -> error
-                    
+
                 }
             }
             return resultUrl;
@@ -228,7 +228,7 @@ namespace OnlineVideos.Sites
         protected List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
-            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(),null,null,forceUTF8Encoding);
+            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), null, null, forceUTF8Encoding);
             if (data.Length > 0)
             {
                 if (regEx_VideoList != null)

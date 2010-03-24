@@ -94,8 +94,8 @@ namespace OnlineVideos.Sites
         /// </summary>
         /// <param name="category">The <see cref="Category"/> that was selected by the user.</param>
         /// <returns>a list of <see cref="VideoInfo"/> object for display</returns>
-        public abstract List<VideoInfo> getVideoList(Category category);                       
-        
+        public abstract List<VideoInfo> getVideoList(Category category);
+
         /// <summary>
         /// If the site's categories can be retrieved dynamically, then it should be done in the implementation of this method.
         /// The categories must be added to the <see cref="SiteSettings"/> retrieved from the <see cref="Settings"/> property of this class.
@@ -204,7 +204,7 @@ namespace OnlineVideos.Sites
         {
             return new List<VideoInfo>();
         }
-        
+
         /// <summary>
         /// Returns true, if the site has multiple choices for a video (e.g. <see cref="AppleTrailersUtil"/>).
         /// The GUI will show a details view with a selection of videos, taken from <see cref="getOtherVideoList"/>.<br/>
@@ -316,7 +316,7 @@ namespace OnlineVideos.Sites
 
         public virtual string GetFileNameForDownload(VideoInfo video, string url)
         {
-            string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] {'/'}));
+            string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] { '/' }));
             if (extension == string.Empty) extension = System.IO.Path.GetExtension(url);
             if (extension == ".f4v" || extension == ".fid") extension = ".flv";
             string safeName = ImageDownloader.GetSaveFilename(video.Title);
@@ -414,7 +414,7 @@ namespace OnlineVideos.Sites
             if (proxy != null) request.Proxy = proxy;
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream responseStream;
-            if (response.ContentEncoding.ToLower().Contains("gzip"))            
+            if (response.ContentEncoding.ToLower().Contains("gzip"))
                 responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
             else if (response.ContentEncoding.ToLower().Contains("deflate"))
                 responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
@@ -655,7 +655,7 @@ namespace OnlineVideos.Sites
                 {
                     _field.SetValue(component, value);
                     OnValueChanged(component, EventArgs.Empty);
-                    
+
                     // if this field is a user config, set value also in MediaPortal config file
                     object[] attrs = _field.GetCustomAttributes(typeof(CategoryAttribute), false);
                     if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
