@@ -20,7 +20,7 @@ namespace OnlineVideos
         public string StartTime { get; set; }
         public object Other { get; set; }
         public Dictionary<string, string> PlaybackOptions;
-        
+
         /// <summary>This property is only used by the <see cref="FavoriteUtil"/> to store the Name of the Site where this Video came from.</summary>
         public string SiteName { get; set; }
 
@@ -61,9 +61,9 @@ namespace OnlineVideos
 
                 // Remove whitespace at the beginning and end
                 Description = Description.Trim();
-            }            
+            }
         }
-        
+
         public override string ToString()
         {
             return string.Format("Title:{0}\nDesc:{1}\nVidUrl:{2}\nImgUrl:{3}\nLength:{4}\nTags:{5}", Title, Description, VideoUrl, ImageUrl, Length, Tags);
@@ -196,14 +196,14 @@ namespace OnlineVideos
         {
             if (!playbackOptions.ContainsValue(content.Url))
                 playbackOptions.Add(
-                    string.Format("{0}x{1} ({2}) | {3}:// | {4}", 
-                        content.Width, 
+                    string.Format("{0}x{1} ({2}) | {3}:// | {4}",
+                        content.Width,
                         content.Height,
-                        content.Bitrate != 0 ? 
-                            content.Bitrate.ToString() + " kbps" : 
-                            (content.FileSize != 0 ? (content.FileSize / 1024).ToString("N0") + " KB" : ""), 
-                        new Uri(content.Url).Scheme, 
-                        System.IO.Path.GetExtension(content.Url)), 
+                        content.Bitrate != 0 ?
+                            content.Bitrate.ToString() + " kbps" :
+                            (content.FileSize != 0 ? (content.FileSize / 1024).ToString("N0") + " KB" : ""),
+                        new Uri(content.Url).Scheme,
+                        System.IO.Path.GetExtension(content.Url)),
                     content.Url);
         }
 
@@ -233,7 +233,7 @@ namespace OnlineVideos
                 // get an Id from the Url
                 int p = videoId.LastIndexOf('/') + 1;
                 int q = videoId.IndexOf('?', p);
-                if (q < 0) videoId.IndexOf('&', p);
+                if (q < 0) q = videoId.IndexOf('&', p);
                 if (q < 0) q = videoId.Length;
                 videoId = videoId.Substring(p, q - p);
             }
@@ -281,7 +281,7 @@ namespace OnlineVideos
                         int index_b = Array.IndexOf(fmtOptionsQualitySorted, b_i);
                         return index_b.CompareTo(index_a);
                     }));
-                }                
+                }
                 PlaybackOptions = FmtMapToPlaybackOptions(FmtMap, Token, videoId);
                 if (PlaybackOptions.Count == 0) // no or empty fmt_map -> add a default url
                 {
@@ -322,7 +322,7 @@ namespace OnlineVideos
             }
             return result;
         }
-               
+
         #endregion
-    }    
+    }
 }
