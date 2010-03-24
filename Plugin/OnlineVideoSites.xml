@@ -858,6 +858,20 @@
     <Site name="OnsNetNuenen" util="OnsNetNuenen" agecheck="false" enabled="true" lang="nl">
       <Categories />
     </Site>
+    <Site name="Kabouter Wesley" util="KabouterWesley" agecheck="false" enabled="true" lang="nl">
+      <Description>Kabouter Wesley. Elke dinsdag een nieuw filmpje!</Description>
+      <Configuration>
+        <item key="fileUrlRegEx"><![CDATA[<embed.*?src="(?<m0>[^"]*)"]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
+        <item key="videoListRegEx"><![CDATA[<h3\sclass="post-title"><a\shref="(?<VideoUrl>[^"]*)"[^>]*>(?<Title>[^<]*)</a></h3>\s*<[^>]*>\s*<span[^>]*>(?<month>[^<]*)</span>\s*<span[^>]*>(?<day>[^<]*)(<[^<]*){13}<div\sclass="post-content\sclearfix">\s*<p>(?<Description>[^<]*)<[^>]*><img\ssrc="(?<ImageUrl>[^"]*)"]]></item>
+        <item key="baseUrl"><![CDATA[http://kabouterwesley.net/]]></item>
+        <item key="nextPageRegEx"><![CDATA[<div\sclass="alignleft"><a\shref="(?<url>[^"]*)"[^>]*>&laquo;\sOudere\sfilmpjes]]></item>
+        <item key="prevPageRegEx"><![CDATA[<div\sclass="alignright"><a\shref="(?<url>[^"]*)"[^>]*>Niewere filmpjes\s&raquo;]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Videos">http://kabouterwesley.net/</Category>
+      </Categories>
+    </Site>
     <Site name="dr.dk TV" util="GenericSite" agecheck="false" enabled="false" lang="da">
       <Categories>
         <Category xsi:type="Group" name="Live TV">
