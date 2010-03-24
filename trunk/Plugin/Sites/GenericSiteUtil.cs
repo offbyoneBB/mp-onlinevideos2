@@ -106,6 +106,8 @@ namespace OnlineVideos.Sites
                         if (!string.IsNullOrEmpty(dynamicCategoryUrlFormatString)) cat.Url = string.Format(dynamicCategoryUrlFormatString, cat.Url);
                         if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
                         cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
+                        cat.Thumb = m.Groups["thumb"].Value;
+                        cat.Description = m.Groups["description"].Value;
                         if (regEx_dynamicSubCategories != null) cat.HasSubCategories = true;
                         Settings.Categories.Add(cat);
                         m = m.NextMatch();
@@ -130,6 +132,8 @@ namespace OnlineVideos.Sites
                     if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
                     if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
                     cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
+                    cat.Thumb = m.Groups["thumb"].Value;
+                    cat.Description = m.Groups["description"].Value;
                     cat.ParentCategory = parentCategory;
                     parentCategory.SubCategories.Add(cat);
                     m = m.NextMatch();
