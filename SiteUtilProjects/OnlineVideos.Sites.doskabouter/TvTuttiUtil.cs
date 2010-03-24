@@ -127,38 +127,6 @@ namespace OnlineVideos.Sites
             return getPagedVideoList(category);
         }
 
-        public static string GetPlayerOmroepUrl(string Url)
-        {
-            int aflID = Convert.ToInt32(Url.Split('=')[1]);
-            CookieContainer cc = new CookieContainer();
-            string step1 = GetWebData(Url, cc);
-            CookieCollection ccol = cc.GetCookies(new Uri("http://tmp.player.omroep.nl/"));
-            CookieContainer newcc = new CookieContainer();
-            foreach (Cookie c in ccol) newcc.Add(c);
-
-            step1 = GetWebData("http://player.omroep.nl/js/initialization.js.php?aflID=" + aflID.ToString(), newcc);
-            if (!String.IsNullOrEmpty(step1))
-            {
-                int p = step1.IndexOf("securityCode = '");
-                if (p != -1)
-                {
-                    step1 = step1.Remove(0, p + 16);
-                    string sec = step1.Split('\'')[0];
-                    string step2 = GetWebData("http://player.omroep.nl/xml/metaplayer.xml.php?aflID=" + aflID.ToString() + "&md5=" + sec, newcc);
-                    if (!String.IsNullOrEmpty(step2))
-                    {
-                        XmlDocument tdoc = new XmlDocument();
-                        tdoc.LoadXml(step2);
-                        XmlNode final = tdoc.SelectSingleNode("/media_export_player/aflevering/streams/stream[@compressie_kwaliteit='bb' and @compressie_formaat='wmv']");
-                        if (final != null)
-                            return final.InnerText;
-
-                    }
-                }
-
-            }
-            return null;
-        }
 
         private List<VideoInfo> getPagedVideoList(Category category)
         {
@@ -202,7 +170,7 @@ namespace OnlineVideos.Sites
                         {
                             string rel = imgNode.Attributes["rel"].Value;
                             if (rel.StartsWith("http://player.omroep.nl/?aflID="))
-                                video.VideoUrl = GetPlayerOmroepUrl(rel);
+                                video.VideoUrl = UrlTricks.PlayerOmroepTrick(rel);
                             else
                             {
                                 string data = GetWebData(rel);

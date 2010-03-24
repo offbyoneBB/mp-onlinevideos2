@@ -455,7 +455,7 @@ namespace OnlineVideos.Sites
         {
             if (Source.RtlGemist.Equals(video.Other)) return video.VideoUrl;
             if (Source.UitzendingGemist.Equals(video.Other))
-                return TvTuttiUtil.GetPlayerOmroepUrl(video.VideoUrl);
+                return UrlTricks.PlayerOmroepTrick(video.VideoUrl);
 
             string webData = GetWebData(video.VideoUrl);
             string url = GetSubString(webData, @"class=""wmv-player-holder"" href=""", @"""");
