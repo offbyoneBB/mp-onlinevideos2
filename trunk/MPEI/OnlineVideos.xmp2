@@ -1004,6 +1004,20 @@
               <ZipFileName>Installer{CopyFile}\{ae94b9a3-a337-4428-9a16-ccfc41dde43e}-ThatGuyWithTheGlasses.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ThatGuyWithTheGlasses.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\MyVideo - Serien.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e5e8e06d-85d7-4bff-8815-0affe5702343}-MyVideo - Serien.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MyVideo - Serien.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\MyVideo - Serien.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{927377aa-e387-4caa-9695-726f8d753b9b}-MyVideo - Serien.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MyVideo - Serien.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1454,7 +1468,7 @@ Plugin GUI now Localized
 Added SMS T9 style filtering in all views 
 Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
     <DevelopmentStatus>Beta</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos.0.18.0.0.mpe1</OnlineLocation>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.18.0.MPE1</OnlineLocation>
     <ReleaseDate>2010-03-03T18:01:51.84375+01:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.[Version].mpe1</Location>
@@ -2477,6 +2491,20 @@ Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\MyVideo - Serien.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e5e8e06d-85d7-4bff-8815-0affe5702343}-MyVideo - Serien.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MyVideo - Serien.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\MyVideo - Serien.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{927377aa-e387-4caa-9695-726f8d753b9b}-MyVideo - Serien.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MyVideo - Serien.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Skins\Xface\myonlinevideos.details.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c1618bb1-561a-4a15-ad4e-ac5dbca348ca}-myonlinevideos.details.xml</ZipFileName>
         <DestinationFilename>%Skin%\Xface\myonlinevideos.details.xml</DestinationFilename>
@@ -2765,7 +2793,7 @@ Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{5c9d1946-1e78-4dd8-bfb4-71b8107a7191}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{ae27bef2-e8e0-458b-9220-d9c633e7b2a5}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
