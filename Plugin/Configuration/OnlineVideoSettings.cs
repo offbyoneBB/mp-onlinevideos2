@@ -89,6 +89,14 @@ namespace OnlineVideos
             SiteList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
             Load();
             CodecConfiguration = new CodecConfiguration();
+
+            // create some needed directories
+            string iconDir = Path.Combine(Config.GetFolder(Config.Dir.Thumbs), @"OnlineVideos\Icons\");
+            if (!Directory.Exists(iconDir)) Directory.CreateDirectory(iconDir);
+            string bannerDir = Path.Combine(Config.GetFolder(Config.Dir.Thumbs), @"OnlineVideos\Banners\");
+            if (!Directory.Exists(bannerDir)) Directory.CreateDirectory(bannerDir);
+            string dllDir = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
+            if (!Directory.Exists(dllDir)) Directory.CreateDirectory(dllDir);
         }
 
         XmlSerializerImplementation _XmlSerImp;
@@ -258,7 +266,8 @@ namespace OnlineVideos
                     if (!string.IsNullOrEmpty(DownloadDir)) xmlwriter.SetValue(CFG_SECTION, CFG_DOWNLOAD_DIR, DownloadDir);
                     if (!string.IsNullOrEmpty(email)) xmlwriter.SetValue(CFG_SECTION, CFG_EMAIL, email);
                     if (!string.IsNullOrEmpty(password)) xmlwriter.SetValue(CFG_SECTION, CFG_PASSWORD, password);
-                    if (updateOnStart != null) xmlwriter.SetValueAsBool(CFG_SECTION, CFG_UPDATEONSTART, updateOnStart.Value);
+                    if (updateOnStart == null) xmlwriter.RemoveEntry(CFG_SECTION, CFG_UPDATEONSTART);
+                    else xmlwriter.SetValueAsBool(CFG_SECTION, CFG_UPDATEONSTART, updateOnStart.Value);
                 }
 
                 SaveSites();

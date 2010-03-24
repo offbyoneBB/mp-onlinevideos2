@@ -300,6 +300,7 @@ namespace OnlineVideos
     public static string SortByLanguage = "Language";
     public static string SortByUpdated = "Updated";
     public static string Search = "Search";
+    public static string SetDownloadFolderInConfig = "Please set a download folder in Configuration!";
 
     // T
     public static string Timeframe = "Timeframe";
