@@ -180,7 +180,7 @@ Plugin GUI now Localized
 Added SMS T9 style filtering in all views 
 Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
         <DevelopmentStatus>Beta</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos.0.18.0.0.mpe1</OnlineLocation>
+        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.18.0.MPE1</OnlineLocation>
         <ReleaseDate>2010-03-03T18:01:51.84375+01:00</ReleaseDate>
         <Tags>online,videos,youtube</Tags>
         <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.[Version].mpe1</Location>
