@@ -105,9 +105,9 @@ namespace OnlineVideos.Sites
             string url = GetRedirectedUrl(video.VideoUrl);
 
             string data = GetWebData(url);
-            string s=GetSubString(data,@"<center><iframe src=""",@"""");
+            string s = GetSubString(data, @"<center><iframe src=""", @"""");
             if (s != string.Empty && (s.StartsWith(@"http://player.omroep.nl/")))
-                return TvTuttiUtil.GetPlayerOmroepUrl(s);
+                return UrlTricks.PlayerOmroepTrick(s);
 
             if (!string.IsNullOrEmpty(data))
             {
@@ -187,7 +187,7 @@ namespace OnlineVideos.Sites
             url = String.Format(url, FilterCategory);
             string referer = url.Replace("/video/videotab/type/", "/videos/");
             referer = referer.Replace("/page/", "/");
-            string webData = GetWebData(url, null, referer,null,true);
+            string webData = GetWebData(url, null, referer, null, true);
             List<VideoInfo> videos = new List<VideoInfo>();
             if (!string.IsNullOrEmpty(webData))
             {

@@ -56,16 +56,7 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            string lsUrl = base.getUrl(video);
-            string s = HttpUtility.UrlDecode(GetRedirectedUrl(lsUrl));
-            int p = s.IndexOf("file=");
-            int q = s.IndexOf('&', p);
-            if (q < 0) q = s.Length;
-            s = s.Substring(p + 5, q - p - 5);
-            string rss = GetWebData(s);
-            p = rss.IndexOf(@"enclosure url="""); p += 15;
-            q = rss.IndexOf('"', p);
-            return rss.Substring(p, q - p);
+            return UrlTricks.BlipTrick(base.getUrl(video));
         }
          
     }
