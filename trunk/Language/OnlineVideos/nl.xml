@@ -52,6 +52,7 @@
   <string Field="SortByLanguage">Op taal sorteren</string>
   <string Field="SortByUpdated">Bijgewerkt</string>
   <string Field="Search">Zoek</string>
+  <string Field="SetDownloadFolderInConfig">Kies eerst een download-map in de instellingen!</string>
   <string Field="Timeframe">Periode</string>
   <string Field="Timeout">Time-out</string>
   <string Field="Updatable">Bij te werken</string>
