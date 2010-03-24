@@ -410,13 +410,17 @@ namespace OnlineVideos
             return -1;
         }
 
-        SiteSettings GetRemoteSite(string name)
+        public static SiteSettings GetRemoteSite(string name)
         {
-            string siteXml = "";
-            OnlineVideosWebservice.OnlineVideosService ws = null;
+             return GetRemoteSite(name, null);
+        }
+
+        public static SiteSettings GetRemoteSite(string name, OnlineVideosWebservice.OnlineVideosService ws)
+        {
+            string siteXml = "";            
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                if (ws == null) ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
                 siteXml = ws.GetSiteXml(name);
             }, "getting site xml from webservice"))
             {

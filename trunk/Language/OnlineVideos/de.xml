@@ -52,6 +52,7 @@
   <string Field="SortByLanguage">Sprache</string>
   <string Field="SortByUpdated">Aktualisiert</string>
   <string Field="Search">Suchen</string>
+  <string Field="SetDownloadFolderInConfig">Bitte einen Ordner für Downloads in der Konfiguration wählen!</string>
   <string Field="Timeframe">Zeitraum</string>
   <string Field="Timeout">Zeitüberschreitung</string>
   <string Field="Updatable">Aktualisierbar</string>

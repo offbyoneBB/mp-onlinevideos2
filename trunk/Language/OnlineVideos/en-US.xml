@@ -84,6 +84,7 @@
   <string Field="SortByLanguage">Language</string>
   <string Field="SortByUpdated">Updated</string>
   <string Field="Search">Search</string>
+  <string Field="SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>
 
   <!-- T -->
   <string Field="Timeframe">Timeframe</string>
