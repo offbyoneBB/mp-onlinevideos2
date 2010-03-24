@@ -44,6 +44,7 @@
     <Compile Include="ArtePlus7Util.cs" />
     <Compile Include="Kabel1Util.cs" />
     <Compile Include="MdrUtil.cs" />
+    <Compile Include="MyVideoSerienUtil.cs" />
     <Compile Include="NdrUtil.cs" />
     <Compile Include="OrfUtil.cs" />
     <Compile Include="Pro7Util.cs" />
