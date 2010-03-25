@@ -36,42 +36,38 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             RssLink cat;
-            test specifics;
+            Specifics specifics;
 
             cat = new RssLink();
             cat.Name = "Uitzending Gemist";
             cat.Url = @"http://www.uitzendinggemist.nl/";
             cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/uitzendinggemist.png";
             cat.HasSubCategories = true;
-            specifics = new pagedTest(Source.UitzendingGemist);
-            specifics.baseUrl = @"http://www.uitzendinggemist.nl";
-            specifics.subCatStart = @"<div id=""nav_letter"">";
-            specifics.subCatEnd = @"</div>";
-            specifics.regex_SubCat = specifics.getRegex(@"<a\s.*?href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<");
+            regex_NedSub = Specifics.getRegex(@"style=""overflow.*?<a\s.*?href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<.*?<td[^>]*>(?<airdate>[^<]*)<");
+            regex_NedVidList = Specifics.getRegex(@"<tr.*?height[^>]*>(?<airdate>[^<]*)<.*?href=""(?<url>[^""]*)"">(?<descr>[^<]+)<.*?</span>.*?href=""(?<vidurl>[^""]+)""");
+            regex_NedDetails = Specifics.getRegex(@"(<p>Datum\suitzending[^>]*>(?<airdate>[^<]*).*?)?(Deze\saflevering:(?<descr>[^<]*).*?)?<a\shref=""(?<url>[^""]*)""\s*target=""player""");
 
-            specifics.videoListStart = @"<tbody id=""afleveringen"">";
-            specifics.regex_VideoList = specifics.getRegex(@"<tr.*?height=[^>]*>\s*(?<airdate>[^<]*)<.*?onclick=""document[^>]*>\s*(?<descr>.*?)\(<a\shref=""(?<url>[^""]+)""");
-            specifics.cc = new CookieContainer();
-            regex_NedSub = specifics.getRegex(@"style=""overflow.*?<a\s.*?href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<.*?<td[^>]*>(?<airdate>[^<]*)<");
-            regex_NedVidList = specifics.getRegex(@"<tr.*?height[^>]*>(?<airdate>[^<]*)<.*?href=""(?<url>[^""]*)"">(?<descr>[^<]+)<.*?</span>.*?href=""(?<vidurl>[^""]+)""");
-            regex_NedDetails = specifics.getRegex(@"(<p>Datum\suitzending[^>]*>(?<airdate>[^<]*).*?)?(Deze\saflevering:(?<descr>[^<]*).*?)?<a\shref=""(?<url>[^""]*)""\s*target=""player""");
-            cat.Other = specifics;
             Settings.Categories.Add(cat);
+            Add2Subcats("Op alfabet", "Op dag", cat);
+            CookieContainer cc = new CookieContainer();
+            cat.SubCategories[0].Other = GetNlSpecifics(@"<div id=""nav_letter"">", cc);
+            cat.SubCategories[1].Other = GetNlSpecifics(@"<div id=""nav_dag"">", cc);
+            ((Specifics)cat.SubCategories[1].Other).doSort = false;
 
             cat = new RssLink();
             cat.Name = "Rtl Gemist";
             cat.Url = @"http://rtl.nl/experience/rtlnl/";
             cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/rtlgemist.png";
             cat.HasSubCategories = true;
-            specifics = new test(Source.RtlGemist);
+            specifics = new Specifics(Source.RtlGemist);
             specifics.baseUrl = @"http://www.rtl.nl/";
             specifics.subCatStart = @"portalProgrammas";
             specifics.subCatEnd = @"this.";
-            specifics.regex_SubCat = specifics.getRegex(@"\[""(?<title>[^""]+)"",""(?<url>[^""]+)"",""[^""]+""\]");
+            specifics.regex_SubCat = Specifics.getRegex(@"\[""(?<title>[^""]+)"",""(?<url>[^""]+)"",""[^""]+""\]");
 
             specifics.videoListStart = String.Empty;
-            specifics.regex_VideoList = specifics.getRegex(@"<li\sclass=""video""\s*(thumb=""(?<thumb>[^""]+)"")?.*?rel=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<");
-            regex_RtlDetails = specifics.getRegex(@"bandwidth:\s*'(?<bandwidth>[^']*).*?file:\s*'(?<url>[^']*)");
+            specifics.regex_VideoList = Specifics.getRegex(@"<li\sclass=""video""\s*(thumb=""(?<thumb>[^""]+)"")?.*?rel=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<");
+            regex_RtlDetails = Specifics.getRegex(@"bandwidth:\s*'(?<bandwidth>[^']*).*?file:\s*'(?<url>[^']*)");
             cat.Other = specifics;
             Settings.Categories.Add(cat);
 
@@ -80,14 +76,14 @@ namespace OnlineVideos.Sites
             cat.Url = @"http://www.net5.nl/web/show/id=95681/langid=43";
             cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/net5gemist.png";
             cat.HasSubCategories = true;
-            specifics = new test(Source.Rest);
+            specifics = new Specifics(Source.Rest);
             specifics.baseUrl = @"http://www.net5.nl";
             specifics.subCatStart = @"class=""mo-a";
             specifics.subCatEnd = @"class=""clearer""";
-            specifics.regex_SubCat = specifics.getRegex(@"<a\s*href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<");
+            specifics.regex_SubCat = Specifics.getRegex(@"<a\s*href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<");
 
             specifics.videoListStart = @"class=""mo-c double""";
-            specifics.regex_VideoList = specifics.getRegex(videoListRegexNet5SbsVeronica);
+            specifics.regex_VideoList = Specifics.getRegex(videoListRegexNet5SbsVeronica);
 
             cat.Other = specifics;
             Settings.Categories.Add(cat);
@@ -97,14 +93,14 @@ namespace OnlineVideos.Sites
             cat.Url = @"http://www.sbs6.nl/web/show/id=73863/langid=43";
             cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/sbsgemist.png";
             cat.HasSubCategories = true;
-            specifics = new test(Source.Rest);
+            specifics = new Specifics(Source.Rest);
             specifics.baseUrl = @"http://www.sbs6.nl";
             specifics.subCatStart = @"<span>Programma gemist overzicht";
             specifics.subCatEnd = @"class=""bottom""";
-            specifics.regex_SubCat = specifics.getRegex(subCategoryRegexSbsVeronica);
+            specifics.regex_SubCat = Specifics.getRegex(subCategoryRegexSbsVeronica);
 
             specifics.videoListStart = @"class=""mo-c double""";
-            specifics.regex_VideoList = specifics.getRegex(videoListRegexNet5SbsVeronica);
+            specifics.regex_VideoList = Specifics.getRegex(videoListRegexNet5SbsVeronica);
 
             cat.Other = specifics;
             Settings.Categories.Add(cat);
@@ -114,14 +110,14 @@ namespace OnlineVideos.Sites
             cat.Url = @"http://www.veronicatv.nl/web/show/id=96520/langid=43";
             cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/veronicagemist.png";
             cat.HasSubCategories = true;
-            specifics = new test(Source.Veronica);
+            specifics = new Specifics(Source.Veronica);
             specifics.baseUrl = @"http://www.veronicatv.nl";
             specifics.subCatStart = @"class=""mo-a"; // was: mo-b
             specifics.subCatEnd = @"class=""bottom""";
-            specifics.regex_SubCat = specifics.getRegex(subCategoryRegexSbsVeronica);
+            specifics.regex_SubCat = Specifics.getRegex(subCategoryRegexSbsVeronica);
 
             specifics.videoListStart = @"class=""mo-c double""";
-            specifics.regex_VideoList = specifics.getRegex(videoListRegexNet5SbsVeronica);
+            specifics.regex_VideoList = Specifics.getRegex(videoListRegexNet5SbsVeronica);
 
             cat.Other = specifics;
             Settings.Categories.Add(cat);
@@ -130,15 +126,55 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        private int DiscoverRtlSubCategories(RssLink parentCategory, test bareSpecifics)
+        private Specifics GetNlSpecifics(string subCatStart, CookieContainer cc)
+        {
+            Specifics specifics = new pagedTest(Source.UitzendingGemist);
+            specifics.baseUrl = @"http://www.uitzendinggemist.nl";
+            specifics.subCatStart = subCatStart;
+            specifics.subCatEnd = @"</div>";
+            specifics.regex_SubCat = Specifics.getRegex(@"<a\s.*?href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<");
+
+            specifics.videoListStart = @"<tbody id=""afleveringen"">";
+            specifics.regex_VideoList = Specifics.getRegex(@"<tr.*?height=[^>]*>\s*(?<airdate>[^<]*)<.*?onclick=""document[^>]*>\s*(?<descr>.*?)\(<a\shref=""(?<url>[^""]+)""");
+            specifics.cc = cc;
+            return specifics;
+        }
+
+        private void Add2Subcats(string cat1, string cat2, RssLink parentCat)
+        {
+            parentCat.SubCategories = new List<Category>();
+
+            RssLink cat = new RssLink();
+            cat.Name = cat1;
+            cat.HasSubCategories = true;
+            cat.Url = parentCat.Url;
+            cat.ParentCategory = parentCat;
+            parentCat.SubCategories.Add(cat);
+
+            cat = new RssLink();
+            cat.Name = cat2;
+            cat.HasSubCategories = true;
+            cat.Url = parentCat.Url;
+            cat.ParentCategory = parentCat;
+            parentCat.SubCategories.Add(cat);
+
+            parentCat.SubCategoriesDiscovered = true;
+        }
+
+        private int DiscoverRtlSubCategories(RssLink parentCategory, Specifics bareSpecifics)
         {
             return parentCategory.SubCategories.Count;
         }
 
-        private int DiscoverBareSubCategories(RssLink parentCategory, test specifics)
+        private int DiscoverBareSubCategories(RssLink parentCategory, Specifics specifics)
         {
             string url = parentCategory.Url;
-            SortedDictionary<string, Category> subCats = new SortedDictionary<string, Category>();
+            IDictionary<string, Category> subCats;
+
+            if (specifics.doSort)
+                subCats = new SortedDictionary<string, Category>();
+            else
+                subCats = new Dictionary<string, Category>();
 
             bool hasNextPage = false;
             int pageNr = 0;
@@ -197,7 +233,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        private int DiscoverNEDSubCategories(RssLink parentCategory, test specifics)
+        private int DiscoverNEDSubCategories(RssLink parentCategory, Specifics specifics)
         {
             string url = parentCategory.Url;
             parentCategory.SubCategories = new List<Category>();
@@ -235,9 +271,9 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategoriesDiscovered = true;
-            if (parentCategory.Other == null) return 0;
-            test specifics = parentCategory.Other as test;
-            if (parentCategory.ParentCategory == null)
+            if (parentCategory.Other == null) return parentCategory.SubCategories.Count;
+            Specifics specifics = parentCategory.Other as Specifics;
+            if (parentCategory.ParentCategory == null || parentCategory.ParentCategory.Other == null)
                 return DiscoverBareSubCategories((RssLink)parentCategory, specifics);
             else
                 switch (specifics.source)
@@ -252,7 +288,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getVideoList(Category category)
         {
             baseCategory = (RssLink)category;
-            test specifics = category.Other as test;
+            Specifics specifics = category.Other as Specifics;
             if (specifics is pagedTest && ((pagedTest)specifics).pageNr != 1)
                 return getNedVideoList(baseCategory, ((pagedTest)specifics));
             else
@@ -337,7 +373,7 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        private void fillFromNed(string url, VideoInfo video, test specifics)
+        private void fillFromNed(string url, VideoInfo video, Specifics specifics)
         {
             try
             {
@@ -361,7 +397,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        private List<VideoInfo> getBareVideoList(RssLink category, test specifics)
+        private List<VideoInfo> getBareVideoList(RssLink category, Specifics specifics)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
             string url = category.Url;
@@ -501,14 +537,14 @@ namespace OnlineVideos.Sites
             return s.Substring(p, q - p);
         }
 
-        private class test
+        private class Specifics
         {
-            public test(Source source)
+            public Specifics(Source source)
             {
                 this.source = source;
             }
 
-            public Regex getRegex(string s)
+            public static Regex getRegex(string s)
             {
                 return new Regex(s, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
             }
@@ -521,9 +557,10 @@ namespace OnlineVideos.Sites
             public string videoListStart;
             public CookieContainer cc = null;
             public Source source;
+            public bool doSort = true;
         }
 
-        private class pagedTest : test
+        private class pagedTest : Specifics
         {
             public pagedTest(Source source) : base(source) { }
             public bool hasNextPage;
@@ -539,7 +576,7 @@ namespace OnlineVideos.Sites
             private bool GetSubCats()
             {
 
-                test specifics = Other as test;
+                Specifics specifics = Other as Specifics;
 
                 string url = String.Empty;
                 SubCategoriesDiscovered = true;
