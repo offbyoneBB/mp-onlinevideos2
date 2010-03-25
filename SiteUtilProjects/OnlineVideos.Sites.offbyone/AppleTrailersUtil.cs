@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Xml;
 using Jayrock.Json;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
@@ -78,7 +79,6 @@ namespace OnlineVideos.Sites
             private StringList _genres = new StringList();
             private StringList _cast = new StringList();
             private StringList _platforms = new StringList();
-            private int _year = 0;
             public List<Video> Media = new List<Video>();
 
             #endregion
@@ -86,31 +86,15 @@ namespace OnlineVideos.Sites
             #region Properties
 
             public string Title { get; set; }
-            public string Description { get; set; }
-
-            public int Year
-            {
-                get
-                {
-                    if (_year > 0)
-                    {
-                        return _year;
-                    }
-                    else
-                    {
-                        return ReleaseDate.Year;
-                    }
-                }
-                set { _year = value; }
-            }
+            public string UnescapedTitle { get; set; }
+            public string Description { get; set; }            
             public DateTime ReleaseDate { get; set; }
             public int Runtime { get; set; }
             public string Director { get; set; }
             public string Rating { get; set; }
             public string Studio { get; set; }
             public string Poster { get; set; }
-            public string Thumb { get; set; }
-            public object Tag { get; set; }
+            public string Thumb { get; set; }            
             public InfoState State { get; set; }            
 
             public StringList Genres
@@ -335,8 +319,14 @@ namespace OnlineVideos.Sites
             XmlNode Root = GetXml(url);
             if (Root == null)
             {
-                Log.Error("Apple Trailers: No XML Found.");
-                return null;
+                string titleWithoutSpecialCharacters = Regex.Replace(HttpUtility.HtmlDecode(trailer.UnescapedTitle), @"[\W\s]", "").ToLower();
+                url = Regex.Replace(url, @"/([^/]+)/index.xml$", "/" + titleWithoutSpecialCharacters + "/index.xml");
+                Root = GetXml(url);
+                if (Root == null)
+                {
+                    Log.Error("Apple Trailers: No XML Found.");
+                    return null;
+                }
             }
 
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(Root.OwnerDocument.NameTable);
@@ -514,7 +504,9 @@ namespace OnlineVideos.Sites
                 }
 
                 newTrailer.State = isSearchResult ? Trailer.InfoState.SEARCH : Trailer.InfoState.INDEX;
-                newTrailer.Title = Utils.ReplaceEscapedUnicodeCharacter(HttpUtility.HtmlDecode((string)trailer["title"]));
+                newTrailer.UnescapedTitle = (string)trailer["title"];
+                // apple doesn't get their html right, we need to double HTMLDecode and Decode Unicode escaped Characters                
+                newTrailer.Title = Utils.ReplaceEscapedUnicodeCharacter(HttpUtility.HtmlDecode(HttpUtility.HtmlDecode((string)trailer["title"])));
                 newTrailer.Studio = HttpUtility.HtmlDecode((string)trailer["studio"]);
                 newTrailer.Rating = (string)trailer["rating"];
 
@@ -538,6 +530,7 @@ namespace OnlineVideos.Sites
                 try
                 {
                     newTrailer.Director = HttpUtility.HtmlDecode((string)trailer["director"]);
+                    if (newTrailer.Director.Length <= 5) newTrailer.Director = "";
                 }
                 catch { }
 
@@ -641,16 +634,16 @@ namespace OnlineVideos.Sites
         /// <returns>XmlNode root</returns>
         protected XmlNode GetXml(string url)
         {
-            string WebData = GetWebData(url);
             try
             {
+                string WebData = GetWebData(url);
                 // attempts to convert the returned string into an XmlDocument
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(WebData);
                 XmlNode root = doc.FirstChild.NextSibling;
                 return root;
             }
-            catch (XmlException e)
+            catch (Exception e)
             {
                 Log.Error("Error parsing results from {0} as XML: {1}", url, e.Message);
             }

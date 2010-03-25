@@ -48,12 +48,13 @@
       <textcolor>ffb2d4f5</textcolor>
     </control>
     <control>
-      <type>fadelabel</type>
+      <type>textboxscrollup</type>
       <description>cast value</description>
       <id>53</id>
       <posX>450</posX>
       <posY>153</posY>
       <width>400</width>
+      <height>240</height>
       <font>font12</font>
       <label>#OnlineVideos.cast</label>
       <visible>no</visible>
