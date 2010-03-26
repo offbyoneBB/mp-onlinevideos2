@@ -1499,6 +1499,7 @@ namespace OnlineVideos
                 WebClient loClient = new WebClient();
                 loClient.Headers.Add("user-agent", OnlineVideoSettings.USERAGENT);
                 loClient.DownloadFileCompleted += OnDownloadFileCompleted;
+                loClient.DownloadProgressChanged += downloadInfo.DownloadProgressCallback;
                 loClient.DownloadFileAsync(new Uri(url), downloadInfo.LocalFile, downloadInfo);
             }
         }
@@ -1531,12 +1532,19 @@ namespace OnlineVideos
                     System.IO.File.Copy(downloadInfo.ThumbFile, localImageName);
                 }
 
+                // get file size
+                int fileSize = downloadInfo.KbTotal;
+                if (fileSize <= 0)
+                {
+                    try { fileSize = (int)((new System.IO.FileInfo(downloadInfo.LocalFile)).Length / 1024); } catch {}
+                }
+
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (loDlgNotify != null)
                 {
                     loDlgNotify.Reset();
                     loDlgNotify.SetHeading(Translation.DownloadComplete);
-                    loDlgNotify.SetText((e.UserState as DownloadInfo).Title);
+                    loDlgNotify.SetText(string.Format("{0}{1}", downloadInfo.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""));
                     loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
                 }
             }
