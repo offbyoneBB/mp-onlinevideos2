@@ -40,6 +40,7 @@ namespace OnlineVideos
             try
             {
                 MMSDownloader mmsDL = new MMSDownloader();
+                mmsDL.FileInfoGot = downloadInfo.DownloadProgressCallback;
                 mmsDL.Start(downloadInfo.Url, null);
                 using (System.IO.FileStream fs = new System.IO.FileStream(downloadInfo.LocalFile, System.IO.FileMode.Create, System.IO.FileAccess.Write))
                 {

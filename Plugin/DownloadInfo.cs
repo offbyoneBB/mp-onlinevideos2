@@ -21,5 +21,10 @@ namespace OnlineVideos
             PercentComplete = e.ProgressPercentage;
             KbTotal = (int)(e.TotalBytesToReceive / 1024);
         }
+        public void DownloadProgressCallback(object sender, MMSStreamProgressChangedEventArgs e)
+        {
+            PercentComplete = e.ProgressPercentage;
+            KbTotal = (int)(e.TotalBytesToReceive / 1024);
+        }
     }
 }
