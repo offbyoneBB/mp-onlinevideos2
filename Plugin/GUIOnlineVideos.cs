@@ -1262,7 +1262,6 @@ namespace OnlineVideos
         private void Play(VideoInfo video)
         {
             bool playing = false;
-            string lsUrl = "";
             if (selectedSite.MultipleFilePlay)
             {
                 List<String> loUrlList = null;
@@ -1299,16 +1298,19 @@ namespace OnlineVideos
                 foreach (String url in loUrlList)
                 {
                     i++;
-                    PlayListItem item = new PlayListItem(string.Format("{0} - {1} / {2}", video.Title, i.ToString(), loUrlList.Count), url);
+                    Player.PlayListItemWrapper item = new Player.PlayListItemWrapper(string.Format("{0} - {1} / {2}", video.Title, i.ToString(), loUrlList.Count), url) 
+                    { 
+                        Type = PlayListItem.PlayListItemType.VideoStream, 
+                        Video = video 
+                    };
                     videoList.Add(item);
                 }
-                lsUrl = loUrlList[0];
-
                 PlayListPlayer.SingletonPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
                 playing = PlayListPlayer.SingletonPlayer.Play(0);
             }
             else
             {
+                string lsUrl = "";
                 if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
                     lsUrl = selectedSite.getUrl(video);
