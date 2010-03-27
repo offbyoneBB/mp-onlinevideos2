@@ -13,6 +13,57 @@ namespace OnlineVideos.Sites
     {
         public enum VideoQuality { Low, High, HD };
 
+        /// <summary>
+        /// http://code.google.com/intl/de-DE/apis/youtube/2.0/reference.html#Standard_feeds
+        /// </summary>
+        public enum StandartFeedCountry 
+        {
+            [Description("Australia")]AU,
+            [Description("Brazil")]BR,
+            [Description("Canada")]CA,
+            [Description("Czech Republic")]CZ,
+            [Description("France")]FR,
+            [Description("Germany")]DE,
+            [Description("Great Britain")]GB,
+            [Description("Holland")]NL,
+            [Description("Hong Kong")]HK,
+            [Description("India")]IN,
+            [Description("Ireland")]IE,
+            [Description("Israel")]IL,
+            [Description("Italy")]IT,
+            [Description("Japan")]JP,
+            [Description("Mexico")]MX,
+            [Description("New Zealand")]NZ,
+            [Description("Poland")]PL,
+            [Description("Russia")]RU,
+            [Description("South Korea")]KR,
+            [Description("Spain")]ES,
+            [Description("Sweden")]SE,
+            [Description("Taiwan")]TW,
+            [Description("United States")]US 
+        }
+        
+        /// <summary>
+        /// http://code.google.com/intl/de-DE/apis/youtube/2.0/reference.html#Localized_Category_Lists
+        /// </summary>
+        public enum CategoryLocale
+        {
+            [Description("Chinese")]zh,
+            [Description("Czech")]cs,
+            [Description("Dutch")]nl,            
+            [Description("English")]en,
+            [Description("French")]fr,
+            [Description("German")]de,
+            [Description("Italian")]it, 
+            [Description("Japanese")]ja,
+            [Description("Korean")]ko,
+            [Description("Polish")]pl,
+            [Description("Portuguese")]pt,
+            [Description("Russian")]ru,
+            [Description("Spanish")]es,
+            [Description("Swedish")]sv
+        }
+
         [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum quality for the video to be played.")]
         VideoQuality videoQuality = VideoQuality.High;
         [Category("OnlineVideosUserConfiguration"), Description("Your YouTube username. Used for favorites.")]
@@ -21,6 +72,8 @@ namespace OnlineVideos.Sites
         string password = "";
         [Category("OnlineVideosUserConfiguration"), Description("Defines the default number of videos to display per page.")]
         int pageSize = 27;
+        [Category("OnlineVideosUserConfiguration"), Description("Try to retrieve data specific for your region.")]
+        bool localize = false;
 
         [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
         bool useDynamicCategories = true;               
@@ -152,6 +205,30 @@ namespace OnlineVideos.Sites
         {
             List<VideoInfo> loRssItems = new List<VideoInfo>();
 
+            if (localize)
+            {
+                if (query.BaseAddress.StartsWith(YouTubeQuery.StandardFeeds))
+                {
+                    // standartfeeds don't honor the LR parameter and have their own way of country specific query
+                    string postStandartFeedUriPart = query.BaseAddress.Substring(YouTubeQuery.StandardFeeds.Length);
+                    if (postStandartFeedUriPart.IndexOf("/") != 2)
+                    {
+                        // try to add a country from the StandartFeedCountry enumeration
+                        try
+                        {
+                            StandartFeedCountry result = (StandartFeedCountry)Enum.Parse(typeof(StandartFeedCountry), OnlineVideoSettings.Instance.MediaPortalLocale.TwoLetterISOLanguageName.ToUpper());
+                            query.BaseAddress = YouTubeQuery.StandardFeeds + result.ToString() + "/" + postStandartFeedUriPart;
+                        }
+                        catch { }
+                    }
+                }
+                else
+                {
+                    //http://code.google.com/intl/de-DE/apis/youtube/2.0/reference.html#lrsp
+                    query.LR = OnlineVideoSettings.Instance.MediaPortalLocale.TwoLetterISOLanguageName;
+                }
+            }
+
             YouTubeFeed feed = service.Query(query);
             hasPreviousPage = !string.IsNullOrEmpty(feed.PrevChunk);
             hasNextPage = !string.IsNullOrEmpty(feed.NextChunk);
@@ -187,7 +264,18 @@ namespace OnlineVideos.Sites
             Dictionary<String, String> categories = new Dictionary<string, string>();
             try
             {
-                foreach (YouTubeCategory cat in YouTubeQuery.GetYouTubeCategories())
+                string catUri = YouTubeService.DefaultCategory;
+                if (localize)
+                {
+                    try
+                    {
+                        Enum.Parse(typeof(CategoryLocale), OnlineVideoSettings.Instance.MediaPortalLocale.TwoLetterISOLanguageName.ToLower());
+                        catUri += "?hl=" + OnlineVideoSettings.Instance.MediaPortalLocale.Name;
+                    }
+                    catch { }
+                }
+
+                foreach (YouTubeCategory cat in YouTubeQuery.GetCategories(new Uri(catUri), new YouTubeCategoryCollection()))
                 {
                     if (cat.Assignable && !cat.Deprecated)
                     {
