@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Net;
+using MediaPortal.Configuration;
 
 namespace OnlineVideos.Sites
 {
@@ -41,14 +42,14 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Uitzending Gemist";
             cat.Url = @"http://www.uitzendinggemist.nl/";
-            cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/uitzendinggemist.png";
+            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\Tvgemist\uitzendinggemist.png";
             cat.HasSubCategories = true;
             regex_NedSub = Specifics.getRegex(@"style=""overflow.*?<a\s.*?href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<.*?<td[^>]*>(?<airdate>[^<]*)<");
             regex_NedVidList = Specifics.getRegex(@"<tr.*?height[^>]*>(?<airdate>[^<]*)<.*?href=""(?<url>[^""]*)"">(?<descr>[^<]+)<.*?</span>.*?href=""(?<vidurl>[^""]+)""");
             regex_NedDetails = Specifics.getRegex(@"(<p>Datum\suitzending[^>]*>(?<airdate>[^<]*).*?)?(Deze\saflevering:(?<descr>[^<]*).*?)?<a\shref=""(?<url>[^""]*)""\s*target=""player""");
 
             Settings.Categories.Add(cat);
-            Add2Subcats("Op alfabet", "Op dag", cat);
+            Add2Subcats("Op alfabet", "Op dag (Under construction)", cat);
             CookieContainer cc = new CookieContainer();
             cat.SubCategories[0].Other = GetNlSpecifics(@"<div id=""nav_letter"">", cc);
             cat.SubCategories[1].Other = GetNlSpecifics(@"<div id=""nav_dag"">", cc);
@@ -57,8 +58,12 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Rtl Gemist";
             cat.Url = @"http://rtl.nl/experience/rtlnl/";
-            cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/rtlgemist.png";
+            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\Tvgemist\rtlgemist.png";
             cat.HasSubCategories = true;
+            Settings.Categories.Add(cat);
+
+            Add2Subcats("Op alfabet", "Op dag (Under construction)", cat);
+
             specifics = new Specifics(Source.RtlGemist);
             specifics.baseUrl = @"http://www.rtl.nl/";
             specifics.subCatStart = @"portalProgrammas";
@@ -68,13 +73,13 @@ namespace OnlineVideos.Sites
             specifics.videoListStart = String.Empty;
             specifics.regex_VideoList = Specifics.getRegex(@"<li\sclass=""video""\s*(thumb=""(?<thumb>[^""]+)"")?.*?rel=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<");
             regex_RtlDetails = Specifics.getRegex(@"bandwidth:\s*'(?<bandwidth>[^']*).*?file:\s*'(?<url>[^']*)");
-            cat.Other = specifics;
-            Settings.Categories.Add(cat);
+            cat.SubCategories[0].Other = specifics;
+            cat.SubCategories[1].Other = Source.RtlGemist;
 
             cat = new RssLink();
             cat.Name = "Net5 Gemist";
             cat.Url = @"http://www.net5.nl/web/show/id=95681/langid=43";
-            cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/net5gemist.png";
+            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\Tvgemist\net5gemist.png";
             cat.HasSubCategories = true;
             specifics = new Specifics(Source.Rest);
             specifics.baseUrl = @"http://www.net5.nl";
@@ -91,7 +96,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "SBS6 Gemist";
             cat.Url = @"http://www.sbs6.nl/web/show/id=73863/langid=43";
-            cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/sbsgemist.png";
+            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\Tvgemist\sbsgemist.png";
             cat.HasSubCategories = true;
             specifics = new Specifics(Source.Rest);
             specifics.baseUrl = @"http://www.sbs6.nl";
@@ -108,7 +113,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Veronica Gemist";
             cat.Url = @"http://www.veronicatv.nl/web/show/id=96520/langid=43";
-            cat.Thumb = @"http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteImages/Icons/Tvgemist/veronicagemist.png";
+            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\Tvgemist\veronicagemist.png";
             cat.HasSubCategories = true;
             specifics = new Specifics(Source.Veronica);
             specifics.baseUrl = @"http://www.veronicatv.nl";
@@ -268,10 +273,46 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
+
+        private int DiscoverRtlOpDag(RssLink parentCategory)
+        {
+            XmlDocument doc = new XmlDocument();
+            string data = GetWebData(@"http://www.rtl.nl/service/gemist/dataset_xml.xml");
+            doc.LoadXml(data);
+            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
+            nsmRequest.AddNamespace("a", @"http://interactief.rtl.nl/system/xmlns/s4m");
+            XmlNodeList list = doc.SelectNodes(@"//a:episodes/a:episode", nsmRequest);
+            SortedDictionary<string, object> cats = new SortedDictionary<string, object>();
+            foreach (XmlNode node in list)
+            {
+                string date = node.SelectSingleNode("broadcast_start").InnerText;
+                date = date.Split(' ')[0];
+                if (!cats.ContainsKey(date))
+                    cats.Add(date, null);
+            }
+            List<string> t = new List<string>(cats.Keys);
+            t.Reverse();
+            parentCategory.SubCategories = new List<Category>();
+            foreach (string s in t)
+            {
+                RssLink cat = new RssLink();
+                cat.Name = s;
+                cat.HasSubCategories = false;
+                cat.Other = parentCategory.Other;
+                cat.ParentCategory = parentCategory;
+                parentCategory.SubCategories.Add(cat);
+            }
+
+            return parentCategory.SubCategories.Count;
+        }
+
+
         public override int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategoriesDiscovered = true;
             if (parentCategory.Other == null) return parentCategory.SubCategories.Count;
+            if (parentCategory.Other.Equals(Source.RtlGemist))
+                return DiscoverRtlOpDag((RssLink)parentCategory);
             Specifics specifics = parentCategory.Other as Specifics;
             if (parentCategory.ParentCategory == null || parentCategory.ParentCategory.Other == null)
                 return DiscoverBareSubCategories((RssLink)parentCategory, specifics);

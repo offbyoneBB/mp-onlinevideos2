@@ -1,4 +1,5 @@
-﻿<MPinstaler>
+﻿add tvgemist!
+<MPinstaler>
 	<ver>1.00.000</ver>
 	<FileList>
 		<File>
@@ -1557,6 +1558,60 @@
 			<Id>04010</Id>
 			<Option />
 			<Guid>4db704a0-30d2-4a8a-bf6b-328c8275cdc8</Guid>
+		</File>
+		<File>
+			<FileName>uitzendinggemist.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons\Tvgemist</SubType>
+			<Source>..\SiteImages\Icons\Tvgemist\uitzendinggemist.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>3895B346-536F-452C-B8C5-1CFD47AA4A39</Guid>
+		</File>
+		<File>
+			<FileName>.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons\Tvgemist</SubType>
+			<Source>..\SiteImages\Icons\Tvgemist\.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>3A2CCE1E-E6F7-425B-91A3-F8D16AC28CB1</Guid>
+		</File>
+		<File>
+			<FileName>rtlgemist.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons\Tvgemist</SubType>
+			<Source>..\SiteImages\Icons\Tvgemist\rtlgemist.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>94B366E1-72A6-4591-A74B-A1B29CADAB77</Guid>
+		</File>
+		<File>
+			<FileName>net5gemist.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons\Tvgemist</SubType>
+			<Source>..\SiteImages\Icons\Tvgemist\net5gemist.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>747764AF-6E76-462D-80D2-0FA6C7C1DEA7</Guid>
+		</File>
+		<File>
+			<FileName>sbsgemist.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons\Tvgemist</SubType>
+			<Source>..\SiteImages\Icons\Tvgemist\sbsgemist.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>975605A4-90F5-4273-887D-CB8E769D6C9E</Guid>
+		</File>
+		<File>
+			<FileName>veronicagemist.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons\Tvgemist</SubType>
+			<Source>..\SiteImages\Icons\Tvgemist\veronicagemist.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid></Guid>
 		</File>
 	</FileList>
 	<StringList />
