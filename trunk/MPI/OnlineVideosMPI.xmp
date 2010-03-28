@@ -1577,15 +1577,6 @@
 			<Guid>3895B346-536F-452C-B8C5-1CFD47AA4A39</Guid>
 		</File>
 		<File>
-			<FileName>.png</FileName>
-			<Type>Thumbs</Type>
-			<SubType>OnlineVideos\Icons\Tvgemist</SubType>
-			<Source>..\SiteImages\Icons\Tvgemist\.png</Source>
-			<Id>04010</Id>
-			<Option />
-			<Guid>3A2CCE1E-E6F7-425B-91A3-F8D16AC28CB1</Guid>
-		</File>
-		<File>
 			<FileName>rtlgemist.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons\Tvgemist</SubType>
