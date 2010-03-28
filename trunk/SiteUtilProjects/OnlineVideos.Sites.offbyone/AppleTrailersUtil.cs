@@ -297,12 +297,29 @@ namespace OnlineVideos.Sites
                 newVideo.Description = trailer.Description;
                 newVideo.Length = v.Duration.ToString();
                 newVideo.ImageUrl = trailer.Thumb;
-                newVideo.PlaybackOptions = v.PlaybackOptions;
-                newVideo.VideoUrl = GetTrailerUrlForConfiguredResolution(newVideo.PlaybackOptions);
+                newVideo.VideoUrl = video.VideoUrl;
+                newVideo.PlaybackOptions = v.PlaybackOptions;                
                 videoList.Add(newVideo);
             }
             
             return videoList;
+        }
+
+        public override string getUrl(VideoInfo video)
+        {
+            if (video.VideoUrl.StartsWith("http://")) return video.VideoUrl;
+
+            if (video.PlaybackOptions == null)
+            {
+                Trailer t = fetchDetails(video.VideoUrl);
+                foreach(Video v in t.Media)
+                    if (t.Title + " - " + v.Label == video.Title)
+                    {
+                        video.PlaybackOptions = v.PlaybackOptions;
+                        break;
+                    }
+            }
+            return GetTrailerUrlForConfiguredResolution(video.PlaybackOptions);
         }
         
         private Trailer fetchDetails(string key)
