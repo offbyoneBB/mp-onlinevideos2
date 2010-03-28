@@ -1,5 +1,4 @@
-﻿add tvgemist!
-<MPinstaler>
+﻿<MPinstaler>
 	<ver>1.00.000</ver>
 	<FileList>
 		<File>
@@ -930,6 +929,15 @@
 			<Guid>29596D5B-BFF5-4976-9012-4E18856306F5</Guid>
 		</File>
     <File>
+			<FileName>ru.xml</FileName>
+			<Type>Other</Type>
+			<SubType>%Language%</SubType>
+			<Source>..\Language\OnlineVideos\ru.xml</Source>
+			<Id>04010</Id>
+			<Option>OutputFileName=\OnlineVideos\ru.xml|</Option>
+			<Guid>43791492-442B-4b26-AF01-A07642AD6EB4</Guid>
+		</File>
+    <File>
 			<FileName>nl.xml</FileName>
 			<Type>Other</Type>
 			<SubType>%Language%</SubType>
@@ -1624,7 +1632,7 @@
 		<ProiectName>Online Videos</ProiectName>
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com/files/Download/MediaPortalInstaller(MPI)/Web/OnlineVideos/</UpdateURL>
-		<Version>0.18.0</Version>
+		<Version>0.19.0</Version>
 		<Description>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</Description>
 		<Group>Web</Group>
 		<Release>Beta</Release>
@@ -1720,7 +1728,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>23-03-10</CreationDate>
+		<CreationDate>29-03-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
