@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Moving Pictures translation file -->
+<!-- Russian -->
+<!-- Note: English is the fallback for any strings not found in other languages -->
+<strings>
+  <string Field="AlreadyDownloading">Видео уже загружается.</string>
+  <string Field="Actions">Действия</string>
+  <string Field="Actors">Исполнители:</string>
+  <string Field="AddToMySites">Добавить к моим страницам</string>
+  <string Field="All">Все</string>
+  <string Field="AddToFavourites">Добавить к фаворитам</string>
+  <string Field="Broken">Дефект</string>
+  <string Field="Category">Рубрика</string>
+  <string Field="Creator">Создатель</string>
+  <string Field="DateOfRelease">Дата издания:</string>
+  <string Field="Download">Загрузить</string>
+  <string Field="DownloadFailed">Загрузка не удалась: {0}</string>
+  <string Field="DownloadComplete">Загрузка окончена</string>
+  <string Field="DownloadedVideos">Загруженные видео</string>
+  <string Field="Delete">Удалить</string>
+  <string Field="Default">Стандарт</string>
+  <string Field="Error">Ошибка</string>
+  <string Field="EnterPin">Ввести код</string>
+  <string Field="Favourites">Фавориты</string>
+  <string Field="Filter">Фильтр</string>
+  <string Field="FullUpdate">Полное актуализирование</string>
+  <string Field="Genre">Жанр:</string>
+  <string Field="LayoutList">Вид: Список</string>
+  <string Field="LayoutIcons">Вид: Маленькие символы</string>
+  <string Field="LayoutBigIcons">Вид: Большие символы</string>
+  <string Field="ManageSites">Управлять страницами</string>
+  <string Field="MaxResults">Максимальные результаты</string>
+  <string Field="NextPage">Следующая страница</string>
+  <string Field="None">Ничего</string>
+  <string Field="NoVideoFound">Видео не найдены</string>
+  <string Field="NewDllRequired">Необходимо новое DLL!</string>
+  <string Field="PlayAll">Все проиграть</string>
+  <string Field="PlotOutline">Действие:</string>
+  <string Field="PreviousPage">Предыдущая страница</string>
+  <string Field="PerformAutomaticUpdate">Выполнить автоматическое актуализирование?</string>
+  <string Field="RemoveFromFavorites">Удалить из фаворитов</string>
+  <string Field="Refresh">Актуализировать вид </string>
+  <string Field="RelatedVideos">Похожие видео</string>
+  <string Field="Reported">Заявлено</string>
+  <string Field="Runtime">Продолжительность:</string>
+  <string Field="RemoveFromMySites">Удалить из моих страниц</string>
+  <string Field="RestartMediaPortalAndAutomaticUpdate">Перезагрузи MediaPortal и выполни автоматическое актуализирование.</string>
+  <string Field="SearchResults">Результаты поиска</string>
+  <string Field="SelectSource">Выбрать источник</string>
+  <string Field="SortOptions">Сортировка</string>
+  <string Field="SortByName">Имя</string>
+  <string Field="SortByLanguage">Язык</string>
+  <string Field="SortByUpdated">Актуализировано</string>
+  <string Field="Search">Искать</string>
+  <string Field="Timeframe">Срок</string>
+  <string Field="Timeout">Превышение времени</string>
+  <string Field="Updatable">Подлежит актуализированию</string>
+  <string Field="UpdateMySite">Актуализировать эту страницу</string>
+  <string Field="UpdateMySiteSkipCategories">Актуализировать эту страницу (рубрики перескочить)</string>
+  <string Field="UpdateAllYourSites">Вследствие этого будут актуализированы все имеющиеся страницы.</string>
+  <string Field="UnableToPlayVideo">Видео невозможно воспроизвести. Отсутствует URL. </string>
+  <string Field="UnableToDownloadVideo">Видео невозможно загрузить. Недействительный URL.</string>
+  <string Field="Working">Функционирующий</string>
+</strings>

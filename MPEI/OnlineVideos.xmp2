@@ -1018,6 +1018,55 @@
               <ZipFileName>Installer{CopyFile}\{927377aa-e387-4caa-9695-726f8d753b9b}-MyVideo - Serien.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MyVideo - Serien.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\KabouterWesley.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{8f20b2fd-57a3-4f57-ac36-d1ff3036a251}-KabouterWesley.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\KabouterWesley.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Tvgemist\net5gemist.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{858c78ca-86d8-4c2d-930d-2e9d74e09858}-net5gemist.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\net5gemist.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Tvgemist\rtlgemist.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d99b8a94-961b-48f7-83fd-3396188cf0b1}-rtlgemist.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\rtlgemist.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Tvgemist\sbsgemist.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2c56e58e-0dbf-4354-a51b-016f7b2ab154}-sbsgemist.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\sbsgemist.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Tvgemist\uitzendinggemist.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2bab97aa-ca77-406f-bdcb-b07274417f5d}-uitzendinggemist.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\uitzendinggemist.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Tvgemist\veronicagemist.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3dee47a1-d900-4d02-84b4-a4c73a6c63d4}-veronicagemist.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\veronicagemist.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\KabouterWesley.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{a45f06e1-39db-4f03-b1d5-dcaee1e4083e}-KabouterWesley.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\KabouterWesley.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1333,6 +1382,13 @@
               <ZipFileName>Installer{CopyFile}\{07f4420c-e3ac-4d49-aaa1-c01a27df5792}-nl.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\nl.xml</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\ru.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{64e288ef-149c-425d-aa93-09fde925d5e7}-ru.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\ru.xml</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1456,20 +1512,15 @@ Click Next to continue or Cancel to exit Setup.</Value>
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>18</Minor>
+      <Minor>19</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
-    <VersionDescription>Added another GUI to manage sites (add, remove, update)
-Added Automatic Update on Plugin first Load
-Forgetting the Pin when exiting OnlineVideos fixed
-Plugin GUI now Localized
-Added SMS T9 style filtering in all views 
-Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
+    <VersionDescription>AutoUpdate Timeout Fixed. Current Downloads now shows Progress. Youtube clips can be added to internal Favorites.</VersionDescription>
     <DevelopmentStatus>Beta</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.18.0.MPE1</OnlineLocation>
-    <ReleaseDate>2010-03-03T18:01:51.84375+01:00</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.19.0.MPE1</OnlineLocation>
+    <ReleaseDate>2010-03-29T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.[Version].mpe1</Location>
     <Params>
@@ -1495,6 +1546,11 @@ Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
           <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
           <ValueType>String</ValueType>
           <Description>Online stored screenshot urls separated by ; </Description>
+        </SectionParam>
+        <SectionParam Name="Force to uninstall on update">
+          <Value>yes</Value>
+          <ValueType>Bool</ValueType>
+          <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
         </SectionParam>
       </Items>
     </Params>
@@ -2505,6 +2561,55 @@ Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\KabouterWesley.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{8f20b2fd-57a3-4f57-ac36-d1ff3036a251}-KabouterWesley.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\KabouterWesley.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Tvgemist\net5gemist.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{858c78ca-86d8-4c2d-930d-2e9d74e09858}-net5gemist.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\net5gemist.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Tvgemist\rtlgemist.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d99b8a94-961b-48f7-83fd-3396188cf0b1}-rtlgemist.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\rtlgemist.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Tvgemist\sbsgemist.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2c56e58e-0dbf-4354-a51b-016f7b2ab154}-sbsgemist.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\sbsgemist.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Tvgemist\uitzendinggemist.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2bab97aa-ca77-406f-bdcb-b07274417f5d}-uitzendinggemist.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\uitzendinggemist.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Tvgemist\veronicagemist.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3dee47a1-d900-4d02-84b4-a4c73a6c63d4}-veronicagemist.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\veronicagemist.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\KabouterWesley.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{a45f06e1-39db-4f03-b1d5-dcaee1e4083e}-KabouterWesley.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\KabouterWesley.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Skins\Xface\myonlinevideos.details.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c1618bb1-561a-4a15-ad4e-ac5dbca348ca}-myonlinevideos.details.xml</ZipFileName>
         <DestinationFilename>%Skin%\Xface\myonlinevideos.details.xml</DestinationFilename>
@@ -2789,11 +2894,18 @@ Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{07f4420c-e3ac-4d49-aaa1-c01a27df5792}-nl.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\nl.xml</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\ru.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{64e288ef-149c-425d-aa93-09fde925d5e7}-ru.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\ru.xml</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{ae27bef2-e8e0-458b-9220-d9c633e7b2a5}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{a338af13-a76f-40b9-b54b-ad97ab25c37d}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>

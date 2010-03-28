@@ -291,73 +291,72 @@ namespace OnlineVideos
             {
                 return;
             }
+            List<string> dialogOptions = new List<string>();
             GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
             if (dlgSel == null) return;
             dlgSel.Reset();
             dlgSel.SetHeading(Translation.Actions);
-
             dlgSel.Add(Translation.PlayAll);
-
+            dialogOptions.Add("PlayAll");
             if (currentVideosDisplayMode != VideosMode.Favorites && !(selectedSite is Sites.FavoriteUtil))
             {
-                if (!(selectedSite is Sites.DownloadedVideoUtil)) dlgSel.Add(Translation.AddToFavourites);
+                if (!(selectedSite is Sites.DownloadedVideoUtil))
+                {
+                    dlgSel.Add(Translation.AddToFavourites);
+                    dialogOptions.Add("AddToFav");
+                }
+                if (selectedSite is IFavorite)
+                {
+                    dlgSel.Add(Translation.AddToFavourites + " (" + selectedSite.Settings.Name + ")");
+                    dialogOptions.Add("AddToFavUtil");
+                }
             }
             else
             {
                 dlgSel.Add(Translation.RemoveFromFavorites);
+                dialogOptions.Add("RemoveFromFav");
             }
             if (selectedSite.HasRelatedVideos)
             {
                 dlgSel.Add(Translation.RelatedVideos);
+                dialogOptions.Add("RelatedVideos");
             }
             if (selectedSite is Sites.DownloadedVideoUtil)
             {
                 dlgSel.Add(Translation.Delete);
+                dialogOptions.Add("Delete");
             }
             else
             {
                 dlgSel.Add(Translation.Download);
+                dialogOptions.Add("Download");
             }
-            dlgSel.DoModal(GetID);
-            int liSelectedIdx = dlgSel.SelectedId;
-            VideoInfo loSelectedVideo;
-            if (CurrentState == State.videos)
+            dlgSel.DoModal(GetID);            
+            VideoInfo loSelectedVideo = CurrentState == State.videos ? currentVideoList[liSelected] : currentTrailerList[liSelected];            
+            switch (dialogOptions[dlgSel.SelectedId-1])
             {
-                loSelectedVideo = currentVideoList[liSelected];
-            }
-            else
-            {
-                loSelectedVideo = currentTrailerList[liSelected];
-            }
-            switch (liSelectedIdx)
-            {
-                case 1:
+                case "PlayAll":
                     PlayAll();
                     break;
-                case 2:
-                    if (selectedSite is Sites.DownloadedVideoUtil)
-                    {
-                        if (System.IO.File.Exists(loSelectedVideo.ImageUrl)) System.IO.File.Delete(loSelectedVideo.ImageUrl);
-                        if (System.IO.File.Exists(loSelectedVideo.VideoUrl)) System.IO.File.Delete(loSelectedVideo.VideoUrl);
-                        DisplayVideos_Category(true);
-                    }
-                    else
-                    {
-                        AddOrRemoveFavorite(loSelectedVideo);
-                    }
+                case "Delete":
+                    if (System.IO.File.Exists(loSelectedVideo.ImageUrl)) System.IO.File.Delete(loSelectedVideo.ImageUrl);
+                    if (System.IO.File.Exists(loSelectedVideo.VideoUrl)) System.IO.File.Delete(loSelectedVideo.VideoUrl);
+                    DisplayVideos_Category(true);
                     break;
-                case 3:
-                    if (selectedSite.HasRelatedVideos)
-                    {
-                        DisplayVideos_Related(loSelectedVideo);
-                        UpdateViewState();
-                    }
-                    else
-                    {
-                        SaveVideo(loSelectedVideo);
-                    }
+                case "AddToFav":
+                    AddFavorite(loSelectedVideo, true);
                     break;
-                case 4:
+                case "AddToFavUtil":
+                    AddFavorite(loSelectedVideo, false);
+                    break;                
+                case "RemoveFromFav":
+                    RemoveFavorite(loSelectedVideo);
+                    break;
+                case "RelatedVideos":
+                    DisplayVideos_Related(loSelectedVideo);
+                    UpdateViewState();
+                    break;
+                case "Download":
                     SaveVideo(loSelectedVideo);
                     break;
             }
@@ -1890,43 +1889,39 @@ namespace OnlineVideos
             }
         }
 
-        private void AddOrRemoveFavorite(VideoInfo loSelectedVideo)
+        private void AddFavorite(VideoInfo loSelectedVideo, bool db)
+        {
+            if (db)
+            {
+                OnlineVideos.Database.FavoritesDatabase.getInstance().addFavoriteVideo(loSelectedVideo, selectedSite.Settings.Name);
+            }
+            else
+            {
+                Log.Info("Received request to add video to favorites.");
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                {
+                    ((IFavorite)selectedSite).addFavorite(loSelectedVideo);
+                }, "adding to favorites");
+            }
+        }
+
+        private void RemoveFavorite(VideoInfo loSelectedVideo)
         {
             if (selectedSite is IFavorite)
             {
-                if (currentVideosDisplayMode == VideosMode.Favorites)
+                Log.Info("Received request to remove video from favorites.");
+                if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    Log.Info("Received request to remove video from favorites.");
-                    if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
-                    {
-                        ((IFavorite)selectedSite).removeFavorite(loSelectedVideo);
-                    }, "removing from favorites"))
-                    {
-                        DisplayVideos_Favorite(); // retrieve favorites again and show the updated list
-                    }
-                }
-                else
+                    ((IFavorite)selectedSite).removeFavorite(loSelectedVideo);
+                }, "removing from favorites"))
                 {
-                    Log.Info("Received request to add video to favorites.");
-                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
-                    {
-                        ((IFavorite)selectedSite).addFavorite(loSelectedVideo);
-                    }, "adding to favorites");
+                    DisplayVideos_Favorite(); // retrieve favorites again and show the updated list
                 }
             }
             else
             {
-                OnlineVideos.Database.FavoritesDatabase db = OnlineVideos.Database.FavoritesDatabase.getInstance();
-
-                if (selectedSite is Sites.FavoriteUtil)
-                {
-                    db.removeFavoriteVideo(loSelectedVideo);
-                    DisplayVideos_Category(true); // retrieve videos again and show the updated list
-                }
-                else
-                {
-                    db.addFavoriteVideo(loSelectedVideo, selectedSite.Settings.Name);
-                }
+                OnlineVideos.Database.FavoritesDatabase.getInstance().removeFavoriteVideo(loSelectedVideo);
+                DisplayVideos_Category(true); // retrieve videos again and show the updated list
             }
         }
 

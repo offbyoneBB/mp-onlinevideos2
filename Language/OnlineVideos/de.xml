@@ -56,7 +56,7 @@
   <string Field="Timeframe">Zeitraum</string>
   <string Field="Timeout">Zeitüberschreitung</string>
   <string Field="Updatable">Aktualisierbar</string>
-  <string Field="UpdateMySite">Diese Site aktualisiern</string>
+  <string Field="UpdateMySite">Diese Site aktualisieren</string>
   <string Field="UpdateMySiteSkipCategories">Diese Site aktualisieren (Rubriken überspringen)</string>
   <string Field="UpdateAllYourSites">Dadurch werden alle vorhandenen Sites aktualisiert.</string>
   <string Field="UnableToPlayVideo">Video kann nicht wiedergegeben werden. Keine URL.</string>
