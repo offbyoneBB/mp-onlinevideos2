@@ -1,5 +1,35 @@
 #summary A guide what elements make up this plugin and can and must be used from the skin.
 
+= Windows =
+
+The Plugin offers 2 window implementations:
+ * Id: 4755 - The main OnlineVideos window where the user can browse sites and play videos.
+ * Id: 4757 - A secondary window that allows management and updating of sites.
+
+= Window 4755 required controls =
+|| *Id* || *type* || *label* || *description* ||
+|| 2 || button || #OnlineVideos.Translation.LayoutList.Label || Change facade viewmode ||
+|| 3 || button || #OnlineVideos.Translation.NextPage.Label || Next page ||
+|| 4 || button || #OnlineVideos.Translation.PreviousPage.Label || Previous page ||
+|| 5 || selectbutton || #OnlineVideos.Translation.MaxResults.Label || Max. results when filtering ||
+|| 6 || selectbutton || #OnlineVideos.Translation.SortOptions.Label || Set sort criteria ||
+|| 7 || selectbutton || #OnlineVideos.Translation.Timeframe.Label || Timeframe when filtering ||
+|| 8 || button || #OnlineVideos.Translation.Refresh.Label || Refresh view when filtering ||
+|| 9 || selectbutton || #OnlineVideos.Translation.Category.Label || Category for search ||
+|| 10 || button || #OnlineVideos.Translation.Search.Label || Search videos on current site ||
+|| 11 || button || #OnlineVideos.Translation.Favourites.Label || Show favorites for current site ||
+|| 12 || button || #OnlineVideos.Translation.EnterPin.Label || Enter Pin for adult sites ||
+|| 50 || facadeview || - ||  main facade (required modes: list, large and small icons) ||
+|| 51 || listcontrol || - || additional list used instead of facade in details view ||
+
+= Window 4757 required controls =
+|| *Id* || *type* || *label* || *description* ||
+|| 50 || listcontrol || label1 - site name, label2 - language, label3 - last updated date || main list ||
+|| 502 || button || #OnlineVideos.Translation.Refresh.Label || Refresh view ||
+|| 503 || selectbutton || #OnlineVideos.Translation.Filter.Label || Current filter ||
+|| 504 || selectbutton || #OnlineVideos.Translation.SortOptions.Label || Set sort criteria ||
+|| 505 || button || #OnlineVideos.Translation.FullUpdate.Label || Full update ||
+
 = Properties set in the code =
 {{{
 #header.label
