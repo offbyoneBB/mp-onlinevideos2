@@ -6,6 +6,12 @@ The Plugin offers 2 window implementations:
  * Id: 4755 - The main OnlineVideos window where the user can browse sites and play videos.
  * Id: 4757 - A secondary window that allows management and updating of sites.
 
+The Blue3Wide skinfiles that are installed with the plugin are always kept updated and should be used as a reference when creating skinfiles.
+
+The plugin comes with its own localization, so skinners are encourages to use the provided properties for their labels.
+
+The skin for the window 4755 should set allowoverlay to yes, because external players (e.g. WindowsMediaPlayer) will be used in some cases.
+
 = Window 4755 required controls =
 || *Id* || *type* || *label* || *description* ||
 || 2 || button || {{{#OnlineVideos.Translation.LayoutList.Label}}} || Change facade viewmode ||
@@ -24,31 +30,43 @@ The Plugin offers 2 window implementations:
 
 = Window 4757 required controls =
 || *Id* || *type* || *label* || *description* ||
-|| 50 || listcontrol || label1 - site name, label2 - language, label3 - last updated date || main list ||
+|| 50 || listcontrol || label1 - site name, label2 - language, label3 - updatedate || main list ||
 || 502 || button || {{{#OnlineVideos.Translation.Refresh.Label}}} || Refresh view ||
 || 503 || selectbutton || {{{#OnlineVideos.Translation.Filter.Label}}} || Current filter ||
 || 504 || selectbutton || {{{#OnlineVideos.Translation.SortOptions.Label}}} || Set sort criteria ||
 || 505 || button || {{{#OnlineVideos.Translation.FullUpdate.Label}}} || Full update ||
 
 = Properties set in the code =
-{{{
-#header.label
-#header.image
+ * Facade
+  * `#itemcount` - total number of items
+  * `#selecteditem` - title of the current selected item
+  * `#selectedthumb` - thumb (if available) for the current selected item
+  * `#OnlineVideos.desc` - description (if available) of the current selected item
+  * `#OnlineVideos.length` - runtime and airdate (if available) of the current selected item (localized label property: {{{#OnlineVideos.Translation.Runtime.Label}}})
 
+ * Currently Playing Video
+  * `#Play.Current.Title`
+  * `#Play.Current.Plot`
+  * `#Play.Current.Thumb`
+  * `#Play.Current.Genre`
+  * `#Play.Current.Year`
+  * `#Play.Current.Cast`
 
-#Play.Current.Title ( set when playing a video to display the title instead of url )
+ * Details View
+  * `#OnlineVideos.movieposter` - 
+  * `#OnlineVideos.trailerdesc` - (localized label property: {{{#OnlineVideos.Translation.PlotOutline.Label}}})
+  * `#OnlineVideos.genre` - (localized label property: {{{#OnlineVideos.Translation.Genre.Label}}})
+  * `#OnlineVideos.releasedate` - (localized label property: {{{#OnlineVideos.Translation.DateOfRelease.Label}}})
+  * `#OnlineVideos.cast` - (localized label property: {{{#OnlineVideos.Translation.Actors.Label}}})
 
+ * 4757 Site Manager Window
+  * `#OnlineVideos.owner` - Creator of the current selected item (localized label property: {{{#OnlineVideos.Translation.Creator.Label}}})
 
-#OnlineVideos.state ( values: sites, categories, videos, details )
+ * 4755 Main Window
+  * `#OnlineVideos.filter` - Current SMS T9 Filter
+  * `#OnlineVideos.state` - Current View (values: sites, categories, videos, details)
 
-
-#OnlineVideos.desc
-#OnlineVideos.length
-
-only on the details screen:
-#OnlineVideos.movieposter
-#OnlineVideos.trailerdesc
-#OnlineVideos.genre
-#OnlineVideos.releasedate
-#OnlineVideos.cast
-}}}
+ * Global
+  * `#header.label` - changes according to the current site/category, ...
+  * `#header.image` - changes according to the current site
+  * `#OnlineVideos.Translation.ManageSites.Label` - can be used for the button that calls the site manager window
