@@ -20,6 +20,7 @@ namespace OnlineVideos.Sites
         private Regex regex_NedDetails;
         private Regex regex_RtlDetails;
         private enum Source { UitzendingGemist = 0, RtlGemist = 1, Veronica = 2, Rest = 3 };
+        private enum Misc { RtlOpDagUrl };
 
         private RssLink baseCategory;
 
@@ -65,7 +66,7 @@ namespace OnlineVideos.Sites
             cat.HasSubCategories = true;
             Settings.Categories.Add(cat);
 
-            Add2Subcats("Op alfabet", "Op dag (Under construction)", cat);
+            Add2Subcats("Op alfabet", "Op dag", cat);
 
             specifics = new Specifics(Source.RtlGemist);
             specifics.baseUrl = @"http://www.rtl.nl/";
@@ -272,6 +273,21 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
+        private VideoInfo GetRtlOpDagVideo(XmlNode node)
+        {
+            VideoInfo result = new VideoInfo();
+            result.VideoUrl = node.SelectSingleNode("component_uri").InnerText;
+            if (String.IsNullOrEmpty(result.VideoUrl))
+                return null;
+            result.VideoUrl = @"http://data.rtl.nl" + result.VideoUrl;
+            result.Title = node.SelectSingleNode("name").InnerText;
+            // start of imageurl from http://data.rtl.nl/_rtl-internal/js/5494466d434556a34b5be354e0a96817.js
+            result.ImageUrl = @"http://data.rtl.nl/system/img/477623qchsb4rdxh6wai4ofb7/" + node.SelectSingleNode("thumbnail_id").InnerText;
+            result.Description = "afl. " + node.SelectSingleNode("episode_number").InnerText + " uitgezonden:" + node.SelectSingleNode("broadcast_start").InnerText + " op " +
+                node.SelectSingleNode("station").InnerText;
+            result.Other = Misc.RtlOpDagUrl;
+            return result;
+        }
 
         private int DiscoverRtlOpDag(RssLink parentCategory)
         {
@@ -281,13 +297,18 @@ namespace OnlineVideos.Sites
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("a", @"http://interactief.rtl.nl/system/xmlns/s4m");
             XmlNodeList list = doc.SelectNodes(@"//a:episodes/a:episode", nsmRequest);
-            SortedDictionary<string, object> cats = new SortedDictionary<string, object>();
+            SortedDictionary<string, List<VideoInfo>> cats = new SortedDictionary<string, List<VideoInfo>>();
             foreach (XmlNode node in list)
             {
                 string date = node.SelectSingleNode("broadcast_start").InnerText;
                 date = date.Split(' ')[0];
-                if (!cats.ContainsKey(date))
-                    cats.Add(date, null);
+                VideoInfo videoInfo = GetRtlOpDagVideo(node);
+                if (videoInfo != null)
+                {
+                    if (!cats.ContainsKey(date))
+                        cats.Add(date, new List<VideoInfo>());
+                    cats[date].Add(videoInfo);
+                }
             }
             List<string> t = new List<string>(cats.Keys);
             t.Reverse();
@@ -297,7 +318,7 @@ namespace OnlineVideos.Sites
                 RssLink cat = new RssLink();
                 cat.Name = s;
                 cat.HasSubCategories = false;
-                cat.Other = parentCategory.Other;
+                cat.Other = cats[s];
                 cat.ParentCategory = parentCategory;
                 parentCategory.SubCategories.Add(cat);
             }
@@ -332,7 +353,12 @@ namespace OnlineVideos.Sites
             if (specifics is pagedTest && ((pagedTest)specifics).pageNr != 1)
                 return getNedVideoList(baseCategory, ((pagedTest)specifics));
             else
+            {
+                List<VideoInfo> test = category.Other as List<VideoInfo>;
+                if (test != null)
+                    return test;
                 return getBareVideoList(baseCategory, specifics);
+            }
         }
 
         public override bool HasNextPage
@@ -437,6 +463,37 @@ namespace OnlineVideos.Sites
             }
         }
 
+        private void SetRtlUrl(VideoInfo video, ref string airdate)
+        {
+            try
+            {
+                string tmp = GetWebData(video.VideoUrl);
+                airdate = GetSubString(tmp, @"date:'", "'");
+                if (String.IsNullOrEmpty(airdate))
+                    airdate = GetSubString(tmp, @"date: '", "'");
+                Match detm = regex_RtlDetails.Match(tmp);
+                int highest = 0;
+                while (detm.Success)
+                {
+                    int bw;
+                    if (!int.TryParse(detm.Groups["bandwidth"].Value, out bw))
+                        bw = 0;
+                    if (bw >= highest)
+                    {
+                        video.VideoUrl = detm.Groups["url"].Value;
+                        highest = bw;
+                    }
+                    detm = detm.NextMatch();
+                }
+            }
+            catch
+            {
+                //Console.WriteLine(" no video found at " + video.VideoUrl);
+                video.VideoUrl = String.Empty;
+            }
+
+        }
+
         private List<VideoInfo> getBareVideoList(RssLink category, Specifics specifics)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
@@ -486,32 +543,7 @@ namespace OnlineVideos.Sites
                         }
 
                         if (specifics.source == Source.RtlGemist)
-                        {
-                            try
-                            {
-                                string tmp = GetWebData(video.VideoUrl);
-                                airdate = GetSubString(tmp, @"date:'", "'");
-                                Match detm = regex_RtlDetails.Match(tmp);
-                                int highest = 0;
-                                while (detm.Success)
-                                {
-                                    int bw;
-                                    if (!int.TryParse(detm.Groups["bandwidth"].Value, out bw))
-                                        bw = 0;
-                                    if (bw >= highest)
-                                    {
-                                        video.VideoUrl = detm.Groups["url"].Value;
-                                        highest = bw;
-                                    }
-                                    detm = detm.NextMatch();
-                                }
-                            }
-                            catch
-                            {
-                                //Console.WriteLine(" no video found at " + video.VideoUrl);
-                                video.VideoUrl = String.Empty;
-                            }
-                        }
+                            SetRtlUrl(video, ref airdate);
 
                         if (!String.IsNullOrEmpty(video.VideoUrl))
                         {
@@ -532,6 +564,12 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            if (Misc.RtlOpDagUrl.Equals(video.Other))
+            {
+                string dummy = null;
+                SetRtlUrl(video, ref dummy);
+                return video.VideoUrl;
+            }
             if (Source.RtlGemist.Equals(video.Other)) return video.VideoUrl;
             if (Source.UitzendingGemist.Equals(video.Other))
                 return UrlTricks.PlayerOmroepTrick(video.VideoUrl);
