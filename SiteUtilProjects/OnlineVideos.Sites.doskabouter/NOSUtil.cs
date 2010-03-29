@@ -189,6 +189,8 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
+            if (Live.Equals(video.Other))
+                return ParseASX(video.VideoUrl)[0];
             string webData = GetWebData(video.VideoUrl);
             string url;
             url = video.VideoUrl;
@@ -288,12 +290,14 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo video = new VideoInfo();
                 video.Title = "Journaal24";
-                video.VideoUrl = @"http://www.omroep.nl/live/thema/nos_journaal24-bb.asx";
+                video.VideoUrl = @"http://livestreams.omroep.nl/nos/journaal24-bb";
+                video.Other = Live;
                 videos.Add(video);
 
                 video = new VideoInfo();
                 video.Title = "Politiek24";
-                video.VideoUrl = @"http://www.omroep.nl/live/thema/nos_politiek24-bb.asx";
+                video.Other = Live;
+                video.VideoUrl = @"http://livestreams.omroep.nl/nos/politiek24-bb";
                 videos.Add(video);
 
                 string osData = GetWebData(@"http://nos.nl/os2010/live/");
