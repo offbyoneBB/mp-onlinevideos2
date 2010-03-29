@@ -49,11 +49,14 @@ namespace OnlineVideos.Sites
             regex_NedDetails = Specifics.getRegex(@"(<p>Datum\suitzending[^>]*>(?<airdate>[^<]*).*?)?(Deze\saflevering:(?<descr>[^<]*).*?)?<a\shref=""(?<url>[^""]*)""\s*target=""player""");
 
             Settings.Categories.Add(cat);
-            Add2Subcats("Op alfabet", "Op dag (Under construction)", cat);
+            Add2Subcats("Op alfabet", "Op dag", cat);
             CookieContainer cc = new CookieContainer();
             cat.SubCategories[0].Other = GetNlSpecifics(@"<div id=""nav_letter"">", cc);
             cat.SubCategories[1].Other = GetNlSpecifics(@"<div id=""nav_dag"">", cc);
             ((Specifics)cat.SubCategories[1].Other).doSort = false;
+            ((Specifics)cat.SubCategories[1].Other).isDay = true;
+            ((Specifics)cat.SubCategories[1].Other).videoListStart = @"bekijk</td>";
+            ((Specifics)cat.SubCategories[1].Other).regex_VideoList = Specifics.getRegex(@"<tr\sclass.*?class=""title""[^>]*>(?<title>[^<]*)<.*?<td\salign[^>]*>(?<airdate>[^<]*)<.*?<a\shref=""(?<url>[^""]*)""");
 
             cat = new RssLink();
             cat.Name = "Rtl Gemist";
@@ -217,11 +220,7 @@ namespace OnlineVideos.Sites
                         cat.Thumb = m.Groups["thumb"].Value;
                         if (cat.Thumb != String.Empty) cat.Thumb = specifics.baseUrl + cat.Thumb;
 
-                        if (specifics.source == Source.UitzendingGemist)
-                            cat.HasSubCategories = true;
-                        else
-                            cat.HasSubCategories = false;
-
+                        cat.HasSubCategories = (specifics.source == Source.UitzendingGemist && !specifics.isDay);
                         cat.Other = parentCategory.Other;
                         cat.ParentCategory = parentCategory;
 
@@ -473,11 +472,14 @@ namespace OnlineVideos.Sites
                         video.ImageUrl = m.Groups["thumb"].Value;
                         if (!String.IsNullOrEmpty(video.ImageUrl))
                             video.ImageUrl = specifics.baseUrl + video.ImageUrl;
-                        video.VideoUrl = specifics.baseUrl + m.Groups["url"].Value;
+                        if (specifics.isDay)
+                            video.VideoUrl = m.Groups["url"].Value;
+                        else
+                            video.VideoUrl = specifics.baseUrl + m.Groups["url"].Value;
                         string airdate = HttpUtility.HtmlDecode(m.Groups["airdate"].Value);
                         video.Description = HttpUtility.HtmlDecode(m.Groups["descr"].Value);
                         video.Other = specifics.source;
-                        if (specifics.source == Source.UitzendingGemist)
+                        if (specifics.source == Source.UitzendingGemist && !specifics.isDay)
                         {
                             fillFromNed(url, video, specifics);
 
@@ -599,6 +601,7 @@ namespace OnlineVideos.Sites
             public CookieContainer cc = null;
             public Source source;
             public bool doSort = true;
+            public bool isDay = false;
         }
 
         private class pagedTest : Specifics
