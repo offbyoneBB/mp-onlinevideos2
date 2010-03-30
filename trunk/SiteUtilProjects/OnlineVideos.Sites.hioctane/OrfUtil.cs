@@ -21,7 +21,7 @@ namespace OnlineVideos.Sites
         string videolistRegex = @"</a></div>\s*<h3\sclass=""title"">\s*<span>(?<title>[^<]+)</span>";
         string videolistRegex2 = @"<li><a\shref=""(?<url>[^""]+)""\stitle=""(?<alt>[^""]+)"">(?<title>[^<]+)</a>";
         string videolistRegex3 = @"<li><a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a>";
-        string playlistRegex = @"<div\sid=""btn_playlist""\sstyle=""(?<style>[^""]+)"">\s*<a\shref=""(?<url>[^""]+)""\sid=""open_playlist""";
+        string playlistRegex = @"<div\sid=""btn_playlist""(\sstyle=""[^""]+"")?>\s*<a\shref=""(?<url>[^""]+)""\sid=""open_playlist""";
 
         Regex regEx_Videolist;
         Regex regEx_Videolist2;
