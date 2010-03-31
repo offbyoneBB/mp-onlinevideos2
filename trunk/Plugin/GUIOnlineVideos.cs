@@ -1151,7 +1151,7 @@ namespace OnlineVideos
             foreach (VideoInfo loVideoInfo in foVideos)
             {
                 liIdx++;
-                loVideoInfo.CleanDescription();
+                loVideoInfo.CleanDescriptionAndTitle();
                 if (!currentFilter.Matches(loVideoInfo.Title) || FilterOut(loVideoInfo.Title) || FilterOut(loVideoInfo.Description))
                 {
                     continue;

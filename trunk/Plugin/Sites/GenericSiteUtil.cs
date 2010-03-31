@@ -34,9 +34,11 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link. Group should be named 'url'.")]
         protected string prevPageRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the prevPageRegEx.")]
-        protected string prevPageRegExUrlFormatString;
+        protected string prevPageRegExUrlFormatString;        
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a link that points to another file holding the actual playback url. Group should be named 'url'. If this is not set, the fileUrlRegEx will be used directly, otherwise first this and afterwards the fileUrlRegEx on the result.")]
         protected string playlistUrlRegEx;
+        [Category("OnlineVideosConfiguration"), Description("Format string used with the 'url' match of the playlistUrlRegEx to create the Url for the playlist request.")]
+        protected string playlistUrlFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for the playback url. Groups should be named 'm0', 'm1' and so on.")]
         protected string fileUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string used with the groups of the regex matches of the fileUrlRegEx to create the Url for playback.")]
@@ -201,7 +203,8 @@ namespace OnlineVideos.Sites
                     Match matchPlaylistUrl = regEx_PlaylistUrl.Match(dataPage);
                     if (matchPlaylistUrl.Success)
                     {
-                        dataPage = GetWebData(HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value), GetCookie());
+                        string playlistFileUrl = string.Format(playlistUrlFormatString,HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
+                        dataPage = GetWebData(playlistFileUrl, GetCookie());
                     }
                     else return ""; // if no match, return empty url -> error
                 }

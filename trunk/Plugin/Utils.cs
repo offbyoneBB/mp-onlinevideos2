@@ -41,5 +41,31 @@ namespace OnlineVideos
             SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
             return s.Sites;            
         }
+
+        public static string PlainTextFromHtml(string input)
+        {
+            string result = input;
+            if (!string.IsNullOrEmpty(result))
+            {
+                // decode HTML escape character
+                result = System.Web.HttpUtility.HtmlDecode(result);
+
+                // Replace &nbsp; with space
+                result = Regex.Replace(result, @"&nbsp;", " ", RegexOptions.Multiline);
+
+                // Remove double spaces
+                result = Regex.Replace(result, @"  +", "", RegexOptions.Multiline);
+
+                // Replace <br/> with \n
+                result = Regex.Replace(result, @"< *br */*>", "\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
+
+                // Remove remaining HTML tags                
+                result = Regex.Replace(result, @"<[^>]*>", "", RegexOptions.Multiline);
+
+                // Remove whitespace at the beginning and end
+                result = result.Trim();
+            }
+            return result;
+        }
     }
 }

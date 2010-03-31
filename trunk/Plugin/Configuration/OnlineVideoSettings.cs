@@ -51,7 +51,7 @@ namespace OnlineVideos
         public int cacheTimeout = 30; // minutes
         public int utilTimeout = 15;  // seconds
         public int wmpbuffer = 5000;  // milliseconds
-        public int playbuffer = 10;   // percent
+        public int playbuffer = 2;   // percent
 
         public string email = "";
         public string password = "";

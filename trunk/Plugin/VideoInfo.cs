@@ -40,28 +40,10 @@ namespace OnlineVideos
             SiteName = string.Empty;
         }
 
-        public void CleanDescription()
+        public void CleanDescriptionAndTitle()
         {
-            if (!string.IsNullOrEmpty(Description))
-            {
-                // decode HTML escape character
-                Description = System.Web.HttpUtility.HtmlDecode(Description);
-
-                // Replace &nbsp; with space
-                Description = Regex.Replace(Description, @"&nbsp;", " ", RegexOptions.Multiline);
-
-                // Remove double spaces
-                Description = Regex.Replace(Description, @"  +", "", RegexOptions.Multiline);
-
-                // Replace <br/> with \n
-                Description = Regex.Replace(Description, @"< *br */*>", "\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
-
-                // Remove remaining HTML tags                
-                Description = Regex.Replace(Description, @"<[^>]*>", "", RegexOptions.Multiline);
-
-                // Remove whitespace at the beginning and end
-                Description = Description.Trim();
-            }
+            Description = Utils.PlainTextFromHtml(Description);
+            Title = Utils.PlainTextFromHtml(Title);
         }
 
         public override string ToString()
