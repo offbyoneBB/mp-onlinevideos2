@@ -37,6 +37,7 @@ namespace OnlineVideos
         const string CFG_CACHE_TIMEOUT = "cacheTimeout";
         const string CFG_UTIL_TIMEOUT = "utilTimeout";
         const string CFG_WMP_BUFFER = "wmpbuffer";
+        const string CFG_PLAY_BUFFER = "playbuffer";
         const string CFG_EMAIL = "email";
         const string CFG_PASSWORD = "password";        
         #endregion        
@@ -50,6 +51,8 @@ namespace OnlineVideos
         public int cacheTimeout = 30; // minutes
         public int utilTimeout = 15;  // seconds
         public int wmpbuffer = 5000;  // milliseconds
+        public int playbuffer = 10;   // percent
+
         public string email = "";
         public string password = "";
         public bool? updateOnStart = null;
@@ -137,6 +140,7 @@ namespace OnlineVideos
                     cacheTimeout = xmlreader.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
                     utilTimeout = xmlreader.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
                     wmpbuffer = xmlreader.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
+                    playbuffer = xmlreader.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
                     email = xmlreader.GetValueAsString(CFG_SECTION, CFG_EMAIL, "");
                     password = xmlreader.GetValueAsString(CFG_SECTION, CFG_PASSWORD, "");
                     string lsFilter = xmlreader.GetValueAsString(CFG_SECTION, CFG_FILTER, "").Trim();
@@ -262,6 +266,7 @@ namespace OnlineVideos
                     xmlwriter.SetValue(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
                     xmlwriter.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
                     xmlwriter.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
+                    xmlwriter.SetValue(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
                     if (FilterArray != null && FilterArray.Length > 0) xmlwriter.SetValue(CFG_SECTION, CFG_FILTER, string.Join(",", FilterArray));
                     if (!string.IsNullOrEmpty(DownloadDir)) xmlwriter.SetValue(CFG_SECTION, CFG_DOWNLOAD_DIR, DownloadDir);
                     if (!string.IsNullOrEmpty(email)) xmlwriter.SetValue(CFG_SECTION, CFG_EMAIL, email);

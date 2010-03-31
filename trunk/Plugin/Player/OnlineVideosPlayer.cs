@@ -172,13 +172,46 @@ namespace OnlineVideos.Player
             {
                 graphBuilder = (IGraphBuilder)new FilterGraph();
 
-                // switch back to directx fullscreen mode
+                // add the source filter manually
+                IBaseFilter sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "File Source (URL)");
+
+                // load the url with the source filter                
+                int result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
+                if (result != 0) return false;
+                
+                // buffer before starting playback
+                try
+                {
+                    GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
+                    long total = 0, current = 0, last = 0;
+                    do
+                    {
+                        result = ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
+                        GUIWindowManager.Process(); // keep GUI responsive
+                        if (current - last >= (double)total * 0.01) // log every percent
+                        {
+                            Log.Debug("Buffering: {0}/{1} KB", current / 1024, total / 1024);
+                            last = current;
+                        }
+                    }
+                    while (current < (double)total * OnlineVideoSettings.Instance.playbuffer * 0.01);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
+                }
+                finally
+                {
+                    GUIWaitCursor.Hide(); // hide the wait cursor
+                }
+
+                // switch to directx fullscreen mode
                 Log.Info("OnlineVideosPlayer: Enabling DX9 exclusive mode");
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
                 GUIWindowManager.SendMessage(msg);
 
                 // add the VMR9 in the graph
-                // after enabeling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
+                // after enabling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
                 Vmr9 = new VMR9Util();
                 Vmr9.AddVMR9(graphBuilder);
                 Vmr9.Enable(false);
@@ -190,13 +223,6 @@ namespace OnlineVideos.Player
                     string audiorenderer = settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
                     DirectShowUtil.AddAudioRendererToGraph(graphBuilder, audiorenderer, false);
                 }
-
-                // add the source filter manually
-                IBaseFilter sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "File Source (URL)");
-
-                // load the url with the source filter
-                int result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
-                if (result != 0) return false;
 
                 // get the output pin of the source filter
                 IEnumPins enumPins;
@@ -255,6 +281,5 @@ namespace OnlineVideos.Player
                 vmr9Field.SetValue(this, value);
             }
         }
-
     }
 }

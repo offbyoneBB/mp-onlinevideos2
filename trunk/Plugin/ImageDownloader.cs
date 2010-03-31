@@ -143,6 +143,7 @@ namespace OnlineVideos
                 request.UserAgent = OnlineVideoSettings.USERAGENT;
                 request.Accept = "*/*";
                 request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+                request.Timeout = 5000; // don't wait longer than 5 seconds for an image
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 System.IO.Stream responseStream;
                 if (response.ContentEncoding.ToLower().Contains("gzip"))
