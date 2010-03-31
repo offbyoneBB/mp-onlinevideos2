@@ -992,17 +992,17 @@
         <Category xsi:type="RssLink" name="Most Viewed">http://www.youporn.com/most_viewed</Category>
       </Categories>
     </Site>
-    <Site name="RedTube" util="RedTube" agecheck="true" enabled="true" lang="en">
+    <Site name="RedTube" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>The home of free porn videos.</Description>
       <Configuration>
         <item key="videoListRegEx">
           <![CDATA[<div\sclass="video">\s*
-<a\shref="/(?<VideoUrl>\d{1,})"\stitle="(?<Title>[^"]*)"[^>]*>\s*
+<a\shref="[^"]*/(?<VideoUrl>\d{1,})"\stitle="(?<Title>[^"]*)"[^>]*>\s*
 <img\s(?:(?!src).)*src="(?<ImageUrl>[^"]*)"
 (?:(?!<div\sclass="time">).)*<div\sclass="time">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\stitle="Next\spage"\shref="(?<url>[^"]*page=\d{1,})">Next</a>]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\stitle="Previous\spage"\shref="(?<url>[^"]*page=\d{1,})">Prev</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[so\.addParam\("flashvars","(?<flashvars>[^"]+)"\);]]></item>
+        <item key="fileUrlRegEx"><![CDATA[so\.addParam\("flashvars","[^"]+hashlink=(?<m0>[^"]+)"\);]]></item>
         <item key="searchUrl"><![CDATA[http://www.redtube.com/?search={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.redtube.com]]></item>
         <item key="cookies"><![CDATA[pp=1]]></item>
@@ -1033,7 +1033,7 @@
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<img\ssrc='(?<ImageUrl>[^']+)'[^/]*/>(?:(?!<div).)*
 <div\sclass="moduleFeaturedTitle">\s*
-<a\shref="(?<VideoUrl>[^"]+)">(?<Title>[^<]+)</a>\s*
+<a\shref="(?<VideoUrl>[^"]+)">(?<Title>(?:(?!</a>).)*)</a>\s*
 </div>\s*
 <div\sclass="moduleFeaturedDetails">Runtime:\s*(?<Duration>[^<]+)<]]></item>
         <item key="nextPageRegEx"><![CDATA[<SPAN\sclass=navNext><A\sHREF="(?<url>.+)">Next</A></SPAN>]]></item>
@@ -1134,15 +1134,15 @@
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>http\://www\.empflix\.com/view\.php\?id\=\d+)"\s*title="(?<Title>[^"]+)"[^>]*>\s*
 <img\ssrc="\s*(?<ImageUrl>http\://[^"]+)"[^>]*>\s*
-(?:(?!<p).)*\s*
+(?:(?!<p\sclass="length").)*\s*
 <p\sclass="length">(?<Duration>[^<]*)</p>]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\sonclick="killVideoThumbs\(\)\;"\shref="(?<url>.*)">next\s&gt;&gt;</a>]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\sonclick="killVideoThumbs\(\)\;"\shref="(?<url>.*)">&lt;&lt;\sprev</a>]]></item>
         <item key="playlistUrlRegEx"><![CDATA[so\.addVariable\('config',\s*'(?<url>[^']+)'\);]]></item>
+        <item key="playlistUrlFormatString"><![CDATA[http://cdn.empflix.com/{0}]]></item>
         <item key="fileUrlRegEx"><![CDATA[<file>(?<m0>[^<]+)</file>]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}&filetype=.flv]]></item>
-        <item key="searchUrl"><![CDATA[http://www.empflix.com/search.php]]></item>
-        <item key="searchPostString"><![CDATA[what={0}]]></item>
+        <item key="searchUrl"><![CDATA[http://www.empflix.com/search.php?what={0}]]></item>        
         <item key="baseUrl"><![CDATA[http://www.empflix.com]]></item>
       </Configuration>
       <Categories>
