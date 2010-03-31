@@ -44,6 +44,7 @@ namespace OnlineVideos
             tbxWebCacheTimeout.Text = settings.cacheTimeout.ToString();
             tbxUtilTimeout.Text = settings.utilTimeout.ToString();
             tbxWMPBuffer.Text = settings.wmpbuffer.ToString();
+            udPlayBuffer.SelectedItem = settings.playbuffer.ToString();
             if (settings.updateOnStart != null) chkDoAutoUpdate.Checked = settings.updateOnStart.Value;
             else chkDoAutoUpdate.CheckState = CheckState.Indeterminate;
 
@@ -166,6 +167,8 @@ namespace OnlineVideos
                 settings.DownloadDir = txtDownloadDir.Text;
                 settings.useAgeConfirmation = chkUseAgeConfirmation.Checked;
                 settings.pinAgeConfirmation = tbxPin.Text;
+                int.TryParse(tbxWMPBuffer.Text, out settings.wmpbuffer);
+                int.TryParse(udPlayBuffer.SelectedItem.ToString(), out settings.playbuffer);
                 try { settings.cacheTimeout = int.Parse(tbxWebCacheTimeout.Text); } catch { }
                 try { settings.utilTimeout = int.Parse(tbxUtilTimeout.Text); } catch { }
                 if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) settings.updateOnStart = null;

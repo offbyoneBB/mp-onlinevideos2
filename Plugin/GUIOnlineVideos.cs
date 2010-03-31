@@ -139,6 +139,8 @@ namespace OnlineVideos
         VideoInfo selectedVideo;
         VideoInfo playingVideo;
 
+        bool buffering;
+
         int selectedSiteIndex = 0;  // used to remember the position of the last selected site
         int selectedVideoIndex = 0; // used to remember the position of the last selected Video
         int selectedClipIndex = 0;  // used to remember the position the last selected Trailer
@@ -281,7 +283,7 @@ namespace OnlineVideos
 
         protected override void OnShowContextMenu()
         {
-            if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. getting next page videos to finish
+            if (Gui2UtilConnector.Instance.IsBusy || buffering) return; // wait for any background action e.g. getting next page videos to finish
 
             int liSelected = GUI_facadeView.SelectedListItemIndex - 1;
 
@@ -380,7 +382,7 @@ namespace OnlineVideos
                     }
                     if (CurrentState != State.sites)
                     {
-                        if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+                        if (Gui2UtilConnector.Instance.IsBusy || buffering) return; // wait for any background action e.g. dynamic category discovery to finish
 
                         // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
                         GUIControl focusedControl = GetControl(GetFocusControlId());
@@ -439,7 +441,7 @@ namespace OnlineVideos
                     if (currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
                     {
                         currentFilter.Clear();
-                        if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+                        if (Gui2UtilConnector.Instance.IsBusy || buffering) return; // wait for any background action e.g. dynamic category discovery to finish
 
                         if (GUI_btnNext.IsEnabled)
                         {
@@ -452,7 +454,7 @@ namespace OnlineVideos
                     if (currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
                     {
                         currentFilter.Clear();
-                        if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+                        if (Gui2UtilConnector.Instance.IsBusy || buffering) return; // wait for any background action e.g. dynamic category discovery to finish
 
                         if (GUI_btnPrevious.IsEnabled)
                         {
@@ -489,7 +491,7 @@ namespace OnlineVideos
 
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
-            if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+            if (Gui2UtilConnector.Instance.IsBusy || buffering) return; // wait for any background action e.g. dynamic category discovery to finish
             if (control == GUI_facadeView && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
                 currentFilter.Clear();
@@ -1339,7 +1341,22 @@ namespace OnlineVideos
                 // we use our own factory, so store the one currently used
                 IPlayerFactory savedFactory = g_Player.Factory;
                 g_Player.Factory = new OnlineVideos.Player.PlayerFactory(selectedSite.Settings.Player);
-                playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
+
+                try
+                {
+                    buffering = true;
+                    playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
+                }
+                catch (Exception playException)
+                {
+                    Log.Error(playException);
+                    playing = false;
+                }
+                finally
+                {
+                    buffering = false;                    
+                }
+                
                 // restore the factory
                 g_Player.Factory = savedFactory;
             }

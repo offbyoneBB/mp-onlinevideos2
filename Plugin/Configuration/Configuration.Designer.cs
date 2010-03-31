@@ -115,6 +115,8 @@ namespace OnlineVideos
             this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.udPlayBuffer = new System.Windows.Forms.DomainUpDown();
+            this.label24 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.chkDoAutoUpdate = new System.Windows.Forms.CheckBox();
             this.tbxWMPBuffer = new System.Windows.Forms.TextBox();
@@ -645,7 +647,7 @@ namespace OnlineVideos
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.btnSave.Size = new System.Drawing.Size(90, 25);
-            this.btnSave.TabIndex = 9;
+            this.btnSave.TabIndex = 13;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             // 
@@ -1033,6 +1035,8 @@ namespace OnlineVideos
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.udPlayBuffer);
+            this.tabGeneral.Controls.Add(this.label24);
             this.tabGeneral.Controls.Add(this.label23);
             this.tabGeneral.Controls.Add(this.chkDoAutoUpdate);
             this.tabGeneral.Controls.Add(this.tbxWMPBuffer);
@@ -1066,10 +1070,50 @@ namespace OnlineVideos
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
+            // udPlayBuffer
+            // 
+            this.udPlayBuffer.Items.Add("1");
+            this.udPlayBuffer.Items.Add("2");
+            this.udPlayBuffer.Items.Add("3");
+            this.udPlayBuffer.Items.Add("4");
+            this.udPlayBuffer.Items.Add("5");
+            this.udPlayBuffer.Items.Add("6");
+            this.udPlayBuffer.Items.Add("7");
+            this.udPlayBuffer.Items.Add("8");
+            this.udPlayBuffer.Items.Add("9");
+            this.udPlayBuffer.Items.Add("10");
+            this.udPlayBuffer.Items.Add("11");
+            this.udPlayBuffer.Items.Add("12");
+            this.udPlayBuffer.Items.Add("13");
+            this.udPlayBuffer.Items.Add("14");
+            this.udPlayBuffer.Items.Add("15");
+            this.udPlayBuffer.Items.Add("16");
+            this.udPlayBuffer.Items.Add("17");
+            this.udPlayBuffer.Items.Add("18");
+            this.udPlayBuffer.Items.Add("19");
+            this.udPlayBuffer.Items.Add("20");
+            this.udPlayBuffer.Location = new System.Drawing.Point(225, 210);
+            this.udPlayBuffer.Name = "udPlayBuffer";
+            this.udPlayBuffer.ReadOnly = true;
+            this.udPlayBuffer.Size = new System.Drawing.Size(53, 20);
+            this.udPlayBuffer.TabIndex = 11;
+            this.udPlayBuffer.Text = "1";
+            this.udPlayBuffer.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.toolTip1.SetToolTip(this.udPlayBuffer, "Percentage of files to buffer from web before starting playback.");
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(5, 212);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(99, 13);
+            this.label24.TabIndex = 48;
+            this.label24.Text = "Playback Buffer (%)";
+            // 
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(6, 211);
+            this.label23.Location = new System.Drawing.Point(6, 236);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(125, 13);
             this.label23.TabIndex = 46;
@@ -1080,10 +1124,10 @@ namespace OnlineVideos
             this.chkDoAutoUpdate.AutoSize = true;
             this.chkDoAutoUpdate.Checked = true;
             this.chkDoAutoUpdate.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.chkDoAutoUpdate.Location = new System.Drawing.Point(225, 210);
+            this.chkDoAutoUpdate.Location = new System.Drawing.Point(225, 236);
             this.chkDoAutoUpdate.Name = "chkDoAutoUpdate";
             this.chkDoAutoUpdate.Size = new System.Drawing.Size(15, 14);
-            this.chkDoAutoUpdate.TabIndex = 45;
+            this.chkDoAutoUpdate.TabIndex = 12;
             this.chkDoAutoUpdate.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkDoAutoUpdate, "If checked plugin will perform an autoupdate the first time it is started each Me" +
                     "diaPortal Session. If indeterminated, plugin will ask.");
@@ -1096,8 +1140,8 @@ namespace OnlineVideos
             this.tbxWMPBuffer.Location = new System.Drawing.Point(225, 184);
             this.tbxWMPBuffer.Name = "tbxWMPBuffer";
             this.tbxWMPBuffer.Size = new System.Drawing.Size(460, 20);
-            this.tbxWMPBuffer.TabIndex = 44;
-            this.toolTip1.SetToolTip(this.tbxWMPBuffer, "Number of milliseconds to use as buffer for playback.");
+            this.tbxWMPBuffer.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.tbxWMPBuffer, "Number of milliseconds to use as buffer for playback with Windows Media Player.");
             this.tbxWMPBuffer.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
             // 
             // label16
@@ -1116,7 +1160,7 @@ namespace OnlineVideos
             this.tbxUtilTimeout.Location = new System.Drawing.Point(225, 158);
             this.tbxUtilTimeout.Name = "tbxUtilTimeout";
             this.tbxUtilTimeout.Size = new System.Drawing.Size(460, 20);
-            this.tbxUtilTimeout.TabIndex = 41;
+            this.tbxUtilTimeout.TabIndex = 9;
             this.toolTip1.SetToolTip(this.tbxUtilTimeout, "When the GUI request data from the web you can specifiy how many seconds to wait " +
                     "before a timeout will occur.");
             this.tbxUtilTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
@@ -1169,7 +1213,7 @@ namespace OnlineVideos
             this.btnCancel.Location = new System.Drawing.Point(595, 474);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 25);
-            this.btnCancel.TabIndex = 10;
+            this.btnCancel.TabIndex = 14;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
@@ -1541,5 +1585,7 @@ namespace OnlineVideos
         private System.Windows.Forms.PictureBox iconSite;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.CheckBox chkDoAutoUpdate;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.DomainUpDown udPlayBuffer;
 	}
 }
