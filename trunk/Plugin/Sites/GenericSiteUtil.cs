@@ -11,7 +11,7 @@ namespace OnlineVideos.Sites
 {
     public class GenericSiteUtil : SiteUtilBase
     {
-        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for dynamic categories. Group names: 'url', 'title'. Will not be used if not set.")]
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for dynamic categories. Group names: 'url', 'title', 'thumb', 'description'. Will not be used if not set.")]
         protected string dynamicCategoriesRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the dynamicCategoriesRegEx.")]
         protected string dynamicCategoryUrlFormatString;
@@ -99,7 +99,7 @@ namespace OnlineVideos.Sites
                 string data = GetWebData(baseUrl, GetCookie());
                 if (!string.IsNullOrEmpty(data))
                 {
-                    Settings.Categories.Clear();
+                    List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a seperate list
                     Match m = regEx_dynamicCategories.Match(data);
                     while (m.Success)
                     {
@@ -111,9 +111,11 @@ namespace OnlineVideos.Sites
                         cat.Thumb = m.Groups["thumb"].Value;
                         cat.Description = m.Groups["description"].Value;
                         if (regEx_dynamicSubCategories != null) cat.HasSubCategories = true;
-                        Settings.Categories.Add(cat);
+                        dynamicCategories.Add(cat);
                         m = m.NextMatch();
                     }
+                    // discovery finished, copy them to the actual list -> prevents double entries if error occurs in the middle of adding
+                    foreach(Category cat in dynamicCategories) Settings.Categories.Add(cat); 
                     Settings.DynamicCategoriesDiscovered = true;
                 }
             }
