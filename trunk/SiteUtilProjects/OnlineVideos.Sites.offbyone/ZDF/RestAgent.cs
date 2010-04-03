@@ -464,6 +464,12 @@
             this.DoRequest(ConfigurationHelper.GetTrackingServiceUrl() + ";jsessionid=" + this.JSessionId + "?id=" + HttpUtility.UrlEncode(id));
         }
 
+        public ivwUrls TrackingIVW(string url, string id, string channelId)
+        {
+            response response = (response)this.DoRequest(url + "?beitragsId=" + id + "&kanalId=" + channelId, typeof(response));
+            return (this.CheckStatusCode(response).Item as ivwUrls);
+        }
+
         public teaserlist WeitereBeitrage(string url, string id, int maxLength, int offset)
         {
             try

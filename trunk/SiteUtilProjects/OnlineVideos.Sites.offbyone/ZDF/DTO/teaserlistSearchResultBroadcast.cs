@@ -6,22 +6,36 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, GeneratedCode("xsd", "2.0.50727.3038"), DesignerCategory("code"), XmlType(AnonymousType=true), DebuggerStepThrough]
-    public class podcastUrl
+    [Serializable, GeneratedCode("xsd", "2.0.50727.3038"), DebuggerStepThrough, DesignerCategory("code"), XmlType(AnonymousType=true)]
+    public class teaserlistSearchResultBroadcast
     {
-        private podcastUrlKey keyField;
+        private string idField;
+        private string numberField;
         private string valueField;
 
         [XmlAttribute]
-        public podcastUrlKey key
+        public string id
         {
             get
             {
-                return this.keyField;
+                return this.idField;
             }
             set
             {
-                this.keyField = value;
+                this.idField = value;
+            }
+        }
+
+        [XmlAttribute(DataType="integer")]
+        public string number
+        {
+            get
+            {
+                return this.numberField;
+            }
+            set
+            {
+                this.numberField = value;
             }
         }
 

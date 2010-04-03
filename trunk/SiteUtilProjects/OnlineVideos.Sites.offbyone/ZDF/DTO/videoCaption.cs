@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, DesignerCategory("code"), XmlType(AnonymousType=true), GeneratedCode("xsd", "2.0.50727.3038"), DebuggerStepThrough]
+    [Serializable, DesignerCategory("code"), GeneratedCode("xsd", "2.0.50727.3038"), DebuggerStepThrough, XmlType(AnonymousType=true)]
     public class videoCaption
     {
         private string offsetField;

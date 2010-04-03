@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, GeneratedCode("xsd", "2.0.50727.3038"), DebuggerStepThrough, DesignerCategory("code"), XmlType(AnonymousType=true), XmlRoot(Namespace="", IsNullable=false)]
+    [Serializable, XmlType(AnonymousType=true), XmlRoot(Namespace="", IsNullable=false), DebuggerStepThrough, DesignerCategory("code"), GeneratedCode("xsd", "2.0.50727.3038")]
     public class mainnavigation
     {
         private mainnavigationMainnaviitem[] mainnaviitemField;

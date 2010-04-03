@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, DebuggerStepThrough, GeneratedCode("xsd", "2.0.50727.3038"), XmlType(AnonymousType=true), DesignerCategory("code")]
+    [Serializable, DebuggerStepThrough, DesignerCategory("code"), XmlType(AnonymousType=true), GeneratedCode("xsd", "2.0.50727.3038")]
     public class imageseriesAudio
     {
         private string urlField;

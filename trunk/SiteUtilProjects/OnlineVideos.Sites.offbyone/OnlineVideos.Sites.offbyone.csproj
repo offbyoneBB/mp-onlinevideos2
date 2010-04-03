@@ -241,6 +241,12 @@
     <Compile Include="ZDF\DTO\teaserimages.cs" />
     <Compile Include="ZDF\DTO\teaserimagesTeaserimage.cs" />
     <Compile Include="ZDF\DTO\teaserlist.cs" />
+    <Compile Include="ZDF\DTO\teaserlistSearchResult.cs" />
+    <Compile Include="ZDF\DTO\teaserlistSearchResultBroadcast.cs" />
+    <Compile Include="ZDF\DTO\teaserlistSearchResultCategory.cs" />
+    <Compile Include="ZDF\DTO\teaserlistSearchResultProperty.cs" />
+    <Compile Include="ZDF\DTO\teaserlistSearchResultStation.cs" />
+    <Compile Include="ZDF\DTO\teaserlistSearchResultType.cs" />
     <Compile Include="ZDF\DTO\teaserMember.cs" />
     <Compile Include="ZDF\DTO\type.cs" />
     <Compile Include="ZDF\DTO\value.cs" />

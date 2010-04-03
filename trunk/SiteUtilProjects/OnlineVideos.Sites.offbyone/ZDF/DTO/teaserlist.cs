@@ -6,13 +6,15 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, DebuggerStepThrough, GeneratedCode("xsd", "2.0.50727.3038"), XmlRoot(Namespace="", IsNullable=false), DesignerCategory("code"), XmlType(AnonymousType=true)]
+    [Serializable, GeneratedCode("xsd", "2.0.50727.3038"), XmlRoot(Namespace="", IsNullable=false), DebuggerStepThrough, DesignerCategory("code"), XmlType(AnonymousType=true)]
     public class teaserlist
     {
         private bool additionalTeaserField;
         private bool additionalTeaserFieldSpecified;
         private int batchField;
         private bool batchFieldSpecified;
+        private ZDFMediathek2009.Code.DTO.information informationField;
+        private teaserlistSearchResult searchResultField;
         private teaser[] teasersField;
 
         public bool additionalTeaser
@@ -62,6 +64,30 @@
             set
             {
                 this.batchFieldSpecified = value;
+            }
+        }
+
+        public ZDFMediathek2009.Code.DTO.information information
+        {
+            get
+            {
+                return this.informationField;
+            }
+            set
+            {
+                this.informationField = value;
+            }
+        }
+
+        public teaserlistSearchResult searchResult
+        {
+            get
+            {
+                return this.searchResultField;
+            }
+            set
+            {
+                this.searchResultField = value;
             }
         }
 

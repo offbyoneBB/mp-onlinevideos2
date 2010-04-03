@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, XmlType(AnonymousType=true), DesignerCategory("code"), DebuggerStepThrough, GeneratedCode("xsd", "2.0.50727.3038"), XmlRoot(Namespace="", IsNullable=false)]
+    [Serializable, DesignerCategory("code"), GeneratedCode("xsd", "2.0.50727.3038"), XmlRoot(Namespace="", IsNullable=false), DebuggerStepThrough, XmlType(AnonymousType=true)]
     public class details
     {
         private string airtimeEndField;
@@ -33,6 +33,7 @@
         private string timetoliveField;
         private bool tippField;
         private bool tippFieldSpecified;
+        private string vcmsUrlField;
 
         public string airtime
         {
@@ -326,6 +327,18 @@
             set
             {
                 this.tippFieldSpecified = value;
+            }
+        }
+
+        public string vcmsUrl
+        {
+            get
+            {
+                return this.vcmsUrlField;
+            }
+            set
+            {
+                this.vcmsUrlField = value;
             }
         }
     }

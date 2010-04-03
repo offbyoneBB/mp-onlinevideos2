@@ -6,11 +6,25 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, GeneratedCode("xsd", "2.0.50727.3038"), DesignerCategory("code"), XmlType(AnonymousType=true), DebuggerStepThrough]
+    [Serializable, GeneratedCode("xsd", "2.0.50727.3038"), XmlType(AnonymousType=true), DebuggerStepThrough, DesignerCategory("code")]
     public class teaserimagesTeaserimage
     {
+        private string altField;
         private string keyField;
         private string valueField;
+
+        [XmlAttribute]
+        public string alt
+        {
+            get
+            {
+                return this.altField;
+            }
+            set
+            {
+                this.altField = value;
+            }
+        }
 
         [XmlAttribute]
         public string key

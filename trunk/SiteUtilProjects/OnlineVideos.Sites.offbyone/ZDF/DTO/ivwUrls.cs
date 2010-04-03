@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, DesignerCategory("code"), GeneratedCode("xsd", "2.0.50727.3038"), DebuggerStepThrough, XmlType(AnonymousType=true), XmlRoot(Namespace="", IsNullable=false)]
+    [Serializable, GeneratedCode("xsd", "2.0.50727.3038"), DesignerCategory("code"), XmlType(AnonymousType=true), XmlRoot(Namespace="", IsNullable=false), DebuggerStepThrough]
     public class ivwUrls
     {
         private ZDFMediathek2009.Code.DTO.value[] valueField;

@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, XmlType(AnonymousType=true), DesignerCategory("code"), DebuggerStepThrough, GeneratedCode("xsd", "2.0.50727.3038")]
+    [Serializable, DesignerCategory("code"), GeneratedCode("xsd", "2.0.50727.3038"), XmlType(AnonymousType=true), DebuggerStepThrough]
     public class channellistChannel
     {
         private channellistChannelInitialLetter initialLetterField;

@@ -136,6 +136,11 @@
             return GetSystemKeyValue(config, "serviceUrl_tipps");
         }
 
+        public static string GetTrackingIVWServiceUrl()
+        {
+            return GetSystemKeyValue(RestAgent.Configuration, "serviceUrl_trackingIVW");
+        }
+
         public static string GetTrackingServiceUrl()
         {
             return GetSystemKeyValue(RestAgent.Configuration, "serviceUrl_tracking");
