@@ -98,6 +98,7 @@
                         if (this.MyNavigationState != null)
                         {
                             Playlist playlist = new Playlist(this.MyNavigationState, PlaylistType.Einzelsendung, this);
+                            playlist.EinzelSendung = this;                 
                             foreach (Teaser teaser in teaserArray)
                             {
                                 if (!teaser.IsChannel)
@@ -191,6 +192,8 @@
                             if (this.MyNavigationState != null)
                             {
                                 Playlist playlist = new Playlist(this.MyNavigationState, PlaylistType.Einzelsendung, this);
+                                playlist.EinzelSendung = this;
+                                playlist.SearchString = ZDFMediathek2009.Code.Application.Current.GlobalSearchTerm;                     
                                 foreach (Teaser teaser in teaserArray)
                                 {
                                     if (!teaser.IsChannel)
@@ -224,6 +227,7 @@
                 else if (this.MyNavigationState != null)
                 {
                     Playlist playlist2 = new Playlist(this.MyNavigationState, PlaylistType.Search, null);
+                    playlist2.SearchString = ZDFMediathek2009.Code.Application.Current.GlobalSearchTerm;         
                     foreach (Teaser teaser2 in teasers)
                     {
                         if (!teaser2.IsChannel)
@@ -263,47 +267,46 @@
                 switch (this.Value.type)
                 {
                     case type.einzelsendung:
-                    {
-                        string s = this.Value.details.length.Replace("min", "").Trim();
-                        int result = 0;
-                        int.TryParse(s, out result);
-                        TimeSpan span = new TimeSpan(0, result, 0);
-                        if (span.Hours <= 0)
-                        {
-                            return (ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type) + ", " + span.Minutes.ToString("00") + ":" + span.Seconds.ToString("00"));
-                        }
-                        return (ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type) + ", " + span.Hours.ToString("00") + ":" + span.Minutes.ToString("00") + ":" + span.Seconds.ToString("00"));
-                    }
+                        return this.Value.details.length;
+
                     case type.thema:
+                    case type.sendung:
                     case type.topthema:
                     case type.rubrik:
-                        return this.NumberOfItems;
-
-                    case type.sendung:
-                        return this.NumberOfItems;
-
                     case type.@event:
-                    case type.podcast:
-                    case type.link:
-                        return str;
+                        return this.NumberOfItems;
 
                     case type.video:
-                        DateTime time;
-                        DateTime.TryParse(this.Value.details.length, out time);
-                        if (time.Hour <= 0)
+                        if (this.Value.details.length.IndexOf("min") <= 0)
                         {
+                            DateTime time;
+                            DateTime.TryParse(this.Value.details.length, out time);
+                            if (time.Hour > 0)
+                            {
+                                return (ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type) + ", " + time.ToString("HH:mm:ss", new CultureInfo("DE-de").DateTimeFormat));
+                            }
                             return (ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type) + ", " + time.ToString("mm:ss", new CultureInfo("DE-de").DateTimeFormat));
                         }
-                        return (ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type) + ", " + time.ToString("HH:mm:ss", new CultureInfo("DE-de").DateTimeFormat));
+                        return this.Value.details.length;
 
                     case type.livevideo:
                         return ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type);
+
+                    case type.podcast:
+                    case type.link:
+                        return str;
 
                     case type.imageseries_informativ:
                     case type.imageseries_emotional:
                     case type.imageseries_informativaudio:
                     case type.imageseries_emotionalaudio:
-                        return ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type).Replace("%(ANZAHL)", this.Value.details.length);
+                        int num;
+                        int.TryParse(this.Value.details.length, out num);
+                        if (num != 1)
+                        {
+                            return ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type).Replace("%(ANZAHL)", this.Value.details.length);
+                        }
+                        return ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type + "-single").Replace("%(ANZAHL)", this.Value.details.length);
                 }
             }
             return str;
@@ -778,6 +781,10 @@
                     {
                         return (this.Value.details.length + ((this.Value.details.length.Trim() == "1") ? " BEITRAG" : " BEITR\x00c4GE") + " ZUR SENDUNG");
                     }
+                    if (this.Value.type == type.@event)
+                    {
+                        return (this.Value.details.length + ((this.Value.details.length.Trim() == "1") ? " BEITRAG" : " BEITR\x00c4GE") + " ZUM SPECIAL");
+                    }
                 }
                 return "";
             }
@@ -801,36 +808,38 @@
         {
             get
             {
-                if (((this.Value != null) && !this.IsChannel) && !this.IsEvent)
+                if (((this.Value == null) || (this.Value.details == null)) || (this.IsChannel || this.IsEvent))
                 {
-                    if (this.IsVideo)
+                    return "";
+                }
+                if (this.IsVideo)
+                {
+                    DateTime time;
+                    if (this.Value.details.length.IndexOf("min") > 0)
                     {
-                        DateTime time;
-                        DateTime.TryParse(this.Value.details.length, out time);
-                        if (time.Hour > 0)
-                        {
-                            return time.ToString("HH:mm:ss", new CultureInfo("DE-de").DateTimeFormat);
-                        }
-                        return time.ToString("mm:ss", new CultureInfo("DE-de").DateTimeFormat);
+                        return this.Value.details.length;
                     }
-                    if (this.Value.type != type.einzelsendung)
+                    DateTime.TryParse(this.Value.details.length, out time);
+                    if (time.Hour > 0)
                     {
-                        return ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type).Replace("%(ANZAHL)", this.Value.details.length);
+                        return time.ToString("HH:mm:ss", new CultureInfo("DE-de").DateTimeFormat);
                     }
-                    if (this.Value.details != null)
+                    return time.ToString("mm:ss", new CultureInfo("DE-de").DateTimeFormat);
+                }
+                if (this.Value.type == type.einzelsendung)
+                {
+                    return this.Value.details.length;
+                }
+                if (((this.Value.type == type.imageseries_informativ) || (this.Value.type == type.imageseries_informativaudio)) || ((this.Value.type == type.imageseries_emotional) || (this.Value.type == type.imageseries_emotionalaudio)))
+                {
+                    int num;
+                    int.TryParse(this.Value.details.length, out num);
+                    if (num == 1)
                     {
-                        string s = this.Value.details.length.Replace("min", "").Trim();
-                        int result = 0;
-                        int.TryParse(s, out result);
-                        TimeSpan span = new TimeSpan(0, result, 0);
-                        if (span.Hours > 0)
-                        {
-                            return (span.Hours.ToString("00") + ":" + span.Minutes.ToString("00") + ":" + span.Seconds.ToString("00"));
-                        }
-                        return (span.Minutes.ToString("00") + ":" + span.Seconds.ToString("00"));
+                        return ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type + "-single").Replace("%(ANZAHL)", this.Value.details.length);
                     }
                 }
-                return "";
+                return ConfigurationHelper.GetDictionaryKeyValue("titel_label-" + this.Value.type).Replace("%(ANZAHL)", this.Value.details.length);
             }
         }
 

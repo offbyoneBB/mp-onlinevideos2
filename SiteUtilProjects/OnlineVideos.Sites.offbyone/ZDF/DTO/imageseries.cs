@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, DebuggerStepThrough, XmlRoot(Namespace="", IsNullable=false), GeneratedCode("xsd", "2.0.50727.3038"), DesignerCategory("code"), XmlType(AnonymousType=true)]
+    [Serializable, GeneratedCode("xsd", "2.0.50727.3038"), XmlType(AnonymousType=true), DesignerCategory("code"), XmlRoot(Namespace="", IsNullable=false), DebuggerStepThrough]
     public class imageseries
     {
         private imageseriesAudio audioField;

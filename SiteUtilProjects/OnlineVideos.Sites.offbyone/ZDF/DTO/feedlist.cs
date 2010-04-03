@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, DesignerCategory("code"), GeneratedCode("xsd", "2.0.50727.3038"), XmlType(AnonymousType=true), XmlRoot(Namespace="", IsNullable=false), DebuggerStepThrough]
+    [Serializable, XmlRoot(Namespace="", IsNullable=false), XmlType(AnonymousType=true), GeneratedCode("xsd", "2.0.50727.3038"), DebuggerStepThrough, DesignerCategory("code")]
     public class feedlist
     {
         private ZDFMediathek2009.Code.DTO.value[] valueField;

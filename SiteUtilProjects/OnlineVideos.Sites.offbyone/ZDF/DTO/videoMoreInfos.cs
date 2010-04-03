@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, DebuggerStepThrough, XmlType(AnonymousType=true), GeneratedCode("xsd", "2.0.50727.3038"), DesignerCategory("code")]
+    [Serializable, GeneratedCode("xsd", "2.0.50727.3038"), XmlType(AnonymousType=true), DebuggerStepThrough, DesignerCategory("code")]
     public class videoMoreInfos
     {
         private string titleField;

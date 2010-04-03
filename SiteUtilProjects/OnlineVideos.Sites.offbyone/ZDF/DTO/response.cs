@@ -6,14 +6,14 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, XmlType(AnonymousType=true), XmlRoot(Namespace="", IsNullable=false), GeneratedCode("xsd", "2.0.50727.3038"), DesignerCategory("code"), DebuggerStepThrough]
+    [Serializable, XmlType(AnonymousType=true), DesignerCategory("code"), GeneratedCode("xsd", "2.0.50727.3038"), XmlRoot(Namespace="", IsNullable=false), DebuggerStepThrough]
     public class response
     {
         private ItemChoiceType itemElementNameField;
         private object itemField;
         private ZDFMediathek2009.Code.DTO.status statusField;
 
-        [XmlElement("imageseries", typeof(imageseries)), XmlElement("suggestlist", typeof(suggestlist)), XmlElement("feedlist", typeof(feedlist)), XmlElement("ivwUrls", typeof(ivwUrls)), XmlElement("mainnavigation", typeof(mainnavigation)), XmlElement("interactive", typeof(interactive)), XmlElement("page", typeof(page)), XmlElement("session", typeof(string)), XmlElement("skindetails", typeof(skindetails)), XmlElement("configuration", typeof(configuration)), XmlElement("teaserlist", typeof(teaserlist)), XmlElement("mceUpdate", typeof(int)), XmlChoiceIdentifier("ItemElementName"), XmlElement("video", typeof(video)), XmlElement("channellist", typeof(channellist))]
+        [XmlElement("mceUpdate", typeof(int)), XmlElement("suggestlist", typeof(suggestlist)), XmlElement("channellist", typeof(channellist)), XmlElement("imageseries", typeof(imageseries)), XmlElement("interactive", typeof(interactive)), XmlElement("ivwUrls", typeof(ivwUrls)), XmlElement("mainnavigation", typeof(mainnavigation)), XmlElement("page", typeof(page)), XmlElement("session", typeof(string)), XmlElement("skindetails", typeof(skindetails)), XmlElement("teaserlist", typeof(teaserlist)), XmlElement("video", typeof(video)), XmlElement("feedlist", typeof(feedlist)), XmlChoiceIdentifier("ItemElementName"), XmlElement("configuration", typeof(configuration))]
         public object Item
         {
             get

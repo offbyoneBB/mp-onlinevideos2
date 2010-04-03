@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, XmlType(AnonymousType=true), GeneratedCode("xsd", "2.0.50727.3038"), DebuggerStepThrough, DesignerCategory("code")]
+    [Serializable, DesignerCategory("code"), XmlType(AnonymousType=true), GeneratedCode("xsd", "2.0.50727.3038"), DebuggerStepThrough]
     public class pagePageElement
     {
         private ZDFMediathek2009.Code.DTO.teaser teaserField;

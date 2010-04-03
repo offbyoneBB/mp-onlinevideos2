@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, DesignerCategory("code"), XmlRoot(Namespace="", IsNullable=false), DebuggerStepThrough, GeneratedCode("xsd", "2.0.50727.3038"), XmlType(AnonymousType=true)]
+    [Serializable, XmlType(AnonymousType=true), DebuggerStepThrough, XmlRoot(Namespace="", IsNullable=false), GeneratedCode("xsd", "2.0.50727.3038"), DesignerCategory("code")]
     public class context
     {
         private string contextLinkField;

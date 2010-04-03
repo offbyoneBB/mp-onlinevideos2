@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, GeneratedCode("xsd", "2.0.50727.3038"), XmlType(AnonymousType=true), DebuggerStepThrough, DesignerCategory("code"), XmlRoot(Namespace="", IsNullable=false)]
+    [Serializable, XmlType(AnonymousType=true), XmlRoot(Namespace="", IsNullable=false), GeneratedCode("xsd", "2.0.50727.3038"), DebuggerStepThrough, DesignerCategory("code")]
     public class page
     {
         private pagePageElement[] pageElementField;

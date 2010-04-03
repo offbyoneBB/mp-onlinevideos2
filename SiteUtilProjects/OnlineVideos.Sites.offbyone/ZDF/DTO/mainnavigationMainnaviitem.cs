@@ -6,7 +6,7 @@
     using System.Diagnostics;
     using System.Xml.Serialization;
 
-    [Serializable, DebuggerStepThrough, GeneratedCode("xsd", "2.0.50727.3038"), DesignerCategory("code"), XmlType(AnonymousType=true)]
+    [Serializable, DebuggerStepThrough, XmlType(AnonymousType=true), GeneratedCode("xsd", "2.0.50727.3038"), DesignerCategory("code")]
     public class mainnavigationMainnaviitem
     {
         private bool delimiterField;

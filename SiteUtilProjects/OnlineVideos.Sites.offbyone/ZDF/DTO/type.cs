@@ -4,7 +4,7 @@
     using System.CodeDom.Compiler;
     using System.Xml.Serialization;
 
-    [Serializable, XmlRoot(Namespace="", IsNullable=false), GeneratedCode("xsd", "2.0.50727.3038"), XmlType(AnonymousType=true)]
+    [Serializable, XmlType(AnonymousType=true), GeneratedCode("xsd", "2.0.50727.3038"), XmlRoot(Namespace="", IsNullable=false)]
     public enum type
     {
         einzelsendung,
