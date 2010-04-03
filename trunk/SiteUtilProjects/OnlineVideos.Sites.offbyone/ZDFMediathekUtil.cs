@@ -12,7 +12,7 @@ namespace OnlineVideos.Sites
     public class ZDFMediathekUtil : SiteUtilBase
     {
         [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum quality for the video to be played.")]
-        videoFormitaetQuality videoQuality = videoFormitaetQuality.veryhigh;
+        videoFormitaetQuality videoQuality = videoFormitaetQuality.veryhigh;        
 
         public override int DiscoverDynamicCategories()
         {
@@ -130,8 +130,13 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            teaserlist teaserlist = null;
+            // reset paging fields
+            currentStart = 0;
+            currentCategory = null;
+            nextPageAvailable = false;
+            previousPageAvailable = false;
 
+            teaserlist teaserlist = null;
             switch (category.Name)
             {
                 case "Startseite":
@@ -146,15 +151,16 @@ namespace OnlineVideos.Sites
                 default:
                     if (category.ParentCategory.Name == "Sendung Verpasst")
                     {
-                        teaserlist = Agent.SendungVerpasst(ConfigurationHelper.GetSendungVerpasstServiceUrl(RestAgent.Configuration), 50, 0, (category as RssLink).Url);
+                        teaserlist = Agent.SendungVerpasst(ConfigurationHelper.GetSendungVerpasstServiceUrl(RestAgent.Configuration), pageSize, 50, (category as RssLink).Url);
                     }
                     else
                     {
-                        teaserlist = Agent.Aktuellste(ConfigurationHelper.GetAktuellsteServiceUrl(RestAgent.Configuration), (category as RssLink).Url, 50, 0, false);
+                        currentCategory = category as RssLink;
+                        teaserlist = Agent.Aktuellste(ConfigurationHelper.GetAktuellsteServiceUrl(RestAgent.Configuration), currentCategory.Url, pageSize, 0, false);
+                        nextPageAvailable = currentCategory.EstimatedVideoCount > pageSize;
                     }
                     break;
             }
-
             return GetVideos(Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.CurrentBroadcasts));
         }
 
@@ -214,6 +220,52 @@ namespace OnlineVideos.Sites
                 return agent;
             }
         }
+
+        #region Next/Previous Page
+
+        int pageSize = 50;
+        int currentStart = 0;
+        RssLink currentCategory;
+        
+        protected bool nextPageAvailable = false;
+        public override bool HasNextPage
+        {
+            get { return nextPageAvailable; }
+        }
+        
+        protected bool previousPageAvailable = false;
+        public override bool HasPreviousPage
+        {
+            get { return previousPageAvailable; }
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            var teaserlist = Agent.Aktuellste(ConfigurationHelper.GetAktuellsteServiceUrl(RestAgent.Configuration), currentCategory.Url, pageSize, currentStart + pageSize, false);
+            if (teaserlist != null && teaserlist.teasers.Length > 0)
+            {
+                currentStart += pageSize;
+                nextPageAvailable = currentCategory.EstimatedVideoCount > currentStart + pageSize;
+                previousPageAvailable = true;
+                return GetVideos(Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.CurrentBroadcasts));
+            }
+            else
+            {
+                nextPageAvailable = false;
+                return new List<VideoInfo>();
+            }
+        }
+
+        public override List<VideoInfo> getPreviousPageVideos()
+        {
+            currentStart -= pageSize;
+            if (currentStart < 0) currentStart = 0;
+            previousPageAvailable = currentStart > 0;
+            var teaserlist = Agent.Aktuellste(ConfigurationHelper.GetAktuellsteServiceUrl(RestAgent.Configuration), currentCategory.Url, pageSize, currentStart, false);
+            return GetVideos(Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.CurrentBroadcasts));
+        }
+
+        #endregion
 
         #region Search
 
