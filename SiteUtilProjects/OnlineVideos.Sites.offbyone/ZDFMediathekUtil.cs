@@ -160,33 +160,26 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
-            video videoInfo = Agent.BeitragsDetail(ConfigurationHelper.GetBeitragsDetailsServiceUrl(RestAgent.Configuration), video.VideoUrl, video.Other.ToString());
-
-            videoFormitaetQuality? foundQuality = null;
-            string foundUrl = null;
-
-            foreach (var vid in videoInfo.formitaeten)
+            if (video.PlaybackOptions == null)
             {
-                if (vid.url.StartsWith("http://") && vid.url.EndsWith(".asx"))
-                {
-                    if (vid.quality == videoQuality)
+                video.PlaybackOptions = new Dictionary<string, string>();
+                video videoInfo = Agent.BeitragsDetail(ConfigurationHelper.GetBeitragsDetailsServiceUrl(RestAgent.Configuration), video.VideoUrl, video.Other.ToString());
+                foreach (var vid in videoInfo.formitaeten)
+                {                    
+                    if (vid.url.StartsWith("http://") && vid.url.EndsWith(".asx"))
                     {
-                        foundQuality = vid.quality;
-                        foundUrl = vid.url;
-                        break;
-                    }
-
-                    if (vid.quality >= videoQuality && (foundQuality == null || vid.quality < foundQuality))
-                    {
-                        foundQuality = vid.quality;
-                        foundUrl = vid.url;
+                        video.PlaybackOptions.Add(string.Format("{2} | mms:// | {0}x{1}", vid.width, vid.height, vid.quality.ToString().Replace("OBSOLETE_", "")), SiteUtilBase.ParseASX(vid.url)[0]);
                     }
                 }
             }
-
-            if (foundUrl != null) foundUrl = SiteUtilBase.ParseASX(foundUrl)[0];
-
-            return foundUrl;
+            string firstUrl = "";
+            var enumer = video.PlaybackOptions.GetEnumerator();
+            while (enumer.MoveNext())
+            {
+                if (firstUrl == "") firstUrl = enumer.Current.Value;
+                if (enumer.Current.Key.StartsWith(videoQuality.ToString().Replace("OBSOLETE_", ""))) return enumer.Current.Value;
+            }
+            return firstUrl;
         }
 
         List<VideoInfo> GetVideos(Teaser[] teaserlist)
