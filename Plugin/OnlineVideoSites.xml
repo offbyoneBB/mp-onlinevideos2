@@ -220,7 +220,7 @@
         <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Today's Videos">http://www.metacafe.com/rss/today_videos/rss.xml</Category>
+        <Category xsi:type="RssLink" name="Today's Videos">http://www.metacafe.com/rss.xml</Category>
         <Category xsi:type="RssLink" name="Art &amp; Animation">http://www.metacafe.com/api/videos/-/art_and_animation/</Category>
         <Category xsi:type="RssLink" name="Comedy">http://www.metacafe.com/api/videos/-/comedy/</Category>
         <Category xsi:type="RssLink" name="Cool Commercials">http://www.metacafe.com/api/videos/-/cool_commercials/</Category>
@@ -254,7 +254,7 @@
       <Description>Dailymotion is a video sharing service website, based in Paris (France).</Description>
       <Configuration>
         <item key="searchUrl"><![CDATA[http://www.dailymotion.com/rss/relevance/search/{0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[addVariable\("video",\s*"(?<m0>(?:(?!%40%40spark).)*)]]></item>
+        <item key="fileUrlRegEx"><![CDATA[addVariable\("video",\s*"(?<m0>[^"]+)"\);]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}&txe=.flv]]></item>
       </Configuration>
       <Categories>

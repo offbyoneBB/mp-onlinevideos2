@@ -49,10 +49,12 @@ namespace OnlineVideos.Sites
         protected string playlistUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string used with the 'url' match of the playlistUrlRegEx to create the Url for the playlist request.")]
         protected string playlistUrlFormatString = "{0}";
-        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for the playback url. Groups should be named 'm0', 'm1' and so on.")]
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for the playback url. Groups should be named 'm0', 'm1' and so on for the url. Multiple matches will be presented as playback choices. The name of a choice will be made of the result of groups named 'n0', 'n1' and so on.")]
         protected string fileUrlRegEx;
-        [Category("OnlineVideosConfiguration"), Description("Format string used with the groups of the regex matches of the fileUrlRegEx to create the Url for playback.")]
+        [Category("OnlineVideosConfiguration"), Description("Format string used with the groups (m0, m1, ..) of the regex matches of the fileUrlRegEx to create the Url for playback.")]
         protected string fileUrlFormatString = "{0}";
+        [Category("OnlineVideosConfiguration"), Description("Format string used with the groups (n0, n1, ..) of the regex matches of the fileUrlRegEx to create the Name for a playback choice.")]
+        protected string fileUrlNameFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
         protected string searchUrl;
         [Category("OnlineVideosConfiguration"), Description("Format string that should be sent as post data for getting the results of a search. {0} will be replaced with the query. If this is not set, search will be executed normal as GET.")]
@@ -225,19 +227,37 @@ namespace OnlineVideos.Sites
                 }
                 // 3.b find a match in the retrieved data for the final playback url
                 if (regEx_FileUrl != null)
-                {
+                {                    
+                    video.PlaybackOptions = new Dictionary<string,string>();
                     Match matchFileUrl = regEx_FileUrl.Match(dataPage);
-                    if (matchFileUrl.Success)
+                    while(matchFileUrl.Success)
                     {
                         // apply some formatting to the url
                         List<string> groupValues = new List<string>();
+                        List<string> groupNameValues = new List<string>();
                         for (int i = 0; i < matchFileUrl.Groups.Count; i++)
+                        {
                             if (matchFileUrl.Groups["m" + i.ToString()].Success)
                                 groupValues.Add(HttpUtility.UrlDecode(matchFileUrl.Groups["m" + i.ToString()].Value));
-                        resultUrl = string.Format(fileUrlFormatString, groupValues.ToArray());
+                            if (matchFileUrl.Groups["n" + i.ToString()].Success)
+                                groupNameValues.Add(HttpUtility.HtmlDecode(matchFileUrl.Groups["n" + i.ToString()].Value));
+                        }
+                        string foundUrl = string.Format(fileUrlFormatString, groupValues.ToArray());
+                        if (!video.PlaybackOptions.ContainsValue(foundUrl))
+                        {
+                            if (groupNameValues.Count == 0) groupNameValues.Add(video.PlaybackOptions.Count.ToString()); // if no groups to build a name, use numbering
+                            video.PlaybackOptions.Add(string.Format(fileUrlNameFormatString, groupNameValues.ToArray()), foundUrl);
+                        }
+                        matchFileUrl = matchFileUrl.NextMatch();
                     }
-                    else return ""; // if no match, return empty url -> error
-
+                    if (video.PlaybackOptions.Count == 0) 
+                        return "";// if no match, return empty url -> error
+                    else
+                    {
+                        var enumer = video.PlaybackOptions.GetEnumerator();
+                        enumer.MoveNext();
+                        resultUrl = enumer.Current.Value;
+                    }
                 }
             }
             return resultUrl;
