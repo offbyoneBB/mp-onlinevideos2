@@ -41,10 +41,6 @@ namespace Google.GData.YouTube {
     //////////////////////////////////////////////////////////////////////
     public class YouTubeService : MediaService
     {
-       
-        /// <summary>The YouTubes service's name</summary> 
-        public const string YTService = "youtube";
-
         /// <summary>
         /// default category for YouTube
         /// </summary>
@@ -54,9 +50,6 @@ namespace Google.GData.YouTube {
         /// the YouTube authentication handler URL
         /// </summary>
         public const string AuthenticationHandler = "https://www.google.com/youtube/accounts/ClientLogin";
-
-
-        private string clientID;
         private string developerID;
 
 
@@ -66,29 +59,38 @@ namespace Google.GData.YouTube {
         /// <param name="applicationName">the applicationname</param>
         /// <param name="client">the client identifier</param>
         /// <param name="developerKey">the developerKey</param>/// 
-        public YouTubeService(string applicationName, string client, string developerKey) : base(YTService, applicationName)
+        [Obsolete("The client id was removed from the YouTubeService, use the constructor without a clientid")]
+        public YouTubeService(string applicationName, string client, string developerKey) : base(ServiceNames.YouTube, applicationName)
         {
-            if (client == null)
-            {
-                throw new ArgumentNullException("client"); 
-            }
             if (developerKey == null)
             {
                 throw new ArgumentNullException("developerKey"); 
             }
 
             this.NewFeed += new ServiceEventHandler(this.OnNewFeed); 
-            clientID = client;
             developerID = developerKey;
             OnRequestFactoryChanged();
         }
 
 
+        public YouTubeService(string applicationName, string developerKey)
+            : base(ServiceNames.YouTube, applicationName)
+        {
+            if (developerKey == null)
+            {
+                throw new ArgumentNullException("developerKey");
+            }
+
+            this.NewFeed += new ServiceEventHandler(this.OnNewFeed);
+            developerID = developerKey;
+            OnRequestFactoryChanged();
+        }
+
         /// <summary>
         ///  readonly constructor 
         /// </summary>
         /// <param name="applicationName">the application identifier</param>
-        public YouTubeService(string applicationName) : base(YTService, applicationName)
+        public YouTubeService(string applicationName) : base(ServiceNames.YouTube, applicationName)
         {
             this.NewFeed += new ServiceEventHandler(this.OnNewFeed); 
             OnRequestFactoryChanged();
@@ -235,10 +237,9 @@ namespace Google.GData.YouTube {
         {
             base.OnRequestFactoryChanged();
             GDataGAuthRequestFactory factory = this.RequestFactory as GDataGAuthRequestFactory;
-            if (factory != null && this.developerID != null && this.clientID != null)
+            if (factory != null && this.developerID != null)
             {
                 RemoveOldKeys(factory.CustomHeaders);
-                factory.CustomHeaders.Add(GoogleAuthentication.YouTubeClientId + this.clientID); 
                 factory.CustomHeaders.Add(GoogleAuthentication.YouTubeDevKey + this.developerID); 
                 factory.Handler = YouTubeService.AuthenticationHandler;
             }

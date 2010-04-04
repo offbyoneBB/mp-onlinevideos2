@@ -128,7 +128,7 @@ namespace Google.GData.Client
 
     
                 outputStream = request.GetRequestStream();
-                inputStream = entry.MediaSource.Data;
+                inputStream = entry.MediaSource.GetDataStream();
                 StreamWriter w = new StreamWriter(outputStream);
 
                 w.WriteLine("Media multipart posting");

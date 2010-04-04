@@ -39,7 +39,6 @@ namespace Google.GData.Extensions {
         /// <summary>
         /// Relation type. Describes the meaning of this association.
         /// </summary>
-        [System.Xml.Serialization.XmlType("Who.RelType")]
         public class RelType
         {
             /// <summary>Relationship value Attendee</summary>

@@ -25,7 +25,7 @@ namespace Google.GData.Extensions
     /// <summary>
     /// GData schema extension describing an extended property/value pair
     /// </summary>
-    public class ExtendedProperty : SimpleAttribute
+    public class ExtendedProperty : SimpleNameValueAttribute
     {
 
         /// <summary>
@@ -35,7 +35,6 @@ namespace Google.GData.Extensions
                                          BaseNameTable.gDataPrefix,
                                          BaseNameTable.gNamespace)
         {
-            this.Attributes.Add(AtomParserNameTable.XmlName, null);
         }
 
         /// <summary>
@@ -44,10 +43,9 @@ namespace Google.GData.Extensions
         /// <param name="initValue"></param>
         public ExtendedProperty(string initValue) : base(GDataParserNameTable.XmlExtendedPropertyElement,
                                          BaseNameTable.gDataPrefix,
-                                         BaseNameTable.gNamespace,
-                                         initValue)
+                                         BaseNameTable.gNamespace)
         {
-            this.Attributes.Add(AtomParserNameTable.XmlName, null);
+            this.Value = initValue; 
         }
 
         /// <summary>
@@ -57,26 +55,10 @@ namespace Google.GData.Extensions
         /// <param name="initName">name for the key</param>
         public ExtendedProperty(string initValue, string initName) : base(GDataParserNameTable.XmlExtendedPropertyElement,
                                          BaseNameTable.gDataPrefix,
-                                         BaseNameTable.gNamespace,
-                                         initValue)
+                                         BaseNameTable.gNamespace)
         {
-            this.Attributes.Add(AtomParserNameTable.XmlName, initName);
-        }
-
-
-         //////////////////////////////////////////////////////////////////////
-        /// <summary>Accessor for "value" attribute.</summary> 
-        /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
-        public string Name
-        {
-            get {
-                return this.Attributes[AtomParserNameTable.XmlName] as string;
-            }
-            set
-            {
-                this.Attributes[AtomParserNameTable.XmlName] = value;
-            }
+            this.Value = initValue; 
+            this.Name = initName;
         }
     }
 }

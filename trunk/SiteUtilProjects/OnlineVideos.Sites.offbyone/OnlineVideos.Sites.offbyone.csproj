@@ -45,6 +45,7 @@
     <Compile Include="Google\GData\Client\abstractentry.cs" />
     <Compile Include="Google\GData\Client\abstractfeed.cs" />
     <Compile Include="Google\GData\Client\appcontrol.cs" />
+    <Compile Include="Google\GData\Client\asyncDataHandler.cs" />
     <Compile Include="Google\GData\Client\asyncservice.cs" />
     <Compile Include="Google\GData\Client\atombase.cs" />
     <Compile Include="Google\GData\Client\atombaselink.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Google\GData\Client\atomsource.cs" />
     <Compile Include="Google\GData\Client\atomtextconstruct.cs" />
     <Compile Include="Google\GData\Client\atomuri.cs" />
+    <Compile Include="Google\GData\Client\authentication.cs" />
     <Compile Include="Google\GData\Client\authexceptions.cs" />
     <Compile Include="Google\GData\Client\authsubutil.cs" />
     <Compile Include="Google\GData\Client\basefeedparser.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="Google\GData\Client\collections.cs" />
     <Compile Include="Google\GData\Client\documentquery.cs" />
     <Compile Include="Google\GData\Client\exceptions.cs" />
+    <Compile Include="Google\GData\Client\extcollections.cs" />
     <Compile Include="Google\GData\Client\extensionbase.cs" />
     <Compile Include="Google\GData\Client\feedconstants.cs" />
     <Compile Include="Google\GData\Client\feedmodel.cs" />
@@ -87,6 +90,7 @@
     <Compile Include="Google\GData\Client\oauthuri.cs" />
     <Compile Include="Google\GData\Client\oauthutil.cs" />
     <Compile Include="Google\GData\Client\request.cs" />
+    <Compile Include="Google\GData\Client\resumableupload.cs" />
     <Compile Include="Google\GData\Client\rssfeedparser.cs" />
     <Compile Include="Google\GData\Client\service.cs" />
     <Compile Include="Google\GData\Client\serviceinterface.cs" />
@@ -102,7 +106,6 @@
     <Compile Include="Google\GData\Extensions\entrylink.cs" />
     <Compile Include="Google\GData\Extensions\enumconstruct.cs" />
     <Compile Include="Google\GData\Extensions\exif.cs" />
-    <Compile Include="Google\GData\Extensions\extcollections.cs" />
     <Compile Include="Google\GData\Extensions\extended.cs" />
     <Compile Include="Google\GData\Extensions\feedlink.cs" />
     <Compile Include="Google\GData\Extensions\gdatanametable.cs" />
@@ -110,6 +113,7 @@
     <Compile Include="Google\GData\Extensions\labelcollection.cs" />
     <Compile Include="Google\GData\Extensions\mailitempropertycollection.cs" />
     <Compile Include="Google\GData\Extensions\mediarss.cs" />
+    <Compile Include="Google\GData\Extensions\misc.cs" />
     <Compile Include="Google\GData\Extensions\originalevent.cs" />
     <Compile Include="Google\GData\Extensions\ratings.cs" />
     <Compile Include="Google\GData\Extensions\recurexception.cs" />

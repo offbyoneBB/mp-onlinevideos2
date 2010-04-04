@@ -29,7 +29,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration")]
         string extraSubCatPagesRegEx = @"<option\svalue=""(?<Url>[^""]+)"">[^<]*</option>";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos.")]
-        string videoListRegEx = @"<div\sclass=""mt-media_item"">\s*
+        string videoListRegEx = @"<div\sclass=""mt-media_item[^""]*"">\s*
 <div\sclass=""mt-image"">\s*
 <span\sclass=""mt-icon\smt-icon_video""></span>\s*
 <img\s(data-)?src=""(?<ImageUrl>[^""]+)""\s[^/]*/>\s*
@@ -43,6 +43,8 @@ namespace OnlineVideos.Sites
         string prevPageRegEx = @"<a\s+href=""(?<PrevPageUrl>[^""]+)""\s[^>]*>Zurück</a>";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for playback urls.")]
         string videoUrlOptionsRegEx = @"mediaCollection.addMediaStream\((?<Info>[^)]+)";
+        [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
+        string searchUrl = "http://www.ardmediathek.de/ard/servlet/content/3517006?inhalt=tv&s={0}";
 
         Regex regEx_Categories, regEx_Subcategories, regEx_VideoList, regEx_extraSubCatPages, regEx_NextPage, regEx_PrevPage, regEx_VideoUrlOptions;
 
@@ -155,30 +157,31 @@ namespace OnlineVideos.Sites
                 Match match = regEx_VideoUrlOptions.Match(dataPage);
                 while (match.Success)
                 {
-                    string[] infos = match.Groups["Info"].Value.Split(new char[] { ',' });
-                    int type = int.Parse(infos[0].Trim(new char[] { '"', ' ' }));
-                    VideoQuality quality = (VideoQuality)int.Parse(infos[1].Trim(new char[] { '"', ' ' }));
+                    string[] infos = match.Groups["Info"].Value.Split(',');
+                    for (int i = 0; i < infos.Length; i++) infos[i] = infos[i].Trim(new char[] { '"', ' ' });
+                    int type = int.Parse(infos[0]);
+                    VideoQuality quality = (VideoQuality)int.Parse(infos[1]);
                     string resultUrl = "";
                     if (infos[infos.Length - 2].Contains("rtmp"))
                     {
-                        Uri uri = new Uri(infos[infos.Length - 2].Trim(new char[] { '"', ' ' }));
+                        Uri uri = new Uri(infos[infos.Length - 2]);
                         if (uri.Host == "gffstream.fcod.llnwd.net")
                         {
                             resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}",
                                 OnlineVideoSettings.RTMP_PROXY_PORT,
-                                HttpUtility.UrlEncode(uri.OriginalString + "/" + infos[infos.Length - 1].Trim(new char[] { '"', ' ' })));
+                                HttpUtility.UrlEncode(uri.OriginalString.Trim('/') + "/" + infos[infos.Length - 1].Trim(new char[] { '"', ' ' })));
                         }
                         else
                         {
                             resultUrl = string.Format("http://127.0.0.1:{5}/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}",
                                 HttpUtility.UrlEncode(uri.Host),
                                 "1935",
-                                HttpUtility.UrlEncode(uri.Segments[1].Trim(new char[] { '/' })),
-                                HttpUtility.UrlEncode("rtmp://" + uri.Host + ":1935" + uri.Segments[0] + uri.Segments[1].Trim(new char[] { '/' })),
+                                HttpUtility.UrlEncode(infos[infos.Length - 2].Substring(infos[infos.Length - 2].IndexOf('/', uri.Host.Length)).Trim('/')),
+                                HttpUtility.UrlEncode(infos[infos.Length - 2]),
                                 HttpUtility.UrlEncode(infos[infos.Length - 1].Trim(new char[] { '"', ' ' })),
                                 OnlineVideoSettings.RTMP_PROXY_PORT);
                         }
-                        video.PlaybackOptions.Add(string.Format("{0} | rtmp:// | {1}", quality.ToString().PadRight(4, ' '), infos[infos.Length - 1].Contains("mp4:") ? ".mp4" : ".flv"), resultUrl);
+                        video.PlaybackOptions.Add(string.Format("{0} | rtmp:// | {1}", quality.ToString().PadRight(4, ' '), infos[infos.Length - 1].ToLower().Contains("mp4:") ? ".mp4" : ".flv"), resultUrl);
                     }
                     else
                     {
@@ -233,8 +236,6 @@ namespace OnlineVideos.Sites
 
         string lastQueriedCategoryUrl = "";
         uint lastQueriedCategoryPageIndex = 1;
-        bool lastQueriedCategoryHasPreviousPage = false;
-        bool lastQueriedCategoryHasNextPage = false;        
         public override List<VideoInfo> getVideoList(Category category)
         {
             lastQueriedCategoryUrl = (category as RssLink).Url;
@@ -242,13 +243,17 @@ namespace OnlineVideos.Sites
             lastQueriedCategoryHasPreviousPage = false;
             lastQueriedCategoryHasNextPage = false;        
             return getVideoListForCurrentCategory();
-        }        
-        
+        }
+
+        #region Next/Previous Page
+
+        bool lastQueriedCategoryHasNextPage = false;
         public override bool HasNextPage
         {
             get { return lastQueriedCategoryHasNextPage; }
-        }        
+        }
 
+        bool lastQueriedCategoryHasPreviousPage = false;
         public override bool HasPreviousPage
         {
             get { return lastQueriedCategoryHasPreviousPage; }
@@ -288,6 +293,19 @@ namespace OnlineVideos.Sites
                 return new List<VideoInfo>();
             }
         }
+
+        #endregion
+
+        #region Search
+
+        public override bool CanSearch { get { return true; } }
+
+        public override List<VideoInfo> Search(string query)
+        {
+            return getVideoList(new RssLink() { Url = string.Format(searchUrl, query) });
+        }
+
+        #endregion
     }
 }
 

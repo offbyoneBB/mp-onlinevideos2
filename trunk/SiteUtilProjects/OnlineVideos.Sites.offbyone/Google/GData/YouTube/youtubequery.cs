@@ -177,7 +177,6 @@ namespace Google.GData.YouTube {
         private string orderBy;
         private string client;
         private string lr;
-        private string racy;
         private string restriction;
         private UploadTime uploadTime = UploadTime.UploadTimeUndefined;
 
@@ -404,23 +403,7 @@ namespace Google.GData.YouTube {
         // end of accessor public string LR
 
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>
-        /// The racy parameter allows a search result set to include restricted
-        /// content as well as standard content. Valid values for this parameter
-        ///  are include and exclude. By default, restricted content is excluded. 
-        /// Feed entries for videos that contain restricted content will contain
-        /// the media:rating element.
-        /// </summary> 
-        /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
-        [Obsolete("replaced with safeSearch")] 
-        public string Racy
-        {
-            get {return this.racy;}
-            set {this.racy = value;}
-        }
-        // end of accessor public string Racy
+       
 
 
 
@@ -672,6 +655,16 @@ namespace Google.GData.YouTube {
         }
 
 
+		
+        /// <summary>
+        /// retrieves a category collection from the given URL
+        /// The owner should be a new Collection object, like:
+        /// <code>
+        ///		GetCategories(new Uri("http://gdata.youtube.com/schemas/2007/categories.cat"), 
+        ///					  new YouTubeCategoryCollection())
+        /// </code>
+        /// </summary>
+        /// <returns></returns>
         public static AtomCategoryCollection GetCategories(Uri uri, AtomBase owner)
         {
             // first order is to get the document into an xml dom
@@ -728,9 +721,6 @@ namespace Google.GData.YouTube {
                                     }
                                 }
                                 break;
-                            case "vq":
-                                this.VQ = parameters[1];
-                                break;
                             case "orderby":
                                 this.OrderBy = parameters[1];
                                 break;
@@ -739,9 +729,6 @@ namespace Google.GData.YouTube {
                                 break;
                             case "lr":
                                 this.LR = parameters[1];
-                                break;
-                            case "racy":
-                                this.Racy = parameters[1];
                                 break;
                             case "location":
                                 this.Location = parameters[1];
@@ -876,14 +863,12 @@ namespace Google.GData.YouTube {
                 paramInsertion = AppendQueryPart(res, "safeSearch", paramInsertion, newPath);
             }
 
-            paramInsertion = AppendQueryPart(this.VQ, "vq", paramInsertion, newPath);
             paramInsertion = AppendQueryPart(this.Location, "location", paramInsertion, newPath);
             paramInsertion = AppendQueryPart(this.LocationRadius, "location-radius", paramInsertion, newPath);
             paramInsertion = AppendQueryPart(this.Uploader, "uploader", paramInsertion, newPath);
             paramInsertion = AppendQueryPart(this.OrderBy, "orderby", paramInsertion, newPath);
             paramInsertion = AppendQueryPart(this.Client, "client", paramInsertion, newPath);
             paramInsertion = AppendQueryPart(this.LR, "lr", paramInsertion, newPath);
-            paramInsertion = AppendQueryPart(this.Racy, "racy", paramInsertion, newPath);
             paramInsertion = AppendQueryPart(this.Restriction, "restriction", paramInsertion, newPath);
 
             return newPath.ToString();

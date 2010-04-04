@@ -156,9 +156,10 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         protected override void SaveXmlAttributes(XmlWriter writer)
         {
-            base.SaveXmlAttributes(writer);
             WriteEncodedAttributeString(writer, AtomParserNameTable.XmlAttributeSrc, this.Src);
             WriteEncodedAttributeString(writer, AtomParserNameTable.XmlAttributeType, this.Type);
+            // call base later, as base will save out extension elements that might create subelements
+            base.SaveXmlAttributes(writer);
         }
         /////////////////////////////////////////////////////////////////////////////
 

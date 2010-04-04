@@ -753,8 +753,7 @@ namespace Google.GData.Client
             while (NextChildElement(reader, ref depth))
             {
                 localname = reader.LocalName;
-                bool fSkip = true;
-
+     
                 if (IsCurrentNameSpace(reader, BaseNameTable.NSAtom))
                 {
                     if (localname.Equals(this.nameTable.Id))
@@ -797,7 +796,7 @@ namespace Google.GData.Client
                     }
                     else if (localname.Equals(this.nameTable.Content))
                     {
-                        entry.Content = ParseContent(reader, entry, out fSkip);
+                        entry.Content = ParseContent(reader, entry);
                     }
                     else if (localname.Equals(this.nameTable.Source))
                     {
@@ -808,13 +807,8 @@ namespace Google.GData.Client
                     {
                         entry.Title = ParseTextConstruct(reader, entry);
                     }
-                    // this will either move the reader to the end of an element, or, 
-                    // if at the end, to the start of a new one. some methods use readInnerXm
-                    // and might therefore already be at the start of the next
-                    if (fSkip)
-                        // note: we want to get rid of fskip and move the logic into the parsing methods
-                        // ParseXXX should just come back with a clearly defined state
-                        reader.Read();
+                    // all parse methods should leave the reader at the end of their element
+                    reader.Read();
                 }
                 else if (IsCurrentNameSpace(reader, BaseNameTable.gBatchNamespace))
                 {
@@ -1090,10 +1084,9 @@ namespace Google.GData.Client
         /// <summary>creates an AtomContent object by parsing an xml stream</summary> 
         /// <param name="reader">a XMLReader positioned correctly </param>
         /// <param name="owner">the container element</param>
-       /// <param name="skipNode">a boolen indicating if the node needs to be skipped, or not</param>
         /// <returns> null or an AtomContent object</returns>
         //////////////////////////////////////////////////////////////////////
-        protected AtomContent ParseContent(XmlReader reader, AtomBase owner, out bool skipNode)
+        protected AtomContent ParseContent(XmlReader reader, AtomBase owner)
         {
             Tracing.Assert(reader != null, "reader should not be null");
             if (reader == null)
@@ -1106,9 +1099,6 @@ namespace Google.GData.Client
                 throw new ArgumentNullException("owner");
             }
         
-
-            // by default, skip to the next node after this routine
-            skipNode = true; 
 
             AtomContent content = owner.CreateAtomSubElement(reader, this) as AtomContent;
             Tracing.TraceCall();
@@ -1136,19 +1126,35 @@ namespace Google.GData.Client
 
                 if (MoveToStartElement(reader) == true)
                 {
-                    // using readInnerXml has disadvantages, even for HTML/XHTML. in .NET 1.1
-                    // decoding will happen and text like "this & that" will come back
-                    // as "this &amp; that" 
-                    if (content.Type.Equals("xhtml"))
+                    if (content.Type.Equals("text") ||
+                        content.Type.Equals("html") || 
+                        content.Type.StartsWith("text/"))
                     {
-                        // ReadInnerXml moves to the next node
-                        skipNode = false; 
-                        content.Content = reader.ReadInnerXml(); 
-                    } 
+                        // if it's text it get's just the string treatment. No 
+                        // subelements are allowed here
+                        content.Content = Utilities.DecodedValue(reader.ReadString());
+                    }
+                    else if (content.Type.Equals("xhtml") ||
+                             content.Type.Contains("/xml") ||
+                             content.Type.Contains("+xml"))
+                    {
+                        // do not get childlists if the element is empty. That would skip to the next element
+                        if (reader.IsEmptyElement == false)
+                        {
+                            // everything else will be nodes in the extension element list
+                            // different media type. Create extension elements
+                            int lvl = -1;
+                            while (NextChildElement(reader, ref lvl))
+                            {
+                                ParseExtensionElements(reader, content);
+                            }
+                        }
+                    }
                     else
                     {
-                        // anything NOT xhtml get's just the string treatment. No 
-                        // subelements are allowed here
+                        // everything else SHOULD be base 64 encoded, so one big string
+                        // i know the if statement could be combined with the text handling
+                        // but i consider it clearer to make a 3 cases statement than combine them
                         content.Content = Utilities.DecodedValue(reader.ReadString());
                     }
                 }

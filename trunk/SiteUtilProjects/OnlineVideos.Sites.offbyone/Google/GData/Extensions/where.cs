@@ -54,7 +54,6 @@ namespace Google.GData.Extensions
         /// <summary>
         /// Relation type. Describes the meaning of this location.
         /// </summary>
-        [System.Xml.Serialization.XmlType("Where.RelType")]
         public class RelType
         {
             /// <summary>
@@ -85,8 +84,8 @@ namespace Google.GData.Extensions
         /// <param name="label">label property value</param>
         /// <param name="rel">default for the Rel property value</param>
         public Where(String rel,
-                                 String label, 
-                                 String value)
+                     String label, 
+                     String value)
         {
             this.Rel = rel;
             this.Label = label;

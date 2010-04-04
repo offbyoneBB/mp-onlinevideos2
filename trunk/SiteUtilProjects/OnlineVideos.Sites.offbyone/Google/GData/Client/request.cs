@@ -18,6 +18,7 @@
 
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Collections.Generic;
 using System.Globalization;
@@ -40,7 +41,11 @@ namespace Google.GData.Client
         private string passWord;
         private string userName;
         private string clientToken;
-  
+        private string accountType = GoogleAuthentication.AccountTypeDefault;
+
+        private string captchaAnswer;
+        private string captchaToken;
+
         /// <summary>
         /// default constructor
         /// </summary>
@@ -61,15 +66,47 @@ namespace Google.GData.Client
             this.clientToken = clientToken;
         }
 
-
         //////////////////////////////////////////////////////////////////////
-        /// <summary>accessor method public string Username</summary> 
+        /// <summary>the username used for authentication</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
         public string Username
         {
             get {return this.userName;}
             set {this.userName = value;}
+        }
+
+        //////////////////////////////////////////////////////////////////////
+        /// <summary>the type of Account used</summary> 
+        /// <returns> </returns>
+        //////////////////////////////////////////////////////////////////////
+        public string AccountType
+        {
+            get {return this.accountType;}
+            set {this.accountType = value;}
+        }
+        // end of accessor public string Username
+
+        //////////////////////////////////////////////////////////////////////
+        /// <summary>in case you need to handle catpcha responses for this account</summary> 
+        /// <returns> </returns>
+        //////////////////////////////////////////////////////////////////////
+        public string CaptchaToken
+        {
+            get {return this.captchaToken;}
+            set {this.captchaToken = value;}
+        }
+        // end of accessor public string Username
+
+
+        //////////////////////////////////////////////////////////////////////
+       /// <summary>in case you need to handle catpcha responses for this account</summary> 
+        /// <returns> </returns>
+        //////////////////////////////////////////////////////////////////////
+        public string CaptchaAnswer
+        {
+            get {return this.captchaAnswer;}
+            set {this.captchaAnswer = value;}
         }
         // end of accessor public string Username
 
@@ -99,6 +136,10 @@ namespace Google.GData.Client
             {
                 return this.clientToken;
             }
+            set 
+            {
+                this.clientToken = value; 
+            }
         }
 
         /// <summary>
@@ -111,9 +152,9 @@ namespace Google.GData.Client
                 return new NetworkCredential(this.userName, this.passWord);
             }
         }
-     }
+    }
 
-    
+
     //////////////////////////////////////////////////////////////////////
     /// <summary>base GDataRequestFactory implementation</summary> 
     //////////////////////////////////////////////////////////////////////
@@ -121,30 +162,35 @@ namespace Google.GData.Client
     {
         /// <summary>this factory's agent</summary> 
         public const string GDataAgent = "SA";
-        
+
         /// <summary>
         /// the default content type for the atom envelope
         /// </summary>
         public const string DefaultContentType = "application/atom+xml; charset=UTF-8";
         /// <summary>holds the user-agent</summary> 
         private string userAgent;
-        private List<string> customHeaders;     // holds any custom headers to set
+        private List<string> customHeaders;         // holds any custom headers to set
         private IWebProxy webProxy;                  // holds an iwebproxy interface
         private bool keepAlive;                     // indicates wether or not to keep the connection alive
         private bool useGZip;
+        private bool useSSL;                        // indicate is https should be used
         private string contentType = DefaultContentType;
         private string slugHeader;
         // set to default by default
         private int timeOut = -1;
-   
+
 
 
         /// <summary>Cookie setting header, returned from server</summary>
         public const string SetCookieHeader = "Set-Cookie"; 
         /// <summary>Cookie client header</summary>
-        public const string CookieHeader = "Cookie"; 
+        public const string CookieHeader = "Cookie";
         /// <summary>Slug client header</summary>
         public const string SlugHeader = "Slug";
+        /// <summary>content override header for resumable upload</summary>
+        public const string ContentOverrideHeader = "X-Upload-Content-Type";
+        /// <summary>content length header for resumable upload</summary>
+        public const string ContentLengthOverrideHeader = "X-Upload-Content-Length";
 
         /// <summary>
         /// constant for the Etag header
@@ -160,7 +206,12 @@ namespace Google.GData.Client
         /// constant for the if-None-match header
         /// </summary>
         public const string IfNoneMatch = "If-None-Match"; 
-        
+
+
+        /// <summary>
+        /// constant for the ifmatch value that matches everything
+        /// </summary>
+        public const string IfMatchAll = "*"; 
 
 
 
@@ -189,8 +240,8 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public bool UseGZip
         {
-            get { return (this.useGZip); }
-            set { this.useGZip = value; }
+            get { return(this.useGZip);}
+            set { this.useGZip = value;}
         }
         //////////////////////////////////////////////////////////////////////
 
@@ -209,8 +260,8 @@ namespace Google.GData.Client
                 if (this.cookies == null)
                     this.cookies = new CookieContainer();
 
-                return this.cookies; }
-            set { this.cookies = value; }
+                return this.cookies;}
+            set { this.cookies = value;}
         }
         //////////////////////////////////////////////////////////////////////
 #endif
@@ -249,7 +300,7 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public virtual string UserAgent
         {
-            get { return this.userAgent; }
+            get { return this.userAgent;}
             set {this.userAgent = value;}
         }
         /////////////////////////////////////////////////////////////////////////////
@@ -264,7 +315,7 @@ namespace Google.GData.Client
             set {this.webProxy = value;}
         }
         /////////////////////////////////////////////////////////////////////////////
-    
+
         /////////////////////////////////////////////////////////////////////
         /// <summary>indicates if the connection should be kept alive, default
         /// is true</summary> 
@@ -272,8 +323,20 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public bool KeepAlive
         {
-          get {return this.keepAlive;}
-          set {this.keepAlive = value;}
+            get { return this.keepAlive; }
+            set { this.keepAlive = value; }
+        }
+        /////////////////////////////////////////////////////////////////////////////
+ 
+        /////////////////////////////////////////////////////////////////////
+        /// <summary>indicates if the connection should use https
+        /// is true</summary> 
+        /// <returns> </returns>
+        //////////////////////////////////////////////////////////////////////
+        public bool UseSSL
+        {
+            get { return this.useSSL; }
+            set { this.useSSL = value; }
         }
         /////////////////////////////////////////////////////////////////////////////
 
@@ -307,12 +370,12 @@ namespace Google.GData.Client
         public List<string> CustomHeaders
         {
             get {
-                if (this.customHeaders == null) 
+                if (this.customHeaders == null)
                 {
                     this.customHeaders = new List<string>(); 
                 }
                 return this.customHeaders;
-                }
+            }
         }
         // end of accessor public StringArray CustomHeaders
     }
@@ -403,8 +466,8 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public bool UseGZip
         {
-            get { return (this.useGZip); }
-            set { this.useGZip = value; }
+            get { return(this.useGZip);}
+            set { this.useGZip = value;}
         }
         //////////////////////////////////////////////////////////////////////
 
@@ -413,8 +476,8 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public DateTime IfModifiedSince
         {
-            get { return (this.ifModifiedSince); }
-            set { this.ifModifiedSince = value; }
+            get { return(this.ifModifiedSince);}
+            set { this.ifModifiedSince = value;}
         }
         //////////////////////////////////////////////////////////////////////
 
@@ -451,7 +514,7 @@ namespace Google.GData.Client
         /////////////////////////////////////////////////////////////////////////////
 
 
-       //////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////
         /// <summary>set's and get's the content Type, used for binary transfers</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
@@ -468,8 +531,8 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public string Etag
         {
-            get { return this.eTag; }
-            set { this.eTag = value; }
+            get { return this.eTag;}
+            set { this.eTag = value;}
         }
         /////////////////////////////////////////////////////////////////////////////
 
@@ -560,9 +623,13 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         protected virtual void EnsureWebRequest()
         {
-
             if (this.webRequest == null && this.targetUri != null)
             {
+                if (this.factory.UseSSL == true && (this.targetUri.Scheme.ToLower().Equals("https") == false))
+                {
+                    this.targetUri = new Uri("https://" + this.targetUri.Host + this.targetUri.PathAndQuery);
+                }
+
                 this.webRequest = WebRequest.Create(this.targetUri);
 
                 this.webResponse = null; 
@@ -574,7 +641,7 @@ namespace Google.GData.Client
 
                 if (web != null)
                 {
-                    switch (this.type) 
+                    switch (this.type)
                     {
                         case GDataRequestType.Delete:
                             web.Method = HttpMethods.Delete;
@@ -589,27 +656,30 @@ namespace Google.GData.Client
                         case GDataRequestType.Query:
                             web.Method = HttpMethods.Get;
                             break;
-    
+
                     }
                     if (this.useGZip == true)
                         web.Headers.Add("Accept-Encoding", "gzip");
 
                     if (this.Etag != null)
                     {
+                        if (this.Etag != GDataRequestFactory.IfMatchAll)
+                        {   
                             web.Headers.Add(GDataRequestFactory.EtagHeader, this.Etag);
-                            switch (this.type) 
-                            {
-                                case GDataRequestType.Update:
-                                case GDataRequestType.Delete:
-                                    if (Utilities.IsWeakETag(this) == false)
-                                    {
-                                        web.Headers.Add(GDataRequestFactory.IfMatch, this.Etag);
-                                    }
-                                    break;
-                                case GDataRequestType.Query:
-                                    web.Headers.Add(GDataRequestFactory.IfNoneMatch, this.Etag);
-                                    break;
-                            }
+                        }
+                        switch (this.type)
+                        {
+                            case GDataRequestType.Update:
+                            case GDataRequestType.Delete:
+                                if (Utilities.IsWeakETag(this) == false)
+                                {
+                                    web.Headers.Add(GDataRequestFactory.IfMatch, this.Etag);
+                                }
+                                break;
+                            case GDataRequestType.Query:
+                                web.Headers.Add(GDataRequestFactory.IfNoneMatch, this.Etag);
+                                break;
+                        }
                     }
 
                     if (this.IfModifiedSince != DateTime.MinValue)
@@ -644,7 +714,7 @@ namespace Google.GData.Client
                         this.Request.Proxy = this.factory.Proxy; 
                     }
                 }
-                
+
                 EnsureCredentials(); 
             }
         }
@@ -667,7 +737,7 @@ namespace Google.GData.Client
 
 
 
-        
+
         //////////////////////////////////////////////////////////////////////
         /// <summary>Log's the request object if overridden in subclass</summary>
         /// <param name="request">the request to log</param> 
@@ -676,7 +746,7 @@ namespace Google.GData.Client
         {
         }
 
-    
+
         //////////////////////////////////////////////////////////////////////
         /// <summary>Log's the response object if overridden in subclass</summary>
         /// <param name="response">the response to log</param> 
@@ -691,7 +761,7 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public virtual void Execute()
         {
-            try 
+            try
             {
                 EnsureWebRequest();
                 // if we ever handed out a stream, we want to close it before doing the real excecution
@@ -702,8 +772,7 @@ namespace Google.GData.Client
                 Tracing.TraceCall("calling the real execution over the webresponse");
                 LogRequest(this.webRequest);
                 this.webResponse = this.webRequest.GetResponse(); 
-            }
-            catch (WebException e)
+            } catch (WebException e)
             {
                 Tracing.TraceCall("GDataRequest::Execute failed: " + this.targetUri.ToString()); 
                 GDataRequestException gde = new GDataRequestException("Execution of request failed: " + this.targetUri.ToString(), e);
@@ -735,14 +804,14 @@ namespace Google.GData.Client
                     // that could imply that we need to reauthenticate
                     Tracing.TraceMsg("need to reauthenticate");
                     throw new GDataForbiddenException("Execution of request returned HttpStatusCode.Forbidden: " + 
-                                                    this.targetUri.ToString() + response.StatusCode.ToString(), this.webResponse); 
+                                                      this.targetUri.ToString() + response.StatusCode.ToString(), this.webResponse); 
                 }
 
                 if (response.StatusCode == HttpStatusCode.Conflict)
                 {
                     // a put went bad due to a version conflict
                     throw new GDataVersionConflictException("Execution of request returned HttpStatusCode.Conflict: " + 
-                                                    this.targetUri.ToString() + response.StatusCode.ToString(), this.webResponse); 
+                                                            this.targetUri.ToString() + response.StatusCode.ToString(), this.webResponse); 
                 }
 
                 if ((this.IfModifiedSince != DateTime.MinValue 
@@ -751,7 +820,7 @@ namespace Google.GData.Client
                     // Throw an exception for conditional GET
                     throw new GDataNotModifiedException("Content not modified: " + this.targetUri.ToString(), this.webResponse);
                 }
-            
+
                 if (response.StatusCode == HttpStatusCode.Redirect ||
                     response.StatusCode == HttpStatusCode.Found ||
                     response.StatusCode == HttpStatusCode.RedirectKeepVerb)
@@ -787,7 +856,7 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public virtual Stream GetResponseStream()
         {
-            return (this.responseStream);
+            return(this.responseStream);
         }
         /////////////////////////////////////////////////////////////////////////////
 

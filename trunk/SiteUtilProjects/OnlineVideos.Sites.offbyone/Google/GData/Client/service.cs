@@ -121,10 +121,9 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         /// <summary>default constructor, sets the default GDataRequest</summary> 
         //////////////////////////////////////////////////////////////////////
-        public Service()
+        public Service() : base()
         {
             this.RequestFactory = new GDataRequestFactory(this.GetType().Name);
-            InitDelegates();
             InitVersionInformation();
         }
         /////////////////////////////////////////////////////////////////////////////
@@ -133,12 +132,11 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         /// <summary>default constructor, sets the default GDataRequest</summary> 
         //////////////////////////////////////////////////////////////////////
-        public Service(string applicationName)
+        public Service(string applicationName) : base()
         {
             this.RequestFactory = new GDataRequestFactory(applicationName == null ? 
                                                             this.GetType().Name : 
                                                             applicationName);
-            InitDelegates();
             InitVersionInformation();
         }
         /////////////////////////////////////////////////////////////////////////////
@@ -147,11 +145,10 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         /// <summary>this will trigger the creation of an authenticating service</summary> 
         //////////////////////////////////////////////////////////////////////
-        public Service(string service, string applicationName)
+        public Service(string service, string applicationName) : base()
         {
             this.RequestFactory = new GDataGAuthRequestFactory(service, applicationName);
             this.serviceID = service; 
-            InitDelegates();
             InitVersionInformation();
         }
         /////////////////////////////////////////////////////////////////////////////
@@ -188,6 +185,8 @@ namespace Google.GData.Client
                 PropagateVersionInfo();
             }
         }
+
+       
 
         /// <summary>
         /// returns the minor protocol version number this element 
@@ -268,9 +267,33 @@ namespace Google.GData.Client
         /// if the service is using a Google Request Factory it will use that 
         /// assuming credentials are set to retrieve the authentication token
         /// for those credentials
+        /// 
+        /// Note that this only works for ClientLogin, not for any other type of authentication
         /// </summary>
         /// <returns>string</returns>
+        [Obsolete("the name is confusing. Do not use this, use QueryClientLoginToken instead")]
         public string QueryAuthenticationToken() 
+        {
+            if (this.Credentials != null)
+            {
+                GDataGAuthRequestFactory factory = this.factory as GDataGAuthRequestFactory;
+                if (factory != null)
+                {
+                    return factory.QueryAuthToken(this.Credentials);
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// if the service is using a Google Request Factory it will use that 
+        /// assuming credentials are set to retrieve the authentication token
+        /// for those credentials
+        /// 
+        /// Note that this only works for ClientLogin, not for any other type of authentication
+        /// </summary>
+        /// <returns>string</returns>
+        public string QueryClientLoginToken()
         {
             if (this.Credentials != null)
             {
@@ -410,7 +433,7 @@ namespace Google.GData.Client
 
               throw;
             }
-
+            
             // return the response
             GDataGAuthRequest gr = request as GDataGAuthRequest;
             if (gr != null)
@@ -718,7 +741,13 @@ namespace Google.GData.Client
         }
 
 
-        private AtomFeed CreateAndParseFeed(Stream inputStream, Uri uriToUse)
+        /// <summary>
+        /// used to create a feed based on a stream
+        /// </summary>
+        /// <param name="inputStream"></param>
+        /// <param name="uriToUse"></param>
+        /// <returns></returns>
+        internal AtomFeed CreateAndParseFeed(Stream inputStream, Uri uriToUse)
         {
             AtomFeed returnFeed = null;
 
@@ -741,7 +770,7 @@ namespace Google.GData.Client
             return returnFeed; 
         }
 
-        private AtomEntry CreateAndParseEntry(Stream inputStream, Uri uriTarget)
+        internal AtomEntry CreateAndParseEntry(Stream inputStream, Uri uriTarget)
         {
             AtomFeed returnFeed = CreateAndParseFeed(inputStream, uriTarget);
             AtomEntry entry=null; 

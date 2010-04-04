@@ -30,7 +30,8 @@ namespace Google.GData.Extensions {
     /// <summary>
     /// Extensible enum type used in many places.
     /// compared to the base class, this one
-    /// adds a default values
+    /// adds a default value which is the text content inside the 
+    /// element node.
     /// </summary>
     public abstract class SimpleElement : ExtensionBase
     {
@@ -152,11 +153,21 @@ namespace Google.GData.Extensions {
 
             if (node != null)
             {
-                e.Value = node.InnerText;
+                e.ProcessAttributes(node);
+                if (node.HasChildNodes == true)
+                {
+                    XmlNode n = node.ChildNodes[0];
+                    if (n.NodeType == XmlNodeType.Text && node.ChildNodes.Count == 1)
+                    {
+                        e.Value = node.InnerText;
+                    }
+                    else
+                    {
+                        e.ProcessChildNodes(node, parser);
+                    }
+                }
             }
 
-            e.ProcessAttributes(node);
-            e.ProcessChildNodes(node, parser);
 
             return e;
         }
@@ -228,5 +239,42 @@ namespace Google.GData.Extensions {
         }
         // end of accessor public string Value
     }
+
+    /// <summary>
+    /// a simple element with two  attribute,called value and name that exposes 
+    /// that value as the value property
+    /// </summary>
+    public class SimpleNameValueAttribute : SimpleAttribute
+    {
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="name">the xml name</param>
+        /// <param name="prefix">the xml prefix</param>
+        /// <param name="ns">the xml namespace</param>
+        protected SimpleNameValueAttribute(string localName, string prefix, string ns)
+                    :base(localName, prefix, ns)
+        {
+            this.Attributes.Add(BaseNameTable.XmlName, null);
+        }
+
+
+        //////////////////////////////////////////////////////////////////////
+        /// <summary>Accessor for "name" attribute.</summary> 
+        /// <returns> </returns>
+        //////////////////////////////////////////////////////////////////////
+        public string Name
+        {
+            get {
+                return this.Attributes[BaseNameTable.XmlName] as string;
+            }
+            set
+            {
+                this.Attributes[BaseNameTable.XmlName] = value;
+            }
+        }
+        // end of accessor public string Value
+    }
+
 
 }  

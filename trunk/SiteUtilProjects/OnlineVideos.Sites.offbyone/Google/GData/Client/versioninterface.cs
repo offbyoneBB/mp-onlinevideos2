@@ -61,6 +61,10 @@ namespace Google.GData.Client
         /// and versionTwo is a 2
         /// </summary>
         public const int VersionTwo = 2;
+        /// <summary>
+        /// and versionThree is a 3
+        /// </summary>
+        public const int VersionThree = 3;
         
     }
 
