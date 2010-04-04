@@ -1,29 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
-using System.Windows.Forms;
-using System.Net;
-using System.IO;
 
 namespace OnlineVideos.Sites
 {
     public class MdrUtil : SiteUtilBase
     {
-        public enum MediaType { mp4, wmv };
-        MediaType preferredMediaType = MediaType.wmv;
-
-        string xmlRegex = @"<div\sclass=""noflashteaser"">\s*
-<h2><a\shref=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)</a></h2>\s*";
+        string xmlRegex = @"<div\sclass=""noflashteaser"">\s*<h2><a\shref=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)</a></h2>\s*";
 
         string playlistRegex = @"<REF\sHREF\s=\s""(?<url>[^""]+)""[^>]*>";
-
-
         string baseUrl = "http://www.mdr.de/mediathek/fernsehen/a-z";
 
         Regex regEx_Xml;
@@ -72,12 +59,19 @@ namespace OnlineVideos.Sites
                     foreach (XmlNode node in list)
                     {
                         RssLink cat = new RssLink();
+                        cat.Name = HttpUtility.HtmlDecode(node.InnerText);
+
                         cat.Url = node.SelectSingleNode("../nimex").InnerText;
                         cat.Url = cat.Url.Replace(".xml", "-meta.xml");
-                        cat.Name = HttpUtility.HtmlDecode(node.SelectSingleNode("../headline").InnerText);
+                        
                         cat.Thumb = node.SelectSingleNode("../image/data").InnerText;
+                        cat.Description = node.SelectSingleNode("../description").InnerText;
 
-                        Settings.Categories.Add(cat);
+                        XmlNodeList videoItems;
+                        videoItems = node.SelectNodes("../children/object");
+                        cat.EstimatedVideoCount = (uint)videoItems.Count;
+                        if(cat.EstimatedVideoCount > 0)
+                            Settings.Categories.Add(cat);
                     }
                     Settings.DynamicCategoriesDiscovered = true;
                     return Settings.Categories.Count;
@@ -88,9 +82,7 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
-            if (preferredMediaType == MediaType.wmv)
-            {
-                string data = GetWebData(video.VideoUrl);
+            string data = GetWebData(video.VideoUrl);
                 if (!string.IsNullOrEmpty(data))
                 {
                     Match m = regEx_Playlist.Match(data);
@@ -100,12 +92,6 @@ namespace OnlineVideos.Sites
                         return videoUrl;
                     }
                 }
-            }
-            else
-            {
-                //TODO: Add rtmp stream url decryption code
-                return null;
-            }
             return null;
         }
 
@@ -125,49 +111,20 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = new VideoInfo();
 
-                    video.Title = HttpUtility.HtmlDecode(node.SelectSingleNode("../headline").InnerText);
+                    video.Title = HttpUtility.HtmlDecode(node.InnerText);
                     video.Length = node.SelectSingleNode("../attributes/length").InnerText;
                     video.ImageUrl = node.SelectSingleNode("../image/data").InnerText;
+                    video.Description = node.SelectSingleNode("../description").InnerText;
+                    video.Tags = node.SelectSingleNode("../keywords").InnerText;
 
                     XmlNodeList videoSources;
                     videoSources = node.SelectNodes("../attributes/av/mime_type");
                     foreach (XmlNode videoNode in videoSources)
                     {
-                        if (preferredMediaType == MediaType.wmv)
+                        if (videoNode.InnerText.Contains("video/x-ms-wmv"))
                         {
-                            if (videoNode.InnerText.Contains("video/x-ms-wmv"))
-                            {
-                                video.VideoUrl = videoNode.SelectSingleNode("../streaming_url").InnerText;
-                            }
+                            video.VideoUrl = videoNode.SelectSingleNode("../streaming_url").InnerText;
                         }
-                        else
-                        {
-
-                            if (videoNode.InnerText.Contains("video/mp4"))
-                            {
-                                //TODO: Add rtmp stream parsing code
-
-                                /*
-                                    <av type="F4V">
-                                    <mime_type>video/mp4</mime_type>
-                                    <media_type>F4V-Video</media_type>
-                                    <streaming_url/>
-                                    <download_url/>
-                                    −
-                                    <fms_application>
-                                    rtmp://c22033-o.f.core.cdn.streamfarm.net/22033mdr/ondemand
-                                    </fms_application>
-                                    −
-                                    <fms_url>
-                                    3087mdr/MDR_vgnf4v/FCMS-55802c8d-7941-4204-a40f-f6bb3b922fac-1
-                                    </fms_url>
-                                    <size>30989099</size>
-                                    <size_readable>29,6 MB</size_readable>
-                                    </av>
-                                 */
-                            }
-                        }
-
                     }
                     videos.Add(video);
                 }
