@@ -239,6 +239,28 @@ namespace Google.GData.Client
         }
 
 
+        /// <summary>
+        /// helper method to setup a query object with some parameters 
+        /// based on a requestsettings
+        /// </summary>
+        /// <param name="q"></param>
+        /// <param name="settings"></param>
+        internal static void PrepareQuery(FeedQuery q, RequestSettings settings)
+        {
+            if (settings.PageSize != -1)
+            {
+                q.NumberToRetrieve = settings.PageSize;
+            }
+            if (settings.OAuthUser != null)
+            {
+                q.OAuthRequestorId = settings.OAuthUser;
+                if (settings.OAuthDomain != null)
+                {
+                    q.OAuthRequestorId += "@" + settings.OAuthDomain;
+                }
+            }
+        }
+
 
      
         //////////////////////////////////////////////////////////////////////
@@ -307,6 +329,7 @@ namespace Google.GData.Client
         /// or the other way round. This is mostly relevant for hosted domains. 
         /// </summary>
         /// <returns></returns>
+        [Obsolete("This is deprecated and replaced by UseSSL on the service and the requestsettings")]
         public bool UseSSL
         {
             get { return this.defaultSSL; }
@@ -489,7 +512,7 @@ namespace Google.GData.Client
         /// <returns>the start-index query parameter, a 1-based index
         /// indicating the first result to be retrieved.</returns>
         //////////////////////////////////////////////////////////////////////
-        public int StartIndex
+        public virtual int StartIndex
         {
             get {return this.startIndex;}
             set {this.startIndex = value; }
@@ -500,7 +523,7 @@ namespace Google.GData.Client
         /// <summary>Accessor method public int NumberToRetrieve.</summary> 
         /// <returns>the number of entries to retrieve</returns>
         //////////////////////////////////////////////////////////////////////
-        public int NumberToRetrieve
+        public virtual int NumberToRetrieve
         {
             get {return this.numToRetrieve;}
             set {this.numToRetrieve = value; }
@@ -882,7 +905,7 @@ namespace Google.GData.Client
             if (builder == null)
                 throw new ArgumentNullException("builder");
 
-            if (builder.ToString().IndexOf(connect+parameterName) == -1)
+            if (builder.ToString().IndexOf(parameterName) == -1)
             {
                 if (Utilities.IsPersistable(value))
                 {
@@ -908,7 +931,7 @@ namespace Google.GData.Client
             if (builder == null)
                 throw new ArgumentNullException("builder");
 
-            if (builder.ToString().IndexOf(connect+parameterName) == -1)
+            if (builder.ToString().IndexOf(parameterName) == -1)
             {
                 if (value != defValue)
                 {
@@ -935,7 +958,10 @@ namespace Google.GData.Client
             if (builder == null)
                 throw new ArgumentNullException("builder");
 
-            if (builder.ToString().IndexOf(connect+parameterName) == -1)
+            // this used to check for connect + parameterName, i do not recall why
+            // using just the parametername should catch cases where the parameter to be 
+            // appended is already in the URI as the first parameter
+            if (builder.ToString().IndexOf(parameterName) == -1)
             {
                 if (value != defValue)
                 {
@@ -960,7 +986,7 @@ namespace Google.GData.Client
             if (builder == null)
                 throw new ArgumentNullException("builder");
 
-            if (builder.ToString().IndexOf(connect+parameterName) == -1)
+            if (builder.ToString().IndexOf(parameterName) == -1)
             {
                 if (Utilities.IsPersistable(value))
                 {

@@ -57,8 +57,13 @@ namespace RTMP_LIB
                 // no slist parameter. send the path as the app
                 // if URL path contains a slash, use the part up to that as the app
                 // as we'll send the part after the slash as the thing to play
-                int pos_slash = link.app.IndexOf("/");
-                if (pos_slash != -1) link.app = link.app.Substring(0, pos_slash);
+                int pos_colon = link.app.IndexOf(":");
+                if (pos_colon != -1) { link.app = link.app.Substring(0, pos_colon); link.app = link.app.Substring(0, link.app.LastIndexOf('/')); }
+                else
+                {
+                    int pos_slash = link.app.IndexOf("/");
+                    if (pos_slash != -1) link.app = link.app.Substring(0, pos_slash);
+                }
             }
 
             link.tcUrl = string.Format("{0}://{1}:{2}/{3}", url.Scheme, link.hostname, link.port, link.app);

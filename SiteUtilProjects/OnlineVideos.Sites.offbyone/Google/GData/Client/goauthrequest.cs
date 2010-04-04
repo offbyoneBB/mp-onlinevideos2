@@ -31,6 +31,8 @@ namespace Google.GData.Client
         /// <summary>this factory's agent</summary> 
         public const string GDataGAuthSubAgent = "GOAuthRequestFactory-CS/1.0.0";
 
+        private String tokenSecret;
+        private String token;
 
         private String consumerSecret;
         private String consumerKey;
@@ -75,7 +77,27 @@ namespace Google.GData.Client
         }
         // end of accessor public string ConsumerKey
 
+        //////////////////////////////////////////////////////////////////////
+        /// <summary>accessor method public string TokenSecret</summary> 
+        /// <returns>the TokenSecret for the oauth request </returns>
+        //////////////////////////////////////////////////////////////////////
+        public string TokenSecret
+        {
+            get { return this.tokenSecret; }
+            set { this.tokenSecret = value; }
+        }
+        // end of accessor public string ConsumerSecret
 
+        //////////////////////////////////////////////////////////////////////
+        /// <summary>accessor method public string TokenSecret</summary> 
+        /// <returns>the Token for the oauth request </returns>
+        //////////////////////////////////////////////////////////////////////
+        public string Token
+        {
+            get { return this.token; }
+            set { this.token = value; }
+        }
+        // end of accessor public string ConsumerSecret
 
     }
     /////////////////////////////////////////////////////////////////////////////
@@ -113,7 +135,12 @@ namespace Google.GData.Client
                 throw new GDataRequestException("ConsumerKey and ConsumerSecret must be provided to use GOAuthRequestFactory");
             }
 
-            string oauthHeader = OAuthUtil.GenerateHeader(http.RequestUri, this.factory.ConsumerKey, this.factory.ConsumerSecret, http.Method);
+            string oauthHeader = OAuthUtil.GenerateHeader(http.RequestUri, 
+                                                            this.factory.ConsumerKey, 
+                                                            this.factory.ConsumerSecret, 
+                                                            this.factory.Token, 
+                                                            this.factory.TokenSecret,
+                                                            http.Method);
             this.Request.Headers.Remove("Authorization"); // needed?
             this.Request.Headers.Add(oauthHeader);
         }

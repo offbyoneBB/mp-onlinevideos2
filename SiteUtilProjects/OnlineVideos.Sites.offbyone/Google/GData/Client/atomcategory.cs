@@ -49,7 +49,7 @@ namespace Google.GData.Client
     /// }
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-    public class AtomCategory : AtomBase
+    public class AtomCategory : AtomBase, IEquatable<AtomCategory>
     {
         /// <summary>holds the term</summary> 
         private string term;
@@ -90,6 +90,21 @@ namespace Google.GData.Client
         }
         /////////////////////////////////////////////////////////////////////////////
 
+        //////////////////////////////////////////////////////////////////////
+        /// <summary>Category constructor</summary> 
+        /// <param name="term">the term of the category</param>
+        /// <param name="scheme">the scheme of the category</param>
+        /// <param name="label"> the label for the category</param>
+        //////////////////////////////////////////////////////////////////////
+        public AtomCategory(string term, AtomUri scheme, string label)
+        {
+            this.Term = term;
+            this.Scheme = scheme;
+            this.label = label;
+        }
+        /////////////////////////////////////////////////////////////////////////////
+
+
         #region overloaded for persistence
 
         //////////////////////////////////////////////////////////////////////
@@ -108,10 +123,11 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         protected override void SaveXmlAttributes(XmlWriter writer)
         {
-            base.SaveXmlAttributes(writer);
             WriteEncodedAttributeString(writer, AtomParserNameTable.XmlAttributeTerm, this.Term);
             WriteEncodedAttributeString(writer, AtomParserNameTable.XmlAttributeScheme, this.Scheme);
             WriteEncodedAttributeString(writer, AtomParserNameTable.XmlAttributeLabel, this.Label);
+            // call base later as base takes care of writing out extension elements that might close the attribute list
+            base.SaveXmlAttributes(writer);
         }
         /////////////////////////////////////////////////////////////////////////////
 
@@ -192,7 +208,49 @@ namespace Google.GData.Client
             }
         }
         /////////////////////////////////////////////////////////////////////////////
-        
+
+        #region added by Noam Gal (ATGardner gmail.com)
+
+        public bool Equals(AtomCategory other)
+        {
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+            return Equals(other.term, this.term) && (other.scheme == null || this.scheme == null || Equals(other.scheme, this.scheme));
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != typeof(AtomCategory))
+            {
+                return false;
+            }
+            return Equals((AtomCategory)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((this.term != null ? this.term.GetHashCode() : 0) * 397) ^ (this.scheme != null ? this.scheme.GetHashCode() : 0);
+            }
+        }
+
+        #endregion
+
     }
     /////////////////////////////////////////////////////////////////////////////
 } 

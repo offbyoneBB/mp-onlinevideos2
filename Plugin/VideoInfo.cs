@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using OnlineVideos.Sites;
 using RssToolkit.Rss;
@@ -203,7 +204,7 @@ namespace OnlineVideos
         #region YouTube Helper
 
         static readonly int[] fmtOptionsQualitySorted = new int[] { 37, 22, 35, 18, 34, 5, 0, 17, 13 };
-        static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})|(?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public void GetYouTubePlaybackOptions()
         {
@@ -220,7 +221,7 @@ namespace OnlineVideos
                 videoId = videoId.Substring(p, q - p);
             }
 
-            Dictionary<string, string> Items = new Dictionary<string, string>();
+            NameValueCollection Items = new NameValueCollection();
             try
             {
                 string contents = Sites.SiteUtilBase.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}", videoId));
@@ -231,29 +232,31 @@ namespace OnlineVideos
                     Match m = swfJsonArgs.Match(contents);
                     if (m.Success)
                     {
-                        Items.Clear();
-                        object data = Jayrock.Json.Conversion.JsonConvert.Import(m.Groups["json"].Value);
-                        foreach (string z in (data as Jayrock.Json.JsonObject).Names)
+                        if (m.Groups["params"].Success)
                         {
-                            Items.Add(z, (data as Jayrock.Json.JsonObject)[z].ToString());
+                            Items = System.Web.HttpUtility.ParseQueryString(m.Groups["params"].Value);
+                        }
+                        else if (m.Groups["json"].Success)
+                        {
+                            Items.Clear();
+                            object data = Jayrock.Json.Conversion.JsonConvert.Import(m.Groups["json"].Value);
+                            foreach (string z in (data as Jayrock.Json.JsonObject).Names)
+                            {
+                                Items.Add(z, (data as Jayrock.Json.JsonObject)[z].ToString());
+                            }
                         }
                     }
                 }
             }
             catch { }
-
-
-            string Token = "";
-            string[] FmtMap = null;
-
-            if (Items.ContainsKey("token"))
-                Token = Items["token"];
-            if (Token == "" && Items.ContainsKey("t"))
-                Token = Items["t"];
-            if (Token != "")
+            
+            string Token = Items["token"];
+            if (Token == null) Token = Items["t"];
+            if (!string.IsNullOrEmpty(Token))
             {
-                if (Items.ContainsKey("fmt_map"))
-                {
+                string[] FmtMap = null;
+                if (Items.Get("fmt_map") != "")
+                {                    
                     FmtMap = System.Web.HttpUtility.UrlDecode(Items["fmt_map"]).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     Array.Sort(FmtMap, new Comparison<string>(delegate(string a, string b)
                     {

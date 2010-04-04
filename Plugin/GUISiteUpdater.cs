@@ -163,7 +163,7 @@ namespace OnlineVideos
             {
                 GUIControl.SelectItemControl(GetID, GUI_btnFilter.GetID, GUI_btnFilter.SelectedItem);
             }
-            else if (control == GUI_infoList)
+            else if (control == GUI_infoList && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
                 ShowOptionsForSite(GUI_infoList.SelectedListItem.TVTag as OnlineVideosWebservice.Site);
             }

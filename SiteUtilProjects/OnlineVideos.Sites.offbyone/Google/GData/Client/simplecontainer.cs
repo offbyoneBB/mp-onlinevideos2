@@ -24,6 +24,7 @@ using System.Text;
 using System.Xml;
 using Google.GData.Client;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace Google.GData.Extensions {
 
@@ -124,12 +125,30 @@ namespace Google.GData.Extensions {
         /// Primary use of this is to find XML nodes
         /// </summary>
         /// <param name="localName">the xml local name of the element to find</param>
-        /// <param name="ns">the namespace of the elementToPersist</param>
+        /// <param name="ns">the namespace of the element to find</param>
         /// <returns>none</returns>
         public ExtensionList FindExtensions(string localName, string ns) 
         {
             return Utilities.FindExtensions(this.ExtensionElements,
                                             localName, ns, new ExtensionList(this));
+
+        }
+
+
+        /// <summary>
+        /// Finds all ExtensionElement based on it's local name
+        /// and it's namespace. If namespace is NULL, allwhere
+        /// the localname matches is found. If there are extensionelements that do 
+        /// not implment ExtensionElementFactory, they will not be taken into account
+        /// Primary use of this is to find XML nodes
+        /// </summary>
+        /// <param name="localName">the xml local name of the element to find</param>
+        /// <param name="ns">the namespace of the element to find</param>
+        /// <returns>none</returns>
+        public List<T> FindExtensions<T>(string localName, string ns) where T : IExtensionElementFactory
+        {
+            return Utilities.FindExtensions<T>(this.ExtensionElements,
+                                            localName, ns);
 
         }
 
@@ -196,6 +215,7 @@ namespace Google.GData.Extensions {
             SimpleContainer sc = null;            
             // create a new container
             sc = this.MemberwiseClone() as SimpleContainer;
+            sc.InitInstance(this);
       
             sc.ProcessAttributes(node);
             sc.ProcessChildNodes(node, parser);
@@ -265,6 +285,30 @@ namespace Google.GData.Extensions {
                     e.Save(writer);
                 }
             }
+        }
+
+
+        protected void SetStringValue<T>(string value, string elementName, string ns) where T : SimpleElement, new()
+        {
+            T v = null;
+            if (String.IsNullOrEmpty(value) == false)
+            {
+                v = new T();
+                v.Value = value;
+            }
+           
+            ReplaceExtension(elementName, ns, v);
+        }
+
+
+        protected string GetStringValue<T>(string elementName, string ns) where T : SimpleElement
+        {
+            T e =  FindExtension(elementName, ns) as T;
+            if (e!= null)
+            {
+                return e.Value;
+            }
+            return null;
         }
         #endregion
     }

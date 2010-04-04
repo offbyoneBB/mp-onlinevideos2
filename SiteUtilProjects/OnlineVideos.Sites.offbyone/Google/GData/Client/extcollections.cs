@@ -25,7 +25,6 @@
 using System;
 using System.Collections;
 using Google.GData.Client;
-using Google.GData.Extensions.MediaRss;
 using System.Collections.Generic;
 
 #endregion

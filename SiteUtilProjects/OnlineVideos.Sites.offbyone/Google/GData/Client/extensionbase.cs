@@ -293,6 +293,8 @@ namespace Google.GData.Extensions {
         protected void InitInstance(ExtensionBase factory)
         {
             this.attributes = null;
+            this.attributeNamespaces = null;
+            this.unknownChildren = null;
             for (int i=0; i < factory.getAttributes().Count; i++)
             {
                 string name = factory.getAttributes().GetKey(i) as string;

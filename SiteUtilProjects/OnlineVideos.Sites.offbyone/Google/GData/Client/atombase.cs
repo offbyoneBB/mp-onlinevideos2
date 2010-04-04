@@ -365,7 +365,7 @@ namespace Google.GData.Client
         /// Primary use of this is to find XML nodes
         /// </summary>
         /// <param name="localName">the xml local name of the element to find</param>
-        /// <param name="ns">the namespace of the elementToPersist</param>
+        /// <param name="ns">the namespace of the element to find</param>
         /// <returns>Object</returns>
         public IExtensionElementFactory FindExtension(string localName, string ns) 
         {
@@ -377,7 +377,7 @@ namespace Google.GData.Client
         /// extension factories list and calling CreateInstance for the right one
         /// </summary>
         /// <param name="localName">the xml local name of the element to find</param>
-        /// <param name="ns">the namespace of the elementToPersist</param>
+        /// <param name="ns">the namespace of the element to find</param>
         /// <returns>Object</returns>
         public IExtensionElementFactory CreateExtension(string localName, string ns) 
         {
@@ -396,7 +396,7 @@ namespace Google.GData.Client
         /// Finds the extension factory for a given name/namespace
         /// </summary>
         /// <param name="localName">the xml local name of the element to find</param>
-        /// <param name="ns">the namespace of the elementToPersist</param>
+        /// <param name="ns">the namespace of the element to find</param>
         /// <returns>Object</returns>
         public IExtensionElementFactory FindExtensionFactory(string localName, string ns) 
         {
@@ -424,7 +424,7 @@ namespace Google.GData.Client
         /// Primary use of this is to find XML nodes
         /// </summary>
         /// <param name="localName">the xml local name of the element to find</param>
-        /// <param name="ns">the namespace of the elementToPersist</param>
+        /// <param name="ns">the namespace of the element to find</param>
         /// <returns>Object</returns>
         public ExtensionList FindExtensions(string localName, string ns) 
         {
@@ -439,7 +439,7 @@ namespace Google.GData.Client
         /// Primary use of this is to find XML nodes
         /// </summary>
         /// <param name="localName">the xml local name of the element to find</param>
-        /// <param name="ns">the namespace of the elementToPersist</param>
+        /// <param name="ns">the namespace of the element to find</param>
         /// <param name="arr">the array to fill</param>
         /// <returns>none</returns>
         public ExtensionList FindExtensions(string localName, string ns, ExtensionList arr) 
@@ -457,7 +457,7 @@ namespace Google.GData.Client
         /// Primary use of this is to find XML nodes
         /// </summary>
         /// <param name="localName">the xml local name of the element to find</param>
-        /// <param name="ns">the namespace of the elementToPersist</param>
+        /// <param name="ns">the namespace of the element to findt</param>
         /// <returns>none</returns>
         public List<T> FindExtensions<T>(string localName, string ns) where T : IExtensionElementFactory
         {
@@ -654,7 +654,6 @@ namespace Google.GData.Client
             if (IsPersistable())
             {
                 WriteElementStart(writer, this.XmlName);
-                AddOtherNamespaces(writer); 
                 SaveXmlAttributes(writer);
                 SaveInnerXml(writer);
                 writer.WriteEndElement();
@@ -697,37 +696,39 @@ namespace Google.GData.Client
                 writer.WriteAttributeString(BaseNameTable.gDataPrefix, BaseNameTable.XmlEtagAttribute, BaseNameTable.gNamespace, se.Etag);
             }
 
-            foreach (object ob in this.ExtensionElements)
+
+            // first go over all attributes
+            foreach (IExtensionElementFactory ele in this.ExtensionElements)
             {
-                // this code can be removed when the generics are introduced. 
-                XmlNode node = ob as XmlNode;
-                if (node != null)
+                XmlExtension x = ele as XmlExtension;
+                // what we need to do here is:
+                // go over all the attributes. look at all attributes that are namespace related
+                // if the attribute is another default atomnamespace declaration, change it to some rnd prefix
+
+                if (x != null)
                 {
-                    if (SkipNode(node))
-                    {
-                        continue;
-                    }
-                    Tracing.TraceInfo("Saving out additonal attributes..." + node.Name); 
-                    node.WriteTo(writer);
-                }
-                else
-                {
-                    IExtensionElementFactory ele = ob as IExtensionElementFactory;
-                    XmlExtension x = ele as XmlExtension;
-                    if (x != null)
-                    {
-                        if (SkipNode(x.Node))
-                        {
-                            continue;
-                        }
-                    }
-                    if (ele != null)
+                    if (x.Node.NodeType == XmlNodeType.Attribute)
                     {
                         ele.Save(writer);
                     }
                 }
             }
-
+            AddOtherNamespaces(writer); 
+            
+            // now just the non attributes
+            foreach (IExtensionElementFactory ele in this.ExtensionElements)
+            {
+                XmlExtension x = ele as XmlExtension;
+                if (x != null)
+                {
+                    if (x.Node.NodeType == XmlNodeType.Attribute)
+                    {
+                        // skip the guy
+                        continue;
+                    } 
+                }
+                ele.Save(writer);
+            }
         }
         /////////////////////////////////////////////////////////////////////////////
          
@@ -746,21 +747,57 @@ namespace Google.GData.Client
             return false; 
         }
 
+        private bool IsAtomDefaultNamespace(XmlWriter writer)
+        {
+            string prefix = writer.LookupPrefix(BaseNameTable.NSAtom);
+            if (prefix == null)
+            {
+                // if it is not defined, we need to make a choice
+                // go over all attributes
+                foreach (IExtensionElementFactory ele in this.ExtensionElements)
+                {
+                    XmlExtension x = ele as XmlExtension;
+                    // what we need to do here is:
+                    // go over all the attributes. look at all attributes that are namespace related
+                    // if the attribute is another default atomnamespace declaration, change it to some rnd prefix
+
+                    if (x != null)
+                    {
+                        if (x.Node.NodeType == XmlNodeType.Attribute &&
+                            (String.Compare(x.Node.Name, "xmlns") == 0) &&
+                            (String.Compare(x.Node.Value, BaseNameTable.NSAtom) != 0))
+                            return false;
+                    }
+                }
+
+                return true;
+            }
+            if (prefix.Length > 0)
+                return false;
+            return true;
+        }
+
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>protected WriteElementStart(XmlWriter writer)</summary> 
         /// <param name="writer"> the xmlwriter to use</param>
         /// <param name="elementName"> the elementToPersist to use</param>
         //////////////////////////////////////////////////////////////////////
-        static protected void WriteElementStart(XmlWriter writer, string elementName)
+        protected void WriteElementStart(XmlWriter writer, string elementName)
         {
             Tracing.Assert(writer != null, "writer should not be null");
             if (writer == null)
             {
                 throw new ArgumentNullException("writer"); 
             }
-            writer.WriteStartElement(elementName);
-            Utilities.EnsureAtomNamespace(writer);
+            if (IsAtomDefaultNamespace(writer) == false)
+            {
+                writer.WriteStartElement("atom", elementName, BaseNameTable.NSAtom);
+            }
+            else
+            {
+                writer.WriteStartElement(elementName);
+            }
         }
         /////////////////////////////////////////////////////////////////////////////
 
@@ -784,7 +821,7 @@ namespace Google.GData.Client
         /// <param name="elementName"> the elementToPersist to use</param>
         /// <param name="dateTime"> the localDateTime to convert and persist</param>
         //////////////////////////////////////////////////////////////////////
-        static protected void WriteLocalDateTimeElement(XmlWriter writer, string elementName, DateTime dateTime)
+        protected void WriteLocalDateTimeElement(XmlWriter writer, string elementName, DateTime dateTime)
         {
             Tracing.Assert(writer != null, "writer should not be null");
             if (writer == null)

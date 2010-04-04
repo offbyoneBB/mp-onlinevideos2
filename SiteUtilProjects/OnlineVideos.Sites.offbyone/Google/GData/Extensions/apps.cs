@@ -302,6 +302,77 @@ namespace Google.GData.Extensions.Apps
     }
 
     /// <summary>
+    /// Name table for Google Apps extensions specific to the Google Domain Settings API.
+    /// </summary>
+    public class AppsDomainSettingsNameTable : AppsNameTable
+    {
+        public const string AppsAdminSettingsBaseFeedUri = "https://apps-apis.google.com/a/feeds/domain/2.0/";
+        /// <summary>
+        /// URL suffixes for the Google Domain Settings tasks
+        /// </summary>        
+        // General Settings
+        public const string DefaultLanguageUriSuffix = "/general/defaultLanguage";
+        public const string OrganizationNameUriSuffix = "/general/organizationName";
+        public const string MaximumNumberOfUsersUriSuffix = "/general/maximumNumberOfUsers";
+        public const string CurrentNumberOfUsersUriSuffix = "/general/currentNumberOfUsers";
+        // Account Information Settings
+        public const string IsVerifiedUriSuffix = "/accountInformation/isVerified";
+        public const string SupportPINUriSuffix = "/accountInformation/supportPIN";
+        public const string EditionUriSuffix = "/accountInformation/edition";
+        public const string CustomerPINUriSuffix = "/accountInformation/customerPIN";
+        public const string CreationTimeUriSuffix = "/accountInformation/creationTime";
+        public const string CountryCodeUriSuffix = "/accountInformation/countryCode";
+        public const string AdminSecondaryEmailUriSuffix = "/accountInformation/adminSecondaryEmail";
+        // Appearance Settings
+        public const string CustomLogoUriSuffix = "/appearance/customLogo";
+        // Verification Settings
+        public const string CnameUriSuffix = "/verification/cname";
+        public const string MxUriSuffix = "/verification/mx";
+        // SSO Settings
+        public const string SsoGeneralUriSuffix = "/sso/general";
+        public const string SsoSigningkeyUriSuffix = "/sso/signingkey";
+        // Email Settings
+        public const string MigrationUriSuffix = "/email/migration";
+        public const string GatewayUriSuffix = "/email/gateway";
+        public const string EmailroutingUriSuffix = "/emailrouting";
+        // Properties
+        public const string DefaultLanguage = "defaultLanguage";
+        public const string OrganizationName = "organizationName";
+        public const string MaximumNumberOfUsers = "maximumNumberOfUsers";
+        public const string CurrentNumberOfUsers = "currentNumberOfUsers";
+        public const string IsVerified = "isVerified";
+        public const string SupportPIN = "supportPIN";
+        public const string Edition = "edition";
+        public const string CustomerPIN = "customerPIN";
+        public const string CreationTime = "creationTime";
+        public const string CountryCode = "countryCode";
+        public const string AdminSecondaryEmail = "adminSecondaryEmail";        
+        public const string LogoImage = "logoImage";
+        public const string RecordName = "recordName";
+        public const string Verified = "verified";
+        public const string VerifiedMethod = "verifiedMethod";
+        public const string SamlSignonUri = "samlSignonUri";
+        public const string SamlLogoutUri = "samlLogoutUri";
+        public const string ChangePasswordUri = "changePasswordUri";
+        public const string EnableSSO = "enableSSO";
+        public const string SsoWhitelist = "ssoWhitelist";
+        public const string UseDomainSpecificIssuer = "useDomainSpecificIssuer";
+        public const string SigningKey = "signingKey";
+        public const string EnableUserMigration = "enableUserMigration";
+        public const string SmartHost = "smartHost";
+        public const string SmtpMode = "smtpMode";
+        public const string RouteDestination = "routeDestination";
+        public const string RouteRewriteTo = "routeRewriteTo";
+        public const string RouteEnabled = "routeEnabled";
+        public const string BounceNotifications = "bounceNotifications";
+        public const string AccountHandling = "accountHandling";
+        // AccountHandling possible values
+        public const string AllAccounts = "allAccounts";
+        public const string ProvisionedAccounts = "allAccounts";
+        public const string UnknownAccounts = "unknownAccounts";
+    }
+
+    /// <summary>
     /// Name table for Google Apps extensions specific to the Groups Provisioning
     /// </summary>
     public class AppsGroupsNameTable : AppsNameTable

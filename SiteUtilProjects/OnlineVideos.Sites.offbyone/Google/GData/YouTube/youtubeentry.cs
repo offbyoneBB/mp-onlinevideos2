@@ -31,7 +31,7 @@ namespace Google.GData.YouTube {
     /// <summary>
     ///  this is a helper class just for parsing the category document
     /// </summary>
-    public class YouTubeCategoryCollection : AtomBase
+    internal class YouTubeCategoryCollection : AtomBase
     {
         public YouTubeCategoryCollection()
         {

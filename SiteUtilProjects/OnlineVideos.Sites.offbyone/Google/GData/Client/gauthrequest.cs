@@ -234,7 +234,7 @@ namespace Google.GData.Client
 
         /// <summary>
         /// property accessor to set the account type that is used during
-        /// authentication. Defaults, if not set, to GOOGLE_OR_HOSTED
+        /// authentication. Defaults, if not set, to HOSTED_OR_GOOGLE
         /// </summary>
         public string AccountType
         {
@@ -314,11 +314,6 @@ namespace Google.GData.Client
                 this.versionInfo.ProtocolMinor = value;
             }
         }
-
-
-        
-
-
     }
     /////////////////////////////////////////////////////////////////////////////
 
@@ -459,7 +454,10 @@ namespace Google.GData.Client
             {
 
                 http.Headers.Remove(GDataGAuthRequestFactory.GDataVersion);
-                http.Headers.Remove(GoogleAuthentication.Override);
+      
+                // as we are doublebuffering due to redirect issues anyhow, 
+                // disallow the default buffering
+                http.AllowWriteStreamBuffering = false; 
 
                 IVersionAware v = this.factory as IVersionAware;
                 if (v != null)
@@ -475,6 +473,9 @@ namespace Google.GData.Client
                     http.Method != HttpMethods.Get &&
                     http.Method != HttpMethods.Post)
                 {
+                    // remove it, if it is already there.
+                    http.Headers.Remove(GoogleAuthentication.Override);
+
                     // cache the method, because Mono will complain if we try
                     // to open the request stream with a DELETE method.
                     string currentMethod = http.Method;
@@ -504,13 +505,16 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         internal string QueryAuthToken(GDataCredentials gc)
         {
-            Tracing.Assert(gc != null, "Do not call QueryAuthToken with no network credentials"); 
-            if (gc == null)
-            {
-                throw new System.ArgumentNullException("nc", "No credentials supplied");
-            }
-            // Create a new request to the authentication URL.    
             Uri authHandler = null; 
+
+            // need to copy this to a new object to avoid that people mix and match
+            // the old (factory) and the new (requestsettings) and get screwed. So
+            // copy the settings from the gc passed in and mix with the settings from the factory
+            GDataCredentials gdc = new GDataCredentials(gc.Username, gc.getPassword());
+            gdc.CaptchaToken = this.factory.CaptchaToken;
+            gdc.CaptchaAnswer = this.factory.CaptchaAnswer;
+            gdc.AccountType = this.factory.AccountType;
+
             try 
             {
                 authHandler = new Uri(this.factory.Handler); 
@@ -518,161 +522,16 @@ namespace Google.GData.Client
             catch
             {
                 throw new GDataRequestException("Invalid authentication handler URI given"); 
-            }
+            }                         
 
-            WebRequest authRequest = WebRequest.Create(authHandler); 
-            string accountType = GoogleAuthentication.AccountType;
-            if (this.factory.AccountType != null)
-            {
-                accountType += this.factory.AccountType;
-            } 
-            else 
-            {
-                accountType += GoogleAuthentication.AccountTypeDefault;
-            }
-            if (this.factory.Proxy != null)
-            {
-                authRequest.Proxy = this.factory.Proxy; 
-            }
-            HttpWebRequest web = authRequest as HttpWebRequest;
-            if (web != null)
-            {
-                web.KeepAlive = this.factory.KeepAlive;     
-            }
-            WebResponse authResponse = null; 
-
-            string authToken = null; 
-            try
-            {
-                authRequest.ContentType = HttpFormPost.Encoding; 
-                authRequest.Method = HttpMethods.Post;
-                ASCIIEncoding encoder = new ASCIIEncoding();
-
-                string user = gc.Username == null ? "" : gc.Username;
-                string pwd = gc.getPassword() == null ? "" : gc.getPassword();
-
-                // now enter the data in the stream
-                string postData = GoogleAuthentication.Email + "=" + Utilities.UriEncodeUnsafe(user) + "&"; 
-                postData += GoogleAuthentication.Password + "=" + Utilities.UriEncodeUnsafe(pwd) + "&";  
-                postData += GoogleAuthentication.Source + "=" + Utilities.UriEncodeUnsafe(this.factory.ApplicationName) + "&"; 
-                postData += GoogleAuthentication.Service + "=" + Utilities.UriEncodeUnsafe(this.factory.Service) + "&"; 
-                if (this.factory.CaptchaAnswer != null)
-                {
-                    postData += GoogleAuthentication.CaptchaAnswer + "=" + Utilities.UriEncodeUnsafe(this.factory.CaptchaAnswer) + "&"; 
-                }
-                if (this.factory.CaptchaToken != null)
-                {
-                    postData += GoogleAuthentication.CaptchaToken + "=" + Utilities.UriEncodeUnsafe(this.factory.CaptchaToken) + "&"; 
-                }
-                postData += accountType; 
-
-                byte[] encodedData = encoder.GetBytes(postData);
-                authRequest.ContentLength = encodedData.Length; 
-
-                Stream requestStream = authRequest.GetRequestStream() ;
-                requestStream.Write(encodedData, 0, encodedData.Length); 
-                requestStream.Close();        
-                authResponse = authRequest.GetResponse(); 
-
-            } 
-            catch (WebException e)
-            {
-                Tracing.TraceMsg("QueryAuthtoken failed " + e.Status + " " + e.Message); 
-                authResponse = e.Response;
-            }
-            HttpWebResponse response = authResponse as HttpWebResponse;
-            if (response != null)
-            {
-                 // check the content type, it must be text
-                if (!response.ContentType.StartsWith(HttpFormPost.ReturnContentType))
-                {
-                    throw new GDataRequestException("Execution of authentication request returned unexpected content type: " + response.ContentType,  response); 
-                }
-                TokenCollection tokens = Utilities.ParseStreamInTokenCollection(response.GetResponseStream());
-                authToken = Utilities.FindToken(tokens, GoogleAuthentication.AuthToken); 
-
-                if (authToken == null)
-                {
-                    throw getAuthException(tokens, response);
-                }
-                // failsafe. if getAuthException did not catch an error...
-                int code= (int)response.StatusCode;
-                if (code != 200)
-                {
-                    throw new GDataRequestException("Execution of authentication request returned unexpected result: " +code,  response); 
-                }
-
-            }
-            Tracing.Assert(authToken != null, "did not find an auth token in QueryAuthToken");
-            if (authResponse != null)
-            {
-                authResponse.Close();
-            }
-
-           return authToken;
+            return Utilities.QueryClientLoginToken(gdc,
+                                        this.factory.Service,
+                                        this.factory.ApplicationName,
+                                        this.factory.KeepAlive,
+                                        authHandler);
         }
         /////////////////////////////////////////////////////////////////////////////
     
-        /// <summary>
-        ///  Returns the respective GDataAuthenticationException given the return
-        /// values from the login URI handler.
-        /// </summary>
-        /// <param name="tokens">The tokencollection of the parsed return form</param>
-        /// <param name="response">the  webresponse</param> 
-        /// <returns>AuthenticationException</returns>
-        private static LoggedException getAuthException(TokenCollection tokens,  HttpWebResponse response) 
-        {
-            String errorName = Utilities.FindToken(tokens, "Error");
-            int code= (int)response.StatusCode;
-            if (errorName == null || errorName.Length == 0)
-            {
-               // no error given by Gaia, return a standard GDataRequestException
-                throw new GDataRequestException("Execution of authentication request returned unexpected result: " +code,  response); 
-            }
-            if ("BadAuthentication".Equals(errorName))
-            {
-                return new InvalidCredentialsException("Invalid credentials");
-            }
-            else if ("AccountDeleted".Equals(errorName))
-            {
-                return new AccountDeletedException("Account deleted");
-            }
-            else if ("AccountDisabled".Equals(errorName))
-            {
-                return new AccountDisabledException("Account disabled");
-            }
-            else if ("NotVerified".Equals(errorName))
-            {
-                return new NotVerifiedException("Not verified");
-            }
-            else if ("TermsNotAgreed".Equals(errorName))
-            {
-                return new TermsNotAgreedException("Terms not agreed");
-            }
-            else if ("ServiceUnavailable".Equals(errorName))
-            {
-                return new ServiceUnavailableException("Service unavailable");
-            }
-            else if ("CaptchaRequired".Equals(errorName))
-            {
-                String captchaPath = Utilities.FindToken(tokens, "CaptchaUrl");
-                String captchaToken = Utilities.FindToken(tokens, "CaptchaToken");
-
-                StringBuilder captchaUrl = new StringBuilder();
-                captchaUrl.Append(GoogleAuthentication.DefaultProtocol).Append("://");
-                captchaUrl.Append(GoogleAuthentication.DefaultDomain);
-                captchaUrl.Append(GoogleAuthentication.AccountPrefix);
-                captchaUrl.Append('/').Append(captchaPath);
-                return new CaptchaRequiredException("Captcha required",
-                                                    captchaUrl.ToString(),
-                                                    captchaToken);
-
-            }
-            else
-            {
-                return new AuthenticationException("Error authenticating (check service name): " + errorName);
-            }
-        }
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>Executes the request and prepares the response stream. Also 
@@ -818,14 +677,17 @@ namespace Google.GData.Client
 #else
                         bytesWritten += numBytes;
                         if (this.asyncData != null && this.asyncData.Delegate != null &&
-                            this.asyncData.Service != null)
+                            this.asyncData.DataHandler != null)
                         {
                             AsyncOperationProgressEventArgs args;
-                            args = new AsyncOperationProgressEventArgs(this.requestCopy.Length, bytesWritten, (int)current, this.asyncData.UserData);
-
-                            if (this.asyncData.Service.SendProgressData(asyncData, args) == false)
-                                break;
+                            args = new AsyncOperationProgressEventArgs(this.requestCopy.Length, 
+                                            bytesWritten, (int)current, 
+                                            this.Request.RequestUri,
+                                            this.Request.Method,
+                                            this.asyncData.UserData);
                             current += oneLoop;
+                            if (this.asyncData.DataHandler.SendProgressData(asyncData, args) == false)
+                                break;         
                         }
 #endif
                     }

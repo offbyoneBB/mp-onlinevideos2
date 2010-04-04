@@ -95,8 +95,8 @@ namespace Google.GData.Client
                                            bool session)
         {
 
-            return getRequestUrl(DEFAULT_PROTOCOL, hostedDomain, continueUrl, scope,
-                                 secure, session);
+            return getRequestUrl(hostedDomain, DEFAULT_PROTOCOL, DEFAULT_DOMAIN, DEFAULT_HANDLER,
+            					continueUrl, scope, secure, session);
         }
 
 
@@ -109,7 +109,7 @@ namespace Google.GData.Client
         /// </summary> 
         /// <param name="protocol">the protocol to use to communicate with the 
         /// server</param>
-        /// <param name="domain">the domain at which the authentication server 
+        /// <param name="authenticationDomain">the domain at which the authentication server 
         /// exists</param>
         /// <param name="continueUrl">the URL to redirect to on successful 
         /// token retrieval</param>
@@ -120,14 +120,14 @@ namespace Google.GData.Client
         /// <returns>the URL to be used to retrieve the AuthSub token</returns>
         //////////////////////////////////////////////////////////////////////
         public static string getRequestUrl(string protocol,
-                                           string domain,
+                                           string authenticationDomain,
                                            string continueUrl,
                                            string scope,
                                            bool secure,
                                            bool session)
         {
-            return getRequestUrl(null, protocol, domain, DEFAULT_HANDLER, continueUrl, 
-                scope, secure, session);
+            return getRequestUrl(null, protocol, authenticationDomain, DEFAULT_HANDLER, 
+            					continueUrl, scope, secure, session);
         }
 
         //////////////////////////////////////////////////////////////////////
@@ -138,7 +138,7 @@ namespace Google.GData.Client
         /// </summary> 
         /// <param name="protocol">the protocol to use to communicate with the 
         /// server</param>
-        /// <param name="domain">the domain at which the authentication server 
+        /// <param name="authenticationDomain">the domain at which the authentication server 
         /// exists</param>
         /// <param name="handler">the location of the authentication handler
         ///  (defaults to "/accounts/AuthSubRequest".</param>
@@ -151,7 +151,7 @@ namespace Google.GData.Client
         /// <returns>the URL to be used to retrieve the AuthSub token</returns>
         //////////////////////////////////////////////////////////////////////
         public static string getRequestUrl(string protocol,
-                                           string domain,
+                                           string authenticationDomain,
                                            string handler,
                                            string continueUrl,
                                            string scope,
@@ -159,7 +159,7 @@ namespace Google.GData.Client
                                            bool session)
         {
 
-            return getRequestUrl(null, protocol, domain, handler, continueUrl, 
+            return getRequestUrl(null, protocol, authenticationDomain, handler, continueUrl, 
                 scope, secure, session);
         }
 
@@ -173,7 +173,7 @@ namespace Google.GData.Client
         /// like www.myexample.com</param>
         /// <param name="protocol">the protocol to use to communicate with the 
         /// server</param>
-        /// <param name="domain">the domain at which the authentication server 
+        /// <param name="authenticationDomain">the domain at which the authentication server 
         /// exists</param>
         /// <param name="handler">the location of the authentication handler
         ///  (defaults to "/accounts/AuthSubRequest".</param>
@@ -187,7 +187,7 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public static string getRequestUrl(string hostedDomain,
                                            string protocol,
-                                           string domain,
+                                           string authenticationDomain,
                                            string handler,
                                            string continueUrl,
                                            string scope,
@@ -197,7 +197,7 @@ namespace Google.GData.Client
 
             StringBuilder url = new StringBuilder(protocol);
             url.Append("://");
-            url.Append(domain);
+            url.Append(authenticationDomain);
             url.Append(handler);
             url.Append("?");
 
@@ -624,7 +624,7 @@ namespace Google.GData.Client
                 {
                     continue; 
                 }
-                x.Insert(i, Convert.ToInt16(randomNumber[i], CultureInfo.InvariantCulture).ToString()[0]);
+                x.Append(Convert.ToInt16(randomNumber[i], CultureInfo.InvariantCulture).ToString()[0]);
             }
             return x.ToString(); 
         }

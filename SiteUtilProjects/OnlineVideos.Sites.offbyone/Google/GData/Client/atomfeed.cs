@@ -613,6 +613,12 @@ namespace Google.GData.Client
             Tracing.TraceCall("parsing stream -> Start:" + format.ToString());
             BaseFeedParser feedParser= null; 
 
+            // make sure we reset our collections
+            this.Authors.Clear();
+            this.Contributors.Clear();
+            this.Links.Clear();
+            this.Categories.Clear();
+            
             feedParser = new AtomFeedParser(this);
 
             // create a new delegate for the parser

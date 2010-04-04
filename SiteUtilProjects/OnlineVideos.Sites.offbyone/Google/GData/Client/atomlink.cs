@@ -203,8 +203,8 @@ namespace Google.GData.Client
                 WriteEncodedAttributeString(writer, AtomParserNameTable.XmlAttributeLength, this.Length.ToString(CultureInfo.InvariantCulture));
             }
             WriteEncodedAttributeString(writer, AtomParserNameTable.XmlTitleElement, this.Title);
-			base.SaveXmlAttributes(writer);
-
+            // call base later as base takes care of writing out extension elements that might close the attribute list
+            base.SaveXmlAttributes(writer);
         }
         /////////////////////////////////////////////////////////////////////////////
 
