@@ -66,7 +66,8 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo vi = new VideoInfo();
                 vi.VideoUrl = jo["id"].ToString().Replace("/video","");
-                vi.VideoUrl = "http://nba.cdn.turner.com/nba/big" + vi.VideoUrl.Substring(0, vi.VideoUrl.LastIndexOf("/"))+"_nba_576x324.flv";
+                vi.VideoUrl = "http://nba.cdn.turner.com/nba/big" + vi.VideoUrl.Substring(0, vi.VideoUrl.LastIndexOf("/"));
+                vi.VideoUrl += vi.VideoUrl.EndsWith(".nba") ? "_nba_576x324.flv" : ".flv";
                 vi.Title = jo["title"].ToString();
                 vi.Description = ((JsonObject)((JsonObject)jo["metadata"])["media"])["excerpt"].ToString();
                 vi.ImageUrl = ((JsonObject)((JsonObject)((JsonObject)jo["metadata"])["media"])["thumbnail"])["url"].ToString();
