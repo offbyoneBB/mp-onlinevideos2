@@ -1067,6 +1067,34 @@
               <ZipFileName>Installer{CopyFile}\{a45f06e1-39db-4f03-b1d5-dcaee1e4083e}-KabouterWesley.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\KabouterWesley.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\ctTV.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e61a4ded-68da-4011-8eee-55a376e61b34}-ctTV.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctTV.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\mySpass.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{eb41995f-4a02-4b56-8dcd-e3d1ebb68f59}-mySpass.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\mySpass.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\ctTV.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{555c7690-e9dc-4ffa-af01-36af0d109c58}-ctTV.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ctTV.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\mySpass.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2e19fa1a-3b63-4df4-89bd-2930dc3e125e}-mySpass.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\mySpass.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1492,6 +1520,48 @@ Click Next to continue or Cancel to exit Setup.</Value>
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
+              <Params>
+                <Items>
+                  <SectionParam Name="Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+using System.IO;
+using System.Security.AccessControl;
+using System.Security.Principal;
+
+public class Script
+{
+    public static void Main(PackageClass packageClass, ActionItem actionItem)
+    {
+        string satelliteDllsPath = Path.Combine(MpeInstaller.TransformInRealPath("%Plugins%"), "Windows\\OnlineVideos");
+
+        // Create a SecurityIdentifier object for "Users".
+        SecurityIdentifier usersSid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+
+        DirectorySecurity security = System.IO.Directory.GetAccessControl(satelliteDllsPath);
+        FileSystemAccessRule newRule =
+          new FileSystemAccessRule(
+            usersSid,
+            FileSystemRights.FullControl,                                       // full control so no arm if new files are created
+            InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
+            PropagationFlags.InheritOnly,
+            AccessControlType.Allow);
+        bool modified = false;
+        security.ModifyAccessRule(AccessControlModification.Add, newRule, out modified);
+        System.IO.Directory.SetAccessControl(satelliteDllsPath, security);
+    }
+}
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>BeforPanelShow</ExecuteLocation>
+            </ActionItem>
           </Items>
         </Actions>
         <IncludedGroups />
@@ -1512,15 +1582,15 @@ Click Next to continue or Cancel to exit Setup.</Value>
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>19</Minor>
+      <Minor>20</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
-    <VersionDescription>AutoUpdate Timeout Fixed. Current Downloads now shows Progress. Youtube clips can be added to internal Favorites.</VersionDescription>
+    <VersionDescription>Bugfixes.</VersionDescription>
     <DevelopmentStatus>Beta</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.19.0.MPE1</OnlineLocation>
-    <ReleaseDate>2010-03-29T18:01:51</ReleaseDate>
+    <ReleaseDate>2010-04-04T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.[Version].mpe1</Location>
     <Params>
@@ -2610,6 +2680,34 @@ Click Next to continue or Cancel to exit Setup.</Value>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\ctTV.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e61a4ded-68da-4011-8eee-55a376e61b34}-ctTV.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctTV.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\mySpass.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{eb41995f-4a02-4b56-8dcd-e3d1ebb68f59}-mySpass.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\mySpass.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\ctTV.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{555c7690-e9dc-4ffa-af01-36af0d109c58}-ctTV.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ctTV.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\mySpass.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2e19fa1a-3b63-4df4-89bd-2930dc3e125e}-mySpass.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\mySpass.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Skins\Xface\myonlinevideos.details.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c1618bb1-561a-4a15-ad4e-ac5dbca348ca}-myonlinevideos.details.xml</ZipFileName>
         <DestinationFilename>%Skin%\Xface\myonlinevideos.details.xml</DestinationFilename>
@@ -2905,7 +3003,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{a338af13-a76f-40b9-b54b-ad97ab25c37d}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{31ece65f-5378-4546-8ddf-795213b4df1e}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
