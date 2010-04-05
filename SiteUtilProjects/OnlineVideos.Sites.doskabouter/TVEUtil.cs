@@ -78,6 +78,10 @@ namespace OnlineVideos.Sites
             string webData = GetWebData(video.VideoUrl);
             string url = GetSubString(webData, "<location>", "</location>");
             if (url.StartsWith("rtmp"))
+                return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", 
+                    OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
+
+            if (url.StartsWith("rtmp"))
                 return url.Replace(@"rtmp://stream.rtve.es/stream/resources", @"http://www.rtve.es/resources");
             return url;
         }
