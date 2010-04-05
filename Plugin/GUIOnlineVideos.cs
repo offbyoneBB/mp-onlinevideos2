@@ -2042,24 +2042,27 @@ namespace OnlineVideos
                 for (int i = 0; i < OnlineVideoSettings.Instance.SiteSettingsList.Count; i++)
                 {                        
                     SiteSettings localSite = OnlineVideoSettings.Instance.SiteSettingsList[i];
-                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, localSite.Name);
-                    OnlineVideosWebservice.Site remoteSite = Array.Find(onlineSites, delegate(OnlineVideosWebservice.Site site) { return site.Name == localSite.Name; });
-                    if (remoteSite != null)
+                    if (localSite.IsEnabled)
                     {
-                        // remember what dlls are required and check for changed dlls later (regardless of lastUpdated on site)
-                        if (!string.IsNullOrEmpty(remoteSite.RequiredDll)) requiredDlls[remoteSite.RequiredDll] = true;
-                        // get site if updated on server
-                        if (localSite.LastUpdated < remoteSite.LastUpdated)
+                        if (dlgPrgrs != null) dlgPrgrs.SetLine(1, localSite.Name);
+                        OnlineVideosWebservice.Site remoteSite = Array.Find(onlineSites, delegate(OnlineVideosWebservice.Site site) { return site.Name == localSite.Name; });
+                        if (remoteSite != null)
                         {
-                            SiteSettings updatedSite = GUISiteUpdater.GetRemoteSite(remoteSite.Name);    
-                            if (updatedSite != null)
+                            // remember what dlls are required and check for changed dlls later (regardless of lastUpdated on site)
+                            if (!string.IsNullOrEmpty(remoteSite.RequiredDll)) requiredDlls[remoteSite.RequiredDll] = true;
+                            // get site if updated on server
+                            if (localSite.LastUpdated < remoteSite.LastUpdated)
                             {
-                                OnlineVideoSettings.Instance.SiteSettingsList[i] = updatedSite;
-                                saveRequired = true;
-                            }      
+                                SiteSettings updatedSite = GUISiteUpdater.GetRemoteSite(remoteSite.Name);
+                                if (updatedSite != null)
+                                {
+                                    OnlineVideoSettings.Instance.SiteSettingsList[i] = updatedSite;
+                                    saveRequired = true;
+                                }
+                            }                            
                         }
-                        if (dlgPrgrs != null) dlgPrgrs.Percentage = 10 + (70 * (i+1) / OnlineVideoSettings.Instance.SiteSettingsList.Count);
                     }
+                    if (dlgPrgrs != null) dlgPrgrs.Percentage = 10 + (70 * (i + 1) / OnlineVideoSettings.Instance.SiteSettingsList.Count);
                 }
 
                 if (requiredDlls.Count > 0)
