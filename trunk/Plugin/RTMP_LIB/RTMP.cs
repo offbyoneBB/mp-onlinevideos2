@@ -445,6 +445,8 @@ namespace RTMP_LIB
         /// type 7: Pong reply from client. The second parameter is the time the server sent with his ping request.
         /// type 26: SWFVerification request
         /// type 27: SWFVerification response
+        /// type 31: Buffer empty
+        /// type 32: Buffer full
         /// </summary>
         /// <param name="nType"></param>
         /// <param name="nObject"></param>
@@ -897,6 +899,16 @@ namespace RTMP_LIB
                     CombinedBitrates += videodatarate;
                     Logger.Log(string.Format("videodatarate: {0}", videodatarate));
                 }
+                if (CombinedTracksLength == 0)
+                {
+                    props.Clear();
+                    obj.FindMatchingProperty("datasize", props, int.MaxValue);
+                    if (props.Count > 0)
+                    {
+                        CombinedTracksLength = (int)props[0].GetNumber();
+                        Logger.Log(string.Format("Set CombinedTracksLength: {0}", CombinedTracksLength));
+                    }
+                }   
             }
         }
 

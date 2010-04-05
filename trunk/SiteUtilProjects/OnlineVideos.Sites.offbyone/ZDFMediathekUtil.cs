@@ -47,7 +47,7 @@ namespace OnlineVideos.Sites
                                 parentCategory.SubCategories.Add(new RssLink()
                                 {
                                     Name = DateTime.Today.AddDays(-i).ToString("dddd, d.M.yyy"),
-                                    Url = string.Format("enddate={0}&startdate={0}", DateTime.Today.AddDays(-i).ToString("ddMMyy")),
+                                    Url = string.Format("startdate={0}&enddate={0}", DateTime.Today.AddDays(-i).ToString("ddMMyy")),
                                     ParentCategory = parentCategory
                                 });
                             }
@@ -151,7 +151,7 @@ namespace OnlineVideos.Sites
                 default:
                     if (category.ParentCategory.Name == "Sendung Verpasst")
                     {
-                        teaserlist = Agent.SendungVerpasst(ConfigurationHelper.GetSendungVerpasstServiceUrl(RestAgent.Configuration), pageSize, 50, (category as RssLink).Url);
+                        teaserlist = Agent.SendungVerpasst(ConfigurationHelper.GetSendungVerpasstServiceUrl(RestAgent.Configuration), pageSize, 0, (category as RssLink).Url);
                     }
                     else
                     {
