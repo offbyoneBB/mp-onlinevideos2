@@ -11,6 +11,8 @@ namespace RTMP_LIB
         double m_dNumVal;
         AMFObject m_objVal;
         string m_strVal;
+        ushort p_UTCoffset;
+        double p_number;
 
         public AMFObjectProperty()
         {
@@ -86,21 +88,21 @@ namespace RTMP_LIB
 
             switch (pBuffer[bufferOffset])
             {
-                case 0x00: //AMF_NUMBER:
+                case (byte)AMFDataType.AMF_NUMBER:
                     if (nSize < (int)sizeof(double))
                         return -1;
                     m_dNumVal = RTMP.ReadNumber(pBuffer, bufferOffset + 1);
                     nSize -= sizeof(double);
                     m_type = AMFDataType.AMF_NUMBER;
                     break;
-                case 0x01: //AMF_BOOLEAN:
+                case (byte)AMFDataType.AMF_BOOLEAN:
                     if (nSize < 1)
                         return -1;
                     m_dNumVal = Convert.ToDouble(RTMP.ReadBool(pBuffer, bufferOffset + 1));
                     nSize--;
                     m_type = AMFDataType.AMF_BOOLEAN;
                     break;
-                case 0x02: //AMF_STRING:
+                case (byte)AMFDataType.AMF_STRING:
                     {
                         ushort nStringSize = RTMP.ReadInt16(pBuffer, bufferOffset + 1);
                         if (nSize < nStringSize + (int)sizeof(short))
@@ -110,7 +112,7 @@ namespace RTMP_LIB
                         m_type = AMFDataType.AMF_STRING;
                         break;
                     }
-                case 0x03: //AMF_OBJECT:
+                case (byte)AMFDataType.AMF_OBJECT:
                     {
                         m_objVal = new AMFObject();
                         int nRes = m_objVal.Decode(pBuffer, bufferOffset + 1, nSize, true);
@@ -120,7 +122,24 @@ namespace RTMP_LIB
                         m_type = AMFDataType.AMF_OBJECT;
                         break;
                     }
-                case 0x08: // AMF_MIXEDARRAY
+                case (byte)AMFDataType.AMF_MOVIECLIP:
+                    {
+                        Logger.Log("AMF_MOVIECLIP reserved!");
+                        return -1;
+                    }
+                case (byte)AMFDataType.AMF_NULL:
+                case (byte)AMFDataType.AMF_UNDEFINED:
+                case (byte)AMFDataType.AMF_UNSUPPORTED:
+                    {
+                        m_type = AMFDataType.AMF_NULL;
+                        break;
+                    }
+                case (byte)AMFDataType.AMF_REFERENCE:
+                    {
+                        Logger.Log("AMF_REFERENCE not supported!");
+                        return -1;
+                    }
+                case (byte)AMFDataType.AMF_ECMA_ARRAY:
                     {
                         //int nMaxIndex = RTMP_LIB::CRTMP::ReadInt32(pBuffer+1); // can be zero for unlimited
                         nSize -= 4;
@@ -134,7 +153,11 @@ namespace RTMP_LIB
                         m_type = AMFDataType.AMF_OBJECT;
                         break;
                     }
-                case 0x0A: // AMF_ARRAY
+                case (byte)AMFDataType.AMF_OBJECT_END:
+                    {
+                        return -1;
+                    }
+                case (byte)AMFDataType.AMF_STRICT_ARRAY:
                     {
                         int nArrayLen = RTMP.ReadInt32(pBuffer, bufferOffset + 1);
                         nSize -= 4;
@@ -146,6 +169,38 @@ namespace RTMP_LIB
                         nSize -= nRes;
                         m_type = AMFDataType.AMF_OBJECT;
                         break;
+                    }
+                case (byte)AMFDataType.AMF_DATE:
+                    {
+                        if (nSize < 10) return -1;
+                        p_number = RTMP.ReadNumber(pBuffer, bufferOffset + 1);
+                        p_UTCoffset = RTMP.ReadInt16(pBuffer, bufferOffset + 9);
+                        nSize -= 10;
+                        break;
+                    }
+                case (byte)AMFDataType.AMF_LONG_STRING:
+                    {
+                        int nStringSize = RTMP.ReadInt32(pBuffer, bufferOffset + 1);
+                        if (nSize < nStringSize + 4) return -1;
+                        m_strVal = RTMP.ReadLongString(pBuffer, bufferOffset + 1);
+                        nSize -= (4 + nStringSize);
+                        m_type = AMFDataType.AMF_STRING;
+                        break;
+                    }
+                case (byte)AMFDataType.AMF_RECORDSET:
+                    {
+                        Logger.Log("AMF_RECORDSET reserved!");
+                        return -1;
+                    }
+                case (byte)AMFDataType.AMF_XML_DOC:
+                    {
+                        Logger.Log("AMF_XML_DOC not supported!");
+                        return -1;
+                    }
+                case (byte)AMFDataType.AMF_TYPED_OBJECT:
+                    {
+                        Logger.Log("AMF_TYPED_OBJECT not supported!");
+                        return -1;
                     }
                 default:
                     Logger.Log(string.Format("unknown datatype {0}", pBuffer[bufferOffset]));
@@ -191,7 +246,7 @@ namespace RTMP_LIB
                     strVal = string.Format("BOOLEAN: {0}", m_dNumVal == 1.0 ? "TRUE" : "FALSE");
                     break;
                 case AMFDataType.AMF_STRING:
-                    strVal = string.Format("STRING: {0}", m_strVal);
+                    strVal = string.Format("STRING: {0}", m_strVal.Length < 256 ? m_strVal : "Length: " + m_strVal.Length.ToString());
                     break;
                 default:
                     strVal = string.Format("INVALID TYPE {0}", m_type);

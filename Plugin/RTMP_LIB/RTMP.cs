@@ -20,7 +20,6 @@ namespace RTMP_LIB
     public enum PacketType : byte
     {
         Undefined         = 0x00,
-
         ChunkSize         = 0x01, 
         Abort             = 0x02, 
         BytesRead         = 0x03, 
@@ -125,7 +124,8 @@ namespace RTMP_LIB
         int outChunkSize = RTMP_DEFAULT_CHUNKSIZE;
         int bytesReadTotal = 0;
         int lastSentBytesRead = 0;
-        int m_nBufferMS = 300;        
+        int m_numInvokes;
+        int m_nBufferMS = (10 * 60 * 60 * 1000)	/* 10 hours default */;
         int m_stream_id; // returned in _result from invoking createStream            
         int m_nBWCheckCounter;
         int m_nServerBW;
@@ -236,7 +236,7 @@ namespace RTMP_LIB
                 return false;
             }
 
-            byte type = singleByteToReadBuffer[0]; bytesReadTotal++;
+            byte type = singleByteToReadBuffer[0];
 
             byte headerType = (byte)((type & 0xc0) >> 6);
             byte channel = (byte)(type & 0x3f);
@@ -256,8 +256,7 @@ namespace RTMP_LIB
             {
                 Logger.Log(string.Format("failed to read RTMP packet header. type: {0}", type));
                 return false;
-            }
-            bytesReadTotal += (int)nSize;
+            }            
 
             if (nSize >= 3)
                 packet.m_nInfoField1 = ReadInt24(header, 0);
@@ -290,18 +289,15 @@ namespace RTMP_LIB
             int read = ReadN(packet.m_body, (int)packet.m_nBytesRead, (int)nChunk);
             if (read != nChunk)
             {
-                //CLog::Log(LOGERROR, "%s, failed to read RTMP packet body. len: %lu", __FUNCTION__, packet.m_nBodySize);
+                Logger.Log(string.Format("failed to read RTMP packet body. len: {0}", packet.m_nBodySize));
                 packet.m_body = null; // we dont want it deleted since its pointed to from the stored packets (m_vecChannelsIn)
                 return false;
-            }
-            bytesReadTotal += (int)read;
+            }            
 
             packet.m_nBytesRead += nChunk;
 
             // keep the packet as ref for other packets on this channel
-            m_vecChannelsIn[packet.m_nChannel] = packet;
-            
-            if (bytesReadTotal > lastSentBytesRead + (600 * 1024)) SendBytesReceived(); // report every 600K
+            m_vecChannelsIn[packet.m_nChannel] = packet;                        
 
             if (packet.IsReady())
             {
@@ -345,6 +341,7 @@ namespace RTMP_LIB
             m_nServerBW = 2500000;
             bytesReadTotal = 0;
             lastSentBytesRead = 0;
+            m_numInvokes = 0;
 
             for (int i = 0; i < 64; i++)
             {
@@ -366,10 +363,10 @@ namespace RTMP_LIB
             packet.PacketType = PacketType.Invoke;
             packet.AllocPacket(4096);
 
-            Logger.Log("Sending Connect");
+            Logger.Log("Sending connect");
             List<byte> enc = new List<byte>();
             EncodeString(enc, "connect");
-            EncodeNumber(enc, 1.0);
+            EncodeNumber(enc, m_numInvokes++);
             enc.Add(0x03); //Object Datatype                
             EncodeString(enc, "app", Link.app);
             EncodeNumber(enc, "objectEncoding", 0.0);
@@ -409,10 +406,10 @@ namespace RTMP_LIB
             List<byte> enc = new List<byte>();
 
             EncodeString(enc, "play");
-            EncodeNumber(enc, 3.0);
+            EncodeNumber(enc, m_numInvokes++);
             enc.Add(0x05); // NULL  
 
-            Logger.Log(string.Format("invoking play '{0}'", Link.playpath));
+            Logger.Log(string.Format("Sending play: '{0}'", Link.playpath));
 
             EncodeString(enc, Link.playpath);
             EncodeNumber(enc, 0.0);
@@ -454,7 +451,7 @@ namespace RTMP_LIB
         /// <returns></returns>
         bool SendPing(short nType, uint nObject, uint nTime)
         {
-            Logger.Log(string.Format("sending ping. type: {0}", nType));
+            Logger.Log(string.Format("Sending ping type: {0}", nType));
 
             RTMPPacket packet = new RTMPPacket();
             packet.m_nChannel = 0x02;   // control channel (ping)
@@ -493,11 +490,12 @@ namespace RTMP_LIB
 
             packet.HeaderType = HeaderType.Large;
             packet.PacketType = PacketType.Invoke;
-            packet.m_nInfoField1 = System.Environment.TickCount;
+            //packet.m_nInfoField1 = System.Environment.TickCount;
 
+            Logger.Log("Sending _checkbw");
             List<byte> enc = new List<byte>();
             EncodeString(enc, "_checkbw");
-            EncodeNumber(enc, 0);
+            EncodeNumber(enc, m_numInvokes++);
             enc.Add(0x05); // NULL            
 
             packet.m_nBodySize = (uint)enc.Count;
@@ -554,7 +552,7 @@ namespace RTMP_LIB
             packet.m_nChannel = 0x02;   // control channel (invoke)
             packet.HeaderType = HeaderType.Large;
             packet.PacketType = PacketType.ServerBW;
-
+            
             packet.AllocPacket(4);
             packet.m_nBodySize = 4;
 
@@ -564,18 +562,18 @@ namespace RTMP_LIB
             return SendRTMP(packet);
         }
 
-        bool SendCreateStream(double dStreamId)
+        bool SendCreateStream()
         {
             RTMPPacket packet = new RTMPPacket();
             packet.m_nChannel = 0x03;   // control channel (invoke)
             packet.HeaderType = HeaderType.Medium;
             packet.PacketType = PacketType.Invoke;
 
-            Logger.Log(string.Format("createStream: {0}", dStreamId));
+            Logger.Log("Sending createStream");
             packet.AllocPacket(256); // should be enough
             List<byte> enc = new List<byte>();
             EncodeString(enc, "createStream");
-            EncodeNumber(enc, dStreamId);
+            EncodeNumber(enc, m_numInvokes++);
             enc.Add(0x05); // NULL
 
             packet.m_nBodySize = (uint)enc.Count;
@@ -594,7 +592,7 @@ namespace RTMP_LIB
             Logger.Log(string.Format("Sending FCSubscribe: {0}", Link.subscribepath));
             List<byte> enc = new List<byte>();
             EncodeString(enc, "FCSubscribe");
-            EncodeNumber(enc, 4.0);
+            EncodeNumber(enc, m_numInvokes++);
             enc.Add(0x05); // NULL
             EncodeString(enc, Link.subscribepath);
 
@@ -614,7 +612,7 @@ namespace RTMP_LIB
             Logger.Log("Sending " + Link.authObjName);
             List<byte> enc = new List<byte>();
             EncodeString(enc, Link.authObjName);
-            EncodeNumber(enc, 0.0d);
+            EncodeNumber(enc, m_numInvokes++);
             enc.Add(0x05); // NULL
             EncodeString(enc, Link.auth);            
 
@@ -786,7 +784,7 @@ namespace RTMP_LIB
                     SendServerBW();
                     if (!string.IsNullOrEmpty(Link.auth)) SendAuth();
                     if (!string.IsNullOrEmpty(Link.subscribepath)) SendFCSubscribe();                    
-                    SendCreateStream(2.0d);
+                    SendCreateStream();
                     SendPing(3, 0, 300);
                 }
                 else if (methodInvoked == "createStream")
@@ -1024,6 +1022,14 @@ namespace RTMP_LIB
             string strRes = "";
             ushort length = ReadInt16(data, offset);
             if (length > 0) strRes = Encoding.ASCII.GetString(data, offset + 2, length);
+            return strRes;
+        }
+
+        public static string ReadLongString(byte[] data, int offset)
+        {
+            string strRes = "";
+            int length = ReadInt32(data, offset);
+            if (length > 0) strRes = Encoding.ASCII.GetString(data, offset + 4, length);
             return strRes;
         }
 
@@ -1511,7 +1517,8 @@ namespace RTMP_LIB
                 i--;
                 System.Threading.Thread.Sleep(100);
             }
-            if (tcpClient.Available < size) return 0;// throw new Exception(string.Format("No Data Available (trying to read {0} byte)", size));
+            if (tcpClient.Available < size) 
+                return 0;// throw new Exception(string.Format("No Data Available (trying to read {0} byte)", size));
 
             byte[] data = new byte[size];
             int read = networkStream.Read(data, 0, size);
@@ -1525,6 +1532,10 @@ namespace RTMP_LIB
             {
                 Array.Copy(data, 0, buffer, offset, size);
             }
+
+            bytesReadTotal += read;
+            
+            if (bytesReadTotal > lastSentBytesRead + (m_nClientBW / 2)) SendBytesReceived(); // report bytes read
 
             return read;
         }        
