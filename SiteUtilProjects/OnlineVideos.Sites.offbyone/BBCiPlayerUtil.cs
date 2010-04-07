@@ -84,13 +84,18 @@ namespace OnlineVideos.Sites
         {
             return (category as RssLink).Other as List<VideoInfo>;
         }
-        
+
+        DateTime lastRefresh = DateTime.MinValue;
         public override int DiscoverDynamicCategories()
         {
-            foreach (Category cat in Settings.Categories)
+            if ((DateTime.Now - lastRefresh).TotalMinutes > 15)
             {
-                cat.HasSubCategories = true;
-                cat.SubCategoriesDiscovered = false; // todo speedup: only every x mins
+                foreach (Category cat in Settings.Categories)
+                {
+                    cat.HasSubCategories = true;
+                    cat.SubCategoriesDiscovered = false;
+                }
+                lastRefresh = DateTime.Now;
             }
             return Settings.Categories.Count;
         }
