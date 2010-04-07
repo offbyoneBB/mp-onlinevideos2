@@ -82,11 +82,66 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
+            return (category as RssLink).Other as List<VideoInfo>;
+        }
+        
+        public override int DiscoverDynamicCategories()
+        {
+            foreach (Category cat in Settings.Categories)
+            {
+                cat.HasSubCategories = true;
+                cat.SubCategoriesDiscovered = false; // todo speedup: only every x mins
+            }
+            return Settings.Categories.Count;
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            parentCategory.SubCategories = new List<Category>();
+            Dictionary<string, List<VideoInfo>> possibleSubCatStrings = new Dictionary<string, List<VideoInfo>>();
+            List<VideoInfo> allOthers = new List<VideoInfo>();            
+            List<VideoInfo> videos = getVideoListInternal((parentCategory as RssLink).Url);
+            foreach (VideoInfo video in videos)
+            {
+                int colonIndex = video.Title.IndexOf(":");
+                if (colonIndex > 0)
+                {
+                    string title = video.Title.Substring(0, colonIndex);
+                    List<VideoInfo> catVids;
+                    if (!possibleSubCatStrings.TryGetValue(title, out catVids)) catVids = new List<VideoInfo>();
+                    catVids.Add(video);
+                    video.Title = video.Title.Substring(colonIndex+1).Trim();
+                    possibleSubCatStrings[title] = catVids;
+                }
+                else
+                {
+                    allOthers.Add(video);
+                }
+            }
+            if (allOthers.Count > 0)
+            {
+                // add all others on top
+                parentCategory.SubCategories.Add(new RssLink() { Name = "All Others", ParentCategory = parentCategory, Other = allOthers, EstimatedVideoCount = (uint)allOthers.Count });
+            }
+            // sort the remaining alphabetically
+            string[] keys = new string[possibleSubCatStrings.Count];
+            possibleSubCatStrings.Keys.CopyTo(keys, 0);
+            Array.Sort(keys);
+            foreach(string key in keys)
+            {
+                List<VideoInfo> value = possibleSubCatStrings[key];
+                parentCategory.SubCategories.Add(new RssLink() { Name = key, ParentCategory = parentCategory, Other = value, EstimatedVideoCount = (uint)value.Count });
+            }
+            parentCategory.SubCategoriesDiscovered = true;
+            return parentCategory.SubCategories.Count;
+        }
+
+        List<VideoInfo> getVideoListInternal(string url)
+        {
             List<VideoInfo> loVideoList = new List<VideoInfo>();
-            foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
+            foreach (RssItem rssItem in GetWebDataAsRss(url).Channel.Items)
             {
                 VideoInfo video = VideoInfo.FromRssItem(rssItem, true, new Predicate<string>(isPossibleVideo));
-                video.Description = System.Text.RegularExpressions.Regex.Replace(video.Description, @"(<[^>]+>)", "").Trim();
                 video.VideoUrl = "http://www.bbc.co.uk/iplayer/playlist/" + rssItem.Guid.Text.Substring(rssItem.Guid.Text.LastIndexOf(':') + 1);
                 loVideoList.Add(video);
             }
