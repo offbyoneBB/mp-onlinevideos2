@@ -8,22 +8,31 @@ namespace OnlineVideos
 {
     public class GUISiteUpdater : GUIWindow
     {
-        enum FilterOption { All, Reported, Broken, Working, Updatable };
-        enum SortOption { SortByUpdated, SortByName, SortByLanguage_SortByName, SortByLanguage_SortByUpdated };
+        enum FilterStateOption { All, Reported, Broken, Working, Updatable };
+        enum SortOption { Updated, Name, Language_Name, Language_Updated };
 
         [SkinControlAttribute(50)]
         protected GUIListControl GUI_infoList = null;
         [SkinControlAttribute(502)]
         protected GUIButtonControl GUI_btnUpdate = null;
         [SkinControlAttribute(503)]
-        protected GUISelectButtonControl GUI_btnFilter = null;
+        protected GUISelectButtonControl GUI_btnFilterState = null;
         [SkinControlAttribute(504)]
         protected GUISelectButtonControl GUI_btnSort = null;
         [SkinControlAttribute(505)]
         protected GUIButtonControl GUI_btnFullUpdate = null;
+        [SkinControlAttribute(506)]
+        protected GUISelectButtonControl GUI_btnFilterCreator = null;
+        [SkinControlAttribute(507)]
+        protected GUISelectButtonControl GUI_btnFilterLang = null;
+
+        string defaultLabelBtnSort;
+        string defaultLabelBtnFilterState;
+        string defaultLabelBtnFilterCreator;
+        string defaultLabelBtnFilterLang;
 
         OnlineVideosWebservice.Dll[] onlineDlls = null;
-        OnlineVideosWebservice.Site[] onlineSites = null;
+        OnlineVideosWebservice.Site[] onlineSites = null;        
         DateTime lastRetrievalTime = DateTime.MinValue;
 
         public override int GetID
@@ -56,11 +65,16 @@ namespace OnlineVideos
 
             base.OnPageLoad();
 
-            if (GUI_btnFilter.SubItemCount == 0)
+            defaultLabelBtnSort = GUIPropertyManager.Parse(GUI_btnSort.Label);
+            defaultLabelBtnFilterState = GUIPropertyManager.Parse(GUI_btnFilterState.Label);
+            defaultLabelBtnFilterCreator = GUIPropertyManager.Parse(GUI_btnFilterCreator.Label);
+            defaultLabelBtnFilterLang = GUIPropertyManager.Parse(GUI_btnFilterLang.Label);
+
+            if (GUI_btnFilterState.SubItemCount == 0)
             {
-                foreach (string aFilterOption in Enum.GetNames(typeof(FilterOption)))
+                foreach (string aFilterOption in Enum.GetNames(typeof(FilterStateOption)))
                 {
-                    GUIControl.AddItemLabelControl(GetID, GUI_btnFilter.GetID, Translation.Strings[aFilterOption]);
+                    GUIControl.AddItemLabelControl(GetID, GUI_btnFilterState.GetID, Translation.Strings[aFilterOption]);
                 }
             }
             if (GUI_btnSort.SubItemCount == 0)
@@ -72,13 +86,14 @@ namespace OnlineVideos
                     GUIControl.AddItemLabelControl(GetID, GUI_btnSort.GetID, string.Join(", ", singled));
                 }
             }
+            SetFilterButtonOptions();
 
             GUIPropertyManager.SetProperty("#header.label",
                                            OnlineVideoSettings.Instance.BasicHomeScreenName + ": " + Translation.ManageSites);
             GUIPropertyManager.SetProperty("#header.image",
                                            Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
 
-            DisplayOnlineSites();
+            DisplayOnlineSites();            
         }
 
         void DisplayOnlineSites()
@@ -98,6 +113,7 @@ namespace OnlineVideos
                 {
                     return;
                 }
+                SetFilterButtonOptions();
             }
 
             if (onlineSites == null || onlineSites.Length == 0) return;
@@ -143,8 +159,10 @@ namespace OnlineVideos
 
         public override void OnAction(Action action)
         {
-            GUI_btnSort.Label = Translation.SortOptions;
-            GUI_btnFilter.Label = Translation.Filter;
+            GUI_btnSort.Label = defaultLabelBtnSort;
+            GUI_btnFilterState.Label = defaultLabelBtnFilterState;
+            GUI_btnFilterCreator.Label = defaultLabelBtnFilterCreator;
+            GUI_btnFilterLang.Label = defaultLabelBtnFilterLang;
             base.OnAction(action);
         }
 
@@ -159,9 +177,17 @@ namespace OnlineVideos
             {
                 GUIControl.SelectItemControl(GetID, GUI_btnSort.GetID, GUI_btnSort.SelectedItem);
             }
-            else if (control == GUI_btnFilter)
+            else if (control == GUI_btnFilterState)
             {
-                GUIControl.SelectItemControl(GetID, GUI_btnFilter.GetID, GUI_btnFilter.SelectedItem);
+                GUIControl.SelectItemControl(GetID, GUI_btnFilterState.GetID, GUI_btnFilterState.SelectedItem);
+            }
+            else if (control == GUI_btnFilterCreator)
+            {
+                GUIControl.SelectItemControl(GetID, GUI_btnFilterCreator.GetID, GUI_btnFilterCreator.SelectedItem);
+            }
+            else if (control == GUI_btnFilterLang)
+            {
+                GUIControl.SelectItemControl(GetID, GUI_btnFilterLang.GetID, GUI_btnFilterLang.SelectedItem);
             }
             else if (control == GUI_infoList && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
@@ -351,16 +377,25 @@ namespace OnlineVideos
 
         bool SitePassesFilter(OnlineVideosWebservice.Site site)
         {
-            FilterOption fo = (FilterOption)GUI_btnFilter.SelectedItem;
+            // language
+            if (GUI_btnFilterLang.SelectedLabel != Translation.All && site.Language != GUI_btnFilterLang.SelectedLabel) return false;
+            // owner
+            if (GUI_btnFilterCreator.SelectedLabel != Translation.All)
+            {
+                string owner = site.Owner_FK.Substring(0, site.Owner_FK.IndexOf('@'));
+                if (owner != GUI_btnFilterCreator.SelectedLabel) return false;
+            }
+            // state
+            FilterStateOption fo = (FilterStateOption)GUI_btnFilterState.SelectedItem;
             switch (fo)
             {
-                case FilterOption.Working:
+                case FilterStateOption.Working:
                     return site.State == OnlineVideos.OnlineVideosWebservice.SiteState.Working;
-                case FilterOption.Reported:
+                case FilterStateOption.Reported:
                     return site.State == OnlineVideos.OnlineVideosWebservice.SiteState.Reported;
-                case FilterOption.Broken:
+                case FilterStateOption.Broken:
                     return site.State == OnlineVideos.OnlineVideosWebservice.SiteState.Broken;
-                case FilterOption.Updatable:
+                case FilterStateOption.Updatable:
                     foreach (SiteSettings localSite in OnlineVideoSettings.Instance.SiteSettingsList)
                     {
                         if (localSite.Name == site.Name)
@@ -379,18 +414,18 @@ namespace OnlineVideos
             SortOption so = (SortOption)GUI_btnSort.SelectedItem;
             switch (so)
             {
-                case SortOption.SortByUpdated:
+                case SortOption.Updated:
                     return site2.LastUpdated.CompareTo(site1.LastUpdated);
-                case SortOption.SortByName:
+                case SortOption.Name:
                     return site1.Name.CompareTo(site2.Name);
-                case SortOption.SortByLanguage_SortByUpdated:
+                case SortOption.Language_Updated:
                     int langCompResult = site1.Language.CompareTo(site2.Language);
                     if (langCompResult == 0)
                     {
                         return site2.LastUpdated.CompareTo(site1.LastUpdated);
                     }
                     else return langCompResult;
-                case SortOption.SortByLanguage_SortByName:
+                case SortOption.Language_Name:
                     int langCompResult2 = site1.Language.CompareTo(site2.Language);
                     if (langCompResult2 == 0)
                     {
@@ -408,6 +443,43 @@ namespace OnlineVideos
                 if (OnlineVideoSettings.Instance.SiteSettingsList[i].Name == name) return i;
             }
             return -1;
+        }
+
+        void SetFilterButtonOptions()
+        {
+            if (onlineSites == null || onlineSites.Length == 0) return;
+
+            // get a sorted list of all site owners and languages to display in filter buttons
+            Dictionary<string, bool> creatorsHash = new Dictionary<string, bool>();
+            Dictionary<string, bool> languagesHash = new Dictionary<string, bool>();
+            foreach (OnlineVideosWebservice.Site site in onlineSites)
+            {
+                string owner = site.Owner_FK.Substring(0, site.Owner_FK.IndexOf('@'));
+                bool temp;
+                if (!creatorsHash.TryGetValue(owner, out temp)) creatorsHash.Add(owner, true);
+                if (!string.IsNullOrEmpty(site.Language))
+                {
+                    if (!languagesHash.TryGetValue(site.Language, out temp)) languagesHash.Add(site.Language, true);
+                }
+            }
+            string[] creators = new string[creatorsHash.Count];
+            creatorsHash.Keys.CopyTo(creators, 0);
+            Array.Sort(creators);
+            if (GUI_btnFilterCreator != null)
+            {
+                GUI_btnFilterCreator.Clear();
+                GUIControl.AddItemLabelControl(GetID, GUI_btnFilterCreator.GetID, Translation.All);
+                foreach (string creator in creators) GUIControl.AddItemLabelControl(GetID, GUI_btnFilterCreator.GetID, creator);
+            }
+            string[] languages = new string[languagesHash.Count];
+            languagesHash.Keys.CopyTo(languages, 0);
+            Array.Sort(languages);
+            if (GUI_btnFilterLang != null)
+            {
+                GUI_btnFilterLang.Clear();
+                GUIControl.AddItemLabelControl(GetID, GUI_btnFilterLang.GetID, Translation.All);
+                foreach (string language in languages) GUIControl.AddItemLabelControl(GetID, GUI_btnFilterLang.GetID, language);
+            }
         }
 
         public static SiteSettings GetRemoteSite(string name)

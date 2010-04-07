@@ -6,10 +6,10 @@
 
   <!-- A -->
   <string Field="AlreadyDownloading">Already downloading this file.</string>
+  <string Field="All">All</string>
   <string Field="Actions">Actions</string>
   <string Field="Actors">Actors:</string>
   <string Field="AddToMySites">Add to my sites</string>
-  <string Field="All">All</string>
   <string Field="AddToFavourites">Add to favorites</string>  
 
   <!-- B -->
@@ -45,6 +45,7 @@
   <!-- I -->
 
   <!-- L -->
+  <string Field="Language">Language</string>
   <string Field="LayoutList">Layout: List</string>
   <string Field="LayoutIcons">Layout: Icons</string>
   <string Field="LayoutBigIcons">Layout: Big Icons</string>
@@ -54,6 +55,7 @@
   <string Field="MaxResults">Max Results</string>
 
   <!-- N -->
+  <string Field="Name">Name</string>
   <string Field="NextPage">Next page</string>
   <string Field="None">None</string>
   <string Field="NoVideoFound">No video found</string>
@@ -79,18 +81,17 @@
   <!-- S -->
   <string Field="SearchResults">Search results</string>
   <string Field="SelectSource">Select source</string>
-  <string Field="SortOptions">Sort options</string>  
-  <string Field="SortByName">Name</string>
-  <string Field="SortByLanguage">Language</string>
-  <string Field="SortByUpdated">Updated</string>
+  <string Field="SortOptions">Sort options</string>
   <string Field="Search">Search</string>
   <string Field="SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>
-
+  <string Field="State">State</string>
+  
   <!-- T -->
   <string Field="Timeframe">Timeframe</string>
   <string Field="Timeout">Timeout</string>
 
-  <!-- U -->  
+  <!-- U -->
+  <string Field="Updated">Updated</string>
   <string Field="Updatable">Updatable</string>
   <string Field="UpdateMySite">Update my site</string>
   <string Field="UpdateMySiteSkipCategories">Update my site (skip categories)</string>

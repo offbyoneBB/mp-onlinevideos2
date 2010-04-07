@@ -720,9 +720,9 @@ namespace OnlineVideos
 
             // set order by options
             GUI_btnOrderBy.Clear();
-            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Default); //Default
-            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.SortByName); //Name
-            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.SortByLanguage); //Language
+            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Default);
+            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Name);
+            GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Language);
             GUI_btnOrderBy.SelectedItem = (int)siteOrder;
 
             // get names in right order
