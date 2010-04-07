@@ -4,10 +4,10 @@
 <!-- Note: English is the fallback for any strings not found in other languages -->
 <strings>
   <string Field="AlreadyDownloading">Video lädt bereits herunter.</string>
+  <string Field="All">Alle</string>
   <string Field="Actions">Aktionen</string>
   <string Field="Actors">Darsteller:</string>
   <string Field="AddToMySites">Zu meinen Sites hinzufügen</string>
-  <string Field="All">Alle</string>
   <string Field="AddToFavourites">Zu den Favoriten hinzufügen</string>
   <string Field="Broken">Defekt</string>
   <string Field="Category">Rubrik</string>
@@ -25,11 +25,13 @@
   <string Field="Filter">Filter</string>
   <string Field="FullUpdate">Komplettaktualisierung</string>
   <string Field="Genre">Genre:</string>
+  <string Field="Language">Sprache</string>
   <string Field="LayoutList">Ansicht: Liste</string>
   <string Field="LayoutIcons">Ansicht: Symbole klein</string>
   <string Field="LayoutBigIcons">Ansicht: Symbole groß</string>
   <string Field="ManageSites">Sites verwalten</string>
   <string Field="MaxResults">Max. Ergebnisse</string>
+  <string Field="Name">Name</string>
   <string Field="NextPage">Nächste Seite</string>
   <string Field="None">None</string>
   <string Field="NoVideoFound">Keine Videos gefunden</string>
@@ -48,13 +50,12 @@
   <string Field="SearchResults">Suchergebnisse</string>
   <string Field="SelectSource">Quelle wählen</string>
   <string Field="SortOptions">Sortierung</string>
-  <string Field="SortByName">Name</string>
-  <string Field="SortByLanguage">Sprache</string>
-  <string Field="SortByUpdated">Aktualisiert</string>
   <string Field="Search">Suchen</string>
   <string Field="SetDownloadFolderInConfig">Bitte einen Ordner für Downloads in der Konfiguration wählen!</string>
+  <string Field="State">Status</string>
   <string Field="Timeframe">Zeitraum</string>
   <string Field="Timeout">Zeitüberschreitung</string>
+  <string Field="Updated">Aktualisiert</string>
   <string Field="Updatable">Aktualisierbar</string>
   <string Field="UpdateMySite">Diese Site aktualisieren</string>
   <string Field="UpdateMySiteSkipCategories">Diese Site aktualisieren (Rubriken überspringen)</string>

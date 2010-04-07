@@ -261,6 +261,7 @@ namespace OnlineVideos
     // I
 
     // L
+    public static string Language = "Language";
     public static string LayoutList = "Layout: List";
     public static string LayoutIcons = "Layout: Icons";
     public static string LayoutBigIcons = "Layout: Big Icons";
@@ -270,6 +271,7 @@ namespace OnlineVideos
     public static string MaxResults = "Max Results";
     
     // N
+    public static string Name = "Name";
     public static string NextPage = "Next page";
     public static string None = "None";
     public static string NoVideoFound = "No video found";
@@ -296,17 +298,16 @@ namespace OnlineVideos
     public static string SearchResults = "Search results";
     public static string SelectSource = "Select source";    
     public static string SortOptions = "Sort options";
-    public static string SortByName = "Name";
-    public static string SortByLanguage = "Language";
-    public static string SortByUpdated = "Updated";
     public static string Search = "Search";
     public static string SetDownloadFolderInConfig = "Please set a download folder in Configuration!";
+    public static string State = "State";
 
     // T
     public static string Timeframe = "Timeframe";
     public static string Timeout = "Timeout";
 
     // U
+    public static string Updated = "Updated";
     public static string Updatable = "Updatable";
     public static string UpdateMySite = "Update my site";
     public static string UpdateMySiteSkipCategories = "Update my site (skip categories)";
