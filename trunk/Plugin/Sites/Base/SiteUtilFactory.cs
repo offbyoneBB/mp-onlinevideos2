@@ -21,8 +21,12 @@ namespace OnlineVideos
             string dirWithExtraDlls = Path.Combine(Path.GetDirectoryName(onlineVideosMainDll.Location), "OnlineVideos");
             if (Directory.Exists(dirWithExtraDlls))
             {
-                string[] dllFilesToCheck = Directory.GetFiles(dirWithExtraDlls, "OnlineVideos.Sites.*.dll");
-                foreach (string aDll in dllFilesToCheck) assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(aDll)));
+                string[] dllFilesToCheck = Directory.GetFiles(dirWithExtraDlls, "OnlineVideos.Sites.*.dll");                
+                foreach (string aDll in dllFilesToCheck)
+                {
+                    // load assembly as raw bytes, so dll can be overwritten while app is still running
+                    assemblies.Add(AppDomain.CurrentDomain.Load(File.ReadAllBytes(aDll)));
+                }
             }
             foreach (Assembly assembly in assemblies)
             {

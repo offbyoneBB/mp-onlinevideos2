@@ -35,7 +35,7 @@
   <string Field="NextPage">Nächste Seite</string>
   <string Field="None">None</string>
   <string Field="NoVideoFound">Keine Videos gefunden</string>
-  <string Field="NewDllRequired">Neue DLL benötigt!</string>
+  <string Field="NewDllDownloaded">Neue DLL heruntergeladen!</string>
   <string Field="PlayAll">Alle abspielen</string>
   <string Field="PlotOutline">Handlung:</string>
   <string Field="PreviousPage">Vorherige Seite</string>
@@ -46,7 +46,7 @@
   <string Field="Reported">Gemeldet</string>
   <string Field="Runtime">Laufzeit:</string>
   <string Field="RemoveFromMySites">Aus meinen Sites entfernen</string>
-  <string Field="RestartMediaPortalAndAutomaticUpdate">Starte MediaPortal neu und führe die autom. Aktualisierung aus.</string>
+  <string Field="RestartMediaPortal">Bitte MediaPortal neu starten!</string>
   <string Field="SearchResults">Suchergebnisse</string>
   <string Field="SelectSource">Quelle wählen</string>
   <string Field="SortOptions">Sortierung</string>

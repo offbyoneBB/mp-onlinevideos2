@@ -218,7 +218,7 @@ namespace OnlineVideos
                 }
                 else
                 {
-                    if (OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].LastUpdated < site.LastUpdated)
+                    if ((site.LastUpdated - OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].LastUpdated).TotalMinutes > 2)
                     {
                         dlgSel.Add(Translation.UpdateMySite);
                         dlgSel.Add(Translation.UpdateMySiteSkipCategories);                        
@@ -301,7 +301,7 @@ namespace OnlineVideos
                         OnlineVideoSettings.Instance.SiteSettingsList.Add(newSite);
                     }
                 }
-                else if (OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].LastUpdated < onlineSite.LastUpdated)
+                else if ((onlineSite.LastUpdated - OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].LastUpdated).TotalMinutes > 2)
                 {
                     // update
                     SiteSettings updatedSite = GetRemoteSite(onlineSite.Name);
@@ -337,23 +337,20 @@ namespace OnlineVideos
                         if (requiredDlls.ContainsKey(anOnlineDll.Name))
                         {
                             // update or download dll if needed
-                            string location = dllDir + anOnlineDll.Name + ".dll";                            
+                            string location = dllDir + anOnlineDll.Name + ".dll";
+                            bool download = true;
                             if (System.IO.File.Exists(location))
                             {
                                 byte[] data = null;
                                 data = System.IO.File.ReadAllBytes(location);
                                 System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
                                 string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
-                                if (md5LocalDll != anOnlineDll.MD5)
-                                {
-                                    showMessage = true;
-                                    break;
-                                }
+                                if (md5LocalDll == anOnlineDll.MD5) download = false;
                             }
-                            else
+                            if (download)
                             {
+                                DownloadDll(anOnlineDll.Name, location);
                                 showMessage = true;
-                                break;
                             }
                         }
                         if (dlgPrgrs != null) dlgPrgrs.Percentage = 90 + (10 * (i + 1) / onlineDlls.Length);
@@ -368,8 +365,8 @@ namespace OnlineVideos
                 {
                     dlg.Reset();
                     dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
-                    dlg.SetLine(1, Translation.NewDllRequired);
-                    dlg.SetLine(2, Translation.RestartMediaPortalAndAutomaticUpdate);
+                    dlg.SetLine(1, Translation.NewDllDownloaded);
+                    dlg.SetLine(2, Translation.RestartMediaPortal);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                 }
             }
@@ -400,7 +397,7 @@ namespace OnlineVideos
                     {
                         if (localSite.Name == site.Name)
                         {
-                            if (localSite.LastUpdated < site.LastUpdated) return true;
+                            if ((site.LastUpdated - localSite.LastUpdated).TotalMinutes > 2) return true;
                             else return false;
                         }
                     }
@@ -547,6 +544,24 @@ namespace OnlineVideos
             {
                 Log.Error(ex.ToString());
             }
+        }
+
+        public static bool DownloadDll(string dllName, string localPath)
+        {
+            return DownloadDll(dllName, localPath, null);
+        }
+
+        public static bool DownloadDll(string dllName, string localPath, OnlineVideosWebservice.OnlineVideosService ws)
+        {
+            if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+            {
+                if (ws == null) ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                byte[] onlineDllData = ws.GetDll(dllName);
+                if (onlineDllData != null && onlineDllData.Length > 0) System.IO.File.WriteAllBytes(localPath, onlineDllData);
+            }, "getting dll from webservice"))
+                return true;
+            else
+                return false;
         }
     }
 }
