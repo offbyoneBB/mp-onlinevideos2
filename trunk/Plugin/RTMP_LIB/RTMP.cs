@@ -900,11 +900,21 @@ namespace RTMP_LIB
                 if (CombinedTracksLength == 0)
                 {
                     props.Clear();
+                    obj.FindMatchingProperty("filesize", props, int.MaxValue);
+                    if (props.Count > 0)
+                    {
+                        CombinedTracksLength = (int)props[0].GetNumber();
+                        Logger.Log(string.Format("Set CombinedTracksLength from filesize: {0}", CombinedTracksLength));
+                    }
+                }
+                if (CombinedTracksLength == 0)
+                {
+                    props.Clear();
                     obj.FindMatchingProperty("datasize", props, int.MaxValue);
                     if (props.Count > 0)
                     {
                         CombinedTracksLength = (int)props[0].GetNumber();
-                        Logger.Log(string.Format("Set CombinedTracksLength: {0}", CombinedTracksLength));
+                        Logger.Log(string.Format("Set CombinedTracksLength from datasize: {0}", CombinedTracksLength));
                     }
                 }   
             }

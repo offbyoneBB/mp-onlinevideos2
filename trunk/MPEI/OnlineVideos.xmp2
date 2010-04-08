@@ -12,9 +12,10 @@
         </Files>
       </GroupItem>
       <GroupItem Name="Thumbs">
-        <DisplayName>Thumbs</DisplayName>
+        <ParentGroup />
+        <DisplayName>Site Icons and Banners</DisplayName>
         <DefaulChecked>true</DefaulChecked>
-        <Description>Thumbs</Description>
+        <Description>PNG images for all sites.</Description>
         <Files>
           <Items>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
@@ -1103,246 +1104,14 @@
         <DefaulChecked>true</DefaulChecked>
         <Description>Skins</Description>
         <Files>
-          <Items>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\myonlinevideos.details.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c1618bb1-561a-4a15-ad4e-ac5dbca348ca}-myonlinevideos.details.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\myonlinevideos.details.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\myonlinevideos.facade.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c1b0124f-721d-478a-9a02-8b1c1abf0fb8}-myonlinevideos.facade.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\myonlinevideos.facade.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\myonlinevideos.window.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{fafef191-5b90-417f-8114-9c2e419475c0}-myonlinevideos.window.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\myonlinevideos.window.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\myonlinevideos.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{68f3b8d7-3b05-46ba-8d2d-d8c53a1d3567}-myonlinevideos.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\myonlinevideos.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\Media\buttonNF_online videos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{55c7f524-165b-4283-810b-8c4e0f269834}-buttonNF_online videos.png</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\Media\buttonNF_online videos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\Media\button_online videos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{0e11ac48-e228-4bfe-87ae-6fbed9c83370}-button_online videos.png</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\Media\button_online videos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\Media\hover_onlinevideos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{f5fb6332-0d6e-4593-95fd-96817f09d2ff}-hover_onlinevideos.png</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\Media\hover_onlinevideos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\Media\OnlineVideos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c0b7afb8-5eb7-4562-a8ff-931596550880}-OnlineVideos.png</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\Media\OnlineVideos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\StreamedMP\myonlinevideos.details.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{76ecb60d-26da-430b-bbc2-c54f35ba6ec4}-myonlinevideos.details.xml</ZipFileName>
-              <DestinationFilename>%Skin%\StreamedMP\myonlinevideos.details.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\StreamedMP\myonlinevideos.facade.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{414124a1-4850-4386-9714-8297bdc9de4a}-myonlinevideos.facade.xml</ZipFileName>
-              <DestinationFilename>%Skin%\StreamedMP\myonlinevideos.facade.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\StreamedMP\myonlinevideos.overlays.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{0e738959-0339-46e9-9ed7-60d1e4dfebbf}-myonlinevideos.overlays.xml</ZipFileName>
-              <DestinationFilename>%Skin%\StreamedMP\myonlinevideos.overlays.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\StreamedMP\myonlinevideos.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d3d7467f-88df-49e4-8a90-a0d57b4a48d7}-myonlinevideos.xml</ZipFileName>
-              <DestinationFilename>%Skin%\StreamedMP\myonlinevideos.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\StreamedMP\Media\hover_OnlineVideos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{8af3d46b-3061-4077-bb08-5fa24ba7ddd4}-hover_OnlineVideos.png</ZipFileName>
-              <DestinationFilename>%Skin%\StreamedMP\Media\hover_OnlineVideos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\StreamedMP\Media\onlinevideosoverlay.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{6c2c322c-0f01-43a3-9d13-93d79ce477d4}-onlinevideosoverlay.png</ZipFileName>
-              <DestinationFilename>%Skin%\StreamedMP\Media\onlinevideosoverlay.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\StreamedMP\Media\onlinevideos_clip_backdrop.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{45be95cb-1f72-459b-bb57-102a3017ee3d}-onlinevideos_clip_backdrop.png</ZipFileName>
-              <DestinationFilename>%Skin%\StreamedMP\Media\onlinevideos_clip_backdrop.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\StreamedMP\Media\onlinevideos_thumbborder.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{f6aa84de-bb21-4b2b-bad4-f17953bb95ad}-onlinevideos_thumbborder.png</ZipFileName>
-              <DestinationFilename>%Skin%\StreamedMP\Media\onlinevideos_thumbborder.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3wide\myonlinevideos.details.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{b328260f-838d-463e-b8a6-995483aaedb4}-myonlinevideos.details.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3wide\myonlinevideos.details.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3wide\myonlinevideos.facade.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{7b9198bc-40bf-4893-8e7b-4eec650d5bbb}-myonlinevideos.facade.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3wide\myonlinevideos.facade.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3wide\myonlinevideos.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{3fefd934-10dc-4a37-9492-b172e7d21f29}-myonlinevideos.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3wide\myonlinevideos.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3wide\myonlinevideosUpdater.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9dfae8a6-5ca7-4a26-bfba-0dd81b436e0b}-myonlinevideosUpdater.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3wide\myonlinevideosUpdater.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3wide\Media\hover_OnlineVideos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{bfd85de2-ae50-497c-962a-4502af2bb7d1}-hover_OnlineVideos.png</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3wide\Media\hover_OnlineVideos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Broken.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{f650fac7-86ed-4f18-a50c-941b5e36239e}-Broken.png</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3wide\Media\OnlineVideos\Broken.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Reported.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{88674a08-25e0-46b2-8b61-ad21e2bc548d}-Reported.png</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3wide\Media\OnlineVideos\Reported.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Working.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c34a600e-e801-485f-a3d3-14865b93632a}-Working.png</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3wide\Media\OnlineVideos\Working.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3\myonlinevideos.details.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{db37b39f-73d4-4660-9836-701e46e637a5}-myonlinevideos.details.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3\myonlinevideos.details.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3\myonlinevideos.facade.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{ea5c542a-bc97-4170-bc7b-bc51c143b8f4}-myonlinevideos.facade.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3\myonlinevideos.facade.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3\myonlinevideos.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{7eea1d5d-2f64-4c7a-aafc-a9265239cd4d}-myonlinevideos.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3\myonlinevideos.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3\Media\hover_OnlineVideos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{753799e3-0e5c-414b-8ed1-4ebdff87942e}-hover_OnlineVideos.png</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3\Media\hover_OnlineVideos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Picture_cover_focused.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c43a5a3c-9074-4df6-bebd-729ff4a548e3}-Picture_cover_focused.png</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Picture_cover_focused.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3\myonlinevideosUpdater.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{7d8ecef2-740e-4f7e-ada7-2f7ce6057051}-myonlinevideosUpdater.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3\myonlinevideosUpdater.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Broken.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{4b85930a-ca0c-4592-9375-4af9707ad018}-Broken.png</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Broken.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Reported.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{3d2b2a36-932f-4401-bdac-16037a83f719}-Reported.png</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Reported.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Working.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c9279b04-e461-40ac-863f-7c4f64dccbfa}-Working.png</ZipFileName>
-              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Working.png</DestinationFilename>
-            </FileItem>
-          </Items>
+          <Items />
         </Files>
       </GroupItem>
       <GroupItem Name="Plugin">
         <ParentGroup />
-        <DisplayName>Plugin</DisplayName>
+        <DisplayName>Plugin binaries</DisplayName>
         <DefaulChecked>true</DefaulChecked>
-        <Description>Plugin</Description>
+        <Description>Dll files required to run the plugin in MediaPortal.</Description>
         <Files>
           <Items>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
@@ -1377,9 +1146,10 @@
         </Files>
       </GroupItem>
       <GroupItem Name="Language">
-        <DisplayName>Language</DisplayName>
+        <ParentGroup />
+        <DisplayName>Language files</DisplayName>
         <DefaulChecked>true</DefaulChecked>
-        <Description>Language</Description>
+        <Description>Xml files containing localized strings.</Description>
         <Files>
           <Items>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
@@ -1416,6 +1186,218 @@
               <LocalFileName>..\Language\OnlineVideos\ru.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{64e288ef-149c-425d-aa93-09fde925d5e7}-ru.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\ru.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\es.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ffffe5e3-2188-4131-b693-0c303098fbf0}-es.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\es.xml</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
+      <GroupItem Name="Blue3">
+        <ParentGroup>Skins</ParentGroup>
+        <DisplayName>Blue3</DisplayName>
+        <DefaulChecked>true</DefaulChecked>
+        <Description>Blue3</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\myonlinevideos.details.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2c7d271c-59d4-440f-9141-8b1c06530e79}-myonlinevideos.details.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\myonlinevideos.details.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\myonlinevideos.facade.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f7ffdbae-e214-428b-b921-3bcd57af7f1b}-myonlinevideos.facade.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\myonlinevideos.facade.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\myonlinevideos.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{8424538d-8fc8-47ca-a04b-2bace116a5e7}-myonlinevideos.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\myonlinevideos.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\myonlinevideosUpdater.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{75209523-7d05-4340-b561-d9da0b6cf283}-myonlinevideosUpdater.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\myonlinevideosUpdater.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\Media\hover_OnlineVideos.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{60516f91-8743-4c56-89b4-b06a15a8b543}-hover_OnlineVideos.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\Media\hover_OnlineVideos.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Broken.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{fe960ce4-5c7b-435e-8ba0-f8fc4323d1c9}-Broken.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Broken.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Picture_cover_focused.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{78cefe49-8334-493a-992a-cb47cbd84dfb}-Picture_cover_focused.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Picture_cover_focused.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Reported.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{617004ad-d096-4017-aa15-6ffd42ae4cdb}-Reported.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Reported.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Working.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{54adadc7-b46b-4ee0-9864-f50cf350bfdd}-Working.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Working.png</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
+      <GroupItem Name="Blue3Wide">
+        <ParentGroup>Skins</ParentGroup>
+        <DisplayName>Blue3Wide</DisplayName>
+        <DefaulChecked>true</DefaulChecked>
+        <Description>Blue3Wide</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3wide\myonlinevideos.details.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e2949e3c-41a5-460f-a1ba-1ac27a266003}-myonlinevideos.details.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3Wide\myonlinevideos.details.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3wide\myonlinevideos.facade.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{eaf05d50-2046-4c8d-8f82-8ce3f49ee7d5}-myonlinevideos.facade.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3Wide\myonlinevideos.facade.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3wide\myonlinevideos.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b1fd0ebe-b5ea-450d-81d1-32a005582096}-myonlinevideos.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3Wide\myonlinevideos.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3wide\myonlinevideosUpdater.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b5e16d1a-da2f-4bee-bb53-703ffcb1f47e}-myonlinevideosUpdater.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3Wide\myonlinevideosUpdater.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3wide\Media\hover_OnlineVideos.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{dfa976e1-f658-473d-82a3-d8e586934e6b}-hover_OnlineVideos.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3Wide\Media\hover_OnlineVideos.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Broken.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4f77744c-b4b2-4683-be60-aed1ffa5f623}-Broken.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3Wide\Media\OnlineVideos\Broken.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Reported.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{7daf0b85-1f62-4311-a99b-4b9329d10b44}-Reported.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3Wide\Media\OnlineVideos\Reported.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Working.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d3ab10f0-479e-40a7-ace6-8caf92198c07}-Working.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3Wide\Media\OnlineVideos\Working.png</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
+      <GroupItem Name="Xface">
+        <ParentGroup>Skins</ParentGroup>
+        <DisplayName>Xface</DisplayName>
+        <DefaulChecked>false</DefaulChecked>
+        <Description>Xface</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Xface\myonlinevideos.details.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{1966ca53-8f98-4b86-89e0-cb8fb8a828eb}-myonlinevideos.details.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Xface\myonlinevideos.details.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Xface\myonlinevideos.facade.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{49748432-4fc7-4da1-ac27-6f8e75314432}-myonlinevideos.facade.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Xface\myonlinevideos.facade.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Xface\myonlinevideos.window.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{316cb2fe-002f-4a17-af03-7b2f7fb631cf}-myonlinevideos.window.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Xface\myonlinevideos.window.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Xface\myonlinevideos.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{33d7329f-7b7e-40b0-887b-54dd8201cafa}-myonlinevideos.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Xface\myonlinevideos.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Xface\Media\buttonNF_online videos.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{fc76fabd-65bb-4c05-a878-93e87d6eada6}-buttonNF_online videos.png</ZipFileName>
+              <DestinationFilename>%Skin%\Xface\Media\buttonNF_online videos.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Xface\Media\button_online videos.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{1dd71cf3-5e6a-41b4-a7d1-a4cd7f4470e1}-button_online videos.png</ZipFileName>
+              <DestinationFilename>%Skin%\Xface\Media\button_online videos.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Xface\Media\hover_onlinevideos.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{742e2b0d-1c71-4296-9a73-e4662306fb86}-hover_onlinevideos.png</ZipFileName>
+              <DestinationFilename>%Skin%\Xface\Media\hover_onlinevideos.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Xface\Media\OnlineVideos.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{88a11a1c-b730-46cf-a1ab-a36863a7c52f}-OnlineVideos.png</ZipFileName>
+              <DestinationFilename>%Skin%\Xface\Media\OnlineVideos.png</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1458,11 +1440,11 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <PanelName>Welcome Screen</PanelName>
         <WizardButtonsEnum>NextCancel</WizardButtonsEnum>
       </SectionItem>
-      <SectionItem Guid="1c2ef741-6ad8-4f6e-ab06-6cb9c933e810" Name="Install Section" ConditionGroup="">
+      <SectionItem Guid="4ad7d08c-515e-44f7-8a84-74d8511a0e17" Name="Tree View Selector" ConditionGroup="">
         <Params>
           <Items>
             <SectionParam Name="Header Title">
-              <Value />
+              <Value>Select the components you want to install</Value>
               <ValueType>String</ValueType>
               <Description>Header title</Description>
             </SectionParam>
@@ -1472,7 +1454,47 @@ Click Next to continue or Cancel to exit Setup.</Value>
               <Description>Description of section, shown in under section title</Description>
             </SectionParam>
             <SectionParam Name="Header image">
+              <Value>..\Plugin\OnlineVideos.png</Value>
+              <ValueType>File</ValueType>
+              <Description>Image in upper right part</Description>
+            </SectionParam>
+            <SectionParam Name="Description ">
               <Value />
+              <ValueType>String</ValueType>
+              <Description>Description of this operation</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+        <Actions>
+          <Items />
+        </Actions>
+        <IncludedGroups>
+          <string>Plugin</string>
+          <string>Thumbs</string>
+          <string>Language</string>
+          <string>Skins</string>
+          <string>Blue3</string>
+          <string>Blue3Wide</string>
+          <string>Xface</string>
+        </IncludedGroups>
+        <PanelName>Tree View Selector</PanelName>
+        <WizardButtonsEnum>BackNextCancel</WizardButtonsEnum>
+      </SectionItem>
+      <SectionItem Guid="1c2ef741-6ad8-4f6e-ab06-6cb9c933e810" Name="Install Section" ConditionGroup="">
+        <Params>
+          <Items>
+            <SectionParam Name="Header Title">
+              <Value>Please wait while installing OnlineVideos</Value>
+              <ValueType>String</ValueType>
+              <Description>Header title</Description>
+            </SectionParam>
+            <SectionParam Name="Header description">
+              <Value />
+              <ValueType>String</ValueType>
+              <Description>Description of section, shown in under section title</Description>
+            </SectionParam>
+            <SectionParam Name="Header image">
+              <Value>..\Plugin\OnlineVideos.png</Value>
               <ValueType>File</ValueType>
               <Description>Image in upper right part</Description>
             </SectionParam>
@@ -1587,7 +1609,7 @@ public class Script
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
-    <VersionDescription>Bugfixes.</VersionDescription>
+    <VersionDescription>Bugfixes. Playback enhancements.</VersionDescription>
     <DevelopmentStatus>Beta</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.19.0.MPE1</OnlineLocation>
     <ReleaseDate>2010-04-04T18:01:51</ReleaseDate>
@@ -2705,237 +2727,6 @@ public class Script
         <ZipFileName>Installer{CopyFile}\{2e19fa1a-3b63-4df4-89bd-2930dc3e125e}-mySpass.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\mySpass.png</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\myonlinevideos.details.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c1618bb1-561a-4a15-ad4e-ac5dbca348ca}-myonlinevideos.details.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\myonlinevideos.details.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\myonlinevideos.facade.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c1b0124f-721d-478a-9a02-8b1c1abf0fb8}-myonlinevideos.facade.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\myonlinevideos.facade.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\myonlinevideos.window.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{fafef191-5b90-417f-8114-9c2e419475c0}-myonlinevideos.window.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\myonlinevideos.window.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\myonlinevideos.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{68f3b8d7-3b05-46ba-8d2d-d8c53a1d3567}-myonlinevideos.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\myonlinevideos.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\Media\buttonNF_online videos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{55c7f524-165b-4283-810b-8c4e0f269834}-buttonNF_online videos.png</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\Media\buttonNF_online videos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\Media\button_online videos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{0e11ac48-e228-4bfe-87ae-6fbed9c83370}-button_online videos.png</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\Media\button_online videos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\Media\hover_onlinevideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f5fb6332-0d6e-4593-95fd-96817f09d2ff}-hover_onlinevideos.png</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\Media\hover_onlinevideos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\Media\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c0b7afb8-5eb7-4562-a8ff-931596550880}-OnlineVideos.png</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\Media\OnlineVideos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\StreamedMP\myonlinevideos.details.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{76ecb60d-26da-430b-bbc2-c54f35ba6ec4}-myonlinevideos.details.xml</ZipFileName>
-        <DestinationFilename>%Skin%\StreamedMP\myonlinevideos.details.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\StreamedMP\myonlinevideos.facade.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{414124a1-4850-4386-9714-8297bdc9de4a}-myonlinevideos.facade.xml</ZipFileName>
-        <DestinationFilename>%Skin%\StreamedMP\myonlinevideos.facade.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\StreamedMP\myonlinevideos.overlays.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{0e738959-0339-46e9-9ed7-60d1e4dfebbf}-myonlinevideos.overlays.xml</ZipFileName>
-        <DestinationFilename>%Skin%\StreamedMP\myonlinevideos.overlays.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\StreamedMP\myonlinevideos.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d3d7467f-88df-49e4-8a90-a0d57b4a48d7}-myonlinevideos.xml</ZipFileName>
-        <DestinationFilename>%Skin%\StreamedMP\myonlinevideos.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\StreamedMP\Media\hover_OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{8af3d46b-3061-4077-bb08-5fa24ba7ddd4}-hover_OnlineVideos.png</ZipFileName>
-        <DestinationFilename>%Skin%\StreamedMP\Media\hover_OnlineVideos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\StreamedMP\Media\onlinevideosoverlay.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{6c2c322c-0f01-43a3-9d13-93d79ce477d4}-onlinevideosoverlay.png</ZipFileName>
-        <DestinationFilename>%Skin%\StreamedMP\Media\onlinevideosoverlay.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\StreamedMP\Media\onlinevideos_clip_backdrop.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{45be95cb-1f72-459b-bb57-102a3017ee3d}-onlinevideos_clip_backdrop.png</ZipFileName>
-        <DestinationFilename>%Skin%\StreamedMP\Media\onlinevideos_clip_backdrop.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\StreamedMP\Media\onlinevideos_thumbborder.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f6aa84de-bb21-4b2b-bad4-f17953bb95ad}-onlinevideos_thumbborder.png</ZipFileName>
-        <DestinationFilename>%Skin%\StreamedMP\Media\onlinevideos_thumbborder.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3wide\myonlinevideos.details.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{b328260f-838d-463e-b8a6-995483aaedb4}-myonlinevideos.details.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3wide\myonlinevideos.details.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3wide\myonlinevideos.facade.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{7b9198bc-40bf-4893-8e7b-4eec650d5bbb}-myonlinevideos.facade.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3wide\myonlinevideos.facade.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3wide\myonlinevideos.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{3fefd934-10dc-4a37-9492-b172e7d21f29}-myonlinevideos.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3wide\myonlinevideos.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3wide\myonlinevideosUpdater.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9dfae8a6-5ca7-4a26-bfba-0dd81b436e0b}-myonlinevideosUpdater.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3wide\myonlinevideosUpdater.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3wide\Media\hover_OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{bfd85de2-ae50-497c-962a-4502af2bb7d1}-hover_OnlineVideos.png</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3wide\Media\hover_OnlineVideos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Broken.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f650fac7-86ed-4f18-a50c-941b5e36239e}-Broken.png</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3wide\Media\OnlineVideos\Broken.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Reported.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{88674a08-25e0-46b2-8b61-ad21e2bc548d}-Reported.png</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3wide\Media\OnlineVideos\Reported.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Working.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c34a600e-e801-485f-a3d3-14865b93632a}-Working.png</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3wide\Media\OnlineVideos\Working.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3\myonlinevideos.details.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{db37b39f-73d4-4660-9836-701e46e637a5}-myonlinevideos.details.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3\myonlinevideos.details.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3\myonlinevideos.facade.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{ea5c542a-bc97-4170-bc7b-bc51c143b8f4}-myonlinevideos.facade.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3\myonlinevideos.facade.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3\myonlinevideos.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{7eea1d5d-2f64-4c7a-aafc-a9265239cd4d}-myonlinevideos.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3\myonlinevideos.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3\Media\hover_OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{753799e3-0e5c-414b-8ed1-4ebdff87942e}-hover_OnlineVideos.png</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3\Media\hover_OnlineVideos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Picture_cover_focused.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c43a5a3c-9074-4df6-bebd-729ff4a548e3}-Picture_cover_focused.png</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Picture_cover_focused.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3\myonlinevideosUpdater.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{7d8ecef2-740e-4f7e-ada7-2f7ce6057051}-myonlinevideosUpdater.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3\myonlinevideosUpdater.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Broken.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{4b85930a-ca0c-4592-9375-4af9707ad018}-Broken.png</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Broken.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Reported.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{3d2b2a36-932f-4401-bdac-16037a83f719}-Reported.png</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Reported.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Working.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c9279b04-e461-40ac-863f-7c4f64dccbfa}-Working.png</ZipFileName>
-        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Working.png</DestinationFilename>
-      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
@@ -2999,11 +2790,193 @@ public class Script
         <ZipFileName>Installer{CopyFile}\{64e288ef-149c-425d-aa93-09fde925d5e7}-ru.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\ru.xml</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\es.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ffffe5e3-2188-4131-b693-0c303098fbf0}-es.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\es.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\myonlinevideos.details.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2c7d271c-59d4-440f-9141-8b1c06530e79}-myonlinevideos.details.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\myonlinevideos.details.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\myonlinevideos.facade.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f7ffdbae-e214-428b-b921-3bcd57af7f1b}-myonlinevideos.facade.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\myonlinevideos.facade.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\myonlinevideos.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{8424538d-8fc8-47ca-a04b-2bace116a5e7}-myonlinevideos.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\myonlinevideos.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\myonlinevideosUpdater.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{75209523-7d05-4340-b561-d9da0b6cf283}-myonlinevideosUpdater.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\myonlinevideosUpdater.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\Media\hover_OnlineVideos.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{60516f91-8743-4c56-89b4-b06a15a8b543}-hover_OnlineVideos.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\Media\hover_OnlineVideos.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Broken.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{fe960ce4-5c7b-435e-8ba0-f8fc4323d1c9}-Broken.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Broken.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Picture_cover_focused.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{78cefe49-8334-493a-992a-cb47cbd84dfb}-Picture_cover_focused.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Picture_cover_focused.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Reported.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{617004ad-d096-4017-aa15-6ffd42ae4cdb}-Reported.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Reported.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\Working.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{54adadc7-b46b-4ee0-9864-f50cf350bfdd}-Working.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Working.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3wide\myonlinevideos.details.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e2949e3c-41a5-460f-a1ba-1ac27a266003}-myonlinevideos.details.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\myonlinevideos.details.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3wide\myonlinevideos.facade.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{eaf05d50-2046-4c8d-8f82-8ce3f49ee7d5}-myonlinevideos.facade.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\myonlinevideos.facade.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3wide\myonlinevideos.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b1fd0ebe-b5ea-450d-81d1-32a005582096}-myonlinevideos.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\myonlinevideos.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3wide\myonlinevideosUpdater.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b5e16d1a-da2f-4bee-bb53-703ffcb1f47e}-myonlinevideosUpdater.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\myonlinevideosUpdater.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3wide\Media\hover_OnlineVideos.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{dfa976e1-f658-473d-82a3-d8e586934e6b}-hover_OnlineVideos.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\Media\hover_OnlineVideos.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Broken.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4f77744c-b4b2-4683-be60-aed1ffa5f623}-Broken.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\Media\OnlineVideos\Broken.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Reported.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7daf0b85-1f62-4311-a99b-4b9329d10b44}-Reported.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\Media\OnlineVideos\Reported.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Working.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d3ab10f0-479e-40a7-ace6-8caf92198c07}-Working.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\Media\OnlineVideos\Working.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Xface\myonlinevideos.details.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{1966ca53-8f98-4b86-89e0-cb8fb8a828eb}-myonlinevideos.details.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Xface\myonlinevideos.details.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Xface\myonlinevideos.facade.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{49748432-4fc7-4da1-ac27-6f8e75314432}-myonlinevideos.facade.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Xface\myonlinevideos.facade.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Xface\myonlinevideos.window.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{316cb2fe-002f-4a17-af03-7b2f7fb631cf}-myonlinevideos.window.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Xface\myonlinevideos.window.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Xface\myonlinevideos.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{33d7329f-7b7e-40b0-887b-54dd8201cafa}-myonlinevideos.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Xface\myonlinevideos.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Xface\Media\buttonNF_online videos.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{fc76fabd-65bb-4c05-a878-93e87d6eada6}-buttonNF_online videos.png</ZipFileName>
+        <DestinationFilename>%Skin%\Xface\Media\buttonNF_online videos.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Xface\Media\button_online videos.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{1dd71cf3-5e6a-41b4-a7d1-a4cd7f4470e1}-button_online videos.png</ZipFileName>
+        <DestinationFilename>%Skin%\Xface\Media\button_online videos.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Xface\Media\hover_onlinevideos.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{742e2b0d-1c71-4296-9a73-e4662306fb86}-hover_onlinevideos.png</ZipFileName>
+        <DestinationFilename>%Skin%\Xface\Media\hover_onlinevideos.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Xface\Media\OnlineVideos.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{88a11a1c-b730-46cf-a1ab-a36863a7c52f}-OnlineVideos.png</ZipFileName>
+        <DestinationFilename>%Skin%\Xface\Media\OnlineVideos.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{31ece65f-5378-4546-8ddf-795213b4df1e}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{7cb40315-b962-4f27-bbe7-6827bc83e909}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
@@ -3024,20 +2997,40 @@ public class Script
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName />
-        <ZipFileName>Installer{CopyFile}\{0a7c20b0-f03f-43df-a3a2-8538c9f51793}-</ZipFileName>
-        <DestinationFilename>%Skin%\</DestinationFilename>
-        <Folder>..\Skins</Folder>
-        <Group>Skins</Group>
+        <ZipFileName>Installer{CopyFile}\{cbad33a3-521c-4204-b0e2-a5f96fe0ff39}-</ZipFileName>
+        <DestinationFilename>%Language%\</DestinationFilename>
+        <Folder>..\Language</Folder>
+        <Group>Language</Group>
         <Recursive>true</Recursive>
       </FolderGroup>
       <FolderGroup InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName />
-        <ZipFileName>Installer{CopyFile}\{cbad33a3-521c-4204-b0e2-a5f96fe0ff39}-</ZipFileName>
-        <DestinationFilename>%Language%\</DestinationFilename>
-        <Folder>..\Language</Folder>
-        <Group>Language</Group>
+        <ZipFileName>Installer{CopyFile}\{35c7f55a-8974-4167-9a46-3130061b02a8}-</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\</DestinationFilename>
+        <Folder>..\Skins\Blue3</Folder>
+        <Group>Blue3</Group>
+        <Recursive>true</Recursive>
+      </FolderGroup>
+      <FolderGroup InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName />
+        <ZipFileName>Installer{CopyFile}\{79fc882f-31ee-43a9-8583-149eea67ec29}-</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\</DestinationFilename>
+        <Folder>..\Skins\Blue3wide</Folder>
+        <Group>Blue3Wide</Group>
+        <Recursive>true</Recursive>
+      </FolderGroup>
+      <FolderGroup InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName />
+        <ZipFileName>Installer{CopyFile}\{fd77545e-85ea-434f-b5dd-4379ece1737f}-</ZipFileName>
+        <DestinationFilename>%Skin%\Xface\</DestinationFilename>
+        <Folder>..\Skins\Xface</Folder>
+        <Group>Xface</Group>
         <Recursive>true</Recursive>
       </FolderGroup>
     </FolderGroups>
