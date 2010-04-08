@@ -53,7 +53,7 @@ namespace OnlineVideos.Sites
                 while (m.Success)
                 {
                     RssLink cat = new RssLink();
-                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+                    cat.Name = Utils.PlainTextFromHtml(m.Groups["title"].Value);
                     cat.Url = m.Groups["url"].Value;
                     if (String.IsNullOrEmpty(cat.Url))
                         cat.Url = url;
