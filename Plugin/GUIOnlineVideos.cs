@@ -803,9 +803,9 @@ namespace OnlineVideos
 
             if (selectedSiteIndex < GUI_facadeView.Count) GUI_facadeView.SelectedListItemIndex = selectedSiteIndex;
 
-            GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.Instance.BasicHomeScreenName);
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
-            GUIPropertyManager.SetProperty("#header.image", "OnlineVideos/OnlineVideos.png");
+            GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.Instance.BasicHomeScreenName);
+            GUIPropertyManager.SetProperty("#header.image", Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
         }
 
         private void DisplayCategories(Category parentCategory)
