@@ -4,10 +4,10 @@
 <!-- Note: English is the fallback for any strings not found in other languages -->
 <strings>
   <string Field="AlreadyDownloading">Al bezig met downloaden</string>
+  <string Field="All">Alle</string>
   <string Field="Actions">Akties</string>
   <string Field="Actors">Acteurs</string>
   <string Field="AddToMySites">Toevoegen aan mijn sites</string>
-  <string Field="All">Alle</string>
   <string Field="AddToFavourites">Toevoegen aan favorieten</string>
   <string Field="Broken">Kapot</string>
   <string Field="Category">Categorie</string>
@@ -25,15 +25,17 @@
   <string Field="Filter">Filter</string>
   <string Field="FullUpdate">Volledige update</string>
   <string Field="Genre">Genre</string>
+  <string Field="Language">Taal</string>
   <string Field="LayoutList">Lay-out: Lijst</string>
   <string Field="LayoutIcons">Lay-out: Pictogrammen</string>
   <string Field="LayoutBigIcons">Lay-out: Grote pictogrammen</string>
   <string Field="ManageSites">Sites beheren</string>
   <string Field="MaxResults">Max. aantal resultaten</string>
+  <string Field="Name">Naam</string>
   <string Field="NextPage">Volgende pagina</string>
   <string Field="None">Niets</string>
   <string Field="NoVideoFound">Geen video gevonden</string>
-  <string Field="NewDllRequired">Nieuwe dll nodig!</string>
+  <string Field="NewDllDownloaded">Nieuwe dll gedownload!</string>
   <string Field="PlayAll">Alles afspelen</string>
   <string Field="PlotOutline">Samenvatting</string>
   <string Field="PreviousPage">Vorige pagina</string>
@@ -44,17 +46,16 @@
   <string Field="Reported">Gerapporteerd</string>
   <string Field="Runtime">Duur:</string>
   <string Field="RemoveFromMySites">Verwijderen uit mijn sites</string>
-  <string Field="RestartMediaPortalAndAutomaticUpdate">Herstart MediaPortal en voer een automatische update uit!</string>
+  <string Field="RestartMediaPortal">Herstart Mediaportal!</string>
   <string Field="SearchResults">Zoekresultaten</string>
   <string Field="SelectSource">Kies bron</string>
   <string Field="SortOptions">Sorteeropties</string>
-  <string Field="SortByName">Op naam sorteren</string>
-  <string Field="SortByLanguage">Op taal sorteren</string>
-  <string Field="SortByUpdated">Bijgewerkt</string>
   <string Field="Search">Zoek</string>
   <string Field="SetDownloadFolderInConfig">Kies eerst een download-map in de instellingen!</string>
+  <string Field="State">Status</string>
   <string Field="Timeframe">Periode</string>
   <string Field="Timeout">Time-out</string>
+  <string Field="Updated">Bijgewerkt</string>
   <string Field="Updatable">Bij te werken</string>
   <string Field="UpdateMySite">Mijn site bijwerken</string>
   <string Field="UpdateMySiteSkipCategories">Mijn site bijwerken (categorieen overslaan)</string>
