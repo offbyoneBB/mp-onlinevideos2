@@ -2051,7 +2051,7 @@ namespace OnlineVideos
                             // remember what dlls are required and check for changed dlls later (regardless of lastUpdated on site)
                             if (!string.IsNullOrEmpty(remoteSite.RequiredDll)) requiredDlls[remoteSite.RequiredDll] = true;
                             // get site if updated on server
-                            if (localSite.LastUpdated < remoteSite.LastUpdated)
+                            if ((remoteSite.LastUpdated - localSite.LastUpdated).TotalMinutes > 2)
                             {
                                 SiteSettings updatedSite = GUISiteUpdater.GetRemoteSite(remoteSite.Name);
                                 if (updatedSite != null)
@@ -2093,14 +2093,7 @@ namespace OnlineVideos
                                 string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
                                 if (md5LocalDll == anOnlineDll.MD5) download = false;
                             }
-                            if (download)
-                            {
-                                if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
-                                {
-                                    byte[] onlineDllData = ws.GetDll(anOnlineDll.Name);
-                                    if (onlineDllData != null && onlineDllData.Length > 0) System.IO.File.WriteAllBytes(location, onlineDllData);
-                                }, "getting dll from webservice")) return;
-                            }
+                            if (download) GUISiteUpdater.DownloadDll(anOnlineDll.Name, location, ws);
                         }
                         if (dlgPrgrs != null) dlgPrgrs.Percentage = 80 + (15 * (i + 1) / onlineDlls.Length);
                     }
