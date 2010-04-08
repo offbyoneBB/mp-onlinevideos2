@@ -180,6 +180,7 @@ namespace OnlineVideos.Sites
         public static string YoutubeTrick(string url, VideoInfo video)
         {
             video.VideoUrl = url;
+            video.PlaybackOptions = null;
             video.GetYouTubePlaybackOptions();
             return "";
         }
