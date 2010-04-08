@@ -24,8 +24,12 @@ namespace OnlineVideos
                 string[] dllFilesToCheck = Directory.GetFiles(dirWithExtraDlls, "OnlineVideos.Sites.*.dll");                
                 foreach (string aDll in dllFilesToCheck)
                 {
+#if DEBUG
+                    assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(aDll)));
+#else
                     // load assembly as raw bytes, so dll can be overwritten while app is still running
                     assemblies.Add(AppDomain.CurrentDomain.Load(File.ReadAllBytes(aDll)));
+#endif
                 }
             }
             foreach (Assembly assembly in assemblies)
