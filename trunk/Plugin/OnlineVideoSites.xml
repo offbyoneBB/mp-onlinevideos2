@@ -963,6 +963,12 @@
       </Categories>
     </Site>
     <Site name="TVE" util="TVE" agecheck="false" enabled="true" lang="es">
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://www.rtve.es]]></item>
+        <item key="videoListRegEx"><![CDATA[<li\sid="video-(?<videoid>[^"]*)"\sclass="videoThumbnail">\s*<div>\s*<a\shref='(?<VideoUrl>[^']*)'[^>]*>\s*<img\ssrc="(?<ImageUrl>[^"]*).*?<h3>[^>]*>(?<Title>[^<]*)<.*?</h3>\s*<p>\s*(?<Description>[^<]*)</p>.*?Emitido:\s*(?<Airdate>[^<]*)<.*?Duraci&oacute;n:\s*(?<Duration>[^<]*)<]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li\sclass="adelante">\s*<a\shref="(?<url>[^"]*)"]]></item>
+        <item key="prevPageRegEx"><![CDATA[<li\sclass="atras">\s*<a\shref="(?<url>[^"]*)"]]></item>
+      </Configuration>
       <Description>Las series y programas de TVE, cuando quieras en rtve.es</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Todos">http://www.rtve.es/alacarta/todos/recomendados/index.html</Category>
