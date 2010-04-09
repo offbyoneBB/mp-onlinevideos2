@@ -5,6 +5,7 @@
 <strings>
 
   <!-- A -->
+  <string Field="Airdate">Emitido</string>
   <string Field="AlreadyDownloading">Descargando el archivo.</string>
   <string Field="Actions">Acciones</string>
   <string Field="Actors">Actores:</string>

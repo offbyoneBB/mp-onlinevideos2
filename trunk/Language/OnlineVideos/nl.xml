@@ -3,6 +3,7 @@
 <!-- Dutch -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
 <strings>
+  <string Field="Airdate">Uitgezonden</string>
   <string Field="AlreadyDownloading">Al bezig met downloaden</string>
   <string Field="All">Alle</string>
   <string Field="Actions">Akties</string>
