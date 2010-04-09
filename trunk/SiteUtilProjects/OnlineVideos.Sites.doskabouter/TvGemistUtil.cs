@@ -6,11 +6,14 @@ using System.Web;
 using System.Xml;
 using System.Net;
 using MediaPortal.Configuration;
+using System.ComponentModel;
 
 namespace OnlineVideos.Sites
 {
     public class TvGemistUtil : SiteUtilBase
     {
+        [Category("OnlineVideosConfiguration"), Description("Boolean used for testing rtlgemist")]
+        protected bool experimental;
 
         private string subCategoryRegexSbsVeronica = @"<span\s*class=""title"">\s*<a\s*href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<";
         private string videoListRegexNet5SbsVeronica = @"<a\s*href=""(?<url>[^""]+)"".*?<img\s*src=""(?<thumb>[^""]+)"".*?<span>(?<episode>[^<]*)<.*?<span>(?<airdate>[^<]*)<.*?<span>(?<descr>[^<]*)<";
@@ -491,7 +494,21 @@ namespace OnlineVideos.Sites
                 //Console.WriteLine(" no video found at " + video.VideoUrl);
                 video.VideoUrl = String.Empty;
             }
+            if (experimental)
+            {
+                string exp = video.VideoUrl.Replace("http://av.rtl.nl/web/", "http://www.rtl.nl/system/video/wvx/");
+                int ind = exp.LastIndexOf('/');
+                ind = exp.LastIndexOf('/', ind - 1);
+                exp = exp.Insert(ind, "/miMedia");
+                exp = exp.Replace(".MiMedia_WM_1500K_V9.wmv", ".xml/1500.wvx");
 
+                // transform 
+                // http://av.rtl.nl/web/components/soaps/gtst/203350/203939.s4m.29707557.Goede_Tijden_Slechte_Tijden_s24_a4020.MiMedia_WM_1500K_V9.wmv
+                // into
+                // http://www.rtl.nl/system/video/wvx/components/soaps/gtst/miMedia/203350/203939.s4m.29707557.Goede_Tijden_Slechte_Tijden_s24_a4020.xml/1500.wvx
+
+                video.VideoUrl = exp;
+            }
         }
 
         private List<VideoInfo> getBareVideoList(RssLink category, Specifics specifics)
@@ -570,7 +587,10 @@ namespace OnlineVideos.Sites
                 SetRtlUrl(video, ref dummy);
                 return video.VideoUrl;
             }
-            if (Source.RtlGemist.Equals(video.Other)) return video.VideoUrl;
+            if (Source.RtlGemist.Equals(video.Other))
+            {
+                return video.VideoUrl;
+            }
             if (Source.UitzendingGemist.Equals(video.Other))
                 return UrlTricks.PlayerOmroepTrick(video.VideoUrl);
 

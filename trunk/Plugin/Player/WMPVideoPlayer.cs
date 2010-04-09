@@ -52,7 +52,7 @@ namespace OnlineVideos.Player
             _wmp10Player.Visible = false;
             GUIGraphicsContext.form.ResumeLayout(false);
         }
-        
+
         public override bool Play(string strFile)
         {
             _graphState = PlayState.Init;
@@ -69,7 +69,7 @@ namespace OnlineVideos.Player
             if (_wmp10Player == null) return false;
             
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-
+            _wmp10Player.ErrorEvent += OnError;
             _wmp10Player.PlayStateChange += OnPlayStateChange;
             _wmp10Player.Buffering += OnBuffering;
 
@@ -102,7 +102,7 @@ namespace OnlineVideos.Player
                             // if true then could not load stream 
                             if (_wmp10Player.playState.Equals(WMPPlayState.wmppsPlaying))
                             {
-                                _bufferCompleted = true;                                
+                                _bufferCompleted = true;
                             }
                             if (GUIGraphicsContext.Overlay)
                             {
@@ -114,6 +114,7 @@ namespace OnlineVideos.Player
                     }
                     GUIGraphicsContext.Overlay = true;
                 }
+
                 if (_bufferCompleted && _wmp10Player.playState.Equals(WMPPlayState.wmppsReady))
                 {
                     Log.Info("WMPVideoPlayer: failed to load {0}", strFile);
@@ -179,7 +180,13 @@ namespace OnlineVideos.Player
                     break;
             }
         }
-        
+
+        private void OnError(object sender, EventArgs e)
+        {
+            string err = _wmp10Player.Error.get_Item(0).errorDescription;
+            Log.Error("WMPVideoPlayer: " + err);
+        }
+
         private void OnBuffering(object sender, _WMPOCXEvents_BufferingEvent e)
         {
             Log.Debug("WMPVideoPlayer: bandWidth: {0}", _wmp10Player.network.bandWidth);
