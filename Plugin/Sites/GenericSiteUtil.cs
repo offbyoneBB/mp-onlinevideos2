@@ -42,7 +42,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a previous page link. Group should be named 'url'.")]
         protected string prevPageRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the prevPageRegEx.")]
-        protected string prevPageRegExUrlFormatString;   
+        protected string prevPageRegExUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Boolean used for decoding url for ajax requests")]
         protected bool prevPageRegExUrlDecoding = false;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for a link that points to another file holding the actual playback url. Group should be named 'url'. If this is not set, the fileUrlRegEx will be used directly, otherwise first this and afterwards the fileUrlRegEx on the result.")]
@@ -128,7 +128,7 @@ namespace OnlineVideos.Sites
                         m = m.NextMatch();
                     }
                     // discovery finished, copy them to the actual list -> prevents double entries if error occurs in the middle of adding
-                    foreach(Category cat in dynamicCategories) Settings.Categories.Add(cat); 
+                    foreach (Category cat in dynamicCategories) Settings.Categories.Add(cat);
                     Settings.DynamicCategoriesDiscovered = true;
                 }
             }
@@ -148,7 +148,7 @@ namespace OnlineVideos.Sites
                     cat.Url = m.Groups["url"].Value;
                     if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
                     if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
-                    if(dynamicSubCategoryUrlDecoding)cat.Url = HttpUtility.HtmlDecode(cat.Url);
+                    if (dynamicSubCategoryUrlDecoding) cat.Url = HttpUtility.HtmlDecode(cat.Url);
                     cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
                     cat.Thumb = m.Groups["thumb"].Value;
                     cat.Description = m.Groups["description"].Value;
@@ -220,17 +220,17 @@ namespace OnlineVideos.Sites
                     Match matchPlaylistUrl = regEx_PlaylistUrl.Match(dataPage);
                     if (matchPlaylistUrl.Success)
                     {
-                        string playlistFileUrl = string.Format(playlistUrlFormatString,HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
+                        string playlistFileUrl = string.Format(playlistUrlFormatString, HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
                         dataPage = GetWebData(playlistFileUrl, GetCookie());
                     }
                     else return ""; // if no match, return empty url -> error
                 }
                 // 3.b find a match in the retrieved data for the final playback url
                 if (regEx_FileUrl != null)
-                {                    
-                    video.PlaybackOptions = new Dictionary<string,string>();
+                {
+                    video.PlaybackOptions = new Dictionary<string, string>();
                     Match matchFileUrl = regEx_FileUrl.Match(dataPage);
-                    while(matchFileUrl.Success)
+                    while (matchFileUrl.Success)
                     {
                         // apply some formatting to the url
                         List<string> groupValues = new List<string>();
@@ -250,7 +250,7 @@ namespace OnlineVideos.Sites
                         }
                         matchFileUrl = matchFileUrl.NextMatch();
                     }
-                    if (video.PlaybackOptions.Count == 0) 
+                    if (video.PlaybackOptions.Count == 0)
                         return "";// if no match, return empty url -> error
                     else
                     {
@@ -283,6 +283,9 @@ namespace OnlineVideos.Sites
                         if (!Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
                         videoInfo.Length = Regex.Replace(m.Groups["Duration"].Value, "(<[^>]+>)", "");
                         videoInfo.Description = m.Groups["Description"].Value;
+                        string Airdate = m.Groups["Airdate"].Value;
+                        if (!String.IsNullOrEmpty(Airdate))
+                            videoInfo.Description = videoInfo.Description + ' ' + Translation.Airdate + ": " + Airdate;
                         videoList.Add(videoInfo);
                         m = m.NextMatch();
                     }

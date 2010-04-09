@@ -221,6 +221,7 @@ namespace OnlineVideos
     
 
     // A
+    public static string Airdate = "Aired";
     public static string AlreadyDownloading = "Already downloading this file.";
     public static string All = "All";
     public static string Actions = "Actions";    
