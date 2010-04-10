@@ -98,8 +98,12 @@ namespace OnlineVideos
             if (!Directory.Exists(iconDir)) Directory.CreateDirectory(iconDir);
             string bannerDir = Path.Combine(Config.GetFolder(Config.Dir.Thumbs), @"OnlineVideos\Banners\");
             if (!Directory.Exists(bannerDir)) Directory.CreateDirectory(bannerDir);
-            string dllDir = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
-            if (!Directory.Exists(dllDir)) Directory.CreateDirectory(dllDir);
+            try
+            {
+                string dllDir = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
+                if (!Directory.Exists(dllDir)) Directory.CreateDirectory(dllDir);
+            }
+            catch { /* might fail due to UAC */ }
         }
 
         XmlSerializerImplementation _XmlSerImp;
