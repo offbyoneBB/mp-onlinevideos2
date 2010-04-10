@@ -2067,8 +2067,6 @@ namespace OnlineVideos
 
                 if (requiredDlls.Count > 0)
                 {
-                    // target directory for dlls
-                    string dllDir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
                     if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Retrieving remote dll list");
                     OnlineVideosWebservice.Dll[] onlineDlls = null;
                     if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
@@ -2076,6 +2074,13 @@ namespace OnlineVideos
                         onlineDlls = ws.GetDllsOverview();
                     }, "getting dlls overview from webservice")) return;
 
+                    // target directory for dlls
+                    string dllDir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
+                    // temp target directory for dlls (if exists, delete and recreate)
+                    string dllTempDir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "OnlineVideos\\");
+                    if (System.IO.Directory.Exists(dllTempDir)) System.IO.Directory.Delete(dllTempDir, true);
+                    System.IO.Directory.CreateDirectory(dllTempDir);
+                    int dllsRetrieved = 0;
                     for (int i = 0; i < onlineDlls.Length; i++)
                     {
                         OnlineVideosWebservice.Dll anOnlineDll = onlineDlls[i];
@@ -2093,9 +2098,16 @@ namespace OnlineVideos
                                 string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
                                 if (md5LocalDll == anOnlineDll.MD5) download = false;
                             }
-                            if (download) GUISiteUpdater.DownloadDll(anOnlineDll.Name, location, ws);
+                            if (download)
+                            {
+                                if (GUISiteUpdater.DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll", ws)) dllsRetrieved++;
+                            }
                         }
                         if (dlgPrgrs != null) dlgPrgrs.Percentage = 80 + (15 * (i + 1) / onlineDlls.Length);
+                    }
+                    if (dllsRetrieved > 0)
+                    {
+                        GUISiteUpdater.CopyDlls(dllTempDir, dllDir);
                     }
                 }
                 if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Saving local site list");

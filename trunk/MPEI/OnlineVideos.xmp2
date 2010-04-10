@@ -1542,48 +1542,6 @@ Click Next to continue or Cancel to exit Setup.</Value>
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
-            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
-              <Params>
-                <Items>
-                  <SectionParam Name="Script">
-                    <Value>//css_reference "MpeCore.dll";
-
-using MpeCore.Classes;
-using MpeCore;
-using System.IO;
-using System.Security.AccessControl;
-using System.Security.Principal;
-
-public class Script
-{
-    public static void Main(PackageClass packageClass, ActionItem actionItem)
-    {
-        string satelliteDllsPath = Path.Combine(MpeInstaller.TransformInRealPath("%Plugins%"), "Windows\\OnlineVideos");
-
-        // Create a SecurityIdentifier object for "Users".
-        SecurityIdentifier usersSid = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
-
-        DirectorySecurity security = System.IO.Directory.GetAccessControl(satelliteDllsPath);
-        FileSystemAccessRule newRule =
-          new FileSystemAccessRule(
-            usersSid,
-            FileSystemRights.FullControl,                                       // full control so no arm if new files are created
-            InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
-            PropagationFlags.InheritOnly,
-            AccessControlType.Allow);
-        bool modified = false;
-        security.ModifyAccessRule(AccessControlModification.Add, newRule, out modified);
-        System.IO.Directory.SetAccessControl(satelliteDllsPath, security);
-    }
-}
-</Value>
-                    <ValueType>Script</ValueType>
-                    <Description />
-                  </SectionParam>
-                </Items>
-              </Params>
-              <ExecuteLocation>BeforPanelShow</ExecuteLocation>
-            </ActionItem>
           </Items>
         </Actions>
         <IncludedGroups />
@@ -1611,7 +1569,7 @@ public class Script
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
     <VersionDescription>Bugfixes. Playback enhancements.</VersionDescription>
     <DevelopmentStatus>Beta</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.19.0.MPE1</OnlineLocation>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.20.0.MPE1</OnlineLocation>
     <ReleaseDate>2010-04-04T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.[Version].mpe1</Location>
@@ -2976,7 +2934,7 @@ public class Script
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{7cb40315-b962-4f27-bbe7-6827bc83e909}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{b802478a-5f08-4784-9ad4-8a1ba84e9622}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>

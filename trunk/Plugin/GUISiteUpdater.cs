@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Configuration;
@@ -324,12 +325,17 @@ namespace OnlineVideos
             if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Checking dlls");
             bool showMessage = false;
             if (requiredDlls.Count > 0)
-            {     
+            {
                 // if dir not found -> no need to check the dlls with MD5
                 string dllDir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
                 if (!System.IO.Directory.Exists(dllDir)) showMessage = true;
                 else
-                {                    
+                {
+                    // target directory for dlls (temp) (if exists, delete and recreate)
+                    string dllTempDir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "OnlineVideos\\");
+                    if (System.IO.Directory.Exists(dllTempDir)) System.IO.Directory.Delete(dllTempDir, true);
+                    System.IO.Directory.CreateDirectory(dllTempDir);
+                    int dllsRetrieved = 0;
                     for (int i = 0; i < onlineDlls.Length; i++)
                     {
                         OnlineVideosWebservice.Dll anOnlineDll = onlineDlls[i];
@@ -349,11 +355,15 @@ namespace OnlineVideos
                             }
                             if (download)
                             {
-                                DownloadDll(anOnlineDll.Name, location);
+                                if (DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll")) dllsRetrieved++;
                                 showMessage = true;
                             }
                         }
                         if (dlgPrgrs != null) dlgPrgrs.Percentage = 90 + (10 * (i + 1) / onlineDlls.Length);
+                    }
+                    if (dllsRetrieved > 0)
+                    {
+                        GUISiteUpdater.CopyDlls(dllTempDir, dllDir);
                     }
                 }
             }
@@ -562,6 +572,27 @@ namespace OnlineVideos
                 return true;
             else
                 return false;
+        }
+
+        public static void CopyDlls(string sourceDir, string targetDir)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
+            psi.FileName = "cmd.exe";
+            psi.Arguments = "/c copy /B /V /Y \"" + sourceDir + "OnlineVideos.Sites.*.dll\" \"" + targetDir + "\"";
+            psi.Verb = "runas";
+            psi.CreateNoWindow = true;
+            psi.WindowStyle = ProcessWindowStyle.Hidden;
+            psi.ErrorDialog = false;
+            try
+            {
+                Process p = System.Diagnostics.Process.Start(psi);
+                p.WaitForExit(10000);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
         }
     }
 }
