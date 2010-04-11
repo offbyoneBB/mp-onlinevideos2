@@ -1,4 +1,4 @@
-#summary A guide what elements make up this plugin and can and must be used from the skin.
+#summary A guide what GUI elements are required and may be used to visually present this plugin using your skin.
 
 = Windows =
 
@@ -8,12 +8,12 @@ The Plugin offers 2 window implementations:
 
 The Blue3Wide skinfiles that are installed with the plugin are always kept updated and should be used as a reference when creating skinfiles.
 
-The plugin comes with its own localization, so skinners are encourages to use the provided properties for their labels.
+The plugin comes with its own localization, so skinners are encouraged to use the provided properties for their labels.
 
-The skin for the window 4755 should set allowoverlay to yes, because external players (e.g. WindowsMediaPlayer) will be used in some cases.
+The skin for the window 4755 should set `allowoverlay` to yes, because external players (e.g. WindowsMediaPlayer) will be used in some cases.
 
 = Window 4755 required controls =
-|| *Id* || *type* || *label* || *description* ||
+|| *Id* || *type* || *default localized label* || *description* ||
 || 2 || button || {{{#OnlineVideos.Translation.LayoutList.Label}}} || Change facade viewmode ||
 || 3 || button || {{{#OnlineVideos.Translation.NextPage.Label}}} || Next page ||
 || 4 || button || {{{#OnlineVideos.Translation.PreviousPage.Label}}} || Previous page ||
@@ -29,7 +29,7 @@ The skin for the window 4755 should set allowoverlay to yes, because external pl
 || 51 || listcontrol || - || additional list used instead of facade in details view ||
 
 = Window 4757 required controls =
-|| *Id* || *type* || *label* || *description* ||
+|| *Id* || *type* || *default localized label* || *description* ||
 || 50 || listcontrol || label1 - site name, label2 - language, label3 - updatedate || main list ||
 || 502 || button || {{{#OnlineVideos.Translation.Refresh.Label}}} || Refresh view ||
 || 503 || selectbutton || {{{#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.State.Label}}} || State filter ||
