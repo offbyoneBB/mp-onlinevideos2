@@ -285,7 +285,7 @@ namespace OnlineVideos.Sites
                         videoInfo.Description = m.Groups["Description"].Value;
                         string Airdate = m.Groups["Airdate"].Value;
                         if (!String.IsNullOrEmpty(Airdate))
-                            videoInfo.Description = videoInfo.Description + ' ' + Translation.Airdate + ": " + Airdate;
+                            videoInfo.Length = videoInfo.Length + '|' + Translation.Airdate + ": " + Airdate;
                         videoList.Add(videoInfo);
                         m = m.NextMatch();
                     }
