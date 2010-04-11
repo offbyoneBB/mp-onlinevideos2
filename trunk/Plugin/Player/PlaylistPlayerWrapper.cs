@@ -26,7 +26,7 @@ namespace OnlineVideos.Player
                     {
                         System.Threading.Thread.Sleep(2000);
                         PlayListItemWrapper item = MediaPortal.Playlists.PlayListPlayer.SingletonPlayer.GetCurrentItem() as PlayListItemWrapper;
-                        if (item != null) GUIOnlineVideos.SetGuiProperties(item.Video);
+                        if (item != null) GUIOnlineVideos.SetPlayingGuiProperties(item.Video);
                     }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
 
             return result;

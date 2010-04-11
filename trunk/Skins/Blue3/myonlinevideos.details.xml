@@ -9,7 +9,7 @@
       <posY>85</posY>
       <width>221</width>
       <height>312</height>
-      <visible>no</visible>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
       <texture>playback_background.png</texture>
     </control>
     <control>
@@ -20,7 +20,7 @@
       <posY>97</posY>
       <width>200</width>
       <height>280</height>
-      <visible>no</visible>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
       <texture flipY="true" diffuse="Thumb_Mask.png">#OnlineVideos.movieposter</texture>
     </control>
     <control>
@@ -35,7 +35,7 @@
       <onleft>51</onleft>
       <onup>51</onup>
       <ondown>51</ondown>
-      <visible>no</visible>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
     </control>
     <control>
       <type>label</type>
@@ -44,7 +44,7 @@
       <posX>260</posX>
       <posY>97</posY>
       <label>#OnlineVideos.Translation.Actors.Label</label>
-      <visible>no</visible>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
       <textcolor>ffb2d4f5</textcolor>
     </control>
     <control>
@@ -56,7 +56,7 @@
       <width>230</width>
       <font>font12</font>
       <label>#OnlineVideos.cast</label>
-      <visible>no</visible>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
       <disabledcolor>ff808080</disabledcolor>
     </control>
     <control>
@@ -66,7 +66,7 @@
       <posX>50</posX>
       <posY>400</posY>
       <label>#OnlineVideos.Translation.DateOfRelease.Label</label>
-      <visible>no</visible>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
       <textcolor>ffb2d4f5</textcolor>
     </control>
     <control>
@@ -76,7 +76,7 @@
       <posX>50</posX>
       <posY>425</posY>
       <label>#OnlineVideos.releasedate</label>
-      <visible>no</visible>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>
@@ -86,7 +86,7 @@
       <posX>50</posX>
       <posY>460</posY>
       <label>#OnlineVideos.Translation.Genre.Label</label>
-      <visible>no</visible>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
       <textcolor>ffb2d4f5</textcolor>
     </control>
     <control>
@@ -97,7 +97,7 @@
       <posY>485</posY>
       <width>195</width>
       <label>#OnlineVideos.genre</label>
-      <visible>no</visible>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
       <disabledcolor>ff808080</disabledcolor>
     </control>
     <control>
@@ -106,7 +106,7 @@
       <id>58</id>
       <posX>260</posX>
       <posY>260</posY>
-      <visible>no</visible>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
       <label>#OnlineVideos.Translation.PlotOutline.Label</label>
       <textcolor>ffb2d4f5</textcolor>
     </control>
@@ -119,7 +119,7 @@
       <width>440</width>
       <height>240</height>
       <colordiffuse>ffffffff</colordiffuse>
-      <visible>no</visible>
+      <visible>string.equals(#OnlineVideos.state, details)</visible>
       <font>font13</font>
       <label>#OnlineVideos.trailerdesc</label>
       <textcolor>FFFFFFFF</textcolor>

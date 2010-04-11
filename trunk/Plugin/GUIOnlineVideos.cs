@@ -238,7 +238,7 @@ namespace OnlineVideos
             {
                 if (g_Player.Player is OnlineVideos.Player.OnlineVideosPlayer || g_Player.Player is OnlineVideos.Player.WMPVideoPlayer)
                 {
-                    SetGuiProperties(playingVideo);
+                    SetPlayingGuiProperties(playingVideo);
                 }
                 else
                 {
@@ -252,7 +252,7 @@ namespace OnlineVideos
                     PlayListItem plsItem = PlayListPlayer.SingletonPlayer.GetCurrentItem();
                     if (plsItem is Player.PlayListItemWrapper)
                     {
-                        SetGuiProperties((plsItem as Player.PlayListItemWrapper).Video);
+                        SetPlayingGuiProperties((plsItem as Player.PlayListItemWrapper).Video);
                     }
                 }
             }
@@ -1380,7 +1380,7 @@ namespace OnlineVideos
                 new System.Threading.Thread(delegate()
                 {
                     System.Threading.Thread.Sleep(2000);
-                    GUIOnlineVideos.SetGuiProperties(playingVideo);
+                    GUIOnlineVideos.SetPlayingGuiProperties(playingVideo);
                 }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
             }
         }
@@ -1600,7 +1600,6 @@ namespace OnlineVideos
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
                     HideAndDisable(GUI_btnPrevious.GetID);
-                    HideVideoDetails();
                     HideFilterButtons();
                     ShowOrderButtons();
                     HideSearchButtons();
@@ -1620,7 +1619,6 @@ namespace OnlineVideos
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
                     HideAndDisable(GUI_btnPrevious.GetID);
-                    HideVideoDetails();
                     HideFilterButtons();
                     if (selectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
                     if (selectedSite is IFavorite) ShowAndEnable(GUI_btnFavorite.GetID); else HideAndDisable(GUI_btnFavorite.GetID);
@@ -1645,7 +1643,6 @@ namespace OnlineVideos
                     ShowAndEnable(GUI_facadeView.GetID);
                     if (selectedSite.HasNextPage) ShowAndEnable(GUI_btnNext.GetID); else HideAndDisable(GUI_btnNext.GetID);
                     if (selectedSite.HasPreviousPage) ShowAndEnable(GUI_btnPrevious.GetID); else HideAndDisable(GUI_btnPrevious.GetID);
-                    HideVideoDetails();
                     if (selectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
                     if (selectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
                     if (selectedSite.HasFilterCategories) ShowCategoryButton();
@@ -1660,13 +1657,13 @@ namespace OnlineVideos
                     GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(selectedSite));
                     HideAndDisable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
-                    HideAndDisable(GUI_btnPrevious.GetID);
-                    ShowVideoDetails();
+                    HideAndDisable(GUI_btnPrevious.GetID);                    
                     HideFilterButtons();
                     HideSearchButtons();
                     HideAndDisable(GUI_btnFavorite.GetID);
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetVideoInfoGuiProperties(null);
+                    SetVideoInfoExtendedGuiProperties();
                     break;
             }
             if (CurrentState == State.details)
@@ -1685,42 +1682,7 @@ namespace OnlineVideos
                 GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
             }
         }
-
-        private void HideVideoDetails()
-        {
-            HideAndDisable(23);
-            HideAndDisable(24);
-            HideAndDisable(51);
-            HideAndDisable(52);
-            HideAndDisable(53);
-            HideAndDisable(54);
-            HideAndDisable(55);
-            HideAndDisable(56);
-            HideAndDisable(57);
-            HideAndDisable(58);
-            HideAndDisable(59);
-        }
-
-        private void ShowVideoDetails()
-        {
-            GUIPropertyManager.SetProperty("#OnlineVideos.movieposter", ImageDownloader.DownloadPoster(selectedVideo.Tags, selectedVideo.Title));
-            GUIPropertyManager.SetProperty("#OnlineVideos.trailerdesc", selectedVideo.Description);
-            GUIPropertyManager.SetProperty("#OnlineVideos.genre", selectedVideo.Genres);
-            GUIPropertyManager.SetProperty("#OnlineVideos.releasedate", selectedVideo.Length);
-            GUIPropertyManager.SetProperty("#OnlineVideos.cast", selectedVideo.Cast);
-            ShowAndEnable(52);
-            ShowAndEnable(53);
-            ShowAndEnable(54);
-            ShowAndEnable(55);
-            ShowAndEnable(56);
-            ShowAndEnable(57);
-            ShowAndEnable(23);
-            ShowAndEnable(24);
-            ShowAndEnable(51);
-            ShowAndEnable(58);
-            ShowAndEnable(59);
-        }
-
+        
         private void ShowOrderButtons()
         {
             ShowAndEnable(GUI_btnOrderBy.GetID);
@@ -1869,43 +1831,6 @@ namespace OnlineVideos
             if (rememberIndex > -1) GUIControl.SelectItemControl(GetID, GUI_facadeView.GetID, rememberIndex);
         }
 
-        private void SetVideoInfoGuiProperties(VideoInfo foVideo)
-        {
-            if (foVideo == null)
-            {
-                GUIPropertyManager.SetProperty("#OnlineVideos.length", String.Empty);
-                GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
-            }
-            else
-            {
-                if (String.IsNullOrEmpty(foVideo.Length))
-                {
-                    GUIPropertyManager.SetProperty("#OnlineVideos.length", Translation.None);
-                }
-                else
-                {
-                    double ldLength;
-                    if (double.TryParse(foVideo.Length, System.Globalization.NumberStyles.None | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.CreateSpecificCulture("en-US"), out ldLength))
-                    {
-                        TimeSpan t = TimeSpan.FromSeconds(ldLength);
-                        GUIPropertyManager.SetProperty("#OnlineVideos.length", t.ToString());
-                    }
-                    else
-                    {
-                        GUIPropertyManager.SetProperty("#OnlineVideos.length", foVideo.Length);
-                    }
-                }
-                if (String.IsNullOrEmpty(foVideo.Description))
-                {
-                    GUIPropertyManager.SetProperty("#OnlineVideos.desc", Translation.None);
-                }
-                else
-                {
-                    GUIPropertyManager.SetProperty("#OnlineVideos.desc", foVideo.Description);
-                }
-            }
-        }
-
         private void AddFavorite(VideoInfo loSelectedVideo, bool db)
         {
             if (db)
@@ -1987,7 +1912,7 @@ namespace OnlineVideos
             return image;
         }
 
-        internal static void SetGuiProperties(VideoInfo video)
+        internal static void SetPlayingGuiProperties(VideoInfo video)
         {
             if (video == null) return;
             Log.Info("Setting Video Properties.");
@@ -1997,6 +1922,52 @@ namespace OnlineVideos
             if (!string.IsNullOrEmpty(video.Genres)) GUIPropertyManager.SetProperty("#Play.Current.Genre", video.Genres);
             if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Length);
             if (!string.IsNullOrEmpty(video.Cast)) GUIPropertyManager.SetProperty("#Play.Current.Cast", video.Cast);
+        }
+
+        private void SetVideoInfoExtendedGuiProperties()
+        {
+            GUIPropertyManager.SetProperty("#OnlineVideos.movieposter", ImageDownloader.DownloadPoster(selectedVideo.Tags, selectedVideo.Title));
+            GUIPropertyManager.SetProperty("#OnlineVideos.trailerdesc", selectedVideo.Description);
+            GUIPropertyManager.SetProperty("#OnlineVideos.genre", selectedVideo.Genres);
+            GUIPropertyManager.SetProperty("#OnlineVideos.releasedate", selectedVideo.Length);
+            GUIPropertyManager.SetProperty("#OnlineVideos.cast", selectedVideo.Cast);
+        }
+
+        private void SetVideoInfoGuiProperties(VideoInfo foVideo)
+        {
+            if (foVideo == null)
+            {
+                GUIPropertyManager.SetProperty("#OnlineVideos.length", String.Empty);
+                GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
+            }
+            else
+            {
+                if (String.IsNullOrEmpty(foVideo.Length))
+                {
+                    GUIPropertyManager.SetProperty("#OnlineVideos.length", Translation.None);
+                }
+                else
+                {
+                    double ldLength;
+                    if (double.TryParse(foVideo.Length, System.Globalization.NumberStyles.None | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.CreateSpecificCulture("en-US"), out ldLength))
+                    {
+                        TimeSpan t = TimeSpan.FromSeconds(ldLength);
+                        GUIPropertyManager.SetProperty("#OnlineVideos.length", t.ToString());
+                    }
+                    else
+                    {
+                        GUIPropertyManager.SetProperty("#OnlineVideos.length", foVideo.Length);
+                    }
+                }
+                if (String.IsNullOrEmpty(foVideo.Description))
+                {
+                    GUIPropertyManager.SetProperty("#OnlineVideos.desc", Translation.None);
+                }
+                else
+                {
+                    GUIPropertyManager.SetProperty("#OnlineVideos.desc", foVideo.Description);
+                }
+            }
         }
 
         private void AutoUpdate(bool ask)
@@ -2110,8 +2081,11 @@ namespace OnlineVideos
                         GUISiteUpdater.CopyDlls(dllTempDir, dllDir);
                     }
                 }
-                if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Saving local site list");
-                if (saveRequired) OnlineVideoSettings.Instance.SaveSites();
+                if (saveRequired)
+                {
+                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Saving local site list");
+                    OnlineVideoSettings.Instance.SaveSites();
+                }
                 if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, "Done"); dlgPrgrs.Close(); }                
             }
         }
