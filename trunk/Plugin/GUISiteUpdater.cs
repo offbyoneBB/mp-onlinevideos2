@@ -272,70 +272,71 @@ namespace OnlineVideos
         void FullUpdate()
         {
             GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-            if (dlgPrgrs != null)
+            try
             {
-                dlgPrgrs.Reset();
-                dlgPrgrs.DisplayProgressBar = true;
-                dlgPrgrs.ShowWaitCursor = false;
-                dlgPrgrs.DisableCancel(true);
-                dlgPrgrs.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
-                dlgPrgrs.StartModal(GetID);
-            }
-
-            Dictionary<string, bool> requiredDlls = new Dictionary<string, bool>();
-
-            // update or add all sites, so the user has everything the server currently has
-            for (int i = 0; i < onlineSites.Length; i++ )
-            {
-                OnlineVideosWebservice.Site onlineSite = onlineSites[i];
-                if (dlgPrgrs != null) dlgPrgrs.SetLine(1, onlineSite.Name);
-                if (!string.IsNullOrEmpty(onlineSite.RequiredDll)) requiredDlls[onlineSite.RequiredDll] = true;
-                int localSiteIndex = GetLocalSite(onlineSite.Name);
-                if (localSiteIndex == -1)
+                if (dlgPrgrs != null)
                 {
-                    // add
-                    SiteSettings newSite = GetRemoteSite(onlineSite.Name);
-                    if (newSite != null)
-                    {
-                        // disable local site if broken
-                        if (onlineSite.State == OnlineVideos.OnlineVideosWebservice.SiteState.Broken) newSite.IsEnabled = false;
-                        OnlineVideoSettings.Instance.SiteSettingsList.Add(newSite);
-                    }
+                    dlgPrgrs.Reset();
+                    dlgPrgrs.DisplayProgressBar = true;
+                    dlgPrgrs.ShowWaitCursor = false;
+                    dlgPrgrs.DisableCancel(true);
+                    dlgPrgrs.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                    dlgPrgrs.StartModal(GetID);
                 }
-                else if ((onlineSite.LastUpdated - OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].LastUpdated).TotalMinutes > 2)
+
+                Dictionary<string, bool> requiredDlls = new Dictionary<string, bool>();
+
+                // update or add all sites, so the user has everything the server currently has
+                for (int i = 0; i < onlineSites.Length; i++)
                 {
-                    // update
-                    SiteSettings updatedSite = GetRemoteSite(onlineSite.Name);
-                    if (updatedSite != null)
+                    OnlineVideosWebservice.Site onlineSite = onlineSites[i];
+                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, onlineSite.Name);
+                    if (!string.IsNullOrEmpty(onlineSite.RequiredDll)) requiredDlls[onlineSite.RequiredDll] = true;
+                    int localSiteIndex = GetLocalSite(onlineSite.Name);
+                    if (localSiteIndex == -1)
                     {
-                        // disable local site if broken
-                        if (onlineSite.State == OnlineVideos.OnlineVideosWebservice.SiteState.Broken) updatedSite.IsEnabled = false;
-                        OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex] = updatedSite;
+                        // add
+                        SiteSettings newSite = GetRemoteSite(onlineSite.Name);
+                        if (newSite != null)
+                        {
+                            // disable local site if broken
+                            if (onlineSite.State == OnlineVideos.OnlineVideosWebservice.SiteState.Broken) newSite.IsEnabled = false;
+                            OnlineVideoSettings.Instance.SiteSettingsList.Add(newSite);
+                        }
                     }
+                    else if ((onlineSite.LastUpdated - OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].LastUpdated).TotalMinutes > 2)
+                    {
+                        // update
+                        SiteSettings updatedSite = GetRemoteSite(onlineSite.Name);
+                        if (updatedSite != null)
+                        {
+                            // disable local site if broken
+                            if (onlineSite.State == OnlineVideos.OnlineVideosWebservice.SiteState.Broken) updatedSite.IsEnabled = false;
+                            OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex] = updatedSite;
+                        }
+                    }
+                    if (dlgPrgrs != null) dlgPrgrs.Percentage = (80 * (i + 1) / onlineSites.Length);
                 }
-                if (dlgPrgrs != null) dlgPrgrs.Percentage = (80 * (i + 1) / onlineSites.Length);
-            }
 
-            if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Saving local site list");
-            OnlineVideoSettings.Instance.SaveSites();
-            OnlineVideoSettings.Instance.BuildSiteList();
-            if (dlgPrgrs != null) dlgPrgrs.Percentage = 90;
-
-            // we can't update dlls here - check if new dlls are needed and tell the user to restart MediaPortal so AutoUpdate can work
-            if (dlgPrgrs != null) dlgPrgrs.SetLine(1, "Checking dlls");
-            bool showMessage = false;
-            if (requiredDlls.Count > 0)
-            {
-                // if dir not found -> no need to check the dlls with MD5
-                string dllDir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
-                if (!System.IO.Directory.Exists(dllDir)) showMessage = true;
-                else
+                if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.SavingLocalSiteList);
+                OnlineVideoSettings.Instance.SaveSites();
+                OnlineVideoSettings.Instance.BuildSiteList();
+                if (dlgPrgrs != null)
                 {
+                    dlgPrgrs.Percentage = 90;
+                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.RetrievingRemoteDlls);
+                }
+                if (requiredDlls.Count > 0)
+                {
+                    // updated dlls can't be loaded here - tell the user to restart MediaPortal if new dlls were downloaded
+                    bool showMessage = false;
+                    // target directory for dlls
+                    string dllDir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
                     // target directory for dlls (temp) (if exists, delete and recreate)
                     string dllTempDir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "OnlineVideos\\");
                     if (System.IO.Directory.Exists(dllTempDir)) System.IO.Directory.Delete(dllTempDir, true);
                     System.IO.Directory.CreateDirectory(dllTempDir);
-                    int dllsRetrieved = 0;
+                    int dllsToCopy = 0;
                     for (int i = 0; i < onlineDlls.Length; i++)
                     {
                         OnlineVideosWebservice.Dll anOnlineDll = onlineDlls[i];
@@ -355,31 +356,42 @@ namespace OnlineVideos
                             }
                             if (download)
                             {
-                                if (DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll")) dllsRetrieved++;
-                                showMessage = true;
+                                // download dll to temp dir first
+                                if (GUISiteUpdater.DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll"))
+                                {
+                                    // if download was successfull, try to copy to target dir (if not successfull, mark for UAC prompted copy later)
+                                    try { System.IO.File.Copy(dllTempDir + anOnlineDll.Name + ".dll", location, true); }
+                                    catch { dllsToCopy++; }
+                                    showMessage = true;
+                                }
                             }
                         }
                         if (dlgPrgrs != null) dlgPrgrs.Percentage = 90 + (10 * (i + 1) / onlineDlls.Length);
                     }
-                    if (dllsRetrieved > 0)
+                    if (dllsToCopy > 0) CopyDlls(dllTempDir, dllDir);
+                    if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, Translation.Done); }
+                    if (showMessage)
                     {
-                        GUISiteUpdater.CopyDlls(dllTempDir, dllDir);
+                        GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                        if (dlg != null)
+                        {
+                            dlg.Reset();
+                            dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                            dlg.SetLine(1, Translation.NewDllDownloaded);
+                            dlg.SetLine(2, Translation.RestartMediaPortal);
+                            dlg.DoModal(GUIWindowManager.ActiveWindow);
+                        }
                     }
                 }
             }
-            if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, "Done"); dlgPrgrs.Close(); }
-            if (showMessage)
+            catch (Exception ex)
             {
-                GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                if (dlg != null)
-                {
-                    dlg.Reset();
-                    dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
-                    dlg.SetLine(1, Translation.NewDllDownloaded);
-                    dlg.SetLine(2, Translation.RestartMediaPortal);
-                    dlg.DoModal(GUIWindowManager.ActiveWindow);
-                }
+                Log.Error(ex);
             }
+            finally
+            {
+                if (dlgPrgrs != null) dlgPrgrs.Close();
+            }            
         }
 
         bool SitePassesFilter(OnlineVideosWebservice.Site site)
@@ -576,6 +588,7 @@ namespace OnlineVideos
 
         public static void CopyDlls(string sourceDir, string targetDir)
         {
+            // todo : maybe "mkdir" if target dir does not exist?
             ProcessStartInfo psi = new ProcessStartInfo();
             psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
             psi.FileName = "cmd.exe";

@@ -19,6 +19,7 @@
   <string Field="DownloadedVideos">Heruntergeladene Videos</string>
   <string Field="Delete">Löschen</string>
   <string Field="Default">Standard</string>
+  <string Field="Done">Fertig</string>
   <string Field="Error">Fehler</string>
   <string Field="EnterPin">Pin eingeben</string>
   <string Field="Favourites">Favoriten</string>
@@ -47,12 +48,15 @@
   <string Field="Runtime">Laufzeit:</string>
   <string Field="RemoveFromMySites">Aus meinen Sites entfernen</string>
   <string Field="RestartMediaPortal">Bitte MediaPortal neu starten!</string>
+  <string Field="RetrievingRemoteDlls">Lade DLLs vom Server ...</string>
+  <string Field="RetrievingRemoteSites">Lade Sites vom Server ...</string>
   <string Field="SearchResults">Suchergebnisse</string>
   <string Field="SelectSource">Quelle wählen</string>
   <string Field="SortOptions">Sortierung</string>
   <string Field="Search">Suchen</string>
   <string Field="SetDownloadFolderInConfig">Bitte einen Ordner für Downloads in der Konfiguration wählen!</string>
   <string Field="State">Status</string>
+  <string Field="SavingLocalSiteList">Speichere lokale Sites ...</string>
   <string Field="Timeframe">Zeitraum</string>
   <string Field="Timeout">Zeitüberschreitung</string>
   <string Field="Updated">Aktualisiert</string>

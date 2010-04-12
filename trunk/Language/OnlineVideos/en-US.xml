@@ -28,6 +28,7 @@
   <string Field="DownloadedVideos">Downloaded Videos</string>
   <string Field="Delete">Delete</string>
   <string Field="Default">Default</string>
+  <string Field="Done">Done</string>
 
   <!-- E -->
   <string Field="Error">Error</string>
@@ -78,6 +79,8 @@
   <string Field="Runtime">Runtime:</string>
   <string Field="RemoveFromMySites">Remove from my sites</string>
   <string Field="RestartMediaPortal">Restart MediaPortal!</string>
+  <string Field="RetrievingRemoteDlls">Retrieving remote dlls ...</string>
+  <string Field="RetrievingRemoteSites">Retrieving remote sites ...</string>
 
   <!-- S -->
   <string Field="SearchResults">Search results</string>
@@ -86,7 +89,8 @@
   <string Field="Search">Search</string>
   <string Field="SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>
   <string Field="State">State</string>
-  
+  <string Field="SavingLocalSiteList">Saving local site list ...</string>
+
   <!-- T -->
   <string Field="Timeframe">Timeframe</string>
   <string Field="Timeout">Timeout</string>
