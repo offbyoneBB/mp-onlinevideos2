@@ -2,15 +2,16 @@
 <!-- Online Videos translation file -->
 <!-- Danish (da) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<!-- Provided by steffansp 8. april 2010 -->
+<!-- Contributed by steffansp 13. april 2010 -->
 <strings>
 
     <!-- A -->
-    <string Field="AlreadyDownloading">Already downloading this file.</string>
+	<string Field="Airdate">Vist</string>
+    <string Field="AlreadyDownloading">Henter allerede denne file.</string>
+	<string Field="All">Alle</string>
     <string Field="Actions">Handlinger</string>
     <string Field="Actors">Skuespillere</string>
 	<string Field="AddToMySites">Tilføj til mine sider</string>
-	<string Field="All">Alle</string>
     <string Field="AddToFavourites">Tilføj til favoritter</string>
 
 	<!-- B -->
@@ -28,7 +29,8 @@
 	<string Field="DownloadedVideos">Hentede videoer</string>
     <string Field="Delete">Slet</string>
     <string Field="Default">Normal</string>
-
+	<string Field="Done">Færdig</string>
+	
     <!-- E -->
     <string Field="Error">Fejl</string>
     <string Field="EnterPin">Skriv password</string>
@@ -46,6 +48,7 @@
     <!-- I -->
 
     <!-- L -->
+	<string Field="Language">Sprog</string>
     <string Field="LayoutList">Layout: Liste</string>
     <string Field="LayoutIcons">Layout: Ikoner</string>
     <string Field="LayoutBigIcons">Layout: Store ikoner</string>
@@ -55,10 +58,11 @@
     <string Field="MaxResults">Max resultater</string>
     
     <!-- N -->
+	<string Field="Name">Navn</string>
     <string Field="NextPage">Næste side</string>
     <string Field="None">Ingen</string>
     <string Field="NoVideoFound">Ingen video blev fundet</string>
-	<string Field="NewDllRequired">Ny dll kræves!</string>
+	<string Field="NewDllDownloaded">Ny dll er hentet!</string>
     
     <!-- O -->
 
@@ -75,25 +79,27 @@
 	<string Field="Reported">Reported</string>
     <string Field="Runtime">Spilletid:</string>
 	<string Field="RemoveFromMySites">Fjern fra mine sider</string>
-	<string Field="RestartMediaPortalAndAutomaticUpdate">Genstart MediaPortal og brug automatisk opdatering!</string>
+	<string Field="RestartMediaPortal">Genstart MediaPortal!</string>
+	<string Field="RetrievingRemoteDlls">Henter fjern dll ...</string>
+	<string Field="RetrievingRemoteSites">Henter fjern sider ...</string>
   
     <!-- S -->
     <string Field="SearchResults">Søgeresultater</string>
     <string Field="SelectSource">Vælg kilde</string>
-    <string Field="SortByName">Søg efter: Navn</string>
-	<string Field="SortByLanguage">Sprog</string>
-	<string Field="SortByUpdated">Opdateret</string>
     <string Field="SortOptions">Sorterings muligheder</string>
     <string Field="Search">Søg</string>
 	<string Field="SetDownloadFolderInConfig">Indstil download mappe i konfigurationen!</string>
+	<string Field="State">Tilstand</string>
+	<string Field="SavingLocalSiteList">Gemmer lokal side liste ...</string>
 
     <!-- T -->
     <string Field="Timeframe">Tidsramme</string>
     <string Field="Timeout">Timeout</string>
 
     <!-- U -->
+	<string Field="Updated">Opdateret</string>
 	<string Field="Updatable">Ny version tilgængelig</string>
-    <string Field="UpdateSites">Updater sider</string>
+    <string Field="UpdateSites">Opdatér sider</string>
 	<string Field="UpdateMySiteSkipCategories">Updater mine sider (spring kategorier over)</string>
 	<string Field="UpdateAllYourSites">Dette opdaterer alle dine nuværende sider.</string>
     <string Field="UnableToPlayVideo">Videoen kunne ikke afspilles. Ingen URL.</string>

@@ -1508,6 +1508,47 @@ Click Next to continue or Cancel to exit Setup.</Value>
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
+              <Params>
+                <Items>
+                  <SectionParam Name="Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+using System.IO;
+using System.Security.AccessControl;
+using System.Security.Principal;
+
+public class Script
+{
+    public static void Main(PackageClass packageClass, ActionItem actionItem)
+    {
+        string satelliteDllsPath = Path.Combine(MpeInstaller.TransformInRealPath("%Plugins%"), "Windows\\OnlineVideos");
+
+        // get the SecurityIdentifier object for the current user
+        SecurityIdentifier userSid = System.Security.Principal.WindowsIdentity.GetCurrent().User;
+
+        DirectorySecurity security = System.IO.Directory.GetAccessControl(satelliteDllsPath);
+        FileSystemAccessRule newRule =
+          new FileSystemAccessRule(
+            userSid,
+            FileSystemRights.FullControl,                                       // full control so no arm if new files are created
+            InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
+            PropagationFlags.InheritOnly,
+            AccessControlType.Allow);
+        bool modified = false;
+        security.ModifyAccessRule(AccessControlModification.Add, newRule, out modified);
+        System.IO.Directory.SetAccessControl(satelliteDllsPath, security);
+    }
+}</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
+            </ActionItem>
           </Items>
         </Actions>
         <IncludedGroups />
@@ -2934,7 +2975,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{b802478a-5f08-4784-9ad4-8a1ba84e9622}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{be3e35d2-0fc8-4aab-9190-5e580fc57bef}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
