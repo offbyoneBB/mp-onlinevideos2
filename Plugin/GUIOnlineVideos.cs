@@ -1931,6 +1931,8 @@ namespace OnlineVideos
             GUIPropertyManager.SetProperty("#OnlineVideos.genre", selectedVideo.Genres);
             GUIPropertyManager.SetProperty("#OnlineVideos.releasedate", selectedVideo.Length);
             GUIPropertyManager.SetProperty("#OnlineVideos.cast", selectedVideo.Cast);
+
+            SetVideoInfoExtendedProperties("Details", selectedVideo);
         }
 
         private void SetVideoInfoGuiProperties(VideoInfo foVideo)
@@ -1967,7 +1969,25 @@ namespace OnlineVideos
                 {
                     GUIPropertyManager.SetProperty("#OnlineVideos.desc", foVideo.Description);
                 }
+
+                SetVideoInfoExtendedProperties("Selected", foVideo);
             }
+        }
+
+        /// <summary>
+        /// Processes extended properties which might be available
+        /// if the VideoInfo.Other object is using the IVideoDetails interface
+        /// </summary>
+        /// <param name="videoInfo"></param>
+        private void SetVideoInfoExtendedProperties(string prefix, VideoInfo videoInfo) {
+             if (videoInfo.Other != null && videoInfo.Other is IVideoDetails) {
+                 Dictionary<string, string> custom = ((IVideoDetails)videoInfo.Other).GetExtendedProperties();
+                 foreach (string property in custom.Keys) {
+                     string label = "#OnlineVideos." + prefix + "." + property;
+                     string value = custom[property];
+                     GUIPropertyManager.SetProperty(label, value);
+                 }
+             }
         }
 
         private void AutoUpdate(bool ask)

@@ -252,6 +252,7 @@
     <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Player\PlayerFactory.cs" />
     <Compile Include="Player\PlaylistPlayerWrapper.cs" />
+    <Compile Include="ReverseProxy.cs" />
     <Compile Include="RssToolkit\Rss\Constants.cs" />
     <Compile Include="RssToolkit\Rss\DocumentType.cs" />
     <Compile Include="RssToolkit\Opml\OpmlBody.cs" />
@@ -383,6 +384,7 @@
     <Compile Include="Sites\Cornerstone\Tools\WebGrabber.cs" />
     <Compile Include="Sites\Interfaces\IFavorite.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
+    <Compile Include="Sites\Interfaces\IVideoDetails.cs" />
     <Compile Include="Sites\ScriptUtil.cs" />
     <Compile Include="Sites\DownloadedVideoUtil.cs" />
     <Compile Include="Sites\FavoriteUtil.cs" />
