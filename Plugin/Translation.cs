@@ -244,6 +244,7 @@ namespace OnlineVideos
     public static string DownloadedVideos = "Downloaded Videos";
     public static string Delete = "Delete";
     public static string Default = "Default";
+    public static string Done = "Done";
 
     // E
     public static string Error = "Error";
@@ -294,6 +295,8 @@ namespace OnlineVideos
     public static string Runtime = "Runtime:";
     public static string RemoveFromMySites = "Remove from my sites";
     public static string RestartMediaPortal = "Restart MediaPortal!";
+    public static string RetrievingRemoteDlls = "Retrieving remote dlls ...";
+    public static string RetrievingRemoteSites = "Retrieving remote sites ...";
 
     // S
     public static string SearchResults = "Search results";
@@ -302,6 +305,7 @@ namespace OnlineVideos
     public static string Search = "Search";
     public static string SetDownloadFolderInConfig = "Please set a download folder in Configuration!";
     public static string State = "State";
+    public static string SavingLocalSiteList = "Saving local site list ...";
 
     // T
     public static string Timeframe = "Timeframe";
