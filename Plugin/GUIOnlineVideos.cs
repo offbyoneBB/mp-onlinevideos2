@@ -124,33 +124,54 @@ namespace OnlineVideos
         #endregion
 
         #region state variables
-        bool firstLoadDone = false;
+        #region CurrentState
         State currentState = State.sites;
-        public State CurrentState
+        State CurrentState
         {
             get { return currentState; }
             set { currentState = value; GUIPropertyManager.SetProperty("#OnlineVideos.state", value.ToString()); }
         }
-        VideosMode currentVideosDisplayMode = VideosMode.Category;
-        SiteOrder siteOrder = SiteOrder.AsInFile;
-
+        #endregion
+        #region SelectedSite
         Sites.SiteUtilBase selectedSite;
+        Sites.SiteUtilBase SelectedSite
+        {
+            get { return selectedSite; }
+            set 
+            { 
+                selectedSite = value;
+                if (selectedSite == null)
+                {
+                    GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", string.Empty);
+                    GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
+                }
+                else
+                {
+                    GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", selectedSite.Settings.Name);
+                    GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", selectedSite.Settings.UtilName);
+                }
+            }
+        }
+        #endregion
         Category selectedCategory;
         VideoInfo selectedVideo;
         VideoInfo playingVideo;
 
-        bool buffering;
+        bool firstLoadDone = false;
+        bool buffering = false;
 
         int selectedSiteIndex = 0;  // used to remember the position of the last selected site
         int selectedVideoIndex = 0; // used to remember the position of the last selected Video
         int selectedClipIndex = 0;  // used to remember the position the last selected Trailer
 
+        VideosMode currentVideosDisplayMode = VideosMode.Category;
+        SiteOrder siteOrder = SiteOrder.AsInFile;
+
         List<VideoInfo> currentVideoList = new List<VideoInfo>();
         List<VideoInfo> currentTrailerList = new List<VideoInfo>();
 
         RTMP_LIB.HTTPServer proxyRtmp;
-
-        private SmsT9Filter currentFilter = new SmsT9Filter();
+        SmsT9Filter currentFilter = new SmsT9Filter();
 
         internal static Dictionary<string, DownloadInfo> currentDownloads = new Dictionary<string, DownloadInfo>();
         #endregion
@@ -199,6 +220,7 @@ namespace OnlineVideos
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", " ");
             GUIPropertyManager.SetProperty("#OnlineVideos.length", " ");
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", " ");
+            SelectedSite = null;
             CurrentState = State.sites;
             return result;
         }
@@ -226,10 +248,10 @@ namespace OnlineVideos
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last                
                 OnlineVideoSettings.Instance.ageHasBeenConfirmed = false;
                 Log.Debug("Age Confirmed set to false.");
-                if (selectedSite != null && selectedSite.Settings.ConfirmAge)
+                if (SelectedSite != null && SelectedSite.Settings.ConfirmAge)
                 {
                     CurrentState = State.sites;
-                    selectedSite = null;
+                    SelectedSite = null;
                     selectedSiteIndex = 0;
                 }
             }
@@ -287,9 +309,9 @@ namespace OnlineVideos
 
             int liSelected = GUI_facadeView.SelectedListItemIndex - 1;
 
-            if (CurrentState == State.details && selectedSite.HasMultipleVideos) liSelected = GUI_infoList.SelectedListItemIndex - 1;
+            if (CurrentState == State.details && SelectedSite.HasMultipleVideos) liSelected = GUI_infoList.SelectedListItemIndex - 1;
 
-            if (liSelected < 0 || CurrentState == State.sites || CurrentState == State.categories || (selectedSite.HasMultipleVideos && CurrentState == State.videos))
+            if (liSelected < 0 || CurrentState == State.sites || CurrentState == State.categories || (SelectedSite.HasMultipleVideos && CurrentState == State.videos))
             {
                 return;
             }
@@ -300,16 +322,16 @@ namespace OnlineVideos
             dlgSel.SetHeading(Translation.Actions);
             dlgSel.Add(Translation.PlayAll);
             dialogOptions.Add("PlayAll");
-            if (currentVideosDisplayMode != VideosMode.Favorites && !(selectedSite is Sites.FavoriteUtil))
+            if (currentVideosDisplayMode != VideosMode.Favorites && !(SelectedSite is Sites.FavoriteUtil))
             {
-                if (!(selectedSite is Sites.DownloadedVideoUtil))
+                if (!(SelectedSite is Sites.DownloadedVideoUtil))
                 {
                     dlgSel.Add(Translation.AddToFavourites);
                     dialogOptions.Add("AddToFav");
                 }
-                if (selectedSite is IFavorite)
+                if (SelectedSite is IFavorite)
                 {
-                    dlgSel.Add(Translation.AddToFavourites + " (" + selectedSite.Settings.Name + ")");
+                    dlgSel.Add(Translation.AddToFavourites + " (" + SelectedSite.Settings.Name + ")");
                     dialogOptions.Add("AddToFavUtil");
                 }
             }
@@ -318,12 +340,12 @@ namespace OnlineVideos
                 dlgSel.Add(Translation.RemoveFromFavorites);
                 dialogOptions.Add("RemoveFromFav");
             }
-            if (selectedSite.HasRelatedVideos)
+            if (SelectedSite.HasRelatedVideos)
             {
                 dlgSel.Add(Translation.RelatedVideos);
                 dialogOptions.Add("RelatedVideos");
             }
-            if (selectedSite is Sites.DownloadedVideoUtil)
+            if (SelectedSite is Sites.DownloadedVideoUtil)
             {
                 dlgSel.Add(Translation.Delete);
                 dialogOptions.Add("Delete");
@@ -497,7 +519,7 @@ namespace OnlineVideos
                 currentFilter.Clear();
                 if (CurrentState == State.sites)
                 {
-                    selectedSite = OnlineVideoSettings.Instance.SiteList[GUI_facadeView.SelectedListItem.Path];
+                    SelectedSite = OnlineVideoSettings.Instance.SiteList[GUI_facadeView.SelectedListItem.Path];
                     selectedSiteIndex = GUI_facadeView.SelectedListItemIndex;
                     DisplayCategories(null);
                     CurrentState = State.categories;
@@ -538,7 +560,7 @@ namespace OnlineVideos
                     else
                     {
                         selectedVideoIndex = GUI_facadeView.SelectedListItemIndex;
-                        if (selectedSite.HasMultipleVideos)
+                        if (SelectedSite.HasMultipleVideos)
                         {
                             if (DisplayDetails(currentVideoList[GUI_facadeView.SelectedListItemIndex - 1]))
                             {
@@ -674,10 +696,10 @@ namespace OnlineVideos
                 {
                     OnlineVideoSettings.Instance.ageHasBeenConfirmed = false;
                     Log.Debug("Age Confirmed set to false.");
-                    if (selectedSite != null && selectedSite.Settings.ConfirmAge)
+                    if (SelectedSite != null && SelectedSite.Settings.ConfirmAge)
                     {
                         CurrentState = State.sites;
-                        selectedSite = null;
+                        SelectedSite = null;
                         selectedSiteIndex = 0;
                     }
                 }
@@ -716,6 +738,7 @@ namespace OnlineVideos
         private void DisplaySites()
         {
             selectedCategory = null;
+            SelectedSite = null;
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
 
             // set order by options
@@ -791,7 +814,7 @@ namespace OnlineVideos
                     }                    
                     if (currentFilter.Matches(name))
                     {
-                        if (loListItem.Item == selectedSite) selectedSiteIndex = GUI_facadeView.Count;
+                        if (loListItem.Item == SelectedSite) selectedSiteIndex = GUI_facadeView.Count;
                         GUI_facadeView.Add(loListItem);
                     }
                 }
@@ -827,16 +850,16 @@ namespace OnlineVideos
             IList<Category> categories = null;
             if (parentCategory == null)
             {
-                if (!selectedSite.Settings.DynamicCategoriesDiscovered)
+                if (!SelectedSite.Settings.DynamicCategoriesDiscovered)
                 {
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                     {
-                        Log.Info("Looking for dynamic categories for {0}", selectedSite.Settings.Name);
-                        int foundCategories = selectedSite.DiscoverDynamicCategories();
+                        Log.Info("Looking for dynamic categories for {0}", SelectedSite.Settings.Name);
+                        int foundCategories = SelectedSite.DiscoverDynamicCategories();
                         Log.Info("Found {0} dynamic categories.", foundCategories);
                     }, "getting dynamic categories");
                 }
-                categories = selectedSite.Settings.Categories;
+                categories = SelectedSite.Settings.Categories;
             }
             else
             {
@@ -844,8 +867,8 @@ namespace OnlineVideos
                 {
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                     {
-                        Log.Info("Looking for sub categories of site {0} in {1}", selectedSite.Settings.Name, parentCategory.Name);
-                        int foundCategories = selectedSite.DiscoverSubCategories(parentCategory);
+                        Log.Info("Looking for sub categories of site {0} in {1}", SelectedSite.Settings.Name, parentCategory.Name);
+                        int foundCategories = SelectedSite.DiscoverSubCategories(parentCategory);
                         Log.Info("Found {0} sub categories.", foundCategories);
                     }, "getting dynamic subcategories");
                 }
@@ -910,7 +933,7 @@ namespace OnlineVideos
             List<VideoInfo> loVideoList = null;
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                loVideoList = selectedSite.getOtherVideoList(foVideo);
+                loVideoList = SelectedSite.getOtherVideoList(foVideo);
             }, "getting video details"))
             {
                 currentTrailerList.Clear();
@@ -942,7 +965,7 @@ namespace OnlineVideos
             List<VideoInfo> categoryVideos = new List<VideoInfo>();
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                categoryVideos = selectedSite.getVideoList(selectedCategory);
+                categoryVideos = SelectedSite.getVideoList(selectedCategory);
             }, "getting category videos"))
             {
                 if (SetVideoListToFacade(categoryVideos))
@@ -966,7 +989,7 @@ namespace OnlineVideos
             List<VideoInfo> favoriteVideos = null;
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                favoriteVideos = ((IFavorite)selectedSite).getFavorites();
+                favoriteVideos = ((IFavorite)SelectedSite).getFavorites();
             }, "getting favorite videos"))
             {
                 if (SetVideoListToFacade(favoriteVideos))
@@ -991,12 +1014,12 @@ namespace OnlineVideos
                         string category = moSupportedSearchCategoryList[GUI_btnSearchCategories.SelectedLabel];
                         Log.Info("Searching for {0} in category {1}", query, category);
                         lastSearchCategory = category;
-                        searchResultVideos = selectedSite.Search(query, category);
+                        searchResultVideos = SelectedSite.Search(query, category);
                     }
                     else
                     {
                         Log.Info("Searching for {0} in all categories ", query);
-                        searchResultVideos = selectedSite.Search(query);
+                        searchResultVideos = SelectedSite.Search(query);
                     }
                 }, "getting search results"))
                 {
@@ -1017,7 +1040,7 @@ namespace OnlineVideos
                 List<VideoInfo> relatedVideos = new List<VideoInfo>();
                 if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    relatedVideos = selectedSite.getRelatedVideos(video);
+                    relatedVideos = SelectedSite.getRelatedVideos(video);
                 }, "getting related videos"))
                 {
                     if (SetVideoListToFacade(relatedVideos))
@@ -1063,19 +1086,19 @@ namespace OnlineVideos
                     //filtering a search result
                     if (String.IsNullOrEmpty(lastSearchCategory))
                     {
-                        filteredVideos = ((IFilter)selectedSite).filterSearchResultList(lastSearchQuery, miMaxResult, msOrderBy, msTimeFrame);
+                        filteredVideos = ((IFilter)SelectedSite).filterSearchResultList(lastSearchQuery, miMaxResult, msOrderBy, msTimeFrame);
                     }
                     else
                     {
-                        filteredVideos = ((IFilter)selectedSite).filterSearchResultList(lastSearchQuery, lastSearchCategory, miMaxResult, msOrderBy, msTimeFrame);
+                        filteredVideos = ((IFilter)SelectedSite).filterSearchResultList(lastSearchQuery, lastSearchCategory, miMaxResult, msOrderBy, msTimeFrame);
                     }
                 }
                 else
                 {
-                    if (selectedSite.HasFilterCategories) // just for setting the category
-                        filteredVideos = selectedSite.Search(string.Empty, moSupportedSearchCategoryList[GUI_btnSearchCategories.SelectedLabel]);
-                    if (selectedSite is IFilter)
-                        filteredVideos = ((IFilter)selectedSite).filterVideoList(selectedCategory, miMaxResult, msOrderBy, msTimeFrame);
+                    if (SelectedSite.HasFilterCategories) // just for setting the category
+                        filteredVideos = SelectedSite.Search(string.Empty, moSupportedSearchCategoryList[GUI_btnSearchCategories.SelectedLabel]);
+                    if (SelectedSite is IFilter)
+                        filteredVideos = ((IFilter)SelectedSite).filterVideoList(selectedCategory, miMaxResult, msOrderBy, msTimeFrame);
                 }
             }, "getting filtered videos"))
             {
@@ -1092,7 +1115,7 @@ namespace OnlineVideos
             List<VideoInfo> nextPageVideos = new List<VideoInfo>();
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                nextPageVideos = selectedSite.getNextPageVideos();
+                nextPageVideos = SelectedSite.getNextPageVideos();
             }, "getting next page videos"))
             {
                 if (SetVideoListToFacade(nextPageVideos))
@@ -1108,7 +1131,7 @@ namespace OnlineVideos
             List<VideoInfo> previousPageVideos = new List<VideoInfo>();
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                previousPageVideos = selectedSite.getPreviousPageVideos();
+                previousPageVideos = SelectedSite.getPreviousPageVideos();
             }, "getting previous page videos"))
             {
                 if (SetVideoListToFacade(previousPageVideos))
@@ -1263,12 +1286,12 @@ namespace OnlineVideos
         private void Play(VideoInfo video)
         {
             bool playing = false;
-            if (selectedSite.MultipleFilePlay)
+            if (SelectedSite.MultipleFilePlay)
             {
                 List<String> loUrlList = null;
                 if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    loUrlList = selectedSite.getMultipleVideoUrls(video);
+                    loUrlList = SelectedSite.getMultipleVideoUrls(video);
                 }, "getting multiple urls for video"))
                 {
                     return;
@@ -1292,7 +1315,7 @@ namespace OnlineVideos
 
                 //PlayListPlayer.SingletonPlayer.Init(); // re.registers Eventhandler among other for PlaybackStoppt, so will call play twice later!
                 PlayListPlayer.SingletonPlayer.Reset();
-                PlayListPlayer.SingletonPlayer.g_Player = new Player.PlaylistPlayerWrapper(selectedSite.Settings.Player);
+                PlayListPlayer.SingletonPlayer.g_Player = new Player.PlaylistPlayerWrapper(SelectedSite.Settings.Player);
                 PlayList videoList = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
                 videoList.Clear();
                 int i = 0;
@@ -1314,7 +1337,7 @@ namespace OnlineVideos
                 string lsUrl = "";
                 if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    lsUrl = selectedSite.getUrl(video);
+                    lsUrl = SelectedSite.getUrl(video);
                 }, "getting url for video"))
                 {
                     return;
@@ -1340,7 +1363,7 @@ namespace OnlineVideos
 
                 // we use our own factory, so store the one currently used
                 IPlayerFactory savedFactory = g_Player.Factory;
-                g_Player.Factory = new OnlineVideos.Player.PlayerFactory(selectedSite.Settings.Player);
+                g_Player.Factory = new OnlineVideos.Player.PlayerFactory(SelectedSite.Settings.Player);
 
                 try
                 {
@@ -1374,7 +1397,7 @@ namespace OnlineVideos
                 GUIGraphicsContext.IsFullScreenVideo = true;
                 GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
 
-                if (selectedSite.HasMultipleVideos) playingVideo = selectedVideo;
+                if (SelectedSite.HasMultipleVideos) playingVideo = selectedVideo;
                 else playingVideo = video;
 
                 new System.Threading.Thread(delegate()
@@ -1390,17 +1413,17 @@ namespace OnlineVideos
             bool playing = false;
             //PlayListPlayer.SingletonPlayer.Init(); // re.registers Eventhandler among other for PlaybackStoppt, so will call play twice later!
             PlayListPlayer.SingletonPlayer.Reset();
-            PlayListPlayer.SingletonPlayer.g_Player = new Player.PlaylistPlayerWrapper(selectedSite.Settings.Player);
+            PlayListPlayer.SingletonPlayer.g_Player = new Player.PlaylistPlayerWrapper(SelectedSite.Settings.Player);
             PlayList videoList = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
             videoList.Clear();
-            List<VideoInfo> loVideoList = selectedSite.HasMultipleVideos ? currentTrailerList : currentVideoList;
+            List<VideoInfo> loVideoList = SelectedSite.HasMultipleVideos ? currentTrailerList : currentVideoList;
             bool firstAdded = false;
             foreach (VideoInfo loVideo in loVideoList)
             {
                 string lsUrl = "";
                 if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    lsUrl = selectedSite.getUrl(loVideo);
+                    lsUrl = SelectedSite.getUrl(loVideo);
                 }, "getting url for video"))
                 {
                     continue;
@@ -1450,7 +1473,7 @@ namespace OnlineVideos
             string url = "";
             if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                url = selectedSite.getUrl(video);
+                url = SelectedSite.getUrl(video);
             }, "getting url for video"))
             {
                 return;
@@ -1489,7 +1512,7 @@ namespace OnlineVideos
             {
                 Url = url,
                 Title = video.Title,
-                LocalFile = System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, selectedSite.GetFileNameForDownload(video, url)),
+                LocalFile = System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, SelectedSite.GetFileNameForDownload(video, url)),
                 ThumbFile = ImageDownloader.GetThumbFile(video.ImageUrl)
             };
 
@@ -1613,15 +1636,15 @@ namespace OnlineVideos
                     SetFacadeViewMode();
                     break;
                 case State.categories:
-                    string cat_headerlabel = selectedCategory != null ? selectedCategory.Name : selectedSite.Settings.Name;
+                    string cat_headerlabel = selectedCategory != null ? selectedCategory.Name : SelectedSite.Settings.Name;
                     GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
-                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(selectedSite));
+                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(SelectedSite));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
                     HideAndDisable(GUI_btnPrevious.GetID);
                     HideFilterButtons();
-                    if (selectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
-                    if (selectedSite is IFavorite) ShowAndEnable(GUI_btnFavorite.GetID); else HideAndDisable(GUI_btnFavorite.GetID);
+                    if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
+                    if (SelectedSite is IFavorite) ShowAndEnable(GUI_btnFavorite.GetID); else HideAndDisable(GUI_btnFavorite.GetID);
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetVideoInfoGuiProperties(null);
                     currentView = suggestedView != null ? suggestedView.Value : currentCategoryView;
@@ -1635,17 +1658,17 @@ namespace OnlineVideos
                         case VideosMode.Related: GUIPropertyManager.SetProperty("#header.label", Translation.RelatedVideos); break;
                         default:
                             {
-                                string proposedLabel = selectedSite.getCurrentVideosTitle();
+                                string proposedLabel = SelectedSite.getCurrentVideosTitle();
                                 GUIPropertyManager.SetProperty("#header.label", proposedLabel != null ? proposedLabel : selectedCategory != null ? selectedCategory.Name : ""); break;
                             }
                     }
-                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(selectedSite));
+                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(SelectedSite));
                     ShowAndEnable(GUI_facadeView.GetID);
-                    if (selectedSite.HasNextPage) ShowAndEnable(GUI_btnNext.GetID); else HideAndDisable(GUI_btnNext.GetID);
-                    if (selectedSite.HasPreviousPage) ShowAndEnable(GUI_btnPrevious.GetID); else HideAndDisable(GUI_btnPrevious.GetID);
-                    if (selectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
-                    if (selectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
-                    if (selectedSite.HasFilterCategories) ShowCategoryButton();
+                    if (SelectedSite.HasNextPage) ShowAndEnable(GUI_btnNext.GetID); else HideAndDisable(GUI_btnNext.GetID);
+                    if (SelectedSite.HasPreviousPage) ShowAndEnable(GUI_btnPrevious.GetID); else HideAndDisable(GUI_btnPrevious.GetID);
+                    if (SelectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
+                    if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
+                    if (SelectedSite.HasFilterCategories) ShowCategoryButton();
                     HideAndDisable(GUI_btnFavorite.GetID);
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetVideoInfoGuiProperties(selectedVideo);
@@ -1654,7 +1677,7 @@ namespace OnlineVideos
                     break;
                 case State.details:
                     GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
-                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(selectedSite));
+                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(SelectedSite));
                     HideAndDisable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
                     HideAndDisable(GUI_btnPrevious.GetID);                    
@@ -1704,17 +1727,17 @@ namespace OnlineVideos
             GUI_btnOrderBy.Clear();
             GUI_btnTimeFrame.Clear();
 
-            moSupportedMaxResultList = ((IFilter)selectedSite).getResultSteps();
+            moSupportedMaxResultList = ((IFilter)SelectedSite).getResultSteps();
             foreach (int step in moSupportedMaxResultList)
             {
                 GUIControl.AddItemLabelControl(GetID, GUI_btnMaxResult.GetID, step + "");
             }
-            moSupportedOrderByList = ((IFilter)selectedSite).getOrderbyList();
+            moSupportedOrderByList = ((IFilter)SelectedSite).getOrderbyList();
             foreach (String orderBy in moSupportedOrderByList.Keys)
             {
                 GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, orderBy);
             }
-            moSupportedTimeFrameList = ((IFilter)selectedSite).getTimeFrameList();
+            moSupportedTimeFrameList = ((IFilter)SelectedSite).getTimeFrameList();
             foreach (String time in moSupportedTimeFrameList.Keys)
             {
                 GUIControl.AddItemLabelControl(GetID, GUI_btnTimeFrame.GetID, time);
@@ -1750,7 +1773,7 @@ namespace OnlineVideos
         {
             Log.Debug("Showing Search buttons");
             GUI_btnSearchCategories.Clear();
-            moSupportedSearchCategoryList = selectedSite.GetSearchableCategories();
+            moSupportedSearchCategoryList = SelectedSite.GetSearchableCategories();
             GUIControl.AddItemLabelControl(GetID, GUI_btnSearchCategories.GetID, Translation.All);
             foreach (String category in moSupportedSearchCategoryList.Keys)
             {
@@ -1773,7 +1796,7 @@ namespace OnlineVideos
         {
             Log.Debug("Showing Category button");
             GUI_btnSearchCategories.Clear();
-            moSupportedSearchCategoryList = selectedSite.GetSearchableCategories();
+            moSupportedSearchCategoryList = SelectedSite.GetSearchableCategories();
             foreach (String category in moSupportedSearchCategoryList.Keys)
                 GUIControl.AddItemLabelControl(GetID, GUI_btnSearchCategories.GetID, category);
             if (moSupportedSearchCategoryList.Count > 1)
@@ -1835,26 +1858,26 @@ namespace OnlineVideos
         {
             if (db)
             {
-                OnlineVideos.Database.FavoritesDatabase.getInstance().addFavoriteVideo(loSelectedVideo, selectedSite.Settings.Name);
+                OnlineVideos.Database.FavoritesDatabase.getInstance().addFavoriteVideo(loSelectedVideo, SelectedSite.Settings.Name);
             }
             else
             {
                 Log.Info("Received request to add video to favorites.");
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    ((IFavorite)selectedSite).addFavorite(loSelectedVideo);
+                    ((IFavorite)SelectedSite).addFavorite(loSelectedVideo);
                 }, "adding to favorites");
             }
         }
 
         private void RemoveFavorite(VideoInfo loSelectedVideo)
         {
-            if (selectedSite is IFavorite)
+            if (SelectedSite is IFavorite)
             {
                 Log.Info("Received request to remove video from favorites.");
                 if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    ((IFavorite)selectedSite).removeFavorite(loSelectedVideo);
+                    ((IFavorite)SelectedSite).removeFavorite(loSelectedVideo);
                 }, "removing from favorites"))
                 {
                     DisplayVideos_Favorite(); // retrieve favorites again and show the updated list
