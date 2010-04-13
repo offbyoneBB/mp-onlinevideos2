@@ -217,9 +217,9 @@ namespace OnlineVideos
         public override bool Init()
         {
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
-            GUIPropertyManager.SetProperty("#OnlineVideos.desc", " ");
-            GUIPropertyManager.SetProperty("#OnlineVideos.length", " ");
-            GUIPropertyManager.SetProperty("#OnlineVideos.filter", " ");
+            GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.length", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
             SelectedSite = null;
             CurrentState = State.sites;
             return result;
