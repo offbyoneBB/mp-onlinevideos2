@@ -45,7 +45,7 @@ namespace OnlineVideos
         public override bool Init()
         {
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideosUpdater.xml");
-            GUIPropertyManager.SetProperty("#OnlineVideos.owner", " ");
+            GUIPropertyManager.SetProperty("#OnlineVideos.owner", string.Empty);
             return result;
         }
 
