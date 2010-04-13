@@ -2046,7 +2046,7 @@ namespace OnlineVideos
                                 // get site if updated on server
                                 if ((remoteSite.LastUpdated - localSite.LastUpdated).TotalMinutes > 2)
                                 {
-                                    SiteSettings updatedSite = GUISiteUpdater.GetRemoteSite(remoteSite.Name);
+                                    SiteSettings updatedSite = GUISiteUpdater.GetRemoteSite(remoteSite.Name, ws);
                                     if (updatedSite != null)
                                     {
                                         OnlineVideoSettings.Instance.SiteSettingsList[i] = updatedSite;
