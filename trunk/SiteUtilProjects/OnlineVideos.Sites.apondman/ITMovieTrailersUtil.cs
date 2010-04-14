@@ -176,16 +176,20 @@ namespace OnlineVideos.Sites.apondman {
 
         #endregion
 
-        #region Settings
+        #region Configuration
+
+        [Category("OnlineVideosConfiguration"), Description("Defines the QuickTime user-agent string")]
+        string QuickTimeUserAgent = "QuickTime/7.6.2";
+
+        #endregion
+
+        #region User Configuration
 
         [Category("OnlineVideosUserConfiguration"), Description("Always playback the highest available quality.")]
         bool AlwaysPlaybackHighestQuality = false;
 
         [Category("OnlineVideosUserConfiguration"), Description("Defines the preferred quality for trailer playback.")]
         VideoQuality PreferredVideoQuality = VideoQuality.HD480;
-
-        [Category("OnlineVideosUserConfiguration"), Description("Defines the QuickTime user-agent string")]
-        string QuickTimeUserAgent = "QuickTime/7.6.2";          
 
         #endregion
 
@@ -267,7 +271,13 @@ namespace OnlineVideos.Sites.apondman {
             List<VideoInfo> clips = new List<VideoInfo>();
 
             // make the movie request
-            ITMovie movie = ((MovieDetails)video.Other).Movie;
+            ITMovie movie;
+
+            if (video.Other != null && video.Other is ITMovie)
+                movie = ((MovieDetails)video.Other).Movie;
+            else
+                movie = new ITMovie(video.VideoUrl);
+
             ITResult result = _trailersApi.Update(movie);
             if (movie.State != ITState.Complete)
                 return clips;
@@ -279,6 +289,7 @@ namespace OnlineVideos.Sites.apondman {
             video.Length = movie.ReleaseDate != DateTime.MinValue ? movie.ReleaseDate.ToShortDateString() : "Coming Soon";
             video.ImageUrl = movie.Poster != null ? movie.Poster.Large.AbsoluteUri : string.Empty;
             video.Tags = video.ImageUrl;
+            video.VideoUrl = movie.Uri.AbsoluteUri;
 
             // get initial video list
             foreach (ITVideo clip in movie.Videos) {
