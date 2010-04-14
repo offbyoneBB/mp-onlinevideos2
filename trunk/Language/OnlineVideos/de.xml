@@ -3,6 +3,7 @@
 <!-- German -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
 <strings>
+  <string Field="Airdate">Ausstrahlung</string>
   <string Field="AlreadyDownloading">Video lädt bereits herunter.</string>
   <string Field="All">Alle</string>
   <string Field="Actions">Aktionen</string>
@@ -57,6 +58,7 @@
   <string Field="SetDownloadFolderInConfig">Bitte einen Ordner für Downloads in der Konfiguration wählen!</string>
   <string Field="State">Status</string>
   <string Field="SavingLocalSiteList">Speichere lokale Sites ...</string>
+  <string Field="ShowReports">Meldungen von Benutzern und Ersteller anzeigen</string>
   <string Field="Timeframe">Zeitraum</string>
   <string Field="Timeout">Zeitüberschreitung</string>
   <string Field="Updated">Aktualisiert</string>

@@ -45,7 +45,7 @@ namespace OnlineVideos
         public override bool Init()
         {
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideosUpdater.xml");
-            GUIPropertyManager.SetProperty("#OnlineVideos.owner", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.owner", " "); GUIPropertyManager.SetProperty("#OnlineVideos.owner", string.Empty);
             return result;
         }
 
@@ -154,12 +154,31 @@ namespace OnlineVideos
             {
                 GUIPropertyManager.SetProperty("#OnlineVideos.owner", site.Owner_FK.Substring(0, site.Owner_FK.IndexOf('@')));
                 if (!string.IsNullOrEmpty(site.Description)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", site.Description);
-                else GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
+                else GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
+            }
+        }
+
+        private void OnReportSelected(GUIListItem item, GUIControl parent)
+        {
+            OnlineVideosWebservice.Report report = item.TVTag as OnlineVideosWebservice.Report;
+            if (report != null)
+            {
+                GUIPropertyManager.SetProperty("#OnlineVideos.owner", string.Empty);
+                if (!string.IsNullOrEmpty(report.Message)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", report.Message);
+                else GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
             }
         }
 
         public override void OnAction(Action action)
         {
+            if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+            {
+                if (GUI_infoList.ListItems.Count > 0 && GUI_infoList.ListItems[0].TVTag is OnlineVideosWebservice.Report) 
+                { 
+                    DisplayOnlineSites(); 
+                    return; 
+                }
+            }
             GUI_btnSort.Label = defaultLabelBtnSort;
             GUI_btnFilterState.Label = defaultLabelBtnFilterState;
             GUI_btnFilterCreator.Label = defaultLabelBtnFilterCreator;
@@ -192,7 +211,10 @@ namespace OnlineVideos
             }
             else if (control == GUI_infoList && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
-                ShowOptionsForSite(GUI_infoList.SelectedListItem.TVTag as OnlineVideosWebservice.Site);
+                if (GUI_infoList.SelectedListItem.TVTag is OnlineVideosWebservice.Site)
+                {
+                    ShowOptionsForSite(GUI_infoList.SelectedListItem.TVTag as OnlineVideosWebservice.Site);
+                }
             }
             else if (control == GUI_btnFullUpdate)
             {
@@ -226,9 +248,10 @@ namespace OnlineVideos
                     }
                     dlgSel.Add(Translation.RemoveFromMySites);
                 }
+                dlgSel.Add(Translation.ShowReports);
             }
             dlgSel.DoModal(GetID);
-
+            if (dlgSel.SelectedId == -1) return; // ESC used, nothing selected
             if (dlgSel.SelectedLabelText == Translation.AddToMySites)
             {
                 SiteSettings newSite = GetRemoteSite(site.Name, null);
@@ -268,6 +291,44 @@ namespace OnlineVideos
                 OnlineVideoSettings.Instance.SiteSettingsList.RemoveAt(localSiteIndex);
                 OnlineVideoSettings.Instance.SaveSites();
                 OnlineVideoSettings.Instance.BuildSiteList();
+            }
+            else if (dlgSel.SelectedLabelText == Translation.ShowReports)
+            {
+                OnlineVideosWebservice.Report[] reports = null;
+                if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                {
+                    OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+                    reports = ws.GetReports(site.Name);
+                }, "getting reports from webservice"))
+                {
+                    if (reports == null || reports.Length == 0)
+                    {
+                        GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                        if (dlg != null)
+                        {
+                            dlg.Reset();
+                            dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                            dlg.SetText("No reports for this site available.");
+                            dlg.DoModal(GUIWindowManager.ActiveWindow);
+                        }
+                    }
+                    else
+                    {
+                        GUIControl.ClearControl(GetID, GUI_infoList.GetID);
+                        foreach (OnlineVideosWebservice.Report report in reports)
+                        {
+                            string shortMsg = report.Message.Replace(Environment.NewLine, " ").Replace("\n", " ").Replace("\r", " ");
+                            GUIListItem loListItem = new GUIListItem(shortMsg.Length > 44 ? shortMsg.Substring(0, 40) + " ..." : shortMsg);
+                            loListItem.TVTag = report;
+                            loListItem.Label2 = report.Type.ToString();
+                            loListItem.Label3 = report.Date.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
+                            loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnReportSelected);
+                            GUI_infoList.Add(loListItem);
+                        }
+                        GUIControl.SelectItemControl(GetID, GUI_infoList.GetID, 0);
+                        GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(GUI_infoList.Count));
+                    }
+                }
             }
         }
 
@@ -507,7 +568,7 @@ namespace OnlineVideos
                 if (OnlineVideoSettings.Instance.SiteSettingsList[i].Name == name) return i;
             }
             return -1;
-        }
+        }        
 
         void SetFilterButtonOptions()
         {
