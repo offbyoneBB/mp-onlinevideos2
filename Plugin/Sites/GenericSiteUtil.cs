@@ -246,7 +246,10 @@ namespace OnlineVideos.Sites
                         if (!video.PlaybackOptions.ContainsValue(foundUrl))
                         {
                             if (groupNameValues.Count == 0) groupNameValues.Add(video.PlaybackOptions.Count.ToString()); // if no groups to build a name, use numbering
-                            video.PlaybackOptions.Add(string.Format(fileUrlNameFormatString, groupNameValues.ToArray()), foundUrl);
+                            string urlNameToAdd = string.Format(fileUrlNameFormatString, groupNameValues.ToArray());
+                            if (video.PlaybackOptions.ContainsKey(urlNameToAdd))
+                                urlNameToAdd += video.PlaybackOptions.Count.ToString();
+                            video.PlaybackOptions.Add(urlNameToAdd, foundUrl);
                         }
                         matchFileUrl = matchFileUrl.NextMatch();
                     }
