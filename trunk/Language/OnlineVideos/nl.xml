@@ -58,6 +58,7 @@
   <string Field="SetDownloadFolderInConfig">Kies eerst een download-map in de instellingen!</string>
   <string Field="State">Status</string>
   <string Field="SavingLocalSiteList">Opslaan lokale site-lijst...</string>
+  <string Field="ShowReports">Toon ontwikkelaars en gebruikers rapporten</string>
   <string Field="Timeframe">Periode</string>
   <string Field="Timeout">Time-out</string>
   <string Field="Updated">Bijgewerkt</string>
