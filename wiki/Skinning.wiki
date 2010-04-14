@@ -51,6 +51,8 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
   * `#OnlineVideos.filter` - Current SMS T9 Filter
   * `#OnlineVideos.state` - Current View (values: sites, categories, videos, details)
   * `#OnlineVideos.length` - runtime and airdate (if available) of the current selected item (localized label property: {{{#OnlineVideos.Translation.Runtime.Label}}})
+  * `#OnlineVideos.selectedSite` - name of the Site currently selected (e.g. "GameTrailers") that can be used for conditional visibility
+  * `#OnlineVideos.selectedSiteUtil` - name of the Util used by the currently selected Site (e.g. "GenericSite") that can be used for conditional visibility
 
  * Facade
   * `#itemcount` - total number of items
