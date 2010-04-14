@@ -21,14 +21,15 @@ namespace OnlineVideos
             string dirWithExtraDlls = Path.Combine(Path.GetDirectoryName(onlineVideosMainDll.Location), "OnlineVideos");
             if (Directory.Exists(dirWithExtraDlls))
             {
+                // loading assembly as raw bytes, so it can be overwritten while app is still running, but cannot be debugged (running Configuration also needs to be loaded normally)
+                bool loadAsRawBytes = AppDomain.CurrentDomain.FriendlyName != "Configuration.exe";
+#if DEBUG
+                if (System.Diagnostics.Debugger.IsAttached) loadAsRawBytes = false;
+#endif
+
                 string[] dllFilesToCheck = Directory.GetFiles(dirWithExtraDlls, "OnlineVideos.Sites.*.dll");                
                 foreach (string aDll in dllFilesToCheck)
                 {
-                    // loading assembly as raw bytes, so it can be overwritten while app is still running, but cannot be debugged
-                    bool loadAsRawBytes = true;
-#if DEBUG
-                    if (System.Diagnostics.Debugger.IsAttached) loadAsRawBytes = false;
-#endif
                     if (loadAsRawBytes)
                         assemblies.Add(AppDomain.CurrentDomain.Load(File.ReadAllBytes(aDll)));
                     else
