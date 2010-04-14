@@ -91,16 +91,31 @@
       <Description>Eine Auswahl der Sendungen des ARTE-Programms steht nach der Fernsehausstrahlung weitere sieben Tage lang kostenfrei per Streaming im Internet zur Verfügung. </Description>
       <Categories />
     </Site>
-    <Site name="Sat1" util="Sat1" agecheck="false" enabled="true" lang="de">
+    <Site name="Sat1" util="Sat1Group" agecheck="false" enabled="true" lang="de" lastUpdated="2010-03-23T14:52:00.0625+01:00">
       <Description>Kostenlos verfügbare Sendungen des Senders Sat1.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://cms030.dc2.qcn3.movenetworks.com/cms/publish/vod2/vodchannelcatalog/sat1/15/catalog.json]]></item>
+        <item key="categoryUrlFormatString"><![CDATA[http://cms030.dc2.qcn3.movenetworks.com/cms/publish/pro7/vodtldatesorted//{0}/{1}/{2}/listing.json]]></item>
+        <item key="rtmpBase"><![CDATA[rtmpt://pssimsat1fs.fplive.net:80/pssimsat1ls/]]></item>
+      </Configuration>
       <Categories />
     </Site>
-    <Site name="Pro7" util="Pro7" agecheck="false" enabled="true" lang="de">
+    <Site name="Pro7" util="Sat1Group" agecheck="false" enabled="true" lang="de" lastUpdated="2010-03-23T14:52:08.765625+01:00">
       <Description>Kostenlos verfügbare Sendungen des Senders Pro7.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://cms002.dc2.qcn3.movenetworks.com/cms/publish/vod2/vodchannelcatalog/pro7/7/catalog.json]]></item>
+        <item key="categoryUrlFormatString"><![CDATA[http://cms002.dc2.qcn3.movenetworks.com/cms/publish/pro7/vodtldatesorted//{0}/{1}/{2}/listing.json]]></item>
+        <item key="rtmpBase"><![CDATA[rtmpt://pssimp7lsfs.fplive.net:80/pssimp7ls/]]></item>
+      </Configuration>
       <Categories />
     </Site>
-    <Site name="Kabel1" util="Kabel1" agecheck="false" enabled="true" lang="de">
+    <Site name="Kabel1" util="Sat1Group" agecheck="false" enabled="true" lang="de" lastUpdated="2010-03-23T14:52:11.640625+01:00">
       <Description>Kostenlos verfügbare Sendungen des Senders Kabel1.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://cms029.dc2.qcn3.movenetworks.com/cms/publish/vod2/vodchannelcatalog/kabel1/36/catalog.json]]></item>
+        <item key="categoryUrlFormatString"><![CDATA[http://cms029.dc2.qcn3.movenetworks.com/cms/publish/pro7/vodtldatesorted//{0}/{1}/{2}/listing.json]]></item>
+        <item key="rtmpBase"><![CDATA[rtmpt://pssimkabel1fs.fplive.net:80/pssimkabel1ls/]]></item>
+      </Configuration>
       <Categories />
     </Site>
     <Site name="RTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
