@@ -273,10 +273,13 @@ namespace OnlineVideos.Sites.apondman {
             // make the movie request
             ITMovie movie;
 
-            if (video.Other != null && video.Other is ITMovie)
+            if (video.Other != null && video.Other is MovieDetails) {
                 movie = ((MovieDetails)video.Other).Movie;
-            else
+            }
+            else {
                 movie = new ITMovie(video.VideoUrl);
+                video.Other = new MovieDetails(movie);
+            }
 
             ITResult result = _trailersApi.Update(movie);
             if (movie.State != ITState.Complete)
@@ -328,6 +331,7 @@ namespace OnlineVideos.Sites.apondman {
             }
             else {
                 clip = new ITVideo(video.VideoUrl);
+                video.Other = clip;
             }
 
             ITResult result = _trailersApi.Update(clip);
