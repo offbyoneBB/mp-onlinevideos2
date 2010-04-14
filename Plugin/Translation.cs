@@ -291,7 +291,7 @@ namespace OnlineVideos
     public static string RemoveFromFavorites = "Remove from favorites";
     public static string Refresh = "Refresh";
     public static string RelatedVideos = "Related Videos";
-    public static string Reported = "Reported";
+    public static string Reported = "Reported";    
     public static string Runtime = "Runtime:";
     public static string RemoveFromMySites = "Remove from my sites";
     public static string RestartMediaPortal = "Restart MediaPortal!";
@@ -306,6 +306,7 @@ namespace OnlineVideos
     public static string SetDownloadFolderInConfig = "Please set a download folder in Configuration!";
     public static string State = "State";
     public static string SavingLocalSiteList = "Saving local site list ...";
+    public static string ShowReports = "Show creator's and user's reports";
 
     // T
     public static string Timeframe = "Timeframe";

@@ -90,6 +90,7 @@
   <string Field="SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>
   <string Field="State">State</string>
   <string Field="SavingLocalSiteList">Saving local site list ...</string>
+  <string Field="ShowReports">Show creator's and user's reports</string>
 
   <!-- T -->
   <string Field="Timeframe">Timeframe</string>

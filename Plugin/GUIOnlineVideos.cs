@@ -217,10 +217,11 @@ namespace OnlineVideos
         public override bool Init()
         {
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
-            GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
-            GUIPropertyManager.SetProperty("#OnlineVideos.length", string.Empty);
-            GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
-            SelectedSite = null;
+            GUIPropertyManager.SetProperty("#OnlineVideos.desc", " "); GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.length", " "); GUIPropertyManager.SetProperty("#OnlineVideos.length", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.filter", " "); GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
             CurrentState = State.sites;
             return result;
         }
