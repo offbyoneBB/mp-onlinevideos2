@@ -289,6 +289,7 @@ namespace OnlineVideos.Sites.apondman {
                 vid.Description = movie.Synopsis;
                 vid.Length = clip.Duration.ToString();
                 vid.ImageUrl = movie.Poster != null ? movie.Poster.Uri.AbsoluteUri : string.Empty;
+                vid.VideoUrl = clip.Uri.AbsoluteUri;
                 clips.Add(vid);
             }
 
@@ -310,7 +311,14 @@ namespace OnlineVideos.Sites.apondman {
         public override string getUrl(VideoInfo video) {
             string videoUrl = string.Empty;
             
-            ITVideo clip = (ITVideo)video.Other;
+            ITVideo clip;
+            if (video.Other != null && video.Other is ITVideo) {
+                clip = (ITVideo)video.Other;
+            }
+            else {
+                clip = new ITVideo(video.VideoUrl);
+            }
+
             ITResult result = _trailersApi.Update(clip);
             if (clip.State != ITState.Complete)
                 return videoUrl;
