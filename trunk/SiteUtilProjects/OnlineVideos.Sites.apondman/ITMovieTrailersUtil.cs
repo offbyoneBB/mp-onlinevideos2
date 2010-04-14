@@ -139,7 +139,7 @@ namespace OnlineVideos.Sites.apondman {
             string uri = section.Uri.AbsoluteUri;
 
             // the following sections have sub categories
-            if (uri == _trailersApi.FeaturedGenresUri || uri == _trailersApi.FeaturedStudiosUri ||
+            if (uri == _trailersApi.Configuration.FeaturedGenresUri || uri == _trailersApi.Configuration.FeaturedStudiosUri ||
                  uri == "urn://itunes/featured" || uri == "urn://itunes/studios" ||
                  uri == "urn://itunes/genres") {
                 return true;
