@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Online Videos translation file -->
+<!-- Swedish (SE) -->
+<!-- av Fredrik Jonsson -->
+<!-- Note: English is the fallback for any strings not found in other languages -->
+<strings>
+
+  <!-- A -->
+  <string Field="AlreadyDownloading">Filen laddas redan ned.</string>
+  <string Field="Actions">Actions</string>
+  <string Field="Actors">Sk&aring;despelare:</string>
+  <string Field="AddToMySites">L&auml;gg till i Mina Sidor</string>
+  <string Field="All">Alla</string>
+  <string Field="AddToFavourites">L&auml;gg till i Favoriter</string>  
+
+  <!-- B -->
+  <string Field="Broken">Trasig</string>
+
+  <!-- C -->
+  <string Field="Category">Kategori</string>
+  <string Field="Creator">Skapare</string>  
+
+  <!-- D -->
+  <string Field="DateOfRelease">Datum f&ouml;r sl&auml;pp:</string>
+  <string Field="Download">Nedladda</string>
+  <string Field="DownloadFailed">Nedladdning misslyckades: {0}</string>
+  <string Field="DownloadComplete">Nedladdning klar</string>
+  <string Field="DownloadedVideos">Nedladdade filmer</string>
+  <string Field="Delete">Radera</string>
+  <string Field="Default">Standard</string>
+
+  <!-- E -->
+  <string Field="Error">Fel</string>
+  <string Field="EnterPin">Sl&aring; in PIN-kod</string>
+
+  <!-- F -->
+  <string Field="Favourites">Favoriter</string>
+  <string Field="Filter">Filter</string>
+  <string Field="FullUpdate">Full Updatering</string>
+
+  <!-- G -->
+  <string Field="Genre">Genre:</string>
+
+  <!-- H -->
+
+  <!-- I -->
+
+  <!-- L -->
+  <string Field="LayoutList">Stil: Lista</string>
+  <string Field="LayoutIcons">Stil: Ikoner</string>
+  <string Field="LayoutBigIcons">Stil: Stora ikoner</string>
+
+  <!-- M -->
+  <string Field="ManageSites">Administrera sajter</string>
+  <string Field="MaxResults">Max Resultat</string>
+
+  <!-- N -->
+  <string Field="NextPage">N&auml;sta sida</string>
+  <string Field="None">Ingen</string>
+  <string Field="NoVideoFound">Ingen film hittad</string>
+  <string Field="NewDllRequired">Ny dll-fil m&aring;ste laddas ned!</string>
+
+  <!-- O -->
+
+  <!-- P -->
+  <string Field="PlayAll">Spela alla</string>
+  <string Field="PlotOutline">Handling:</string>
+  <string Field="PreviousPage">F&ouml;reg&aring;ende sida</string>
+  <string Field="PerformAutomaticUpdate">K&ouml;r automatisk uppdatering?</string>
+
+  <!-- R -->
+  <string Field="RemoveFromFavorites">Ta bort fr&aring;n mina Favoriter</string>
+  <string Field="Refresh">Uppdatera</string>
+  <string Field="RelatedVideos">Relaterade filmer</string>
+  <string Field="Reported">Rapporterad</string>
+  <string Field="Runtime">Speltid:</string>
+  <string Field="RemoveFromMySites">Ta bort fr&aring;n mina sajter</string>
+  <string Field="RestartMediaPortalAndAutomaticUpdate">Starta om Mediaportal och k&ouml;r automatisk uppdatering!</string>
+
+  <!-- S -->
+  <string Field="SearchResults">S&ouml;k resultat</string>
+  <string Field="SelectSource">V&auml;lj k&auml;lla</string>
+  <string Field="SortOptions">Sorterings val</string>  
+  <string Field="SortByName">Namn</string>
+  <string Field="SortByLanguage">Spr&aring;k</string>
+  <string Field="SortByUpdated">Updaterad</string>
+  <string Field="Search">S&ouml;k</string>
+  <string Field="SetDownloadFolderInConfig">V&auml;nligen st&auml;ll in en nedladdningsmapp i konfigurationen!</string>
+
+  <!-- T -->
+  <string Field="Timeframe">Timeframe</string>
+  <string Field="Timeout">Timeout</string>
+
+  <!-- U -->  
+  <string Field="Updatable">Uppdateringsbar</string>
+  <string Field="UpdateMySite">Updatera min Sajt</string>
+  <string Field="UpdateMySiteSkipCategories">Updatera min Sajt (hoppa &ouml;ver kategorier)</string>
+  <string Field="UpdateAllYourSites">Detta kommer uppdatera alla dina sajter.</string>
+  <string Field="UnableToPlayVideo">Kan inte spela upp filmen. Saknar URL till filen (eller blockerad).</string>
+  <string Field="UnableToDownloadVideo">Kan inte ladda ned filen. Felaktig URL (eller blockerad).</string>
+
+  <!-- V -->
+
+  <!-- W -->
+  <string Field="Working">Arbetar...</string>
+
+  <!-- Y -->
+
+</strings>
