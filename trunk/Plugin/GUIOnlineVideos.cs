@@ -1920,7 +1920,7 @@ namespace OnlineVideos
             if (defaultOption != -1) dlgSel.SelectedLabel = defaultOption;
             dlgSel.DoModal(GetID);
             if (dlgSel.SelectedId == -1) return "-1";
-            return videoInfo.PlaybackOptions[dlgSel.SelectedLabelText];
+            return videoInfo.GetPlaybackOptionUrl(dlgSel.SelectedLabelText);
         }
 
         private string GetBannerForSite(Sites.SiteUtilBase site)

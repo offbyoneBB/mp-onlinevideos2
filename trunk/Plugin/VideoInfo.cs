@@ -52,6 +52,11 @@ namespace OnlineVideos
             return string.Format("Title:{0}\nDesc:{1}\nVidUrl:{2}\nImgUrl:{3}\nLength:{4}\nTags:{5}", Title, Description, VideoUrl, ImageUrl, Length, Tags);
         }
 
+        public virtual string GetPlaybackOptionUrl(string url)
+        {
+            return PlaybackOptions[url];
+        }
+
         public double GetSecondsFromStartTime()
         {
             // Example: startTime = 02:34:25.00 should result in 9265 seconds
@@ -249,14 +254,14 @@ namespace OnlineVideos
                 }
             }
             catch { }
-            
+
             string Token = Items["token"];
             if (Token == null) Token = Items["t"];
             if (!string.IsNullOrEmpty(Token))
             {
                 string[] FmtMap = null;
                 if (Items.Get("fmt_map") != "")
-                {                    
+                {
                     FmtMap = System.Web.HttpUtility.UrlDecode(Items["fmt_map"]).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     Array.Sort(FmtMap, new Comparison<string>(delegate(string a, string b)
                     {
