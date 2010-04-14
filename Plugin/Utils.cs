@@ -67,5 +67,25 @@ namespace OnlineVideos
             }
             return result;
         }
+
+        public static string[] Tokenize(string text, bool dropToken, params string[] tokens)
+        {
+            if( tokens.Length > 0){
+
+                string regex = @"([";
+                foreach (string s in tokens)
+                    regex += s;
+                regex += "])";
+                Regex RE = new Regex(regex);
+                if (dropToken)
+                {
+                    string output = RE.Replace(text, " ");
+                    return (new Regex(@"\s").Split(output)); 
+                }
+                else
+                    return (RE.Split(text));
+            }
+            return null;
+        }
     }
 }
