@@ -399,6 +399,7 @@ namespace OnlineVideos.Sites
 
         public static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy, bool forceUTF8)
         {
+            Log.Debug("get webdata from {0}", url);
             // try cache first
             string cachedData = WebCache.Instance[url];
             if (cachedData != null) return cachedData;
