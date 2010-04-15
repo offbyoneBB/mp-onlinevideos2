@@ -19,8 +19,24 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Defines number of videos to retrieve as one page.")]
         int itemsPerPage = 15;
 
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse logos from a html page for NBA teams. Groups need to be named 'logo' and 'teamname'.")]
+        string logosRegEx = @"<div\sclass=""thumbHolder"">\s*<a\shref='team.php[^']+'[^>]+><img\sclass='thumb'\ssrc='(?<logo>[^']+)'[^>]+></a><br\s/><a[^>]+>(?<teamname>[^<]+)</a>";
+        [Category("OnlineVideosConfiguration"), Description("Url for a page that has links to all logos of the NBA teams")]
+        string logosPage = "http://www.sportslogos.net/league.php?id=6";
+        
+        Regex regEx_logos;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+
+            if (!string.IsNullOrEmpty(logosRegEx)) regEx_logos = new Regex(logosRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+        }
+
         public override int DiscoverDynamicCategories()
         {
+            Dictionary<string, string> teamLogos = GetTeamLogoUrls();
+
             string js = GetWebData("http://i.cdn.turner.com/nba/nba/z/.e/js/pkg/video/652.js");
             string json = Regex.Match(js, @"var\snbaChannelConfig=(?<json>.+)").Groups["json"].Value;
             JsonObject nbaChannelConfig = Jayrock.Json.Conversion.JsonConvert.Import(json) as JsonObject;
@@ -28,9 +44,10 @@ namespace OnlineVideos.Sites
             {
                 List<Category> cats = new List<Category>();
                 foreach (DictionaryEntry jo in nbaChannelConfig)
-                {                    
+                {
                     string name = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jo.Key.ToString().Replace("/", ": "));
                     Category mainCategory = new Category() { Name = name, HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = new List<Category>() };
+                    SetLogoAndName(teamLogos, mainCategory, jo.Value);
                     JsonArray subCats = jo.Value as JsonArray;
                     foreach(JsonObject subJo in jo.Value as JsonArray)
                     {
@@ -77,7 +94,80 @@ namespace OnlineVideos.Sites
                 videos.Add(vi);
             }            
             return videos;
-        }        
+        }
+
+        Dictionary<string, string> GetTeamLogoUrls()
+        {
+            Dictionary<string, string> teamLogos = new Dictionary<string, string>();
+            try
+            {
+                if (regEx_logos != null && !string.IsNullOrEmpty(logosPage))
+                {
+                    string teamLogosPage = GetWebData(logosPage);
+                    Match m = regEx_logos.Match(teamLogosPage);
+                    while (m.Success)
+                    {
+                        string logoUrl = m.Groups["logo"].Value;
+                        if (!Uri.IsWellFormedUriString(logoUrl, System.UriKind.Absolute)) logoUrl = new Uri(new Uri(logosPage), logoUrl).AbsoluteUri;
+                        teamLogos.Add(m.Groups["teamname"].Value.ToLower(), logoUrl);
+                        m = m.NextMatch();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
+            return teamLogos;
+        }
+
+        void SetLogoAndName(Dictionary<string, string> teamLogos, Category category, object jsonValue)
+        {
+            try
+            {
+                string searchString = ((JsonObject)((JsonArray)jsonValue)[0])["search_string"].ToString();
+                int index = searchString.IndexOf("&team=");
+                if (index > 0)
+                {
+                    string name = System.Web.HttpUtility.UrlDecode(searchString.Substring(index + 6));
+                    string logoUrl = "";
+                    if (teamLogos.TryGetValue(name.ToLower(), out logoUrl))
+                    {
+                        category.Thumb = logoUrl;
+                    }
+                    else
+                    {
+                        // no direct match found, do weak matching
+                        string relaxedName = name.ToLower().Substring(0, name.Length - 1);
+                        foreach (string key in teamLogos.Keys)
+                        {
+                            if (key.Contains(relaxedName))
+                            {
+                                category.Thumb = teamLogos[key];
+                                break;
+                            }
+                        }
+                    }
+                    name = "Team: " + name;
+                    category.Name = name;
+                }
+                else if (category.Name.ToLower().Contains("league"))
+                {
+                    foreach (string key in teamLogos.Keys)
+                    {
+                        if (key.Contains("national basketball asso"))
+                        {
+                            category.Thumb = teamLogos[key];
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug(ex.ToString());
+            }
+        }
 
         #region Paging
 
