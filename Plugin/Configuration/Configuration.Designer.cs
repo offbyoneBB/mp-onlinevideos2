@@ -115,16 +115,22 @@ namespace OnlineVideos
             this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label32 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.tbxWebCacheTimeout = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.tbxUtilTimeout = new System.Windows.Forms.TextBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
             this.udPlayBuffer = new System.Windows.Forms.DomainUpDown();
+            this.label16 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
+            this.tbxWMPBuffer = new System.Windows.Forms.TextBox();
             this.label23 = new System.Windows.Forms.Label();
             this.chkDoAutoUpdate = new System.Windows.Forms.CheckBox();
-            this.tbxWMPBuffer = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.tbxUtilTimeout = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.tbxWebCacheTimeout = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblVersion = new System.Windows.Forms.Label();
@@ -169,6 +175,8 @@ namespace OnlineVideos
             this.toolStripChannels.SuspendLayout();
             this.mainTabControl.SuspendLayout();
             this.tabGeneral.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.tabSites.SuspendLayout();
             this.tabPageCodecs.SuspendLayout();
             this.groupBoxSplitter.SuspendLayout();
@@ -623,9 +631,9 @@ namespace OnlineVideos
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(6, 35);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(109, 13);
+            this.label5.Size = new System.Drawing.Size(112, 13);
             this.label5.TabIndex = 23;
-            this.label5.Text = "Use Age Confirmation";
+            this.label5.Text = "Use Age Confirmation:";
             // 
             // chkUseAgeConfirmation
             // 
@@ -982,11 +990,11 @@ namespace OnlineVideos
             this.tbxPin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxPin.Enabled = false;
-            this.tbxPin.Location = new System.Drawing.Point(271, 33);
+            this.tbxPin.Location = new System.Drawing.Point(274, 33);
             this.tbxPin.Margin = new System.Windows.Forms.Padding(2);
             this.tbxPin.Name = "tbxPin";
             this.tbxPin.PasswordChar = '*';
-            this.tbxPin.Size = new System.Drawing.Size(414, 20);
+            this.tbxPin.Size = new System.Drawing.Size(411, 20);
             this.tbxPin.TabIndex = 3;
             // 
             // tbxScreenName
@@ -1035,16 +1043,10 @@ namespace OnlineVideos
             // 
             // tabGeneral
             // 
-            this.tabGeneral.Controls.Add(this.udPlayBuffer);
-            this.tabGeneral.Controls.Add(this.label24);
+            this.tabGeneral.Controls.Add(this.groupBox3);
+            this.tabGeneral.Controls.Add(this.groupBox2);
             this.tabGeneral.Controls.Add(this.label23);
             this.tabGeneral.Controls.Add(this.chkDoAutoUpdate);
-            this.tabGeneral.Controls.Add(this.tbxWMPBuffer);
-            this.tabGeneral.Controls.Add(this.label16);
-            this.tabGeneral.Controls.Add(this.tbxUtilTimeout);
-            this.tabGeneral.Controls.Add(this.label15);
-            this.tabGeneral.Controls.Add(this.tbxWebCacheTimeout);
-            this.tabGeneral.Controls.Add(this.label6);
             this.tabGeneral.Controls.Add(this.label21);
             this.tabGeneral.Controls.Add(this.btnCancel);
             this.tabGeneral.Controls.Add(this.lblVersion);
@@ -1070,8 +1072,119 @@ namespace OnlineVideos
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.label32);
+            this.groupBox3.Controls.Add(this.label31);
+            this.groupBox3.Controls.Add(this.label6);
+            this.groupBox3.Controls.Add(this.tbxWebCacheTimeout);
+            this.groupBox3.Controls.Add(this.label15);
+            this.groupBox3.Controls.Add(this.tbxUtilTimeout);
+            this.groupBox3.Location = new System.Drawing.Point(0, 165);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(682, 56);
+            this.groupBox3.TabIndex = 50;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Timeouts";
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(638, 26);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(24, 13);
+            this.label32.TabIndex = 44;
+            this.label32.Text = "sec";
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(291, 26);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(23, 13);
+            this.label31.TabIndex = 43;
+            this.label31.Text = "min";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 26);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(91, 13);
+            this.label6.TabIndex = 40;
+            this.label6.Text = "Cached Webdata";
+            // 
+            // tbxWebCacheTimeout
+            // 
+            this.tbxWebCacheTimeout.Location = new System.Drawing.Point(216, 23);
+            this.tbxWebCacheTimeout.Name = "tbxWebCacheTimeout";
+            this.tbxWebCacheTimeout.Size = new System.Drawing.Size(53, 20);
+            this.tbxWebCacheTimeout.TabIndex = 8;
+            this.tbxWebCacheTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.toolTip1.SetToolTip(this.tbxWebCacheTimeout, "WebRequests are cached internally. This number determines the minutes after which" +
+                    " the cached data becomes invalid. Set to 0 to disable.");
+            this.tbxWebCacheTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(393, 26);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(70, 13);
+            this.label15.TabIndex = 42;
+            this.label15.Text = "Webrequests";
+            // 
+            // tbxUtilTimeout
+            // 
+            this.tbxUtilTimeout.Location = new System.Drawing.Point(541, 23);
+            this.tbxUtilTimeout.Name = "tbxUtilTimeout";
+            this.tbxUtilTimeout.Size = new System.Drawing.Size(76, 20);
+            this.tbxUtilTimeout.TabIndex = 9;
+            this.tbxUtilTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.toolTip1.SetToolTip(this.tbxUtilTimeout, "When the GUI request data from the web you can specifiy how many seconds to wait " +
+                    "before a timeout will occur.");
+            this.tbxUtilTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.label30);
+            this.groupBox2.Controls.Add(this.label29);
+            this.groupBox2.Controls.Add(this.udPlayBuffer);
+            this.groupBox2.Controls.Add(this.label16);
+            this.groupBox2.Controls.Add(this.label24);
+            this.groupBox2.Controls.Add(this.tbxWMPBuffer);
+            this.groupBox2.Location = new System.Drawing.Point(0, 231);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(682, 56);
+            this.groupBox2.TabIndex = 49;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Playback Buffer";
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(291, 26);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(15, 13);
+            this.label30.TabIndex = 49;
+            this.label30.Text = "%";
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(638, 26);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(32, 13);
+            this.label29.TabIndex = 44;
+            this.label29.Text = "msec";
+            // 
             // udPlayBuffer
             // 
+            this.udPlayBuffer.BackColor = System.Drawing.SystemColors.Window;
             this.udPlayBuffer.Items.Add("1");
             this.udPlayBuffer.Items.Add("2");
             this.udPlayBuffer.Items.Add("3");
@@ -1092,28 +1205,47 @@ namespace OnlineVideos
             this.udPlayBuffer.Items.Add("18");
             this.udPlayBuffer.Items.Add("19");
             this.udPlayBuffer.Items.Add("20");
-            this.udPlayBuffer.Location = new System.Drawing.Point(225, 210);
+            this.udPlayBuffer.Location = new System.Drawing.Point(216, 24);
             this.udPlayBuffer.Name = "udPlayBuffer";
             this.udPlayBuffer.ReadOnly = true;
             this.udPlayBuffer.Size = new System.Drawing.Size(53, 20);
             this.udPlayBuffer.TabIndex = 11;
             this.udPlayBuffer.Text = "1";
             this.udPlayBuffer.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.toolTip1.SetToolTip(this.udPlayBuffer, "Percentage of files to buffer from web before starting playback.");
+            this.toolTip1.SetToolTip(this.udPlayBuffer, "Percentage of the file to buffer from web before starting playback.");
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(393, 26);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(115, 13);
+            this.label16.TabIndex = 43;
+            this.label16.Text = "Windows Media Player";
             // 
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(5, 212);
+            this.label24.Location = new System.Drawing.Point(6, 26);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(99, 13);
+            this.label24.Size = new System.Drawing.Size(101, 13);
             this.label24.TabIndex = 48;
-            this.label24.Text = "Playback Buffer (%)";
+            this.label24.Text = "Internal Player (http)";
+            // 
+            // tbxWMPBuffer
+            // 
+            this.tbxWMPBuffer.Location = new System.Drawing.Point(541, 23);
+            this.tbxWMPBuffer.Name = "tbxWMPBuffer";
+            this.tbxWMPBuffer.Size = new System.Drawing.Size(76, 20);
+            this.tbxWMPBuffer.TabIndex = 10;
+            this.tbxWMPBuffer.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.toolTip1.SetToolTip(this.tbxWMPBuffer, "Number of milliseconds to use as buffer for playback with Windows Media Player.");
+            this.tbxWMPBuffer.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
             // 
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(6, 236);
+            this.label23.Location = new System.Drawing.Point(6, 138);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(125, 13);
             this.label23.TabIndex = 46;
@@ -1124,7 +1256,7 @@ namespace OnlineVideos
             this.chkDoAutoUpdate.AutoSize = true;
             this.chkDoAutoUpdate.Checked = true;
             this.chkDoAutoUpdate.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.chkDoAutoUpdate.Location = new System.Drawing.Point(225, 236);
+            this.chkDoAutoUpdate.Location = new System.Drawing.Point(225, 138);
             this.chkDoAutoUpdate.Name = "chkDoAutoUpdate";
             this.chkDoAutoUpdate.Size = new System.Drawing.Size(15, 14);
             this.chkDoAutoUpdate.TabIndex = 12;
@@ -1133,76 +1265,14 @@ namespace OnlineVideos
                     "diaPortal Session. If indeterminated, plugin will ask.");
             this.chkDoAutoUpdate.UseVisualStyleBackColor = true;
             // 
-            // tbxWMPBuffer
-            // 
-            this.tbxWMPBuffer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxWMPBuffer.Location = new System.Drawing.Point(225, 184);
-            this.tbxWMPBuffer.Name = "tbxWMPBuffer";
-            this.tbxWMPBuffer.Size = new System.Drawing.Size(460, 20);
-            this.tbxWMPBuffer.TabIndex = 10;
-            this.toolTip1.SetToolTip(this.tbxWMPBuffer, "Number of milliseconds to use as buffer for playback with Windows Media Player.");
-            this.tbxWMPBuffer.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(6, 187);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(131, 13);
-            this.label16.TabIndex = 43;
-            this.label16.Text = "WMP Player Buffer (msec)";
-            // 
-            // tbxUtilTimeout
-            // 
-            this.tbxUtilTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxUtilTimeout.Location = new System.Drawing.Point(225, 158);
-            this.tbxUtilTimeout.Name = "tbxUtilTimeout";
-            this.tbxUtilTimeout.Size = new System.Drawing.Size(460, 20);
-            this.tbxUtilTimeout.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.tbxUtilTimeout, "When the GUI request data from the web you can specifiy how many seconds to wait " +
-                    "before a timeout will occur.");
-            this.tbxUtilTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 161);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(114, 13);
-            this.label15.TabIndex = 42;
-            this.label15.Text = "Request Timeout (sec)";
-            // 
-            // tbxWebCacheTimeout
-            // 
-            this.tbxWebCacheTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxWebCacheTimeout.Location = new System.Drawing.Point(225, 136);
-            this.tbxWebCacheTimeout.Name = "tbxWebCacheTimeout";
-            this.tbxWebCacheTimeout.Size = new System.Drawing.Size(460, 20);
-            this.tbxWebCacheTimeout.TabIndex = 8;
-            this.toolTip1.SetToolTip(this.tbxWebCacheTimeout, "WebRequests are cached internally. This number determines the minutes after which" +
-                    " the cached data becomes invalid. Set to 0 to disable.");
-            this.tbxWebCacheTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(5, 138);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(127, 13);
-            this.label6.TabIndex = 40;
-            this.label6.Text = "WebCache Timeout (min)";
-            // 
             // label21
             // 
             this.label21.AutoSize = true;
             this.label21.Location = new System.Drawing.Point(244, 36);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(22, 13);
+            this.label21.Size = new System.Drawing.Size(25, 13);
             this.label21.TabIndex = 39;
-            this.label21.Text = "Pin";
+            this.label21.Text = "Pin:";
             // 
             // btnCancel
             // 
@@ -1465,6 +1535,10 @@ namespace OnlineVideos
             this.mainTabControl.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
             this.tabGeneral.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.tabSites.ResumeLayout(false);
             this.tabPageCodecs.ResumeLayout(false);
             this.groupBoxSplitter.ResumeLayout(false);
@@ -1587,5 +1661,11 @@ namespace OnlineVideos
         private System.Windows.Forms.CheckBox chkDoAutoUpdate;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.DomainUpDown udPlayBuffer;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.Label label31;
 	}
 }
