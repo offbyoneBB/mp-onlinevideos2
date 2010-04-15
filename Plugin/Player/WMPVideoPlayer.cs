@@ -379,8 +379,11 @@ namespace OnlineVideos.Player
         }
 
         #region IDisposable Members
-
+#if MP102
         public override void Release()
+#else
+        public override void Dispose()
+#endif
         {
             if (_wmp10Player == null)
             {
