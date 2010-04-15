@@ -9,35 +9,6 @@ namespace OnlineVideos.Sites
 {
     public static class UrlTricks
     {
-        // use MySiteUtil until everybody has 0.19 or higher, there the needed methods of SiteUtilBase are public. 
-        // After that: Remove MySiteUtil and replace references with SiteUtilBase
-        private class MySiteUtil : SiteUtilBase
-        {
-            public override List<VideoInfo> getVideoList(Category category)
-            {
-                throw new NotImplementedException();
-            }
-            public override string getUrl(VideoInfo video)
-            {
-                return base.getUrl(video);
-            }
-
-            public static new string GetWebData(string url)
-            {
-                return SiteUtilBase.GetWebData(url);
-            }
-
-            public static new string GetWebData(string url, CookieContainer cc)
-            {
-                return SiteUtilBase.GetWebData(url, cc);
-            }
-
-            public static new string GetRedirectedUrl(string url)
-            {
-                return SiteUtilBase.GetRedirectedUrl(url);
-            }
-        }
-
         private static String Decrypt(String str_hex, String str_key1, String str_key2)
         {
             // 1. Convert hexadecimal string to binary string
@@ -90,7 +61,7 @@ namespace OnlineVideos.Sites
         {
             XmlDocument doc = new XmlDocument();
             string s = url.Insert(25, "xml/videolink.php");
-            s = MySiteUtil.GetWebData(s);
+            s = SiteUtilBase.GetWebData(s);
             doc.LoadXml(s);
             XmlNode node = doc.SelectSingleNode("ROWS/ROW");
             string server = node.Attributes["s"].Value;
@@ -100,12 +71,12 @@ namespace OnlineVideos.Sites
 
         public static string BlipTrick(string url)
         {
-            string s = HttpUtility.UrlDecode(MySiteUtil.GetRedirectedUrl(url));
+            string s = HttpUtility.UrlDecode(SiteUtilBase.GetRedirectedUrl(url));
             int p = s.IndexOf("file=");
             int q = s.IndexOf('&', p);
             if (q < 0) q = s.Length;
             s = s.Substring(p + 5, q - p - 5);
-            string rss = MySiteUtil.GetWebData(s);
+            string rss = SiteUtilBase.GetWebData(s);
             p = rss.IndexOf(@"enclosure url="""); p += 15;
             q = rss.IndexOf('"', p);
             return rss.Substring(p, q - p);
@@ -115,12 +86,12 @@ namespace OnlineVideos.Sites
         {
             int aflID = Convert.ToInt32(Url.Split('=')[1]);
             CookieContainer cc = new CookieContainer();
-            string step1 = MySiteUtil.GetWebData(Url, cc);
+            string step1 = SiteUtilBase.GetWebData(Url, cc);
             CookieCollection ccol = cc.GetCookies(new Uri("http://tmp.player.omroep.nl/"));
             CookieContainer newcc = new CookieContainer();
             foreach (Cookie c in ccol) newcc.Add(c);
 
-            step1 = MySiteUtil.GetWebData("http://player.omroep.nl/js/initialization.js.php?aflID=" + aflID.ToString(), newcc);
+            step1 = SiteUtilBase.GetWebData("http://player.omroep.nl/js/initialization.js.php?aflID=" + aflID.ToString(), newcc);
             if (!String.IsNullOrEmpty(step1))
             {
                 int p = step1.IndexOf("securityCode = '");
@@ -128,7 +99,7 @@ namespace OnlineVideos.Sites
                 {
                     step1 = step1.Remove(0, p + 16);
                     string sec = step1.Split('\'')[0];
-                    string step2 = MySiteUtil.GetWebData("http://player.omroep.nl/xml/metaplayer.xml.php?aflID=" + aflID.ToString() + "&md5=" + sec, newcc);
+                    string step2 = SiteUtilBase.GetWebData("http://player.omroep.nl/xml/metaplayer.xml.php?aflID=" + aflID.ToString() + "&md5=" + sec, newcc);
                     if (!String.IsNullOrEmpty(step2))
                     {
                         XmlDocument tdoc = new XmlDocument();
@@ -146,12 +117,12 @@ namespace OnlineVideos.Sites
 
         public static string ZShareTrick(string Url)
         {
-            string data = MySiteUtil.GetWebData(Url);
+            string data = SiteUtilBase.GetWebData(Url);
 
             string tmpurl = "http://www.zshare.net/" + GetSubString(data, @"src=""http://www.zshare.net/", @"""");
 
             CookieContainer cc = new CookieContainer();
-            data = MySiteUtil.GetWebData(tmpurl, cc);
+            data = SiteUtilBase.GetWebData(tmpurl, cc);
             CookieCollection ccol = cc.GetCookies(new Uri("http://tmp.zshare.net"));
             data = GetSubString(data, @"name=""flashvars"" value=""", "&player");
             Dictionary<string, string> dic = new Dictionary<string, string>();
