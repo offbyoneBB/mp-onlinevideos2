@@ -38,19 +38,19 @@
 			<Guid>45E12C71-DFFD-4e01-9A10-7752D543E25D</Guid>
 		</File>
 		<File>
-			<FileName>Apple Trailers.png</FileName>
+			<FileName>iTunes Movie Trailers.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
-			<Source>..\SiteImages\Banners\Apple Trailers.png</Source>
+			<Source>..\SiteImages\Banners\iTunes Movie Trailers.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>148fe6e1-d44e-458d-a953-37fd50f927f8</Guid>
 		</File>
 		<File>
-			<FileName>Apple Trailers.png</FileName>
+			<FileName>iTunes Movie Trailers.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Icons</SubType>
-			<Source>..\SiteImages\Icons\Apple Trailers.png</Source>
+			<Source>..\SiteImages\Icons\iTunes Movie Trailers.png</Source>
 			<Id>04010</Id>
 			<Option />
 			<Guid>4a789505-8c66-4d34-a988-0a5af571989d</Guid>
@@ -1623,7 +1623,7 @@
 		<ProiectName>Online Videos</ProiectName>
 		<Author>offbyone</Author>
 		<UpdateURL>http://www.team-mediaportal.com/files/Download/MediaPortalInstaller(MPI)/Web/OnlineVideos/</UpdateURL>
-		<Version>0.19.0</Version>
+		<Version>0.20.0</Version>
 		<Description>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</Description>
 		<Group>Web</Group>
 		<Release>Beta</Release>
@@ -1719,7 +1719,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>29-03-10</CreationDate>
+		<CreationDate>17-04-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>

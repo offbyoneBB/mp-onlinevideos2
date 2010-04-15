@@ -57,16 +57,19 @@ namespace OnlineVideos.Sites
             string[] lsSiteIds = db.getSiteIDs();            
             foreach (string lsSiteId in lsSiteIds)
             {
-                SiteSettings aSite = OnlineVideoSettings.Instance.SiteList[lsSiteId].Settings;
-
-                if (aSite.IsEnabled &&
-                   (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
+                SiteUtilBase util = null;
+                if (OnlineVideoSettings.Instance.SiteList.TryGetValue(lsSiteId, out util))
                 {
-                    RssLink cat = new RssLink();
-                    cat.Name = aSite.Name + " - " + Translation.Favourites;
-                    cat.Url = "fav:" + aSite.Name;
-                    cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Name + ".png";
-                    Settings.Categories.Add(cat);
+                    SiteSettings aSite = util.Settings;
+                    if (aSite.IsEnabled &&
+                       (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
+                    {
+                        RssLink cat = new RssLink();
+                        cat.Name = aSite.Name + " - " + Translation.Favourites;
+                        cat.Url = "fav:" + aSite.Name;
+                        cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Name + ".png";
+                        Settings.Categories.Add(cat);
+                    }
                 }
             }
 
