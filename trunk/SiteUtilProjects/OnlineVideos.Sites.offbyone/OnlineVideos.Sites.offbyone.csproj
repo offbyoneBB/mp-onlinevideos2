@@ -39,7 +39,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppleTrailersUtil.cs" />
     <Compile Include="BBCiPlayerUtil.cs" />
     <Compile Include="DasErsteMediathekUtil.cs" />
     <Compile Include="Google\GData\Client\abstractentry.cs" />

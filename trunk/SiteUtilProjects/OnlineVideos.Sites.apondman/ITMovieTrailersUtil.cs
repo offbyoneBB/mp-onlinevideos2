@@ -140,8 +140,7 @@ namespace OnlineVideos.Sites.apondman {
 
             // the following sections have sub categories
             if (uri == _trailersApi.Configuration.FeaturedGenresUri || uri == _trailersApi.Configuration.FeaturedStudiosUri ||
-                 uri == "urn://itunes/featured" || uri == "urn://itunes/studios" ||
-                 uri == "urn://itunes/genres") {
+                 uri == ITSection.FeaturedUri || uri == ITSection.StudiosUri || uri == ITSection.GenresUri) {
                 return true;
             }
 

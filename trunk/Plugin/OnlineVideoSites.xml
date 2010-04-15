@@ -363,8 +363,8 @@
         <Category xsi:type="RssLink" name="Gamestrailer">http://www.kino.de/showroom/trailer/games</Category>
       </Categories>
     </Site>
-    <Site name="Apple Trailers" util="AppleTrailers" agecheck="false" enabled="true" lang="en">
-      <Description>Trailers for all the latest movies from Apple. Most are avaliable in HD.</Description>
+    <Site name="iTunes Movie Trailers" util="ITMovieTrailers" agecheck="false" enabled="true" lang="en">
+      <Description>View the latest movie trailers for many current and upcoming releases. Many trailers are available in high-quality HD</Description>
       <Categories />
     </Site>
     <Site name="Break" util="GenericSite" agecheck="false" enabled="true" lang="en">
