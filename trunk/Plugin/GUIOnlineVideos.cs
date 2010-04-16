@@ -157,6 +157,7 @@ namespace OnlineVideos
         VideoInfo selectedVideo;
         VideoInfo playingVideo;
 
+        bool preventDialogOnLoad = false;
         bool firstLoadDone = false;
         bool buffering = false;
 
@@ -223,6 +224,13 @@ namespace OnlineVideos
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
             CurrentState = State.sites;
+            // get last active module settings  
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+                bool lastActiveModuleSetting = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
+                int lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
+                preventDialogOnLoad = (lastActiveModuleSetting && (lastActiveModule == GetID));
+            }
             return result;
         }
 
@@ -2017,7 +2025,7 @@ namespace OnlineVideos
         private void AutoUpdate(bool ask)
         {
             bool doUpdate = !ask;
-            if (ask)
+            if (ask && !preventDialogOnLoad)
             {
                 GUIDialogYesNo dlg = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
                 if (dlg != null)
