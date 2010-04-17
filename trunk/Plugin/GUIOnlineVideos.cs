@@ -952,7 +952,7 @@ namespace OnlineVideos
                 OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem("..");
                 loListItem.IsFolder = true;
                 loListItem.ItemId = 0;
-                MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
+                MediaPortal.Util.Utils.SetDefaultIcons(loListItem);                
                 GUI_infoList.Add(loListItem);
                 int liIdx = 0;
                 foreach (VideoInfo loVideoInfo in loVideoList)
@@ -961,7 +961,7 @@ namespace OnlineVideos
                     loListItem = new OnlineVideosGuiListItem(loVideoInfo.Title2);
                     loListItem.Path = loVideoInfo.VideoUrl;
                     loListItem.ItemId = liIdx;
-                    loListItem.Item = loVideoInfo;
+                    loListItem.Item = loVideoInfo;                    
                     loListItem.OnItemSelected += OnDetailsVideoItemSelected;
                     GUI_infoList.Add(loListItem);
                     currentTrailerList.Add(loVideoInfo);
@@ -1963,9 +1963,7 @@ namespace OnlineVideos
             if (!string.IsNullOrEmpty(video.Title)) GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title);
             if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
             if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
-            if (!string.IsNullOrEmpty(video.Genres)) GUIPropertyManager.SetProperty("#Play.Current.Genre", video.Genres);
             if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Length);
-            if (!string.IsNullOrEmpty(video.Cast)) GUIPropertyManager.SetProperty("#Play.Current.Cast", video.Cast);
         }
 
         private void SetVideoInfoGuiProperties(VideoInfo foVideo)
