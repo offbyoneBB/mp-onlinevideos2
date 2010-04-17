@@ -28,7 +28,9 @@ namespace OnlineVideos
         {
             // gets a CRC code for the given url and returns a file path: thums_dir\crc.jpg
             string name = MediaPortal.Util.Utils.GetThumb(url);
-            name = System.IO.Path.GetFileNameWithoutExtension(name) + "L.jpg";
+            string possibleExtension = System.IO.Path.GetExtension(url).ToLower();
+            if (possibleExtension != ".gif" & possibleExtension != ".jpg") possibleExtension = ".jpg";
+            name = System.IO.Path.GetFileNameWithoutExtension(name) + "L" +possibleExtension;
             return System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, name);
         }
 
@@ -153,7 +155,14 @@ namespace OnlineVideos
                 else
                     responseStream = response.GetResponseStream();
                 System.Drawing.Image image = System.Drawing.Image.FromStream(responseStream, true, true);
-                image.Save(file, System.Drawing.Imaging.ImageFormat.Jpeg);
+                if (image.RawFormat.Guid == System.Drawing.Imaging.ImageFormat.Gif.Guid && file.EndsWith(".gif"))
+                {
+                    image.Save(file, System.Drawing.Imaging.ImageFormat.Gif);
+                }
+                else
+                {
+                    image.Save(file, System.Drawing.Imaging.ImageFormat.Jpeg);
+                }
                 image.Dispose();
                 return true;
             }

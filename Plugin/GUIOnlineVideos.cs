@@ -801,7 +801,7 @@ namespace OnlineVideos
                     loListItem.Path = aSite.Settings.Name;
                     loListItem.IsFolder = true;
                     loListItem.Item = aSite;
-                    loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
+                    loListItem.OnItemSelected += OnSiteSelected;
                     // use Icon with the same name as the Site
                     string image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Settings.Name + ".png";
                     if (!System.IO.File.Exists(image))
@@ -905,6 +905,7 @@ namespace OnlineVideos
                             loListItem.ThumbUrl = loCat.Thumb;
                         }
                         loListItem.Item = loCat;
+                        loListItem.OnItemSelected += OnCategorySelected;
                         if (loCat == selectedCategory) categoryIndexToSelect = GUI_facadeView.Count; // select the category that was previously selected
                         GUI_facadeView.Add(loListItem);
 
@@ -961,6 +962,7 @@ namespace OnlineVideos
                     loListItem.Path = loVideoInfo.VideoUrl;
                     loListItem.ItemId = liIdx;
                     loListItem.Item = loVideoInfo;
+                    loListItem.OnItemSelected += OnDetailsVideoItemSelected;
                     GUI_infoList.Add(loListItem);
                     currentTrailerList.Add(loVideoInfo);
                 }
@@ -1263,20 +1265,30 @@ namespace OnlineVideos
             UpdateViewState();
         }
 
-        private void OnSiteSelected(GUIListItem item, GUIControl parent)
+        void OnSiteSelected(GUIListItem item, GUIControl parent)
         {
-            GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
-            if (filmstrip != null) filmstrip.InfoImageFileName = item.ThumbnailImage;
-
-            string desc = OnlineVideoSettings.Instance.SiteList[item.Label].Settings.Description;
+            Sites.SiteUtilBase site = (item as OnlineVideosGuiListItem).Item as Sites.SiteUtilBase;
+            string desc = site.Settings.Description;
             if (!string.IsNullOrEmpty(desc)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", desc);
-            else GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
+            else GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
+        }
+
+        void OnCategorySelected(GUIListItem item, GUIControl parent)
+        {
+            Category cat = (item as OnlineVideosGuiListItem).Item as Category;
+            string desc = cat.Description;
+            if (!string.IsNullOrEmpty(desc)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", desc);
+            else GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
         }
 
         void OnVideoItemSelected(GUIListItem item, GUIControl parent)
         {
-            if (item.ItemId == 0) SetVideoInfoGuiProperties(null);
-            else SetVideoInfoGuiProperties(currentVideoList[item.ItemId - 1]);
+            SetVideoInfoGuiProperties((item as OnlineVideosGuiListItem).Item as VideoInfo);
+        }
+
+        void OnDetailsVideoItemSelected(GUIListItem item, GUIControl parent)
+        {
+            SetVideoInfoExtendedGuiProperties((item as OnlineVideosGuiListItem).Item as VideoInfo);
         }
 
         private bool GetUserInputString(ref string sString, bool password)
@@ -1695,7 +1707,7 @@ namespace OnlineVideos
                     HideAndDisable(GUI_btnFavorite.GetID);
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetVideoInfoGuiProperties(null);
-                    SetVideoInfoExtendedGuiProperties();
+                    SetVideoInfoExtendedGuiProperties(null);
                     break;
             }
             if (CurrentState == State.details)
@@ -1956,17 +1968,6 @@ namespace OnlineVideos
             if (!string.IsNullOrEmpty(video.Cast)) GUIPropertyManager.SetProperty("#Play.Current.Cast", video.Cast);
         }
 
-        private void SetVideoInfoExtendedGuiProperties()
-        {
-            GUIPropertyManager.SetProperty("#OnlineVideos.movieposter", ImageDownloader.DownloadPoster(selectedVideo.Tags, selectedVideo.Title));
-            GUIPropertyManager.SetProperty("#OnlineVideos.trailerdesc", selectedVideo.Description);
-            GUIPropertyManager.SetProperty("#OnlineVideos.genre", selectedVideo.Genres);
-            GUIPropertyManager.SetProperty("#OnlineVideos.releasedate", selectedVideo.Length);
-            GUIPropertyManager.SetProperty("#OnlineVideos.cast", selectedVideo.Cast);
-
-            SetVideoInfoExtendedProperties("Details", selectedVideo);
-        }
-
         private void SetVideoInfoGuiProperties(VideoInfo foVideo)
         {
             if (foVideo == null)
@@ -2000,9 +2001,7 @@ namespace OnlineVideos
                 else
                 {
                     GUIPropertyManager.SetProperty("#OnlineVideos.desc", foVideo.Description);
-                }
-
-                SetVideoInfoExtendedProperties("Selected", foVideo);
+                }                
             }
         }
 
@@ -2010,16 +2009,24 @@ namespace OnlineVideos
         /// Processes extended properties which might be available
         /// if the VideoInfo.Other object is using the IVideoDetails interface
         /// </summary>
-        /// <param name="videoInfo"></param>
-        private void SetVideoInfoExtendedProperties(string prefix, VideoInfo videoInfo) {
-             if (videoInfo.Other != null && videoInfo.Other is IVideoDetails) {
-                 Dictionary<string, string> custom = ((IVideoDetails)videoInfo.Other).GetExtendedProperties();
-                 foreach (string property in custom.Keys) {
-                     string label = "#OnlineVideos." + prefix + "." + property;
-                     string value = custom[property];
-                     GUIPropertyManager.SetProperty(label, value);
-                 }
-             }
+        /// <param name="videoInfo">if this param is null, the <see cref="selectedVideo"/> will be used</param>
+        private void SetVideoInfoExtendedGuiProperties(VideoInfo videoInfo)
+        {
+            string prefix = "DetailsItem";
+            if (videoInfo == null)
+            { 
+                videoInfo = selectedVideo; prefix = "Details"; 
+            }
+            if (videoInfo != null && videoInfo.Other is IVideoDetails)
+            {
+                Dictionary<string, string> custom = ((IVideoDetails)videoInfo.Other).GetExtendedProperties();
+                foreach (string property in custom.Keys)
+                {
+                    string label = "#OnlineVideos." + prefix + "." + property;
+                    string value = custom[property];
+                    GUIPropertyManager.SetProperty(label, value);
+                }
+            }
         }
 
         private void AutoUpdate(bool ask)
