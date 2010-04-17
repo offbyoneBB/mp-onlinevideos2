@@ -157,16 +157,21 @@ namespace OnlineVideos.Sites
                                         else
                                             video.VideoUrl = rtmpBase + geoblock + filename + "flv";
 
+                                        string cast, tags;
+                                        
+                                        cast = Regex.Match(jEntry.Value.ToString(), @"""cast_1"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_2"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_3"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_4"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_5"":""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                        while (cast.EndsWith(",")) cast = cast.Substring(0, cast.Length - 1);
 
-                                        video.Cast = Regex.Match(jEntry.Value.ToString(), @"""cast_1"":""(?<tag>[^""]+)""").Groups["tag"].Value + " ";
-                                        video.Cast += Regex.Match(jEntry.Value.ToString(), @"""cast_2"":""(?<tag>[^""]+)""").Groups["tag"].Value + " ";
-                                        video.Cast += Regex.Match(jEntry.Value.ToString(), @"""cast_3"":""(?<tag>[^""]+)""").Groups["tag"].Value + " ";
-                                        video.Cast += Regex.Match(jEntry.Value.ToString(), @"""cast_4"":""(?<tag>[^""]+)""").Groups["tag"].Value + " ";
-                                        video.Cast += Regex.Match(jEntry.Value.ToString(), @"""cast_5"":""(?<tag>[^""]+)""").Groups["tag"].Value + " ";
+                                        tags = Regex.Match(jEntry.Value.ToString(), @"""tag_1"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        tags += Regex.Match(jEntry.Value.ToString(), @"""tag_2"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        tags += Regex.Match(jEntry.Value.ToString(), @"""tag_3"":""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                        while (tags.EndsWith(",")) tags = tags.Substring(0, tags.Length - 1);
 
-                                        video.Tags = Regex.Match(jEntry.Value.ToString(), @"""tag_1"":""(?<tag>[^""]+)""").Groups["tag"].Value + " ";
-                                        video.Tags += Regex.Match(jEntry.Value.ToString(), @"""tag_2"":""(?<tag>[^""]+)""").Groups["tag"].Value + " ";
-                                        video.Tags += Regex.Match(jEntry.Value.ToString(), @"""tag_3"":""(?<tag>[^""]+)""").Groups["tag"].Value + " ";
+                                        video.Description += "\nCast: " + cast + "\nTags: " + tags;
                                         break;
                                     case "name":
                                         if (!string.IsNullOrEmpty(video.Title))
