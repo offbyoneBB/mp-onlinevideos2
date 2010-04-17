@@ -9,7 +9,7 @@
   <string Field="AlreadyDownloading">Already downloading this file.</string>
   <string Field="All">All</string>
   <string Field="Actions">Actions</string>
-  <string Field="Actors">Actors:</string>
+  <string Field="Actors">Actors</string>
   <string Field="AddToMySites">Add to my sites</string>
   <string Field="AddToFavourites">Add to favorites</string>  
 
@@ -21,7 +21,8 @@
   <string Field="Creator">Creator</string>  
 
   <!-- D -->
-  <string Field="DateOfRelease">Date of Release:</string>
+  <string Field="DateOfRelease">Date of Release</string>
+  <string Field="Directors">Directors</string>
   <string Field="Download">Download</string>
   <string Field="DownloadFailed">Download failed: {0}</string>
   <string Field="DownloadComplete">Download Complete</string>
@@ -40,7 +41,7 @@
   <string Field="FullUpdate">Full Update</string>
 
   <!-- G -->
-  <string Field="Genre">Genre:</string>
+  <string Field="Genre">Genre</string>
 
   <!-- H -->
 
@@ -67,7 +68,7 @@
 
   <!-- P -->
   <string Field="PlayAll">Play all</string>
-  <string Field="PlotOutline">Plot outline:</string>
+  <string Field="PlotOutline">Plot outline</string>
   <string Field="PreviousPage">Previous page</string>
   <string Field="PerformAutomaticUpdate">Perform automatic update?</string>
 
@@ -76,7 +77,7 @@
   <string Field="Refresh">Refresh</string>
   <string Field="RelatedVideos">Related Videos</string>
   <string Field="Reported">Reported</string>
-  <string Field="Runtime">Runtime:</string>
+  <string Field="Runtime">Runtime</string>
   <string Field="RemoveFromMySites">Remove from my sites</string>
   <string Field="RestartMediaPortal">Restart MediaPortal!</string>
   <string Field="RetrievingRemoteDlls">Retrieving remote dlls ...</string>
@@ -95,6 +96,7 @@
   <!-- T -->
   <string Field="Timeframe">Timeframe</string>
   <string Field="Timeout">Timeout</string>
+  <string Field="Tags">Tags</string>
 
   <!-- U -->
   <string Field="Updated">Updated</string>

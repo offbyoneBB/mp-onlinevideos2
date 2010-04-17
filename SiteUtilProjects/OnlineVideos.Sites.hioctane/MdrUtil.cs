@@ -115,7 +115,7 @@ namespace OnlineVideos.Sites
                     video.Length = node.SelectSingleNode("../attributes/length").InnerText;
                     video.ImageUrl = node.SelectSingleNode("../image/data").InnerText;
                     video.Description = node.SelectSingleNode("../description").InnerText;
-                    video.Description += "\nTags: " + node.SelectSingleNode("../keywords").InnerText;
+                    video.Description += "\n" + Translation.Tags + ": " + node.SelectSingleNode("../keywords").InnerText;
 
                     XmlNodeList videoSources;
                     videoSources = node.SelectNodes("../attributes/av/mime_type");

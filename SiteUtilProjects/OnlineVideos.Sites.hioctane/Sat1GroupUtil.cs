@@ -171,7 +171,7 @@ namespace OnlineVideos.Sites
                                         tags += Regex.Match(jEntry.Value.ToString(), @"""tag_3"":""(?<tag>[^""]+)""").Groups["tag"].Value;
                                         while (tags.EndsWith(",")) tags = tags.Substring(0, tags.Length - 1);
 
-                                        video.Description += "\nCast: " + cast + "\nTags: " + tags;
+                                        video.Description += "\n" + Translation.Actors + ": " + cast + "\n" + Translation.Tags + ": " + tags;
                                         break;
                                     case "name":
                                         if (!string.IsNullOrEmpty(video.Title))
