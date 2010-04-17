@@ -39,7 +39,7 @@ namespace OnlineVideos.Player
 
         bool BuildGraphForRTSP()
         {
-            base.graphBuilder = (IGraphBuilder)new FilterGraph();
+            base.graphBuilder = (IGraphBuilder)new FilterGraph();            
 
             // add video renderer
             Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode", new object[0]);
@@ -101,6 +101,7 @@ namespace OnlineVideos.Player
         bool BuildGraphForMMS()
         {
             base.graphBuilder = (IGraphBuilder)new FilterGraph();
+            _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
             Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode", new object[0]);
             GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
@@ -171,6 +172,7 @@ namespace OnlineVideos.Player
             try
             {
                 graphBuilder = (IGraphBuilder)new FilterGraph();
+                _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
                 // add the source filter manually
                 IBaseFilter sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "File Source (URL)");
