@@ -225,7 +225,7 @@ namespace OnlineVideos
     public static string AlreadyDownloading = "Already downloading this file.";
     public static string All = "All";
     public static string Actions = "Actions";    
-    public static string Actors = "Actors:";
+    public static string Actors = "Actors";
     public static string AddToMySites = "Add to my sites";
     public static string AddToFavourites = "Add to favourites";    
     
@@ -237,7 +237,8 @@ namespace OnlineVideos
     public static string Creator = "Creator";
 
     // D
-    public static string DateOfRelease = "Date of Release:";
+    public static string DateOfRelease = "Date of Release";
+    public static string Directors = "Directors";
     public static string Download = "Download";
     public static string DownloadFailed = "Download failed: {0}";
     public static string DownloadComplete = "Download Complete";
@@ -256,7 +257,7 @@ namespace OnlineVideos
     public static string FullUpdate = "Full Update";
 
     // G
-    public static string Genre = "Genre:";
+    public static string Genre = "Genre";
 
     // H
 
@@ -283,7 +284,7 @@ namespace OnlineVideos
 
     // P
     public static string PlayAll = "Play all";
-    public static string PlotOutline = "Plot outline:";
+    public static string PlotOutline = "Plot outline";
     public static string PreviousPage = "Previous page";
     public static string PerformAutomaticUpdate = "Perform automatic update?";
     
@@ -292,7 +293,7 @@ namespace OnlineVideos
     public static string Refresh = "Refresh";
     public static string RelatedVideos = "Related Videos";
     public static string Reported = "Reported";    
-    public static string Runtime = "Runtime:";
+    public static string Runtime = "Runtime";
     public static string RemoveFromMySites = "Remove from my sites";
     public static string RestartMediaPortal = "Restart MediaPortal!";
     public static string RetrievingRemoteDlls = "Retrieving remote dlls ...";
@@ -311,6 +312,7 @@ namespace OnlineVideos
     // T
     public static string Timeframe = "Timeframe";
     public static string Timeout = "Timeout";
+    public static string Tags = "Tags";
 
     // U
     public static string Updated = "Updated";
