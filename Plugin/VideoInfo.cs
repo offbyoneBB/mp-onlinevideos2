@@ -15,9 +15,6 @@ namespace OnlineVideos
         public string VideoUrl { get; set; }
         public string ImageUrl { get; set; }
         public string Length { get; set; }
-        public string Tags { get; set; }
-        public string Genres { get; set; }
-        public string Cast { get; set; }
         public string StartTime { get; set; }
         public object Other { get; set; }
         public Dictionary<string, string> PlaybackOptions;
@@ -31,12 +28,10 @@ namespace OnlineVideos
         public VideoInfo()
         {
             Title = string.Empty;
-            Title2 = string.Empty;
             Description = string.Empty;
             VideoUrl = string.Empty;
             ImageUrl = string.Empty;
             Length = string.Empty;
-            Tags = string.Empty;
             StartTime = string.Empty;
             SiteName = string.Empty;
         }
@@ -49,7 +44,7 @@ namespace OnlineVideos
 
         public override string ToString()
         {
-            return string.Format("Title:{0}\nDesc:{1}\nVidUrl:{2}\nImgUrl:{3}\nLength:{4}\nTags:{5}", Title, Description, VideoUrl, ImageUrl, Length, Tags);
+            return string.Format("Title:{0}\nDesc:{1}\nVidUrl:{2}\nImgUrl:{3}\nLength:{4}\n", Title, Description, VideoUrl, ImageUrl, Length);
         }
 
         public virtual string GetPlaybackOptionUrl(string url)

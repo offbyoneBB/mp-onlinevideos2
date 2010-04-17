@@ -89,7 +89,7 @@ namespace OnlineVideos.Database
         Log.Info(e.ToString());
       }
     }
-    public bool addFavoriteVideo(OnlineVideos.VideoInfo foVideo, string siteName)
+    public bool addFavoriteVideo(VideoInfo foVideo, string siteName)
     {
 
         //check if the video is already in the favorite list
@@ -99,23 +99,17 @@ namespace OnlineVideos.Database
         //{
         //    return false;
         //}
-        Log.Info("inserting favorite:");
-        Log.Info("desc:" + foVideo.Description);
-        Log.Info("image:" + foVideo.ImageUrl);
-        Log.Info("tags:" + foVideo.Tags);
-        Log.Info("title:" + foVideo.Title);
-        Log.Info("url" + foVideo.VideoUrl);
+        Log.Info("inserting favorite on site {4} with title: {0}, desc: {1}, image: {2}, url: {3}", foVideo.Title, foVideo.Description, foVideo.ImageUrl, foVideo.VideoUrl, siteName);
 
+        foVideo.Title = DatabaseUtility.RemoveInvalidChars(foVideo.Title);
         foVideo.Description = DatabaseUtility.RemoveInvalidChars(foVideo.Description);
         foVideo.ImageUrl = DatabaseUtility.RemoveInvalidChars(foVideo.ImageUrl);
-        foVideo.Tags = DatabaseUtility.RemoveInvalidChars(foVideo.Tags);
-        foVideo.Title = DatabaseUtility.RemoveInvalidChars(foVideo.Title);
         foVideo.VideoUrl = DatabaseUtility.RemoveInvalidChars(foVideo.VideoUrl);
 
         string lsSQL =
             string.Format(
                 "insert into FAVORITE_VIDEOS(VDO_NM,VDO_URL,VDO_DESC,VDO_TAGS,VDO_LENGTH,VDO_IMG_URL,VDO_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
-                foVideo.Title, foVideo.VideoUrl, foVideo.Description, foVideo.Tags, foVideo.Length, foVideo.ImageUrl,
+                foVideo.Title, foVideo.VideoUrl, foVideo.Description, "", foVideo.Length, foVideo.ImageUrl,
                 siteName);
         m_db.Execute(lsSQL);
         if (m_db.ChangedRows() > 0)
@@ -125,13 +119,12 @@ namespace OnlineVideos.Database
         }
         else
         {
-            Log.Info("Favorite {0} failed to insert into database", foVideo.Title);
+            Log.Warn("Favorite {0} failed to insert into database", foVideo.Title);
             return false;
         }
     }
 
-
-      public bool removeFavoriteVideo(VideoInfo foVideo)
+    public bool removeFavoriteVideo(VideoInfo foVideo)
     {    	     
       String lsSQL = string.Format("delete from FAVORITE_VIDEOS where VDO_ID='{0}' ", foVideo.Other.ToString());
       m_db.Execute(lsSQL);
@@ -180,7 +173,6 @@ namespace OnlineVideos.Database
                     video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
                     video.ImageUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
                     video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
-                    video.Tags = DatabaseUtility.Get(loResultSet, iRow, "VDO_TAGS");
                     video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");
                     video.VideoUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_URL");
                     video.SiteName = sitename;
@@ -210,7 +202,7 @@ namespace OnlineVideos.Database
       //createFavorite("Default2");
       string lsSQL;
       //if(!fbLimitBySite){
-      	lsSQL = string.Format("select * from favorite_videos where VDO_NM like '%{0}%' or VDO_DESC like '%{0}%' or VDO_TAGS like '%{0}%'",fsQuery);
+      	lsSQL = string.Format("select * from favorite_videos where VDO_NM like '%{0}%' or VDO_DESC like '%{0}%'",fsQuery);
       //}else{
       	//lsSQL = string.Format("select * from favorite_videos where VDO_SITE_ID='{0}'",fsSiteId);
       //}
@@ -223,8 +215,7 @@ namespace OnlineVideos.Database
             VideoInfo video = new VideoInfo();
         	video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
         	video.ImageUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
-        	video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
-        	video.Tags = DatabaseUtility.Get(loResultSet, iRow, "VDO_TAGS");
+        	video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");        	
         	video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");
         	video.VideoUrl = DatabaseUtility.Get(loResultSet,iRow,"VDO_URL");
 			video.SiteName = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");

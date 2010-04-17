@@ -144,9 +144,7 @@ namespace OnlineVideos.Sites
 
                     video.Title = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(m.Groups["title"].Value));
                     video.VideoUrl = HttpUtility.HtmlDecode(m.Groups["url"].Value);
-                    video.ImageUrl = HttpUtility.HtmlDecode(m.Groups["thumb"].Value);
-                    video.Tags = video.ImageUrl;
-
+                    video.ImageUrl = HttpUtility.HtmlDecode(m.Groups["thumb"].Value);                    
                     video.Description = HttpUtility.HtmlDecode(m.Groups["descr"].Value) + '\n' + m.Groups["date"].Value;
 
                     videos.Add(video);
