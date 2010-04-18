@@ -966,8 +966,9 @@ namespace OnlineVideos
                     liIdx++;
                     loListItem = new OnlineVideosGuiListItem(loVideoInfo.Title2);
                     loListItem.Path = loVideoInfo.VideoUrl;
+                    loListItem.IconImage = "defaultVideo.png";
                     loListItem.ItemId = liIdx;
-                    loListItem.Item = loVideoInfo;                    
+                    loListItem.Item = loVideoInfo;
                     loListItem.OnItemSelected += OnDetailsVideoItemSelected;
                     GUI_infoList.Add(loListItem);
                     currentTrailerList.Add(loVideoInfo);
