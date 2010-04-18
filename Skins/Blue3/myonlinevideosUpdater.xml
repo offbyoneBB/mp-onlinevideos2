@@ -80,7 +80,7 @@
       <scrollOffset>2</scrollOffset>
       <textXOff3>400</textXOff3>
       <PinIconXOff>12</PinIconXOff>
-      <PinIconYOff>8</PinIconYOff>
+      <PinIconYOff>4</PinIconYOff>
       <IconXOff>50</IconXOff>
       <textXOff>60</textXOff>
       <onleft>502</onleft>
@@ -228,16 +228,36 @@
         <id>503</id>
         <onright>50</onright>
         <onup>502</onup>
-        <label>#OnlineVideos.Translation.Filter.Label</label>
+        <label>#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.State.Label</label>
         <textYOff>3</textYOff>
         <visible>!Control.HasFocus(50)</visible>
-      </control>         
+      </control>
+      <control>
+        <type>selectbutton</type>
+        <description>filter button for Creator</description>
+        <id>506</id>
+        <onright>50</onright>
+        <onup>503</onup>
+        <label>#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.Creator.Label</label>        
+        <textYOff>3</textYOff>
+        <visible>!Control.HasFocus(50)</visible>
+      </control>
+      <control>
+        <type>selectbutton</type>
+        <description>filter button for Language</description>
+        <id>507</id>
+        <onright>50</onright>
+        <onup>506</onup>
+        <label>#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.Language.Label</label>
+        <textYOff>3</textYOff>
+        <visible>!Control.HasFocus(50)</visible>
+      </control>
       <control>
         <type>selectbutton</type>
         <description>Order By</description>
         <id>504</id>
         <onright>50</onright>
-        <onup>503</onup>
+        <onup>507</onup>
         <ondown>505</ondown>
         <label>#OnlineVideos.Translation.SortOptions.Label</label>
         <textYOff>3</textYOff>

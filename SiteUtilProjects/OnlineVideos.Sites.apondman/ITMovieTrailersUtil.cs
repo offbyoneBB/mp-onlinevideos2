@@ -128,8 +128,6 @@ namespace OnlineVideos.Sites.apondman {
             // extra
             string actors = movie.Actors.ToCommaSeperatedString();
             video.Description = String.IsNullOrEmpty(movie.Synopsis) ? actors : movie.Synopsis;
-            video.Cast = actors;
-            video.Genres = movie.Genres.ToCommaSeperatedString();
             video.Length = movie.ReleaseDate != DateTime.MinValue ? movie.ReleaseDate.ToShortDateString() : "Coming Soon";
 
             return video;
@@ -285,12 +283,9 @@ namespace OnlineVideos.Sites.apondman {
                 return clips;
 
             // complete movie metadata
-            video.Cast = movie.Actors.ToCommaSeperatedString();
-            video.Genres = movie.Genres.ToCommaSeperatedString();
             video.Description = movie.Synopsis;
             video.Length = movie.ReleaseDate != DateTime.MinValue ? movie.ReleaseDate.ToShortDateString() : "Coming Soon";
             video.ImageUrl = movie.Poster != null ? movie.Poster.Large.AbsoluteUri : string.Empty;
-            video.Tags = video.ImageUrl;
             video.VideoUrl = movie.Uri.AbsoluteUri;
 
             // get initial video list
