@@ -946,6 +946,12 @@ namespace OnlineVideos
                 loVideoList = SelectedSite.getOtherVideoList(foVideo);
             }, "getting video details"))
             {
+                // make the Thumb of the VideoInfo available to the details view
+                if (string.IsNullOrEmpty(foVideo.ThumbnailImage))
+                    GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", string.Empty);
+                else
+                    GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", foVideo.ThumbnailImage);
+
                 currentTrailerList.Clear();
                 GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
                 GUIControl.ClearControl(GetID, GUI_infoList.GetID);

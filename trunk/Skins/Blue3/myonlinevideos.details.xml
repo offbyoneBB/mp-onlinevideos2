@@ -21,7 +21,7 @@
       <width>200</width>
       <height>280</height>
       <visible>string.equals(#OnlineVideos.state, details)</visible>
-      <texture flipY="true" diffuse="Thumb_Mask.png">#OnlineVideos.movieposter</texture>
+      <texture flipY="true" diffuse="Thumb_Mask.png">#OnlineVideos.Details.Poster</texture>
     </control>
     <control>
       <type>listcontrol</type>
@@ -44,84 +44,104 @@
       <posX>260</posX>
       <posY>97</posY>
       <label>#OnlineVideos.Translation.Actors.Label</label>
-      <visible>string.equals(#OnlineVideos.state, details)</visible>
+      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
       <textcolor>ffb2d4f5</textcolor>
     </control>
     <control>
-      <type>fadelabel</type>
+      <type>textboxscrollup</type>
       <description>cast value</description>
       <id>53</id>
       <posX>260</posX>
       <posY>120</posY>
       <width>230</width>
-      <font>font12</font>
-      <label>#OnlineVideos.cast</label>
-      <visible>string.equals(#OnlineVideos.state, details)</visible>
+      <height>65</height>      
+      <label>#OnlineVideos.Details.Actors</label>
+      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
       <disabledcolor>ff808080</disabledcolor>
     </control>
     <control>
       <type>label</type>
-      <description>Year txt</description>
+      <description>Directors txt</description>
       <id>54</id>
+      <posX>260</posX>
+      <posY>200</posY>
+      <label>#OnlineVideos.Translation.Directors.Label</label>
+      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Directors value</description>
+      <id>55</id>
+      <posX>260</posX>
+      <posY>220</posY>
+      <width>400</width>
+      <label>#OnlineVideos.Details.Directors</label>
+      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Release date  txt</description>
+      <id>56</id>
       <posX>50</posX>
       <posY>400</posY>
       <label>#OnlineVideos.Translation.DateOfRelease.Label</label>
-      <visible>string.equals(#OnlineVideos.state, details)</visible>
+      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
       <textcolor>ffb2d4f5</textcolor>
     </control>
     <control>
       <type>label</type>
-      <description>year value</description>
-      <id>55</id>
+      <description>Release date  value</description>
+      <id>57</id>
       <posX>50</posX>
       <posY>425</posY>
-      <label>#OnlineVideos.releasedate</label>
-      <visible>string.equals(#OnlineVideos.state, details)</visible>
+      <label>#OnlineVideos.Details.ReleaseDate</label>
+      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
       <textcolor>ffffffff</textcolor>
     </control>
     <control>
       <type>label</type>
       <description>Genre txt</description>
-      <id>56</id>
+      <id>58</id>
       <posX>50</posX>
       <posY>460</posY>
       <label>#OnlineVideos.Translation.Genre.Label</label>
-      <visible>string.equals(#OnlineVideos.state, details)</visible>
+      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
       <textcolor>ffb2d4f5</textcolor>
     </control>
     <control>
       <type>fadelabel</type>
       <description>genre value</description>
-      <id>57</id>
+      <id>59</id>
       <posX>50</posX>
       <posY>485</posY>
       <width>195</width>
-      <label>#OnlineVideos.genre</label>
-      <visible>string.equals(#OnlineVideos.state, details)</visible>
+      <label>#OnlineVideos.Details.Genres</label>
+      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
       <disabledcolor>ff808080</disabledcolor>
     </control>
     <control>
       <type>label</type>
       <description>Plot txt</description>
-      <id>58</id>
+      <id>60</id>
       <posX>260</posX>
       <posY>260</posY>
-      <visible>string.equals(#OnlineVideos.state, details)</visible>
+      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
       <label>#OnlineVideos.Translation.PlotOutline.Label</label>
       <textcolor>ffb2d4f5</textcolor>
     </control>
     <control>
       <type>textboxscrollup</type>
       <description>Plot value</description>
-      <id>59</id>
+      <id>61</id>
       <posX>260</posX>
       <posY>285</posY>
       <width>440</width>
       <height>240</height>
       <colordiffuse>ffffffff</colordiffuse>
-      <visible>string.equals(#OnlineVideos.state, details)</visible>
-      <font>font13</font>
-      <label>#OnlineVideos.trailerdesc</label>
+      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
+      <label>#OnlineVideos.Details.Synopsis</label>
       <textcolor>FFFFFFFF</textcolor>
     </control>    
   </controls>
