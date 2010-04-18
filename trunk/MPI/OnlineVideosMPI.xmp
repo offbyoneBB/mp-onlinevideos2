@@ -38,24 +38,6 @@
 			<Guid>45E12C71-DFFD-4e01-9A10-7752D543E25D</Guid>
 		</File>
 		<File>
-			<FileName>iTunes Movie Trailers.png</FileName>
-			<Type>Thumbs</Type>
-			<SubType>OnlineVideos\Banners</SubType>
-			<Source>..\SiteImages\Banners\iTunes Movie Trailers.png</Source>
-			<Id>04010</Id>
-			<Option />
-			<Guid>148fe6e1-d44e-458d-a953-37fd50f927f8</Guid>
-		</File>
-		<File>
-			<FileName>iTunes Movie Trailers.png</FileName>
-			<Type>Thumbs</Type>
-			<SubType>OnlineVideos\Icons</SubType>
-			<Source>..\SiteImages\Icons\iTunes Movie Trailers.png</Source>
-			<Id>04010</Id>
-			<Option />
-			<Guid>4a789505-8c66-4d34-a988-0a5af571989d</Guid>
-		</File>		
-		<File>
 			<FileName>Arte+7.png</FileName>
 			<Type>Thumbs</Type>
 			<SubType>OnlineVideos\Banners</SubType>
@@ -360,6 +342,24 @@
 			<Id>04010</Id>
 			<Option />
 			<Guid>5DA8C0AF-9EF8-463F-B1C4-125A4F7F5B97</Guid>
+		</File>
+		<File>
+			<FileName>iTunes Movie Trailers.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Banners</SubType>
+			<Source>..\SiteImages\Banners\iTunes Movie Trailers.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>148fe6e1-d44e-458d-a953-37fd50f927f8</Guid>
+		</File>
+		<File>
+			<FileName>iTunes Movie Trailers.png</FileName>
+			<Type>Thumbs</Type>
+			<SubType>OnlineVideos\Icons</SubType>
+			<Source>..\SiteImages\Icons\iTunes Movie Trailers.png</Source>
+			<Id>04010</Id>
+			<Option />
+			<Guid>4a789505-8c66-4d34-a988-0a5af571989d</Guid>
 		</File>
 		<File>
 			<FileName>hover_onlinevideos.png</FileName>
@@ -891,7 +891,16 @@
 			<Id>01010</Id>
 			<Option>OutputFileName=\OnlineVideos\OnlineVideos.Sites.doskabouter.dll|</Option>
 			<Guid>5E86E758-7710-4b2c-8ADC-419DC09C6361</Guid>
-		</File>
+		</File>		
+		<File>
+			<FileName>OnlineVideos.Sites.apondman.dll</FileName>
+			<Type>Plugin</Type>
+			<SubType>Window</SubType>
+			<Source>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</Source>
+			<Id>01010</Id>
+			<Option>OutputFileName=\OnlineVideos\OnlineVideos.Sites.apondman.dll|</Option>
+			<Guid>00C65A54-002C-4b08-BDB4-A2A0DA8714CC</Guid>
+		</File>		
 		<File>
 			<FileName>OnlineVideos.png</FileName>
 			<Type>Thumbs</Type>
@@ -902,13 +911,13 @@
 			<Guid>11369256-4e7a-4250-96ec-a56f0c92f845</Guid>
 		</File>
 		<File>
-			<FileName>en-US.xml</FileName>
+			<FileName>da.xml</FileName>
 			<Type>Other</Type>
 			<SubType>%Language%</SubType>
-			<Source>..\Language\OnlineVideos\en-US.xml</Source>
+			<Source>..\Language\OnlineVideos\da.xml</Source>
 			<Id>04010</Id>
-			<Option>OutputFileName=\OnlineVideos\en-US.xml|</Option>
-			<Guid>3D7200BE-9745-403a-9E7B-39E7B2259985</Guid>
+			<Option>OutputFileName=\OnlineVideos\da.xml|</Option>
+			<Guid>29596D5B-BFF5-4976-9012-4E18856306F5</Guid>
 		</File>
 		<File>
 			<FileName>de.xml</FileName>
@@ -918,16 +927,34 @@
 			<Id>04010</Id>
 			<Option>OutputFileName=\OnlineVideos\de.xml|</Option>
 			<Guid>21DB6869-B87D-4619-BB73-5C51704931B9</Guid>
-		</File>		
+		</File>
 		<File>
-			<FileName>da.xml</FileName>
+			<FileName>en-US.xml</FileName>
 			<Type>Other</Type>
 			<SubType>%Language%</SubType>
-			<Source>..\Language\OnlineVideos\da.xml</Source>
+			<Source>..\Language\OnlineVideos\en-US.xml</Source>
 			<Id>04010</Id>
-			<Option>OutputFileName=\OnlineVideos\da.xml|</Option>
-			<Guid>29596D5B-BFF5-4976-9012-4E18856306F5</Guid>
-		</File>
+			<Option>OutputFileName=\OnlineVideos\en-US.xml|</Option>
+			<Guid>3D7200BE-9745-403a-9E7B-39E7B2259985</Guid>
+		</File>		
+    <File>
+			<FileName>es.xml</FileName>
+			<Type>Other</Type>
+			<SubType>%Language%</SubType>
+			<Source>..\Language\OnlineVideos\es.xml</Source>
+			<Id>04010</Id>
+			<Option>OutputFileName=\OnlineVideos\es.xml|</Option>
+			<Guid>87B715CF-4783-473a-A037-98829437A13E</Guid>
+		</File>				
+		<File>
+			<FileName>nl.xml</FileName>
+			<Type>Other</Type>
+			<SubType>%Language%</SubType>
+			<Source>..\Language\OnlineVideos\nl.xml</Source>
+			<Id>04010</Id>
+			<Option>OutputFileName=\OnlineVideos\nl.xml|</Option>
+			<Guid>540A1BD5-6F3C-417c-9D6B-8569534DB285</Guid>
+		</File>		
     <File>
 			<FileName>ru.xml</FileName>
 			<Type>Other</Type>
@@ -938,14 +965,14 @@
 			<Guid>43791492-442B-4b26-AF01-A07642AD6EB4</Guid>
 		</File>
     <File>
-			<FileName>nl.xml</FileName>
+			<FileName>sv.xml</FileName>
 			<Type>Other</Type>
 			<SubType>%Language%</SubType>
-			<Source>..\Language\OnlineVideos\nl.xml</Source>
+			<Source>..\Language\OnlineVideos\sv.xml</Source>
 			<Id>04010</Id>
-			<Option>OutputFileName=\OnlineVideos\nl.xml|</Option>
-			<Guid>540A1BD5-6F3C-417c-9D6B-8569534DB285</Guid>
-		</File>
+			<Option>OutputFileName=\OnlineVideos\sv.xml|</Option>
+			<Guid>9ACC795A-6CC5-4751-A629-1B5A82C51A39</Guid>
+		</File>    		
     <File>
       <FileName>OnlineTV by on-tv.ru.png</FileName>
       <Type>Thumbs</Type>
@@ -1719,7 +1746,7 @@ class InstallScript : MPInstallerScript
 		<ForumURL>http://forum.team-mediaportal.com/onlinevideos-244/</ForumURL>
 		<WebURL>http://code.google.com/p/mp-onlinevideos2/</WebURL>
 		<WikiURL>http://code.google.com/p/mp-onlinevideos2/w/list</WikiURL>
-		<CreationDate>17-04-10</CreationDate>
+		<CreationDate>18-04-10</CreationDate>
 		<SingleGroupSelect>False</SingleGroupSelect>
 		<ClearSkinCache>True</ClearSkinCache>
 		<UseRealPathInPackage>False</UseRealPathInPackage>
