@@ -297,6 +297,7 @@ namespace OnlineVideos.Sites.apondman {
                 vid.Description = movie.Synopsis;
                 vid.Length = clip.Duration.ToString();
                 vid.ImageUrl = movie.Poster != null ? movie.Poster.Uri.AbsoluteUri : string.Empty;
+                vid.ThumbnailImage = video.ThumbnailImage;
                 vid.VideoUrl = clip.Uri.AbsoluteUri;
                 clips.Add(vid);
             }

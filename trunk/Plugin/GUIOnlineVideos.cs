@@ -155,7 +155,7 @@ namespace OnlineVideos
         #endregion
         Category selectedCategory;
         VideoInfo selectedVideo;
-        VideoInfo playingVideo;
+        VideoInfo playingVideo;        
 
         bool preventDialogOnLoad = false;
         bool firstLoadDone = false;
@@ -1424,8 +1424,7 @@ namespace OnlineVideos
                 GUIGraphicsContext.IsFullScreenVideo = true;
                 GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
 
-                if (SelectedSite.HasMultipleVideos) playingVideo = selectedVideo;
-                else playingVideo = video;
+                playingVideo = video;
 
                 new System.Threading.Thread(delegate()
                 {
@@ -1966,7 +1965,22 @@ namespace OnlineVideos
         {
             if (video == null) return;
             Log.Info("Setting Video Properties.");
-            if (!string.IsNullOrEmpty(video.Title)) GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title);
+
+            string quality = "";
+            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
+            {
+                var enumer = video.PlaybackOptions.GetEnumerator();
+                while (enumer.MoveNext())
+                {
+                    if (enumer.Current.Value == g_Player.CurrentFile)
+                    {
+                        quality = " (" + enumer.Current.Key + ")";
+                        break;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(video.Title)) GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title + (string.IsNullOrEmpty(quality) ? "" : quality));
             if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
             if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
             if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Length);
