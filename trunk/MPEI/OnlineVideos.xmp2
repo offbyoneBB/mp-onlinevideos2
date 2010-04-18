@@ -35,13 +35,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Apple Trailers.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{10fed5ef-c375-4c77-9d7e-009760c83c22}-Apple Trailers.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Apple Trailers.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Arte+7.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{95df6fae-e079-40b2-8782-4e0577e44a38}-Arte+7.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Arte+7.png</DestinationFilename>
@@ -472,13 +465,6 @@
               <LocalFileName>..\SiteImages\Banners\5min.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{169c57db-48fd-40d3-91b0-9b5d1f1025b7}-5min.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\5min.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Apple Trailers.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{af5d940c-079d-4000-aa85-ee06e6df4ee8}-Apple Trailers.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Apple Trailers.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1096,6 +1082,20 @@
               <ZipFileName>Installer{CopyFile}\{2e19fa1a-3b63-4df4-89bd-2930dc3e125e}-mySpass.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\mySpass.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\iTunes Movie Trailers.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c1958bf2-05e1-4f31-9150-4441a2837482}-iTunes Movie Trailers.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\iTunes Movie Trailers.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\iTunes Movie Trailers.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e52af790-9acc-4b5f-928e-db22eeddde8d}-iTunes Movie Trailers.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\iTunes Movie Trailers.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1141,6 +1141,13 @@
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1193,6 +1200,13 @@
               <LocalFileName>..\Language\OnlineVideos\es.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{ffffe5e3-2188-4131-b693-0c303098fbf0}-es.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\es.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\sv.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{bf7109f3-8d12-4461-9866-c9eccbfae478}-sv.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\sv.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1608,10 +1622,13 @@ public class Script
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
-    <VersionDescription>Bugfixes. Playback enhancements.</VersionDescription>
+    <VersionDescription>Compatible with MediaPortal 1.1 RC2
+Configurable Playback Buffering
+RTMP Playback improvements
+AutoUpdate on UAC enabled systems fixed</VersionDescription>
     <DevelopmentStatus>Beta</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.20.0.MPE1</OnlineLocation>
-    <ReleaseDate>2010-04-04T18:01:51</ReleaseDate>
+    <ReleaseDate>2010-04-18T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.[Version].mpe1</Location>
     <Params>
@@ -1661,13 +1678,6 @@ public class Script
         <LocalFileName>..\SiteImages\Icons\5min.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{54dea0f1-0e9f-4145-a2e3-be2716f94037}-5min.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\5min.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Apple Trailers.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{10fed5ef-c375-4c77-9d7e-009760c83c22}-Apple Trailers.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Apple Trailers.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -2102,13 +2112,6 @@ public class Script
         <LocalFileName>..\SiteImages\Banners\5min.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{169c57db-48fd-40d3-91b0-9b5d1f1025b7}-5min.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\5min.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Apple Trailers.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{af5d940c-079d-4000-aa85-ee06e6df4ee8}-Apple Trailers.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Apple Trailers.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -2726,6 +2729,20 @@ public class Script
         <ZipFileName>Installer{CopyFile}\{2e19fa1a-3b63-4df4-89bd-2930dc3e125e}-mySpass.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\mySpass.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\iTunes Movie Trailers.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c1958bf2-05e1-4f31-9150-4441a2837482}-iTunes Movie Trailers.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\iTunes Movie Trailers.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\iTunes Movie Trailers.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e52af790-9acc-4b5f-928e-db22eeddde8d}-iTunes Movie Trailers.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\iTunes Movie Trailers.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
@@ -2753,6 +2770,13 @@ public class Script
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -2795,6 +2819,13 @@ public class Script
         <LocalFileName>..\Language\OnlineVideos\es.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{ffffe5e3-2188-4131-b693-0c303098fbf0}-es.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\es.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\sv.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bf7109f3-8d12-4461-9866-c9eccbfae478}-sv.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\sv.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -2975,7 +3006,7 @@ public class Script
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{be3e35d2-0fc8-4aab-9190-5e580fc57bef}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{d671c058-cf4d-4829-b67a-0151f8b4a90d}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
