@@ -1200,6 +1200,8 @@ namespace OnlineVideos
                 loListItem.Path = loVideoInfo.VideoUrl;
                 loListItem.ItemId = liIdx;
                 loListItem.Item = loVideoInfo;
+                loListItem.IconImage = "defaultVideo.png";
+                loListItem.IconImageBig = "defaultVideoBig.png";
                 loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
                 GUI_facadeView.Add(loListItem);
                 if (!string.IsNullOrEmpty(loVideoInfo.ImageUrl))
