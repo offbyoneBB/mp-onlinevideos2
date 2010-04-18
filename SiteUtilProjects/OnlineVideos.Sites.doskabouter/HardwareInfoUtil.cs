@@ -72,6 +72,7 @@ namespace OnlineVideos.Sites
                     newvideo.Title = video.Title + '-' + newvideo.Title2;
                     newvideo.VideoUrl = HttpUtility.HtmlDecode(m.Groups["url"].Value);
                     newvideo.ImageUrl = video.ImageUrl;
+                    newvideo.ThumbnailImage = video.ThumbnailImage;
                     newvideo.Description = video.Description;
                     videos.Add(newvideo);
                     m = m.NextMatch();
