@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Online Videos translation file -->
+<!-- French -->
+<strings>
+
+  <!-- A -->
+  <string Field="Airdate">Date de diffusion</string>
+  <string Field="AlreadyDownloading">Prêt pour le téléchargement de ce fichier.</string>
+  <string Field="All">Tous</string>
+  <string Field="Actions">Actions</string>
+  <string Field="Actors">Acteurs</string>
+  <string Field="AddToMySites">Ajouter à mes sites</string>
+  <string Field="AddToFavourites">Ajouter aux favoris</string>  
+
+  <!-- B -->
+  <string Field="Broken">Non actif</string>
+
+  <!-- C -->
+  <string Field="Category">Catégorie</string>
+  <string Field="Creator">Créateur</string>  
+
+  <!-- D -->
+  <string Field="DateOfRelease">Date de sortie</string>
+  <string Field="Directors">Réalisateurs</string>
+  <string Field="Download">Télécharger</string>
+  <string Field="DownloadFailed">Le téléchargement a échoué: {0}</string>
+  <string Field="DownloadComplete">Téléchargement terminé</string>
+  <string Field="DownloadedVideos">Vidéos téléchargées</string>
+  <string Field="Delete">Effacer</string>
+  <string Field="Default">Par défaut</string>
+  <string Field="Done">Effectué</string>
+
+  <!-- E -->
+  <string Field="Error">Erreur</string>
+  <string Field="EnterPin">Entrez le code PIN</string>
+
+  <!-- F -->
+  <string Field="Favourites">Favoris</string>
+  <string Field="Filter">Tri par</string>
+  <string Field="FullUpdate">Mise à jour complète</string>
+
+  <!-- G -->
+  <string Field="Genre">Genre</string>
+
+  <!-- H -->
+
+  <!-- I -->
+
+  <!-- L -->
+  <string Field="Language">Par langage</string>
+  <string Field="LayoutList">Disposition: Liste</string>
+  <string Field="LayoutIcons">Disposition: Icônes</string>
+  <string Field="LayoutBigIcons">Disposition: Grandes icônes</string>
+
+  <!-- M -->
+  <string Field="ManageSites">Gérer les sites</string>
+  <string Field="MaxResults">Nombre de Résultats?</string>
+
+  <!-- N -->
+  <string Field="Name">Par nom</string>
+  <string Field="NextPage">Page suivante</string>
+  <string Field="None">Aucun</string>
+  <string Field="NoVideoFound">Aucune vidéo trouvée</string>
+  <string Field="NewDllDownloaded">Nouvelle DLL téléchargé!</string>
+
+  <!-- O -->
+
+  <!-- P -->
+  <string Field="PlayAll">Lecture de la totalité des vidéos</string>
+  <string Field="PlotOutline">Aperçu</string>
+  <string Field="PreviousPage">Page précédente</string>
+  <string Field="PerformAutomaticUpdate">Effectuer la mise à jour automatique?</string>
+
+  <!-- R -->
+  <string Field="RemoveFromFavorites">Supprimer le fichier des favoris</string>
+  <string Field="Refresh">Rafraîchir</string>
+  <string Field="RelatedVideos">Vidéos Similaires</string>
+  <string Field="Reported">En maintenance</string>
+  <string Field="Runtime">Durée</string>
+  <string Field="RemoveFromMySites">Retirer de mes sites</string>
+  <string Field="RestartMediaPortal">Redémarrez MediaPortal!</string>
+  <string Field="RetrievingRemoteDlls">Récupération des DLL à distance ...</string>
+  <string Field="RetrievingRemoteSites">Récupération des sites distants ...</string>
+
+  <!-- S -->
+  <string Field="SearchResults">Résultats de la recherche</string>
+  <string Field="SelectSource">Sélectionner une source</string>
+  <string Field="SortOptions">Options de tri</string>
+  <string Field="Search">Recherche</string>
+  <string Field="SetDownloadFolderInConfig">S'il vous plaît définissez le dossier pour le téléchargement dans le menu Configuration!</string>
+  <string Field="State">Situation</string>
+  <string Field="SavingLocalSiteList">Enregistrer la liste de site local ...</string>
+  <string Field="ShowReports">Montrer les informations</string>
+
+  <!-- T -->
+  <string Field="Timeframe">Calendrier</string>
+  <string Field="Timeout">Pause</string>
+  <string Field="Tags">Tags</string>
+
+  <!-- U -->
+  <string Field="Updated">Mise à jour</string>
+  <string Field="Updatable">Mise à niveau</string>
+  <string Field="UpdateMySite">Mettre à jour mon site</string>
+  <string Field="UpdateMySiteSkipCategories">Mettre à jour mon site (sans l'utilisation des filtres)</string>
+  <string Field="UpdateAllYourSites">Cela mettra à jour tous vos sites en cours.</string>
+  <string Field="UnableToPlayVideo">Impossible de lire la vidéo. Aucune URL.</string>
+  <string Field="UnableToDownloadVideo">Impossible de télécharger la vidéo. URL incorrecte.</string>
+
+  <!-- V -->
+
+  <!-- W -->
+  <string Field="Working">Actif</string>
+
+  <!-- Y -->
+
+</strings>
