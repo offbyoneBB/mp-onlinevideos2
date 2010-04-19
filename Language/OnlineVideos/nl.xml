@@ -14,6 +14,7 @@
   <string Field="Category">Categorie</string>
   <string Field="Creator">Maker</string>
   <string Field="DateOfRelease">Verschijningsdatum:</string>
+  <string Field="Directors">Regisseurs</string>
   <string Field="Download">Download</string>
   <string Field="DownloadFailed">Download mislukt: {0}</string>
   <string Field="DownloadComplete">Download gereed</string>
@@ -61,6 +62,7 @@
   <string Field="ShowReports">Toon ontwikkelaars en gebruikers rapporten</string>
   <string Field="Timeframe">Periode</string>
   <string Field="Timeout">Time-out</string>
+  <string Field="Tags">Kenmerken</string>
   <string Field="Updated">Bijgewerkt</string>
   <string Field="Updatable">Bij te werken</string>
   <string Field="UpdateMySite">Mijn site bijwerken</string>
