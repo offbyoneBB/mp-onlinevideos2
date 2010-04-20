@@ -186,7 +186,12 @@ namespace OnlineVideos.Sites
                 //http://www.gametrailers.com/video/angry-video-screwattack/60232
                 int i = thisUrl.LastIndexOf('/');
                 data = thisUrl.Substring(i + 1);
-                return String.Format(@"http://www.gametrailers.com/neo/?page=xml.mediaplayer.Mediagen&movieId={0}", data);
+                string url = String.Format(@"http://www.gametrailers.com/neo/?page=xml.mediaplayer.Mediagen&movieId={0}", data);
+                string data2 = GetWebData(url);
+
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(data2);
+                return url = doc.SelectSingleNode("//rendition/src").InnerText;
             }
 
             if (thisUrl.IndexOf("spike.com") >= 0)
