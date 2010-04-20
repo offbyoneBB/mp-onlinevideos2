@@ -7,10 +7,10 @@
   <!-- A -->
   <string Field="Airdate">Emitido</string>
   <string Field="AlreadyDownloading">Descargando el archivo.</string>
+  <string Field="All">Todos</string>
   <string Field="Actions">Acciones</string>
   <string Field="Actors">Actores:</string>
   <string Field="AddToMySites">Añadir a mis sitios</string>
-  <string Field="All">Todos</string>
   <string Field="AddToFavourites">Añadir a favoritos</string>  
 
   <!-- B -->
@@ -22,12 +22,14 @@
 
   <!-- D -->
   <string Field="DateOfRelease">Añadido el:</string>
+  <string Field="Directors">Directores</string>
   <string Field="Download">Descargar</string>
   <string Field="DownloadFailed">Error en la descarga: {0}</string>
   <string Field="DownloadComplete">Descarga completa</string>
   <string Field="DownloadedVideos">Vídeos descargados</string>
   <string Field="Delete">Eliminar</string>
   <string Field="Default">Por defecto</string>
+  <string Field="Done">Hecho</string>
 
   <!-- E -->
   <string Field="Error">Error</string>
@@ -46,6 +48,7 @@
   <!-- I -->
 
   <!-- L -->
+  <string Field="Language">Idioma</string>
   <string Field="LayoutList">Vista: Lista</string>
   <string Field="LayoutIcons">Vista: Icónos</string>
   <string Field="LayoutBigIcons">Vista: Iconos grandes</string>
@@ -55,10 +58,11 @@
   <string Field="MaxResults">Máx resultados</string>
 
   <!-- N -->
+  <string Field="Name">Nombre</string>
   <string Field="NextPage">Siguiente página</string>
   <string Field="None">Nada</string>
   <string Field="NoVideoFound">No se encontró el vídeo</string>
-  <string Field="NewDllRequired">Se necesita nueva dll!</string>
+  <string Field="NewDllDownloaded">¡Nueva DLL descargada!</string>
 
   <!-- O -->
 
@@ -76,22 +80,26 @@
   <string Field="Runtime">Duración:</string>
   <string Field="RemoveFromMySites">Eliminar de mis sitios</string>
   <string Field="RestartMediaPortalAndAutomaticUpdate">Reiniciar Mediaportal y actualizar automáticamente!</string>
+  <string Field="RetrievingRemoteDlls">Recibiendo DLLs online...</string>
+  <string Field="RetrievingRemoteSites">Recibiendo sitios online...</string>
 
   <!-- S -->
   <string Field="SearchResults">Resultados de búsqueda</string>
   <string Field="SelectSource">Seleccionar fuente</string>
-  <string Field="SortOptions">Opciones de filtrado</string>  
-  <string Field="SortByName">Nombre</string>
-  <string Field="SortByLanguage">Idioma</string>
-  <string Field="SortByUpdated">Actualización</string>
-  <string Field="Search">Buscar</string>
-  <string Field="SetDownloadFolderInConfig">¡Defina una carpeta de descarga en la configuración!</string>
+  <string Field="SortOptions">Opciones de filtrado</string>
+  <string Field="Search">Buscar</string>  
+  <string Field="SetDownloadFolderInConfig">Por favor, elija una carpeta de descarga.</string>
+  <string Field="State">Estado</string>
+  <string Field="SavingLocalSiteList">Guardando la lista de sitios...</string>
+  <string Field="ShowReports">Mostrar reportes del creador y del usuario</string>
 
   <!-- T -->
   <string Field="Timeframe">Timeframe</string>
   <string Field="Timeout">Fuera de tiempo</string>
+  <string Field="Tags">Etiqueta</string>
 
   <!-- U -->  
+  <string Field="Updated">Actualizado</string>
   <string Field="Updatable">Actualizable</string>
   <string Field="UpdateMySite">Actualizar el sitio</string>
   <string Field="UpdateMySiteSkipCategories">Actualizar el sitio (evitar categorías)</string>
