@@ -41,7 +41,7 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
 = Properties set in the code =
  * Global
   * `#header.label` - changes according to the current site/category, ...
-  * `#header.image` - changes according to the current site
+  * `#header.image` - changes according to the current site the user is browsing
   * `#OnlineVideos.Translation.ManageSites.Label` - can be used for the button that calls the site manager window
 
  * Site Manager Window (4757) only
@@ -54,23 +54,28 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
   * `#OnlineVideos.selectedSite` - name of the Site currently selected (e.g. "GameTrailers") that can be used for conditional visibility
   * `#OnlineVideos.selectedSiteUtil` - name of the Util used by the currently selected Site (e.g. "GenericSite") that can be used for conditional visibility
 
- * Facade
+ * Facade (both Windows)
   * `#itemcount` - total number of items
   * `#selecteditem` - title of the current selected item
   * `#selectedthumb` - thumb (if available) for the current selected item
   * `#OnlineVideos.desc` - description (if available) of the current selected item
 
- * Details View
-  * `#OnlineVideos.movieposter` - path to an poster format image
-  * `#OnlineVideos.trailerdesc` - (localized label property: {{{#OnlineVideos.Translation.PlotOutline.Label}}})
-  * `#OnlineVideos.genre` - (localized label property: {{{#OnlineVideos.Translation.Genre.Label}}})
-  * `#OnlineVideos.releasedate` - (localized label property: {{{#OnlineVideos.Translation.DateOfRelease.Label}}})
-  * `#OnlineVideos.cast` - (localized label property: {{{#OnlineVideos.Translation.Actors.Label}}})
-
  * Currently Playing Video
   * `#Play.Current.Title`
   * `#Play.Current.Plot`
   * `#Play.Current.Thumb`
-  * `#Play.Current.Genre`
   * `#Play.Current.Year`
-  * `#Play.Current.Cast`
+
+= Details View =
+
+ * iTunes Movie Trailers (#OnlineVideos.selectedSiteUtil = ITMovieTrailers)
+  * `#OnlineVideos.Details.Poster` - path to a poster format image
+  * `#OnlineVideos.Details.Synopsis` - (localized label property: {{{#OnlineVideos.Translation.PlotOutline.Label}}})
+  * `#OnlineVideos.Details.Genres` - (localized label property: {{{#OnlineVideos.Translation.Genre.Label}}})
+  * `#OnlineVideos.Details.ReleaseDate` - (localized label property: {{{#OnlineVideos.Translation.DateOfRelease.Label}}})
+  * `#OnlineVideos.Details.Actors` - (localized label property: {{{#OnlineVideos.Translation.Actors.Label}}})
+  * `#OnlineVideos.Details.Directors` - (localized label property: {{{#OnlineVideos.Translation.Directors.Label}}})
+  * `#OnlineVideos.Details.Rating` - movie rating (e.g. PG-13, R ...)
+  * `#OnlineVideos.Details.Title` - also set in `#header.label`
+  * `#OnlineVideos.Details.Studio`
+  * `#OnlineVideos.Details.Year`
