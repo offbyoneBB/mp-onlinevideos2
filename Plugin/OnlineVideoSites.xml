@@ -447,14 +447,11 @@
     </Site>
     <Site name="Cinemassacre" util="Cinemassacre" agecheck="false" enabled="true" lang="en">
       <Description>Video site from cinemassacre productions.</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="AVGN">http://www.cinemassacre.com/new/?page_id=13</Category>
-        <Category xsi:type="RssLink" name="You Know What’s Bullshit">http://www.cinemassacre.com/new/?page_id=2479</Category>
-        <Category xsi:type="RssLink" name="Cinemassacre’s Top 10’s and Movie Reviews">http://www.cinemassacre.com/new/?page_id=23</Category>
-        <Category xsi:type="RssLink" name="Cinemassacre’s Monster Madness 3: 2009">http://www.cinemassacre.com/new/?page_id=1373</Category>
-        <Category xsi:type="RssLink" name="Board James">http://www.cinemassacre.com/new/?page_id=1174</Category>
-        <Category xsi:type="RssLink" name="Filmography">http://www.cinemassacre.com/new/?page_id=1375</Category>
-      </Categories>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://www.cinemassacre.com]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="video[^>]*>\s*<div\sclass="video-tnail">\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*</div>\s*[^>]*>\s*[^>]*>[^>]*>(?<Title>[^<]*)[^>]*>[^>]*>[^>]*>(?<Airdate>[^<]*)]]></item>
+      </Configuration>
+      <Categories />
     </Site>
     <Site name="CollegeHumor" util="GenericSite" agecheck="false" enabled="true" lang="en" lastUpdated="2010-03-23T14:53:44.515625+01:00">
       <Description>Funny videos from CollegeHumor.com.</Description>
