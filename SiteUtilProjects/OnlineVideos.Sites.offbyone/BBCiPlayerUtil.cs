@@ -11,6 +11,8 @@ namespace OnlineVideos.Sites
     {
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
         string proxy = null;
+        [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
+        string searchUrl = "http://feeds.bbc.co.uk/iplayer/search/tv/?q={0}";
 
         public override string getUrl(VideoInfo video)
         {
@@ -152,5 +154,17 @@ namespace OnlineVideos.Sites
             }
             return loVideoList;
         }
+
+        #region Search
+
+        public override bool CanSearch { get { return !string.IsNullOrEmpty(searchUrl); } }
+
+        public override List<VideoInfo> Search(string query)
+        {
+            return getVideoListInternal(string.Format(searchUrl, query));
+        }
+
+        #endregion
+
     }
 }
