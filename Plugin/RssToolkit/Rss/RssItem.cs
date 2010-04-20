@@ -404,7 +404,7 @@ namespace RssToolkit.Rss
             /// The size in bytes of the mediaobject. It is an optional attribute.
             /// </summary>
             [XmlAttribute(AttributeName = "fileSize")]
-            public int FileSize { get; set; }            
+            public string FileSize { get; set; }
 
             /// <summary>
             /// The primary language encapsulated in the media object. Language codes possible are detailed in RFC 3066. It is an optional attribute.
