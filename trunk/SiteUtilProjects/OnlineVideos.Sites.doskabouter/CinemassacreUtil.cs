@@ -8,14 +8,14 @@ using System.Xml;
 
 namespace OnlineVideos.Sites
 {
-    public class CinemassacreUtil : SiteUtilBase
+    public class CinemassacreUtil : GenericSiteUtil
     {
         /*			 
           <ul id="pagine2">
 		  <li class="page_item page-item-4180"><a href="http://www.cinemassacre.com/new/?page_id=4180" title="2010 Vids">2010 Vids</a></li>
 		  </ul>
         */
-        private string categoryRegex = @"<a\shref=""(?<url>[^""]+)""[^>]+>(?<title>[^<]+)<";
+        //private string categoryRegex = @"<a\shref=""(?<url>[^""]+)""[^>]+>(?<title>[^<]+)<";
         /* 
         <td><a href="http://www.gametrailers.com/video/angry-video-screwattack/60452"><br />
         </a><a href="http://www.gametrailers.com/video/angry-video-screwattack/60452" target="_self"><img 
@@ -34,11 +34,11 @@ namespace OnlineVideos.Sites
         <p><a href="http://www.cinemassacre.com/new/?p=2831" target="_self"><strong><strong>78 Wayne&#8217;s World </strong></strong></a></p>
 
          */
-        private string videoListRegex = @"<a\shref=""(?<url>[^""]+)[^>]+>(?:<strong>)*(<img.*?src=""(?<thumb>[^""]+)[^>]*>)?(?<title>[^<]*)<";
+        //private string videoListRegex = @"<a\shref=""(?<url>[^""]+)[^>]+>(?:<strong>)*(<img.*?src=""(?<thumb>[^""]+)[^>]*>)?(?<title>[^<]*)<";
 
         private string[] videoUrlRegex = new String[3];
 
-        private Regex regEx_Category;
+        //private Regex regEx_Category;
         private Regex regEx_VideoList;
         private Regex[] regEx_VideoUrl = new Regex[3];
 
@@ -56,71 +56,165 @@ namespace OnlineVideos.Sites
             videoUrlRegex[1] = @"<a\shref=""(?<url>[^""]+)""";
             videoUrlRegex[2] = @"param\sname=""src""\s*value=""(?<url>[^""]+)""";
 
-            regEx_Category = new Regex(categoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
-            regEx_VideoList = new Regex(videoListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            //regEx_Category = new Regex(categoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            //regEx_VideoList = new Regex(videoListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
             for (int i = 0; i < videoUrlRegex.Length; i++)
                 regEx_VideoUrl[i] = new Regex(videoUrlRegex[i], RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
         }
 
-        public override int DiscoverDynamicCategories()
+        private void AddSubcats(RssLink parentCategory, XmlNode node)
         {
-            foreach (Category cat in Settings.Categories)
+            parentCategory.SubCategories = new List<Category>();
+            parentCategory.HasSubCategories = true;
+            foreach (XmlNode sub in node.ChildNodes)
             {
-                string url = ((RssLink)cat).Url;
-                string data = GetWebData(url);
-                if (!string.IsNullOrEmpty(data))
-                    cat.HasSubCategories = data.IndexOf(@"id=""pagine2""") >= 0;
-            }
+                RssLink subcat = new RssLink();
+                XmlNode a = sub.SelectSingleNode("a");
+                subcat.Name = a.InnerText;
+                subcat.Url = a.Attributes["href"].Value;
+                subcat.ParentCategory = parentCategory;
+                parentCategory.SubCategories.Add(subcat);
 
-            return base.DiscoverDynamicCategories();
+                XmlNode subsub = sub.SelectSingleNode("ul");
+                subcat.HasSubCategories = subsub != null;
+                if (subcat.HasSubCategories)
+                    AddSubcats(subcat, subsub);
+
+            }
+            parentCategory.SubCategoriesDiscovered = true;
         }
 
-        public override int DiscoverSubCategories(Category parentCategory)
+        public override int DiscoverDynamicCategories()
         {
-            string url = ((RssLink)parentCategory).Url;
-            parentCategory.SubCategories = new List<Category>();
+            string data = GetWebData(baseUrl);
+            data = GetSubString(data, @"<!-- nav -->", @"<!-- /nav -->");
+            data = @"<?xml version=""1.0"" encoding=""iso-8859-1""?>" + data;
 
-            string data = GetWebData(url);
-            if (!string.IsNullOrEmpty(data))
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(data);
+            XmlNodeList cats = doc.SelectNodes(@"//div/ul[@id=""navlist""]/li");
+            foreach (XmlNode node in cats)
             {
-                data = GetSubString(data, @"id=""pagine2""", @"</ul>");
-
-                Match m = regEx_Category.Match(data);
-                while (m.Success)
-                {
-                    RssLink cat = new RssLink();
-                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
-                    cat.Url = m.Groups["url"].Value;
-                    cat.SubCategoriesDiscovered = true;
-                    cat.HasSubCategories = false;
-
-                    parentCategory.SubCategories.Add(cat);
-                    cat.ParentCategory = parentCategory;
-                    m = m.NextMatch();
-                }
-                parentCategory.SubCategoriesDiscovered = true;
-                return parentCategory.SubCategories.Count;
+                RssLink cat = new RssLink();
+                XmlNode a = node.SelectSingleNode("a");
+                cat.Name = a.InnerText;
+                XmlNode sub = node.SelectSingleNode("ul");
+                cat.HasSubCategories = sub != null;
+                if (cat.HasSubCategories)
+                    AddSubcats(cat, sub);
+                else
+                    cat.Url = a.Attributes["href"].Value;
+                Settings.Categories.Add(cat);
             }
-            return 0;
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
         }
 
         public override string getUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
+            string thisUrl = null;
+            if (data.IndexOf(@"param name=""src"" value=""") >= 0)
+                thisUrl = GetSubString(data, @"param name=""src"" value=""", @"""");
+            else
+                if (data.IndexOf(@"<div id=""video-content"">") >= 0)
+                {
+                    data = GetSubString(data, @"<div id=""video-content"">", "</div>");
+                    thisUrl = GetSubString(data, @"src=""", @"""");
+                    if (String.IsNullOrEmpty(thisUrl))
+                    {
+                        data = GetWebData(video.VideoUrl);
+                        data = GetSubString(data, @"<div id=""video-content"">", "<!-- /video -->");
+                        int i = data.IndexOf(@"><img class=");
+                        if (i >= 0)
+                        {
+                            int j = data.LastIndexOf(@"href=""", i);
+                            if (j >= 0)
+                            {
+                                thisUrl = data.Substring(j + 6);
+                                i = thisUrl.IndexOf('"');
+                                if (i >= 0)
+                                    thisUrl = thisUrl.Substring(0, i);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    data = GetSubString(data, @"<div id=""content"" class=""content page"">", @"<div id=""comments"">");
+                    thisUrl = GetSubString(data, @"href=""", @"""");
+                    if (String.IsNullOrEmpty(thisUrl))
+                    {
+                        thisUrl = GetSubString(data, @"src=""", @"""");
+                        if (thisUrl.EndsWith(".jpg"))
+                            thisUrl = null;
 
-            if (video.VideoUrl.StartsWith("http://screwattack.com"))
+                    }
+                }
+
+            if (thisUrl == null) return null;
+
+            if (thisUrl.StartsWith("http://blip.tv/play"))
+                return UrlTricks.BlipTrick(thisUrl);
+
+            if (thisUrl.StartsWith("http://screwattack.com"))
             {
-                int i = data.IndexOf("gr.vau.videoURLHQ = '");
-                if (i < 0) i = data.IndexOf("gr.vau.videoURL = '");
-                i = data.IndexOf('\'', i);
-                i++;
-                int j = data.IndexOf('\'', i);
-                return data.Substring(i, j - i);
+                data = GetWebData(thisUrl);
+
+                // next is shamelessly copied from hioctane
+                Match m = Regex.Match(data, @"<embed\sname=""[^""]+""\sFlashVars="".+&vi=(?<vid>[^&]*)&pid=(?<pid>[^&]*)&");
+                if (m.Success)
+                {
+                    string url = "http://v.giantrealm.com/sax/" + m.Groups["pid"].Value + "/" + m.Groups["vid"].Value;
+                    data = GetWebData(url);
+                    if (!string.IsNullOrEmpty(data))
+                    {
+                        m = Regex.Match(data, @"<file-hq>\s*(.+?)\s*</file-hq>");
+                        if (m.Success) return m.Groups[1].Value;
+
+                        m = Regex.Match(data, @"<file>\s*(.+?)\s*</file>");
+                        if (m.Success) return m.Groups[1].Value;
+                    }
+
+                }
+                return null;
             }
 
-            string lsUrl = null;
+            if (thisUrl.StartsWith("http://www.gametrailers.com/video"))
+            {
+                //http://www.gametrailers.com/video/angry-video-screwattack/60232
+                int i = thisUrl.LastIndexOf('/');
+                data = thisUrl.Substring(i + 1);
+                return String.Format(@"http://www.gametrailers.com/neo/?page=xml.mediaplayer.Mediagen&movieId={0}", data);
+            }
 
+            if (thisUrl.IndexOf("spike.com") >= 0)
+            {
+                int p = thisUrl.LastIndexOf('/');
+                string id = thisUrl.Substring(p + 1);
+                if (id == "efp")
+                {
+                    id = GetSubString(data, "flvbaseclip=", @"""");
+                }
+                string url = String.Format(@"http://www.spike.com/ui/xml/mediaplayer/mediagen.groovy?videoId={0}", id);
+                string data2 = GetWebData(url);
+
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(data2);
+                return url = doc.SelectSingleNode("//rendition/src").InnerText;
+            }
+
+            return null;
+            // game collection: no videos
+            // fan art: no videos
+            // game over: no videos
+            // ko boxing, game over, pixel land, video game, fan songs, filmography, head incident: multi
+            //trip to sleepy hollow, fan photos, star wars,monster madness 2010 coming, dracula 1931
+            // rocky jumped: multi, rocky movie reviews: multi
+            /*
+             old:
+            string lsUrl = null;
             if (!string.IsNullOrEmpty(data))
             {
                 data = HttpUtility.HtmlDecode(data);
@@ -146,17 +240,6 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            if (video.VideoUrl.IndexOf("spike.com") >= 0)
-            {
-                int p = video.VideoUrl.LastIndexOf('/');
-                string id = video.VideoUrl.Substring(p + 1);
-                string url = String.Format(@"http://www.spike.com/ui/xml/mediaplayer/mediagen.groovy?videoId={0}", id);
-                string data2 = GetWebData(url);
-
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(data2);
-                return url = doc.SelectSingleNode("//rendition/src").InnerText;
-            }
 
             if (!String.IsNullOrEmpty(lsUrl))
             {
@@ -206,9 +289,10 @@ namespace OnlineVideos.Sites
             }
             else
                 return video.VideoUrl;
+             */
         }
 
-        private List<VideoInfo> getVideoList1(string webData)
+        /*private List<VideoInfo> getVideoList1(string webData)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
             string data = GetSubString(webData, @"<tbody>", @"</tbody>");
@@ -299,46 +383,23 @@ namespace OnlineVideos.Sites
             }
             return videos;
         }
-
+        */
         public override List<VideoInfo> getVideoList(Category category)
         {
-            string url = ((RssLink)category).Url;
-            string data = GetWebData(url);
-            if (!string.IsNullOrEmpty(data))
-            {
-                List<VideoInfo> videos = null;
-
-                try
-                {
-                    videos = getVideoList1(data);
-                }
-                catch
-                { }
-
-                if (videos == null || videos.Count == 0)
-                    videos = getVideoList2(data);
-
-                /*
-                 foreach (VideoInfo video in videos)
-                {
-                    //video.Description += '\n' + video.VideoUrl;
-                    video.Description += '\n' + getUrl(video);
-                }
-                 */
-                return videos;
-            }
-            else
-                return new List<VideoInfo>();
-
+            string data = GetWebData(((RssLink)category).Url);
+            int p = data.IndexOf(@"<!-- /content -->");
+            if (p >= 0) data = data.Substring(0, p);
+            return Parse(((RssLink)category).Url, data);
         }
 
-        private string GetSubString(string s, string start, string until)
+        private static string GetSubString(string s, string start, string until)
         {
             int p = s.IndexOf(start);
             if (p == -1) return String.Empty;
+            p += start.Length;
             int q = s.IndexOf(until, p);
             if (q == -1) return s.Substring(p);
-            return s.Substring(p, q + start.Length + 1 - p);
+            return s.Substring(p, q - p);
         }
 
     }
