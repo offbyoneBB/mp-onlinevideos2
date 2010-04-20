@@ -177,6 +177,16 @@ namespace OnlineVideos
 
         static void AddToPlaybackOption(Dictionary<string, string> playbackOptions, RssItem.MediaContent content)
         {
+            int sizeInBytes = 0;
+            if (!string.IsNullOrEmpty(content.FileSize))
+            {
+                if (!int.TryParse(content.FileSize, out sizeInBytes))
+                {
+                    // with . inside the string -> already in KB
+                    if (int.TryParse(content.FileSize, System.Globalization.NumberStyles.AllowThousands, null, out sizeInBytes)) sizeInBytes *= 1000;
+                }
+            }
+
             if (!playbackOptions.ContainsValue(content.Url))
                 playbackOptions.Add(
                     string.Format("{0}x{1} ({2}) | {3}:// | {4}",
@@ -184,7 +194,7 @@ namespace OnlineVideos
                         content.Height,
                         content.Bitrate != 0 ?
                             content.Bitrate.ToString() + " kbps" :
-                            (content.FileSize != 0 ? (content.FileSize / 1024).ToString("N0") + " KB" : ""),
+                            (sizeInBytes != 0 ? (sizeInBytes / 1024).ToString("N0") + " KB" : ""),
                         new Uri(content.Url).Scheme,
                         System.IO.Path.GetExtension(content.Url)),
                     content.Url);
