@@ -13,6 +13,8 @@ namespace OnlineVideos.Sites
         string proxy = null;
         [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
         string searchUrl = "http://feeds.bbc.co.uk/iplayer/search/tv/?q={0}";
+        [Category("OnlineVideosUserConfiguration"), Description("Group similar items from the rss feeds into subcategories.")]
+        bool autoGrouping = true;
 
         public override string getUrl(VideoInfo video)
         {
@@ -84,20 +86,30 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            return (category as RssLink).Other as List<VideoInfo>;
+            if (autoGrouping)
+                return (category as RssLink).Other as List<VideoInfo>;
+            else
+                return getVideoListInternal((category as RssLink).Url);
         }
 
         DateTime lastRefresh = DateTime.MinValue;
         public override int DiscoverDynamicCategories()
         {
-            if ((DateTime.Now - lastRefresh).TotalMinutes > 15)
+            if (autoGrouping)
             {
-                foreach (Category cat in Settings.Categories)
+                if ((DateTime.Now - lastRefresh).TotalMinutes > 15)
                 {
-                    cat.HasSubCategories = true;
-                    cat.SubCategoriesDiscovered = false;
+                    foreach (Category cat in Settings.Categories)
+                    {
+                        cat.HasSubCategories = true;
+                        cat.SubCategoriesDiscovered = false;
+                    }
+                    lastRefresh = DateTime.Now;
                 }
-                lastRefresh = DateTime.Now;
+            }
+            else
+            {
+                Settings.DynamicCategoriesDiscovered = true;
             }
             return Settings.Categories.Count;
         }
