@@ -119,7 +119,7 @@ namespace OnlineVideos.Sites
                         videoInfo.Title = FormatTitle(vi);
                         videoInfo.Length = vi.Video.Duration.ToString();
                         videoInfo.VideoUrl = vi.Video.Id;
-                        videoInfo.ImageUrl = vi.Image.Url;
+                        videoInfo.ImageUrl = new Uri(vi.Image.Url).GetLeftPart(UriPartial.Path);
                         videoList.Add(videoInfo);
                     }
                 }
@@ -140,7 +140,7 @@ namespace OnlineVideos.Sites
                         videoInfo.Title = FormatTitle(vi);
                         videoInfo.Length = vi.Video.Duration.ToString();
                         videoInfo.VideoUrl = vi.Video.Id;
-                        videoInfo.ImageUrl = vi.Image.Url;
+                        videoInfo.ImageUrl = new Uri(vi.Image.Url).GetLeftPart(UriPartial.Path);
                         videoList.Add(videoInfo);
                     }
                 }
