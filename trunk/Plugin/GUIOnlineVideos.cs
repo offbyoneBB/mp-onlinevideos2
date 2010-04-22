@@ -196,7 +196,7 @@ namespace OnlineVideos
         #endregion
 
         #region search variables
-        string lastSearchQuery;
+        string lastSearchQuery = string.Empty;
         string lastSearchCategory;
         #endregion
 
@@ -645,7 +645,7 @@ namespace OnlineVideos
             }
             else if (control == GUI_btnSearch)
             {
-                String query = String.Empty;
+                string query = lastSearchQuery;
                 if (GetUserInputString(ref query, false))
                 {
                     GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
@@ -746,6 +746,7 @@ namespace OnlineVideos
 
         private void DisplaySites()
         {
+            lastSearchQuery = string.Empty;
             selectedCategory = null;
             SelectedSite = null;
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
