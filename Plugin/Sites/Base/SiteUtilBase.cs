@@ -432,7 +432,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        protected static string GetWebDataFromPost(string url, string postData)
+        public static string GetWebDataFromPost(string url, string postData)
         {
             byte[] data = Encoding.UTF8.GetBytes(postData);
 
