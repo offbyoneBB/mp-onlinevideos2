@@ -248,6 +248,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Player\ExternalOSDLibrary\OSDWindow.cs" />
+    <Compile Include="Player\GUIOnlineVideoFullscreen.cs" />
+    <Compile Include="Player\GUIOnlineVideoOSD.cs" />
     <Compile Include="Player\WMPVideoPlayer.cs" />
     <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Player\PlayerFactory.cs" />

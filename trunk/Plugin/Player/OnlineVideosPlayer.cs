@@ -10,6 +10,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Threading;
 
 namespace OnlineVideos.Player
 {
@@ -27,14 +28,31 @@ namespace OnlineVideos.Player
         {
             string currentFileLower = CurrentFile.ToLower();
 
-            if (currentFileLower.StartsWith("mms://") || currentFileLower.Contains(".asf"))
+            if (StartGraphWithFileSourceUrl(currentFileLower))
+                return BuildGraphWithFileSourceUrl();
+            else if (currentFileLower.StartsWith("mms://") || currentFileLower.Contains(".asf"))
                 return BuildGraphForMMS();
             else if (currentFileLower.StartsWith("rtsp://"))
                 return BuildGraphForRTSP();
-            else if (currentFileLower.EndsWith(".m4v") || currentFileLower.EndsWith(".mp4") || currentFileLower.EndsWith(".mov") || currentFileLower.EndsWith(".flv"))
-                return BuildGraphWithFileSourceUrl();
             else
                 return base.GetInterfaces();
+        }
+
+        bool StartGraphWithFileSourceUrl(string url)
+        {
+            Uri uri = new Uri(url);
+            if (uri.Scheme == "http")
+            {
+                string extension1 = Path.GetExtension(uri.LocalPath);
+                string extension2 = uri.PathAndQuery.Substring(uri.PathAndQuery.Length - 4);
+                if (extension1 != ".asx" && extension2 != ".asx" && 
+                   (OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension1) || 
+                   OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension2)))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         bool BuildGraphForRTSP()
@@ -124,6 +142,9 @@ namespace OnlineVideos.Player
             int result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
             if (result != 0) return false;
 
+            // mms streams allow skipping so set buffered to 100%
+            PercentageBuffered = 100.0d;
+
             // add the audio renderer
             using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
             {
@@ -167,6 +188,45 @@ namespace OnlineVideos.Player
             return true;
         }
 
+        double _PercentageBuffered = 0;
+        double PercentageBuffered 
+        {
+            get { return _PercentageBuffered; }
+            set { _PercentageBuffered = value; GUIPropertyManager.SetProperty("#TV.Record.percent3", value.ToString()); } 
+        }
+
+        Thread bufferProgressMonitorThread;
+        void MonitorBufferProgress(object filter)
+        {
+            try
+            {
+                IAMOpenProgress sourceFilter = filter as IAMOpenProgress;
+                if (filter == null) return;
+
+                int result = 0;
+                long total = 0, current = 0, last = 0;
+                do
+                {
+                    result = sourceFilter.QueryProgress(out total, out current);
+                    PercentageBuffered = (double)current / (double)total * 100.0f;
+                    if (current - last >= (double)total * 0.01) // log every percent
+                    {
+                        Log.Debug("Buffering: {0}/{1} KB ({3})%", current / 1024, total / 1024, (int)PercentageBuffered);
+                        last = current;
+                    }
+                }
+                while (current < total && graphBuilder != null);
+            }
+            catch (ThreadAbortException)
+            {
+                Thread.ResetAbort();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
+        }
+
         bool BuildGraphWithFileSourceUrl()
         {            
             try
@@ -185,18 +245,14 @@ namespace OnlineVideos.Player
                 try
                 {
                     GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
-                    long total = 0, current = 0, last = 0;
-                    do
-                    {
-                        result = ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
+
+                    bufferProgressMonitorThread = new Thread(MonitorBufferProgress) { IsBackground = true };
+                    bufferProgressMonitorThread.Start(sourceFilter);
+                    while (bufferProgressMonitorThread.ThreadState == ThreadState.Running && 
+                           PercentageBuffered < OnlineVideoSettings.Instance.playbuffer)
+                    {                        
                         GUIWindowManager.Process(); // keep GUI responsive
-                        if (current - last >= (double)total * 0.01) // log every percent
-                        {
-                            Log.Debug("Buffering: {0}/{1} KB", current / 1024, total / 1024);
-                            last = current;
-                        }
-                    }
-                    while (current < (double)total * OnlineVideoSettings.Instance.playbuffer * 0.01);
+                    }                    
                 }
                 catch (Exception ex)
                 {
@@ -239,25 +295,25 @@ namespace OnlineVideos.Player
                 // cleanup resources
                 DirectShowUtil.ReleaseComObject(sourceFilterPins[0]);
                 DirectShowUtil.ReleaseComObject(enumPins);
-                DirectShowUtil.ReleaseComObject(sourceFilter);                                
+
+                if (Vmr9 == null || !Vmr9.IsVMR9Connected)
+                {
+                    Log.Error("OnlineVideosPlayer: Failed to render file -> vmr9");
+                    mediaCtrl = null;
+                    Cleanup();
+                    return false;
+                }
 
                 // set fields for playback
                 mediaCtrl = (IMediaControl)graphBuilder;
                 mediaEvt = (IMediaEventEx)graphBuilder;
                 mediaSeek = (IMediaSeeking)graphBuilder;
                 mediaPos = (IMediaPosition)graphBuilder;
-                basicAudio = graphBuilder as IBasicAudio;
-                DirectShowUtil.EnableDeInterlace(graphBuilder);
+                basicAudio = (IBasicAudio)graphBuilder;
+                videoWin = (IVideoWindow)graphBuilder;                
                 m_iVideoWidth = Vmr9.VideoWidth;
                 m_iVideoHeight = Vmr9.VideoHeight;
-
-                if (!Vmr9.IsVMR9Connected)
-                {
-                    //VMR9 is not supported, switch to overlay
-                    mediaCtrl = null;
-                    CloseInterfaces();
-                    return false;
-                }
+                
                 Vmr9.SetDeinterlaceMode();
                 return true;
             }

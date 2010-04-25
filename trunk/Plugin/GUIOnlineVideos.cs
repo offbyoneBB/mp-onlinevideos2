@@ -229,9 +229,31 @@ namespace OnlineVideos
             {
                 bool lastActiveModuleSetting = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
                 int lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
-                preventDialogOnLoad = (lastActiveModuleSetting && (lastActiveModule == GetID));
+                preventDialogOnLoad = (lastActiveModuleSetting && (lastActiveModule == GetID));                        
             }
+
+            // replace g_player's ShowFullScreenWindowVideo
+            g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowHandler;
+
             return result;
+        }
+
+        /// <summary>
+        /// This function replaces g_player.ShowFullScreenWindowVideo
+        /// </summary>
+        /// <returns></returns>
+        private static bool ShowFullScreenWindowHandler()
+        {
+            if (g_Player.HasVideo && g_Player.Player is Player.OnlineVideosPlayer)
+            {
+                if (GUIWindowManager.ActiveWindow == Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) return true;
+
+                Log.Info("ShowFullScreenWindow switching to fullscreen.");
+                GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                GUIGraphicsContext.IsFullScreenVideo = true;
+                return true;
+            }
+            return g_Player.ShowFullScreenWindowVideoDefault();
         }
 
         protected override void OnPageLoad()
@@ -494,7 +516,6 @@ namespace OnlineVideos
                         }
                     }
                     break;
-
             }
             GUI_btnOrderBy.Label = Translation.SortOptions;
             GUI_btnMaxResult.Label = Translation.MaxResults;
@@ -689,7 +710,7 @@ namespace OnlineVideos
         protected override void OnPageDestroy(int newWindowId)
         {
             // only handle if not just going to a full screen video
-            if (newWindowId != (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+            if (newWindowId != Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO)
             {
                 // Save view
                 using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
@@ -1415,7 +1436,7 @@ namespace OnlineVideos
                 g_Player.Factory = savedFactory;
             }
 
-            if (playing && g_Player.Player != null && g_Player.IsVideo)
+            if (playing && g_Player.Player != null && g_Player.HasVideo)
             {
                 if (!string.IsNullOrEmpty(video.StartTime))
                 {
@@ -1425,8 +1446,8 @@ namespace OnlineVideos
                     g_Player.SeekAbsolute(seconds);
                 }
 
-                GUIGraphicsContext.IsFullScreenVideo = true;
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                GUIGraphicsContext.IsFullScreenVideo = true;                
+                GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
 
                 playingVideo = video;
 
@@ -1478,7 +1499,7 @@ namespace OnlineVideos
                         {
                             Log.Info("GUIOnlineVideos.playAll:Playing first video.");
                             GUIGraphicsContext.IsFullScreenVideo = true;
-                            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                            GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
                         }
                     }
                 }
