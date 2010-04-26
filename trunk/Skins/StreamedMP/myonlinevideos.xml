@@ -1,453 +1,418 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 
-<!-- StreamedMP skin for OnlineVideos plugin Version 1.1.3 -->
-
 <window>
-	<id>4755</id>
-	<defaultcontrol>50</defaultcontrol>
-	<allowoverlay>yes</allowoverlay>
-	<define>#header.label</define>
-	<define>#header.hover:hover_onlinevideos.png</define>
-	<define>#header.BG.colordiffuse:ffffffff</define>
-    <define>#header.BG.overlay:onlinevideosoverlay.png</define>
-
-	<define>#OnlineVideos.skinversion:Skin Version 1.1.3</define>
-	<define>#OnlineVideos.nofocuscolor:ffffffff</define>
-	<define>#OnlineVideos.discolor:ff606060</define>
-
-	<controls>
-
-		<!-- *** WINDOW DEFAULTS *** -->
-
-		<control>
-			<id>1</id>
-			<description>Background Image</description>
-			<type>image</type>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>1280</width>
-			<height>720</height>
-			<texture>#header.hover</texture>
-            <colordiffuse>#header.BG.colordiffuse</colordiffuse>
-			<animation effect="fade" time="250">WindowOpen</animation>
-			<animation effect="fade" time="250">WindowClose</animation>
-		</control>
-		
-		<control>
-			<id>1</id>
-			<description>Overlay Image</description>
-			<type>image</type>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>1280</width>
-			<height>720</height>
-			<texture>#header.BG.overlay</texture>
-			<animation effect="fade" time="50">WindowOpen</animation>
-			<animation effect="fade" time="250">WindowClose</animation>
-		</control>
-		
-		<control>
-			<id>1</id>
-			<description>Top Title Background</description>
-			<type>image</type>
-			<posX>77</posX>
-			<posY>11</posY>
-			<width>437</width>
-			<height>35</height>
-			<texture>tvtitlebg.png</texture>
-			<animation effect="slide" start="-514,0" end="0,0" tween="quadratic" time="300" delay="0">WindowOpen</animation>
-			<animation effect="slide" start="0,0" end="-514,0" tween="quadratic" time="300" delay="0">WindowClose</animation>
-			<animation effect="fade" time="150">WindowClose</animation>
-		</control>
-		
-		<control>
-			<id>1</id>
-			<type>fadelabel</type>
-			<description>Top Title</description>
-			<posX>493</posX>
-			<posY>13</posY>
-			<width>350</width>
-			<font>mediastream12c</font>
-			<align>right</align>
-			<visible>yes</visible>
-			<label>Online Videos</label>
-			<!--<label>#currentmodule</label>-->
-			<animation effect="slide" start="-514,0" end="0,0" tween="quadratic" time="300" delay="0">WindowOpen</animation>
-			<animation effect="slide" start="0,0" end="-514,0" tween="quadratic" time="300" delay="0">WindowClose</animation>
-			<animation effect="fade" time="150">WindowClose</animation>
-		</control>
-	
-		<!-- *** IMPORTS *** -->
-		
-		<import>myonlinevideos.overlays.xml</import>
-		<import>myonlinevideos.facade.xml</import>
-		<import>myonlinevideos.details.xml</import>
-		<import>common.time.xml</import>
-
-
-		<!-- *** LOGO & CATEGORY *** -->
-
-		<control>
-			<description>Category Logo</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>24</posX>
-			<posY>248</posY>
-			<width>105</width>
-			<height>35</height>
-			<texture>#header.image</texture>
-			<animation effect="fade" time="250">WindowOpen</animation>
- 			<animation effect="fade" time="250">WindowClose</animation>
-		</control>
-
-		<control>
-			<description>Category Text Shadow</description>
-			<type>fadelabel</type>
-			<id>0</id>
-			<posX>152</posX>
-			<posY>252</posY>
-			<width>1064</width>
-			<font>mediastream16tc</font>
-			<label>#header.label</label>
-			<textcolor>ff222222</textcolor>
-			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
-			<animation effect="fade" time="250">VisibleChange</animation>
-		</control>
-		
-		<control>
-			<description>Category Text</description>
-			<type>fadelabel</type>
-			<id>0</id>
-			<posX>150</posX>
-			<posY>250</posY>
-			<width>1064</width>
-			<font>mediastream16tc</font>
-			<label>#header.label</label>
-			<textcolor>ffFFFFFF</textcolor>
-			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
-			<animation effect="fade" time="250">VisibleChange</animation>
-		</control>
-
-		<!-- *** CLIP TITLE & DESCRIPTION *** -->
-
-		<control>
-			<description>Dummy Length</description>
-			<type>label</type>
-			<id>5001</id>
-			<posX>10</posX>
-			<posY>70</posY>
-			<width>1</width>
-			<height>1</height>
-			<label>#OnlineVideos.length</label>
-			<visible>yes</visible>
-		</control>
-
-		<control>
-			<description>Description Box</description>
-			<type>image</type>
-			<id>0</id>
-			<posX>4</posX>
-			<posY>60</posY>
-			<width>756</width>
-			<height>152</height>
-			<texture>dialogprogressbg.png</texture>
-			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
-			<animation effect="fade" time="250">VisibleChange</animation>
-		</control>
-
-		<control>
-			<description>Title Shadow</description>
-			<type>fadelabel</type>
-			<id>0</id>
-			<posX>26</posX>
-			<posY>82</posY>
-			<width>715</width>
-			<font>mediastream12tc</font>
-			<label>#selecteditem</label>
-			<textcolor>ff222222</textcolor>
-			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
-			<animation effect="fade" time="250">VisibleChange</animation>
-		</control>
-		
-		<control>
-			<description>Title</description>
-			<type>fadelabel</type>
-			<id>0</id>
-			<posX>24</posX>
-			<posY>80</posY>
-			<width>715</width>
-			<font>mediastream12tc</font>
-			<label>#selecteditem</label>
-			<textcolor>ffb2d4f5</textcolor>
-			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
-		</control>
-
-		<control>
-			<description>Length Label</description>
-			<type>label</type>
-			<id>0</id>
-			<posX>24</posX>
-			<posY>102</posY>
-			<width>550</width>
-			<font>mediastream9</font>
-			<label>299</label>
-			<textcolor>ffb2d4f5</textcolor>
-			<visible>[!Control.IsVisible(51)]+control.hastext(5001)+[facadeview.smallicons|facadeview.largeicons]</visible>
-		</control>
-
-		<control>
-			<description>Length</description>
-			<type>label</type>
-			<id>0</id>
-			<posX>120</posX>
-			<posY>102</posY>
-			<width>550</width>
-			<font>mediastream9</font>
-			<label>#OnlineVideos.length</label>
-			<textcolor>ffffffff</textcolor>
-			<visible>[!Control.IsVisible(51)]+control.hastext(5001)+[facadeview.smallicons|facadeview.largeicons]</visible>
-		</control>
-
-		<control>
-			<description>Description</description>
-			<type>textboxscrollup</type>
-			<id>0</id>
-			<posX>24</posX>
-			<posY>123</posY>
-			<width>715</width>
-			<height>74</height>
-			<colordiffuse>ffffffff</colordiffuse>
-			<font>mediastream11</font>
-			<label>#OnlineVideos.desc</label>
-			<textcolor>FFFFFFFF</textcolor>
-			<visible>[!Control.IsVisible(51)]+[facadeview.smallicons|facadeview.largeicons]</visible>
-		</control>
-
-		<!-- *** HIDDEN MENU *** -->
-
-		<control>
-			<type>actiongroup</type>
-			<description>action menu</description>
-			<onexit>50</onexit>
-			<dimColor>00ffffff</dimColor>
-			
-			<control>
-				<description>Menu Background</description>
-				<type>image</type>
-				<posX>1002</posX>
-				<posY>0</posY>
-				<width>278</width>
-				<height>720</height>
-	        	<texture>hiddenmenu_right.png</texture>
-				<visible>!Control.HasFocus(50)</visible>
-	        	<animation effect="slide" time="200" start="300,0">visible</animation>
-	        	<animation effect="slide" time="0" end="300,0">hidden</animation>
-			</control>
-
-			<control>
-				<description>OPTIONS Header</description>
-	        	<type>label</type>
-	        	<id>0</id>
-	        	<font>mediastream12tc</font>
-	        	<posX>1040</posX>
-	        	<posY>230</posY>
-	        	<visible>!Control.HasFocus(50)</visible>
-	        	<label>496</label>
-	        	<animation effect="slide" time="200" start="300,0">visible</animation>
-	        	<animation effect="slide" time="0" end="300,0">hidden</animation>
-	      	</control>	      	     
-
-			<control>
-				<description>Clips Header</description>
-				<type>label</type>
-				<id>0</id>
-				<font>mediastream12tc</font>
-				<visible>!Control.HasFocus(50)</visible>
-	        	<posX>1040</posX>
-				<posY>340</posY>
-				<label>5907</label>
-				<animation effect="slide" time="200" start="300,0">visible</animation>
-				<animation effect="slide" time="0" end="300,0">hidden</animation>
-			</control>	      	     
-
-			<control>
-				<description>Skin Version</description>
-	        	<type>label</type>
-	        	<id>0</id>
-	        	<posX>1145</posX>
-	        	<posY>690</posY>
-	        	<visible>!Control.HasFocus(50)</visible>
-	        	<label>#OnlineVideos.skinversion</label>
-	        	<font>mediastream9</font>
-				<textcolor>b0315662</textcolor>
-	        	<animation effect="slide" time="200" start="300,0">visible</animation>
-	        	<animation effect="slide" time="0" end="300,0">hidden</animation>
-	      	</control>	      	     
-
-			<control>
-				<description>Button Group</description>
-				<type>group</type>
-	        	<posX>1040</posX>
-	        	<posY>250</posY>
-	        	<width>220</width>
-	        	<height>720</height>
-				<layout>StackLayout</layout>
-				<visible>!Control.HasFocus(50)</visible>
-	        	<animation effect="slide" time="200" start="300,0">visible</animation>
-	        	<animation effect="slide" time="0" end="300,0">hidden</animation>
-				
-				<control>
-					<description>View-As</description>
-					<type>button</type>
-					<id>2</id>
-					<ondown>12</ondown>
-					<label>101</label>
-					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
-					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
-					<onup>17</onup>
-				</control>
-
-				<control>
-					<description>Do Age Check</description>
-					<type>button</type>
-					<id>12</id>          
-					<ondown>11</ondown>
-					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
-					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
-					<label>Enter Pin</label>          
-					<visible>no</visible>
-				</control>
-
-				<control>
-					<description>Empty button</description>
-					<type>button</type>
-					<id>0</id>
-					<ondown>11</ondown>
-					<label>-</label>
-					<visible>false</visible>
-				</control>
-
-				<control>
-					<description>Empty button</description>
-					<type>button</type>
-					<id>0</id>
-					<ondown>11</ondown>
-					<label>-</label>
-					<visible>false</visible>
-				</control>
-
-				<control>
-					<description>Favorites</description>
-					<type>button</type>
-					<id>11</id>
-					<ondown>10</ondown>
-					<label>932</label>
-					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
-					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
-					<visible>no</visible>
-				</control>
-
-				<control>
-					<description>Search</description>
-					<type>button</type>
-					<id>10</id>
-					<ondown>9</ondown>
-					<label>137</label>
-					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
-					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
-					<visible>no</visible>
-				</control>
-
-				<control>
-					<description>Select Category</description>
-					<type>selectbutton</type>
-					<id>9</id>
-					<ondown>5</ondown>
-					<label>2053</label>
-					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
-					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
-					<visible>no</visible>
-				</control>
-
-				<control>
-					<description>Max Results</description>
-					<type>selectbutton</type>
-					<id>5</id>
-					<ondown>7</ondown>
-					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
-					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
-					<label>Max Results</label>
-					<visible>no</visible>
-				</control>
-
-				<control>
-					<description>TimeFrame</description>
-					<type>selectbutton</type>
-					<id>7</id>
-					<ondown>6</ondown>
-					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
-					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
-					<label>Timeframe</label>
-					<visible>no</visible>
-				</control>
-
-				<control>
-					<description>Order By</description>
-					<type>selectbutton</type>
-					<id>6</id>
-					<ondown>8</ondown>
-					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
-					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
-					<label>495</label>
-					<visible>no</visible>
-				</control>
-
-				<control>
-					<description>Update</description>
-					<type>button</type>
-					<id>8</id>
-					<ondown>3</ondown>
-					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
-					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
-					<label>184</label>
-					<visible>no</visible>
-				</control>
-
-				<control>
-					<description>Empty button</description>
-					<type>button</type>
-					<id>0</id>
-					<ondown>3</ondown>
-					<label>-</label>
-					<visible>false</visible>
-				</control>
-
-				<control>
-					<description>Next Page</description>
-					<type>button</type>
-					<id>3</id>          
-					<ondown>4</ondown>
-					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
-					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
-					<label>1975</label>
-					<visible>no</visible>
-				</control>
-
-				<control>
-					<description>Previous Page</description>
-					<type>button</type>
-					<id>4</id>          
-					<ondown>2</ondown>
-					<disabledcolor>#OnlineVideos.discolor</disabledcolor>
-					<textcolorNoFocus>#OnlineVideos.nofocuscolor</textcolorNoFocus>
-					<label>30004</label>
-					<visible>no</visible>
-				</control>
-
-			</control>
-			
-		</control>
-    
-	</controls>
+  <id>4755</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.Extension.label:#header.label</define>
+  <define>#header.label:Online Videos</define>
+  <define>#header.hover:hover_onlinevideos.png</define>
+  <define>#header.BG.colordiffuse:ffffffff</define>
+  <define>#header.BG.overlay:mainoverlay.png</define>
+  <controls>
+    <!-- *** IMPORTS *** -->
+    <import>common.window.default.xml</import>
+    <control>
+      <description>Top Title Extension Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>381</posX>
+      <posY>11</posY>
+      <width>486</width>
+      <height>36</height>
+      <texture>tvtitlebg.png</texture>
+      <visible>!string.equals(#OnlineVideos.state,sites)</visible>
+      <animation effect="fade" time="300" delay="300">WindowOpen</animation>
+      <animation effect="fade" time="300" delay="0">WindowClose</animation>
+      <animation effect="slide" start="-514,0" end="0,0" tween="quadratic" time="300" delay="300">WindowOpen</animation>
+      <animation effect="slide" start="0,0" end="-514,0" tween="quadratic" time="600" delay="0">WindowClose</animation>
+    </control>
+    <control>
+      <id>1</id>
+      <description>Top Title Background</description>
+      <type>image</type>
+      <posX>77</posX>
+      <posY>11</posY>
+      <width>437</width>
+      <height>35</height>
+      <texture>tvtitlebg.png</texture>
+      <visible>!string.equals(#OnlineVideos.state,sites)</visible>
+      <animation effect="slide" start="-514,0" end="0,0" tween="quadratic" time="300" delay="0">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>Extension label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>839</posX>
+      <posY>13</posY>
+      <width>320</width>
+      <align>right</align>
+      <label>#header.Extension.label</label>
+      <font>mediastream12c</font>
+      <align>right</align>
+      <visible>!string.equals(#OnlineVideos.state,sites)</visible>
+      <animation effect="fade" time="300" delay="300">WindowOpen</animation>
+      <animation effect="fade" time="230" delay="0">WindowClose</animation>
+      <animation effect="slide" start="-514,0" end="0,0" tween="bounce" time="700" delay="300">WindowOpen</animation>
+      <animation effect="slide" start="0,0" end="-514,0" tween="quadratic" time="600" delay="0">WindowClose</animation>
+    </control>
+    <!-- *** CLIP TITLE & DESCRIPTION *** -->
+    <!--
+     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+     :::::::::::::::::::::::::::::::::           LIST VIEW      ::::::::::::::::::
+     :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    -->
+    <control>
+      <description>Thumb</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>28</posX>
+      <posY>242</posY>
+      <height>198</height>
+      <width>354</width>
+      <zoom>no</zoom>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <texture flipY="true" diffuse="diffusemirrorwide.png">#selectedthumb</texture>
+      <visible>facadeview.list+!Control.IsVisible(51)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="-800,0">WindowClose</animation>
+    </control>
+    <control>
+      <description>Category Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>424</posX>
+      <posY>248</posY>
+      <width>105</width>
+      <height>35</height>
+      <texture>#header.image</texture>
+      <visible>facadeview.list+!Control.IsVisible(51)+!string.equals(#selectedthumb,)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Current video length</description>
+      <id>501</id>
+      <posX>28</posX>
+      <posY>485</posY>
+      <width>315</width>
+      <textcolor>ff006698</textcolor>
+      <label>#OnlineVideos.length</label>
+      <visible>facadeview.list+!Control.IsVisible(51)+!string.equals(#selectedthumb,)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="-800,0">WindowClose</animation>
+    </control>
+    <control>
+      <type>textboxscrollup</type>
+      <description>Description</description>
+      <id>0</id>
+      <posX>28</posX>
+      <posY>510</posY>
+      <width>600</width>
+      <height>150</height>
+      <seperator>----------------------------------------------------------------------------------------</seperator>
+      <font>mediastream11</font>
+      <label>#OnlineVideos.desc</label>
+      <visible>facadeview.list+!Control.IsVisible(51)+!string.equals(#selectedthumb,)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="-800,0">WindowClose</animation>
+    </control>
+    <!--:::::::::::::::::::::::::::::::::           LIST VIEW  WITHOUT #selectedthumb    ::::::::::::::::::-->
+    <control>
+      <description>Category Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>28</posX>
+      <posY>248</posY>
+      <width>105</width>
+      <height>35</height>
+      <texture>#header.image</texture>
+      <visible>facadeview.list+!Control.IsVisible(51)+string.equals(#selectedthumb,)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Length</description>
+      <id>1</id>
+      <posX>28</posX>
+      <posY>315</posY>
+      <width>315</width>
+      <textcolor>ff006698</textcolor>
+      <font>mediastream11tc</font>
+      <label>#OnlineVideos.length</label>
+      <visible>facadeview.list+!Control.IsVisible(51)+string.equals(#selectedthumb,)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="-800,0">WindowClose</animation>
+    </control>
+    <control>
+      <type>textboxscrollup</type>
+      <description>Description</description>
+      <id>1</id>
+      <posX>28</posX>
+      <posY>337</posY>
+      <width>600</width>
+      <height>288</height>
+      <seperator>----------------------------------------------------------------------------------------</seperator>
+      <font>mediastream12</font>
+      <label>#OnlineVideos.desc</label>
+      <visible>facadeview.list+!Control.IsVisible(51)+string.equals(#selectedthumb,)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="-800,0">WindowClose</animation>
+    </control>
+    <!--
+		:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+		::::::::::::::::::::::::::::::::::     THUMBNAIL VIEW      ::::::::::::::::::
+		:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	-->
+    <control>
+      <description>Category Logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>28</posX>
+      <posY>248</posY>
+      <width>105</width>
+      <height>35</height>
+      <texture>#header.image</texture>
+      <visible>[facadeview.largeicons | facadeview.smallicons]+!Control.IsVisible(51)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>label</type>
+      <description>Length</description>
+      <id>1</id>
+      <posX>28</posX>
+      <posY>315</posY>
+      <width>315</width>
+      <textcolor>ff006698</textcolor>
+      <font>mediastream11tc</font>
+      <label>#OnlineVideos.length</label>
+      <visible>[facadeview.largeicons | facadeview.smallicons]+!Control.IsVisible(51)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="-800,0">WindowClose</animation>
+    </control>
+    <control>
+      <type>textboxscrollup</type>
+      <description>Description</description>
+      <id>1</id>
+      <posX>28</posX>
+      <posY>337</posY>
+      <width>475</width>
+      <height>288</height>
+      <seperator>----------------------------------------------------------------------------------------</seperator>
+      <font>mediastream12</font>
+      <label>#OnlineVideos.desc</label>
+      <visible>[facadeview.largeicons | facadeview.smallicons]+!Control.IsVisible(51)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="-800,0">WindowClose</animation>
+    </control>
+    <!-- *** HIDDEN MENU *** -->
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <onexit>50</onexit>
+      <defaultcontrol>2</defaultcontrol>
+      <posX>1002</posX>
+      <posY>0</posY>
+      <width>278</width>
+      <height>720</height>
+      <buttonX>1231</buttonX>
+      <buttonY>55</buttonY>
+      <buttonwidth>49</buttonwidth>
+      <buttonheight>153</buttonheight>
+      <textureFocus>Action_menu.png</textureFocus>
+      <textureNoFocus>Action_menu.png</textureNoFocus>
+      <visible>!Control.HasFocus(50)+!Control.IsVisible(51)</visible>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <description>Menu Background</description>
+        <type>image</type>
+        <posX>1002</posX>
+        <posY>0</posY>
+        <width>278</width>
+        <height>720</height>
+        <texture>hiddenmenu_right.png</texture>
+        <visible>!Control.HasFocus(50)+!Control.IsVisible(51)</visible>
+        <animation effect="slide" time="200" start="300,0">visible</animation>
+        <animation effect="slide" time="0" end="300,0">hidden</animation>
+      </control>
+      <control>
+        <description>label Views menu</description>
+        <type>label</type>
+        <id>0</id>
+        <font>mediastream12tc</font>
+        <posX>1040</posX>
+        <posY>230</posY>
+        <visible>!Control.HasFocus(50)+!Control.IsVisible(51)</visible>
+        <label>499</label>
+        <animation effect="slide" time="200" start="300,0">visible</animation>
+        <animation effect="slide" time="0" end="300,0">hidden</animation>
+      </control>
+      <control>
+        <description>label OPTIONS</description>
+        <type>label</type>
+        <id>0</id>
+        <font>mediastream12tc</font>
+        <visible>!Control.HasFocus(50)+!Control.IsVisible(51)</visible>
+        <posX>1040</posX>
+        <posY>480</posY>
+        <label>496</label>
+        <animation effect="slide" time="200" start="300,0">visible</animation>
+        <animation effect="slide" time="0" end="300,0">hidden</animation>
+      </control>
+      <control>
+        <description>Button Group</description>
+        <type>group</type>
+        <posX>1040</posX>
+        <posY>250</posY>
+        <width>220</width>
+        <height>720</height>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)+!Control.IsVisible(51)</visible>
+        <animation effect="slide" time="200" start="300,0">visible</animation>
+        <animation effect="slide" time="0" end="300,0">hidden</animation>
+        <control>
+          <description>View-As</description>
+          <type>button</type>
+          <id>2</id>
+          <label>#OnlineVideos.Translation.LayoutList.Label</label>
+          <onup>17</onup>
+          <onleft>50</onleft>
+          <onright>50</onright>
+        </control>
+        <control>
+          <description>Next Page</description>
+          <type>button</type>
+          <id>3</id>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <label>#OnlineVideos.Translation.NextPage.Label</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <description>Previous Page</description>
+          <type>button</type>
+          <id>4</id>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <label>#OnlineVideos.Translation.PreviousPage.Label</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <description>Max Results</description>
+          <type>selectbutton</type>
+          <id>5</id>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <label>#OnlineVideos.Translation.MaxResults.Label</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <description>Order By</description>
+          <type>selectbutton</type>
+          <id>6</id>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <label>#OnlineVideos.Translation.SortOptions.Label</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <description>TimeFrame</description>
+          <type>selectbutton</type>
+          <id>7</id>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <label>#OnlineVideos.Translation.Timeframe.Label</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <description>Update</description>
+          <type>button</type>
+          <id>8</id>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <label>#OnlineVideos.Translation.Refresh.Label</label>
+          <visible>no</visible>
+        </control>     
+        <control>
+          <description>Select Category</description>
+          <type>selectbutton</type>
+          <id>9</id>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <label>#OnlineVideos.Translation.Category.Label</label>
+          <visible>no</visible>
+        </control>
+        <control>
+          <description>Empty button</description>
+          <type>button</type>
+          <id>0</id>
+          <label>-</label>
+          <visible>false</visible>
+        </control>
+        <control>
+          <description>Search</description>
+          <type>button</type>
+          <id>10</id>
+          <label>#OnlineVideos.Translation.Search.Label</label>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <visible>no</visible>
+        </control>
+        <control>
+          <description>Favorites</description>
+          <type>button</type>
+          <id>11</id>
+          <label>#OnlineVideos.Translation.Favourites.Label</label>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <visible>no</visible>
+        </control>       
+        <control>
+          <description>Do Age Check</description>
+          <type>button</type>
+          <id>12</id>
+          <label>#OnlineVideos.Translation.EnterPin.Label</label>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <visible>no</visible>
+        </control>
+         <control>
+          <description>Update Sites</description>
+          <type>button</type>
+          <id>13</id>
+          <ondown>2</ondown>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <label>#OnlineVideos.Translation.ManageSites.Label</label>
+          <hyperlink>4757</hyperlink>
+          <visible>no</visible>
+        </control>
+      </control>
+    </control>
+    <!-- *** IMPORTS *** -->	
+    <import>common.overlays.xml</import>
+    <import>myonlinevideos.facade.xml</import>
+    <import>myonlinevideos.details.xml</import>
+    <import>common.time.xml</import>
+  </controls>
 
 </window>
