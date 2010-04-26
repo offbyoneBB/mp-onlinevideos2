@@ -1374,10 +1374,10 @@ namespace OnlineVideos
                 foreach (String url in loUrlList)
                 {
                     i++;
-                    Player.PlayListItemWrapper item = new Player.PlayListItemWrapper(string.Format("{0} - {1} / {2}", video.Title, i.ToString(), loUrlList.Count), url) 
-                    { 
-                        Type = PlayListItem.PlayListItemType.VideoStream, 
-                        Video = video 
+                    Player.PlayListItemWrapper item = new Player.PlayListItemWrapper(string.Format("{0} - {1} / {2}", video.Title, i.ToString(), loUrlList.Count), url)
+                    {
+                        Type = PlayListItem.PlayListItemType.VideoStream,
+                        Video = video
                     };
                     videoList.Add(item);
                 }
@@ -1429,33 +1429,33 @@ namespace OnlineVideos
                 }
                 finally
                 {
-                    buffering = false;                    
+                    buffering = false;
                 }
-                
+
                 // restore the factory
                 g_Player.Factory = savedFactory;
-            }
 
-            if (playing && g_Player.Player != null && g_Player.HasVideo)
-            {
-                if (!string.IsNullOrEmpty(video.StartTime))
+                if (playing && g_Player.Player != null && g_Player.HasVideo)
                 {
-                    Log.Info("Found starttime: {0}", video.StartTime);
-                    double seconds = video.GetSecondsFromStartTime();
-                    Log.Info("SeekingAbsolute: {0}", seconds);
-                    g_Player.SeekAbsolute(seconds);
+                    if (!string.IsNullOrEmpty(video.StartTime))
+                    {
+                        Log.Info("Found starttime: {0}", video.StartTime);
+                        double seconds = video.GetSecondsFromStartTime();
+                        Log.Info("SeekingAbsolute: {0}", seconds);
+                        g_Player.SeekAbsolute(seconds);
+                    }
+
+                    GUIGraphicsContext.IsFullScreenVideo = true;
+                    GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+
+                    playingVideo = video;
+
+                    new System.Threading.Thread(delegate()
+                    {
+                        System.Threading.Thread.Sleep(2000);
+                        GUIOnlineVideos.SetPlayingGuiProperties(playingVideo);
+                    }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
                 }
-
-                GUIGraphicsContext.IsFullScreenVideo = true;                
-                GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
-
-                playingVideo = video;
-
-                new System.Threading.Thread(delegate()
-                {
-                    System.Threading.Thread.Sleep(2000);
-                    GUIOnlineVideos.SetPlayingGuiProperties(playingVideo);
-                }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
             }
         }
 
@@ -1988,6 +1988,11 @@ namespace OnlineVideos
 
         internal static void SetPlayingGuiProperties(VideoInfo video)
         {
+            SetPlayingGuiProperties(video, null);
+        }
+
+        internal static void SetPlayingGuiProperties(VideoInfo video, string alternativeTitle)
+        {
             if (video == null) return;
             Log.Info("Setting Video Properties.");
 
@@ -2005,7 +2010,10 @@ namespace OnlineVideos
                 }
             }
 
-            if (!string.IsNullOrEmpty(video.Title)) GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title + (string.IsNullOrEmpty(quality) ? "" : quality));
+            if (!string.IsNullOrEmpty(alternativeTitle)) 
+                GUIPropertyManager.SetProperty("#Play.Current.Title", alternativeTitle);
+            else if (!string.IsNullOrEmpty(video.Title)) 
+                GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title + (string.IsNullOrEmpty(quality) ? "" : quality));
             if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
             if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
             if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Length);
