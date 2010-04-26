@@ -1,5 +1,6 @@
 using System;
 using MediaPortal.Player;
+using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Player
 {
@@ -22,13 +23,17 @@ namespace OnlineVideos.Player
             g_Player.Factory = savedFactory;
 
             if (result)
+            {
+                GUIGraphicsContext.IsFullScreenVideo = true;
+                GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+
                 new System.Threading.Thread(delegate()
                     {
                         System.Threading.Thread.Sleep(2000);
                         PlayListItemWrapper item = MediaPortal.Playlists.PlayListPlayer.SingletonPlayer.GetCurrentItem() as PlayListItemWrapper;
-                        if (item != null) GUIOnlineVideos.SetPlayingGuiProperties(item.Video);
+                        if (item != null) GUIOnlineVideos.SetPlayingGuiProperties(item.Video, item.Description);
                     }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
-
+            }
             return result;
         }
 
