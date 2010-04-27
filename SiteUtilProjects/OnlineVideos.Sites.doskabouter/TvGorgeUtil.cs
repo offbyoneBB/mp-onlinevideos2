@@ -102,7 +102,11 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
-            return UrlTricks.ZShareTrick(video.VideoUrl);
+            string data = SiteUtilBase.GetWebData(video.VideoUrl);
+
+            string tmpurl = "http://www.zshare.net/" + GetSubString(data, @"src=""http://www.zshare.net/", @"""");
+
+            return UrlTricks.ZShareTrick(tmpurl);
             /*data = GetWebData(String.Format(@"http://tvgorge.com/includes/ajax/ad1s.php?ai={0}", id));
             string url = GetSubString(data, @"streamer=", "&");
             return String.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfurl={2}",
