@@ -115,14 +115,45 @@ namespace OnlineVideos.Sites
             return null;
         }
 
+        public static string DivxDenTrick(string Url)
+        {
+            // laad: http://www.divxden.com/l9qqwqjnto2g/qfn-smpsns2102.flv.html
+            // dan een post naar dat adres. zoek naar addVariable, en daar staat dan:
+            // addVariable|http|com|divxden|addParam|player|true|s4||flvplayer|write|autostart||type|jpg|l9qqwqjnto2g|00000||image|flv|smpsns2102|qfn|rlua5vaty4yeu53c7vqdgsluthlsjvgdhrqhq7i|182|file|opaque|wmode|always|allowscriptaccess|allowfullscreen|318|640|swf|www|SWFObject|new|var'.split('|')))
+            //voor http://s4.divxden.com:182/d/rlua5vaty4yeu53c7vqdgsluthlsjvgdhrqhq7i/qfn-smpsns2102.flv
+
+            string[] urlParts = Url.Split('/');
+
+            string postData = @"op=download1&usr_login=&id=" + urlParts[3] + "&fname=" + urlParts[4] + "&referer=&method_free=Free+Stream";
+            string webData = MySiteUtil.GetWebDataFromPost(Url, postData);
+            string url2 = GetSubString(webData, "addVariable", "'");
+            string[] param = url2.Split('|');
+            url2 = param[0];
+            return param[1] + "://" + param[7] + '.' + param[3] + '.' + param[2] + ':' + param[23] + "/d/" + param[22] + '/' + param[21] + '-' + param[20] + '.' + param[19];
+        }
+
+        public static string SmotriTrick(string Url)
+        {
+            string videoId = GetSubString(Url, "?id=", null);
+
+
+            string webData = SiteUtilBase.GetWebData(Url);
+            string postData = GetSubString(webData, @"so.addVariable('context',", @""");");
+            postData = GetSubString(postData, @"""", null);
+            postData = postData.Replace("_", "%5F");
+            postData = postData.Replace(".", "%2E");
+            postData = @"p%5Fid%5B1%5D=4&begun=1&video%5Furl=1&p%5Fid%5B0%5D=2&context=" +
+                postData + @"&devid=LoadupFlashPlayer&ticket=" + videoId;
+
+            webData = MySiteUtil.GetWebDataFromPost(@"http://smotri.com/video/view/url/bot/", postData);
+            //"{\"_is_loadup\":0,\"_vidURL\":\"http:\\/\\/file38.loadup.ru\\/4412949d467b8db09bd07eedc7127f57\\/4bd0b05a\\/9a\\/a1\\/c1ad0ea5c0e8268898d3449b9087.flv\",\"_imgURL\":\"http:\\/\\/frame2.loadup.ru\\/9a\\/a1\\/1191805.3.3.jpg\",\"botator_banner\":{\"4\":[{\"cnt_tot_max\":1120377,\"cnt_hour_max\":4500,\"clc_tot_max\":0,\"clc_hour_max\":0,\"cnt_uniq_day_max\":3,\"cnt_uniq_week_max\":0,\"cnt_uniq_month_max\":0,\"link_transitions\":\"http:\\/\\/smotri.com\\/botator\\/clickator\\/click\\/?sid=qm2fzb5ruwdcj1ig_12\",\"zero_pixel\":\"http:\\/\\/ad.adriver.ru\\/cgi-bin\\/rle.cgi?sid=1&bt=21&ad=226889&pid=440944&bid=817095&bn=817095&rnd=1702217828\",\"signature\":{\"set_sign\":\"top\",\"signature\":\"\",\"signature_color\":null},\"link\":\"http:\\/\\/pics.loadup.ru\\/content\\/smotri.com_400x300_reenc_2.flv\",\"link_show\":\"http:\\/\\/smotri.com\\/botator\\/logator\\/show\\/?sid=qm2fzb5ruwdcj1ig_12\",\"banner_type\":\"video_flv\",\"b_id\":12}]},\"trustKey\":\"79e566c96057ce2b6f6055a3fa34f744\",\"video_id\":\"v119180501e5\",\"_pass_protected\":0,\"begun_url_1\":\"http:\\/\\/flash.begun.ru\\/banner.jsp?pad_id=100582787&offset=0&limit=5&encoding=utf8&charset=utf8&keywords=\"}"
+            return GetSubString(webData, @"_vidURL"":""", @"""").Replace(@"\/", "/");
+        }
+
         public static string ZShareTrick(string Url)
         {
-            string data = SiteUtilBase.GetWebData(Url);
-
-            string tmpurl = "http://www.zshare.net/" + GetSubString(data, @"src=""http://www.zshare.net/", @"""");
-
             CookieContainer cc = new CookieContainer();
-            data = SiteUtilBase.GetWebData(tmpurl, cc);
+            string data = SiteUtilBase.GetWebData(Url, cc);
             CookieCollection ccol = cc.GetCookies(new Uri("http://tmp.zshare.net"));
             data = GetSubString(data, @"name=""flashvars"" value=""", "&player");
             Dictionary<string, string> dic = new Dictionary<string, string>();
@@ -161,9 +192,30 @@ namespace OnlineVideos.Sites
             int p = s.IndexOf(start);
             if (p == -1) return String.Empty;
             p += start.Length;
+            if (until == null) return s.Substring(p);
             int q = s.IndexOf(until, p);
             if (q == -1) return s.Substring(p);
             return s.Substring(p, q - p);
+        }
+
+        // use MySiteUtil until everybody has 0.21 or higher, there the needed methods of SiteUtilBase are public. 
+        // After that: Remove MySiteUtil and replace references with SiteUtilBase
+        private class MySiteUtil : SiteUtilBase
+        {
+            public override List<VideoInfo> getVideoList(Category category)
+            {
+                throw new NotImplementedException();
+            }
+            public override string getUrl(VideoInfo video)
+            {
+                return base.getUrl(video);
+            }
+
+            public static new string GetWebDataFromPost(string url, string postData)
+            {
+                return SiteUtilBase.GetWebDataFromPost(url, postData);
+            }
+
         }
 
     }
