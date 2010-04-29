@@ -78,11 +78,6 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override bool MultipleFilePlay
-        {
-            get { return true; }
-        }
-
         public override List<string> getMultipleVideoUrls(VideoInfo video)
         {
             List<string> result = new List<string>();
