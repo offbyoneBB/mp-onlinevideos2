@@ -19,7 +19,6 @@ namespace OnlineVideos.Player
                     typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekIsRelative", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true) });
                     typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekValue", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10) });
                 }
-            }
 #endif
             return bResult;
         }
