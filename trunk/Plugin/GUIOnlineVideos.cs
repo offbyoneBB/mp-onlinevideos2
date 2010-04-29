@@ -1415,10 +1415,7 @@ namespace OnlineVideos
                         double seconds = video.GetSecondsFromStartTime();
                         Log.Info("SeekingAbsolute: {0}", seconds);
                         g_Player.SeekAbsolute(seconds);
-                    }
-
-                    GUIGraphicsContext.IsFullScreenVideo = true;
-                    GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                    }                    
 
                     new System.Threading.Thread(delegate()
                     {
@@ -1427,6 +1424,8 @@ namespace OnlineVideos
                     }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
                 }
             }
+
+            if (playing) GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
         }
 
         private void PlayAll()
@@ -1458,6 +1457,10 @@ namespace OnlineVideos
                     {
                         if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
                         {
+                            Log.Info("GUIOnlineVideos.playAll:Skipping 1 invalid url.");
+                        }
+                        else
+                        {
                             Player.PlayListItemWrapper item = new Player.PlayListItemWrapper(video.Title, lsUrl) { Type = PlayListItem.PlayListItemType.VideoStream, Video = video };
                             videoList.Add(item);
                             Log.Info("GUIOnlineVideos.playAll:Added {0} to playlist", video.Title);
@@ -1471,8 +1474,7 @@ namespace OnlineVideos
                                 }
                                 if (playing)
                                 {
-                                    Log.Info("GUIOnlineVideos.playAll:Playing first video.");
-                                    GUIGraphicsContext.IsFullScreenVideo = true;
+                                    Log.Info("GUIOnlineVideos.playAll:Playing first video.");                                    
                                     GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
                                 }
                             }

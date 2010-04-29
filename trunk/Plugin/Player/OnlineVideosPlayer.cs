@@ -325,11 +325,13 @@ namespace OnlineVideos.Player
                 {
                     GUIWaitCursor.Hide(); // hide the wait cursor
                 }
-
+                
+                /*
                 // switch to directx fullscreen mode
                 Log.Info("OnlineVideosPlayer: Enabling DX9 exclusive mode");
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
                 GUIWindowManager.SendMessage(msg);
+                */
 
                 // add the VMR9 in the graph
                 // after enabling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
