@@ -28,7 +28,9 @@ namespace OnlineVideos.Player
         {
             string currentFileLower = CurrentFile.ToLower();
 
-            if (StartGraphWithFileSourceUrl(currentFileLower))
+            /*if( currentFileLower.Contains(".avi") && !currentFileLower.Contains(".flv"))
+                return BuildGraphForDivxStream();
+            else*/ if (StartGraphWithFileSourceUrl(currentFileLower))
                 return BuildGraphWithFileSourceUrl();
             else if (currentFileLower.StartsWith("mms://") || currentFileLower.Contains(".asf"))
                 return BuildGraphForMMS();
@@ -55,10 +57,69 @@ namespace OnlineVideos.Player
             return false;
         }
 
+        bool BuildGraphForDivxStream()
+        {
+            base.graphBuilder = (IGraphBuilder)new FilterGraph();
+            // add video renderer
+            Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode", new object[0]);
+            GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+            GUIWindowManager.SendMessage(message);
+            this.Vmr9 = new VMR9Util();
+            this.Vmr9.AddVMR9(base.graphBuilder);
+            this.Vmr9.Enable(false);
+
+            // add the audio renderer
+            using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+                string audiorenderer = settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+                DirectShowUtil.AddAudioRendererToGraph(base.graphBuilder, audiorenderer, false);
+            }
+
+            // add the source filter
+            IBaseFilter sourceFilter = DirectShowUtil.AddFilterToGraph(base.graphBuilder, "Haali Media Splitter");
+            if (sourceFilter == null) return false;
+            int result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
+            if (result != 0) return false;
+
+            IEnumPins enumPins;
+            IPin[] sourceFilterPins = new IPin[2];
+            int fetched;
+            result = sourceFilter.EnumPins(out enumPins);
+            result = enumPins.Next(2, sourceFilterPins, out fetched);
+            // connect the pins automatically
+            result = base.graphBuilder.Render(sourceFilterPins[0]); // audio
+            result = base.graphBuilder.Render(sourceFilterPins[1]); // video
+
+            // cleanup resources
+            DirectShowUtil.ReleaseComObject(sourceFilter);
+            DirectShowUtil.ReleaseComObject(enumPins);
+            DirectShowUtil.ReleaseComObject(sourceFilterPins[0]);
+            DirectShowUtil.ReleaseComObject(sourceFilterPins[1]);
+
+            // set fields for playback
+            base.mediaCtrl = (IMediaControl)base.graphBuilder;
+            base.mediaEvt = (IMediaEventEx)base.graphBuilder;
+            base.mediaSeek = (IMediaSeeking)base.graphBuilder;
+            base.mediaPos = (IMediaPosition)base.graphBuilder;
+            base.basicAudio = base.graphBuilder as IBasicAudio;
+            DirectShowUtil.EnableDeInterlace(base.graphBuilder);
+            base.m_iVideoWidth = this.Vmr9.VideoWidth;
+            base.m_iVideoHeight = this.Vmr9.VideoHeight;
+
+            if (!this.Vmr9.IsVMR9Connected)
+            {
+                base.mediaCtrl = null;
+                CloseInterfaces();
+                return false;
+            }
+            this.Vmr9.SetDeinterlaceMode();
+
+            return true;
+        }
+
         bool BuildGraphForRTSP()
         {
-            base.graphBuilder = (IGraphBuilder)new FilterGraph();            
-
+            base.graphBuilder = (IGraphBuilder)new FilterGraph();
             // add video renderer
             Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode", new object[0]);
             GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
@@ -209,6 +270,7 @@ namespace OnlineVideos.Player
                 {
                     result = sourceFilter.QueryProgress(out total, out current);
                     PercentageBuffered = (double)current / (double)total * 100.0f;
+
                     if (current - last >= (double)total * 0.01) // log every percent
                     {
                         Log.Debug("Buffering: {0}/{1} KB ({3})%", current / 1024, total / 1024, (int)PercentageBuffered);
@@ -250,7 +312,8 @@ namespace OnlineVideos.Player
                     bufferProgressMonitorThread.Start(sourceFilter);
                     while (bufferProgressMonitorThread.ThreadState == ThreadState.Running && 
                            PercentageBuffered < OnlineVideoSettings.Instance.playbuffer)
-                    {                        
+                    {
+                        
                         GUIWindowManager.Process(); // keep GUI responsive
                     }                    
                 }
