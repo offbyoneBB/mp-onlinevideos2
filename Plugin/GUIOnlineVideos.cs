@@ -155,7 +155,6 @@ namespace OnlineVideos
         #endregion
         Category selectedCategory;
         VideoInfo selectedVideo;
-        VideoInfo playingVideo;        
 
         bool preventDialogOnLoad = false;
         bool firstLoadDone = false;
@@ -284,29 +283,6 @@ namespace OnlineVideos
                     CurrentState = State.sites;
                     SelectedSite = null;
                     selectedSiteIndex = 0;
-                }
-            }
-
-            if (playingVideo != null)
-            {
-                if (g_Player.Player is OnlineVideos.Player.OnlineVideosPlayer || g_Player.Player is OnlineVideos.Player.WMPVideoPlayer)
-                {
-                    SetPlayingGuiProperties(playingVideo);
-                }
-                else
-                {
-                    playingVideo = null;
-                }
-            }
-            else
-            {
-                if (PlayListPlayer.SingletonPlayer.g_Player is Player.PlaylistPlayerWrapper)
-                {
-                    PlayListItem plsItem = PlayListPlayer.SingletonPlayer.GetCurrentItem();
-                    if (plsItem is Player.PlayListItemWrapper)
-                    {
-                        SetPlayingGuiProperties((plsItem as Player.PlayListItemWrapper).Video);
-                    }
                 }
             }
 
@@ -1338,30 +1314,46 @@ namespace OnlineVideos
         private void Play(VideoInfo video)
         {
             bool playing = false;
-            if (SelectedSite.MultipleFilePlay)
+            List<String> loUrlList = null;
+            if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                List<String> loUrlList = null;
-                if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                loUrlList = SelectedSite.getMultipleVideoUrls(video);
+            }, "getting playback urls for video"))
+            {
+                return;
+            }
+            // remove all invalid entries from the list of playback url
+            if (loUrlList != null)
+            {
+                int i = 0;
+                while (i < loUrlList.Count)
                 {
-                    loUrlList = SelectedSite.getMultipleVideoUrls(video);
-                }, "getting multiple urls for video"))
-                {
-                    return;
-                }
-
-                if (loUrlList == null || loUrlList.Count == 0)
-                {
-                    GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    if (dlg != null)
+                    if (String.IsNullOrEmpty(loUrlList[i]) || !(Uri.IsWellFormedUriString(loUrlList[i], UriKind.Absolute) || System.IO.Path.IsPathRooted(loUrlList[i])))
                     {
-                        dlg.Reset();
-                        dlg.SetHeading(Translation.Error/*ERROR*/);
-                        dlg.SetText(Translation.UnableToPlayVideo);
-                        dlg.DoModal(GUIWindowManager.ActiveWindow);
+                        loUrlList.RemoveAt(i);
                     }
-                    return;
+                    else
+                    {
+                        i++;
+                    }
                 }
+            }
+            // if no valid urls were returned show error msg
+            if (loUrlList == null || loUrlList.Count == 0)
+            {
+                GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                if (dlg != null)
+                {
+                    dlg.Reset();
+                    dlg.SetHeading(Translation.Error/*ERROR*/);
+                    dlg.SetText(Translation.UnableToPlayVideo);
+                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                }
+                return;
+            }
 
+            if (loUrlList.Count > 1)
+            {
                 // stop player if currently playing some other video
                 if (g_Player.Playing) g_Player.Stop();
 
@@ -1387,29 +1379,9 @@ namespace OnlineVideos
             else
             {
                 string lsUrl = "";
-                if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
-                {
-                    lsUrl = SelectedSite.getUrl(video);
-                }, "getting url for video"))
-                {
-                    return;
-                }
-
-                if (video.PlaybackOptions != null) lsUrl = DisplayPlaybackOptions(video, lsUrl);
+                if (video.PlaybackOptions != null) lsUrl = DisplayPlaybackOptions(video, loUrlList[0]);
                 if (lsUrl == "-1") return;
 
-                if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
-                {
-                    GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    if (dlg != null)
-                    {
-                        dlg.Reset();
-                        dlg.SetHeading(Translation.Error/*ERROR*/);
-                        dlg.SetText(Translation.UnableToPlayVideo);
-                        dlg.DoModal(GUIWindowManager.ActiveWindow);
-                    }
-                    return;
-                }
                 // stop player if currently playing some other video
                 if (g_Player.Playing) g_Player.Stop();
 
@@ -1448,12 +1420,10 @@ namespace OnlineVideos
                     GUIGraphicsContext.IsFullScreenVideo = true;
                     GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
 
-                    playingVideo = video;
-
                     new System.Threading.Thread(delegate()
                     {
                         System.Threading.Thread.Sleep(2000);
-                        GUIOnlineVideos.SetPlayingGuiProperties(playingVideo);
+                        GUIOnlineVideos.SetPlayingGuiProperties(video);
                     }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
                 }
             }
@@ -1469,37 +1439,43 @@ namespace OnlineVideos
             videoList.Clear();
             List<VideoInfo> loVideoList = SelectedSite.HasMultipleVideos ? currentTrailerList : currentVideoList;
             bool firstAdded = false;
-            foreach (VideoInfo loVideo in loVideoList)
+            foreach (VideoInfo video in loVideoList)
             {
-                string lsUrl = "";
+                List<String> loUrlList = null;
                 if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    lsUrl = SelectedSite.getUrl(loVideo);
-                }, "getting url for video"))
+                    loUrlList = SelectedSite.getMultipleVideoUrls(video);
+                }, "getting playback urls for video"))
                 {
                     continue;
                 }
 
                 if (firstAdded && !g_Player.Playing) break; // not playing anymore -> stop adding
 
-                if (!String.IsNullOrEmpty(lsUrl) && (Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
+                if (loUrlList != null)
                 {
-                    Player.PlayListItemWrapper item = new Player.PlayListItemWrapper(loVideo.Title, lsUrl) { Type = PlayListItem.PlayListItemType.VideoStream, Video = loVideo };
-                    videoList.Add(item);
-                    Log.Info("GUIOnlineVideos.playAll:Added {0} to playlist", loVideo.Title);
-                    if (!firstAdded)
+                    foreach (string lsUrl in loUrlList)
                     {
-                        firstAdded = true;
-                        PlayListPlayer.SingletonPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
-                        if (PlayListPlayer.SingletonPlayer.Play(0))
+                        if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
                         {
-                            playing = true;
-                        }
-                        if (playing)
-                        {
-                            Log.Info("GUIOnlineVideos.playAll:Playing first video.");
-                            GUIGraphicsContext.IsFullScreenVideo = true;
-                            GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                            Player.PlayListItemWrapper item = new Player.PlayListItemWrapper(video.Title, lsUrl) { Type = PlayListItem.PlayListItemType.VideoStream, Video = video };
+                            videoList.Add(item);
+                            Log.Info("GUIOnlineVideos.playAll:Added {0} to playlist", video.Title);
+                            if (!firstAdded)
+                            {
+                                firstAdded = true;
+                                PlayListPlayer.SingletonPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
+                                if (PlayListPlayer.SingletonPlayer.Play(0))
+                                {
+                                    playing = true;
+                                }
+                                if (playing)
+                                {
+                                    Log.Info("GUIOnlineVideos.playAll:Playing first video.");
+                                    GUIGraphicsContext.IsFullScreenVideo = true;
+                                    GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                                }
+                            }
                         }
                     }
                 }
@@ -1521,18 +1497,36 @@ namespace OnlineVideos
                 return;
             }
 
-            string url = "";
+            List<String> loUrlList = null;
             if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                url = SelectedSite.getUrl(video);
-            }, "getting url for video"))
+                loUrlList = SelectedSite.getMultipleVideoUrls(video);
+            }, "getting playback urls for video"))
             {
                 return;
             }
+            // remove all invalid entries from the list of playback url
+            if (loUrlList != null)
+            {
+                int i = 0;
+                while (i < loUrlList.Count)
+                {
+                    if (String.IsNullOrEmpty(loUrlList[i]) || !(Uri.IsWellFormedUriString(loUrlList[i], UriKind.Absolute) || System.IO.Path.IsPathRooted(loUrlList[i])))
+                    {
+                        loUrlList.RemoveAt(i);
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+            }
 
-            if (video.PlaybackOptions != null) url = DisplayPlaybackOptions(video, url);
+            string url = "";
+            if (video.PlaybackOptions != null) url = DisplayPlaybackOptions(video, loUrlList[0]); //downloads the first file from the list, todo: download all if multiple
             if (url == "-1") return;
 
+            // if no valid url was returned show error msg
             if (String.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);

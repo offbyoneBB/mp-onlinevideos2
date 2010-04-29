@@ -95,7 +95,14 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            if (video.VideoUrl.ToLower().Contains("youtube.com")) { video.GetYouTubePlaybackOptions(); return ""; }
+            if (video.VideoUrl.ToLower().Contains("youtube.com")) 
+            { 
+                video.GetYouTubePlaybackOptions();
+
+                var enumer = video.PlaybackOptions.GetEnumerator();
+                enumer.MoveNext();
+                return enumer.Current.Value;
+            }
             else return base.getUrl(video);
         }
     }

@@ -123,17 +123,6 @@ namespace OnlineVideos.Sites
         }
 
         /// <summary>
-        /// This function will be called when the user selects a video for playback. It should return the absolute url to the video file.<br/>
-        /// By default, the <see cref="VideoInfo.VideoUrl"/> fields value will be returned.
-        /// </summary>
-        /// <param name="video">The <see cref="VideoInfo"/> from the list of displayed videos that were returned by this instance previously.</param>
-        /// <returns>A valid url or filename.</returns>
-        public virtual String getUrl(VideoInfo video)
-        {
-            return video.VideoUrl;
-        }
-
-        /// <summary>
         /// This will be called to find out if there is a next page for the videos that have just been returned 
         /// by a call to <see cref="getVideoList"/>. If returns true, the menu entry for "next page" will be enabled, otherwise disabled.<br/>
         /// Example: <see cref="MtvMusicVideosUtil"/><br/>
@@ -229,25 +218,28 @@ namespace OnlineVideos.Sites
         }
 
         /// <summary>
-        /// Returns true, if the videos for this site are split in multiple parts, so a playlist has to be used for playback
-        /// (e.g. <see cref="SouthParkDeUtil"/>).<br/>
-        /// default: false
+        /// This function will be called to get the urls for playback of a video.<br/>
+        /// By default: returns a list with the result from <see cref="getUrl"/>.
         /// </summary>
-        public virtual bool MultipleFilePlay
-        {
-            get { return false; }
-        }
-
-        /// <summary>
-        /// This function will be called to get the multiple urls for playback of the video, 
-        /// if <see cref="MultipleFilePlay"/> is true (e.g. <see cref="SouthParkDeUtil"/>).<br/>
-        /// default: empty list
-        /// </summary>
-        /// <param name="video">The base <see cref="VideoInfo"/> object, for which to get a list of urls.</param>
+        /// <param name="video">The <see cref="VideoInfo"/> object, for which to get a list of urls.</param>
         /// <returns></returns>
         public virtual List<String> getMultipleVideoUrls(VideoInfo video)
         {
-            return new List<String>();
+            List<String> urls = new List<String>();
+            urls.Add(getUrl(video));
+            return  urls;
+        }
+
+        /// <summary>
+        /// This function will be called when the user selects a video for playback. It should return the absolute url to the video file.<br/>
+        /// By default, the <see cref="VideoInfo.VideoUrl"/> fields value will be returned.
+        /// </summary>
+        /// <param name="video">The <see cref="VideoInfo"/> from the list of displayed videos that were returned by this instance previously.</param>
+        /// <returns>A valid url or filename.</returns>
+        [Obsolete]
+        public virtual String getUrl(VideoInfo video)
+        {
+            return video.VideoUrl;
         }
 
         #region Search

@@ -363,7 +363,9 @@ namespace OnlineVideos.Player
                 {
                     Log.Error("OnlineVideosPlayer: Failed to render file -> vmr9");
                     mediaCtrl = null;
+#if !MP102
                     Cleanup();
+#endif
                     return false;
                 }
 

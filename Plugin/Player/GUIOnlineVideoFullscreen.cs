@@ -13,11 +13,14 @@ namespace OnlineVideos.Player
         public override bool Init()
         {
             bool bResult = Load(GUIGraphicsContext.Skin + @"\myonlinevideosFullScreen.xml");
+#if !MP102
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-            {
-                typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekIsRelative", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] {xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true)});
-                typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekValue", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10)});
+                {
+                    typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekIsRelative", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true) });
+                    typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekValue", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10) });
+                }
             }
+#endif
             return bResult;
         }
         
