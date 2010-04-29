@@ -24,8 +24,8 @@ namespace OnlineVideos.Player
 
             if (result)
             {
-                GUIGraphicsContext.IsFullScreenVideo = true;
-                GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                if (GUIWindowManager.ActiveWindow == Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) 
+                    GUIGraphicsContext.IsFullScreenVideo = true;
 
                 new System.Threading.Thread(delegate()
                     {
@@ -64,7 +64,8 @@ namespace OnlineVideos.Player
 
         public bool ShowFullScreenWindow()
         {
-            return g_Player.ShowFullScreenWindow();
+            return true;
+            // g_Player.ShowFullScreenWindow(); -> don't pass the call on, otherwise overlay playback will always go fullscreen on next item
         }
 
         public void Stop()
