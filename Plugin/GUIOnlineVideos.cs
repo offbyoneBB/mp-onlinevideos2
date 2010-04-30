@@ -1379,8 +1379,7 @@ namespace OnlineVideos
             }
             else
             {
-                string lsUrl = "";
-                if (video.PlaybackOptions != null) lsUrl = DisplayPlaybackOptions(video, loUrlList[0]);
+                string lsUrl = DisplayPlaybackOptions(video, loUrlList[0]);
                 if (lsUrl == "-1") return;
 
                 // stop player if currently playing some other video
@@ -1525,8 +1524,7 @@ namespace OnlineVideos
                 }
             }
 
-            string url = "";
-            if (video.PlaybackOptions != null) url = DisplayPlaybackOptions(video, loUrlList[0]); //downloads the first file from the list, todo: download all if multiple
+            string url = DisplayPlaybackOptions(video, loUrlList[0]); //downloads the first file from the list, todo: download all if multiple
             if (url == "-1") return;
 
             // if no valid url was returned show error msg

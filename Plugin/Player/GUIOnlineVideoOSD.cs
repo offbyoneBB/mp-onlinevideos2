@@ -12,6 +12,20 @@ namespace OnlineVideos.Player
         {
             bool bResult = Load(GUIGraphicsContext.Skin + @"\myonlinevideosOSD.xml");
             return bResult;
-        }        
+        }
+
+        public override void OnAction(Action action)
+        {
+            if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+            {
+                GUIOnlineVideoFullscreen videoWindow = (GUIOnlineVideoFullscreen)GUIWindowManager.GetWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                videoWindow.OnAction(new Action(Action.ActionType.ACTION_SHOW_OSD, 0, 0));
+                videoWindow.OnAction(action);
+            }
+            else
+            {
+                base.OnAction(action);
+            }
+        }
     }
 }
