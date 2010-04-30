@@ -1,230 +1,165 @@
 using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using MediaPortal.GUI.Library;
-using MediaPortal.Database;
 using SQLite.NET;
-using System.Xml;
-using System.IO;
-using MediaPortal.Util;
 using MediaPortal.Configuration;
+using MediaPortal.Database;
 
 namespace OnlineVideos.Database
 {
-  public class FavoritesDatabase
-  {   
-    private SQLiteClient m_db;
-
-    private static FavoritesDatabase Instance;
-
-    private FavoritesDatabase()
+    public class FavoritesDatabase
     {
-    	
-      bool dbExists;
-      try
-      {
-        // Open database
-        try
-        {
-          System.IO.Directory.CreateDirectory("database");
-        }
-        catch (Exception) { }
-        dbExists = System.IO.File.Exists(Config.GetFile(Config.Dir.Database, "OnlineVideoDatabase.db3"));
-        m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "OnlineVideoDatabase.db3"));
+        private SQLiteClient m_db;
 
-        MediaPortal.Database.DatabaseUtility.SetPragmas(m_db);
-         
-        if (!dbExists)
-        {
-          CreateTables();
-        }        
-      }
-      catch (SQLiteException ex)
-      {
-        Log.Error("database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-    }
-    public void Dispose()
-    {
-      if (m_db != null)
-      {
-        m_db.Close();
-        m_db.Dispose();
-        m_db = null;
-      }
-    }
-
-    public static FavoritesDatabase getInstance()
-    {
-      if (Instance == null)
-      {
-        Instance = new FavoritesDatabase();
-      }
-      return Instance;
-    }
-    private void CreateTables()
-    {
-      if (m_db == null)
-      {
-        return;
-      }
-      try
-      {
-        m_db.Execute("CREATE TABLE FAVORITE_VIDEOS(VDO_ID integer primary key autoincrement,VDO_NM text,VDO_URL text,VDO_DESC text,VDO_TAGS text,VDO_LENGTH text,VDO_OTHER_NFO text,VDO_IMG_URL text,VDO_SITE_ID text)\n");
-        //m_db.Execute("CREATE TABLE FAVORITE(FAVORITE_ID integer primary key,FAVORITE_NM text)\n");
+        private static FavoritesDatabase _Instance;
         
-        
-        
-        //if (loFavoriteVideos.Count > 0)
-        //{
-          //foreach (YahooVideo loVideo in loFavoriteVideos)
-          //{
-          //  addFavoriteVideo("Default", loVideo);
-          //}
-        //}
-      }
-      catch (Exception e)
-      {
-        Log.Info(e.ToString());
-      }
-    }
-    public bool addFavoriteVideo(VideoInfo foVideo, string siteName)
-    {
-
-        //check if the video is already in the favorite list
-        //lsSQL = string.Format("select SONG_ID from FAVORITE_VIDEOS where SONG_ID='{0}' AND COUNTRY='{1}' and FAVORITE_ID=''", foVideo.songId, foVideo.countryId, lsFavID);
-        //loResultSet = m_db.Execute(lsSQL);
-        //if (loResultSet.Rows.Count > 0)
-        //{
-        //    return false;
-        //}
-        Log.Info("inserting favorite on site {4} with title: {0}, desc: {1}, image: {2}, url: {3}", foVideo.Title, foVideo.Description, foVideo.ImageUrl, foVideo.VideoUrl, siteName);
-
-        foVideo.Title = DatabaseUtility.RemoveInvalidChars(foVideo.Title);
-        foVideo.Description = DatabaseUtility.RemoveInvalidChars(foVideo.Description);
-        foVideo.ImageUrl = DatabaseUtility.RemoveInvalidChars(foVideo.ImageUrl);
-        foVideo.VideoUrl = DatabaseUtility.RemoveInvalidChars(foVideo.VideoUrl);
-
-        string lsSQL =
-            string.Format(
-                "insert into FAVORITE_VIDEOS(VDO_NM,VDO_URL,VDO_DESC,VDO_TAGS,VDO_LENGTH,VDO_IMG_URL,VDO_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
-                foVideo.Title, foVideo.VideoUrl, foVideo.Description, "", foVideo.Length, foVideo.ImageUrl,
-                siteName);
-        m_db.Execute(lsSQL);
-        if (m_db.ChangedRows() > 0)
+        public static FavoritesDatabase Instance
         {
-            Log.Info("Favorite {0} inserted successfully into database", foVideo.Title);
-            return true;
-        }
-        else
-        {
-            Log.Warn("Favorite {0} failed to insert into database", foVideo.Title);
-            return false;
-        }
-    }
-
-    public bool removeFavoriteVideo(VideoInfo foVideo)
-    {    	     
-      String lsSQL = string.Format("delete from FAVORITE_VIDEOS where VDO_ID='{0}' ", foVideo.Other.ToString());
-      m_db.Execute(lsSQL);
-      if (m_db.ChangedRows() > 0)
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-     
-
-    public List<VideoInfo> getAllFavoriteVideos()
-    {
-    	return getFavoriteVideos(false,null);
-    }
-    public List<VideoInfo> getSiteFavoriteVideos(String fsSiteId){
-    	return getFavoriteVideos(true,fsSiteId);
-    }
-    private List<VideoInfo> getFavoriteVideos(bool fbLimitBySite, String fsSiteId){
-    	
-      //createFavorite("Default2");
-      string lsSQL;
-      if(!fbLimitBySite){
-      	lsSQL = string.Format("select * from favorite_videos");
-      }else{
-      	lsSQL = string.Format("select * from favorite_videos where VDO_SITE_ID='{0}'",fsSiteId);
-      }
-      SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
-      List<VideoInfo> loFavoriteList = new List<VideoInfo>();
-      if (loResultSet.Rows.Count == 0) return loFavoriteList ;
-      
-        for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
-        {
-            string sitename = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");
-            if (OnlineVideoSettings.Instance.SiteList.ContainsKey(sitename))
+            get
             {
-                SiteSettings aSite = OnlineVideoSettings.Instance.SiteList[sitename].Settings;
+                if (_Instance == null) _Instance = new FavoritesDatabase();
+                return _Instance;
+            }
+        }        
 
-                if (aSite.IsEnabled &&
-                   (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
+        private FavoritesDatabase()
+        {
+            bool dbExists;
+            try
+            {
+                // Open database
+                try
                 {
-                    VideoInfo video = new VideoInfo();
-                    video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
-                    video.ImageUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
-                    video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
-                    video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");
-                    video.VideoUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_URL");
-                    video.SiteName = sitename;
-                    video.Other = DatabaseUtility.GetAsInt(loResultSet, iRow, "VDO_ID");
-                    Log.Info("Pulled {0} out of the database", video.Title);
-                    loFavoriteList.Add(video);
+                    System.IO.Directory.CreateDirectory("database");
+                }
+                catch (Exception) { }
+                dbExists = System.IO.File.Exists(Config.GetFile(Config.Dir.Database, "OnlineVideoDatabase.db3"));
+                m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "OnlineVideoDatabase.db3"));
+
+                MediaPortal.Database.DatabaseUtility.SetPragmas(m_db);
+
+                if (!dbExists)
+                {
+                    m_db.Execute("CREATE TABLE FAVORITE_VIDEOS(VDO_ID integer primary key autoincrement,VDO_NM text,VDO_URL text,VDO_DESC text,VDO_TAGS text,VDO_LENGTH text,VDO_OTHER_NFO text,VDO_IMG_URL text,VDO_SITE_ID text)\n");
                 }
             }
-        }
-        return loFavoriteList;
-    }
+            catch (SQLiteException ex)
+            {
+                Log.Error("database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+            }
+        }                
 
-    public string [] getSiteIDs(){
-    	string lsSQL = "select distinct VDO_SITE_ID from favorite_videos";
-    	SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
-    	string [] siteIdList = new string[loResultSet.Rows.Count];
-    	 for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
+        public void Dispose()
         {
-    	 	siteIdList[iRow] = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");
-    	 		
-    	 }
-    	 return siteIdList;    	
-    }
-    
-     public List<VideoInfo> searchFavoriteVideos(String fsQuery){
-    	
-      //createFavorite("Default2");
-      string lsSQL;
-      //if(!fbLimitBySite){
-      	lsSQL = string.Format("select * from favorite_videos where VDO_NM like '%{0}%' or VDO_DESC like '%{0}%'",fsQuery);
-      //}else{
-      	//lsSQL = string.Format("select * from favorite_videos where VDO_SITE_ID='{0}'",fsSiteId);
-      //}
-      SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
-      List<VideoInfo> loFavoriteList = new List<VideoInfo>();
-      if (loResultSet.Rows.Count == 0) return loFavoriteList ;
-      
-        for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
-        {
-            VideoInfo video = new VideoInfo();
-        	video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
-        	video.ImageUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
-        	video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");        	
-        	video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");
-        	video.VideoUrl = DatabaseUtility.Get(loResultSet,iRow,"VDO_URL");
-			video.SiteName = DatabaseUtility.Get(loResultSet,iRow,"VDO_SITE_ID");
-            video.Other = DatabaseUtility.GetAsInt(loResultSet, iRow, "VDO_ID");
-        	Log.Info("Pulled {0} out of the database",video.Title);
-        	loFavoriteList.Add(video);
-        	
+            if (m_db != null)
+            {
+                m_db.Close();
+                m_db.Dispose();
+                m_db = null;
+            }
         }
-        return loFavoriteList;
-    }    
-  }
+
+        public string[] getSiteIDs()
+        {
+            string lsSQL = "select distinct VDO_SITE_ID from favorite_videos";
+            SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
+            string[] siteIdList = new string[loResultSet.Rows.Count];
+            for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
+            {
+                siteIdList[iRow] = DatabaseUtility.Get(loResultSet, iRow, "VDO_SITE_ID");
+
+            }
+            return siteIdList;
+        }
+
+        public bool addFavoriteVideo(VideoInfo foVideo, string siteName)
+        {
+            //check if the video is already in the favorite list
+            //lsSQL = string.Format("select SONG_ID from FAVORITE_VIDEOS where SONG_ID='{0}' AND COUNTRY='{1}' and FAVORITE_ID=''", foVideo.songId, foVideo.countryId, lsFavID);
+            //loResultSet = m_db.Execute(lsSQL);
+            //if (loResultSet.Rows.Count > 0)
+            //{
+            //    return false;
+            //}
+            Log.Info("inserting favorite on site {4} with title: {0}, desc: {1}, image: {2}, url: {3}", foVideo.Title, foVideo.Description, foVideo.ImageUrl, foVideo.VideoUrl, siteName);
+
+            if (!string.IsNullOrEmpty(foVideo.Title)) foVideo.Title = DatabaseUtility.RemoveInvalidChars(foVideo.Title);
+            if (!string.IsNullOrEmpty(foVideo.Description)) foVideo.Description = DatabaseUtility.RemoveInvalidChars(foVideo.Description);
+            if (!string.IsNullOrEmpty(foVideo.ImageUrl)) foVideo.ImageUrl = DatabaseUtility.RemoveInvalidChars(foVideo.ImageUrl);
+            if (!string.IsNullOrEmpty(foVideo.VideoUrl)) foVideo.VideoUrl = DatabaseUtility.RemoveInvalidChars(foVideo.VideoUrl);
+
+            string lsSQL =
+                string.Format(
+                    "insert into FAVORITE_VIDEOS(VDO_NM,VDO_URL,VDO_DESC,VDO_TAGS,VDO_LENGTH,VDO_OTHER_NFO,VDO_IMG_URL,VDO_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
+                    foVideo.Title, foVideo.VideoUrl, foVideo.Description, "", foVideo.Length, foVideo.Other != null ? foVideo.Other.ToString() : "", foVideo.ImageUrl, siteName);
+            m_db.Execute(lsSQL);
+            if (m_db.ChangedRows() > 0)
+            {
+                Log.Info("Favorite {0} inserted successfully into database", foVideo.Title);
+                return true;
+            }
+            else
+            {
+                Log.Warn("Favorite {0} failed to insert into database", foVideo.Title);
+                return false;
+            }
+        }
+
+        public bool removeFavoriteVideo(VideoInfo foVideo)
+        {
+            String lsSQL = string.Format("delete from FAVORITE_VIDEOS where VDO_ID='{0}' ", foVideo.Other.ToString());
+            m_db.Execute(lsSQL);
+            if (m_db.ChangedRows() > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public List<VideoInfo> getFavoriteVideos(string fsSiteId, string fsQuery)
+        {
+            string lsSQL = "select * from favorite_videos";
+            if (!string.IsNullOrEmpty(fsSiteId))
+            {
+                lsSQL += string.Format(" where VDO_SITE_ID='{0}'", fsSiteId);
+            }
+            if (!string.IsNullOrEmpty(fsQuery))
+            {
+                if (string.IsNullOrEmpty(fsSiteId)) 
+                    lsSQL += string.Format(" where VDO_NM like '%{0}%' or VDO_DESC like '%{0}%'", fsQuery);
+                else
+                    lsSQL += string.Format(" and (VDO_NM like '%{0}%' or VDO_DESC like '%{0}%')", fsQuery);
+            }
+
+            SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
+            List<VideoInfo> loFavoriteList = new List<VideoInfo>();
+            if (loResultSet.Rows.Count == 0) return loFavoriteList;
+
+            for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
+            {
+                VideoInfo video = new VideoInfo();
+                video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
+                video.ImageUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
+                video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
+                video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");
+                video.VideoUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_URL");
+                video.Other = DatabaseUtility.Get(loResultSet, iRow, "VDO_OTHER_NFO");
+                video.Id = DatabaseUtility.GetAsInt(loResultSet, iRow, "VDO_ID");
+                video.SiteName = DatabaseUtility.Get(loResultSet, iRow, "VDO_SITE_ID");
+                Log.Debug("Pulled {0} out of the database", video.Title);
+
+                if (OnlineVideoSettings.Instance.SiteList.ContainsKey(video.SiteName))
+                {
+                    SiteSettings aSite = OnlineVideoSettings.Instance.SiteList[video.SiteName].Settings;
+                    if (aSite.IsEnabled && (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
+                    {
+                        loFavoriteList.Add(video);
+                    }
+                }
+            }
+            return loFavoriteList;
+        }     
+    }
 }
