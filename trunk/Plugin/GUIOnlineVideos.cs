@@ -362,7 +362,8 @@ namespace OnlineVideos
                 dlgSel.Add(Translation.Download);
                 dialogOptions.Add("Download");
             }
-            dlgSel.DoModal(GetID);            
+            dlgSel.DoModal(GetID);
+            if (dlgSel.SelectedId == -1) return;
             VideoInfo loSelectedVideo = CurrentState == State.videos ? currentVideoList[liSelected] : currentTrailerList[liSelected];            
             switch (dialogOptions[dlgSel.SelectedId-1])
             {
@@ -1905,7 +1906,7 @@ namespace OnlineVideos
         {
             if (db)
             {
-                OnlineVideos.Database.FavoritesDatabase.getInstance().addFavoriteVideo(loSelectedVideo, SelectedSite.Settings.Name);
+                OnlineVideos.Database.FavoritesDatabase.Instance.addFavoriteVideo(loSelectedVideo, SelectedSite.Settings.Name);
             }
             else
             {
@@ -1932,7 +1933,7 @@ namespace OnlineVideos
             }
             else
             {
-                OnlineVideos.Database.FavoritesDatabase.getInstance().removeFavoriteVideo(loSelectedVideo);
+                OnlineVideos.Database.FavoritesDatabase.Instance.removeFavoriteVideo(loSelectedVideo);
                 DisplayVideos_Category(true); // retrieve videos again and show the updated list
             }
         }
