@@ -276,6 +276,8 @@ namespace OnlineVideos.Player
                         Log.Debug("Buffering: {0}/{1} KB ({3})%", current / 1024, total / 1024, (int)PercentageBuffered);
                         last = current;
                     }
+
+                    Thread.Sleep(50); // no need to do this more often than 20 times per second
                 }
                 while (current < total && graphBuilder != null);
             }

@@ -10,10 +10,10 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class FavoriteUtil : SiteUtilBase
     {
-        public override string getUrl(VideoInfo video)
+        public override List<string> getMultipleVideoUrls(VideoInfo video)
         {
             SiteUtilBase util = OnlineVideoSettings.Instance.SiteList[video.SiteName];
-            return util.getUrl(video);
+            return util.getMultipleVideoUrls(video);
         }
 
         public override List<VideoInfo> getVideoList(Category category)
