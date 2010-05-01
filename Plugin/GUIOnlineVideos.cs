@@ -1389,20 +1389,28 @@ namespace OnlineVideos
                 IPlayerFactory savedFactory = g_Player.Factory;
                 g_Player.Factory = new OnlineVideos.Player.PlayerFactory(SelectedSite.Settings.Player);
 
-                try
+                buffering = true;
+                GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
+                
+                new System.Threading.Thread(delegate()
                 {
-                    buffering = true;
-                    playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
-                }
-                catch (Exception playException)
-                {
-                    Log.Error(playException);
-                    playing = false;
-                }
-                finally
-                {
-                    buffering = false;
-                }
+                    try
+                    {
+                        playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
+                    }
+                    catch (Exception playException)
+                    {
+                        Log.Error(playException);
+                        playing = false;
+                    }
+                    finally
+                    {
+                        buffering = false;
+                    }
+                }) { Name = "OnlineVideosPlayThread", IsBackground = true }.Start();
+
+                while (buffering) GUIWindowManager.Process();
+                GUIWaitCursor.Hide(); // hide the wait cursor
 
                 // restore the factory
                 g_Player.Factory = savedFactory;
