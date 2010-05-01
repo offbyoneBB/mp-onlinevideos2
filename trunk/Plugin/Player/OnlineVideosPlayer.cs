@@ -273,7 +273,7 @@ namespace OnlineVideos.Player
 
                     if (current - last >= (double)total * 0.01) // log every percent
                     {
-                        Log.Debug("Buffering: {0}/{1} KB ({3})%", current / 1024, total / 1024, (int)PercentageBuffered);
+                        Log.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)PercentageBuffered);
                         last = current;
                     }
 
@@ -306,27 +306,13 @@ namespace OnlineVideos.Player
                 if (result != 0) return false;
                 
                 // buffer before starting playback
-                try
+                bufferProgressMonitorThread = new Thread(MonitorBufferProgress) { IsBackground = true, Name = "MonitorBufferProgress" };
+                bufferProgressMonitorThread.Start(sourceFilter);
+                while (bufferProgressMonitorThread.ThreadState == ThreadState.Running && 
+                       PercentageBuffered < OnlineVideoSettings.Instance.playbuffer)
                 {
-                    GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
-
-                    bufferProgressMonitorThread = new Thread(MonitorBufferProgress) { IsBackground = true };
-                    bufferProgressMonitorThread.Start(sourceFilter);
-                    while (bufferProgressMonitorThread.ThreadState == ThreadState.Running && 
-                           PercentageBuffered < OnlineVideoSettings.Instance.playbuffer)
-                    {
-                        
-                        GUIWindowManager.Process(); // keep GUI responsive
-                    }                    
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex);
-                }
-                finally
-                {
-                    GUIWaitCursor.Hide(); // hide the wait cursor
-                }
+                    Thread.Sleep(50);
+                }                    
                 
                 /*
                 // switch to directx fullscreen mode
@@ -338,8 +324,10 @@ namespace OnlineVideos.Player
                 // add the VMR9 in the graph
                 // after enabling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
                 Vmr9 = new VMR9Util();
-                Vmr9.AddVMR9(graphBuilder);
+                Vmr9.AddVMR9(graphBuilder);                
                 Vmr9.Enable(false);
+                // set VMR9 back to NOT Active -> otherwise GUI is not refreshed while graph is building
+                GUIGraphicsContext.Vmr9Active = false;
 
                 // add the audio renderer
                 //using (Settings settings = new MPSettings()) // only available in 1.1+
@@ -373,6 +361,9 @@ namespace OnlineVideos.Player
                     return false;
                 }
 
+                // now set VMR9 to Active
+                GUIGraphicsContext.Vmr9Active = true;
+                
                 // set fields for playback
                 mediaCtrl = (IMediaControl)graphBuilder;
                 mediaEvt = (IMediaEventEx)graphBuilder;
@@ -395,7 +386,7 @@ namespace OnlineVideos.Player
         }
 
         System.Reflection.FieldInfo vmr9Field = null;
-        private VMR9Util Vmr9
+        private new VMR9Util Vmr9
         {
             get
             {
