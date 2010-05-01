@@ -53,6 +53,7 @@ namespace OnlineVideos.Sites
                         {
                             cat = new RssLink();
                             cat.Name = aSite.Name + " - " + Translation.Favourites;
+                            cat.Description = aSite.Description;
                             cat.Url = "fav:" + aSite.Name;
                             cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Name + ".png";
                             cachedCategories.Add(cat.Name, cat);

@@ -235,24 +235,24 @@ namespace OnlineVideos
             LoadScriptSites();
 
             //create a favorites site
-            SiteSettings SelectedSite = new SiteSettings();
-            SelectedSite.Name = Translation.Favourites;
-            SelectedSite.UtilName = "Favorite";
-            SelectedSite.IsEnabled = true;
-            SiteList.Add(SelectedSite.Name, SiteUtilFactory.CreateFromShortName(SelectedSite.UtilName, SelectedSite));
+            SiteSettings aSite = new SiteSettings()
+            {
+                Name = Translation.Favourites,
+                UtilName = "Favorite",
+                IsEnabled = true
+            };
+            SiteList.Add(aSite.Name, SiteUtilFactory.CreateFromShortName(aSite.UtilName, aSite));
 
             if (!String.IsNullOrEmpty(DownloadDir))
             {                
                 //add a downloaded videos site
-                SelectedSite = new SiteSettings();
-                SelectedSite.Name = Translation.DownloadedVideos;
-                SelectedSite.UtilName = "DownloadedVideo";
-                SelectedSite.IsEnabled = true;
-                RssLink cat = new RssLink() { Name = "All", Url = DownloadDir };
-                SelectedSite.Categories.Add(cat);
-                Category currentDlsCat = new Category() { Name = "Downloading", Description = "Shows a list of downloads currently running." };
-                SelectedSite.Categories.Add(currentDlsCat);
-                SiteList.Add(SelectedSite.Name, SiteUtilFactory.CreateFromShortName(SelectedSite.UtilName, SelectedSite));
+                aSite = new SiteSettings()
+                {
+                    Name = Translation.DownloadedVideos,
+                    UtilName = "DownloadedVideo",
+                    IsEnabled = true
+                };
+                SiteList.Add(aSite.Name, SiteUtilFactory.CreateFromShortName(aSite.UtilName, aSite));
             }
         }
 
