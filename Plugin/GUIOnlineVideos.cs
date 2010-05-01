@@ -1566,9 +1566,15 @@ namespace OnlineVideos
             {
                 Url = url,
                 Title = video.Title,
-                LocalFile = System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, SelectedSite.GetFileNameForDownload(video, url)),
+                LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, SelectedSite.Settings.Name), SelectedSite.GetFileNameForDownload(video, url)),
                 ThumbFile = ImageDownloader.GetThumbFile(video.ImageUrl)
             };
+
+            // make sure the target dir exists
+            if (!(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile))))
+            {
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile));
+            }
 
             lock (GUIOnlineVideos.currentDownloads) currentDownloads.Add(url, downloadInfo); // make access threadsafe
 

@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
 
 namespace OnlineVideos.Sites
 {
@@ -10,12 +11,71 @@ namespace OnlineVideos.Sites
     {
         string lastSort = "date";
 
+        // keep a reference of all Categories ever created and reuse them, to get them selected when returning to the category view
+        Dictionary<string, Category> cachedCategories = new Dictionary<string, Category>();
+
+        public override int DiscoverDynamicCategories()
+        {
+            Settings.Categories.Clear();
+            Category cat = null;
+            // add a category for all files
+            if (!cachedCategories.TryGetValue(Translation.All, out cat))
+            {
+                cat = new RssLink() { Name = Translation.All, Url = OnlineVideoSettings.Instance.DownloadDir };
+                cachedCategories.Add(cat.Name, cat);
+            }
+            Settings.Categories.Add(cat);
+
+            if (GUIOnlineVideos.currentDownloads.Count > 0)
+            {
+                // add a category for all downloads in progress
+                if (!cachedCategories.TryGetValue("Downloading", out cat))
+                {
+                    cat = new Category() { Name = "Downloading", Description = "Shows a list of downloads currently running." };
+                    cachedCategories.Add(cat.Name, cat);
+                }
+                Settings.Categories.Add(cat);
+            }
+
+            foreach (string aDir in Directory.GetDirectories(OnlineVideoSettings.Instance.DownloadDir))
+            {
+                SiteUtilBase util = null;
+                if (OnlineVideoSettings.Instance.SiteList.TryGetValue(Path.GetFileName(aDir), out util))
+                {
+                    SiteSettings aSite = util.Settings;
+                    if (aSite.IsEnabled &&
+                       (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
+                    {
+                        if (!cachedCategories.TryGetValue(aSite.Name + " - " + Translation.DownloadedVideos, out cat))
+                        {
+                            cat = new RssLink();
+                            cat.Name = aSite.Name + " - " + Translation.DownloadedVideos;
+                            cat.Description = aSite.Description;
+                            ((RssLink)cat).Url = aDir;
+                            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Name + ".png";
+                            cachedCategories.Add(cat.Name, cat);
+                        }
+                        Settings.Categories.Add(cat);
+                    }
+                }
+            }
+
+            // need to always get the categories, because when adding new fav video from a new site, a removing the last one for a site, the categories must be refreshed 
+            Settings.DynamicCategoriesDiscovered = false;
+            return Settings.Categories.Count;
+        }
+
         public override List<VideoInfo> getVideoList(Category category)
         {
+            return getVideoList(category is RssLink ? (category as RssLink).Url : null, "*", category.Name == Translation.All);
+        }
+
+        List<VideoInfo> getVideoList(string path, string search, bool recursive)
+        {
             List<VideoInfo> loVideoInfoList = new List<VideoInfo>();
-            if (category is RssLink)
+            if (!(string.IsNullOrEmpty(path)))
             {
-                FileInfo[] files = new DirectoryInfo(((RssLink)category).Url).GetFiles();
+                FileInfo[] files = new DirectoryInfo(path).GetFiles(search, recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
                 foreach (FileInfo file in files)
                 {
@@ -74,6 +134,20 @@ namespace OnlineVideos.Sites
             return loVideoInfoList;
         }
 
+        #region Search
+
+        public override bool CanSearch { get { return true; } }
+
+        public override List<VideoInfo> Search(string query)
+        {
+            query = query.Replace(' ', '*');
+            if (!query.StartsWith("*")) query = "*" + query;
+            if (!query.EndsWith("*")) query += "*";
+            return getVideoList(OnlineVideoSettings.Instance.DownloadDir, query, true);
+        }
+
+        #endregion
+
         #region IFilter Member
 
         public List<VideoInfo> filterVideoList(Category category, int maxResult, string orderBy, string timeFrame)
@@ -84,7 +158,8 @@ namespace OnlineVideos.Sites
 
         public List<VideoInfo> filterSearchResultList(string query, int maxResult, string orderBy, string timeFrame)
         {
-            return null;
+            lastSort = orderBy;
+            return Search(query);
         }
 
         public List<VideoInfo> filterSearchResultList(string query, string category, int maxResult, string orderBy, string timeFrame)
