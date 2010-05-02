@@ -782,7 +782,7 @@ namespace RTMP_LIB
                 if (methodInvoked == "connect")
                 {
                     SendServerBW();
-                    if (!string.IsNullOrEmpty(Link.auth)) SendAuth();
+                    //if (!string.IsNullOrEmpty(Link.auth)) SendAuth();
                     if (!string.IsNullOrEmpty(Link.subscribepath)) SendFCSubscribe();                    
                     SendCreateStream();
                     SendPing(3, 0, 300);
@@ -871,17 +871,7 @@ namespace RTMP_LIB
                     Duration = props[0].GetNumber();
                     Logger.Log(string.Format("Set duration: {0}", Duration));
                 }
-                props.Clear();
-                obj.FindMatchingProperty("length", props, int.MaxValue);
-                if (props.Count > 0)
-                {
-                    foreach (AMFObjectProperty prop in props)
-                    {
-                        CombinedTracksLength += (int)prop.GetNumber();
-                    }
-                    Logger.Log(string.Format("Set CombinedTracksLength: {0}", CombinedTracksLength));
-                }
-                props.Clear();
+                props.Clear();                
                 obj.FindMatchingProperty("audiodatarate", props, 1);
                 if (props.Count > 0)
                 {

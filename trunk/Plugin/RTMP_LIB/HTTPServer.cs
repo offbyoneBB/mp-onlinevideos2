@@ -54,7 +54,7 @@ namespace RTMP_LIB
                 if (connected)
                 {
                     response.ContentType = "video/x-flv";
-                    response.ChunkedTransferEncoding = true;
+                    //response.ChunkedTransferEncoding = true;
 
                     Stream responseStream = null;
                     FLVStream fs = new FLVStream();
@@ -62,23 +62,27 @@ namespace RTMP_LIB
                     fs.WriteFLV(rtmp, delegate()
                     {
                         // we must set a content length for the File Source filter, otherwise it thinks we have no content
-                        // but don't set a lenght if it is our user agent, so a download will always be complete
+                        // but don't set a length if it is our user agent, so a download will always be complete
                         if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.USERAGENT)
-                            response.ContentLength = fs.EstimatedLength;
+                            response.ContentLength = fs.EstimatedLength;      
                         
                         responseStream = response.Send();
                         return responseStream;
                     });
 
                     invalidHeader = rtmp.invalidRTMPHeader;
-                    
-                    long zeroBytes = fs.EstimatedLength - fs.Length;
-                    while (zeroBytes > 0)
+
+                    if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.USERAGENT)
                     {
-                        int chunk = (int)Math.Min(4096, zeroBytes);
-                        byte[] buffer = new byte[chunk];
-                        responseStream.Write(buffer, 0, chunk);
-                        zeroBytes -= chunk;
+                        // keep appending "0" - bytes until we filled the estimated length when sending data to the File Source filter
+                        long zeroBytes = fs.EstimatedLength - fs.Length;
+                        while (zeroBytes > 0)
+                        {
+                            int chunk = (int)Math.Min(4096, zeroBytes);
+                            byte[] buffer = new byte[chunk];
+                            responseStream.Write(buffer, 0, chunk);
+                            zeroBytes -= chunk;
+                        }
                     }
                     if (responseStream != null) responseStream.Close();
                 }

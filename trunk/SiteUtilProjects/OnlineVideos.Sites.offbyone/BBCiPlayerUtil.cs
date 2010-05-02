@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Text;
 using RssToolkit.Rss;
@@ -32,41 +33,53 @@ namespace OnlineVideos.Sites
             nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
-            List<string> urls = new List<string>();
+            SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
             foreach(XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
-            {                
+            {
+                string info = "";
+                string resultUrl = "";
                 foreach (XmlElement connectionElem in mediaElem.SelectNodes("ns1:connection", nsmRequest))
                 {
+                    /*
                     if (Array.BinarySearch<string>(new string[] {"http","sis"}, connectionElem.Attributes["kind"].Value)>=0)
                     {
                         // http
-                        string resultUrl = connectionElem.Attributes["href"].Value;
-                        urls.Add(resultUrl);
+                        info = string.Format("{0}x{1} | {2}kbps| {3}", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"), connectionElem.GetAttribute("kind"));
+                        resultUrl = connectionElem.Attributes["href"].Value;
                     }
-                    else if (Array.BinarySearch<string>(new string[] { "akamai", "level3", "limelight" }, connectionElem.Attributes["kind"].Value) >= 0)
+                    else */
+                    if (Array.BinarySearch<string>(new string[] { /*"akamai",*/ "level3", "limelight" }, connectionElem.Attributes["kind"].Value) >= 0)
                     {
                         // rtmp
                         string server = connectionElem.Attributes["server"].Value;
                         string identifier = connectionElem.Attributes["identifier"].Value;
                         string auth = connectionElem.Attributes["authString"].Value;
-                        string application = "ondemand";
+                        string application = connectionElem.Attributes["application"].Value;
                         string SWFPlayer = "http://www.bbc.co.uk/emp/9player.swf?revision=7276";
                         string PlayPath = identifier;
 
                         if (connectionElem.Attributes["kind"].Value == "limelight")
                         {
-                            application = connectionElem.Attributes["application"].Value + "?" + auth;
-                            PlayPath = identifier + "?" + auth;
-                            SWFPlayer = "http://www.bbc.co.uk/emp/9player.swf?revision=10344_10753";
+                            PlayPath = identifier +"?" + auth;
                         }
-                        else if (mediaElem.Attributes["encoding"].Value == "h264")
+                        else if (connectionElem.Attributes["kind"].Value == "level3")
                         {
-                            PlayPath = identifier;                
-                            identifier = PlayPath.Substring("mp4:".Length);
-                            SWFPlayer = "http://www.bbc.co.uk/emp/9player.swf?revision=10344_10753";
-                        }
+                            PlayPath = identifier + "?" + auth;
+                        }/*
+                        else if (connectionElem.Attributes["kind"].Value == "akamai")
+                        {
+                            application = "ondemand";
+                            // authString contains more params (like slist=) -> strip them
+                            int andIndex = auth.IndexOf("&");
+                            if (andIndex > 0)
+                                auth = auth.Substring(0, andIndex);
+                            if (auth.StartsWith("auth="))
+                                auth = auth.Substring(5);
+                            continue;
+                        }*/
 
-                        string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?hostname={1}&port={2}&app={3}&tcUrl={4}&playpath={5}&swfurl={6}",
+                        info = string.Format("{0}x{1} | {2} kbps", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"));
+                        resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?hostname={1}&port={2}&app={3}&tcUrl={4}&playpath={5}&swfurl={6}&auth={7}&swfhash={8}&swfsize={9}",
                             OnlineVideoSettings.RTMP_PROXY_PORT,
                             System.Web.HttpUtility.UrlEncode(server),
                             "1935",
@@ -74,14 +87,23 @@ namespace OnlineVideos.Sites
                             System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}", server, application)),
                             System.Web.HttpUtility.UrlEncode(PlayPath),
                             System.Web.HttpUtility.UrlEncode(SWFPlayer),
-                            System.Web.HttpUtility.UrlEncode(auth));
-
-                        urls.Add(resultUrl);
-                    }
-                }                
+                            System.Web.HttpUtility.UrlEncode(auth),
+                            System.Web.HttpUtility.UrlEncode("321923f8db00ef49612a5da233c9642ae3d2fdd9aea928054ab2f154b96112c0"),
+                            "1020525");
+                    }                    
+                }
+                if (resultUrl != "") sortedPlaybackOptions.Add(info, resultUrl);
             }
-            urls.Sort();
-            return urls[0];
+
+            string lastUrl = "";
+            video.PlaybackOptions = new Dictionary<string, string>();
+            var enumer = sortedPlaybackOptions.GetEnumerator();
+            while (enumer.MoveNext())
+            {
+                if (!enumer.Current.Value.Contains("3200")) lastUrl = enumer.Current.Value;
+                video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
+            }
+            return lastUrl;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -179,4 +201,21 @@ namespace OnlineVideos.Sites
         #endregion
 
     }
+
+    class QualityComparer : IComparer<string>
+    {
+        #region IComparer<string> Member
+
+        public int Compare(string x, string y)
+        {
+            int x_kbps = 0;
+            if (!int.TryParse(x.Substring(x.IndexOf('|')+1).Replace(" kbps", ""), out x_kbps)) return 1;
+            int y_kbps = 0;
+            if (!int.TryParse(y.Substring(y.IndexOf('|') + 1).Replace(" kbps", ""), out y_kbps)) return -1;
+            return x_kbps.CompareTo(y_kbps);
+        }
+
+        #endregion
+    }
 }
+
