@@ -12,29 +12,31 @@ namespace OnlineVideos.Player
             this.playerType = playerType;
         }
         
-        public IPlayer Create(string filename)
-        {
-            return Create(filename, g_Player.MediaType.Video);
-        }  
+        string preparedUrl;
+        PlayerType preparedPlayerType = PlayerType.Auto;
 
-        public IPlayer Create(string filename, g_Player.MediaType type)
+        public PlayerType Prepare(string url)
         {
+            preparedUrl = url;
+
             switch (playerType)
             {
                 case PlayerType.Internal:
-                    return new OnlineVideosPlayer();
+                    preparedPlayerType = PlayerType.Internal;
+                    break;
                 case PlayerType.WMP:
-                    return new WMPVideoPlayer();
+                    preparedPlayerType = PlayerType.WMP;
+                    break;
                 default:
-                    Uri uri = new Uri(filename);
+                    Uri uri = new Uri(url);
 
                     if (uri.Scheme == "rtsp" || uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asf"))
                     {
-                        return new OnlineVideosPlayer();
+                        preparedPlayerType = PlayerType.Internal;
                     }
                     else if (uri.PathAndQuery.Contains(".asx"))
                     {
-                        return new WMPVideoPlayer();
+                        preparedPlayerType = PlayerType.WMP;
                     }
                     else
                     {
@@ -44,17 +46,37 @@ namespace OnlineVideos.Player
                             {
                                 if (anExt == ".wmv" && !string.IsNullOrEmpty(uri.Query))
                                 {
-                                    return new WMPVideoPlayer();
+                                    preparedPlayerType = PlayerType.WMP;
+                                    break;
                                 }
                                 else
                                 {
-                                    return new OnlineVideosPlayer();
+                                    preparedPlayerType = PlayerType.Internal;
+                                    break;
                                 }
                             }
                         }
-                        return new WMPVideoPlayer();
+                        if (preparedPlayerType == PlayerType.Auto) preparedPlayerType = PlayerType.WMP;
                     }
-            }            
+                    break;
+            }
+            return preparedPlayerType;
+        }
+        
+        public IPlayer Create(string filename)
+        {
+            return Create(filename, g_Player.MediaType.Video);
+        }  
+
+        public IPlayer Create(string filename, g_Player.MediaType type)
+        {
+            if (filename != preparedUrl) Prepare(filename);
+
+            switch (preparedPlayerType)
+            {
+                case PlayerType.Internal: return new OnlineVideosPlayer();
+                default: return new WMPVideoPlayer();
+            }
         }              
     }
 }

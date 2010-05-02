@@ -1389,28 +1389,36 @@ namespace OnlineVideos
                 IPlayerFactory savedFactory = g_Player.Factory;
                 g_Player.Factory = new OnlineVideos.Player.PlayerFactory(SelectedSite.Settings.Player);
 
-                buffering = true;
-                GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
-                
-                new System.Threading.Thread(delegate()
+                PlayerType chosenPlayer = ((OnlineVideos.Player.PlayerFactory)g_Player.Factory).Prepare(lsUrl);
+                if (chosenPlayer == PlayerType.Internal)
                 {
-                    try
-                    {
-                        playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
-                    }
-                    catch (Exception playException)
-                    {
-                        Log.Error(playException);
-                        playing = false;
-                    }
-                    finally
-                    {
-                        buffering = false;
-                    }
-                }) { Name = "OnlineVideosPlayThread", IsBackground = true }.Start();
+                    buffering = true;
+                    GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
 
-                while (buffering) GUIWindowManager.Process();
-                GUIWaitCursor.Hide(); // hide the wait cursor
+                    new System.Threading.Thread(delegate()
+                    {
+                        try
+                        {
+                            playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
+                        }
+                        catch (Exception playException)
+                        {
+                            Log.Error(playException);
+                            playing = false;
+                        }
+                        finally
+                        {
+                            buffering = false;
+                        }
+                    }) { Name = "OnlineVideosPlayThread", IsBackground = true }.Start();
+
+                    while (buffering) GUIWindowManager.Process();
+                    GUIWaitCursor.Hide(); // hide the wait cursor
+                }
+                else
+                {
+                    playing = g_Player.Play(lsUrl, g_Player.MediaType.Video); // external players cannot be created from a seperate thread
+                }
 
                 // restore the factory
                 g_Player.Factory = savedFactory;
