@@ -1847,7 +1847,7 @@ namespace OnlineVideos
             {
                 GUIControl.AddItemLabelControl(GetID, GUI_btnSearchCategories.GetID, category);
             }
-            if (moSupportedSearchCategoryList.Count > 1)
+            if (moSupportedSearchCategoryList.Count >= 1)
             {
                 ShowAndEnable(GUI_btnSearchCategories.GetID);
             }
