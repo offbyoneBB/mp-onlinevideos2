@@ -106,7 +106,7 @@ namespace OnlineVideos.Database
 
         public bool removeFavoriteVideo(VideoInfo foVideo)
         {
-            String lsSQL = string.Format("delete from FAVORITE_VIDEOS where VDO_ID='{0}' ", foVideo.Other.ToString());
+            String lsSQL = string.Format("delete from FAVORITE_VIDEOS where VDO_ID='{0}' ", foVideo.Id);
             m_db.Execute(lsSQL);
             if (m_db.ChangedRows() > 0)
             {
