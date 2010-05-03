@@ -128,10 +128,7 @@ namespace OnlineVideos.Sites
         /// Example: <see cref="MtvMusicVideosUtil"/><br/>
         /// default: always false
         /// </summary>
-        public virtual bool HasNextPage
-        {
-            get { return false; }
-        }
+        public virtual bool HasNextPage { get; protected set; }
 
         /// <summary>
         /// This function should return the videos of the next page. No state is given, 
@@ -153,10 +150,7 @@ namespace OnlineVideos.Sites
         /// Example: <see cref="MtvMusicVideosUtil"/><br/>
         /// default: always false
         /// </summary>
-        public virtual bool HasPreviousPage
-        {
-            get { return false; }
-        }
+        public virtual bool HasPreviousPage { get; protected set; }
 
         /// <summary>
         /// This function should return the videos of the previous page. No state is given, 
