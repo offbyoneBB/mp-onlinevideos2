@@ -22,7 +22,7 @@ namespace OnlineVideos.Sites
         private Regex regex_NedVidList;
         private Regex regex_NedDetails;
         private Regex regex_RtlDetails;
-        private enum Source { UitzendingGemist = 0, RtlGemist = 1, Veronica = 2, Rest = 3 };
+        private enum Source { UitzendingGemist = 0, RtlGemist = 1, Veronica = 2, SBS = 3, Rest = 4 };
         private enum Misc { RtlOpDagUrl };
 
         private RssLink baseCategory;
@@ -105,7 +105,7 @@ namespace OnlineVideos.Sites
             cat.Url = @"http://www.sbs6.nl/web/show/id=73863/langid=43";
             cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\Tvgemist\sbsgemist.png";
             cat.HasSubCategories = true;
-            specifics = new Specifics(Source.Rest);
+            specifics = new Specifics(Source.SBS);
             specifics.baseUrl = @"http://www.sbs6.nl";
             specifics.subCatStart = @"<span>Programma gemist overzicht";
             specifics.subCatEnd = @"class=""bottom""";
@@ -149,6 +149,19 @@ namespace OnlineVideos.Sites
             specifics.videoListStart = @"<tbody id=""afleveringen"">";
             specifics.regex_VideoList = Specifics.getRegex(@"<tr.*?height=[^>]*>\s*(?<airdate>[^<]*)<.*?onclick=""document[^>]*>\s*(?<descr>.*?)\(<a\shref=""(?<url>[^""]+)""");
             specifics.cc = cc;
+            return specifics;
+        }
+
+        private Specifics GetSbsExtraSpecifics()
+        {
+            Specifics specifics = new Specifics(Source.SBS);
+            specifics.baseUrl = String.Empty;
+            specifics.subCatStart = null;
+            specifics.subCatEnd = null;
+            specifics.regex_SubCat = null;
+
+            specifics.videoListStart = @"class=""mo-c"">";
+            specifics.regex_VideoList = Specifics.getRegex(@"<div\sclass=""item\s*[^\s]*\s*archief.*?<a\shref=""(?<url>[^""]*).*?<img\ssrc=""(?<thumb>[^""]*).*?<div\sclass=""airtime""><span>(?<airdate>[^<]*).*?<div\sclass=""title""><span>[^>]*>(?<title>[^<]*).*?<div\sclass=""text""><span>[^>]*>(?<desrc>[^<]*)");
             return specifics;
         }
 
@@ -218,14 +231,24 @@ namespace OnlineVideos.Sites
                             cat = new RtlRssLink();
                         else
                             cat = new RssLink();
+
+                        cat.Other = parentCategory.Other;
+
                         cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
-                        cat.Url = specifics.baseUrl + m.Groups["url"].Value;
+                        cat.Url = m.Groups["url"].Value;
+                        if (!cat.Url.StartsWith(@"http://"))
+                            cat.Url = specifics.baseUrl + cat.Url;
+                        else
+                            if (specifics.source == Source.SBS)
+                            {
+                                cat.Url = cat.Url + "archief/";
+                                cat.Other = GetSbsExtraSpecifics();
+                            }
 
                         cat.Thumb = m.Groups["thumb"].Value;
                         if (cat.Thumb != String.Empty) cat.Thumb = specifics.baseUrl + cat.Thumb;
 
                         cat.HasSubCategories = (specifics.source == Source.UitzendingGemist && !specifics.isDay);
-                        cat.Other = parentCategory.Other;
                         cat.ParentCategory = parentCategory;
 
                         if (specifics.source != Source.RtlGemist || !rtlBlackList.ContainsKey(cat.Name))
@@ -526,15 +549,22 @@ namespace OnlineVideos.Sites
                 pageNr++;
                 string webData;
                 //Log.Info("getting page {0} of category {1}", pageNr, category.Name);
-                webData = GetWebData(pageNr == 1 ? url : url + @"/page=" + pageNr.ToString(), specifics.cc);
-                if (specifics.source == Source.UitzendingGemist)
-                {
-                    ((pagedTest)specifics).hasNextPage = webData.Contains(@"alt=""meer afleveringen""");
-                    hasNextPage = false;
-                }
+                if (specifics.source == Source.SBS && String.IsNullOrEmpty(specifics.baseUrl))
+                    webData = GetWebData(pageNr == 1 ? url : url + @"page/" + pageNr.ToString() + "/", specifics.cc);
                 else
-                    hasNextPage = webData.Contains(@"class=""next""");
-
+                    webData = GetWebData(pageNr == 1 ? url : url + @"/page=" + pageNr.ToString(), specifics.cc);
+                switch (specifics.source)
+                {
+                    case Source.UitzendingGemist:
+                        {
+                            ((pagedTest)specifics).hasNextPage = webData.Contains(@"alt=""meer afleveringen""");
+                            hasNextPage = false;
+                            break;
+                        }
+                    case Source.SBS: hasNextPage = webData.Contains(@">Ouder<"); break;
+                    default:
+                        hasNextPage = webData.Contains(@"class=""next"""); break;
+                }
                 webData = GetSubString(webData, specifics.videoListStart, @"class=""pages""");
                 if (!string.IsNullOrEmpty(webData))
                 {
