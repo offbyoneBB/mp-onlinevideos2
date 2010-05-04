@@ -328,23 +328,23 @@ namespace OnlineVideos
         {
             CodecConfiguration cc = OnlineVideoSettings.Instance.CodecConfiguration;
 
-            chkFLVSplitterInstalled.Checked = cc.MPC_HC_FLVSplitter.IsInstalled;
-            tbxFLVSplitter.Text = cc.MPC_HC_FLVSplitter.IsInstalled  ? string.Format("{0} | {1}", cc.MPC_HC_FLVSplitter.CodecFile, cc.MPC_HC_FLVSplitter.Version) : "";
+            chkFLVSplitterInstalled.Checked = cc.FLV_Splitter.IsInstalled;
+            tbxFLVSplitter.Text = cc.FLV_Splitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.FLV_Splitter.Name, cc.FLV_Splitter.Version, cc.FLV_Splitter.CodecFile) : "";
 
             chkMP4SplitterInstalled.Checked = cc.MPC_HC_MP4Splitter.IsInstalled;
-            tbxMP4Splitter.Text = cc.MPC_HC_MP4Splitter.IsInstalled ? string.Format("{0} | {1}", cc.MPC_HC_MP4Splitter.CodecFile, cc.MPC_HC_MP4Splitter.Version) : "";
+            tbxMP4Splitter.Text = cc.MPC_HC_MP4Splitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.MPC_HC_MP4Splitter.Name, cc.MPC_HC_MP4Splitter.Version, cc.MPC_HC_MP4Splitter.CodecFile) : "";
 
             if (!chkMP4SplitterInstalled.Checked)
             {
                 chkMP4SplitterInstalled.Checked = cc.HaaliMediaSplitter.IsInstalled;
-                tbxMP4Splitter.Text = cc.HaaliMediaSplitter.IsInstalled ? string.Format("{0} | {1}", cc.HaaliMediaSplitter.CodecFile, cc.HaaliMediaSplitter.Version) : "";
+                tbxMP4Splitter.Text = cc.HaaliMediaSplitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.HaaliMediaSplitter.Name, cc.HaaliMediaSplitter.Version, cc.HaaliMediaSplitter.CodecFile) : "";
             }
 
             chkWMVSplitterInstalled.Checked = cc.WM_ASFReader.IsInstalled;
-            tbxWMVSplitter.Text = cc.WM_ASFReader.IsInstalled ? string.Format("{0} | {1}", cc.WM_ASFReader.CodecFile, cc.WM_ASFReader.Version) : "";
+            tbxWMVSplitter.Text = cc.WM_ASFReader.IsInstalled ? string.Format("{0} | {1} | {2}", cc.WM_ASFReader.Name, cc.WM_ASFReader.Version, cc.WM_ASFReader.CodecFile) : "";
 
             chkAVISplitterInstalled.Checked = cc.AVI_Splitter.IsInstalled;
-            tbxAVISplitter.Text = cc.AVI_Splitter.IsInstalled ? string.Format("{0} | {1}", cc.AVI_Splitter.CodecFile, cc.AVI_Splitter.Version) : "";
+            tbxAVISplitter.Text = cc.AVI_Splitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.AVI_Splitter.Name, cc.AVI_Splitter.Version, cc.AVI_Splitter.CodecFile) : "";
         }
 
         private void btnAddSite_Click(object sender, EventArgs e)
