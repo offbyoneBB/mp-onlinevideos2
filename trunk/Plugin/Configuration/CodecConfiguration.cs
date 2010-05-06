@@ -25,15 +25,29 @@ namespace OnlineVideos
             public string Version;
             public bool IsInstalled;
         }
-        
+
+        public Codec MPC_HC_FLVSplitter = new Codec() { CLSID = "{47E792CF-0BBE-4F7A-859C-194B0768650A}", Name = "MPC-HC FLV Splitter", FileTypes = new string[] { ".flv" } };
         public Codec MPC_HC_MP4Splitter = new Codec() { CLSID = "{61F47056-E400-43D3-AF1E-AB7DFFD4C4AD}", Name = "MPC-HC MP4 Splitter", FileTypes = new string[] { ".mp4", ".m4v", ".mov" } };
         public Codec HaaliMediaSplitter = new Codec() { CLSID = "{55DA30FC-F16B-49FC-BAA5-AE59FC65F82D}", Name = "Haali Media Splitter", FileTypes = new string[] { ".mp4", ".m4v", ".mov" } };
         public Codec AVI_Splitter = new Codec() { CLSID = "{1B544C20-FD0B-11CE-8C63-00AA0044B51E}", Name = "AVI Splitter", FileTypes = new string[] { ".avi" } };
         public Codec FLV_Splitter = new Codec() { FileTypes = new string[] { ".flv" } };
         public Codec WM_ASFReader = new Codec() { CLSID = "{187463A0-5BB7-11D3-ACBE-0080C75E246E}", Name = "WM ASF Reader", FileTypes = new string[] { ".wmv" } };
-        
-        public CodecConfiguration()
+
+        #region Singleton
+        private static CodecConfiguration _Instance = new CodecConfiguration();
+        public static CodecConfiguration Instance
         {
+            get
+            {
+                if (_Instance == null) _Instance = new CodecConfiguration();
+                return _Instance;
+            }
+        }
+        #endregion
+
+        private CodecConfiguration()
+        {
+#if !MP102
             // get FLV splitter from registry by MediaSubType
             Merit highestMerit = Merit.DoNotUse;
             ArrayList list = FilterHelper.GetFilters(MediaType.Stream, new Guid(MediaSubType_FLV));
@@ -43,7 +57,7 @@ namespace OnlineVideos
                 {
                     if (list.Contains(filter.Name))
                     {
-                        Merit m = GetMerit(filter);
+                        Merit m = GetMerit(filter.CLSID.ToString());
                         if (m > highestMerit)
                         {
                             FLV_Splitter.CLSID = filter.CLSID.ToString("B");
@@ -53,8 +67,10 @@ namespace OnlineVideos
                     }
                 }
             }
-
             CheckCodec(ref FLV_Splitter);
+#else
+            CheckCodec(ref MPC_HC_FLVSplitter);
+#endif
             CheckCodec(ref MPC_HC_MP4Splitter);
             CheckCodec(ref HaaliMediaSplitter);
             CheckCodec(ref WM_ASFReader);
@@ -85,15 +101,15 @@ namespace OnlineVideos
             catch (Exception) { }
         }
 
-        private static Merit GetMerit(Filter filter)
+        private static Merit GetMerit(string clsid)
         {
             try
             {
                 RegistryKey filterKey =
-                  Registry.ClassesRoot.OpenSubKey(@"CLSID\{083863F1-70DE-11d0-BD40-00A0C911CE86}\Instance\{" + filter.CLSID.ToString() + @"}");
+                  Registry.ClassesRoot.OpenSubKey(@"CLSID\{083863F1-70DE-11d0-BD40-00A0C911CE86}\Instance\{" + clsid + @"}");
                 if (filterKey == null)
                 {
-                    Log.Debug("Could not get merit value for clsid {0}, key not found!", filter.CLSID.ToString());
+                    Log.Debug("Could not get merit value for clsid {0}, key not found!", clsid);
                     return Merit.DoNotUse;
                 }
                 Byte[] filterData = (Byte[])filterKey.GetValue("FilterData", 0x0);
@@ -109,7 +125,7 @@ namespace OnlineVideos
             }
             catch (Exception e)
             {
-                Log.Debug("Could not get merit value for clsid {0}. Error: {1}", filter.CLSID.ToString(), e.Message);
+                Log.Debug("Could not get merit value for clsid {0}. Error: {1}", clsid, e.Message);
                 return Merit.DoNotUse;
             }
         }
