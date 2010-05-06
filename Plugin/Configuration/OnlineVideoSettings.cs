@@ -60,7 +60,6 @@ namespace OnlineVideos
         public BindingList<SiteSettings> SiteSettingsList { get; protected set; }
         public Dictionary<string, Sites.SiteUtilBase> SiteList { get; protected set; }
         public SortedList<string, bool> VideoExtensions { get; protected set; }
-        public CodecConfiguration CodecConfiguration { get; protected set; }
         public CultureInfo MediaPortalLocale { get; protected set; }
 
         public bool ageHasBeenConfirmed = false;
@@ -91,7 +90,6 @@ namespace OnlineVideos
             SiteSettingsList = new BindingList<SiteSettings>();
             SiteList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
             Load();
-            CodecConfiguration = new CodecConfiguration();
 
             // create some needed directories
             string iconDir = Path.Combine(Config.GetFolder(Config.Dir.Thumbs), @"OnlineVideos\Icons\");
