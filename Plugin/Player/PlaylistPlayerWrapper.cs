@@ -13,14 +13,23 @@ namespace OnlineVideos.Player
             this.playerType = playerType;
         }
 
-        public bool Play(string strFile)
+        public bool Play(string lsUrl)
         {
-            IPlayerFactory savedFactory = g_Player.Factory;
-            g_Player.Factory = new OnlineVideos.Player.PlayerFactory(playerType);            
-            bool result = g_Player.Play(strFile, g_Player.MediaType.Video);
-            g_Player.Factory = savedFactory;
+            bool playing = false;
+            // play files using the normal internal MediaPortal player
+            if (System.IO.Path.IsPathRooted(lsUrl))
+            {
+                playing = g_Player.PlayVideoStream(lsUrl);
+            }
+            else
+            {
+                IPlayerFactory savedFactory = g_Player.Factory;
+                g_Player.Factory = new OnlineVideos.Player.PlayerFactory(playerType);            
+                playing = g_Player.Play(lsUrl, g_Player.MediaType.Video); 
+                g_Player.Factory = savedFactory;
+            }
 
-            if (result)
+            if (playing)
             {
                 if (GUIWindowManager.ActiveWindow == Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) 
                     GUIGraphicsContext.IsFullScreenVideo = true;
@@ -32,7 +41,7 @@ namespace OnlineVideos.Player
                         if (item != null) GUIOnlineVideos.SetPlayingGuiProperties(item.Video, item.Description);
                     }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
             }
-            return result;
+            return playing;
         }
 
         public bool PlayAudioStream(string strURL)

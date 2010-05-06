@@ -1096,6 +1096,20 @@
               <ZipFileName>Installer{CopyFile}\{e52af790-9acc-4b5f-928e-db22eeddde8d}-iTunes Movie Trailers.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\iTunes Movie Trailers.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\NrkBrowser.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{1522ca57-20a5-4b2b-aa98-021ef34d976e}-NrkBrowser.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\NrkBrowser.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\NrkBrowser.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{48a26c97-11c6-40ed-b0e7-cbc15763e59d}-NrkBrowser.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\NrkBrowser.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1116,35 +1130,35 @@
           <Items>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
@@ -1207,6 +1221,13 @@
               <LocalFileName>..\Language\OnlineVideos\sv.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{bf7109f3-8d12-4461-9866-c9eccbfae478}-sv.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\sv.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\fr.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5cf4fb48-1773-4bd3-8c18-4536118aadba}-fr.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\fr.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1281,6 +1302,20 @@
               <ZipFileName>Installer{CopyFile}\{54adadc7-b46b-4ee0-9864-f50cf350bfdd}-Working.png</ZipFileName>
               <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\Working.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\myonlinevideosFullScreen.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{94eb8c06-fba4-4d10-abbb-d9a83d5baec5}-myonlinevideosFullScreen.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\myonlinevideosFullScreen.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\myonlinevideosOSD.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{fb58d0e5-b90d-489d-8926-d76747cf627d}-myonlinevideosOSD.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\myonlinevideosOSD.xml</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1346,6 +1381,20 @@
               <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Working.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{d3ab10f0-479e-40a7-ace6-8caf92198c07}-Working.png</ZipFileName>
               <DestinationFilename>%Skin%\Blue3Wide\Media\OnlineVideos\Working.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3wide\myonlinevideosFullScreen.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{98c56952-7828-4312-a729-031ddbf9a901}-myonlinevideosFullScreen.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3Wide\myonlinevideosFullScreen.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3wide\myonlinevideosOSD.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{edcb4aec-b880-41d2-a708-4cdb4a5e9f4f}-myonlinevideosOSD.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3Wide\myonlinevideosOSD.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1617,15 +1666,12 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>20</Minor>
+      <Minor>21</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
-    <VersionDescription>Compatible with MediaPortal 1.1 RC2
-Configurable Playback Buffering
-RTMP Playback improvements
-AutoUpdate on UAC enabled systems fixed</VersionDescription>
+    <VersionDescription />
     <DevelopmentStatus>Beta</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.20.0.MPE1</OnlineLocation>
     <ReleaseDate>2010-04-18T18:01:51</ReleaseDate>
@@ -2743,37 +2789,51 @@ AutoUpdate on UAC enabled systems fixed</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{e52af790-9acc-4b5f-928e-db22eeddde8d}-iTunes Movie Trailers.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\iTunes Movie Trailers.png</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\NrkBrowser.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{1522ca57-20a5-4b2b-aa98-021ef34d976e}-NrkBrowser.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\NrkBrowser.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\NrkBrowser.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{48a26c97-11c6-40ed-b0e7-cbc15763e59d}-NrkBrowser.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\NrkBrowser.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
@@ -2826,6 +2886,13 @@ AutoUpdate on UAC enabled systems fixed</VersionDescription>
         <LocalFileName>..\Language\OnlineVideos\sv.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{bf7109f3-8d12-4461-9866-c9eccbfae478}-sv.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\sv.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\fr.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5cf4fb48-1773-4bd3-8c18-4536118aadba}-fr.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\fr.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -2893,6 +2960,20 @@ AutoUpdate on UAC enabled systems fixed</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\myonlinevideosFullScreen.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{94eb8c06-fba4-4d10-abbb-d9a83d5baec5}-myonlinevideosFullScreen.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\myonlinevideosFullScreen.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\myonlinevideosOSD.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{fb58d0e5-b90d-489d-8926-d76747cf627d}-myonlinevideosOSD.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\myonlinevideosOSD.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Skins\Blue3wide\myonlinevideos.details.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e2949e3c-41a5-460f-a1ba-1ac27a266003}-myonlinevideos.details.xml</ZipFileName>
         <DestinationFilename>%Skin%\Blue3Wide\myonlinevideos.details.xml</DestinationFilename>
@@ -2945,6 +3026,20 @@ AutoUpdate on UAC enabled systems fixed</VersionDescription>
         <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\Working.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{d3ab10f0-479e-40a7-ace6-8caf92198c07}-Working.png</ZipFileName>
         <DestinationFilename>%Skin%\Blue3Wide\Media\OnlineVideos\Working.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3wide\myonlinevideosFullScreen.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{98c56952-7828-4312-a729-031ddbf9a901}-myonlinevideosFullScreen.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\myonlinevideosFullScreen.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3wide\myonlinevideosOSD.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{edcb4aec-b880-41d2-a708-4cdb4a5e9f4f}-myonlinevideosOSD.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\myonlinevideosOSD.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3006,7 +3101,7 @@ AutoUpdate on UAC enabled systems fixed</VersionDescription>
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d671c058-cf4d-4829-b67a-0151f8b4a90d}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{d203d03c-408e-41ea-9696-ba0ab22e11c7}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>

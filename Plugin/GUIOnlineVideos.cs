@@ -237,24 +237,6 @@ namespace OnlineVideos
             return result;
         }
 
-        /// <summary>
-        /// This function replaces g_player.ShowFullScreenWindowVideo
-        /// </summary>
-        /// <returns></returns>
-        private static bool ShowFullScreenWindowHandler()
-        {
-            if (g_Player.HasVideo && g_Player.Player is Player.OnlineVideosPlayer)
-            {
-                if (GUIWindowManager.ActiveWindow == Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) return true;
-
-                Log.Info("ShowFullScreenWindow switching to fullscreen.");
-                GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
-                GUIGraphicsContext.IsFullScreenVideo = true;
-                return true;
-            }
-            return g_Player.ShowFullScreenWindowVideoDefault();
-        }
-
         protected override void OnPageLoad()
         {
             #if MP102
@@ -717,6 +699,24 @@ namespace OnlineVideos
         #endregion
 
         #region new methods
+
+        /// <summary>
+        /// This function replaces g_player.ShowFullScreenWindowVideo
+        /// </summary>
+        /// <returns></returns>
+        private static bool ShowFullScreenWindowHandler()
+        {
+            if (g_Player.HasVideo && g_Player.Player is Player.OnlineVideosPlayer)
+            {
+                if (GUIWindowManager.ActiveWindow == Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) return true;
+
+                Log.Info("ShowFullScreenWindow switching to fullscreen.");
+                GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                GUIGraphicsContext.IsFullScreenVideo = true;
+                return true;
+            }
+            return g_Player.ShowFullScreenWindowVideoDefault();
+        }
 
         private void ShowAndEnable(int iControlId)
         {
@@ -1352,7 +1352,7 @@ namespace OnlineVideos
                 }
                 return;
             }
-
+            // more than one url needs playlist playback
             if (loUrlList.Count > 1)
             {
                 // stop player if currently playing some other video
@@ -1385,43 +1385,48 @@ namespace OnlineVideos
                 // stop player if currently playing some other video
                 if (g_Player.Playing) g_Player.Stop();
 
-                // we use our own factory, so store the one currently used
-                IPlayerFactory savedFactory = g_Player.Factory;
-                g_Player.Factory = new OnlineVideos.Player.PlayerFactory(SelectedSite.Settings.Player);
-
-                PlayerType chosenPlayer = ((OnlineVideos.Player.PlayerFactory)g_Player.Factory).Prepare(lsUrl);
-                if (chosenPlayer == PlayerType.Internal)
+                // play files using the normal internal MediaPortal player
+                if (System.IO.Path.IsPathRooted(lsUrl))
                 {
-                    buffering = true;
-                    GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
-
-                    new System.Threading.Thread(delegate()
-                    {
-                        try
-                        {
-                            playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
-                        }
-                        catch (Exception playException)
-                        {
-                            Log.Error(playException);
-                            playing = false;
-                        }
-                        finally
-                        {
-                            buffering = false;
-                        }
-                    }) { Name = "OnlineVideosPlayThread", IsBackground = true }.Start();
-
-                    while (buffering) GUIWindowManager.Process();
-                    GUIWaitCursor.Hide(); // hide the wait cursor
+                    playing = g_Player.PlayVideoStream(lsUrl);
                 }
                 else
                 {
-                    playing = g_Player.Play(lsUrl, g_Player.MediaType.Video); // external players cannot be created from a seperate thread
-                }
+                    // we use our own factory on urls, so store the one currently used
+                    IPlayerFactory savedFactory = g_Player.Factory;
+                    g_Player.Factory = new OnlineVideos.Player.PlayerFactory(SelectedSite.Settings.Player);
+                    if (((OnlineVideos.Player.PlayerFactory)g_Player.Factory).Prepare(lsUrl) != PlayerType.Internal)
+                    {
+                        // external players cannot be created from a seperate thread
+                        playing = g_Player.Play(lsUrl, g_Player.MediaType.Video); 
+                    }
+                    else
+                    {
+                        buffering = true;
+                        GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
+                        new System.Threading.Thread(delegate()
+                        {
+                            try
+                            {
+                                playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
+                            }
+                            catch (Exception playException)
+                            {
+                                Log.Error(playException);
+                                playing = false;
+                            }
+                            finally
+                            {
+                                buffering = false;
+                            }
+                        }) { Name = "OnlineVideosPlayThread", IsBackground = true }.Start();
 
-                // restore the factory
-                g_Player.Factory = savedFactory;
+                        while (buffering) GUIWindowManager.Process();
+                        GUIWaitCursor.Hide(); // hide the wait cursor
+                    }
+                    // restore the factory
+                    g_Player.Factory = savedFactory;
+                }
 
                 if (playing && g_Player.Player != null && g_Player.HasVideo)
                 {
@@ -1441,7 +1446,17 @@ namespace OnlineVideos
                 }
             }
 
-            if (playing) GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+            if (playing)
+            {
+                if (g_Player.Player is Player.OnlineVideosPlayer)
+                {
+                    GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                }
+                else
+                {
+                    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                }
+            }
         }
 
         private void PlayAll()
@@ -1450,7 +1465,7 @@ namespace OnlineVideos
             //PlayListPlayer.SingletonPlayer.Init(); // re.registers Eventhandler among other for PlaybackStoppt, so will call play twice later!
             PlayListPlayer.SingletonPlayer.Reset();
             PlayListPlayer.SingletonPlayer.g_Player = new Player.PlaylistPlayerWrapper(SelectedSite.Settings.Player);
-            PlayList videoList = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
+            PlayList videoList = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
             videoList.Clear();
             List<VideoInfo> loVideoList = SelectedSite.HasMultipleVideos ? currentTrailerList : currentVideoList;
             bool firstAdded = false;
@@ -1483,15 +1498,22 @@ namespace OnlineVideos
                             if (!firstAdded)
                             {
                                 firstAdded = true;
-                                PlayListPlayer.SingletonPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
+                                PlayListPlayer.SingletonPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
                                 if (PlayListPlayer.SingletonPlayer.Play(0))
                                 {
                                     playing = true;
                                 }
                                 if (playing)
                                 {
-                                    Log.Info("GUIOnlineVideos.playAll:Playing first video.");                                    
-                                    GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                                    Log.Info("GUIOnlineVideos.playAll:Playing first video.");
+                                    if (g_Player.Player is Player.OnlineVideosPlayer)
+                                    {
+                                        GUIWindowManager.ActivateWindow(Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                                    }
+                                    else
+                                    {
+                                        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                                    }
                                 }
                             }
                         }
