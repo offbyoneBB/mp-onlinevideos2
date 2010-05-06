@@ -149,8 +149,9 @@ namespace OnlineVideos.Sites
                     if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
                     if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
                     if (dynamicSubCategoryUrlDecoding) cat.Url = HttpUtility.HtmlDecode(cat.Url);
-                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
+                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());                    
                     cat.Thumb = m.Groups["thumb"].Value;
+                    if (!Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
                     cat.Description = m.Groups["description"].Value;
                     cat.ParentCategory = parentCategory;
                     parentCategory.SubCategories.Add(cat);
