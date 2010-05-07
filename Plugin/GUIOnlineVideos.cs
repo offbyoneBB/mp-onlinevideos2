@@ -1434,8 +1434,11 @@ namespace OnlineVideos
                     {
                         Log.Info("Found starttime: {0}", video.StartTime);
                         double seconds = video.GetSecondsFromStartTime();
-                        Log.Info("SeekingAbsolute: {0}", seconds);
-                        g_Player.SeekAbsolute(seconds);
+                        if (seconds > 0.0d)
+                        {
+                            Log.Info("SeekingAbsolute: {0}", seconds);
+                            g_Player.SeekAbsolute(seconds);
+                        }
                     }                    
 
                     new System.Threading.Thread(delegate()
