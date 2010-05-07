@@ -289,6 +289,10 @@ namespace OnlineVideos.Player
             {
                 Log.Error(ex);
             }
+            finally
+            {
+                PercentageBuffered = 100.0d;
+            }
         }
 
         bool BuildGraphWithFileSourceUrl()
@@ -306,13 +310,10 @@ namespace OnlineVideos.Player
                 if (result != 0) return false;
                 
                 // buffer before starting playback
+                PercentageBuffered = 0.0d;
                 bufferProgressMonitorThread = new Thread(MonitorBufferProgress) { IsBackground = true, Name = "MonitorBufferProgress" };
                 bufferProgressMonitorThread.Start(sourceFilter);
-                while (bufferProgressMonitorThread.ThreadState == ThreadState.Running && 
-                       PercentageBuffered < OnlineVideoSettings.Instance.playbuffer)
-                {
-                    Thread.Sleep(50);
-                }                    
+                while (PercentageBuffered < OnlineVideoSettings.Instance.playbuffer) Thread.Sleep(50);
                 
                 /*
                 // switch to directx fullscreen mode
