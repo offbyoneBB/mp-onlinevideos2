@@ -226,7 +226,11 @@ namespace OnlineVideos
             if (videoId.ToLower().Contains("youtube.com"))
             {
                 // get an Id from the Url
-                int p = videoId.LastIndexOf('/') + 1;
+                int p = videoId.LastIndexOf("watch?v="); // for http://www.youtube.com/watch?v=jAgBeAFZVgI
+                if (p >= 0)
+                    p += +8;
+                else
+                    p = videoId.LastIndexOf('/') + 1;
                 int q = videoId.IndexOf('?', p);
                 if (q < 0) q = videoId.IndexOf('&', p);
                 if (q < 0) q = videoId.Length;
