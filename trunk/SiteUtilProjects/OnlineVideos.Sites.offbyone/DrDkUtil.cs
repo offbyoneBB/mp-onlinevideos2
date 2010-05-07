@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using RssToolkit.Rss;
+using Jayrock.Json;
 
 namespace OnlineVideos.Sites
 {
@@ -33,7 +34,21 @@ namespace OnlineVideos.Sites
 (?:(?!<p>).)*<p>(?<desc>(?:(?!</p>).)+)</p>\s*
 (?:(?!<span>\s*\().)*<span>\s*\((?<length>[^\)]+)\)\s*</span>";
 
-        Regex regEx_Podcasts, regEx_Programs, regEx_Videolist, regEx_VideolistExtended;
+
+
+        string bonanza_url = "http://www.dr.dk/Bonanza/index.htm";
+        string bonanzaKategori_regEx = @"<p><a\shref=""(?<url>/Bonanza/kategori[^""]+)"">(?<title>[^<]+)</a></p>";
+        string bonanzaSerie_regEx = @"<a\shref=""(?<url>[^""]+)""[^>]*>\s*
+<img\ssrc=""(?<thumb>[^""]+)""[^>]*>\s*
+<b>(?<title>[^<]+)</b>\s*
+<span>(?<description>[^<]+)</span>\s*
+</a>(?=(?:(?!Redaktionens\sfavoritter).)*Redaktionens\sfavoritter)";
+        string bonanzaVideolist_regEx = @"<a\starget=""_parent""(?:(?!onclick="").)*onclick=""bonanzaFunctions.newPlaylist\((?<url>[^""]+)\);""[^>]*>\s*
+<img\ssrc=""(?<thumb>[^""]+)""[^>]*>\s*
+<b>(?<title>[^<]+)</b>\s*
+(?:(?!<div\sclass=""duration"">).)*<div\sclass=""duration"">(?<length>[^<]+)</div>\s*</a>";
+
+        Regex regEx_Podcasts, regEx_Programs, regEx_Videolist, regEx_VideolistExtended, regEx_bonanzaKategori, regEx_bonanzaSerie, regEx_bonanzaVideolist;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -43,12 +58,17 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(programs_regEx)) regEx_Programs = new Regex(programs_regEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             if (!string.IsNullOrEmpty(videolist_regEx)) regEx_Videolist = new Regex(videolist_regEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             if (!string.IsNullOrEmpty(videolistExtended_regEx)) regEx_VideolistExtended = new Regex(videolistExtended_regEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+            if (!string.IsNullOrEmpty(bonanzaKategori_regEx)) regEx_bonanzaKategori = new Regex(bonanzaKategori_regEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+            if (!string.IsNullOrEmpty(bonanzaSerie_regEx)) regEx_bonanzaSerie = new Regex(bonanzaSerie_regEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+            if (!string.IsNullOrEmpty(bonanzaVideolist_regEx)) regEx_bonanzaVideolist = new Regex(bonanzaVideolist_regEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+            
         }
 
         public override int DiscoverDynamicCategories()
         {
-            Settings.Categories.Add(new Category() { Name = "Podcasts (MP4)", HasSubCategories = true });
-            Settings.Categories.Add(new Category() { Name = "dr.dk TV (WMV)", HasSubCategories = true });
+            Settings.Categories.Add(new RssLink() { Name = "Podcasts (MP4)", Url = podcasts_url, Other = regEx_Podcasts, HasSubCategories = true });
+            Settings.Categories.Add(new RssLink() { Name = "dr.dk TV (WMV)", Url = programs_url, Other = regEx_Programs, HasSubCategories = true });
+            Settings.Categories.Add(new RssLink() { Name = "Bonanza", Url = bonanza_url, Other = regEx_bonanzaKategori, HasSubCategories = true });
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
@@ -56,46 +76,30 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategories = new List<Category>();
-            if (parentCategory.Name == "Podcasts (MP4)")
+            RssLink catRss = parentCategory as RssLink;
+            string data = GetWebData(catRss.Url);
+            if (!string.IsNullOrEmpty(data))
             {
-                string data = GetWebData(podcasts_url);
-                if (!string.IsNullOrEmpty(data))
+                Regex regEx = (catRss.Other as Regex);
+                if (regEx == null) regEx = regEx_bonanzaSerie;
+                Match m = regEx.Match(data);
+                while (m.Success)
                 {
-                    Match m = regEx_Podcasts.Match(data);
-                    while (m.Success)
+                    RssLink cat = new RssLink()
                     {
-                        RssLink cat = new RssLink()
-                        {
-                            Url = m.Groups["url"].Value,
-                            Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim()),
-                            Description = m.Groups["description"].Value,
-                            ParentCategory = parentCategory
-                        };
-                        parentCategory.SubCategories.Add(cat);
-                        m = m.NextMatch();
-                    }
+                        Url = m.Groups["url"].Value,
+                        Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim()),
+                        Description = m.Groups["description"].Value,
+                        Thumb = m.Groups["thumb"].Value,
+                        ParentCategory = parentCategory,
+                        HasSubCategories = parentCategory.Name == "Bonanza"
+                    };
+                    cat.Url = HttpUtility.HtmlDecode(cat.Url);
+                    if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(catRss.Url), cat.Url).AbsoluteUri;
+                    parentCategory.SubCategories.Add(cat);
+                    m = m.NextMatch();
                 }
-            }
-            else if (parentCategory.Name == "dr.dk TV (WMV)")
-            {
-                string data = GetWebData(programs_url);
-                if (!string.IsNullOrEmpty(data))
-                {
-                    Match m = regEx_Programs.Match(data);
-                    while (m.Success)
-                    {
-                        RssLink cat = new RssLink()
-                        {
-                            Url = m.Groups["url"].Value,
-                            Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim()),
-                            ParentCategory = parentCategory
-                        };
-                        cat.Url = HttpUtility.HtmlDecode(cat.Url);
-                        if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(programs_url), cat.Url).AbsoluteUri;
-                        parentCategory.SubCategories.Add(cat);
-                        m = m.NextMatch();
-                    }
-                }
+                parentCategory.SubCategoriesDiscovered = true;
             }
             return parentCategory.SubCategories.Count;
         }
@@ -118,6 +122,36 @@ namespace OnlineVideos.Sites
                             if (!string.IsNullOrEmpty(video.VideoUrl)) videoList.Add(video);
                         }
                     }
+                    if (url.ToLower().Contains("bonanza"))
+                    {
+                        Match m = regEx_bonanzaVideolist.Match(data);
+                        while (m.Success)
+                        {
+                            VideoInfo videoInfo = new VideoInfo()
+                            {                                
+                                Title = m.Groups["title"].Value,
+                                Length = m.Groups["length"].Value,
+                                ImageUrl = m.Groups["thumb"].Value
+                            };
+
+                            JsonObject info = Jayrock.Json.Conversion.JsonConvert.Import(HttpUtility.HtmlDecode(m.Groups["url"].Value)) as JsonObject;
+                            if (info != null)
+                            {
+                                videoInfo.Description = info["Description"].ToString();
+                                DateTime parsedDate;
+                                if (DateTime.TryParse(info["FirstPublished"].ToString(), out parsedDate)) videoInfo.Length += " | " + parsedDate.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
+                                foreach(JsonObject file in info["Files"] as JsonArray)
+                                {                                    
+                                    if (((string)file["Type"]).StartsWith("Video"))
+                                    {
+                                        videoInfo.VideoUrl += (videoInfo.VideoUrl.Length > 0 ? "|" : "") + ((string)file["Type"]).Substring(5) + "+" + (string)file["Location"];
+                                    }
+                                }                                
+                                videoList.Add(videoInfo);
+                            }
+                            m = m.NextMatch();
+                        }
+                    }
                     else
                     {
                         Match m = regEx_Videolist.Match(data);
@@ -125,12 +159,12 @@ namespace OnlineVideos.Sites
                         {
                             string[] myString = m.Groups["clip"].Value.Split(',');
                             VideoInfo videoInfo = new VideoInfo()
-                            { 
-                                Length = myString[4].Trim(new char[] {'\'', ' '}),
+                            {
+                                Length = myString[4].Trim(new char[] { '\'', ' ' }),
                                 Title = myString[5].Trim(new char[] { '\'', ' ' }),
-                                VideoUrl = myString[0].Trim(new char[] {'\'', ' '})
+                                VideoUrl = myString[0].Trim(new char[] { '\'', ' ' })
                             };
-                            
+
                             videoInfo.VideoUrl = HttpUtility.HtmlDecode(videoInfo.VideoUrl);
                             if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(url), videoInfo.VideoUrl).AbsoluteUri;
                             // Remove geo check
@@ -140,9 +174,9 @@ namespace OnlineVideos.Sites
 
                             DateTime parsedDate;
                             if (DateTime.TryParse(videoInfo.Length, out parsedDate)) videoInfo.Length = parsedDate.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
-                            
+
                             videoList.Add(videoInfo);
-                            
+
                             m = m.NextMatch();
                         }
                         int i = 0;
@@ -174,6 +208,25 @@ namespace OnlineVideos.Sites
                 }
             }
             return videoList;
-        }        
+        }
+
+        public override string getUrl(VideoInfo video)
+        {
+            if (video.VideoUrl.Contains("+"))
+            {
+                string aUrl = "";
+                video.PlaybackOptions = new Dictionary<string, string>();
+                string[] qualities = video.VideoUrl.Split(new char[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string quality in qualities)
+                {
+                    string[] q_l = quality.Split('+');
+                    if (aUrl == "") aUrl = q_l[1];
+                    video.PlaybackOptions.Add(q_l[0], q_l[1]);
+                }
+                return aUrl;
+            }
+            else
+                return base.getUrl(video);
+        }
     }
 }
