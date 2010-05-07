@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Web;
+using System.Xml;
 using OnlineVideos.Database;
 using MediaPortal.GUI.Library;
 
@@ -480,6 +481,21 @@ namespace OnlineVideos.Sites
                 urlList.Add(videoUrl.Groups["url"].Value);
             }
             return urlList;
+        }
+
+        protected static string ParseASX(string url, out string startTime)
+        {
+            startTime = "";
+            string lsAsxData = GetWebData(url).ToLower();
+            XmlDocument asxDoc = new XmlDocument();
+            asxDoc.LoadXml(lsAsxData);
+            XmlElement entryElement = asxDoc.SelectSingleNode("//entry") as XmlElement;
+            if (entryElement == null) return "";
+            XmlElement refElement = entryElement.SelectSingleNode("ref") as XmlElement;
+            if (entryElement == null) return "";
+            XmlElement startElement = entryElement.SelectSingleNode("starttime") as XmlElement;
+            if (startElement != null) startTime = startElement.GetAttribute("value");
+            return refElement.GetAttribute("href");
         }
 
         #endregion

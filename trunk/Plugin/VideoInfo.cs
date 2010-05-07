@@ -56,18 +56,26 @@ namespace OnlineVideos
 
         public double GetSecondsFromStartTime()
         {
-            // Example: startTime = 02:34:25.00 should result in 9265 seconds
-            double hours = new double();
-            double minutes = new double();
-            double seconds = new double();
+            try
+            {
+                // Example: startTime = 02:34:25.00 should result in 9265 seconds
+                double hours = new double();
+                double minutes = new double();
+                double seconds = new double();
 
-            double.TryParse(StartTime.Substring(0, 2), out hours);
-            double.TryParse(StartTime.Substring(3, 2), out minutes);
-            double.TryParse(StartTime.Substring(6, 2), out seconds);
+                double.TryParse(StartTime.Substring(0, 2), out hours);
+                double.TryParse(StartTime.Substring(3, 2), out minutes);
+                double.TryParse(StartTime.Substring(6, 2), out seconds);
 
-            seconds += (((hours * 60) + minutes) * 60);
+                seconds += (((hours * 60) + minutes) * 60);
 
-            return seconds;
+                return seconds;
+            }
+            catch (Exception)
+            {
+                Log.Warn("Could not parse starttime: {0}", StartTime);
+                return 0.0d;
+            }
         }
 
         public static VideoInfo FromRssItem(RssItem rssItem, bool useLink, System.Predicate<string> isPossibleVideo)

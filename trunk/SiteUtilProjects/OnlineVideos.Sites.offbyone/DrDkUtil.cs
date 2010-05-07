@@ -174,16 +174,6 @@ namespace OnlineVideos.Sites
                 }
             }
             return videoList;
-        }
-
-        public override string getUrl(VideoInfo video)
-        {
-            if (video.VideoUrl.EndsWith("&location=mydrtv"))
-            {
-                // todo : starttime from asx!
-                return ParseASX(video.VideoUrl)[0];
-            }
-            return base.getUrl(video);
-        }
+        }        
     }
 }
