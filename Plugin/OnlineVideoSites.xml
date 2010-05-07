@@ -925,7 +925,9 @@
         <Category xsi:type="RssLink" name="Videos">http://kabouterwesley.net/</Category>
       </Categories>
     </Site>
-    <Site name="dr.dk TV" util="GenericSite" agecheck="false" enabled="false" lang="da">
+    <Site name="NrkBrowser" util="NrkBrowser" agecheck="false" enabled="true" lang="no">
+    </Site>
+    <Site name="dr.dk TV" util="DrDk" agecheck="false" enabled="true" lang="da">
       <Categories>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
@@ -934,44 +936,6 @@
             <Channel name="DR Update Live" thumb="http://www.dr.dk/NR/rdonlyres/D622289C-9BD0-4B77-A6FB-EEA964F1D486/643194/drupdateolog.jpg">http://www.dr.dk/tjenester/podcast/update.asx?qid=288417</Channel>
           </Channels>
         </Category>
-        <Category xsi:type="RssLink" name="21 Søndag">http://vpodcast.dr.dk/feeds/21_soendagrss.xml</Category>
-        <Category xsi:type="RssLink" name="Aftenshowet">http://vpodcast.dr.dk/feeds/aftenshowetrss.xml</Category>
-        <Category xsi:type="RssLink" name="AnneMad">http://vpodcast.dr.dk/feeds/annemadrss.xml</Category>
-        <Category xsi:type="RssLink" name="Autograf">http://vpodcast.dr.dk/feeds/autografrss.xml</Category>
-        <Category xsi:type="RssLink" name="Bonderøven">http://vpodcast.dr.dk/feeds/bonderoevenrss.xml</Category>
-        <Category xsi:type="RssLink" name="Clement Interviewer">http://vpodcast.dr.dk/feeds/clement_interviewerrss.xml</Category>
-        <Category xsi:type="RssLink" name="Clement: Fredag Til Fredag">http://vpodcast.dr.dk/feeds/clement_fredag_til_fredagrss.xml</Category>
-        <Category xsi:type="RssLink" name="Deadline 17.00">http://vpodcast.dr.dk/feeds/deadline1700rss.xml</Category>
-        <Category xsi:type="RssLink" name="Deadline 2.sektion">http://vpodcast.dr.dk/feeds/deadline_2sektionrss.xml</Category>
-        <Category xsi:type="RssLink" name="Deadline 22.30">http://vpodcast.dr.dk/feeds/deadline2230rss.xml</Category>
-        <Category xsi:type="RssLink" name="Debatten">http://vpodcast.dr.dk/feeds/debattenrss.xml</Category>
-        <Category xsi:type="RssLink" name="DR Kirken">http://vpodcast.dr.dk/feeds/drkirkenrss.xml</Category>
-        <Category xsi:type="RssLink" name="DR2 Udland">http://vpodcast.dr.dk/feeds/DR2_udlandrss.xml</Category>
-        <Category xsi:type="RssLink" name="Gør Det Selv">http://vpodcast.dr.dk/feeds/goer_det_selvrss.xml</Category>
-        <Category xsi:type="RssLink" name="Ha Det Godt">http://vpodcast.dr.dk/feeds/ha_det_godtrss.xml</Category>
-        <Category xsi:type="RssLink" name="Hammerslag">http://vpodcast.dr.dk/feeds/hammerslagrss.xml</Category>
-        <Category xsi:type="RssLink" name="Hvor Er Vi Landet">http://vpodcast.dr.dk/feeds/hvorervilandetrss.xml</Category>
-        <Category xsi:type="RssLink" name="Jersild Live">http://vpodcast.dr.dk/feeds/jersildliverss.xml</Category>
-        <Category xsi:type="RssLink" name="Kontant">http://vpodcast.dr.dk/feeds/kontantrss.xml</Category>
-        <Category xsi:type="RssLink" name="Lille Nørd">http://vpodcast.dr.dk/feeds/lillenoerdrss.xml</Category>
-        <Category xsi:type="RssLink" name="Naturtid">http://vpodcast.dr.dk/feeds/Naturtidrss.xml</Category>
-        <Category xsi:type="RssLink" name="Nyheder På Tegnsprog">http://vpodcast.dr.dk/feeds/nyheder_paa_tegnsprogrss.xml</Category>
-        <Category xsi:type="RssLink" name="Penge">http://vpodcast.dr.dk/feeds/pengerss.xml</Category>
-        <Category xsi:type="RssLink" name="Pigerne Mod Drengene">http://vpodcast.dr.dk/feeds/pigerne_mod_drengenerss.xml</Category>
-        <Category xsi:type="RssLink" name="Quatraro Mysteriet">http://vpodcast.dr.dk/feeds/Quatraro_mysterietrss.xml</Category>
-        <Category xsi:type="RssLink" name="Rabatten">http://vpodcast.dr.dk/feeds/rabattenrss.xml</Category>
-        <Category xsi:type="RssLink" name="Smagsdommerne">http://vpodcast.dr.dk/feeds/smagsdommernerss.xml</Category>
-        <Category xsi:type="RssLink" name="So Ein Ding">http://vpodcast.dr.dk/feeds/soeindingrss.xml</Category>
-        <Category xsi:type="RssLink" name="SP Eller K">http://vpodcast.dr.dk/feeds/SP_eller_Krss.xml</Category>
-        <Category xsi:type="RssLink" name="Spam">http://vpodcast.dr.dk/feeds/spamrss.xml</Category>
-        <Category xsi:type="RssLink" name="Store Nørd">http://vpodcast.dr.dk/feeds/storenoerdrss.xml</Category>
-        <Category xsi:type="RssLink" name="Søren Ryge Præsenterer">http://vpodcast.dr.dk/feeds/soren_rygerss.xml</Category>
-        <Category xsi:type="RssLink" name="Tidens Tegn">http://vpodcast.dr.dk/feeds/tidens_tegnrss.xml</Category>
-        <Category xsi:type="RssLink" name="Tjenesten på DR2 ">http://vpodcast.dr.dk/feeds/tjenestenrss.xml</Category>
-        <Category xsi:type="RssLink" name="Troldspejlet">http://vpodcast.dr.dk/feeds/troldspejletrss.xml</Category>
-        <Category xsi:type="RssLink" name="TV Avisen 18.30">http://vpodcast.dr.dk/feeds/tvavisen1830rss.xml</Category>
-        <Category xsi:type="RssLink" name="Udeliv">http://vpodcast.dr.dk/feeds/udelivrss.xml</Category>
-        <Category xsi:type="RssLink" name="Univers">http://vpodcast.dr.dk/feeds/universrss.xml</Category>
       </Categories>
     </Site>
     <Site name="TVE" util="TVE" agecheck="false" enabled="true" lang="es">
