@@ -185,11 +185,11 @@ namespace ExternalOSDLibrary
     /// <returns></returns>
     private int GetPercentage()
     {
-      int percent;
-      Int32.TryParse(GUIPropertyManager.Parse(_progressControl.Property), out percent);
+      float percent;
+      float.TryParse(GUIPropertyManager.Parse(_progressControl.Property), out percent);
       if (percent > 100)
         percent = 100;
-      return percent;
+      return (int)percent;
     }
     #endregion
   }

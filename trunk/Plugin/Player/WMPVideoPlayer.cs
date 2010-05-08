@@ -150,6 +150,19 @@ namespace OnlineVideos.Player
                     case Action.ActionType.ACTION_BIG_STEP_BACK:
                     case Action.ActionType.ACTION_STEP_BACK:
                     case Action.ActionType.ACTION_STEP_FORWARD:
+                    case Action.ActionType.ACTION_SHOW_OSD:                    
+                        if (!_osdActive) { _osd.Activate(); _osdActive = true; }
+                        break;
+                    case Action.ActionType.ACTION_VOLUME_MUTE:
+                        _wmp10Player.settings.mute = VolumeHandler.Instance.IsMuted;
+                        if (!_osdActive) { _osd.Activate(); _osdActive = true; }
+                        break;
+                    case Action.ActionType.ACTION_VOLUME_DOWN:
+                        _wmp10Player.settings.volume = (int)((double)MediaPortal.Player.VolumeHandler.Instance.Previous / MediaPortal.Player.VolumeHandler.Instance.Maximum * 100);
+                        if (!_osdActive) { _osd.Activate(); _osdActive = true; }
+                        break;
+                    case Action.ActionType.ACTION_VOLUME_UP:
+                        _wmp10Player.settings.volume = (int)((double)VolumeHandler.Instance.Next / MediaPortal.Player.VolumeHandler.Instance.Maximum * 100);
                         if (!_osdActive) { _osd.Activate(); _osdActive = true; }
                         break;
                 }
