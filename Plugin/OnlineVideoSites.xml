@@ -926,8 +926,10 @@
       </Categories>
     </Site>
     <Site name="NrkBrowser" util="NrkBrowser" agecheck="false" enabled="true" lang="no">
+      <Description>NRK er Norges største tilbud på nett; nyheter, radio- og tv-programmer live, nett-tv og podcast.</Description>
     </Site>
     <Site name="dr.dk TV" util="DrDk" agecheck="false" enabled="true" lang="da">
+      <Description>DR is Denmark's oldest and largest electronic media enterprise. It was founded in 1925 as a public service organisation.</Description>
       <Categories>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
