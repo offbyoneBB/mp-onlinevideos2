@@ -79,7 +79,7 @@ namespace RTMP_LIB
                 // use part after app
                 link.playpath = url.AbsolutePath.TrimStart(new char[] { '/' }).Substring(link.app.Length).TrimStart(new char[] { '/' });
                 if (link.playpath.EndsWith(".flv")) link.playpath = link.playpath.Substring(0, link.playpath.Length - 4);
-                if (link.playpath.EndsWith(".mp4")) link.playpath = "mp4:" + link.playpath;
+                if (link.playpath.EndsWith(".mp4") & !link.playpath.StartsWith("mp4:")) link.playpath = "mp4:" + link.playpath;
             }
 
             return link;
