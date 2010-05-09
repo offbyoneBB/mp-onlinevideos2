@@ -611,6 +611,19 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+
+            string s = video.Other as string;
+            if (s != null)
+            {
+                if (Enum.IsDefined(typeof(Misc), s))
+                    video.Other = Enum.Parse(typeof(Misc), s, true);
+                else
+                    if (Enum.IsDefined(typeof(Source), s))
+                        video.Other = Enum.Parse(typeof(Source), s, true);
+                    else
+                        video.Other = null;
+            }
+
             if (Misc.RtlOpDagUrl.Equals(video.Other))
             {
                 string dummy = null;
@@ -656,6 +669,11 @@ namespace OnlineVideos.Sites
             }
             return video.VideoUrl;
 
+        }
+
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            return category.Name + " " + video.Title;
         }
 
         private static string GetSubString(string s, string start, string until)
