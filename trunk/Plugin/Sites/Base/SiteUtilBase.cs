@@ -301,13 +301,27 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        public virtual string GetFileNameForDownload(VideoInfo video, string url)
+        /// <summary>
+        /// This method will be called before downloading the video from the given url, 
+        /// or before adding it to the favorites. (in that case the url param is null.<br/>
+        /// By default, the favorite name is the <see cref="VideoInfo.Title"/>.
+        /// </summary>
+        /// <param name="video">The <see cref="VideoInfo"/> object that can be used to get some more info.</param>
+        /// <param name="category">The <see cref="Category"/> that this video comes from.</param>
+        /// <param name="url">The url from which the download will take place. If null, a favorite name should be returned.</param>
+        /// <returns>A cleaned pretty name that can be user as filename, or as favorite title.</returns>
+        public virtual string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
-            string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] { '/' }));
-            if (extension == string.Empty) extension = System.IO.Path.GetExtension(url);
-            if (extension == ".f4v" || extension == ".fid") extension = ".flv";
-            string safeName = ImageDownloader.GetSaveFilename(video.Title);
-            return safeName + extension;
+            if (string.IsNullOrEmpty(url)) // called for adding to favorites
+                return video.Title; 
+            else // called for downloading
+            {
+                string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] { '/' }));
+                if (extension == string.Empty) extension = System.IO.Path.GetExtension(url);
+                if (extension == ".f4v" || extension == ".fid") extension = ".flv";
+                string safeName = ImageDownloader.GetSaveFilename(video.Title);
+                return safeName + extension;
+            }
         }
 
         public virtual bool isPossibleVideo(string fsUrl)

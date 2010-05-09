@@ -71,7 +71,7 @@ namespace OnlineVideos.Database
             return siteIdList;
         }
 
-        public bool addFavoriteVideo(VideoInfo foVideo, string siteName)
+        public bool addFavoriteVideo(VideoInfo foVideo, string titleFromUtil, string siteName)
         {
             //check if the video is already in the favorite list
             //lsSQL = string.Format("select SONG_ID from FAVORITE_VIDEOS where SONG_ID='{0}' AND COUNTRY='{1}' and FAVORITE_ID=''", foVideo.songId, foVideo.countryId, lsFavID);
@@ -82,15 +82,17 @@ namespace OnlineVideos.Database
             //}
             Log.Info("inserting favorite on site {4} with title: {0}, desc: {1}, image: {2}, url: {3}", foVideo.Title, foVideo.Description, foVideo.ImageUrl, foVideo.VideoUrl, siteName);
 
-            if (!string.IsNullOrEmpty(foVideo.Title)) foVideo.Title = DatabaseUtility.RemoveInvalidChars(foVideo.Title);
-            if (!string.IsNullOrEmpty(foVideo.Description)) foVideo.Description = DatabaseUtility.RemoveInvalidChars(foVideo.Description);
-            if (!string.IsNullOrEmpty(foVideo.ImageUrl)) foVideo.ImageUrl = DatabaseUtility.RemoveInvalidChars(foVideo.ImageUrl);
-            if (!string.IsNullOrEmpty(foVideo.VideoUrl)) foVideo.VideoUrl = DatabaseUtility.RemoveInvalidChars(foVideo.VideoUrl);
+            string title = string.IsNullOrEmpty(titleFromUtil) ? "" : DatabaseUtility.RemoveInvalidChars(titleFromUtil);
+            string desc = string.IsNullOrEmpty(foVideo.Description) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Description);
+            string thumb = string.IsNullOrEmpty(foVideo.ImageUrl) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.ImageUrl);
+            string url = string.IsNullOrEmpty(foVideo.VideoUrl) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.VideoUrl);
+            string length = string.IsNullOrEmpty(foVideo.Length) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Length);
+            string other = foVideo.Other == null ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Other.ToString());
 
             string lsSQL =
                 string.Format(
                     "insert into FAVORITE_VIDEOS(VDO_NM,VDO_URL,VDO_DESC,VDO_TAGS,VDO_LENGTH,VDO_OTHER_NFO,VDO_IMG_URL,VDO_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
-                    foVideo.Title, foVideo.VideoUrl, foVideo.Description, "", foVideo.Length, foVideo.Other != null ? foVideo.Other.ToString() : "", foVideo.ImageUrl, siteName);
+                    title, url, desc, "", length, other, thumb, siteName);
             m_db.Execute(lsSQL);
             if (m_db.ChangedRows() > 0)
             {
