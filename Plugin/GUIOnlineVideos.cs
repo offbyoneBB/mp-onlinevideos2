@@ -1599,7 +1599,7 @@ namespace OnlineVideos
             {
                 Url = url,
                 Title = video.Title,
-                LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, SelectedSite.Settings.Name), SelectedSite.GetFileNameForDownload(video, url)),
+                LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, SelectedSite.Settings.Name), SelectedSite.GetFileNameForDownload(video, selectedCategory, url)),
                 ThumbFile = ImageDownloader.GetThumbFile(video.ImageUrl)
             };
 
@@ -1951,7 +1951,8 @@ namespace OnlineVideos
         {
             if (db)
             {
-                OnlineVideos.Database.FavoritesDatabase.Instance.addFavoriteVideo(loSelectedVideo, SelectedSite.Settings.Name);
+                string suggestedTitle = SelectedSite.GetFileNameForDownload(loSelectedVideo, selectedCategory, null);
+                OnlineVideos.Database.FavoritesDatabase.Instance.addFavoriteVideo(loSelectedVideo, suggestedTitle, SelectedSite.Settings.Name);
             }
             else
             {

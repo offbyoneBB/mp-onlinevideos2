@@ -64,13 +64,7 @@ namespace OnlineVideos.Sites
                         System.Web.HttpUtility.UrlEncode(url));                
             }
             return "";
-        }
-
-        public override string GetFileNameForDownload(VideoInfo video, string url)
-        {
-            string safeName = ImageDownloader.GetSaveFilename(video.Title);
-            return safeName + ".flv";
-        }
+        }       
 
         #region Next/Previous Page
 
