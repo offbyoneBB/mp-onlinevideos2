@@ -268,6 +268,7 @@ namespace OnlineVideos.WebService
                     else if (type == ReportType.RejectedBroken || type == ReportType.Fixed) site.State = SiteState.Working;                    
                     dc.Report.InsertOnSubmit(report);
                     dc.SubmitChanges();
+                    SendNewReportEmail(report);
                     infoMessage = "Report successfully submitted!";
                     return true;
                 }
@@ -453,6 +454,24 @@ namespace OnlineVideos.WebService
                 m.From = "offbyone@offbyone.de";
                 m.Subject = "Thank you for registering with MediaPortal OnlineVideos Plugin.";
                 m.Body = "Your registered password is: " + user.Password;
+                SmtpMail.Send(m);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        static bool SendNewReportEmail(Report report)
+        {
+            try
+            {
+                MailMessage m = new MailMessage();
+                m.To = report.Site.Owner.Email;
+                m.From = "offbyone@offbyone.de";
+                m.Subject = string.Format("OnlineVideos: New Report ({0}) for {1}", report.Type.ToString(), report.Site.Name);
+                m.Body = report.Message;
                 SmtpMail.Send(m);
                 return true;
             }
