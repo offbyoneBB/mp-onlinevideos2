@@ -105,6 +105,7 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string url = video.VideoUrl;
+            MessageBox.Show(url);
             string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
             return resultUrl;
         }
@@ -135,6 +136,9 @@ namespace OnlineVideos.Sites
                                     case "metadata":
                                         string filename = Regex.Match(jEntry.Value.ToString(), @"""uploadFilename"":""(?<tag>[^""]+)""").Groups["tag"].Value;
                                         filename = filename.Substring(0, filename.Length - 3);
+
+                                        //Filter DRM protected RTMP Streams
+                                        if(filename.Contains("_dummy"))break;
                                         string geo = Regex.Match(jEntry.Value.ToString(), @"""geoblocking"":""(?<tag>[^""]+)""").Groups["tag"].Value;
                                         string geoblock = "";
 
@@ -174,7 +178,7 @@ namespace OnlineVideos.Sites
                                         video.Description += "\n" + Translation.Actors + ": " + cast + "\n" + Translation.Tags + ": " + tags;
                                         break;
                                     case "name":
-                                        if (!string.IsNullOrEmpty(video.Title))
+                                        if (!string.IsNullOrEmpty(video.Title) && !string.IsNullOrEmpty(video.VideoUrl))
                                         {
                                             videos.Add(video);
                                             video = new VideoInfo();
@@ -182,7 +186,7 @@ namespace OnlineVideos.Sites
                                         video.Title = jEntry.Value.ToString();
                                         break;
                                     case "playback_duration":
-                                        if (!string.IsNullOrEmpty(video.Length))
+                                        if (!string.IsNullOrEmpty(video.Length) && !string.IsNullOrEmpty(video.VideoUrl))
                                         {
                                             videos.Add(video);
                                             video = new VideoInfo();
@@ -195,7 +199,7 @@ namespace OnlineVideos.Sites
                                     case "visibility":
                                         break;
                                     case "description":
-                                        if (!string.IsNullOrEmpty(video.Description))
+                                        if (!string.IsNullOrEmpty(video.Description) && !string.IsNullOrEmpty(video.VideoUrl))
                                         {
                                             videos.Add(video);
                                             video = new VideoInfo();
@@ -203,7 +207,7 @@ namespace OnlineVideos.Sites
                                         video.Description = jEntry.Value.ToString();
                                         break;
                                     case "thumbnail":
-                                        if (!string.IsNullOrEmpty(video.ImageUrl))
+                                        if (!string.IsNullOrEmpty(video.ImageUrl) && !string.IsNullOrEmpty(video.VideoUrl))
                                         {
                                             videos.Add(video);
                                             video = new VideoInfo();
@@ -214,7 +218,7 @@ namespace OnlineVideos.Sites
                             }
                             
                         }
-                        if (!string.IsNullOrEmpty(video.Title))
+                        if (!string.IsNullOrEmpty(video.Title) && !string.IsNullOrEmpty(video.VideoUrl))
                         {
                             videos.Add(video);
                             video = new VideoInfo();
