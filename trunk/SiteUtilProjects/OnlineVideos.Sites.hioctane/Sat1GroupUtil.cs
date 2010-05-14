@@ -105,7 +105,6 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string url = video.VideoUrl;
-            MessageBox.Show(url);
             string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
             return resultUrl;
         }
