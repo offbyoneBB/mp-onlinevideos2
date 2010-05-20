@@ -198,12 +198,12 @@ namespace OnlineVideos.Sites
                                     case "visibility":
                                         break;
                                     case "description":
-                                        if (!string.IsNullOrEmpty(video.Description) && !string.IsNullOrEmpty(video.VideoUrl))
+                                        if (!string.IsNullOrEmpty(video.Description) && !string.IsNullOrEmpty(video.VideoUrl) && video.Description.Contains(jEntry.Value.ToString()))
                                         {
                                             videos.Add(video);
                                             video = new VideoInfo();
                                         }
-                                        video.Description = jEntry.Value.ToString();
+                                        video.Description = jEntry.Value.ToString() + video.Description;
                                         break;
                                     case "thumbnail":
                                         if (!string.IsNullOrEmpty(video.ImageUrl) && !string.IsNullOrEmpty(video.VideoUrl))
