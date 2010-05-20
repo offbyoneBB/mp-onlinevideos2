@@ -36,7 +36,7 @@ namespace OnlineVideos.Sites
 
 
         //string baseUrl = "http://plus7.arte.tv/de/1697480,filter=emissions.html";
-        string baseUrl = "http://plus7.arte.tv/de/1697480.html";
+        string baseUrl = "http://videos.arte.tv/de/videos";
 
         Regex regEx_CategoryUrl;
         Regex regEx_Category;
@@ -64,19 +64,19 @@ namespace OnlineVideos.Sites
 
             if (!string.IsNullOrEmpty(data))
             {
-                Match m = regEx_SubcategoryItem.Match(data);
+                string languageField = Regex.Match(data, @"<div\sclass=""languageChoice"">\s*<ul>\s*(?<inner>[^.]+)</ul>\s*</div>").Groups["inner"].Value;
+
+                Match m = Regex.Match(languageField, @"<li><a\shref=""(?<url>[^""]+)""(|[^>]+)>(?<title>[^<]+)</a></li>");
                 while (m.Success)
                 {
-                    if (m.Groups["url"].Value.Contains("filter"))
-                    {
-                        RssLink cat = new RssLink();
-                        cat.HasSubCategories = true;
-                        cat.Name = m.Groups["title"].Value;
-                        cat.Url = m.Groups["url"].Value;
-                        cat.Url = "http://plus7.arte.tv" + cat.Url;
+                    RssLink cat = new RssLink();
+                    cat.HasSubCategories = true;
+                    cat.Name = m.Groups["title"].Value;
+                    cat.Url = m.Groups["url"].Value;
+                    cat.Url = "http://videos.arte.tv" + cat.Url;
 
-                        Settings.Categories.Add(cat);
-                    }
+                    Settings.Categories.Add(cat);
+
                     m = m.NextMatch();
                 }
                 Settings.DynamicCategoriesDiscovered = true;
@@ -89,46 +89,31 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             string data = GetWebData((parentCategory as RssLink).Url);
-            string categoryUrl = String.Empty;
-
+            data = data.Substring(data.IndexOf(@"<div class=""program"">"));
 
             parentCategory.SubCategories = new List<Category>();
+
             if (!string.IsNullOrEmpty(data))
             {
-                Match m = regEx_CategoryUrl.Match(data);
+
+                Match m = Regex.Match(data, @"<li>\s*<input\stype=""checkbox""\svalue=""[^""]+""/>\s*<label>\s*<a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a></label>");
                 while (m.Success)
                 {
-                    categoryUrl = m.Groups["url"].Value;
-                    categoryUrl = "http://plus7.arte.tv" + categoryUrl;
+                    RssLink cat = new RssLink();
+                    cat.SubCategoriesDiscovered = true;
+                    cat.HasSubCategories = false;
+
+                    cat.Url = m.Groups["url"].Value;
+                    cat.Url = "http://videos.arte.tv" + cat.Url;
+
+                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+
+                    parentCategory.SubCategories.Add(cat);
+                    cat.ParentCategory = parentCategory;
                     m = m.NextMatch();
                 }
-            }
-            if (!string.IsNullOrEmpty(categoryUrl))
-            {
-                data = String.Empty;
-                data = GetWebData(categoryUrl);
-
-                if (!string.IsNullOrEmpty(data))
-                {
-                    Match m = regEx_Category.Match(data);
-                    while (m.Success)
-                    {
-                        RssLink cat = new RssLink();
-                        cat.SubCategoriesDiscovered = true;
-                        cat.HasSubCategories = false;
-
-                        cat.Url = m.Groups["url"].Value;
-                        cat.Url = "http://plus7.arte.tv" + cat.Url;
-
-                        cat.Name = m.Groups["title"].Value;
-
-                        parentCategory.SubCategories.Add(cat);
-                        cat.ParentCategory = parentCategory;
-                        m = m.NextMatch();
-                    }
-                    parentCategory.SubCategoriesDiscovered = true;
-                    return Settings.Categories.Count;
-                }
+                parentCategory.SubCategoriesDiscovered = true;
+                return Settings.Categories.Count;
             }
             return 0;
         }
@@ -136,61 +121,79 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
-            if (!string.IsNullOrEmpty(data))
+
+            data = HttpUtility.UrlDecode(data);
+
+            if (video.PlaybackOptions == null)
             {
-                Match m = regEx_Playlist.Match(data);
-                while (m.Success)
+                video.PlaybackOptions = new Dictionary<string, string>();
+
+                if (!string.IsNullOrEmpty(data))
                 {
-                    if (preferredMediaType == MediaType.wmv && m.Groups["format"].Value.Contains("WMV"))
+                    string xmlUrl = Regex.Match(data, @"videorefFileUrl=(?<url>[^""]+)""/>").Groups["url"].Value;
+
+                    if (!string.IsNullOrEmpty(xmlUrl))
                     {
-                        if (preferredMediaQuality == MediaQuality.high && m.Groups["quality"].Value.Contains("HQ"))
+                        List<string> langValues = new List<string>();
+                        List<string> urlValues = new List<string>();
+
+                        data = GetWebData(xmlUrl);
+
+                        Match m = Regex.Match(data, @"<video\slang=""(?<lang>[^""]+)""\sref=""(?<url>[^""]+)""/>");
+                        while (m.Success)
                         {
-                            string playlistUrl = m.Groups["url"].Value;
-                            string playlist = GetWebData(playlistUrl);
-                            if (!string.IsNullOrEmpty(playlist))
+                            langValues.Add(m.Groups["lang"].Value);
+                            urlValues.Add(m.Groups["url"].Value);
+                            m = m.NextMatch();
+                        }
+                        for (int i = 0; i < langValues.Count; i++)
+                        {
+                            if (!string.IsNullOrEmpty(urlValues[i]))
                             {
-                                Match n = regEx_PlaylistItem.Match(playlist);
-                                if (n.Success)
+                                string xmlFile = GetWebData(urlValues[i]);
+                                if (!string.IsNullOrEmpty(xmlFile))
                                 {
-                                    string videoUrl = n.Groups["url"].Value;
-                                    return videoUrl;
+                                    Match n = Regex.Match(xmlFile, @"<url\squality=""(?<quality>[^""]+)"">(?<url>[^<]+)</url>");
+                                    while (n.Success)
+                                    {
+                                        string title = langValues[i] + " - " + n.Groups["quality"].Value;
+
+                                        string url = n.Groups["url"].Value;
+                                        string host = url.Substring(7, url.IndexOf("/", 7)-7);
+                                        string app = url.Substring(host.Length + url.IndexOf(host) + 1, (url.IndexOf("/", url.IndexOf("/", (host.Length + url.IndexOf(host) + 1)) + 1)) - (host.Length + url.IndexOf(host) + 1));
+                                        string tcUrl = "rtmp://" + host + ":1935" + "/" + app;
+                                        string playPath = url.Substring(url.IndexOf(app) + app.Length + 1);
+
+                                        string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&hostname={2}&tcUrl={3}&app={4}&swfurl={5}&swfsize={6}&swfhash={7}&pageurl={8}&playpath={9}",
+                                        OnlineVideoSettings.RTMP_PROXY_PORT,
+                                        url, //rtmpUrl
+                                        host, //host
+                                        tcUrl, //tcUrl
+                                        app, //app
+                                        "http://artestras.vo.llnwd.net/o35/geo/arte7/player/ALL/artep7_hd_16_9_v2.swf", //swfurl
+                                        "105878",
+                                        "061e498c18ca7ce1244caaa0311f35cddc6cf69b4ff810ab88caf7b546a6795e",
+                                        video.VideoUrl, //pageUrl
+                                        playPath //playpath
+                                        );
+                                        if(video.PlaybackOptions.ContainsKey(title)) title += " - 2";
+                                        video.PlaybackOptions.Add(title, resultUrl);
+                                        n = n.NextMatch();
+                                    }
                                 }
                             }
-                            return null;
                         }
-                        else if (preferredMediaQuality == MediaQuality.medium && m.Groups["quality"].Value.Contains("MQ"))
-                        {
-                            string playlistUrl = m.Groups["url"].Value;
-                            string playlist = GetWebData(playlistUrl);
-                            if (!string.IsNullOrEmpty(playlist))
-                            {
-                                Match n = regEx_PlaylistItem.Match(playlist);
-                                if (n.Success)
-                                {
-                                    string videoUrl = n.Groups["url"].Value;
-                                    return videoUrl;
-                                }
-                            }
-                            return null;
-                        }
+
                     }
-                    else if (preferredMediaType == MediaType.flv && m.Groups["format"].Value.Contains("FLV"))
-                    {
-                        if (preferredMediaQuality == MediaQuality.high && m.Groups["quality"].Value.Contains("HQ"))
-                        {
-                            //TODO: RTMP link generation
-                            return null;
-                        }
-                        else if (preferredMediaQuality == MediaQuality.medium && m.Groups["quality"].Value.Contains("MQ"))
-                        {
-                            //TODO: RTMP link generation
-                            return null;
-                        }
-                    }
-                    m = m.NextMatch();
                 }
             }
-            return null;
+            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+            {
+                var enumer = video.PlaybackOptions.GetEnumerator();
+                enumer.MoveNext();
+                return enumer.Current.Value;
+            }
+            return "";
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -198,42 +201,25 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videos = new List<VideoInfo>();
 
             string data = GetWebData((category as RssLink).Url);
+
             if (!string.IsNullOrEmpty(data))
             {
-                //re is kidding me.. -_-
-                Match m = regEx_Videolist.Match(data);
-                string xmlUrl = "";
-                if (m.Success)
+
+                Match m = Regex.Match(data, @"<div\sclass=""video"">\s<div\sclass=""thumbnailContainer"">\s*<a\shref=""(?<url>[^""]+)""><img\salt=""[^""]*""\s*class=""thumbnail""\s*width=""[^""]*""\sheight=""[^""]*""\ssrc=""(?<thumb>[^""]+)""\s/>\s*</a>\s*<div\sclass=""videoHover"">\s*<p\sclass=""teaserText"">(?<description>[^<]+)</p>\s*</div>\s*</div>\s*<h2><a\shref=""[^""]+"">(?<title>[^<]+)</a></h2>\s*<p>(?<airdate>[^<]+)</p>");
+
+                while(m.Success)
                 {
-                    xmlUrl = m.Groups["url"].Value;
-                    xmlUrl = "http://plus7.arte.tv" + xmlUrl;
-                }
+                    VideoInfo video = new VideoInfo();
 
-                if (!string.IsNullOrEmpty(xmlUrl))
-                {
+                    video.Title = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+                    video.ImageUrl = "http://videos.arte.tv" + m.Groups["thumb"].Value;
+                    video.VideoUrl = "http://videos.arte.tv" + m.Groups["url"].Value;
+                    video.Description = HttpUtility.HtmlDecode(m.Groups["description"].Value);
+                    video.Length = HttpUtility.HtmlDecode(m.Groups["airdate"].Value);
 
-                    data = String.Empty;
-                    data = GetWebData(xmlUrl);
+                    videos.Add(video);
 
-                    if (!string.IsNullOrEmpty(data))
-                    {
-                        XmlDocument doc = new XmlDocument();
-                        doc.LoadXml(data);
-                        XmlElement root = doc.DocumentElement;
-                        XmlNodeList list;
-                        list = root.SelectNodes("./video/title");
-                        foreach (XmlNode node in list)
-                        {
-                            VideoInfo video = new VideoInfo();
-
-                            video.Title = HttpUtility.HtmlDecode(node.SelectSingleNode("../title").InnerText);
-                            video.ImageUrl = node.SelectSingleNode("../previewPictureURL").InnerText;
-                            video.VideoUrl = node.SelectSingleNode("../targetURL").InnerText;
-
-                            videos.Add(video);
-                        }
-                    }
-
+                    m = m.NextMatch();
                 }
             }
             return videos;
