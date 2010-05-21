@@ -58,6 +58,7 @@
     <Compile Include="TvGorgeUtil.cs" />
     <Compile Include="TvTuttiUtil.cs" />
     <Compile Include="UrlTricks.cs" />
+    <Compile Include="WatchSeriesUtil.cs" />
     <Compile Include="Wetenschap24Util.cs" />
   </ItemGroup>
   <ItemGroup>

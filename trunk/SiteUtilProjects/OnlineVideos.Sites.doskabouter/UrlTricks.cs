@@ -117,9 +117,11 @@ namespace OnlineVideos.Sites
 
         public static string DivxDenTrick(string Url)
         {
+            //http://www.watch-series.com/open_link.php?vari=Y2BmaGVt werkt niet!
             // laad: http://www.divxden.com/l9qqwqjnto2g/qfn-smpsns2102.flv.html
             // dan een post naar dat adres. zoek naar addVariable, en daar staat dan:
             // addVariable|http|com|divxden|addParam|player|true|s4||flvplayer|write|autostart||type|jpg|l9qqwqjnto2g|00000||image|flv|smpsns2102|qfn|rlua5vaty4yeu53c7vqdgsluthlsjvgdhrqhq7i|182|file|opaque|wmode|always|allowscriptaccess|allowfullscreen|318|640|swf|www|SWFObject|new|var'.split('|')))
+            //            |http|com|divxden|addParam|player|true|s6||flvplayer|write|autostart||type|jpg|p5ao2i4gqhir|00001||image|flv|net|dome|The_Simpsons_2002_tv|rpua5vapzmqfimt2unutmtrprqn6eiimzcaffhq|182|file|opaque|wmode|always|allowscriptaccess|allowfullscreen|318|640|swf|www|SWFObject|new|var"
             //voor http://s4.divxden.com:182/d/rlua5vaty4yeu53c7vqdgsluthlsjvgdhrqhq7i/qfn-smpsns2102.flv
 
             string[] urlParts = Url.Split('/');
@@ -127,9 +129,22 @@ namespace OnlineVideos.Sites
             string postData = @"op=download1&usr_login=&id=" + urlParts[3] + "&fname=" + urlParts[4] + "&referer=&method_free=Free+Stream";
             string webData = MySiteUtil.GetWebDataFromPost(Url, postData);
             string url2 = GetSubString(webData, "addVariable", "'");
-            string[] param = url2.Split('|');
-            url2 = param[0];
-            return param[1] + "://" + param[7] + '.' + param[3] + '.' + param[2] + ':' + param[23] + "/d/" + param[22] + '/' + param[21] + '-' + param[20] + '.' + param[19];
+            if (url2 == String.Empty)
+            {
+                url2 = GetSubString(webData, "'value", "'");
+                //4://7.6.3:15/d/14/13-12.11.10.z-y.x
+                string[] param = url2.Split('|');
+                int srcInd = Array.IndexOf(param, "src");
+                return param[4] + "://" + param[7] + '.' + param[6] + '.' + param[3] + ':' + param[srcInd - 1] + "/d/" +
+                    param[srcInd - 2] + '/' + param[srcInd - 3] + '-' + param[srcInd - 4] + '.' + param[srcInd - 5] + '.' +
+                    param[srcInd - 6] + '.' + param[srcInd - 7] + '-' + param[srcInd - 8] + '.' + param[srcInd - 9];
+            }
+            else
+            {
+                string[] param = url2.Split('|');
+                int fileInd = Array.IndexOf(param, "file");
+                return param[1] + "://" + param[7] + '.' + param[3] + '.' + param[2] + ':' + param[fileInd - 1] + "/d/" + param[fileInd - 2] + '/' + param[fileInd - 3] + '-' + param[fileInd - 4] + '.' + param[fileInd - 5];
+            }
         }
 
         public static string SmotriTrick(string Url)
@@ -150,6 +165,12 @@ namespace OnlineVideos.Sites
             return GetSubString(webData, @"_vidURL"":""", @"""").Replace(@"\/", "/");
         }
 
+        public static string MovShareTrick(string Url)
+        {
+            string webData = MySiteUtil.GetWebDataFromPost(Url, "submit.x=119&submit.y=19");
+            return GetSubString(webData, @"<param name=""src"" value=""", @"""");
+        }
+
         public static string ZShareTrick(string Url)
         {
             CookieContainer cc = new CookieContainer();
@@ -162,7 +183,6 @@ namespace OnlineVideos.Sites
             {
                 string[] t = s.Split('=');
                 dic[t[0]] = t[1];
-
             }
             string hash = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(dic["filename"] + "tr35MaX25P7aY3R", "MD5").ToLower();
             string turl = @"http://" + dic["serverid"] + ".zshare.net/stream/" + dic["hash"] + '/' + dic["fileid"] + '/' +
@@ -173,10 +193,65 @@ namespace OnlineVideos.Sites
             return turl;
         }
 
+        public static string TudouTrick(string Url, ISimpleRequestHandler reqHandler)
+        {
+            XmlDocument doc = new XmlDocument();
+            string webData = SiteUtilBase.GetWebData(Url);
+            doc.LoadXml(webData);
+            XmlNodeList nodes = doc.SelectNodes("//v/b/f");
+            string largest = null;
+            foreach (XmlNode node in nodes)
+                if (largest == null || String.Compare(largest, node.InnerText) == -1)
+                    largest = node.InnerText;
+            return ReverseProxy.GetProxyUri(reqHandler, largest);
+        }
+
         public static string WiseVidTrick(string url)
         {
             byte[] tmp = Convert.FromBase64String(url);
             return Encoding.ASCII.GetString(tmp);
+        }
+
+        public static string FiftySixComTrick(string Url)
+        {
+            //Url=http://www.56.com/u90/v_MzYxNzA2MzE.html
+            string id = GetSubString(Url, "/v_", ".html");
+            //http://stat.56.com/stat/flv.php?id=MzYxNzA2MzE&pct=1&user_id=&norand=1&gJsonId=1&gJson=VideoTimes&gJsonData=n&gJsonDoStr=oFlv.up_times(oJson.VideoTimes.data)
+            string tmpUrl = @"http://stat.56.com/stat/flv.php?id=" + id + @"&pct=1&user_id=&norand=1&gJsonId=1&gJson=VideoTimes&gJsonData=n&gJsonDoStr=oFlv.up_times(oJson.VideoTimes.data)";
+            CookieContainer cc = new CookieContainer();
+            string webData = SiteUtilBase.GetWebData(tmpUrl, cc);
+            CookieCollection ccol = cc.GetCookies(new Uri("http://stat.56.com"));
+            string id2 = null;
+            foreach (Cookie cook in ccol)
+                id2 = cook.Value.TrimEnd('-');
+            //http://vxml.56.com/json/36170631/?src=site
+            webData = SiteUtilBase.GetWebData(@"http://vxml.56.com/json/" + id2 + "/?src=site");
+            string fileUrl = GetSubString(webData, @"{""url"":""", @"""");
+            return SiteUtilBase.GetRedirectedUrl(fileUrl);
+        }
+
+        public static string LiveVideoTrick(string Url)
+        {
+            return null;
+        }
+
+        public static string VureelTrick(string Url)
+        {
+            string s = SiteUtilBase.GetWebData(Url);
+            return GetSubString(s, @"Referral: ", " ");
+
+            /*
+            s = @"D{kzqx|(|""xmE*|m!|7ri~i{kzqx|*F~iz({9(E(vm([_NWjrmk|0*p||xB77{|i|qk6~}zmmt6kwu7~zmkgxti""mz6{n*4*xt""*4*><:*4*;A8*4*A*4*+NNNNNN*1C{96illXiziu0*uwlm*4*|ziv{xizmv|*1C{96illXiziu0*ittw[kzqx|Ikkm{{*4(*iti""{*1C{96illXiziu0*ittwn}tt{kzmmv*4*|z}m*1C{96illXiziu0*nti{p~iz{*4*nqtmEp||xB77{=6~}zmmt6kwu7tmmkpqvoq{qttmoit7@l;=;9;jmmA>nA>k;@j==nk;?>=k<?@=7<jlj=<ki7989=96nt~.{|zm|kpqvoEm!ik|nq|.|""xmE~qlmw.t|i{6umlqiqlE989=9.{sqvEp||xB77{|i|qk6~}zmmt6kwu7kwum|6{n*1C{96zq|m0*umlqi{xikm*1CD7{kzqx|F";
+            byte[] bytes = Encoding.ASCII.GetBytes(s);
+            byte[]newb=new byte[bytes.Length];
+            for (int i=0;i<bytes.Length;i++)
+            {
+                int n = bytes[i];
+                if (n < 128) { n = n - 8; if (n < 32) { n = 127 + (n - 32); } }
+                newb[i] = (byte)n;
+            }
+            string t = Encoding.ASCII.GetString(newb);
+             */
         }
 
         public static string YoutubeTrick(string url, VideoInfo video)
@@ -185,6 +260,57 @@ namespace OnlineVideos.Sites
             video.PlaybackOptions = null;
             video.GetYouTubePlaybackOptions();
             return "";
+        }
+
+        public static string GoogleCaTrick(string Url)
+        {
+            string webData = SiteUtilBase.GetWebData(Url);
+            return HttpUtility.UrlDecode(GetSubString(webData, @"videoUrl\x3d", @"\x26"));
+        }
+
+        public static string MyspaceTrick(string Url)
+        {
+            string videoId = GetSubString(Url, "videoid=", "&");
+            string webData = SiteUtilBase.GetWebData(@"http://mediaservices.myspace.com/services/rss.ashx?videoID=" + videoId);
+            string fileUrl = GetSubString(webData, @"RTMPE url=""", @"""");
+
+            //return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfhash=a51d59f968ffb279f0a3c0bf398f2118b2cc811f04d86c940fd211193dee2013&swfsize=770329",
+            return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}",
+                    OnlineVideoSettings.RTMP_PROXY_PORT, fileUrl.Replace("rtmp:", "rtmpe:"));
+        }
+
+        public static string UnPack(string packed)
+        {
+            string res;
+            int p = packed.IndexOf('|');
+            if (p < 0) return null;
+            p = packed.LastIndexOf('\'', p);
+
+            string pattern = packed.Substring(0, p - 1);
+
+            string[] pars = packed.Substring(p).Split('|');
+            res = String.Empty;
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                char c = pattern[i];
+                int ind = -1;
+                if (Char.IsDigit(c))
+                {
+                    if (i + 1 < pattern.Length && Char.IsDigit(pattern[i + 1]))
+                        ind = int.Parse(pattern.Substring(i, 2)) + 26;
+                    else
+                        ind = int.Parse(pattern.Substring(i, 1));
+                }
+                else
+                    if (Char.IsLower(c))
+                        ind = ((int)c) - 0x61 + 10;
+
+                if (ind == -1 || ind >= pars.Length || String.IsNullOrEmpty(pars[ind]))
+                    res += c;
+                else
+                    res += pars[ind];
+            }
+            return res;
         }
 
         private static string GetSubString(string s, string start, string until)
