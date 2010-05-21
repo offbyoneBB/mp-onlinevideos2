@@ -12,15 +12,16 @@ namespace OnlineVideos.Player
     public class WMPVideoPlayer : IPlayer
     {
         public enum PlayState { Init, Playing, Paused, Ended };
-        
+
         private static AxWindowsMediaPlayer _wmp10Player = null;
         private string _currentFile = "";
         private PlayState _graphState = PlayState.Init;
         private bool _isFullScreen = false;
-        private int _positionX = 10, _positionY = 10, _videoWidth = 100, _videoHeight = 100;        
+        private int _positionX = 10, _positionY = 10, _videoWidth = 100, _videoHeight = 100;
         private bool _needUpdate = true;
         private bool _notifyPlaying = true;
         private bool _bufferCompleted = true;
+        private bool _criticalErrorEncountered = false;
         private OSDController _osd;
         private bool _osdActive = false;
 
@@ -42,7 +43,8 @@ namespace OnlineVideos.Player
 
             GUIGraphicsContext.form.Controls.Add(_wmp10Player);
 
-            try { _wmp10Player.EndInit(); } catch { }
+            try { _wmp10Player.EndInit(); }
+            catch { }
 
             _wmp10Player.uiMode = "none";
             _wmp10Player.windowlessVideo = true;
@@ -51,10 +53,12 @@ namespace OnlineVideos.Player
             _wmp10Player.ClientSize = new Size(0, 0);
             _wmp10Player.Visible = false;
             GUIGraphicsContext.form.ResumeLayout(false);
+
         }
 
         public override bool Play(string strFile)
         {
+            _criticalErrorEncountered = false;
             _graphState = PlayState.Init;
             _currentFile = strFile;
 
@@ -64,10 +68,10 @@ namespace OnlineVideos.Player
 
             _notifyPlaying = true;
             GC.Collect();
-            CreateInstance();            
+            CreateInstance();
 
             if (_wmp10Player == null) return false;
-            
+
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
             _wmp10Player.ErrorEvent += OnError;
             _wmp10Player.PlayStateChange += OnPlayStateChange;
@@ -93,16 +97,24 @@ namespace OnlineVideos.Player
             if (_wmp10Player.URL.ToLower().StartsWith("http") || _wmp10Player.URL.ToLower().StartsWith("mms"))
             {
                 _bufferCompleted = false;
-                using (WaitCursor waitcursor = new WaitCursor())
+                GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
+                try
                 {
                     GUIGraphicsContext.Overlay = false;
-                    while (_bufferCompleted != true)
+                    while (_bufferCompleted != true && !_criticalErrorEncountered)
                     {
                         {
-                            // if true then could not load stream 
+                            //if true then wmp is playing, so exit loop
                             if (_wmp10Player.playState.Equals(WMPPlayState.wmppsPlaying))
                             {
                                 _bufferCompleted = true;
+                            }
+                            // if true then could not load stream because of (in my test case) a drm-box
+                            // for example tvgemist/rtl/crime scene inv./las vegas/season 10/ep 11
+                            //http://www.rtl.nl/system/video/wvx/components/programma/csi/crimesceneinvestigation/miMedia/209061/209072.s4m8wk.29781180.Crime_Scene_Investigation_s10_a11.xml/1500.wvx
+                            if (_wmp10Player.playState.Equals(WMPPlayState.wmppsReady))
+                            {
+                                _criticalErrorEncountered = true;
                             }
                             if (GUIGraphicsContext.Overlay)
                             {
@@ -114,12 +126,23 @@ namespace OnlineVideos.Player
                     }
                     GUIGraphicsContext.Overlay = true;
                 }
+                finally
+                {
+                    GUIWaitCursor.Hide(); // hide the wait cursor
+                }
 
                 if (_bufferCompleted && _wmp10Player.playState.Equals(WMPPlayState.wmppsReady))
-                {
-                    Log.Info("WMPVideoPlayer: failed to load {0}", strFile);
-                    return false;
-                }
+                    _criticalErrorEncountered = true;
+            }
+
+            _wmp10Player.Buffering -= OnBuffering;
+
+            if (_criticalErrorEncountered)
+            {
+                Log.Info("WMPVideoPlayer: error encountered while trying to play {0}", strFile);
+                _wmp10Player.PlayStateChange -= OnPlayStateChange;
+                _wmp10Player.ErrorEvent -= OnError;
+                return false;
             }
 
             GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
@@ -150,7 +173,7 @@ namespace OnlineVideos.Player
                     case Action.ActionType.ACTION_BIG_STEP_BACK:
                     case Action.ActionType.ACTION_STEP_BACK:
                     case Action.ActionType.ACTION_STEP_FORWARD:
-                    case Action.ActionType.ACTION_SHOW_OSD:                    
+                    case Action.ActionType.ACTION_SHOW_OSD:
                         if (!_osdActive) { _osd.Activate(); _osdActive = true; }
                         break;
                     case Action.ActionType.ACTION_VOLUME_MUTE:
@@ -196,8 +219,14 @@ namespace OnlineVideos.Player
 
         private void OnError(object sender, EventArgs e)
         {
-            string err = _wmp10Player.Error.get_Item(0).errorDescription;
-            Log.Error("WMPVideoPlayer: " + err);
+            IWMPErrorItem error = _wmp10Player.Error.get_Item(0);
+            // error codes see http://msdn.microsoft.com/en-us/library/cc704587(PROT.10).aspx
+            switch ((uint)error.errorCode)
+            {
+                case 0xc00d1197: _criticalErrorEncountered = true; break;  //NS_E_WMP_CANNOT_FIND_FILE
+                default: _criticalErrorEncountered = true; break; // for now: abort on all errors
+            }
+            Log.Error("WMPVideoPlayer: " + error.errorDescription);
         }
 
         private void OnBuffering(object sender, _WMPOCXEvents_BufferingEvent e)
@@ -209,16 +238,8 @@ namespace OnlineVideos.Player
 
             //_wmp10Player.network.bufferingTime = _bufferTime;
 
-            if (e.start)
-            {
-                _bufferCompleted = false;
-                Log.Debug("WMPVideoPlayer: bandWidth: {0}", _wmp10Player.network.bandWidth);
-                Log.Debug("WMPVideoPlayer: receptionQuality: {0}", _wmp10Player.network.receptionQuality);
-            }
-            if (!e.start)
-            {
-                _bufferCompleted = true;
-            }
+            _bufferCompleted = !e.start;
+            Log.Debug("WMPVideoPlayer: onbuffer start:{0}", e.start.ToString());
         }
 
         private void PlaybackEnded(bool bManualStop)
@@ -239,7 +260,8 @@ namespace OnlineVideos.Player
                 _wmp10Player.ClientSize = new Size(0, 0);
                 _wmp10Player.Visible = false;
                 _wmp10Player.PlayStateChange -= OnPlayStateChange;
-                _wmp10Player.Buffering -= OnBuffering;
+                _wmp10Player.ErrorEvent -= OnError;
+                _criticalErrorEncountered = false;
             }
             //GUIGraphicsContext.IsFullScreenVideo=false;
             GUIGraphicsContext.IsPlaying = false;
@@ -379,12 +401,12 @@ namespace OnlineVideos.Player
             get { return true; }
         }
 
-        #if !MP102
+#if !MP102
         public override bool HasViz
         {
             get { return true; }
         }
-        #endif
+#endif
 
         public override bool IsCDA
         {
@@ -738,7 +760,7 @@ namespace OnlineVideos.Player
                 {
                     if (value < 0)
                     {
-                        _wmp10Player.Ctlcontrols.currentPosition += (double)value;                        
+                        _wmp10Player.Ctlcontrols.currentPosition += (double)value;
                     }
                     else
                     {
@@ -748,7 +770,7 @@ namespace OnlineVideos.Player
                         }
                         catch (Exception)
                         {
-                        }                        
+                        }
                     }
                 }
             }
