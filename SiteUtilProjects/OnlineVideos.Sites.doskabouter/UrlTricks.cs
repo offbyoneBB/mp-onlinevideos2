@@ -128,23 +128,10 @@ namespace OnlineVideos.Sites
 
             string postData = @"op=download1&usr_login=&id=" + urlParts[3] + "&fname=" + urlParts[4] + "&referer=&method_free=Free+Stream";
             string webData = MySiteUtil.GetWebDataFromPost(Url, postData);
-            string url2 = GetSubString(webData, "addVariable", "'");
-            if (url2 == String.Empty)
-            {
-                url2 = GetSubString(webData, "'value", "'");
-                //4://7.6.3:15/d/14/13-12.11.10.z-y.x
-                string[] param = url2.Split('|');
-                int srcInd = Array.IndexOf(param, "src");
-                return param[4] + "://" + param[7] + '.' + param[6] + '.' + param[3] + ':' + param[srcInd - 1] + "/d/" +
-                    param[srcInd - 2] + '/' + param[srcInd - 3] + '-' + param[srcInd - 4] + '.' + param[srcInd - 5] + '.' +
-                    param[srcInd - 6] + '.' + param[srcInd - 7] + '-' + param[srcInd - 8] + '.' + param[srcInd - 9];
-            }
-            else
-            {
-                string[] param = url2.Split('|');
-                int fileInd = Array.IndexOf(param, "file");
-                return param[1] + "://" + param[7] + '.' + param[3] + '.' + param[2] + ':' + param[fileInd - 1] + "/d/" + param[fileInd - 2] + '/' + param[fileInd - 3] + '-' + param[fileInd - 4] + '.' + param[fileInd - 5];
-            }
+            string packed = GetSubString(webData, @"return p}", @"</script>");
+            packed = packed.Replace(@"\'", @"'");
+            string unpacked = UrlTricks.UnPack(packed);
+            return GetSubString(unpacked, @"'file','", @"'");
         }
 
         public static string SmotriTrick(string Url)
