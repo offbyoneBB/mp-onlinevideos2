@@ -156,41 +156,76 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string tmp = base.getUrl(video);
-            Dictionary<string, string> newPlaybackOptions = new Dictionary<string, string>();
-            string firstName = null;
+            List<PlaybackElement> lst = new List<PlaybackElement>();
             foreach (string name in video.PlaybackOptions.Keys)
             {
-                if (name.StartsWith("youtube.com"))
+                PlaybackElement element = new PlaybackElement(name, video.PlaybackOptions[name]);
+
+                if (element.server == "youtube.com")
                 {
                     Dictionary<string, string> savOptions = video.PlaybackOptions;
                     video.GetPlaybackOptionUrl(name);
                     foreach (string nm in video.PlaybackOptions.Keys)
-                        newPlaybackOptions.Add(nm, video.PlaybackOptions[nm]);
+                    {
+                        PlaybackElement el = new PlaybackElement();
+                        el.server = element.server;
+                        el.extra = nm;
+                        el.percentage = element.percentage;
+                        lst.Add(el);
+                    }
                     video.PlaybackOptions = savOptions;
                 }
                 else
-                    if (name.StartsWith("movshare.net") || name.StartsWith("playmyvid.com") ||
-                        name.StartsWith("divxden.com") || name.StartsWith("smotri.com") ||
-                        name.StartsWith("wisevid.com") || name.StartsWith("megavideo.com") ||
-                        name.StartsWith("zshare.net") || name.StartsWith("vureel.com") ||
-                        name.StartsWith("stagevu.com") || name.StartsWith("56.com") ||
-                        name.StartsWith("loombo.com") || name.StartsWith("ufliq.com") ||
-                        name.StartsWith("tudou.com") || (name.StartsWith("google.ca")))
-                        newPlaybackOptions.Add(name, video.PlaybackOptions[name]);
+                {
+                    element.status = "ns";
+                    if (element.server == "movshare.net" || element.server == "playmyvid.com" ||
+                        element.server == "divxden.com" || element.server == "smotri.com" ||
+                        element.server == "wisevid.com" || element.server == "megavideo.com" ||
+                        element.server == "zshare.net" || element.server == "vureel.com" ||
+                        element.server == "stagevu.com" || element.server == "56.com" ||
+                        element.server == "loombo.com" || element.server == "ufliq.com" ||
+                        element.server == "tudou.com" || element.server == "google.ca")
+                        element.status = String.Empty;
                     else
-                        if (name.StartsWith("livevideo.com") || name.StartsWith("veehd.com") ||
-                            name.StartsWith("myspace.com") || name.StartsWith("cinshare.com") ||
-                            name.StartsWith("2gb-hosting.com") || name.StartsWith("gigabyteupload.com"))
-                            newPlaybackOptions.Add(name + " wip", video.PlaybackOptions[name]);
-                        else
-                            newPlaybackOptions.Add(name + " ns", video.PlaybackOptions[name]);
-                if (firstName == null)
-                    firstName = name;
+                        if (element.server == "livevideo.com" || element.server == "veehd.com" ||
+                            element.server == "myspace.com" || element.server == "cinshare.com" ||
+                            element.server == "2gb-hosting.com" || element.server == "gigabyteupload.com")
+                            element.status = "wip";
+
+                    lst.Add(element);
+                }
             }
-            video.PlaybackOptions = newPlaybackOptions;
-            if (video.PlaybackOptions.Count == 1)
+
+
+            Dictionary<string, int> counts = new Dictionary<string, int>();
+            foreach (PlaybackElement el in lst)
             {
-                video.VideoUrl = video.GetPlaybackOptionUrl(firstName);
+                if (counts.ContainsKey(el.server))
+                    counts[el.server]++;
+                else
+                    counts.Add(el.server, 1);
+            }
+            Dictionary<string, int> counts2 = new Dictionary<string, int>();
+            foreach (string name in counts.Keys)
+                if (counts[name] != 1)
+                    counts2.Add(name, counts[name]);
+
+            lst.Sort(PlaybackComparer);
+
+            for (int i = lst.Count - 1; i >= 0; i--)
+                if (counts2.ContainsKey(lst[i].server))
+                {
+                    lst[i].dupcnt = counts2[lst[i].server];
+                    counts2[lst[i].server]--;
+                }
+
+            video.PlaybackOptions = new Dictionary<string, string>();
+            foreach (PlaybackElement el in lst)
+                video.PlaybackOptions.Add(el.GetName(), el.url);
+
+            if (lst.Count == 1)
+            {
+                video.VideoUrl = video.GetPlaybackOptionUrl(lst[0].server);
                 video.PlaybackOptions = null;
                 return video.VideoUrl;
             }
@@ -214,7 +249,7 @@ namespace OnlineVideos.Sites
                 string tmpUrl = null;
 
                 tmpUrl = GetRedirectedUrl(@"http://www.watch-series.com/open_link.php?vari=" + webData);
-                if (url.StartsWith("youtube.com"))
+                if (url.EndsWith("youtube.com"))
                     return UrlTricks.YoutubeTrick(tmpUrl, this);
                 if (url.StartsWith("movshare.net"))
                     return UrlTricks.MovShareTrick(tmpUrl);
@@ -361,6 +396,22 @@ namespace OnlineVideos.Sites
             return s.Substring(p, q - p);
         }
 
+        private int IntComparer(int i1, int i2)
+        {
+            if (i1 == i2) return 0;
+            if (i1 > i2) return -1;
+            return 1;
+        }
+
+        private int PlaybackComparer(PlaybackElement e1, PlaybackElement e2)
+        {
+            int res = IntComparer(e1.percentage, e2.percentage);
+            if (res != 0)
+                return res;
+            else
+                return String.Compare(e1.server, e2.server);
+        }
+
 
         #region ISimpleRequestHandler Members
 
@@ -370,5 +421,38 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
+    }
+
+    internal class PlaybackElement
+    {
+        public int percentage;
+        public string server;
+        public string url;
+        public string status;
+        public string extra;
+        public int dupcnt;
+
+        public PlaybackElement()
+        {
+        }
+
+        public string GetName()
+        {
+            string res = server + ' ' + percentage.ToString() + '%';
+            if (dupcnt != 0)
+                res += " (" + dupcnt.ToString() + ')';
+            if (!String.IsNullOrEmpty(extra))
+                res += ' ' + extra;
+            return res;
+        }
+
+        public PlaybackElement(string aPlaybackName, string aUrl)
+        {
+            string[] tmp = aPlaybackName.Split('%');
+            percentage = int.Parse(tmp[0]);
+            server = tmp[1].TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' });
+            url = aUrl;
+        }
+
     }
 }

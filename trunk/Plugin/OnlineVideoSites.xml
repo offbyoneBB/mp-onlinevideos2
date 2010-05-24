@@ -993,14 +993,14 @@
     <Site name="TurboNick" util="TurboNick" agecheck="false" enabled="true" lang="nl">
       <Categories />
     </Site>
-    <Site name="Watch Series" util="WatchSeries" agecheck="false" enabled="true" player="Internal" lang="en">
+    <Site name="Watch-Series" util="WatchSeries" agecheck="false" enabled="true" player="Internal" lang="en" lastUpdated="2010-05-23T00:41:25.8202801+02:00">
       <Description>Watch tv series online for free, full episodes.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"[^>]*>(?<title>[^<]*)<[^>]*>(?<description>[^<]*)<]]></item>
         <item key="videoListRegEx"><![CDATA[<li><a\shref="(?<VideoUrl>[^"]*)"[^>]*>(?<Title>[^<]*)</a></li>]]></item>
         <item key="fileUrlRegEx"><![CDATA[<div\sclass="linktable"\s*>\s*[^<]*<[^<]*<div\sclass="site">\s*(?<n0>.*?)\s*<[^<]*<[^<]*<a\shref="..(?<m0>[^"]*)".*?class="user">(?<n1>[^%]*)]]></item>
-        <item key="fileUrlNameFormatString"><![CDATA[{0} stars: {1}%]]></item>
+        <item key="fileUrlNameFormatString"><![CDATA[{1}%{0}]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://watch-series.com{0}]]></item>
         <item key="baseUrl"><![CDATA[http://watch-series.com]]></item>
       </Configuration>
