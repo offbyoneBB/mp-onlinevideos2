@@ -67,6 +67,8 @@ namespace OnlineVideos.Sites
         protected string videoItemXml;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoTitle for videoList.")]
         protected string videoTitleXml;
+        [Category("OnlineVideosConfiguration"), Description("XML Path used to parse an extra videoTitle for videoList.")]
+        protected string videoTitle2Xml;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoThumb for videoList.")]
         protected string videoThumbXml;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoUrl for videoList.")]
@@ -75,6 +77,8 @@ namespace OnlineVideos.Sites
         protected string videoDurationXml;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoDescription for videoList.")]
         protected string videoDescriptionXml;
+        [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoAirDate for videoList.")]
+        protected string videoAirDateXml;
         [Category("OnlineVideosConfiguration"), Description("Boolean used for forcing UTF8 encoding on received data.")]
         protected bool forceUTF8Encoding;
 
@@ -149,9 +153,9 @@ namespace OnlineVideos.Sites
                     if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
                     if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
                     if (dynamicSubCategoryUrlDecoding) cat.Url = HttpUtility.HtmlDecode(cat.Url);
-                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());                    
+                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
                     cat.Thumb = m.Groups["thumb"].Value;
-                    if (!Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
+                    if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
                     cat.Description = m.Groups["description"].Value;
                     cat.ParentCategory = parentCategory;
                     parentCategory.SubCategories.Add(cat);
@@ -305,11 +309,21 @@ namespace OnlineVideos.Sites
                         {
                             VideoInfo videoInfo = new VideoInfo();
                             videoInfo.Title = HttpUtility.HtmlDecode(videoItems[i].SelectSingleNode(videoTitleXml).InnerText);
+                            if (!String.IsNullOrEmpty(videoTitle2Xml))
+                                videoInfo.Title += ' ' + HttpUtility.HtmlDecode(videoItems[i].SelectSingleNode(videoTitle2Xml).InnerText); ;
+
                             videoInfo.VideoUrl = videoItems[i].SelectSingleNode(videoUrlXml).InnerText;
                             if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
                             if (!string.IsNullOrEmpty(videoThumbXml)) videoInfo.ImageUrl = videoItems[i].SelectSingleNode(videoThumbXml).InnerText;
                             if (!string.IsNullOrEmpty(videoDurationXml)) videoInfo.Length = Regex.Replace(videoItems[i].SelectSingleNode(videoDurationXml).InnerText, "(<[^>]+>)", "");
                             if (!string.IsNullOrEmpty(videoDescriptionXml)) videoInfo.Description = videoItems[i].SelectSingleNode(videoDescriptionXml).InnerText;
+                            if (!string.IsNullOrEmpty(videoDescriptionXml)) videoInfo.Description = videoItems[i].SelectSingleNode(videoDescriptionXml).InnerText;
+                            if (!string.IsNullOrEmpty(videoAirDateXml))
+                            {
+                                string Airdate = videoItems[i].SelectSingleNode(videoAirDateXml).InnerText;
+                                if (!String.IsNullOrEmpty(Airdate))
+                                    videoInfo.Length = videoInfo.Length + '|' + Translation.Airdate + ": " + Airdate;
+                            }
                             videoList.Add(videoInfo);
                         }
                     }

@@ -229,6 +229,9 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions = null;
                 return video.VideoUrl;
             }
+
+            if (lst.Count > 0)
+                tmp = lst[0].url;
             return tmp;
         }
 
@@ -438,11 +441,14 @@ namespace OnlineVideos.Sites
 
         public string GetName()
         {
-            string res = server + ' ' + percentage.ToString() + '%';
+            string res = server;
             if (dupcnt != 0)
                 res += " (" + dupcnt.ToString() + ')';
             if (!String.IsNullOrEmpty(extra))
                 res += ' ' + extra;
+            res += ' ' + percentage.ToString() + '%';
+            if (!String.IsNullOrEmpty(status))
+                res += " - " + status;
             return res;
         }
 
