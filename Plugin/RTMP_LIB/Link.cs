@@ -22,6 +22,7 @@ namespace RTMP_LIB
         public string pageUrl;
         public string app;
         public string auth;
+        public string token;
 
         /// <summary>
         /// How to build the swf Hash:

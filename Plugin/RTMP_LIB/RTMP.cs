@@ -582,6 +582,26 @@ namespace RTMP_LIB
             return SendRTMP(packet);
         }
 
+        bool SendSecureTokenResponse(string resp)
+        {
+            RTMPPacket packet = new RTMPPacket();
+            packet.m_nChannel = 0x03;	/* control channel (invoke) */
+            packet.HeaderType = HeaderType.Medium;
+            packet.PacketType = PacketType.Invoke;
+
+            Logger.Log(string.Format("Sending SecureTokenResponse: {0}", resp));
+            List<byte> enc = new List<byte>();
+            EncodeString(enc, "secureTokenResponse");
+            EncodeNumber(enc, 0.0);
+            enc.Add(0x05); // NULL
+            EncodeString(enc, resp);
+
+            packet.m_nBodySize = (uint)enc.Count;
+            packet.m_body = enc.ToArray();
+
+            return SendRTMP(packet, false);
+        }
+
         bool SendFCSubscribe()
         {
             RTMPPacket packet = new RTMPPacket();
@@ -781,8 +801,17 @@ namespace RTMP_LIB
 
                 if (methodInvoked == "connect")
                 {
-                    SendServerBW();
-                    //if (!string.IsNullOrEmpty(Link.auth)) SendAuth();
+                    if (!string.IsNullOrEmpty(Link.token))
+                    {
+                        List<AMFObjectProperty> props = new List<AMFObjectProperty>();
+                        obj.FindMatchingProperty("secureToken", props, int.MaxValue);
+                        if (props.Count > 0)
+                        {
+                            string decodedToken = Tea.Decrypt(props[0].GetString(), Link.token);
+                            SendSecureTokenResponse(decodedToken);
+                        }
+                    }
+                    SendServerBW();                    
                     if (!string.IsNullOrEmpty(Link.subscribepath)) SendFCSubscribe();                    
                     SendCreateStream();
                     SendPing(3, 0, 300);
