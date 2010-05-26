@@ -363,6 +363,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Configuration\SiteSettings.cs" />
+    <Compile Include="RTMP_LIB\Tea.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\ByteArray.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\DynamicList.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\IDynamic.cs" />
