@@ -104,9 +104,34 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
-            string url = video.VideoUrl;
-            string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
-            return resultUrl;
+            if (video.VideoUrl.Contains("token"))
+            {
+                string url = video.VideoUrl;
+                string host = url.Substring(9, url.IndexOf("/", 9) - 9);
+                string app = url.Substring(host.Length + url.IndexOf(host) + 1, (url.IndexOf("/", url.IndexOf("/", (host.Length + url.IndexOf(host) + 1)) + 1)) - (host.Length + url.IndexOf(host) + 1));
+                string tcUrl = "rtmpe://" + host + ":1935" + "/" + app;
+                string playpath = url.Substring(url.IndexOf(app) + app.Length + 1);
+
+                string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&hostname={2}&tcUrl={3}&app={4}&swfurl={5}&swfsize={6}&swfhash={7}&playpath={8}",
+                        OnlineVideoSettings.RTMP_PROXY_PORT,
+                        url, //rtmpUrl
+                        host, //host
+                        tcUrl, //tcUrl
+                        app, //app
+                        "http://www.sat1.de/php-bin/apps/VideoPlayer20/mediacenter/HybridPlayer.swf", //swfurl
+                        "850680", //swfsize
+                        "89b2c799c23569599472e3ed8b00a292a78de2ef7f181d4de64dccc99e43e1ff", //swfhash
+                        playpath //playpath
+                        );
+                return resultUrl;
+            }
+            else
+            {
+                string url = video.VideoUrl;
+                string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
+                return resultUrl;
+            }
+           
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -133,45 +158,51 @@ namespace OnlineVideos.Sites
                                     case "external_id":
                                         break;
                                     case "metadata":
-                                        string filename = Regex.Match(jEntry.Value.ToString(), @"""uploadFilename"":""(?<tag>[^""]+)""").Groups["tag"].Value;
-                                        filename = filename.Substring(0, filename.Length - 3);
 
-                                        //Filter DRM protected RTMP Streams
-                                        if(filename.Contains("_dummy"))break;
-                                        string geo = Regex.Match(jEntry.Value.ToString(), @"""geoblocking"":""(?<tag>[^""]+)""").Groups["tag"].Value;
-                                        string geoblock = "";
-
-                                        if (string.IsNullOrEmpty(geo))
-                                            geoblock = "geo_d_at_ch/";
-                                        else if (geo.Contains("ww"))
-                                            geoblock = "geo_worldwide/";
-                                        else if (geo.Contains("de_at_ch"))
-                                            geoblock = "geo_d_at_ch/";
+                                        string drmUrl = Regex.Match(jEntry.Value.ToString(), @"""flashdrm_url"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                        if (!string.IsNullOrEmpty(drmUrl))
+                                        {
+                                            video.VideoUrl = drmUrl;
+                                        }
                                         else
-                                            geoblock = "geo_d/";
+                                        {
+                                            string filename = Regex.Match(jEntry.Value.ToString(), @"""uploadFilename"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                            filename = filename.Substring(0, filename.Length - 3);
 
-                                        string suffix = Regex.Match(jEntry.Value.ToString(), @"""flashSuffix"":""(?<tag>[^""]+)""").Groups["tag"].Value;
-                                        string videoType = Regex.Match(jEntry.Value.ToString(), @"""video_type"":""(?<tag>[^""]+)""").Groups["tag"].Value;
-                                        string broadcast = Regex.Match(jEntry.Value.ToString(), @"""broadcast_date"":""(?<tag>[^""]+)""").Groups["tag"].Value;
-                                        video.Title2 = videoType + " (" + broadcast + ")";
-                                        
-                                        if (suffix.Contains("mp4"))
-                                            video.VideoUrl = rtmpBase + geoblock + "mp4:" + filename + "f4v";
-                                        else
-                                            video.VideoUrl = rtmpBase + geoblock + filename + "flv";
+                                            string geo = Regex.Match(jEntry.Value.ToString(), @"""geoblocking"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                            string geoblock = "";
+                                            if (string.IsNullOrEmpty(geo))
+                                                geoblock = "geo_d_at_ch/";
+                                            else if (geo.Contains("ww"))
+                                                geoblock = "geo_worldwide/";
+                                            else if (geo.Contains("de_at_ch"))
+                                                geoblock = "geo_d_at_ch/";
+                                            else
+                                                geoblock = "geo_d/";
+
+                                            string suffix = Regex.Match(jEntry.Value.ToString(), @"""flashSuffix"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                            string videoType = Regex.Match(jEntry.Value.ToString(), @"""video_type"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                            string broadcast = Regex.Match(jEntry.Value.ToString(), @"""broadcast_date"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                            video.Title2 = videoType + " (" + broadcast + ")";
+
+                                            if (suffix.Contains("mp4"))
+                                                video.VideoUrl = rtmpBase + geoblock + "mp4:" + filename + "f4v";
+                                            else
+                                                video.VideoUrl = rtmpBase + geoblock + filename + "flv";
+                                        }
 
                                         string cast, tags;
-                                        
-                                        cast = Regex.Match(jEntry.Value.ToString(), @"""cast_1"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_2"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_3"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_4"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_5"":""(?<tag>[^""]+)""").Groups["tag"].Value;
+
+                                        cast = Regex.Match(jEntry.Value.ToString(), @"""cast_1"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_2"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_3"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_4"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_5"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
                                         while (cast.EndsWith(",")) cast = cast.Substring(0, cast.Length - 1);
 
-                                        tags = Regex.Match(jEntry.Value.ToString(), @"""tag_1"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        tags += Regex.Match(jEntry.Value.ToString(), @"""tag_2"":""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        tags += Regex.Match(jEntry.Value.ToString(), @"""tag_3"":""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                        tags = Regex.Match(jEntry.Value.ToString(), @"""tag_1"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        tags += Regex.Match(jEntry.Value.ToString(), @"""tag_2"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
+                                        tags += Regex.Match(jEntry.Value.ToString(), @"""tag_3"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
                                         while (tags.EndsWith(",")) tags = tags.Substring(0, tags.Length - 1);
 
                                         video.Description += "\n" + Translation.Actors + ": " + cast + "\n" + Translation.Tags + ": " + tags;
@@ -211,7 +242,7 @@ namespace OnlineVideos.Sites
                                             videos.Add(video);
                                             video = new VideoInfo();
                                         }
-                                        video.ImageUrl = Regex.Match(jEntry.Value.ToString(), @"""thumb_url"":""(?<thumb>[^""]+)""").Groups["thumb"].Value;
+                                        video.ImageUrl = Regex.Match(jEntry.Value.ToString(), @"""thumb_url"":\s*""(?<thumb>[^""]+)""").Groups["thumb"].Value;
                                         break;
                                 }
                             }
