@@ -80,7 +80,12 @@ namespace OnlineVideos.Sites
                         {
                             string title = "FLV (" + m.Groups["bitrate"].Value + "K)";
                             string url = m.Groups["url"].Value.Replace("\\/", "/");
-                            url = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
+                            url = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfurl={2}&swfsize={3}&swfhash={4}",
+                                OnlineVideoSettings.RTMP_PROXY_PORT,
+                                System.Web.HttpUtility.UrlEncode(url),
+                                "http://videoportal.sf.tv/flash/videoplayer.swf", //swfurl
+                                "966431", //swfsize
+                                "68e1041936257eeecf65717bcbfcb789c752bdf53d155c10eb8a3bc86d0eed6a"); //swfhash
                             video.PlaybackOptions.Add(title, url);
                         }
                     }
