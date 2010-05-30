@@ -19,6 +19,10 @@ namespace OnlineVideos.Sites
         {
             base.Initialize(siteSettings);
             ReverseProxy.AddHandler(this);
+        }
+
+        public override int DiscoverDynamicCategories()
+        {
             CookieContainer tmpcc = new CookieContainer();
             GetWebData(baseUrl, tmpcc);
 
@@ -26,10 +30,7 @@ namespace OnlineVideos.Sites
             CookieCollection ccol = tmpcc.GetCookies(new Uri(baseUrl));
             foreach (Cookie c in ccol)
                 cc.Add(c);
-        }
 
-        public override int DiscoverDynamicCategories()
-        {
             base.DiscoverDynamicCategories();
             int i = 0;
             do
