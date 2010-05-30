@@ -55,7 +55,7 @@
     <Compile Include="TurboNickUtil.cs" />
     <Compile Include="TVEUtil.cs" />
     <Compile Include="TvGemistUtil.cs" />
-    <Compile Include="TvGorgeUtil.cs" />
+    <Compile Include="TVNZOnDemandUtil.cs" />
     <Compile Include="TvTuttiUtil.cs" />
     <Compile Include="UrlTricks.cs" />
     <Compile Include="WatchSeriesUtil.cs" />

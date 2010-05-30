@@ -219,10 +219,6 @@
         <Category xsi:type="RssLink" name="Prüfstand">http://www.heise.de/ct-tv/pruefstand-4793.html</Category>
       </Categories>
     </Site>
-    <Site name="TvGorge" util="TvGorge" agecheck="false" enabled="false" lang="en">
-      <Description>Watch full episodes of your favourite TV shows.</Description>
-      <Categories />
-    </Site>
     <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en">
       <Description>Miro combines and categorizes collections of video channels from thousands of sources.</Description>
       <Categories />
@@ -953,6 +949,24 @@
         <Category xsi:type="RssLink" name="la 1">http://www.rtve.es/alacarta/la1/recomendados/index.html</Category>
         <Category xsi:type="RssLink" name="la 2">http://www.rtve.es/alacarta/la2/recomendados/index.html</Category>
       </Categories>
+    </Site>
+    <Site name="TVNZOnDemand" util="TVNZOnDemand" agecheck="false" enabled="true" lang="en">
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://tvnz.co.nz/video]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li>\s*<a\s(class="number"\s)?rel="[^"]*"\stitle="[^"]*"\shref="/video-shows(?<url>[^\#]*)\#ondemand">(?<title>[^<]*)<]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://tvnz.co.nz/video-shows{0}#ondemand]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[class="show"\sid="(extra-)?(?<id>[^"]*)".*?<h5><a\stitle="(?<title>[^"]*)"\shref="(?<url>[^"]*).*?<li\sclass="type">(?<type>[^<]*)]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="readItem">\s*<[^>]*>\s*<a\shref=".*?-(?<VideoUrl>[^-]*)">\s*<img\s.*?src="(?<ImageUrl>[^"]*)"[^>]*>.*?</h4>\s*<p\sclass="time">(?<Airdate>[^<]*).*?(<strong>(?<Title>[^<]*)</strong>)?\s</p>\s<p>(?<Description>[^<]*)<]]></item>
+        <item key="videoListRegExFormatString"><![CDATA[http://tvnz.co.nz/content/{0}/ta_ent_smil_skin.smil]]></item>
+        <item key="nextPageRegEx"><![CDATA[<span\sclass="next">\s*<a\shref="(?<url>[^"]*)"]]></item>
+        <item key="nextPageRegExUrlFormatString"><![CDATA[http://tvnz.co.nz/search/ta_ent_search_tv_skin.xhtml{0}]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[true]]></item>
+        <item key="prevPageRegEx"><![CDATA[<span\sclass="previous">\s*<a\shref="(?<url>[^"]*)"]]></item>
+        <item key="prevPageRegExUrlFormatString"><![CDATA[http://tvnz.co.nz/search/ta_ent_search_tv_skin.xhtml{0}]]></item>
+        <item key="prevPageRegExUrlDecoding"><![CDATA[true]]></item>
+      </Configuration>
+      <Description>Television New Zealand: TV One, TV2, TVNZ 6, TVNZ 7</Description>
+      <Categories />
     </Site>
     <Site name="HardwareInfo" util="HardwareInfo" agecheck="false" enabled="true" lang="nl">
       <Categories>
