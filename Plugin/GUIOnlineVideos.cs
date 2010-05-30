@@ -137,20 +137,23 @@ namespace OnlineVideos
         Sites.SiteUtilBase SelectedSite
         {
             get { return selectedSite; }
-            set 
-            { 
+            set
+            {
                 selectedSite = value;
                 if (selectedSite == null)
-                {
-                    GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", string.Empty);
-                    GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
-                }
+                    ResetSelectedSite();
                 else
                 {
                     GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", selectedSite.Settings.Name);
                     GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", selectedSite.Settings.UtilName);
                 }
             }
+        }
+
+        private void ResetSelectedSite()
+        {
+            GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
         }
         #endregion
         Category selectedCategory;
@@ -201,12 +204,12 @@ namespace OnlineVideos
 
         #region GUIWindow Overrides
 
-        #if !MP102
+#if !MP102
         public override string GetModuleName()
         {
             return PluginName();
         }
-        #endif
+#endif
 
         public override int GetID
         {
@@ -228,7 +231,7 @@ namespace OnlineVideos
             {
                 bool lastActiveModuleSetting = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
                 int lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
-                preventDialogOnLoad = (lastActiveModuleSetting && (lastActiveModule == GetID));                        
+                preventDialogOnLoad = (lastActiveModuleSetting && (lastActiveModule == GetID));
             }
 
             // replace g_player's ShowFullScreenWindowVideo
@@ -239,9 +242,9 @@ namespace OnlineVideos
 
         protected override void OnPageLoad()
         {
-            #if MP102
+#if MP102
             GUIPropertyManager.SetProperty("#currentmodule", PluginName());
-            #endif
+#endif
             if (!firstLoadDone)
             {
                 GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.PLUGIN_NAME);
@@ -346,8 +349,8 @@ namespace OnlineVideos
             }
             dlgSel.DoModal(GetID);
             if (dlgSel.SelectedId == -1) return;
-            VideoInfo loSelectedVideo = CurrentState == State.videos ? currentVideoList[liSelected] : currentTrailerList[liSelected];            
-            switch (dialogOptions[dlgSel.SelectedId-1])
+            VideoInfo loSelectedVideo = CurrentState == State.videos ? currentVideoList[liSelected] : currentTrailerList[liSelected];
+            switch (dialogOptions[dlgSel.SelectedId - 1])
             {
                 case "PlayAll":
                     PlayAll();
@@ -362,7 +365,7 @@ namespace OnlineVideos
                     break;
                 case "AddToFavUtil":
                     AddFavorite(loSelectedVideo, false);
-                    break;                
+                    break;
                 case "RemoveFromFav":
                     RemoveFavorite(loSelectedVideo);
                     break;
@@ -559,7 +562,8 @@ namespace OnlineVideos
                         else
                         {
                             //play the video
-                            Play((GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo);
+                            selectedVideo = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
+                            Play(selectedVideo);
                         }
                     }
                 }
@@ -746,7 +750,7 @@ namespace OnlineVideos
         {
             lastSearchQuery = string.Empty;
             selectedCategory = null;
-            SelectedSite = null;
+            ResetSelectedSite();
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
 
             // set order by options
@@ -813,13 +817,13 @@ namespace OnlineVideos
                     {
                         loListItem.ThumbnailImage = image;
                         loListItem.IconImage = image;
-                        loListItem.IconImageBig = image;                        
+                        loListItem.IconImageBig = image;
                     }
                     else
                     {
                         Log.Debug("Icon {0} for site {1} not found", Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Settings.Name + ".png", aSite.Settings.Name);
                         MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
-                    }                    
+                    }
                     if (currentFilter.Matches(name))
                     {
                         if (loListItem.Item == SelectedSite) selectedSiteIndex = GUI_facadeView.Count;
@@ -957,7 +961,7 @@ namespace OnlineVideos
                 OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem("..");
                 loListItem.IsFolder = true;
                 loListItem.ItemId = 0;
-                MediaPortal.Util.Utils.SetDefaultIcons(loListItem);                
+                MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                 GUI_infoList.Add(loListItem);
                 int liIdx = 0;
                 foreach (VideoInfo loVideoInfo in loVideoList)
@@ -1204,6 +1208,9 @@ namespace OnlineVideos
                 loListItem.IconImageBig = "defaultVideoBig.png";
                 loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
                 GUI_facadeView.Add(loListItem);
+
+                if (loListItem.Item == selectedVideo) selectedVideoIndex = GUI_facadeView.Count-1;
+
                 if (!string.IsNullOrEmpty(loVideoInfo.ImageUrl))
                 {
                     imageHash[loVideoInfo.ImageUrl] = true;
@@ -1398,7 +1405,7 @@ namespace OnlineVideos
                     if (((OnlineVideos.Player.PlayerFactory)g_Player.Factory).Prepare(lsUrl) != PlayerType.Internal)
                     {
                         // external players cannot be created from a seperate thread
-                        playing = g_Player.Play(lsUrl, g_Player.MediaType.Video); 
+                        playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
                     }
                     else
                     {
@@ -1439,7 +1446,7 @@ namespace OnlineVideos
                             Log.Info("SeekingAbsolute: {0}", seconds);
                             g_Player.SeekAbsolute(seconds);
                         }
-                    }                    
+                    }
 
                     new System.Threading.Thread(delegate()
                     {
@@ -1670,7 +1677,8 @@ namespace OnlineVideos
                 int fileSize = downloadInfo.KbTotal;
                 if (fileSize <= 0)
                 {
-                    try { fileSize = (int)((new System.IO.FileInfo(downloadInfo.LocalFile)).Length / 1024); } catch {}
+                    try { fileSize = (int)((new System.IO.FileInfo(downloadInfo.LocalFile)).Length / 1024); }
+                    catch { }
                 }
 
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
@@ -1773,7 +1781,7 @@ namespace OnlineVideos
                     GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(SelectedSite));
                     HideAndDisable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
-                    HideAndDisable(GUI_btnPrevious.GetID);                    
+                    HideAndDisable(GUI_btnPrevious.GetID);
                     HideFilterButtons();
                     HideSearchButtons();
                     HideAndDisable(GUI_btnFavorite.GetID);
@@ -1798,7 +1806,7 @@ namespace OnlineVideos
                 GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
             }
         }
-        
+
         private void ShowOrderButtons()
         {
             ShowAndEnable(GUI_btnOrderBy.GetID);
@@ -2053,9 +2061,9 @@ namespace OnlineVideos
                 }
             }
 
-            if (!string.IsNullOrEmpty(alternativeTitle)) 
+            if (!string.IsNullOrEmpty(alternativeTitle))
                 GUIPropertyManager.SetProperty("#Play.Current.Title", alternativeTitle);
-            else if (!string.IsNullOrEmpty(video.Title)) 
+            else if (!string.IsNullOrEmpty(video.Title))
                 GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title + (string.IsNullOrEmpty(quality) ? "" : quality));
             if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
             if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
@@ -2095,7 +2103,7 @@ namespace OnlineVideos
                 else
                 {
                     GUIPropertyManager.SetProperty("#OnlineVideos.desc", foVideo.Description);
-                }                
+                }
             }
         }
 
@@ -2108,8 +2116,8 @@ namespace OnlineVideos
         {
             string prefix = "DetailsItem";
             if (videoInfo == null)
-            { 
-                videoInfo = selectedVideo; prefix = "Details"; 
+            {
+                videoInfo = selectedVideo; prefix = "Details";
             }
             if (videoInfo != null && videoInfo.Other is IVideoDetails)
             {
@@ -2231,7 +2239,7 @@ namespace OnlineVideos
                                     {
                                         // if download was successfull, try to copy to target dir (if not successfull, mark for UAC prompted copy later)
                                         try { System.IO.File.Copy(dllTempDir + anOnlineDll.Name + ".dll", location, true); }
-                                        catch { dllsToCopy++; }                                        
+                                        catch { dllsToCopy++; }
                                     }
                                 }
                             }
