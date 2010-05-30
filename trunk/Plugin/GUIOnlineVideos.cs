@@ -552,9 +552,11 @@ namespace OnlineVideos
                     else
                     {
                         selectedVideoIndex = GUI_facadeView.SelectedListItemIndex;
+                        selectedVideo = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
+
                         if (SelectedSite.HasMultipleVideos)
                         {
-                            if (DisplayDetails(currentVideoList[GUI_facadeView.SelectedListItemIndex - 1]))
+                            if (DisplayDetails(selectedVideo))
                             {
                                 CurrentState = State.details;
                             }
@@ -562,7 +564,6 @@ namespace OnlineVideos
                         else
                         {
                             //play the video
-                            selectedVideo = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
                             Play(selectedVideo);
                         }
                     }
@@ -942,7 +943,6 @@ namespace OnlineVideos
 
         private bool DisplayDetails(VideoInfo foVideo)
         {
-            selectedVideo = foVideo;
             List<VideoInfo> loVideoList = null;
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
@@ -1209,7 +1209,7 @@ namespace OnlineVideos
                 loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
                 GUI_facadeView.Add(loListItem);
 
-                if (loListItem.Item == selectedVideo) selectedVideoIndex = GUI_facadeView.Count-1;
+                if (loListItem.Item == selectedVideo) selectedVideoIndex = GUI_facadeView.Count - 1;
 
                 if (!string.IsNullOrEmpty(loVideoInfo.ImageUrl))
                 {
