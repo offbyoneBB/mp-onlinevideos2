@@ -30,7 +30,7 @@ namespace OnlineVideos.Sites
                     cat.Description = m.Groups["description"].Value;
 
                     cat.Url = @"http://tvnz.co.nz/search/ta_ent_search_tv_skin.xhtml?requiredfields=type:media.";
-                    if (m.Groups["type"].Value == "Extra")
+                    if (m.Groups["type"].Value == "Extra" || m.Groups["type"].Value == "Preview")
                     {
                         cat.Name += ": Extras";
                         cat.Url += @"(format:extras|format:preview)";
