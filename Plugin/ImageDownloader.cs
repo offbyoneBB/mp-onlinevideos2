@@ -123,8 +123,9 @@ namespace OnlineVideos
                                     item.IconImage = thumbFile;
                                     item.IconImageBig = thumbFile;
                                     if (item.Item is VideoInfo) (item.Item as VideoInfo).ThumbnailImage = thumbFile;
+                                    item.RefreshCoverArt();
                                     break;
-                                }                                
+                                }
                             }
                         }
                     }
