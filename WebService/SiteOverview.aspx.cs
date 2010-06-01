@@ -18,8 +18,9 @@ namespace OnlineVideos.WebService
                 {
                     if (dc.DatabaseExists())
                     {                        
-                        var s = from a in dc.Site select new { Description = a.Description, Language = a.Language, IsAdult = a.IsAdult, LastUpdated = a.LastUpdated, Name = a.Name, State = a.State, Owner_FK = a.Owner_FK, RequiredDll = a.RequiredDll };
-                        siteOverview.DataSource = (List<Site>)s.ToList().ToNonAnonymousList(typeof(Site));
+                        var sites = from a in dc.Site select new { Description = a.Description, Language = a.Language, IsAdult = a.IsAdult, LastUpdated = a.LastUpdated, Name = a.Name, State = a.State, Owner_FK = a.Owner_FK, RequiredDll = a.RequiredDll };
+                        sites = sites.OrderByDescending(s => s.LastUpdated);
+                        siteOverview.DataSource = (List<Site>)sites.ToList().ToNonAnonymousList(typeof(Site));
                         siteOverview.DataBind();
                     }
                 }
