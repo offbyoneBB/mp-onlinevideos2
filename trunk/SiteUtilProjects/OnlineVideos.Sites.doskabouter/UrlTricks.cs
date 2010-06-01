@@ -246,7 +246,7 @@ namespace OnlineVideos.Sites
             video.VideoUrl = url;
             video.PlaybackOptions = null;
             video.GetYouTubePlaybackOptions();
-            return "";
+            return url;
         }
 
         public static string GoogleCaTrick(string Url)
