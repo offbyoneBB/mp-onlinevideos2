@@ -170,7 +170,7 @@ namespace OnlineVideos
 
         List<VideoInfo> currentVideoList = new List<VideoInfo>();
         List<VideoInfo> currentTrailerList = new List<VideoInfo>();
-        List<Player.PlayListItemWrapper> currentPlaylist = null;
+        List<Player.PlayListItem> currentPlaylist = null;
         int currentPlaylistIndex = 0;
 
         RTMP_LIB.HTTPServer proxyRtmp;
@@ -585,7 +585,7 @@ namespace OnlineVideos
                             //play the video
                             currentPlaylist = null;
                             currentPlaylistIndex = 0;
-                            Play(new PlayListItemWrapper(null, null) 
+                            Play(new PlayListItem(null, null) 
                                     { 
                                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                                         Video = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo,
@@ -608,7 +608,7 @@ namespace OnlineVideos
                     //play the video
                     currentPlaylist = null;
                     currentPlaylistIndex = 0;
-                    Play(new PlayListItemWrapper(null, null)
+                    Play(new PlayListItem(null, null)
                     {
                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                         Video = (GUI_infoList.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo,
@@ -1380,7 +1380,7 @@ namespace OnlineVideos
             }
         }
 
-        private void Play(PlayListItemWrapper playItem, bool goFullScreen)
+        private void Play(PlayListItem playItem, bool goFullScreen)
         {
             if (!string.IsNullOrEmpty(playItem.FileName))
             {
@@ -1400,7 +1400,7 @@ namespace OnlineVideos
             }
         }
 
-        private void Play(PlayListItemWrapper playItem, List<String> loUrlList, bool goFullScreen)
+        private void Play(PlayListItem playItem, List<String> loUrlList, bool goFullScreen)
         {
             bool playing = false;
             // remove all invalid entries from the list of playback urls
@@ -1435,10 +1435,10 @@ namespace OnlineVideos
             // create playlist entries if more than one url
             if (loUrlList.Count > 1)
             {
-                List<PlayListItemWrapper> playbackItems = new List<PlayListItemWrapper>();
+                List<PlayListItem> playbackItems = new List<PlayListItem>();
                 foreach (string url in loUrlList)
                 {
-                    playbackItems.Add(new PlayListItemWrapper(string.Format("{0} - {1} / {2}", playItem.Video.Title, (playbackItems.Count+1).ToString(), loUrlList.Count), url)
+                    playbackItems.Add(new PlayListItem(string.Format("{0} - {1} / {2}", playItem.Video.Title, (playbackItems.Count+1).ToString(), loUrlList.Count), url)
                     {
                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                         Video = playItem.Video,
@@ -1563,12 +1563,12 @@ namespace OnlineVideos
 
         private void PlayAll()
         {
-            currentPlaylist = new List<Player.PlayListItemWrapper>();
+            currentPlaylist = new List<Player.PlayListItem>();
             currentPlaylistIndex = 0;
             List<VideoInfo> loVideoList = SelectedSite.HasMultipleVideos ? currentTrailerList : currentVideoList;
             foreach (VideoInfo video in loVideoList)
             {
-                currentPlaylist.Add(new Player.PlayListItemWrapper(video.Title, null)
+                currentPlaylist.Add(new Player.PlayListItem(video.Title, null)
                 {
                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                     Video = video,
