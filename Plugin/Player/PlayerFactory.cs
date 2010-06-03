@@ -5,64 +5,64 @@ namespace OnlineVideos.Player
 {
     public class PlayerFactory : IPlayerFactory
     {
-        PlayerType playerType = PlayerType.Auto;        
+        public string PreparedUrl { get; protected set; }
+        public PlayerType PreparedPlayerType { get; protected set; }
+        public IPlayer PreparedPlayer { get; protected set; }
 
-        public PlayerFactory(PlayerType playerType)
+        public PlayerFactory(PlayerType playerType, string url)
         {
-            this.playerType = playerType;
+            PreparedPlayerType = playerType;
+            PreparedUrl = url;
+            SelectPlayerType();
+            PreparePlayer();
         }
-        
-        string preparedUrl;
-        PlayerType preparedPlayerType = PlayerType.Auto;
 
-        public PlayerType Prepare(string url)
+        void SelectPlayerType()
         {
-            preparedUrl = url;
-
-            switch (playerType)
+            if (PreparedPlayerType == PlayerType.Auto)
             {
-                case PlayerType.Internal:
-                    preparedPlayerType = PlayerType.Internal;
-                    break;
-                case PlayerType.WMP:
-                    preparedPlayerType = PlayerType.WMP;
-                    break;
-                default:
-                    Uri uri = new Uri(url);
+                Uri uri = new Uri(PreparedUrl);
 
-                    if (uri.Scheme == "rtsp" || uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asf"))
+                if (uri.Scheme == "rtsp" || uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asf"))
+                {
+                    PreparedPlayerType = PlayerType.Internal;
+                }
+                else if (uri.PathAndQuery.Contains(".asx"))
+                {
+                    PreparedPlayerType = PlayerType.WMP;
+                }
+                else
+                {
+                    foreach (string anExt in OnlineVideoSettings.Instance.VideoExtensions.Keys)
                     {
-                        preparedPlayerType = PlayerType.Internal;
-                    }
-                    else if (uri.PathAndQuery.Contains(".asx"))
-                    {
-                        preparedPlayerType = PlayerType.WMP;
-                    }
-                    else
-                    {
-                        foreach (string anExt in OnlineVideoSettings.Instance.VideoExtensions.Keys)
+                        if (uri.PathAndQuery.Contains(anExt))
                         {
-                            if (uri.PathAndQuery.Contains(anExt))
+                            if (anExt == ".wmv" && !string.IsNullOrEmpty(uri.Query))
                             {
-                                if (anExt == ".wmv" && !string.IsNullOrEmpty(uri.Query))
-                                {
-                                    preparedPlayerType = PlayerType.WMP;
-                                    break;
-                                }
-                                else
-                                {
-                                    preparedPlayerType = PlayerType.Internal;
-                                    break;
-                                }
+                                PreparedPlayerType = PlayerType.WMP;
+                                break;
+                            }
+                            else
+                            {
+                                PreparedPlayerType = PlayerType.Internal;
+                                break;
                             }
                         }
-                        if (preparedPlayerType == PlayerType.Auto) preparedPlayerType = PlayerType.WMP;
                     }
-                    break;
+                    if (PreparedPlayerType == PlayerType.Auto) PreparedPlayerType = PlayerType.WMP;
+                }
             }
-            return preparedPlayerType;
         }
-        
+
+        void PreparePlayer()
+        {
+            switch (PreparedPlayerType)
+            {
+                case PlayerType.Internal: PreparedPlayer = new OnlineVideosPlayer(PreparedUrl); break;
+                default: PreparedPlayer = new WMPVideoPlayer(); break;
+            }
+        }
+
         public IPlayer Create(string filename)
         {
             return Create(filename, g_Player.MediaType.Video);
@@ -70,13 +70,10 @@ namespace OnlineVideos.Player
 
         public IPlayer Create(string filename, g_Player.MediaType type)
         {
-            if (filename != preparedUrl) Prepare(filename);
-
-            switch (preparedPlayerType)
-            {
-                case PlayerType.Internal: return new OnlineVideosPlayer();
-                default: return new WMPVideoPlayer();
-            }
+            if (filename != PreparedUrl)
+                throw new OnlineVideosException("Cannot play a different url than this PlayerFactory was created with!");
+            else
+                return PreparedPlayer;
         }              
     }
 }

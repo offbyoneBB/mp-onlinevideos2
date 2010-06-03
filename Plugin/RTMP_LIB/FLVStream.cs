@@ -20,7 +20,7 @@ namespace RTMP_LIB
 
         public long EstimatedLength { get; protected set; } // predicted amount of byte in the file
 
-        public void WriteFLV(RTMP rtmp, DataReadyHandler DataReady)
+        public void WriteFLV(RTMP rtmp, DataReadyHandler DataReady, System.Net.Sockets.Socket socket)
         {
             // rtmp must be connected
             if (!rtmp.IsConnected()) return;
@@ -78,7 +78,7 @@ namespace RTMP_LIB
                     ms = new MemoryStream();
                 }
             }
-            while (nRead > -1 && rtmp.Playing);
+            while (nRead > -1 && rtmp.Playing && socket.Connected);
         }
 
         int WriteStream(RTMP rtmp, Stream stream, out uint nTimeStamp)

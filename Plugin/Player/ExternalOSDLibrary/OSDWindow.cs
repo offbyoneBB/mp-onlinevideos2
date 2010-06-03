@@ -45,7 +45,8 @@ namespace ExternalOSDLibrary
     /// </summary>
     public VideoOSDWindow()
     {
-      _osdWindow = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_OSD) as GUIVideoOSD;
+      //_osdWindow = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_OSD) as GUIVideoOSD;
+      _osdWindow = GUIWindowManager.GetWindow(OnlineVideos.Player.GUIOnlineVideoOSD.WINDOW_ONLINEVIDEOS_OSD) as GUIVideoOSD;
       if (_osdWindow != null) _controlList = _osdWindow.controlList;
       GenerateElements();
     }
@@ -58,7 +59,7 @@ namespace ExternalOSDLibrary
     /// <returns>true, if window is visible; false otherwise</returns>
     protected override bool CheckSpecificVisibility()
     {
-      return GUIWindowManager.VisibleOsd == GUIWindow.Window.WINDOW_OSD;;
+        return (int)GUIWindowManager.VisibleOsd == _osdWindow.GetID;
     }
 
     /// <summary>
@@ -68,7 +69,8 @@ namespace ExternalOSDLibrary
     /// </summary>
     protected override void BaseInit()
     {
-      _osdWindow = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_OSD) as GUIVideoOSD;
+      //_osdWindow = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_OSD) as GUIVideoOSD;
+      _osdWindow = GUIWindowManager.GetWindow(OnlineVideos.Player.GUIOnlineVideoOSD.WINDOW_ONLINEVIDEOS_OSD) as GUIVideoOSD;
       if (_osdWindow != null)
         _controlList = _osdWindow.controlList;
     }

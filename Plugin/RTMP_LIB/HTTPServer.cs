@@ -27,6 +27,7 @@ namespace RTMP_LIB
             Thread.CurrentThread.Name = "RTMPProxy";
             Logger.Log("Request");
             RTMP rtmp = null;
+            Stream responseStream = null;
             try
             {
                 NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(new Uri(new Uri("http://127.0.0.1"), request.URI).Query);
@@ -56,8 +57,7 @@ namespace RTMP_LIB
                 {
                     response.ContentType = "video/x-flv";
                     //response.ChunkedTransferEncoding = true;
-
-                    Stream responseStream = null;
+                    
                     FLVStream fs = new FLVStream();
                     
                     fs.WriteFLV(rtmp, delegate()
@@ -66,10 +66,10 @@ namespace RTMP_LIB
                         // but don't set a length if it is our user agent, so a download will always be complete
                         if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.USERAGENT)
                             response.ContentLength = fs.EstimatedLength;      
-                        
+                                                
                         responseStream = response.Send();
                         return responseStream;
-                    });
+                    }, response._session._socket);
 
                     invalidHeader = rtmp.invalidRTMPHeader;
 
@@ -95,6 +95,7 @@ namespace RTMP_LIB
             }
             catch (Exception ex)
             {
+                if (responseStream != null) responseStream.Close();
                 Logger.Log(ex.ToString());                
             }
             finally

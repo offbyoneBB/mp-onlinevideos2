@@ -609,7 +609,7 @@ namespace OnlineVideos
 
         public static SiteSettings GetRemoteSite(string name, OnlineVideosWebservice.OnlineVideosService ws)
         {
-            string siteXml = "";            
+            string siteXml = "";
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
                 if (ws == null) ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();

@@ -188,6 +188,16 @@ namespace OnlineVideos.Player
                         _wmp10Player.settings.volume = (int)((double)VolumeHandler.Instance.Next / MediaPortal.Player.VolumeHandler.Instance.Maximum * 100);
                         if (!_osdActive) { _osd.Activate(); _osdActive = true; }
                         break;
+                    default:
+                        Action translatedAction = new Action();
+                        if (ActionTranslator.GetAction((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO, action.m_key, ref translatedAction))
+                        {
+                            if (translatedAction.wID == Action.ActionType.ACTION_SHOW_OSD)
+                            {
+                                if (!_osdActive) { _osd.Activate(); _osdActive = true; }
+                            }
+                        }
+                        break;
                 }
             }
         }
