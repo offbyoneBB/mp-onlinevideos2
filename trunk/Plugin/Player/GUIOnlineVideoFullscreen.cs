@@ -25,15 +25,45 @@ namespace OnlineVideos.Player
         
         public override void OnAction(Action action)
         {
-            Action translatedAction = new Action();
-            if (ActionTranslator.GetAction((int)Window.WINDOW_FULLSCREEN_VIDEO, action.m_key, ref translatedAction))
+            if (action.wID == Action.ActionType.ACTION_NEXT_ITEM)
             {
-                if (translatedAction.wID == Action.ActionType.ACTION_SHOW_OSD)
-                { 
-                    base.OnAction(translatedAction);
+                // send a GUI Message to Onlinevideos GUI that it can now play the next item if any
+                GUIWindowManager.SendMessage(new GUIMessage() { TargetWindowId = GUIOnlineVideos.WindowId, SendToTargetWindow = true, Object = this, Param1 = 1 });
+                return;
+            }
+            else if (action.wID == Action.ActionType.ACTION_PREV_ITEM)
+            {
+                // send a GUI Message to Onlinevideos GUI that it can now play the previous item if any
+                GUIWindowManager.SendMessage(new GUIMessage() { TargetWindowId = GUIOnlineVideos.WindowId, SendToTargetWindow = true, Object = this, Param1 = -1 });
+                return;
+            }
+            else
+            {
+                if (action.wID == Action.ActionType.ACTION_VOLUME_UP ||
+                    action.wID == Action.ActionType.ACTION_VOLUME_DOWN ||
+                    action.wID == Action.ActionType.ACTION_VOLUME_MUTE)
+                {
+                    // MediaPortal core sends this message to the Fullscreenwindow, we need to do it ourselves to make the Volume OSD show up
+                    base.OnAction(new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0));
                     return;
                 }
-            }            
+                else
+                {
+                    Action translatedAction = new Action();
+                    if (ActionTranslator.GetAction((int)Window.WINDOW_FULLSCREEN_VIDEO, action.m_key, ref translatedAction))
+                    {
+                        if (translatedAction.wID == Action.ActionType.ACTION_SHOW_OSD)
+                        {
+                            base.OnAction(translatedAction);
+                            if (GUIWindowManager.VisibleOsd == Window.WINDOW_OSD)
+                            {
+                                GUIWindowManager.VisibleOsd = (Window)GUIOnlineVideoOSD.WINDOW_ONLINEVIDEOS_OSD;
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
             base.OnAction(action);
         }
         

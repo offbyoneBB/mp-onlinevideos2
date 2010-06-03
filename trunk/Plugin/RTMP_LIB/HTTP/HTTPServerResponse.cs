@@ -128,7 +128,7 @@ namespace HybridDSP.Net.HTTP
         public const string DATE       = "Date";
         public const string SET_COOKIE = "Set-Cookie";
 
-        private HTTPServerSession _session;
+        internal HTTPServerSession _session { get; private set; }
         private Stream _stream = null;
 
         private HTTPStatus _status;
