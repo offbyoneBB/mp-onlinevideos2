@@ -250,10 +250,10 @@
     <Compile Include="Player\ExternalOSDLibrary\OSDWindow.cs" />
     <Compile Include="Player\GUIOnlineVideoFullscreen.cs" />
     <Compile Include="Player\GUIOnlineVideoOSD.cs" />
+    <Compile Include="Player\PlayListItem.cs" />
     <Compile Include="Player\WMPVideoPlayer.cs" />
     <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Player\PlayerFactory.cs" />
-    <Compile Include="Player\PlaylistPlayerWrapper.cs" />
     <Compile Include="ReverseProxy.cs" />
     <Compile Include="RssToolkit\Rss\Constants.cs" />
     <Compile Include="RssToolkit\Rss\DocumentType.cs" />
