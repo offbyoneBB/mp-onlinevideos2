@@ -239,7 +239,7 @@ namespace OnlineVideos
         protected override void OnPageLoad()
         {
             #if MP102
-            GUIPropertyManager.SetProperty("#currentmodule", PluginName());
+            GUIPropertyManager.SetProperty("#currentmodule", ((ISetupForm)this).PluginName());
             #endif
             if (!firstLoadDone)
             {
@@ -1516,7 +1516,9 @@ namespace OnlineVideos
                             }
                             else
                             {
-                                factory.PreparedPlayer.Dispose();
+                                #if !MP102
+                                factory.PreparedPlayer.Dispose(); 
+                                #endif
                                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                                 if (dlg != null)
                                 {
@@ -1530,7 +1532,9 @@ namespace OnlineVideos
                         }
                         else
                         {
+                            #if !MP102
                             factory.PreparedPlayer.Dispose();
+                            #endif
                         }
                     },
                     "starting playback", false);
