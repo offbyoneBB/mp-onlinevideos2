@@ -232,6 +232,7 @@ namespace OnlineVideos
 
         // B
         public static string Broken = "Broken";
+        public static string Buffered = "buffered";
 
         // C
         public static string Category = "Category";

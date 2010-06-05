@@ -213,7 +213,20 @@
       <textcolor>White</textcolor>
       <visible>!Control.IsVisible(51)</visible>
     </control>    
-
+    <control>
+      <description>Buffering Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1195</posX>
+      <posY>590</posY>
+      <label>#OnlineVideos.buffered % #OnlineVideos.Translation.Buffered.Label</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#OnlineVideos.IsBuffering, true) + !player.hasmedia</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
     <!-- Number of Items Label for all views -->
     <control>
       <description>Number of Items Label in Sites View</description>
