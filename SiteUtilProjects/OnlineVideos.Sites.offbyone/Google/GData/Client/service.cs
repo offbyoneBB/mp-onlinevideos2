@@ -1148,20 +1148,30 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public void Delete(AtomEntry entry)
         {
+            Delete(entry, false);
+        }
+
+        //////////////////////////////////////////////////////////////////////
+        /// <summary>deletes an Atom entry object</summary> 
+        /// <param name="entry">The entry to be deleted </param>
+        /// <param name="permanentDelete">Should the entry be archived or not</param>
+        //////////////////////////////////////////////////////////////////////
+        public void Delete(AtomEntry entry, bool permanentDelete)
+        {
             Tracing.Assert(entry != null, "entry should not be null");
             string eTag = null;
 
             if (entry == null)
             {
-                throw new ArgumentNullException("entry"); 
+                throw new ArgumentNullException("entry");
             }
 
             if (entry.ReadOnly == true)
             {
-                throw new GDataRequestException("Can not update a read-only entry"); 
+                throw new GDataRequestException("Can not update a read-only entry");
             }
 
-            Tracing.Assert(entry.EditUri != null, "Entry should have a valid edit URI"); 
+            Tracing.Assert(entry.EditUri != null, "Entry should have a valid edit URI");
 
             ISupportsEtag eSource = entry as ISupportsEtag;
 
@@ -1172,13 +1182,15 @@ namespace Google.GData.Client
 
             if (entry.EditUri != null)
             {
-                Delete(new Uri(entry.EditUri.ToString()), eTag);
+                var uriString = entry.EditUri.Content + (permanentDelete ? "?delete=true" : string.Empty);
+                Delete(new Uri(uriString), eTag);
             }
             else
             {
-                throw new GDataRequestException("Invalid Entry object (no edit uri) to call Delete on"); 
+                throw new GDataRequestException("Invalid Entry object (no edit uri) to call Delete on");
             }
         }
+
         /////////////////////////////////////////////////////////////////////////////
 
         //////////////////////////////////////////////////////////////////////
@@ -1219,7 +1231,8 @@ namespace Google.GData.Client
             request.Execute();
             IDisposable disp = request as IDisposable;
             disp.Dispose();
-        }   
+        }
+
         //////////////////////////////////////////////////////////////////////
 
 

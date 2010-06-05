@@ -200,8 +200,7 @@ namespace Google.GData.Client
             return returnString.ToString(); 
         }
 
-
-
+        
 
         /// <summary>
         /// used as a cover method to hide the actual decoding implementation

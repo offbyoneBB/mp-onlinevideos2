@@ -369,16 +369,16 @@ namespace RTMP_LIB
             EncodeNumber(enc, m_numInvokes++);
             enc.Add(0x03); //Object Datatype                
             EncodeString(enc, "app", Link.app);
-            EncodeNumber(enc, "objectEncoding", 0.0);
-            EncodeBoolean(enc, "fpad", false);
-            EncodeString(enc, "flashVer", "WIN 10,0,22,87");//EncodeString(enc, "flashVer", "WIN 9,0,115,0");
+            EncodeString(enc, "flashVer", "WIN 10,0,32,18");
             if (!string.IsNullOrEmpty(Link.swfUrl)) EncodeString(enc, "swfUrl", Link.swfUrl);
-            EncodeString(enc, "tcUrl", Link.tcUrl);                        
-            EncodeNumber(enc, "audioCodecs", 1639.0);//EncodeNumber(enc, "audioCodecs", 3191.0);
-            EncodeNumber(enc, "videoFunction", 1.0);
+            EncodeString(enc, "tcUrl", Link.tcUrl);
+            EncodeBoolean(enc, "fpad", false);
             EncodeNumber(enc, "capabilities", 15.0);
-            EncodeNumber(enc, "videoCodecs", 252.0);            
+            EncodeNumber(enc, "audioCodecs", 3191.0);
+            EncodeNumber(enc, "videoCodecs", 252.0);
+            EncodeNumber(enc, "videoFunction", 1.0);
             if (!string.IsNullOrEmpty(Link.pageUrl)) EncodeString(enc, "pageUrl", Link.pageUrl);
+            EncodeNumber(enc, "objectEncoding", 0.0);
             enc.Add(0); enc.Add(0); enc.Add(0x09); // end of object - 0x00 0x00 0x09
 
             // add auth string

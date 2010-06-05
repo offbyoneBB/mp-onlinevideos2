@@ -189,7 +189,7 @@ namespace Google.GData.Client
                 string linkType = link.Type;
 
                 if ((service == null || (linkRel != null && linkRel == service)) &&
-                    (type == null || (linkType != null && linkType == type)))
+                    (type == null || (linkType != null && linkType.StartsWith(type))))
                 {
 
                     return link;

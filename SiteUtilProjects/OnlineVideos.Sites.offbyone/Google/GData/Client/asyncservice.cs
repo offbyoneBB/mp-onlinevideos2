@@ -115,6 +115,37 @@ namespace Google.GData.Client
         }
 
     }
+
+    public class AsyncDeleteData : AsyncData
+    {
+        private readonly AtomEntry _entry;
+
+        private readonly bool _permanentDelete;
+
+        public AsyncDeleteData(AtomEntry entry, bool permanentDelete, object userData, SendOrPostCallback callback)
+            : base(null, userData, callback)
+        {
+            _entry = entry;
+            _permanentDelete = permanentDelete;
+        }
+
+        public bool PermanentDelete
+        {
+            get
+            {
+                return _permanentDelete;
+            }
+        }
+
+        public AtomEntry Entry
+        {
+            get
+            {
+                return _entry;
+            }
+        }
+    }
+
     //////////////////////////////////////////////////////////////////////
     /// <summary>async functionallity of the Service implementation
     /// </summary> 
@@ -123,6 +154,9 @@ namespace Google.GData.Client
     {
 
         private delegate void WorkerSendEventHandler(AsyncSendData data, AsyncOperation asyncOp,
+                                   SendOrPostCallback completionMethodDelegate);
+
+        private delegate void WorkerDeleteEventHandler(AsyncDeleteData data, AsyncOperation asyncOp,
                                    SendOrPostCallback completionMethodDelegate);
        
         /// <summary>
@@ -459,6 +493,36 @@ namespace Google.GData.Client
                 this.CompletionMethodDelegate,
                 null,
                 null);
+        }
+
+        public void DeleteAsync(AtomEntry entry, bool permanentDelete, Object userData)
+        {
+            AsyncDeleteData data = new AsyncDeleteData(entry, permanentDelete, userData, ProgressReportDelegate);
+            AsyncStarter(data, AsyncDeleteWorker, userData);
+        }
+
+        private void AsyncStarter(AsyncDeleteData data, WorkerDeleteEventHandler workerDelegate, Object userData)
+        {
+            AsyncOperation asyncOp = AsyncOperationManager.CreateOperation(userData);
+            data.Operation = asyncOp;
+            AddUserDataToDictionary(userData, asyncOp);
+
+            // Start the asynchronous operation.
+            workerDelegate.BeginInvoke(data, asyncOp, CompletionMethodDelegate, null, null);
+        }
+
+        private void AsyncDeleteWorker(AsyncDeleteData data, AsyncOperation asyncOp, SendOrPostCallback completionMethodDelegate)
+        {
+            try
+            {
+                Delete(data.Entry, data.PermanentDelete);
+            }
+            catch (Exception e)
+            {
+                data.Exception = e;
+            }
+
+            completionMethodDelegate(data);
         }
     }
    //////////////////////////////////////////////////////////////////////////

@@ -608,7 +608,7 @@ namespace Google.GData.Client
             {
                 if (retryCounter > this.factory.NumberOfRetries)
                 {
-                    Tracing.TraceMsg("Got no response object");
+                    Tracing.TraceMsg("Number of retries exceeded");
                     throw;
                 }
                 Tracing.TraceMsg("Let's retry this"); 
@@ -661,6 +661,13 @@ namespace Google.GData.Client
                         oneLoop = (100 / ((double)this.requestCopy.Length / size));
 
                     }
+
+                    // 3 lines of debug code
+                    // this.requestCopy.Seek(0, SeekOrigin.Begin);
+
+                    // StreamReader reader = new StreamReader( this.requestCopy );
+                    // string text = reader.ReadToEnd();
+
 
                     this.requestCopy.Seek(0, SeekOrigin.Begin);
 

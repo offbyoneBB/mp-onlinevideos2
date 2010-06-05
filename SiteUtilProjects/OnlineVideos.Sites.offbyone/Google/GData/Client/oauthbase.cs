@@ -83,7 +83,7 @@ namespace Google.GData.Client {
 
         protected Random random = new Random();
 
-        protected string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
+        protected static string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 
         /// <summary>
         /// Helper function to compute a hash value
@@ -91,7 +91,8 @@ namespace Google.GData.Client {
         /// <param name="hashAlgorithm">The hashing algoirhtm used. If that algorithm needs some initialization, like HMAC and its derivatives, they should be initialized prior to passing it to this function</param>
         /// <param name="data">The data to hash</param>
         /// <returns>a Base64 string of the hash value</returns>
-        private string ComputeHash(HashAlgorithm hashAlgorithm, string data) {
+        private static string ComputeHash(HashAlgorithm hashAlgorithm, string data)
+        {
             if (hashAlgorithm == null) {
                 throw new ArgumentNullException("hashAlgorithm");
             }
@@ -111,7 +112,7 @@ namespace Google.GData.Client {
         /// </summary>
         /// <param name="parameters">The query string part of the Url</param>
         /// <returns>A list of QueryParameter each containing the parameter name and value</returns>
-        private List<QueryParameter> GetQueryParameters(string parameters) {
+        private static List<QueryParameter> GetQueryParameters(string parameters) {
             if (parameters.StartsWith("?")) {
                 parameters = parameters.Remove(0, 1);
             }
@@ -124,9 +125,14 @@ namespace Google.GData.Client {
                     if (!string.IsNullOrEmpty(s) && !s.StartsWith(OAuthParameterPrefix)) {
                         if (s.IndexOf('=') > -1) {
                             string[] temp = s.Split('=');
-                            result.Add(new QueryParameter(temp[0], temp[1]));
+                            // now temp[1], the value, might contain encoded data, that would be double encoded later. 
+                            // also it MIGHT contain encoding of the lowercase kind, which throws OAUTH off
+                            // the same is true for the name
+                            string name = Utilities.UrlDecodedValue(temp[0]);
+                            string value = Utilities.UrlDecodedValue(temp[1]);
+                            result.Add(new QueryParameter(name, value));
                         } else {
-                            result.Add(new QueryParameter(s, string.Empty));
+                            result.Add(new QueryParameter(Utilities.UrlDecodedValue(s), string.Empty));
                         }
                     }
                 }
@@ -136,12 +142,15 @@ namespace Google.GData.Client {
         }
 
         /// <summary>
-        /// This is a different Url Encode implementation since the default .NET one outputs the percent encoding in lower case.
-        /// While this is not a problem with the percent encoding spec, it is used in upper case throughout OAuth
+        /// All parameter names and values are escaped using the [RFC3986]  
+        /// percent-encoding (%xx) mechanism. Characters not in the unreserved character 
+        /// MUST be encoded. Characters in the unreserved character set MUST NOT be encoded. 
+        /// Hexadecimal characters in encodings MUST be upper case. Text names and values MUST be 
+        /// encoded as UTF-8 octets before percent-encoding them per [RFC3629] 
         /// </summary>
         /// <param name="value">The value to Url encode</param>
         /// <returns>Returns a Url encoded string</returns>
-        protected string UrlEncode(string value) {
+        public static string EncodingPerRFC3986(string value) {
             StringBuilder result = new StringBuilder();
 
             foreach (char symbol in value) {
@@ -156,16 +165,18 @@ namespace Google.GData.Client {
         }
                         
         /// <summary>
-        /// Normalizes the request parameters according to the spec
+        /// Normalizes the request parameters according to the spec for the signature generation.
         /// </summary>
         /// <param name="parameters">The list of parameters already sorted</param>
         /// <returns>a string representing the normalized parameters</returns>
-		protected string NormalizeRequestParameters(IList<QueryParameter> parameters) {			
+		protected static string NormalizeRequestParameters(IList<QueryParameter> parameters) {			
 			StringBuilder sb = new StringBuilder();
             QueryParameter p = null;
             for (int i = 0; i < parameters.Count; i++) {
                 p = parameters[i];
-                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}={1}", p.Name, p.Value);
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}={1}", 
+                                            EncodingPerRFC3986(p.Name), 
+                                            EncodingPerRFC3986(p.Value));
 
                 if (i < parameters.Count - 1) {
                     sb.Append("&");
@@ -185,7 +196,8 @@ namespace Google.GData.Client {
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
         /// <param name="signatureType">The signature type. To use the default values use <see cref="OAuthBase.SignatureTypes">OAuthBase.SignatureTypes</see>.</param>
         /// <returns>The signature base</returns>
-        public string GenerateSignatureBase(Uri url, string consumerKey, string token, string tokenSecret, string httpMethod, string timeStamp, string nonce, string signatureType, out string normalizedUrl, out string normalizedRequestParameters) {
+        public static string GenerateSignatureBase(Uri url, string consumerKey, string token, string tokenSecret, 
+                                                    string httpMethod, string timeStamp, string nonce, string signatureType) {
             if (token == null) {
                 token = string.Empty;
             }
@@ -206,8 +218,8 @@ namespace Google.GData.Client {
                 throw new ArgumentNullException("signatureType");
             }
 
-			normalizedUrl = null;
-			normalizedRequestParameters = null;
+			string normalizedUrl = null;
+			string normalizedRequestParameters = null;
 
             List<QueryParameter> parameters = GetQueryParameters(url.Query);
             parameters.Add(new QueryParameter(OAuthVersionKey, OAuthVersion));
@@ -219,7 +231,7 @@ namespace Google.GData.Client {
             if (!string.IsNullOrEmpty(token)) {
                 parameters.Add(new QueryParameter(OAuthTokenKey, token));
             }
-
+      
             parameters.Sort(new QueryParameterComparer());
 
             normalizedUrl = string.Format("{0}://{1}", url.Scheme, url.Host);
@@ -232,8 +244,8 @@ namespace Google.GData.Client {
 
             StringBuilder signatureBase = new StringBuilder();
             signatureBase.AppendFormat(CultureInfo.InvariantCulture, "{0}&", httpMethod.ToUpper());
-            signatureBase.AppendFormat(CultureInfo.InvariantCulture, "{0}&", UrlEncode(normalizedUrl));
-            signatureBase.AppendFormat(CultureInfo.InvariantCulture, "{0}", UrlEncode(normalizedRequestParameters));
+            signatureBase.AppendFormat(CultureInfo.InvariantCulture, "{0}&", EncodingPerRFC3986(normalizedUrl));
+            signatureBase.AppendFormat(CultureInfo.InvariantCulture, "{0}",  EncodingPerRFC3986(normalizedRequestParameters));
 
             return signatureBase.ToString();
         }
@@ -244,7 +256,7 @@ namespace Google.GData.Client {
         /// <param name="signatureBase">The signature based as produced by the GenerateSignatureBase method or by any other means</param>
         /// <param name="hash">The hash algorithm used to perform the hashing. If the hashing algorithm requires initialization or a key it should be set prior to calling this method</param>
         /// <returns>A base64 string of the hash value</returns>
-        public string GenerateSignatureUsingHash(string signatureBase, HashAlgorithm hash) {
+        public static string GenerateSignatureUsingHash(string signatureBase, HashAlgorithm hash) {
             return ComputeHash(hash, signatureBase);
         }
 
@@ -258,8 +270,8 @@ namespace Google.GData.Client {
         /// <param name="tokenSecret">The token secret, if available. If not available pass null or an empty string</param>
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
         /// <returns>A base64 string of the hash value</returns>
-		public string GenerateSignature(Uri url, string consumerKey, string consumerSecret, string token, string tokenSecret, string httpMethod, string timeStamp, string nonce, out string normalizedUrl, out string normalizedRequestParameters) {            
-			return GenerateSignature(url, consumerKey, consumerSecret, token, tokenSecret, httpMethod, timeStamp, nonce, SignatureTypes.HMACSHA1, out normalizedUrl, out normalizedRequestParameters);
+		public string GenerateSignature(Uri url, string consumerKey, string consumerSecret, string token, string tokenSecret, string httpMethod, string timeStamp, string nonce) {            
+			return GenerateSignature(url, consumerKey, consumerSecret, token, tokenSecret, httpMethod, timeStamp, nonce, SignatureTypes.HMACSHA1);
         }
 
         /// <summary>
@@ -273,18 +285,17 @@ namespace Google.GData.Client {
         /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
         /// <param name="signatureType">The type of signature to use</param>
         /// <returns>A base64 string of the hash value</returns>
-		public string GenerateSignature(Uri url, string consumerKey, string consumerSecret, string token, string tokenSecret, string httpMethod, string timeStamp, string nonce, SignatureTypes signatureType, out string normalizedUrl, out string normalizedRequestParameters) {
-			normalizedUrl = null;
-			normalizedRequestParameters = null;
+		public static string GenerateSignature(Uri url, string consumerKey, string consumerSecret, string token, string tokenSecret, string httpMethod, string timeStamp, string nonce, SignatureTypes signatureType) {
 
             switch (signatureType) {
                 case SignatureTypes.PLAINTEXT:					
                     return HttpUtility.UrlEncode(string.Format("{0}&{1}", consumerSecret, tokenSecret));
                 case SignatureTypes.HMACSHA1:					
-					string signatureBase = GenerateSignatureBase(url, consumerKey, token, tokenSecret, httpMethod, timeStamp, nonce, HMACSHA1SignatureType, out normalizedUrl, out normalizedRequestParameters);
+					string signatureBase = GenerateSignatureBase(url, consumerKey, token, tokenSecret, httpMethod, timeStamp, 
+                                           nonce, HMACSHA1SignatureType);
 
                     HMACSHA1 hmacsha1 = new HMACSHA1();
-                    hmacsha1.Key = Encoding.ASCII.GetBytes(string.Format("{0}&{1}", UrlEncode(consumerSecret), string.IsNullOrEmpty(tokenSecret) ? "" : UrlEncode(tokenSecret)));
+                    hmacsha1.Key = Encoding.ASCII.GetBytes(GenerateOAuthSignature(consumerSecret, tokenSecret));
 
                     return GenerateSignatureUsingHash(signatureBase, hmacsha1);                                        
                 case SignatureTypes.RSASHA1:
@@ -293,6 +304,40 @@ namespace Google.GData.Client {
                     throw new ArgumentException("Unknown signature type", "signatureType");
             }
         }
+
+
+        /// <summary>
+        /// oauth_signature is set to the concatenated encoded values of the Consumer Secret and Token Secret, 
+        /// separated by a ‘&’ character (ASCII code 38), even if either secret is empty. This version calls
+        /// GenerateOAuthSignature and encodes the whole signature again
+        /// The result MUST be encoded again. 
+        /// </summary>
+        /// <param name="consumerSecret"></param>
+        /// <param name="tokenSecret"></param>
+        /// <returns></returns>
+        public static string GenerateOAuthSignatureEncoded(string consumerSecret, string tokenSecret)
+        {
+            return EncodingPerRFC3986(
+                            GenerateOAuthSignature(consumerSecret, tokenSecret));
+        }
+
+
+        /// <summary>
+        /// oauth_signature is set to the concatenated encoded values of the Consumer Secret and Token Secret, 
+        /// separated by a ‘&’ character (ASCII code 38), even if either secret is empty. 
+        /// The result MUST be encoded again. 
+        /// </summary>
+        /// <param name="consumerSecret"></param>
+        /// <param name="tokenSecret"></param>
+        /// <returns></returns>
+        public static string GenerateOAuthSignature(string consumerSecret, string tokenSecret)
+        {
+            return string.Format("{0}&{1}",
+                                 EncodingPerRFC3986(consumerSecret),
+                                 string.IsNullOrEmpty(tokenSecret) ? "" : EncodingPerRFC3986(tokenSecret));
+        }
+
+
 
         /// <summary>
         /// Generate the timestamp for the signature        

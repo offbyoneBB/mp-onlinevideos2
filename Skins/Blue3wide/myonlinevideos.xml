@@ -144,7 +144,7 @@
       <id>1</id>
       <posX>300</posX>
       <posY>551</posY>
-      <width>880</width>
+      <width>780</width>
       <label>#selecteditem</label>
       <font>font11</font>
       <textcolor>White</textcolor>
