@@ -11,7 +11,9 @@
   <string Field="AddToMySites">Toevoegen aan mijn sites</string>
   <string Field="AddToFavourites">Toevoegen aan favorieten</string>
   <string Field="Broken">Kapot</string>
+  <string Field="Buffered">Gebufferd</string>
   <string Field="Category">Categorie</string>
+  <string Field="Categories">Categoriën</string>
   <string Field="Creator">Maker</string>
   <string Field="DateOfRelease">Verschijningsdatum:</string>
   <string Field="Directors">Regisseurs</string>
@@ -54,6 +56,7 @@
   <string Field="RetrievingRemoteSites">Ophalen externe sites...</string>
   <string Field="SearchResults">Zoekresultaten</string>
   <string Field="SelectSource">Kies bron</string>
+  <string Field="Sites">Sites</string>
   <string Field="SortOptions">Sorteeropties</string>
   <string Field="Search">Zoek</string>
   <string Field="SetDownloadFolderInConfig">Kies eerst een download-map in de instellingen!</string>
@@ -70,5 +73,6 @@
   <string Field="UpdateAllYourSites">Dit zal de huidige sites bijwerken</string>
   <string Field="UnableToPlayVideo">Kan video niet afspelen: Geen URL.</string>
   <string Field="UnableToDownloadVideo">Kan video niet downloaden: Ongeldige URL.</string>
+  <string Field="Videos">Videos</string>
   <string Field="Working">Bezig</string>
 </strings>
