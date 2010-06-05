@@ -235,6 +235,7 @@ namespace OnlineVideos
 
         // C
         public static string Category = "Category";
+        public static string Categories = "Categories";
         public static string Creator = "Creator";
 
         // D
@@ -303,6 +304,7 @@ namespace OnlineVideos
         // S
         public static string SearchResults = "Search results";
         public static string SelectSource = "Select source";
+        public static string Sites = "Sites";
         public static string SortOptions = "Sort options";
         public static string Search = "Search";
         public static string SetDownloadFolderInConfig = "Please set a download folder in Configuration!";
@@ -325,6 +327,7 @@ namespace OnlineVideos
         public static string UnableToDownloadVideo = "Unable to download the video. Invalid URL.";
 
         // V
+        public static string Videos = "Videos";
 
         // W
         public static string Working = "Working";

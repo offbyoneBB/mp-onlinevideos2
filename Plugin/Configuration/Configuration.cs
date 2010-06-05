@@ -528,30 +528,37 @@ namespace OnlineVideos
                 if (!string.IsNullOrEmpty(dll))
                 {
                     string location = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "OnlineVideos\\") + dll + ".dll";
-                    byte[] data = null;
-                    // check webservice if we need to submit the dll (set useremail = dll owner, or dll not on server)
-                    bool dllFound = false;
-                    bool userIsOwner = false;
-                    bool dllsAreEqual = false;
-                    string md5RemoteDll = null;
-                    string owner = ws.GetDllOwner(dll, out md5RemoteDll);
-                    dllFound = !string.IsNullOrEmpty(owner);
-                    if (dllFound) userIsOwner = owner == settings.email;
-                    if (dllFound && userIsOwner)
+                    if (System.IO.File.Exists(location))
                     {
-                        data = System.IO.File.ReadAllBytes(location);
-                        System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();                        
+                        byte[] data = System.IO.File.ReadAllBytes(location);
+                        System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
                         string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
-                        dllsAreEqual = md5RemoteDll == md5LocalDll;
-                    }
-                    if (!dllFound || (userIsOwner && !dllsAreEqual))
-                    {
-                        string info = dllFound ? "DLL found on server differs from your local file, do you want to update the existing one?" : "Do you want to upload the required dll?";
-                        if (MessageBox.Show(info, "DLL required", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        // check webservice if we need to submit the dll
+                        string md5RemoteDll = null;
+                        string owner = ws.GetDllOwner(dll, out md5RemoteDll);
+                        bool dllFound = md5RemoteDll != null;
+                        bool dllsAreEqual = dllFound ? md5RemoteDll == md5LocalDll : false;
+                        bool userIsOwner = dllFound ? owner == settings.email : true;
+                        if (!dllsAreEqual)
                         {
-                            if (data == null) data = System.IO.File.ReadAllBytes(location);
-                            success = ws.SubmitDll(settings.email, settings.password, dll, data, out msg);
-                            MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+                            bool isAdmin = false;
+                            if (!userIsOwner)
+                            {
+                                if (MessageBox.Show("Only administrators can overwrite a DLL they don't own. I am an Admin. Proceed?", "New DLL - Admin required", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                                {
+                                    isAdmin = true;
+                                }
+                            }
+                            if (userIsOwner || isAdmin)
+                            {
+                                string info = dllFound ? "DLL found on server differs from your local file, do you want to update the existing one?" : "Do you want to upload the required dll?";
+                                if (MessageBox.Show(info, "DLL required", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                                {
+                                    if (data == null) data = System.IO.File.ReadAllBytes(location);
+                                    success = ws.SubmitDll(settings.email, settings.password, dll, data, out msg);
+                                    MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+                                }
+                            }
                         }
                     }
                 }
