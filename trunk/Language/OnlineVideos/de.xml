@@ -12,6 +12,7 @@
   <string Field="AddToFavourites">Zu den Favoriten hinzufügen</string>
   <string Field="Broken">Defekt</string>
   <string Field="Category">Rubrik</string>
+  <string Field="Categories">Rubriken</string>
   <string Field="Creator">Ersteller</string>
   <string Field="DateOfRelease">Erscheinungsdatum</string>
   <string Field="Directors">Regisseure</string>
@@ -54,6 +55,7 @@
   <string Field="RetrievingRemoteSites">Lade Sites vom Server ...</string>
   <string Field="SearchResults">Suchergebnisse</string>
   <string Field="SelectSource">Quelle wählen</string>
+  <string Field="Sites">Sites</string>
   <string Field="SortOptions">Sortierung</string>
   <string Field="Search">Suchen</string>
   <string Field="SetDownloadFolderInConfig">Bitte einen Ordner für Downloads in der Konfiguration wählen!</string>
@@ -70,5 +72,6 @@
   <string Field="UpdateAllYourSites">Dadurch werden alle vorhandenen Sites aktualisiert.</string>
   <string Field="UnableToPlayVideo">Video kann nicht wiedergegeben werden. Keine URL.</string>
   <string Field="UnableToDownloadVideo">Video kann nicht heruntergeladen werden. Ungültige URL.</string>
+  <string Field="Videos">Videos</string>
   <string Field="Working">Funktionierend</string>
 </strings>

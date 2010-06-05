@@ -150,6 +150,7 @@
       <textcolor>White</textcolor>
       <visible>!Control.IsVisible(51)</visible>
     </control>    
+    
     <control>
       <description>Length Label</description>
       <type>label</type>
@@ -175,6 +176,30 @@
       <visible>!Control.IsVisible(51)</visible>
     </control>
     <control>
+      <description>Language Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>579</posY>
+      <width>120</width>
+      <font>font10</font>
+      <label>248</label>
+      <textcolor>White</textcolor>
+      <visible>string.equals(#OnlineVideos.state, sites)+control.hastext(502)</visible>
+    </control>
+    <control>
+      <description>Language</description>
+      <type>label</type>
+      <id>502</id>
+      <posX>420</posX>
+      <posY>579</posY>
+      <width>780</width>
+      <font>font10</font>
+      <label>#selecteditem2</label>
+      <textcolor>White</textcolor>
+      <visible>string.equals(#OnlineVideos.state, sites)</visible>
+    </control>
+    <control>
       <description>Description</description>
       <type>textboxscrollup</type>
       <id>0</id>
@@ -188,17 +213,75 @@
       <textcolor>White</textcolor>
       <visible>!Control.IsVisible(51)</visible>
     </control>    
+
+    <!-- Number of Items Label for all views -->
     <control>
-      <description>Number of Items Label</description>
+      <description>Number of Items Label in Sites View</description>
       <type>label</type>
       <id>0</id>
       <posX>1195</posX>
       <posY>551</posY>
-      <label>#itemcount</label>
+      <label>#selectedindex/#itemcount #OnlineVideos.Translation.Sites.Label</label>
       <align>right</align>
       <textcolor>White</textcolor>
       <font>font10</font>
-      <visible>!Control.IsVisible(51)</visible>
+      <visible>string.equals(#selectedindex)+string.equals(#OnlineVideos.state, sites)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Number of Items Label in categories view without a selected one</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1195</posX>
+      <posY>551</posY>
+      <label>#itemcount #OnlineVideos.Translation.Categories.Label</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <visible>!string.equals(#selectedindex)+string.equals(#OnlineVideos.state, categories)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Number of Items Label in categories view</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1195</posX>
+      <posY>551</posY>
+      <label>#selectedindex/#itemcount #OnlineVideos.Translation.Categories.Label</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#selectedindex)+string.equals(#OnlineVideos.state, categories)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Number of Items Label in Videos view without a selected one</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1195</posX>
+      <posY>551</posY>
+      <label>#itemcount #OnlineVideos.Translation.Videos.Label</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <visible>!string.equals(#selectedindex)+string.equals(#OnlineVideos.state, videos)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Number of Items Label in Videos view</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1195</posX>
+      <posY>551</posY>
+      <label>#selectedindex/#itemcount #OnlineVideos.Translation.Videos.Label</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#selectedindex)+string.equals(#OnlineVideos.state, videos)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
