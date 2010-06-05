@@ -11,6 +11,7 @@
   <string Field="AddToMySites">Zu meinen Sites hinzufügen</string>
   <string Field="AddToFavourites">Zu den Favoriten hinzufügen</string>
   <string Field="Broken">Defekt</string>
+  <string Field="Buffered">gepuffert</string>
   <string Field="Category">Rubrik</string>
   <string Field="Categories">Rubriken</string>
   <string Field="Creator">Ersteller</string>

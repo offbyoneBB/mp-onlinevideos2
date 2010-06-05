@@ -151,19 +151,25 @@ namespace OnlineVideos
             }
         }
         #endregion
-
-        private void ResetSelectedSite()
+        #region Buffering
+        OnlineVideos.Player.PlayerFactory _bufferingPlayerFactory = null;
+        OnlineVideos.Player.PlayerFactory BufferingPlayerFactory
         {
-            GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", string.Empty);
-            GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
+            get { return _bufferingPlayerFactory; }
+            set 
+            { 
+                _bufferingPlayerFactory = value;
+                GUIPropertyManager.SetProperty("#OnlineVideos.buffered", "0");
+                GUIPropertyManager.SetProperty("#OnlineVideos.IsBuffering", (value != null).ToString()); 
+            }
         }
+        #endregion
 
         Category selectedCategory;
         VideoInfo selectedVideo;
 
         bool preventDialogOnLoad = false;
         bool firstLoadDone = false;
-        OnlineVideos.Player.PlayerFactory bufferingPlayerFactory = null;
 
         int selectedClipIndex = 0;  // used to remember the position the last selected Trailer
 
@@ -294,7 +300,7 @@ namespace OnlineVideos
 
         protected override void OnShowContextMenu()
         {
-            if (Gui2UtilConnector.Instance.IsBusy || bufferingPlayerFactory != null) return; // wait for any background action e.g. getting next page videos to finish
+            if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. getting next page videos to finish
 
             int liSelected = GUI_facadeView.SelectedListItemIndex - 1;
 
@@ -380,10 +386,10 @@ namespace OnlineVideos
             switch (action.wID)
             {
                 case Action.ActionType.ACTION_STOP:
-                    if (bufferingPlayerFactory != null)
+                    if (BufferingPlayerFactory != null)
                     {
                         Gui2UtilConnector.Instance.StopBackgroundTask();
-                        ((OnlineVideosPlayer)bufferingPlayerFactory.PreparedPlayer).StopBuffering = true;
+                        ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).StopBuffering = true;
                     }
                     break;
                 case Action.ActionType.ACTION_PREVIOUS_MENU:
@@ -400,7 +406,7 @@ namespace OnlineVideos
                     }
                     if (CurrentState != State.sites)
                     {
-                        if (Gui2UtilConnector.Instance.IsBusy || bufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
+                        if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
 
                         // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
                         GUIControl focusedControl = GetControl(GetFocusControlId());
@@ -459,7 +465,7 @@ namespace OnlineVideos
                     if (currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
                     {
                         currentFilter.Clear();
-                        if (Gui2UtilConnector.Instance.IsBusy || bufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
+                        if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
 
                         if (GUI_btnNext.IsEnabled)
                         {
@@ -471,7 +477,7 @@ namespace OnlineVideos
                     if (currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
                     {
                         currentFilter.Clear();
-                        if (Gui2UtilConnector.Instance.IsBusy || bufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
+                        if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
 
                         if (GUI_btnPrevious.IsEnabled)
                         {
@@ -536,7 +542,7 @@ namespace OnlineVideos
 
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
-            if (Gui2UtilConnector.Instance.IsBusy || bufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
+            if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
             if (control == GUI_facadeView && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
                 currentFilter.Clear();
@@ -1483,7 +1489,7 @@ namespace OnlineVideos
                     {
                         try
                         {
-                            bufferingPlayerFactory = factory;
+                            BufferingPlayerFactory = factory;
                             if (((OnlineVideosPlayer)factory.PreparedPlayer).BufferFile())
                                 return factory;
                             else
@@ -1496,7 +1502,7 @@ namespace OnlineVideos
                         }
                         finally
                         {
-                            bufferingPlayerFactory = null;
+                            BufferingPlayerFactory = null;
                         }
                     },
                     delegate(bool success, object result)
@@ -2187,6 +2193,12 @@ namespace OnlineVideos
                     GUIPropertyManager.SetProperty(label, value);
                 }
             }
+        }
+
+        private void ResetSelectedSite()
+        {
+            GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
         }
 
         private void AutoUpdate(bool ask)

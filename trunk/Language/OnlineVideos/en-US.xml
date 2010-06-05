@@ -15,6 +15,7 @@
 
   <!-- B -->
   <string Field="Broken">Broken</string>
+  <string Field="Buffered">buffered</string>
 
   <!-- C -->
   <string Field="Category">Category</string>

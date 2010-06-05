@@ -256,7 +256,7 @@ namespace OnlineVideos.Player
             {
                 IAMOpenProgress sourceFilter = filter as IAMOpenProgress;
                 if (filter == null) return;
-
+                
                 int result = 0;
                 long total = 0, current = 0, last = 0;
                 do
@@ -271,6 +271,7 @@ namespace OnlineVideos.Player
                     if (current > last && current - last >= (double)total * 0.01) // log every percent
                     {
                         Log.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)PercentageBuffered);
+                        GUIPropertyManager.SetProperty("#OnlineVideos.buffered", ((int)PercentageBuffered).ToString());
                         last = current;                        
                     }
                     Thread.Sleep(50); // no need to do this more often than 20 times per second
