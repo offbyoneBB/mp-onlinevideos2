@@ -151,6 +151,8 @@ namespace OnlineVideos
             this.label11 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.label33 = new System.Windows.Forms.Label();
+            this.chkUseQuickSelect = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -1043,6 +1045,8 @@ namespace OnlineVideos
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.label33);
+            this.tabGeneral.Controls.Add(this.chkUseQuickSelect);
             this.tabGeneral.Controls.Add(this.groupBox3);
             this.tabGeneral.Controls.Add(this.groupBox2);
             this.tabGeneral.Controls.Add(this.label23);
@@ -1082,7 +1086,7 @@ namespace OnlineVideos
             this.groupBox3.Controls.Add(this.tbxWebCacheTimeout);
             this.groupBox3.Controls.Add(this.label15);
             this.groupBox3.Controls.Add(this.tbxUtilTimeout);
-            this.groupBox3.Location = new System.Drawing.Point(0, 165);
+            this.groupBox3.Location = new System.Drawing.Point(0, 188);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(682, 56);
             this.groupBox3.TabIndex = 50;
@@ -1157,7 +1161,7 @@ namespace OnlineVideos
             this.groupBox2.Controls.Add(this.label16);
             this.groupBox2.Controls.Add(this.label24);
             this.groupBox2.Controls.Add(this.tbxWMPBuffer);
-            this.groupBox2.Location = new System.Drawing.Point(0, 231);
+            this.groupBox2.Location = new System.Drawing.Point(0, 254);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(682, 56);
             this.groupBox2.TabIndex = 49;
@@ -1481,6 +1485,26 @@ namespace OnlineVideos
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(6, 163);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(90, 13);
+            this.label33.TabIndex = 52;
+            this.label33.Text = "Use Quick Select";
+            // 
+            // chkUseQuickSelect
+            // 
+            this.chkUseQuickSelect.AutoSize = true;
+            this.chkUseQuickSelect.Location = new System.Drawing.Point(225, 164);
+            this.chkUseQuickSelect.Name = "chkUseQuickSelect";
+            this.chkUseQuickSelect.Size = new System.Drawing.Size(15, 14);
+            this.chkUseQuickSelect.TabIndex = 51;
+            this.toolTip1.SetToolTip(this.chkUseQuickSelect, "Allows you to quickly select entries that start with the letter or number you pre" +
+                    "ssed in the list.");
+            this.chkUseQuickSelect.UseVisualStyleBackColor = true;
+            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -1667,5 +1691,7 @@ namespace OnlineVideos
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.CheckBox chkUseQuickSelect;
 	}
 }

@@ -446,7 +446,7 @@ namespace OnlineVideos
                         }
                         else
                         {
-                            if (char.IsLetterOrDigit(pressedChar))
+                            if (OnlineVideoSettings.Instance.useQuickSelect && char.IsLetterOrDigit(pressedChar))
                             {
                                 string lowerChar = pressedChar.ToString().ToLower();
                                 for (int i = GUI_facadeView.SelectedListItemIndex + 1; i < GUI_facadeView.Count; i++)

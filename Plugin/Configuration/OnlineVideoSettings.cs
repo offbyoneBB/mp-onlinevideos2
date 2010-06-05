@@ -32,6 +32,7 @@ namespace OnlineVideos
         const string CFG_THUMBNAIL_DIR = "thumbDir";
         const string CFG_DOWNLOAD_DIR = "downloadDir";
         const string CFG_FILTER = "filter";
+        const string CFG_USE_QUICKSELECT = "useQuickSelect";
         const string CFG_USE_AGECONFIRMATION = "useAgeConfirmation";
         const string CFG_PIN_AGECONFIRMATION = "pinAgeConfirmation";
         const string CFG_CACHE_TIMEOUT = "cacheTimeout";
@@ -47,6 +48,7 @@ namespace OnlineVideos
         public string DownloadDir;
         public string[] FilterArray;
         public bool useAgeConfirmation = true;
+        public bool useQuickSelect = false;
         public string pinAgeConfirmation = "";
         public int cacheTimeout = 30; // minutes
         public int utilTimeout = 15;  // seconds
@@ -139,6 +141,7 @@ namespace OnlineVideos
                     useAgeConfirmation = xmlreader.GetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, useAgeConfirmation);
                     // set an almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
                     pinAgeConfirmation = xmlreader.GetValueAsString(CFG_SECTION, CFG_PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
+                    useQuickSelect = xmlreader.GetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);                    
                     cacheTimeout = xmlreader.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
                     utilTimeout = xmlreader.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
                     wmpbuffer = xmlreader.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
@@ -265,6 +268,7 @@ namespace OnlineVideos
                     xmlwriter.SetValue(CFG_SECTION, CFG_THUMBNAIL_DIR, ThumbsDir);
                     xmlwriter.SetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, useAgeConfirmation);
                     xmlwriter.SetValue(CFG_SECTION, CFG_PIN_AGECONFIRMATION, pinAgeConfirmation);
+                    xmlwriter.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
                     xmlwriter.SetValue(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
                     xmlwriter.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
                     xmlwriter.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
