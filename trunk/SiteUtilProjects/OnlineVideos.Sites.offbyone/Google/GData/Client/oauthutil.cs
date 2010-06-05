@@ -72,26 +72,21 @@ namespace Google.GData.Client
             OAuthUtil oauthUtil = new OAuthUtil();
             string timeStamp = oauthUtil.GenerateTimeStamp();
             string nonce = oauthUtil.GenerateNonce();
-            string normalizedUrl; string normalizedRequestParameters;
 
-  
             string signature = oauthUtil.GenerateSignature(uri, consumerKey, consumerSecret, token, tokenSecret,
-                httpMethod.ToUpper(), timeStamp, nonce, out normalizedUrl, out normalizedRequestParameters);
-           
-            signature = System.Web.HttpUtility.UrlEncode(signature);
+                httpMethod.ToUpper(), timeStamp, nonce);
             
             StringBuilder sb = new StringBuilder();
-            sb.Append("Authorization: OAuth realm=\"\",oauth_version=\"1.0\",");
-            sb.AppendFormat("oauth_nonce=\"{0}\",", nonce);
-            sb.AppendFormat("oauth_timestamp=\"{0}\",", timeStamp);
-            sb.AppendFormat("oauth_consumer_key=\"{0}\",", consumerKey);
+            sb.Append("Authorization: OAuth oauth_version=\"1.0\",");
+            sb.AppendFormat("oauth_nonce=\"{0}\",", EncodingPerRFC3986(nonce));
+            sb.AppendFormat("oauth_timestamp=\"{0}\",", EncodingPerRFC3986(timeStamp));
+            sb.AppendFormat("oauth_consumer_key=\"{0}\",", EncodingPerRFC3986(consumerKey));
             if (!String.IsNullOrEmpty(token))
             {
-                token = System.Web.HttpUtility.UrlEncode(token);
-                sb.AppendFormat("oauth_token=\"{0}\",", token);
+                sb.AppendFormat("oauth_token=\"{0}\",", EncodingPerRFC3986(token));
             }
             sb.Append("oauth_signature_method=\"HMAC-SHA1\",");
-            sb.AppendFormat("oauth_signature=\"{0}\"", signature);
+            sb.AppendFormat("oauth_signature=\"{0}\"", EncodingPerRFC3986(signature));
 
             return sb.ToString();
         }

@@ -905,7 +905,7 @@ namespace Google.GData.Client
             if (builder == null)
                 throw new ArgumentNullException("builder");
 
-            if (builder.ToString().IndexOf(parameterName) == -1)
+            if (builder.ToString().IndexOf(parameterName + "=") == -1)
             {
                 if (Utilities.IsPersistable(value))
                 {
@@ -918,7 +918,7 @@ namespace Google.GData.Client
         }
 
         /// <summary>
-        /// helper to format an inteer parameter into the query
+        /// helper to format an integer parameter into the query
         /// </summary>
         /// <param name="value"></param>
         /// <param name="defValue">default value</param>
@@ -931,7 +931,7 @@ namespace Google.GData.Client
             if (builder == null)
                 throw new ArgumentNullException("builder");
 
-            if (builder.ToString().IndexOf(parameterName) == -1)
+            if (builder.ToString().IndexOf(parameterName + "=") == -1)
             {
                 if (value != defValue)
                 {
@@ -944,7 +944,7 @@ namespace Google.GData.Client
         }
 
          /// <summary>
-        /// helper to format an inteer parameter into the query
+        /// helper to format an unsigned integer parameter into the query
         /// </summary>
         /// <param name="value"></param>
         /// <param name="defValue">default value</param>
@@ -961,7 +961,7 @@ namespace Google.GData.Client
             // this used to check for connect + parameterName, i do not recall why
             // using just the parametername should catch cases where the parameter to be 
             // appended is already in the URI as the first parameter
-            if (builder.ToString().IndexOf(parameterName) == -1)
+            if (builder.ToString().IndexOf(parameterName+"=") == -1)
             {
                 if (value != defValue)
                 {
@@ -986,7 +986,7 @@ namespace Google.GData.Client
             if (builder == null)
                 throw new ArgumentNullException("builder");
 
-            if (builder.ToString().IndexOf(parameterName) == -1)
+            if (builder.ToString().IndexOf(parameterName + "=") == -1)
             {
                 if (Utilities.IsPersistable(value))
                 {

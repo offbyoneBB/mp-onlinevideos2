@@ -120,8 +120,7 @@ namespace Google.GData.Client.ResumableUpload
         // chunksize in Megabytes
         private int chunkSize;
         private static int MB = 1048576;
-        private Authenticator authenticator;
-
+   
         /// <summary>
         /// The relationship value to be used to find the resumable 
         /// </summary>
@@ -696,9 +695,8 @@ namespace Google.GData.Client.ResumableUpload
         /// <returns>The uri to be used for the rest of the operation</returns>
         public Uri InitiateUpload(Uri resumableUploadUri, Authenticator authentication, string contentType, string slug, long contentLength)
         {
-            this.authenticator = authentication;
-
-            HttpWebRequest request = PrepareRequest(resumableUploadUri, 
+            HttpWebRequest request = PrepareRequest(resumableUploadUri,
+                                                    authentication,
                                                     slug, 
                                                     contentType, 
                                                     contentLength);
@@ -718,9 +716,8 @@ namespace Google.GData.Client.ResumableUpload
         /// <returns>The uri to be used for the rest of the operation</returns>
         public Uri InitiateUpload(Uri resumableUploadUri, Authenticator authentication, AbstractEntry entry)
         {
-            this.authenticator = authentication;
-
             HttpWebRequest request = PrepareRequest(resumableUploadUri,
+                                                    authentication,
                                                     entry.MediaSource.Name,
                                                     entry.MediaSource.ContentType,
                                                     entry.MediaSource.ContentLength);
@@ -749,9 +746,13 @@ namespace Google.GData.Client.ResumableUpload
             return new Uri(response.Headers["Location"]);
         }
 
-        private HttpWebRequest PrepareRequest(Uri target, string slug, string contentType, long contentLength)
+        private HttpWebRequest PrepareRequest(Uri target, 
+                                              Authenticator authentication, 
+                                              string slug, 
+                                              string contentType, 
+                                              long contentLength)
         {
-            HttpWebRequest request = this.authenticator.CreateHttpWebRequest(HttpMethods.Post, target);
+            HttpWebRequest request = authentication.CreateHttpWebRequest(HttpMethods.Post, target);
             request.Headers.Add(GDataRequestFactory.SlugHeader + ": " + slug);
             request.Headers.Add(GDataRequestFactory.ContentOverrideHeader + ": " + contentType);
             if (contentLength != -1)
