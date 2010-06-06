@@ -67,7 +67,8 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
   * `#Play.Current.Plot`
   * `#Play.Current.Thumb`
   * `#Play.Current.Year`
-
+  * `#OnlineVideos.IsBuffering` - "true" when a video is beeing buffered before playback will start
+  * `#OnlineVideos.buffered` - integer showing percentage buffered (localized label property: `#OnlineVideos.Translation.Buffered.Label`) 
 = Details View =
 
  * iTunes Movie Trailers (#OnlineVideos.selectedSiteUtil = ITMovieTrailers)
