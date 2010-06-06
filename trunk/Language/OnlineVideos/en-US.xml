@@ -32,6 +32,7 @@
   <string Field="Delete">Delete</string>
   <string Field="Default">Default</string>
   <string Field="Done">Done</string>
+  <string Field="DeletingOldThumbs">Deleting old thumbnails</string>
 
   <!-- E -->
   <string Field="Error">Error</string>

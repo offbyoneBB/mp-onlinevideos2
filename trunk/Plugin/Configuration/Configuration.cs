@@ -37,6 +37,7 @@ namespace OnlineVideos
             lblVersion.Text = "Version: " + new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version.ToString();            
             tbxScreenName.Text = settings.BasicHomeScreenName;
 			txtThumbLoc.Text = settings.ThumbsDir;
+            tbxThumbAge.Text = settings.thumbAge.ToString();
             txtDownloadDir.Text = settings.DownloadDir;
             txtFilters.Text = settings.FilterArray != null ? string.Join(",", settings.FilterArray) : "";
             chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;            
@@ -46,6 +47,7 @@ namespace OnlineVideos
             tbxWMPBuffer.Text = settings.wmpbuffer.ToString();
             udPlayBuffer.SelectedItem = settings.playbuffer.ToString();
             chkUseQuickSelect.Checked = settings.useQuickSelect;
+            chkRememberLastSearch.Checked = settings.rememberLastSearch;
             if (settings.updateOnStart != null) chkDoAutoUpdate.Checked = settings.updateOnStart.Value;
             else chkDoAutoUpdate.CheckState = CheckState.Indeterminate;
 
@@ -164,11 +166,13 @@ namespace OnlineVideos
                 String[] lsFilterArray = lsFilter.Split(new char[] { ',' });
                 settings.FilterArray = lsFilterArray;
                 settings.ThumbsDir = txtThumbLoc.Text;
+                try { settings.thumbAge = int.Parse(tbxThumbAge.Text); } catch { }
                 settings.BasicHomeScreenName = tbxScreenName.Text;                
                 settings.DownloadDir = txtDownloadDir.Text;
                 settings.useAgeConfirmation = chkUseAgeConfirmation.Checked;
                 settings.pinAgeConfirmation = tbxPin.Text;
                 settings.useQuickSelect = chkUseQuickSelect.Checked;
+                settings.rememberLastSearch = chkRememberLastSearch.Checked;
                 int.TryParse(tbxWMPBuffer.Text, out settings.wmpbuffer);
                 int.TryParse(udPlayBuffer.SelectedItem.ToString(), out settings.playbuffer);
                 try { settings.cacheTimeout = int.Parse(tbxWebCacheTimeout.Text); } catch { }
@@ -326,6 +330,15 @@ namespace OnlineVideos
             }
         }
 
+        private void bntBrowseFolderForThumbs_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                txtThumbLoc.Text = folderBrowserDialog1.SelectedPath;
+            }
+        }
+
+
         void SetInfosFromCodecs()
         {
             CodecConfiguration cc = CodecConfiguration.Instance;
@@ -469,6 +482,18 @@ namespace OnlineVideos
             string error = null;
             uint value = 0;
             if (!uint.TryParse((sender as TextBox).Text, out value))
+            {
+                error = (sender as TextBox).Text + " is not a valid number!";
+                e.Cancel = true;
+            }
+            errorProvider1.SetError(sender as TextBox, error);
+        }
+
+        private void CheckValidInteger(object sender, CancelEventArgs e)
+        {
+            string error = null;
+            int value = 0;
+            if (!int.TryParse((sender as TextBox).Text, out value))
             {
                 error = (sender as TextBox).Text + " is not a valid number!";
                 e.Cancel = true;

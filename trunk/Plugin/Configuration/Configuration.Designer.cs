@@ -115,6 +115,15 @@ namespace OnlineVideos
             this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.Thumbnails = new System.Windows.Forms.GroupBox();
+            this.label36 = new System.Windows.Forms.Label();
+            this.tbxThumbAge = new System.Windows.Forms.TextBox();
+            this.label35 = new System.Windows.Forms.Label();
+            this.bntBrowseFolderForThumbs = new System.Windows.Forms.Button();
+            this.label34 = new System.Windows.Forms.Label();
+            this.chkRememberLastSearch = new System.Windows.Forms.CheckBox();
+            this.label33 = new System.Windows.Forms.Label();
+            this.chkUseQuickSelect = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label32 = new System.Windows.Forms.Label();
             this.label31 = new System.Windows.Forms.Label();
@@ -151,8 +160,6 @@ namespace OnlineVideos
             this.label11 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.label33 = new System.Windows.Forms.Label();
-            this.chkUseQuickSelect = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -177,6 +184,7 @@ namespace OnlineVideos
             this.toolStripChannels.SuspendLayout();
             this.mainTabControl.SuspendLayout();
             this.tabGeneral.SuspendLayout();
+            this.Thumbnails.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabSites.SuspendLayout();
@@ -595,16 +603,16 @@ namespace OnlineVideos
             // 
             this.txtFilters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFilters.Location = new System.Drawing.Point(225, 110);
+            this.txtFilters.Location = new System.Drawing.Point(225, 85);
             this.txtFilters.Name = "txtFilters";
             this.txtFilters.Size = new System.Drawing.Size(460, 20);
-            this.txtFilters.TabIndex = 7;
+            this.txtFilters.TabIndex = 6;
             this.toolTip1.SetToolTip(this.txtFilters, "Comma seperated list of words that will be used to filter out videos.");
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 113);
+            this.label2.Location = new System.Drawing.Point(6, 88);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(155, 13);
             this.label2.TabIndex = 3;
@@ -614,19 +622,19 @@ namespace OnlineVideos
             // 
             this.txtThumbLoc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtThumbLoc.Location = new System.Drawing.Point(225, 84);
+            this.txtThumbLoc.Location = new System.Drawing.Point(222, 22);
             this.txtThumbLoc.Name = "txtThumbLoc";
-            this.txtThumbLoc.Size = new System.Drawing.Size(460, 20);
-            this.txtThumbLoc.TabIndex = 6;
+            this.txtThumbLoc.Size = new System.Drawing.Size(429, 20);
+            this.txtThumbLoc.TabIndex = 14;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 87);
+            this.label1.Location = new System.Drawing.Point(3, 25);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(103, 13);
+            this.label1.Size = new System.Drawing.Size(51, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Thumbnail Location:";
+            this.label1.Text = "Location:";
             // 
             // label5
             // 
@@ -657,7 +665,7 @@ namespace OnlineVideos
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.btnSave.Size = new System.Drawing.Size(90, 25);
-            this.btnSave.TabIndex = 13;
+            this.btnSave.TabIndex = 17;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             // 
@@ -1041,10 +1049,13 @@ namespace OnlineVideos
             this.mainTabControl.Name = "mainTabControl";
             this.mainTabControl.SelectedIndex = 0;
             this.mainTabControl.Size = new System.Drawing.Size(712, 544);
-            this.mainTabControl.TabIndex = 33;
+            this.mainTabControl.TabIndex = 0;
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.Thumbnails);
+            this.tabGeneral.Controls.Add(this.label34);
+            this.tabGeneral.Controls.Add(this.chkRememberLastSearch);
             this.tabGeneral.Controls.Add(this.label33);
             this.tabGeneral.Controls.Add(this.chkUseQuickSelect);
             this.tabGeneral.Controls.Add(this.groupBox3);
@@ -1054,9 +1065,7 @@ namespace OnlineVideos
             this.tabGeneral.Controls.Add(this.label21);
             this.tabGeneral.Controls.Add(this.btnCancel);
             this.tabGeneral.Controls.Add(this.lblVersion);
-            this.tabGeneral.Controls.Add(this.label1);
             this.tabGeneral.Controls.Add(this.btnBrowseForDlFolder);
-            this.tabGeneral.Controls.Add(this.txtThumbLoc);
             this.tabGeneral.Controls.Add(this.btnSave);
             this.tabGeneral.Controls.Add(this.tbxScreenName);
             this.tabGeneral.Controls.Add(this.label2);
@@ -1076,6 +1085,104 @@ namespace OnlineVideos
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
+            // Thumbnails
+            // 
+            this.Thumbnails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.Thumbnails.Controls.Add(this.label36);
+            this.Thumbnails.Controls.Add(this.tbxThumbAge);
+            this.Thumbnails.Controls.Add(this.label35);
+            this.Thumbnails.Controls.Add(this.label1);
+            this.Thumbnails.Controls.Add(this.bntBrowseFolderForThumbs);
+            this.Thumbnails.Controls.Add(this.txtThumbLoc);
+            this.Thumbnails.Location = new System.Drawing.Point(3, 315);
+            this.Thumbnails.Name = "Thumbnails";
+            this.Thumbnails.Size = new System.Drawing.Size(682, 80);
+            this.Thumbnails.TabIndex = 56;
+            this.Thumbnails.TabStop = false;
+            this.Thumbnails.Text = "Thumbnails";
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(288, 53);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(29, 13);
+            this.label36.TabIndex = 45;
+            this.label36.Text = "days";
+            // 
+            // tbxThumbAge
+            // 
+            this.tbxThumbAge.Location = new System.Drawing.Point(222, 50);
+            this.tbxThumbAge.Name = "tbxThumbAge";
+            this.tbxThumbAge.Size = new System.Drawing.Size(53, 20);
+            this.tbxThumbAge.TabIndex = 16;
+            this.tbxThumbAge.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.toolTip1.SetToolTip(this.tbxThumbAge, "Thumbnails older than this will be deleted on first OnlineVideos start each time " +
+                    "MediaPortal runs. Set to 0 to delete all and -1 to keep all.");
+            this.tbxThumbAge.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidInteger);
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(3, 53);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(76, 13);
+            this.label35.TabIndex = 56;
+            this.label35.Text = "Maximum Age:";
+            // 
+            // bntBrowseFolderForThumbs
+            // 
+            this.bntBrowseFolderForThumbs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bntBrowseFolderForThumbs.AutoSize = true;
+            this.bntBrowseFolderForThumbs.Location = new System.Drawing.Point(652, 20);
+            this.bntBrowseFolderForThumbs.Margin = new System.Windows.Forms.Padding(2);
+            this.bntBrowseFolderForThumbs.Name = "bntBrowseFolderForThumbs";
+            this.bntBrowseFolderForThumbs.Size = new System.Drawing.Size(30, 23);
+            this.bntBrowseFolderForThumbs.TabIndex = 15;
+            this.bntBrowseFolderForThumbs.Text = "...";
+            this.bntBrowseFolderForThumbs.UseVisualStyleBackColor = true;
+            this.bntBrowseFolderForThumbs.Click += new System.EventHandler(this.bntBrowseFolderForThumbs_Click);
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(6, 163);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(148, 13);
+            this.label34.TabIndex = 54;
+            this.label34.Text = "Remember last search on Site";
+            // 
+            // chkRememberLastSearch
+            // 
+            this.chkRememberLastSearch.AutoSize = true;
+            this.chkRememberLastSearch.Location = new System.Drawing.Point(225, 164);
+            this.chkRememberLastSearch.Name = "chkRememberLastSearch";
+            this.chkRememberLastSearch.Size = new System.Drawing.Size(15, 14);
+            this.chkRememberLastSearch.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.chkRememberLastSearch, "Will restore your last search string when searching again on the same site.");
+            this.chkRememberLastSearch.UseVisualStyleBackColor = true;
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(6, 138);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(90, 13);
+            this.label33.TabIndex = 52;
+            this.label33.Text = "Use Quick Select";
+            // 
+            // chkUseQuickSelect
+            // 
+            this.chkUseQuickSelect.AutoSize = true;
+            this.chkUseQuickSelect.Location = new System.Drawing.Point(225, 139);
+            this.chkUseQuickSelect.Name = "chkUseQuickSelect";
+            this.chkUseQuickSelect.Size = new System.Drawing.Size(15, 14);
+            this.chkUseQuickSelect.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.chkUseQuickSelect, "Allows you to quickly select entries that start with the letter or number you pre" +
+                    "ssed in the list.");
+            this.chkUseQuickSelect.UseVisualStyleBackColor = true;
+            // 
             // groupBox3
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -1086,7 +1193,7 @@ namespace OnlineVideos
             this.groupBox3.Controls.Add(this.tbxWebCacheTimeout);
             this.groupBox3.Controls.Add(this.label15);
             this.groupBox3.Controls.Add(this.tbxUtilTimeout);
-            this.groupBox3.Location = new System.Drawing.Point(0, 188);
+            this.groupBox3.Location = new System.Drawing.Point(0, 183);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(682, 56);
             this.groupBox3.TabIndex = 50;
@@ -1122,10 +1229,10 @@ namespace OnlineVideos
             // 
             // tbxWebCacheTimeout
             // 
-            this.tbxWebCacheTimeout.Location = new System.Drawing.Point(216, 23);
+            this.tbxWebCacheTimeout.Location = new System.Drawing.Point(225, 23);
             this.tbxWebCacheTimeout.Name = "tbxWebCacheTimeout";
             this.tbxWebCacheTimeout.Size = new System.Drawing.Size(53, 20);
-            this.tbxWebCacheTimeout.TabIndex = 8;
+            this.tbxWebCacheTimeout.TabIndex = 10;
             this.tbxWebCacheTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.tbxWebCacheTimeout, "WebRequests are cached internally. This number determines the minutes after which" +
                     " the cached data becomes invalid. Set to 0 to disable.");
@@ -1145,7 +1252,7 @@ namespace OnlineVideos
             this.tbxUtilTimeout.Location = new System.Drawing.Point(541, 23);
             this.tbxUtilTimeout.Name = "tbxUtilTimeout";
             this.tbxUtilTimeout.Size = new System.Drawing.Size(76, 20);
-            this.tbxUtilTimeout.TabIndex = 9;
+            this.tbxUtilTimeout.TabIndex = 11;
             this.tbxUtilTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.tbxUtilTimeout, "When the GUI request data from the web you can specifiy how many seconds to wait " +
                     "before a timeout will occur.");
@@ -1161,7 +1268,7 @@ namespace OnlineVideos
             this.groupBox2.Controls.Add(this.label16);
             this.groupBox2.Controls.Add(this.label24);
             this.groupBox2.Controls.Add(this.tbxWMPBuffer);
-            this.groupBox2.Location = new System.Drawing.Point(0, 254);
+            this.groupBox2.Location = new System.Drawing.Point(0, 249);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(682, 56);
             this.groupBox2.TabIndex = 49;
@@ -1209,11 +1316,11 @@ namespace OnlineVideos
             this.udPlayBuffer.Items.Add("18");
             this.udPlayBuffer.Items.Add("19");
             this.udPlayBuffer.Items.Add("20");
-            this.udPlayBuffer.Location = new System.Drawing.Point(216, 24);
+            this.udPlayBuffer.Location = new System.Drawing.Point(225, 24);
             this.udPlayBuffer.Name = "udPlayBuffer";
             this.udPlayBuffer.ReadOnly = true;
             this.udPlayBuffer.Size = new System.Drawing.Size(53, 20);
-            this.udPlayBuffer.TabIndex = 11;
+            this.udPlayBuffer.TabIndex = 12;
             this.udPlayBuffer.Text = "1";
             this.udPlayBuffer.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.udPlayBuffer, "Percentage of the file to buffer from web before starting playback.");
@@ -1241,7 +1348,7 @@ namespace OnlineVideos
             this.tbxWMPBuffer.Location = new System.Drawing.Point(541, 23);
             this.tbxWMPBuffer.Name = "tbxWMPBuffer";
             this.tbxWMPBuffer.Size = new System.Drawing.Size(76, 20);
-            this.tbxWMPBuffer.TabIndex = 10;
+            this.tbxWMPBuffer.TabIndex = 13;
             this.tbxWMPBuffer.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.tbxWMPBuffer, "Number of milliseconds to use as buffer for playback with Windows Media Player.");
             this.tbxWMPBuffer.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
@@ -1249,7 +1356,7 @@ namespace OnlineVideos
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(6, 138);
+            this.label23.Location = new System.Drawing.Point(6, 113);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(125, 13);
             this.label23.TabIndex = 46;
@@ -1260,10 +1367,10 @@ namespace OnlineVideos
             this.chkDoAutoUpdate.AutoSize = true;
             this.chkDoAutoUpdate.Checked = true;
             this.chkDoAutoUpdate.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.chkDoAutoUpdate.Location = new System.Drawing.Point(225, 138);
+            this.chkDoAutoUpdate.Location = new System.Drawing.Point(225, 113);
             this.chkDoAutoUpdate.Name = "chkDoAutoUpdate";
             this.chkDoAutoUpdate.Size = new System.Drawing.Size(15, 14);
-            this.chkDoAutoUpdate.TabIndex = 12;
+            this.chkDoAutoUpdate.TabIndex = 7;
             this.chkDoAutoUpdate.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkDoAutoUpdate, "If checked plugin will perform an autoupdate the first time it is started each Me" +
                     "diaPortal Session. If indeterminated, plugin will ask.");
@@ -1287,7 +1394,7 @@ namespace OnlineVideos
             this.btnCancel.Location = new System.Drawing.Point(595, 474);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 25);
-            this.btnCancel.TabIndex = 14;
+            this.btnCancel.TabIndex = 18;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
@@ -1485,26 +1592,6 @@ namespace OnlineVideos
             // 
             this.errorProvider1.ContainerControl = this;
             // 
-            // label33
-            // 
-            this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(6, 163);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(90, 13);
-            this.label33.TabIndex = 52;
-            this.label33.Text = "Use Quick Select";
-            // 
-            // chkUseQuickSelect
-            // 
-            this.chkUseQuickSelect.AutoSize = true;
-            this.chkUseQuickSelect.Location = new System.Drawing.Point(225, 164);
-            this.chkUseQuickSelect.Name = "chkUseQuickSelect";
-            this.chkUseQuickSelect.Size = new System.Drawing.Size(15, 14);
-            this.chkUseQuickSelect.TabIndex = 51;
-            this.toolTip1.SetToolTip(this.chkUseQuickSelect, "Allows you to quickly select entries that start with the letter or number you pre" +
-                    "ssed in the list.");
-            this.chkUseQuickSelect.UseVisualStyleBackColor = true;
-            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -1559,6 +1646,8 @@ namespace OnlineVideos
             this.mainTabControl.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
             this.tabGeneral.PerformLayout();
+            this.Thumbnails.ResumeLayout(false);
+            this.Thumbnails.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -1693,5 +1782,12 @@ namespace OnlineVideos
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.CheckBox chkUseQuickSelect;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.CheckBox chkRememberLastSearch;
+        private System.Windows.Forms.Button bntBrowseFolderForThumbs;
+        private System.Windows.Forms.GroupBox Thumbnails;
+        private System.Windows.Forms.TextBox tbxThumbAge;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.Label label36;
 	}
 }

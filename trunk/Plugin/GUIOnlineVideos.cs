@@ -258,6 +258,7 @@ namespace OnlineVideos
                 GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.PLUGIN_NAME);
                 Translation.TranslateSkin();
                 if (OnlineVideoSettings.Instance.updateOnStart != false) AutoUpdate(!OnlineVideoSettings.Instance.updateOnStart.HasValue);
+                if (OnlineVideoSettings.Instance.thumbAge >= 0) ImageDownloader.DeleteOldThumbs();
                 LoadSettings();
                 proxyRtmp = new RTMP_LIB.HTTPServer(OnlineVideoSettings.RTMP_PROXY_PORT);
                 firstLoadDone = true;
@@ -663,7 +664,7 @@ namespace OnlineVideos
             }
             else if (control == GUI_btnSearch)
             {
-                string query = lastSearchQuery;
+                string query = OnlineVideoSettings.Instance.rememberLastSearch ? lastSearchQuery : string.Empty;
                 if (GetUserInputString(ref query, false))
                 {
                     GUIControl.FocusControl(GetID, GUI_facadeView.GetID);

@@ -24,6 +24,7 @@
   <string Field="Delete">Löschen</string>
   <string Field="Default">Standard</string>
   <string Field="Done">Fertig</string>
+  <string Field="DeletingOldThumbs">Alte Miniaturbilder werden gelöscht</string>
   <string Field="Error">Fehler</string>
   <string Field="EnterPin">Pin eingeben</string>
   <string Field="Favourites">Favoriten</string>
