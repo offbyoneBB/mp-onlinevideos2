@@ -249,6 +249,7 @@ namespace OnlineVideos
         public static string Delete = "Delete";
         public static string Default = "Default";
         public static string Done = "Done";
+        public static string DeletingOldThumbs = "Deleting old thumbnails";
 
         // E
         public static string Error = "Error";

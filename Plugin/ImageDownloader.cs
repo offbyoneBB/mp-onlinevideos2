@@ -1,8 +1,11 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using MediaPortal.GUI.Library;
 using System.Net;
+using MediaPortal.Dialogs;
+using System.Threading;
 
 namespace OnlineVideos
 {
@@ -172,6 +175,52 @@ namespace OnlineVideos
                 Log.Debug("Invalid Image: {0} {1}", url, ex.ToString());
                 return false; 
             }
+        }
+
+        public static void DeleteOldThumbs()
+        {
+            GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+            if (dlgPrgrs != null)
+            {
+                dlgPrgrs.Reset();
+                dlgPrgrs.DisplayProgressBar = true;
+                dlgPrgrs.ShowWaitCursor = false;
+                dlgPrgrs.DisableCancel(false);
+                dlgPrgrs.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                dlgPrgrs.StartModal(GUIOnlineVideos.WindowId);
+                dlgPrgrs.SetLine(1, Translation.DeletingOldThumbs);
+                dlgPrgrs.Percentage = 0;
+            }
+            new Thread(delegate()
+            {
+                int thumbsDeleted = 0;
+                try
+                {
+                    DateTime keepdate = DateTime.Now.AddDays(-OnlineVideoSettings.Instance.thumbAge);
+                    FileInfo[] files = new DirectoryInfo(OnlineVideoSettings.Instance.ThumbsDir).GetFiles();
+                    Log.Info("Checking {0} thumbnails for age.", files.Length);
+                    for (int i = 0; i < files.Length; i++)
+                    {
+                        FileInfo f = files[i];
+                        if (f.LastWriteTime <= keepdate)
+                        {
+                            f.Delete();
+                            thumbsDeleted++;
+                        }
+                        dlgPrgrs.Percentage = i / files.Length * 100;
+                        if (!dlgPrgrs.ShouldRenderLayer()) break;
+                    }
+                }
+                catch (Exception threadException)
+                {
+                    Log.Error(threadException);
+                }
+                finally
+                {
+                    Log.Info("Deleted {0} thumbnails.", thumbsDeleted);
+                    if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, Translation.Done); dlgPrgrs.Close(); }
+                }
+            }) { Name = "OnlineVideosThumbnail", IsBackground = true }.Start();
         }
     }
 }

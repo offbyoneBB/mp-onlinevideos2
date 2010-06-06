@@ -30,9 +30,11 @@ namespace OnlineVideos
         const string CFG_UPDATEONSTART = "updateOnStart";
         const string CFG_BASICHOMESCREEN_NAME = "basicHomeScreenName";
         const string CFG_THUMBNAIL_DIR = "thumbDir";
+        const string CFG_THUMBNAIL_AGE = "thumbAge";
         const string CFG_DOWNLOAD_DIR = "downloadDir";
         const string CFG_FILTER = "filter";
         const string CFG_USE_QUICKSELECT = "useQuickSelect";
+        const string CFG_REMEMBER_LAST_SEARCH = "rememberLastSearch";
         const string CFG_USE_AGECONFIRMATION = "useAgeConfirmation";
         const string CFG_PIN_AGECONFIRMATION = "pinAgeConfirmation";
         const string CFG_CACHE_TIMEOUT = "cacheTimeout";
@@ -40,15 +42,17 @@ namespace OnlineVideos
         const string CFG_WMP_BUFFER = "wmpbuffer";
         const string CFG_PLAY_BUFFER = "playbuffer";
         const string CFG_EMAIL = "email";
-        const string CFG_PASSWORD = "password";        
+        const string CFG_PASSWORD = "password";
         #endregion        
 
         public string BasicHomeScreenName = PLUGIN_NAME;        
         public string ThumbsDir = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\";
+        public int thumbAge = 100;
         public string DownloadDir;
         public string[] FilterArray;
         public bool useAgeConfirmation = true;
         public bool useQuickSelect = false;
+        public bool rememberLastSearch = true;
         public string pinAgeConfirmation = "";
         public int cacheTimeout = 30; // minutes
         public int utilTimeout = 15;  // seconds
@@ -130,8 +134,9 @@ namespace OnlineVideos
                     ThumbsDir = xmlreader.GetValueAsString(CFG_SECTION, CFG_THUMBNAIL_DIR, ThumbsDir).Replace("/", @"\");
                     if (!ThumbsDir.EndsWith(@"\")) ThumbsDir = ThumbsDir + @"\"; // fix thumbnail dir to include the trailing slash
                     try { if (!Directory.Exists(ThumbsDir)) Directory.CreateDirectory(ThumbsDir); }
-                    catch (Exception e) { Log.Error("Failed to create thumb dir: {0}", e.ToString()); }                    
-                    Log.Info("Thumbnails will be stored in  " + ThumbsDir);
+                    catch (Exception e) { Log.Error("Failed to create thumb dir: {0}", e.ToString()); }
+                    thumbAge = xmlreader.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, thumbAge);
+                    Log.Info("Thumbnails will be stored in {0} with a maximum age of {1} days.", ThumbsDir, thumbAge);
                     
                     DownloadDir = xmlreader.GetValueAsString(CFG_SECTION, CFG_DOWNLOAD_DIR, "");
                     try { if (Directory.Exists(DownloadDir)) Directory.CreateDirectory(DownloadDir); }
@@ -141,7 +146,8 @@ namespace OnlineVideos
                     useAgeConfirmation = xmlreader.GetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, useAgeConfirmation);
                     // set an almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
                     pinAgeConfirmation = xmlreader.GetValueAsString(CFG_SECTION, CFG_PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
-                    useQuickSelect = xmlreader.GetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);                    
+                    useQuickSelect = xmlreader.GetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
+                    rememberLastSearch = xmlreader.GetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);
                     cacheTimeout = xmlreader.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
                     utilTimeout = xmlreader.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
                     wmpbuffer = xmlreader.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
@@ -266,9 +272,11 @@ namespace OnlineVideos
                 {
                     xmlwriter.SetValue(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
                     xmlwriter.SetValue(CFG_SECTION, CFG_THUMBNAIL_DIR, ThumbsDir);
+                    xmlwriter.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, thumbAge);
                     xmlwriter.SetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, useAgeConfirmation);
                     xmlwriter.SetValue(CFG_SECTION, CFG_PIN_AGECONFIRMATION, pinAgeConfirmation);
                     xmlwriter.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
+                    xmlwriter.SetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);
                     xmlwriter.SetValue(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
                     xmlwriter.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
                     xmlwriter.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
