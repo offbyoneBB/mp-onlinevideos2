@@ -562,7 +562,7 @@ AutoUpdate on UAC enabled systems fixed</VersionDescription>
 - freezing MediaPortal GUi should be history
 - buffering before playback can be stopped</VersionDescription>
         <DevelopmentStatus>Beta</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.21.0.MPE1</OnlineLocation>
+        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos.0.21.0.MPE1</OnlineLocation>
         <ReleaseDate>2010-06-06T18:01:51</ReleaseDate>
         <Tags>online,videos,youtube</Tags>
         <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.[Version].mpe1</Location>
