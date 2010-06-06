@@ -1110,6 +1110,48 @@
               <ZipFileName>Installer{CopyFile}\{48a26c97-11c6-40ed-b0e7-cbc15763e59d}-NrkBrowser.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\NrkBrowser.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\dr.dk TV.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{61c44c78-7066-4b5e-94b8-bbeee64b2b31}-dr.dk TV.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\dr.dk TV.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TVNZOnDemand.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{01fb2687-9b30-4f99-9bd2-b0f0448a3122}-TVNZOnDemand.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVNZOnDemand.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\watch-series.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{da52e33a-2820-422e-aa24-45aba3911041}-watch-series.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\watch-series.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\dr.dk TV.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6a877edf-c7e9-4ef1-b6b9-8f64c056488f}-dr.dk TV.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\dr.dk TV.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\TVNZOnDemand.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6a4b4a0f-2d62-481c-9ebf-9d1f5b5debd0}-TVNZOnDemand.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVNZOnDemand.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\watch-series.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{842d7436-39f5-4762-ab97-9b6e477886cd}-watch-series.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-series.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1228,6 +1270,13 @@
               <LocalFileName>..\Language\OnlineVideos\fr.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{5cf4fb48-1773-4bd3-8c18-4536118aadba}-fr.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\fr.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\it.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f573da36-3005-4851-accc-b110ae11803c}-it.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\it.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1671,10 +1720,13 @@ public class Script
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
-    <VersionDescription />
+    <VersionDescription>playback enhancements:
+- OSD shows current buffer progress
+- freezing MediaPortal GUi should be history
+- buffering before playback can be stopped</VersionDescription>
     <DevelopmentStatus>Beta</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.20.0.MPE1</OnlineLocation>
-    <ReleaseDate>2010-04-18T18:01:51</ReleaseDate>
+    <ReleaseDate>2010-06-06T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.[Version].mpe1</Location>
     <Params>
@@ -2803,6 +2855,48 @@ public class Script
         <ZipFileName>Installer{CopyFile}\{48a26c97-11c6-40ed-b0e7-cbc15763e59d}-NrkBrowser.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\NrkBrowser.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\dr.dk TV.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{61c44c78-7066-4b5e-94b8-bbeee64b2b31}-dr.dk TV.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\dr.dk TV.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TVNZOnDemand.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{01fb2687-9b30-4f99-9bd2-b0f0448a3122}-TVNZOnDemand.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVNZOnDemand.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\watch-series.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{da52e33a-2820-422e-aa24-45aba3911041}-watch-series.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\watch-series.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\dr.dk TV.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6a877edf-c7e9-4ef1-b6b9-8f64c056488f}-dr.dk TV.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\dr.dk TV.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\TVNZOnDemand.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6a4b4a0f-2d62-481c-9ebf-9d1f5b5debd0}-TVNZOnDemand.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVNZOnDemand.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\watch-series.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{842d7436-39f5-4762-ab97-9b6e477886cd}-watch-series.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-series.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -2893,6 +2987,13 @@ public class Script
         <LocalFileName>..\Language\OnlineVideos\fr.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{5cf4fb48-1773-4bd3-8c18-4536118aadba}-fr.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\fr.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\it.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f573da36-3005-4851-accc-b110ae11803c}-it.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\it.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3101,7 +3202,7 @@ public class Script
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d203d03c-408e-41ea-9696-ba0ab22e11c7}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{1e2eeb41-0aae-4193-9f2e-18872f5cd14b}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
