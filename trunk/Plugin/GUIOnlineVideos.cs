@@ -431,8 +431,8 @@ namespace OnlineVideos
                     {
                         // search items (starting from current selected) by title and select first found one
                         char pressedChar = (char)action.m_key.KeyChar;
-                        if (char.IsDigit(pressedChar) || pressedChar == '\b')
-                        {
+                        if (char.IsDigit(pressedChar) || (pressedChar == '\b' && !currentFilter.IsEmpty()))
+                        {                            
                             currentFilter.Add(pressedChar);
                             switch (CurrentState)
                             {
@@ -440,8 +440,6 @@ namespace OnlineVideos
                                 case State.categories: DisplayCategories(selectedCategory); break;
                                 case State.videos: SetVideosToFacade(currentVideoList, currentVideosDisplayMode); break;
                             }
-
-                            //?DisplayCategories(selectedCategory);
                             return;
                         }
                         else
