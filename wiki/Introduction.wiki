@@ -37,6 +37,7 @@ This screen is only available on sites that have multiple choices for a video (c
  * next / previous page is available in video view
  * Favorites (displays your favorites from the current site, only YouTube currently)
  * Pin (enter the pin to enable adult content)
+ * SiteManager (update, add or remove sites)
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg"/>
 ==context menu (video view)==
  * play all videos currently showing
