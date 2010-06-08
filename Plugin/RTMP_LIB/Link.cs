@@ -15,8 +15,6 @@ namespace RTMP_LIB
 
         public string authObjName;
 
-        public bool useFP9Handshake;
-
         public string tcUrl;
         public string swfUrl;
         public string pageUrl;
