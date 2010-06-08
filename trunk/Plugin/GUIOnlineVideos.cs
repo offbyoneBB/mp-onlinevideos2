@@ -391,6 +391,7 @@ namespace OnlineVideos
                     {
                         Gui2UtilConnector.Instance.StopBackgroundTask();
                         ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).StopBuffering = true;
+                        return;
                     }
                     break;
                 case Action.ActionType.ACTION_PREVIOUS_MENU:
@@ -405,6 +406,12 @@ namespace OnlineVideos
                         }
                         return;
                     }
+                    if (BufferingPlayerFactory != null)
+                    {
+                        Gui2UtilConnector.Instance.StopBackgroundTask();
+                        ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).StopBuffering = true;
+                        return;
+                    }                    
                     if (CurrentState != State.sites)
                     {
                         if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
@@ -887,16 +894,14 @@ namespace OnlineVideos
                     {
                         if (success)
                         {
-                            SetCategoriesToFacade(result as IList<Category>);
-                            selectedCategory = parentCategory;
+                            SetCategoriesToFacade(parentCategory, result as IList<Category>);                            
                         }
                     },
                     "getting dynamic categories", true);
                 }
                 else
                 {
-                    SetCategoriesToFacade(SelectedSite.Settings.Categories);
-                    selectedCategory = parentCategory;
+                    SetCategoriesToFacade(parentCategory, SelectedSite.Settings.Categories);                    
                 }
             }
             else
@@ -914,22 +919,20 @@ namespace OnlineVideos
                     {
                         if (success)
                         {
-                            SetCategoriesToFacade(result as IList<Category>);
-                            selectedCategory = parentCategory;
+                            SetCategoriesToFacade(parentCategory, result as IList<Category>);
                         }
                     },
                     "getting dynamic subcategories", true);
                 }
                 else
                 {
-                    SetCategoriesToFacade(parentCategory.SubCategories);
-                    selectedCategory = parentCategory;
+                    SetCategoriesToFacade(parentCategory, parentCategory.SubCategories);
                 }
             }
         }
 
-        private void SetCategoriesToFacade(IList<Category> categories)
-        {
+        private void SetCategoriesToFacade(Category parentCategory, IList<Category> categories)
+        {            
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
 
             // add the first item that will go to the previous menu
@@ -990,6 +993,7 @@ namespace OnlineVideos
             GUI_facadeView.SelectedListItemIndex = categoryIndexToSelect;
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             CurrentState = State.categories;
+            selectedCategory = parentCategory;
             UpdateViewState();
         }
 
@@ -1291,8 +1295,7 @@ namespace OnlineVideos
                 else
                 {
                     ImageDownloader.StopDownload = true;
-                    if (selectedCategory.ParentCategory == null) DisplayCategories(null);
-                    else DisplayCategories(selectedCategory.ParentCategory);
+                    DisplayCategories(selectedCategory.ParentCategory);
                 }
             }
             else if (CurrentState == State.videos)
