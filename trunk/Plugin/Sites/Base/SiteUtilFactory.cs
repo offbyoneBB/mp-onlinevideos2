@@ -62,6 +62,8 @@ namespace OnlineVideos
 
         public static SiteUtilBase CreateFromShortName(string name, SiteSettings settings)
 		{
+            if (string.IsNullOrEmpty(name)) return null;
+
             Type result = null;
             if (utils.TryGetValue(name, out result))
             {
