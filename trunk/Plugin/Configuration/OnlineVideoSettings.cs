@@ -272,7 +272,7 @@ namespace OnlineVideos
                 {
                     xmlwriter.SetValue(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
                     xmlwriter.SetValue(CFG_SECTION, CFG_THUMBNAIL_DIR, ThumbsDir);
-                    xmlwriter.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, thumbAge);
+                    xmlwriter.SetValue(CFG_SECTION, CFG_THUMBNAIL_AGE, thumbAge);
                     xmlwriter.SetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, useAgeConfirmation);
                     xmlwriter.SetValue(CFG_SECTION, CFG_PIN_AGECONFIRMATION, pinAgeConfirmation);
                     xmlwriter.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
