@@ -1482,17 +1482,25 @@ namespace OnlineVideos
             }
             else
             {
+                Log.Info("Preparing graph for playback of {0}", lsUrl);
                 if (((OnlineVideosPlayer)factory.PreparedPlayer).PrepareGraph())
                 {
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                     {
                         try
                         {
+                            Log.Info("Start prebuffering ...");
                             BufferingPlayerFactory = factory;
                             if (((OnlineVideosPlayer)factory.PreparedPlayer).BufferFile())
+                            {
+                                Log.Info("Prebuffering finished.");
                                 return factory;
+                            }
                             else
+                            {
+                                Log.Info("Prebuffering failed.");
                                 return null;
+                            }
                         }
                         catch (Exception playException)
                         {
@@ -1509,7 +1517,7 @@ namespace OnlineVideos
                         if (success)
                         {
                             if (result != null)
-                            {
+                            {                                
                                 IPlayerFactory savedFactory = g_Player.Factory;
                                 g_Player.Factory = result as Player.PlayerFactory;
                                 playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);

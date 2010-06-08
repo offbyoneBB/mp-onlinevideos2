@@ -44,7 +44,6 @@ namespace RTMP_LIB
                 if (!string.IsNullOrEmpty(paramsHash["swfurl"])) link.swfUrl = paramsHash["swfurl"];
                 if (!string.IsNullOrEmpty(paramsHash["swfsize"])) link.SWFSize = int.Parse(paramsHash["swfsize"]);
                 if (!string.IsNullOrEmpty(paramsHash["swfhash"])) link.SWFHash = Link.ArrayFromHexString(paramsHash["swfhash"]);
-                if (!string.IsNullOrEmpty(paramsHash["usefp9"])) link.useFP9Handshake = bool.Parse(paramsHash["usefp9"]);
                 if (!string.IsNullOrEmpty(paramsHash["authobj"])) link.authObjName = paramsHash["authobj"];
                 if (!string.IsNullOrEmpty(paramsHash["auth"])) link.auth = paramsHash["auth"];
                 if (!string.IsNullOrEmpty(paramsHash["token"])) link.token = paramsHash["token"];

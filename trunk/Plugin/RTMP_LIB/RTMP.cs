@@ -78,6 +78,26 @@ namespace RTMP_LIB
             0xcf, 0xeb, 0x31, 0xae 
         };
 
+        static readonly uint[][] rtmpe8_keys = new uint[16][] 
+        {
+	        new uint[4]{0xbff034b2, 0x11d9081f, 0xccdfb795, 0x748de732},
+            new uint[4]	{0x086a5eb6, 0x1743090e, 0x6ef05ab8, 0xfe5a39e2},
+	        new uint[4]{0x7b10956f, 0x76ce0521, 0x2388a73a, 0x440149a1},
+	        new uint[4]{0xa943f317, 0xebf11bb2, 0xa691a5ee, 0x17f36339},
+	        new uint[4]{0x7a30e00a, 0xb529e22c, 0xa087aea5, 0xc0cb79ac},
+	        new uint[4]{0xbdce0c23, 0x2febdeff, 0x1cfaae16, 0x1123239d},
+	        new uint[4]{0x55dd3f7b, 0x77e7e62e, 0x9bb8c499, 0xc9481ee4},
+	        new uint[4]{0x407bb6b4, 0x71e89136, 0xa7aebf55, 0xca33b839},
+	        new uint[4]{0xfcf6bdc3, 0xb63c3697, 0x7ce4f825, 0x04d959b2},
+	        new uint[4]{0x28e091fd, 0x41954c4c, 0x7fb7db00, 0xe3a066f8},
+	        new uint[4]{0x57845b76, 0x4f251b03, 0x46d45bcd, 0xa2c30d29},
+	        new uint[4]{0x0acceef8, 0xda55b546, 0x03473452, 0x5863713b},
+	        new uint[4]{0xb82075dc, 0xa75f1fee, 0xd84268e8, 0xa72a44cc},
+	        new uint[4]{0x07cf6e9e, 0xa16d7b25, 0x9fa7ae6c, 0xd92f5629},
+	        new uint[4]{0xfeb1eae4, 0x8c8c3ce1, 0x4e0064a7, 0x6a387c2a},
+	        new uint[4]{0x893a9427, 0xcc3013a2, 0xf106385b, 0xa829f927}
+        };
+
         static readonly uint[] packetSize = { 12, 8, 4, 1 };
 
         const int RTMP_DEFAULT_CHUNKSIZE = 128;
@@ -148,7 +168,7 @@ namespace RTMP_LIB
             tcpClient = new TcpClient(Link.hostname, Link.port) { NoDelay = true };
             networkStream = tcpClient.GetStream();
 
-            if (!HandShake(Link.useFP9Handshake || Link.protocol == Protocol.RTMPE || Link.protocol == Protocol.RTMPTE)) return false;
+            if (!HandShake(true)) return false;
             if (!SendConnect()) return false;
 
             return true;
@@ -412,9 +432,21 @@ namespace RTMP_LIB
             Logger.Log(string.Format("Sending play: '{0}'", Link.playpath));
 
             EncodeString(enc, Link.playpath);
+
+            /* Optional parameters start and len.
+             *
+             * start: -2, -1, 0, positive number
+             *  -2: looks for a live stream, then a recorded stream, if not found any open a live stream
+             *  -1: plays a live stream
+             * >=0: plays a recorded streams from 'start' milliseconds
+            */
             EncodeNumber(enc, 0.0);
-            EncodeNumber(enc, -2.0);
-            //EncodeBoolean(enc, true);
+            /* len: -1, 0, positive number
+             *  -1: plays live or recorded stream to the end (default)
+             *   0: plays a frame 'start' ms away from the beginning
+             *  >0: plays a live or recoded stream for 'len' milliseconds
+             */
+            //EncodeNumber(enc, -2.0);
 
             packet.m_body = enc.ToArray();
             packet.m_nBodySize = (uint)enc.Count;
@@ -750,7 +782,7 @@ namespace RTMP_LIB
                 }
                 else
                 {
-                    Logger.Log("Ignoring SWFVerification request, use --swfhash and --swfsize!");
+                    Logger.Log("Ignoring SWFVerification request, swfhash and swfsize parameters not set!");
                 }
             }
         }
@@ -1133,12 +1165,19 @@ namespace RTMP_LIB
             Array.Copy(uptime_bytes, 0, clientsig, 1, uptime_bytes.Length);
 
             if (FP9HandShake)
-            {
-                //* TODO RTMPE ;), its just RC4 with diffie-hellman
-                // set version to at least 9.0.115.0
-                clientsig[5] = 9;
+            {                
+                /* set version to at least 9.0.115.0 */
+                if (encrypted)
+                {
+                    clientsig[5] = 128;
+                    clientsig[7] = 3;
+                }
+                else
+                {
+                    clientsig[5] = 10;
+                    clientsig[7] = 45;
+                }
                 clientsig[6] = 0;
-                clientsig[7] = 124;
                 clientsig[8] = 2;
                 
                 Logger.Log(string.Format("Client type: {0}", clientsig[0]));
@@ -1225,91 +1264,121 @@ namespace RTMP_LIB
             Logger.Log(string.Format("Server Uptime : {0}",suptime));
             Logger.Log(string.Format("FMS Version   : {0}.{1}.{2}.{3}", serversig[4], serversig[5], serversig[6], serversig[7]));
 
-            // we have to use this signature now to find the correct algorithms for getting the digest and DH positions
-            int digestPosServer = (int)GetDigestOffset2(serversig,0, RTMP_SIG_SIZE);
-            int dhposServer = (int)GetDHOffset2(serversig,0, RTMP_SIG_SIZE);
+            if (FP9HandShake && type == 3 && serversig[4] == 0) FP9HandShake = false;
 
-            if (!VerifyDigest(digestPosServer, serversig, GenuineFMSKey, 36))
+            byte[] clientResp;
+
+            if (FP9HandShake)
             {
-                Logger.Log("Trying different position for server digest!");
-                digestPosServer = (int)GetDigestOffset1(serversig, 0, RTMP_SIG_SIZE);
-                dhposServer = (int)GetDHOffset1(serversig,0, RTMP_SIG_SIZE);
+                // we have to use this signature now to find the correct algorithms for getting the digest and DH positions
+                int digestPosServer = (int)GetDigestOffset2(serversig, 0, RTMP_SIG_SIZE);
+                int dhposServer = (int)GetDHOffset2(serversig, 0, RTMP_SIG_SIZE);
 
                 if (!VerifyDigest(digestPosServer, serversig, GenuineFMSKey, 36))
                 {
-                    Logger.Log("Couldn't verify the server digest");//,  continuing anyway, will probably fail!\n");
-                    return false;
-                }
-            }
+                    Logger.Log("Trying different position for server digest!");
+                    digestPosServer = (int)GetDigestOffset1(serversig, 0, RTMP_SIG_SIZE);
+                    dhposServer = (int)GetDHOffset1(serversig, 0, RTMP_SIG_SIZE);
 
-            Logger.Log(string.Format("Server DH public key offset: {0}",dhposServer));
-
-            // generate SWFVerification token (SHA256 HMAC hash of decompressed SWF, key are the last 32 bytes of the server handshake)            
-            if (Link.SWFHash != null)
-            {
-                byte[] swfVerify = new byte[2] { 0x01, 0x01 };
-                Array.Copy(swfVerify, Link.SWFVerificationResponse, 2);
-                List<byte> data = new List<byte>();
-                EncodeInt32(data, Link.SWFSize);
-                EncodeInt32(data, Link.SWFSize);
-                Array.Copy(data.ToArray(), 0, Link.SWFVerificationResponse, 2, data.Count);
-                byte[] key = new byte[SHA256_DIGEST_LENGTH];
-                Array.Copy(serversig, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, key, 0, SHA256_DIGEST_LENGTH);
-                HMACsha256(Link.SWFHash, 0, SHA256_DIGEST_LENGTH, key, SHA256_DIGEST_LENGTH, Link.SWFVerificationResponse, 10);
-            }
-
-            // do Diffie-Hellmann Key exchange for encrypted RTMP
-            if (encrypted)
-            {
-                // compute secret key	
-                byte[] secretKey = new byte[128];
-
-                byte[] serverKey = new byte[128];
-                Array.Copy(serversig, dhposServer, serverKey, 0, 128);
-                
-                Org.BouncyCastle.Crypto.Parameters.DHParameters dhParams =
-                    new Org.BouncyCastle.Crypto.Parameters.DHParameters(
-                        new Org.BouncyCastle.Math.BigInteger(1, DH_MODULUS_BYTES),
-                        Org.BouncyCastle.Math.BigInteger.ValueOf(2));
-
-                Org.BouncyCastle.Crypto.Parameters.DHPublicKeyParameters dhPubKey =
-                    new Org.BouncyCastle.Crypto.Parameters.DHPublicKeyParameters(
-                        new Org.BouncyCastle.Math.BigInteger(1, serverKey),
-                        dhParams);
-
-                secretKey = Link.keyAgreement.CalculateAgreement(dhPubKey).ToByteArray();
-
-                Logger.Log("DH SecretKey:");
-                Logger.LogHex(secretKey, 0, 128);                
-                
-                InitRC4Encryption(
-                    secretKey,
-                    serversig, dhposServer,
-                    clientsig, 1 + dhposClient,
-                    out keyIn, out keyOut);
-            }
-
-            // 2nd part of handshake
-            byte[] resp = new byte[RTMP_SIG_SIZE];            
-            if (ReadN(resp, 0, RTMP_SIG_SIZE) != RTMP_SIG_SIZE) return false;
-
-            if (FP9HandShake && resp[4] == 0 && resp[5] == 0 && resp[6] == 0 && resp[7] == 0)
-            {
-                Logger.Log("Wait, did the server just refuse signed authentication?");
-            }
-
-            if (!FP9HandShake)
-            {
-                for (int i = 8; i < RTMP_SIG_SIZE; i++) // first 8 bytes don't have to match (RTL)?
-                    if (resp[i] != clientsig[i + 1])
+                    if (!VerifyDigest(digestPosServer, serversig, GenuineFMSKey, 36))
                     {
-                        Logger.Log("client signature does not match!");
+                        Logger.Log("Couldn't verify the server digest");//,  continuing anyway, will probably fail!\n");
                         return false;
-                    }                
-                WriteN(serversig, 0, RTMP_SIG_SIZE); // send server signature back to finish handshake
+                    }
+                }
+
+                Logger.Log(string.Format("Server DH public key offset: {0}", dhposServer));
+
+                // generate SWFVerification token (SHA256 HMAC hash of decompressed SWF, key are the last 32 bytes of the server handshake)            
+                if (Link.SWFHash != null)
+                {
+                    byte[] swfVerify = new byte[2] { 0x01, 0x01 };
+                    Array.Copy(swfVerify, Link.SWFVerificationResponse, 2);
+                    List<byte> data = new List<byte>();
+                    EncodeInt32(data, Link.SWFSize);
+                    EncodeInt32(data, Link.SWFSize);
+                    Array.Copy(data.ToArray(), 0, Link.SWFVerificationResponse, 2, data.Count);
+                    byte[] key = new byte[SHA256_DIGEST_LENGTH];
+                    Array.Copy(serversig, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, key, 0, SHA256_DIGEST_LENGTH);
+                    HMACsha256(Link.SWFHash, 0, SHA256_DIGEST_LENGTH, key, SHA256_DIGEST_LENGTH, Link.SWFVerificationResponse, 10);
+                }
+
+                // do Diffie-Hellmann Key exchange for encrypted RTMP
+                if (encrypted)
+                {
+                    // compute secret key	
+                    byte[] secretKey = new byte[128];
+
+                    byte[] serverKey = new byte[128];
+                    Array.Copy(serversig, dhposServer, serverKey, 0, 128);
+
+                    Org.BouncyCastle.Crypto.Parameters.DHParameters dhParams =
+                        new Org.BouncyCastle.Crypto.Parameters.DHParameters(
+                            new Org.BouncyCastle.Math.BigInteger(1, DH_MODULUS_BYTES),
+                            Org.BouncyCastle.Math.BigInteger.ValueOf(2));
+
+                    Org.BouncyCastle.Crypto.Parameters.DHPublicKeyParameters dhPubKey =
+                        new Org.BouncyCastle.Crypto.Parameters.DHPublicKeyParameters(
+                            new Org.BouncyCastle.Math.BigInteger(1, serverKey),
+                            dhParams);
+
+                    secretKey = Link.keyAgreement.CalculateAgreement(dhPubKey).ToByteArray();
+
+                    Logger.Log("DH SecretKey:");
+                    Logger.LogHex(secretKey, 0, 128);
+
+                    InitRC4Encryption(
+                        secretKey,
+                        serversig, dhposServer,
+                        clientsig, 1 + dhposClient,
+                        out keyIn, out keyOut);
+                }
+
+                clientResp = new byte[RTMP_SIG_SIZE];
+                for (int i = 0; i < RTMP_SIG_SIZE; i++) clientResp[i] = (byte)(rand.Next(0, 256));
+
+                // calculate response now
+                byte[] signatureResp = new byte[SHA256_DIGEST_LENGTH];
+                byte[] digestResp = new byte[SHA256_DIGEST_LENGTH];
+
+                HMACsha256(serversig, digestPosServer, SHA256_DIGEST_LENGTH, GenuineFPKey, GenuineFPKey.Length, digestResp, 0);
+                HMACsha256(clientResp, 0, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digestResp, SHA256_DIGEST_LENGTH, signatureResp, 0);
+
+                // some info output
+                Logger.Log("Calculated digest key from secure key and server digest: ");
+                Logger.LogHex(digestResp, 0, SHA256_DIGEST_LENGTH);
+
+                // FP10 stuff
+                if (type == 8)
+                {
+                    /* encrypt signatureResp */
+                    for (int i = 0; i < SHA256_DIGEST_LENGTH; i += 8)
+                        rtmpe8_sig(signatureResp, i, digestResp[i] % 15);
+                }
+
+                Logger.Log("Client signature calculated:");
+                Logger.LogHex(signatureResp, 0, SHA256_DIGEST_LENGTH);
+
+                Array.Copy(signatureResp, 0, clientResp, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, SHA256_DIGEST_LENGTH);
             }
             else
             {
+                clientResp = serversig;
+            }
+
+            WriteN(clientResp, 0, RTMP_SIG_SIZE);
+
+            // 2nd part of handshake
+            byte[] resp = new byte[RTMP_SIG_SIZE];
+            if (ReadN(resp, 0, RTMP_SIG_SIZE) != RTMP_SIG_SIZE) return false;
+
+            if (FP9HandShake)
+            {
+                if (resp[4] == 0 && resp[5] == 0 && resp[6] == 0 && resp[7] == 0)
+                {
+                    Logger.Log("Wait, did the server just refuse signed authentication?");
+                }
+
                 // verify server response
                 int digestPosClient = (int)GetDigestOffset1(clientsig, 1, RTMP_SIG_SIZE);
 
@@ -1324,6 +1393,14 @@ namespace RTMP_LIB
                 Logger.Log("Digest key: ");
                 Logger.LogHex(digest, 0, SHA256_DIGEST_LENGTH);
 
+                // FP10 stuff
+                if (type == 8)
+                {
+                    /* encrypt signatureResp */
+                    for (int i = 0; i < SHA256_DIGEST_LENGTH; i += 8)
+                        rtmpe8_sig(signature, i, digest[i] % 15);
+                }
+
                 Logger.Log("Signature calculated:");
                 Logger.LogHex(signature, 0, SHA256_DIGEST_LENGTH);
 
@@ -1337,49 +1414,36 @@ namespace RTMP_LIB
                         return false;
                     }
                 Logger.Log("Genuine Adobe Flash Media Server");
-                
-                // generate signed answer
-                byte[] clientResp = new byte[RTMP_SIG_SIZE];
-                for (int i = 0; i < RTMP_SIG_SIZE; i++) clientResp[i] = (byte)(rand.Next(0, 256));
-                
-                // calculate response now
-                byte[] signatureResp = new byte[SHA256_DIGEST_LENGTH];
-                byte[] digestResp = new byte[SHA256_DIGEST_LENGTH];
 
-                HMACsha256(serversig, digestPosServer, SHA256_DIGEST_LENGTH, GenuineFPKey, GenuineFPKey.Length, digestResp, 0);
-                HMACsha256(clientResp, 0, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digestResp, SHA256_DIGEST_LENGTH, signatureResp, 0);
+                if (encrypted)
+                {
+                    // set keys for encryption from now on
+                    Link.rc4In = new Org.BouncyCastle.Crypto.Engines.RC4Engine();
+                    Link.rc4In.Init(false, new Org.BouncyCastle.Crypto.Parameters.KeyParameter(keyIn));
 
-                // some info output
-                Logger.Log("Calculated digest key from secure key and server digest: ");
-                Logger.LogHex(digestResp, 0, SHA256_DIGEST_LENGTH);
+                    Link.rc4Out = new Org.BouncyCastle.Crypto.Engines.RC4Engine();
+                    Link.rc4Out.Init(true, new Org.BouncyCastle.Crypto.Parameters.KeyParameter(keyOut));
 
-                Logger.Log("Client signature calculated:");
-                Logger.LogHex(signatureResp, 0, SHA256_DIGEST_LENGTH);
-
-                Array.Copy(signatureResp, 0, clientResp, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, SHA256_DIGEST_LENGTH);
-
-                WriteN(clientResp,0, RTMP_SIG_SIZE);
+                    // update 'encoder / decoder state' for the RC4 keys
+                    // both parties *pretend* as if handshake part 2 (1536 bytes) was encrypted
+                    // effectively this hides / discards the first few bytes of encrypted session
+                    // which is known to increase the secure-ness of RC4
+                    // RC4 state is just a function of number of bytes processed so far
+                    // that's why we just run 1536 arbitrary bytes through the keys below
+                    byte[] dummyBytes = new byte[RTMP_SIG_SIZE];
+                    Link.rc4In.ProcessBytes(dummyBytes, 0, RTMP_SIG_SIZE, new byte[RTMP_SIG_SIZE], 0);
+                    Link.rc4Out.ProcessBytes(dummyBytes, 0, RTMP_SIG_SIZE, new byte[RTMP_SIG_SIZE], 0);
+                }                
             }
-
-            if (encrypted)
+            else
             {
-                // set keys for encryption from now on
-                Link.rc4In = new Org.BouncyCastle.Crypto.Engines.RC4Engine();
-                Link.rc4In.Init(false, new Org.BouncyCastle.Crypto.Parameters.KeyParameter(keyIn));
-
-                Link.rc4Out = new Org.BouncyCastle.Crypto.Engines.RC4Engine();
-                Link.rc4Out.Init(true, new Org.BouncyCastle.Crypto.Parameters.KeyParameter(keyOut));
-
-                // update 'encoder / decoder state' for the RC4 keys
-                // both parties *pretend* as if handshake part 2 (1536 bytes) was encrypted
-                // effectively this hides / discards the first few bytes of encrypted session
-                // which is known to increase the secure-ness of RC4
-                // RC4 state is just a function of number of bytes processed so far
-                // that's why we just run 1536 arbitrary bytes through the keys below
-                byte[] dummyBytes = new byte[RTMP_SIG_SIZE];
-                Link.rc4In.ProcessBytes(dummyBytes, 0, RTMP_SIG_SIZE, new byte[RTMP_SIG_SIZE], 0);
-                Link.rc4Out.ProcessBytes(dummyBytes, 0, RTMP_SIG_SIZE, new byte[RTMP_SIG_SIZE], 0);
-            }
+                for (int i = 0; i < RTMP_SIG_SIZE; i++)
+                    if (resp[i] != clientsig[i + 1])
+                    {
+                        Logger.Log("client signature does not match!");
+                        return false;
+                    }
+            }            
 
             Logger.Log("Handshaking finished....");
             return true;
@@ -1533,6 +1597,33 @@ namespace RTMP_LIB
             Array.Copy(digest, rc4keyIn, 16);
             Logger.Log("RC4 In Key: ");
             Logger.LogHex(rc4keyIn, 0, 16);
+        }
+
+        /// <summary>
+        /// RTMPE type 8 uses XTEA on the regular signature (http://en.wikipedia.org/wiki/XTEA)
+        /// todo : little or big endian?, might have to reverse bytes on BitConverter calls
+        /// </summary>
+        /// <param name="?"></param>
+        static void rtmpe8_sig(byte[] array, int offset, int keyid)
+        {
+            uint i, num_rounds = 32;
+            uint v0, v1, sum = 0, delta = 0x9E3779B9;
+            uint[] k;
+
+            v0 = BitConverter.ToUInt32(array, offset);
+            v1 = BitConverter.ToUInt32(array, offset + 4);
+
+            k = rtmpe8_keys[keyid];
+
+            for (i = 0; i < num_rounds; i++)
+            {
+                v0 += (((v1 << 4) ^ (v1 >> 5)) + v1) ^ (sum + k[sum & 3]);
+                sum += delta;
+                v1 += (((v0 << 4) ^ (v0 >> 5)) + v0) ^ (sum + k[(sum >> 11) & 3]);
+            }
+
+            Array.Copy(BitConverter.GetBytes(v0), 0, array, offset, 4);
+            Array.Copy(BitConverter.GetBytes(v1), 0, array, offset + 4, 4);
         }
 
         #endregion        
