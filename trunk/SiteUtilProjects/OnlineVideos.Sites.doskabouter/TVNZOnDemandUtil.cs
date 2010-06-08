@@ -99,7 +99,12 @@ namespace OnlineVideos.Sites
                         }
                     }
                 }
-                res.Add(vid.Attributes["src"].InnerText);
+                string url = vid.Attributes["src"].InnerText;
+                if (url.StartsWith("rtmp:"))
+                    url = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}",
+                    OnlineVideoSettings.RTMP_PROXY_PORT, HttpUtility.UrlEncode(url));
+
+                res.Add(url);
             }
             return res;
         }
