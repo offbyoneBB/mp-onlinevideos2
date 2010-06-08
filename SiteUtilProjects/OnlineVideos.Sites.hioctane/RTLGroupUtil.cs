@@ -21,6 +21,7 @@ namespace OnlineVideos.Sites
                 if (m.Success)
                 {
                     string url = HttpUtility.UrlDecode(m.Groups["url"].Value);
+                    if (!Uri.IsWellFormedUriString(url, System.UriKind.Absolute)) url = new Uri(new Uri(baseUrl), url).AbsoluteUri;
                     data = GetWebData(url);
                     if (!string.IsNullOrEmpty(data))
                     {
