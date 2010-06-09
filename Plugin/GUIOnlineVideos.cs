@@ -181,7 +181,6 @@ namespace OnlineVideos
         List<Player.PlayListItem> currentPlaylist = null;
         int currentPlaylistIndex = 0;
 
-        RTMP_LIB.HTTPServer proxyRtmp;
         SmsT9Filter currentFilter = new SmsT9Filter();
 
         internal static Dictionary<string, DownloadInfo> currentDownloads = new Dictionary<string, DownloadInfo>();
@@ -260,7 +259,7 @@ namespace OnlineVideos
                 if (OnlineVideoSettings.Instance.updateOnStart != false) AutoUpdate(!OnlineVideoSettings.Instance.updateOnStart.HasValue);
                 if (OnlineVideoSettings.Instance.thumbAge >= 0) ImageDownloader.DeleteOldThumbs();
                 LoadSettings();
-                proxyRtmp = new RTMP_LIB.HTTPServer(OnlineVideoSettings.RTMP_PROXY_PORT);
+                ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); // add a special reversed proxy handler for rtmp
                 firstLoadDone = true;
             }
 

@@ -250,13 +250,17 @@ namespace OnlineVideos.Player
 
         public bool StopBuffering { get; set; }
 
-        void MonitorBufferProgress(object filter)
+        void MonitorBufferProgress()
         {
+            IAMOpenProgress sourceFilter = null;
             try
             {
-                IAMOpenProgress sourceFilter = filter as IAMOpenProgress;
-                if (filter == null) return;
-                
+                IBaseFilter filter = null;
+                graphBuilder.FindFilterByName("File Source (URL)", out filter);
+                sourceFilter = filter as IAMOpenProgress;
+                Marshal.ReleaseComObject(filter);
+                if (sourceFilter == null) return;
+
                 int result = 0;
                 long total = 0, current = 0, last = 0;
                 do
@@ -272,7 +276,7 @@ namespace OnlineVideos.Player
                     {
                         Log.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)PercentageBuffered);
                         GUIPropertyManager.SetProperty("#OnlineVideos.buffered", ((int)PercentageBuffered).ToString());
-                        last = current;                        
+                        last = current;
                     }
                     Thread.Sleep(50); // no need to do this more often than 20 times per second
                 }
@@ -286,6 +290,10 @@ namespace OnlineVideos.Player
             catch (Exception ex)
             {
                 Log.Error(ex);
+            }
+            finally
+            {
+                if (sourceFilter != null) Marshal.ReleaseComObject(sourceFilter);
             }
         }        
 
@@ -339,7 +347,7 @@ namespace OnlineVideos.Player
             if (result != 0) return false;
             // buffer before starting playback
             PercentageBuffered = 0.0f;
-            new Thread(MonitorBufferProgress) { IsBackground = true, Name = "MonitorBufferProgress" }.Start(sourceFilter);
+            new Thread(MonitorBufferProgress) { IsBackground = true, Name = "MonitorBufferProgress" }.Start();
             while (PercentageBuffered < OnlineVideoSettings.Instance.playbuffer) Thread.Sleep(50);
             // get the output pin of the source filter
             IEnumPins enumPins;
@@ -351,7 +359,7 @@ namespace OnlineVideos.Player
             base.graphBuilder.Render(sourceFilterPins[0]);
             // cleanup resources
             DirectShowUtil.ReleaseComObject(sourceFilterPins[0]);
-            DirectShowUtil.ReleaseComObject(enumPins);            
+            DirectShowUtil.ReleaseComObject(enumPins);
             // playback is ready
             return true;
         }
@@ -511,6 +519,13 @@ namespace OnlineVideos.Player
                 OnInitialized();
             }
             return true;
-        }        
+        }
+
+        public override void Stop()
+        {
+            StopBuffering = true;
+            Thread.Sleep(200);
+            base.Stop();
+        }
     }
 }
