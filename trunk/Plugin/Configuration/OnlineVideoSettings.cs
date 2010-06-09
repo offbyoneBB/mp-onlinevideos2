@@ -16,7 +16,7 @@ namespace OnlineVideos
     /// </summary>
     public class OnlineVideoSettings
     {
-        public const int RTMP_PROXY_PORT = 30004;
+        public static readonly int RTMP_PROXY_PORT = ReverseProxy.Port;
         public const string USERAGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3";
         public const string PLUGIN_NAME = "Online Videos";
         public const string SETTINGS_FILE = "OnlineVideoSites.xml";
@@ -71,7 +71,7 @@ namespace OnlineVideos
         public bool ageHasBeenConfirmed = false;
 
         #region Singleton
-        private static OnlineVideoSettings _Instance = new OnlineVideoSettings();
+        private static OnlineVideoSettings _Instance = null;
         public static OnlineVideoSettings Instance
         {
             get

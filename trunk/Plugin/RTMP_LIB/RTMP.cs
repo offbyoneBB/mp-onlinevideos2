@@ -856,7 +856,7 @@ namespace RTMP_LIB
                 }
                 else if (methodInvoked == "play")
                 {
-                    Playing = true;
+                    //Playing = true;
                 }
             }
             else if (method == "onBWDone")
@@ -920,7 +920,7 @@ namespace RTMP_LIB
                 return;
             }
 
-            obj.Dump();
+            if (!Playing) obj.Dump();
             string metastring = obj.GetProperty(0).GetString();
 
             if (metastring == "onMetaData")

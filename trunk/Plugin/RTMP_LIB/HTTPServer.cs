@@ -5,24 +5,29 @@ using System.Threading;
 
 namespace RTMP_LIB
 {
-    public class RequestHandlerFactory : HybridDSP.Net.HTTP.IHTTPRequestHandlerFactory
+    public class RTMPRequestHandler : OnlineVideos.IRequestHandler
     {
-        public HybridDSP.Net.HTTP.IHTTPRequestHandler CreateRequestHandler(HybridDSP.Net.HTTP.HTTPServerRequest request)
+        #region Singleton
+        private static RTMPRequestHandler _Instance = null;
+        public static RTMPRequestHandler Instance
         {
-            request.ExpectsContinue = true; // so the 100 continue header is sent
-            request.KeepAlive = true; // keep connection alive
-            return new RequestHandler();
+            get
+            {
+                if (_Instance == null) _Instance = new RTMPRequestHandler();
+                return _Instance;
+            }
         }
-    }
+        private RTMPRequestHandler() { }
+        #endregion
 
-    public class RequestHandler : HybridDSP.Net.HTTP.IHTTPRequestHandler
-    {
-        private bool invalidHeader = false;
+        bool invalidHeader = false;
+
         public bool DetectInvalidPackageHeader()
         {
             return invalidHeader;
         }
-        public void HandleRequest(HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
+
+        public void HandleRequest(string url, HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
         {
             Thread.CurrentThread.Name = "RTMPProxy";
             Logger.Log("Request");
@@ -54,6 +59,7 @@ namespace RTMP_LIB
                 
                 if (connected)
                 {
+                    request.KeepAlive = true; // keep connection alive
                     response.ContentType = "video/x-flv";
                     //response.ChunkedTransferEncoding = true;
                     
@@ -105,24 +111,4 @@ namespace RTMP_LIB
             Logger.Log("Request finished.");
         }
     }
-
-    /// <summary>
-    /// This class handles HTTP Request that will be used to get rtmp streams and return them via http.
-    /// </summary>
-    public class HTTPServer
-    {
-        HybridDSP.Net.HTTP.HTTPServer _server = null;        
-
-        public HTTPServer(int port)
-        {
-            _server = new HybridDSP.Net.HTTP.HTTPServer(new RequestHandlerFactory(), port);
-            _server.OnServerException += new HybridDSP.Net.HTTP.HTTPServer.ServerCaughtException(delegate(Exception ex) { Logger.Log(ex.Message); });
-            _server.Start();            
-        }        
-
-        public void StopListening()
-        {
-            _server.Stop();
-        }        
-    }    
 }

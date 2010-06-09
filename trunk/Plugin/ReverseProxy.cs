@@ -12,6 +12,7 @@ namespace OnlineVideos {
     public interface IProxyHandler { }
 
     public interface IRequestHandler : IProxyHandler {
+        bool DetectInvalidPackageHeader();
         void HandleRequest(string url, HTTPServerRequest request, HTTPServerResponse response);
     }
 
@@ -39,6 +40,8 @@ namespace OnlineVideos {
             _server.OnServerException += new HTTPServer.ServerCaughtException(delegate(Exception ex) { Log.Error(ex.Message); });
             _server.Start();
         }
+
+        public static int Port { get { return _serverPort; } }
 
         public static void StopListening() {
             _server.Stop();
@@ -72,9 +75,13 @@ namespace OnlineVideos {
         }
 
         class RequestHandler : IHTTPRequestHandler {
-            
+
+            IProxyHandler handler = null;
+
             public bool DetectInvalidPackageHeader() {
-                return false;
+                IRequestHandler h = handler as IRequestHandler;
+                if (h != null) return h.DetectInvalidPackageHeader();
+                else return false;
             }
 
             public void HandleRequest(HTTPServerRequest request, HTTPServerResponse response) {
@@ -84,18 +91,20 @@ namespace OnlineVideos {
                 // Create the actual url from the request
                 string uri = request.URI;
                 int startIndex = uri.IndexOf('/', 1);
-                string url = "http:/" + uri.Substring(startIndex);
+                string url = startIndex > 0 ? "http:/" + uri.Substring(startIndex) : request.URI;
 
-                string parsedHandlerIndex = uri.Substring(1, startIndex - 1);
+                string parsedHandlerIndex = startIndex > 1 ? uri.Substring(1, startIndex - 1) : "";
                 int handlerIndex;
 
                 // dont continue if the handler index is invalid
                 if (!int.TryParse(parsedHandlerIndex, out handlerIndex)) {
-                    return;
+                    // if this is not a number, use rtmphandler by default (hack, but only way without recoding all utils)
+                    handlerIndex = _handlers.IndexOf(RTMP_LIB.RTMPRequestHandler.Instance);
+                    url = string.Format("http://127.0.0.1:{0}{1}", _serverPort, request.URI);
                 } else if (handlerIndex >= _handlers.Count)
                     return;
 
-                IProxyHandler handler = _handlers[handlerIndex];
+                handler = _handlers[handlerIndex];
 
                 // if the handler implements IRequestHandler it will take over 
                 // the complete request so execute and return
