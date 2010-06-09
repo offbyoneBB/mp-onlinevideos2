@@ -274,19 +274,9 @@ namespace OnlineVideos.Sites
                     }
                 }
                 if (item != null)
-                {
-                    if (item.Type == Clip.KlippType.KLIPP)
-                    {
-                        IList<Clip> chapters = nrkParser.getChapters(item);
-                        if (chapters.Count > 0)
-                        {
-                            item.Type = Clip.KlippType.KLIPP_CHAPTER; //et stygt lite hakk for å unngå evig løkke når man klikker på klippet
-                            item.ID = chapters[0].ID; //også en ikke spesielt pen måte..url til "hovedklipp" vil være samme som til andre
-                            chapters.Insert(0, item);
-                            foreach (Clip clip in chapters) urls.Add(nrkParser.GetClipUrlAndPutStartTime(item));
-                        }
-                    }
+                {                    
                     urls.Add(nrkParser.GetClipUrlAndPutStartTime(item));
+                    video.StartTime = TimeSpan.FromSeconds(item.StartTime).ToString();
                 }
             }
             return urls;
@@ -362,6 +352,25 @@ namespace OnlineVideos.Sites
                         Clip clip = item as Clip;
                         VideoInfo vi = new VideoInfo() { Title = clip.Title, Description = clip.Description, ImageUrl = clip.Bilde, Length = clip.Duration, VideoUrl = clip.ID, Other = clip };
                         result.Add(vi);
+
+                        if (((Clip)item).Type == Clip.KlippType.KLIPP)
+                        {
+                            IList<Clip> chapters = nrkParser.getChapters((Clip)item);
+                            for(int i = 0; i<chapters.Count; i++)
+                            {
+                                Clip chapter_clip = chapters[i];                                
+                                result.Add(new VideoInfo() 
+                                { 
+                                    Title = string.Format("{0} ({1}/{2} - {3})", clip.Title, (i+1).ToString(), chapters.Count.ToString(), chapter_clip.Title), 
+                                    Description = chapter_clip.Description, 
+                                    ImageUrl = chapter_clip.Bilde, 
+                                    Length = chapter_clip.Duration, 
+                                    VideoUrl = chapter_clip.ID, 
+                                    Other = chapter_clip, 
+                                    StartTime = TimeSpan.FromSeconds(chapter_clip.StartTime).ToString() 
+                                });
+                            }
+                        }
                     }
                     else if (item is Stream)
                     {
