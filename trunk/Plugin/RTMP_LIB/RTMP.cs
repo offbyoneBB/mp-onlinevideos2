@@ -1252,7 +1252,7 @@ namespace RTMP_LIB
             if (ReadN(singleByteToReadBuffer, 0, 1) != 1) return false;
             byte type = singleByteToReadBuffer[0]; // 0x03 or 0x06
 
-            Logger.Log(string.Format("Type Answer   : {0}", type.ToString("X2")));
+            Logger.Log(string.Format("Type Answer   : {0}", type.ToString()));
 
             if (type != clientsig[0]) Logger.Log(string.Format("Type mismatch: client sent {0}, server answered {0}", clientsig[0], type));
 

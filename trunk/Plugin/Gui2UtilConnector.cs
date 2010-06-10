@@ -34,21 +34,28 @@ namespace OnlineVideos
         OnlineVideosException _CurrentError = null;
         string _CurrentTaskDescription = null;
         Thread backgroundThread = null;
+        bool abortedByUser = false;
         System.Timers.Timer timeoutTimer = new System.Timers.Timer(OnlineVideoSettings.Instance.utilTimeout * 1000) { AutoReset = false };
 
         public void StopBackgroundTask()
+        {
+            StopBackgroundTask(true);
+        }
+
+        void StopBackgroundTask(bool byUserRequest)
         {
             if (IsBusy && _CurrentTaskSuccess == null && backgroundThread != null && backgroundThread.IsAlive)
             {
                 Log.Info("Aborting background thread.");
                 backgroundThread.Abort();
+                abortedByUser = byUserRequest;
                 return;
             }
         }
 
         void TaskWatcherTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            StopBackgroundTask();
+            StopBackgroundTask(false);
         }
 
         /// <summary>
@@ -164,6 +171,7 @@ namespace OnlineVideos
                 try
                 {
                     IsBusy = true;
+                    abortedByUser = false;
                     _CurrentResultHandler = resultHandler;
                     _CurrentTaskDescription = taskDescription;
                     _CurrentResult = null;
@@ -247,7 +255,7 @@ namespace OnlineVideos
                             dlg_error.SetText(string.Format("{0} {1}", Translation.Error, _CurrentTaskDescription));
                         else
                             dlg_error.SetText(string.Format("{0} {1}", Translation.Timeout, _CurrentTaskDescription));
-                        dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                        if (!abortedByUser) dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                     }
                 }
             }
@@ -264,6 +272,7 @@ namespace OnlineVideos
             _CurrentTaskSuccess = null;
             _CurrentError = null;
             backgroundThread = null;
+            abortedByUser = false;
             IsBusy = false;
             Monitor.Exit(this);
 

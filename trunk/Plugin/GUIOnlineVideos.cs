@@ -388,8 +388,8 @@ namespace OnlineVideos
                 case Action.ActionType.ACTION_STOP:
                     if (BufferingPlayerFactory != null)
                     {
-                        Gui2UtilConnector.Instance.StopBackgroundTask();
                         ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).StopBuffering = true;
+                        Gui2UtilConnector.Instance.StopBackgroundTask();
                         return;
                     }
                     break;
@@ -407,8 +407,8 @@ namespace OnlineVideos
                     }
                     if (BufferingPlayerFactory != null)
                     {
-                        Gui2UtilConnector.Instance.StopBackgroundTask();
                         ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).StopBuffering = true;
+                        Gui2UtilConnector.Instance.StopBackgroundTask();
                         return;
                     }                    
                     if (CurrentState != State.sites)
