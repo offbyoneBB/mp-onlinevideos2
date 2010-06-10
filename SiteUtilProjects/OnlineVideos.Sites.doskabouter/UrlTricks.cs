@@ -131,7 +131,10 @@ namespace OnlineVideos.Sites
             string packed = GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = UrlTricks.UnPack(packed);
-            return GetSubString(unpacked, @"'file','", @"'");
+            string res = GetSubString(unpacked, @"'file','", @"'");
+            if (!String.IsNullOrEmpty(res))
+                return res;
+            return GetSubString(unpacked, @"name=""src""value=""", @"""");
         }
 
         public static string SmotriTrick(string Url)
@@ -275,7 +278,16 @@ namespace OnlineVideos.Sites
 
             string pattern = packed.Substring(0, p - 1);
 
-            string[] pars = packed.Substring(p).Split('|');
+            string[] pars = packed.Substring(p).TrimStart('\'').Split('|');
+            for (int i = 0; i < pars.Length; i++)
+                if (String.IsNullOrEmpty(pars[i]))
+                    if (i < 10)
+                        pars[i] = i.ToString();
+                    else
+                        if (i < 36)
+                            pars[i] = ((char)(i + 0x61 - 10)).ToString();
+                        else
+                            pars[i] = (i - 26).ToString();
             res = String.Empty;
             for (int i = 0; i < pattern.Length; i++)
             {
@@ -284,7 +296,10 @@ namespace OnlineVideos.Sites
                 if (Char.IsDigit(c))
                 {
                     if (i + 1 < pattern.Length && Char.IsDigit(pattern[i + 1]))
+                    {
                         ind = int.Parse(pattern.Substring(i, 2)) + 26;
+                        i++;
+                    }
                     else
                         ind = int.Parse(pattern.Substring(i, 1));
                 }
@@ -292,7 +307,7 @@ namespace OnlineVideos.Sites
                     if (Char.IsLower(c))
                         ind = ((int)c) - 0x61 + 10;
 
-                if (ind == -1 || ind >= pars.Length || String.IsNullOrEmpty(pars[ind]))
+                if (ind == -1 || ind >= pars.Length)
                     res += c;
                 else
                     res += pars[ind];
