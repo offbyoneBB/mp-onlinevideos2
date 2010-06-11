@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArtePlus7Util.cs" />
+    <Compile Include="BrUtil.cs" />
     <Compile Include="MdrUtil.cs" />
     <Compile Include="MyVideoSerienUtil.cs" />
     <Compile Include="NdrUtil.cs" />
