@@ -140,6 +140,7 @@
     <Compile Include="Configuration\SubmitSiteReport.Designer.cs">
       <DependentUpon>SubmitSiteReport.cs</DependentUpon>
     </Compile>
+    <Compile Include="CookieHelper.cs" />
     <Compile Include="DotNetZip\ComHelper.cs" />
     <Compile Include="DotNetZip\Crc32.cs" />
     <Compile Include="DotNetZip\Deflate.cs" />
@@ -184,7 +185,6 @@
     <Compile Include="DotNetZip\ZlibCodec.cs" />
     <Compile Include="DotNetZip\ZlibConstants.cs" />
     <Compile Include="DotNetZip\ZlibStream.cs" />
-    <Compile Include="Sites\CookieHelper.cs" />
     <Compile Include="DownloadInfo.cs" />
     <Compile Include="Gui2UtilConnector.cs" />
     <Compile Include="GUISiteUpdater.cs" />
