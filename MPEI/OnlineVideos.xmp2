@@ -1514,6 +1514,23 @@
           </Items>
         </Files>
       </GroupItem>
+      <GroupItem Name="FLVSplitter">
+        <ParentGroup />
+        <DisplayName>FLV Splitter</DisplayName>
+        <DefaulChecked>false</DefaulChecked>
+        <Description>Directshow filter that allows seeking on FLV files.</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>FLVSplitter.ax</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{24aa2ae9-effd-4774-919c-25d70ce7ea3f}-FLVSplitter.ax</ZipFileName>
+              <DestinationFilename>%Base%\FLVSplitter.ax</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
     </Items>
   </Groups>
   <Sections>
@@ -1584,6 +1601,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
           <string>Plugin</string>
           <string>Thumbs</string>
           <string>Language</string>
+          <string>FLVSplitter</string>
           <string>Skins</string>
           <string>Blue3</string>
           <string>Blue3Wide</string>
@@ -1661,6 +1679,122 @@ public class Script
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="FLVSplitter">
+              <Params>
+                <Items>
+                  <SectionParam Name="Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+using System.Diagnostics;
+using System;
+
+public class Script
+{
+    public static void Main(PackageClass packageClass, ActionItem actionItem)
+    {
+ProcessStartInfo psi = new ProcessStartInfo();
+        psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
+psi.FileName = "cmd.exe";
+        psi.Arguments = "/c regsvr32 /s \"" + MpeInstaller.TransformInRealPath(@"%Base%\FLVSplitter.ax") + "\"";        psi.Verb = "runas";
+        psi.CreateNoWindow = true;
+        psi.WindowStyle = ProcessWindowStyle.Hidden;
+        psi.ErrorDialog = false;
+        try
+        {
+            Process p = System.Diagnostics.Process.Start(psi);
+            p.WaitForExit(10000);
+        }
+        catch (Exception ex)
+        {
+            
+        }
+    }
+}
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                  <SectionParam Name="Uninstall Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+
+public class Script
+{
+    public static void Main(PackageClass packageClass, UnInstallItem item)
+    {
+        return;
+    }
+}
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
+            </ActionItem>
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="FLVSplitter">
+              <Params>
+                <Items>
+                  <SectionParam Name="Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+
+public class Script
+{
+    public static void Main(PackageClass packageClass, ActionItem actionItem)
+    {
+        return;
+    }
+}
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                  <SectionParam Name="Uninstall Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+using System.Diagnostics;
+using System;
+
+public class Script
+{
+    public static void Main(PackageClass packageClass, UnInstallItem item)
+    {
+ProcessStartInfo psi = new ProcessStartInfo();
+        psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
+        psi.FileName = "cmd.exe";
+        psi.Arguments = "/c regsvr32 /s u \"" + MpeInstaller.TransformInRealPath(@"%Base%\FLVSplitter.ax") + "\"";
+        psi.Verb = "runas";
+        psi.CreateNoWindow = true;
+        psi.WindowStyle = ProcessWindowStyle.Hidden;
+        psi.ErrorDialog = false;
+        try
+        {
+            Process p = System.Diagnostics.Process.Start(psi);
+            p.WaitForExit(10000);
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+}
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
+            </ActionItem>
           </Items>
         </Actions>
         <IncludedGroups />
@@ -1715,18 +1849,15 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>21</Minor>
+      <Minor>22</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
-    <VersionDescription>playback enhancements:
-- OSD shows current buffer progress
-- freezing MediaPortal GUi should be history
-- buffering before playback can be stopped</VersionDescription>
+    <VersionDescription>bugfixes</VersionDescription>
     <DevelopmentStatus>Beta</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.20.0.MPE1</OnlineLocation>
-    <ReleaseDate>2010-06-06T18:01:51</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.22.0.MPE1</OnlineLocation>
+    <ReleaseDate>2010-06-10T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.[Version].mpe1</Location>
     <Params>
@@ -3198,11 +3329,18 @@ public class Script
         <ZipFileName>Installer{CopyFile}\{88a11a1c-b730-46cf-a1ab-a36863a7c52f}-OnlineVideos.png</ZipFileName>
         <DestinationFilename>%Skin%\Xface\Media\OnlineVideos.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>FLVSplitter.ax</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{24aa2ae9-effd-4774-919c-25d70ce7ea3f}-FLVSplitter.ax</ZipFileName>
+        <DestinationFilename>%Base%\FLVSplitter.ax</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{1e2eeb41-0aae-4193-9f2e-18872f5cd14b}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{f8454f77-13fd-46d3-96b7-f4e6dd797825}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
