@@ -41,8 +41,6 @@ namespace OnlineVideos {
             _server.Start();
         }
 
-        public static int Port { get { return _serverPort; } }
-
         public static void StopListening() {
             _server.Stop();
         }
@@ -89,18 +87,15 @@ namespace OnlineVideos {
                     return;
 
                 // Create the actual url from the request
-                string uri = request.URI;
-                int startIndex = uri.IndexOf('/', 1);
-                string url = startIndex > 0 ? "http:/" + uri.Substring(startIndex) : request.URI;
+                int startIndex = request.URI.IndexOf('/', 1);
+                string url = "http:/" + request.URI.Substring(startIndex);
 
-                string parsedHandlerIndex = startIndex > 1 ? uri.Substring(1, startIndex - 1) : "";
+                string parsedHandlerIndex = startIndex > 1 ? request.URI.Substring(1, startIndex - 1) : "";
                 int handlerIndex;
 
                 // dont continue if the handler index is invalid
                 if (!int.TryParse(parsedHandlerIndex, out handlerIndex)) {
-                    // if this is not a number, use rtmphandler by default (hack, but only way without recoding all utils)
-                    handlerIndex = _handlers.IndexOf(RTMP_LIB.RTMPRequestHandler.Instance);
-                    url = string.Format("http://127.0.0.1:{0}{1}", _serverPort, request.URI);
+                    return;
                 } else if (handlerIndex >= _handlers.Count)
                     return;
 

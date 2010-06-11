@@ -112,8 +112,8 @@ namespace OnlineVideos.Sites
                 string tcUrl = "rtmpe://" + host + ":1935" + "/" + app;
                 string playpath = url.Substring(url.IndexOf(app) + app.Length + 1);
 
-                string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&hostname={2}&tcUrl={3}&app={4}&swfurl={5}&swfsize={6}&swfhash={7}&playpath={8}",
-                        OnlineVideoSettings.RTMP_PROXY_PORT,
+                string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&swfurl={4}&swfsize={5}&swfhash={6}&playpath={7}",
                         url, //rtmpUrl
                         host, //host
                         tcUrl, //tcUrl
@@ -122,13 +122,14 @@ namespace OnlineVideos.Sites
                         "850680", //swfsize
                         "89b2c799c23569599472e3ed8b00a292a78de2ef7f181d4de64dccc99e43e1ff", //swfhash
                         playpath //playpath
-                        );
+                        ));
                 return resultUrl;
             }
             else
             {
                 string url = video.VideoUrl;
-                string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
+                string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
                 return resultUrl;
             }
            

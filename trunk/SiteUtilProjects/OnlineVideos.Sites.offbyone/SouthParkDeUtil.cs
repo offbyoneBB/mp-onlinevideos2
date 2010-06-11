@@ -130,49 +130,14 @@ namespace OnlineVideos.Sites
                                 
                                 if (url.StartsWith("rtmpe://")) url = url.Replace("rtmpe://", "rtmp://");
                                 
-                                string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfsize={2}&swfhash={3}",
-                                    OnlineVideoSettings.RTMP_PROXY_PORT,
-                                    System.Web.HttpUtility.UrlEncode(url)
-                                    , "563963",
-                                    "1155163cece179766c97fedce8933ccfccb9a553e47c1fabbb5faeacc4e8ad70");
+                                string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfsize={1}&swfhash={2}",
+                                        System.Web.HttpUtility.UrlEncode(url)
+                                        , "563963",
+                                        "1155163cece179766c97fedce8933ccfccb9a553e47c1fabbb5faeacc4e8ad70"));
                                 result.Add(resultUrl);
                             //}
                         }
-                    }
-                }
-            }
-            return result;
-        }
-
-        public override String getUrl(VideoInfo video)
-        {
-            string result = "";
-            string data = GetWebData(video.VideoUrl);
-            if (!string.IsNullOrEmpty(data))
-            {
-                Match m = episodePlayerRegEx.Match(data);
-                if (m.Success)
-                {
-                    string playerUrl = m.Groups["url"].Value;
-                    playerUrl = GetRedirectedUrl(playerUrl);
-                    playerUrl = System.Web.HttpUtility.ParseQueryString(new Uri(playerUrl).Query)["uri"];
-                    playerUrl = System.Web.HttpUtility.UrlDecode(playerUrl);
-                    playerUrl = @"http://www.southpark.de/feeds/as3player/mrss.php?uri=" + playerUrl;
-                    data = GetWebData(playerUrl);
-                    if (!string.IsNullOrEmpty(data))
-                    {
-                        data = GetWebData(RssToolkit.Rss.RssDocument.Load(data).Channel.Items[1].MediaGroups[0].MediaContents[0].Url);
-                        XmlDocument doc = new XmlDocument();
-                        doc.LoadXml(data);
-
-                        XmlNodeList list = doc.SelectNodes("//src");
-                        string url = list[list.Count - 1].InnerText; // todo : quality selection in configuration
-                        if (url.StartsWith("rtmpe://")) url = url.Replace("rtmpe://", "rtmp://");
-                        result = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfsize={2}&swfhash={3}", 
-                            OnlineVideoSettings.RTMP_PROXY_PORT, 
-                            System.Web.HttpUtility.UrlEncode(url)
-                            , "563963",
-                            "1155163cece179766c97fedce8933ccfccb9a553e47c1fabbb5faeacc4e8ad70");
                     }
                 }
             }

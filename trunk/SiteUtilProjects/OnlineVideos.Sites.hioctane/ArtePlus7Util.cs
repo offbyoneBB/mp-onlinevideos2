@@ -109,18 +109,18 @@ namespace OnlineVideos.Sites
                                         string tcUrl = "rtmp://" + host + ":1935" + "/" + app;
                                         string playPath = url.Substring(url.IndexOf(app) + app.Length + 1);
 
-                                        string resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&hostname={2}&tcUrl={3}&app={4}&swfurl={5}&swfsize={6}&swfhash={7}&pageurl={8}&playpath={9}",
-                                        OnlineVideoSettings.RTMP_PROXY_PORT,
-                                        url, //rtmpUrl
-                                        host, //host
-                                        tcUrl, //tcUrl
-                                        app, //app
-                                        "http://artestras.vo.llnwd.net/o35/geo/arte7/player/ALL/artep7_hd_16_9_v2.swf", //swfurl
-                                        "105878",
-                                        "061e498c18ca7ce1244caaa0311f35cddc6cf69b4ff810ab88caf7b546a6795e",
-                                        video.VideoUrl, //pageUrl
-                                        playPath //playpath
-                                        );
+                                        string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&swfurl={4}&swfsize={5}&swfhash={6}&pageurl={7}&playpath={8}",
+                                                url, //rtmpUrl
+                                                host, //host
+                                                tcUrl, //tcUrl
+                                                app, //app
+                                                "http://artestras.vo.llnwd.net/o35/geo/arte7/player/ALL/artep7_hd_16_9_v2.swf", //swfurl
+                                                "105878",
+                                                "061e498c18ca7ce1244caaa0311f35cddc6cf69b4ff810ab88caf7b546a6795e",
+                                                video.VideoUrl, //pageUrl
+                                                playPath //playpath
+                                                ));
 
                                         if(video.PlaybackOptions.ContainsKey(title)) title += " - 2";
                                         video.PlaybackOptions.Add(title, resultUrl);

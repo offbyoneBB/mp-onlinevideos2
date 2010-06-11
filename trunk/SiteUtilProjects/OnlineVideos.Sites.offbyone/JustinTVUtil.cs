@@ -38,18 +38,19 @@ namespace OnlineVideos.Sites
             }
             string str4 = str3.Replace("rtmp://", "").Replace("/app", "");
             // todo : send token as NetStream.Authenticate.UsherToken after connect packet in rtmp
-            return string.Format("http://127.0.0.1:{6}/stream.flv?hostname={0}&port={1}&app={2}&swfUrl={3}&playpath={4}&tcUrl={5}&pageurl={7}&usefp9=true&authobj={8}&auth={9}&subscribepath={10}", new object[] { 
-                HttpUtility.UrlEncode(str4), 
-                "1935", 
-                "app", 
-                HttpUtility.UrlEncode("http://www-cdn.justin.tv/widgets/live_site_player.r7d3ed44c4594caafa272b91a2de339eb03325273.swf"), 
-                HttpUtility.UrlEncode(str2), 
-                HttpUtility.UrlEncode(str3), 
-                OnlineVideoSettings.RTMP_PROXY_PORT,
-                HttpUtility.UrlEncode("http://www.justin.tv/"+ video.VideoUrl),
-                HttpUtility.UrlEncode("NetStream.Authenticate.UsherToken"),
-                HttpUtility.UrlEncode(token),
-                HttpUtility.UrlEncode(str2) });
+
+            return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&swfUrl={3}&playpath={4}&tcUrl={5}&pageurl={6}&authobj={7}&auth={8}&subscribepath={9}",
+                    HttpUtility.UrlEncode(str4), 
+                    "1935", 
+                    "app", 
+                    HttpUtility.UrlEncode("http://www-cdn.justin.tv/widgets/live_site_player.r7d3ed44c4594caafa272b91a2de339eb03325273.swf"), 
+                    HttpUtility.UrlEncode(str2), 
+                    HttpUtility.UrlEncode(str3),                 
+                    HttpUtility.UrlEncode("http://www.justin.tv/"+ video.VideoUrl),
+                    HttpUtility.UrlEncode("NetStream.Authenticate.UsherToken"),
+                    HttpUtility.UrlEncode(token),
+                    HttpUtility.UrlEncode(str2)));
         }
 
         public override List<VideoInfo> getVideoList(Category category)

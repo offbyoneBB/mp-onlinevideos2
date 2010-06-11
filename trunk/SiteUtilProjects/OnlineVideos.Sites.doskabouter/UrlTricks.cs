@@ -265,8 +265,8 @@ namespace OnlineVideos.Sites
             string fileUrl = GetSubString(webData, @"RTMPE url=""", @"""");
 
             //return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfhash=a51d59f968ffb279f0a3c0bf398f2118b2cc811f04d86c940fd211193dee2013&swfsize=770329",
-            return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}",
-                    OnlineVideoSettings.RTMP_PROXY_PORT, fileUrl.Replace("rtmp:", "rtmpe:"));
+            return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", fileUrl.Replace("rtmp:", "rtmpe:")));
         }
 
         public static string UnPack(string packed)

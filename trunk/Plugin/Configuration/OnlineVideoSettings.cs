@@ -16,7 +16,6 @@ namespace OnlineVideos
     /// </summary>
     public class OnlineVideoSettings
     {
-        public static readonly int RTMP_PROXY_PORT = ReverseProxy.Port;
         public const string USERAGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3";
         public const string PLUGIN_NAME = "Online Videos";
         public const string SETTINGS_FILE = "OnlineVideoSites.xml";
