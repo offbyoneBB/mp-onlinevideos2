@@ -1473,6 +1473,13 @@ namespace OnlineVideos
             // stop player if currently playing some other video
             if (g_Player.Playing) g_Player.Stop();
 
+            // translate rtmp urls to the local proxy
+            if (new Uri(lsUrl).Scheme.ToLower().StartsWith("rtmp"))
+            {
+                lsUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(lsUrl)));
+            }
+
             OnlineVideos.Player.PlayerFactory factory = new OnlineVideos.Player.PlayerFactory(playItem.Util.Settings.Player, lsUrl);
             // external players cannot be created from a seperate thread
             if (factory.PreparedPlayerType != PlayerType.Internal)

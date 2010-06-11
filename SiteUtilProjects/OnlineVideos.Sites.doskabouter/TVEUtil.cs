@@ -69,11 +69,7 @@ namespace OnlineVideos.Sites
             string videoName = baseUrl + "/alacarta/player/" + Path.ChangeExtension(Path.GetFileName(video.VideoUrl), ".html");
             string webData = GetWebData(videoName);
             string url = GetSubString(webData, "'url':'", "'");
-            if (url.StartsWith("rtmp"))
-                return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
-            else
-                return url;
+            return url;
 
             /*if (url.StartsWith("rtmp"))
                 return url.Replace(@"rtmp://stream.rtve.es/stream/resources", @"http://www.rtve.es/resources");

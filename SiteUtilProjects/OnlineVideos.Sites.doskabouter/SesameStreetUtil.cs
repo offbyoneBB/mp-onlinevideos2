@@ -178,9 +178,7 @@ namespace OnlineVideos.Sites
                 if (nd.InnerText.Contains(uid))
                 {
                     string url = nd.ParentNode.SelectSingleNode("filename").InnerText;
-                    if (url.StartsWith("rtmp"))
-                        return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
+                    if (url.StartsWith("rtmp")) return url;
                     //return url;
                 }
             }
