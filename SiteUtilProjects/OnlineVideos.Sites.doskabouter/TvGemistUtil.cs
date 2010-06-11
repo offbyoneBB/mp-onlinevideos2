@@ -656,10 +656,10 @@ namespace OnlineVideos.Sites
                 {
                     node = doc.SelectSingleNode(@"//a:identifier", nsmRequest);
 
-                    return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfurl={2}",
-                        OnlineVideoSettings.RTMP_PROXY_PORT,
-                        System.Web.HttpUtility.UrlEncode(url + node.InnerText + ".flv"),
-                        @"http://www.veronicatv.nl/design/channel/veronicatv/swf/mediaplayer.swf");
+                    return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}",                        
+                            System.Web.HttpUtility.UrlEncode(url + node.InnerText + ".flv"),
+                            @"http://www.veronicatv.nl/design/channel/veronicatv/swf/mediaplayer.swf"));
                     //vb: hotshots op veronica: this is not working, connection closed by server
                 }
                 if (!String.IsNullOrEmpty(url))

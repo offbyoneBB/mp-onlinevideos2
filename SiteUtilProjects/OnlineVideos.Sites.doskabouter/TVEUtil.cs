@@ -70,8 +70,8 @@ namespace OnlineVideos.Sites
             string webData = GetWebData(videoName);
             string url = GetSubString(webData, "'url':'", "'");
             if (url.StartsWith("rtmp"))
-                return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}",
-                    OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(url));
+                return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
             else
                 return url;
 

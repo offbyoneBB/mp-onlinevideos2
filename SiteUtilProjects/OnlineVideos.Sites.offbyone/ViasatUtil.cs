@@ -107,7 +107,8 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            playstr = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", OnlineVideoSettings.RTMP_PROXY_PORT, System.Web.HttpUtility.UrlEncode(playstr));
+            playstr = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(playstr)));
 
             //playstr += Viasat.GetAdString(channel, int.Parse(item.Attributes["id"].ToString())); - not sure if this is needed
             

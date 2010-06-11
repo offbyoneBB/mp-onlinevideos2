@@ -59,9 +59,9 @@ namespace OnlineVideos.Sites
                 data.LoadXml(playlist);
                 string url = ((XmlElement)data.SelectSingleNode("//src")).InnerText;
                 if (!url.EndsWith(".swf")) // country block
-                    return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}", 
-                        OnlineVideoSettings.RTMP_PROXY_PORT, 
-                        System.Web.HttpUtility.UrlEncode(url));                
+                    return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, 
+                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", 
+                        System.Web.HttpUtility.UrlEncode(url)));
             }
             return "";
         }       

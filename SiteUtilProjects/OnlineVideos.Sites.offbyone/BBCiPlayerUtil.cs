@@ -79,17 +79,17 @@ namespace OnlineVideos.Sites
                         }*/
 
                         info = string.Format("{0}x{1} | {2} kbps", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"));
-                        resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?hostname={1}&port={2}&app={3}&tcUrl={4}&playpath={5}&swfurl={6}&auth={7}&swfhash={8}&swfsize={9}",
-                            OnlineVideoSettings.RTMP_PROXY_PORT,
-                            System.Web.HttpUtility.UrlEncode(server),
-                            "1935",
-                            System.Web.HttpUtility.UrlEncode(application),
-                            System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}", server, application)),
-                            System.Web.HttpUtility.UrlEncode(PlayPath),
-                            System.Web.HttpUtility.UrlEncode(SWFPlayer),
-                            System.Web.HttpUtility.UrlEncode(auth),
-                            System.Web.HttpUtility.UrlEncode("321923f8db00ef49612a5da233c9642ae3d2fdd9aea928054ab2f154b96112c0"),
-                            "1020525");
+                        resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfurl={5}&auth={6}&swfhash={7}&swfsize={8}",
+                                System.Web.HttpUtility.UrlEncode(server),
+                                "1935",
+                                System.Web.HttpUtility.UrlEncode(application),
+                                System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}", server, application)),
+                                System.Web.HttpUtility.UrlEncode(PlayPath),
+                                System.Web.HttpUtility.UrlEncode(SWFPlayer),
+                                System.Web.HttpUtility.UrlEncode(auth),
+                                System.Web.HttpUtility.UrlEncode("321923f8db00ef49612a5da233c9642ae3d2fdd9aea928054ab2f154b96112c0"),
+                                "1020525"));
                     }                    
                 }
                 if (resultUrl != "") sortedPlaybackOptions.Add(info, resultUrl);

@@ -321,7 +321,6 @@
     <Compile Include="RTMP_LIB\BouncyCastle\util\Arrays.cs" />
     <Compile Include="RTMP_LIB\BouncyCastle\util\Platform.cs" />
     <Compile Include="RTMP_LIB\FLVStream.cs" />
-    <Compile Include="RTMP_LIB\HTTPServer.cs" />
     <Compile Include="RTMP_LIB\HTTP\ChunkedStream.cs" />
     <Compile Include="RTMP_LIB\HTTP\CountingOutputStream.cs" />
     <Compile Include="RTMP_LIB\HTTP\HTTPException.cs" />
@@ -363,6 +362,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Configuration\SiteSettings.cs" />
+    <Compile Include="RTMP_LIB\RTMPRequestHandler.cs" />
     <Compile Include="RTMP_LIB\Tea.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\ByteArray.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\DynamicList.cs" />

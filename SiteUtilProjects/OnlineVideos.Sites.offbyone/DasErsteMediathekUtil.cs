@@ -167,19 +167,19 @@ namespace OnlineVideos.Sites
                         Uri uri = new Uri(infos[infos.Length - 2]);
                         if (uri.Host == "gffstream.fcod.llnwd.net")
                         {
-                            resultUrl = string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}",
-                                OnlineVideoSettings.RTMP_PROXY_PORT,
-                                HttpUtility.UrlEncode(uri.OriginalString.Trim('/') + "/" + infos[infos.Length - 1].Trim(new char[] { '"', ' ' })));
+                            resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}",
+                                    HttpUtility.UrlEncode(uri.OriginalString.Trim('/') + "/" + infos[infos.Length - 1].Trim(new char[] { '"', ' ' }))));
                         }
                         else
                         {
-                            resultUrl = string.Format("http://127.0.0.1:{5}/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}",
-                                HttpUtility.UrlEncode(uri.Host),
-                                "1935",
-                                HttpUtility.UrlEncode(infos[infos.Length - 2].Substring(infos[infos.Length - 2].IndexOf('/', uri.Host.Length)).Trim('/')),
-                                HttpUtility.UrlEncode(infos[infos.Length - 2]),
-                                HttpUtility.UrlEncode(infos[infos.Length - 1].Trim(new char[] { '"', ' ' })),
-                                OnlineVideoSettings.RTMP_PROXY_PORT);
+                            resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                                string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}",
+                                    HttpUtility.UrlEncode(uri.Host),
+                                    "1935",
+                                    HttpUtility.UrlEncode(infos[infos.Length - 2].Substring(infos[infos.Length - 2].IndexOf('/', uri.Host.Length)).Trim('/')),
+                                    HttpUtility.UrlEncode(infos[infos.Length - 2]),
+                                    HttpUtility.UrlEncode(infos[infos.Length - 1].Trim(new char[] { '"', ' ' }))));
                         }
                         video.PlaybackOptions.Add(string.Format("{0} | rtmp:// | {1}", quality.ToString().PadRight(4, ' '), infos[infos.Length - 1].ToLower().Contains("mp4:") ? ".mp4" : ".flv"), resultUrl);
                     }
