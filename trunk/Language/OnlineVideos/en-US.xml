@@ -2,7 +2,7 @@
 <!-- Online Videos translation file -->
 <!-- English (US) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
-<strings>
+<strings>  
 
   <!-- A -->
   <string Field="Airdate">Aired</string>
@@ -11,8 +11,9 @@
   <string Field="Actions">Actions</string>
   <string Field="Actors">Actors</string>
   <string Field="AddToMySites">Add to my sites</string>
-  <string Field="AddToFavourites">Add to favorites</string>  
-
+  <string Field="AddToFavourites">Add to favorites</string>
+  <string Field="AddingToFavorites">adding to favorites</string>
+  
   <!-- B -->
   <string Field="Broken">Broken</string>
   <string Field="Buffered">buffered</string>
@@ -45,6 +46,16 @@
 
   <!-- G -->
   <string Field="Genre">Genre</string>
+  <string Field="GettingVideoDetails">getting video details</string>
+  <string Field="GettingCategoryVideos">getting category videos</string>
+  <string Field="GettingFavoriteVideos">getting favorite videos</string>
+  <string Field="GettingSearchResults">getting search results</string>
+  <string Field="GettingRelatedVideos">getting related videos</string>
+  <string Field="GettingFilteredVideos">getting filtered videos</string>
+  <string Field="GettingNextPageVideos">getting next page videos</string>
+  <string Field="GettingPreviousPageVideos">getting previous page videos</string>
+  <string Field="GettingPlaybackUrlsForVideo">getting playback urls for video</string>
+  <string Field="GettingDynamicCategories">getting dynamic categories</string>
 
   <!-- H -->
 
@@ -77,6 +88,7 @@
 
   <!-- R -->
   <string Field="RemoveFromFavorites">Remove from favorites</string>
+  <string Field="RemovingFromFavorites">removing from favorites</string>
   <string Field="Refresh">Refresh</string>
   <string Field="RelatedVideos">Related Videos</string>
   <string Field="Reported">Reported</string>
@@ -96,7 +108,8 @@
   <string Field="State">State</string>
   <string Field="SavingLocalSiteList">Saving local site list ...</string>
   <string Field="ShowReports">Show creator's and user's reports</string>
-
+  <string Field="StartingPlayback">starting playback</string>
+  
   <!-- T -->
   <string Field="Timeframe">Timeframe</string>
   <string Field="Timeout">Timeout</string>

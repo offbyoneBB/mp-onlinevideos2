@@ -896,7 +896,7 @@ namespace OnlineVideos
                             SetCategoriesToFacade(parentCategory, result as IList<Category>);                            
                         }
                     },
-                    "getting dynamic categories", true);
+                    Translation.GettingDynamicCategories, true);
                 }
                 else
                 {
@@ -921,7 +921,7 @@ namespace OnlineVideos
                             SetCategoriesToFacade(parentCategory, result as IList<Category>);
                         }
                     },
-                    "getting dynamic subcategories", true);
+                    Translation.GettingDynamicCategories, true);
                 }
                 else
                 {
@@ -1017,7 +1017,7 @@ namespace OnlineVideos
                     SetVideosToInfoList(result as List<VideoInfo>);
                 }
             },
-            "getting video details", true);
+            Translation.GettingVideoDetails, true);
         }
 
         private void SetVideosToInfoList(List<VideoInfo> loVideoList)
@@ -1068,7 +1068,7 @@ namespace OnlineVideos
                     }
                 }
             },
-            "getting category videos", true);
+            Translation.GettingCategoryVideos, true);
         }
 
         private void DisplayVideos_Favorite()
@@ -1081,7 +1081,7 @@ namespace OnlineVideos
             {
                 if (success) SetVideosToFacade(result as List<VideoInfo>, VideosMode.Favorites);
             },
-            "getting favorite videos", true);
+            Translation.GettingFavoriteVideos, true);
         }
 
         private void DisplayVideos_Search(string query)
@@ -1108,7 +1108,7 @@ namespace OnlineVideos
                 {
                     if (success) SetVideosToFacade(result as List<VideoInfo>, VideosMode.Search);
                 },
-                "getting search results", true);
+                Translation.GettingSearchResults, true);
             }
         }
 
@@ -1124,7 +1124,7 @@ namespace OnlineVideos
                 {
                     if (success) SetVideosToFacade(result as List<VideoInfo>, VideosMode.Related);
                 },
-                "getting related videos", true);
+                Translation.GettingRelatedVideos, true);
             }
         }
 
@@ -1180,7 +1180,7 @@ namespace OnlineVideos
             {
                 if (success) SetVideosToFacade(result as List<VideoInfo>, currentVideosDisplayMode);
             }
-            , "getting filtered videos", true);
+            , Translation.GettingFilteredVideos, true);
         }
 
         private void DisplayVideos_NextPage()
@@ -1193,7 +1193,7 @@ namespace OnlineVideos
             {
                 if (success) SetVideosToFacade(result as List<VideoInfo>, currentVideosDisplayMode);
             },
-            "getting next page videos", true);
+            Translation.GettingNextPageVideos, true);
         }
 
         private void DisplayVideos_PreviousPage()
@@ -1206,7 +1206,7 @@ namespace OnlineVideos
             {
                 if (success) SetVideosToFacade(result as List<VideoInfo>, currentVideosDisplayMode);
             },
-            "getting previous page videos", true);
+            Translation.GettingPreviousPageVideos, true);
         }
 
         private bool SetVideosToFacade(List<VideoInfo> videos, VideosMode mode)
@@ -1404,7 +1404,7 @@ namespace OnlineVideos
                 {
                     if (success) Play(playItem, result as List<String>, goFullScreen);
                 }
-                , "getting playback urls for video", true);
+                , Translation.GettingPlaybackUrlsForVideo, true);
             }
         }
 
@@ -1560,7 +1560,7 @@ namespace OnlineVideos
 #endif
                         }
                     },
-                    "starting playback", false);
+                    Translation.StartingPlayback, false);
                 }
                 else
                 {
@@ -1726,7 +1726,7 @@ namespace OnlineVideos
                     loClient.DownloadFileAsync(new Uri(url), downloadInfo.LocalFile, downloadInfo);
                 }
             },
-            "getting playback urls for video", true);
+            Translation.GettingPlaybackUrlsForVideo, true);
         }
 
         private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
@@ -2053,7 +2053,7 @@ namespace OnlineVideos
                 {
                     ((IFavorite)SelectedSite).addFavorite(loSelectedVideo);
                     return null;
-                }, null, "adding to favorites", true);
+                }, null, Translation.AddingToFavorites, true);
             }
         }
 
@@ -2071,7 +2071,7 @@ namespace OnlineVideos
                 {
                     if (success) DisplayVideos_Favorite(); // retrieve favorites again and show the updated list
                 },
-                "removing from favorites", true);
+                Translation.RemovingFromFavorites, true);
             }
             else
             {
