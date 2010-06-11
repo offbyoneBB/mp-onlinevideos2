@@ -19,6 +19,10 @@
       <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>
       <Categories />
     </Site>
+    <Site name="BR" util="Br" agecheck="false" enabled="true" lang="de">
+      <Description>Kostenlos verfügbare Sendungen aus der Mediathek des Bayerischen Rundfunks (BR).</Description>
+      <Categories />
+    </Site>
     <Site name="MDR" util="Mdr" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen aus der Mediathek des Mitteldeutschen Rundfunks (MDR).</Description>
       <Categories />
