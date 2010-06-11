@@ -100,10 +100,6 @@ namespace OnlineVideos.Sites
                     }
                 }
                 string url = vid.Attributes["src"].InnerText;
-                if (url.StartsWith("rtmp:"))
-                    url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, 
-                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", HttpUtility.UrlEncode(url)));
-
                 res.Add(url);
             }
             return res;

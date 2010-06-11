@@ -127,10 +127,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                string url = video.VideoUrl;
-                string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
-                return resultUrl;
+                return video.VideoUrl;
             }
            
         }

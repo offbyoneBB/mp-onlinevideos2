@@ -25,9 +25,7 @@ namespace OnlineVideos.Sites
                         string title = node.SelectSingleNode("@mimetype").InnerText + " - " + node.SelectSingleNode("@format").InnerText;
                         string url = node.InnerText;
                         url = url.Replace("rtmpt://fms.edge.newmedia.nacamar.net", "rtmpt://ndr.fcod.llnwd.net/a3715/d1/flashmedia/streams");
-                        string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
-                        video.PlaybackOptions.Add(title, resultUrl);
+                        video.PlaybackOptions.Add(title, url);
                     }
                 }
             }

@@ -167,9 +167,7 @@ namespace OnlineVideos.Sites
                         Uri uri = new Uri(infos[infos.Length - 2]);
                         if (uri.Host == "gffstream.fcod.llnwd.net")
                         {
-                            resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}",
-                                    HttpUtility.UrlEncode(uri.OriginalString.Trim('/') + "/" + infos[infos.Length - 1].Trim(new char[] { '"', ' ' }))));
+                            resultUrl = uri.OriginalString.Trim('/') + "/" + infos[infos.Length - 1].Trim(new char[] { '"', ' ' });
                         }
                         else
                         {
