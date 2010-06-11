@@ -430,6 +430,8 @@ namespace OnlineVideos.Player
         public override void Dispose()
 #endif
         {
+            GUIWindowManager.OnNewAction -= GUIWindowManager_OnNewAction;
+
             if (_wmp10Player == null)
             {
                 return;
