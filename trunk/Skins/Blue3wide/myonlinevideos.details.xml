@@ -140,7 +140,7 @@
       <id>61</id>
       <posX>450</posX>
       <posY>400</posY>
-      <width>800</width>
+      <width>670</width>
       <height>250</height>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
