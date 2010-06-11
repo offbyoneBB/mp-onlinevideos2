@@ -220,8 +220,8 @@ namespace OnlineVideos
         /// if that also fails it will use the hardcoded strings as a last resort.
         /// </summary>
 
-
         // A
+        public static string AddingToFavorites = "adding to favorites";
         public static string Airdate = "Aired";
         public static string AlreadyDownloading = "Already downloading this file.";
         public static string All = "All";
@@ -262,6 +262,16 @@ namespace OnlineVideos
 
         // G
         public static string Genre = "Genre";
+        public static string GettingVideoDetails = "getting video details";
+        public static string GettingCategoryVideos = "getting category videos";
+        public static string GettingFavoriteVideos = "getting favorite videos";
+        public static string GettingSearchResults = "getting search results";
+        public static string GettingRelatedVideos = "getting related videos";
+        public static string GettingFilteredVideos = "getting filtered videos";
+        public static string GettingNextPageVideos = "getting next page videos";
+        public static string GettingPreviousPageVideos = "getting previous page videos";
+        public static string GettingPlaybackUrlsForVideo = "getting playback urls for video";
+        public static string GettingDynamicCategories = "getting dynamic categories";
 
         // H
 
@@ -294,6 +304,7 @@ namespace OnlineVideos
 
         // R
         public static string RemoveFromFavorites = "Remove from favorites";
+        public static string RemovingFromFavorites = "removing from favorites";
         public static string Refresh = "Refresh";
         public static string RelatedVideos = "Related Videos";
         public static string Reported = "Reported";
@@ -313,6 +324,7 @@ namespace OnlineVideos
         public static string State = "State";
         public static string SavingLocalSiteList = "Saving local site list ...";
         public static string ShowReports = "Show creator's and user's reports";
+        public static string StartingPlayback = "starting playback";
 
         // T
         public static string Timeframe = "Timeframe";

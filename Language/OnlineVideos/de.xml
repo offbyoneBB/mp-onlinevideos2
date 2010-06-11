@@ -10,6 +10,7 @@
   <string Field="Actors">Darsteller</string>
   <string Field="AddToMySites">Zu meinen Sites hinzufügen</string>
   <string Field="AddToFavourites">Zu den Favoriten hinzufügen</string>
+  <string Field="AddingToFavorites">beim Hinzufügen zu den Favoriten</string>
   <string Field="Broken">Defekt</string>
   <string Field="Buffered">gepuffert</string>
   <string Field="Category">Rubrik</string>
@@ -31,6 +32,16 @@
   <string Field="Filter">Filter</string>
   <string Field="FullUpdate">Komplettaktualisierung</string>
   <string Field="Genre">Genre</string>
+  <string Field="GettingVideoDetails">beim Abrufen der Videodetails</string>
+  <string Field="GettingCategoryVideos">beim Abrufen der Videos dieser Rubrik</string>
+  <string Field="GettingFavoriteVideos">beim Abrufen der Favoriten</string>
+  <string Field="GettingSearchResults">beim Abrufen der Suchergebnisse</string>
+  <string Field="GettingRelatedVideos">beim Abrufen der ähnlichen Videos</string>
+  <string Field="GettingFilteredVideos">beim Abrufen der gefilterten Ergebnisse</string>
+  <string Field="GettingNextPageVideos">beim Abrufen der Videos der nächsten Seite</string>
+  <string Field="GettingPreviousPageVideos">beim Abrufen der Videos der vorherigen Seite</string>
+  <string Field="GettingPlaybackUrlsForVideo">beim Abrufen der Abspieladressen</string>
+  <string Field="GettingDynamicCategories">beim Abrufen der dynamischen Rubriken</string>
   <string Field="Language">Sprache</string>
   <string Field="LayoutList">Ansicht: Liste</string>
   <string Field="LayoutIcons">Ansicht: Symbole klein</string>
@@ -47,6 +58,7 @@
   <string Field="PreviousPage">Vorherige Seite</string>
   <string Field="PerformAutomaticUpdate">Automatische Aktualisierung ausführen?</string>
   <string Field="RemoveFromFavorites">Von den Favoriten entfernen</string>
+  <string Field="RemovingFromFavorites">beim Entfernen von den Favoriten</string>
   <string Field="Refresh">Ansicht aktualisieren</string>
   <string Field="RelatedVideos">Ähnliche Videos</string>
   <string Field="Reported">Gemeldet</string>
@@ -64,6 +76,7 @@
   <string Field="State">Status</string>
   <string Field="SavingLocalSiteList">Speichere lokale Sites ...</string>
   <string Field="ShowReports">Meldungen von Benutzern und Ersteller anzeigen</string>
+  <string Field="StartingPlayback">beim Starten des Abspielens</string>
   <string Field="Timeframe">Zeitraum</string>
   <string Field="Timeout">Zeitüberschreitung</string>
   <string Field="Tags">Schlagworte</string>
