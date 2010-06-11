@@ -1152,6 +1152,20 @@
               <ZipFileName>Installer{CopyFile}\{842d7436-39f5-4762-ab97-9b6e477886cd}-watch-series.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-series.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Br.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{8e5b48b0-5c89-4abf-94df-2f567f1e7309}-Br.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Br.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Br.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{1e8f5e32-5e66-4c20-92cb-d3da096656a2}-Br.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Br.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1871,12 +1885,14 @@ ProcessStartInfo psi = new ProcessStartInfo();
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
-    <VersionDescription>bugfixes</VersionDescription>
+    <VersionDescription>bugfixes for version 0.21
+local proxy resource usage reduced
+FLVSplitter inside MPEI package</VersionDescription>
     <DevelopmentStatus>Beta</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.22.0.MPE1</OnlineLocation>
-    <ReleaseDate>2010-06-10T18:01:51</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.22.0.0.mpe1</OnlineLocation>
+    <ReleaseDate>2010-06-11T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
-    <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.[Version].mpe1</Location>
+    <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
       <Items>
         <SectionParam Name="Icon">
@@ -3045,6 +3061,20 @@ ProcessStartInfo psi = new ProcessStartInfo();
         <ZipFileName>Installer{CopyFile}\{842d7436-39f5-4762-ab97-9b6e477886cd}-watch-series.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-series.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Br.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{8e5b48b0-5c89-4abf-94df-2f567f1e7309}-Br.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Br.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Br.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{1e8f5e32-5e66-4c20-92cb-d3da096656a2}-Br.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Br.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -3357,7 +3387,7 @@ ProcessStartInfo psi = new ProcessStartInfo();
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{88d438c5-d100-47e5-b6bb-8f2d1a8239dd}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{01e51e5c-6ba4-4c28-8373-fdeaa77b3706}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
