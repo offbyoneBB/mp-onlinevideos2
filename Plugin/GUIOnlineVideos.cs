@@ -1664,6 +1664,13 @@ namespace OnlineVideos
                     return;
                 }
 
+                // translate rtmp urls to the local proxy
+                if (new Uri(url).Scheme.ToLower().StartsWith("rtmp"))
+                {
+                    url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
+                }
+
                 DownloadInfo downloadInfo = new DownloadInfo()
                 {
                     Url = url,
