@@ -16,7 +16,7 @@ namespace Vattenmelon.Nrk.Parser.Xml
         public String GetUrl()
         { 
             XmlNode abba = doc.SelectSingleNode("//mediadefinition/mediaitems/mediaitem/mediaurl");
-            return abba.FirstChild.Value;
+            return abba == null ? "" : abba.FirstChild.Value;
         }
         public int GetStartTimeOfClip()
         {
