@@ -90,10 +90,10 @@
       <description>video rectangle</description>
       <type>image</type>
       <id>0</id>
-      <posX>49</posX>
-      <posY>419</posY>
-      <width>160</width>
-      <height>124</height>
+      <posX>43</posX>
+      <posY>442</posY>
+      <width>123</width>
+      <height>99</height>
       <texture>Picture_cover.png</texture>
       <visible>!Control.IsVisible(51)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -104,10 +104,12 @@
       <description>video preview window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>56</posX>
-      <posY>425</posY>
-      <width>145</width>
-      <height>111</height>
+      <posX>48</posX>
+      <posY>446</posY>
+      <width>114</width>
+      <height>92</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
       <visible>player.hasmedia | videoplayer.usingoverlays</visible>
@@ -118,10 +120,10 @@
     <control>
       <id>500</id>
       <type>image</type>
-      <posX>52</posX>
-      <posY>421</posY>
-      <width>152</width>
-      <height>119</height>
+      <posX>48</posX>
+      <posY>446</posY>
+      <width>114</width>
+      <height>92</height>
       <centered>yes</centered>
       <texture diffuse="Thumb_Mask.png">#selectedthumb</texture>
       <keepaspectratio>yes</keepaspectratio>
