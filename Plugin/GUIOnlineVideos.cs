@@ -256,10 +256,10 @@ namespace OnlineVideos
 
                 GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.PLUGIN_NAME);
                 Translation.TranslateSkin();
+                ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); // add a special reversed proxy handler for rtmp
                 if (OnlineVideoSettings.Instance.updateOnStart != false) AutoUpdate(!OnlineVideoSettings.Instance.updateOnStart.HasValue);
                 if (OnlineVideoSettings.Instance.thumbAge >= 0) ImageDownloader.DeleteOldThumbs();
                 LoadSettings();
-                ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); // add a special reversed proxy handler for rtmp
                 firstLoadDone = true;
             }
 
