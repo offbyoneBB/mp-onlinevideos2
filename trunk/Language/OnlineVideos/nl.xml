@@ -10,6 +10,7 @@
   <string Field="Actors">Acteurs</string>
   <string Field="AddToMySites">Toevoegen aan mijn sites</string>
   <string Field="AddToFavourites">Toevoegen aan favorieten</string>
+  <string Field="AddingToFavorites">bij het toevoegen aan favorieten</string>
   <string Field="Broken">Kapot</string>
   <string Field="Buffered">Gebufferd</string>
   <string Field="Category">Categorie</string>
@@ -24,12 +25,23 @@
   <string Field="Delete">Verwijderen</string>
   <string Field="Default">Standaard</string>
   <string Field="Done">Gereed</string>
+  <string Field="DeletingOldThumbs">Wissen van oude thumbnails</string>
   <string Field="Error">Fout</string>
   <string Field="EnterPin">Voer pin-code in</string>
   <string Field="Favourites">Favorieten</string>
   <string Field="Filter">Filter</string>
   <string Field="FullUpdate">Volledige update</string>
   <string Field="Genre">Genre</string>
+  <string Field="GettingVideoDetails">bij het opvragen van de video-details</string>
+  <string Field="GettingCategoryVideos">bij het opvragen van de categoriën</string>
+  <string Field="GettingFavoriteVideos">bij het opvragen van de favorieten</string>
+  <string Field="GettingSearchResults">bij het opvragen van de zoekresultaten</string>
+  <string Field="GettingRelatedVideos">bij het opvragen van de verwante videos</string>
+  <string Field="GettingFilteredVideos">bij het opvragen van de gefilterde videos</string>
+  <string Field="GettingNextPageVideos">bij het opvragen van de videos op de volgende pagina</string>
+  <string Field="GettingPreviousPageVideos">bij het opvragen van de vorige pagina</string>
+  <string Field="GettingPlaybackUrlsForVideo">bij het opvragen van de afspeel-url's van de video</string>
+  <string Field="GettingDynamicCategories">bij het opvragen van de dynamische categoriën</string>
   <string Field="Language">Taal</string>
   <string Field="LayoutList">Lay-out: Lijst</string>
   <string Field="LayoutIcons">Lay-out: Pictogrammen</string>
@@ -46,6 +58,7 @@
   <string Field="PreviousPage">Vorige pagina</string>
   <string Field="PerformAutomaticUpdate">Automatische update uitvoeren?</string>
   <string Field="RemoveFromFavorites">Verwijderen uit favorieten</string>
+  <string Field="RemovingFromFavorites">bij het verwijderen uit de favorieten</string>
   <string Field="Refresh">Verversen</string>
   <string Field="RelatedVideos">Gerelateerde videos</string>
   <string Field="Reported">Gerapporteerd</string>
@@ -63,6 +76,7 @@
   <string Field="State">Status</string>
   <string Field="SavingLocalSiteList">Opslaan lokale site-lijst...</string>
   <string Field="ShowReports">Toon ontwikkelaars en gebruikers rapporten</string>
+  <string Field="StartingPlayback">bij het starten van de video</string>
   <string Field="Timeframe">Periode</string>
   <string Field="Timeout">Time-out</string>
   <string Field="Tags">Kenmerken</string>
