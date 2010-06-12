@@ -51,6 +51,7 @@
     <Compile Include="OnsNetNuenenUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SesameStreetUtil.cs" />
+    <Compile Include="SouthParkUtil.cs" />
     <Compile Include="ThatGuyWithTheGlassesUtil.cs" />
     <Compile Include="TurboNickUtil.cs" />
     <Compile Include="TVEUtil.cs" />
