@@ -234,7 +234,7 @@ namespace OnlineVideos
                 if (siteSettings.IsEnabled)
                 {
                     Sites.SiteUtilBase siteutil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
-                    if (siteutil != null) SiteList.Add(siteSettings.Name, siteutil);
+                    if (siteutil != null && !SiteList.ContainsKey(siteSettings.Name)) SiteList.Add(siteSettings.Name, siteutil);
                 }
             }
 
