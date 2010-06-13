@@ -7,6 +7,13 @@ namespace OnlineVideos.Player
 {
     public class GUIOnlineVideoFullscreen : GUIVideoFullscreen
     {
+#if !MP102
+        public override string GetModuleName()
+        {
+            return OnlineVideoSettings.PLUGIN_NAME + " Fullscreen";
+        }
+#endif
+
         public const int WINDOW_FULLSCREEN_ONLINEVIDEO = 4758;
         public override int GetID { get { return WINDOW_FULLSCREEN_ONLINEVIDEO; } set { } }
       
