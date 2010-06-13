@@ -40,7 +40,6 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-
         public override List<string> getMultipleVideoUrls(VideoInfo video)
         {
             List<string> result = new List<string>();
@@ -54,7 +53,7 @@ namespace OnlineVideos.Sites
                     playerUrl = GetRedirectedUrl(playerUrl);
                     playerUrl = System.Web.HttpUtility.ParseQueryString(new Uri(playerUrl).Query)["uri"];
                     playerUrl = System.Web.HttpUtility.UrlDecode(playerUrl);
-                    playerUrl = new Uri(new Uri(baseUrl), @"feeds/as3player/mrss.php?uri=" + playerUrl).AbsoluteUri;
+                    playerUrl = new Uri(new Uri(baseUrl), @"/feeds/as3player/mrss.php?uri=" + playerUrl).AbsoluteUri;
                     data = GetWebData(playerUrl);
                     if (!string.IsNullOrEmpty(data))
                     {
