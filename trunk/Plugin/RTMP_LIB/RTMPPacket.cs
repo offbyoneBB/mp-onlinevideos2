@@ -6,7 +6,7 @@ namespace RTMP_LIB
     {
         public HeaderType HeaderType;
         public PacketType PacketType;
-        public byte m_nChannel;
+        public int m_nChannel;
         public int m_nInfoField1; // first 3 bytes
         public int m_nInfoField2; // last  4 bytes in a long header        
         public bool m_hasAbsTimestamp; // timestamp absolute or relative?
