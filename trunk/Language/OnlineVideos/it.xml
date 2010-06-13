@@ -10,8 +10,11 @@
   <string Field="Actors">Attori</string>
   <string Field="AddToMySites">Aggiungi ai miei siti</string>
   <string Field="AddToFavourites">Aggiungi ai favoriti</string>
+  <string Field="AddingToFavorites">aggiungendo ai preferiti</string>
   <string Field="Broken">Rovinato</string>
+  <string Field="Buffered">bufferizzato</string>
   <string Field="Category">Categoria</string>
+  <string Field="Categories">Categorie</string>
   <string Field="Creator">Autore</string>
   <string Field="DateOfRelease">Data di pubblicazione</string>
   <string Field="Directors">Registi</string>
@@ -22,12 +25,23 @@
   <string Field="Delete">Cancella</string>
   <string Field="Default">Default</string>
   <string Field="Done">Fatto</string>
+  <string Field="DeletingOldThumbs">Cancellazione vecchie miniature</string>
   <string Field="Error">Errore</string>
   <string Field="EnterPin">Inserire PIN</string>
   <string Field="Favourites">Favoriti</string>
   <string Field="Filter">Filtro</string>
   <string Field="FullUpdate">Aggiornamento completo</string>
   <string Field="Genre">Genere</string>
+  <string Field="GettingVideoDetails">caricando i dettagli dei filmati</string>
+  <string Field="GettingCategoryVideos">caricando le categorie dei filmati</string>
+  <string Field="GettingFavoriteVideos">caricando i filmati preferiti</string>
+  <string Field="GettingSearchResults">caricando i risultati della ricerca</string>
+  <string Field="GettingRelatedVideos">caricando i filmati correlati</string>
+  <string Field="GettingFilteredVideos">caricando i filmati filtrati</string>
+  <string Field="GettingNextPageVideos">caricando i filmati della pagina successiva </string>
+  <string Field="GettingPreviousPageVideos">caricando i filmati della pagina precedente</string>
+  <string Field="GettingPlaybackUrlsForVideo">caricando le url di riproduzione per il filmato</string>
+  <string Field="GettingDynamicCategories">caricando le categorie dinamiche</string>
   <string Field="Language">Lingua</string>
   <string Field="LayoutList">Aspetto: lista</string>
   <string Field="LayoutIcons">Aspetto: icone</string>
@@ -44,6 +58,7 @@
   <string Field="PreviousPage">Pagina precedente</string>
   <string Field="PerformAutomaticUpdate">Procedere con l'aggiornamento automatico ?</string>
   <string Field="RemoveFromFavorites">Rimuovi dai favoriti</string>
+  <string Field="RemovingFromFavorites">in fase di rimozione dai preferiti</string>
   <string Field="Refresh">Aggiorna</string>
   <string Field="RelatedVideos">Video collegati</string>
   <string Field="Reported">Segnalato</string>
@@ -54,12 +69,14 @@
   <string Field="RetrievingRemoteSites">Download siti da remoto...</string>
   <string Field="SearchResults">Risultati ricerca</string>
   <string Field="SelectSource">Selezionare sorgente</string>
+  <string Field="Sites">Siti</string>
   <string Field="SortOptions">Opzioni di ordinamento</string>
   <string Field="Search">Ricerca</string>
   <string Field="SetDownloadFolderInConfig">Selezionare una cartella per il download nel pannello di configurazione!</string>
   <string Field="State">Stato</string>
   <string Field="SavingLocalSiteList">Salvataggio locale lista siti ...</string>
   <string Field="ShowReports">Mostra la reportistica utente e autore</string>
+  <string Field="StartingPlayback">inizio riproduzione</string>
   <string Field="Timeframe">Arco di tempo</string>
   <string Field="Timeout">Timeout</string>
   <string Field="Tags">Etichette</string>
@@ -70,5 +87,6 @@
   <string Field="UpdateAllYourSites">Aggiornamento di tutti i miei siti.</string>
   <string Field="UnableToPlayVideo">Impossibile riprodurre il video. Nessuna URL.</string>
   <string Field="UnableToDownloadVideo">Impossibile scaricare il video. URL invalida.</string>
+  <string Field="Videos">Filmati</string>
   <string Field="Working">In lavorazione</string>
 </strings>
