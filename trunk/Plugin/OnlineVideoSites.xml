@@ -212,9 +212,9 @@
     <Site name="SouthParkDE" util="SouthPark" agecheck="false" enabled="true" lang="de">
       <Description>Alle SouthPark Folgen komplett und auf Deutsch.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.southpark.de/alleepisoden/]]></item>
+        <item key="baseUrl"><![CDATA[http://www.southpark.de/alleEpisoden/]]></item>
         <item key="dynamicCategoriesRegEx"><![CDATA[href="(?<url>/guide/episoden/staffel[^"]+)">(?<title>[^<]+)<]]></item>
-        <item key="videoListRegEx"><![CDATA[<li\sclass="grid_item">\s*<div\sclass="image">\s*(?:(?!<img).)*<img\ssrc="(?<ImageUrl>[^"]*)"(?:(?!<a).)*<a\sclass="overlay"\shref="/guide(?<VideoUrl>[^"]*)">\s*<span\sclass="epnumber">(?<Duration>[^<]*)</span>\s*<span\sclass="title\septitle">(?<Title>[^<]*)</span>\s*<span\sclass="epdate">(?<Airdate>[^<]*)</span>\s*<span\sclass="epdesc">(?<Description>[^<]*)</span>\s*</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<li\sclass="grid_item">\s*<div\sclass="image">\s*(?:(?!<img).)*<img\ssrc="(?<ImageUrl>[^"]*)"(?:(?!<a).)*<a\sclass="overlay"\shref="/guide/episoden/(?<VideoUrl>\d{3,4})/">\s*<span\sclass="epnumber">(?<Duration>[^<]*)</span>\s*<span\sclass="title\septitle">(?<Title>[^<]*)</span>\s*<span\sclass="epdate">(?<Airdate>[^<]*)</span>\s*<span\sclass="epdesc">(?<Description>[^<]*)</span>\s*</a>]]></item>
       </Configuration>
       <Categories />
     </Site>
