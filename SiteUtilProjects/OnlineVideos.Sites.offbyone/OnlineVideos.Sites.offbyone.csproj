@@ -188,7 +188,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SouthParkDeUtil.cs" />
     <Compile Include="SVTPlayUtil.cs" />
     <Compile Include="ViasatUtil.cs" />
     <Compile Include="VidiLifeUtil.cs" />
