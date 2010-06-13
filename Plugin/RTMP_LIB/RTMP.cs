@@ -103,7 +103,8 @@ namespace RTMP_LIB
         const int RTMP_DEFAULT_CHUNKSIZE = 128;
         const int SHA256_DIGEST_LENGTH = 32;
         const int RTMP_LARGE_HEADER_SIZE = 12;
-        const int RTMP_SIG_SIZE = 1536;        
+        const int RTMP_SIG_SIZE = 1536;
+        const int RTMP_CHANNELS = 65600;
 
         #endregion        
 
@@ -151,9 +152,9 @@ namespace RTMP_LIB
         int m_nServerBW;
         int m_nClientBW;
         byte m_nClientBW2;
-        RTMPPacket[] m_vecChannelsIn = new RTMPPacket[64];
-        RTMPPacket[] m_vecChannelsOut = new RTMPPacket[64];
-        uint[] m_channelTimestamp = new uint[64]; // abs timestamp of last packet
+        RTMPPacket[] m_vecChannelsIn = new RTMPPacket[RTMP_CHANNELS];
+        RTMPPacket[] m_vecChannelsOut = new RTMPPacket[RTMP_CHANNELS];
+        uint[] m_channelTimestamp = new uint[RTMP_CHANNELS]; // abs timestamp of last packet
         Queue<string> m_methodCalls = new Queue<string>(); //remote method calls queue
         public bool invalidRTMPHeader = false;
 
@@ -233,7 +234,7 @@ namespace RTMP_LIB
                         bHasMediaPacket = true;
                         break;
                     default:
-                        Logger.Log(string.Format("Unknown packet type received: {0}", packet.PacketType));
+                        Logger.Log(string.Format("Ignoring packet of type {0}", packet.PacketType));
                         break;
                 }
                 //if (!bHasMediaPacket) packet.FreePacket();
@@ -259,7 +260,40 @@ namespace RTMP_LIB
             byte type = singleByteToReadBuffer[0];
 
             byte headerType = (byte)((type & 0xc0) >> 6);
-            byte channel = (byte)(type & 0x3f);
+            int channel = (byte)(type & 0x3f);
+
+
+            if (channel == 0)
+            {
+                if (ReadN(singleByteToReadBuffer, 0, 1) != 1)
+                {
+                    Logger.Log("failed to read RTMP packet header 2nd byte");
+                    packet = null;
+                    return false;
+                }
+                channel = singleByteToReadBuffer[0];
+                channel += 64;
+                //header++;
+            }
+            else if (channel == 1)
+            {
+                int tmp;
+                byte[] hbuf = new byte[2];
+
+                if (ReadN(hbuf, 0, 2) != 2)
+                {
+                    Logger.Log("failed to read RTMP packet header 3rd and 4th byte");
+                    packet = null;
+                    return false;
+                }
+                tmp = ((hbuf[2]) << 8) + hbuf[1];
+                channel = tmp + 64;
+                Logger.Log(string.Format("channel: {0}", channel));
+                //header += 2;
+            }
+
+
+
             uint nSize = packetSize[headerType];
 
             //Logger.Log(string.Format("reading RTMP packet chunk on channel {0}, headersz {1}", channel, nSize));
@@ -290,7 +324,10 @@ namespace RTMP_LIB
             }
 
             if (nSize > 6)
+            {
                 if (Enum.IsDefined(typeof(PacketType), header[6])) packet.PacketType = (PacketType)header[6];
+                else Logger.Log(string.Format("Unknown packet type received: {0}", header[6]));
+            }
 
             if (nSize == 11)
                 packet.m_nInfoField2 = ReadInt32LE(header, 7);
@@ -363,7 +400,7 @@ namespace RTMP_LIB
             lastSentBytesRead = 0;
             m_numInvokes = 0;
 
-            for (int i = 0; i < 64; i++)
+            for (int i = 0; i < RTMP_CHANNELS; i++)
             {
                 m_vecChannelsIn[i] = null;
                 m_vecChannelsOut[i] = null;
