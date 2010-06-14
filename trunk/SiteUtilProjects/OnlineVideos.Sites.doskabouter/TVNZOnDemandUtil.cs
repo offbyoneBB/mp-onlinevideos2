@@ -78,7 +78,9 @@ namespace OnlineVideos.Sites
         {
             List<string> res = new List<string>();
             XmlDocument doc = new XmlDocument();
-            doc.Load(video.VideoUrl);
+            string webData = GetWebData(video.VideoUrl);
+            if (String.IsNullOrEmpty(webData)) return res;
+            doc.LoadXml(webData);
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("a", @"http://www.w3.org/ns/SMIL");
             XmlNodeList nodes = doc.SelectNodes("//a:smil/a:body/a:seq", nsmRequest);
