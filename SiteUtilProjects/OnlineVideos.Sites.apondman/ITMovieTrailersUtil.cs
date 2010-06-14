@@ -111,7 +111,7 @@ namespace OnlineVideos.Sites.apondman {
         /// <param name="uri"></param>
         /// <returns></returns>
         private string doWebRequest(Uri uri) {
-            return GetWebData(uri.AbsoluteUri);
+            return GetWebData(uri.AbsoluteUri, null, null, null, false, true);
         }
 
         /// <summary>
