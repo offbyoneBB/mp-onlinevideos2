@@ -1892,7 +1892,7 @@ FLVSplitter inside MPEI package</VersionDescription>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.22.0.0.mpe1</OnlineLocation>
     <ReleaseDate>2010-06-11T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
-    <Location>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos[Version].mpe1</Location>
+    <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
       <Items>
         <SectionParam Name="Icon">
