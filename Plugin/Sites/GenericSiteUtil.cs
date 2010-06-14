@@ -81,7 +81,7 @@ namespace OnlineVideos.Sites
         protected string videoAirDateXml;
         [Category("OnlineVideosConfiguration"), Description("Boolean used for forcing UTF8 encoding on received data.")]
         protected bool forceUTF8Encoding;
-        [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'thumb' match retrieved from the videoThumbXml.")]
+        [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'thumb' match retrieved from the videoThumbXml or 'ImageUrl' of the videoListRegEx.")]
         protected string videoThumbFormatString = "{0}";
 
         protected Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_VideoUrl, regEx_PlaylistUrl, regEx_FileUrl;
@@ -286,12 +286,14 @@ namespace OnlineVideos.Sites
                     {
                         VideoInfo videoInfo = new VideoInfo();
                         videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+                        // get, format and if needed absolutify the video url
                         videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                         if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
                         if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
+                        // get, format and if needed absolutify the thumb url
                         videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                        if (!String.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) 
-                            videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
+                        if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.ImageUrl = string.Format(videoThumbFormatString, videoInfo.ImageUrl);
+                        if (!string.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
                         videoInfo.Length = Regex.Replace(m.Groups["Duration"].Value, "(<[^>]+>)", "");
                         videoInfo.Description = m.Groups["Description"].Value;
                         string Airdate = m.Groups["Airdate"].Value;
