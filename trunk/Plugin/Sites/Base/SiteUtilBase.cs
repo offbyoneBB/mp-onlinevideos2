@@ -400,36 +400,49 @@ namespace OnlineVideos.Sites
 
         public static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy, bool forceUTF8)
         {
-            Log.Debug("get webdata from {0}", url);
-            // try cache first
-            string cachedData = WebCache.Instance[url];
-            if (cachedData != null) return cachedData;
-
-            // request the data
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-            if (request == null) return "";
-            request.UserAgent = OnlineVideoSettings.USERAGENT;
-            request.Accept = "*/*";
-            request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
-            if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set refere if give
-            if (cc != null) request.CookieContainer = cc; // set cookies if given
-            if (proxy != null) request.Proxy = proxy;
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream responseStream;
-            if (response.ContentEncoding.ToLower().Contains("gzip"))
-                responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
-            else if (response.ContentEncoding.ToLower().Contains("deflate"))
-                responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
-            else
-                responseStream = response.GetResponseStream();
-            Encoding encoding = Encoding.UTF8;
-            if (!forceUTF8 && !String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
-            using (StreamReader reader = new StreamReader(responseStream, encoding, true))
+            return GetWebData(url, cc, referer, proxy, false, false);
+        }
+        public static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy, bool forceUTF8, bool allowUnsafeHeader)
+        {
+            try
             {
-                string str = reader.ReadToEnd().Trim();
-                // add to cache if HTTP Status was 200 and we got more than 500 bytes (might just be an errorpage otherwise)
-                if (response.StatusCode == HttpStatusCode.OK && str.Length > 500) WebCache.Instance[url] = str;
-                return str;
+                Log.Debug("get webdata from {0}", url);
+                // try cache first
+                string cachedData = WebCache.Instance[url];
+                if (cachedData != null) return cachedData;
+
+                // request the data
+                if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(true);
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                if (request == null) return "";
+                request.UserAgent = OnlineVideoSettings.USERAGENT;
+                request.Accept = "*/*";
+                request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+                if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set refere if give
+                if (cc != null) request.CookieContainer = cc; // set cookies if given
+                if (proxy != null) request.Proxy = proxy;
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream responseStream;
+                if (response.ContentEncoding.ToLower().Contains("gzip"))
+                    responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                else if (response.ContentEncoding.ToLower().Contains("deflate"))
+                    responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                else
+                    responseStream = response.GetResponseStream();
+                Encoding encoding = Encoding.UTF8;
+                if (!forceUTF8 && !String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
+                using (StreamReader reader = new StreamReader(responseStream, encoding, true))
+                {
+                    string str = reader.ReadToEnd().Trim();
+                    // add to cache if HTTP Status was 200 and we got more than 500 bytes (might just be an errorpage otherwise)
+                    if (response.StatusCode == HttpStatusCode.OK && str.Length > 500) WebCache.Instance[url] = str;
+                    return str;
+                }
+            }
+            finally
+            {
+                // disable unsafe header parsing if it was enabled
+                if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(false);
             }
         }
 
