@@ -109,7 +109,7 @@ namespace OnlineVideos.Sites
                     {
                         string logoUrl = m.Groups["logo"].Value;
                         if (!Uri.IsWellFormedUriString(logoUrl, System.UriKind.Absolute)) logoUrl = new Uri(new Uri(logosPage), logoUrl).AbsoluteUri;
-                        teamLogos.Add(m.Groups["teamname"].Value.ToLower(), logoUrl);
+                        if (!teamLogos.ContainsKey(m.Groups["teamname"].Value.ToLower())) teamLogos.Add(m.Groups["teamname"].Value.ToLower(), logoUrl);
                         m = m.NextMatch();
                     }
                 }
