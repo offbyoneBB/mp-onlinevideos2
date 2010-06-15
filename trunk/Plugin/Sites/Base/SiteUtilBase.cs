@@ -222,7 +222,7 @@ namespace OnlineVideos.Sites
         {
             List<String> urls = new List<String>();
             urls.Add(getUrl(video));
-            return  urls;
+            return urls;
         }
 
         /// <summary>
@@ -313,7 +313,7 @@ namespace OnlineVideos.Sites
         public virtual string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
             if (string.IsNullOrEmpty(url)) // called for adding to favorites
-                return video.Title; 
+                return video.Title;
             else // called for downloading
             {
                 string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] { '/' }));
@@ -400,7 +400,7 @@ namespace OnlineVideos.Sites
 
         public static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy, bool forceUTF8)
         {
-            return GetWebData(url, cc, referer, proxy, false, false);
+            return GetWebData(url, cc, referer, proxy, forceUTF8, false);
         }
         public static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy, bool forceUTF8, bool allowUnsafeHeader)
         {
