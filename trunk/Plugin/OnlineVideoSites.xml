@@ -401,12 +401,9 @@
     <Site name="Break" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Funny videos for young men.</Description>
       <Configuration>
-        <item key="searchUrl"><![CDATA[http://rss.break.com/keyword/{0}/]]></item>
-        <item key="fileUrlRegEx"><![CDATA[sGlobalFileName='(?<m0>[^']*)';[^;]*;.+sGlobalContentFilePath='(?<m1>[^']*)'
-                                           (?:(?!var\svideoPath).)*
-                                           var\svideoPath\s*=\s*"(?<m2>[^"]+)"
-                                           (?:(?!flashVars\.icon\s=\s).)*flashVars\.icon\s=\s"(?<m3>[^"]+)"]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{2}{1}/{0}.flv?{3}]]></item>
+        <item key="searchUrl"><![CDATA[http://rss.break.com/keyword/{0}/filterby/Videos]]></item>
+        <item key="fileUrlRegEx"><![CDATA[sGlobalFileName='(?<m0>[^']*)'(?:(?!flashVars\.icon\s=\s).)*flashVars\.icon\s=\s"(?<m1>[^"]+)"]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}.flv?{1}]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Home Page">http://rss.break.com/channel/homepage/</Category>
@@ -429,7 +426,7 @@
       <Description>Video site showing funny television commercials from around the world.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<collection\s+id='(?<url>\d{3,8})'[^>]*>\s*<name><!\[CDATA\[(?<title>[^\]]+)\]\]></name>]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://tbs.com/veryfunnyads/getCollectionById.do?offset=0&id={0}&sort=&limit=50&daysback=]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.veryfunnyads.com/veryfunnyads/getCollectionById.do?offset=0&id={0}&sort=date&limit=12&daysback=]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://www.tbs.com/veryfunnyads/getPlaylistById.do?id={0}]]></item>
         <item key="fileUrlRegEx"><![CDATA[<url>(?<m0>[^<]*)]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
