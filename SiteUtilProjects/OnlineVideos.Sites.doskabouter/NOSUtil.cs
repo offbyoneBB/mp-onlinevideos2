@@ -199,6 +199,18 @@ namespace OnlineVideos.Sites
                 Match m = regEx_VideoUrl.Match(webData);
                 if (m.Success)
                     url = m.Groups["url"].Value;
+                else
+                {
+                    Match m2 = Regex.Match(webData, @"class=""wmp""\s*href=""(?<url>[^""]*)""");
+                    if (m2.Success)
+                    {
+                        webData = GetWebData(video.VideoUrl + m2.Groups["url"]);
+                        url = GetSubString(webData, @"name=""URL"" value=""", @"""");
+                        url = GetRedirectedUrl(url);
+                        return url;
+                    }
+                }
+
             }
 
             XmlDocument doc = new XmlDocument();
