@@ -369,7 +369,7 @@ namespace OnlineVideos.Sites
             }
             catch (Exception ex)
             {
-                Log.Error(ex);
+                Log.Warn(ex.ToString());
             }
             finally
             {

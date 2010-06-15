@@ -42,7 +42,7 @@ namespace OnlineVideos
             string file = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, GetSaveFilename(name) + "_p.jpg");
             if (!System.IO.File.Exists(file))
             {
-                Log.Info("downloading Poster image :" + url);
+                Log.Debug("downloading Poster image :" + url);
                 if (DownloadAndCheckImage(url, file)) return file;
                 else return "";
             }
@@ -119,7 +119,7 @@ namespace OnlineVideos
                             if (!System.IO.Path.IsPathRooted(aFinalUrl)) // only urls
                             {
                                 string thumbFile = GetThumbFile(aFinalUrl);
-                                Log.Debug(string.Format("Downloading Image from {0} to {1}", aFinalUrl, thumbFile));
+                                //Log.Debug(string.Format("Downloading Image from {0} to {1}", aFinalUrl, thumbFile));
                                 if (DownloadAndCheckImage(aFinalUrl, thumbFile))
                                 {
                                     item.ThumbnailImage = thumbFile;
@@ -172,7 +172,7 @@ namespace OnlineVideos
             }
             catch (Exception ex)
             {
-                Log.Debug("Invalid Image: {0} {1}", url, ex.ToString());
+                Log.Info("Invalid Image: {0} {1}", url, ex.Message);
                 return false; 
             }
         }

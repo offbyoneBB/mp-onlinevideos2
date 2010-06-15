@@ -116,7 +116,7 @@ namespace OnlineVideos.Sites
             }
             catch (Exception ex)
             {
-                Log.Error(ex);
+                Log.Warn("Error loading team logos: {0}", ex.Message);
             }
             return teamLogos;
         }

@@ -8,6 +8,13 @@ namespace OnlineVideos.Player
         public const int WINDOW_ONLINEVIDEOS_OSD = 4759;
         public override int GetID { get { return WINDOW_ONLINEVIDEOS_OSD; } set { } }
 
+#if !MP102
+        public override string GetModuleName()
+        {
+            return OnlineVideoSettings.PLUGIN_NAME + " OSD";
+        }
+#endif
+
         public override bool Init()
         {
             bool bResult = Load(GUIGraphicsContext.Skin + @"\myonlinevideosOSD.xml");
