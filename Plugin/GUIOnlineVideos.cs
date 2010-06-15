@@ -577,7 +577,6 @@ namespace OnlineVideos
                 }
                 else if (CurrentState == State.videos)
                 {
-                    Log.Info("Set the stopDownload to true 2");
                     ImageDownloader.StopDownload = true;
                     if (GUI_facadeView.SelectedListItemIndex == 0)
                     {
@@ -886,7 +885,7 @@ namespace OnlineVideos
                     {
                         Log.Info("Looking for dynamic categories for {0}", SelectedSite.Settings.Name);
                         int foundCategories = SelectedSite.DiscoverDynamicCategories();
-                        Log.Info("Found {0} dynamic categories.", foundCategories);
+                        Log.Info("Found {0} dynamic categories for {1}", foundCategories, SelectedSite.Settings.Name);
                         return SelectedSite.Settings.Categories;
                     },
                     delegate(bool success, object result)
@@ -909,9 +908,9 @@ namespace OnlineVideos
                 {
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                     {
-                        Log.Info("Looking for sub categories of site {0} in {1}", SelectedSite.Settings.Name, parentCategory.Name);
+                        Log.Info("Looking for sub categories in '{1}' on site {1}", parentCategory.Name, SelectedSite.Settings.Name);
                         int foundCategories = SelectedSite.DiscoverSubCategories(parentCategory);
-                        Log.Info("Found {0} sub categories.", foundCategories);
+                        Log.Info("Found {0} sub categories in '{1}' on site {2}", foundCategories, parentCategory.Name, SelectedSite.Settings.Name);
                         return parentCategory.SubCategories;
                     },
                     delegate(bool success, object result)
@@ -1284,7 +1283,6 @@ namespace OnlineVideos
 
         private void ShowPreviousMenu()
         {
-            Log.Info("OnShowPreviousMenu CurrentState:" + CurrentState);
             if (CurrentState == State.categories)
             {
                 if (selectedCategory == null)
@@ -1299,7 +1297,6 @@ namespace OnlineVideos
             }
             else if (CurrentState == State.videos)
             {
-                Log.Info("Set the stopDownload to true 3");
                 ImageDownloader.StopDownload = true;
 
                 if (selectedCategory == null || selectedCategory.ParentCategory == null) DisplayCategories(null);
@@ -1510,12 +1507,7 @@ namespace OnlineVideos
                                 Log.Info("Prebuffering failed.");
                                 return null;
                             }
-                        }
-                        catch (Exception playException)
-                        {
-                            Log.Error(playException);
-                            return null;
-                        }
+                        }                        
                         finally
                         {
                             BufferingPlayerFactory = null;
@@ -1799,7 +1791,6 @@ namespace OnlineVideos
 
         private void UpdateViewState()
         {
-            Log.Info("Updating View State");
             switch (CurrentState)
             {
                 case State.sites:
@@ -1907,7 +1898,6 @@ namespace OnlineVideos
 
         private void ShowFilterButtons()
         {
-            Log.Debug("Showing Filter buttons");
             GUI_btnMaxResult.Clear();
             GUI_btnOrderBy.Clear();
             GUI_btnTimeFrame.Clear();
@@ -1949,14 +1939,12 @@ namespace OnlineVideos
 
         private void HideSearchButtons()
         {
-            Log.Debug("Hiding Search buttons");
             HideAndDisable(GUI_btnSearchCategories.GetID);
             HideAndDisable(GUI_btnSearch.GetID);
         }
 
         private void ShowSearchButtons()
         {
-            Log.Debug("Showing Search buttons");
             GUI_btnSearchCategories.Clear();
             moSupportedSearchCategoryList = SelectedSite.GetSearchableCategories();
             GUIControl.AddItemLabelControl(GetID, GUI_btnSearchCategories.GetID, Translation.All);

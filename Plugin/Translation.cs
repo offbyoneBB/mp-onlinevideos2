@@ -106,10 +106,10 @@ namespace OnlineVideos
                     return 0; // otherwise we are in an endless loop!
 
                 if (e.GetType() == typeof(FileNotFoundException))
-                    Log.Warn("Cannot find translation file {0}.  Failing back to English (US)", langPath);
+                    Log.Warn("Cannot find translation file {0}.  Falling back to English (US)", langPath);
                 else
                 {
-                    Log.Error("Error in translation xml file: {0}. Failing back to English (US)", Lang);
+                    Log.Error("Error in translation xml file: {0}. Falling back to English (US)", Lang);
                     Log.Error(e);
                 }
 

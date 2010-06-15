@@ -71,7 +71,7 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(new RssLink() { Url = NrkBrowserConstants.MENU_ITEM_ID_RECOMMENDED_PROGRAMS, 
                                                     Name = NrkTranslatableStrings.MENU_ITEM_TITLE_RECOMMENDED_PROGRAMS, 
                                                     Description = NrkTranslatableStrings.MENU_ITEM_DESCRIPTION_RECOMMENDED_PROGRAMS, 
-                                                    Thumb = "nrkbrowser\\" + NrkBrowserConstants.NRK_LOGO_PICTURE });
+                                                    /*Thumb = "nrkbrowser\\" + NrkBrowserConstants.NRK_LOGO_PICTURE*/ });
 
             Settings.Categories.Add(new RssLink() { Url = NrkBrowserConstants.MENU_ITEM_ID_MOST_WATCHED, 
                                                     Name = NrkTranslatableStrings.MENU_ITEM_TITLE_MOST_WATCHED, 
@@ -81,12 +81,12 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(new RssLink() { Url = NrkBrowserConstants.MENU_ITEM_ID_NRKBETA, 
                                                     Name = NrkTranslatableStrings.MENU_ITEM_TITLE_NRKBETA,
                                                     Description = NrkTranslatableStrings.MENU_ITEM_DESCRIPTON_NRKBETA, 
-                                                    Thumb = "nrkbrowser\\" + NrkBrowserConstants.MENU_ITEM_PICTURE_NRKBETA, 
+                                                    /*Thumb = "nrkbrowser\\" + NrkBrowserConstants.MENU_ITEM_PICTURE_NRKBETA,*/
                                                     HasSubCategories = true });
             
             Settings.Categories.Add(new RssLink() { Url = NrkBrowserConstants.MENU_ITEM_ID_PODCASTS_VIDEO, 
                                                     Name = NrkTranslatableStrings.MENU_ITEM_TITLE_PODCASTS,
-                                                    Thumb = "nrkbrowser\\" + NrkBrowserConstants.NRK_LOGO_PICTURE,
+                                                    /*Thumb = "nrkbrowser\\" + NrkBrowserConstants.NRK_LOGO_PICTURE,*/
                                                     HasSubCategories = true});
 
             Settings.DynamicCategoriesDiscovered = true;

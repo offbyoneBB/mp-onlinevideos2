@@ -31,15 +31,9 @@ namespace Vattenmelon.Nrk.Browser.Translation
                 }                
                 addStringsToDictionary(doc);
             }
-            catch (Exception e)
-            {
-                
-                if (e.GetType() == typeof(FileNotFoundException)){
-                    Log.Warn("Cannot find translation file {0}.  Falling back to hardcoded english", lang);
-                }
-                else{
-                    Log.Error(String.Format("Error in translation xml file: {0}. Falling back to hardcoded english", lang), e);
-                }
+            catch (Exception)
+            {                
+                Log.Warn("NrkBrowser : Error with translation file {0}.xml Falling back to hardcoded english", lang);
             }
         }
 

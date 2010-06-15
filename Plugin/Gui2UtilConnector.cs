@@ -89,13 +89,13 @@ namespace OnlineVideos
                         }
                         catch (ThreadAbortException)
                         {
-                            Log.Error("Timeout waiting for results.");
+                            Log.Warn("Timeout waiting for results.");
                             Thread.ResetAbort();
                         }
                         catch (Exception threadException)
                         {
                             error = threadException as OnlineVideosException;
-                            Log.Error(threadException);
+                            Log.Warn(threadException.ToString());
                             result = false;
                         }
                     }) { Name = "OnlineVideos", IsBackground = true };
@@ -187,13 +187,13 @@ namespace OnlineVideos
                         }
                         catch (ThreadAbortException)
                         {
-                            Log.Error("Timeout waiting for results.");
+                            if (!abortedByUser) Log.Warn("Timeout waiting for results.");
                             Thread.ResetAbort();
                         }
                         catch (Exception threadException)
                         {
                             _CurrentError = threadException as OnlineVideosException;
-                            Log.Error(threadException);
+                            Log.Warn(threadException.ToString());
                             _CurrentTaskSuccess = false;
                         }
                         timeoutTimer.Stop();
