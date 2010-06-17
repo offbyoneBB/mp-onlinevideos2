@@ -13,7 +13,7 @@ using System.Windows.Forms;
 namespace OnlineVideos.Sites
 {
     /// <summary>
-    /// Api Documentation at : http://www.yahooapis.com/music/
+    /// API Documentation at : http://www.yahooapis.com/music/
     /// </summary>
     public class YahooMusicVideosUtil : SiteUtilBase
     {
@@ -87,7 +87,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Language (Country) to use when accessing this service.")]
         Locale locale = Locale.us;
         [Category("OnlineVideosUserConfiguration"), Description("How each video title is displayed. These tags will be replaced: %artist% %title% %year% %rating%.")]
-        string format_Title = "%artist% - %title%";
+        string format_Title = "%artist% - %title% (%year%)";
         [Category("OnlineVideosUserConfiguration"), Description("Defines number of videos to display per page.")]
         int pageSize = 27;
         
@@ -115,12 +115,7 @@ namespace OnlineVideos.Sites
                 {
                     if (!string.IsNullOrEmpty(vi.Video.Id))
                     {
-                        VideoInfo videoInfo = new VideoInfo();
-                        videoInfo.Title = FormatTitle(vi);
-                        videoInfo.Length = vi.Video.Duration.ToString();
-                        videoInfo.VideoUrl = vi.Video.Id;
-                        videoInfo.ImageUrl = new Uri(vi.Image.Url).GetLeftPart(UriPartial.Path);
-                        videoList.Add(videoInfo);
+                        videoList.Add(GetVideoInfoFromVideoResponse(vi));
                     }
                 }
             }
@@ -136,12 +131,7 @@ namespace OnlineVideos.Sites
                 {
                     if (!string.IsNullOrEmpty(vi.Video.Id))
                     {
-                        VideoInfo videoInfo = new VideoInfo();
-                        videoInfo.Title = FormatTitle(vi);
-                        videoInfo.Length = vi.Video.Duration.ToString();
-                        videoInfo.VideoUrl = vi.Video.Id;
-                        videoInfo.ImageUrl = new Uri(vi.Image.Url).GetLeftPart(UriPartial.Path);
-                        videoList.Add(videoInfo);
+                        videoList.Add(GetVideoInfoFromVideoResponse(vi));
                     }
                 }
             }
@@ -347,12 +337,7 @@ namespace OnlineVideos.Sites
             {
                 if (!string.IsNullOrEmpty(vi.Video.Id))
                 {
-                    VideoInfo loRssItem = new VideoInfo();
-                    loRssItem.Title = FormatTitle(vi);
-                    loRssItem.Length = vi.Video.Duration.ToString();
-                    loRssItem.VideoUrl = vi.Video.Id;
-                    loRssItem.ImageUrl = vi.Image.Url;
-                    loRssItemList.Add(loRssItem);
+                    loRssItemList.Add(GetVideoInfoFromVideoResponse(vi));
                 }
             }
 
@@ -363,5 +348,18 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
-    }
+
+        VideoInfo GetVideoInfoFromVideoResponse(VideoResponse vi)
+        {
+            VideoInfo videoInfo = new VideoInfo();
+            videoInfo.Title = FormatTitle(vi);
+            videoInfo.Length = vi.Video.Duration.ToString();
+            videoInfo.VideoUrl = vi.Video.Id;
+            videoInfo.ImageUrl = new Uri(vi.Image.Url).GetLeftPart(UriPartial.Path);
+            List<string> albums = new List<string>();
+            foreach (var album in vi.Albums) albums.Add(string.Format("{0} ({1})", album.Release.Title, album.Release.Year));
+            videoInfo.Description = string.Join("\n", albums.ToArray());
+            return videoInfo;
+        }
+    }    
 }

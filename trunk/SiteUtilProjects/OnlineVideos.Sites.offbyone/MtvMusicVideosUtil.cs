@@ -8,7 +8,7 @@ using System.ComponentModel;
 namespace OnlineVideos.Sites
 {
     /// <summary>
-    /// API documentation at http://developer.mtvnservices.com/docs/Home
+    /// API documentation at http://developer.mtvnservices.com/docs/
     /// </summary>
     public class MtvMusicVideosUtil : SiteUtilBase
     {
