@@ -14,16 +14,19 @@ namespace YahooMusicEngine.Entities
       set { title = value; }
     }
 
+    public int Year { get; set; }
 
     public override void ParseXml(System.Xml.XmlNode node)
     {
       base.ParseXml(node);
       Title = ParseXmlAttributeAsString(node, "title", string.Empty);
+      Year = ParseXmlAttributeAsInt(node, "releaseYear", 0);
     }
 
     public ReleaseEntity()
     {
       Title = string.Empty;
+      Year = 0;
     }
 
 
