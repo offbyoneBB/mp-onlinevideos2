@@ -43,7 +43,15 @@ namespace OnlineVideos.Sites
         public override List<string> getMultipleVideoUrls(VideoInfo video)
         {
             List<string> result = new List<string>();
-            string data = GetWebData(video.VideoUrl);
+            string tmmpUrl;
+            if (regEx_FileUrl != null)
+            {
+                tmmpUrl = base.getUrl(video);
+            }
+            else
+                tmmpUrl = video.VideoUrl;
+
+            string data = GetWebData(tmmpUrl);
             if (!string.IsNullOrEmpty(data))
             {
                 Match m = episodePlayerRegEx.Match(data);
