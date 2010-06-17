@@ -217,6 +217,16 @@
       </Configuration>
       <Categories />
     </Site>
+    <Site name="SouthParkWORLD" util="SouthPark" agecheck="false" enabled="true" lang="en">
+      <Description>All episodes now available</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://www.southparkstudios.com/guide/]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[href="(?<url>http://www.southparkstudios.com/guide/\?season=[^"]*)">(?<title>[^<]+)<]]></item>
+        <item key="videoListRegEx"><![CDATA[<li\sclass="grid_item">\s*<div\sclass="image">\s*(?:(?!<img).)*<img\ssrc="(?<ImageUrl>[^"]*)"(?:(?!<a).)*<a\sclass="overlay"\shref="(?<VideoUrl>/guide[^("|\?)]*)[^"]*">\s*<span\sclass="epnumber">(?<Duration>[^<]*)</span>\s*<span\sclass="title\septitle">(?<Title>[^<]*)</span>\s*<span\sclass="epdate">(?<Airdate>[^<]*)</span>\s*<span\sclass="epdesc">(?<Description>[^<]*)</span>\s*</a>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[href="(?<m0>[^"]*)">Watch\sThis\sFull]]></item>
+      </Configuration>
+      <Categories />
+    </Site>
     <Site name="SouthParkNL" util="SouthPark" agecheck="false" enabled="true" lang="nl">
       <Description>All episodes now available</Description>
       <Configuration>
