@@ -213,6 +213,17 @@
       </Configuration>
       <Categories />
     </Site>
+    <Site name="Bild.de Filme" util="BildFilme" agecheck="false" enabled="true" lang="de" lastUpdated="2010-03-24T04:21:51.25+01:00">
+      <Description>Ganze Filme des deutschen Videoportals Bild.de.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[category_id=("|')(?<url>[^("|')]+)("|')\s*category_name=("|')(?<title>[^("|')]+)("|')>]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://film.bild.de/nav.aspx?s=list&c={0}]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="detail.aspx\?s=detail&m=(?<VideoUrl>[^&]+)&pl=t"><div\s*id="[^"]+"\sclass="naw_movieBoxT1_movieImage\snaw_column"\sstyle="background-image:\surl\s*\((?<ImageUrl>[^\)]+)\);">\s*[^;]+;[^>]+>(?<Title>[^<]+)</div></a>]]></item>
+        <item key="videoListRegExFormatString"><![CDATA[http://film.bild.de/nav.aspx?s=movie&m={0}&pl=m]]></item>
+        <item key="baseUrl"><![CDATA[http://film.bild.de/]]></item>
+      </Configuration>
+      <Categories />
+    </Site>
     <Site name="mySpass" util="GenericSite" agecheck="false" enabled="true" lang="de" lastUpdated="2010-04-01T16:16:58.640625+02:00">
       <Description>kostenlose TVShows von MySpass.de ansehen</Description>
       <Configuration>
