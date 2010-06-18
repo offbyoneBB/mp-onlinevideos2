@@ -226,7 +226,7 @@ namespace OnlineVideos.Sites
 
             if (lst.Count == 1)
             {
-                video.VideoUrl = video.GetPlaybackOptionUrl(lst[0].server);
+                video.VideoUrl = video.GetPlaybackOptionUrl(lst[0].GetName());
                 video.PlaybackOptions = null;
                 return video.VideoUrl;
             }
