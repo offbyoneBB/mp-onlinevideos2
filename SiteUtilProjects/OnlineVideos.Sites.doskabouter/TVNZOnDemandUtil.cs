@@ -102,6 +102,9 @@ namespace OnlineVideos.Sites
                     }
                 }
                 string url = vid.Attributes["src"].InnerText;
+                if (url.StartsWith("rtmp"))
+                    //rtmpe://fms-streaming.tvnz.co.nz/tvnz.co.nz/2010/thebigbandtheory_s3_e19_part1_700k
+                    url = url.Replace("rtmp:", "rtmpe://fms-streaming.tvnz.co.nz/tvnz.co.nz/");
                 res.Add(url);
             }
             return res;
