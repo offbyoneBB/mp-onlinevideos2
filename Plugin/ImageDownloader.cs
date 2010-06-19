@@ -207,7 +207,7 @@ namespace OnlineVideos
                             f.Delete();
                             thumbsDeleted++;
                         }
-                        dlgPrgrs.Percentage = i / files.Length * 100;
+                        dlgPrgrs.Percentage = (int)((float)i / files.Length * 100);
                         if (!dlgPrgrs.ShouldRenderLayer()) break;
                     }
                 }
