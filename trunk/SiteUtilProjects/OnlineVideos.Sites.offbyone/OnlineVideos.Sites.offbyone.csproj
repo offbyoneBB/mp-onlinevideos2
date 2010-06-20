@@ -149,6 +149,7 @@
     <Compile Include="JustinTVUtil.cs" />
     <Compile Include="LineCinemaRuUtil.cs" />
     <Compile Include="LiveVideoUtil.cs" />
+    <Compile Include="MetaCafeUtil.cs" />
     <Compile Include="MiroUtil.cs" />
     <Compile Include="MsnbcUtil.cs" />
     <Compile Include="MtvMusicVideosUtil.cs" />
