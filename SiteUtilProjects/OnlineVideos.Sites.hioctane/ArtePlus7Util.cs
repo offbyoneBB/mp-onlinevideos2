@@ -13,11 +13,9 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
             string data = GetWebData(baseUrl);
-
             if (!string.IsNullOrEmpty(data))
             {
-                string languageField = Regex.Match(data, @"<div\sclass=""languageChoice"">\s*<ul>\s*(?<inner>[^.]+)</ul>\s*</div>").Groups["inner"].Value;
-
+                string languageField = Regex.Match(data, @"Logout</a></li>\s*(?<inner>[^.]+)</ul>\s*</div>").Groups["inner"].Value;
                 Match m = Regex.Match(languageField, @"<li><a\shref=""(?<url>[^""]+)""(|[^>]+)>(?<title>[^<]+)</a></li>");
                 while (m.Success)
                 {
@@ -104,7 +102,7 @@ namespace OnlineVideos.Sites
                                         string title = langValues[i] + " - " + n.Groups["quality"].Value;
 
                                         string url = n.Groups["url"].Value;
-                                        string host = url.Substring(7, url.IndexOf("/", 7)-7);
+                                        string host = url.Substring(url.IndexOf(":") + 3, url.IndexOf("/", url.IndexOf(":") + 3) - (url.IndexOf(":") + 3));
                                         string app = url.Substring(host.Length + url.IndexOf(host) + 1, (url.IndexOf("/", url.IndexOf("/", (host.Length + url.IndexOf(host) + 1)) + 1)) - (host.Length + url.IndexOf(host) + 1));
                                         string tcUrl = "rtmp://" + host + ":1935" + "/" + app;
                                         string playPath = url.Substring(url.IndexOf(app) + app.Length + 1);
@@ -149,7 +147,7 @@ namespace OnlineVideos.Sites
 
             if (!string.IsNullOrEmpty(data))
             {
-                Match m = Regex.Match(data, @"<div\sclass=""video"">\s<div\sclass=""thumbnailContainer"">\s*<a\shref=""(?<url>[^""]+)""><img\salt=""[^""]*""\s*class=""thumbnail""\s*width=""[^""]*""\sheight=""[^""]*""\ssrc=""(?<thumb>[^""]+)""\s/>\s*</a>\s*<div\sclass=""videoHover"">\s*<p\sclass=""teaserText"">(?<description>[^<]+)</p>\s*</div>\s*</div>\s*<h2><a\shref=""[^""]+"">(?<title>[^<]+)</a></h2>\s*<p>(?<airdate>[^<]+)</p>");
+                Match m = Regex.Match(data, @"src=""(?<thumb>[^""]+)""\s*/></a>\s*<div\sclass=""videoHover"">\s*<p\sclass=""teaserText"">(?<description>[^<]+)</p>\s*</div>\s*</div>\s*<h2><a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a></h2>\s*<p>(?<airdate>[^<]+)</p>");
                 while(m.Success)
                 {
                     VideoInfo video = new VideoInfo();
