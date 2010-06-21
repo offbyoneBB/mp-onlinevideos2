@@ -18,7 +18,7 @@ namespace OnlineVideos.Sites
             if(!url.Contains("rtmpe:"))url = url.Replace("rtmp:","rtmpe:");
             url = HttpUtility.HtmlDecode(url);
 
-            string host = url.Substring(8, url.IndexOf("/", 8) - 8);
+            string host = url.Substring(url.IndexOf(":") + 3, url.IndexOf("/", url.IndexOf(":") + 3) - (url.IndexOf(":") + 3));
             string app = "ondemand?ovpfv=1.1&" +url.Substring(url.IndexOf("?") + 1);
             string tcUrl = "rtmpe://" + host + ":1935" + "/" + app;
             string playpath = "mp4:" + url.Substring(url.LastIndexOf("=") + 1) + ".flv" + url.Substring(url.IndexOf("?"));

@@ -18,7 +18,7 @@ namespace OnlineVideos.Sites
             string data = GetWebData(video.VideoUrl);
 
             string url = Regex.Match(data, @"<ref\shref=""(?<url>[^""]+)""/>").Groups["url"].Value;
-            string host = url.Substring(8, url.IndexOf("/", 8) - 8);
+            string host = url.Substring(url.IndexOf(":") + 3, url.IndexOf("/", url.IndexOf(":") + 3) - (url.IndexOf(":") + 3));
             string app = url.Substring(host.Length + url.IndexOf(host) + 1, (url.IndexOf("/", url.IndexOf("/", (host.Length + url.IndexOf(host) + 1)) + 1)) - (host.Length + url.IndexOf(host) + 1));
             string tcUrl = "rtmpe://" + host + ":1935" + "/" + app;
             string playpath = url.Substring(url.IndexOf(app) + app.Length + 1);
