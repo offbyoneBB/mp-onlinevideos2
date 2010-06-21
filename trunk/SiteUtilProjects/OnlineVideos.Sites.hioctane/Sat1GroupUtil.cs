@@ -104,17 +104,16 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
-            if (video.VideoUrl.Contains("token"))
-            {
                 string url = video.VideoUrl;
-                string host = url.Substring(9, url.IndexOf("/", 9) - 9);
+                string host = url.Substring(url.IndexOf(":") + 3, url.IndexOf("/", url.IndexOf(":") + 3) - (url.IndexOf(":") + 3));
                 string app = url.Substring(host.Length + url.IndexOf(host) + 1, (url.IndexOf("/", url.IndexOf("/", (host.Length + url.IndexOf(host) + 1)) + 1)) - (host.Length + url.IndexOf(host) + 1));
+                if (host.Contains(":")) host = host.Substring(0, host.IndexOf(":"));    
                 string tcUrl = "rtmpe://" + host + ":1935" + "/" + app;
                 string playpath = url.Substring(url.IndexOf(app) + app.Length + 1);
 
                 string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                     string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&swfurl={4}&swfsize={5}&swfhash={6}&playpath={7}",
-                        url, //rtmpUrl
+                        tcUrl, //rtmpUrl
                         host, //host
                         tcUrl, //tcUrl
                         app, //app
@@ -124,12 +123,6 @@ namespace OnlineVideos.Sites
                         playpath //playpath
                         ));
                 return resultUrl;
-            }
-            else
-            {
-                return video.VideoUrl;
-            }
-           
         }
 
         public override List<VideoInfo> getVideoList(Category category)
