@@ -6,6 +6,8 @@ using MediaPortal.GUI.Library;
 using System.Net;
 using MediaPortal.Dialogs;
 using System.Threading;
+using System.Drawing;
+using MediaPortal.Util;
 
 namespace OnlineVideos
 {
@@ -159,6 +161,33 @@ namespace OnlineVideos
                 else
                     responseStream = response.GetResponseStream();
                 System.Drawing.Image image = System.Drawing.Image.FromStream(responseStream, true, true);
+
+                // resample if needed
+                int maxSize = (int)Thumbs.ThumbLargeResolution;
+                if (image.Width > maxSize || image.Height > maxSize)
+                {
+                    int iWidth = maxSize;
+                    int iHeight = maxSize;
+
+                    float fAR = (image.Width) / ((float)image.Height);
+
+                    if (image.Width > image.Height)
+                        iHeight = (int)Math.Floor((((float)iWidth) / fAR));
+                    else
+                        iWidth = (int)Math.Floor((fAR * ((float)iHeight)));
+                    
+                    Bitmap tmp = new Bitmap(iWidth, iHeight, image.PixelFormat);
+                    using (Graphics g = Graphics.FromImage(tmp))
+                    {
+                        g.CompositingQuality = Thumbs.Compositing;
+                        g.InterpolationMode = Thumbs.Interpolation;
+                        g.SmoothingMode = Thumbs.Smoothing;
+                        g.DrawImage(image, new Rectangle(0, 0, iWidth, iHeight));
+                        image.Dispose();
+                        image = tmp;
+                    }
+                }
+
                 if (image.RawFormat.Guid == System.Drawing.Imaging.ImageFormat.Gif.Guid && file.EndsWith(".gif"))
                 {
                     image.Save(file, System.Drawing.Imaging.ImageFormat.Gif);
