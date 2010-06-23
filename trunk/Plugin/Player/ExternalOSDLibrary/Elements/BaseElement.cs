@@ -104,7 +104,7 @@ namespace ExternalOSDLibrary
       GUIFont guiFont = GUIFontManager.GetFont(name);
       return new Font(guiFont.FileName, guiFont.FontSize, guiFont.FontStyle);
     }
-
+    
     /// <summary>
     /// Loads the bitmap with the given filename
     /// </summary>
@@ -133,7 +133,10 @@ namespace ExternalOSDLibrary
     public bool CheckForUpdate()
     {
       _control.UpdateVisibility();
-      bool newVisible = _control.Visible || GUIInfoManager.GetBool(_control.GetVisibleCondition(),_control.ParentID);
+
+      int _visibleCondition = _control.GetVisibleCondition();
+      bool newVisible = _visibleCondition == 0 ? _control.IsVisible : GUIInfoManager.GetBool(_visibleCondition, _control.ParentID);
+
       if (newVisible == _wasVisible)
       {
         if (newVisible)

@@ -92,7 +92,7 @@ namespace ExternalOSDLibrary
     /// <param name="graph">Graphics</param>
     public override void DrawElement(Graphics graph)
     {
-      if (_progressControl.Visible || GUIInfoManager.GetBool(_progressControl.GetVisibleCondition(), _progressControl.ParentID))
+        if (_wasVisible)
       {
         float fWidth = _percentage;
         DrawProgressBar(graph, fWidth, _percentage);

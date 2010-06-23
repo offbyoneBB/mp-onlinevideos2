@@ -301,7 +301,7 @@ namespace ExternalOSDLibrary
       _background.Dispose();
       foreach (BaseElement element in _cacheElements)
       {
-        element.Dispose();
+        if (element!= null) element.Dispose();
       }
       base.Dispose();
     }

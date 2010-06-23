@@ -741,7 +741,7 @@ namespace OnlineVideos
         /// <returns></returns>
         private static bool ShowFullScreenWindowHandler()
         {
-            if (g_Player.HasVideo && g_Player.Player is Player.OnlineVideosPlayer)
+            if (g_Player.HasVideo && (g_Player.Player is Player.OnlineVideosPlayer || g_Player.Player is Player.WMPVideoPlayer))
             {
                 if (GUIWindowManager.ActiveWindow == Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) return true;
 

@@ -98,7 +98,7 @@ namespace ExternalOSDLibrary
     /// <param name="graph">Graphics</param>
     public override void DrawElement(Graphics graph)
     {
-      if (_slider.Visible || GUIInfoManager.GetBool(_slider.GetVisibleCondition(), _slider.ParentID))
+        if (_wasVisible)
       {
         const string strValue = "";
         Font font = getFont("font13");

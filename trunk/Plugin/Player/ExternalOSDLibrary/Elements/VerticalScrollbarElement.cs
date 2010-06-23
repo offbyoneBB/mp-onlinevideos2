@@ -85,7 +85,7 @@ namespace ExternalOSDLibrary
     /// <param name="graph">Graphics</param>
     public override void DrawElement(Graphics graph)
     {
-      if (_verticalScrollBar.Visible || GUIInfoManager.GetBool(_verticalScrollBar.GetVisibleCondition(), _verticalScrollBar.ParentID))
+        if (_wasVisible)
       {
         if (_scrollBarBackground != null && _scrollBarTop != null && _scrollBarBottom != null)
         {

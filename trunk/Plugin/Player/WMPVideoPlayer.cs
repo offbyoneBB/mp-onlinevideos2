@@ -432,6 +432,8 @@ namespace OnlineVideos.Player
         {
             GUIWindowManager.OnNewAction -= GUIWindowManager_OnNewAction;
 
+            if (_osd != null) _osd.Dispose();
+
             if (_wmp10Player == null)
             {
                 return;

@@ -83,10 +83,10 @@ namespace ExternalOSDLibrary
       }
       Bitmap result = null;
       String realFileName = GUIPropertyManager.Parse(fileName);
-      String location = GUIGraphicsContext.Skin + @"\media\" + realFileName;
-      if (File.Exists(location))
+        if (!Path.IsPathRooted(realFileName)) realFileName = GUIGraphicsContext.Skin + @"\media\" + realFileName;
+        if (File.Exists(realFileName))
       {
-        result = new Bitmap(location);
+          result = new Bitmap(realFileName);
         UpdateBitmap(result);
       }
       if(result!=null)
