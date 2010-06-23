@@ -448,7 +448,7 @@ namespace ExternalOSDLibrary
     /// <param name="graph">Graphics</param>
     public override void DrawElement(Graphics graph)
     {
-      if (_list.Visible || GUIInfoManager.GetBool(_list.GetVisibleCondition(), _list.ParentID))
+        if (_wasVisible)
       {
         _listItems = _list.ListItems;
         int dwPosY = _list.YPosition;

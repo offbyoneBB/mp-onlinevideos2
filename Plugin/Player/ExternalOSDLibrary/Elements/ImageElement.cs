@@ -41,7 +41,7 @@ namespace ExternalOSDLibrary
     /// <summary>
     /// Image of this element
     /// </summary>
-    private readonly Bitmap _bitmap;
+    private Bitmap _bitmap;
     #endregion
 
     #region ctor
@@ -67,9 +67,12 @@ namespace ExternalOSDLibrary
     /// <param name="graph">Graphics</param>
     public override void DrawElement(Graphics graph)
     {
-      if ((_image.Visible || GUIInfoManager.GetBool(_image.GetVisibleCondition(), _image.ParentID)) && !_image.FileName.Equals("black.bmp"))
+        if (_wasVisible)
       {
-        DrawElementAlternative(graph, GetImageRectangle());
+          if (_image.TextureHeight != 0 && _image.TextureWidth != 0)
+          {
+              DrawElementAlternative(graph, GetImageRectangle());
+          }
       }
     }
 
@@ -98,7 +101,20 @@ namespace ExternalOSDLibrary
     /// <returns>Rectangle of the image</returns>
     public RectangleF GetImageRectangle()
     {
-      return new RectangleF(_image.XPosition, _image.YPosition, _image.Width, _image.Height);
+      if (_image.rect.IsEmpty) _image.Refresh();
+
+        int xFromAnim = 0;
+        int yFromAnim = 0;
+        foreach (VisualEffect effect in _image.Animations)
+        {
+            if (/*effect.QueuedProcess == AnimationProcess.Normal &&*/ effect.Effect == EffectType.Slide && (effect.Condition == 0 || GUIInfoManager.GetBool(effect.Condition, 0)))
+            {
+                xFromAnim += (int)effect.EndX;
+                yFromAnim += (int)effect.EndY;
+            }
+        }
+
+      return new RectangleF(_image.rect.X + xFromAnim, _image.rect.Y + yFromAnim, _image.RenderWidth, _image.RenderHeight);
     }
 
     /// <summary>
@@ -108,6 +124,11 @@ namespace ExternalOSDLibrary
     /// <param name="rectangle">Rectangle of the image</param>
     public void DrawElementAlternative(Graphics graph, RectangleF rectangle)
     {
+        if (_bitmap == null)
+        {
+            _bitmap = loadBitmap(_image.FileName);
+        }
+
       if (_bitmap != null)
       {
         graph.DrawImage(_bitmap, rectangle);

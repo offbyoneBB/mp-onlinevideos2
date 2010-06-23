@@ -116,7 +116,7 @@ namespace ExternalOSDLibrary
     /// <param name="graph">Graphics</param>
     public override void DrawElement(Graphics graph)
     {
-      if (_button.Visible || GUIInfoManager.GetBool(_button.GetVisibleCondition(), _button.ParentID))
+        if (_wasVisible)
       {
         if (_focus)
         {

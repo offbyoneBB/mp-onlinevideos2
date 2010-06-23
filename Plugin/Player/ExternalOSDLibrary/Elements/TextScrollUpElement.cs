@@ -80,7 +80,7 @@ namespace ExternalOSDLibrary
     /// <param name="graph">Graphics</param>
     public override void DrawElement(Graphics graph)
     {
-      if (_textScrollUp.Visible || GUIInfoManager.GetBool(_textScrollUp.GetVisibleCondition(), _textScrollUp.ParentID))
+        if (_wasVisible)
       {
         SizeF textSize = graph.MeasureString(_label, _font);
         RectangleF rectangle;
