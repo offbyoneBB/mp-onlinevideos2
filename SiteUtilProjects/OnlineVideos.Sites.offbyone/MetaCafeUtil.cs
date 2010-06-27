@@ -35,25 +35,16 @@ namespace OnlineVideos.Sites
                 {
                     return "";// if no match, return empty url -> error
                 }
+                var enumer2 = video.PlaybackOptions.GetEnumerator();
+                enumer2.MoveNext();
+                return enumer2.Current.Value;
             }
             else
             {
                 string result = base.getUrl(video);
-                if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
-                {
-                    return "";// if no match, return empty url -> error
-                }
-                else
-                {
-                    var enumer = video.PlaybackOptions.GetEnumerator();
-                    enumer.MoveNext();
-                    video.PlaybackOptions[enumer.Current.Key] = enumer.Current.Value.Replace("\\", "");
-                    
-                }
+                if (!string.IsNullOrEmpty(result)) result = result.Replace("\\", "");
+                return result;
             }
-            var enumer2 = video.PlaybackOptions.GetEnumerator();
-            enumer2.MoveNext();
-            return enumer2.Current.Value;
         }
     }
 }

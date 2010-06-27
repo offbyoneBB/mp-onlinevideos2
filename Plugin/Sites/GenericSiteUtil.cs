@@ -261,16 +261,56 @@ namespace OnlineVideos.Sites
                         }
                         matchFileUrl = matchFileUrl.NextMatch();
                     }
-                    if (video.PlaybackOptions.Count == 0)
-                        return "";// if no match, return empty url -> error
+                    if (video.PlaybackOptions.Count == 0) return "";// if no match, return empty url -> error
                     else
                     {
+                        // return first found url as default
                         var enumer = video.PlaybackOptions.GetEnumerator();
                         enumer.MoveNext();
                         resultUrl = enumer.Current.Value;
                     }
+                    if (video.PlaybackOptions.Count == 1) video.PlaybackOptions = null;// only one url found, PlaybackOptions not needed
                 }
             }
+
+            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+            {
+                string[] keys = new string[video.PlaybackOptions.Count];
+                video.PlaybackOptions.Keys.CopyTo(keys, 0);
+                foreach (string key in keys)
+                {
+                    // resolve asx
+                    if (video.PlaybackOptions[key].EndsWith(".asx"))
+                    {
+                        string mmsUrl = SiteUtilBase.ParseASX(video.PlaybackOptions[key])[0];
+                        if (!video.PlaybackOptions.ContainsValue(mmsUrl))
+                        {
+                            Uri uri = new Uri(mmsUrl);
+                            if (uri.Scheme == "mms")
+                            {
+                                string newKey = key;
+                                if (newKey.IndexOf(".asx") >= 0) newKey = newKey.Replace(".asx", System.IO.Path.GetExtension(mmsUrl));
+                                if (newKey.IndexOf("http") >= 0) newKey = newKey.Replace("http", uri.Scheme);
+                                if (newKey == key) newKey = string.Format("{0}->[{1}.{2}]", key, uri.Scheme, System.IO.Path.GetExtension(mmsUrl));
+                                video.PlaybackOptions.Add(newKey, mmsUrl);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (resultUrl.EndsWith(".asx") && (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0))
+            {
+                string mmsUrl = SiteUtilBase.ParseASX(resultUrl)[0];
+                Uri uri = new Uri(mmsUrl);
+                if (uri.Scheme == "mms")
+                {
+                    video.PlaybackOptions = new Dictionary<string, string>();
+                    video.PlaybackOptions.Add("http:// .asx", resultUrl);
+                    video.PlaybackOptions.Add(string.Format("{0}:// {1}", new Uri(mmsUrl).Scheme, System.IO.Path.GetExtension(mmsUrl)), resultUrl);
+                }
+            }
+
             return resultUrl;
         }
 
