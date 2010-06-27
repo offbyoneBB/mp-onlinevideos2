@@ -132,5 +132,56 @@ namespace OnlineVideos
             }
         }
 
+        public static string DictionaryToString(Dictionary<string, string> dic)
+        {
+            System.Text.StringBuilder b = new System.Text.StringBuilder();
+            using (System.Xml.XmlWriter writer = System.Xml.XmlWriter.Create(b))
+            {
+                writer.WriteStartElement("dictionary");
+                foreach (string key in dic.Keys)
+                {
+                    writer.WriteStartElement("item");
+                    writer.WriteStartElement("key");
+                    writer.WriteCData(key);
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("value");
+                    writer.WriteCData(dic[key]);
+                    writer.WriteEndElement();
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+                writer.Flush();
+                writer.Close();
+            }
+            return b.ToString();
+        }
+
+        public static Dictionary<string, string> DictionaryFromString(string input)
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            using (System.Xml.XmlReader reader = System.Xml.XmlReader.Create(new System.IO.StringReader(input)))
+            {
+                bool wasEmpty = reader.IsEmptyElement;
+                reader.Read();
+                if (wasEmpty) return null;
+                reader.ReadStartElement("dictionary");
+                while (reader.NodeType != System.Xml.XmlNodeType.EndElement)
+                {
+                    reader.ReadStartElement("item");
+                    reader.ReadStartElement("key");
+                    string key = reader.ReadContentAsString();
+                    reader.ReadEndElement();
+                    reader.ReadStartElement("value");
+                    string value = reader.ReadContentAsString();
+                    reader.ReadEndElement();
+                    dic.Add(key, value);
+                    reader.ReadEndElement();
+                    reader.MoveToContent();
+                }
+                reader.ReadEndElement();
+            }
+            return dic;
+        }
+
     }
 }

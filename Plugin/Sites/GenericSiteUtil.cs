@@ -193,6 +193,12 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            // Get playbackoptins back from favorite video if they were saved in Other object
+            if (!string.IsNullOrEmpty(video.SiteName) && video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
+            {
+                video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
+            }
+
             string resultUrl = video.VideoUrl;
             // 1. do some formatting with the videoUrl
             if (regEx_VideoUrl != null)
@@ -310,7 +316,6 @@ namespace OnlineVideos.Sites
                     video.PlaybackOptions.Add(string.Format("{0}:// {1}", new Uri(mmsUrl).Scheme, System.IO.Path.GetExtension(mmsUrl)), resultUrl);
                 }
             }
-
             return resultUrl;
         }
 
