@@ -308,13 +308,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\SouthPark.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{18b7798e-81c3-4af6-a2ae-e4ba8bda7a11}-SouthPark.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthPark.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\SVTPlay.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{7edff9ad-fcd0-44b3-ba37-8cb7c49d0b0f}-SVTPlay.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SVTPlay.png</DestinationFilename>
@@ -749,13 +742,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\SouthPark.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9f121747-9b0e-4e02-b8df-a09cb54e5305}-SouthPark.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SouthPark.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\SVTPlay.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4ee3105e-96c6-46bf-aebe-ead0913e30ee}-SVTPlay.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SVTPlay.png</DestinationFilename>
@@ -1165,6 +1151,90 @@
               <LocalFileName>..\SiteImages\Banners\Br.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{1e8f5e32-5e66-4c20-92cb-d3da096656a2}-Br.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Br.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Bild.de Filme.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9ce11d0e-0a54-4ff7-b65d-af4fe40a3ed8}-Bild.de Filme.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Bild.de Filme.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\MSN Movies.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{88a5c1b9-14c1-4b28-8956-84258403276b}-MSN Movies.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MSN Movies.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\MyVideo - Filme.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{388e81be-6516-4ca6-94ba-0e391f881905}-MyVideo - Filme.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MyVideo - Filme.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\SouthParkDE.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{15ac0a4a-582b-4061-bcdd-b0aad1293573}-SouthParkDE.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkDE.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\SouthParkNL.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{7e67e92e-6170-4d3d-8ec5-199db556be8a}-SouthParkNL.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkNL.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\SouthParkWORLD.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{cd4fc2f4-0e88-4996-acf5-44712c7266bb}-SouthParkWORLD.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkWORLD.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Bild.de Filme.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f46f6bf6-5dfc-4ca0-9af1-d20b6ff0c5d2}-Bild.de Filme.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Bild.de Filme.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\MSN Movies.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{21dd8111-dab2-4642-a391-7db7ad62a19e}-MSN Movies.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MSN Movies.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\MyVideo - Filme.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5cd1db9c-fe6b-412c-a83a-5adb54502541}-MyVideo - Filme.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MyVideo - Filme.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\SouthParkDE.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{308ae58c-6bce-4196-8424-9008d6145bb7}-SouthParkDE.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SouthParkDE.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\SouthParkNL.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{27337cd5-880e-4166-9fc4-f2a2df1f0016}-SouthParkNL.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SouthParkNL.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\SouthParkWORLD.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{772a45ca-7f74-40bc-972a-ea9a10b376d4}-SouthParkWORLD.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SouthParkWORLD.png</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1880,17 +1950,15 @@ ProcessStartInfo psi = new ProcessStartInfo();
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>22</Minor>
+      <Minor>23</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
-    <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds or parsing html sites. Supported sites include: YouTube, MetaCafe, DailyMotion, AppleTrailers, ARD, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, Southpark.de and many more.</ExtensionDescription>
-    <VersionDescription>bugfixes for version 0.21
-local proxy resource usage reduced
-FLVSplitter inside MPEI package</VersionDescription>
+    <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
+    <VersionDescription>Usability improvements and bugfixes.</VersionDescription>
     <DevelopmentStatus>Beta</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.22.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2010-06-11T18:01:51</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
+    <ReleaseDate>2010-06-28T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -1918,7 +1986,7 @@ FLVSplitter inside MPEI package</VersionDescription>
           <Description>Online stored screenshot urls separated by ; </Description>
         </SectionParam>
         <SectionParam Name="Force to uninstall on update">
-          <Value>yes</Value>
+          <Value>YES</Value>
           <ValueType>Bool</ValueType>
           <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
         </SectionParam>
@@ -2213,13 +2281,6 @@ FLVSplitter inside MPEI package</VersionDescription>
         <LocalFileName>..\SiteImages\Icons\Snowboard Surf and Skate.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e4d93e18-f5e4-4ecd-ab6a-9f732e602c72}-Snowboard Surf and Skate.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Snowboard Surf and Skate.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\SouthPark.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{18b7798e-81c3-4af6-a2ae-e4ba8bda7a11}-SouthPark.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthPark.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -2658,13 +2719,6 @@ FLVSplitter inside MPEI package</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\SouthPark.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9f121747-9b0e-4e02-b8df-a09cb54e5305}-SouthPark.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SouthPark.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\SVTPlay.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{4ee3105e-96c6-46bf-aebe-ead0913e30ee}-SVTPlay.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SVTPlay.png</DestinationFilename>
@@ -3075,6 +3129,90 @@ FLVSplitter inside MPEI package</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{1e8f5e32-5e66-4c20-92cb-d3da096656a2}-Br.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Br.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Bild.de Filme.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9ce11d0e-0a54-4ff7-b65d-af4fe40a3ed8}-Bild.de Filme.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Bild.de Filme.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\MSN Movies.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{88a5c1b9-14c1-4b28-8956-84258403276b}-MSN Movies.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MSN Movies.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\MyVideo - Filme.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{388e81be-6516-4ca6-94ba-0e391f881905}-MyVideo - Filme.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MyVideo - Filme.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\SouthParkDE.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{15ac0a4a-582b-4061-bcdd-b0aad1293573}-SouthParkDE.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkDE.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\SouthParkNL.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7e67e92e-6170-4d3d-8ec5-199db556be8a}-SouthParkNL.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkNL.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\SouthParkWORLD.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{cd4fc2f4-0e88-4996-acf5-44712c7266bb}-SouthParkWORLD.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SouthParkWORLD.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Bild.de Filme.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f46f6bf6-5dfc-4ca0-9af1-d20b6ff0c5d2}-Bild.de Filme.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Bild.de Filme.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\MSN Movies.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{21dd8111-dab2-4642-a391-7db7ad62a19e}-MSN Movies.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MSN Movies.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\MyVideo - Filme.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5cd1db9c-fe6b-412c-a83a-5adb54502541}-MyVideo - Filme.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MyVideo - Filme.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\SouthParkDE.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{308ae58c-6bce-4196-8424-9008d6145bb7}-SouthParkDE.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SouthParkDE.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\SouthParkNL.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{27337cd5-880e-4166-9fc4-f2a2df1f0016}-SouthParkNL.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SouthParkNL.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\SouthParkWORLD.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{772a45ca-7f74-40bc-972a-ea9a10b376d4}-SouthParkWORLD.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SouthParkWORLD.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -3387,7 +3525,7 @@ FLVSplitter inside MPEI package</VersionDescription>
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{01e51e5c-6ba4-4c28-8373-fdeaa77b3706}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{7e13164a-def7-44f6-8039-5d043fd4dda6}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
