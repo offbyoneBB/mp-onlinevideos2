@@ -385,7 +385,14 @@ namespace OnlineVideos.Sites
                     {
                         VideoInfo video = VideoInfo.FromRssItem(rssItem, regEx_FileUrl != null, new Predicate<string>(isPossibleVideo));
                         // only if a video url was set, add this Video to the list
-                        if (!string.IsNullOrEmpty(video.VideoUrl)) videoList.Add(video);
+                        if (!string.IsNullOrEmpty(video.VideoUrl))
+                        {
+                            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
+                            {
+                                video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(video.PlaybackOptions);
+                            }
+                            videoList.Add(video);
+                        }
                     }
                 }
 
