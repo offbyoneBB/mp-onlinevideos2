@@ -134,8 +134,9 @@ namespace OnlineVideos
 
         public static string DictionaryToString(Dictionary<string, string> dic)
         {
-            System.Text.StringBuilder b = new System.Text.StringBuilder();
-            using (System.Xml.XmlWriter writer = System.Xml.XmlWriter.Create(b))
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            System.Xml.XmlWriterSettings settings = new System.Xml.XmlWriterSettings() { Encoding = Encoding.UTF8, Indent = true, OmitXmlDeclaration = true };
+            using (System.Xml.XmlWriter writer = System.Xml.XmlWriter.Create(sb, settings))
             {
                 writer.WriteStartElement("dictionary");
                 foreach (string key in dic.Keys)
@@ -153,7 +154,7 @@ namespace OnlineVideos
                 writer.Flush();
                 writer.Close();
             }
-            return b.ToString();
+            return sb.ToString();
         }
 
         public static Dictionary<string, string> DictionaryFromString(string input)

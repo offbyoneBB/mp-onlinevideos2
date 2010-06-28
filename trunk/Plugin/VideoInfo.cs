@@ -180,11 +180,7 @@ namespace OnlineVideos
                 enumer.MoveNext();
                 video.VideoUrl = enumer.Current.Value;
                 video.PlaybackOptions = null;
-            }
-            else
-            {
-                video.Other = "PlaybackOptions://" + Utils.DictionaryToString(video.PlaybackOptions);
-            }
+            }            
 
             return video;
         }
