@@ -1264,7 +1264,7 @@
         <item key="nextPageRegEx"><![CDATA[<a\sonclick="killVideoThumbs\(\)\;"\shref="(?<url>.*)">next\s&gt;&gt;</a>]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\sonclick="killVideoThumbs\(\)\;"\shref="(?<url>.*)">&lt;&lt;\sprev</a>]]></item>
         <item key="playlistUrlRegEx"><![CDATA[so\.addVariable\('config',\s*'(?<url>[^']+)'\);]]></item>
-        <item key="playlistUrlFormatString"><![CDATA[http://cdn.empflix.com/{0}]]></item>
+        <item key="playlistUrlFormatString"><![CDATA[{0}]]></item>
         <item key="fileUrlRegEx"><![CDATA[<file>(?<m0>[^<]+)</file>]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}&filetype=.flv]]></item>
         <item key="searchUrl"><![CDATA[http://www.empflix.com/search.php?what={0}]]></item>        
