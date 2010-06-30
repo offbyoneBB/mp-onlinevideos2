@@ -927,10 +927,13 @@
       </Categories>
     </Site>
     <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sw">
-      <Categories>
-        <Category xsi:type="RssLink" name="Senaste nyheter">http://feeds.svtplay.se/v1/video/list/96244?expression=full&amp;mode=plain</Category>
-        <Category xsi:type="RssLink" name="Senaste sportnytt">http://feeds.svtplay.se/v1/video/list/103738?expression=full&amp;mode=plain</Category>
-      </Categories>
+      <Description>Se dina favoritprogram när du vill i SVT Play - fri television på nätet.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://svtplay.se/alfabetisk]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://xml.svtplay.se/v1/video/list/{0}]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[(?<HTML><a[^>]*href\s*=\s*[\"\'']?/t/(?<url>[^/]*)(?<thumb>[^"''>\s]*)[\"\'']?[^>]*>((<img\ssrc='[^']+'\salt="(?<title>[^"]+)"\s/>)|((?<title>[^<]+|.*?)?</a\s*>)))]]></item>
+      </Configuration>
+      <Categories />
     </Site>
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sw">
       <Categories />

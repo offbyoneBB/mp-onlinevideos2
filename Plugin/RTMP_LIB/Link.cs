@@ -49,37 +49,76 @@ namespace RTMP_LIB
             link.hostname = url.Host;
             link.port = url.Port > 0 ? url.Port : 1935;
 
-            link.app = url.AbsolutePath.TrimStart(new char[] { '/' });
-            int slistPos = link.app.IndexOf("slist=");
-            if (slistPos == -1)
+            /* parse application
+	         *
+	         * rtmp://host[:port]/app[/appinstance][/...]
+	         * application = app[/appinstance]
+	         */
+            string parsePlayPathFrom = "";
+            if (url.PathAndQuery.Contains("?slist="))
             {
-                // no slist parameter. send the path as the app
-                // if URL path contains a slash, use the part up to that as the app
-                // as we'll send the part after the slash as the thing to play
-                int pos_colon = link.app.IndexOf(":");
-                if (pos_colon != -1) { link.app = link.app.Substring(0, pos_colon); link.app = link.app.Substring(0, link.app.LastIndexOf('/')); }
-                else
-                {
-                    int pos_slash = link.app.IndexOf("/");
-                    if (pos_slash != -1) link.app = link.app.Substring(0, pos_slash);
-                }
+                /* whatever it is, the '?' and slist= means we need to use everything as app and parse playpath from slist= */
+                link.app = url.PathAndQuery.Substring(1);
+                parsePlayPathFrom = url.PathAndQuery.Substring(url.PathAndQuery.IndexOf("?slist="));
             }
-
-            link.tcUrl = string.Format("{0}://{1}:{2}/{3}", url.Scheme, link.hostname, link.port, link.app);
-
-            // or use slist parameter, if there is one
-            int nPos = url.AbsolutePath.IndexOf("slist=");
-            if (nPos > 0)
+            else if (url.PathAndQuery.StartsWith("/ondemand/"))
             {
-                link.playpath = url.AbsolutePath.Substring(nPos, 6);
+                /* app = ondemand/foobar, only pass app=ondemand */
+                link.app = "ondemand";
+                parsePlayPathFrom = url.PathAndQuery.Substring(9);
             }
             else
             {
-                // use part after app
-                link.playpath = url.AbsolutePath.TrimStart(new char[] { '/' }).Substring(link.app.Length).TrimStart(new char[] { '/' });
-                if (link.playpath.EndsWith(".flv")) link.playpath = link.playpath.Substring(0, link.playpath.Length - 4);
-                if (link.playpath.EndsWith(".mp4") & !link.playpath.StartsWith("mp4:")) link.playpath = "mp4:" + link.playpath;
+                /* app!=ondemand, so app is app[/appinstance] */
+                int slash2Index = url.PathAndQuery.IndexOf('/', 1);
+                int slash3Index = slash2Index >= 0 ? url.PathAndQuery.IndexOf('/', slash2Index+1) : -1;
+                
+                if(slash3Index >= 0) 
+                {
+                    link.app = url.PathAndQuery.Substring(1, slash3Index - 2);
+                    parsePlayPathFrom = url.PathAndQuery.Substring(slash3Index);
+                }
+		        else if(slash2Index >= 0) 
+                {
+                    link.app = url.PathAndQuery.Substring(1, slash2Index - 2);
+                    parsePlayPathFrom = url.PathAndQuery.Substring(slash2Index);
+                }
             }
+
+            if (parsePlayPathFrom.StartsWith("/")) parsePlayPathFrom = parsePlayPathFrom.Substring(1);
+
+            /*
+             * Extracts playpath from RTMP URL. playpath is the file part of the
+             * URL, i.e. the part that comes after rtmp://host:port/app/
+             *
+             * Returns the stream name in a format understood by FMS. The name is
+             * the playpath part of the URL with formatting depending on the stream
+             * type:
+             *
+             * mp4 streams: prepend "mp4:", remove extension
+             * mp3 streams: prepend "mp3:", remove extension
+             * flv streams: remove extension (Only remove .flv from rtmp URL, not slist params)
+             */
+
+            // use slist parameter, if there is one
+            int nPos = parsePlayPathFrom.IndexOf("slist=");
+            if (nPos > 0)
+            {
+                parsePlayPathFrom = parsePlayPathFrom.Substring(nPos + 6);
+            }
+            else
+            {
+                if (parsePlayPathFrom.EndsWith(".flv")) parsePlayPathFrom = parsePlayPathFrom.Substring(0, parsePlayPathFrom.Length - 4);
+            }
+            if (parsePlayPathFrom.EndsWith(".mp4"))
+            {
+                parsePlayPathFrom = parsePlayPathFrom.Substring(0, parsePlayPathFrom.Length - 4);
+                if (!parsePlayPathFrom.StartsWith("mp4:")) parsePlayPathFrom = "mp4:" + parsePlayPathFrom;
+            }
+
+            link.playpath = parsePlayPathFrom;
+
+            link.tcUrl = string.Format("{0}://{1}:{2}/{3}", url.Scheme, link.hostname, link.port, link.app);
 
             return link;
         }

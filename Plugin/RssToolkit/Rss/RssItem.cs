@@ -393,12 +393,12 @@ namespace RssToolkit.Rss
             /// </summary>
             [XmlAttribute(AttributeName = "height")]
             public int Height { get; set; }
-
+           
             /// <summary>
             /// The bitrate of the mediaobject. It is an optional attribute.
             /// </summary>
             [XmlAttribute(AttributeName = "bitrate")]
-            public int Bitrate { get; set; }
+            public float Bitrate { get; set; }
 
             /// <summary>
             /// The size in bytes of the mediaobject. It is an optional attribute.
