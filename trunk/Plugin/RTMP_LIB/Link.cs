@@ -75,12 +75,12 @@ namespace RTMP_LIB
                 
                 if(slash3Index >= 0) 
                 {
-                    link.app = url.PathAndQuery.Substring(1, slash3Index - 2);
+                    link.app = url.PathAndQuery.Substring(1, slash3Index - 1);
                     parsePlayPathFrom = url.PathAndQuery.Substring(slash3Index);
                 }
 		        else if(slash2Index >= 0) 
                 {
-                    link.app = url.PathAndQuery.Substring(1, slash2Index - 2);
+                    link.app = url.PathAndQuery.Substring(1, slash2Index - 1);
                     parsePlayPathFrom = url.PathAndQuery.Substring(slash2Index);
                 }
             }
