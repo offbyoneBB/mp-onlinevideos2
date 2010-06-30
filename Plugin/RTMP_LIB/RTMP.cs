@@ -1291,7 +1291,7 @@ namespace RTMP_LIB
 
             Logger.Log(string.Format("Type Answer   : {0}", type.ToString()));
 
-            if (type != clientsig[0]) Logger.Log(string.Format("Type mismatch: client sent {0}, server answered {0}", clientsig[0], type));
+            if (type != clientsig[0]) Logger.Log(string.Format("Type mismatch: client sent {0}, server answered {1}", clientsig[0], type));
 
             if (ReadN(serversig, 0, RTMP_SIG_SIZE) != RTMP_SIG_SIZE) return false;
 
