@@ -326,7 +326,8 @@ namespace OnlineVideos.Sites
 
         public virtual bool isPossibleVideo(string fsUrl)
         {
-            if (string.IsNullOrEmpty(fsUrl)) return false;
+            if (string.IsNullOrEmpty(fsUrl)) return false; // empty string is not a video
+            if (fsUrl.StartsWith("rtsp://")) return false; // rtsp protocol not supported yet
             string extensionFile = System.IO.Path.GetExtension(fsUrl).ToLower();
             bool isVideo = OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extensionFile);
             if (!isVideo)

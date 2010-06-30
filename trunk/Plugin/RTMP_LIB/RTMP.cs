@@ -425,10 +425,10 @@ namespace RTMP_LIB
             EncodeString(enc, "connect");
             EncodeNumber(enc, m_numInvokes++);
             enc.Add(0x03); //Object Datatype                
-            EncodeString(enc, "app", Link.app);
+            EncodeString(enc, "app", Link.app); Logger.Log(string.Format("app : {0}", Link.app));
             EncodeString(enc, "flashVer", "WIN 10,0,32,18");
             if (!string.IsNullOrEmpty(Link.swfUrl)) EncodeString(enc, "swfUrl", Link.swfUrl);
-            EncodeString(enc, "tcUrl", Link.tcUrl);
+            EncodeString(enc, "tcUrl", Link.tcUrl); Logger.Log(string.Format("tcUrl : {0}", Link.tcUrl));
             EncodeBoolean(enc, "fpad", false);
             EncodeNumber(enc, "capabilities", 15.0);
             EncodeNumber(enc, "audioCodecs", 3191.0);

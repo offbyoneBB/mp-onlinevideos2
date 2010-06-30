@@ -173,13 +173,13 @@ namespace OnlineVideos
                 }
             }
 
-            // if only one url found as playbackoptions but nothing set a video url -> set the one option directly as url
-            if (video.PlaybackOptions.Count == 1 && string.IsNullOrEmpty(video.VideoUrl))
+            // if no VideoUrl but PlaybackOptions are set -> put the first option as VideoUrl
+            if (string.IsNullOrEmpty(video.VideoUrl) && video.PlaybackOptions.Count > 0)
             {
                 var enumer = video.PlaybackOptions.GetEnumerator();
                 enumer.MoveNext();
                 video.VideoUrl = enumer.Current.Value;
-                video.PlaybackOptions = null;
+                if (video.PlaybackOptions.Count == 1) video.PlaybackOptions = null; // no need for options with only one url
             }            
 
             return video;
