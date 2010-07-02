@@ -879,20 +879,20 @@
         <Category xsi:type="RssLink" name="Other">http://api.justin.tv/api/stream/list.xml?category=other</Category>
       </Categories>
     </Site>
-    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" lang="--">
+    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" player="WMP" lang="--">
       <Description>Collection of live music streams.</Description>
       <Categories>
         <Category xsi:type="Group" name="RockTelevision" thumb="http://www.tv-port.net/wp-content/uploads/2009/05/rock-tv.jpg">
           <Channels>
-            <Channel name="RockTV">mms://mediatv2.topix.it/rockchTV</Channel>
-            <Channel name="21st">mms://mediatv2.topix.it/rockch00</Channel>
-            <Channel name="90s">mms://mediatv2.topix.it/rockch90</Channel>
-            <Channel name="80s">mms://mediatv2.topix.it/rockch80</Channel>
-            <Channel name="70s">mms://mediatv2.topix.it/rockch70</Channel>
-            <Channel name="60s">mms://mediatv2.topix.it/rockch60</Channel>
-            <Channel name="Hard &amp; Heavy">mms://mediatv2.topix.it/rockchhard</Channel>
-            <Channel name="Prog Rock">mms://mediatv2.topix.it/rockchprog</Channel>
-            <Channel name="Soft &amp; Ballads">mms://mediatv2.topix.it/rockchsoft</Channel>
+            <Channel name="RockTV">mms://mediatv2.topix.it/chTV</Channel>
+            <Channel name="21st">mms://mediatv2.topix.it/ch00</Channel>
+            <Channel name="90s">mms://mediatv2.topix.it/ch90</Channel>
+            <Channel name="80s">mms://mediatv2.topix.it/ch80</Channel>
+            <Channel name="70s">mms://mediatv2.topix.it/ch70</Channel>
+            <Channel name="60s">mms://mediatv2.topix.it/60</Channel>
+            <Channel name="Hard &amp; Heavy">mms://mediatv2.topix.it/chhard</Channel>
+            <Channel name="Prog Rock">mms://mediatv2.topix.it/chprog</Channel>
+            <Channel name="Soft &amp; Ballads">mms://mediatv2.topix.it/chsoft</Channel>
           </Channels>
         </Category>
       </Categories>
