@@ -180,27 +180,23 @@ namespace OnlineVideos
                 }
                 
                 string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
+                Stream fs = null;
                 if (!File.Exists(filename))
                 {
-                    Log.Info("ConfigFile {0} was not found using embedded resource.", filename);
-                    using (Stream fs = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.OnlineVideoSites.xml"))
-                    {
-                        XmlSerializer ser = XmlSerImp.GetSerializer(typeof(SerializableSettings));
-                        SerializableSettings s = (SerializableSettings)ser.Deserialize(fs);
-                        fs.Close();
-                        SiteSettingsList = s.Sites;
-                    }
+                    Log.Info("ConfigFile \"{0}\" was not found. Using embedded resource.", filename);
+                    fs = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.OnlineVideoSites.xml");
                 }
                 else
                 {
-                    using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
-                    {
-                        XmlSerializer ser = XmlSerImp.GetSerializer(typeof(SerializableSettings));
-                        SerializableSettings s = (SerializableSettings)ser.Deserialize(fs);
-                        fs.Close();
-                        SiteSettingsList = s.Sites;
-                    }
+                    fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
                 }
+                using (fs)
+                {
+                    XmlSerializer ser = XmlSerImp.GetSerializer(typeof(SerializableSettings));
+                    SerializableSettings s = (SerializableSettings)ser.Deserialize(fs);
+                    fs.Close();
+                    SiteSettingsList = s.Sites;
+                }                
             }
             catch (Exception e)
             {

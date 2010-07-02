@@ -110,13 +110,13 @@ namespace ExternalOSDLibrary
           graph.DrawString(GUIPropertyManager.Parse(strValue), font, brush, _slider.XPosition, _slider.YPosition);
           brush.Dispose();
         }
-        backgroundPositionX += 60;
+        //backgroundPositionX += 60;
 
         //int iHeight=25;
         graph.DrawImage(_backgroundBitmap, backgroundPositionX, backgroundPositionY, _backgroundBitmap.Width, _backgroundBitmap.Height);
         //_imageBackGround.SetHeight(iHeight);
 
-        float fWidth = _backgroundBitmap.Width - _sliderBitmap.Width; //-20.0f;
+        float fWidth = (float)(_backgroundBitmap.Width - _sliderBitmap.Width); //-20.0f;
         float fPos = _percentage;
         fPos /= 100.0f;
         fPos *= fWidth;

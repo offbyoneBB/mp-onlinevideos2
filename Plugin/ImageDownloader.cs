@@ -32,10 +32,9 @@ namespace OnlineVideos
         public static string GetThumbFile(string url)
         {
             // gets a CRC code for the given url and returns a file path: thums_dir\crc.jpg
-            string name = MediaPortal.Util.Utils.GetThumb(url);
             string possibleExtension = System.IO.Path.GetExtension(url).ToLower();
             if (possibleExtension != ".gif" & possibleExtension != ".jpg") possibleExtension = ".jpg";
-            name = System.IO.Path.GetFileNameWithoutExtension(name) + "L" +possibleExtension;
+            string name = string.Format("Thumbs{0}L{1}", MediaPortal.Util.Utils.EncryptLine(url), possibleExtension);
             return System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, name);
         }
 
