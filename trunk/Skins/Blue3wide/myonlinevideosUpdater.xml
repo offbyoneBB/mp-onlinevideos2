@@ -179,6 +179,8 @@
     <!-- *** HIDDEN MENU *** -->
     <control>
       <type>image</type>
+      <width>106</width>
+      <height>720</height>
       <texture>Action_nofocus.png</texture>        
       <visible>Control.HasFocus(50)</visible>      
       <animation effect="fade" time="0" delay="300">visible</animation>

@@ -307,6 +307,8 @@
       <onexit>50</onexit>
       <buttonX>0</buttonX>
       <buttonY>0</buttonY>
+      <buttonwidth>106</buttonwidth>
+      <buttonheight>720</buttonheight>      
       <textureFocus>Action_focus.png</textureFocus>
       <textureNoFocus>Action_nofocus.png</textureNoFocus>
       <dimColor>00ffffff</dimColor>
@@ -422,8 +424,6 @@
           <onright>50</onright>
           <onup>8</onup>
           <label>#OnlineVideos.Translation.NextPage.Label</label>
-          <animation effect="fade" time="200">WindowOpen</animation>
-          <animation effect="fade" time="200">WindowClose</animation>
           <font>font11</font>
           <height>37</height>
           <textYOff>3</textYOff>
@@ -436,8 +436,6 @@
           <onright>50</onright>
           <onup>3</onup>
           <label>#OnlineVideos.Translation.PreviousPage.Label</label>
-          <animation effect="fade" time="200">WindowOpen</animation>
-          <animation effect="fade" time="200">WindowClose</animation>
           <font>font11</font>
           <height>37</height>
           <textYOff>3</textYOff>
