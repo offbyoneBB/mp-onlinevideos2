@@ -27,7 +27,7 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
 || 10 || button || {{{#OnlineVideos.Translation.Search.Label}}} || Search videos on current site ||
 || 11 || button || {{{#OnlineVideos.Translation.Favourites.Label}}} || Show favorites for current site ||
 || 12 || button || {{{#OnlineVideos.Translation.EnterPin.Label}}} || Enter Pin for adult sites ||
-|| 50 || facadeview || - ||  main facade (required modes: list, large and small icons) ||
+|| 50 || facadeview || label1 - title, label2 - language (`#OnlineVideos.state = sites`) ||  main facade (required modes: list, large and small icons) ||
 || 51 || listcontrol || - || additional list used instead of facade in details view ||
 
 = Window 4757 required controls =
@@ -42,13 +42,13 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
 
 
 The listcontrol (id 50) also sets the PinImage for each listitem to an image file with this path: {{{[CurrentSkinFolder]\Media\OnlineVideos\[State].png}}}.<br/>
-The State is one of the three: {{{Broken, Reported, Working}}}.
+The State is one of the three: {{{Broken, Reported, Working}}}. In the default skin, these states are represented by a red, yellow and green icon.
 
 
 = Properties set in the code =
  * Global
-  * `#header.label` - changes according to the current site/category, ...
-  * `#header.image` - changes according to the current site the user is browsing
+  * `#header.label` - changes according to the name of the current site/category, ...
+  * `#header.image` - banner style image (3:1 AR) that changes according to the current site the user is browsing
   * `#OnlineVideos.Translation.ManageSites.Label` - can be used for the button that calls the site manager window
 
  * Site Manager Window (4757) only
@@ -62,21 +62,22 @@ The State is one of the three: {{{Broken, Reported, Working}}}.
   * `#OnlineVideos.selectedSiteUtil` - name of the Util used by the currently selected Site (e.g. "GenericSite") that can be used for conditional visibility
 
  * Facade (both Windows)
-  * `#itemcount` - total number of items
+  * `#itemcount` - total number of items 
+    * localized itemtypes using 3 conditional labels: `#OnlineVideos.state = [sites|categories|videos]` -> `#OnlineVideos.Translation.[Sites|Categories|Videos].Label`
   * `#selecteditem` - title of the current selected item
   * `#selectedthumb` - thumb (if available) for the current selected item
   * `#OnlineVideos.desc` - description (if available) of the current selected item
 
  * Currently Playing Video
-  * `#Play.Current.Title`
-  * `#Play.Current.Plot`
-  * `#Play.Current.Thumb`
-  * `#Play.Current.Year`
+  * `#Play.Current.Title` - title as in facade
+  * `#Play.Current.Plot` - description
+  * `#Play.Current.Thumb` - thumbnail as in facade
+  * `#Play.Current.Year` - duration and airdate if available
   * `#OnlineVideos.IsBuffering` - "true" when a video is beeing buffered before playback will start
   * `#OnlineVideos.buffered` - integer showing percentage buffered (localized label property: `#OnlineVideos.Translation.Buffered.Label`) 
 = Details View =
 
- * iTunes Movie Trailers (#OnlineVideos.selectedSiteUtil = ITMovieTrailers)
+ * iTunes Movie Trailers (`string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)`)
   * `#OnlineVideos.Details.Poster` - path to a poster format image
   * `#OnlineVideos.Details.Synopsis` - (localized label property: {{{#OnlineVideos.Translation.PlotOutline.Label}}})
   * `#OnlineVideos.Details.Genres` - (localized label property: {{{#OnlineVideos.Translation.Genre.Label}}})
@@ -85,5 +86,5 @@ The State is one of the three: {{{Broken, Reported, Working}}}.
   * `#OnlineVideos.Details.Directors` - (localized label property: {{{#OnlineVideos.Translation.Directors.Label}}})
   * `#OnlineVideos.Details.Rating` - movie rating (e.g. PG-13, R ...)
   * `#OnlineVideos.Details.Title` - also set in `#header.label`
-  * `#OnlineVideos.Details.Studio`
-  * `#OnlineVideos.Details.Year`
+  * `#OnlineVideos.Details.Studio` - movie studio creating the moview
+  * `#OnlineVideos.Details.Year` - release year of the movie
