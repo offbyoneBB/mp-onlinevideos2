@@ -117,7 +117,7 @@ namespace OnlineVideos.Sites
                 string data = GetWebData(baseUrl, GetCookie());
                 if (!string.IsNullOrEmpty(data))
                 {
-                    List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a seperate list
+                    List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a separate list
                     Match m = regEx_dynamicCategories.Match(data);
                     while (m.Success)
                     {
@@ -128,6 +128,7 @@ namespace OnlineVideos.Sites
                         if (dynamicCategoryUrlDecoding) cat.Url = HttpUtility.HtmlDecode(cat.Url);
                         cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
                         cat.Thumb = m.Groups["thumb"].Value;
+                        if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
                         cat.Description = m.Groups["description"].Value;
                         if (regEx_dynamicSubCategories != null) cat.HasSubCategories = true;
                         dynamicCategories.Add(cat);
@@ -136,10 +137,10 @@ namespace OnlineVideos.Sites
                     // discovery finished, copy them to the actual list -> prevents double entries if error occurs in the middle of adding
                     foreach (Category cat in dynamicCategories) Settings.Categories.Add(cat);
                     Settings.DynamicCategoriesDiscovered = true;
-                    return dynamicCategories.Count;
+                    return dynamicCategories.Count; // return the number of discovered categories
                 }
             }
-            return 0;
+            return 0; // coming here means no dynamic categories were discovered
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
