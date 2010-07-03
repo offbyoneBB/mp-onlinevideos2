@@ -40,6 +40,11 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
 || 506 || selectbutton || {{{#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.Creator.Label}}} || Creator filter ||
 || 507 || selectbutton || {{{#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.Language.Label}}} ||| Language Filter ||
 
+
+The listcontrol (id 50) also sets the PinImage for each listitem to an image file with this path: {{{[CurrentSkinFolder]\Media\OnlineVideos\[State].png}}}.<br/>
+The State is one of the three: {{{Broken, Reported, Working}}}.
+
+
 = Properties set in the code =
  * Global
   * `#header.label` - changes according to the current site/category, ...
