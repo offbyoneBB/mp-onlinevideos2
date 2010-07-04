@@ -1762,16 +1762,53 @@ public class Script
                   <SectionParam Name="Uninstall Script">
                     <Value>//css_reference "MpeCore.dll";
 
-using MpeCore.Classes;
 using MpeCore;
+using MpeCore.Classes;
+using System;
+using System.IO;
+using System.Windows.Forms;
+using System.Xml;
 
 public class Script
 {
     public static void Main(PackageClass packageClass, UnInstallItem item)
     {
-        return;
+       if (!packageClass.Silent &amp;&amp; MessageBox.Show("Do you want to delete settings (complete OnlineVideos cleanup) ?", "Uninstall", MessageBoxButtons.YesNo) == DialogResult.Yes)
+        {
+            string CFG_SECTION = "onlinevideos";
+            string CFG_THUMBNAIL_DIR = "thumbDir";
+
+            string mePoConfigFile = Path.Combine(MpeInstaller.TransformInRealPath("%Config%"), "MediaPortal.xml");
+            string ThumbsDir = Path.Combine(MpeInstaller.TransformInRealPath("%Thumbs%"), @"OnlineVideos\");
+
+            XmlDocument configDoc = new XmlDocument();
+            configDoc.Load(mePoConfigFile);
+            XmlNode ovsConfigNode = configDoc.SelectSingleNode("//section[@name=\"" + CFG_SECTION + "\"]");
+            if (ovsConfigNode != null)
+            {
+                XmlNode thumbsDirEntryNode = ovsConfigNode.SelectSingleNode("entry[@name=\"" + CFG_THUMBNAIL_DIR + "\"]");
+                if (thumbsDirEntryNode != null) ThumbsDir = thumbsDirEntryNode.InnerText;
+
+                try
+                {
+                    ovsConfigNode.ParentNode.RemoveChild(ovsConfigNode);
+                    configDoc.Save(mePoConfigFile);
+                }
+                catch { }
+            }
+
+            ThumbsDir = ThumbsDir.Replace("/", @"\");
+            if (Directory.Exists(ThumbsDir)) try { Directory.Delete(ThumbsDir, true); } catch { }
+
+            string filename = Path.Combine(MpeInstaller.TransformInRealPath("%Config%"), "OnlineVideoSites.xml");
+            if (File.Exists(filename)) try { File.Delete(filename); } catch { }
+
+            string satelliteDllsPath = Path.Combine(MpeInstaller.TransformInRealPath("%Plugins%"), "Windows\\OnlineVideos");
+            if (Directory.Exists(satelliteDllsPath)) try { Directory.Delete(satelliteDllsPath, true); } catch { }
+        }
     }
 }
+
 </Value>
                     <ValueType>Script</ValueType>
                     <Description />
@@ -1870,7 +1907,7 @@ public class Script
 {
     public static void Main(PackageClass packageClass, UnInstallItem item)
     {
-ProcessStartInfo psi = new ProcessStartInfo();
+        ProcessStartInfo psi = new ProcessStartInfo();
         psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
         psi.FileName = "cmd.exe";
         psi.Arguments = "/c regsvr32 /s /u \"" + MpeInstaller.TransformInRealPath(@"%Base%\FLVSplitter.ax") + "\"";
@@ -1950,7 +1987,7 @@ ProcessStartInfo psi = new ProcessStartInfo();
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>23</Minor>
+      <Minor>24</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
@@ -3525,7 +3562,7 @@ ProcessStartInfo psi = new ProcessStartInfo();
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{7e13164a-def7-44f6-8039-5d043fd4dda6}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{927e99cb-5e41-4c32-a01f-6030cca5e111}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
