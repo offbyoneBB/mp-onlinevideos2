@@ -10,7 +10,7 @@ namespace OnlineVideos.Player
 #if !MP102
         public override string GetModuleName()
         {
-            return OnlineVideoSettings.PLUGIN_NAME + " Fullscreen";
+            return OnlineVideoSettings.Instance.BasicHomeScreenName + " Fullscreen";
         }
 #endif
 

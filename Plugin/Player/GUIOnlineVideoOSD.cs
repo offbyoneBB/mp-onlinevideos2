@@ -11,7 +11,7 @@ namespace OnlineVideos.Player
 #if !MP102
         public override string GetModuleName()
         {
-            return OnlineVideoSettings.PLUGIN_NAME + " OSD";
+            return OnlineVideoSettings.Instance.BasicHomeScreenName + " OSD";
         }
 #endif
 

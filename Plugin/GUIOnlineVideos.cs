@@ -214,7 +214,7 @@ namespace OnlineVideos
 #if !MP102
         public override string GetModuleName()
         {
-            return OnlineVideoSettings.PLUGIN_NAME;
+            return OnlineVideoSettings.Instance.BasicHomeScreenName;
         }
 #endif
 
@@ -254,7 +254,7 @@ namespace OnlineVideos
                 g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowHandler;
                 g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
 
-                GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.PLUGIN_NAME);
+                GUIPropertyManager.SetProperty("#header.label", OnlineVideoSettings.Instance.BasicHomeScreenName);
                 Translation.TranslateSkin();
                 ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); // add a special reversed proxy handler for rtmp
                 if (OnlineVideoSettings.Instance.updateOnStart != false) AutoUpdate(!OnlineVideoSettings.Instance.updateOnStart.HasValue);
@@ -1217,7 +1217,7 @@ namespace OnlineVideos
                 if (dlg_error != null)
                 {
                     dlg_error.Reset();
-                    dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                    dlg_error.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
                     dlg_error.SetText(Translation.NoVideoFound);
                     dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                 }
@@ -1431,7 +1431,7 @@ namespace OnlineVideos
                 if (dlg != null)
                 {
                     dlg.Reset();
-                    dlg.SetHeading(Translation.Error/*ERROR*/);
+                    dlg.SetHeading(Translation.Error);
                     dlg.SetText(Translation.UnableToPlayVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
                 }
@@ -2085,7 +2085,7 @@ namespace OnlineVideos
             if (dlgSel != null)
             {
                 dlgSel.Reset();
-                dlgSel.SetHeading(Translation.SelectSource /*Select Source*/);
+                dlgSel.SetHeading(Translation.SelectSource);
                 int option = 0;
                 foreach (string key in videoInfo.PlaybackOptions.Keys)
                 {
@@ -2221,7 +2221,7 @@ namespace OnlineVideos
                 if (dlg != null)
                 {
                     dlg.Reset();
-                    dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                    dlg.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
                     dlg.SetLine(1, Translation.PerformAutomaticUpdate);
                     dlg.SetLine(2, Translation.UpdateAllYourSites);
                     dlg.DoModal(GetID);
@@ -2239,7 +2239,7 @@ namespace OnlineVideos
                         dlgPrgrs.DisplayProgressBar = true;
                         dlgPrgrs.ShowWaitCursor = false;
                         dlgPrgrs.DisableCancel(true);
-                        dlgPrgrs.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                        dlgPrgrs.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
                         dlgPrgrs.StartModal(GetID);
                     }
                     if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.RetrievingRemoteSites);
