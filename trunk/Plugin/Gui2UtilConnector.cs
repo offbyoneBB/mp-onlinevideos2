@@ -123,7 +123,7 @@ namespace OnlineVideos
                             if (dlg_error != null)
                             {
                                 dlg_error.Reset();
-                                dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                                dlg_error.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
                                 dlg_error.SetLine(1, string.Format("{0} {1}", Translation.Error, taskdescription));
                                 dlg_error.SetLine(2, error.Message);
                                 dlg_error.DoModal(GUIWindowManager.ActiveWindow);
@@ -135,7 +135,7 @@ namespace OnlineVideos
                             if (dlg_error != null)
                             {
                                 dlg_error.Reset();
-                                dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                                dlg_error.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
                                 if (result.HasValue)
                                     dlg_error.SetText(string.Format("{0} {1}", Translation.Error, taskdescription));
                                 else
@@ -238,7 +238,7 @@ namespace OnlineVideos
                     if (dlg_error != null)
                     {
                         dlg_error.Reset();
-                        dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                        dlg_error.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
                         dlg_error.SetLine(1, string.Format("{0} {1}", Translation.Error, _CurrentTaskDescription));
                         dlg_error.SetLine(2, _CurrentError.Message);
                         dlg_error.DoModal(GUIWindowManager.ActiveWindow);
@@ -250,7 +250,7 @@ namespace OnlineVideos
                     if (dlg_error != null)
                     {
                         dlg_error.Reset();
-                        dlg_error.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                        dlg_error.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
                         if (_CurrentTaskSuccess.HasValue)
                             dlg_error.SetText(string.Format("{0} {1}", Translation.Error, _CurrentTaskDescription));
                         else

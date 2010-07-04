@@ -52,7 +52,7 @@ namespace OnlineVideos
         #if !MP102
         public override string GetModuleName()
         {
-            return OnlineVideoSettings.PLUGIN_NAME;
+            return OnlineVideoSettings.Instance.BasicHomeScreenName;
         }
         #endif
 
@@ -307,7 +307,7 @@ namespace OnlineVideos
                         if (dlg != null)
                         {
                             dlg.Reset();
-                            dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                            dlg.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
                             dlg.SetText("No reports for this site available.");
                             dlg.DoModal(GUIWindowManager.ActiveWindow);
                         }
@@ -384,7 +384,7 @@ namespace OnlineVideos
                     dlgPrgrs.DisplayProgressBar = true;
                     dlgPrgrs.ShowWaitCursor = false;
                     dlgPrgrs.DisableCancel(true);
-                    dlgPrgrs.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                    dlgPrgrs.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
                     dlgPrgrs.StartModal(GetID);
                 }
 
@@ -493,7 +493,7 @@ namespace OnlineVideos
             if (dlg != null)
             {
                 dlg.Reset();
-                dlg.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                dlg.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
                 dlg.SetLine(1, Translation.NewDllDownloaded);
                 dlg.SetLine(2, Translation.RestartMediaPortal);
                 dlg.DoModal(GUIWindowManager.ActiveWindow);

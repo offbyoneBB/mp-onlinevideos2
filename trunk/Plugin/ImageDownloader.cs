@@ -214,7 +214,7 @@ namespace OnlineVideos
                 dlgPrgrs.DisplayProgressBar = true;
                 dlgPrgrs.ShowWaitCursor = false;
                 dlgPrgrs.DisableCancel(false);
-                dlgPrgrs.SetHeading(OnlineVideoSettings.PLUGIN_NAME);
+                dlgPrgrs.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
                 dlgPrgrs.StartModal(GUIOnlineVideos.WindowId);
                 dlgPrgrs.SetLine(1, Translation.DeletingOldThumbs);
                 dlgPrgrs.Percentage = 0;
