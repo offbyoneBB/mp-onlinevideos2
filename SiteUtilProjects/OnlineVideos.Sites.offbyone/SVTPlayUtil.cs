@@ -20,6 +20,7 @@ namespace OnlineVideos.Sites
             {
                 string id = c.Url.Substring(c.Url.LastIndexOf('/')+1);
                 string path = "http://material.svtplay.se/content/2/c6/" + id.Substring(0, 2) + "/" + id.Substring(2, 2) + "/" + id.Substring(4, 2);
+                c.Thumb = c.Thumb.Substring(c.Thumb.LastIndexOf("/"));
                 c.Thumb = 
                     path + c.Thumb + "_a.jpg" + "|" +
                     path + c.Thumb + "4.jpg" + "|" +
