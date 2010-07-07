@@ -29,9 +29,9 @@ namespace OnlineVideos.Sites
             if (GUIOnlineVideos.currentDownloads.Count > 0)
             {
                 // add a category for all downloads in progress
-                if (!cachedCategories.TryGetValue("Downloading", out cat))
+                if (!cachedCategories.TryGetValue(Translation.Downloading, out cat))
                 {
-                    cat = new Category() { Name = "Downloading", Description = "Shows a list of downloads currently running." };
+                    cat = new Category() { Name = Translation.Downloading, Description = Translation.DownloadingDescription };
                     cachedCategories.Add(cat.Name, cat);
                 }
                 Settings.Categories.Add(cat);
@@ -126,7 +126,7 @@ namespace OnlineVideos.Sites
                         loVideoInfo.Title = di.Title;                        
                         loVideoInfo.ImageUrl = di.ThumbFile;
                         loVideoInfo.Length = di.Start.ToString("HH:mm:ss") + progressInfo;
-                        loVideoInfo.Description = string.Format("Download from {0} to {1}", di.Url, di.LocalFile, progressInfo);
+                        loVideoInfo.Description = string.Format("{0}\n{1}", di.Url, di.LocalFile, progressInfo);
                         loVideoInfoList.Add(loVideoInfo);
                     }
                 }
