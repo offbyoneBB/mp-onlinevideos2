@@ -340,28 +340,20 @@ namespace OnlineVideos
                 dlgSel.Add(Translation.RelatedVideos);
                 dialogOptions.Add("RelatedVideos");
             }
-            if (SelectedSite is Sites.DownloadedVideoUtil)
-            {
-                dlgSel.Add(Translation.Delete);
-                dialogOptions.Add("Delete");
-            }
-            else
+            if (!(SelectedSite is Sites.DownloadedVideoUtil))
             {
                 dlgSel.Add(Translation.Download);
                 dialogOptions.Add("Download");
             }
-            dlgSel.DoModal(GetID);
-            if (dlgSel.SelectedId == -1) return;
             VideoInfo loSelectedVideo = CurrentState == State.videos ? currentVideoList[liSelected] : currentTrailerList[liSelected];
+            List<string> siteSpecificEntries = SelectedSite.GetContextMenuEntries(selectedCategory, loSelectedVideo);
+            if (siteSpecificEntries != null) foreach (string entry in siteSpecificEntries) {dlgSel.Add(entry); dialogOptions.Add(entry);}
+            dlgSel.DoModal(GetID);
+            if (dlgSel.SelectedId == -1) return;            
             switch (dialogOptions[dlgSel.SelectedId - 1])
             {
                 case "PlayAll":
                     PlayAll();
-                    break;
-                case "Delete":
-                    if (System.IO.File.Exists(loSelectedVideo.ImageUrl)) System.IO.File.Delete(loSelectedVideo.ImageUrl);
-                    if (System.IO.File.Exists(loSelectedVideo.VideoUrl)) System.IO.File.Delete(loSelectedVideo.VideoUrl);
-                    DisplayVideos_Category(selectedCategory, true);
                     break;
                 case "AddToFav":
                     AddFavorite(loSelectedVideo, true);
@@ -377,6 +369,16 @@ namespace OnlineVideos
                     break;
                 case "Download":
                     SaveVideo(loSelectedVideo);
+                    break;
+                default:
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    {
+                        return SelectedSite.ExecuteContextMenuEntry(selectedCategory, loSelectedVideo, dialogOptions[dlgSel.SelectedId - 1]);
+                    },
+                    delegate(bool success, object result)
+                    {
+                        if (success && result != null && (bool)result) DisplayVideos_Category(selectedCategory, true);
+                    }, "executing " + dialogOptions[dlgSel.SelectedId - 1], true);
                     break;
             }
         }
@@ -1623,7 +1625,7 @@ namespace OnlineVideos
                 {
                     List<String> loUrlList = result as List<String>;
 
-                    // remove all invalid entries from the list of playback url
+                    // remove all invalid entries from the list of playback urls
                     if (loUrlList != null)
                     {
                         int i = 0;
@@ -1688,22 +1690,22 @@ namespace OnlineVideos
                 if (!(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile))))
                 {
                     System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile));
-                }
-
-                lock (GUIOnlineVideos.currentDownloads) currentDownloads.Add(url, downloadInfo); // make access threadsafe
+                }                
 
                 if (url.ToLower().StartsWith("mms://"))
                 {
+                    MMSDownloadHelper dlHelper = new MMSDownloadHelper();
                     System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
                     {
-                        Exception exception = MMSDownloadHelper.Download(o as DownloadInfo);
+                        Exception exception = dlHelper.Download(o as DownloadInfo);
                         if (exception == null) OnDownloadFileCompleted(this, new AsyncCompletedEventArgs(null, false, o as DownloadInfo));
                         else
                         {
                             Log.Error("Error downloading {0}, Msg: ", url, exception.Message);
-                            OnDownloadFileCompleted(this, new AsyncCompletedEventArgs(exception, true, o as DownloadInfo));
+                            OnDownloadFileCompleted(this, new AsyncCompletedEventArgs(exception, dlHelper.Cancelled, o as DownloadInfo));
                         }
                     });
+                    downloadInfo.Downloader = dlHelper;
                     downloadThread.IsBackground = true;
                     downloadThread.Name = "OnlineVideosDownload";
                     downloadThread.Start(downloadInfo);
@@ -1712,11 +1714,14 @@ namespace OnlineVideos
                 {
                     // download file from web
                     WebClient loClient = new WebClient();
+                    downloadInfo.Downloader = loClient;
                     loClient.Headers.Add("user-agent", OnlineVideoSettings.USERAGENT);
                     loClient.DownloadFileCompleted += OnDownloadFileCompleted;
                     loClient.DownloadProgressChanged += downloadInfo.DownloadProgressCallback;
                     loClient.DownloadFileAsync(new Uri(url), downloadInfo.LocalFile, downloadInfo);
                 }
+
+                lock (GUIOnlineVideos.currentDownloads) currentDownloads.Add(url, downloadInfo); // make access threadsafe
             },
             Translation.GettingPlaybackUrlsForVideo, true);
         }
@@ -1726,7 +1731,7 @@ namespace OnlineVideos
             DownloadInfo downloadInfo = e.UserState as DownloadInfo;
             lock (GUIOnlineVideos.currentDownloads) currentDownloads.Remove(downloadInfo.Url); // make access threadsafe
 
-            if (e.Error != null)
+            if (e.Error != null && !e.Cancelled)
             {
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (loDlgNotify != null)
@@ -1761,7 +1766,10 @@ namespace OnlineVideos
                 if (loDlgNotify != null)
                 {
                     loDlgNotify.Reset();
-                    loDlgNotify.SetHeading(Translation.DownloadComplete);
+                    if (e.Cancelled)
+                        loDlgNotify.SetHeading(Translation.DownloadCancelled);
+                    else
+                        loDlgNotify.SetHeading(Translation.DownloadComplete);
                     loDlgNotify.SetText(string.Format("{0}{1}", downloadInfo.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""));
                     loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
                 }

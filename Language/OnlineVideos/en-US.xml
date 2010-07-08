@@ -30,6 +30,7 @@
   <string Field="Downloading">Downloading</string>
   <string Field="DownloadingDescription">Shows a list of downloads currently running.</string>
   <string Field="DownloadFailed">Download failed: {0}</string>
+  <string Field="DownloadCancelled">Download Cancelled</string>
   <string Field="DownloadComplete">Download Complete</string>
   <string Field="DownloadedVideos">Downloaded Videos</string>
   <string Field="Delete">Delete</string>

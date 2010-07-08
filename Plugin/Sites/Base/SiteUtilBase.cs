@@ -324,6 +324,12 @@ namespace OnlineVideos.Sites
             }
         }
 
+        /// <summary>
+        /// This function checks a given string, if it points to a file that is a valid video.
+        /// It will check for protocol and known and supported video extensions.
+        /// </summary>
+        /// <param name="fsUrl">the string to check which should be a valid URI.</param>
+        /// <returns>true if the url points to a video that can be played with directshow.</returns>
         public virtual bool isPossibleVideo(string fsUrl)
         {
             if (string.IsNullOrEmpty(fsUrl)) return false; // empty string is not a video
@@ -335,6 +341,31 @@ namespace OnlineVideos.Sites
                 foreach (string anExt in OnlineVideoSettings.Instance.VideoExtensions.Keys) if (fsUrl.Contains(anExt)) { isVideo = true; break; }
             }
             return isVideo;
+        }
+
+        /// <summary>
+        /// This function will be called when a contextmenu for a video is shown in the GUI. 
+        /// Override it to add your own entries (which should be localized).
+        /// </summary>
+        /// <param name="selectedCategory"></param>
+        /// <param name="selectedItem"></param>
+        /// <returns>A list of string to be added to the context menu for the given VideoInfo.</returns>
+        public virtual List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// This function is called when one of the custom contextmenu entries was selected by the user.
+        /// Override it to handle the entries you added with <see cref="GetContextMenuEntries"/>.
+        /// </summary>
+        /// <param name="selectedCategory"></param>
+        /// <param name="selectedItem"></param>
+        /// <param name="choice"></param>
+        /// <returns>true, if videos for the current category need to be retrieved again</returns>
+        public virtual bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice)
+        {
+            return false;
         }
 
         # region static helper functions

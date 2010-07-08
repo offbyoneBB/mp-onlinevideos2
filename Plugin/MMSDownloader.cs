@@ -33,9 +33,11 @@ using System.Runtime.Remoting.Messaging;
 
 namespace OnlineVideos
 {
-    public static class MMSDownloadHelper
+    public class MMSDownloadHelper
     {
-        public static Exception Download(DownloadInfo downloadInfo)
+        public bool Cancelled { get; private set; }
+
+        public Exception Download(DownloadInfo downloadInfo)
         {
             try
             {
@@ -52,15 +54,20 @@ namespace OnlineVideos
                         readSize = mmsDL.Read(buffer, 0, buffSize);
                         fs.Write(buffer, 0, (int)readSize);
                     }
-                    while (readSize > 0);
+                    while (readSize > 0 && ! Cancelled);
                     mmsDL.Close();
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                return ex;                
+                return ex;
             }
+        }
+
+        public void CancelAsync()
+        {
+            Cancelled = true;
         }
     }
     public class MMSStreamProgressChangedEventArgs
