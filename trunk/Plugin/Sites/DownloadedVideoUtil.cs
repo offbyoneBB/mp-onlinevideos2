@@ -4,6 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using System.Net;
 
 namespace OnlineVideos.Sites
 {
@@ -127,11 +128,44 @@ namespace OnlineVideos.Sites
                         loVideoInfo.ImageUrl = di.ThumbFile;
                         loVideoInfo.Length = di.Start.ToString("HH:mm:ss") + progressInfo;
                         loVideoInfo.Description = string.Format("{0}\n{1}", di.Url, di.LocalFile, progressInfo);
+                        loVideoInfo.Other = di;
                         loVideoInfoList.Add(loVideoInfo);
                     }
                 }
             }
             return loVideoInfoList;
+        }
+
+        public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        {
+            List<string> options = new List<string>();
+            if (selectedCategory is RssLink)
+            {
+                options.Add(Translation.Delete);
+            }
+            else
+            {
+                options.Add(GUILocalizeStrings.Get(222));
+            }
+            return options;
+        }
+
+        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice)
+        {
+            if (choice == Translation.Delete)
+            {
+                if (System.IO.File.Exists(selectedItem.ImageUrl)) System.IO.File.Delete(selectedItem.ImageUrl);
+                if (System.IO.File.Exists(selectedItem.VideoUrl)) System.IO.File.Delete(selectedItem.VideoUrl);
+                return true;
+            }
+            else if (choice == GUILocalizeStrings.Get(222))
+            {
+                WebClient wc = (selectedItem.Other as DownloadInfo).Downloader as WebClient;
+                if (wc != null) wc.CancelAsync();
+                MMSDownloadHelper mh = (selectedItem.Other as DownloadInfo).Downloader as MMSDownloadHelper;
+                if (mh != null) mh.CancelAsync();
+            }
+            return false;
         }
 
         #region Search

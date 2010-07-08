@@ -15,7 +15,8 @@ namespace OnlineVideos
         public string LocalFile { get; set; }
         public DateTime Start { get; private set; }
         public int PercentComplete { get; private set; }
-        public int KbTotal { get; private set; }        
+        public int KbTotal { get; private set; }
+        public object Downloader { get; set; }
         public void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
         {
             PercentComplete = e.ProgressPercentage;
