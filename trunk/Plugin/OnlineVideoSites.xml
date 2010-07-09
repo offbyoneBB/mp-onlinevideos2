@@ -1169,7 +1169,7 @@
         <item key="fileUrlRegEx"><![CDATA['srv':\s'(?<m0>[^']+)',\s*
 (?:'[^']+':\s'[^']+',\s*)?
 'file':\s'(?<m1>[^']+)']]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}flv2/{1}]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}/flv2/{1}]]></item>
         <item key="searchUrl"><![CDATA[http://www.xhamster.com/search.php?q={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
       </Configuration>
