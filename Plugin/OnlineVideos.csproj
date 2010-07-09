@@ -188,6 +188,7 @@
     <Compile Include="DownloadInfo.cs" />
     <Compile Include="Gui2UtilConnector.cs" />
     <Compile Include="GUISiteUpdater.cs" />
+    <Compile Include="HTTPDownloader.cs" />
     <Compile Include="ImageDownloader.cs" />
     <Compile Include="Jayrock.Json\BooleanObject.cs" />
     <Compile Include="Jayrock.Json\Collections\KeyedCollection.cs" />

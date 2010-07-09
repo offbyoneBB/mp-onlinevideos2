@@ -160,10 +160,7 @@ namespace OnlineVideos.Sites
             }
             else if (choice == GUILocalizeStrings.Get(222))
             {
-                WebClient wc = (selectedItem.Other as DownloadInfo).Downloader as WebClient;
-                if (wc != null) wc.CancelAsync();
-                MMSDownloadHelper mh = (selectedItem.Other as DownloadInfo).Downloader as MMSDownloadHelper;
-                if (mh != null) mh.CancelAsync();
+                ((IDownloader)(selectedItem.Other as DownloadInfo).Downloader).CancelAsync();
             }
             return false;
         }
