@@ -1690,48 +1690,33 @@ namespace OnlineVideos
                 if (!(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile))))
                 {
                     System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile));
-                }                
+                }
 
-                if (url.ToLower().StartsWith("mms://"))
+                System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
                 {
-                    MMSDownloadHelper dlHelper = new MMSDownloadHelper();
-                    System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
-                    {
-                        Exception exception = dlHelper.Download(o as DownloadInfo);
-                        if (exception == null) OnDownloadFileCompleted(this, new AsyncCompletedEventArgs(null, false, o as DownloadInfo));
-                        else
-                        {
-                            Log.Error("Error downloading {0}, Msg: ", url, exception.Message);
-                            OnDownloadFileCompleted(this, new AsyncCompletedEventArgs(exception, dlHelper.Cancelled, o as DownloadInfo));
-                        }
-                    });
-                    downloadInfo.Downloader = dlHelper;
-                    downloadThread.IsBackground = true;
-                    downloadThread.Name = "OnlineVideosDownload";
-                    downloadThread.Start(downloadInfo);
-                }
-                else
-                {
-                    // download file from web
-                    WebClient loClient = new WebClient();
-                    downloadInfo.Downloader = loClient;
-                    loClient.Headers.Add("user-agent", OnlineVideoSettings.USERAGENT);
-                    loClient.DownloadFileCompleted += OnDownloadFileCompleted;
-                    loClient.DownloadProgressChanged += downloadInfo.DownloadProgressCallback;
-                    loClient.DownloadFileAsync(new Uri(url), downloadInfo.LocalFile, downloadInfo);
-                }
+                    IDownloader dlHelper = null;
+                    if (url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloadHelper();
+                    else dlHelper = new HTTPDownloader();
+                    DownloadInfo dlInfo = o as DownloadInfo;
+                    dlInfo.Downloader = dlHelper;
+                    Exception exception = dlHelper.Download(dlInfo);
+                    if (exception != null) Log.Error("Error downloading {0}, Msg: ", dlInfo.Url, exception.Message);
+                    OnDownloadFileCompleted(dlInfo, exception);
+                });
+                downloadThread.IsBackground = true;
+                downloadThread.Name = "OnlineVideosDownload";
+                downloadThread.Start(downloadInfo);
 
                 lock (GUIOnlineVideos.currentDownloads) currentDownloads.Add(url, downloadInfo); // make access threadsafe
             },
             Translation.GettingPlaybackUrlsForVideo, true);
         }
 
-        private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            DownloadInfo downloadInfo = e.UserState as DownloadInfo;
+        private void OnDownloadFileCompleted(DownloadInfo downloadInfo, Exception error)
+        {            
             lock (GUIOnlineVideos.currentDownloads) currentDownloads.Remove(downloadInfo.Url); // make access threadsafe
 
-            if (e.Error != null && !e.Cancelled)
+            if (error != null && !downloadInfo.Downloader.Cancelled)
             {
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (loDlgNotify != null)
@@ -1766,7 +1751,7 @@ namespace OnlineVideos
                 if (loDlgNotify != null)
                 {
                     loDlgNotify.Reset();
-                    if (e.Cancelled)
+                    if (downloadInfo.Downloader.Cancelled)
                         loDlgNotify.SetHeading(Translation.DownloadCancelled);
                     else
                         loDlgNotify.SetHeading(Translation.DownloadComplete);
