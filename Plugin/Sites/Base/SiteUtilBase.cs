@@ -420,6 +420,11 @@ namespace OnlineVideos.Sites
             return GetWebData(url, cc, null, null, false);
         }
 
+        public static string GetWebData(string url, CookieContainer cc, bool forceUTF8)
+        {
+            return GetWebData(url, cc, null, null, forceUTF8);
+        }
+
         public static string GetWebData(string url, CookieContainer cc, string referer)
         {
             return GetWebData(url, cc, referer, null, false);
@@ -434,6 +439,7 @@ namespace OnlineVideos.Sites
         {
             return GetWebData(url, cc, referer, proxy, forceUTF8, false);
         }
+
         public static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy, bool forceUTF8, bool allowUnsafeHeader)
         {
             try

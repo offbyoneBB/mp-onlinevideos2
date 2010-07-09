@@ -79,7 +79,7 @@ namespace OnlineVideos.Sites
         protected string videoDescriptionXml;
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoAirDate for videoList.")]
         protected string videoAirDateXml;
-        [Category("OnlineVideosConfiguration"), Description("Boolean used for forcing UTF8 encoding on received data.")]
+        [Category("OnlineVideosConfiguration"), Description("Some webservers don't send a header that tells the content encoding. Use this bool to enforce UTF-8")]
         protected bool forceUTF8Encoding;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'thumb' match retrieved from the videoThumbXml or 'ImageUrl' of the videoListRegEx.")]
         protected string videoThumbFormatString = "{0}";
@@ -114,7 +114,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                string data = GetWebData(baseUrl, GetCookie());
+                string data = GetWebData(baseUrl, GetCookie(), forceUTF8Encoding);
                 if (!string.IsNullOrEmpty(data))
                 {
                     List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a separate list
@@ -145,7 +145,7 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            string data = GetWebData((parentCategory as RssLink).Url, GetCookie());
+            string data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8Encoding);
             if (!string.IsNullOrEmpty(data))
             {
                 parentCategory.SubCategories = new List<Category>();
@@ -228,7 +228,7 @@ namespace OnlineVideos.Sites
             // 3. retrieve a file from the web to find the actual playback url
             if (regEx_PlaylistUrl != null || regEx_FileUrl != null)
             {
-                string dataPage = GetWebData(resultUrl, GetCookie());
+                string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8Encoding);
                 // 3.a extra step to get a playlist file if needed
                 if (regEx_PlaylistUrl != null)
                 {
@@ -236,7 +236,7 @@ namespace OnlineVideos.Sites
                     if (matchPlaylistUrl.Success)
                     {
                         string playlistFileUrl = string.Format(playlistUrlFormatString, HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
-                        dataPage = GetWebData(playlistFileUrl, GetCookie());
+                        dataPage = GetWebData(playlistFileUrl, GetCookie(), forceUTF8Encoding);
                     }
                     else return ""; // if no match, return empty url -> error
                 }
@@ -323,7 +323,7 @@ namespace OnlineVideos.Sites
         protected List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
-            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), null, null, forceUTF8Encoding);
+            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), forceUTF8Encoding);
             if (data.Length > 0)
             {
                 if (regEx_VideoList != null)
