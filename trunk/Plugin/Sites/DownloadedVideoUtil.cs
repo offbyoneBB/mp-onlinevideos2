@@ -121,7 +121,8 @@ namespace OnlineVideos.Sites
                 {
                     foreach (DownloadInfo di in GUIOnlineVideos.currentDownloads.Values)
                     {
-                        string progressInfo = (di.PercentComplete != 0 || di.KbTotal != 0) ? string.Format(" | {0}% / {1} KB", di.PercentComplete, di.KbTotal.ToString("n0")) : "";
+                        string progressInfo = (di.PercentComplete != 0 || di.KbTotal != 0 || di.KbDownloaded != 0) ?
+                            string.Format(" | {0}% / {1} KB - {2} KB/sec", di.PercentComplete, di.KbTotal > 0 ? di.KbTotal.ToString("n0") : di.KbDownloaded.ToString("n0"), (int)(di.KbDownloaded / (DateTime.Now - di.Start).TotalSeconds)) : "";
 
                         VideoInfo loVideoInfo = new VideoInfo();
                         loVideoInfo.Title = di.Title;                        
