@@ -136,7 +136,7 @@
       <width>120</width>
       <font>font10</font>
       <label>#OnlineVideos.Translation.Creator.Label</label>
-      <textcolor>White</textcolor>
+      <textcolor>ffa9d0f7</textcolor>
       <visible>control.hastext(501)</visible>
     </control>
     <control>
@@ -148,7 +148,7 @@
       <width>780</width>
       <font>font10</font>
       <label>#OnlineVideos.owner</label>
-      <textcolor>White</textcolor>
+      <textcolor>ffa9d0f7</textcolor>
     </control>
     <control>
       <description>Description</description>

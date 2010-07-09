@@ -160,7 +160,7 @@
       <width>120</width>
       <font>font10</font>
       <label>#OnlineVideos.Translation.Runtime.Label</label>
-      <textcolor>White</textcolor>
+      <textcolor>ffa9d0f7</textcolor>
       <visible>!Control.IsVisible(51)+control.hastext(501)</visible>
     </control>
     <control>
@@ -172,7 +172,7 @@
       <width>780</width>
       <font>font10</font>
       <label>#OnlineVideos.length</label>
-      <textcolor>White</textcolor>
+      <textcolor>ffa9d0f7</textcolor>
       <visible>!Control.IsVisible(51)</visible>
     </control>
     <control>
@@ -184,7 +184,7 @@
       <width>120</width>
       <font>font10</font>
       <label>248</label>
-      <textcolor>White</textcolor>
+      <textcolor>ffa9d0f7</textcolor>
       <visible>string.equals(#OnlineVideos.state, sites)+control.hastext(502)</visible>
     </control>
     <control>
@@ -196,7 +196,7 @@
       <width>780</width>
       <font>font10</font>
       <label>#selecteditem2</label>
-      <textcolor>White</textcolor>
+      <textcolor>ffa9d0f7</textcolor>
       <visible>string.equals(#OnlineVideos.state, sites)</visible>
     </control>
     <control>
