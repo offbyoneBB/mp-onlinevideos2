@@ -19,7 +19,10 @@
   <string Field="DateOfRelease">Verschijningsdatum:</string>
   <string Field="Directors">Regisseurs</string>
   <string Field="Download">Download</string>
+  <string Field="Downloading">Downloaden</string>
+  <string Field="DownloadingDescription">Toont lijst van huidige downloads</string>
   <string Field="DownloadFailed">Download mislukt: {0}</string>
+  <string Field="DownloadCancelled">Download geannuleerd</string>
   <string Field="DownloadComplete">Download gereed</string>
   <string Field="DownloadedVideos">Gedownloade videos</string>
   <string Field="Delete">Verwijderen</string>
