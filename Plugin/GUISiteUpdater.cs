@@ -481,7 +481,123 @@ namespace OnlineVideos
             }            
         }
 
-        void ShowRestartMessage()
+        public static void AutoUpdate(bool dllsAreLoaded)
+        {
+            GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+            try
+            {
+                if (dlgPrgrs != null)
+                {
+                    dlgPrgrs.Reset();
+                    dlgPrgrs.DisplayProgressBar = true;
+                    dlgPrgrs.ShowWaitCursor = false;
+                    dlgPrgrs.DisableCancel(true);
+                    dlgPrgrs.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                    dlgPrgrs.StartModal(GUIWindowManager.ActiveWindow);
+                }
+                if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.RetrievingRemoteSites);
+                OnlineVideosWebservice.OnlineVideosService ws = null;
+                OnlineVideosWebservice.Site[] onlineSites = null;
+                if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                {
+                    ws = new OnlineVideosWebservice.OnlineVideosService();
+                    onlineSites = ws.GetSitesOverview();
+                }, "getting site overview from webservice")) return;
+
+                if (dlgPrgrs != null) dlgPrgrs.Percentage = 10;
+                bool saveRequired = false;
+                Dictionary<string, bool> requiredDlls = new Dictionary<string, bool>();
+                for (int i = 0; i < OnlineVideoSettings.Instance.SiteSettingsList.Count; i++)
+                {
+                    SiteSettings localSite = OnlineVideoSettings.Instance.SiteSettingsList[i];
+                    if (localSite.IsEnabled)
+                    {
+                        if (dlgPrgrs != null) dlgPrgrs.SetLine(1, localSite.Name);
+                        OnlineVideosWebservice.Site remoteSite = Array.Find(onlineSites, delegate(OnlineVideosWebservice.Site site) { return site.Name == localSite.Name; });
+                        if (remoteSite != null)
+                        {
+                            // remember what dlls are required and check for changed dlls later (regardless of lastUpdated on site)
+                            if (!string.IsNullOrEmpty(remoteSite.RequiredDll)) requiredDlls[remoteSite.RequiredDll] = true;
+                            // get site if updated on server
+                            if ((remoteSite.LastUpdated - localSite.LastUpdated).TotalMinutes > 2)
+                            {
+                                SiteSettings updatedSite = GUISiteUpdater.GetRemoteSite(remoteSite.Name, ws);
+                                if (updatedSite != null)
+                                {
+                                    OnlineVideoSettings.Instance.SiteSettingsList[i] = updatedSite;
+                                    saveRequired = true;
+                                }
+                            }
+                        }
+                    }
+                    if (dlgPrgrs != null) dlgPrgrs.Percentage = 10 + (70 * (i + 1) / OnlineVideoSettings.Instance.SiteSettingsList.Count);
+                }
+
+                if (requiredDlls.Count > 0)
+                {
+                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.RetrievingRemoteDlls);
+                    OnlineVideosWebservice.Dll[] onlineDlls = null;
+                    if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                    {
+                        onlineDlls = ws.GetDllsOverview();
+                    }, "getting dlls overview from webservice")) return;
+
+                    // target directory for dlls
+                    string dllDir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
+                    // temp target directory for dlls (if exists, delete and recreate)
+                    string dllTempDir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "OnlineVideos\\");
+                    if (System.IO.Directory.Exists(dllTempDir)) System.IO.Directory.Delete(dllTempDir, true);
+                    System.IO.Directory.CreateDirectory(dllTempDir);
+                    int dllsToCopy = 0;
+                    for (int i = 0; i < onlineDlls.Length; i++)
+                    {
+                        OnlineVideosWebservice.Dll anOnlineDll = onlineDlls[i];
+                        if (dlgPrgrs != null) dlgPrgrs.SetLine(1, anOnlineDll.Name);
+                        if (requiredDlls.ContainsKey(anOnlineDll.Name))
+                        {
+                            // update or download dll if needed
+                            string location = dllDir + anOnlineDll.Name + ".dll";
+                            bool download = true;
+                            if (System.IO.File.Exists(location))
+                            {
+                                byte[] data = null;
+                                data = System.IO.File.ReadAllBytes(location);
+                                System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                                string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
+                                if (md5LocalDll == anOnlineDll.MD5) download = false;
+                            }
+                            if (download)
+                            {
+                                // download dll to temp dir first
+                                if (GUISiteUpdater.DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll", ws))
+                                {
+                                    // if download was successfull, try to copy to target dir (if not successfull, mark for UAC prompted copy later)
+                                    try { System.IO.File.Copy(dllTempDir + anOnlineDll.Name + ".dll", location, true); }
+                                    catch { dllsToCopy++; }
+                                }
+                            }
+                        }
+                        if (dlgPrgrs != null) dlgPrgrs.Percentage = 80 + (15 * (i + 1) / onlineDlls.Length);
+                    }
+                    if (dllsToCopy > 0) GUISiteUpdater.CopyDlls(dllTempDir, dllDir);
+                }
+                if (saveRequired)
+                {
+                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.SavingLocalSiteList);
+                    OnlineVideoSettings.Instance.SaveSites();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
+            finally
+            {
+                if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, Translation.Done); dlgPrgrs.Close(); }
+            }
+        }
+
+        public static void ShowRestartMessage()
         {
             GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
             if (dlg != null)
