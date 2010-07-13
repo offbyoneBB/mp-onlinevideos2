@@ -1632,8 +1632,11 @@ namespace OnlineVideos
                             }
                         }
                     }
-                    url = DisplayPlaybackOptions(video, loUrlList[0]); //downloads the first file from the list, todo: download all if multiple
-                    if (url == "-1") return;
+                    if (loUrlList.Count > 0)
+                    {
+                        url = DisplayPlaybackOptions(video, loUrlList[0]); //downloads the first file from the list, todo: download all if multiple
+                        if (url == "-1") return; // user canceled the dialog -> don't download
+                    }
                 }
                 // if no valid url was returned show error msg
                 if (String.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
