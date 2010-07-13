@@ -49,19 +49,13 @@ namespace OnlineVideos
             return result;
         }
 
-        #if !MP102
         public override string GetModuleName()
         {
-            return OnlineVideoSettings.Instance.BasicHomeScreenName;
+            return OnlineVideoSettings.Instance.BasicHomeScreenName + ": " + Translation.ManageSites;
         }
-        #endif
 
         protected override void OnPageLoad()
         {
-            #if MP102
-            GUIPropertyManager.SetProperty("#currentmodule", OnlineVideoSettings.PLUGIN_NAME);
-            #endif
-
             Translation.TranslateSkin();
 
             base.OnPageLoad();

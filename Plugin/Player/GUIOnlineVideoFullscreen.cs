@@ -7,29 +7,25 @@ namespace OnlineVideos.Player
 {
     public class GUIOnlineVideoFullscreen : GUIVideoFullscreen
     {
-#if !MP102
         public override string GetModuleName()
         {
             return OnlineVideoSettings.Instance.BasicHomeScreenName + " Fullscreen";
         }
-#endif
 
         public const int WINDOW_FULLSCREEN_ONLINEVIDEO = 4758;
         public override int GetID { get { return WINDOW_FULLSCREEN_ONLINEVIDEO; } set { } }
-      
+
         public override bool Init()
         {
             bool bResult = Load(GUIGraphicsContext.Skin + @"\myonlinevideosFullScreen.xml");
-#if !MP102
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
-                {
-                    typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekIsRelative", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true) });
-                    typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekValue", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10) });
-                }
-#endif
+            using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
+            {
+                typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekIsRelative", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { settings.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true) });
+                typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekValue", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { settings.GetValueAsInt("movieplayer", "immediateskipstepsize", 10) });
+            }
             return bResult;
         }
-        
+
         public override void OnAction(Action action)
         {
             if (action.wID == Action.ActionType.ACTION_NEXT_ITEM)
@@ -73,7 +69,7 @@ namespace OnlineVideos.Player
             }
             base.OnAction(action);
         }
-        
+
         public override bool OnMessage(GUIMessage message)
         {
             bool result = base.OnMessage(message);

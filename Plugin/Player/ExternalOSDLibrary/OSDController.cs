@@ -169,9 +169,9 @@ namespace ExternalOSDLibrary
       _sizeChanged = parent_SizeChanged;
       _parentForm.SizeChanged += _sizeChanged;
       _minimized = false;
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
       {
-        _blankScreen = xmlreader.GetValueAsBool("externalOSDLibrary", "blankScreen", true);
+        _blankScreen = settings.GetValueAsBool("externalOSDLibrary", "blankScreen", true);
       }
     }
     #endregion

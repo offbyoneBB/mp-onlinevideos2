@@ -60,7 +60,7 @@ namespace OnlineVideos.Player
             this.Vmr9.Enable(false);
 
             // add the audio renderer
-            using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            using (Settings settings = new MPSettings())
             {
                 string audiorenderer = settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
                 DirectShowUtil.AddAudioRendererToGraph(base.graphBuilder, audiorenderer, false);
@@ -120,7 +120,7 @@ namespace OnlineVideos.Player
             this.Vmr9.Enable(false);
 
             // add the audio renderer
-            using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            using (Settings settings = new MPSettings())
             {
                 string audiorenderer = settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
                 DirectShowUtil.AddAudioRendererToGraph(base.graphBuilder, audiorenderer, false);
@@ -198,7 +198,7 @@ namespace OnlineVideos.Player
             PercentageBuffered = 100.0f;
 
             // add the audio renderer
-            using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            using (Settings settings = new MPSettings())
             {
                 string audiorenderer = settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
                 DirectShowUtil.AddAudioRendererToGraph(graphBuilder, audiorenderer, false);
@@ -318,8 +318,7 @@ namespace OnlineVideos.Player
                 GUIGraphicsContext.Vmr9Active = false;                
 
                 // add the audio renderer
-                //using (Settings settings = new MPSettings()) // only available in 1.1+
-                using (Settings settings = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                using (Settings settings = new MPSettings())
                 {
                     string audiorenderer = settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
                     DirectShowUtil.AddAudioRendererToGraph(graphBuilder, audiorenderer, false);
@@ -377,9 +376,7 @@ namespace OnlineVideos.Player
                 {
                     Log.Error("OnlineVideosPlayer: Failed to render file -> vmr9");
                     mediaCtrl = null;
-#if !MP102
                     Cleanup();
-#endif
                     return false;
                 }
 
@@ -405,22 +402,7 @@ namespace OnlineVideos.Player
                 Log.Error("OnlineVideosPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
                 return false;
             }
-        }
-
-        System.Reflection.FieldInfo vmr9Field = null;
-        private new VMR9Util Vmr9
-        {
-            get
-            {
-                if (vmr9Field == null) vmr9Field = typeof(VideoPlayerVMR9).GetField("Vmr9", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                return (VMR9Util)vmr9Field.GetValue(this);
-            }
-            set
-            {
-                if (vmr9Field == null) vmr9Field = typeof(VideoPlayerVMR9).GetField("Vmr9", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                vmr9Field.SetValue(this, value);
-            }
-        }
+        }        
 
         public override bool Play(string strFile)
         {

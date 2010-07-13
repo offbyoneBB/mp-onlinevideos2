@@ -8,12 +8,10 @@ namespace OnlineVideos.Player
         public const int WINDOW_ONLINEVIDEOS_OSD = 4759;
         public override int GetID { get { return WINDOW_ONLINEVIDEOS_OSD; } set { } }
 
-#if !MP102
         public override string GetModuleName()
         {
             return OnlineVideoSettings.Instance.BasicHomeScreenName + " OSD";
         }
-#endif
 
         public override bool Init()
         {
