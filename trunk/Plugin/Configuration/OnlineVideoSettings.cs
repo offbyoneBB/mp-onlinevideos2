@@ -125,45 +125,45 @@ namespace OnlineVideos
         void Load()
         {
             try
-            {                
-                using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            {
+                using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
                 {
-                    BasicHomeScreenName = xmlreader.GetValueAsString(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
+                    BasicHomeScreenName = settings.GetValueAsString(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
 
-                    ThumbsDir = xmlreader.GetValueAsString(CFG_SECTION, CFG_THUMBNAIL_DIR, ThumbsDir).Replace("/", @"\");
+                    ThumbsDir = settings.GetValueAsString(CFG_SECTION, CFG_THUMBNAIL_DIR, ThumbsDir).Replace("/", @"\");
                     if (!ThumbsDir.EndsWith(@"\")) ThumbsDir = ThumbsDir + @"\"; // fix thumbnail dir to include the trailing slash
                     try { if (!Directory.Exists(ThumbsDir)) Directory.CreateDirectory(ThumbsDir); }
                     catch (Exception e) { Log.Error("Failed to create thumb dir: {0}", e.ToString()); }
-                    thumbAge = xmlreader.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, thumbAge);
+                    thumbAge = settings.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, thumbAge);
                     Log.Info("Thumbnails will be stored in {0} with a maximum age of {1} days.", ThumbsDir, thumbAge);
                     
-                    DownloadDir = xmlreader.GetValueAsString(CFG_SECTION, CFG_DOWNLOAD_DIR, "");
+                    DownloadDir = settings.GetValueAsString(CFG_SECTION, CFG_DOWNLOAD_DIR, "");
                     try { if (Directory.Exists(DownloadDir)) Directory.CreateDirectory(DownloadDir); }
                     catch (Exception e) { Log.Error("Failed to create download dir: {0}", e.ToString()); }
 
                     // enable pin by default -> child protection
-                    useAgeConfirmation = xmlreader.GetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, useAgeConfirmation);
+                    useAgeConfirmation = settings.GetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, useAgeConfirmation);
                     // set an almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
-                    pinAgeConfirmation = xmlreader.GetValueAsString(CFG_SECTION, CFG_PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
-                    useQuickSelect = xmlreader.GetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
-                    rememberLastSearch = xmlreader.GetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);
-                    cacheTimeout = xmlreader.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
-                    utilTimeout = xmlreader.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
-                    wmpbuffer = xmlreader.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
-                    playbuffer = xmlreader.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
-                    email = xmlreader.GetValueAsString(CFG_SECTION, CFG_EMAIL, "");
-                    password = xmlreader.GetValueAsString(CFG_SECTION, CFG_PASSWORD, "");
-                    string lsFilter = xmlreader.GetValueAsString(CFG_SECTION, CFG_FILTER, "").Trim();
+                    pinAgeConfirmation = settings.GetValueAsString(CFG_SECTION, CFG_PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
+                    useQuickSelect = settings.GetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
+                    rememberLastSearch = settings.GetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);
+                    cacheTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
+                    utilTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
+                    wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
+                    playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
+                    email = settings.GetValueAsString(CFG_SECTION, CFG_EMAIL, "");
+                    password = settings.GetValueAsString(CFG_SECTION, CFG_PASSWORD, "");
+                    string lsFilter = settings.GetValueAsString(CFG_SECTION, CFG_FILTER, "").Trim();
                     FilterArray = lsFilter != "" ? lsFilter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries) : null;
 
                     // set updateOnStart only when defined, so we have 3 modi: undefined = ask, true = don't ask and update, false = don't ask and don't update
-                    string doUpdateString = xmlreader.GetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_UPDATEONSTART);
-                    if (!string.IsNullOrEmpty(doUpdateString)) updateOnStart = xmlreader.GetValueAsBool(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_UPDATEONSTART, true);
+                    string doUpdateString = settings.GetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_UPDATEONSTART);
+                    if (!string.IsNullOrEmpty(doUpdateString)) updateOnStart = settings.GetValueAsBool(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_UPDATEONSTART, true);
 
                     // read the video extensions configured in MediaPortal
                     VideoExtensions = new SortedList<string, bool>();
                     string[] mediaportal_user_configured_video_extensions;
-                    string strTmp = xmlreader.GetValueAsString("movies", "extensions", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts");
+                    string strTmp = settings.GetValueAsString("movies", "extensions", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts");
                     mediaportal_user_configured_video_extensions = strTmp.Split(',');
                     foreach (string anExt in mediaportal_user_configured_video_extensions)
                     {
@@ -262,26 +262,25 @@ namespace OnlineVideos
         {
             try
             {
-                Log.Info("using MP config file:" + Config.GetFile(Config.Dir.Config, "MediaPortal.xml"));
-                using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
                 {
-                    xmlwriter.SetValue(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
-                    xmlwriter.SetValue(CFG_SECTION, CFG_THUMBNAIL_DIR, ThumbsDir);
-                    xmlwriter.SetValue(CFG_SECTION, CFG_THUMBNAIL_AGE, thumbAge);
-                    xmlwriter.SetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, useAgeConfirmation);
-                    xmlwriter.SetValue(CFG_SECTION, CFG_PIN_AGECONFIRMATION, pinAgeConfirmation);
-                    xmlwriter.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
-                    xmlwriter.SetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);
-                    xmlwriter.SetValue(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
-                    xmlwriter.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
-                    xmlwriter.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
-                    xmlwriter.SetValue(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
-                    if (FilterArray != null && FilterArray.Length > 0) xmlwriter.SetValue(CFG_SECTION, CFG_FILTER, string.Join(",", FilterArray));
-                    if (!string.IsNullOrEmpty(DownloadDir)) xmlwriter.SetValue(CFG_SECTION, CFG_DOWNLOAD_DIR, DownloadDir);
-                    if (!string.IsNullOrEmpty(email)) xmlwriter.SetValue(CFG_SECTION, CFG_EMAIL, email);
-                    if (!string.IsNullOrEmpty(password)) xmlwriter.SetValue(CFG_SECTION, CFG_PASSWORD, password);
-                    if (updateOnStart == null) xmlwriter.RemoveEntry(CFG_SECTION, CFG_UPDATEONSTART);
-                    else xmlwriter.SetValueAsBool(CFG_SECTION, CFG_UPDATEONSTART, updateOnStart.Value);
+                    settings.SetValue(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
+                    settings.SetValue(CFG_SECTION, CFG_THUMBNAIL_DIR, ThumbsDir);
+                    settings.SetValue(CFG_SECTION, CFG_THUMBNAIL_AGE, thumbAge);
+                    settings.SetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, useAgeConfirmation);
+                    settings.SetValue(CFG_SECTION, CFG_PIN_AGECONFIRMATION, pinAgeConfirmation);
+                    settings.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
+                    settings.SetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);
+                    settings.SetValue(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
+                    settings.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
+                    settings.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
+                    settings.SetValue(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
+                    if (FilterArray != null && FilterArray.Length > 0) settings.SetValue(CFG_SECTION, CFG_FILTER, string.Join(",", FilterArray));
+                    if (!string.IsNullOrEmpty(DownloadDir)) settings.SetValue(CFG_SECTION, CFG_DOWNLOAD_DIR, DownloadDir);
+                    if (!string.IsNullOrEmpty(email)) settings.SetValue(CFG_SECTION, CFG_EMAIL, email);
+                    if (!string.IsNullOrEmpty(password)) settings.SetValue(CFG_SECTION, CFG_PASSWORD, password);
+                    if (updateOnStart == null) settings.RemoveEntry(CFG_SECTION, CFG_UPDATEONSTART);
+                    else settings.SetValueAsBool(CFG_SECTION, CFG_UPDATEONSTART, updateOnStart.Value);
                 }
 
                 SaveSites();

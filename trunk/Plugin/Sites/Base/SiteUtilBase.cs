@@ -62,9 +62,9 @@ namespace OnlineVideos.Sites
                     }
                     else if (((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
                     {
-                        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+                        using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
                         {
-                            string value = xmlreader.GetValueAsString(OnlineVideoSettings.CFG_SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteSettings.Name).Replace(' ', '_'), field.Name), "NO_VALUE_FOUND");
+                            string value = settings.GetValueAsString(OnlineVideoSettings.CFG_SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteSettings.Name).Replace(' ', '_'), field.Name), "NO_VALUE_FOUND");
                             if (value != "NO_VALUE_FOUND")
                             {
                                 try
@@ -728,10 +728,10 @@ namespace OnlineVideos.Sites
                     object[] attrs = _field.GetCustomAttributes(typeof(CategoryAttribute), false);
                     if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
                     {
-                        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(MediaPortal.Configuration.Config.GetFile(MediaPortal.Configuration.Config.Dir.Config, "MediaPortal.xml")))
+                        using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
                         {
                             string siteName = (component as Sites.SiteUtilBase).Settings.Name;
-                            xmlreader.SetValue(OnlineVideoSettings.CFG_SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());
+                            settings.SetValue(OnlineVideoSettings.CFG_SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());
                         }
                     }
                 }

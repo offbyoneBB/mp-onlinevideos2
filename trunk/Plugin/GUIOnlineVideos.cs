@@ -211,12 +211,10 @@ namespace OnlineVideos
 
         #region GUIWindow Overrides
 
-#if !MP102
         public override string GetModuleName()
         {
             return OnlineVideoSettings.Instance.BasicHomeScreenName;
         }
-#endif
 
         public override int GetID
         {
@@ -234,10 +232,10 @@ namespace OnlineVideos
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
             CurrentState = State.sites;
             // get last active module settings  
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
             {
-                bool lastActiveModuleSetting = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
-                int lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
+                bool lastActiveModuleSetting = settings.GetValueAsBool("general", "showlastactivemodule", false);
+                int lastActiveModule = settings.GetValueAsInt("general", "lastactivemodule", -1);
                 preventDialogOnLoad = (lastActiveModuleSetting && (lastActiveModule == GetID));
             }
             return result;
@@ -245,9 +243,6 @@ namespace OnlineVideos
 
         protected override void OnPageLoad()
         {
-#if MP102
-            GUIPropertyManager.SetProperty("#currentmodule", ((ISetupForm)this).PluginName());
-#endif
             if (!firstLoadDone)
             {
                 // replace g_player's ShowFullScreenWindowVideo
@@ -710,12 +705,12 @@ namespace OnlineVideos
             if (newWindowId != Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO)
             {
                 // Save view
-                using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
                 {
-                    xmlwriter.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_MODE, (int)currentSiteView);
-                    xmlwriter.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_ORDER, (int)siteOrder);
-                    xmlwriter.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_VIDEOVIEW_MODE, (int)currentVideoView);
-                    xmlwriter.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_CATEGORYVIEW_MODE, (int)currentCategoryView);
+                    settings.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_MODE, (int)currentSiteView);
+                    settings.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_ORDER, (int)siteOrder);
+                    settings.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_VIDEOVIEW_MODE, (int)currentVideoView);
+                    settings.SetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_CATEGORYVIEW_MODE, (int)currentCategoryView);
                 }
 
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
@@ -769,12 +764,12 @@ namespace OnlineVideos
 
         private void LoadSettings()
         {
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+            using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
             {
-                currentSiteView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
-                siteOrder = (SiteOrder)xmlreader.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_ORDER, 0);
-                currentVideoView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
-                currentCategoryView = (GUIFacadeControl.ViewMode)xmlreader.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
+                currentSiteView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
+                siteOrder = (SiteOrder)settings.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_SITEVIEW_ORDER, 0);
+                currentVideoView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
+                currentCategoryView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
             }
             OnlineVideoSettings.Instance.BuildSiteList();
         }
@@ -1533,9 +1528,7 @@ namespace OnlineVideos
                             }
                             else
                             {
-#if !MP102
                                 factory.PreparedPlayer.Dispose();
-#endif
                                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                                 if (dlg != null)
                                 {
@@ -1549,9 +1542,7 @@ namespace OnlineVideos
                         }
                         else
                         {
-#if !MP102
                             factory.PreparedPlayer.Dispose();
-#endif
                         }
                     },
                     Translation.StartingPlayback, false);

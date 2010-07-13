@@ -343,14 +343,9 @@ namespace OnlineVideos
         {
             CodecConfiguration cc = CodecConfiguration.Instance;
 
-#if MP102
-            chkFLVSplitterInstalled.Checked = cc.MPC_HC_FLVSplitter.IsInstalled;
-            tbxFLVSplitter.Text = cc.MPC_HC_FLVSplitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.MPC_HC_FLVSplitter.Name, cc.MPC_HC_FLVSplitter.Version, cc.MPC_HC_FLVSplitter.CodecFile) : "";
-#else
             chkFLVSplitterInstalled.Checked = cc.FLV_Splitter.IsInstalled;
             tbxFLVSplitter.Text = cc.FLV_Splitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.FLV_Splitter.Name, cc.FLV_Splitter.Version, cc.FLV_Splitter.CodecFile) : "";
-#endif
-
+            
             chkMP4SplitterInstalled.Checked = cc.MPC_HC_MP4Splitter.IsInstalled;
             tbxMP4Splitter.Text = cc.MPC_HC_MP4Splitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.MPC_HC_MP4Splitter.Name, cc.MPC_HC_MP4Splitter.Version, cc.MPC_HC_MP4Splitter.CodecFile) : "";
 

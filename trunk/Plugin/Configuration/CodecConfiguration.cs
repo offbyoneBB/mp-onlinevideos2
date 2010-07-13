@@ -47,7 +47,6 @@ namespace OnlineVideos
 
         private CodecConfiguration()
         {
-#if !MP102
             // get FLV splitter from registry by MediaSubType
             Merit highestMerit = Merit.DoNotUse;
             ArrayList list = FilterHelper.GetFilters(MediaType.Stream, new Guid(MediaSubType_FLV));
@@ -68,9 +67,6 @@ namespace OnlineVideos
                 }
             }
             CheckCodec(ref FLV_Splitter);
-#else
-            CheckCodec(ref MPC_HC_FLVSplitter);
-#endif
             CheckCodec(ref MPC_HC_MP4Splitter);
             CheckCodec(ref HaaliMediaSplitter);
             CheckCodec(ref WM_ASFReader);

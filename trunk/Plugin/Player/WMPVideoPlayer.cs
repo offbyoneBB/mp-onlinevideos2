@@ -411,12 +411,10 @@ namespace OnlineVideos.Player
             get { return true; }
         }
 
-#if !MP102
         public override bool HasViz
         {
             get { return true; }
         }
-#endif
 
         public override bool IsCDA
         {
@@ -424,11 +422,8 @@ namespace OnlineVideos.Player
         }
 
         #region IDisposable Members
-#if MP102
-        public override void Release()
-#else
+
         public override void Dispose()
-#endif
         {
             GUIWindowManager.OnNewAction -= GUIWindowManager_OnNewAction;
 
