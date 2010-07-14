@@ -48,7 +48,7 @@ namespace OnlineVideos
             udPlayBuffer.SelectedItem = settings.playbuffer.ToString();
             chkUseQuickSelect.Checked = settings.useQuickSelect;
             chkRememberLastSearch.Checked = settings.rememberLastSearch;
-            if (settings.updateOnStart != null) chkDoAutoUpdate.Checked = settings.updateOnStart.Value;
+            if (settings.updateOnStart != null) chkDoAutoUpdate.CheckState = settings.updateOnStart.Value ? CheckState.Checked : CheckState.Unchecked;
             else chkDoAutoUpdate.CheckState = CheckState.Indeterminate;
 
             /** fill "Sites" tab **/
