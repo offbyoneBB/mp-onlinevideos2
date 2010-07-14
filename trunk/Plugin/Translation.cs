@@ -229,6 +229,8 @@ namespace OnlineVideos
         public static string Actors = "Actors";
         public static string AddToMySites = "Add to my sites";
         public static string AddToFavourites = "Add to favourites";
+        public static string AutomaticUpdate = "Automatic Update";
+        public static string AutomaticUpdateDisabled = "Automatic Update disabled.";
 
         // B
         public static string Broken = "Broken";
@@ -238,6 +240,7 @@ namespace OnlineVideos
         public static string Category = "Category";
         public static string Categories = "Categories";
         public static string Creator = "Creator";
+        public static string CheckingForPluginUpdate = "checking for updated plugin version";
 
         // D
         public static string DateOfRelease = "Date of Release";
@@ -275,12 +278,18 @@ namespace OnlineVideos
         public static string GettingPreviousPageVideos = "getting previous page videos";
         public static string GettingPlaybackUrlsForVideo = "getting playback urls for video";
         public static string GettingDynamicCategories = "getting dynamic categories";
+        public static string GettingReports = "getting reports from webservice";
+        public static string GettingSiteXml = "getting site xml from webservice";
+        public static string GettingIcon = "getting site icon from webservice";
+        public static string GettingBanner = "getting site banner from webservice";
+        public static string GettingDll = "getting dll from webservice";
 
         // H
 
         // I
 
         // L
+        public static string LatestVersionRequired = "Latest version ({0}) required!";
         public static string Language = "Language";
         public static string LayoutList = "Layout: List";
         public static string LayoutIcons = "Layout: Icons";
@@ -295,6 +304,7 @@ namespace OnlineVideos
         public static string NextPage = "Next page";
         public static string None = "None";
         public static string NoVideoFound = "No video found";
+        public static string NoReportsForSite = "No reports for this site available.";
         public static string NewDllDownloaded = "New dll downloaded!";
 
         // O

@@ -285,7 +285,7 @@ namespace OnlineVideos
                 {
                     OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
                     reports = ws.GetReports(site.Name);
-                }, "getting reports from webservice"))
+                }, Translation.GettingReports))
                 {
                     if (reports == null || reports.Length == 0)
                     {
@@ -294,13 +294,19 @@ namespace OnlineVideos
                         {
                             dlg.Reset();
                             dlg.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
-                            dlg.SetText("No reports for this site available.");
+                            dlg.SetText(Translation.NoReportsForSite);
                             dlg.DoModal(GUIWindowManager.ActiveWindow);
                         }
                     }
                     else
                     {
                         GUIControl.ClearControl(GetID, GUI_infoList.GetID);
+
+                        Array.Sort(reports, new Comparison<OnlineVideosWebservice.Report>(delegate(OnlineVideosWebservice.Report a, OnlineVideosWebservice.Report b)
+                        {
+                            return b.Date.CompareTo(a.Date);
+                        }));
+
                         foreach (OnlineVideosWebservice.Report report in reports)
                         {
                             string shortMsg = report.Message.Replace(Environment.NewLine, " ").Replace("\n", " ").Replace("\r", " ");
@@ -370,7 +376,7 @@ namespace OnlineVideos
                     dlgPrgrs.DisplayProgressBar = true;
                     dlgPrgrs.ShowWaitCursor = false;
                     dlgPrgrs.DisableCancel(true);
-                    dlgPrgrs.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                    dlgPrgrs.SetHeading(string.Format("{0} - {1}", OnlineVideoSettings.Instance.BasicHomeScreenName, Translation.FullUpdate));
                     dlgPrgrs.StartModal(GetID);
                 }
 
@@ -479,6 +485,20 @@ namespace OnlineVideos
         {
             bool? hasLatestVersion = CheckOnlineVideosVersion();
 
+            if (hasLatestVersion == false)
+            {
+                GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                if (dlg != null)
+                {
+                    dlg.Reset();
+                    dlg.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                    dlg.SetLine(1, Translation.AutomaticUpdateDisabled);
+                    dlg.SetLine(2, string.Format(Translation.LatestVersionRequired, versionOnline.ToString()));
+                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                }
+                return;
+            }
+
             GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
             try
             {
@@ -488,10 +508,10 @@ namespace OnlineVideos
                     dlgPrgrs.DisplayProgressBar = true;
                     dlgPrgrs.ShowWaitCursor = false;
                     dlgPrgrs.DisableCancel(true);
-                    dlgPrgrs.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                    dlgPrgrs.SetHeading(string.Format("{0} - {1}", OnlineVideoSettings.Instance.BasicHomeScreenName, Translation.AutomaticUpdate));
+                    dlgPrgrs.SetLine(1, Translation.RetrievingRemoteSites);
                     dlgPrgrs.StartModal(GUIWindowManager.ActiveWindow);
                 }
-                if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.RetrievingRemoteSites);
 
                 GetRemoteOverviews();
 
@@ -713,16 +733,26 @@ namespace OnlineVideos
         {
             if (DateTime.Now - lastOverviewsRetrieved > TimeSpan.FromMinutes(10)) // only get sites every 10 minutes
             {
-                if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+                
+                if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
-                    OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
-                    onlineSites = ws.GetSitesOverview();
-                    onlineDlls = ws.GetDllsOverview();
-                    lastOverviewsRetrieved = DateTime.Now;                    
-                }, "getting site overview from webservice"))
+                    onlineSites = ws.GetSitesOverview();   
+                    
+                }, Translation.RetrievingRemoteSites))
                 {
-                    return true;
+                    return false;
                 }
+                if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                {
+                    onlineDlls = ws.GetDllsOverview();
+
+                }, Translation.RetrievingRemoteDlls))
+                {
+                    return false;
+                }
+                lastOverviewsRetrieved = DateTime.Now;
+                return true;
             }
             return false;
         }
@@ -734,7 +764,7 @@ namespace OnlineVideos
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
                 siteXml = ws.GetSiteXml(name);
-            }, "getting site xml from webservice"))
+            }, Translation.GettingSiteXml))
             {
                 if (siteXml.Length > 0)
                 {
@@ -757,7 +787,7 @@ namespace OnlineVideos
                 if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
                     icon = ws.GetSiteIcon(siteName);
-                }, "getting site icon from webservice"))
+                }, Translation.GettingIcon))
                 {
                     if (icon != null && icon.Length > 0)
                     {
@@ -775,7 +805,7 @@ namespace OnlineVideos
                 if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
                 {
                     banner = ws.GetSiteBanner(siteName);
-                }, "getting site banner from webservice"))
+                }, Translation.GettingBanner))
                 {
                     if (banner != null && banner.Length > 0)
                     {
@@ -796,7 +826,7 @@ namespace OnlineVideos
                 OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
                 byte[] onlineDllData = ws.GetDll(dllName);
                 if (onlineDllData != null && onlineDllData.Length > 0) System.IO.File.WriteAllBytes(localPath, onlineDllData);
-            }, "getting dll from webservice"))
+            }, Translation.GettingDll))
                 return true;
             else
                 return false;
@@ -815,7 +845,7 @@ namespace OnlineVideos
                     string tempFile = System.IO.Path.GetTempFileName();
                     new System.Net.WebClient().DownloadFile("http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml", tempFile);
                     versionOnline = new Version(MpeCore.Classes.ExtensionCollection.Load(tempFile).GetUniqueList().Items[0].GeneralInfo.Version.ToString());
-                }, "checking for updated plugin version"))
+                }, Translation.CheckingForPluginUpdate))
                 {
                     return null;
                 }

@@ -13,7 +13,9 @@
   <string Field="AddToMySites">Add to my sites</string>
   <string Field="AddToFavourites">Add to favorites</string>
   <string Field="AddingToFavorites">adding to favorites</string>
-  
+  <string Field="AutomaticUpdate">Automatic Update</string>
+  <string Field="AutomaticUpdateDisabled">Automatic Update disabled.</string>
+
   <!-- B -->
   <string Field="Broken">Broken</string>
   <string Field="Buffered">buffered</string>
@@ -21,7 +23,8 @@
   <!-- C -->
   <string Field="Category">Category</string>
   <string Field="Categories">Categories</string>
-  <string Field="Creator">Creator</string>  
+  <string Field="Creator">Creator</string>
+  <string Field="CheckingForPluginUpdate">checking for updated plugin version</string>
 
   <!-- D -->
   <string Field="DateOfRelease">Date of Release</string>
@@ -59,12 +62,18 @@
   <string Field="GettingPreviousPageVideos">getting previous page videos</string>
   <string Field="GettingPlaybackUrlsForVideo">getting playback urls for video</string>
   <string Field="GettingDynamicCategories">getting dynamic categories</string>
+  <string Field="GettingReports">getting reports from webservice</string>
+  <string Field="GettingSiteXml">getting site xml from webservice</string>
+  <string Field="GettingIcon">getting site icon from webservice</string>
+  <string Field="GettingBanner">getting site banner from webservice</string>
+  <string Field="GettingDll">getting dll from webservice</string>
 
   <!-- H -->
 
   <!-- I -->
 
   <!-- L -->
+  <string Field="LatestVersionRequired">Latest version ({0}) required!</string>
   <string Field="Language">Language</string>
   <string Field="LayoutList">Layout: List</string>
   <string Field="LayoutIcons">Layout: Icons</string>
@@ -79,6 +88,7 @@
   <string Field="NextPage">Next page</string>
   <string Field="None">None</string>
   <string Field="NoVideoFound">No video found</string>
+  <string Field="NoReportsForSite">No reports for this site available.</string>
   <string Field="NewDllDownloaded">New dll downloaded!</string>
 
   <!-- O -->
