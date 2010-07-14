@@ -427,7 +427,8 @@ namespace OnlineVideos.Player
         {
             GUIWindowManager.OnNewAction -= GUIWindowManager_OnNewAction;
 
-            if (_osd != null) _osd.Dispose();
+            try { if (_osd != null) _osd.Dispose(); }
+            catch (Exception ex) { Log.Warn(ex.ToString()); }
 
             if (_wmp10Player == null)
             {
