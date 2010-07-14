@@ -13,7 +13,7 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
-            string data = GetWebData(video.VideoUrl);
+            string data = GetWebData(HttpUtility.HtmlDecode(video.VideoUrl));
 
             if (!string.IsNullOrEmpty(data))
             {
