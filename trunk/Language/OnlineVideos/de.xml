@@ -97,7 +97,7 @@
   <string Field="Updatable">Aktualisierbar</string>
   <string Field="UpdateMySite">Diese Site aktualisieren</string>
   <string Field="UpdateMySiteSkipCategories">Diese Site aktualisieren (Rubriken überspringen)</string>
-  <string Field="UpdateAllYourSites">Es werden nur vorhandenen Sites aktualisiert.</string>
+  <string Field="UpdateAllYourSites">Es werden nur vorhandene Sites aktualisiert.</string>
   <string Field="UnableToPlayVideo">Video kann nicht wiedergegeben werden. Keine URL.</string>
   <string Field="UnableToDownloadVideo">Video kann nicht heruntergeladen werden. Ungültige URL.</string>
   <string Field="Videos">Videos</string>
