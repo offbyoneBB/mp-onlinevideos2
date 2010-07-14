@@ -9,6 +9,8 @@ namespace OnlineVideos
 {
     public class GUISiteUpdater : GUIWindow
     {
+        public const int WindowId = 4757;
+
         enum FilterStateOption { All, Reported, Broken, Working, Updatable };
         enum SortOption { Updated, Name, Language_Name, Language_Updated };
 
@@ -34,11 +36,14 @@ namespace OnlineVideos
 
         OnlineVideosWebservice.Dll[] onlineDlls = null;
         OnlineVideosWebservice.Site[] onlineSites = null;        
-        DateTime lastRetrievalTime = DateTime.MinValue;
+        DateTime lastOverviewsRetrieved = DateTime.MinValue;
+        Version versionDll = new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version;
+        Version versionOnline = null;
+        DateTime lastOnlineVersionRetrieved = DateTime.MinValue;
 
         public override int GetID
         {
-            get { return 4757; }
+            get { return WindowId; }
             set { base.GetID = value; }
         }
 
@@ -96,20 +101,7 @@ namespace OnlineVideos
             GUIPropertyManager.SetProperty("#OnlineVideos.owner", String.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", String.Empty);
 
-            if (DateTime.Now - lastRetrievalTime > TimeSpan.FromMinutes(10)) // only get sites every 10 minutes
-            {
-                if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
-                {
-                    OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
-                    onlineSites = ws.GetSitesOverview();
-                    onlineDlls = ws.GetDllsOverview();
-                    lastRetrievalTime = DateTime.Now;
-                }, "getting site overview from webservice"))
-                {
-                    return;
-                }
-                SetFilterButtonOptions();
-            }
+            if (GetRemoteOverviews()) SetFilterButtonOptions();
 
             if (onlineSites == null || onlineSites.Length == 0) return;
 
@@ -248,7 +240,7 @@ namespace OnlineVideos
             if (dlgSel.SelectedId == -1) return; // ESC used, nothing selected
             if (dlgSel.SelectedLabelText == Translation.AddToMySites)
             {
-                SiteSettings newSite = GetRemoteSite(site.Name, null);
+                SiteSettings newSite = GetRemoteSite(site.Name);
                 if (newSite != null)
                 {
                     OnlineVideoSettings.Instance.SiteSettingsList.Add(newSite);
@@ -259,7 +251,7 @@ namespace OnlineVideos
             }
             else if (dlgSel.SelectedLabelText == Translation.UpdateMySite)
             {
-                SiteSettings site2Update = GetRemoteSite(site.Name, null);
+                SiteSettings site2Update = GetRemoteSite(site.Name);
                 if (site2Update != null)
                 {
                     OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex] = site2Update;
@@ -270,7 +262,7 @@ namespace OnlineVideos
             }
             else if (dlgSel.SelectedLabelText == Translation.UpdateMySiteSkipCategories)
             {
-                SiteSettings site2Update = GetRemoteSite(site.Name, null);
+                SiteSettings site2Update = GetRemoteSite(site.Name);
                 if (site2Update != null)
                 {
                     site2Update.Categories = OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].Categories;
@@ -351,11 +343,11 @@ namespace OnlineVideos
                             if (md5LocalDll != anOnlineDll.MD5)
                             {
                                 // download dll to temp dir first
-                                if (GUISiteUpdater.DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll", null))
+                                if (DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll"))
                                 {
                                     // if download was successfull, try to copy to target dir (if not successfull, do UAC prompted copy)
                                     try { System.IO.File.Copy(dllTempDir + anOnlineDll.Name + ".dll", location, true); }
-                                    catch { GUISiteUpdater.CopyDlls(dllTempDir, dllDir); }
+                                    catch { CopyDlls(dllTempDir, dllDir); }
                                     return true;
                                 }                                
                             }
@@ -382,6 +374,8 @@ namespace OnlineVideos
                     dlgPrgrs.StartModal(GetID);
                 }
 
+                if (onlineSites == null) return;
+
                 Dictionary<string, bool> requiredDlls = new Dictionary<string, bool>();
 
                 // update or add all sites, so the user has everything the server currently has
@@ -394,7 +388,7 @@ namespace OnlineVideos
                     if (localSiteIndex == -1)
                     {
                         // add
-                        SiteSettings newSite = GetRemoteSite(onlineSite.Name, null);
+                        SiteSettings newSite = GetRemoteSite(onlineSite.Name);
                         if (newSite != null)
                         {
                             // disable local site if broken
@@ -405,7 +399,7 @@ namespace OnlineVideos
                     else if ((onlineSite.LastUpdated - OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].LastUpdated).TotalMinutes > 2)
                     {
                         // update
-                        SiteSettings updatedSite = GetRemoteSite(onlineSite.Name, null);
+                        SiteSettings updatedSite = GetRemoteSite(onlineSite.Name);
                         if (updatedSite != null)
                         {
                             // disable local site if broken
@@ -455,7 +449,7 @@ namespace OnlineVideos
                             if (download)
                             {
                                 // download dll to temp dir first
-                                if (GUISiteUpdater.DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll", null))
+                                if (DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll"))
                                 {
                                     // if download was successfull, try to copy to target dir (if not successfull, mark for UAC prompted copy later)
                                     try { System.IO.File.Copy(dllTempDir + anOnlineDll.Name + ".dll", location, true); }
@@ -481,8 +475,10 @@ namespace OnlineVideos
             }            
         }
 
-        public static void AutoUpdate(bool dllsAreLoaded)
+        public void AutoUpdate(bool dllsLoaded)
         {
+            bool? hasLatestVersion = CheckOnlineVideosVersion();
+
             GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
             try
             {
@@ -496,14 +492,11 @@ namespace OnlineVideos
                     dlgPrgrs.StartModal(GUIWindowManager.ActiveWindow);
                 }
                 if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.RetrievingRemoteSites);
-                OnlineVideosWebservice.OnlineVideosService ws = null;
-                OnlineVideosWebservice.Site[] onlineSites = null;
-                if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
-                {
-                    ws = new OnlineVideosWebservice.OnlineVideosService();
-                    onlineSites = ws.GetSitesOverview();
-                }, "getting site overview from webservice")) return;
 
+                GetRemoteOverviews();
+
+                if (onlineSites == null) return;
+                
                 if (dlgPrgrs != null) dlgPrgrs.Percentage = 10;
                 bool saveRequired = false;
                 Dictionary<string, bool> requiredDlls = new Dictionary<string, bool>();
@@ -521,7 +514,7 @@ namespace OnlineVideos
                             // get site if updated on server
                             if ((remoteSite.LastUpdated - localSite.LastUpdated).TotalMinutes > 2)
                             {
-                                SiteSettings updatedSite = GUISiteUpdater.GetRemoteSite(remoteSite.Name, ws);
+                                SiteSettings updatedSite = GetRemoteSite(remoteSite.Name);
                                 if (updatedSite != null)
                                 {
                                     OnlineVideoSettings.Instance.SiteSettingsList[i] = updatedSite;
@@ -535,12 +528,7 @@ namespace OnlineVideos
 
                 if (requiredDlls.Count > 0)
                 {
-                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.RetrievingRemoteDlls);
-                    OnlineVideosWebservice.Dll[] onlineDlls = null;
-                    if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
-                    {
-                        onlineDlls = ws.GetDllsOverview();
-                    }, "getting dlls overview from webservice")) return;
+                    if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.RetrievingRemoteDlls);                    
 
                     // target directory for dlls
                     string dllDir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
@@ -569,7 +557,7 @@ namespace OnlineVideos
                             if (download)
                             {
                                 // download dll to temp dir first
-                                if (GUISiteUpdater.DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll", ws))
+                                if (DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll"))
                                 {
                                     // if download was successfull, try to copy to target dir (if not successfull, mark for UAC prompted copy later)
                                     try { System.IO.File.Copy(dllTempDir + anOnlineDll.Name + ".dll", location, true); }
@@ -579,7 +567,11 @@ namespace OnlineVideos
                         }
                         if (dlgPrgrs != null) dlgPrgrs.Percentage = 80 + (15 * (i + 1) / onlineDlls.Length);
                     }
-                    if (dllsToCopy > 0) GUISiteUpdater.CopyDlls(dllTempDir, dllDir);
+                    if (dllsToCopy > 0)
+                    {
+                        CopyDlls(dllTempDir, dllDir);
+                        if (dllsLoaded) ShowRestartMessage();
+                    }
                 }
                 if (saveRequired)
                 {
@@ -597,7 +589,7 @@ namespace OnlineVideos
             }
         }
 
-        public static void ShowRestartMessage()
+        void ShowRestartMessage()
         {
             GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
             if (dlg != null)
@@ -717,12 +709,30 @@ namespace OnlineVideos
             }
         }
 
-        public static SiteSettings GetRemoteSite(string name, OnlineVideosWebservice.OnlineVideosService ws)
+        bool GetRemoteOverviews()
+        {
+            if (DateTime.Now - lastOverviewsRetrieved > TimeSpan.FromMinutes(10)) // only get sites every 10 minutes
+            {
+                if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                {
+                    OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+                    onlineSites = ws.GetSitesOverview();
+                    onlineDlls = ws.GetDllsOverview();
+                    lastOverviewsRetrieved = DateTime.Now;                    
+                }, "getting site overview from webservice"))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        SiteSettings GetRemoteSite(string name)
         {
             string siteXml = "";
+            OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                if (ws == null) ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
                 siteXml = ws.GetSiteXml(name);
             }, "getting site xml from webservice"))
             {
@@ -739,7 +749,7 @@ namespace OnlineVideos
             return null;
         }
 
-        static void DownloadImages(string siteName, OnlineVideosWebservice.OnlineVideosService ws)
+        void DownloadImages(string siteName, OnlineVideosWebservice.OnlineVideosService ws)
         {
             try
             {
@@ -779,11 +789,11 @@ namespace OnlineVideos
             }
         }
 
-        public static bool DownloadDll(string dllName, string localPath, OnlineVideosWebservice.OnlineVideosService ws)
+        bool DownloadDll(string dllName, string localPath)
         {
             if (Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
             {
-                if (ws == null) ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
                 byte[] onlineDllData = ws.GetDll(dllName);
                 if (onlineDllData != null && onlineDllData.Length > 0) System.IO.File.WriteAllBytes(localPath, onlineDllData);
             }, "getting dll from webservice"))
@@ -792,7 +802,29 @@ namespace OnlineVideos
                 return false;
         }
 
-        public static void CopyDlls(string sourceDir, string targetDir)
+        /// <summary>
+        /// Downloads and retrieves the latest version of OnlineVides that has been published online, by checking update.xml in SVN.
+        /// </summary>
+        /// <returns>null if no onlineversion could be found, true if the local version is equal or higher than the online version, otherwise false.</returns>
+        bool? CheckOnlineVideosVersion()
+        {
+            if (DateTime.Now - lastOnlineVersionRetrieved > TimeSpan.FromDays(1)) // only check for a new available version once a day
+            {
+                if (!Gui2UtilConnector.Instance.ExecuteInBackgroundAndWait(delegate()
+                {
+                    string tempFile = System.IO.Path.GetTempFileName();
+                    new System.Net.WebClient().DownloadFile("http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml", tempFile);
+                    versionOnline = new Version(MpeCore.Classes.ExtensionCollection.Load(tempFile).GetUniqueList().Items[0].GeneralInfo.Version.ToString());
+                }, "checking for updated plugin version"))
+                {
+                    return null;
+                }
+            }
+            if (versionOnline == null) return null;
+            return versionOnline <= versionDll;
+        }
+
+        void CopyDlls(string sourceDir, string targetDir)
         {
             // todo : maybe "mkdir" if target dir does not exist?
             ProcessStartInfo psi = new ProcessStartInfo();

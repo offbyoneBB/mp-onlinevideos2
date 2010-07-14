@@ -746,7 +746,8 @@ namespace OnlineVideos
                 }
                 if (doUpdate == true)
                 {
-                    GUISiteUpdater.AutoUpdate(false);
+                    GUISiteUpdater guiUpdater = (GUISiteUpdater)GUIWindowManager.GetWindow(GUISiteUpdater.WindowId);
+                    guiUpdater.AutoUpdate(false);
                 }
             }
             if (OnlineVideoSettings.Instance.thumbAge >= 0) ImageDownloader.DeleteOldThumbs();
