@@ -71,6 +71,10 @@
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\Dialogs.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="MpeCore, Version=1.0.10.18354, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\MpeCore.dll</HintPath>
+    </Reference>
     <Reference Include="System.configuration" />
     <Reference Include="WindowPlugins, Version=1.0.4.17412, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
