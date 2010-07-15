@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Online Videos translation file -->
+<!-- Norwegian -->
+<!-- Note: English is the fallback for any strings not found in other languages -->
+<strings>
+
+  <!-- A -->
+  <string Field="Airdate">Vist</string>
+  <string Field="AlreadyDownloading">Filen lastes allerede ned.</string>
+  <string Field="All">Alle</string>
+  <string Field="Actions">Oppgaver</string>
+  <string Field="Actors">Skuespillere</string>
+  <string Field="AddToMySites">Legg til favorittsider</string>
+  <string Field="AddToFavourites">Legg til favoritter</string>
+  <string Field="AddingToFavorites">Legger til favoritter</string>
+  <string Field="AutomaticUpdate">Automatisk oppdatering</string>
+  <string Field="AutomaticUpdateDisabled">Automatisk oppdatering deaktivert.</string>
+  
+  <!-- B -->
+  <string Field="Broken">Ødelagt</string>
+  <string Field="Buffered">bufret</string>
+
+  <!-- C -->
+  <string Field="Category">Kategori</string>
+  <string Field="Categories">Kategorier</string>
+  <string Field="Creator">Lagd av</string>
+  <string Field="CheckingForPluginUpdate">ser etter oppdatert plugin versjon</string>
+
+  <!-- D -->
+  <string Field="DateOfRelease">Utgivelse dato</string>
+  <string Field="Directors">Regissører</string>
+  <string Field="Download">Nedlasting</string>
+  <string Field="Downloading">Nedlaster</string>
+  <string Field="DownloadingDescription">Vis listen med aktive nedlastinger.</string>
+  <string Field="DownloadFailed">Nedlasting feilet: {0}</string>
+  <string Field="DownloadCancelled">Nedlasting kansellert</string>
+  <string Field="DownloadComplete">Nedlasting ferdig</string>
+  <string Field="DownloadedVideos">Nedlastede videoer</string>
+  <string Field="Delete">Slett</string>
+  <string Field="Default">Standard</string>
+  <string Field="Done">Ferdig</string>
+  <string Field="DeletingOldThumbs">Sletter gamle miniatyrbilder</string>
+
+  <!-- E -->
+  <string Field="Error">Feil</string>
+  <string Field="EnterPin">Skriv inn pinkode</string>
+
+  <!-- F -->
+  <string Field="Favourites">Favoritter</string>
+  <string Field="Filter">Filter</string>
+  <string Field="FullUpdate">Full oppdatering</string>
+
+  <!-- G -->
+  <string Field="Genre">Sjanger</string>
+  <string Field="GettingVideoDetails">henter video detaljer</string>
+  <string Field="GettingCategoryVideos">henter kategori videoer</string>
+  <string Field="GettingFavoriteVideos">henter favoritt videoer</string>
+  <string Field="GettingSearchResults">henter søke resultater</string>
+  <string Field="GettingRelatedVideos">henter relaterte videoer</string>
+  <string Field="GettingFilteredVideos">henter filtrerte videoer</string>
+  <string Field="GettingNextPageVideos">henter neste sides videoer</string>
+  <string Field="GettingPreviousPageVideos">henter forrige sides videoer</string>
+  <string Field="GettingPlaybackUrlsForVideo">henter avspillings url'er for video</string>
+  <string Field="GettingDynamicCategories">henter dynamiske kategorier</string>
+  <string Field="GettingReports">henter rapporter fra webservice</string>
+  <string Field="GettingSiteXml">henter side xml fra webservice</string>
+  <string Field="GettingIcon">henter side ikoner fra webservice</string>
+  <string Field="GettingBanner">henter side banner fra webservice</string>
+  <string Field="GettingDll">henter dll fra webservice</string>
+
+  <!-- H -->
+
+  <!-- I -->
+
+  <!-- L -->
+  <string Field="LatestVersionRequired">Siste versjon ({0}) er nødvendig!</string>
+  <string Field="Language">Språk</string>
+  <string Field="LayoutList">Visning: Liste</string>
+  <string Field="LayoutIcons">Visning: Ikoner</string>
+  <string Field="LayoutBigIcons">Visning: Store Ikoner</string>
+
+  <!-- M -->
+  <string Field="ManageSites">Konfigurer sider</string>
+  <string Field="MaxResults">Maks resultater</string>
+
+  <!-- N -->
+  <string Field="Name">Navn</string>
+  <string Field="NextPage">Neste side</string>
+  <string Field="None">Ingen</string>
+  <string Field="NoVideoFound">Ingen video funnet</string>
+  <string Field="NoReportsForSite">Rapporter for denne side er utilgjengelig.</string>
+  <string Field="NewDllDownloaded">Ny dll lastet ned!</string>
+
+  <!-- O -->
+
+  <!-- P -->
+  <string Field="PlayAll">Spill alle</string>
+  <string Field="PlotOutline">Handling</string>
+  <string Field="PreviousPage">Forrige side</string>
+  <string Field="PerformAutomaticUpdate">Utfør automatiske oppdateringer?</string>
+
+  <!-- R -->
+  <string Field="RemoveFromFavorites">Fjern fra favoritter</string>
+  <string Field="RemovingFromFavorites">fjerner fra favoritter</string>
+  <string Field="Refresh">Oppdater</string>
+  <string Field="RelatedVideos">Relaterte videoer</string>
+  <string Field="Reported">Rapporterte</string>
+  <string Field="Runtime">Spilletid</string>
+  <string Field="RemoveFromMySites">Fjern fra mine sider</string>
+  <string Field="RestartMediaPortal">Omstart MediaPortal!</string>
+  <string Field="RetrievingRemoteDlls">Mottar dlls ...</string>
+  <string Field="RetrievingRemoteSites">Mottar sider ...</string>
+
+  <!-- S -->
+  <string Field="SearchResults">Søkeresultater</string>
+  <string Field="SelectSource">Velg kilde</string>
+  <string Field="Sites">Sider</string>
+  <string Field="SortOptions">Sortering</string>
+  <string Field="Search">Søk</string>
+  <string Field="SetDownloadFolderInConfig">Angi en nedlastingsmappe under konfigurasjon!</string>
+  <string Field="State">Tilstand</string>
+  <string Field="SavingLocalSiteList">Lagrer lokal liste ...</string>
+  <string Field="ShowReports">Vis skaper og bruker rapporter</string>
+  <string Field="StartingPlayback">starter avspilling</string>
+
+   <!-- T -->
+  <string Field="Timeframe">Tidsramme</string>
+  <string Field="Timeout">Tidsavbrudd</string>
+  <string Field="Tags">Tagg</string>
+
+  <!-- U -->
+  <string Field="Updated">Oppdatert</string>
+  <string Field="Updatable">Oppdaterbar</string>
+  <string Field="UpdateMySite">Oppdater min side</string>
+  <string Field="UpdateMySiteSkipCategories">Oppdater min side(hopp over kategorier)</string>
+  <string Field="UpdateAllYourSites">Dette vil oppdatere alle dine sider.</string>
+  <string Field="UnableToPlayVideo">Kan ikke spille av video. Ingen URL.</string>
+  <string Field="UnableToDownloadVideo">Kan ikke laste ned. Ugyldig URL.</string>
+
+  <!-- V -->
+  <string Field="Videos">Videoer</string>
+
+  <!-- W -->
+  <string Field="Working">Arbeider</string>
+
+  <!-- Y -->
+
+</strings>
