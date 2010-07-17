@@ -305,7 +305,7 @@ namespace OnlineVideos.Sites
             result.VideoUrl = node.SelectSingleNode("component_uri").InnerText;
             if (String.IsNullOrEmpty(result.VideoUrl))
                 return null;
-            result.VideoUrl = @"http://data.rtl.nl" + result.VideoUrl;
+            result.VideoUrl = @"http://www.rtl.nl" + result.VideoUrl;
             result.Title = node.SelectSingleNode("name").InnerText;
             // start of imageurl from http://data.rtl.nl/_rtl-internal/js/5494466d434556a34b5be354e0a96817.js
             result.ImageUrl = @"http://data.rtl.nl/system/img/477623qchsb4rdxh6wai4ofb7/" + node.SelectSingleNode("thumbnail_id").InnerText;
@@ -514,23 +514,27 @@ namespace OnlineVideos.Sites
             }
             catch
             {
+                Log.Info(" no video found at " + video.VideoUrl);
                 //Console.WriteLine(" no video found at " + video.VideoUrl);
                 video.VideoUrl = String.Empty;
             }
             if (experimental)
             {
-                string exp = video.VideoUrl.Replace("http://av.rtl.nl/web/", "http://www.rtl.nl/system/video/wvx/");
-                int ind = exp.LastIndexOf('/');
-                ind = exp.LastIndexOf('/', ind - 1);
-                exp = exp.Insert(ind, "/miMedia");
-                exp = exp.Replace(".MiMedia_WM_1500K_V9.wmv", ".xml/1500.wvx");
+                if (video.VideoUrl.IndexOf("http://av.rtl.nl/") >= 0)
+                {
+                    string exp = video.VideoUrl.Replace("http://av.rtl.nl/web/", "http://www.rtl.nl/system/video/wvx/");
+                    int ind = exp.LastIndexOf('/');
+                    ind = exp.LastIndexOf('/', ind - 1);
+                    exp = exp.Insert(ind, "/miMedia");
+                    exp = exp.Replace(".MiMedia_WM_1500K_V9.wmv", ".xml/1500.wvx");
 
-                // transform 
-                // http://av.rtl.nl/web/components/soaps/gtst/203350/203939.s4m.29707557.Goede_Tijden_Slechte_Tijden_s24_a4020.MiMedia_WM_1500K_V9.wmv
-                // into
-                // http://www.rtl.nl/system/video/wvx/components/soaps/gtst/miMedia/203350/203939.s4m.29707557.Goede_Tijden_Slechte_Tijden_s24_a4020.xml/1500.wvx
+                    // transform 
+                    // http://av.rtl.nl/web/components/soaps/gtst/203350/203939.s4m.29707557.Goede_Tijden_Slechte_Tijden_s24_a4020.MiMedia_WM_1500K_V9.wmv
+                    // into
+                    // http://www.rtl.nl/system/video/wvx/components/soaps/gtst/miMedia/203350/203939.s4m.29707557.Goede_Tijden_Slechte_Tijden_s24_a4020.xml/1500.wvx
 
-                video.VideoUrl = exp;
+                    video.VideoUrl = exp;
+                }
             }
         }
 
@@ -657,7 +661,7 @@ namespace OnlineVideos.Sites
                     node = doc.SelectSingleNode(@"//a:identifier", nsmRequest);
 
                     return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}",                        
+                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}",
                             System.Web.HttpUtility.UrlEncode(url + node.InnerText + ".flv"),
                             @"http://www.veronicatv.nl/design/channel/veronicatv/swf/mediaplayer.swf"));
                     //vb: hotshots op veronica: this is not working, connection closed by server
