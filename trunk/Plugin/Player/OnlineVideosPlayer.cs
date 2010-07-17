@@ -293,6 +293,8 @@ namespace OnlineVideos.Player
             }
             finally
             {
+                // if not 100% buffered, some error occured, set -1%, to signal the abort to any waiting threads
+                if (PercentageBuffered != 100.0f) PercentageBuffered = -1.0f;
                 if (sourceFilter != null) Marshal.ReleaseComObject(sourceFilter);
             }
         }        
@@ -347,7 +349,7 @@ namespace OnlineVideos.Player
             // buffer before starting playback
             PercentageBuffered = 0.0f;
             new Thread(MonitorBufferProgress) { IsBackground = true, Name = "MonitorBufferProgress" }.Start();
-            while (PercentageBuffered < OnlineVideoSettings.Instance.playbuffer) Thread.Sleep(50);
+            while (PercentageBuffered >= 0.0f && PercentageBuffered < OnlineVideoSettings.Instance.playbuffer) Thread.Sleep(50);
             // get the output pin of the source filter
             IEnumPins enumPins;
             IPin[] sourceFilterPins = new IPin[1];
@@ -359,8 +361,8 @@ namespace OnlineVideos.Player
             // cleanup resources
             DirectShowUtil.ReleaseComObject(sourceFilterPins[0]);
             DirectShowUtil.ReleaseComObject(enumPins);
-            // playback is ready
-            return true;
+            // playback is ready when no error occured while buffering
+            return PercentageBuffered >= 0.0f;
         }
 
         /// <summary>
