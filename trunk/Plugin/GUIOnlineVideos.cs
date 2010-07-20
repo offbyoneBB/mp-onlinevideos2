@@ -350,7 +350,7 @@ namespace OnlineVideos
                     DisplayVideos_Related(loSelectedVideo);
                     break;
                 case "Download":
-                    SaveVideo(loSelectedVideo);
+                    SaveVideo_Step1(loSelectedVideo);
                     break;
                 default:
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
@@ -498,7 +498,7 @@ namespace OnlineVideos
                     if (currentPlaylist != null && currentPlaylist.Count > currentPlaylistIndex + 1)
                     {
                         currentPlaylistIndex++;
-                        Play(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                        Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
                         return true;
                     }
                 }
@@ -508,7 +508,7 @@ namespace OnlineVideos
                     if (currentPlaylist != null && currentPlaylistIndex - 1 >= 0)
                     {
                         currentPlaylistIndex--;
-                        Play(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                        Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
                         return true;
                     }
                 }
@@ -580,7 +580,7 @@ namespace OnlineVideos
                             currentPlaylist = null;
                             currentPlaylistIndex = 0;
 
-                            Play(new PlayListItem(null, null)
+                            Play_Step1(new PlayListItem(null, null)
                                     {
                                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                                         Video = selectedVideo,
@@ -603,7 +603,7 @@ namespace OnlineVideos
                     //play the video
                     currentPlaylist = null;
                     currentPlaylistIndex = 0;
-                    Play(new PlayListItem(null, null)
+                    Play_Step1(new PlayListItem(null, null)
                     {
                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                         Video = (GUI_infoList.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo,
@@ -1387,7 +1387,7 @@ namespace OnlineVideos
                     {
                         // if playing a playlist item, move to the next            
                         currentPlaylistIndex++;
-                        Play(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                        Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
                     }
                     else
                     {
@@ -1405,11 +1405,11 @@ namespace OnlineVideos
             }
         }
 
-        private void Play(PlayListItem playItem, bool goFullScreen)
+        private void Play_Step1(PlayListItem playItem, bool goFullScreen)
         {
             if (!string.IsNullOrEmpty(playItem.FileName))
             {
-                Play(playItem, new List<string>(new string[] { playItem.FileName }), goFullScreen);
+                Play_Step2(playItem, new List<string>(new string[] { playItem.FileName }), goFullScreen);
             }
             else
             {
@@ -1419,15 +1419,14 @@ namespace OnlineVideos
                 },
                 delegate(bool success, object result)
                 {
-                    if (success) Play(playItem, result as List<String>, goFullScreen);
+                    if (success) Play_Step2(playItem, result as List<String>, goFullScreen);
                 }
                 , Translation.GettingPlaybackUrlsForVideo, true);
             }
         }
 
-        private void Play(PlayListItem playItem, List<String> loUrlList, bool goFullScreen)
-        {
-            bool playing = false;
+        private void Play_Step2(PlayListItem playItem, List<String> loUrlList, bool goFullScreen)
+        {            
             // remove all invalid entries from the list of playback urls
             if (loUrlList != null)
             {
@@ -1484,8 +1483,46 @@ namespace OnlineVideos
                 loUrlList = new List<string>(new string[] { playItem.FileName });
             }
             // if multiple quality choices are available show a selection dialogue (not on playlist playback)
-            string lsUrl = (currentPlaylist == null || currentPlaylist.Count == 0) ? DisplayPlaybackOptions(playItem.Video, loUrlList[0]) : loUrlList[0];
-            if (lsUrl == "-1") return; // the user did not chose an option but canceled the dialog
+            string lsUrl = loUrlList[0];
+            if (currentPlaylist == null || currentPlaylist.Count == 0)
+            {
+                bool resolve = DisplayPlaybackOptions(playItem.Video, ref lsUrl);
+                if (lsUrl == "-1") return; // the user did not chose an option but canceled the dialog
+                // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
+                if (resolve)
+                {
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    {
+                        return playItem.Video.GetPlaybackOptionUrl(lsUrl);
+                    },
+                    delegate(bool success, object result)
+                    {
+                        if (success) Play_Step3(playItem, result as string, goFullScreen);
+                    }
+                    , Translation.GettingPlaybackUrlsForVideo, true);
+                    return; // don't execute rest of function, we are waiting for callback
+                }
+            }
+            Play_Step3(playItem, lsUrl, goFullScreen);
+        }
+
+        void Play_Step3(PlayListItem playItem, string lsUrl, bool goFullScreen)
+        {
+            // check for valid url
+            if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
+            {
+                GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                if (dlg != null)
+                {
+                    dlg.Reset();
+                    dlg.SetHeading(Translation.Error);
+                    dlg.SetText(Translation.UnableToPlayVideo);
+                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                }
+                return;
+            }
+
+            bool playing = false;
 
             // stop player if currently playing some other video
             if (g_Player.Playing) g_Player.Stop();
@@ -1610,10 +1647,10 @@ namespace OnlineVideos
                     Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteList[video.SiteName] : SelectedSite
                 });
             }
-            Play(currentPlaylist[0], true);
+            Play_Step1(currentPlaylist[0], true);
         }
 
-        private void SaveVideo(VideoInfo video)
+        private void SaveVideo_Step1(VideoInfo video)
         {
             if (string.IsNullOrEmpty(OnlineVideoSettings.Instance.DownloadDir))
             {
@@ -1634,99 +1671,138 @@ namespace OnlineVideos
             },
             delegate(bool success, object result)
             {
-                string url = "";
-                if (success)
-                {
-                    List<String> loUrlList = result as List<String>;
-
-                    // remove all invalid entries from the list of playback urls
-                    if (loUrlList != null)
-                    {
-                        int i = 0;
-                        while (i < loUrlList.Count)
-                        {
-                            if (String.IsNullOrEmpty(loUrlList[i]) || !(Uri.IsWellFormedUriString(loUrlList[i], UriKind.Absolute) || System.IO.Path.IsPathRooted(loUrlList[i])))
-                            {
-                                loUrlList.RemoveAt(i);
-                            }
-                            else
-                            {
-                                i++;
-                            }
-                        }
-                    }
-                    if (loUrlList.Count > 0)
-                    {
-                        url = DisplayPlaybackOptions(video, loUrlList[0]); //downloads the first file from the list, todo: download all if multiple
-                        if (url == "-1") return; // user canceled the dialog -> don't download
-                    }
-                }
-                // if no valid url was returned show error msg
-                if (String.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
-                {
-                    GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    if (dlg != null)
-                    {
-                        dlg.Reset();
-                        dlg.SetHeading(Translation.Error);
-                        dlg.SetText(Translation.UnableToDownloadVideo);
-                        dlg.DoModal(GUIWindowManager.ActiveWindow);
-                    }
-                    return;
-                }
-
-                // translate rtmp urls to the local proxy
-                if (new Uri(url).Scheme.ToLower().StartsWith("rtmp"))
-                {
-                    url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
-                }
-
-                DownloadInfo downloadInfo = new DownloadInfo()
-                {
-                    Url = url,
-                    Title = video.Title,
-                    LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, SelectedSite.Settings.Name), SelectedSite.GetFileNameForDownload(video, selectedCategory, url)),
-                    ThumbFile = ImageDownloader.GetThumbFile(video.ImageUrl)
-                };
-
-                if (currentDownloads.ContainsKey(url) || System.IO.File.Exists(downloadInfo.LocalFile))
-                {
-                    GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    if (dlg != null)
-                    {
-                        dlg.Reset();
-                        dlg.SetHeading(Translation.Error);
-                        dlg.SetText(Translation.AlreadyDownloading);
-                        dlg.DoModal(GUIWindowManager.ActiveWindow);
-                    }
-                    return;
-                }
-
-                // make sure the target dir exists
-                if (!(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile))))
-                {
-                    System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile));
-                }
-
-                System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
-                {
-                    IDownloader dlHelper = null;
-                    if (url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloadHelper();
-                    else dlHelper = new HTTPDownloader();
-                    DownloadInfo dlInfo = o as DownloadInfo;
-                    dlInfo.Downloader = dlHelper;
-                    Exception exception = dlHelper.Download(dlInfo);
-                    if (exception != null) Log.Error("Error downloading {0}, Msg: ", dlInfo.Url, exception.Message);
-                    OnDownloadFileCompleted(dlInfo, exception);
-                });
-                downloadThread.IsBackground = true;
-                downloadThread.Name = "OnlineVideosDownload";
-                downloadThread.Start(downloadInfo);
-
-                lock (GUIOnlineVideos.currentDownloads) currentDownloads.Add(url, downloadInfo); // make access threadsafe
+                if (success) SaveVideo_Step2(video, result as List<String>);
             },
             Translation.GettingPlaybackUrlsForVideo, true);
+        }
+
+        private void SaveVideo_Step2(VideoInfo video, List<String> loUrlList)
+        {
+            // remove all invalid entries from the list of playback urls
+            if (loUrlList != null)
+            {
+                int i = 0;
+                while (i < loUrlList.Count)
+                {
+                    if (String.IsNullOrEmpty(loUrlList[i]) || !(Uri.IsWellFormedUriString(loUrlList[i], UriKind.Absolute) || System.IO.Path.IsPathRooted(loUrlList[i])))
+                    {
+                        loUrlList.RemoveAt(i);
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+            }            
+            // if no valid urls were returned show error msg
+            if (loUrlList == null || loUrlList.Count == 0)
+            {
+                GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                if (dlg != null)
+                {
+                    dlg.Reset();
+                    dlg.SetHeading(Translation.Error);
+                    dlg.SetText(Translation.UnableToDownloadVideo);
+                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                }
+                return;
+            }
+            // if multiple quality choices are available show a selection dialogue (
+            string url = loUrlList[0];
+            bool resolve = DisplayPlaybackOptions(video, ref url); //downloads the first file from the list, todo: download all if multiple
+            if (url == "-1") return; // user canceled the dialog -> don't download
+            // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
+            if (resolve)
+            {
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                {
+                    return video.GetPlaybackOptionUrl(url);
+                },
+                delegate(bool success, object result)
+                {
+                    if (success) SaveVideo_Step3(video, result as string);
+                }
+                , Translation.GettingPlaybackUrlsForVideo, true);
+                return; // don't execute rest of function, we are waiting for callback
+            }
+            SaveVideo_Step3(video, url);
+        }
+
+        private void SaveVideo_Step3(VideoInfo video, string url)
+        {
+            // check for valid url
+            if (String.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                if (dlg != null)
+                {
+                    dlg.Reset();
+                    dlg.SetHeading(Translation.Error);
+                    dlg.SetText(Translation.UnableToDownloadVideo);
+                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                }
+                return;
+            }
+
+            // translate rtmp urls to the local proxy
+            if (new Uri(url).Scheme.ToLower().StartsWith("rtmp"))
+            {
+                url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
+            }
+
+            DownloadInfo downloadInfo = new DownloadInfo()
+            {
+                Url = url,
+                Title = video.Title,
+                LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, SelectedSite.Settings.Name), SelectedSite.GetFileNameForDownload(video, selectedCategory, url)),
+                ThumbFile = ImageDownloader.GetThumbFile(video.ImageUrl)
+            };
+
+            if (currentDownloads.ContainsKey(url) || System.IO.File.Exists(downloadInfo.LocalFile))
+            {
+                GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                if (dlg != null)
+                {
+                    dlg.Reset();
+                    dlg.SetHeading(Translation.Error);
+                    dlg.SetText(Translation.AlreadyDownloading);
+                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                }
+                return;
+            }
+
+            // make sure the target dir exists
+            if (!(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile))))
+            {
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile));
+            }
+
+            lock (GUIOnlineVideos.currentDownloads) currentDownloads.Add(url, downloadInfo); // make access threadsafe
+
+            System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
+            {
+                IDownloader dlHelper = null;
+                if (url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloadHelper();
+                else dlHelper = new HTTPDownloader();
+                DownloadInfo dlInfo = o as DownloadInfo;
+                dlInfo.Downloader = dlHelper;
+                Exception exception = dlHelper.Download(dlInfo);
+                if (exception != null) Log.Error("Error downloading {0}, Msg: ", dlInfo.Url, exception.Message);
+                OnDownloadFileCompleted(dlInfo, exception);
+            });
+            downloadThread.IsBackground = true;
+            downloadThread.Name = "OnlineVideosDownload";
+            downloadThread.Start(downloadInfo);
+
+            GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+            if (dlgNotify != null)
+            {
+                dlgNotify.Reset();
+                dlgNotify.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                dlgNotify.SetText(Translation.DownloadStarted);
+                dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+            }
         }
 
         private void OnDownloadFileCompleted(DownloadInfo downloadInfo, Exception error)
@@ -1753,7 +1829,7 @@ namespace OnlineVideos
                         System.IO.Path.GetDirectoryName(downloadInfo.LocalFile),
                         System.IO.Path.GetFileNameWithoutExtension(downloadInfo.LocalFile))
                         + System.IO.Path.GetExtension(downloadInfo.ThumbFile);
-                    System.IO.File.Copy(downloadInfo.ThumbFile, localImageName);
+                    System.IO.File.Copy(downloadInfo.ThumbFile, localImageName, true);
                 }
 
                 // get file size
@@ -2078,16 +2154,24 @@ namespace OnlineVideos
             }
         }
 
-        private string DisplayPlaybackOptions(VideoInfo videoInfo, string defaultUrl)
+        /// <summary>
+        /// Displays a modal dialog, with a list of the PlaybackOptions to the user, 
+        /// only if PlaybackOptions holds more than one entry.
+        /// </summary>
+        /// <param name="videoInfo"></param>
+        /// <param name="defaultUrl">will be set to -1 when the user canceled the dialog</param>
+        /// <returns>true when a choice from the PlaybackOptions was made and defaultUrl hold the key of that choice</returns>
+        private bool DisplayPlaybackOptions(VideoInfo videoInfo, ref string defaultUrl)
         {
             // with no options set, return the VideoUrl field
-            if (videoInfo.PlaybackOptions == null || videoInfo.PlaybackOptions.Count == 0) return defaultUrl;
+            if (videoInfo.PlaybackOptions == null || videoInfo.PlaybackOptions.Count == 0) return false;
             // with just one option set, return that options url
             if (videoInfo.PlaybackOptions.Count == 1)
             {
                 var enumer = videoInfo.PlaybackOptions.GetEnumerator();
                 enumer.MoveNext();
-                return enumer.Current.Value;
+                defaultUrl = enumer.Current.Value;
+                return false;
             }
             int defaultOption = -1;
             // show a list of available options and let the user decide
@@ -2106,8 +2190,8 @@ namespace OnlineVideos
             }
             if (defaultOption != -1) dlgSel.SelectedLabel = defaultOption;
             dlgSel.DoModal(GetID);
-            if (dlgSel.SelectedId == -1) return "-1";
-            return videoInfo.GetPlaybackOptionUrl(dlgSel.SelectedLabelText);
+            defaultUrl = (dlgSel.SelectedId == -1) ? "-1" : dlgSel.SelectedLabelText;
+            return true;
         }
 
         private string GetBannerForSite(Sites.SiteUtilBase site)

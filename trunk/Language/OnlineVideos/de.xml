@@ -27,6 +27,7 @@
   <string Field="DownloadFailed">Herunterladen fehlgeschlagen: {0}</string>
   <string Field="DownloadCancelled">Herunterladen abgebrochen</string>
   <string Field="DownloadComplete">Herunterladen beendet</string>
+  <string Field="DownloadStarted">Herunterladen begonnen</string>
   <string Field="DownloadedVideos">Heruntergeladene Videos</string>
   <string Field="Delete">Löschen</string>
   <string Field="Default">Standard</string>
