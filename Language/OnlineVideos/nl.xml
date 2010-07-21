@@ -27,6 +27,7 @@
   <string Field="DownloadFailed">Download mislukt: {0}</string>
   <string Field="DownloadCancelled">Download geannuleerd</string>
   <string Field="DownloadComplete">Download gereed</string>
+  <string Field="DownloadStarted">Download begonnen</string>
   <string Field="DownloadedVideos">Gedownloade videos</string>
   <string Field="Delete">Verwijderen</string>
   <string Field="Default">Standaard</string>
