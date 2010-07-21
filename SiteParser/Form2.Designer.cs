@@ -32,7 +32,6 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.RegexTextbox = new System.Windows.Forms.TextBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.findTextBox = new System.Windows.Forms.TextBox();
             this.findButton = new System.Windows.Forms.Button();
             this.insertComboBox = new System.Windows.Forms.ComboBox();
@@ -42,12 +41,21 @@
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(742, 482);
+            this.button1.Location = new System.Drawing.Point(748, 469);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -58,7 +66,7 @@
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(823, 482);
+            this.button2.Location = new System.Drawing.Point(829, 469);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 1;
@@ -68,26 +76,16 @@
             // 
             // RegexTextbox
             // 
-            this.RegexTextbox.HideSelection = false;
-            this.RegexTextbox.Location = new System.Drawing.Point(12, 72);
-            this.RegexTextbox.Multiline = true;
-            this.RegexTextbox.Name = "RegexTextbox";
-            this.RegexTextbox.Size = new System.Drawing.Size(319, 79);
-            this.RegexTextbox.TabIndex = 17;
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.RegexTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox1.DetectUrls = false;
-            this.richTextBox1.HideSelection = false;
-            this.richTextBox1.Location = new System.Drawing.Point(337, 32);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(565, 444);
-            this.richTextBox1.TabIndex = 33;
-            this.richTextBox1.Text = "";
+            this.RegexTextbox.HideSelection = false;
+            this.RegexTextbox.Location = new System.Drawing.Point(3, 37);
+            this.RegexTextbox.Multiline = true;
+            this.RegexTextbox.Name = "RegexTextbox";
+            this.RegexTextbox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.RegexTextbox.Size = new System.Drawing.Size(321, 75);
+            this.RegexTextbox.TabIndex = 17;
             // 
             // findTextBox
             // 
@@ -118,17 +116,19 @@
             // 
             // treeView1
             // 
-            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
-            this.treeView1.Location = new System.Drawing.Point(12, 186);
+            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeView1.Location = new System.Drawing.Point(3, 32);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(319, 288);
+            this.treeView1.Size = new System.Drawing.Size(321, 270);
             this.treeView1.TabIndex = 36;
             // 
             // button7
             // 
+            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button7.Image = global::SiteParser.Properties.Resources.curved;
-            this.button7.Location = new System.Drawing.Point(285, 39);
+            this.button7.Location = new System.Drawing.Point(278, 4);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(46, 27);
             this.button7.TabIndex = 38;
@@ -138,9 +138,10 @@
             // 
             // button6
             // 
+            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button6.Image = global::SiteParser.Properties.Resources.Intersect;
             this.button6.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button6.Location = new System.Drawing.Point(277, 157);
+            this.button6.Location = new System.Drawing.Point(270, 3);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(54, 23);
             this.button6.TabIndex = 37;
@@ -154,7 +155,7 @@
             // 
             this.button5.Image = global::SiteParser.Properties.Resources.arrowDn;
             this.button5.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button5.Location = new System.Drawing.Point(12, 39);
+            this.button5.Location = new System.Drawing.Point(3, 4);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(56, 27);
             this.button5.TabIndex = 35;
@@ -173,25 +174,81 @@
             this.label1.TabIndex = 39;
             this.label1.Text = "Web-data";
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(12, 39);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.richTextBox1);
+            this.splitContainer1.Size = new System.Drawing.Size(892, 424);
+            this.splitContainer1.SplitterDistance = 329;
+            this.splitContainer1.TabIndex = 40;
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.DetectUrls = false;
+            this.richTextBox1.HideSelection = false;
+            this.richTextBox1.Location = new System.Drawing.Point(3, 3);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(553, 418);
+            this.richTextBox1.TabIndex = 34;
+            this.richTextBox1.Text = "";
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.RegexTextbox);
+            this.splitContainer2.Panel1.Controls.Add(this.button5);
+            this.splitContainer2.Panel1.Controls.Add(this.button7);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.treeView1);
+            this.splitContainer2.Panel2.Controls.Add(this.button6);
+            this.splitContainer2.Size = new System.Drawing.Size(329, 424);
+            this.splitContainer2.SplitterDistance = 115;
+            this.splitContainer2.TabIndex = 0;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(910, 517);
+            this.ClientSize = new System.Drawing.Size(916, 504);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.button7);
-            this.Controls.Add(this.button6);
-            this.Controls.Add(this.treeView1);
-            this.Controls.Add(this.button5);
             this.Controls.Add(this.insertComboBox);
-            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.findTextBox);
             this.Controls.Add(this.findButton);
-            this.Controls.Add(this.RegexTextbox);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Name = "Form2";
             this.Text = "Create regex";
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -202,7 +259,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox RegexTextbox;
-        private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.TextBox findTextBox;
         private System.Windows.Forms.Button findButton;
         private System.Windows.Forms.ComboBox insertComboBox;
@@ -212,5 +268,8 @@
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
     }
 }

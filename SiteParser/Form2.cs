@@ -17,7 +17,6 @@ namespace SiteParser
         }
 
         private string result;
-        private int searchStartInd = 0;
         private string[] fields;
         private string testData;
 
@@ -30,6 +29,7 @@ namespace SiteParser
             foreach (string s in names)
                 insertComboBox.Items.Add(new RegexPart(s, @"(?<" + s + @">[^@@@]*)"));
             insertComboBox.Items.Add(new RegexPart("skip to", @"(?:(?!@@).)*"));
+            insertComboBox.Items.Add(new RegexPart("optional", @"(?:@@@@)?"));
             insertComboBox.SelectedIndex = 0;
             fields = names;
             testData = webData;
@@ -155,6 +155,7 @@ namespace SiteParser
 
         private void button4_Click(object sender, EventArgs e)
         {
+            int searchStartInd = richTextBox1.SelectionStart + 1;
             int i = richTextBox1.Text.IndexOf(findTextBox.Text, searchStartInd, StringComparison.OrdinalIgnoreCase);
             if (i != -1)
             {
@@ -175,19 +176,31 @@ namespace SiteParser
         private void button5_Click(object sender, EventArgs e)
         {
             string strToInsert = ((RegexPart)insertComboBox.SelectedItem).Value;
-            int p = strToInsert.IndexOf(@"@@@");
-            bool replaceWithLast = p >= 0;
-            if (p < 0) p = strToInsert.IndexOf(@"@@");
+            int p = strToInsert.IndexOf(@"@@@@");
+            if (p >= 0)
+            {
+                strToInsert = strToInsert.Substring(0, p) + RegexTextbox.SelectedText + strToInsert.Substring(p + 4);
+                p = -1; // prevent further processing
+            }
+            bool replaceWithLast = false;
+            if (p < 0)
+            {
+                p = strToInsert.IndexOf(@"@@@");
+                replaceWithLast = p >= 0;
+                if (p < 0) p = strToInsert.IndexOf(@"@@");
+            }
             int nextInd = RegexTextbox.SelectionStart + RegexTextbox.SelectionLength;
+            string nextChar = String.Empty;
+            if (nextInd < RegexTextbox.Text.Length)
+                nextChar = new String(RegexTextbox.Text[nextInd], 1);
 
             int insPos = RegexTextbox.SelectionStart;
             RegexTextbox.Text = RegexTextbox.Text.Substring(0, insPos) + strToInsert +
                 RegexTextbox.Text.Substring(insPos + RegexTextbox.SelectionLength);
-
             if (replaceWithLast && nextInd < RegexTextbox.Text.Length)
             {
                 insPos += p;
-                RegexTextbox.Text = RegexTextbox.Text.Substring(0, insPos) + RegexTextbox.Text[nextInd] +
+                RegexTextbox.Text = RegexTextbox.Text.Substring(0, insPos) + nextChar +
                     RegexTextbox.Text.Substring(insPos + 3);
                 RegexTextbox.SelectionStart = insPos;
                 RegexTextbox.SelectionLength = 0;
@@ -197,6 +210,11 @@ namespace SiteParser
                 {
                     RegexTextbox.SelectionStart = insPos + p;
                     RegexTextbox.SelectionLength = 2;
+                }
+                else
+                {
+                    RegexTextbox.SelectionStart = insPos;
+                    RegexTextbox.SelectionLength = 0;
                 }
             RegexTextbox.Focus();
         }
@@ -257,7 +275,7 @@ namespace SiteParser
                             int j = i + 1;
                             while (j < txt.Length && (txt[j] == ' ' || txt[j] == '\t' || txt[j] == '\r' || txt[j] == '\n'))
                                 j++;
-                            if (j - i > 1) sb.Append(@"\s*");
+                            if (j - i > 1 || txt[i] == '\n') sb.Append(@"\s*");
                             else
                                 sb.Append(@"\s");
                             i = j - 1;
@@ -273,7 +291,7 @@ namespace SiteParser
 
         private void findTextBox_TextChanged(object sender, EventArgs e)
         {
-            searchStartInd = 0;
+            richTextBox1.SelectionStart = 0;
             findButton.Text = "Find";
         }
     }
