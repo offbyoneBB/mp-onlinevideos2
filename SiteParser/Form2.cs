@@ -197,7 +197,7 @@ namespace SiteParser
             int insPos = RegexTextbox.SelectionStart;
             RegexTextbox.Text = RegexTextbox.Text.Substring(0, insPos) + strToInsert +
                 RegexTextbox.Text.Substring(insPos + RegexTextbox.SelectionLength);
-            if (replaceWithLast && nextInd < RegexTextbox.Text.Length)
+            if (replaceWithLast)
             {
                 insPos += p;
                 RegexTextbox.Text = RegexTextbox.Text.Substring(0, insPos) + nextChar +

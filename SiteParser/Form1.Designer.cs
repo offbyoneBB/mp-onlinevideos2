@@ -108,6 +108,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.videoListUrlDecodingCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.categTabPage.SuspendLayout();
             this.subCatTabPage.SuspendLayout();
@@ -153,7 +154,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 30, 3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(468, 436);
+            this.tabControl1.Size = new System.Drawing.Size(468, 498);
             this.tabControl1.TabIndex = 16;
             // 
             // categTabPage
@@ -326,6 +327,7 @@
             // 
             // videoListTabPage
             // 
+            this.videoListTabPage.Controls.Add(this.videoListUrlDecodingCheckBox);
             this.videoListTabPage.Controls.Add(this.prevPageLabel);
             this.videoListTabPage.Controls.Add(this.CreatePrevPageRegexButton);
             this.videoListTabPage.Controls.Add(this.nextPageLabel);
@@ -351,7 +353,7 @@
             this.videoListTabPage.Location = new System.Drawing.Point(4, 22);
             this.videoListTabPage.Name = "videoListTabPage";
             this.videoListTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.videoListTabPage.Size = new System.Drawing.Size(460, 410);
+            this.videoListTabPage.Size = new System.Drawing.Size(460, 472);
             this.videoListTabPage.TabIndex = 2;
             this.videoListTabPage.Text = "VideoList";
             this.videoListTabPage.UseVisualStyleBackColor = true;
@@ -359,7 +361,7 @@
             // prevPageLabel
             // 
             this.prevPageLabel.AutoSize = true;
-            this.prevPageLabel.Location = new System.Drawing.Point(93, 314);
+            this.prevPageLabel.Location = new System.Drawing.Point(94, 352);
             this.prevPageLabel.Name = "prevPageLabel";
             this.prevPageLabel.Size = new System.Drawing.Size(41, 13);
             this.prevPageLabel.TabIndex = 54;
@@ -367,7 +369,7 @@
             // 
             // CreatePrevPageRegexButton
             // 
-            this.CreatePrevPageRegexButton.Location = new System.Drawing.Point(3, 304);
+            this.CreatePrevPageRegexButton.Location = new System.Drawing.Point(4, 342);
             this.CreatePrevPageRegexButton.Name = "CreatePrevPageRegexButton";
             this.CreatePrevPageRegexButton.Size = new System.Drawing.Size(80, 23);
             this.CreatePrevPageRegexButton.TabIndex = 53;
@@ -378,7 +380,7 @@
             // nextPageLabel
             // 
             this.nextPageLabel.AutoSize = true;
-            this.nextPageLabel.Location = new System.Drawing.Point(95, 177);
+            this.nextPageLabel.Location = new System.Drawing.Point(96, 215);
             this.nextPageLabel.Name = "nextPageLabel";
             this.nextPageLabel.Size = new System.Drawing.Size(41, 13);
             this.nextPageLabel.TabIndex = 52;
@@ -386,7 +388,7 @@
             // 
             // CreateNextPageRegexButton
             // 
-            this.CreateNextPageRegexButton.Location = new System.Drawing.Point(3, 167);
+            this.CreateNextPageRegexButton.Location = new System.Drawing.Point(4, 205);
             this.CreateNextPageRegexButton.Name = "CreateNextPageRegexButton";
             this.CreateNextPageRegexButton.Size = new System.Drawing.Size(80, 23);
             this.CreateNextPageRegexButton.TabIndex = 51;
@@ -407,7 +409,7 @@
             // prevPageRegExUrlDecodingCheckBox
             // 
             this.prevPageRegExUrlDecodingCheckBox.AutoSize = true;
-            this.prevPageRegExUrlDecodingCheckBox.Location = new System.Drawing.Point(10, 411);
+            this.prevPageRegExUrlDecodingCheckBox.Location = new System.Drawing.Point(11, 449);
             this.prevPageRegExUrlDecodingCheckBox.Name = "prevPageRegExUrlDecodingCheckBox";
             this.prevPageRegExUrlDecodingCheckBox.Size = new System.Drawing.Size(163, 17);
             this.prevPageRegExUrlDecodingCheckBox.TabIndex = 49;
@@ -418,7 +420,7 @@
             // 
             this.prevPageRegExUrlFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.prevPageRegExUrlFormatStringTextBox.Location = new System.Drawing.Point(3, 385);
+            this.prevPageRegExUrlFormatStringTextBox.Location = new System.Drawing.Point(4, 423);
             this.prevPageRegExUrlFormatStringTextBox.Name = "prevPageRegExUrlFormatStringTextBox";
             this.prevPageRegExUrlFormatStringTextBox.Size = new System.Drawing.Size(445, 20);
             this.prevPageRegExUrlFormatStringTextBox.TabIndex = 48;
@@ -427,7 +429,7 @@
             // 
             this.prevPageRegExTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.prevPageRegExTextBox.Location = new System.Drawing.Point(3, 346);
+            this.prevPageRegExTextBox.Location = new System.Drawing.Point(4, 384);
             this.prevPageRegExTextBox.Name = "prevPageRegExTextBox";
             this.prevPageRegExTextBox.Size = new System.Drawing.Size(445, 20);
             this.prevPageRegExTextBox.TabIndex = 47;
@@ -435,7 +437,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(0, 369);
+            this.label11.Location = new System.Drawing.Point(1, 407);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(157, 13);
             this.label11.TabIndex = 46;
@@ -444,7 +446,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(0, 330);
+            this.label12.Location = new System.Drawing.Point(1, 368);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(85, 13);
             this.label12.TabIndex = 45;
@@ -453,7 +455,7 @@
             // nextPageRegExUrlDecodingCheckBox
             // 
             this.nextPageRegExUrlDecodingCheckBox.AutoSize = true;
-            this.nextPageRegExUrlDecodingCheckBox.Location = new System.Drawing.Point(3, 274);
+            this.nextPageRegExUrlDecodingCheckBox.Location = new System.Drawing.Point(4, 312);
             this.nextPageRegExUrlDecodingCheckBox.Name = "nextPageRegExUrlDecodingCheckBox";
             this.nextPageRegExUrlDecodingCheckBox.Size = new System.Drawing.Size(162, 17);
             this.nextPageRegExUrlDecodingCheckBox.TabIndex = 44;
@@ -464,7 +466,7 @@
             // 
             this.nextPageRegExUrlFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.nextPageRegExUrlFormatStringTextBox.Location = new System.Drawing.Point(3, 248);
+            this.nextPageRegExUrlFormatStringTextBox.Location = new System.Drawing.Point(4, 286);
             this.nextPageRegExUrlFormatStringTextBox.Name = "nextPageRegExUrlFormatStringTextBox";
             this.nextPageRegExUrlFormatStringTextBox.Size = new System.Drawing.Size(445, 20);
             this.nextPageRegExUrlFormatStringTextBox.TabIndex = 43;
@@ -473,7 +475,7 @@
             // 
             this.nextPageRegExTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.nextPageRegExTextBox.Location = new System.Drawing.Point(3, 209);
+            this.nextPageRegExTextBox.Location = new System.Drawing.Point(4, 247);
             this.nextPageRegExTextBox.Name = "nextPageRegExTextBox";
             this.nextPageRegExTextBox.Size = new System.Drawing.Size(445, 20);
             this.nextPageRegExTextBox.TabIndex = 42;
@@ -481,7 +483,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(0, 232);
+            this.label10.Location = new System.Drawing.Point(1, 270);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(156, 13);
             this.label10.TabIndex = 41;
@@ -490,7 +492,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(0, 193);
+            this.label9.Location = new System.Drawing.Point(1, 231);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(84, 13);
             this.label9.TabIndex = 40;
@@ -500,7 +502,7 @@
             // 
             this.videoThumbFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.videoThumbFormatStringTextBox.Location = new System.Drawing.Point(3, 141);
+            this.videoThumbFormatStringTextBox.Location = new System.Drawing.Point(4, 179);
             this.videoThumbFormatStringTextBox.Name = "videoThumbFormatStringTextBox";
             this.videoThumbFormatStringTextBox.Size = new System.Drawing.Size(443, 20);
             this.videoThumbFormatStringTextBox.TabIndex = 39;
@@ -508,7 +510,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(0, 125);
+            this.label8.Location = new System.Drawing.Point(1, 163);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(125, 13);
             this.label8.TabIndex = 38;
@@ -588,7 +590,7 @@
             this.VideoUrlTabPage.Location = new System.Drawing.Point(4, 22);
             this.VideoUrlTabPage.Name = "VideoUrlTabPage";
             this.VideoUrlTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.VideoUrlTabPage.Size = new System.Drawing.Size(460, 410);
+            this.VideoUrlTabPage.Size = new System.Drawing.Size(460, 472);
             this.VideoUrlTabPage.TabIndex = 3;
             this.VideoUrlTabPage.Text = "VideoUrl";
             this.VideoUrlTabPage.UseVisualStyleBackColor = true;
@@ -810,7 +812,7 @@
             this.categoryInfoListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.categoryInfoListView.Location = new System.Drawing.Point(0, 0);
             this.categoryInfoListView.Name = "categoryInfoListView";
-            this.categoryInfoListView.Size = new System.Drawing.Size(955, 139);
+            this.categoryInfoListView.Size = new System.Drawing.Size(955, 158);
             this.categoryInfoListView.TabIndex = 25;
             this.categoryInfoListView.UseCompatibleStateImageBehavior = false;
             this.categoryInfoListView.View = System.Windows.Forms.View.Details;
@@ -830,7 +832,7 @@
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(483, 471);
+            this.treeView1.Size = new System.Drawing.Size(483, 533);
             this.treeView1.TabIndex = 26;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
@@ -848,8 +850,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.categoryInfoListView);
-            this.splitContainer1.Size = new System.Drawing.Size(955, 614);
-            this.splitContainer1.SplitterDistance = 471;
+            this.splitContainer1.Size = new System.Drawing.Size(955, 695);
+            this.splitContainer1.SplitterDistance = 533;
             this.splitContainer1.TabIndex = 27;
             // 
             // splitContainer2
@@ -866,7 +868,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.treeView1);
-            this.splitContainer2.Size = new System.Drawing.Size(955, 471);
+            this.splitContainer2.Size = new System.Drawing.Size(955, 533);
             this.splitContainer2.SplitterDistance = 468;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -931,14 +933,24 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.FileName = "OnlineVideoSites.xml";
             this.openFileDialog1.Filter = "xml-Files|*.xml";
+            // 
+            // videoListUrlDecodingCheckBox
+            // 
+            this.videoListUrlDecodingCheckBox.AutoSize = true;
+            this.videoListUrlDecodingCheckBox.Location = new System.Drawing.Point(4, 128);
+            this.videoListUrlDecodingCheckBox.Name = "videoListUrlDecodingCheckBox";
+            this.videoListUrlDecodingCheckBox.Size = new System.Drawing.Size(127, 17);
+            this.videoListUrlDecodingCheckBox.TabIndex = 55;
+            this.videoListUrlDecodingCheckBox.Text = "videoListUrlDecoding";
+            this.videoListUrlDecodingCheckBox.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(955, 641);
+            this.ClientSize = new System.Drawing.Size(955, 722);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1050,6 +1062,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.Button btnPlay;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+        private System.Windows.Forms.CheckBox videoListUrlDecodingCheckBox;
     }
 }
 
