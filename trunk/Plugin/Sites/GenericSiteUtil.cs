@@ -27,6 +27,8 @@ namespace OnlineVideos.Sites
         protected string videoListRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the videoListRegEx.")]
         protected string videoListRegExFormatString;
+        [Category("OnlineVideosConfiguration"), Description("Boolean used for decoding url for ajax requests")]
+        protected bool videoListUrlDecoding = false;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to match on the video url retrieved as a result of the 'VideoUrl' match of the videoListRegEx. Groups should be named 'm0', 'm1' and so on. Only used if set.")]
         protected string videoUrlRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the video url of an item that was found in the rss. If videoUrlRegEx is set those groups will be taken as parameters.")]
@@ -337,6 +339,7 @@ namespace OnlineVideos.Sites
                         videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                         if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
                         if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
+                        if (videoListUrlDecoding) videoInfo.VideoUrl = HttpUtility.HtmlDecode(videoInfo.VideoUrl);
                         // get, format and if needed absolutify the thumb url
                         videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                         if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.ImageUrl = string.Format(videoThumbFormatString, videoInfo.ImageUrl);

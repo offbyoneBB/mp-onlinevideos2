@@ -53,6 +53,7 @@ namespace SiteParser
 
             videoUrlRegExTextBox.Text = GetRegex(util.VideoUrlRegEx);
             videoUrlFormatStringTextBox.Text = util.VideoUrlFormatString;
+            videoListUrlDecodingCheckBox.Checked = util.VideoListUrlDecoding;
             videoUrlDecodingCheckBox.Checked = util.VideoUrlDecoding;
 
             playlistUrlRegexTextBox.Text = GetRegex(util.PlaylistUrlRegEx);
@@ -214,6 +215,7 @@ namespace SiteParser
             //videolist
             generic.VideoListRegEx = CreateRegex(videoListRegexTextBox.Text);
             generic.VideoListRegExFormatString = videoListRegexFormatTextBox.Text;
+            generic.VideoListUrlDecoding = videoListUrlDecodingCheckBox.Checked;
             generic.VideoThumbFormatString = videoThumbFormatStringTextBox.Text;
 
             generic.NextPageRegEx = CreateRegex(nextPageRegExTextBox.Text);
@@ -232,6 +234,7 @@ namespace SiteParser
                 List<VideoInfo> videos = generic.getVideoList(parentCat);
                 foreach (VideoInfo video in videos)
                     selected.Nodes.Add(video.Title).Tag = video;
+                selected.Text += ' ' + selected.Nodes.Count.ToString();
                 if (generic.HasNextPage)
                     nextPageLabel.Text = generic.NextPageUrl;
                 else
@@ -389,6 +392,7 @@ namespace SiteParser
 
         public Regex VideoListRegEx { get { return regEx_VideoList; } set { regEx_VideoList = value; } }
         public string VideoListRegExFormatString { get { return videoListRegExFormatString; } set { videoListRegExFormatString = value; } }
+        public bool VideoListUrlDecoding { get { return videoListUrlDecoding; } set { videoListUrlDecoding = value; } }
         public string VideoThumbFormatString { get { return videoThumbFormatString; } set { videoThumbFormatString = value; } }
 
         public Regex NextPageRegEx { get { return regEx_NextPage; } set { regEx_NextPage = value; } }
