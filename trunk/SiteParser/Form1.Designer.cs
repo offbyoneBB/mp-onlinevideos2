@@ -49,6 +49,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.SubcategorieRegexTextBox = new System.Windows.Forms.TextBox();
             this.videoListTabPage = new System.Windows.Forms.TabPage();
+            this.videoListUrlDecodingCheckBox = new System.Windows.Forms.CheckBox();
             this.prevPageLabel = new System.Windows.Forms.Label();
             this.CreatePrevPageRegexButton = new System.Windows.Forms.Button();
             this.nextPageLabel = new System.Windows.Forms.Label();
@@ -108,7 +109,6 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.videoListUrlDecodingCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.categTabPage.SuspendLayout();
             this.subCatTabPage.SuspendLayout();
@@ -169,7 +169,7 @@
             this.categTabPage.Location = new System.Drawing.Point(4, 22);
             this.categTabPage.Name = "categTabPage";
             this.categTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.categTabPage.Size = new System.Drawing.Size(460, 410);
+            this.categTabPage.Size = new System.Drawing.Size(460, 472);
             this.categTabPage.TabIndex = 0;
             this.categTabPage.Text = "Category";
             this.categTabPage.UseVisualStyleBackColor = true;
@@ -253,7 +253,7 @@
             this.subCatTabPage.Location = new System.Drawing.Point(4, 22);
             this.subCatTabPage.Name = "subCatTabPage";
             this.subCatTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.subCatTabPage.Size = new System.Drawing.Size(460, 410);
+            this.subCatTabPage.Size = new System.Drawing.Size(460, 472);
             this.subCatTabPage.TabIndex = 1;
             this.subCatTabPage.Text = "Subcategories";
             this.subCatTabPage.UseVisualStyleBackColor = true;
@@ -357,6 +357,16 @@
             this.videoListTabPage.TabIndex = 2;
             this.videoListTabPage.Text = "VideoList";
             this.videoListTabPage.UseVisualStyleBackColor = true;
+            // 
+            // videoListUrlDecodingCheckBox
+            // 
+            this.videoListUrlDecodingCheckBox.AutoSize = true;
+            this.videoListUrlDecodingCheckBox.Location = new System.Drawing.Point(4, 128);
+            this.videoListUrlDecodingCheckBox.Name = "videoListUrlDecodingCheckBox";
+            this.videoListUrlDecodingCheckBox.Size = new System.Drawing.Size(127, 17);
+            this.videoListUrlDecodingCheckBox.TabIndex = 55;
+            this.videoListUrlDecodingCheckBox.Text = "videoListUrlDecoding";
+            this.videoListUrlDecodingCheckBox.UseVisualStyleBackColor = true;
             // 
             // prevPageLabel
             // 
@@ -935,16 +945,6 @@
             // 
             this.openFileDialog1.FileName = "OnlineVideoSites.xml";
             this.openFileDialog1.Filter = "xml-Files|*.xml";
-            // 
-            // videoListUrlDecodingCheckBox
-            // 
-            this.videoListUrlDecodingCheckBox.AutoSize = true;
-            this.videoListUrlDecodingCheckBox.Location = new System.Drawing.Point(4, 128);
-            this.videoListUrlDecodingCheckBox.Name = "videoListUrlDecodingCheckBox";
-            this.videoListUrlDecodingCheckBox.Size = new System.Drawing.Size(127, 17);
-            this.videoListUrlDecodingCheckBox.TabIndex = 55;
-            this.videoListUrlDecodingCheckBox.Text = "videoListUrlDecoding";
-            this.videoListUrlDecodingCheckBox.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

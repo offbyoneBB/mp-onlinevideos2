@@ -112,6 +112,11 @@
   <ItemGroup>
     <None Include="Resources\Intersect.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\WindowPlugins.dll">
+      <Link>WindowPlugins.dll</Link>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
