@@ -12,35 +12,35 @@ using MediaPortal.Configuration;
 
 namespace OnlineVideos
 {
-	/// <summary>
-	/// Description of Configuration.
-	/// </summary>
-	public partial class Configuration : Form
-	{
-		public Configuration()
-		{
-			//
-			// The InitializeComponent() call is required for Windows Forms designer support.
-			//
-			InitializeComponent();
+    /// <summary>
+    /// Description of Configuration.
+    /// </summary>
+    public partial class Configuration : Form
+    {
+        public Configuration()
+        {
+            //
+            // The InitializeComponent() call is required for Windows Forms designer support.
+            //
+            InitializeComponent();
 
             propertyGridUserConfig.BrowsableAttributes = new AttributeCollection(new CategoryAttribute("OnlineVideosUserConfiguration"));
-		}
+        }
 
-		public void Configuration_Load(object sender, EventArgs e)
+        public void Configuration_Load(object sender, EventArgs e)
         {
             /** fill "Codecs" tab **/
             SetInfosFromCodecs();
 
             /** fill "General" tab **/
             OnlineVideoSettings settings = OnlineVideoSettings.Instance;
-            lblVersion.Text = "Version: " + new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version.ToString();            
+            lblVersion.Text = "Version: " + new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version.ToString();
             tbxScreenName.Text = settings.BasicHomeScreenName;
-			txtThumbLoc.Text = settings.ThumbsDir;
+            txtThumbLoc.Text = settings.ThumbsDir;
             tbxThumbAge.Text = settings.thumbAge.ToString();
             txtDownloadDir.Text = settings.DownloadDir;
             txtFilters.Text = settings.FilterArray != null ? string.Join(",", settings.FilterArray) : "";
-            chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;            
+            chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;
             tbxPin.Text = settings.pinAgeConfirmation;
             tbxWebCacheTimeout.Text = settings.cacheTimeout.ToString();
             tbxUtilTimeout.Text = settings.utilTimeout.ToString();
@@ -55,7 +55,7 @@ namespace OnlineVideos
             // utils combobox
             foreach (string site in SiteUtilFactory.GetAllNames()) cbSiteUtil.Items.Add(site);
             // language identifiers combobox
-            List<string> cultureNames = new List<string>();            
+            List<string> cultureNames = new List<string>();
             foreach (System.Globalization.CultureInfo ci in System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.NeutralCultures))
             {
                 string name = ci.Name.IndexOf('-') >= 0 ? ci.Name.Substring(0, ci.Name.IndexOf('-')) : ci.Name;
@@ -63,14 +63,14 @@ namespace OnlineVideos
             }
             cultureNames.Add("--");
             cultureNames.Sort();
-            cbLanguages.Items.AddRange(cultureNames.ToArray());            
+            cbLanguages.Items.AddRange(cultureNames.ToArray());
 
             // set bindings            
             bindingSourceSiteSettings.DataSource = OnlineVideoSettings.Instance.SiteSettingsList;
-		}
-		
-		void SiteListSelectedValueChanged(object sender, EventArgs e)
-        {            
+        }
+
+        void SiteListSelectedValueChanged(object sender, EventArgs e)
+        {
             SiteSettings site = siteList.SelectedItem as SiteSettings;
             BindingList<RssLink> rssLinks = new BindingList<RssLink>();
 
@@ -80,7 +80,7 @@ namespace OnlineVideos
             iconSite.Image = null;
 
             if (site != null)
-            {                                                
+            {
                 foreach (Category aCat in site.Categories)
                 {
                     if (aCat is RssLink) rssLinks.Add(aCat as RssLink);
@@ -117,19 +117,19 @@ namespace OnlineVideos
             btnPublishSite.Enabled = site != null;
             btnSiteUp.Enabled = site != null;
             btnSiteDown.Enabled = site != null;
-		}
-		
-		void RssLinkListSelectedIndexChanged(object sender, EventArgs e)
-		{                        
+        }
+
+        void RssLinkListSelectedIndexChanged(object sender, EventArgs e)
+        {
             // enable/disable all TextBoxes and Buttons for RssLink if one/none is selected
             txtRssUrl.Enabled = RssLinkList.SelectedIndex > -1;
             txtRssName.Enabled = RssLinkList.SelectedIndex > -1;
             txtRssThumb.Enabled = RssLinkList.SelectedIndex > -1;
             btnDeleteRss.Enabled = RssLinkList.SelectedIndex > -1;
-		}		
-				
-		void BtnAddRssClick(object sender, EventArgs e)
-		{   
+        }
+
+        void BtnAddRssClick(object sender, EventArgs e)
+        {
             SiteSettings site = siteList.SelectedItem as SiteSettings;
             RssLink link = new RssLink() { Name = "new", Url = "http://" };
             site.Categories.Add(link);
@@ -137,21 +137,21 @@ namespace OnlineVideos
             RssLinkList.SelectedIndex = RssLinkList.Items.Count - 1;
             RssLinkListSelectedIndexChanged(this, EventArgs.Empty);
             txtRssName.Focus();
-		}
-				
-		void BtnDeleteRssClick(object sender, EventArgs e)
-		{
-			if(RssLinkList.SelectedIndex > -1)
+        }
+
+        void BtnDeleteRssClick(object sender, EventArgs e)
+        {
+            if (RssLinkList.SelectedIndex > -1)
             {
                 SiteSettings site = siteList.SelectedItem as SiteSettings;
                 RssLink link = RssLinkList.SelectedItem as RssLink;
                 ((CurrencyManager)BindingContext[bindingSourceRssLink]).RemoveAt(RssLinkList.SelectedIndex);
                 site.Categories.Remove(link);
-			}			
-		}
-		
-		void ConfigurationFormClosing(object sender, FormClosingEventArgs e)
-		{
+            }
+        }
+
+        void ConfigurationFormClosing(object sender, FormClosingEventArgs e)
+        {
             DialogResult dr = this.DialogResult;
 
             if (DialogResult == DialogResult.Cancel)
@@ -166,8 +166,9 @@ namespace OnlineVideos
                 String[] lsFilterArray = lsFilter.Split(new char[] { ',' });
                 settings.FilterArray = lsFilterArray;
                 settings.ThumbsDir = txtThumbLoc.Text;
-                try { settings.thumbAge = int.Parse(tbxThumbAge.Text); } catch { }
-                settings.BasicHomeScreenName = tbxScreenName.Text;                
+                try { settings.thumbAge = int.Parse(tbxThumbAge.Text); }
+                catch { }
+                settings.BasicHomeScreenName = tbxScreenName.Text;
                 settings.DownloadDir = txtDownloadDir.Text;
                 settings.useAgeConfirmation = chkUseAgeConfirmation.Checked;
                 settings.pinAgeConfirmation = tbxPin.Text;
@@ -175,13 +176,15 @@ namespace OnlineVideos
                 settings.rememberLastSearch = chkRememberLastSearch.Checked;
                 int.TryParse(tbxWMPBuffer.Text, out settings.wmpbuffer);
                 int.TryParse(udPlayBuffer.SelectedItem.ToString(), out settings.playbuffer);
-                try { settings.cacheTimeout = int.Parse(tbxWebCacheTimeout.Text); } catch { }
-                try { settings.utilTimeout = int.Parse(tbxUtilTimeout.Text); } catch { }
+                try { settings.cacheTimeout = int.Parse(tbxWebCacheTimeout.Text); }
+                catch { }
+                try { settings.utilTimeout = int.Parse(tbxUtilTimeout.Text); }
+                catch { }
                 if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) settings.updateOnStart = null;
                 else settings.updateOnStart = chkDoAutoUpdate.Checked;
                 settings.Save();
             }
-		}               
+        }
 
         private void chkUseAgeConfirmation_CheckedChanged(object sender, EventArgs e)
         {
@@ -259,7 +262,7 @@ namespace OnlineVideos
                     group.Name = tbxChannelName.Text;
                     group.Thumb = tbxChannelThumb.Text != "" ? tbxChannelThumb.Text : null;
                     tvGroups.SelectedNode.Text = tbxChannelName.Text;
-                    site.Categories.Add(group);                    
+                    site.Categories.Add(group);
                 }
                 else
                 {
@@ -345,7 +348,7 @@ namespace OnlineVideos
 
             chkFLVSplitterInstalled.Checked = cc.FLV_Splitter.IsInstalled;
             tbxFLVSplitter.Text = cc.FLV_Splitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.FLV_Splitter.Name, cc.FLV_Splitter.Version, cc.FLV_Splitter.CodecFile) : "";
-            
+
             chkMP4SplitterInstalled.Checked = cc.MPC_HC_MP4Splitter.IsInstalled;
             tbxMP4Splitter.Text = cc.MPC_HC_MP4Splitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.MPC_HC_MP4Splitter.Name, cc.MPC_HC_MP4Splitter.Version, cc.MPC_HC_MP4Splitter.CodecFile) : "";
 
@@ -363,7 +366,7 @@ namespace OnlineVideos
         }
 
         private void btnAddSite_Click(object sender, EventArgs e)
-        {            
+        {
             SiteSettings site = new SiteSettings();
             site.Name = "New";
             site.UtilName = "GenericSite";
@@ -375,8 +378,8 @@ namespace OnlineVideos
 
         private void btnDeleteSite_Click(object sender, EventArgs e)
         {
-            SiteSettings site = siteList.SelectedItem as SiteSettings;            
-            bindingSourceSiteSettings.Remove(site);            
+            SiteSettings site = siteList.SelectedItem as SiteSettings;
+            bindingSourceSiteSettings.Remove(site);
         }
 
         private void btnSiteUp_Click(object sender, EventArgs e)
@@ -391,7 +394,7 @@ namespace OnlineVideos
             else OnlineVideoSettings.Instance.SiteSettingsList.Insert(currentPos - 1, site);
 
             bindingSourceSiteSettings.ResumeBinding();
-            bindingSourceSiteSettings.Position = OnlineVideoSettings.Instance.SiteSettingsList.IndexOf(site); 
+            bindingSourceSiteSettings.Position = OnlineVideoSettings.Instance.SiteSettingsList.IndexOf(site);
             bindingSourceSiteSettings.ResetCurrentItem();
         }
 
@@ -417,7 +420,7 @@ namespace OnlineVideos
             {
                 ImExportXml dialog = new ImExportXml();
                 if (dialog.ShowDialog() == DialogResult.OK)
-                {                                        
+                {
                     IList<SiteSettings> sitesFromDlg = Utils.SiteSettingsFromXml(dialog.txtXml.Text);
                     if (sitesFromDlg != null)
                     {
@@ -429,7 +432,41 @@ namespace OnlineVideos
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }           
+            }
+        }
+
+        public static void AddConfigurationValues(Sites.SiteUtilBase siteUtil, SiteSettings siteSettings)
+        {
+            // find and set all configuration fields that are not default
+
+            // 1. build a list of all the Fields that are used for OnlineVideosConfiguration
+            List<FieldInfo> fieldInfos = new List<FieldInfo>();
+            foreach (FieldInfo field in siteUtil.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                object[] attrs = field.GetCustomAttributes(typeof(CategoryAttribute), false);
+                if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosConfiguration")
+                {
+                    fieldInfos.Add(field);
+                }
+            }
+
+            // 2. get a "clean" site by creating it with empty SiteSettings
+            siteSettings.Configuration = new StringHash();
+            Sites.SiteUtilBase cleanSiteUtil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
+
+            // 3. compare and collect different settings
+            foreach (FieldInfo field in fieldInfos)
+            {
+                object defaultValue = field.GetValue(cleanSiteUtil);
+                object newValue = field.GetValue(siteUtil);
+                if (defaultValue != newValue)
+                {
+                    // seems that if default value = false, and newvalue = false defaultvalue != newvalue returns true
+                    // so added extra check
+                    if (defaultValue == null || !defaultValue.Equals(newValue))
+                        siteSettings.Configuration.Add(field.Name, newValue.ToString());
+                }
+            }
         }
 
         private void btnAdvanced_Click(object sender, EventArgs e)
@@ -441,37 +478,9 @@ namespace OnlineVideos
             ca.Text += " - " + siteSettings.UtilName;
             ca.propertyGrid.SelectedObject = siteUtil;
             if (ca.ShowDialog() == DialogResult.OK)
-            {
-                // find and set all configuration fields that are not default
-
-                // 1. build a list of all the Fields that are used for OnlineVideosConfiguration
-                List<FieldInfo> fieldInfos = new List<FieldInfo>();
-                foreach (FieldInfo field in siteUtil.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
-                {
-                    object[] attrs = field.GetCustomAttributes(typeof(CategoryAttribute), false);
-                    if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosConfiguration")
-                    {
-                        fieldInfos.Add(field);
-                    }
-                }
-
-                // 2. get a "clean" site by creating it with empty SiteSettings
-                siteSettings.Configuration = new StringHash();
-                Sites.SiteUtilBase cleanSiteUtil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
-
-                // 3. compare and collect different settings
-                foreach (FieldInfo field in fieldInfos)
-                {
-                    object defaultValue = field.GetValue(cleanSiteUtil);
-                    object newValue = field.GetValue(siteUtil);
-                    if (defaultValue != newValue)
-                    {
-                        siteSettings.Configuration.Add(field.Name, newValue.ToString());
-                    }
-                }
-            }
+                AddConfigurationValues(siteUtil, siteSettings);
         }
-        
+
         private void CheckValidNumber(object sender, CancelEventArgs e)
         {
             string error = null;
@@ -545,7 +554,7 @@ namespace OnlineVideos
             try
             {
                 string dll = SiteUtilFactory.RequiredDll(site.UtilName);
-                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();                
+                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
                 string msg = "";
                 if (!string.IsNullOrEmpty(dll))
                 {
@@ -601,5 +610,5 @@ namespace OnlineVideos
             SubmitSiteReport ssrFrm = new SubmitSiteReport() { SiteName = site.Name };
             ssrFrm.ShowDialog();
         }
-	}
+    }
 }

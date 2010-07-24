@@ -20,6 +20,8 @@ namespace SiteParser
             InitializeComponent();
             generic = new MySiteUtil();
             generic.Initialize(new SiteSettings());
+            generic.Settings.UtilName = "GenericSite";
+
             UtilToGui(generic);
         }
 
@@ -362,6 +364,7 @@ namespace SiteParser
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Configuration.AddConfigurationValues(generic, generic.Settings);
 
             XmlSerializer ser = new XmlSerializer(typeof(SiteSettings));
             StringBuilder sb = new StringBuilder();
