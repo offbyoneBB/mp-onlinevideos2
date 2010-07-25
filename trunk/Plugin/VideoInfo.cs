@@ -249,7 +249,7 @@ namespace OnlineVideos
             try
             {
                 string contents = Sites.SiteUtilBase.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}", videoId));
-                foreach (string s in contents.Split('&')) Items.Add(s.Split('=')[0], s.Split('=')[1]);
+                Items = System.Web.HttpUtility.ParseQueryString(contents);
                 if (Items["status"] == "fail")
                 {
                     contents = Sites.SiteUtilBase.GetWebData(string.Format("http://www.youtube.com/watch?v={0}", videoId));
@@ -270,41 +270,24 @@ namespace OnlineVideos
                             }
                         }
                     }
-                }
+                }               
             }
             catch { }
 
-            string Token = Items["token"];
-            if (Token == null) Token = Items["t"];
-            if (!string.IsNullOrEmpty(Token))
-            {
-                string[] FmtMap = null;
-                if (Items.Get("fmt_url_map") != "")
+            string[] FmtMap = null;
+            if (Items.Get("fmt_url_map") != "")
+            {                    
+                FmtMap = Items["fmt_url_map"].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                Array.Sort(FmtMap, new Comparison<string>(delegate(string a, string b)
                 {
-                    FmtMap = System.Web.HttpUtility.UrlDecode(Items["fmt_url_map"]).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    Array.Sort(FmtMap, new Comparison<string>(delegate(string a, string b)
-                    {
-                        int a_i = int.Parse(a.Substring(0, a.IndexOf("|")));
-                        int b_i = int.Parse(b.Substring(0, b.IndexOf("|")));
-                        int index_a = Array.IndexOf(fmtOptionsQualitySorted, a_i);
-                        int index_b = Array.IndexOf(fmtOptionsQualitySorted, b_i);
-                        return index_b.CompareTo(index_a);
-                    }));
-                }
-                PlaybackOptions = FmtMapToPlaybackOptions(FmtMap, Token, videoId);
-                if (PlaybackOptions.Count == 0) // no or empty fmt_map -> add a default url
-                {
-                    PlaybackOptions.Add("", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&ext=.flv", videoId, Token));
-                }
-            }
-        }
-
-        static Dictionary<string, string> FmtMapToPlaybackOptions(string[] fmtMap, string token, string videoId)
-        {
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            if (fmtMap != null && fmtMap.Length > 0)
-            {
-                foreach (string fmtValue in fmtMap)
+                    int a_i = int.Parse(a.Substring(0, a.IndexOf("|")));
+                    int b_i = int.Parse(b.Substring(0, b.IndexOf("|")));
+                    int index_a = Array.IndexOf(fmtOptionsQualitySorted, a_i);
+                    int index_b = Array.IndexOf(fmtOptionsQualitySorted, b_i);
+                    return index_b.CompareTo(index_a);
+                }));
+                PlaybackOptions = new Dictionary<string, string>();
+                foreach (string fmtValue in FmtMap)
                 {
                     int fmtValueInt = int.Parse(fmtValue.Substring(0, fmtValue.IndexOf("|")));
                     switch (fmtValueInt)
@@ -312,25 +295,22 @@ namespace OnlineVideos
                         case 0:
                         case 5:
                         case 34:
-                            result.Add("320x240 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|")+1), "flv")); break;
+                            PlaybackOptions.Add("320x240 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "flv")); break;
                         case 13:
                         case 17:
-                            result.Add("176x144 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
+                            PlaybackOptions.Add("176x144 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
                         case 18:
-                            result.Add("480x360 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
+                            PlaybackOptions.Add("480x360 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
                         case 35:
-                            result.Add("640x480 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "flv")); break;
+                            PlaybackOptions.Add("640x480 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "flv")); break;
                         case 22:
-                            result.Add("1280x720 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
+                            PlaybackOptions.Add("1280x720 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
                         case 37:
-                            result.Add("1920x1080 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
-                        default:
-                            result.Add("Unknown | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .???", string.Format("http://youtube.com/get_video?video_id={0}&t={1}&fmt={2}", videoId, token, fmtValueInt)); break;
+                            PlaybackOptions.Add("1920x1080 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
                     }
                 }
             }
-            return result;
-        }
+        }      
 
         #endregion
     }
