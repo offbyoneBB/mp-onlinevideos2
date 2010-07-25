@@ -1232,6 +1232,7 @@
         <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
         <item key="searchUrl"><![CDATA[http://www.tube8.com/search.html?q={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.tube8.com]]></item>
+        <item key="cookies"><![CDATA[t8disclaimer=1]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Latest">http://www.tube8.com/latest.html</Category>

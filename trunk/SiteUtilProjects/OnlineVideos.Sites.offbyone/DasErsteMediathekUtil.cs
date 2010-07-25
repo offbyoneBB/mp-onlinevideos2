@@ -9,10 +9,9 @@ namespace OnlineVideos.Sites
     public class DasErsteMediathekUtil : SiteUtilBase
     {        
         public enum VideoQuality { Low, High, Max };
-        /*
-        [Category("OnlineVideosUserConfiguration"), Description("Low or high quality for the videos according to bandwidth.")]
+
+        [Category("OnlineVideosUserConfiguration"), Description("Chose your preferred quality for the videos according to bandwidth.")]
         VideoQuality videoQuality = VideoQuality.High;
-        */
 
         [Category("OnlineVideosConfiguration")]
         string categoriesRegEx = @"<div\sclass=""mt-reset\smt-categories"">\s*
@@ -155,10 +154,20 @@ namespace OnlineVideos.Sites
                 string dataPage = GetWebData(video.VideoUrl);
                 video.PlaybackOptions = new Dictionary<string, string>();
                 Match match = regEx_VideoUrlOptions.Match(dataPage);
+                List<string[]> options = new List<string[]>();
                 while (match.Success)
                 {
                     string[] infos = match.Groups["Info"].Value.Split(',');
                     for (int i = 0; i < infos.Length; i++) infos[i] = infos[i].Trim(new char[] { '"', ' ' });
+                    options.Add(infos);
+                    match = match.NextMatch();
+                }
+                options.Sort(new Comparison<string[]>(delegate(string[] a, string[] b)
+                    {
+                        return int.Parse(a[1]).CompareTo(int.Parse(b[1]));
+                    }));
+                foreach(string[] infos in options)
+                {
                     int type = int.Parse(infos[0]);
                     VideoQuality quality = (VideoQuality)int.Parse(infos[1]);
                     string resultUrl = "";
@@ -200,12 +209,35 @@ namespace OnlineVideos.Sites
                             catch { }
                         }
                     }
-                    match = match.NextMatch();
                 }
             }
-            var enumer = video.PlaybackOptions.GetEnumerator();
-            enumer.MoveNext();
-            return enumer.Current.Value;
+
+            if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
+            {
+                return ""; // no url to play available
+            }
+            else if (video.PlaybackOptions.Count == 1 || videoQuality == VideoQuality.Low)
+            {
+                //user wants low quality or only one playback option -> use first
+                string[] values = new string[video.PlaybackOptions.Count];
+                video.PlaybackOptions.Values.CopyTo(values, 0);
+                return values[0];
+            }
+            else if (videoQuality == VideoQuality.Max)
+            {
+                // take highest available quality
+                string[] values = new string[video.PlaybackOptions.Count];
+                video.PlaybackOptions.Values.CopyTo(values, 0);
+                return values[values.Length - 1];
+            }
+            else // choose a high quality from options (first below Max)
+            {
+                string[] keys = new string[video.PlaybackOptions.Count];
+                video.PlaybackOptions.Keys.CopyTo(keys, 0);
+                int index = keys.Length - 1;
+                while (index > 0 && keys[index].StartsWith(VideoQuality.Max.ToString())) index--;
+                return video.PlaybackOptions[keys[index]];
+            }
         }
 
         protected List<VideoInfo> getVideoListForCurrentCategory()
