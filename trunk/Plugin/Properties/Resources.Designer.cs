@@ -81,6 +81,20 @@ namespace OnlineVideos.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Import {
+            get {
+                object obj = ResourceManager.GetObject("Import", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ImportGlobal {
+            get {
+                object obj = ResourceManager.GetObject("ImportGlobal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap ImportXml {
             get {
                 object obj = ResourceManager.GetObject("ImportXml", resourceCulture);

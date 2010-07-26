@@ -69,7 +69,9 @@ namespace OnlineVideos
             this.btnSiteUp = new System.Windows.Forms.ToolStripButton();
             this.btnSiteDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripSites = new System.Windows.Forms.ToolStrip();
-            this.btnImportSite = new System.Windows.Forms.ToolStripButton();
+            this.toolStripDropDownBtnImport = new System.Windows.Forms.ToolStripDropDownButton();
+            this.btnImportXml = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnImportGlobal = new System.Windows.Forms.ToolStripMenuItem();
             this.btnAddSite = new System.Windows.Forms.ToolStripButton();
             this.btnDeleteSite = new System.Windows.Forms.ToolStripButton();
             this.btnPublishSite = new System.Windows.Forms.ToolStripButton();
@@ -504,7 +506,7 @@ namespace OnlineVideos
             this.btnSiteDown});
             this.toolStripSiteUpDown.Location = new System.Drawing.Point(0, 0);
             this.toolStripSiteUpDown.Name = "toolStripSiteUpDown";
-            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 211);
+            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 186);
             this.toolStripSiteUpDown.Stretch = true;
             this.toolStripSiteUpDown.TabIndex = 0;
             // 
@@ -536,25 +538,45 @@ namespace OnlineVideos
             this.toolStripSites.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStripSites.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripSites.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnImportSite,
+            this.toolStripDropDownBtnImport,
             this.btnAddSite,
             this.btnDeleteSite,
             this.btnPublishSite,
             this.btnReportSite});
             this.toolStripSites.Location = new System.Drawing.Point(3, 0);
             this.toolStripSites.Name = "toolStripSites";
-            this.toolStripSites.Size = new System.Drawing.Size(118, 25);
+            this.toolStripSites.Size = new System.Drawing.Size(124, 25);
             this.toolStripSites.TabIndex = 0;
             // 
-            // btnImportSite
+            // toolStripDropDownBtnImport
             // 
-            this.btnImportSite.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnImportSite.Image = global::OnlineVideos.Properties.Resources.ImportXml;
-            this.btnImportSite.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnImportSite.Name = "btnImportSite";
-            this.btnImportSite.Size = new System.Drawing.Size(23, 22);
-            this.btnImportSite.Text = "Import";
-            this.btnImportSite.Click += new System.EventHandler(this.btnImportSite_Click);
+            this.toolStripDropDownBtnImport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownBtnImport.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnImportXml,
+            this.btnImportGlobal});
+            this.toolStripDropDownBtnImport.Image = global::OnlineVideos.Properties.Resources.Import;
+            this.toolStripDropDownBtnImport.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownBtnImport.Name = "toolStripDropDownBtnImport";
+            this.toolStripDropDownBtnImport.Size = new System.Drawing.Size(29, 22);
+            this.toolStripDropDownBtnImport.ToolTipText = "Import";
+            // 
+            // btnImportXml
+            // 
+            this.btnImportXml.Image = global::OnlineVideos.Properties.Resources.ImportXml;
+            this.btnImportXml.Name = "btnImportXml";
+            this.btnImportXml.Size = new System.Drawing.Size(108, 22);
+            this.btnImportXml.Text = "XML";
+            this.btnImportXml.ToolTipText = "Import from Xml";
+            this.btnImportXml.Click += new System.EventHandler(this.btnImportSite_Click);
+            // 
+            // btnImportGlobal
+            // 
+            this.btnImportGlobal.Image = global::OnlineVideos.Properties.Resources.ImportGlobal;
+            this.btnImportGlobal.Name = "btnImportGlobal";
+            this.btnImportGlobal.Size = new System.Drawing.Size(108, 22);
+            this.btnImportGlobal.Text = "Global";
+            this.btnImportGlobal.ToolTipText = "Import from global List";
+            this.btnImportGlobal.Click += new System.EventHandler(this.btnImportGlobal_Click);
             // 
             // btnAddSite
             // 
@@ -1752,7 +1774,6 @@ namespace OnlineVideos
         private System.Windows.Forms.ToolStrip toolStripSiteUpDown;
         private System.Windows.Forms.ToolStripButton btnSiteUp;
         private System.Windows.Forms.ToolStripButton btnSiteDown;
-        private System.Windows.Forms.ToolStripButton btnImportSite;
         private System.Windows.Forms.BindingSource bindingSourceRssLink;
         private System.Windows.Forms.Button btnAdvanced;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
@@ -1789,5 +1810,8 @@ namespace OnlineVideos
         private System.Windows.Forms.TextBox tbxThumbAge;
         private System.Windows.Forms.Label label35;
         private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownBtnImport;
+        private System.Windows.Forms.ToolStripMenuItem btnImportXml;
+        private System.Windows.Forms.ToolStripMenuItem btnImportGlobal;
 	}
 }

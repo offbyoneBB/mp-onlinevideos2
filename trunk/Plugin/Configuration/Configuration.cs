@@ -610,5 +610,70 @@ namespace OnlineVideos
             SubmitSiteReport ssrFrm = new SubmitSiteReport() { SiteName = site.Name };
             ssrFrm.ShowDialog();
         }
+
+        OnlineVideosWebservice.Site[] onlineSites = null;
+        private void btnImportGlobal_Click(object sender, EventArgs e)
+        {
+            if (onlineSites == null)
+            {
+                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                onlineSites = ws.GetSitesOverview();
+            }
+
+            Dictionary<string, SiteSettings> hashedLocalSites = new Dictionary<string, SiteSettings>();
+            foreach (SiteSettings ss in OnlineVideoSettings.Instance.SiteSettingsList) hashedLocalSites.Add(ss.Name, ss);
+
+            List<OnlineVideosWebservice.Site> onlyOnlineSites = new List<OnlineVideos.OnlineVideosWebservice.Site>();
+
+            int i = 0;
+            while (i < onlineSites.Length)
+            {
+                if (!hashedLocalSites.ContainsKey(onlineSites[i].Name))
+                {
+                    onlineSites[i].Owner_FK = onlineSites[i].Owner_FK.Substring(0, onlineSites[i].Owner_FK.IndexOf('@'));
+                    onlyOnlineSites.Add(onlineSites[i]);
+                }
+                i++;
+            }
+            ImportGlobalSite frm = new ImportGlobalSite();
+            frm.dgvSites.DataSource = onlyOnlineSites;
+            if (frm.ShowDialog() == DialogResult.OK)
+            {
+                Cursor oldCursor = Cursor;
+                try
+                {
+                    Cursor = Cursors.WaitCursor;
+                    OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                    foreach (DataGridViewRow dgvr in frm.dgvSites.SelectedRows)
+                    {
+                        OnlineVideosWebservice.Site onlineSite = (OnlineVideosWebservice.Site)dgvr.DataBoundItem;
+                        string siteXml = ws.GetSiteXml(onlineSite.Name);
+                        IList<SiteSettings> sitesFromServer = Utils.SiteSettingsFromXml(siteXml);
+                        if (sitesFromServer != null)
+                        {
+                            foreach (SiteSettings site in sitesFromServer) OnlineVideoSettings.Instance.SiteSettingsList.Add(site);
+                        }
+                        byte[] icon = ws.GetSiteIcon(onlineSite.Name);
+                        if (icon != null && icon.Length > 0)
+                        {
+                            System.IO.File.WriteAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + onlineSite.Name + ".png", icon);
+                        }
+                        icon = ws.GetSiteBanner(onlineSite.Name);
+                        if (icon != null && icon.Length > 0)
+                        {
+                            System.IO.File.WriteAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + onlineSite.Name + ".png", icon);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    Cursor = oldCursor;
+                }
+            }
+        }
     }
 }

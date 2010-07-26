@@ -132,6 +132,12 @@
     <Compile Include="Configuration\ImExportXml.Designer.cs">
       <DependentUpon>ImExportXml.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\ImportGlobalSite.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\ImportGlobalSite.Designer.cs">
+      <DependentUpon>ImportGlobalSite.cs</DependentUpon>
+    </Compile>
     <Compile Include="Configuration\RegisterEmail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -561,7 +567,16 @@
     <None Include="Resources\NewReport.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Configuration\ImportGlobalSite.resx">
+      <DependentUpon>ImportGlobalSite.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OnlineVideoSites.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Import.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ImportGlobal.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
