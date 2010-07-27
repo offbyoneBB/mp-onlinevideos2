@@ -90,7 +90,10 @@ namespace OnlineVideos.Sites
         string format_Title = "%artist% - %title% (%year%)";
         [Category("OnlineVideosUserConfiguration"), Description("Defines number of videos to display per page.")]
         int pageSize = 27;
-        
+
+        [Category("OnlineVideosConfiguration"), Description("Format string applied to the video id to create an url for getting the playlist file.")]
+        protected string videoUrlFormatString = "http://cosmos.bcst.yahoo.com/up/yep/process/getPlaylistFOP.php?node_id=v{0}&tech=flash&mode=playlist&lg=R0xx6idZnW2zlrKP8xxAIR&bitrate=700&eventid=1301797";
+                
         CategoryTreeService catserv;
         ServiceProvider provider;
         VideosForACategoryService videoInCatList = new VideosForACategoryService();
@@ -236,11 +239,11 @@ namespace OnlineVideos.Sites
             return resultUrl;
         }
         
-        static RTMP_LIB.Link YahooRTMPLinkCatcher(string videoId)
+        RTMP_LIB.Link YahooRTMPLinkCatcher(string videoId)
         {
             RTMP_LIB.Link link = new RTMP_LIB.Link();
 
-            string url = "http://video.music.yahoo.com/ver/268.0/process/getPlaylistFOP.php?node_id=v" + videoId + "&tech=flash&bitrate=5000&eventid=1301797";
+            string url = string.Format(videoUrlFormatString, videoId);
             System.Xml.XmlDocument data = new System.Xml.XmlDocument();
             data.Load(System.Xml.XmlReader.Create(url));
 
