@@ -1362,6 +1362,13 @@
               <ZipFileName>Installer{CopyFile}\{f573da36-3005-4851-accc-b110ae11803c}-it.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\it.xml</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\no.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ba83d647-abf4-4bcc-8946-be770917043b}-no.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\no.xml</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1992,10 +1999,28 @@ public class Script
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>Usability improvements and bugfixes.</VersionDescription>
-    <DevelopmentStatus>Beta</DevelopmentStatus>
+    <VersionDescription>fixed: YouTube
+added: possibility to retrieve sites from global list within Configuration.
+fixed: Configuration showing wrong state on 3state checkbox for autoupdate.
+
+fixed possible infinite loop while pre-buffering 
+fixed WindowsMediaPlayer crash with ExternalOSD
+Added a latest version check before AutoUpdate
+SiteManager shows reports for a site sorted by date (newest first)
+Added more localized strings
+Small Blue3wide skin improvements
+Successful start of a download shows a notification, else error message
+Added a possibility to Cancel a download in progress.
+Downloading no longer freezes MediaPortal's ContextMenu on slower systems
+Added a possibility for SiteUtils to create and handle their own ContextMenu entries.
+
+Added optional uninstall question to delete all settings, good for reseting OnlineVideos
+Popup Messages now use the configured name of the plugin.
+fixed missing url absolutify for thumb on dynamic categories in GenericSiteUtil
+fixed forceUTF8Encoding not used for all webrequests in GenericSiteUtil</VersionDescription>
+    <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2010-06-28T18:01:51</ReleaseDate>
+    <ReleaseDate>2010-07-28T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -3351,6 +3376,13 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\no.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ba83d647-abf4-4bcc-8946-be770917043b}-no.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\no.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Skins\Blue3\myonlinevideos.details.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{2c7d271c-59d4-440f-9141-8b1c06530e79}-myonlinevideos.details.xml</ZipFileName>
         <DestinationFilename>%Skin%\Blue3\myonlinevideos.details.xml</DestinationFilename>
@@ -3562,7 +3594,7 @@ public class Script
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{927e99cb-5e41-4c32-a01f-6030cca5e111}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{022b6171-8bff-431c-ace3-81ea262ed553}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
