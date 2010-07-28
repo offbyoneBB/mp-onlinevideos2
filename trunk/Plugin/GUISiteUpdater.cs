@@ -123,6 +123,7 @@ namespace OnlineVideos
                     if (System.IO.File.Exists(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
                     loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
                     loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
+                    loListItem.IsPlayed = GetLocalSite(site.Name) != -1;
                     GUI_infoList.Add(loListItem);
                 }
             }
