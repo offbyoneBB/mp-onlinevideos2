@@ -22,11 +22,11 @@ namespace YahooMusicEngine.Services
       get { return string.Format("item/{0}", ID); }
     }
 
+    Dictionary<string, string> _params = new Dictionary<string, string>();
     public Dictionary<string, string> Params
     {
       get
       {
-        Dictionary<string, string> _params = new Dictionary<string, string>(); ;
         return _params;
       }
       set
@@ -38,7 +38,7 @@ namespace YahooMusicEngine.Services
     public void Parse(System.Xml.XmlDocument doc)
     {
       items.Clear();
-      XmlNodeList bodynodes = doc.SelectNodes("Categories/CategoryType/Category");
+      XmlNodeList bodynodes = doc.SelectNodes("Categories/Category");
       foreach (XmlNode node in bodynodes)
       {
         ParseXmlNode(node, Items, null);

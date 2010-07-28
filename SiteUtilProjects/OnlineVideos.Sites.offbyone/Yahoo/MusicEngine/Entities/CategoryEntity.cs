@@ -54,6 +54,8 @@ namespace YahooMusicEngine.Entities
       set { hasAudioStation = value; }
     }
 
+    public string ShortDescription { get; protected set; }
+
     private List<CategoryEntity> childs;
 
     public List<CategoryEntity> Childs
@@ -124,6 +126,9 @@ namespace YahooMusicEngine.Entities
       TrackCount = ParseXmlAttributeAsInt(node, "trackCount", 0);
       HasVideoStation = ParseXmlAttributeAsBool(node, "hasVideoStation", false);
       HasAudioStation = ParseXmlAttributeAsBool(node, "hasAudioStation", false);
+      
+      System.Xml.XmlNode descElem = node.SelectSingleNode("ShortDescription");
+      if (descElem != null) ShortDescription = descElem.InnerText;
     }
 
 

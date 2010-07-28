@@ -99,6 +99,7 @@ namespace OnlineVideos.Sites
         VideosForACategoryService videoInCatList = new VideosForACategoryService();
         SearchForVideosService videoSearchList = new SearchForVideosService();
         VideosForGivenPublishedListService videoPublishedList = new VideosForGivenPublishedListService();
+        SimilarVideosService similarVideosServ = new SimilarVideosService();
 
         List<VideoInfo> GetVideoForCurrentCategory()        
         {
@@ -122,9 +123,22 @@ namespace OnlineVideos.Sites
                     }
                 }
             }
+            else if (currentCategory.Name == "similar")
+            {
+                similarVideosServ.Id = id;
+                similarVideosServ.Start = currentStart;
+                similarVideosServ.Count = pageSize;
+                provider.GetData(similarVideosServ);
+                foreach (VideoResponse vi in similarVideosServ.Items)
+                {
+                    if (!string.IsNullOrEmpty(vi.Video.Id))
+                    {
+                        videoList.Add(GetVideoInfoFromVideoResponse(vi));
+                    }
+                }
+            }
             else
             {
-                //CategoryEntity cat = catserv.Find(id);
                 videoInCatList.Category = id;
                 videoInCatList.Start = currentStart;
                 videoInCatList.Count = pageSize;
@@ -173,7 +187,7 @@ namespace OnlineVideos.Sites
             {
                 catserv = new CategoryTreeService();
                 catserv.Type = CategoryTreeTypes.genre;
-                provider.GetData(catserv);                
+                provider.GetData(catserv);
             }
 
             Settings.Categories.Clear();
@@ -188,6 +202,8 @@ namespace OnlineVideos.Sites
             newItem.Url = "new";
             Settings.Categories.Add(newItem);
 
+            Dictionary<string, RssLink> ids = new Dictionary<string,RssLink>();
+
             foreach (CategoryEntity cat in catserv.Items)
             {
                 RssLink loRssItem = new RssLink();
@@ -195,6 +211,8 @@ namespace OnlineVideos.Sites
                 loRssItem.Url = cat.Id;
                 loRssItem.EstimatedVideoCount = (uint)cat.VideoCount;
                 Settings.Categories.Add(loRssItem);
+
+                ids.Add(cat.Id, loRssItem);
 
                 // create sub cats tree
                 if (cat.Childs != null && cat.Childs.Count > 0)
@@ -218,8 +236,21 @@ namespace OnlineVideos.Sites
                         subitem.EstimatedVideoCount = (uint)subcat.VideoCount;
                         loRssItem.SubCategories.Add(subitem);
                         subitem.ParentCategory = loRssItem;
+
+                        ids.Add(subcat.Id, subitem);
                     }
                 }
+            }
+
+            string[] idsOnly = new string[ids.Count];
+            ids.Keys.CopyTo(idsOnly, 0);
+            CategoryByIdService catIdServ = new CategoryByIdService();
+            catIdServ.ID = string.Join(",", idsOnly);
+            catIdServ.Params.Add("response", "shortdesc");
+            provider.GetData(catIdServ);
+            foreach (CategoryEntity catEnt in catIdServ.Items)
+            {
+                ids[catEnt.Id].Description = catEnt.ShortDescription;
             }
 
             Settings.DynamicCategoriesDiscovered = true;
@@ -350,6 +381,17 @@ namespace OnlineVideos.Sites
 
         }
 
+        #endregion
+
+        #region Related
+        public override bool HasRelatedVideos { get { return true; } }
+
+        public override List<VideoInfo> getRelatedVideos(VideoInfo video)
+        {
+            currentCategory = new RssLink() { Url = video.VideoUrl, Name = "similar" } ;
+            currentStart = 1;
+            return GetVideoForCurrentCategory();
+        }
         #endregion
 
         VideoInfo GetVideoInfoFromVideoResponse(VideoResponse vi)
