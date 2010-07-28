@@ -60,6 +60,8 @@ namespace OnlineVideos.Sites
                 string url = ((XmlElement)data.SelectSingleNode("//src")).InnerText;
                 if (!url.EndsWith(".swf")) // country block
                     return url;
+                else
+                    throw new OnlineVideosException("Video blocked for your country.");
             }
             return "";
         }       
