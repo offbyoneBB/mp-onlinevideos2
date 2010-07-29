@@ -18,6 +18,8 @@ namespace OnlineVideos.Sites
         string searchUrl = "http://api.mtvnservices.com/1/video/search/?term={0}&sort=date_descending";
         [Category("OnlineVideosUserConfiguration"), Description("Defines number of videos to display per page.")]
         int pageSize = 27;
+        [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for getting the playback url. Define like this: 83.84.85.86:8118")]
+        string proxy = null;
 
         List<VideoInfo> GetVideoForCurrentCategory()
         {
@@ -52,19 +54,29 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            string playlist = GetWebData(string.Format(videoUrlFormatString, new System.Uri(video.VideoUrl).AbsolutePath.Substring(1)));
+            System.Net.WebProxy proxyObj = null; // new System.Net.WebProxy("127.0.0.1", 8118);
+            if (!string.IsNullOrEmpty(proxy)) proxyObj = new System.Net.WebProxy(proxy);
+
+            string playlist = GetWebData(string.Format(videoUrlFormatString, new System.Uri(video.VideoUrl).AbsolutePath.Substring(1)), null, null, proxyObj);
             if (playlist.Length > 0)
             {
+                if (playlist.IndexOf("error_country_block.swf") >= 0) throw new OnlineVideosException("Video blocked for your country.");
+                string url = "";
                 XmlDocument data = new XmlDocument();
                 data.LoadXml(playlist);
-                string url = ((XmlElement)data.SelectSingleNode("//src")).InnerText;
-                if (!url.EndsWith(".swf")) // country block
-                    return url;
-                else
-                    throw new OnlineVideosException("Video blocked for your country.");
+                video.PlaybackOptions = new Dictionary<string, string>();
+                foreach (XmlElement elem in data.SelectNodes("//rendition"))
+                {
+                    url = ((XmlElement)elem.SelectSingleNode("src")).InnerText;
+                    if (!url.EndsWith(".swf"))
+                    {
+                        video.PlaybackOptions.Add(string.Format("{0}x{1} | {2} | .{3}", elem.GetAttribute("width"), elem.GetAttribute("height"), elem.GetAttribute("bitrate"), elem.GetAttribute("type").Substring(elem.GetAttribute("type").Length - 3)), url);
+                    }
+                }
+                return url;
             }
             return "";
-        }       
+        }
 
         #region Next/Previous Page
 
