@@ -372,7 +372,7 @@ namespace OnlineVideos
                 case Action.ActionType.ACTION_STOP:
                     if (BufferingPlayerFactory != null)
                     {
-                        ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).StopBuffering = true;
+                        ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).StopBuffering();
                         Gui2UtilConnector.Instance.StopBackgroundTask();
                         return;
                     }
@@ -391,7 +391,7 @@ namespace OnlineVideos
                     }
                     if (BufferingPlayerFactory != null)
                     {
-                        ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).StopBuffering = true;
+                        ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).StopBuffering();
                         Gui2UtilConnector.Instance.StopBackgroundTask();
                         return;
                     }                    
@@ -1588,14 +1588,19 @@ namespace OnlineVideos
                             }
                             else
                             {
+                                bool showMessage = true;
+                                if (factory.PreparedPlayer is OnlineVideosPlayer && (factory.PreparedPlayer as OnlineVideosPlayer).BufferingStopped == true) showMessage = false;
                                 factory.PreparedPlayer.Dispose();
-                                GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                                if (dlg != null)
+                                if (showMessage)
                                 {
-                                    dlg.Reset();
-                                    dlg.SetHeading(Translation.Error);
-                                    dlg.SetText(Translation.UnableToPlayVideo);
-                                    dlg.DoModal(GUIWindowManager.ActiveWindow);
+                                    GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                                    if (dlg != null)
+                                    {
+                                        dlg.Reset();
+                                        dlg.SetHeading(Translation.Error);
+                                        dlg.SetText(Translation.UnableToPlayVideo);
+                                        dlg.DoModal(GUIWindowManager.ActiveWindow);
+                                    }
                                 }
                                 return;
                             }

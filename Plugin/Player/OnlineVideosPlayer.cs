@@ -248,7 +248,24 @@ namespace OnlineVideos.Player
             base.Process();
         }
 
-        public bool StopBuffering { get; set; }
+        public bool BufferingStopped { get; protected set; }
+        public void StopBuffering()
+        {
+            if (!BufferingStopped)
+            {
+                IAMOpenProgress sourceFilter = null;
+                try
+                {
+                    IBaseFilter filter = null;
+                    graphBuilder.FindFilterByName("File Source (URL)", out filter);
+                    sourceFilter = filter as IAMOpenProgress;
+                    Marshal.ReleaseComObject(filter);
+                    if (sourceFilter != null) sourceFilter.AbortOperation();
+                    BufferingStopped = true;                    
+                }
+                catch { }
+            }
+        }
 
         void MonitorBufferProgress()
         {
@@ -265,11 +282,7 @@ namespace OnlineVideos.Player
                 long total = 0, current = 0, last = 0;
                 do
                 {
-                    if (StopBuffering)
-                    {
-                        sourceFilter.AbortOperation();
-                        break;
-                    }
+                    if (BufferingStopped) break;
                     result = sourceFilter.QueryProgress(out total, out current);
                     PercentageBuffered = (float)current / (float)total * 100.0f;
                     if (current > last && current - last >= (double)total * 0.01) // log every percent
@@ -507,7 +520,7 @@ namespace OnlineVideos.Player
 
         public override void Stop()
         {
-            StopBuffering = true;
+            BufferingStopped = true;
             Thread.Sleep(200);
             base.Stop();
         }

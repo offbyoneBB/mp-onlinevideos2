@@ -61,6 +61,7 @@ namespace RTMP_LIB
                 {
                     request.KeepAlive = true; // keep connection alive
                     response.ContentType = "video/x-flv";
+                    response.KeepAlive = true;
                     //response.ChunkedTransferEncoding = true;
                     
                     FLVStream fs = new FLVStream();
