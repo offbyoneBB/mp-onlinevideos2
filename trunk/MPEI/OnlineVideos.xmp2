@@ -1622,6 +1622,23 @@
           </Items>
         </Files>
       </GroupItem>
+      <GroupItem Name="Settings">
+        <ParentGroup />
+        <DisplayName>Settings</DisplayName>
+        <DefaulChecked>false</DefaulChecked>
+        <Description>Settings</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>extension_settings.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
+              <DestinationFilename>%Base%\extension_settings.xml</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
     </Items>
   </Groups>
   <Sections>
@@ -1930,6 +1947,53 @@ public class Script
         catch (Exception ex)
         {
         }
+    }
+}
+</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
+            </ActionItem>
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
+              <Params>
+                <Items>
+                  <SectionParam Name="Script">
+                    <Value>//css_reference "MpeCore.dll";
+//css_reference "Utils.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+using MediaPortal.Profile;
+
+public class Script
+{
+    public static void Main(PackageClass packageClass, ActionItem actionItem)
+    {
+       using (MediaPortal.Profile.Settings xmlwriter = new MPSettings())
+       {
+           xmlwriter.SetValue("plugins", "Online Videos", "yes");
+       }
+       MediaPortal.Profile.Settings.SaveCache();
+        return;
+    }
+}</Value>
+                    <ValueType>Script</ValueType>
+                    <Description />
+                  </SectionParam>
+                  <SectionParam Name="Uninstall Script">
+                    <Value>//css_reference "MpeCore.dll";
+
+using MpeCore.Classes;
+using MpeCore;
+
+public class Script
+{
+    public static void Main(PackageClass packageClass, UnInstallItem item)
+    {
+        return;
     }
 }
 </Value>
@@ -3590,11 +3654,18 @@ fixed forceUTF8Encoding not used for all webrequests in GenericSiteUtil</Version
         <ZipFileName>Installer{CopyFile}\{24aa2ae9-effd-4774-919c-25d70ce7ea3f}-FLVSplitter.ax</ZipFileName>
         <DestinationFilename>%Base%\FLVSplitter.ax</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>extension_settings.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
+        <DestinationFilename>%Base%\extension_settings.xml</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{022b6171-8bff-431c-ace3-81ea262ed553}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{8c9f1e9f-c82e-4fdd-95f5-b772bbb78ec1}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
@@ -3652,7 +3723,7 @@ fixed forceUTF8Encoding not used for all webrequests in GenericSiteUtil</Version
         <Recursive>true</Recursive>
       </FolderGroup>
     </FolderGroups>
-    <ProjectFilename>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.xmp2</ProjectFilename>
+    <ProjectFilename>D:\devel\vs2005\onlinevideos\mp-onlinevideos2\MPEI\OnlineVideos.xmp2</ProjectFilename>
     <UpdatePath1>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\update.xml</UpdatePath1>
     <UpdatePath2 />
     <UpdatePath3 />
