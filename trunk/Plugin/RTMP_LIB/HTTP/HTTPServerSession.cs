@@ -47,9 +47,9 @@ namespace HybridDSP.Net.HTTP
             _socket = socket;
             _params = parameters;
             _maxRequests = parameters.MaxRequests;
-            // we are local, don't wait forever when sending or receiving data
-            _socket.SendTimeout = 1000; 
-            _socket.ReceiveTimeout = 1000;
+            // we are local, don't wait forever when sending or receiving data (30 sec)
+            _socket.SendTimeout = 30000; 
+            _socket.ReceiveTimeout = 30000;
         }
 
         public bool KeepAlive

@@ -137,8 +137,7 @@ namespace RTMP_LIB
 
         #endregion
 
-        TcpClient tcpClient = null;
-        NetworkStream networkStream = null;
+        Socket tcpSocket = null;
         
         Link Link = new Link();
 
@@ -165,9 +164,11 @@ namespace RTMP_LIB
 
             Link = link;
             
-            // connect            
-            tcpClient = new TcpClient(Link.hostname, Link.port) { NoDelay = true };
-            networkStream = tcpClient.GetStream();
+            // connect
+            tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            tcpSocket.Connect(Link.hostname, Link.port);
+            tcpSocket.NoDelay = true;
+            tcpSocket.ReceiveTimeout = 30000;
 
             if (!HandShake(true)) return false;
             if (!SendConnect()) return false;
@@ -177,7 +178,7 @@ namespace RTMP_LIB
         
         public bool IsConnected()
         {
-            return tcpClient != null && tcpClient.Connected;
+            return tcpSocket != null && tcpSocket.Connected;
         }
 
         public bool GetNextMediaPacket(out RTMPPacket packet)
@@ -375,12 +376,13 @@ namespace RTMP_LIB
 
         public void Close()
         {
-            if (networkStream != null) networkStream.Close(1000);
-            if (tcpClient != null && tcpClient.Connected) tcpClient.Close();
+            if (tcpSocket != null)
+            {
+                tcpSocket.Shutdown(SocketShutdown.Both);
+                tcpSocket.Close();
+            }
 
-            networkStream = null;
-            tcpClient = null;
-
+            tcpSocket = null;
             
             InChunkSize = RTMP_DEFAULT_CHUNKSIZE;
             outChunkSize = RTMP_DEFAULT_CHUNKSIZE;
@@ -1662,19 +1664,17 @@ namespace RTMP_LIB
         #endregion        
 
         int ReadN(byte[] buffer, int offset, int size)
-        {            
-            // wait (max) 5 seconds until data is available
-            int i = 50;
-            while (tcpClient.Available < size && i > 0)
+        {                   
+            // wait (max) 30 seconds until data is available
+            int i = 300;
+            while (tcpSocket.Available < size && i > 0)
             {
                 i--;
                 System.Threading.Thread.Sleep(100);
             }
-            if (tcpClient.Available < size) 
-                return 0;// throw new Exception(string.Format("No Data Available (trying to read {0} byte)", size));
 
             byte[] data = new byte[size];
-            int read = networkStream.Read(data, 0, size);
+            int read = tcpSocket.Receive(data);
 
             // decrypt if needed
             if (read > 0 && Link.rc4In != null)
@@ -1700,11 +1700,11 @@ namespace RTMP_LIB
             {
                 byte[] result = new byte[size];
                 Link.rc4Out.ProcessBytes(buffer, offset, size, result, 0);
-                networkStream.Write(result, 0, size);                
+                tcpSocket.Send(result);                
             }
             else
             {
-                networkStream.Write(buffer, offset, size);
+                tcpSocket.Send(buffer, offset, size, SocketFlags.None);
             }
         }        
     }
