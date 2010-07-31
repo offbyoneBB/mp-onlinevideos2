@@ -255,7 +255,10 @@ namespace OnlineVideos.Sites
         public static string GoogleCaTrick(string Url)
         {
             string webData = SiteUtilBase.GetWebData(Url);
-            return HttpUtility.UrlDecode(GetSubString(webData, @"videoUrl\x3d", @"\x26"));
+            string result = HttpUtility.UrlDecode(GetSubString(webData, @"videoUrl\x3d", @"\x26"));
+            if (!String.IsNullOrEmpty(result))
+                return result;
+            return HttpUtility.UrlDecode(GetSubString(webData, @"videoUrl=", @"&amp;"));
         }
 
         public static string MyspaceTrick(string Url)
