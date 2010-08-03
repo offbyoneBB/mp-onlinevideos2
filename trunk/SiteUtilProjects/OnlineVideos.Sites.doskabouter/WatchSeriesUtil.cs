@@ -187,7 +187,7 @@ namespace OnlineVideos.Sites
                 {
                     PlaybackElement element = new PlaybackElement(name, video.PlaybackOptions[name]);
 
-                    if (element.server == "youtube.com")
+                    if (element.server.StartsWith("youtube.com"))
                     {
                         Dictionary<string, string> savOptions = video.PlaybackOptions;
                         video.GetPlaybackOptionUrl(name);
@@ -515,7 +515,7 @@ namespace OnlineVideos.Sites
         {
             string[] tmp = aPlaybackName.Split('%');
             percentage = int.Parse(tmp[0]);
-            server = tmp[1].TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' });
+            server = tmp[1].TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }).Trim();
             url = aUrl;
         }
 
