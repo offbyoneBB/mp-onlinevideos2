@@ -14,10 +14,12 @@ namespace OnlineVideos.Sites
     {
         private enum Depth { MainMenu = 0, Alfabet = 1, Series = 2, Seasons = 3, BareList = 4 };
         public CookieContainer cc = null;
+        private bool isWatchMovies = false;
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
+            isWatchMovies = baseUrl.StartsWith(@"http://watch-movies");
             ReverseProxy.AddHandler(this);
         }
 
@@ -36,11 +38,19 @@ namespace OnlineVideos.Sites
             do
             {
                 RssLink cat = (RssLink)Settings.Categories[i];
-                if (cat.Url.Equals(baseUrl))
+                if (cat.Url.Equals(baseUrl) ||
+                    (isWatchMovies && (cat.Name == "HOW TO WATCH" || cat.Name == "CONTACT"))
+                   )
                     Settings.Categories.Remove(cat);
                 else
                 {
-                    if (cat.Url.EndsWith("/A"))
+                    bool isMain;
+                    if (isWatchMovies)
+                        isMain = cat.Url.Contains(@"/year/") || cat.Url.Contains(@"/genres/") ||
+                            cat.Url.EndsWith("/A");
+                    else
+                        isMain = cat.Url.EndsWith("/A");
+                    if (isMain)
                         cat.Other = Depth.MainMenu;
                     else
                     {
@@ -73,8 +83,13 @@ namespace OnlineVideos.Sites
             switch ((Depth)parentCategory.Other)
             {
                 case Depth.MainMenu:
-                    webData = GetSubString(webData, @"class=""pagination""", @"class=""listbig""");
-                    m = regEx_dynamicCategories.Match(webData);
+                    if (!isWatchMovies)
+                    {
+                        webData = GetSubString(webData, @"class=""pagination""", @"class=""listbig""");
+                        m = regEx_dynamicCategories.Match(webData);
+                    }
+                    else
+                        m = regEx_dynamicSubCategories.Match(webData);
                     break;
                 case Depth.Alfabet:
                     webData = GetSubString(webData, @"class=""listbig""", @"class=""clear""");
@@ -108,7 +123,7 @@ namespace OnlineVideos.Sites
                 cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
                 cat.Url = m.Groups["url"].Value;
                 cat.Description = HttpUtility.HtmlDecode(m.Groups["description"].Value);
-                cat.HasSubCategories = !parentCategory.Other.Equals(Depth.Series);
+                cat.HasSubCategories = !isWatchMovies && !parentCategory.Other.Equals(Depth.Series);
                 cat.Other = ((Depth)parentCategory.Other) + 1;
 
                 if (cat.Name == "NEW")
@@ -132,8 +147,15 @@ namespace OnlineVideos.Sites
             if (category.Other.Equals(Depth.BareList))
             {
                 webData = GetWebData(webData, cc);
-                webData = GetSubString(webData, @"class=""listbig""", @"class=""clear""");
+                if (isWatchMovies)
+                    webData = GetSubString(webData, @"class=""listings""", @"class=""clear""");
+                else
+                    webData = GetSubString(webData, @"class=""listbig""", @"class=""clear""");
             }
+            else
+                if (isWatchMovies)
+                    webData = GetWebData(webData, cc);
+
             List<VideoInfo> videos = new List<VideoInfo>();
             if (!string.IsNullOrEmpty(webData))
             {
@@ -188,7 +210,8 @@ namespace OnlineVideos.Sites
                             element.server == "zshare.net" || element.server == "vureel.com" ||
                             element.server == "stagevu.com" || element.server == "56.com" ||
                             element.server == "loombo.com" || element.server == "ufliq.com" ||
-                            element.server == "tudou.com" || element.server == "google.ca")
+                            element.server == "tudou.com" || element.server == "google.ca" ||
+                            element.server == "videoweed.com" || element.server == "novamov.com")
                             element.status = String.Empty;
                         else
                             if (element.server == "livevideo.com" || element.server == "veehd.com" ||
@@ -271,7 +294,12 @@ namespace OnlineVideos.Sites
                     }
                 }
                 else
-                    url = GetRedirectedUrl(@"http://www.watch-series.com/open_link.php?vari=" + vidId);
+                {
+                    if (newUrl.StartsWith(@"http://watch-movies"))
+                        url = GetRedirectedUrl(@"http://www.watch-movies.ro/open_link.php?input=" + vidId);
+                    else
+                        url = GetRedirectedUrl(@"http://www.watch-series.com/open_link.php?vari=" + vidId);
+                }
                 if (savUrl.StartsWith("youtube.com"))
                     return UrlTricks.YoutubeTrick(url, this);
                 if (url.StartsWith("http://www2.movshare.net"))
@@ -368,6 +396,17 @@ namespace OnlineVideos.Sites
                 }
                 if (url.StartsWith("http://veehd.com"))
                     return GetSubString(webData, @"name=""src"" value=""", @"""");
+
+                if (url.StartsWith("http://www2.videoweed.com"))
+                {
+                    string url2 = GetSubString(webData, @"""file"",""", @"""");
+                    if (String.IsNullOrEmpty(url2))
+                        return url2;
+                    return GetRedirectedUrl(url2);
+                }
+
+                if (url.StartsWith("http://www.novamov.com"))
+                    return GetSubString(webData, @"""file"",""", @"""");
 
                 if (url.StartsWith("http://www.tudou.com"))
                 {  //babylon 5

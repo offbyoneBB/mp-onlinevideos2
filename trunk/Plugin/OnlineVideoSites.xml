@@ -1096,6 +1096,19 @@
       </Configuration>
       <Categories />
     </Site>
+    <Site name="Watch-Movies" util="WatchSeries" agecheck="false" enabled="true" player="Internal" lang="en">
+      <Description>Watch Movies Online For Free, Watch Latest Movies Online For Free, Latest Hollywood Movies.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"[^>]*>(?<title>[^<]*)</a></li>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*<(?:/)?li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<li>\s+<a\shref="(?<VideoUrl>[^"]*)"[^>]+>(?<Title>[^<]*)</a>\s+</li>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<div\sclass="linewrap"\s*>\s*[^<]*<div\sclass="site">\s*(?<n0>[^<]*)\s*<[^<]*<[^<]*<a\shref="(?<m0>[^"]*)"[^>]*>([^\d]*)<.*?class="user">(?<n1>[^%]*)]]></item>
+        <item key="fileUrlNameFormatString"><![CDATA[{1}%{0}]]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
+        <item key="baseUrl"><![CDATA[http://watch-movies-az.com]]></item>
+      </Configuration>
+      <Categories />
+    </Site>
     <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" player="WMP" lang="nl">
       <Categories />
     </Site>
