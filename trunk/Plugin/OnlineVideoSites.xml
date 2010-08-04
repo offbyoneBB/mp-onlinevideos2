@@ -400,7 +400,7 @@
       <Configuration>
         <item key="fileUrlRegEx"><![CDATA[<src>(?<m0>[^<]+)</src>]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
-        <item key="videoUrlRegEx"><![CDATA[http://.+/(?<m0>\d{4,10}).html.*]]></item>
+        <item key="videoUrlRegEx"><![CDATA[http://.+/(?<m0>\d{4,10})]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://www.gametrailers.com/neo/?page=xml.mediaplayer.Mediagen&movieId={0}]]></item>
       </Configuration>
       <Categories>
