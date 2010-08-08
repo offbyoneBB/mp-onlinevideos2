@@ -507,14 +507,13 @@ namespace OnlineVideos.Sites
             }
         }
 
-        protected static object GetWebDataAsJson(string url)
+        protected static Newtonsoft.Json.Linq.JObject GetWebDataAsJson(string url)
         {
             string WebData = GetWebData(url);
             try
             {
                 // attempts to convert the returned string into a Json object
-                object data = Jayrock.Json.Conversion.JsonConvert.Import(WebData);
-                return data;
+                return Newtonsoft.Json.Linq.JObject.Parse(WebData);
             }
             catch (Exception e)
             {

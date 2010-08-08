@@ -210,12 +210,15 @@ namespace OnlineVideos
                     content.Url);
         }
 
-        static string GetDuration(string duration)
+        public static string GetDuration(string duration)
         {
             if (!string.IsNullOrEmpty(duration))
             {
-                uint seconds = 0;
-                if (uint.TryParse(duration, out seconds)) return TimeSpan.FromSeconds(seconds).ToString();
+                double seconds;
+                if (double.TryParse(duration, System.Globalization.NumberStyles.None | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.CreateSpecificCulture("en-US"), out seconds))
+                {
+                    return new DateTime(TimeSpan.FromSeconds(seconds).Ticks).ToString("HH:mm:ss");
+                }
                 else return duration;
             }
             return "";
@@ -263,10 +266,9 @@ namespace OnlineVideos
                         else if (m.Groups["json"].Success)
                         {
                             Items.Clear();
-                            object data = Jayrock.Json.Conversion.JsonConvert.Import(m.Groups["json"].Value);
-                            foreach (string z in (data as Jayrock.Json.JsonObject).Names)
+                            foreach (var z in Newtonsoft.Json.Linq.JObject.Parse(m.Groups["json"].Value))
                             {
-                                Items.Add(z, (data as Jayrock.Json.JsonObject)[z].ToString());
+                                Items.Add(z.Key, z.Value.Value<string>(z.Key));
                             }
                         }
                     }

@@ -1,16 +1,14 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C# Express 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos", "Plugin\OnlineVideos.csproj", "{E0D9D390-CDD6-4B98-86F3-6EB04A958882}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{28BEFB3A-C1A1-427F-B156-83157F30EA3C}"
 	ProjectSection(SolutionItems) = preProject
 		Language\OnlineVideos\en-US.xml = Language\OnlineVideos\en-US.xml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CornerstoneTest", "CornerstoneTest\CornerstoneTest.csproj", "{F88965B6-68AA-4EE0-9415-2572330F8B33}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SiteUtilProjects", "SiteUtilProjects", "{6B73364F-8850-4FD8-87DF-CA29321DF24E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos", "Plugin\OnlineVideos.csproj", "{E0D9D390-CDD6-4B98-86F3-6EB04A958882}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.offbyone", "SiteUtilProjects\OnlineVideos.Sites.offbyone\OnlineVideos.Sites.offbyone.csproj", "{022D3A7F-676E-4741-95D3-6E5D0223BFE4}"
 EndProject
@@ -19,8 +17,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.doskabouter", "SiteUtilProjects\OnlineVideos.Sites.doskabouter\OnlineVideos.Sites.doskabouter.csproj", "{D43B3A93-FDF8-4B5C-8BD0-714FBBF9AF31}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.apondman", "SiteUtilProjects\OnlineVideos.Sites.apondman\OnlineVideos.Sites.apondman.csproj", "{D05B2288-6732-4211-9931-29C8511DC32F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiteParser", "SiteParser\SiteParser.csproj", "{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,12 +32,6 @@ Global
 		{E0D9D390-CDD6-4B98-86F3-6EB04A958882}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0D9D390-CDD6-4B98-86F3-6EB04A958882}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E0D9D390-CDD6-4B98-86F3-6EB04A958882}.Release|x86.ActiveCfg = Release|Any CPU
-		{F88965B6-68AA-4EE0-9415-2572330F8B33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F88965B6-68AA-4EE0-9415-2572330F8B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F88965B6-68AA-4EE0-9415-2572330F8B33}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F88965B6-68AA-4EE0-9415-2572330F8B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F88965B6-68AA-4EE0-9415-2572330F8B33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F88965B6-68AA-4EE0-9415-2572330F8B33}.Release|x86.ActiveCfg = Release|Any CPU
 		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -66,12 +56,6 @@ Global
 		{D05B2288-6732-4211-9931-29C8511DC32F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D05B2288-6732-4211-9931-29C8511DC32F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D05B2288-6732-4211-9931-29C8511DC32F}.Release|x86.ActiveCfg = Release|Any CPU
-		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

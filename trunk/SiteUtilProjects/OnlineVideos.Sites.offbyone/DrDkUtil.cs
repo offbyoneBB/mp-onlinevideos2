@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using RssToolkit.Rss;
-using Jayrock.Json;
 
 namespace OnlineVideos.Sites
 {
@@ -33,7 +32,6 @@ namespace OnlineVideos.Sites
 (<img\ssrc=""(?<thumb>[^""]+)""[^>]*>)?
 (?:(?!<p>).)*<p>(?<desc>(?:(?!</p>).)+)</p>\s*
 (?:(?!<span>\s*\().)*<span>\s*\((?<length>[^\)]+)\)\s*</span>";
-
 
 
         string bonanza_url = "http://www.dr.dk/Bonanza/index.htm";
@@ -134,17 +132,17 @@ namespace OnlineVideos.Sites
                                 ImageUrl = m.Groups["thumb"].Value
                             };
 
-                            JsonObject info = Jayrock.Json.Conversion.JsonConvert.Import(HttpUtility.HtmlDecode(m.Groups["url"].Value)) as JsonObject;
+                            var info = Newtonsoft.Json.Linq.JObject.Parse(HttpUtility.HtmlDecode(m.Groups["url"].Value));
                             if (info != null)
                             {
-                                videoInfo.Description = info["Description"].ToString();
+                                videoInfo.Description = info.Value<string>("Description");
                                 DateTime parsedDate;
-                                if (DateTime.TryParse(info["FirstPublished"].ToString(), out parsedDate)) videoInfo.Length += " | " + parsedDate.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
-                                foreach(JsonObject file in info["Files"] as JsonArray)
+                                if (DateTime.TryParse(info.Value<string>("FirstPublished"), out parsedDate)) videoInfo.Length += " | " + parsedDate.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
+                                foreach(var file in info["Files"])
                                 {                                    
-                                    if (((string)file["Type"]).StartsWith("Video"))
+                                    if (file.Value<string>("Type").StartsWith("Video"))
                                     {
-                                        videoInfo.VideoUrl += (videoInfo.VideoUrl.Length > 0 ? "|" : "") + ((string)file["Type"]).Substring(5) + "+" + (string)file["Location"];
+                                        videoInfo.VideoUrl += (videoInfo.VideoUrl.Length > 0 ? "|" : "") + file.Value<string>("Type").Substring(5) + "+" + file.Value<string>("Location");
                                     }
                                 }                                
                                 videoList.Add(videoInfo);

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Jayrock.Json;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -37,59 +37,55 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            string json = GetWebData(baseUrl);
-
-            JsonObject contentData = Jayrock.Json.Conversion.JsonConvert.Import(json) as JsonObject;
+            JObject contentData = GetWebDataAsJson(baseUrl);
             if (contentData != null)
             {
-                foreach (DictionaryEntry jObject in contentData)
+                foreach (var jObject in contentData)
                 {
-                    if (jObject.Key.ToString().Contains("categoryList"))
+                    if (jObject.Key.Contains("categoryList"))
                     {
-                        foreach (JsonObject jSubObject in jObject.Value as JsonArray)
+                        foreach (var jSubObject in jObject.Value)
                         {
                             RssLink cat = new RssLink();
-                            cat.Name = jSubObject["name"].ToString();
-                            cat.Description = jSubObject["description"].ToString();
+                            cat.Name = jSubObject.Value<string>("name");
+                            cat.Description = jSubObject.Value<string>("description");
                             if (jSubObject["thumbnail"] != null)
-                                cat.Thumb = Regex.Match(jSubObject["thumbnail"].ToString(), @"""thumb_url"":""(?<thumb>[^""]+)""").Groups["thumb"].Value;
-                            cat.Url = string.Format(categoryUrlFormatString, jSubObject["id"].ToString(), start, end);
+                                cat.Thumb = jSubObject["thumbnail"].Value<string>("thumb_url");
+                            cat.Url = string.Format(categoryUrlFormatString, jSubObject.Value<string>("id"), start, end);
 
-                            if (jSubObject["clipList"].ToString().CompareTo("[]") != 0)
-                            {
-                                string cliplist = jSubObject["clipList"].ToString();
-                                if (cliplist.StartsWith("[")) cliplist = cliplist.Substring(1, cliplist.Length - 2);
-                                string[] vars = Utils.Tokenize(cliplist, true, ",");
-                                cat.EstimatedVideoCount = (uint)vars.Length;
+                            if (jSubObject["clipList"] as JArray != null)
+                            {                                
+                                cat.EstimatedVideoCount = (uint)(jSubObject["clipList"] as JArray).Count;
                             }
 
-                            if (jSubObject["categoryList"].ToString().CompareTo("[]") != 0)
-                            {
-                                cat.HasSubCategories = true;
-                                cat.SubCategoriesDiscovered = true;
+                            if (jSubObject["categoryList"] as JArray != null)
+                            {                                
                                 cat.SubCategories = new List<Category>();
 
-                                foreach (JsonObject jSubCategoryObject in jSubObject["categoryList"] as JsonArray)
+                                foreach (var jSubCategoryObject in jSubObject["categoryList"] as JArray)
                                 {
                                     RssLink subCategory = new RssLink();
                                     subCategory.ParentCategory = cat;
 
-                                    subCategory.Name = jSubCategoryObject["name"].ToString();
-                                    subCategory.Description = jSubCategoryObject["description"].ToString();
+                                    subCategory.Name = jSubCategoryObject.Value<string>("name");
+                                    subCategory.Description = jSubCategoryObject.Value<string>("description");
                                     if(jSubCategoryObject["thumbnail"] != null)
-                                        subCategory.Thumb = Regex.Match(jSubCategoryObject["thumbnail"].ToString(), @"""thumb_url"":""(?<thumb>[^""]+)""").Groups["thumb"].Value;
-                                    subCategory.Url = string.Format(categoryUrlFormatString, jSubCategoryObject["id"].ToString(), start, end);
+                                        subCategory.Thumb = jSubCategoryObject["thumbnail"].Value<string>("thumb_url");
+                                    subCategory.Url = string.Format(categoryUrlFormatString, jSubCategoryObject.Value<string>("id"), start, end);
 
-                                    if (jSubCategoryObject["clipList"].ToString().CompareTo("[]") != 0)
-                                    {
-                                        string cliplist = jSubCategoryObject["clipList"].ToString();
-                                        if (cliplist.StartsWith("[")) cliplist = cliplist.Substring(1, cliplist.Length - 2);
-                                        string[] vars = Utils.Tokenize(cliplist, true, ",");
-                                        subCategory.EstimatedVideoCount = (uint)vars.Length;
+                                    if (jSubCategoryObject["clipList"] as JArray != null)
+                                    {                                        
+                                        subCategory.EstimatedVideoCount = (uint)(jSubCategoryObject["clipList"] as JArray).Count;
                                         cat.EstimatedVideoCount += subCategory.EstimatedVideoCount;
                                     }
                                     if(subCategory.EstimatedVideoCount > 0)
                                         cat.SubCategories.Add(subCategory);  
+                                }
+
+                                if (cat.SubCategories.Count > 0)
+                                {
+                                    cat.HasSubCategories = true;
+                                    cat.SubCategoriesDiscovered = true;
                                 }
                             }
                             if(cat.EstimatedVideoCount > 0)
@@ -130,37 +126,34 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videos = new List<VideoInfo>();
             VideoInfo video = new VideoInfo();
 
-            string data = GetWebData((category as RssLink).Url);
-            JsonObject contentData = Jayrock.Json.Conversion.JsonConvert.Import(data) as JsonObject;
+            JObject contentData = GetWebDataAsJson((category as RssLink).Url);
             if (contentData != null)
             {
-                foreach (DictionaryEntry jObject in contentData)
+                foreach (var jObject in contentData)
                 {
                     if (jObject.Key.ToString().Contains("clipList"))
                     {
-                        foreach (JsonObject jSubObject in jObject.Value as JsonArray)
+                        foreach (var jSubObject in jObject.Value as JArray)
                         {
-                            foreach (DictionaryEntry jEntry in jSubObject)
+                            foreach (JProperty jEntry in jSubObject)
                             {
-                                switch (jEntry.Key.ToString())
+                                switch (jEntry.Name)
                                 {
                                     case "id":
                                         break;
                                     case "external_id":
                                         break;
                                     case "metadata":
-
-                                        string drmUrl = Regex.Match(jEntry.Value.ToString(), @"""flashdrm_url"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
-                                        if (!string.IsNullOrEmpty(drmUrl))
+                                        if (jEntry.Value["flashdrm_url"] != null)
                                         {
-                                            video.VideoUrl = drmUrl;
+                                            video.VideoUrl = jEntry.Value.Value<string>("flashdrm_url");
                                         }
                                         else
                                         {
-                                            string filename = Regex.Match(jEntry.Value.ToString(), @"""uploadFilename"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                            string filename = jEntry.Value.Value<string>("uploadFilename");
                                             filename = filename.Substring(0, filename.Length - 3);
 
-                                            string geo = Regex.Match(jEntry.Value.ToString(), @"""geoblocking"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                            string geo = jEntry.Value.Value<string>("geoblocking");
                                             string geoblock = "";
                                             if (string.IsNullOrEmpty(geo))
                                                 geoblock = "geo_d_at_ch/";
@@ -171,12 +164,12 @@ namespace OnlineVideos.Sites
                                             else
                                                 geoblock = "geo_d/";
 
-                                            string suffix = Regex.Match(jEntry.Value.ToString(), @"""flashSuffix"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
-                                            string videoType = Regex.Match(jEntry.Value.ToString(), @"""video_type"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
-                                            string broadcast = Regex.Match(jEntry.Value.ToString(), @"""broadcast_date"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                            string suffix = jEntry.Value.Value<string>("flashSuffix");
+                                            string videoType = jEntry.Value.Value<string>("video_type");
+                                            string broadcast = jEntry.Value.Value<string>("broadcast_date");
                                             video.Title2 = videoType + " (" + broadcast + ")";
 
-                                            if (suffix.Contains("mp4"))
+                                            if (suffix != null && suffix.Contains("mp4")) // todo : es gibt auch avi
                                                 video.VideoUrl = rtmpBase + geoblock + "mp4:" + filename + "f4v";
                                             else
                                                 video.VideoUrl = rtmpBase + geoblock + filename + "flv";
@@ -184,19 +177,20 @@ namespace OnlineVideos.Sites
 
                                         string cast, tags;
 
-                                        cast = Regex.Match(jEntry.Value.ToString(), @"""cast_1"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_2"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_3"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_4"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        cast += Regex.Match(jEntry.Value.ToString(), @"""cast_5"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                        cast = jEntry.Value.Value<string>("cast_1") + ",";
+                                        cast += jEntry.Value.Value<string>("cast_2") + ",";
+                                        cast += jEntry.Value.Value<string>("cast_3") + ",";
+                                        cast += jEntry.Value.Value<string>("cast_4") + ",";
+                                        cast += jEntry.Value.Value<string>("cast_5");
                                         while (cast.EndsWith(",")) cast = cast.Substring(0, cast.Length - 1);
+                                        video.Description += string.IsNullOrEmpty(cast) ? "" : "\n" + Translation.Actors + ": " + cast;
 
-                                        tags = Regex.Match(jEntry.Value.ToString(), @"""tag_1"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        tags += Regex.Match(jEntry.Value.ToString(), @"""tag_2"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value + ",";
-                                        tags += Regex.Match(jEntry.Value.ToString(), @"""tag_3"":\s*""(?<tag>[^""]+)""").Groups["tag"].Value;
+                                        tags = jEntry.Value.Value<string>("tag_1") + ",";
+                                        tags += jEntry.Value.Value<string>("tag_2") + ",";
+                                        tags += jEntry.Value.Value<string>("tag_3");
                                         while (tags.EndsWith(",")) tags = tags.Substring(0, tags.Length - 1);
-
-                                        video.Description += "\n" + Translation.Actors + ": " + cast + "\n" + Translation.Tags + ": " + tags;
+                                        video.Description += string.IsNullOrEmpty(tags) ? "" : "\n" + Translation.Tags + ": " + tags;
+                                                                                
                                         break;
                                     case "name":
                                         if (!string.IsNullOrEmpty(video.Title) && !string.IsNullOrEmpty(video.VideoUrl))
@@ -204,7 +198,7 @@ namespace OnlineVideos.Sites
                                             videos.Add(video);
                                             video = new VideoInfo();
                                         }
-                                        video.Title = jEntry.Value.ToString();
+                                        video.Title = jEntry.Value.Value<string>();
                                         break;
                                     case "playback_duration":
                                         if (!string.IsNullOrEmpty(video.Length) && !string.IsNullOrEmpty(video.VideoUrl))
@@ -212,20 +206,17 @@ namespace OnlineVideos.Sites
                                             videos.Add(video);
                                             video = new VideoInfo();
                                         }
-                                        if (!string.IsNullOrEmpty(jEntry.Value.ToString())){
-                                            int duration = Convert.ToInt32(jEntry.Value.ToString().Substring(0,jEntry.Value.ToString().IndexOf(".")));
-                                            video.Length = string.Format("{0:00}:{1:00}", duration / 60, duration % 60);
-                                        }
+                                        video.Length = jEntry.Value.Value<string>();                                        
                                         break;
                                     case "visibility":
                                         break;
                                     case "description":
-                                        if (!string.IsNullOrEmpty(video.Description) && !string.IsNullOrEmpty(video.VideoUrl) && video.Description.Contains(jEntry.Value.ToString()))
+                                        if (!string.IsNullOrEmpty(video.Description) && !string.IsNullOrEmpty(video.VideoUrl) && video.Description.Contains(jEntry.Value.Value<string>()))
                                         {
                                             videos.Add(video);
                                             video = new VideoInfo();
                                         }
-                                        video.Description = jEntry.Value.ToString() + video.Description;
+                                        video.Description = jEntry.Value.Value<string>() + video.Description;
                                         break;
                                     case "thumbnail":
                                         if (!string.IsNullOrEmpty(video.ImageUrl) && !string.IsNullOrEmpty(video.VideoUrl))
@@ -233,7 +224,7 @@ namespace OnlineVideos.Sites
                                             videos.Add(video);
                                             video = new VideoInfo();
                                         }
-                                        video.ImageUrl = Regex.Match(jEntry.Value.ToString(), @"""thumb_url"":\s*""(?<thumb>[^""]+)""").Groups["thumb"].Value;
+                                        video.ImageUrl = jEntry.Value.Value<string>("thumb_url");
                                         break;
                                 }
                             }

@@ -526,12 +526,11 @@ namespace OnlineVideos
             }
             // set current Time to last updated in the xml, so it can be compared later
             DateTime lastUdpBkp = site.LastUpdated;
-            site.LastUpdated = DateTime.Now;
-            System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.Instance.XmlSerImp.GetSerializer(typeof(SerializableSettings));
+            site.LastUpdated = DateTime.Now;            
             SerializableSettings s = new SerializableSettings() { Sites = new BindingList<SiteSettings>() };
             s.Sites.Add(site);
             System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            ser.Serialize(ms, s);
+            Utils.SiteSettingsToXml(s, ms);
             ms.Position = 0;
             System.Xml.XmlDocument siteDoc = new System.Xml.XmlDocument();
             siteDoc.Load(ms);

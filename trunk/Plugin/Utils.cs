@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using System.IO;
+using System.Xml;
 
 namespace OnlineVideos
 {
@@ -29,6 +31,23 @@ namespace OnlineVideos
             return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTime).ToLocalTime();
         }
 
+        public static void SiteSettingsToXml(SerializableSettings sites, Stream stream)
+        {
+            MemoryStream xmlMem = new MemoryStream();
+            System.Runtime.Serialization.DataContractSerializer dcs = new System.Runtime.Serialization.DataContractSerializer(typeof(SerializableSettings));
+            dcs.WriteObject(xmlMem, sites);
+            xmlMem.Position = 0;
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(xmlMem);
+
+            Stream xslt = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.Configuration.ExportSiteSettings.xslt");
+            System.Xml.Xsl.XslCompiledTransform xsltTransform = new System.Xml.Xsl.XslCompiledTransform();
+            xsltTransform.Load(XmlReader.Create(xslt));
+            
+            xsltTransform.Transform(xmlDoc, null, stream);
+            stream.Flush();
+        }
+
         public static IList<SiteSettings> SiteSettingsFromXml(string siteXml)
         {
             siteXml = @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -37,10 +56,27 @@ namespace OnlineVideos
 " + siteXml + @"
 </Sites>
 </OnlineVideoSites>";
-            System.IO.StringReader sr = new System.IO.StringReader(siteXml);
-            System.Xml.Serialization.XmlSerializer ser = OnlineVideoSettings.Instance.XmlSerImp.GetSerializer(typeof(SerializableSettings));
-            SerializableSettings s = (SerializableSettings)ser.Deserialize(sr);
-            return s.Sites;            
+            return SiteSettingsFromXml(new System.IO.StringReader(siteXml));
+        }
+
+        public static IList<SiteSettings> SiteSettingsFromXml(TextReader reader)
+        {
+            XmlDocument sitesXmlDoc = new XmlDocument();
+            sitesXmlDoc.Load(reader);
+
+            Stream xslt = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.Configuration.ImportSiteSettings.xslt");
+            System.Xml.Xsl.XslCompiledTransform xsltTransform = new System.Xml.Xsl.XslCompiledTransform();
+            xsltTransform.Load(XmlReader.Create(xslt));
+            MemoryStream ms = new MemoryStream();
+            xsltTransform.Transform(sitesXmlDoc, null, ms);
+            ms.Flush();
+            ms.Position = 0;
+
+            System.Runtime.Serialization.DataContractSerializer dcs2 = new System.Runtime.Serialization.DataContractSerializer(typeof(SerializableSettings));
+            XmlReader xr = XmlReader.Create(ms);
+            xr.MoveToContent();
+            SerializableSettings s = dcs2.ReadObject(xr) as SerializableSettings;
+            return s != null ? s.Sites : null;
         }
 
         public static string PlainTextFromHtml(string input)

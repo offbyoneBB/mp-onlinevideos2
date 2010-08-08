@@ -6,6 +6,7 @@ using MediaPortal.Player;
 using AxWMPLib;
 using WMPLib;
 using ExternalOSDLibrary;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace OnlineVideos.Player
 {
