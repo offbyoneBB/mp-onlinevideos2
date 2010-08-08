@@ -7,7 +7,6 @@ using System.Net;
 using System.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
-using Jayrock.Json;
 
 namespace OnlineVideos.Sites
 {
@@ -39,27 +38,24 @@ namespace OnlineVideos.Sites
 
             string js = GetWebData("http://i.cdn.turner.com/nba/nba/z/.e/js/pkg/video/652.js");
             string json = Regex.Match(js, @"var\snbaChannelConfig=(?<json>.+)").Groups["json"].Value;
-            JsonObject nbaChannelConfig = Jayrock.Json.Conversion.JsonConvert.Import(json) as JsonObject;
-            if (nbaChannelConfig != null)
+
+            List<Category> categories = new List<Category>();
+            foreach (var jsonToken in Newtonsoft.Json.Linq.JObject.Parse(json))
             {
-                List<Category> cats = new List<Category>();
-                foreach (DictionaryEntry jo in nbaChannelConfig)
+                string name = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jsonToken.Key.Replace("/", ": "));
+                Category mainCategory = new Category() { Name = name, HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = new List<Category>() };
+                SetLogoAndName(teamLogos, mainCategory, jsonToken.Value as Newtonsoft.Json.Linq.JArray);          
+                foreach (var subJo in jsonToken.Value)
                 {
-                    string name = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jo.Key.ToString().Replace("/", ": "));
-                    Category mainCategory = new Category() { Name = name, HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = new List<Category>() };
-                    SetLogoAndName(teamLogos, mainCategory, jo.Value);
-                    JsonArray subCats = jo.Value as JsonArray;
-                    foreach(JsonObject subJo in jo.Value as JsonArray)
-                    {
-                        RssLink subCategory = new RssLink() { Name = subJo["display"].ToString(), ParentCategory = mainCategory, Url = subJo["search_string"].ToString() };
-                        mainCategory.SubCategories.Add(subCategory);                        
-                    }
-                    cats.Add(mainCategory);
+                    RssLink subCategory = new RssLink() { Name = subJo.Value<string>("display"), ParentCategory = mainCategory, Url = subJo.Value<string>("search_string") };
+                    mainCategory.SubCategories.Add(subCategory);
                 }
-                cats.Sort();
+                categories.Add(mainCategory);
+                categories.Sort();
                 Settings.Categories.Clear();
-                foreach(Category cat in cats) Settings.Categories.Add(cat);
-            }            
+                foreach (Category cat in categories) Settings.Categories.Add(cat);
+            }
+                        
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
@@ -76,20 +72,21 @@ namespace OnlineVideos.Sites
 
             string data = GetWebData(inUrl);
             string json = Regex.Match(data, "<textarea id=\"jsCode\">(?<json>.+)</textarea>", RegexOptions.Singleline).Groups["json"].Value;
-            JsonObject jsonData = Jayrock.Json.Conversion.JsonConvert.Import(json) as JsonObject;
-            int NumVideosTotal = ((JsonNumber)((JsonObject)jsonData["metaResults"])["advvideo"]).ToInt32();
+
+            Newtonsoft.Json.Linq.JObject jsonData = Newtonsoft.Json.Linq.JObject.Parse(json);
+            int NumVideosTotal = jsonData["metaResults"].Value<int>("advvideo");            
             pagesInCategory = NumVideosTotal / itemsPerPage;
-            foreach (JsonObject jo in ((JsonArray)jsonData["results"])[0] as JsonArray)
+            foreach (var jo in jsonData["results"][0])
             {
                 VideoInfo vi = new VideoInfo();
-                vi.VideoUrl = jo["id"].ToString().Replace("/video","");
+                vi.VideoUrl = jo.Value<string>("id").Replace("/video","");
                 vi.VideoUrl = "http://nba.cdn.turner.com/nba/big" + vi.VideoUrl.Substring(0, vi.VideoUrl.LastIndexOf("/"));
                 vi.VideoUrl += vi.VideoUrl.EndsWith(".nba") ? "_nba_576x324.flv" : ".flv";
-                vi.Title = jo["title"].ToString();
-                vi.Description = ((JsonObject)((JsonObject)jo["metadata"])["media"])["excerpt"].ToString();
-                vi.ImageUrl = ((JsonObject)((JsonObject)((JsonObject)jo["metadata"])["media"])["thumbnail"])["url"].ToString();
-                vi.Length = ((JsonObject)((JsonObject)jo["metadata"])["video"])["length"].ToString();
-                vi.Length += " | " + OnlineVideos.Utils.UNIXTimeToDateTime(long.Parse(jo["mediaDateUts"].ToString())).ToString("g");
+                vi.Title = jo.Value<string>("title");
+                vi.Description = jo["metadata"]["media"].Value<string>("excerpt");
+                vi.ImageUrl = jo["metadata"]["media"]["thumbnail"].Value<string>("url");
+                vi.Length = jo["metadata"]["video"].Value<string>("length");
+                vi.Length += " | " + OnlineVideos.Utils.UNIXTimeToDateTime(jo.Value<long>("mediaDateUts")).ToString("g");
 
                 videos.Add(vi);
             }            
@@ -121,11 +118,11 @@ namespace OnlineVideos.Sites
             return teamLogos;
         }
 
-        void SetLogoAndName(Dictionary<string, string> teamLogos, Category category, object jsonValue)
+        void SetLogoAndName(Dictionary<string, string> teamLogos, Category category, Newtonsoft.Json.Linq.JArray jsonValue)
         {
             try
             {
-                string searchString = ((JsonObject)((JsonArray)jsonValue)[0])["search_string"].ToString();
+                string searchString = jsonValue[0].Value<string>("search_string");
                 int index = searchString.IndexOf("&team=");
                 if (index > 0)
                 {

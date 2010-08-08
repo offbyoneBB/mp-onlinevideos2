@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using OnlineVideos.Sites;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace OnlineVideos
 {
@@ -14,14 +15,17 @@ namespace OnlineVideos
         [XmlEnum(Name = "WMP")] WMP
     }
 
+    [DataContract(Name = "OnlineVideoSites")]
     [Serializable]
     [XmlRoot("OnlineVideoSites")]
     public class SerializableSettings
-    {                
+    {
+        [DataMember]   
         [XmlArray("Sites"), XmlArrayItem("Site")]
         public BindingList<SiteSettings> Sites { get; set; }
     }
 
+    [DataContract(Name="Site")]
     [Serializable]
     public class SiteSettings
     {
@@ -30,37 +34,47 @@ namespace OnlineVideos
             Language = "";
             Categories = new BindingList<Category>();
         }
-        
+
+        [DataMember(Name = "name", Order = 0)]
         [XmlAttribute("name")]
         public string Name { get; set; }
 
+        [DataMember(Name = "util", Order = 1)]
         [XmlAttribute("util")]
         public string UtilName { get; set; }
-       
+
+        [DataMember(Name = "agecheck", Order = 2)]
         [XmlAttribute("agecheck")]
         public bool ConfirmAge { get; set; }
-        
+
+        [DataMember(Name = "enabled", Order = 3)]
         [XmlAttribute("enabled")]
         public bool IsEnabled { get; set; }
 
-        [XmlAttribute("player")]
-        public PlayerType Player { get; set; }
-        public bool ShouldSerializePlayer() { return Player != PlayerType.Auto; }
-
+        [DataMember(Name = "lang", EmitDefaultValue = false, Order = 4)]
         [XmlAttribute("lang")]
         public string Language { get; set; }
         public bool ShouldSerializeLanguage() { return !string.IsNullOrEmpty(Language); }
 
+        [DataMember(Name = "player", Order = 5, EmitDefaultValue = false)]
+        [XmlAttribute("player")]
+        public PlayerType Player { get; set; }
+        public bool ShouldSerializePlayer() { return Player != PlayerType.Auto; }
+
+        [DataMember(Name = "lastUpdated", Order = 6, EmitDefaultValue = false)]
         [XmlAttribute("lastUpdated")]
         public DateTime LastUpdated { get; set; }
         public bool ShouldSerializeLastUpdated() { return LastUpdated > new DateTime(2000,1,1); }
 
+        [DataMember(EmitDefaultValue = false, Order = 7)]
         public string Description { get; set; }
         public bool ShouldSerializeDescription() { return !string.IsNullOrEmpty(Description); }
 
+        [DataMember(EmitDefaultValue = false, Order = 8)]
         public StringHash Configuration { get; set; }
         public bool ShouldSerializeConfiguration() { return Configuration != null && Configuration.Count > 0; }
 
+        [DataMember(EmitDefaultValue = false, Order = 9)]
         public BindingList<Category> Categories { get; set; }
                
         [XmlIgnore]
@@ -69,17 +83,23 @@ namespace OnlineVideos
         public override string ToString() { return Name; }
     }
 
+    [DataContract]
+    [KnownType(typeof(RssLink))]
+    [KnownType(typeof(Group))]
     [Serializable]
     [XmlInclude(typeof(RssLink))]
     [XmlInclude(typeof(Group))]
     public class Category : IComparable<Category>
     {
+        [DataMember(Name="name")]
         [XmlAttribute("name")]
         public string Name { get; set; }
 
+        [DataMember(Name="thumb", EmitDefaultValue = false)]
         [XmlAttribute("thumb")]
         public string Thumb { get; set; }
 
+        [DataMember(Name = "desc", EmitDefaultValue = false)]
         [XmlAttribute("desc")]
         public string Description { get; set; }
 
@@ -110,9 +130,11 @@ namespace OnlineVideos
         #endregion
     }
 
+    [DataContract]
     [Serializable]
     public class RssLink : Category
-    {        
+    {
+        [DataMember]
         [XmlText]
         public string Url { get; set; }
         
@@ -120,23 +142,29 @@ namespace OnlineVideos
         public uint EstimatedVideoCount  { get; set; }
     }
 
+    [DataContract]
     [Serializable]
     public class Group : Category
     {
+        [DataMember]
         public BindingList<Channel> Channels { get; set; }        
     }
 
+    [DataContract]
     [Serializable]
     public class Channel
-    {        
+    {
+        [DataMember(Name="name", Order=0)]
         [XmlAttribute("name")]
         public string StreamName { get; set; }
-        
-        [XmlText]
-        public string Url { get; set; }
 
+        [DataMember(Name = "thumb", Order=1, EmitDefaultValue = false)]
         [XmlAttribute("thumb")]
         public string Thumb { get; set; }
+
+        [DataMember(Order=2)]
+        [XmlText]
+        public string Url { get; set; }
     }
 
     #region HelperClass to Serialize a Dictionary of strings

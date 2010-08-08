@@ -7,6 +7,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace OnlineVideos
 {
@@ -2258,17 +2259,8 @@ namespace OnlineVideos
                     GUIPropertyManager.SetProperty("#OnlineVideos.length", Translation.None);
                 }
                 else
-                {
-                    double ldLength;
-                    if (double.TryParse(foVideo.Length, System.Globalization.NumberStyles.None | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.CreateSpecificCulture("en-US"), out ldLength))
-                    {
-                        TimeSpan t = TimeSpan.FromSeconds(ldLength);
-                        GUIPropertyManager.SetProperty("#OnlineVideos.length", t.ToString());
-                    }
-                    else
-                    {
-                        GUIPropertyManager.SetProperty("#OnlineVideos.length", foVideo.Length);
-                    }
+                {                                        
+                    GUIPropertyManager.SetProperty("#OnlineVideos.length", VideoInfo.GetDuration(foVideo.Length));                    
                 }
                 if (String.IsNullOrEmpty(foVideo.Description))
                 {

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Configuration;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace OnlineVideos
 {

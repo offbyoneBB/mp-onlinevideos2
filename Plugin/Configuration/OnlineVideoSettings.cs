@@ -107,20 +107,7 @@ namespace OnlineVideos
                 if (!Directory.Exists(dllDir)) Directory.CreateDirectory(dllDir);
             }
             catch { /* might fail due to UAC */ }
-        }
-
-        XmlSerializerImplementation _XmlSerImp;
-        public XmlSerializerImplementation XmlSerImp
-        {
-            get
-            {
-                if (_XmlSerImp == null)
-                {
-                    _XmlSerImp = (XmlSerializerImplementation)Activator.CreateInstance(GetType().Assembly.GetType("Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializerContract", false));
-                }
-                return _XmlSerImp;
-            }
-        }
+        }        
 
         void Load()
         {
@@ -180,23 +167,20 @@ namespace OnlineVideos
                 }
                 
                 string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
-                Stream fs = null;
+                Stream sitesStream = null;
                 if (!File.Exists(filename))
                 {
                     Log.Info("ConfigFile \"{0}\" was not found. Using embedded resource.", filename);
-                    fs = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.OnlineVideoSites.xml");
+                    sitesStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.OnlineVideoSites.xml");
                 }
                 else
                 {
-                    fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
+                    sitesStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
                 }
-                using (fs)
+                using (sitesStream)
                 {
-                    XmlSerializer ser = XmlSerImp.GetSerializer(typeof(SerializableSettings));
-                    SerializableSettings s = (SerializableSettings)ser.Deserialize(fs);
-                    fs.Close();
-                    SiteSettingsList = s.Sites;
-                }                
+                    SiteSettingsList = (BindingList<SiteSettings>)Utils.SiteSettingsFromXml(new StreamReader(sitesStream));
+                }
             }
             catch (Exception e)
             {
@@ -296,21 +280,9 @@ namespace OnlineVideos
             // only save if there are sites - otherwise an error might have occured on load
             if (SiteSettingsList != null && SiteSettingsList.Count > 0)
             {
-                string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
-                if (File.Exists(filename)) File.Delete(filename);
-
-                SerializableSettings s = new SerializableSettings();
-                s.Sites = SiteSettingsList;
-                System.Xml.Serialization.XmlSerializer ser = XmlSerImp.GetSerializer(s.GetType());
-                XmlWriterSettings xmlSettings = new XmlWriterSettings();
-                xmlSettings.Encoding = System.Text.Encoding.UTF8;
-                xmlSettings.Indent = true;
-
-                using (FileStream fs = new FileStream(filename, FileMode.Create))
+                using (FileStream fso = new FileStream(Config.GetFile(Config.Dir.Config, SETTINGS_FILE), FileMode.Create))
                 {
-                    XmlWriter writer = XmlWriter.Create(fs, xmlSettings);
-                    ser.Serialize(writer, s);
-                    fs.Close();
+                    Utils.SiteSettingsToXml(new SerializableSettings() { Sites = SiteSettingsList }, fso);
                 }
             }
         }
