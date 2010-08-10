@@ -32,36 +32,36 @@ namespace SiteParser
         {
             BaseUrlTextbox.Text = util.BaseUrl;
 
-            CategoryRegexTextbox.Text = GetRegex(util.DynamicCategoriesRegEx);
+            CategoryRegexTextbox.Text = util.DynamicCategoriesRegEx;
             dynamicCategoryUrlFormatTextBox.Text = util.DynamicCategoryUrlFormatString;
             dynamicCategoryUrlDecodingCheckBox.Checked = util.DynamicCategoryUrlDecoding;
 
-            SubcategorieRegexTextBox.Text = GetRegex(util.DynamicSubCategoriesRegEx);
+            SubcategorieRegexTextBox.Text = util.DynamicSubCategoriesRegEx;
             SubcategorieUrlFormatTextBox.Text = util.DynamicSubCategoryUrlFormatString;
             dynamicSubCategoryUrlDecodingCheckBox.Checked = util.DynamicSubCategoryUrlDecoding;
 
-            videoListRegexTextBox.Text = GetRegex(util.VideoListRegEx);
+            videoListRegexTextBox.Text = util.VideoListRegEx;
             videoListRegexFormatTextBox.Text = util.VideoListRegExFormatString;
 
             videoThumbFormatStringTextBox.Text = util.VideoThumbFormatString;
 
-            nextPageRegExTextBox.Text = GetRegex(util.NextPageRegEx);
+            nextPageRegExTextBox.Text = util.NextPageRegEx;
             nextPageRegExUrlFormatStringTextBox.Text = util.NextPageRegExUrlFormatString;
             nextPageRegExUrlDecodingCheckBox.Checked = util.NextPageRegExUrlDecoding;
 
-            prevPageRegExTextBox.Text = GetRegex(util.PrevPageRegEx);
+            prevPageRegExTextBox.Text = util.PrevPageRegEx;
             prevPageRegExUrlFormatStringTextBox.Text = util.PrevPageRegExUrlFormatString;
             prevPageRegExUrlDecodingCheckBox.Checked = util.PrevPageRegExUrlDecoding;
 
-            videoUrlRegExTextBox.Text = GetRegex(util.VideoUrlRegEx);
+            videoUrlRegExTextBox.Text = util.VideoUrlRegEx;
             videoUrlFormatStringTextBox.Text = util.VideoUrlFormatString;
             videoListUrlDecodingCheckBox.Checked = util.VideoListUrlDecoding;
             videoUrlDecodingCheckBox.Checked = util.VideoUrlDecoding;
 
-            playlistUrlRegexTextBox.Text = GetRegex(util.PlaylistUrlRegEx);
+            playlistUrlRegexTextBox.Text = util.PlaylistUrlRegEx;
             playlistUrlFormatStringTextBox.Text = util.PlaylistUrlFormatString;
 
-            fileUrlRegexTextBox.Text = GetRegex(util.FileUrlRegEx);
+            fileUrlRegexTextBox.Text = util.FileUrlRegEx;
             fileUrlFormatStringTextBox.Text = util.FileUrlFormatString;
         }
 
@@ -85,21 +85,6 @@ namespace SiteParser
             }
             return selected.Tag;
         }
-
-        #region Regex_String
-        private Regex CreateRegex(string s)
-        {
-            if (String.IsNullOrEmpty(s))
-                return null;
-            return new Regex(s, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
-        }
-
-        private string GetRegex(Regex r)
-        {
-            if (r == null) return String.Empty;
-            return r.ToString().TrimStart('{').TrimEnd('}');
-        }
-        #endregion
 
         private void ShowCategoryInfo(Category cat)
         {
@@ -139,7 +124,7 @@ namespace SiteParser
         private void GetCategoriesButton_Click(object sender, EventArgs e)
         {
             //get categories
-            generic.DynamicCategoriesRegEx = CreateRegex(CategoryRegexTextbox.Text);
+            generic.DynamicCategoriesRegEx = CategoryRegexTextbox.Text;
             generic.DynamicCategoryUrlFormatString = dynamicCategoryUrlFormatTextBox.Text;
             generic.DynamicCategoryUrlDecoding = dynamicCategoryUrlDecodingCheckBox.Checked;
             if (generic.DynamicCategoriesRegEx != null)
@@ -176,7 +161,7 @@ namespace SiteParser
         private void GetSubCategoriesButton_Click(object sender, EventArgs e)
         {
             //subcategories
-            generic.DynamicSubCategoriesRegEx = CreateRegex(SubcategorieRegexTextBox.Text);
+            generic.DynamicSubCategoriesRegEx = SubcategorieRegexTextBox.Text;
             generic.DynamicSubCategoryUrlFormatString = SubcategorieUrlFormatTextBox.Text;
             generic.DynamicSubCategoryUrlDecoding = dynamicSubCategoryUrlDecodingCheckBox.Checked;
 
@@ -215,16 +200,16 @@ namespace SiteParser
         private void GetVideoListButton_Click(object sender, EventArgs e)
         {
             //videolist
-            generic.VideoListRegEx = CreateRegex(videoListRegexTextBox.Text);
+            generic.VideoListRegEx = videoListRegexTextBox.Text;
             generic.VideoListRegExFormatString = videoListRegexFormatTextBox.Text;
             generic.VideoListUrlDecoding = videoListUrlDecodingCheckBox.Checked;
             generic.VideoThumbFormatString = videoThumbFormatStringTextBox.Text;
 
-            generic.NextPageRegEx = CreateRegex(nextPageRegExTextBox.Text);
+            generic.NextPageRegEx = nextPageRegExTextBox.Text;
             generic.NextPageRegExUrlFormatString = nextPageRegExUrlFormatStringTextBox.Text;
             generic.NextPageRegExUrlDecoding = nextPageRegExUrlDecodingCheckBox.Checked;
 
-            generic.PrevPageRegEx = CreateRegex(prevPageRegExTextBox.Text);
+            generic.PrevPageRegEx = prevPageRegExTextBox.Text;
             generic.PrevPageRegExUrlFormatString = prevPageRegExUrlFormatStringTextBox.Text;
             generic.PrevPageRegExUrlDecoding = prevPageRegExUrlDecodingCheckBox.Checked;
 
@@ -299,12 +284,12 @@ namespace SiteParser
         private void GetVideoUrlButton_Click(object sender, EventArgs e)
         {
             //VideoUrl
-            generic.VideoUrlRegEx = CreateRegex(videoUrlRegExTextBox.Text);
+            generic.VideoUrlRegEx = videoUrlRegExTextBox.Text;
             generic.VideoUrlDecoding = videoUrlDecodingCheckBox.Checked;
             generic.VideoUrlFormatString = videoUrlFormatStringTextBox.Text;
-            generic.PlaylistUrlRegEx = CreateRegex(playlistUrlRegexTextBox.Text);
+            generic.PlaylistUrlRegEx = playlistUrlRegexTextBox.Text;
             generic.PlaylistUrlFormatString = playlistUrlFormatStringTextBox.Text;
-            generic.FileUrlRegEx = CreateRegex(fileUrlRegexTextBox.Text);
+            generic.FileUrlRegEx = fileUrlRegexTextBox.Text;
             generic.FileUrlFormatString = fileUrlFormatStringTextBox.Text;
             VideoInfo video = GetTreeViewSelectedNode() as VideoInfo;
             if (video != null)
@@ -385,37 +370,52 @@ namespace SiteParser
     {
         public string BaseUrl { get { return baseUrl; } set { baseUrl = value; } }
 
-        public Regex DynamicCategoriesRegEx { get { return regEx_dynamicCategories; } set { regEx_dynamicCategories = value; } }
+        public string DynamicCategoriesRegEx { get { return GetRegex(regEx_dynamicCategories); } set { regEx_dynamicCategories = CreateRegex(value); dynamicCategoriesRegEx = value; } }
         public string DynamicCategoryUrlFormatString { get { return dynamicCategoryUrlFormatString; } set { dynamicCategoryUrlFormatString = value; } }
         public bool DynamicCategoryUrlDecoding { get { return dynamicCategoryUrlDecoding; } set { dynamicCategoryUrlDecoding = value; } }
 
-        public Regex DynamicSubCategoriesRegEx { get { return regEx_dynamicSubCategories; } set { regEx_dynamicSubCategories = value; } }
+        public string DynamicSubCategoriesRegEx { get { return GetRegex(regEx_dynamicSubCategories); } set { regEx_dynamicSubCategories = CreateRegex(value); dynamicSubCategoriesRegEx = value; } }
         public string DynamicSubCategoryUrlFormatString { get { return dynamicSubCategoryUrlFormatString; } set { dynamicSubCategoryUrlFormatString = value; } }
         public bool DynamicSubCategoryUrlDecoding { get { return dynamicSubCategoryUrlDecoding; } set { dynamicSubCategoryUrlDecoding = value; } }
 
-        public Regex VideoListRegEx { get { return regEx_VideoList; } set { regEx_VideoList = value; } }
+        public string VideoListRegEx { get { return GetRegex(regEx_VideoList); } set { regEx_VideoList = CreateRegex(value); videoListRegEx = value; } }
         public string VideoListRegExFormatString { get { return videoListRegExFormatString; } set { videoListRegExFormatString = value; } }
         public bool VideoListUrlDecoding { get { return videoListUrlDecoding; } set { videoListUrlDecoding = value; } }
         public string VideoThumbFormatString { get { return videoThumbFormatString; } set { videoThumbFormatString = value; } }
 
-        public Regex NextPageRegEx { get { return regEx_NextPage; } set { regEx_NextPage = value; } }
+        public string NextPageRegEx { get { return GetRegex(regEx_NextPage); } set { regEx_NextPage = CreateRegex(value); nextPageRegEx = value; } }
         public string NextPageRegExUrlFormatString { get { return nextPageRegExUrlFormatString; } set { nextPageRegExUrlFormatString = value; } }
         public bool NextPageRegExUrlDecoding { get { return nextPageRegExUrlDecoding; } set { nextPageRegExUrlDecoding = value; } }
         public string NextPageUrl { get { return nextPageUrl; } }
 
-        public Regex PrevPageRegEx { get { return regEx_PrevPage; } set { regEx_PrevPage = value; } }
+        public string PrevPageRegEx { get { return GetRegex(regEx_PrevPage); } set { regEx_PrevPage = CreateRegex(value); prevPageRegEx = value; } }
         public string PrevPageRegExUrlFormatString { get { return prevPageRegExUrlFormatString; } set { prevPageRegExUrlFormatString = value; } }
         public bool PrevPageRegExUrlDecoding { get { return prevPageRegExUrlDecoding; } set { prevPageRegExUrlDecoding = value; } }
         public string PrevPageUrl { get { return previousPageUrl; } }
 
-        public Regex VideoUrlRegEx { get { return regEx_VideoUrl; } set { regEx_VideoUrl = value; } }
+        public string VideoUrlRegEx { get { return GetRegex(regEx_VideoUrl); } set { regEx_VideoUrl = CreateRegex(value); videoUrlRegEx = value; } }
         public string VideoUrlFormatString { get { return videoUrlFormatString; } set { videoUrlFormatString = value; } }
         public bool VideoUrlDecoding { get { return videoUrlDecoding; } set { videoUrlDecoding = value; } }
 
-        public Regex PlaylistUrlRegEx { get { return regEx_PlaylistUrl; } set { regEx_PlaylistUrl = value; } }
+        public string PlaylistUrlRegEx { get { return GetRegex(regEx_PlaylistUrl); } set { regEx_PlaylistUrl = CreateRegex(value); playlistUrlRegEx = value; } }
         public string PlaylistUrlFormatString { get { return playlistUrlFormatString; } set { playlistUrlFormatString = value; } }
-        public Regex FileUrlRegEx { get { return regEx_FileUrl; } set { regEx_FileUrl = value; } }
+        public string FileUrlRegEx { get { return GetRegex(regEx_FileUrl); } set { regEx_FileUrl = CreateRegex(value); fileUrlRegEx = value; } }
         public string FileUrlFormatString { get { return fileUrlFormatString; } set { fileUrlFormatString = value; } }
+
+        #region Regex_String
+        private Regex CreateRegex(string s)
+        {
+            if (String.IsNullOrEmpty(s))
+                return null;
+            return new Regex(s, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+        }
+
+        private string GetRegex(Regex r)
+        {
+            if (r == null) return String.Empty;
+            return r.ToString().TrimStart('{').TrimEnd('}');
+        }
+        #endregion
     }
 
 }

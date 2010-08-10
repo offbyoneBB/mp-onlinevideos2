@@ -74,6 +74,7 @@
     <Compile Include="SesameStreetUtil.cs" />
     <Compile Include="SouthParkUtil.cs" />
     <Compile Include="ThatGuyWithTheGlassesUtil.cs" />
+    <Compile Include="TheEscapistUtil.cs" />
     <Compile Include="TurboNickUtil.cs" />
     <Compile Include="TVEUtil.cs" />
     <Compile Include="TvGemistUtil.cs" />
