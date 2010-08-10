@@ -982,10 +982,22 @@
         <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
       </Categories>
     </Site>
+    <Site name="Academic Earth" util="UrlTrick" agecheck="false" enabled="true" lang="en">
+      <Description>Online degrees and video courses from leading universities.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://academicearth.org/]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\sclass="accordion-item"\shref="(?<url>/subjects/[^"]*)">\s*(?<title>[^<]*)</a></li>\s*]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass="thumb">\s*<a\sclass="thumb"\shref="(?<url>[^"]*)">\s*<img\ssrc="(?<thumb>[^"]*)"[^>]*>\s*</a>\s*<[^>]*><i[^>]*></a>\s*</div>\s*<div\sclass="info">\s*<h3><[^>]*>(?<title>[^<]*)</a></h3>\s*<h4><[^>]*>[^>]*>\s/\s<[^>]*>[^>]*></h4>\s*<[^>]*>\s*<[^>]*>\s*(?<Description>[^<]*)</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\sclass="thumb"\shref="(?<VideoUrl>[^"]*)"[^<]*<img[^>]*>\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^<]*</a>\s*<[^<]*</a>\s*<div\sclass="description">\s*<h4><[^>]*>(?<Title>[^<]*)</a></h4>\s*]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<textarea\sid="clip-embed"\sreadonly="readonly"\sstyle="display:none;"><div><embed\ssrc="(?<m0>[^"]*)"]]></item>
+      </Configuration>
+      <Categories>
+      </Categories>
+    </Site>
     <Site name="OnsNetNuenen" util="OnsNetNuenen" agecheck="false" enabled="true" lang="nl">
       <Categories />
     </Site>
-    <Site name="Kabouter Wesley" util="KabouterWesley" agecheck="false" enabled="true" lang="nl" lastUpdated="2010-03-29T13:08:44.158817+02:00">
+    <Site name="Kabouter Wesley" util="UrlTrick" agecheck="false" enabled="true" lang="nl" lastUpdated="2010-03-29T13:08:44.158817+02:00">
       <Description>Kabouter Wesley. Elke dinsdag een nieuw filmpje!</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<li><a\shref='(?<VideoUrl>[^']*)'\stitle='[^']*'>(?<Title>[^<]*)</a></li>]]></item>

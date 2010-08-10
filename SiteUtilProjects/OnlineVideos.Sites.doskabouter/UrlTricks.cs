@@ -9,6 +9,68 @@ namespace OnlineVideos.Sites
 {
     public static class UrlTricks
     {
+        public static bool GetUrlFromAll(string url, VideoInfo video, out string newUrl)
+        {
+
+            if (url.StartsWith("http://www.youtube.com"))
+            {
+                newUrl = UrlTricks.YoutubeTrick(url, video);
+                return true;
+            }
+            if (url.StartsWith("http://www2.movshare.net"))
+            {
+                newUrl = UrlTricks.MovShareTrick(url);
+                return true;
+            }
+            if (url.StartsWith("http://www.vureel.com"))
+            {
+                newUrl = UrlTricks.VureelTrick(url);
+                return true;
+            }
+            if (url.StartsWith("http://www.56.com"))
+            {
+                newUrl = UrlTricks.FiftySixComTrick(url);
+                return true;
+            }
+            if (url.StartsWith("http://www.livevideo.com"))
+            {
+                newUrl = UrlTricks.LiveVideoTrick(url);
+                return true;
+            }
+            if (url.StartsWith("http://www.divxden.com"))
+            {
+                newUrl = UrlTricks.DivxDenTrick(url);
+                return true;
+            }
+            if (url.StartsWith("http://smotri.com"))
+            {
+                newUrl = UrlTricks.SmotriTrick(url);
+                return true;
+            }
+            if (url.StartsWith("http://video.google"))
+            {
+                newUrl = UrlTricks.GoogleCaTrick(url);
+                return true;
+            }
+            if (url.StartsWith("http://www.megavideo.com"))
+            {
+                newUrl = UrlTricks.MegaVideoTrick(url);
+                return true;
+            }
+            if (url.StartsWith("http://www.myspace.com"))
+            {
+                newUrl = UrlTricks.MyspaceTrick(url);
+                return true;
+            }
+            if (url.StartsWith("http://blip.tv"))
+            {
+                newUrl = UrlTricks.BlipTrick(url);
+                return true;
+            }
+            newUrl = null;
+            return false;
+        }
+
         private static String Decrypt(String str_hex, String str_key1, String str_key2)
         {
             // 1. Convert hexadecimal string to binary string
