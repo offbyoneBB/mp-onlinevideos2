@@ -300,26 +300,9 @@ namespace OnlineVideos.Sites
                     else
                         url = GetRedirectedUrl(@"http://www.watch-series.com/open_link.php?vari=" + vidId);
                 }
-                if (savUrl.StartsWith("youtube.com"))
-                    return UrlTricks.YoutubeTrick(url, this);
-                if (url.StartsWith("http://www2.movshare.net"))
-                    return UrlTricks.MovShareTrick(url);
-                if (url.StartsWith("http://www.vureel.com"))
-                    return UrlTricks.VureelTrick(url);
-                if (url.StartsWith("http://www.56.com"))
-                    return UrlTricks.FiftySixComTrick(url);
-                if (url.StartsWith("http://www.livevideo.com"))
-                    return UrlTricks.LiveVideoTrick(url);
-                if (url.StartsWith("http://www.divxden.com"))
-                    return UrlTricks.DivxDenTrick(url);
-                if (url.StartsWith("http://smotri.com"))
-                    return UrlTricks.SmotriTrick(url);
-                if (url.StartsWith("http://video.google"))
-                    return UrlTricks.GoogleCaTrick(url);
-                if (url.StartsWith("http://www.megavideo.com"))
-                    return UrlTricks.MegaVideoTrick(url);
-                if (url.StartsWith("http://www.myspace.com"))
-                    return UrlTricks.MyspaceTrick(url);
+                string theUrl;
+                if (UrlTricks.GetUrlFromAll(url, this, out theUrl))
+                    return theUrl;
 
                 webData = GetWebData(url);
 
