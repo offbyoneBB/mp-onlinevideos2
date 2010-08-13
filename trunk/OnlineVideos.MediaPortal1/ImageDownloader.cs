@@ -9,41 +9,18 @@ using System.Threading;
 using System.Drawing;
 using MediaPortal.Util;
 
-namespace OnlineVideos
+namespace OnlineVideos.MediaPortal1
 {
     public static class ImageDownloader
     {
-        public static bool StopDownload { get; set; }
-
-        public static string GetSaveFilename(string input)
-        {
-            string safe = input;
-            foreach (char lDisallowed in System.IO.Path.GetInvalidFileNameChars())
-            {
-                safe = safe.Replace(lDisallowed.ToString(), "");
-            }
-            foreach (char lDisallowed in System.IO.Path.GetInvalidPathChars())
-            {
-                safe = safe.Replace(lDisallowed.ToString(), "");
-            }
-            return safe;
-        }
-
-        public static string GetThumbFile(string url)
-        {
-            // gets a CRC code for the given url and returns a file path: thums_dir\crc.jpg
-            string possibleExtension = System.IO.Path.GetExtension(url).ToLower();
-            if (possibleExtension != ".gif" & possibleExtension != ".jpg") possibleExtension = ".jpg";
-            string name = string.Format("Thumbs{0}L{1}", MediaPortal.Util.Utils.EncryptLine(url), possibleExtension);
-            return System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, name);
-        }
+        public static bool StopDownload { get; set; }                
 
         public static string DownloadPoster(string url, string name)
         {
-            string file = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, GetSaveFilename(name) + "_p.jpg");
+            string file = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, Utils.GetSaveFilename(name) + "_p.jpg");
             if (!System.IO.File.Exists(file))
             {
-                Log.Debug("downloading Poster image :" + url);
+                Log.Instance.Debug("downloading Poster image :" + url);
                 if (DownloadAndCheckImage(url, file)) return file;
                 else return "";
             }
@@ -73,7 +50,7 @@ namespace OnlineVideos
                         }
                         else
                         {
-                            string thumbFile = GetThumbFile(aFinalUrl);
+                            string thumbFile = Utils.GetThumbFile(aFinalUrl);
                             if (System.IO.File.Exists(thumbFile))
                             {
                                 imageLocation = thumbFile;
@@ -111,7 +88,7 @@ namespace OnlineVideos
                     {
                         if (StopDownload)
                         {
-                            Log.Info("Received request to stop downloading thumbs.");
+                            Log.Instance.Info("Received request to stop downloading thumbs.");
                             break;
                         }
                         string[] urls = item.ThumbUrl.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -119,8 +96,8 @@ namespace OnlineVideos
                         {
                             if (!System.IO.Path.IsPathRooted(aFinalUrl)) // only urls
                             {
-                                string thumbFile = GetThumbFile(aFinalUrl);
-                                //Log.Debug(string.Format("Downloading Image from {0} to {1}", aFinalUrl, thumbFile));
+                                string thumbFile = Utils.GetThumbFile(aFinalUrl);
+                                //Log.Instance.Debug(string.Format("Downloading Image from {0} to {1}", aFinalUrl, thumbFile));
                                 if (DownloadAndCheckImage(aFinalUrl, thumbFile))
                                 {
                                     item.ThumbnailImage = thumbFile;
@@ -200,7 +177,7 @@ namespace OnlineVideos
             }
             catch (Exception ex)
             {
-                Log.Info("Invalid Image: {0} {1}", url, ex.Message);
+                Log.Instance.Info("Invalid Image: {0} {1}", url, ex.Message);
                 return false; 
             }
         }
@@ -214,7 +191,7 @@ namespace OnlineVideos
                 dlgPrgrs.DisplayProgressBar = true;
                 dlgPrgrs.ShowWaitCursor = false;
                 dlgPrgrs.DisableCancel(false);
-                dlgPrgrs.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                dlgPrgrs.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                 dlgPrgrs.StartModal(GUIOnlineVideos.WindowId);
                 dlgPrgrs.SetLine(1, Translation.DeletingOldThumbs);
                 dlgPrgrs.Percentage = 0;
@@ -224,9 +201,9 @@ namespace OnlineVideos
                 int thumbsDeleted = 0;
                 try
                 {
-                    DateTime keepdate = DateTime.Now.AddDays(-OnlineVideoSettings.Instance.thumbAge);
+                    DateTime keepdate = DateTime.Now.AddDays(-OnlineVideoSettings.Instance.ThumbsAge);
                     FileInfo[] files = new DirectoryInfo(OnlineVideoSettings.Instance.ThumbsDir).GetFiles();
-                    Log.Info("Checking {0} thumbnails for age.", files.Length);
+                    Log.Instance.Info("Checking {0} thumbnails for age.", files.Length);
                     for (int i = 0; i < files.Length; i++)
                     {
                         FileInfo f = files[i];
@@ -241,11 +218,11 @@ namespace OnlineVideos
                 }
                 catch (Exception threadException)
                 {
-                    Log.Error(threadException);
+                    Log.Instance.Error(threadException);
                 }
                 finally
                 {
-                    Log.Info("Deleted {0} thumbnails.", thumbsDeleted);
+                    Log.Instance.Info("Deleted {0} thumbnails.", thumbsDeleted);
                     if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, Translation.Done); dlgPrgrs.Close(); }
                 }
             }) { Name = "OnlineVideosThumbnail", IsBackground = true }.Start();

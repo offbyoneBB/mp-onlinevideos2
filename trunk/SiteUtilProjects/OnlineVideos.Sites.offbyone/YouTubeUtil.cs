@@ -216,7 +216,7 @@ namespace OnlineVideos.Sites
                         // try to add a country from the StandartFeedCountry enumeration
                         try
                         {
-                            StandartFeedCountry result = (StandartFeedCountry)Enum.Parse(typeof(StandartFeedCountry), OnlineVideoSettings.Instance.MediaPortalLocale.TwoLetterISOLanguageName.ToUpper());
+                            StandartFeedCountry result = (StandartFeedCountry)Enum.Parse(typeof(StandartFeedCountry), OnlineVideoSettings.Instance.Locale.TwoLetterISOLanguageName.ToUpper());
                             query.BaseAddress = YouTubeQuery.StandardFeeds + result.ToString() + "/" + postStandartFeedUriPart;
                         }
                         catch { }
@@ -225,7 +225,7 @@ namespace OnlineVideos.Sites
                 else
                 {
                     //http://code.google.com/intl/de-DE/apis/youtube/2.0/reference.html#lrsp
-                    query.LR = OnlineVideoSettings.Instance.MediaPortalLocale.TwoLetterISOLanguageName;
+                    query.LR = OnlineVideoSettings.Instance.Locale.TwoLetterISOLanguageName;
                 }
             }
 
@@ -269,8 +269,8 @@ namespace OnlineVideos.Sites
                 {
                     try
                     {
-                        Enum.Parse(typeof(CategoryLocale), OnlineVideoSettings.Instance.MediaPortalLocale.TwoLetterISOLanguageName.ToLower());
-                        catUri += "?hl=" + OnlineVideoSettings.Instance.MediaPortalLocale.Name;
+                        Enum.Parse(typeof(CategoryLocale), OnlineVideoSettings.Instance.Locale.TwoLetterISOLanguageName.ToLower());
+                        catUri += "?hl=" + OnlineVideoSettings.Instance.Locale.Name;
                     }
                     catch { }
                 }

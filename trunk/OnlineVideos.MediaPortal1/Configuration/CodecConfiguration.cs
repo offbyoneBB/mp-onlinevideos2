@@ -7,7 +7,7 @@ using System.Collections;
 using DShowNET.Helper;
 using DirectShowLib;
 
-namespace OnlineVideos
+namespace OnlineVideos.MediaPortal1
 {
     /// <summary>
     /// http://msdn.microsoft.com/en-us/library/dd377513(VS.85).aspx
@@ -105,7 +105,7 @@ namespace OnlineVideos
                   Registry.ClassesRoot.OpenSubKey(@"CLSID\{083863F1-70DE-11d0-BD40-00A0C911CE86}\Instance\{" + clsid + @"}");
                 if (filterKey == null)
                 {
-                    Log.Debug("Could not get merit value for clsid {0}, key not found!", clsid);
+                    Log.Instance.Debug("Could not get merit value for clsid {0}, key not found!", clsid);
                     return Merit.DoNotUse;
                 }
                 Byte[] filterData = (Byte[])filterKey.GetValue("FilterData", 0x0);
@@ -121,7 +121,7 @@ namespace OnlineVideos
             }
             catch (Exception e)
             {
-                Log.Debug("Could not get merit value for clsid {0}. Error: {1}", clsid, e.Message);
+                Log.Instance.Debug("Could not get merit value for clsid {0}. Error: {1}", clsid, e.Message);
                 return Merit.DoNotUse;
             }
         }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace OnlineVideos
+namespace OnlineVideos.MediaPortal1
 {
     internal class SmsT9Filter
     {

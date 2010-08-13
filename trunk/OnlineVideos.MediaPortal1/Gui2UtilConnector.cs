@@ -3,7 +3,7 @@ using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 
-namespace OnlineVideos
+namespace OnlineVideos.MediaPortal1
 {
     internal delegate object TaskHandler();
     internal delegate void TaskResultHandler(bool success, object result);
@@ -35,7 +35,7 @@ namespace OnlineVideos
         string _CurrentTaskDescription = null;
         Thread backgroundThread = null;
         bool abortedByUser = false;
-        System.Timers.Timer timeoutTimer = new System.Timers.Timer(OnlineVideoSettings.Instance.utilTimeout * 1000) { AutoReset = false };
+        System.Timers.Timer timeoutTimer = new System.Timers.Timer(PluginConfiguration.Instance.utilTimeout * 1000) { AutoReset = false };
 
         public void StopBackgroundTask()
         {
@@ -46,7 +46,7 @@ namespace OnlineVideos
         {
             if (IsBusy && _CurrentTaskSuccess == null && backgroundThread != null && backgroundThread.IsAlive)
             {
-                Log.Info("Aborting background thread.");
+                Log.Instance.Info("Aborting background thread.");
                 backgroundThread.Abort();
                 abortedByUser = byUserRequest;
                 return;
@@ -76,7 +76,7 @@ namespace OnlineVideos
                 try
                 {
                     GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor in MediaPortal
-                    DateTime end = DateTime.Now.AddSeconds(OnlineVideoSettings.Instance.utilTimeout); // point in time until we wait for the execution of this task
+                    DateTime end = DateTime.Now.AddSeconds(PluginConfiguration.Instance.utilTimeout); // point in time until we wait for the execution of this task
 #if DEBUG
                     if (System.Diagnostics.Debugger.IsAttached) end = DateTime.Now.AddYears(1); // basically disable timeout when debugging
 #endif
@@ -89,13 +89,13 @@ namespace OnlineVideos
                         }
                         catch (ThreadAbortException)
                         {
-                            Log.Warn("Timeout waiting for results.");
+                            Log.Instance.Warn("Timeout waiting for results.");
                             Thread.ResetAbort();
                         }
                         catch (Exception threadException)
                         {
                             error = threadException as OnlineVideosException;
-                            Log.Warn(threadException.ToString());
+                            Log.Instance.Warn(threadException.ToString());
                             result = false;
                         }
                     }) { Name = "OnlineVideos", IsBackground = true };
@@ -110,7 +110,7 @@ namespace OnlineVideos
                 catch (Exception ex)
                 {
                     result = false;
-                    Log.Error(ex);
+                    Log.Instance.Error(ex);
                 }
                 finally
                 {
@@ -123,7 +123,7 @@ namespace OnlineVideos
                             if (dlg_error != null)
                             {
                                 dlg_error.Reset();
-                                dlg_error.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                                dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                                 dlg_error.SetLine(1, string.Format("{0} {1}", Translation.Error, taskdescription));
                                 dlg_error.SetLine(2, error.Message);
                                 dlg_error.DoModal(GUIWindowManager.ActiveWindow);
@@ -135,7 +135,7 @@ namespace OnlineVideos
                             if (dlg_error != null)
                             {
                                 dlg_error.Reset();
-                                dlg_error.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                                dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                                 if (result.HasValue)
                                     dlg_error.SetText(string.Format("{0} {1}", Translation.Error, taskdescription));
                                 else
@@ -151,7 +151,7 @@ namespace OnlineVideos
             }
             else
             {
-                Log.Error("Another thread tried to execute a task in background.");
+                Log.Instance.Error("Another thread tried to execute a task in background.");
                 return false;
             }
         }
@@ -187,13 +187,13 @@ namespace OnlineVideos
                         }
                         catch (ThreadAbortException)
                         {
-                            if (!abortedByUser) Log.Warn("Timeout waiting for results.");
+                            if (!abortedByUser) Log.Instance.Warn("Timeout waiting for results.");
                             Thread.ResetAbort();
                         }
                         catch (Exception threadException)
                         {
                             _CurrentError = threadException as OnlineVideosException;
-                            Log.Warn(threadException.ToString());
+                            Log.Instance.Warn(threadException.ToString());
                             _CurrentTaskSuccess = false;
                         }
                         timeoutTimer.Stop();
@@ -211,7 +211,7 @@ namespace OnlineVideos
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex);
+                    Log.Instance.Error(ex);
                     IsBusy = false;
                     _CurrentResultHandler = null;
                     GUIWaitCursor.Hide(); // hide the wait cursor
@@ -220,7 +220,7 @@ namespace OnlineVideos
             }
             else
             {
-                Log.Error("Another thread tried to execute a task in background.");
+                Log.Instance.Error("Another thread tried to execute a task in background.");
                 return false;
             }
         }
@@ -238,7 +238,7 @@ namespace OnlineVideos
                     if (dlg_error != null)
                     {
                         dlg_error.Reset();
-                        dlg_error.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                        dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                         dlg_error.SetLine(1, string.Format("{0} {1}", Translation.Error, _CurrentTaskDescription));
                         dlg_error.SetLine(2, _CurrentError.Message);
                         dlg_error.DoModal(GUIWindowManager.ActiveWindow);
@@ -250,7 +250,7 @@ namespace OnlineVideos
                     if (dlg_error != null)
                     {
                         dlg_error.Reset();
-                        dlg_error.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                        dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                         if (_CurrentTaskSuccess.HasValue)
                             dlg_error.SetText(string.Format("{0} {1}", Translation.Error, _CurrentTaskDescription));
                         else

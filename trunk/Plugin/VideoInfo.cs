@@ -20,9 +20,9 @@ namespace OnlineVideos
         public Dictionary<string, string> PlaybackOptions;
 
         /// <summary>This property is only used by the <see cref="FavoriteUtil"/> to store the Name of the Site where this Video came from.</summary>
-        internal string SiteName { get; set; }
+        public string SiteName { get; set; }
         /// <summary>This property is only used by the <see cref="FavoriteUtil"/> to store the Id of Video, so it can be deleted from the DB.</summary>
-        internal int Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>This property is set by the <see cref="ImageDownloader"/> to the file after downloading from <see cref="ImageUrl"/>.</summary>
         public string ThumbnailImage { get; set; }
@@ -165,7 +165,7 @@ namespace OnlineVideos
                 if (!string.IsNullOrEmpty(video.Length)) video.Length += " | ";
                 try
                 {
-                    video.Length += rssItem.PubDateParsed.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
+                    video.Length += rssItem.PubDateParsed.ToString("g", OnlineVideoSettings.Instance.Locale);
                 }
                 catch
                 {

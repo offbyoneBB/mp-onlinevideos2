@@ -137,7 +137,7 @@ namespace OnlineVideos.Sites
                             {
                                 videoInfo.Description = info.Value<string>("Description");
                                 DateTime parsedDate;
-                                if (DateTime.TryParse(info.Value<string>("FirstPublished"), out parsedDate)) videoInfo.Length += " | " + parsedDate.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
+                                if (DateTime.TryParse(info.Value<string>("FirstPublished"), out parsedDate)) videoInfo.Length += " | " + parsedDate.ToString("g", OnlineVideoSettings.Instance.Locale);
                                 foreach(var file in info["Files"])
                                 {                                    
                                     if (file.Value<string>("Type").StartsWith("Video"))
@@ -171,7 +171,7 @@ namespace OnlineVideos.Sites
                             videoInfo.VideoUrl += "&location=mydrtv";
 
                             DateTime parsedDate;
-                            if (DateTime.TryParse(videoInfo.Length, out parsedDate)) videoInfo.Length = parsedDate.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
+                            if (DateTime.TryParse(videoInfo.Length, out parsedDate)) videoInfo.Length = parsedDate.ToString("g", OnlineVideoSettings.Instance.Locale);
 
                             videoList.Add(videoInfo);
 

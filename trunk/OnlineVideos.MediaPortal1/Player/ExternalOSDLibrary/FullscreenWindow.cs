@@ -110,7 +110,7 @@ namespace ExternalOSDLibrary
     public FullscreenWindow()
     {
       //_fullscreenWindow = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) as GUIVideoFullscreen;
-        _fullscreenWindow = GUIWindowManager.GetWindow(OnlineVideos.Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) as GUIVideoFullscreen;
+        _fullscreenWindow = GUIWindowManager.GetWindow(OnlineVideos.MediaPortal1.Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) as GUIVideoFullscreen;
       if (_fullscreenWindow != null) _controlList = _fullscreenWindow.controlList;
       GenerateElements();
       _cacheElements = new List<BaseElement>();
@@ -226,7 +226,7 @@ namespace ExternalOSDLibrary
     protected override void BaseInit()
     {
       //_fullscreenWindow = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) as GUIVideoFullscreen;
-      _fullscreenWindow = GUIWindowManager.GetWindow(OnlineVideos.Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) as GUIVideoFullscreen;
+      _fullscreenWindow = GUIWindowManager.GetWindow(OnlineVideos.MediaPortal1.Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) as GUIVideoFullscreen;
       if (_fullscreenWindow != null)
         _controlList = _fullscreenWindow.controlList;
     }

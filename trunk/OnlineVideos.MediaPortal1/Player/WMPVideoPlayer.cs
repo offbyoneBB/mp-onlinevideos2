@@ -8,7 +8,7 @@ using WMPLib;
 using ExternalOSDLibrary;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace OnlineVideos.Player
+namespace OnlineVideos.MediaPortal1.Player
 {
     public class WMPVideoPlayer : IPlayer
     {
@@ -63,7 +63,7 @@ namespace OnlineVideos.Player
             _graphState = PlayState.Init;
             _currentFile = strFile;
 
-            Log.Info("WMPVideoPlayer: Disabling DX9 exclusive mode");
+            Log.Instance.Info("WMPVideoPlayer: Disabling DX9 exclusive mode");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendMessage(msg);
 
@@ -86,10 +86,10 @@ namespace OnlineVideos.Player
 
             //_wmp10Player.enableContextMenu = false;
             //_wmp10Player.Ctlenabled = false;
-            Log.Info("WMPVideoPlayer:play {0}", strFile);
+            Log.Instance.Info("WMPVideoPlayer:play {0}", strFile);
             _wmp10Player.URL = strFile;
 
-            _wmp10Player.network.bufferingTime = OnlineVideoSettings.Instance.wmpbuffer;
+            _wmp10Player.network.bufferingTime = PluginConfiguration.Instance.wmpbuffer;
             _wmp10Player.Ctlcontrols.play();
             _wmp10Player.ClientSize = new Size(0, 0);
             _wmp10Player.Visible = false;
@@ -140,7 +140,7 @@ namespace OnlineVideos.Player
 
             if (_criticalErrorEncountered)
             {
-                Log.Info("WMPVideoPlayer: error encountered while trying to play {0}", strFile);
+                Log.Instance.Info("WMPVideoPlayer: error encountered while trying to play {0}", strFile);
                 _wmp10Player.PlayStateChange -= OnPlayStateChange;
                 _wmp10Player.ErrorEvent -= OnError;
                 return false;
@@ -237,20 +237,20 @@ namespace OnlineVideos.Player
                 case 0xc00d1197: _criticalErrorEncountered = true; break;  //NS_E_WMP_CANNOT_FIND_FILE
                 default: _criticalErrorEncountered = true; break; // for now: abort on all errors
             }
-            Log.Error("WMPVideoPlayer: " + error.errorDescription);
+            Log.Instance.Error("WMPVideoPlayer: " + error.errorDescription);
         }
 
         private void OnBuffering(object sender, _WMPOCXEvents_BufferingEvent e)
         {
-            Log.Debug("WMPVideoPlayer: bandWidth: {0}", _wmp10Player.network.bandWidth);
-            Log.Debug("WMPVideoPlayer: bitRate: {0}", _wmp10Player.network.bitRate);
-            Log.Debug("WMPVideoPlayer: receivedPackets: {0}", _wmp10Player.network.receivedPackets);
-            Log.Debug("WMPVideoPlayer: receptionQuality: {0}", _wmp10Player.network.receptionQuality);
+            Log.Instance.Debug("WMPVideoPlayer: bandWidth: {0}", _wmp10Player.network.bandWidth);
+            Log.Instance.Debug("WMPVideoPlayer: bitRate: {0}", _wmp10Player.network.bitRate);
+            Log.Instance.Debug("WMPVideoPlayer: receivedPackets: {0}", _wmp10Player.network.receivedPackets);
+            Log.Instance.Debug("WMPVideoPlayer: receptionQuality: {0}", _wmp10Player.network.receptionQuality);
 
             //_wmp10Player.network.bufferingTime = _bufferTime;
 
             _bufferCompleted = !e.start;
-            Log.Debug("WMPVideoPlayer: onbuffer start:{0}", e.start.ToString());
+            Log.Instance.Debug("WMPVideoPlayer: onbuffer start:{0}", e.start.ToString());
         }
 
         private void PlaybackEnded(bool bManualStop)
@@ -262,7 +262,7 @@ namespace OnlineVideos.Player
             //{
             GUIGraphicsContext.IsFullScreenVideo = false;
             //}
-            Log.Info("WMPVideoPlayer:ended {0} {1}", _currentFile, bManualStop);
+            Log.Instance.Info("WMPVideoPlayer:ended {0} {1}", _currentFile, bManualStop);
             _currentFile = "";
             if (_osdActive) { _osd.Deactivate(); _osdActive = false; }
             if (_wmp10Player != null)
@@ -429,7 +429,7 @@ namespace OnlineVideos.Player
             GUIWindowManager.OnNewAction -= GUIWindowManager_OnNewAction;
 
             try { if (_osd != null) _osd.Dispose(); }
-            catch (Exception ex) { Log.Warn(ex.ToString()); }
+            catch (Exception ex) { Log.Instance.Warn(ex.ToString()); }
 
             if (_wmp10Player == null)
             {
@@ -579,7 +579,7 @@ namespace OnlineVideos.Player
 
             if (_isFullScreen)
             {
-                Log.Info("WMPVideoPlayer:Fullscreen");
+                Log.Instance.Info("WMPVideoPlayer:Fullscreen");
 
                 _positionX = GUIGraphicsContext.OverScanLeft;
                 _positionY = GUIGraphicsContext.OverScanTop;
@@ -610,7 +610,7 @@ namespace OnlineVideos.Player
                 _sourceRectangle = _videoRectangle;
 
                 //_wmp10Player.fullScreen=true;
-                Log.Info("WMPVideoPlayer:done");
+                Log.Instance.Info("WMPVideoPlayer:done");
                 return;
             }
             else
@@ -632,7 +632,7 @@ namespace OnlineVideos.Player
                 _videoRectangle = new Rectangle(_positionX, _positionY, _wmp10Player.ClientSize.Width,
                                                 _wmp10Player.ClientSize.Height);
                 _sourceRectangle = _videoRectangle;
-                //Log.Info("WMPVideoPlayer:set window:({0},{1})-({2},{3})",_positionX,_positionY,_positionX+_wmp10Player.ClientSize.Width,_positionY+_wmp10Player.ClientSize.Height);
+                //Log.Instance.Info("WMPVideoPlayer:set window:({0},{1})-({2},{3})",_positionX,_positionY,_positionX+_wmp10Player.ClientSize.Width,_positionY+_wmp10Player.ClientSize.Height);
             }
             //_wmp10Player.uiMode = "none";
             //_wmp10Player.windowlessVideo = true;

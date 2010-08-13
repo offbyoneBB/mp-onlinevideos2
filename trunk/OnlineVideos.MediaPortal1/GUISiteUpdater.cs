@@ -6,7 +6,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.Configuration;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace OnlineVideos
+namespace OnlineVideos.MediaPortal1
 {
     public class GUISiteUpdater : GUIWindow
     {
@@ -57,12 +57,12 @@ namespace OnlineVideos
 
         public override string GetModuleName()
         {
-            return OnlineVideoSettings.Instance.BasicHomeScreenName + ": " + Translation.ManageSites;
+            return PluginConfiguration.Instance.BasicHomeScreenName + ": " + Translation.ManageSites;
         }
 
         protected override void OnPageLoad()
         {
-            Translation.TranslateSkin();
+            Translator.TranslateSkin();
 
             base.OnPageLoad();
 
@@ -75,7 +75,7 @@ namespace OnlineVideos
             {
                 foreach (string aFilterOption in Enum.GetNames(typeof(FilterStateOption)))
                 {
-                    GUIControl.AddItemLabelControl(GetID, GUI_btnFilterState.GetID, Translation.Strings[aFilterOption]);
+                    GUIControl.AddItemLabelControl(GetID, GUI_btnFilterState.GetID, Translator.Strings[aFilterOption]);
                 }
             }
             if (GUI_btnSort.SubItemCount == 0)
@@ -83,14 +83,14 @@ namespace OnlineVideos
                 foreach (string aSortOption in Enum.GetNames(typeof(SortOption)))
                 {
                     string[] singled = aSortOption.Split('_');
-                    for(int i = 0; i<singled.Length;i++) singled[i] = Translation.Strings[singled[i]];                    
+                    for(int i = 0; i<singled.Length;i++) singled[i] = Translator.Strings[singled[i]];                    
                     GUIControl.AddItemLabelControl(GetID, GUI_btnSort.GetID, string.Join(", ", singled));
                 }
             }
             SetFilterButtonOptions();
 
             GUIPropertyManager.SetProperty("#header.label",
-                                           OnlineVideoSettings.Instance.BasicHomeScreenName + ": " + Translation.ManageSites);
+                                           PluginConfiguration.Instance.BasicHomeScreenName + ": " + Translation.ManageSites);
             GUIPropertyManager.SetProperty("#header.image",
                                            Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
 
@@ -119,7 +119,7 @@ namespace OnlineVideos
                     GUIListItem loListItem = new GUIListItem(site.Name);
                     loListItem.TVTag = site;
                     loListItem.Label2 = site.Language;
-                    loListItem.Label3 = site.LastUpdated.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
+                    loListItem.Label3 = site.LastUpdated.ToString("g", OnlineVideoSettings.Instance.Locale);
                     string image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + site.Name + ".png";
                     if (System.IO.File.Exists(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
                     loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
@@ -295,7 +295,7 @@ namespace OnlineVideos
                         if (dlg != null)
                         {
                             dlg.Reset();
-                            dlg.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                            dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                             dlg.SetText(Translation.NoReportsForSite);
                             dlg.DoModal(GUIWindowManager.ActiveWindow);
                         }
@@ -315,7 +315,7 @@ namespace OnlineVideos
                             GUIListItem loListItem = new GUIListItem(shortMsg.Length > 44 ? shortMsg.Substring(0, 40) + " ..." : shortMsg);
                             loListItem.TVTag = report;
                             loListItem.Label2 = report.Type.ToString();
-                            loListItem.Label3 = report.Date.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
+                            loListItem.Label3 = report.Date.ToString("g", OnlineVideoSettings.Instance.Locale);
                             loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnReportSelected);
                             GUI_infoList.Add(loListItem);
                         }
@@ -378,7 +378,7 @@ namespace OnlineVideos
                     dlgPrgrs.DisplayProgressBar = true;
                     dlgPrgrs.ShowWaitCursor = false;
                     dlgPrgrs.DisableCancel(true);
-                    dlgPrgrs.SetHeading(string.Format("{0} - {1}", OnlineVideoSettings.Instance.BasicHomeScreenName, Translation.FullUpdate));
+                    dlgPrgrs.SetHeading(string.Format("{0} - {1}", PluginConfiguration.Instance.BasicHomeScreenName, Translation.FullUpdate));
                     dlgPrgrs.StartModal(GetID);
                 }
 
@@ -475,7 +475,7 @@ namespace OnlineVideos
             }
             catch (Exception ex)
             {
-                Log.Error(ex);
+                Log.Instance.Error(ex);
             }
             finally
             {
@@ -493,7 +493,7 @@ namespace OnlineVideos
                 if (dlg != null)
                 {
                     dlg.Reset();
-                    dlg.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                    dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                     dlg.SetLine(1, Translation.AutomaticUpdateDisabled);
                     dlg.SetLine(2, string.Format(Translation.LatestVersionRequired, versionOnline.ToString()));
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -510,7 +510,7 @@ namespace OnlineVideos
                     dlgPrgrs.DisplayProgressBar = true;
                     dlgPrgrs.ShowWaitCursor = false;
                     dlgPrgrs.DisableCancel(true);
-                    dlgPrgrs.SetHeading(string.Format("{0} - {1}", OnlineVideoSettings.Instance.BasicHomeScreenName, Translation.AutomaticUpdate));
+                    dlgPrgrs.SetHeading(string.Format("{0} - {1}", PluginConfiguration.Instance.BasicHomeScreenName, Translation.AutomaticUpdate));
                     dlgPrgrs.SetLine(1, Translation.RetrievingRemoteSites);
                     dlgPrgrs.StartModal(GUIWindowManager.ActiveWindow);
                 }
@@ -603,7 +603,7 @@ namespace OnlineVideos
             }
             catch (Exception ex)
             {
-                Log.Error(ex);
+                Log.Instance.Error(ex);
             }
             finally
             {
@@ -617,7 +617,7 @@ namespace OnlineVideos
             if (dlg != null)
             {
                 dlg.Reset();
-                dlg.SetHeading(OnlineVideoSettings.Instance.BasicHomeScreenName);
+                dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                 dlg.SetLine(1, Translation.NewDllDownloaded);
                 dlg.SetLine(2, Translation.RestartMediaPortal);
                 dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -799,7 +799,7 @@ namespace OnlineVideos
             }
             catch (Exception ex)
             {
-                Log.Error(ex.ToString());
+                Log.Instance.Error(ex.ToString());
             }
             try
             {
@@ -817,7 +817,7 @@ namespace OnlineVideos
             }
             catch (Exception ex)
             {
-                Log.Error(ex.ToString());
+                Log.Instance.Error(ex.ToString());
             }
         }
 
@@ -874,7 +874,7 @@ namespace OnlineVideos
             }
             catch (Exception ex)
             {
-                Log.Error(ex);
+                Log.Instance.Error(ex);
             }
         }
     }

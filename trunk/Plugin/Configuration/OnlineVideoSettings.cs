@@ -1,12 +1,8 @@
 using System;
 using System.IO;
-using System.Xml;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Xml.Serialization;
-using MediaPortal.Configuration;
-using MediaPortal.GUI.Library;
 using OnlineVideos.Sites;
 
 namespace OnlineVideos
@@ -17,57 +13,25 @@ namespace OnlineVideos
     public class OnlineVideoSettings
     {
         public const string USERAGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3";
-        public const string PLUGIN_NAME = "Online Videos";
         public const string SETTINGS_FILE = "OnlineVideoSites.xml";
 
-        #region MediaPortal.xml attribute names
-        public const string CFG_SECTION = "onlinevideos";
-        public const string CFG_SITEVIEW_MODE = "siteview";
-        public const string CFG_SITEVIEW_ORDER = "siteview_order";
-        public const string CFG_CATEGORYVIEW_MODE = "categoryview";
-        public const string CFG_VIDEOVIEW_MODE = "videoview";
-        const string CFG_UPDATEONSTART = "updateOnStart";
-        const string CFG_BASICHOMESCREEN_NAME = "basicHomeScreenName";
-        const string CFG_THUMBNAIL_DIR = "thumbDir";
-        const string CFG_THUMBNAIL_AGE = "thumbAge";
-        const string CFG_DOWNLOAD_DIR = "downloadDir";
-        const string CFG_FILTER = "filter";
-        const string CFG_USE_QUICKSELECT = "useQuickSelect";
-        const string CFG_REMEMBER_LAST_SEARCH = "rememberLastSearch";
-        const string CFG_USE_AGECONFIRMATION = "useAgeConfirmation";
-        const string CFG_PIN_AGECONFIRMATION = "pinAgeConfirmation";
-        const string CFG_CACHE_TIMEOUT = "cacheTimeout";
-        const string CFG_UTIL_TIMEOUT = "utilTimeout";
-        const string CFG_WMP_BUFFER = "wmpbuffer";
-        const string CFG_PLAY_BUFFER = "playbuffer";
-        const string CFG_EMAIL = "email";
-        const string CFG_PASSWORD = "password";
-        #endregion        
-
-        public string BasicHomeScreenName = PLUGIN_NAME;        
-        public string ThumbsDir = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\";
-        public int thumbAge = 100;
+        public IUserStore UserStore;
+        public IFavoritesDatabase FavDB;
+        public ILog Logger;
+        public string ConfigDir;
+        public string ThumbsDir;        
         public string DownloadDir;
-        public string[] FilterArray;
-        public bool useAgeConfirmation = true;
-        public bool useQuickSelect = false;
-        public bool rememberLastSearch = true;
-        public string pinAgeConfirmation = "";
-        public int cacheTimeout = 30; // minutes
-        public int utilTimeout = 15;  // seconds
-        public int wmpbuffer = 5000;  // milliseconds
-        public int playbuffer = 2;   // percent
+        public string DllsDir;
 
-        public string email = "";
-        public string password = "";
-        public bool? updateOnStart = null;
+        public int ThumbsAge = 100; // days
+        public bool useAgeConfirmation = true; // enable pin by default -> child protection
+        public bool ageHasBeenConfirmed = false;
+        public int CacheTimeout = 30; // minutes
 
+        public CultureInfo Locale { get; set; }
         public BindingList<SiteSettings> SiteSettingsList { get; protected set; }
         public Dictionary<string, Sites.SiteUtilBase> SiteList { get; protected set; }
         public SortedList<string, bool> VideoExtensions { get; protected set; }
-        public CultureInfo MediaPortalLocale { get; protected set; }
-
-        public bool ageHasBeenConfirmed = false;
 
         #region Singleton
         private static OnlineVideoSettings _Instance = null;
@@ -83,117 +47,46 @@ namespace OnlineVideos
 
         private OnlineVideoSettings()
         {
-            try
-            {
-                MediaPortalLocale = CultureInfo.CreateSpecificCulture(GUILocalizeStrings.GetCultureName(GUILocalizeStrings.CurrentLanguage()));
-            }
-            catch (Exception ex)
-            {
-                MediaPortalLocale = CultureInfo.CurrentUICulture;
-                Log.Error(ex);                
-            }
+            // set some defaults
+            Locale = CultureInfo.CurrentUICulture;
             SiteSettingsList = new BindingList<SiteSettings>();
             SiteList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
-            Load();
+            VideoExtensions = new SortedList<string, bool>();
+        }
 
-            // create some needed directories
-            string iconDir = Path.Combine(Config.GetFolder(Config.Dir.Thumbs), @"OnlineVideos\Icons\");
-            if (!Directory.Exists(iconDir)) Directory.CreateDirectory(iconDir);
-            string bannerDir = Path.Combine(Config.GetFolder(Config.Dir.Thumbs), @"OnlineVideos\Banners\");
-            if (!Directory.Exists(bannerDir)) Directory.CreateDirectory(bannerDir);
-            try
-            {
-                string dllDir = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
-                if (!Directory.Exists(dllDir)) Directory.CreateDirectory(dllDir);
-            }
-            catch { /* might fail due to UAC */ }
-        }        
-
-        void Load()
+        public void LoadSites()
         {
-            try
+            // create the configured directories
+            string iconDir = Path.Combine(ThumbsDir, @"Icons\");
+            if (!Directory.Exists(iconDir)) Directory.CreateDirectory(iconDir);
+            string bannerDir = Path.Combine(ThumbsDir, @"Banners\");
+            if (!Directory.Exists(bannerDir)) Directory.CreateDirectory(bannerDir);
+            try { if (!Directory.Exists(DllsDir)) Directory.CreateDirectory(DllsDir); }
+            catch { /* might fail due to UAC */ }
+
+            string filename = Path.Combine(ConfigDir, SETTINGS_FILE);
+            Stream sitesStream = null;
+            if (!File.Exists(filename))
             {
-                using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
-                {
-                    BasicHomeScreenName = settings.GetValueAsString(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
-
-                    ThumbsDir = settings.GetValueAsString(CFG_SECTION, CFG_THUMBNAIL_DIR, ThumbsDir).Replace("/", @"\");
-                    if (!ThumbsDir.EndsWith(@"\")) ThumbsDir = ThumbsDir + @"\"; // fix thumbnail dir to include the trailing slash
-                    try { if (!Directory.Exists(ThumbsDir)) Directory.CreateDirectory(ThumbsDir); }
-                    catch (Exception e) { Log.Error("Failed to create thumb dir: {0}", e.ToString()); }
-                    thumbAge = settings.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, thumbAge);
-                    Log.Info("Thumbnails will be stored in {0} with a maximum age of {1} days.", ThumbsDir, thumbAge);
-                    
-                    DownloadDir = settings.GetValueAsString(CFG_SECTION, CFG_DOWNLOAD_DIR, "");
-                    try { if (Directory.Exists(DownloadDir)) Directory.CreateDirectory(DownloadDir); }
-                    catch (Exception e) { Log.Error("Failed to create download dir: {0}", e.ToString()); }
-
-                    // enable pin by default -> child protection
-                    useAgeConfirmation = settings.GetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, useAgeConfirmation);
-                    // set an almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
-                    pinAgeConfirmation = settings.GetValueAsString(CFG_SECTION, CFG_PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
-                    useQuickSelect = settings.GetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
-                    rememberLastSearch = settings.GetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);
-                    cacheTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
-                    utilTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
-                    wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
-                    playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
-                    email = settings.GetValueAsString(CFG_SECTION, CFG_EMAIL, "");
-                    password = settings.GetValueAsString(CFG_SECTION, CFG_PASSWORD, "");
-                    string lsFilter = settings.GetValueAsString(CFG_SECTION, CFG_FILTER, "").Trim();
-                    FilterArray = lsFilter != "" ? lsFilter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries) : null;
-
-                    // set updateOnStart only when defined, so we have 3 modi: undefined = ask, true = don't ask and update, false = don't ask and don't update
-                    string doUpdateString = settings.GetValue(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_UPDATEONSTART);
-                    if (!string.IsNullOrEmpty(doUpdateString)) updateOnStart = settings.GetValueAsBool(OnlineVideoSettings.CFG_SECTION, OnlineVideoSettings.CFG_UPDATEONSTART, true);
-
-                    // read the video extensions configured in MediaPortal
-                    VideoExtensions = new SortedList<string, bool>();
-                    string[] mediaportal_user_configured_video_extensions;
-                    string strTmp = settings.GetValueAsString("movies", "extensions", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts");
-                    mediaportal_user_configured_video_extensions = strTmp.Split(',');
-                    foreach (string anExt in mediaportal_user_configured_video_extensions)
-                    {
-                        if (!VideoExtensions.ContainsKey(anExt.ToLower().Trim())) VideoExtensions.Add(anExt.ToLower().Trim(), true);
-                    }
-
-                    if (!VideoExtensions.ContainsKey(".asf")) VideoExtensions.Add(".asf", false);
-                    if (!VideoExtensions.ContainsKey(".asx")) VideoExtensions.Add(".asx", false);
-                    if (!VideoExtensions.ContainsKey(".flv")) VideoExtensions.Add(".flv", false);
-                    if (!VideoExtensions.ContainsKey(".m4v")) VideoExtensions.Add(".m4v", false);
-                    if (!VideoExtensions.ContainsKey(".mov")) VideoExtensions.Add(".mov", false);
-                    if (!VideoExtensions.ContainsKey(".mp4")) VideoExtensions.Add(".mp4", false);
-                    if (!VideoExtensions.ContainsKey(".wmv")) VideoExtensions.Add(".wmv", false);
-                }
-                
-                string filename = Config.GetFile(Config.Dir.Config, SETTINGS_FILE);
-                Stream sitesStream = null;
-                if (!File.Exists(filename))
-                {
-                    Log.Info("ConfigFile \"{0}\" was not found. Using embedded resource.", filename);
-                    sitesStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.OnlineVideoSites.xml");
-                }
-                else
-                {
-                    sitesStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
-                }
-                using (sitesStream)
-                {
-                    SiteSettingsList = (BindingList<SiteSettings>)Utils.SiteSettingsFromXml(new StreamReader(sitesStream));
-                }
+                Log.Info("ConfigFile \"{0}\" was not found. Using embedded resource.", filename);
+                sitesStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.OnlineVideoSites.xml");
             }
-            catch (Exception e)
+            else
             {
-                Log.Error(e);
+                sitesStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+            }
+            using (sitesStream)
+            {
+                SiteSettingsList = (BindingList<SiteSettings>)Utils.SiteSettingsFromXml(new StreamReader(sitesStream));
             }
         }
 
         void LoadScriptSites()
         {
             Log.Info("Loading script files");
-            if (Directory.Exists(Config.GetSubFolder(Config.Dir.Config, "scripts\\OnlineVideos")))
+            if (Directory.Exists(Path.Combine(ConfigDir, "scripts\\OnlineVideos")))
             {
-                FileInfo[] fileInfos = Config.GetSubDirectoryInfo(Config.Dir.Config, "scripts\\OnlineVideos").GetFiles("*.xml");
+                FileInfo[] fileInfos = new DirectoryInfo(Path.Combine(ConfigDir, "scripts\\OnlineVideos")).GetFiles("*.xml");
                 foreach (var fileInfo in fileInfos)
                 {
                     Log.Info("Script loaded for {0}", fileInfo.FullName);
@@ -220,19 +113,22 @@ namespace OnlineVideos
 
             LoadScriptSites();
 
-            //create a favorites site
-            SiteSettings aSite = new SiteSettings()
+            if (FavDB != null)
             {
-                Name = Translation.Favourites,
-                UtilName = "Favorite",
-                IsEnabled = true
-            };
-            SiteList.Add(aSite.Name, SiteUtilFactory.CreateFromShortName(aSite.UtilName, aSite));
+                //create a favorites site
+                SiteSettings aSite = new SiteSettings()
+                {
+                    Name = Translation.Favourites,
+                    UtilName = "Favorite",
+                    IsEnabled = true
+                };
+                SiteList.Add(aSite.Name, SiteUtilFactory.CreateFromShortName(aSite.UtilName, aSite));
+            }
 
             if (!String.IsNullOrEmpty(DownloadDir))
             {                
                 //add a downloaded videos site
-                aSite = new SiteSettings()
+                SiteSettings aSite = new SiteSettings()
                 {
                     Name = Translation.DownloadedVideos,
                     UtilName = "DownloadedVideo",
@@ -242,45 +138,12 @@ namespace OnlineVideos
             }
         }
 
-        public void Save()
-        {
-            try
-            {
-                using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
-                {
-                    settings.SetValue(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
-                    settings.SetValue(CFG_SECTION, CFG_THUMBNAIL_DIR, ThumbsDir);
-                    settings.SetValue(CFG_SECTION, CFG_THUMBNAIL_AGE, thumbAge);
-                    settings.SetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, useAgeConfirmation);
-                    settings.SetValue(CFG_SECTION, CFG_PIN_AGECONFIRMATION, pinAgeConfirmation);
-                    settings.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
-                    settings.SetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);
-                    settings.SetValue(CFG_SECTION, CFG_CACHE_TIMEOUT, cacheTimeout);
-                    settings.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
-                    settings.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
-                    settings.SetValue(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
-                    if (FilterArray != null && FilterArray.Length > 0) settings.SetValue(CFG_SECTION, CFG_FILTER, string.Join(",", FilterArray));
-                    if (!string.IsNullOrEmpty(DownloadDir)) settings.SetValue(CFG_SECTION, CFG_DOWNLOAD_DIR, DownloadDir);
-                    if (!string.IsNullOrEmpty(email)) settings.SetValue(CFG_SECTION, CFG_EMAIL, email);
-                    if (!string.IsNullOrEmpty(password)) settings.SetValue(CFG_SECTION, CFG_PASSWORD, password);
-                    if (updateOnStart == null) settings.RemoveEntry(CFG_SECTION, CFG_UPDATEONSTART);
-                    else settings.SetValueAsBool(CFG_SECTION, CFG_UPDATEONSTART, updateOnStart.Value);
-                }
-
-                SaveSites();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-            }
-        }
-
         public void SaveSites()
         {
-            // only save if there are sites - otherwise an error might have occured on load
+            // only save if there are sites - otherwise an error might have occured on LoadSites
             if (SiteSettingsList != null && SiteSettingsList.Count > 0)
             {
-                using (FileStream fso = new FileStream(Config.GetFile(Config.Dir.Config, SETTINGS_FILE), FileMode.Create))
+                using (FileStream fso = new FileStream(Path.Combine(ConfigDir, SETTINGS_FILE), FileMode.Create))
                 {
                     Utils.SiteSettingsToXml(new SerializableSettings() { Sites = SiteSettingsList }, fso);
                 }

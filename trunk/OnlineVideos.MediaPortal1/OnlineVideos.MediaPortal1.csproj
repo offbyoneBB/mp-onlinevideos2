@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F229AF99-6CB8-48C7-81EF-BDAD4C2F0EC7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OnlineVideos.MediaPortal1</RootNamespace>
+    <AssemblyName>OnlineVideos.MediaPortal1</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AxInterop.WMPLib">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\AxInterop.WMPLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Core">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Databases">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Databases.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Dialogs">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\Dialogs.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DirectShowLib">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\DirectShowLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Interop.WMPLib">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Interop.WMPLib.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MpeCore">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\MpeCore.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Utils">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Utils.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="WindowPlugins">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\WindowPlugins.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\BindableCheckedListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Configuration\BrowserForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\BrowserForm.Designer.cs">
+      <DependentUpon>BrowserForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\CodecConfiguration.cs" />
+    <Compile Include="Configuration\Configuration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\Configuration.Designer.cs">
+      <DependentUpon>Configuration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ConfigurationAdvanced.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\ConfigurationAdvanced.Designer.cs">
+      <DependentUpon>ConfigurationAdvanced.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ImExportXml.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\ImExportXml.Designer.cs">
+      <DependentUpon>ImExportXml.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ImportGlobalSite.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\ImportGlobalSite.Designer.cs">
+      <DependentUpon>ImportGlobalSite.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\PluginConfiguration.cs" />
+    <Compile Include="Configuration\RegisterEmail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\RegisterEmail.Designer.cs">
+      <DependentUpon>RegisterEmail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\SubmitSiteReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Configuration\SubmitSiteReport.Designer.cs">
+      <DependentUpon>SubmitSiteReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\UserStore.cs" />
+    <Compile Include="FavoritesDatabase.cs" />
+    <Compile Include="Gui2UtilConnector.cs" />
+    <Compile Include="GUIOnlineVideos.cs" />
+    <Compile Include="GUISiteUpdater.cs" />
+    <Compile Include="ImageDownloader.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="OnlineVideosGuiListItem.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\BaseWindow.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\DialogWindow.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\BaseElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ButtonElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\CheckMarkElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\FadeLabelElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ImageCache.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ImageElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\LabelElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ListElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ProgressControlElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\SliderElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\TextScrollUpElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\ToggleButtonElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\VerticalScrollbarElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\VolumeBarElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\FullscreenWindow.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\OSDController.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\OSDForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Player\ExternalOSDLibrary\OSDWindow.cs" />
+    <Compile Include="Player\GUIOnlineVideoFullscreen.cs" />
+    <Compile Include="Player\GUIOnlineVideoOSD.cs" />
+    <Compile Include="Player\OnlineVideosPlayer.cs" />
+    <Compile Include="Player\PlayerFactory.cs" />
+    <Compile Include="Player\PlayListItem.cs" />
+    <Compile Include="Player\WMPVideoPlayer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SmsT9Filter.cs" />
+    <Compile Include="Translator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="OnlineVideos.ico" />
+    <EmbeddedResource Include="OnlineVideos.png" />
+    <EmbeddedResource Include="OnlineVideosDisabled.png" />
+    <None Include="Properties\DataSources\RssLink.datasource" />
+    <None Include="Properties\DataSources\SiteSettings.datasource" />
+    <None Include="Resources\Add.png" />
+    <None Include="Resources\Delete.png" />
+    <None Include="Resources\Down.png" />
+    <None Include="Resources\Import.png" />
+    <None Include="Resources\ImportGlobal.png" />
+    <None Include="Resources\ImportXml.png" />
+    <None Include="Resources\NewFolder.png" />
+    <None Include="Resources\NewReport.png" />
+    <None Include="Resources\PublishToWeb.png" />
+    <None Include="Resources\Save.png" />
+    <None Include="Resources\Up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\BrowserForm.resx">
+      <DependentUpon>BrowserForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\Configuration.resx">
+      <DependentUpon>Configuration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\ConfigurationAdvanced.resx">
+      <DependentUpon>ConfigurationAdvanced.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\ImExportXml.resx">
+      <DependentUpon>ImExportXml.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\ImportGlobalSite.resx">
+      <DependentUpon>ImportGlobalSite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\RegisterEmail.resx">
+      <DependentUpon>RegisterEmail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\SubmitSiteReport.resx">
+      <DependentUpon>SubmitSiteReport.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Plugin\OnlineVideos.csproj">
+      <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
+      <Name>OnlineVideos</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

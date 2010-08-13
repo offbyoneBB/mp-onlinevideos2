@@ -2,14 +2,15 @@
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 using MediaPortal.Player;
+using MediaPortal.Profile;
 
-namespace OnlineVideos.Player
+namespace OnlineVideos.MediaPortal1.Player
 {
     public class GUIOnlineVideoFullscreen : GUIVideoFullscreen
     {
         public override string GetModuleName()
         {
-            return OnlineVideoSettings.Instance.BasicHomeScreenName + " Fullscreen";
+            return PluginConfiguration.Instance.BasicHomeScreenName + " Fullscreen";
         }
 
         public const int WINDOW_FULLSCREEN_ONLINEVIDEO = 4758;
@@ -18,7 +19,7 @@ namespace OnlineVideos.Player
         public override bool Init()
         {
             bool bResult = Load(GUIGraphicsContext.Skin + @"\myonlinevideosFullScreen.xml");
-            using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
+            using (Settings settings = new MPSettings())
             {
                 typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekIsRelative", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { settings.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true) });
                 typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekValue", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { settings.GetValueAsInt("movieplayer", "immediateskipstepsize", 10) });

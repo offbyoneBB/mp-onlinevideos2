@@ -15,7 +15,8 @@ namespace Vattenmelon.Nrk.Browser.Translation
         /// </summary>
         public void Init()
         {
-            string lang = OnlineVideos.Translation.Lang;
+            string lang = OnlineVideoSettings.Instance.Locale.TwoLetterISOLanguageName.ToLower();
+            if (lang != "no") lang = "en-US";            
             Log.Info("NrkBrowser using language " + lang);
             loadTranslatedStringsFromResource(lang);
         }

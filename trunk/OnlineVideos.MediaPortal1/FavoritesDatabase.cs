@@ -4,9 +4,9 @@ using SQLite.NET;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 
-namespace OnlineVideos.Database
+namespace OnlineVideos.MediaPortal1
 {
-    public class FavoritesDatabase
+    public class FavoritesDatabase : IFavoritesDatabase
     {
         private SQLiteClient m_db;
 
@@ -44,7 +44,7 @@ namespace OnlineVideos.Database
             }
             catch (SQLiteException ex)
             {
-                Log.Error("database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+                Log.Instance.Error("database exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
             }
         }                
 
@@ -80,7 +80,7 @@ namespace OnlineVideos.Database
             //{
             //    return false;
             //}
-            Log.Info("inserting favorite on site {4} with title: {0}, desc: {1}, image: {2}, url: {3}", foVideo.Title, foVideo.Description, foVideo.ImageUrl, foVideo.VideoUrl, siteName);
+            Log.Instance.Info("inserting favorite on site {4} with title: {0}, desc: {1}, image: {2}, url: {3}", foVideo.Title, foVideo.Description, foVideo.ImageUrl, foVideo.VideoUrl, siteName);
 
             string title = string.IsNullOrEmpty(titleFromUtil) ? "" : DatabaseUtility.RemoveInvalidChars(titleFromUtil);
             string desc = string.IsNullOrEmpty(foVideo.Description) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Description);
@@ -96,12 +96,12 @@ namespace OnlineVideos.Database
             m_db.Execute(lsSQL);
             if (m_db.ChangedRows() > 0)
             {
-                Log.Info("Favorite {0} inserted successfully into database", foVideo.Title);
+                Log.Instance.Info("Favorite {0} inserted successfully into database", foVideo.Title);
                 return true;
             }
             else
             {
-                Log.Warn("Favorite {0} failed to insert into database", foVideo.Title);
+                Log.Instance.Warn("Favorite {0} failed to insert into database", foVideo.Title);
                 return false;
             }
         }
@@ -150,7 +150,7 @@ namespace OnlineVideos.Database
                 video.Other = DatabaseUtility.Get(loResultSet, iRow, "VDO_OTHER_NFO");
                 video.Id = DatabaseUtility.GetAsInt(loResultSet, iRow, "VDO_ID");
                 video.SiteName = DatabaseUtility.Get(loResultSet, iRow, "VDO_SITE_ID");
-                Log.Debug("Pulled {0} out of the database", video.Title);
+                Log.Instance.Debug("Pulled {0} out of the database", video.Title);
 
                 if (OnlineVideoSettings.Instance.SiteList.ContainsKey(video.SiteName))
                 {

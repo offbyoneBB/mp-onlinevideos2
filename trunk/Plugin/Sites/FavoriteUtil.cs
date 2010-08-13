@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using OnlineVideos.Database;
-using MediaPortal.Configuration;
 
 namespace OnlineVideos.Sites
 {
@@ -18,7 +16,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            return FavoritesDatabase.Instance.getFavoriteVideos(((RssLink)category).Url.Substring(4), null);
+            return OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(((RssLink)category).Url.Substring(4), null);
         }
 
         // keep a reference of all Categories ever created and reuse them, to get them selected when returning to the category view
@@ -38,7 +36,7 @@ namespace OnlineVideos.Sites
             }
             Settings.Categories.Add(all);
 
-            string[] lsSiteIds = FavoritesDatabase.Instance.getSiteIDs();            
+            string[] lsSiteIds = OnlineVideoSettings.Instance.FavDB.getSiteIDs();            
             foreach (string lsSiteId in lsSiteIds)
             {
                 SiteUtilBase util = null;
@@ -55,7 +53,7 @@ namespace OnlineVideos.Sites
                             cat.Name = aSite.Name + " - " + Translation.Favourites;
                             cat.Description = aSite.Description;
                             cat.Url = "fav:" + aSite.Name;
-                            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Name + ".png";
+                            cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + aSite.Name + ".png");
                             cachedCategories.Add(cat.Name, cat);
                         }
                         Settings.Categories.Add(cat);
@@ -74,7 +72,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> Search(string query)
         {
-            return FavoritesDatabase.Instance.getFavoriteVideos(null, query);
+            return OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(null, query);
         }
 
         #endregion

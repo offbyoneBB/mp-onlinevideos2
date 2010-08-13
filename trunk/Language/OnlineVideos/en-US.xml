@@ -21,12 +21,14 @@
   <string Field="Buffered">buffered</string>
 
   <!-- C -->
+  <string Field="Cancel">Cancel</string>
   <string Field="Category">Category</string>
   <string Field="Categories">Categories</string>
   <string Field="Creator">Creator</string>
   <string Field="CheckingForPluginUpdate">checking for updated plugin version</string>
 
   <!-- D -->
+  <string Field="Date">Date</string>
   <string Field="DateOfRelease">Date of Release</string>
   <string Field="Directors">Directors</string>
   <string Field="Download">Download</string>
@@ -116,6 +118,7 @@
   <string Field="SearchResults">Search results</string>
   <string Field="SelectSource">Select source</string>
   <string Field="Sites">Sites</string>
+  <string Field="Size">Size</string>  
   <string Field="SortOptions">Sort options</string>
   <string Field="Search">Search</string>
   <string Field="SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>

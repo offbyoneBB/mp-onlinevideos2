@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Net;
-using MediaPortal.Configuration;
 using System.ComponentModel;
 
 namespace OnlineVideos.Sites
@@ -46,7 +45,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Uitzending Gemist";
             cat.Url = @"http://www.uitzendinggemist.nl/";
-            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\Tvgemist\uitzendinggemist.png";
+            cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\Icons\Tvgemist\uitzendinggemist.png");
             cat.HasSubCategories = true;
             regex_NedSub = Specifics.getRegex(@"style=""overflow.*?<a\s.*?href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<.*?<td[^>]*>(?<airdate>[^<]*)<");
             regex_NedVidList = Specifics.getRegex(@"<tr.*?height[^>]*>(?<airdate>[^<]*)<.*?href=""(?<url>[^""]*)"">(?<descr>[^<]+)<.*?</span>.*?href=""(?<vidurl>[^""]+)""");
@@ -65,7 +64,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Rtl Gemist";
             cat.Url = @"http://rtl.nl/experience/rtlnl/";
-            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\Tvgemist\rtlgemist.png";
+            cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\Icons\Tvgemist\rtlgemist.png");
             cat.HasSubCategories = true;
             Settings.Categories.Add(cat);
 
@@ -86,7 +85,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Net5 Gemist";
             cat.Url = @"http://www.net5.nl/web/show/id=95681/langid=43";
-            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\Tvgemist\net5gemist.png";
+            cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\Icons\Tvgemist\net5gemist.png");
             cat.HasSubCategories = true;
             specifics = new Specifics(Source.Rest);
             specifics.baseUrl = @"http://www.net5.nl";
@@ -103,7 +102,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "SBS6 Gemist";
             cat.Url = @"http://www.sbs6.nl/web/show/id=73863/langid=43";
-            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\Tvgemist\sbsgemist.png";
+            cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\Icons\Tvgemist\sbsgemist.png");
             cat.HasSubCategories = true;
             specifics = new Specifics(Source.SBS);
             specifics.baseUrl = @"http://www.sbs6.nl";
@@ -120,7 +119,7 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Veronica Gemist";
             cat.Url = @"http://www.veronicatv.nl/web/show/id=96520/langid=43";
-            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\Tvgemist\veronicagemist.png";
+            cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\Icons\Tvgemist\veronicagemist.png");
             cat.HasSubCategories = true;
             specifics = new Specifics(Source.Veronica);
             specifics.baseUrl = @"http://www.veronicatv.nl";

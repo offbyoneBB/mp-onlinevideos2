@@ -1,16 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Reflection;
-using System.Web;
 using System.Xml;
-using OnlineVideos.Database;
-using MediaPortal.GUI.Library;
 
 namespace OnlineVideos.Sites
 {
@@ -62,26 +58,23 @@ namespace OnlineVideos.Sites
                     }
                     else if (((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
                     {
-                        using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
+                        string value = OnlineVideoSettings.Instance.UserStore.GetValue(string.Format("{0}.{1}", Utils.GetSaveFilename(siteSettings.Name).Replace(' ', '_'), field.Name));
+                        if (value != null)
                         {
-                            string value = settings.GetValueAsString(OnlineVideoSettings.CFG_SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteSettings.Name).Replace(' ', '_'), field.Name), "NO_VALUE_FOUND");
-                            if (value != "NO_VALUE_FOUND")
+                            try
                             {
-                                try
+                                if (field.FieldType.IsEnum)
                                 {
-                                    if (field.FieldType.IsEnum)
-                                    {
-                                        field.SetValue(this, Enum.Parse(field.FieldType, value));
-                                    }
-                                    else
-                                    {
-                                        field.SetValue(this, Convert.ChangeType(value, field.FieldType));
-                                    }
+                                    field.SetValue(this, Enum.Parse(field.FieldType, value));
                                 }
-                                catch (Exception ex)
+                                else
                                 {
-                                    Log.Error("Could not set Configuration Value: {0}. Error: {1}", field.Name, ex.Message);
+                                    field.SetValue(this, Convert.ChangeType(value, field.FieldType));
                                 }
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error("Could not set Configuration Value: {0}. Error: {1}", field.Name, ex.Message);
                             }
                         }
                     }
@@ -319,7 +312,7 @@ namespace OnlineVideos.Sites
                 string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] { '/' }));
                 if (extension == string.Empty) extension = System.IO.Path.GetExtension(url);
                 if (extension == ".f4v" || extension == ".fid") extension = ".flv";
-                string safeName = ImageDownloader.GetSaveFilename(video.Title);
+                string safeName = Utils.GetSaveFilename(video.Title);
                 return safeName + extension;
             }
         }
@@ -727,11 +720,8 @@ namespace OnlineVideos.Sites
                     object[] attrs = _field.GetCustomAttributes(typeof(CategoryAttribute), false);
                     if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
                     {
-                        using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
-                        {
-                            string siteName = (component as Sites.SiteUtilBase).Settings.Name;
-                            settings.SetValue(OnlineVideoSettings.CFG_SECTION, string.Format("{0}.{1}", ImageDownloader.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());
-                        }
+                        string siteName = (component as Sites.SiteUtilBase).Settings.Name;
+                        OnlineVideoSettings.Instance.UserStore.SetValue(string.Format("{0}.{1}", Utils.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());                        
                     }
                 }
             }
