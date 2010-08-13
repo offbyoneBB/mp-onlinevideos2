@@ -16,7 +16,7 @@ namespace OnlineVideos
         WebCache() 
         {
             // only use cache if a timeout > 0 was set
-            if (OnlineVideoSettings.Instance.cacheTimeout > 0)
+            if (OnlineVideoSettings.Instance.CacheTimeout > 0)
             {
                 cleanUpTimer = new Timer(CleanCache, null, TimeSpan.FromMinutes(10), TimeSpan.FromMinutes(10));
             }
@@ -32,7 +32,7 @@ namespace OnlineVideos
         {
             get 
             {
-                if (OnlineVideoSettings.Instance.cacheTimeout > 0) // only use cache if a timeout > 0 was set
+                if (OnlineVideoSettings.Instance.CacheTimeout > 0) // only use cache if a timeout > 0 was set
                 {
                     lock (this)
                     {
@@ -47,7 +47,7 @@ namespace OnlineVideos
             }
             set 
             {
-                if (OnlineVideoSettings.Instance.cacheTimeout > 0) // only use cache if a timeout > 0 was set
+                if (OnlineVideoSettings.Instance.CacheTimeout > 0) // only use cache if a timeout > 0 was set
                 {
                     lock (this)
                     {
@@ -64,7 +64,7 @@ namespace OnlineVideos
                 List<string> outdatedKeys = new List<string>();
 
                 foreach (string key in cache.Keys)
-                    if ((DateTime.Now - cache[key].LastUpdated).TotalMinutes >= OnlineVideoSettings.Instance.cacheTimeout)
+                    if ((DateTime.Now - cache[key].LastUpdated).TotalMinutes >= OnlineVideoSettings.Instance.CacheTimeout)
                         outdatedKeys.Add(key);
 
                 foreach(string key in outdatedKeys) cache.Remove(key);

@@ -1,7 +1,7 @@
 ﻿using System;
 using MediaPortal.Player;
 
-namespace OnlineVideos.Player
+namespace OnlineVideos.MediaPortal1.Player
 {
     public class PlayerFactory : IPlayerFactory
     {

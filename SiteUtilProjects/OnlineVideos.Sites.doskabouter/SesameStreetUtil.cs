@@ -130,7 +130,7 @@ namespace OnlineVideos.Sites
                         {
                             string finalUrl = bareFinalUrl + '_' + i.ToString() + ".PNG";
                             categories[i].Thumb = finalUrl;
-                            string imageLocation = ImageDownloader.GetThumbFile(finalUrl);
+                            string imageLocation = Utils.GetThumbFile(finalUrl);
                             if (!File.Exists(imageLocation))
                             {
                                 if (png == null)

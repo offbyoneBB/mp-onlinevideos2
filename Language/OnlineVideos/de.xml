@@ -15,10 +15,12 @@
   <string Field="AutomaticUpdateDisabled">Automatische Aktualisierung deaktiviert.</string>
   <string Field="Broken">Defekt</string>
   <string Field="Buffered">gepuffert</string>
+  <string Field="Cancel">Abbrechen</string>
   <string Field="Category">Rubrik</string>
   <string Field="Categories">Rubriken</string>
   <string Field="Creator">Ersteller</string>
   <string Field="CheckingForPluginUpdate">beim Überprüfen auf aktuelle Version des Plugins</string>
+  <string Field="Date">Datum</string>
   <string Field="DateOfRelease">Erscheinungsdatum</string>
   <string Field="Directors">Regisseure</string>
   <string Field="Download">Herunterladen</string>
@@ -84,6 +86,7 @@
   <string Field="SearchResults">Suchergebnisse</string>
   <string Field="SelectSource">Quelle wählen</string>
   <string Field="Sites">Sites</string>
+  <string Field="Size">Größe</string>
   <string Field="SortOptions">Sortierung</string>
   <string Field="Search">Suchen</string>
   <string Field="SetDownloadFolderInConfig">Bitte einen Ordner für Downloads in der Konfiguration wählen!</string>

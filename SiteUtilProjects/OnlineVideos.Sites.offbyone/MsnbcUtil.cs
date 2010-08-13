@@ -54,7 +54,7 @@ namespace OnlineVideos.Sites
                 video.Description = rssItem.Description;
                 video.ImageUrl = rssItem.MediaContents[0].Url;
                 video.Title = rssItem.Title.Replace("Video: ", "");
-                video.Length = rssItem.PubDateParsed.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
+                video.Length = rssItem.PubDateParsed.ToString("g", OnlineVideoSettings.Instance.Locale);
                 video.VideoUrl = rssItem.Guid.Text;
                 loVideoList.Add(video);
             }

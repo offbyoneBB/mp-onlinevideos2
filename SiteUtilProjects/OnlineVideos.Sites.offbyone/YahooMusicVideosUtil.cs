@@ -17,55 +17,6 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class YahooMusicVideosUtil : SiteUtilBase
     {
-        public class UITokenEditor : UITypeEditor
-        {
-            IWindowsFormsEditorService editorService;
-
-            public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
-            {
-                return UITypeEditorEditStyle.Modal;
-            }
-
-            public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
-            {
-                if (provider != null)
-                {
-                    editorService =
-                        provider.GetService(
-                        typeof(IWindowsFormsEditorService))
-                        as IWindowsFormsEditorService;
-                }
-
-                if (editorService != null)
-                {
-                    OnlineVideos.BrowserForm form = new BrowserForm();
-                    form.webBrowser1.DocumentCompleted += WebBrowserDocumentCompleted;
-                    Yahoo.Authentication auth = new Yahoo.Authentication(YahooMusicVideosUtil.AppId, YahooMusicVideosUtil.SharedSecret);
-                    form.webBrowser1.Url = auth.GetUserLogOnAddress();
-                    editorService.ShowDialog(form);
-                    value = Token;
-                }
-
-                return value;
-            }
-
-            string Token;
-
-            private void WebBrowserDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-            {
-                Token = string.Empty;
-                if (e.Url.DnsSafeHost.Contains("extra.hu"))
-                {
-                    try
-                    {
-                        Token = System.Web.HttpUtility.ParseQueryString(e.Url.Query)["token"];
-                        ((sender as WebBrowser).Parent as Form).Close();
-                    }
-                    catch {}
-                }
-            }
-        }
-
         public enum Locale 
         { 
             [Description("United States")]us, 
@@ -78,12 +29,7 @@ namespace OnlineVideos.Sites
 
         const string AppId = "DeUZup_IkY7d17O2DzAMPoyxmc55_hTasA--";
         const string SharedSecret = "d80b9a5766788713e1fadd73e752c7eb";
-
-        [Editor("OnlineVideos.Sites.YahooMusicVideosUtil+UITokenEditor", typeof(UITypeEditor)),
-        Category("OnlineVideosUserConfiguration"), 
-        Description("You can, but don't have to sign in with your Yahoo account to access user specific features of this service.")]
-        string token = "";
-
+        
         [Category("OnlineVideosUserConfiguration"), Description("Language (Country) to use when accessing this service.")]
         Locale locale = Locale.us;
         [Category("OnlineVideosUserConfiguration"), Description("How each video title is displayed. These tags will be replaced: %artist% %title% %year% %rating%.")]
@@ -170,7 +116,6 @@ namespace OnlineVideos.Sites
                 provider = new ServiceProvider();
                 provider.AppId = AppId;
                 provider.SharedSecret = SharedSecret;
-                provider.Token = token;
                 provider.SetLocale(locale.ToString());
                 provider.Init();
             }
@@ -181,7 +126,7 @@ namespace OnlineVideos.Sites
             }
             if (provider.Error)
             {
-                throw new OnlineVideosException("Yahoo Authentication Token invalid. Please check Configuration.");
+                throw new OnlineVideosException(provider.ErrorMessage);
             }
             if (catserv == null)
             {

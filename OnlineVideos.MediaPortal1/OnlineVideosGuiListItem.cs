@@ -1,7 +1,7 @@
 ﻿using System;
 using MediaPortal.GUI.Library;
 
-namespace OnlineVideos
+namespace OnlineVideos.MediaPortal1
 {
     /// <summary>
     /// Extends a <see cref="GUIListItem"/> with properties only used in OnlineVideos.

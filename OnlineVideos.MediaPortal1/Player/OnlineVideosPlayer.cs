@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Threading;
 
-namespace OnlineVideos.Player
+namespace OnlineVideos.MediaPortal1.Player
 {
     public class OnlineVideosPlayer : VideoPlayerVMR9
     {
@@ -52,7 +52,7 @@ namespace OnlineVideos.Player
         {
             base.graphBuilder = (IGraphBuilder)new FilterGraph();
             // add video renderer
-            Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode", new object[0]);
+            Log.Instance.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode", new object[0]);
             GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
             GUIWindowManager.SendMessage(message);
             this.Vmr9 = new VMR9Util();
@@ -112,7 +112,7 @@ namespace OnlineVideos.Player
         {
             base.graphBuilder = (IGraphBuilder)new FilterGraph();
             // add video renderer
-            Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode", new object[0]);
+            Log.Instance.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode", new object[0]);
             GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
             GUIWindowManager.SendMessage(message);
             this.Vmr9 = new VMR9Util();
@@ -173,7 +173,7 @@ namespace OnlineVideos.Player
             base.graphBuilder = (IGraphBuilder)new FilterGraph();
             _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
-            Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode", new object[0]);
+            Log.Instance.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode", new object[0]);
             GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
             GUIWindowManager.SendMessage(message);
             this.Vmr9 = new VMR9Util();
@@ -186,7 +186,7 @@ namespace OnlineVideos.Player
             if (sourceFilter == null)
             {
                 Error.SetError("Unable to load DirectshowFilter: WM ASF Reader", "Windows Media Player not installed?");
-                Log.Error("Unable to load DirectshowFilter: WM ASF Reader", new object[0]);
+                Log.Instance.Error("Unable to load DirectshowFilter: WM ASF Reader", new object[0]);
                 return false;
             }
 
@@ -287,7 +287,7 @@ namespace OnlineVideos.Player
                     PercentageBuffered = (float)current / (float)total * 100.0f;
                     if (current > last && current - last >= (double)total * 0.01) // log every percent
                     {
-                        Log.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)PercentageBuffered);
+                        Log.Instance.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)PercentageBuffered);
                         GUIPropertyManager.SetProperty("#OnlineVideos.buffered", ((int)PercentageBuffered).ToString());
                         last = current;
                     }
@@ -302,7 +302,7 @@ namespace OnlineVideos.Player
             }
             catch (Exception ex)
             {
-                Log.Warn(ex.ToString());
+                Log.Instance.Warn(ex.ToString());
             }
             finally
             {
@@ -362,7 +362,7 @@ namespace OnlineVideos.Player
             // buffer before starting playback
             PercentageBuffered = 0.0f;
             new Thread(MonitorBufferProgress) { IsBackground = true, Name = "MonitorBufferProgress" }.Start();
-            while (PercentageBuffered >= 0.0f && PercentageBuffered < OnlineVideoSettings.Instance.playbuffer) Thread.Sleep(50);
+            while (PercentageBuffered >= 0.0f && PercentageBuffered < PluginConfiguration.Instance.playbuffer) Thread.Sleep(50);
             // get the output pin of the source filter
             IEnumPins enumPins;
             IPin[] sourceFilterPins = new IPin[1];
@@ -389,7 +389,7 @@ namespace OnlineVideos.Player
             {
                 if (Vmr9 == null || !Vmr9.IsVMR9Connected)
                 {
-                    Log.Error("OnlineVideosPlayer: Failed to render file -> vmr9");
+                    Log.Instance.Error("OnlineVideosPlayer: Failed to render file -> vmr9");
                     mediaCtrl = null;
                     Cleanup();
                     return false;
@@ -414,7 +414,7 @@ namespace OnlineVideos.Player
             catch (Exception ex)
             {
                 Error.SetError("Unable to play movie", "Unable build graph for VMR9");
-                Log.Error("OnlineVideosPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+                Log.Instance.Error("OnlineVideosPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
                 return false;
             }
         }        
@@ -431,7 +431,7 @@ namespace OnlineVideos.Player
             m_ar = GUIGraphicsContext.ARType;
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
             _updateNeeded = true;
-            Log.Info("VideoPlayer:play {0}", strFile);
+            Log.Instance.Info("VideoPlayer:play {0}", strFile);
             //lock ( typeof(VideoPlayerVMR7) )
             {
                 //CloseInterfaces();
@@ -487,7 +487,7 @@ namespace OnlineVideos.Player
                 }
                 catch (Exception error)
                 {
-                    Log.Error("VideoPlayer: Unable to play with reason - {0}", error.Message);
+                    Log.Instance.Error("VideoPlayer: Unable to play with reason - {0}", error.Message);
                 }
                 if (hr < 0)
                 {
@@ -509,7 +509,7 @@ namespace OnlineVideos.Player
                 _updateNeeded = true;
                 SetVideoWindow();
                 mediaPos.get_Duration(out m_dDuration);
-                Log.Info("VideoPlayer:Duration:{0}", m_dDuration);
+                Log.Instance.Info("VideoPlayer:Duration:{0}", m_dDuration);
                 AnalyseStreams();
                 //SelectSubtitles();
                 //SelectAudioLanguage();

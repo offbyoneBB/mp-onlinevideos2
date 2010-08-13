@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
-using MediaPortal.GUI.Library;
 using OnlineVideos.Sites;
 
 namespace OnlineVideos
@@ -17,9 +16,8 @@ namespace OnlineVideos
             List<Assembly> assemblies = new List<Assembly>();
             Assembly onlineVideosMainDll = Assembly.GetExecutingAssembly();
             assemblies.Add(onlineVideosMainDll);
-            onlineVideosMainDllName = onlineVideosMainDll.GetName().Name;
-            string dirWithExtraDlls = Path.Combine(Path.GetDirectoryName(onlineVideosMainDll.Location), "OnlineVideos");
-            if (Directory.Exists(dirWithExtraDlls))
+            onlineVideosMainDllName = onlineVideosMainDll.GetName().Name;            
+            if (Directory.Exists(OnlineVideoSettings.Instance.DllsDir))
             {
                 // loading assembly as raw bytes, so it can be overwritten while app is still running, but cannot be debugged (running Configuration also needs to be loaded normally)
                 bool loadAsRawBytes = AppDomain.CurrentDomain.FriendlyName != "Configuration.exe";
@@ -27,7 +25,7 @@ namespace OnlineVideos
                 if (System.Diagnostics.Debugger.IsAttached) loadAsRawBytes = false;
 #endif
 
-                string[] dllFilesToCheck = Directory.GetFiles(dirWithExtraDlls, "OnlineVideos.Sites.*.dll");                
+                string[] dllFilesToCheck = Directory.GetFiles(OnlineVideoSettings.Instance.DllsDir, "OnlineVideos.Sites.*.dll");                
                 foreach (string aDll in dllFilesToCheck)
                 {
                     if (loadAsRawBytes)

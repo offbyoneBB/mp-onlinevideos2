@@ -1,8 +1,9 @@
 using System;
+using MePo = MediaPortal.Playlists;
 
-namespace OnlineVideos.Player
+namespace OnlineVideos.MediaPortal1.Player
 {
-    public class PlayListItem : MediaPortal.Playlists.PlayListItem
+    public class PlayListItem : MePo.PlayListItem
     {
         public PlayListItem(string description, string fileName) : base(description, fileName) { }
 

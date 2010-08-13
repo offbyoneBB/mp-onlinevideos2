@@ -220,5 +220,38 @@ namespace OnlineVideos
             return dic;
         }
 
+        public static string GetSaveFilename(string input)
+        {
+            string safe = input;
+            foreach (char lDisallowed in System.IO.Path.GetInvalidFileNameChars())
+            {
+                safe = safe.Replace(lDisallowed.ToString(), "");
+            }
+            foreach (char lDisallowed in System.IO.Path.GetInvalidPathChars())
+            {
+                safe = safe.Replace(lDisallowed.ToString(), "");
+            }
+            return safe;
+        }
+
+        public static string EncryptLine(string strLine)
+        {
+            if (string.IsNullOrEmpty(strLine)) return string.Empty;
+            Ionic.Zlib.CRC32 crc = new Ionic.Zlib.CRC32();
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream) { AutoFlush = true };
+            writer.Write(strLine);
+            stream.Position = 0;
+            return string.Format("{0}", crc.GetCrc32(stream));
+        }
+
+        public static string GetThumbFile(string url)
+        {
+            // gets a CRC code for the given url and returns a full file path to the image: thums_dir\crc.jpg|gif
+            string possibleExtension = System.IO.Path.GetExtension(url).ToLower();
+            if (possibleExtension != ".gif" & possibleExtension != ".jpg") possibleExtension = ".jpg";
+            string name = string.Format("Thumbs{0}L{1}", EncryptLine(url), possibleExtension);
+            return System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, name);
+        }
     }
 }

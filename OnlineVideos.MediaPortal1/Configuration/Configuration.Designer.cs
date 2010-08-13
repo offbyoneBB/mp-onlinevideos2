@@ -7,7 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 
-namespace OnlineVideos
+namespace OnlineVideos.MediaPortal1
 {
 	partial class Configuration
 	{
@@ -514,7 +514,7 @@ namespace OnlineVideos
             // 
             this.btnSiteUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnSiteUp.Enabled = false;
-            this.btnSiteUp.Image = global::OnlineVideos.Properties.Resources.Up;
+            this.btnSiteUp.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Up;
             this.btnSiteUp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSiteUp.Name = "btnSiteUp";
             this.btnSiteUp.Size = new System.Drawing.Size(22, 20);
@@ -526,7 +526,7 @@ namespace OnlineVideos
             this.btnSiteDown.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.btnSiteDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnSiteDown.Enabled = false;
-            this.btnSiteDown.Image = global::OnlineVideos.Properties.Resources.Down;
+            this.btnSiteDown.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Down;
             this.btnSiteDown.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSiteDown.Name = "btnSiteDown";
             this.btnSiteDown.Size = new System.Drawing.Size(22, 20);
@@ -554,7 +554,7 @@ namespace OnlineVideos
             this.toolStripDropDownBtnImport.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnImportXml,
             this.btnImportGlobal});
-            this.toolStripDropDownBtnImport.Image = global::OnlineVideos.Properties.Resources.Import;
+            this.toolStripDropDownBtnImport.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Import;
             this.toolStripDropDownBtnImport.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownBtnImport.Name = "toolStripDropDownBtnImport";
             this.toolStripDropDownBtnImport.Size = new System.Drawing.Size(29, 22);
@@ -562,7 +562,7 @@ namespace OnlineVideos
             // 
             // btnImportXml
             // 
-            this.btnImportXml.Image = global::OnlineVideos.Properties.Resources.ImportXml;
+            this.btnImportXml.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.ImportXml;
             this.btnImportXml.Name = "btnImportXml";
             this.btnImportXml.Size = new System.Drawing.Size(108, 22);
             this.btnImportXml.Text = "XML";
@@ -571,7 +571,7 @@ namespace OnlineVideos
             // 
             // btnImportGlobal
             // 
-            this.btnImportGlobal.Image = global::OnlineVideos.Properties.Resources.ImportGlobal;
+            this.btnImportGlobal.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.ImportGlobal;
             this.btnImportGlobal.Name = "btnImportGlobal";
             this.btnImportGlobal.Size = new System.Drawing.Size(108, 22);
             this.btnImportGlobal.Text = "Global";
@@ -581,7 +581,7 @@ namespace OnlineVideos
             // btnAddSite
             // 
             this.btnAddSite.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnAddSite.Image = global::OnlineVideos.Properties.Resources.Add;
+            this.btnAddSite.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Add;
             this.btnAddSite.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAddSite.Name = "btnAddSite";
             this.btnAddSite.Size = new System.Drawing.Size(23, 22);
@@ -592,7 +592,7 @@ namespace OnlineVideos
             // 
             this.btnDeleteSite.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnDeleteSite.Enabled = false;
-            this.btnDeleteSite.Image = global::OnlineVideos.Properties.Resources.delete;
+            this.btnDeleteSite.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.delete;
             this.btnDeleteSite.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDeleteSite.Name = "btnDeleteSite";
             this.btnDeleteSite.Size = new System.Drawing.Size(23, 22);
@@ -603,7 +603,7 @@ namespace OnlineVideos
             // 
             this.btnPublishSite.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnPublishSite.Enabled = false;
-            this.btnPublishSite.Image = global::OnlineVideos.Properties.Resources.PublishToWeb;
+            this.btnPublishSite.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.PublishToWeb;
             this.btnPublishSite.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnPublishSite.Name = "btnPublishSite";
             this.btnPublishSite.Size = new System.Drawing.Size(23, 22);
@@ -614,7 +614,7 @@ namespace OnlineVideos
             // 
             this.btnReportSite.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnReportSite.Enabled = false;
-            this.btnReportSite.Image = global::OnlineVideos.Properties.Resources.NewReport;
+            this.btnReportSite.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.NewReport;
             this.btnReportSite.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnReportSite.Name = "btnReportSite";
             this.btnReportSite.Size = new System.Drawing.Size(23, 22);
@@ -681,7 +681,7 @@ namespace OnlineVideos
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSave.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnSave.Image = global::OnlineVideos.Properties.Resources.Save;
+            this.btnSave.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Save;
             this.btnSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnSave.Location = new System.Drawing.Point(499, 474);
             this.btnSave.Name = "btnSave";
@@ -762,7 +762,7 @@ namespace OnlineVideos
             // 
             this.btnAddRss.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnAddRss.Enabled = false;
-            this.btnAddRss.Image = global::OnlineVideos.Properties.Resources.Add;
+            this.btnAddRss.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Add;
             this.btnAddRss.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAddRss.Name = "btnAddRss";
             this.btnAddRss.Size = new System.Drawing.Size(23, 22);
@@ -773,7 +773,7 @@ namespace OnlineVideos
             // 
             this.btnDeleteRss.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnDeleteRss.Enabled = false;
-            this.btnDeleteRss.Image = global::OnlineVideos.Properties.Resources.delete;
+            this.btnDeleteRss.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.delete;
             this.btnDeleteRss.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDeleteRss.Name = "btnDeleteRss";
             this.btnDeleteRss.Size = new System.Drawing.Size(23, 22);
@@ -871,7 +871,7 @@ namespace OnlineVideos
             // 
             this.btnAddGroup.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnAddGroup.Enabled = false;
-            this.btnAddGroup.Image = global::OnlineVideos.Properties.Resources.NewFolderHS;
+            this.btnAddGroup.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.NewFolderHS;
             this.btnAddGroup.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAddGroup.Name = "btnAddGroup";
             this.btnAddGroup.Size = new System.Drawing.Size(23, 22);
@@ -882,7 +882,7 @@ namespace OnlineVideos
             // 
             this.btnAddChannel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnAddChannel.Enabled = false;
-            this.btnAddChannel.Image = global::OnlineVideos.Properties.Resources.Add;
+            this.btnAddChannel.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Add;
             this.btnAddChannel.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAddChannel.Name = "btnAddChannel";
             this.btnAddChannel.Size = new System.Drawing.Size(23, 22);
@@ -893,7 +893,7 @@ namespace OnlineVideos
             // 
             this.btnDeleteChannel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnDeleteChannel.Enabled = false;
-            this.btnDeleteChannel.Image = global::OnlineVideos.Properties.Resources.delete;
+            this.btnDeleteChannel.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.delete;
             this.btnDeleteChannel.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDeleteChannel.Name = "btnDeleteChannel";
             this.btnDeleteChannel.Size = new System.Drawing.Size(23, 22);
@@ -942,7 +942,7 @@ namespace OnlineVideos
             // 
             this.btnSaveChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSaveChannel.Enabled = false;
-            this.btnSaveChannel.Image = global::OnlineVideos.Properties.Resources.Save;
+            this.btnSaveChannel.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Save;
             this.btnSaveChannel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnSaveChannel.Location = new System.Drawing.Point(594, 162);
             this.btnSaveChannel.Name = "btnSaveChannel";

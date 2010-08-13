@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Xml;
 using MediaPortal.Configuration;
 
-namespace OnlineVideos
+namespace OnlineVideos.MediaPortal1
 {
     /// <summary>
     /// Description of Configuration.
@@ -33,22 +33,21 @@ namespace OnlineVideos
             SetInfosFromCodecs();
 
             /** fill "General" tab **/
-            OnlineVideoSettings settings = OnlineVideoSettings.Instance;
             lblVersion.Text = "Version: " + new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version.ToString();
-            tbxScreenName.Text = settings.BasicHomeScreenName;
-            txtThumbLoc.Text = settings.ThumbsDir;
-            tbxThumbAge.Text = settings.thumbAge.ToString();
-            txtDownloadDir.Text = settings.DownloadDir;
-            txtFilters.Text = settings.FilterArray != null ? string.Join(",", settings.FilterArray) : "";
-            chkUseAgeConfirmation.Checked = settings.useAgeConfirmation;
-            tbxPin.Text = settings.pinAgeConfirmation;
-            tbxWebCacheTimeout.Text = settings.cacheTimeout.ToString();
-            tbxUtilTimeout.Text = settings.utilTimeout.ToString();
-            tbxWMPBuffer.Text = settings.wmpbuffer.ToString();
-            udPlayBuffer.SelectedItem = settings.playbuffer.ToString();
-            chkUseQuickSelect.Checked = settings.useQuickSelect;
-            chkRememberLastSearch.Checked = settings.rememberLastSearch;
-            if (settings.updateOnStart != null) chkDoAutoUpdate.CheckState = settings.updateOnStart.Value ? CheckState.Checked : CheckState.Unchecked;
+            tbxScreenName.Text = PluginConfiguration.Instance.BasicHomeScreenName;
+            txtThumbLoc.Text = OnlineVideoSettings.Instance.ThumbsDir;
+            tbxThumbAge.Text = OnlineVideoSettings.Instance.ThumbsAge.ToString();
+            txtDownloadDir.Text = OnlineVideoSettings.Instance.DownloadDir;
+            txtFilters.Text = PluginConfiguration.Instance.FilterArray != null ? string.Join(",", PluginConfiguration.Instance.FilterArray) : "";
+            chkUseAgeConfirmation.Checked = OnlineVideoSettings.Instance.useAgeConfirmation;
+            tbxPin.Text = PluginConfiguration.Instance.pinAgeConfirmation;
+            tbxWebCacheTimeout.Text = OnlineVideoSettings.Instance.CacheTimeout.ToString();
+            tbxUtilTimeout.Text = PluginConfiguration.Instance.utilTimeout.ToString();
+            tbxWMPBuffer.Text = PluginConfiguration.Instance.wmpbuffer.ToString();
+            udPlayBuffer.SelectedItem = PluginConfiguration.Instance.playbuffer.ToString();
+            chkUseQuickSelect.Checked = PluginConfiguration.Instance.useQuickSelect;
+            chkRememberLastSearch.Checked = PluginConfiguration.Instance.rememberLastSearch;
+            if (PluginConfiguration.Instance.updateOnStart != null) chkDoAutoUpdate.CheckState = PluginConfiguration.Instance.updateOnStart.Value ? CheckState.Checked : CheckState.Unchecked;
             else chkDoAutoUpdate.CheckState = CheckState.Indeterminate;
 
             /** fill "Sites" tab **/
@@ -161,28 +160,27 @@ namespace OnlineVideos
 
             if (dr == DialogResult.OK || dr == DialogResult.Yes)
             {
-                OnlineVideoSettings settings = OnlineVideoSettings.Instance;
                 String lsFilter = txtFilters.Text;
                 String[] lsFilterArray = lsFilter.Split(new char[] { ',' });
-                settings.FilterArray = lsFilterArray;
-                settings.ThumbsDir = txtThumbLoc.Text;
-                try { settings.thumbAge = int.Parse(tbxThumbAge.Text); }
+                PluginConfiguration.Instance.FilterArray = lsFilterArray;
+                OnlineVideoSettings.Instance.ThumbsDir = txtThumbLoc.Text;
+                try { OnlineVideoSettings.Instance.ThumbsAge = int.Parse(tbxThumbAge.Text); }
                 catch { }
-                settings.BasicHomeScreenName = tbxScreenName.Text;
-                settings.DownloadDir = txtDownloadDir.Text;
-                settings.useAgeConfirmation = chkUseAgeConfirmation.Checked;
-                settings.pinAgeConfirmation = tbxPin.Text;
-                settings.useQuickSelect = chkUseQuickSelect.Checked;
-                settings.rememberLastSearch = chkRememberLastSearch.Checked;
-                int.TryParse(tbxWMPBuffer.Text, out settings.wmpbuffer);
-                int.TryParse(udPlayBuffer.SelectedItem.ToString(), out settings.playbuffer);
-                try { settings.cacheTimeout = int.Parse(tbxWebCacheTimeout.Text); }
+                PluginConfiguration.Instance.BasicHomeScreenName = tbxScreenName.Text;
+                OnlineVideoSettings.Instance.DownloadDir = txtDownloadDir.Text;
+                OnlineVideoSettings.Instance.useAgeConfirmation = chkUseAgeConfirmation.Checked;
+                PluginConfiguration.Instance.pinAgeConfirmation = tbxPin.Text;
+                PluginConfiguration.Instance.useQuickSelect = chkUseQuickSelect.Checked;
+                PluginConfiguration.Instance.rememberLastSearch = chkRememberLastSearch.Checked;
+                int.TryParse(tbxWMPBuffer.Text, out PluginConfiguration.Instance.wmpbuffer);
+                int.TryParse(udPlayBuffer.SelectedItem.ToString(), out PluginConfiguration.Instance.playbuffer);
+                try { OnlineVideoSettings.Instance.CacheTimeout = int.Parse(tbxWebCacheTimeout.Text); }
                 catch { }
-                try { settings.utilTimeout = int.Parse(tbxUtilTimeout.Text); }
+                try { PluginConfiguration.Instance.utilTimeout = int.Parse(tbxUtilTimeout.Text); }
                 catch { }
-                if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) settings.updateOnStart = null;
-                else settings.updateOnStart = chkDoAutoUpdate.Checked;
-                settings.Save();
+                if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) PluginConfiguration.Instance.updateOnStart = null;
+                else PluginConfiguration.Instance.updateOnStart = chkDoAutoUpdate.Checked;
+                PluginConfiguration.Instance.Save();
             }
         }
 
@@ -507,19 +505,18 @@ namespace OnlineVideos
 
         private void btnPublishSite_Click(object sender, EventArgs e)
         {
-            OnlineVideoSettings settings = OnlineVideoSettings.Instance;
             SiteSettings site = siteList.SelectedItem as SiteSettings;
-            if (string.IsNullOrEmpty(settings.email) || string.IsNullOrEmpty(settings.password))
+            if (string.IsNullOrEmpty(PluginConfiguration.Instance.email) || string.IsNullOrEmpty(PluginConfiguration.Instance.password))
             {
                 if (MessageBox.Show("Do you want to register an Email now?", "Registration required!", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     RegisterEmail reFrm = new RegisterEmail();
-                    reFrm.tbxEmail.Text = settings.email;
-                    reFrm.tbxPassword.Text = settings.password;
+                    reFrm.tbxEmail.Text = PluginConfiguration.Instance.email;
+                    reFrm.tbxPassword.Text = PluginConfiguration.Instance.password;
                     if (reFrm.ShowDialog() == DialogResult.OK)
                     {
-                        settings.email = reFrm.tbxEmail.Text;
-                        settings.password = reFrm.tbxPassword.Text;
+                        PluginConfiguration.Instance.email = reFrm.tbxEmail.Text;
+                        PluginConfiguration.Instance.password = reFrm.tbxPassword.Text;
                     }
                 }
                 return;
@@ -568,7 +565,7 @@ namespace OnlineVideos
                         string owner = ws.GetDllOwner(dll, out md5RemoteDll);
                         bool dllFound = md5RemoteDll != null;
                         bool dllsAreEqual = dllFound ? md5RemoteDll == md5LocalDll : false;
-                        bool userIsOwner = dllFound ? owner == settings.email : true;
+                        bool userIsOwner = dllFound ? owner == PluginConfiguration.Instance.email : true;
                         if (!dllsAreEqual)
                         {
                             bool isAdmin = false;
@@ -585,14 +582,14 @@ namespace OnlineVideos
                                 if (MessageBox.Show(info, "DLL required", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                                 {
                                     if (data == null) data = System.IO.File.ReadAllBytes(location);
-                                    success = ws.SubmitDll(settings.email, settings.password, dll, data, out msg);
+                                    success = ws.SubmitDll(PluginConfiguration.Instance.email, PluginConfiguration.Instance.password, dll, data, out msg);
                                     MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
                                 }
                             }
                         }
                     }
                 }
-                success = ws.SubmitSite(settings.email, settings.password, siteXmlString, icon, banner, dll, out msg);
+                success = ws.SubmitSite(PluginConfiguration.Instance.email, PluginConfiguration.Instance.password, siteXmlString, icon, banner, dll, out msg);
                 MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);
             }
             catch (Exception ex)

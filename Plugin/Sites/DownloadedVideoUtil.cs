@@ -2,14 +2,13 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
-using MediaPortal.GUI.Library;
-using MediaPortal.Configuration;
 using System.Net;
 
 namespace OnlineVideos.Sites
 {
-    public class DownloadedVideoUtil : SiteUtilBase, IFilter 
+    public class DownloadedVideoUtil : SiteUtilBase, IFilter
     {
+        public Dictionary<string, DownloadInfo> currentDownloads = new Dictionary<string, DownloadInfo>();
         string lastSort = "date";
 
         // keep a reference of all Categories ever created and reuse them, to get them selected when returning to the category view
@@ -27,7 +26,7 @@ namespace OnlineVideos.Sites
             }
             Settings.Categories.Add(cat);
 
-            if (GUIOnlineVideos.currentDownloads.Count > 0)
+            if (currentDownloads.Count > 0)
             {
                 // add a category for all downloads in progress
                 if (!cachedCategories.TryGetValue(Translation.Downloading, out cat))
@@ -53,7 +52,7 @@ namespace OnlineVideos.Sites
                             cat.Name = aSite.Name + " - " + Translation.DownloadedVideos;
                             cat.Description = aSite.Description;
                             ((RssLink)cat).Url = aDir;
-                            cat.Thumb = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Name + ".png";
+                            cat.Thumb = Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + aSite.Name + ".png");
                             cachedCategories.Add(cat.Name, cat);
                         }
                         Settings.Categories.Add(cat);
@@ -85,8 +84,8 @@ namespace OnlineVideos.Sites
                         VideoInfo loVideoInfo = new VideoInfo();
                         loVideoInfo.VideoUrl = file.FullName;
                         loVideoInfo.ImageUrl = file.FullName.Substring(0, file.FullName.LastIndexOf(".")) + ".jpg";
-                        loVideoInfo.Length = file.LastWriteTime.ToString("g", OnlineVideoSettings.Instance.MediaPortalLocale);
-                        loVideoInfo.Title = MediaPortal.Util.Utils.GetFilename(file.Name);
+                        loVideoInfo.Length = file.LastWriteTime.ToString("g", OnlineVideoSettings.Instance.Locale);
+                        loVideoInfo.Title = file.Name;
                         loVideoInfo.Description = string.Format("{0} MB", (file.Length / 1024 / 1024).ToString("N0"));
                         loVideoInfo.Other = file;
                         loVideoInfoList.Add(loVideoInfo);
@@ -117,9 +116,9 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                lock (GUIOnlineVideos.currentDownloads)
+                lock (currentDownloads)
                 {
-                    foreach (DownloadInfo di in GUIOnlineVideos.currentDownloads.Values)
+                    foreach (DownloadInfo di in currentDownloads.Values)
                     {
                         string progressInfo = (di.PercentComplete != 0 || di.KbTotal != 0 || di.KbDownloaded != 0) ?
                             string.Format(" | {0}% / {1} KB - {2} KB/sec", di.PercentComplete, di.KbTotal > 0 ? di.KbTotal.ToString("n0") : di.KbDownloaded.ToString("n0"), (int)(di.KbDownloaded / (DateTime.Now - di.Start).TotalSeconds)) : "";
@@ -146,7 +145,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                options.Add(GUILocalizeStrings.Get(222));
+                options.Add(Translation.Cancel);
             }
             return options;
         }
@@ -159,7 +158,7 @@ namespace OnlineVideos.Sites
                 if (System.IO.File.Exists(selectedItem.VideoUrl)) System.IO.File.Delete(selectedItem.VideoUrl);
                 return true;
             }
-            else if (choice == GUILocalizeStrings.Get(222))
+            else if (choice == Translation.Cancel)
             {
                 ((IDownloader)(selectedItem.Other as DownloadInfo).Downloader).CancelAsync();
             }
@@ -207,9 +206,9 @@ namespace OnlineVideos.Sites
         public Dictionary<string, string> getOrderbyList()
         {
             Dictionary<string, string> options = new Dictionary<string, string>();
-            options.Add(GUILocalizeStrings.Get(104), "date");
-            options.Add(GUILocalizeStrings.Get(365), "name");
-            options.Add(GUILocalizeStrings.Get(105), "size");
+            options.Add(Translation.Date, "date");
+            options.Add(Translation.Name, "name");
+            options.Add(Translation.Size, "size");
             return options;
         }
 

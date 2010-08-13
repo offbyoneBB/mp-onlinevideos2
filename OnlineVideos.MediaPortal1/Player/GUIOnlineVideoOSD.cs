@@ -1,7 +1,7 @@
 ﻿using MediaPortal.GUI.Video;
 using MediaPortal.GUI.Library;
 
-namespace OnlineVideos.Player
+namespace OnlineVideos.MediaPortal1.Player
 {
     public class GUIOnlineVideoOSD : GUIVideoOSD
     {
@@ -10,7 +10,7 @@ namespace OnlineVideos.Player
 
         public override string GetModuleName()
         {
-            return OnlineVideoSettings.Instance.BasicHomeScreenName + " OSD";
+            return PluginConfiguration.Instance.BasicHomeScreenName + " OSD";
         }
 
         public override bool Init()

@@ -45,7 +45,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\</OutputPath>
+    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -55,7 +55,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\</OutputPath>
+    <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -70,31 +70,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxInterop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\AxInterop.WMPLib.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Core, Version=0.2.3.17915, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Databases, Version=0.2.3.17915, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Databases.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Dialogs, Version=1.0.4.17412, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\Dialogs.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MpeCore, Version=1.0.10.18354, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\MpeCore.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -104,21 +79,6 @@
     </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowPlugins, Version=1.0.4.17412, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\WindowPlugins.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="DirectShowLib, Version=2.0.0.22244, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\DirectShowLib.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Interop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Interop.WMPLib.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>
@@ -138,47 +98,10 @@
     <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
-    <Reference Include="Utils, Version=0.2.3.17915, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Utils.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\BindableCheckedListBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Configuration\CodecConfiguration.cs" />
-    <Compile Include="Configuration\ConfigurationAdvanced.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Configuration\ConfigurationAdvanced.Designer.cs">
-      <DependentUpon>ConfigurationAdvanced.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\ImExportXml.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Configuration\ImExportXml.Designer.cs">
-      <DependentUpon>ImExportXml.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\ImportGlobalSite.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Configuration\ImportGlobalSite.Designer.cs">
-      <DependentUpon>ImportGlobalSite.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\RegisterEmail.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Configuration\RegisterEmail.Designer.cs">
-      <DependentUpon>RegisterEmail.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\SubmitSiteReport.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Configuration\SubmitSiteReport.Designer.cs">
-      <DependentUpon>SubmitSiteReport.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Configuration\OnlineVideoSettings.cs" />
+    <Compile Include="Configuration\SiteSettings.cs" />
     <Compile Include="CookieHelper.cs" />
     <Compile Include="DotNetZip\ComHelper.cs" />
     <Compile Include="DotNetZip\Crc32.cs" />
@@ -225,10 +148,7 @@
     <Compile Include="DotNetZip\ZlibConstants.cs" />
     <Compile Include="DotNetZip\ZlibStream.cs" />
     <Compile Include="DownloadInfo.cs" />
-    <Compile Include="Gui2UtilConnector.cs" />
-    <Compile Include="GUISiteUpdater.cs" />
     <Compile Include="HTTPDownloader.cs" />
-    <Compile Include="ImageDownloader.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MMSDownloader.cs" />
     <Compile Include="Newtonsoft.Json\Bson\BsonBinaryType.cs" />
@@ -379,35 +299,6 @@
     <Compile Include="Newtonsoft.Json\Utilities\ThreadSafeStore.cs" />
     <Compile Include="Newtonsoft.Json\Utilities\ValidationUtils.cs" />
     <Compile Include="OnlineVideosException.cs" />
-    <Compile Include="OnlineVideosGuiListItem.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\BaseWindow.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\DialogWindow.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\BaseElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\ButtonElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\CheckMarkElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\FadeLabelElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\ImageCache.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\ImageElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\LabelElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\ListElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\ProgressControlElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\SliderElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\TextScrollUpElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\ToggleButtonElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\VerticalScrollbarElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\Elements\VolumeBarElement.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\FullscreenWindow.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\OSDController.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\OSDForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Player\ExternalOSDLibrary\OSDWindow.cs" />
-    <Compile Include="Player\GUIOnlineVideoFullscreen.cs" />
-    <Compile Include="Player\GUIOnlineVideoOSD.cs" />
-    <Compile Include="Player\PlayListItem.cs" />
-    <Compile Include="Player\WMPVideoPlayer.cs" />
-    <Compile Include="Player\OnlineVideosPlayer.cs" />
-    <Compile Include="Player\PlayerFactory.cs" />
     <Compile Include="ReverseProxy.cs" />
     <Compile Include="RssToolkit\Rss\Constants.cs" />
     <Compile Include="RssToolkit\Rss\DocumentType.cs" />
@@ -496,26 +387,6 @@
     <Compile Include="RTMP_LIB\Log.cs" />
     <Compile Include="RTMP_LIB\RTMP.cs" />
     <Compile Include="RTMP_LIB\RTMPPacket.cs" />
-    <Compile Include="Configuration\BrowserForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Configuration\BrowserForm.Designer.cs">
-      <DependentUpon>BrowserForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\Configuration.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Configuration\Configuration.Designer.cs">
-      <DependentUpon>Configuration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FavoritesDatabase.cs" />
-    <Compile Include="Configuration\OnlineVideoSettings.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\SiteSettings.cs" />
     <Compile Include="RTMP_LIB\RTMPRequestHandler.cs" />
     <Compile Include="RTMP_LIB\Tea.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\ByteArray.cs" />
@@ -540,7 +411,9 @@
     <Compile Include="Sites\Cornerstone\Tools\AdvancedStringComparer.cs" />
     <Compile Include="Sites\Cornerstone\Tools\WebGrabber.cs" />
     <Compile Include="Sites\Interfaces\IFavorite.cs" />
+    <Compile Include="Sites\Interfaces\IFavoritesDatabase.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
+    <Compile Include="Sites\Interfaces\IUserStore.cs" />
     <Compile Include="Sites\Interfaces\IVideoDetails.cs" />
     <Compile Include="Sites\ScriptUtil.cs" />
     <Compile Include="Sites\DownloadedVideoUtil.cs" />
@@ -548,11 +421,7 @@
     <Compile Include="Sites\GenericSiteUtil.cs" />
     <Compile Include="Sites\Base\SiteUtilBase.cs" />
     <Compile Include="Sites\Base\SiteUtilFactory.cs" />
-    <Compile Include="GUIOnlineVideos.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SmsT9Filter.cs" />
     <Compile Include="Translation.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="VideoInfo.cs" />
@@ -562,64 +431,12 @@
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="WebCache.cs" />
-    <EmbeddedResource Include="Configuration\BrowserForm.resx">
-      <DependentUpon>BrowserForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Configuration\Configuration.resx">
-      <DependentUpon>Configuration.Designer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Configuration\ImExportXml.resx">
-      <DependentUpon>ImExportXml.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="OnlineVideos.png" />
-    <EmbeddedResource Include="OnlineVideosDisabled.png" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="OnlineVideos.ico" />
-    <None Include="Properties\DataSources\SiteSettings.datasource" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Delete.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Add.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\NewFolder.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Save.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Up.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Down.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\DataSources\RssLink.datasource" />
-    <None Include="Resources\ImportXml.png" />
     <None Include="Web References\OnlineVideosWebservice\OnlineVideos.wsdl" />
     <EmbeddedResource Include="RssToolkit\Resources\Rss20.xsd" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Configuration\ConfigurationAdvanced.resx">
-      <DependentUpon>ConfigurationAdvanced.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Configuration\RegisterEmail.resx">
-      <DependentUpon>RegisterEmail.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Configuration\SubmitSiteReport.resx">
-      <DependentUpon>SubmitSiteReport.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="RssToolkit\Resources\AtomToRss20.xsl" />
     <EmbeddedResource Include="RssToolkit\Resources\RdfToRss20.xsl" />
     <EmbeddedResource Include="RssToolkit\Resources\Rss20ToAtom.xsl" />
@@ -660,28 +477,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\PublishToWeb.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\NewReport.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Configuration\ImportGlobalSite.resx">
-      <DependentUpon>ImportGlobalSite.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="OnlineVideoSites.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Import.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ImportGlobal.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Configuration\ExportSiteSettings.xslt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Configuration\ImportSiteSettings.xslt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -699,6 +495,10 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\ExportSiteSettings.xslt" />
+    <EmbeddedResource Include="Configuration\ImportSiteSettings.xslt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
