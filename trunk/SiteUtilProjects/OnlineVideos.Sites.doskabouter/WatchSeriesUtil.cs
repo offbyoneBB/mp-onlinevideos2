@@ -462,7 +462,7 @@ namespace OnlineVideos.Sites
 
         public void UpdateRequest(HttpWebRequest request)
         {
-            request.UserAgent = OnlineVideoSettings.USERAGENT;
+            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
         }
 
         #endregion

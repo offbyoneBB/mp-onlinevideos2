@@ -40,11 +40,11 @@ namespace OnlineVideos.Sites
             foreach (string aDir in Directory.GetDirectories(OnlineVideoSettings.Instance.DownloadDir))
             {
                 SiteUtilBase util = null;
-                if (OnlineVideoSettings.Instance.SiteList.TryGetValue(Path.GetFileName(aDir), out util))
+                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Path.GetFileName(aDir), out util))
                 {
                     SiteSettings aSite = util.Settings;
                     if (aSite.IsEnabled &&
-                       (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
+                       (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
                     {
                         if (!cachedCategories.TryGetValue(aSite.Name + " - " + Translation.DownloadedVideos, out cat))
                         {

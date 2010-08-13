@@ -1,4 +1,4 @@
-﻿namespace OnlineVideos
+﻿namespace OnlineVideos.MediaPortal1
 {
     partial class RegisterEmail
     {

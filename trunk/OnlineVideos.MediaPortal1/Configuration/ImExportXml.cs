@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace OnlineVideos
+namespace OnlineVideos.MediaPortal1
 {
     public partial class ImExportXml : Form
     {
