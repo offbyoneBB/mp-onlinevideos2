@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace OnlineVideos
+namespace OnlineVideos.MediaPortal1
 {
     public class BindableCheckedListBox : CheckedListBox
     {

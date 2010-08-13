@@ -152,10 +152,10 @@ namespace OnlineVideos.MediaPortal1
                 video.SiteName = DatabaseUtility.Get(loResultSet, iRow, "VDO_SITE_ID");
                 Log.Instance.Debug("Pulled {0} out of the database", video.Title);
 
-                if (OnlineVideoSettings.Instance.SiteList.ContainsKey(video.SiteName))
+                if (OnlineVideoSettings.Instance.SiteUtilsList.ContainsKey(video.SiteName))
                 {
-                    SiteSettings aSite = OnlineVideoSettings.Instance.SiteList[video.SiteName].Settings;
-                    if (aSite.IsEnabled && (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
+                    SiteSettings aSite = OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName].Settings;
+                    if (aSite.IsEnabled && (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
                     {
                         loFavoriteList.Add(video);
                     }

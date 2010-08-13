@@ -10,7 +10,7 @@ namespace OnlineVideos.Sites
     {
         public override List<string> getMultipleVideoUrls(VideoInfo video)
         {
-            SiteUtilBase util = OnlineVideoSettings.Instance.SiteList[video.SiteName];
+            SiteUtilBase util = OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName];
             return util.getMultipleVideoUrls(video);
         }
 
@@ -40,11 +40,11 @@ namespace OnlineVideos.Sites
             foreach (string lsSiteId in lsSiteIds)
             {
                 SiteUtilBase util = null;
-                if (OnlineVideoSettings.Instance.SiteList.TryGetValue(lsSiteId, out util))
+                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(lsSiteId, out util))
                 {
                     SiteSettings aSite = util.Settings;
                     if (aSite.IsEnabled &&
-                       (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
+                       (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
                     {
                         RssLink cat = null;
                         if (!cachedCategories.TryGetValue(aSite.Name + " - " + Translation.Favourites, out cat))

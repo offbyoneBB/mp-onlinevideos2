@@ -64,7 +64,7 @@ namespace OnlineVideos.MediaPortal1
             this.chkAgeConfirm = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.toolStripContainer3 = new System.Windows.Forms.ToolStripContainer();
-            this.siteList = new OnlineVideos.BindableCheckedListBox();
+            this.siteList = new BindableCheckedListBox();
             this.toolStripSiteUpDown = new System.Windows.Forms.ToolStrip();
             this.btnSiteUp = new System.Windows.Forms.ToolStripButton();
             this.btnSiteDown = new System.Windows.Forms.ToolStripButton();

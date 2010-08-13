@@ -224,7 +224,6 @@ namespace OnlineVideos.Sites
         /// </summary>
         /// <param name="video">The <see cref="VideoInfo"/> from the list of displayed videos that were returned by this instance previously.</param>
         /// <returns>A valid url or filename.</returns>
-        [Obsolete]
         public virtual String getUrl(VideoInfo video)
         {
             return video.VideoUrl;
@@ -370,7 +369,7 @@ namespace OnlineVideos.Sites
             {
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return url;
-                request.UserAgent = OnlineVideoSettings.USERAGENT;
+                request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
                 request.Timeout = 15000;
                 httpWebresponse = request.GetResponse() as HttpWebResponse;
                 if (httpWebresponse == null) return url;
@@ -446,7 +445,7 @@ namespace OnlineVideos.Sites
                 if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(true);
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return "";
-                request.UserAgent = OnlineVideoSettings.USERAGENT;
+                request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
                 request.Accept = "*/*";
                 request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
                 if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set refere if give
@@ -484,7 +483,7 @@ namespace OnlineVideos.Sites
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
-            request.UserAgent = OnlineVideoSettings.USERAGENT;
+            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
             request.Timeout = 15000;
             request.ContentLength = data.Length;
             request.ProtocolVersion = HttpVersion.Version10;

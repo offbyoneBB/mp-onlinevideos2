@@ -114,7 +114,7 @@ namespace OnlineVideos.MediaPortal1
 
             foreach (OnlineVideosWebservice.Site site in filteredsortedSites)
             {
-                if (!site.IsAdult || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed)
+                if (!site.IsAdult || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed)
                 {
                     GUIListItem loListItem = new GUIListItem(site.Name);
                     loListItem.TVTag = site;
@@ -247,7 +247,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     OnlineVideoSettings.Instance.SiteSettingsList.Add(newSite);
                     OnlineVideoSettings.Instance.SaveSites();
-                    OnlineVideoSettings.Instance.BuildSiteList();
+                    OnlineVideoSettings.Instance.BuildSiteUtilsList();
                     if (DownloadRequiredDllIfNeeded(site.RequiredDll)) ShowRestartMessage();
                 }
             }
@@ -258,7 +258,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex] = site2Update;
                     OnlineVideoSettings.Instance.SaveSites();
-                    OnlineVideoSettings.Instance.BuildSiteList();
+                    OnlineVideoSettings.Instance.BuildSiteUtilsList();
                     if (DownloadRequiredDllIfNeeded(site.RequiredDll)) ShowRestartMessage();
                 }
             }
@@ -270,7 +270,7 @@ namespace OnlineVideos.MediaPortal1
                     site2Update.Categories = OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].Categories;
                     OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex] = site2Update;
                     OnlineVideoSettings.Instance.SaveSites();
-                    OnlineVideoSettings.Instance.BuildSiteList();
+                    OnlineVideoSettings.Instance.BuildSiteUtilsList();
                     if (DownloadRequiredDllIfNeeded(site.RequiredDll)) ShowRestartMessage();    
                 }
             }
@@ -278,7 +278,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 OnlineVideoSettings.Instance.SiteSettingsList.RemoveAt(localSiteIndex);
                 OnlineVideoSettings.Instance.SaveSites();
-                OnlineVideoSettings.Instance.BuildSiteList();
+                OnlineVideoSettings.Instance.BuildSiteUtilsList();
             }
             else if (dlgSel.SelectedLabelText == Translation.ShowReports)
             {
@@ -420,7 +420,7 @@ namespace OnlineVideos.MediaPortal1
 
                 if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.SavingLocalSiteList);
                 OnlineVideoSettings.Instance.SaveSites();
-                OnlineVideoSettings.Instance.BuildSiteList();
+                OnlineVideoSettings.Instance.BuildSiteUtilsList();
                 if (dlgPrgrs != null)
                 {
                     dlgPrgrs.Percentage = 90;

@@ -124,7 +124,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return false;
-                request.UserAgent = OnlineVideoSettings.USERAGENT;
+                request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
                 request.Accept = "*/*";
                 request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
                 request.Timeout = 5000; // don't wait longer than 5 seconds for an image
@@ -201,7 +201,7 @@ namespace OnlineVideos.MediaPortal1
                 int thumbsDeleted = 0;
                 try
                 {
-                    DateTime keepdate = DateTime.Now.AddDays(-OnlineVideoSettings.Instance.ThumbsAge);
+                    DateTime keepdate = DateTime.Now.AddDays(-PluginConfiguration.Instance.ThumbsAge);
                     FileInfo[] files = new DirectoryInfo(OnlineVideoSettings.Instance.ThumbsDir).GetFiles();
                     Log.Instance.Info("Checking {0} thumbnails for age.", files.Length);
                     for (int i = 0; i < files.Length; i++)

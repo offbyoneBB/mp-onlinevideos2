@@ -70,7 +70,7 @@ namespace RTMP_LIB
                     {
                         // we must set a content length for the File Source filter, otherwise it thinks we have no content
                         // but don't set a length if it is our user agent, so a download will always be complete
-                        if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.USERAGENT)
+                        if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.Instance.UserAgent)
                             response.ContentLength = fs.EstimatedLength;      
                                                 
                         responseStream = response.Send();
@@ -79,7 +79,7 @@ namespace RTMP_LIB
 
                     invalidHeader = rtmp.invalidRTMPHeader;
 
-                    if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.USERAGENT)
+                    if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.Instance.UserAgent)
                     {
                         // keep appending "0" - bytes until we filled the estimated length when sending data to the File Source filter
                         long zeroBytes = fs.EstimatedLength - fs.Length;

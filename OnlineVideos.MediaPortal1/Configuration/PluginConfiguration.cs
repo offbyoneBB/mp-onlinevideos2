@@ -15,13 +15,14 @@ namespace OnlineVideos.MediaPortal1
         public int wmpbuffer = 5000;  // milliseconds
         public int playbuffer = 2;   // percent
         public int utilTimeout = 15;  // seconds
+        public int ThumbsAge = 100; // days
         public bool useQuickSelect = false;
         public string[] FilterArray;
         public bool rememberLastSearch = true;
         public string pinAgeConfirmation = "";
         public bool? updateOnStart = null;
         public string email = "";
-        public string password = "";
+        public string password = "";        
 
         #region MediaPortal.xml attribute names
         public const string CFG_SECTION = "onlinevideos";
@@ -88,15 +89,15 @@ namespace OnlineVideos.MediaPortal1
                     if (!ovsconf.ThumbsDir.EndsWith(@"\")) ovsconf.ThumbsDir = ovsconf.ThumbsDir + @"\"; // fix thumbnail dir to include the trailing slash
                     try { if (!Directory.Exists(ovsconf.ThumbsDir)) Directory.CreateDirectory(ovsconf.ThumbsDir); }
                     catch (Exception e) { Log.Instance.Error("Failed to create thumb dir: {0}", e.ToString()); }
-                    ovsconf.ThumbsAge = settings.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, ovsconf.ThumbsAge);
-                    Log.Instance.Info("Thumbnails will be stored in {0} with a maximum age of {1} days.", ovsconf.ThumbsDir, ovsconf.ThumbsAge);
+                    ThumbsAge = settings.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, ThumbsAge);
+                    Log.Instance.Info("Thumbnails will be stored in {0} with a maximum age of {1} days.", ovsconf.ThumbsDir, ThumbsAge);
 
                     ovsconf.DownloadDir = settings.GetValueAsString(CFG_SECTION, CFG_DOWNLOAD_DIR, "");
                     try { if (Directory.Exists(ovsconf.DownloadDir)) Directory.CreateDirectory(ovsconf.DownloadDir); }
                     catch (Exception e) { Log.Instance.Error("Failed to create download dir: {0}", e.ToString()); }
 
                     ovsconf.CacheTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, ovsconf.CacheTimeout);                    
-                    ovsconf.useAgeConfirmation = settings.GetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, ovsconf.useAgeConfirmation);
+                    ovsconf.UseAgeConfirmation = settings.GetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, ovsconf.UseAgeConfirmation);
 
                     // set an almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
                     pinAgeConfirmation = settings.GetValueAsString(CFG_SECTION, CFG_PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
@@ -149,8 +150,8 @@ namespace OnlineVideos.MediaPortal1
                 {
                     settings.SetValue(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
                     settings.SetValue(CFG_SECTION, CFG_THUMBNAIL_DIR, ovsconf.ThumbsDir);
-                    settings.SetValue(CFG_SECTION, CFG_THUMBNAIL_AGE, ovsconf.ThumbsAge);
-                    settings.SetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, ovsconf.useAgeConfirmation);
+                    settings.SetValue(CFG_SECTION, CFG_THUMBNAIL_AGE, ThumbsAge);
+                    settings.SetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, ovsconf.UseAgeConfirmation);
                     settings.SetValue(CFG_SECTION, CFG_PIN_AGECONFIRMATION, pinAgeConfirmation);
                     settings.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
                     settings.SetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);

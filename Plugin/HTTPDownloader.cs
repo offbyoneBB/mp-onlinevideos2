@@ -31,7 +31,7 @@ namespace OnlineVideos
                 {
                     HttpWebRequest request = (HttpWebRequest)System.Net.WebRequest.Create(downloadInfo.Url);
                     request.Timeout = 15000;
-                    request.UserAgent = OnlineVideoSettings.USERAGENT;
+                    request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
                     request.Accept = "*/*";
                     request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
                     response = (HttpWebResponse)request.GetResponse();

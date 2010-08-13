@@ -36,10 +36,10 @@ namespace OnlineVideos.MediaPortal1
             lblVersion.Text = "Version: " + new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version.ToString();
             tbxScreenName.Text = PluginConfiguration.Instance.BasicHomeScreenName;
             txtThumbLoc.Text = OnlineVideoSettings.Instance.ThumbsDir;
-            tbxThumbAge.Text = OnlineVideoSettings.Instance.ThumbsAge.ToString();
+            tbxThumbAge.Text = PluginConfiguration.Instance.ThumbsAge.ToString();
             txtDownloadDir.Text = OnlineVideoSettings.Instance.DownloadDir;
             txtFilters.Text = PluginConfiguration.Instance.FilterArray != null ? string.Join(",", PluginConfiguration.Instance.FilterArray) : "";
-            chkUseAgeConfirmation.Checked = OnlineVideoSettings.Instance.useAgeConfirmation;
+            chkUseAgeConfirmation.Checked = OnlineVideoSettings.Instance.UseAgeConfirmation;
             tbxPin.Text = PluginConfiguration.Instance.pinAgeConfirmation;
             tbxWebCacheTimeout.Text = OnlineVideoSettings.Instance.CacheTimeout.ToString();
             tbxUtilTimeout.Text = PluginConfiguration.Instance.utilTimeout.ToString();
@@ -164,11 +164,11 @@ namespace OnlineVideos.MediaPortal1
                 String[] lsFilterArray = lsFilter.Split(new char[] { ',' });
                 PluginConfiguration.Instance.FilterArray = lsFilterArray;
                 OnlineVideoSettings.Instance.ThumbsDir = txtThumbLoc.Text;
-                try { OnlineVideoSettings.Instance.ThumbsAge = int.Parse(tbxThumbAge.Text); }
+                try { PluginConfiguration.Instance.ThumbsAge = int.Parse(tbxThumbAge.Text); }
                 catch { }
                 PluginConfiguration.Instance.BasicHomeScreenName = tbxScreenName.Text;
                 OnlineVideoSettings.Instance.DownloadDir = txtDownloadDir.Text;
-                OnlineVideoSettings.Instance.useAgeConfirmation = chkUseAgeConfirmation.Checked;
+                OnlineVideoSettings.Instance.UseAgeConfirmation = chkUseAgeConfirmation.Checked;
                 PluginConfiguration.Instance.pinAgeConfirmation = tbxPin.Text;
                 PluginConfiguration.Instance.useQuickSelect = chkUseQuickSelect.Checked;
                 PluginConfiguration.Instance.rememberLastSearch = chkRememberLastSearch.Checked;

@@ -248,10 +248,10 @@ namespace OnlineVideos.MediaPortal1
             base.OnPageLoad(); // let animations run
 
             // everytime the plugin is shown, after some other window was shown
-            if (OnlineVideoSettings.Instance.ageHasBeenConfirmed && PreviousWindowId == 0)
+            if (OnlineVideoSettings.Instance.AgeConfirmed && PreviousWindowId == 0)
             {
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last                
-                OnlineVideoSettings.Instance.ageHasBeenConfirmed = false;
+                OnlineVideoSettings.Instance.AgeConfirmed = false;
                 Log.Instance.Debug("Age Confirmed set to false.");
                 if (SelectedSite != null && SelectedSite.Settings.ConfirmAge)
                 {
@@ -537,7 +537,7 @@ namespace OnlineVideos.MediaPortal1
                 currentFilter.Clear();
                 if (CurrentState == State.sites)
                 {
-                    SelectedSite = OnlineVideoSettings.Instance.SiteList[GUI_facadeView.SelectedListItem.Path];
+                    SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[GUI_facadeView.SelectedListItem.Path];
                     DisplayCategories(null);
                 }
                 else if (CurrentState == State.categories)
@@ -676,7 +676,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     if (pin == PluginConfiguration.Instance.pinAgeConfirmation)
                     {
-                        OnlineVideoSettings.Instance.ageHasBeenConfirmed = true;
+                        OnlineVideoSettings.Instance.AgeConfirmed = true;
                         HideAndDisable(GUI_btnEnterPin.GetID);
                         DisplaySites();
                         GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
@@ -701,9 +701,9 @@ namespace OnlineVideos.MediaPortal1
                 }
 
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
-                if (OnlineVideoSettings.Instance.ageHasBeenConfirmed)
+                if (OnlineVideoSettings.Instance.AgeConfirmed)
                 {
-                    OnlineVideoSettings.Instance.ageHasBeenConfirmed = false;
+                    OnlineVideoSettings.Instance.AgeConfirmed = false;
                     Log.Instance.Debug("Age Confirmed set to false.");
                     if (SelectedSite != null && SelectedSite.Settings.ConfirmAge)
                     {
@@ -750,7 +750,7 @@ namespace OnlineVideos.MediaPortal1
                     guiUpdater.AutoUpdate(false);
                 }
             }
-            if (OnlineVideoSettings.Instance.ThumbsAge >= 0) ImageDownloader.DeleteOldThumbs();
+            if (PluginConfiguration.Instance.ThumbsAge >= 0) ImageDownloader.DeleteOldThumbs();
             LoadSettings();
             firstLoadDone = true;
         }
@@ -794,7 +794,7 @@ namespace OnlineVideos.MediaPortal1
                 currentVideoView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(PluginConfiguration.CFG_SECTION, PluginConfiguration.CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
                 currentCategoryView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(PluginConfiguration.CFG_SECTION, PluginConfiguration.CFG_CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
             }
-            OnlineVideoSettings.Instance.BuildSiteList();
+            OnlineVideoSettings.Instance.BuildSiteUtilsList();
         }
 
         private void DisplaySites()
@@ -812,16 +812,16 @@ namespace OnlineVideos.MediaPortal1
             GUI_btnOrderBy.SelectedItem = (int)siteOrder;
 
             // get names in right order
-            string[] names = new string[OnlineVideoSettings.Instance.SiteList.Count];
+            string[] names = new string[OnlineVideoSettings.Instance.SiteUtilsList.Count];
             switch (siteOrder)
             {
                 case SiteOrder.Name:
-                    OnlineVideoSettings.Instance.SiteList.Keys.CopyTo(names, 0);
+                    OnlineVideoSettings.Instance.SiteUtilsList.Keys.CopyTo(names, 0);
                     Array.Sort(names);
                     break;
                 case SiteOrder.Language:
                     Dictionary<string, List<string>> sitenames = new Dictionary<string, List<string>>();
-                    foreach (Sites.SiteUtilBase aSite in OnlineVideoSettings.Instance.SiteList.Values)
+                    foreach (Sites.SiteUtilBase aSite in OnlineVideoSettings.Instance.SiteUtilsList.Values)
                     {
                         string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "zzzzz" : aSite.Settings.Language; // puts empty lang at the end
                         List<string> listForLang = null;
@@ -839,7 +839,7 @@ namespace OnlineVideos.MediaPortal1
                     }
                     break;
                 default:
-                    OnlineVideoSettings.Instance.SiteList.Keys.CopyTo(names, 0);
+                    OnlineVideoSettings.Instance.SiteUtilsList.Keys.CopyTo(names, 0);
                     break;
             }
 
@@ -847,9 +847,9 @@ namespace OnlineVideos.MediaPortal1
             currentFilter.StartMatching();
             foreach (string name in names)
             {
-                Sites.SiteUtilBase aSite = OnlineVideoSettings.Instance.SiteList[name];
+                Sites.SiteUtilBase aSite = OnlineVideoSettings.Instance.SiteUtilsList[name];
                 if (aSite.Settings.IsEnabled &&
-                    (!aSite.Settings.ConfirmAge || !OnlineVideoSettings.Instance.useAgeConfirmation || OnlineVideoSettings.Instance.ageHasBeenConfirmed))
+                    (!aSite.Settings.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
                 {
                     OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem(aSite.Settings.Name);
                     loListItem.Label2 = aSite.Settings.Language;
@@ -1649,7 +1649,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                     Video = video,
-                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteList[video.SiteName] : SelectedSite
+                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName] : SelectedSite
                 });
             }
             Play_Step1(currentPlaylist[0], true);
@@ -1764,7 +1764,7 @@ namespace OnlineVideos.MediaPortal1
                 ThumbFile = Utils.GetThumbFile(video.ImageUrl)
             };
 
-            Dictionary<string, DownloadInfo> currentDownloads = ((OnlineVideos.Sites.DownloadedVideoUtil)OnlineVideoSettings.Instance.SiteList[Translation.DownloadedVideos]).currentDownloads;
+            Dictionary<string, DownloadInfo> currentDownloads = ((OnlineVideos.Sites.DownloadedVideoUtil)OnlineVideoSettings.Instance.SiteUtilsList[Translation.DownloadedVideos]).currentDownloads;
 
             if (currentDownloads.ContainsKey(url) || System.IO.File.Exists(downloadInfo.LocalFile))
             {
@@ -1814,7 +1814,7 @@ namespace OnlineVideos.MediaPortal1
 
         private void OnDownloadFileCompleted(DownloadInfo downloadInfo, Exception error)
         {
-            Dictionary<string, DownloadInfo> currentDownloads = ((OnlineVideos.Sites.DownloadedVideoUtil)OnlineVideoSettings.Instance.SiteList[Translation.DownloadedVideos]).currentDownloads;
+            Dictionary<string, DownloadInfo> currentDownloads = ((OnlineVideos.Sites.DownloadedVideoUtil)OnlineVideoSettings.Instance.SiteUtilsList[Translation.DownloadedVideos]).currentDownloads;
             lock (currentDownloads) currentDownloads.Remove(downloadInfo.Url); // make access threadsafe
 
             if (error != null && !downloadInfo.Downloader.Cancelled)
@@ -1897,7 +1897,7 @@ namespace OnlineVideos.MediaPortal1
                     ShowOrderButtons();
                     HideSearchButtons();
                     HideAndDisable(GUI_btnFavorite.GetID);
-                    if (OnlineVideoSettings.Instance.useAgeConfirmation && !OnlineVideoSettings.Instance.ageHasBeenConfirmed)
+                    if (OnlineVideoSettings.Instance.UseAgeConfirmation && !OnlineVideoSettings.Instance.AgeConfirmed)
                         ShowAndEnable(GUI_btnEnterPin.GetID);
                     else
                         HideAndDisable(GUI_btnEnterPin.GetID);
