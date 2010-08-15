@@ -146,7 +146,7 @@ namespace OnlineVideos.Sites
 
         public static string PlayerOmroepTrick(string Url)
         {
-            int aflID = Convert.ToInt32(Url.Split('=')[1]);
+            int aflID = Convert.ToInt32(Url.Split('&')[0].Split('=')[1]);
             CookieContainer cc = new CookieContainer();
             string step1 = SiteUtilBase.GetWebData(Url, cc);
             CookieCollection ccol = cc.GetCookies(new Uri("http://tmp.player.omroep.nl/"));
