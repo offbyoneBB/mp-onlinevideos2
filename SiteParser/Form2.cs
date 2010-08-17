@@ -29,6 +29,7 @@ namespace SiteParser
             foreach (string s in names)
                 insertComboBox.Items.Add(new RegexPart(s, @"(?<" + s + @">[^@@@]*)"));
             insertComboBox.Items.Add(new RegexPart("skip to", @"(?:(?!@@).)*"));
+            insertComboBox.Items.Add(new RegexPart("skip to single char", @"[^@@@]*"));
             insertComboBox.Items.Add(new RegexPart("optional", @"(?:@@@@)?"));
             insertComboBox.SelectedIndex = 0;
             fields = names;
