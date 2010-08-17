@@ -51,24 +51,23 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             List<Category> TotalSubCategories = new List<Category>();
-            Regex npRegex = new Regex(@"href=""(?<url>[^""]*)""\stitle=""Next\spage""");
+            Regex npRegex = new Regex(@".lett[^,]*,\s*(?<url>[^\)]*)\)[^""]*""\stitle=""Next\spage"">");
             string tmpUrl = ((RssLink)parentCategory).Url;
-            string bareUrl = tmpUrl.Split('#')[0];
+            string extra =String.Empty;
+            Match m;
             do
             {
-                ((RssLink)parentCategory).Url = tmpUrl;
+                ((RssLink)parentCategory).Url = tmpUrl + extra;
                 MyDiscoverSubCategories(parentCategory);
                 TotalSubCategories.AddRange(parentCategory.SubCategories);
 
-                string webData = GetWebData(tmpUrl);
-                Match m = npRegex.Match(webData);
+                string webData = GetWebData(tmpUrl+extra);
+                m = npRegex.Match(webData);
                 if (m.Success)
-                    tmpUrl = bareUrl + m.Groups["url"].Value;
-                else
-                    tmpUrl = null;
-            } while (!String.IsNullOrEmpty(tmpUrl));
+                    extra = "&offset=" + m.Groups["url"].Value; ;
+            } while (m.Success);
 
-            ((RssLink)parentCategory).Url = bareUrl;
+            ((RssLink)parentCategory).Url = tmpUrl;
 
             parentCategory.SubCategories = TotalSubCategories;
             return parentCategory.SubCategories.Count;

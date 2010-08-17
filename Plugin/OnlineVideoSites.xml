@@ -1056,12 +1056,12 @@
         <Category xsi:type="RssLink" name="la 2">http://www.rtve.es/alacarta/la2/recomendados/index.html</Category>
       </Categories>
     </Site>
-    <Site name="TVNZOnDemand" util="TVNZOnDemand" agecheck="false" enabled="true" lang="en" player="Internal">
+    <Site name="TVNZOnDemand" util="TVNZOnDemand" agecheck="false" enabled="true" player="Internal" lastUpdated="2010-06-18T17:28:34.5672788+02:00">
       <Description>Television New Zealand: TV One, TV2, TVNZ 6, TVNZ 7</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://tvnz.co.nz/video]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li>\s*<a\s(class="number"\s)?rel="[^"]*"\stitle="[^"]*"\shref="/video-shows(?<url>[^\#]*)\#ondemand">(?<title>[^<]*)<]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://tvnz.co.nz/video-shows{0}#ondemand]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<a\s(class="doubleSize"\s)?rel="nofollow"\stitle="[^"]*"\sonclick="return\sfindAShow.letterSearch\('(?<url>[^']*)'[^>]*>(?<title>[^<]*)<]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://tvnz.co.nz/content/ta_ent_video_shows_group/ta_ent_programme_result_module_skin.xinc?letter={0}]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[class="show"\sid="(extra-)?(?<id>[^"]*)".*?<h5>\s*<a\stitle="(?<title>[^"]*)"\shref="(?<url>[^"]*).*?<li\sclass="type">(?<type>[^<]*)]]></item>
         <item key="videoListRegEx"><![CDATA[<div\sclass="readItem">\s*<[^>]*>\s*<a\shref=".*?-(?<VideoUrl>[^-]*)">\s*<img\s.*?src="(?<ImageUrl>[^"]*)"[^>]*>.*?</h4>\s*<p\sclass="time">(?<Airdate>[^<]*).*?(<strong>(?<Title>[^<]*)</strong>)?\s</p>\s<p>(?<Description>[^<]*)<]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://tvnz.co.nz/content/{0}/ta_ent_smil_skin.smil]]></item>
