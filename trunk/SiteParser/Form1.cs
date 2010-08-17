@@ -27,6 +27,8 @@ namespace SiteParser
 
         System.ComponentModel.BindingList<SiteSettings> SiteSettingsList;
         MySiteUtil generic;
+        List<Category> staticList = null;
+
 
         private void UtilToGui(MySiteUtil util)
         {
@@ -63,6 +65,53 @@ namespace SiteParser
 
             fileUrlRegexTextBox.Text = util.FileUrlRegEx;
             fileUrlFormatStringTextBox.Text = util.FileUrlFormatString;
+
+            treeView1.Nodes.Clear();
+            TreeNode root = treeView1.Nodes.Add("site");
+            if (staticList != null)
+                foreach (Category cat in staticList)
+                {
+                    root.Nodes.Add(cat.Name).Tag = cat;
+                    cat.HasSubCategories = true;
+                }
+
+        }
+
+        private void GuiToUtil(MySiteUtil util)
+        {
+            util.BaseUrl = BaseUrlTextbox.Text;
+
+            util.DynamicCategoriesRegEx = CategoryRegexTextbox.Text;
+            util.DynamicCategoryUrlFormatString = dynamicCategoryUrlFormatTextBox.Text;
+            util.DynamicCategoryUrlDecoding = dynamicCategoryUrlDecodingCheckBox.Checked;
+
+            util.DynamicSubCategoriesRegEx = SubcategorieRegexTextBox.Text;
+            util.DynamicSubCategoryUrlFormatString = SubcategorieUrlFormatTextBox.Text;
+            util.DynamicSubCategoryUrlDecoding = dynamicSubCategoryUrlDecodingCheckBox.Checked;
+
+            util.VideoListRegEx = videoListRegexTextBox.Text;
+            util.VideoListRegExFormatString = videoListRegexFormatTextBox.Text;
+
+            util.VideoThumbFormatString = videoThumbFormatStringTextBox.Text;
+
+            util.NextPageRegEx = nextPageRegExTextBox.Text;
+            util.NextPageRegExUrlFormatString = nextPageRegExUrlFormatStringTextBox.Text;
+            util.NextPageRegExUrlDecoding = nextPageRegExUrlDecodingCheckBox.Checked;
+
+            util.PrevPageRegEx = prevPageRegExTextBox.Text;
+            util.PrevPageRegExUrlFormatString = prevPageRegExUrlFormatStringTextBox.Text;
+            util.PrevPageRegExUrlDecoding = prevPageRegExUrlDecodingCheckBox.Checked;
+
+            util.VideoUrlRegEx = videoUrlRegExTextBox.Text;
+            util.VideoUrlFormatString = videoUrlFormatStringTextBox.Text;
+            util.VideoListUrlDecoding = videoListUrlDecodingCheckBox.Checked;
+            util.VideoUrlDecoding = videoUrlDecodingCheckBox.Checked;
+
+            util.PlaylistUrlRegEx = playlistUrlRegexTextBox.Text;
+            util.PlaylistUrlFormatString = playlistUrlFormatStringTextBox.Text;
+
+            util.FileUrlRegEx = fileUrlRegexTextBox.Text;
+            util.FileUrlFormatString = fileUrlFormatStringTextBox.Text;
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -124,9 +173,7 @@ namespace SiteParser
         private void GetCategoriesButton_Click(object sender, EventArgs e)
         {
             //get categories
-            generic.DynamicCategoriesRegEx = CategoryRegexTextbox.Text;
-            generic.DynamicCategoryUrlFormatString = dynamicCategoryUrlFormatTextBox.Text;
-            generic.DynamicCategoryUrlDecoding = dynamicCategoryUrlDecodingCheckBox.Checked;
+            GuiToUtil(generic);
             if (generic.DynamicCategoriesRegEx != null)
             {
                 generic.Settings.Categories.Clear();
@@ -161,9 +208,7 @@ namespace SiteParser
         private void GetSubCategoriesButton_Click(object sender, EventArgs e)
         {
             //subcategories
-            generic.DynamicSubCategoriesRegEx = SubcategorieRegexTextBox.Text;
-            generic.DynamicSubCategoryUrlFormatString = SubcategorieUrlFormatTextBox.Text;
-            generic.DynamicSubCategoryUrlDecoding = dynamicSubCategoryUrlDecodingCheckBox.Checked;
+            GuiToUtil(generic);
 
             Category parentCat = GetTreeViewSelectedNode() as Category;
             if (parentCat != null && parentCat.HasSubCategories)
@@ -200,18 +245,7 @@ namespace SiteParser
         private void GetVideoListButton_Click(object sender, EventArgs e)
         {
             //videolist
-            generic.VideoListRegEx = videoListRegexTextBox.Text;
-            generic.VideoListRegExFormatString = videoListRegexFormatTextBox.Text;
-            generic.VideoListUrlDecoding = videoListUrlDecodingCheckBox.Checked;
-            generic.VideoThumbFormatString = videoThumbFormatStringTextBox.Text;
-
-            generic.NextPageRegEx = nextPageRegExTextBox.Text;
-            generic.NextPageRegExUrlFormatString = nextPageRegExUrlFormatStringTextBox.Text;
-            generic.NextPageRegExUrlDecoding = nextPageRegExUrlDecodingCheckBox.Checked;
-
-            generic.PrevPageRegEx = prevPageRegExTextBox.Text;
-            generic.PrevPageRegExUrlFormatString = prevPageRegExUrlFormatStringTextBox.Text;
-            generic.PrevPageRegExUrlDecoding = prevPageRegExUrlDecodingCheckBox.Checked;
+            GuiToUtil(generic);
 
             Category parentCat = GetTreeViewSelectedNode() as Category;
             if (parentCat != null)
@@ -284,13 +318,8 @@ namespace SiteParser
         private void GetVideoUrlButton_Click(object sender, EventArgs e)
         {
             //VideoUrl
-            generic.VideoUrlRegEx = videoUrlRegExTextBox.Text;
-            generic.VideoUrlDecoding = videoUrlDecodingCheckBox.Checked;
-            generic.VideoUrlFormatString = videoUrlFormatStringTextBox.Text;
-            generic.PlaylistUrlRegEx = playlistUrlRegexTextBox.Text;
-            generic.PlaylistUrlFormatString = playlistUrlFormatStringTextBox.Text;
-            generic.FileUrlRegEx = fileUrlRegexTextBox.Text;
-            generic.FileUrlFormatString = fileUrlFormatStringTextBox.Text;
+            GuiToUtil(generic);
+
             VideoInfo video = GetTreeViewSelectedNode() as VideoInfo;
             if (video != null)
                 ResultUrlTextBox.Text = generic.getUrl(video);
@@ -337,6 +366,13 @@ namespace SiteParser
             // Load settings from selected site into TextBoxes
             SiteSettings siteSettings = comboBoxSites.SelectedItem as SiteSettings;
             generic.Initialize(siteSettings);
+            if (staticList == null)
+            {
+                staticList = new List<Category>();
+                foreach (Category cat in generic.Settings.Categories)
+                    staticList.Add(cat);
+            }
+
             UtilToGui(generic);
         }
 
@@ -349,6 +385,7 @@ namespace SiteParser
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            GuiToUtil(generic);
             Configuration.AddConfigurationValues(generic, generic.Settings);
 
             XmlSerializer ser = new XmlSerializer(typeof(SiteSettings));
