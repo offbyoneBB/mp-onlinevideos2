@@ -727,7 +727,7 @@ namespace OnlineVideos.MediaPortal1
 
             GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
             Translator.TranslateSkin();
-            ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); // add a special reversed proxy handler for rtmp
+            
             if (PluginConfiguration.Instance.updateOnStart != false)
             {
                 bool? doUpdate = PluginConfiguration.Instance.updateOnStart;

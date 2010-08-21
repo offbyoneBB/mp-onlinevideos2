@@ -13,8 +13,7 @@ namespace OnlineVideos.MediaPortal1
 
         public string BasicHomeScreenName = "Online Videos";
         public int wmpbuffer = 5000;  // milliseconds
-        public int playbuffer = 2;   // percent
-        public int utilTimeout = 15;  // seconds
+        public int playbuffer = 2;   // percent        
         public int ThumbsAge = 100; // days
         public bool useQuickSelect = false;
         public string[] FilterArray;
@@ -98,12 +97,12 @@ namespace OnlineVideos.MediaPortal1
 
                     ovsconf.CacheTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, ovsconf.CacheTimeout);                    
                     ovsconf.UseAgeConfirmation = settings.GetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, ovsconf.UseAgeConfirmation);
+                    ovsconf.UtilTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, ovsconf.UtilTimeout);
 
                     // set an almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
                     pinAgeConfirmation = settings.GetValueAsString(CFG_SECTION, CFG_PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
                     useQuickSelect = settings.GetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
                     rememberLastSearch = settings.GetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);                    
-                    utilTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
                     wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                     playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
                     email = settings.GetValueAsString(CFG_SECTION, CFG_EMAIL, "");
@@ -156,7 +155,7 @@ namespace OnlineVideos.MediaPortal1
                     settings.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
                     settings.SetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);
                     settings.SetValue(CFG_SECTION, CFG_CACHE_TIMEOUT, ovsconf.CacheTimeout);
-                    settings.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, utilTimeout);
+                    settings.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, ovsconf.UtilTimeout);
                     settings.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                     settings.SetValue(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
                     if (FilterArray != null && FilterArray.Length > 0) settings.SetValue(CFG_SECTION, CFG_FILTER, string.Join(",", FilterArray));

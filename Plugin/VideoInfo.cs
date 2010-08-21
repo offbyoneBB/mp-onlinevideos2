@@ -7,7 +7,7 @@ using RssToolkit.Rss;
 
 namespace OnlineVideos
 {
-    public class VideoInfo
+    public class VideoInfo: System.ComponentModel.INotifyPropertyChanged
     {
         public string Title { get; set; }
         public string Title2 { get; set; }
@@ -315,5 +315,11 @@ namespace OnlineVideos
         }      
 
         #endregion
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null) PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
     }
 }

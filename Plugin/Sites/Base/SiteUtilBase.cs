@@ -56,7 +56,8 @@ namespace OnlineVideos.Sites
                             Log.Error("Could not set Configuration Value: {0}. Error: {1}", field.Name, ex.Message);
                         }
                     }
-                    else if (((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
+                    else if (((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration"
+                             && OnlineVideoSettings.Instance.UserStore != null)
                     {
                         string value = OnlineVideoSettings.Instance.UserStore.GetValue(string.Format("{0}.{1}", Utils.GetSaveFilename(siteSettings.Name).Replace(' ', '_'), field.Name));
                         if (value != null)
