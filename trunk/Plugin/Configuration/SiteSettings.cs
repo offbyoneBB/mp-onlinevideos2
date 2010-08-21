@@ -88,7 +88,7 @@ namespace OnlineVideos
     [Serializable]
     [XmlInclude(typeof(RssLink))]
     [XmlInclude(typeof(Group))]
-    public class Category : IComparable<Category>
+    public class Category : IComparable<Category>, INotifyPropertyChanged
     {
         [DataMember(Name="name")]
         [XmlAttribute("name")]
@@ -127,6 +127,14 @@ namespace OnlineVideos
         }
 
         #endregion
+
+        #region INotifyPropertyChanged Member
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null) PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
     }
 
     [DataContract]
@@ -138,7 +146,7 @@ namespace OnlineVideos
         public string Url { get; set; }
         
         [XmlIgnore]
-        public uint EstimatedVideoCount  { get; set; }
+        public uint? EstimatedVideoCount  { get; set; }
     }
 
     [DataContract]

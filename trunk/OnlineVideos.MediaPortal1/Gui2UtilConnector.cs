@@ -35,7 +35,7 @@ namespace OnlineVideos.MediaPortal1
         string _CurrentTaskDescription = null;
         Thread backgroundThread = null;
         bool abortedByUser = false;
-        System.Timers.Timer timeoutTimer = new System.Timers.Timer(PluginConfiguration.Instance.utilTimeout * 1000) { AutoReset = false };
+        System.Timers.Timer timeoutTimer = new System.Timers.Timer(OnlineVideoSettings.Instance.UtilTimeout * 1000) { AutoReset = false };
 
         public void StopBackgroundTask()
         {
@@ -76,7 +76,7 @@ namespace OnlineVideos.MediaPortal1
                 try
                 {
                     GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor in MediaPortal
-                    DateTime end = DateTime.Now.AddSeconds(PluginConfiguration.Instance.utilTimeout); // point in time until we wait for the execution of this task
+                    DateTime end = DateTime.Now.AddSeconds(OnlineVideoSettings.Instance.UtilTimeout); // point in time until we wait for the execution of this task
 #if DEBUG
                     if (System.Diagnostics.Debugger.IsAttached) end = DateTime.Now.AddYears(1); // basically disable timeout when debugging
 #endif

@@ -42,7 +42,7 @@ namespace OnlineVideos.MediaPortal1
             chkUseAgeConfirmation.Checked = OnlineVideoSettings.Instance.UseAgeConfirmation;
             tbxPin.Text = PluginConfiguration.Instance.pinAgeConfirmation;
             tbxWebCacheTimeout.Text = OnlineVideoSettings.Instance.CacheTimeout.ToString();
-            tbxUtilTimeout.Text = PluginConfiguration.Instance.utilTimeout.ToString();
+            tbxUtilTimeout.Text = OnlineVideoSettings.Instance.UtilTimeout.ToString();
             tbxWMPBuffer.Text = PluginConfiguration.Instance.wmpbuffer.ToString();
             udPlayBuffer.SelectedItem = PluginConfiguration.Instance.playbuffer.ToString();
             chkUseQuickSelect.Checked = PluginConfiguration.Instance.useQuickSelect;
@@ -176,7 +176,7 @@ namespace OnlineVideos.MediaPortal1
                 int.TryParse(udPlayBuffer.SelectedItem.ToString(), out PluginConfiguration.Instance.playbuffer);
                 try { OnlineVideoSettings.Instance.CacheTimeout = int.Parse(tbxWebCacheTimeout.Text); }
                 catch { }
-                try { PluginConfiguration.Instance.utilTimeout = int.Parse(tbxUtilTimeout.Text); }
+                try { OnlineVideoSettings.Instance.UtilTimeout = int.Parse(tbxUtilTimeout.Text); }
                 catch { }
                 if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) PluginConfiguration.Instance.updateOnStart = null;
                 else PluginConfiguration.Instance.updateOnStart = chkDoAutoUpdate.Checked;

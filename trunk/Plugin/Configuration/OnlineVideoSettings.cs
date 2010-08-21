@@ -25,6 +25,7 @@ namespace OnlineVideos
         public bool UseAgeConfirmation = true; // enable pin by default -> child protection
         public bool AgeConfirmed = false;
         public int CacheTimeout = 30; // minutes
+        public int UtilTimeout = 15;  // seconds
         public CultureInfo Locale;
         public BindingList<SiteSettings> SiteSettingsList { get; protected set; }
         public Dictionary<string, Sites.SiteUtilBase> SiteUtilsList { get; protected set; }
@@ -49,21 +50,23 @@ namespace OnlineVideos
             SiteSettingsList = new BindingList<SiteSettings>();
             SiteUtilsList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
             VideoExtensions = new SortedList<string, bool>();
+            // add a special reversed proxy handler for rtmp
+            ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); 
         }
 
         public void LoadSites()
         {
             // create the configured directories
-            string iconDir = Path.Combine(ThumbsDir, @"Icons\");
-            if (!Directory.Exists(iconDir)) Directory.CreateDirectory(iconDir);
-            string bannerDir = Path.Combine(ThumbsDir, @"Banners\");
-            if (!Directory.Exists(bannerDir)) Directory.CreateDirectory(bannerDir);
-            try { if (!Directory.Exists(DllsDir)) Directory.CreateDirectory(DllsDir); }
+            string iconDir = string.IsNullOrEmpty(ThumbsDir) ? string.Empty : Path.Combine(ThumbsDir, @"Icons\");
+            if (!string.IsNullOrEmpty(iconDir) && !Directory.Exists(iconDir)) Directory.CreateDirectory(iconDir);
+            string bannerDir = string.IsNullOrEmpty(ThumbsDir) ? string.Empty : Path.Combine(ThumbsDir, @"Banners\");
+            if (!string.IsNullOrEmpty(bannerDir) && !Directory.Exists(bannerDir)) Directory.CreateDirectory(bannerDir);
+            try { if (!string.IsNullOrEmpty(DllsDir) && !Directory.Exists(DllsDir)) Directory.CreateDirectory(DllsDir); }
             catch { /* might fail due to UAC */ }
 
-            string filename = Path.Combine(ConfigDir, SitesFileName);
+            string filename = string.IsNullOrEmpty(ConfigDir) ? string.Empty : Path.Combine(ConfigDir, SitesFileName);
             Stream sitesStream = null;
-            if (!File.Exists(filename))
+            if (string.IsNullOrEmpty(filename) || !File.Exists(filename))
             {
                 Log.Info("ConfigFile \"{0}\" was not found. Using embedded resource.", filename);
                 sitesStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.OnlineVideoSites.xml");
@@ -81,7 +84,7 @@ namespace OnlineVideos
         void LoadScriptSites()
         {
             Log.Info("Loading script files");
-            if (Directory.Exists(Path.Combine(ConfigDir, "scripts\\OnlineVideos")))
+            if (!string.IsNullOrEmpty(ConfigDir) && Directory.Exists(Path.Combine(ConfigDir, "scripts\\OnlineVideos")))
             {
                 FileInfo[] fileInfos = new DirectoryInfo(Path.Combine(ConfigDir, "scripts\\OnlineVideos")).GetFiles("*.xml");
                 foreach (var fileInfo in fileInfos)
@@ -138,7 +141,7 @@ namespace OnlineVideos
         public void SaveSites()
         {
             // only save if there are sites - otherwise an error might have occured on LoadSites
-            if (SiteSettingsList != null && SiteSettingsList.Count > 0)
+            if (SiteSettingsList != null && SiteSettingsList.Count > 0 && !string.IsNullOrEmpty(ConfigDir))
             {
                 using (FileStream fso = new FileStream(Path.Combine(ConfigDir, SitesFileName), FileMode.Create))
                 {

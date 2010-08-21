@@ -879,7 +879,7 @@
         <Category xsi:type="RssLink" name="Other">http://api.justin.tv/api/stream/list.xml?category=other</Category>
       </Categories>
     </Site>
-    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" player="WMP" lang="--">
+    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" lang="--" player="WMP">
       <Description>Collection of live music streams.</Description>
       <Categories>
         <Category xsi:type="Group" name="RockTelevision" thumb="http://www.tv-port.net/wp-content/uploads/2009/05/rock-tv.jpg">
@@ -926,7 +926,7 @@
         <Category xsi:type="RssLink" name="PodSurf">http://www.podsurf.tv/podsurftv.xml</Category>
       </Categories>
     </Site>
-    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sw">
+    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sv">
       <Description>Se dina favoritprogram när du vill i SVT Play - fri television på nätet.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://svtplay.se/alfabetisk]]></item>
@@ -935,7 +935,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sw">
+    <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
       <Categories />
     </Site>
     <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="false" lang="ru">
@@ -1086,11 +1086,11 @@
       <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
       <Categories />
     </Site>
-    <Site name="TvGemist" util="TvGemist" agecheck="false" enabled="true" player="WMP" lang="nl">
+    <Site name="TvGemist" util="TvGemist" agecheck="false" enabled="true" lang="nl" player="WMP">
       <Description>Alle uitzendingen van Nederland 1,2,3, Rtl 4,5,6,7,8, Net5, Sbs6 en Veronica</Description>
       <Categories />
     </Site>
-    <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" player="WMP" lang="nl">
+    <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" lang="nl" player="WMP">
       <Description>TV Tutti: alle programma’s van Uitzending Gemist, RTL, SBS6, Net5, Veronica</Description>
       <Categories>
         <Category xsi:type="RssLink" name="All">http://tvtutti.nl/alle/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
@@ -1113,7 +1113,7 @@
     <Site name="TurboNick" util="TurboNick" agecheck="false" enabled="true" lang="nl">
       <Categories />
     </Site>
-    <Site name="Watch-Series" util="WatchSeries" agecheck="false" enabled="true" player="Internal" lang="en" lastUpdated="2010-06-18T23:41:46.4703588+02:00">
+    <Site name="Watch-Series" util="WatchSeries" agecheck="false" enabled="true" lang="en" player="Internal" lastUpdated="2010-06-18T23:41:46.4703588+02:00">
       <Description>Watch tv series online for free, full episodes.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
@@ -1126,7 +1126,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="Watch-Movies" util="WatchSeries" agecheck="false" enabled="true" player="Internal" lang="en">
+    <Site name="Watch-Movies" util="WatchSeries" agecheck="false" enabled="true" lang="en" player="Internal">
       <Description>Watch Movies Online For Free, Watch Latest Movies Online For Free, Latest Hollywood Movies.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"[^>]*>(?<title>[^<]*)</a></li>]]></item>
@@ -1139,7 +1139,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" player="WMP" lang="nl">
+    <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" lang="nl" player="WMP">
       <Categories />
     </Site>
     <Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
