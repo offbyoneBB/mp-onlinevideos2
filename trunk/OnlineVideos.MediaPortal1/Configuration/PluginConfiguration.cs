@@ -4,6 +4,7 @@ using System.IO;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Util;
 
 namespace OnlineVideos.MediaPortal1
 {
@@ -70,6 +71,13 @@ namespace OnlineVideos.MediaPortal1
             ovsconf.ThumbsDir = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\";
             ovsconf.ConfigDir = Config.GetFolder(Config.Dir.Config);
             ovsconf.DllsDir = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
+            ovsconf.ThumbsResizeOptions = new OnlineVideos.ImageDownloader.ResizeOptions()
+            {
+                MaxSize = (int)Thumbs.ThumbLargeResolution,
+                Compositing = Thumbs.Compositing,
+                Interpolation = Thumbs.Interpolation,
+                Smoothing = Thumbs.Smoothing 
+            };
             try
             {
                 ovsconf.Locale = CultureInfo.CreateSpecificCulture(GUILocalizeStrings.GetCultureName(GUILocalizeStrings.CurrentLanguage()));

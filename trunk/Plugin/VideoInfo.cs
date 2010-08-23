@@ -30,6 +30,7 @@ namespace OnlineVideos
         public VideoInfo()
         {
             Title = string.Empty;
+            Title2 = string.Empty;
             Description = string.Empty;
             VideoUrl = string.Empty;
             ImageUrl = string.Empty;
