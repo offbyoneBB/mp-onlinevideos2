@@ -16,6 +16,7 @@ namespace OnlineVideos
         public IUserStore UserStore;
         public IFavoritesDatabase FavDB;
         public ILog Logger;
+        public ImageDownloader.ResizeOptions ThumbsResizeOptions;
         public string ConfigDir;
         public string ThumbsDir;        
         public string DownloadDir;
@@ -50,6 +51,7 @@ namespace OnlineVideos
             SiteSettingsList = new BindingList<SiteSettings>();
             SiteUtilsList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
             VideoExtensions = new SortedList<string, bool>();
+            ThumbsResizeOptions = ImageDownloader.ResizeOptions.Default;
             // add a special reversed proxy handler for rtmp
             ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); 
         }

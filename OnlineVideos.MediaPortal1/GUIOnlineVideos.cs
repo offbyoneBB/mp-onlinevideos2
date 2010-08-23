@@ -750,7 +750,30 @@ namespace OnlineVideos.MediaPortal1
                     guiUpdater.AutoUpdate(false);
                 }
             }
-            if (PluginConfiguration.Instance.ThumbsAge >= 0) ImageDownloader.DeleteOldThumbs();
+            if (PluginConfiguration.Instance.ThumbsAge >= 0)
+            {
+                GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+                if (dlgPrgrs != null)
+                {
+                    dlgPrgrs.Reset();
+                    dlgPrgrs.DisplayProgressBar = true;
+                    dlgPrgrs.ShowWaitCursor = false;
+                    dlgPrgrs.DisableCancel(false);
+                    dlgPrgrs.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+                    dlgPrgrs.StartModal(GUIOnlineVideos.WindowId);
+                    dlgPrgrs.SetLine(1, Translation.DeletingOldThumbs);
+                    dlgPrgrs.Percentage = 0;
+                }
+                new System.Threading.Thread(delegate()
+                {
+                    ImageDownloader.DeleteOldThumbs(PluginConfiguration.Instance.ThumbsAge, r =>
+                        {
+                            dlgPrgrs.Percentage = r;
+                            return dlgPrgrs.ShouldRenderLayer();
+                        });
+                    if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, Translation.Done); dlgPrgrs.Close(); }
+                }) { Name = "OnlineVideosThumbnail", IsBackground = true }.Start();
+            }
             LoadSettings();
             firstLoadDone = true;
         }
@@ -976,11 +999,7 @@ namespace OnlineVideos.MediaPortal1
                         loListItem.IsFolder = true;
                         loListItem.ItemId = i + 1;
                         MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
-                        if (!string.IsNullOrEmpty(loCat.Thumb))
-                        {
-                            numCategoriesWithThumb++;
-                            loListItem.ThumbUrl = loCat.Thumb;
-                        }
+                        if (!string.IsNullOrEmpty(loCat.Thumb)) numCategoriesWithThumb++;
                         loListItem.Item = loCat;
                         loListItem.OnItemSelected += OnCategorySelected;
                         if (loCat == selectedCategory) categoryIndexToSelect = GUI_facadeView.Count; // select the category that was previously selected
@@ -1004,7 +1023,7 @@ namespace OnlineVideos.MediaPortal1
                     }
                 }
 
-                if (numCategoriesWithThumb > 0) ImageDownloader.GetImages(GUI_facadeView);
+                if (numCategoriesWithThumb > 0) ImageDownloader.GetImages<Category>(categories);
                 if (numCategoriesWithThumb <= categories.Count / 2) suggestedView = GUIFacadeControl.ViewMode.List;
             }
 
@@ -1028,10 +1047,10 @@ namespace OnlineVideos.MediaPortal1
                     CurrentState = State.details;
 
                     // make the Thumb of the VideoInfo available to the details view
-                    if (string.IsNullOrEmpty(foVideo.ThumbnailImage))
+                    if (string.IsNullOrEmpty(foVideo.ImageUrl))
                         GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", string.Empty);
                     else
-                        GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", foVideo.ThumbnailImage);
+                        GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", foVideo.ImageUrl);
 
                     SetVideosToInfoList(result as List<VideoInfo>);
                 }
@@ -1278,14 +1297,10 @@ namespace OnlineVideos.MediaPortal1
 
                 if (listItem.Item == selectedVideo) selectedVideoIndex = GUI_facadeView.Count - 1;
 
-                if (!string.IsNullOrEmpty(videoInfo.ImageUrl))
-                {
-                    imageHash[videoInfo.ImageUrl] = true;
-                    listItem.ThumbUrl = videoInfo.ImageUrl;
-                }
+                if (!string.IsNullOrEmpty(videoInfo.ImageUrl)) imageHash[videoInfo.ImageUrl] = true;
             }
             // fall back to list view if there are no items with thumbs
-            if (imageHash.Count > 0) ImageDownloader.GetImages(GUI_facadeView);
+            if (imageHash.Count > 0) ImageDownloader.GetImages<VideoInfo>(videos);
             suggestedView = null;
             if (imageHash.Count == 0 || (videos.Count > 1 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.ViewMode.List;
 
@@ -2242,7 +2257,7 @@ namespace OnlineVideos.MediaPortal1
                 else if (!string.IsNullOrEmpty(video.Title))
                     GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title + (string.IsNullOrEmpty(quality) ? "" : quality));
                 if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
-                if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
+                if (!string.IsNullOrEmpty(video.ImageUrl)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ImageUrl);
                 if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Length);
             }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
         }
