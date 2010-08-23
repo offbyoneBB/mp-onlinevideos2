@@ -14,11 +14,13 @@
   <string Field="AutomaticUpdate">Aggiornamento automatico</string>
   <string Field="AutomaticUpdateDisabled">Aggiornamento automatico disabilitato.</string>
   <string Field="Broken">Rovinato</string>
-  <string Field="Buffered">bufferizzato</string>
+  <string Field="Buffered">Bufferizzato</string>
+  <string Field="Cancel">Cancellato</string>
   <string Field="Category">Categoria</string>
   <string Field="Categories">Categorie</string>
   <string Field="Creator">Autore</string>
   <string Field="CheckingForPluginUpdate">controllo in corso per nuove versioni dei plugin</string>
+  <string Field="Date">Data</string>
   <string Field="DateOfRelease">Data di pubblicazione</string>
   <string Field="Directors">Registi</string>
   <string Field="Download">Download</string>
@@ -27,6 +29,7 @@
   <string Field="DownloadFailed">Download fallito: {0}</string>
   <string Field="DownloadCancelled">Download cancellato</string>
   <string Field="DownloadComplete">Download completato</string>
+  <string Field="DownloadStarted">Download cominciato</string>
   <string Field="DownloadedVideos">Video scaricati</string>
   <string Field="Delete">Cancella</string>
   <string Field="Default">Default</string>
@@ -83,6 +86,7 @@
   <string Field="SearchResults">Risultati ricerca</string>
   <string Field="SelectSource">Selezionare sorgente</string>
   <string Field="Sites">Siti</string>
+  <string Field="Size">Dimensione</string>
   <string Field="SortOptions">Opzioni di ordinamento</string>
   <string Field="Search">Ricerca</string>
   <string Field="SetDownloadFolderInConfig">Selezionare una cartella per il download nel pannello di configurazione!</string>
