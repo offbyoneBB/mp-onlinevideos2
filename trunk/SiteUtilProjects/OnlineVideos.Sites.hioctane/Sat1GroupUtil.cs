@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Collections;
-using System.Text.RegularExpressions;
 using System.ComponentModel;
 using Newtonsoft.Json.Linq;
 
@@ -167,10 +164,10 @@ namespace OnlineVideos.Sites
                                             string suffix = jEntry.Value.Value<string>("flashSuffix");
                                             string videoType = jEntry.Value.Value<string>("video_type");
                                             string broadcast = jEntry.Value.Value<string>("broadcast_date");
-                                            video.Title2 = videoType + " (" + broadcast + ")";
+                                            video.Title2 = videoType;
 
-                                            if (suffix != null && suffix.Contains("mp4")) // todo : es gibt auch avi
-                                                video.VideoUrl = rtmpBase + geoblock + "mp4:" + filename + "f4v";
+                                            if (suffix != null && suffix.Contains("mp4"))
+                                                video.VideoUrl = rtmpBase + geoblock + "mp4:" + filename + "mp4";
                                             else
                                                 video.VideoUrl = rtmpBase + geoblock + filename + "flv";
                                         }
@@ -193,47 +190,32 @@ namespace OnlineVideos.Sites
                                                                                 
                                         break;
                                     case "name":
-                                        if (!string.IsNullOrEmpty(video.Title) && !string.IsNullOrEmpty(video.VideoUrl))
-                                        {
-                                            videos.Add(video);
-                                            video = new VideoInfo();
-                                        }
                                         video.Title = jEntry.Value.Value<string>();
                                         break;
                                     case "playback_duration":
-                                        if (!string.IsNullOrEmpty(video.Length) && !string.IsNullOrEmpty(video.VideoUrl))
-                                        {
-                                            videos.Add(video);
-                                            video = new VideoInfo();
-                                        }
                                         video.Length = jEntry.Value.Value<string>();                                        
                                         break;
                                     case "visibility":
                                         break;
                                     case "description":
-                                        if (!string.IsNullOrEmpty(video.Description) && !string.IsNullOrEmpty(video.VideoUrl) && video.Description.Contains(jEntry.Value.Value<string>()))
-                                        {
-                                            videos.Add(video);
-                                            video = new VideoInfo();
-                                        }
                                         video.Description = jEntry.Value.Value<string>() + video.Description;
                                         break;
                                     case "thumbnail":
-                                        if (!string.IsNullOrEmpty(video.ImageUrl) && !string.IsNullOrEmpty(video.VideoUrl))
-                                        {
-                                            videos.Add(video);
-                                            video = new VideoInfo();
-                                        }
                                         video.ImageUrl = jEntry.Value.Value<string>("thumb_url");
                                         break;
                                 }
                             }
-                            
-                        }
-                        if (!string.IsNullOrEmpty(video.Title) && !string.IsNullOrEmpty(video.VideoUrl))
-                        {
-                            videos.Add(video);
-                            video = new VideoInfo();
+                            if (!string.IsNullOrEmpty(video.Title) && !string.IsNullOrEmpty(video.VideoUrl))
+                            {
+
+                                if (!string.IsNullOrEmpty(video.Title2))
+                                {
+                                    video.Title2 = video.Title2.Replace("short", "clip");
+                                    video.Title = video.Title + " (" + video.Title2 + ")";
+                                }
+                                videos.Add(video);
+                                video = new VideoInfo();
+                            }
                         }
                     }
                 }
