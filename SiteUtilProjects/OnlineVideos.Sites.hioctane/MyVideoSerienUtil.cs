@@ -12,7 +12,7 @@ namespace OnlineVideos.Sites
             videoId = videoId.Substring(videoId.LastIndexOf("/") + 1);
             
             string data = GetWebData(video.VideoUrl);
-            string regex = @"/de/(?<url>.+)/thumbs/" + videoId;
+            string regex = @"/de/(?<url>[^t]+)thumbs/" + videoId;
             Match m = Regex.Match(data, regex);
             if (m.Success)
             {
@@ -20,7 +20,7 @@ namespace OnlineVideos.Sites
                 m = Regex.Match(data, @"addVariable\('SERVER','(?<url>[^']+)'\)");
                 if(m.Success){
                     string server = m.Groups["url"].Value;
-                    return "http://" + server + "/" + part + "/" + videoId + ".flv";
+                    return "http://" + server + "/" + part + videoId + ".flv";
                 }
             }
             return null;
