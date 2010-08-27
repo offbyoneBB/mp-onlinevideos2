@@ -444,6 +444,12 @@ namespace RTMP_LIB
                 EncodeString(enc, Link.auth);
             }
 
+            // add aditional arbitrary AMF connection properties
+            if (Link.extras != null)
+            {
+                foreach (AMFObjectProperty aProp in Link.extras.m_properties) aProp.Encode(enc);
+            }
+
             Array.Copy(enc.ToArray(), packet.m_body, enc.Count);
             packet.m_nBodySize = (uint)enc.Count;
             
@@ -688,27 +694,7 @@ namespace RTMP_LIB
             packet.m_body = enc.ToArray();
 
             return SendRTMP(packet);
-        }
-
-        bool SendAuth()
-        {
-            RTMPPacket packet = new RTMPPacket();
-            packet.m_nChannel = 0x03;   // control channel (invoke)
-            packet.HeaderType = HeaderType.Large;
-            packet.PacketType = PacketType.Invoke;
-
-            Logger.Log("Sending " + Link.authObjName);
-            List<byte> enc = new List<byte>();
-            EncodeString(enc, Link.authObjName);
-            EncodeNumber(enc, ++m_numInvokes);
-            enc.Add(0x05); // NULL
-            EncodeString(enc, Link.auth);            
-
-            packet.m_nBodySize = (uint)enc.Count;
-            packet.m_body = enc.ToArray();
-
-            return SendRTMP(packet, false);
-        }
+        }        
 
         bool SendRTMP(RTMPPacket packet) { return SendRTMP(packet, true); }
         bool SendRTMP(RTMPPacket packet, bool queue)

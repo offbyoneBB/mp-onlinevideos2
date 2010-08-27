@@ -18,7 +18,7 @@ namespace RTMP_LIB
 
     public class AMFObject
     {
-        List<AMFObjectProperty> m_properties = new List<AMFObjectProperty>();
+        public List<AMFObjectProperty> m_properties = new List<AMFObjectProperty>();
 
         public AMFObject()
         {
@@ -144,6 +144,13 @@ namespace RTMP_LIB
         public void Reset()
         {
             m_properties.Clear();
+        }
+
+        public void Encode(List<byte> output)
+        {
+            output.Add((byte)AMFDataType.AMF_OBJECT);
+            foreach (AMFObjectProperty aProp in m_properties) aProp.Encode(output);
+            RTMP.EncodeInt24(output, (int)AMFDataType.AMF_OBJECT_END);
         }
 
     }
