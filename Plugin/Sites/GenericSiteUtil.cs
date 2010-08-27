@@ -198,9 +198,7 @@ namespace OnlineVideos.Sites
         {
             // Get playbackoptins back from favorite video if they were saved in Other object
             if (!string.IsNullOrEmpty(video.SiteName) && video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
-            {
                 video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
-            }
 
             string resultUrl = video.VideoUrl;
             // 1. do some formatting with the videoUrl
@@ -218,14 +216,11 @@ namespace OnlineVideos.Sites
                 }
             }
             else
-            {
                 if (!string.IsNullOrEmpty(videoUrlFormatString)) resultUrl = string.Format(videoUrlFormatString, resultUrl);
-            }
+
             // 2. create an absolute Uri using the baseUrl if the current one is not and a baseUrl was given
             if (!string.IsNullOrEmpty(baseUrl) && !Uri.IsWellFormedUriString(resultUrl, UriKind.Absolute))
-            {
                 resultUrl = new Uri(new Uri(baseUrl), resultUrl).AbsoluteUri;
-            }
 
             return resultUrl;
         }
@@ -238,18 +233,16 @@ namespace OnlineVideos.Sites
                 string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8Encoding);
                 Match matchPlaylistUrl = regEx_PlaylistUrl.Match(dataPage);
                 if (matchPlaylistUrl.Success)
-                {
                     return string.Format(playlistUrlFormatString, HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
-                }
-                else return ""; // if no match, return empty url -> error
+                else return String.Empty; // if no match, return empty url -> error
             }
             else
                 return resultUrl;
         }
 
-        public Dictionary<string, string> GetPlaybackOptions(string playlistFileUrl)
+        public Dictionary<string, string> GetPlaybackOptions(string playlistUrl)
         {
-            string dataPage = GetWebData(playlistFileUrl, GetCookie(), forceUTF8Encoding);
+            string dataPage = GetWebData(playlistUrl, GetCookie(), forceUTF8Encoding);
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             Match matchFileUrl = regEx_FileUrl.Match(dataPage);
