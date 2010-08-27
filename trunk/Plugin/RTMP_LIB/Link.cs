@@ -13,14 +13,13 @@ namespace RTMP_LIB
         public string playpath;
         public string subscribepath;
 
-        public string authObjName;
-
         public string tcUrl;
         public string swfUrl;
         public string pageUrl;
         public string app;
         public string auth;
         public string token;
+        public AMFObject extras;
 
         /// <summary>
         /// How to build the swf Hash:
@@ -133,6 +132,103 @@ namespace RTMP_LIB
             }
 
             return result;
+        }
+
+        public static AMFObject ParseAMF(string amfString)
+        {
+            int depth = 0;
+
+            AMFObject obj = new AMFObject();
+
+            string[] args = amfString.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string arg in args)
+            {
+                AMFObjectProperty prop = new AMFObjectProperty();
+                string p;
+
+                if (arg[1] == ':')
+                {
+                    p = arg.Substring(2);
+                    switch (arg[0])
+                    {
+                        case 'B':
+                            prop.m_type = AMFDataType.AMF_BOOLEAN;
+                            prop.p_number = int.Parse(p);
+                            break;
+                        case 'S':
+                            prop.m_type = AMFDataType.AMF_STRING;
+                            prop.m_strVal = p;
+                            break;
+                        case 'N':
+                            prop.m_type = AMFDataType.AMF_NUMBER;
+                            prop.p_number = double.Parse(p);
+                            break;
+                        case 'Z':
+                            prop.m_type = AMFDataType.AMF_NULL;
+                            break;
+                        case 'O':
+                            int i = int.Parse(p);
+                            if (i > 0)
+                            {
+                                prop.m_type = AMFDataType.AMF_OBJECT;
+                            }
+                            else
+                            {
+                                depth--;
+                                return obj;
+                            }
+                            break;
+                        default:
+                            return null;
+                    }
+                }
+                else if (arg[2] == ':' && arg[0] == 'N')
+                {
+                    int secondColonIndex = arg.IndexOf(':', 3);
+                    if (secondColonIndex < 0 ||depth <= 0) return null;
+                    prop.m_strName = arg.Substring(3);
+                    p = arg.Substring(secondColonIndex + 1);
+                    switch (arg[1])
+                    {
+                        case 'B':
+                            prop.m_type = AMFDataType.AMF_BOOLEAN;
+                            prop.p_number = int.Parse(p);
+                            break;
+                        case 'S':
+                            prop.m_type = AMFDataType.AMF_STRING;
+                            prop.m_strVal = p;
+                            break;
+                        case 'N':
+                            prop.m_type = AMFDataType.AMF_NUMBER;
+                            prop.p_number = double.Parse(p);
+                            break;
+                        case 'O':
+                            prop.m_type = AMFDataType.AMF_OBJECT;
+                            break;
+                        default:
+                            return null;
+                    }
+                }
+                else
+                    return null;
+
+                if (depth > 0)
+                {
+                    AMFObject o2;
+                    for (int i = 0; i < depth; i++)
+                    {
+                        o2 = obj.GetProperty(obj.GetPropertyCount() - 1).GetObject();
+                        obj = o2;
+                    }
+                }
+                obj.AddProperty(prop);
+
+                if (prop.m_type == AMFDataType.AMF_OBJECT)
+                    depth++;               
+            }
+
+            return obj;
         }
     }
 }

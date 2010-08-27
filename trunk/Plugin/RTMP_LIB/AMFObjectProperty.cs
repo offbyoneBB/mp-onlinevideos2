@@ -6,13 +6,13 @@ namespace RTMP_LIB
 {
     public class AMFObjectProperty
     {
-        string m_strName;
-        AMFDataType m_type;
-        double m_dNumVal;
-        AMFObject m_objVal;
-        string m_strVal;
-        ushort p_UTCoffset;
-        double p_number;
+        internal string m_strName;
+        internal AMFDataType m_type;
+        internal double m_dNumVal;
+        internal AMFObject m_objVal;
+        internal string m_strVal;
+        internal ushort p_UTCoffset;
+        internal double p_number;
 
         public AMFObjectProperty()
         {
@@ -255,6 +255,54 @@ namespace RTMP_LIB
 
             strRes += strVal;
             Logger.Log(string.Format("Property: {0}", strRes));
+        }
+
+        public void Encode(List<byte> output)
+        {
+            if (m_type == AMFDataType.AMF_INVALID)
+                return;           
+
+            switch (m_type)
+            {
+                case AMFDataType.AMF_NUMBER:
+                    if (string.IsNullOrEmpty(m_strName))
+                        RTMP.EncodeNumber(output, GetNumber());
+                    else
+                        RTMP.EncodeNumber(output, m_strName, GetNumber());                    
+                    break;
+
+                case AMFDataType.AMF_BOOLEAN:
+                    if (string.IsNullOrEmpty(m_strName))
+                        RTMP.EncodeBoolean(output, GetBoolean());
+                    else
+                        RTMP.EncodeBoolean(output, m_strName, GetBoolean());
+                    break;
+
+                case AMFDataType.AMF_STRING:
+                    if (string.IsNullOrEmpty(m_strName))
+                        RTMP.EncodeString(output, GetString());
+                    else
+                        RTMP.EncodeString(output, m_strName, GetString());
+                    break;
+
+                case AMFDataType.AMF_NULL:
+                    output.Add(0x05);
+                    break;
+
+                case AMFDataType.AMF_OBJECT:
+                    if (!string.IsNullOrEmpty(m_strName))
+                    {
+                        short length = System.Net.IPAddress.HostToNetworkOrder((short)m_strName.Length);
+                        output.AddRange(BitConverter.GetBytes(length));
+                        output.AddRange(Encoding.ASCII.GetBytes(m_strName));
+                    }                    
+                    GetObject().Encode(output);                    
+                    break;
+
+                default:
+                    Logger.Log(string.Format("AMFObjectProperty.Encode invalid type: {0}", m_type));
+                    break;
+            }
         }
 
         public void Reset()
