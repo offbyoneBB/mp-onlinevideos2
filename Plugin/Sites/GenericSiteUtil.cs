@@ -230,21 +230,25 @@ namespace OnlineVideos.Sites
             // 3. retrieve a file from the web to find the actual playback url
             if (regEx_PlaylistUrl != null || regEx_FileUrl != null)
             {
-                string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8Encoding);
+                string playlistFileUrl = resultUrl;
                 // 3.a extra step to get a playlist file if needed
                 if (regEx_PlaylistUrl != null)
                 {
+                    string dataPage = GetWebData(playlistFileUrl, GetCookie(), forceUTF8Encoding);
+
                     Match matchPlaylistUrl = regEx_PlaylistUrl.Match(dataPage);
                     if (matchPlaylistUrl.Success)
                     {
-                        string playlistFileUrl = string.Format(playlistUrlFormatString, HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
-                        dataPage = GetWebData(playlistFileUrl, GetCookie(), forceUTF8Encoding);
+                        playlistFileUrl = string.Format(playlistUrlFormatString, HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
                     }
                     else return ""; // if no match, return empty url -> error
                 }
+
                 // 3.b find a match in the retrieved data for the final playback url
                 if (regEx_FileUrl != null)
                 {
+                    string dataPage = GetWebData(playlistFileUrl, GetCookie(), forceUTF8Encoding);
+
                     video.PlaybackOptions = new Dictionary<string, string>();
                     Match matchFileUrl = regEx_FileUrl.Match(dataPage);
                     while (matchFileUrl.Success)
