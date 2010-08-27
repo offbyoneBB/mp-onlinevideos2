@@ -194,7 +194,7 @@ namespace OnlineVideos.Sites
             return loVideoList;
         }
 
-        public override string getUrl(VideoInfo video)
+        public string getFormattedVideoUrl(VideoInfo video)
         {
             // Get playbackoptins back from favorite video if they were saved in Other object
             if (!string.IsNullOrEmpty(video.SiteName) && video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
@@ -221,59 +221,80 @@ namespace OnlineVideos.Sites
             {
                 if (!string.IsNullOrEmpty(videoUrlFormatString)) resultUrl = string.Format(videoUrlFormatString, resultUrl);
             }
-
             // 2. create an absolute Uri using the baseUrl if the current one is not and a baseUrl was given
             if (!string.IsNullOrEmpty(baseUrl) && !Uri.IsWellFormedUriString(resultUrl, UriKind.Absolute))
             {
                 resultUrl = new Uri(new Uri(baseUrl), resultUrl).AbsoluteUri;
             }
+
+            return resultUrl;
+        }
+
+        public string getPlaylistUrl(string resultUrl)
+        {
+            // 3.a extra step to get a playlist file if needed
+            if (regEx_PlaylistUrl != null)
+            {
+                string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8Encoding);
+                Match matchPlaylistUrl = regEx_PlaylistUrl.Match(dataPage);
+                if (matchPlaylistUrl.Success)
+                {
+                    return string.Format(playlistUrlFormatString, HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
+                }
+                else return ""; // if no match, return empty url -> error
+            }
+            else
+                return resultUrl;
+        }
+
+        public Dictionary<string, string> GetPlaybackOptions(string playlistFileUrl)
+        {
+            string dataPage = GetWebData(playlistFileUrl, GetCookie(), forceUTF8Encoding);
+
+            Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
+            Match matchFileUrl = regEx_FileUrl.Match(dataPage);
+            while (matchFileUrl.Success)
+            {
+                // apply some formatting to the url
+                List<string> groupValues = new List<string>();
+                List<string> groupNameValues = new List<string>();
+                for (int i = 0; i < matchFileUrl.Groups.Count; i++)
+                {
+                    if (matchFileUrl.Groups["m" + i.ToString()].Success)
+                        groupValues.Add(HttpUtility.UrlDecode(matchFileUrl.Groups["m" + i.ToString()].Value));
+                    if (matchFileUrl.Groups["n" + i.ToString()].Success)
+                        groupNameValues.Add(HttpUtility.HtmlDecode(matchFileUrl.Groups["n" + i.ToString()].Value));
+                }
+                string foundUrl = string.Format(fileUrlFormatString, groupValues.ToArray());
+                if (!playbackOptions.ContainsValue(foundUrl))
+                {
+                    if (groupNameValues.Count == 0) groupNameValues.Add(playbackOptions.Count.ToString()); // if no groups to build a name, use numbering
+                    string urlNameToAdd = string.Format(fileUrlNameFormatString, groupNameValues.ToArray());
+                    if (playbackOptions.ContainsKey(urlNameToAdd))
+                        urlNameToAdd += playbackOptions.Count.ToString();
+                    playbackOptions.Add(urlNameToAdd, foundUrl);
+                }
+                matchFileUrl = matchFileUrl.NextMatch();
+            }
+            return playbackOptions;
+        }
+
+
+        public override string getUrl(VideoInfo video)
+        {
+            string resultUrl = getFormattedVideoUrl(video);
+
             // 3. retrieve a file from the web to find the actual playback url
             if (regEx_PlaylistUrl != null || regEx_FileUrl != null)
             {
-                string playlistFileUrl = resultUrl;
-                // 3.a extra step to get a playlist file if needed
-                if (regEx_PlaylistUrl != null)
-                {
-                    string dataPage = GetWebData(playlistFileUrl, GetCookie(), forceUTF8Encoding);
-
-                    Match matchPlaylistUrl = regEx_PlaylistUrl.Match(dataPage);
-                    if (matchPlaylistUrl.Success)
-                    {
-                        playlistFileUrl = string.Format(playlistUrlFormatString, HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
-                    }
-                    else return ""; // if no match, return empty url -> error
-                }
+                string playListUrl = getPlaylistUrl(resultUrl);
+                if (String.IsNullOrEmpty(playListUrl))
+                    return String.Empty; // if no match, return empty url -> error
 
                 // 3.b find a match in the retrieved data for the final playback url
                 if (regEx_FileUrl != null)
                 {
-                    string dataPage = GetWebData(playlistFileUrl, GetCookie(), forceUTF8Encoding);
-
-                    video.PlaybackOptions = new Dictionary<string, string>();
-                    Match matchFileUrl = regEx_FileUrl.Match(dataPage);
-                    while (matchFileUrl.Success)
-                    {
-                        // apply some formatting to the url
-                        List<string> groupValues = new List<string>();
-                        List<string> groupNameValues = new List<string>();
-                        for (int i = 0; i < matchFileUrl.Groups.Count; i++)
-                        {
-                            if (matchFileUrl.Groups["m" + i.ToString()].Success)
-                                groupValues.Add(HttpUtility.UrlDecode(matchFileUrl.Groups["m" + i.ToString()].Value));
-                            if (matchFileUrl.Groups["n" + i.ToString()].Success)
-                                groupNameValues.Add(HttpUtility.HtmlDecode(matchFileUrl.Groups["n" + i.ToString()].Value));
-                        }
-                        string foundUrl = string.Format(fileUrlFormatString, groupValues.ToArray());
-                        if (!video.PlaybackOptions.ContainsValue(foundUrl))
-                        {
-                            if (groupNameValues.Count == 0) groupNameValues.Add(video.PlaybackOptions.Count.ToString()); // if no groups to build a name, use numbering
-                            string urlNameToAdd = string.Format(fileUrlNameFormatString, groupNameValues.ToArray());
-                            if (video.PlaybackOptions.ContainsKey(urlNameToAdd))
-                                urlNameToAdd += video.PlaybackOptions.Count.ToString();
-                            video.PlaybackOptions.Add(urlNameToAdd, foundUrl);
-                        }
-                        matchFileUrl = matchFileUrl.NextMatch();
-                    }
+                    video.PlaybackOptions = GetPlaybackOptions(playListUrl);
                     if (video.PlaybackOptions.Count == 0) return "";// if no match, return empty url -> error
                     else
                     {
