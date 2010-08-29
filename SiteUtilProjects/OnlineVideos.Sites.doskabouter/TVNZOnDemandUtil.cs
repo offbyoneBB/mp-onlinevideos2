@@ -1,76 +1,119 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using System.Web;
 
 namespace OnlineVideos.Sites
 {
-    public class TVNZOnDemandUtil : GenericSiteUtil
+    public class TVNZOnDemandUtil : SiteUtilBase
     {
+        private string baseUrl = @"http://tvnz.co.nz";
 
-        private int MyDiscoverSubCategories(Category parentCategory)
+        public override int DiscoverDynamicCategories()
         {
-            string data = GetWebData((parentCategory as RssLink).Url, GetCookie());
-            if (!string.IsNullOrEmpty(data))
+            string webData = GetWebData(@"http://tvnz.co.nz/content/ps3_navigation/ps3_xml_skin.xml");
+            if (!string.IsNullOrEmpty(webData))
             {
-                parentCategory.SubCategories = new List<Category>();
-                Match m = regEx_dynamicSubCategories.Match(data);
-                while (m.Success)
+                List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a separate list
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(webData);
+                XmlNodeList cats = doc.SelectNodes(@"Menu/MenuItem[@type=""shows"" or @type=""alphabetical""]");
+                foreach (XmlNode node in cats)
                 {
                     RssLink cat = new RssLink();
-                    cat.Url = m.Groups["url"].Value;
-                    if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
-                    if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
-                    if (dynamicSubCategoryUrlDecoding) cat.Url = HttpUtility.HtmlDecode(cat.Url);
-                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
-                    cat.Thumb = m.Groups["thumb"].Value;
-                    if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
-                    cat.Description = m.Groups["description"].Value;
+                    cat.Url = baseUrl + node.Attributes["href"].Value;
+                    cat.Name = node.Attributes["title"].Value;
+                    cat.HasSubCategories = node.Attributes["type"].Value != "shows";
+                    dynamicCategories.Add(cat);
+                }
+                // discovery finished, copy them to the actual list -> prevents double entries if error occurs in the middle of adding
+                foreach (Category cat in dynamicCategories) Settings.Categories.Add(cat);
+                Settings.DynamicCategoriesDiscovered = true;
+                return dynamicCategories.Count; // return the number of discovered categories
+            }
+            return 0;
+        }
 
-                    cat.Url = @"http://tvnz.co.nz/search/ta_ent_search_tv_skin.xhtml?requiredfields=type:media.";
-                    if (m.Groups["type"].Value == "Extra" || m.Groups["type"].Value == "Preview")
-                    {
-                        cat.Name += ": Extras";
-                        cat.Url += @"(format:extras|format:preview)";
-                    }
-                    else
-                        cat.Url += @"format:full+episode";
-                    cat.Url += @"&partialfields=programme:%3B" + m.Groups["id"].Value + @"&tab=tvmedia&start=0&sort=date:D:S:d1";
-                    cat.ParentCategory = parentCategory;
-                    parentCategory.SubCategories.Add(cat);
-                    m = m.NextMatch();
+        private void AddSubcats(XmlNode letter, RssLink cat)
+        {
+            cat.HasSubCategories = true;
+            cat.SubCategories = new List<Category>();
+            XmlNodeList shows = letter.SelectNodes("Show");
+            foreach (XmlNode node in shows)
+            {
+                RssLink show = new RssLink();
+                show.Name = node.Attributes["title"].Value;
+                show.Description = "channel: " + node.Attributes["channel"].Value;
+                if (node.Attributes["episodes"] != null)
+                    show.Description += ", episodes: " + node.Attributes["episodes"].Value;
+                if (node.Attributes["videos"] != null)
+                    show.Description += ", videos: " + node.Attributes["videos"].Value;
+                show.Url = baseUrl + node.Attributes["href"].Value;
+                show.ParentCategory = cat;
+                cat.SubCategories.Add(show);
+            }
+            cat.SubCategoriesDiscovered = true;
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            // only for alphabetical
+            string webData = GetWebData((parentCategory as RssLink).Url);
+            if (!string.IsNullOrEmpty(webData))
+            {
+                parentCategory.SubCategories = new List<Category>();
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(webData);
+
+                XmlNodeList letters = doc.SelectNodes(@"Group/Letter");
+                foreach (XmlNode letter in letters)
+                {
+                    RssLink subcat = new RssLink();
+                    subcat.Name = letter.Attributes["label"].Value;
+                    parentCategory.SubCategories.Add(subcat);
+                    AddSubcats(letter, subcat);
                 }
                 parentCategory.SubCategoriesDiscovered = true;
             }
             return parentCategory.SubCategories == null ? 0 : parentCategory.SubCategories.Count;
         }
 
-
-        public override int DiscoverSubCategories(Category parentCategory)
+        public override List<VideoInfo> getVideoList(Category category)
         {
-            List<Category> TotalSubCategories = new List<Category>();
-            Regex npRegex = new Regex(@".lett[^,]*,\s*(?<url>[^\)]*)\)[^""]*""\stitle=""Next\spage"">");
-            string tmpUrl = ((RssLink)parentCategory).Url;
-            string extra =String.Empty;
-            Match m;
-            do
+            string webData = GetWebData((category as RssLink).Url, null, true);
+            List<VideoInfo> res = new List<VideoInfo>();
+            if (!string.IsNullOrEmpty(webData))
             {
-                ((RssLink)parentCategory).Url = tmpUrl + extra;
-                MyDiscoverSubCategories(parentCategory);
-                TotalSubCategories.AddRange(parentCategory.SubCategories);
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(webData);
 
-                string webData = GetWebData(tmpUrl+extra);
-                m = npRegex.Match(webData);
-                if (m.Success)
-                    extra = "&offset=" + m.Groups["url"].Value; ;
-            } while (m.Success);
-
-            ((RssLink)parentCategory).Url = tmpUrl;
-
-            parentCategory.SubCategories = TotalSubCategories;
-            return parentCategory.SubCategories.Count;
+                XmlNodeList episodes = doc.SelectNodes(@"Group/Episode|Group/Extra");
+                foreach (XmlNode episode in episodes)
+                {
+                    VideoInfo video = new VideoInfo();
+                    video.Title = episode.Attributes["title"].Value;
+                    string subTitle = episode.Attributes["sub-title"].Value;
+                    if (!String.IsNullOrEmpty(subTitle))
+                        video.Title += ": " + subTitle;
+                    video.Description = episode.InnerText;
+                    video.VideoUrl = baseUrl + episode.Attributes["href"].Value.Split('?')[0];
+                    video.ThumbnailImage = episode.Attributes["src"].Value;
+                    string[] epinfo = episode.Attributes["episode"].Value.Split('|');
+                    if (epinfo.Length == 1)
+                        video.Length = epinfo[0].Trim();
+                    else
+                    {
+                        if (epinfo.Length > 0)
+                            video.Description = epinfo[0].Trim() + " " + video.Description;
+                        if (epinfo.Length > 2)
+                            video.Length = epinfo[2].Trim();
+                        if (epinfo.Length > 1)
+                            video.Length = video.Length + '|' + Translation.Airdate + ": " + epinfo[1].Trim();
+                    }
+                    res.Add(video);
+                }
+            }
+            return res;
         }
 
         public override List<string> getMultipleVideoUrls(VideoInfo video)
@@ -107,17 +150,6 @@ namespace OnlineVideos.Sites
                 res.Add(url);
             }
             return res;
-        }
-
-        private static string GetSubString(string s, string start, string until)
-        {
-            int p = s.IndexOf(start);
-            if (p == -1) return String.Empty;
-            p += start.Length;
-            if (until == null) return s.Substring(p);
-            int q = s.IndexOf(until, p);
-            if (q == -1) return s.Substring(p);
-            return s.Substring(p, q - p);
         }
 
     }
