@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Web;
 using System.Net;
@@ -9,15 +10,69 @@ namespace OnlineVideos.Sites
 {
     public static class UrlTricks
     {
+        public static bool getMultipleVideoUrlsFromAll(string url, VideoInfo video, out List<String> newUrls)
+        {
+            newUrls = new List<String>();
+            string newUrl;
+            if (url.StartsWith(@"http://www.youtube.com/p/"))
+            {
+                int p = url.IndexOf(@"/p/");
+                //http://www.youtube.com/p/0541E51E6DE963A0&amp;hl=en_US&amp;fs=1&amp;hd=1
+                string playListId = GetSubString(url, @"/p/", "&");
+                if (!String.IsNullOrEmpty(playListId))
+                {
+                    //http://gdata.youtube.com/feeds/api/playlists/0541E51E6DE963A0?&v=2&max-results=50
+                    string webData = SiteUtilBase.GetWebData(@"http://gdata.youtube.com/feeds/api/playlists/" + playListId);
+                    if (!String.IsNullOrEmpty(webData))
+                    {
+                        string urlRegex = @"player\surl='(?<url>[^']*)'";
+                        Regex regex_Url = new Regex(urlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+                        Match m = regex_Url.Match(webData);
+                        while (m.Success)
+                        {
+                            string thisUrl = m.Groups["url"].Value;
+                            if (!String.IsNullOrEmpty(thisUrl))
+                            {
+                                video.VideoUrl = thisUrl;
+                                video.PlaybackOptions = null;
+                                video.GetYouTubePlaybackOptions();
+                                newUrl = null;
+                                if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+                                {
+                                    var enumer = video.PlaybackOptions.GetEnumerator();
+                                    while (enumer.MoveNext())
+                                        newUrl = enumer.Current.Value;
+                                }
+                                if (!String.IsNullOrEmpty(newUrl))
+                                    newUrls.Add(newUrl);
+                                video.PlaybackOptions = null;
+
+                            }
+                            m = m.NextMatch();
+                        }
+                        video.VideoUrl = null;
+
+                    }
+                }
+                return newUrls.Count > 0;
+            }
+            bool res = GetUrlFromAll(url, video, out newUrl);
+            if (res && !String.IsNullOrEmpty(newUrl))
+            {
+                newUrls.Add(newUrl);
+                return true;
+            }
+            return false;
+        }
+
         public static bool GetUrlFromAll(string url, VideoInfo video, out string newUrl)
         {
-
             if (url.StartsWith("http://www.youtube.com"))
             {
                 newUrl = UrlTricks.YoutubeTrick(url, video);
                 return true;
             }
-            if (url.StartsWith("http://www2.movshare.net"))
+            if (url.StartsWith("http://www2.movshare.net") || url.StartsWith("http://www.movshare.net"))
             {
                 newUrl = UrlTricks.MovShareTrick(url);
                 return true;
@@ -189,7 +244,7 @@ namespace OnlineVideos.Sites
             string[] urlParts = Url.Split('/');
 
             string postData = @"op=download1&usr_login=&id=" + urlParts[3] + "&fname=" + urlParts[4] + "&referer=&method_free=Free+Stream";
-            string webData = MySiteUtil.GetWebDataFromPost(Url, postData);
+            string webData = SiteUtilBase.GetWebDataFromPost(Url, postData);
             string packed = GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = UrlTricks.UnPack(packed);
@@ -212,14 +267,14 @@ namespace OnlineVideos.Sites
             postData = @"p%5Fid%5B1%5D=4&begun=1&video%5Furl=1&p%5Fid%5B0%5D=2&context=" +
                 postData + @"&devid=LoadupFlashPlayer&ticket=" + videoId;
 
-            webData = MySiteUtil.GetWebDataFromPost(@"http://smotri.com/video/view/url/bot/", postData);
+            webData = SiteUtilBase.GetWebDataFromPost(@"http://smotri.com/video/view/url/bot/", postData);
             //"{\"_is_loadup\":0,\"_vidURL\":\"http:\\/\\/file38.loadup.ru\\/4412949d467b8db09bd07eedc7127f57\\/4bd0b05a\\/9a\\/a1\\/c1ad0ea5c0e8268898d3449b9087.flv\",\"_imgURL\":\"http:\\/\\/frame2.loadup.ru\\/9a\\/a1\\/1191805.3.3.jpg\",\"botator_banner\":{\"4\":[{\"cnt_tot_max\":1120377,\"cnt_hour_max\":4500,\"clc_tot_max\":0,\"clc_hour_max\":0,\"cnt_uniq_day_max\":3,\"cnt_uniq_week_max\":0,\"cnt_uniq_month_max\":0,\"link_transitions\":\"http:\\/\\/smotri.com\\/botator\\/clickator\\/click\\/?sid=qm2fzb5ruwdcj1ig_12\",\"zero_pixel\":\"http:\\/\\/ad.adriver.ru\\/cgi-bin\\/rle.cgi?sid=1&bt=21&ad=226889&pid=440944&bid=817095&bn=817095&rnd=1702217828\",\"signature\":{\"set_sign\":\"top\",\"signature\":\"\",\"signature_color\":null},\"link\":\"http:\\/\\/pics.loadup.ru\\/content\\/smotri.com_400x300_reenc_2.flv\",\"link_show\":\"http:\\/\\/smotri.com\\/botator\\/logator\\/show\\/?sid=qm2fzb5ruwdcj1ig_12\",\"banner_type\":\"video_flv\",\"b_id\":12}]},\"trustKey\":\"79e566c96057ce2b6f6055a3fa34f744\",\"video_id\":\"v119180501e5\",\"_pass_protected\":0,\"begun_url_1\":\"http:\\/\\/flash.begun.ru\\/banner.jsp?pad_id=100582787&offset=0&limit=5&encoding=utf8&charset=utf8&keywords=\"}"
             return GetSubString(webData, @"_vidURL"":""", @"""").Replace(@"\/", "/");
         }
 
         public static string MovShareTrick(string Url)
         {
-            string webData = MySiteUtil.GetWebDataFromPost(Url, "submit.x=119&submit.y=19");
+            string webData = SiteUtilBase.GetWebDataFromPost(Url, "submit.x=119&submit.y=19");
             return GetSubString(webData, @"<param name=""src"" value=""", @"""");
         }
 
@@ -388,26 +443,6 @@ namespace OnlineVideos.Sites
             int q = s.IndexOf(until, p);
             if (q == -1) return s.Substring(p);
             return s.Substring(p, q - p);
-        }
-
-        // use MySiteUtil until everybody has 0.21 or higher, there the needed methods of SiteUtilBase are public. 
-        // After that: Remove MySiteUtil and replace references with SiteUtilBase
-        private class MySiteUtil : SiteUtilBase
-        {
-            public override List<VideoInfo> getVideoList(Category category)
-            {
-                throw new NotImplementedException();
-            }
-            public override string getUrl(VideoInfo video)
-            {
-                return base.getUrl(video);
-            }
-
-            public static new string GetWebDataFromPost(string url, string postData)
-            {
-                return SiteUtilBase.GetWebDataFromPost(url, postData);
-            }
-
         }
 
     }
