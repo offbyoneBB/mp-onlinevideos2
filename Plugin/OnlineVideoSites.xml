@@ -1061,9 +1061,19 @@
       <Configuration />
       <Categories />
     </Site>
-    <Site name="HardwareInfo" util="HardwareInfo" agecheck="false" enabled="true" lang="nl">
+    <Site name="HardwareInfo" util="UrlTrick" agecheck="false" enabled="true" lang="nl" lastUpdated="2010-03-18T19:51:57.641746+01:00">
+      <Description>Informational videos about computer hardware</Description>
+      <Configuration>
+    <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)">\s*<img\sclass="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*(?:<[^>]*>\s*</div>\s*<[^>]*>\s*)?<h2><a[^>]*>(?<Title>[^<]*)</a></h2>\s*<span\sclass="lessImportant">(?<Airdate>[^<]*)</span>(?<Description>[^<]*)<]]></item>
+    <item key="nextPageRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)">Volgende</a></li>]]></item>
+    <item key="nextPageRegExUrlDecoding"><![CDATA[True]]></item>
+    <item key="prevPageRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)">Vorige</a></li>]]></item>
+    <item key="prevPageRegExUrlDecoding"><![CDATA[True]]></item>
+    <item key="fileUrlRegEx"><![CDATA[<embed\ssrc="(?<m0>[^"]*)"]]></item>
+    <item key="baseUrl"><![CDATA[http://nl.hardware.info/tv/]]></item>
+      </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Laatste videos">http://www.hardware.info/nl-NL/video/</Category>
+        <Category xsi:type="RssLink" name="Laatste videos">http://nl.hardware.info/tv/</Category>
       </Categories>
     </Site>
     <Site name="Movies4Men" util="Movies4Men" agecheck="false" enabled="true" lang="en">

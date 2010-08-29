@@ -6,13 +6,15 @@ namespace OnlineVideos.Sites
 {
     public class UrlTrickUtil : GenericSiteUtil
     {
-        public override string getUrl(VideoInfo video)
+        public override List<String> getMultipleVideoUrls(VideoInfo video)
         {
-            string newUrl;
+            List<string> newUrls;
             string s = base.getUrl(video);
-            if (UrlTricks.GetUrlFromAll(s, video, out newUrl))
-                return newUrl;
+            if (UrlTricks.getMultipleVideoUrlsFromAll(s, video, out newUrls))
+                return newUrls;
             return null;
         }
+
+
     }
 }
