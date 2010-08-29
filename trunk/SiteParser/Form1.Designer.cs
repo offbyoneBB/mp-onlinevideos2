@@ -73,16 +73,18 @@
             this.label7 = new System.Windows.Forms.Label();
             this.videoListRegexTextBox = new System.Windows.Forms.TextBox();
             this.VideoUrlTabPage = new System.Windows.Forms.TabPage();
+            this.playListUrlResultTextBox = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.GetPlayListUrlButton = new System.Windows.Forms.Button();
+            this.videoUrlResultTextBox = new System.Windows.Forms.TextBox();
+            this.label22 = new System.Windows.Forms.Label();
             this.btnPlay = new System.Windows.Forms.Button();
-            this.ResultUrlTextBox = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
             this.CreateFileUrlRegexButton = new System.Windows.Forms.Button();
             this.fileUrlFormatStringTextBox = new System.Windows.Forms.TextBox();
             this.fileUrlRegexTextBox = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
             this.CreatePlayListRegexButton = new System.Windows.Forms.Button();
             this.playlistUrlFormatStringTextBox = new System.Windows.Forms.TextBox();
             this.playlistUrlRegexTextBox = new System.Windows.Forms.TextBox();
@@ -96,8 +98,8 @@
             this.label14 = new System.Windows.Forms.Label();
             this.videoUrlRegExTextBox = new System.Windows.Forms.TextBox();
             this.categoryInfoListView = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -109,6 +111,8 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.getFileUrlButton = new System.Windows.Forms.Button();
+            this.ResultUrlComboBox = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.categTabPage.SuspendLayout();
             this.subCatTabPage.SuspendLayout();
@@ -575,16 +579,20 @@
             // 
             // VideoUrlTabPage
             // 
+            this.VideoUrlTabPage.Controls.Add(this.ResultUrlComboBox);
+            this.VideoUrlTabPage.Controls.Add(this.getFileUrlButton);
+            this.VideoUrlTabPage.Controls.Add(this.playListUrlResultTextBox);
+            this.VideoUrlTabPage.Controls.Add(this.label15);
+            this.VideoUrlTabPage.Controls.Add(this.GetPlayListUrlButton);
+            this.VideoUrlTabPage.Controls.Add(this.videoUrlResultTextBox);
+            this.VideoUrlTabPage.Controls.Add(this.label22);
             this.VideoUrlTabPage.Controls.Add(this.btnPlay);
-            this.VideoUrlTabPage.Controls.Add(this.ResultUrlTextBox);
             this.VideoUrlTabPage.Controls.Add(this.label21);
-            this.VideoUrlTabPage.Controls.Add(this.label18);
             this.VideoUrlTabPage.Controls.Add(this.CreateFileUrlRegexButton);
             this.VideoUrlTabPage.Controls.Add(this.fileUrlFormatStringTextBox);
             this.VideoUrlTabPage.Controls.Add(this.fileUrlRegexTextBox);
             this.VideoUrlTabPage.Controls.Add(this.label19);
             this.VideoUrlTabPage.Controls.Add(this.label20);
-            this.VideoUrlTabPage.Controls.Add(this.label15);
             this.VideoUrlTabPage.Controls.Add(this.CreatePlayListRegexButton);
             this.VideoUrlTabPage.Controls.Add(this.playlistUrlFormatStringTextBox);
             this.VideoUrlTabPage.Controls.Add(this.playlistUrlRegexTextBox);
@@ -605,10 +613,54 @@
             this.VideoUrlTabPage.Text = "VideoUrl";
             this.VideoUrlTabPage.UseVisualStyleBackColor = true;
             // 
+            // playListUrlResultTextBox
+            // 
+            this.playListUrlResultTextBox.Location = new System.Drawing.Point(0, 302);
+            this.playListUrlResultTextBox.Name = "playListUrlResultTextBox";
+            this.playListUrlResultTextBox.ReadOnly = true;
+            this.playListUrlResultTextBox.Size = new System.Drawing.Size(442, 20);
+            this.playListUrlResultTextBox.TabIndex = 77;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(0, 286);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(86, 13);
+            this.label15.TabIndex = 76;
+            this.label15.Text = "PlayListUrlResult";
+            // 
+            // GetPlayListUrlButton
+            // 
+            this.GetPlayListUrlButton.Location = new System.Drawing.Point(89, 177);
+            this.GetPlayListUrlButton.Name = "GetPlayListUrlButton";
+            this.GetPlayListUrlButton.Size = new System.Drawing.Size(85, 23);
+            this.GetPlayListUrlButton.TabIndex = 75;
+            this.GetPlayListUrlButton.Text = "GetPlayListUrl";
+            this.GetPlayListUrlButton.UseVisualStyleBackColor = true;
+            this.GetPlayListUrlButton.Click += new System.EventHandler(this.GetPlayListUrlButton_Click);
+            // 
+            // videoUrlResultTextBox
+            // 
+            this.videoUrlResultTextBox.Location = new System.Drawing.Point(0, 151);
+            this.videoUrlResultTextBox.Name = "videoUrlResultTextBox";
+            this.videoUrlResultTextBox.ReadOnly = true;
+            this.videoUrlResultTextBox.Size = new System.Drawing.Size(442, 20);
+            this.videoUrlResultTextBox.TabIndex = 74;
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(0, 135);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(77, 13);
+            this.label22.TabIndex = 73;
+            this.label22.Text = "VideoUrlResult";
+            // 
             // btnPlay
             // 
             this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlay.Location = new System.Drawing.Point(416, 375);
+            this.btnPlay.Location = new System.Drawing.Point(413, 445);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(38, 23);
             this.btnPlay.TabIndex = 72;
@@ -616,37 +668,18 @@
             this.btnPlay.UseVisualStyleBackColor = true;
             this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
             // 
-            // ResultUrlTextBox
-            // 
-            this.ResultUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.ResultUrlTextBox.Location = new System.Drawing.Point(3, 377);
-            this.ResultUrlTextBox.Name = "ResultUrlTextBox";
-            this.ResultUrlTextBox.ReadOnly = true;
-            this.ResultUrlTextBox.Size = new System.Drawing.Size(407, 20);
-            this.ResultUrlTextBox.TabIndex = 71;
-            // 
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(0, 361);
+            this.label21.Location = new System.Drawing.Point(-3, 431);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(50, 13);
             this.label21.TabIndex = 70;
             this.label21.Text = "ResultUrl";
             // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(97, 267);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(41, 13);
-            this.label18.TabIndex = 69;
-            this.label18.Text = "label13";
-            // 
             // CreateFileUrlRegexButton
             // 
-            this.CreateFileUrlRegexButton.Location = new System.Drawing.Point(3, 257);
+            this.CreateFileUrlRegexButton.Location = new System.Drawing.Point(0, 327);
             this.CreateFileUrlRegexButton.Name = "CreateFileUrlRegexButton";
             this.CreateFileUrlRegexButton.Size = new System.Drawing.Size(80, 23);
             this.CreateFileUrlRegexButton.TabIndex = 68;
@@ -658,24 +691,24 @@
             // 
             this.fileUrlFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.fileUrlFormatStringTextBox.Location = new System.Drawing.Point(3, 338);
+            this.fileUrlFormatStringTextBox.Location = new System.Drawing.Point(0, 408);
             this.fileUrlFormatStringTextBox.Name = "fileUrlFormatStringTextBox";
-            this.fileUrlFormatStringTextBox.Size = new System.Drawing.Size(443, 20);
+            this.fileUrlFormatStringTextBox.Size = new System.Drawing.Size(442, 20);
             this.fileUrlFormatStringTextBox.TabIndex = 67;
             // 
             // fileUrlRegexTextBox
             // 
             this.fileUrlRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.fileUrlRegexTextBox.Location = new System.Drawing.Point(3, 299);
+            this.fileUrlRegexTextBox.Location = new System.Drawing.Point(0, 369);
             this.fileUrlRegexTextBox.Name = "fileUrlRegexTextBox";
-            this.fileUrlRegexTextBox.Size = new System.Drawing.Size(443, 20);
+            this.fileUrlRegexTextBox.Size = new System.Drawing.Size(442, 20);
             this.fileUrlRegexTextBox.TabIndex = 66;
             // 
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(0, 322);
+            this.label19.Location = new System.Drawing.Point(-3, 392);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(92, 13);
             this.label19.TabIndex = 65;
@@ -684,24 +717,15 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(0, 283);
+            this.label20.Location = new System.Drawing.Point(-3, 353);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(65, 13);
             this.label20.TabIndex = 64;
             this.label20.Text = "fileUrlRegEx";
             // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(99, 160);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(41, 13);
-            this.label15.TabIndex = 63;
-            this.label15.Text = "label13";
-            // 
             // CreatePlayListRegexButton
             // 
-            this.CreatePlayListRegexButton.Location = new System.Drawing.Point(3, 150);
+            this.CreatePlayListRegexButton.Location = new System.Drawing.Point(3, 177);
             this.CreatePlayListRegexButton.Name = "CreatePlayListRegexButton";
             this.CreatePlayListRegexButton.Size = new System.Drawing.Size(80, 23);
             this.CreatePlayListRegexButton.TabIndex = 62;
@@ -713,24 +737,24 @@
             // 
             this.playlistUrlFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.playlistUrlFormatStringTextBox.Location = new System.Drawing.Point(3, 231);
+            this.playlistUrlFormatStringTextBox.Location = new System.Drawing.Point(0, 263);
             this.playlistUrlFormatStringTextBox.Name = "playlistUrlFormatStringTextBox";
-            this.playlistUrlFormatStringTextBox.Size = new System.Drawing.Size(441, 20);
+            this.playlistUrlFormatStringTextBox.Size = new System.Drawing.Size(442, 20);
             this.playlistUrlFormatStringTextBox.TabIndex = 61;
             // 
             // playlistUrlRegexTextBox
             // 
             this.playlistUrlRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.playlistUrlRegexTextBox.Location = new System.Drawing.Point(3, 192);
+            this.playlistUrlRegexTextBox.Location = new System.Drawing.Point(0, 224);
             this.playlistUrlRegexTextBox.Name = "playlistUrlRegexTextBox";
-            this.playlistUrlRegexTextBox.Size = new System.Drawing.Size(441, 20);
+            this.playlistUrlRegexTextBox.Size = new System.Drawing.Size(442, 20);
             this.playlistUrlRegexTextBox.TabIndex = 60;
             // 
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(0, 215);
+            this.label16.Location = new System.Drawing.Point(-3, 247);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(110, 13);
             this.label16.TabIndex = 59;
@@ -739,7 +763,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(0, 176);
+            this.label17.Location = new System.Drawing.Point(-3, 208);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(83, 13);
             this.label17.TabIndex = 58;
@@ -748,7 +772,7 @@
             // videoUrlDecodingCheckBox
             // 
             this.videoUrlDecodingCheckBox.AutoSize = true;
-            this.videoUrlDecodingCheckBox.Location = new System.Drawing.Point(3, 127);
+            this.videoUrlDecodingCheckBox.Location = new System.Drawing.Point(0, 115);
             this.videoUrlDecodingCheckBox.Name = "videoUrlDecodingCheckBox";
             this.videoUrlDecodingCheckBox.Size = new System.Drawing.Size(111, 17);
             this.videoUrlDecodingCheckBox.TabIndex = 57;
@@ -769,7 +793,7 @@
             // 
             this.videoUrlFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.videoUrlFormatStringTextBox.Location = new System.Drawing.Point(3, 103);
+            this.videoUrlFormatStringTextBox.Location = new System.Drawing.Point(0, 89);
             this.videoUrlFormatStringTextBox.Name = "videoUrlFormatStringTextBox";
             this.videoUrlFormatStringTextBox.Size = new System.Drawing.Size(442, 20);
             this.videoUrlFormatStringTextBox.TabIndex = 55;
@@ -777,7 +801,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(0, 87);
+            this.label13.Location = new System.Drawing.Point(0, 73);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(106, 13);
             this.label13.TabIndex = 54;
@@ -806,10 +830,10 @@
             // 
             this.videoUrlRegExTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.videoUrlRegExTextBox.Location = new System.Drawing.Point(3, 49);
+            this.videoUrlRegExTextBox.Location = new System.Drawing.Point(0, 49);
             this.videoUrlRegExTextBox.Multiline = true;
             this.videoUrlRegExTextBox.Name = "videoUrlRegExTextBox";
-            this.videoUrlRegExTextBox.Size = new System.Drawing.Size(442, 33);
+            this.videoUrlRegExTextBox.Size = new System.Drawing.Size(442, 20);
             this.videoUrlRegExTextBox.TabIndex = 51;
             // 
             // categoryInfoListView
@@ -946,6 +970,25 @@
             this.openFileDialog1.FileName = "OnlineVideoSites.xml";
             this.openFileDialog1.Filter = "xml-Files|*.xml";
             // 
+            // getFileUrlButton
+            // 
+            this.getFileUrlButton.Location = new System.Drawing.Point(89, 327);
+            this.getFileUrlButton.Name = "getFileUrlButton";
+            this.getFileUrlButton.Size = new System.Drawing.Size(75, 23);
+            this.getFileUrlButton.TabIndex = 78;
+            this.getFileUrlButton.Text = "GetFileUrl";
+            this.getFileUrlButton.UseVisualStyleBackColor = true;
+            this.getFileUrlButton.Click += new System.EventHandler(this.getFileUrlButton_Click);
+            // 
+            // ResultUrlComboBox
+            // 
+            this.ResultUrlComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ResultUrlComboBox.FormattingEnabled = true;
+            this.ResultUrlComboBox.Location = new System.Drawing.Point(0, 445);
+            this.ResultUrlComboBox.Name = "ResultUrlComboBox";
+            this.ResultUrlComboBox.Size = new System.Drawing.Size(407, 21);
+            this.ResultUrlComboBox.TabIndex = 79;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1037,19 +1080,16 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox videoUrlRegExTextBox;
         private System.Windows.Forms.CheckBox videoUrlDecodingCheckBox;
-        private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Button CreateFileUrlRegexButton;
         private System.Windows.Forms.TextBox fileUrlFormatStringTextBox;
         private System.Windows.Forms.TextBox fileUrlRegexTextBox;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button CreatePlayListRegexButton;
         private System.Windows.Forms.TextBox playlistUrlFormatStringTextBox;
         private System.Windows.Forms.TextBox playlistUrlRegexTextBox;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.TextBox ResultUrlTextBox;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
@@ -1063,6 +1103,13 @@
         private System.Windows.Forms.Button btnPlay;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
         private System.Windows.Forms.CheckBox videoListUrlDecodingCheckBox;
+        private System.Windows.Forms.TextBox videoUrlResultTextBox;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Button GetPlayListUrlButton;
+        private System.Windows.Forms.TextBox playListUrlResultTextBox;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Button getFileUrlButton;
+        private System.Windows.Forms.ComboBox ResultUrlComboBox;
     }
 }
 

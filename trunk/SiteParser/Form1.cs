@@ -307,8 +307,7 @@ namespace SiteParser
             if (video != null)
             {
                 Form2 f2 = new Form2();
-                string webData = SiteUtilBase.GetWebData(video.VideoUrl);
-                videoUrlRegExTextBox.Text = f2.Execute(videoUrlRegExTextBox.Text, webData,
+                videoUrlRegExTextBox.Text = f2.Execute(videoUrlRegExTextBox.Text, video.VideoUrl,
                     new string[] { "m0", "m1", "m2" });
             }
             else
@@ -322,19 +321,60 @@ namespace SiteParser
 
             VideoInfo video = GetTreeViewSelectedNode() as VideoInfo;
             if (video != null)
-                ResultUrlTextBox.Text = generic.getUrl(video);
+                videoUrlResultTextBox.Text = generic.getFormattedVideoUrl(video);
             else
                 MessageBox.Show("no valid video selected");
         }
 
         private void CreatePlayListRegexButton_Click(object sender, EventArgs e)
         {
-            //todo
+            if (String.IsNullOrEmpty(videoUrlResultTextBox.Text))
+                MessageBox.Show("VideoUrlResult is empty");
+            else
+            {
+                string webData = SiteUtilBase.GetWebData(videoUrlResultTextBox.Text);
+                Form2 f2 = new Form2();
+                playlistUrlRegexTextBox.Text = f2.Execute(playlistUrlRegexTextBox.Text, webData,
+                    new string[] { "url" });
+            }
+        }
+
+        private void GetPlayListUrlButton_Click(object sender, EventArgs e)
+        {
+            GuiToUtil(generic);
+            if (String.IsNullOrEmpty(videoUrlResultTextBox.Text))
+                MessageBox.Show("VideoUrlResult is empty");
+            else
+                playListUrlResultTextBox.Text = generic.getPlaylistUrl(videoUrlResultTextBox.Text);
         }
 
         private void CreateFileUrlRegexButton_Click(object sender, EventArgs e)
         {
-            //todo
+            if (String.IsNullOrEmpty(playListUrlResultTextBox.Text))
+                MessageBox.Show("PlaylistUrlResult is empty");
+            else
+            {
+                string webData = SiteUtilBase.GetWebData(playListUrlResultTextBox.Text);
+                Form2 f2 = new Form2();
+                fileUrlRegexTextBox.Text = f2.Execute(fileUrlRegexTextBox.Text, webData,
+                    new string[] { "m0", "m1", "m2" });
+            }
+        }
+
+        private void getFileUrlButton_Click(object sender, EventArgs e)
+        {
+            GuiToUtil(generic);
+            if (String.IsNullOrEmpty(playListUrlResultTextBox.Text))
+                MessageBox.Show("PlaylistUrlResult is empty");
+            else
+            {
+                Dictionary<string, string> playList = generic.GetPlaybackOptions(playListUrlResultTextBox.Text);
+                ResultUrlComboBox.Items.Clear();
+
+                if (playList != null)
+                    foreach (string item in playList.Values)
+                        ResultUrlComboBox.Items.Add(item);
+            }
         }
 
         #endregion
@@ -365,13 +405,11 @@ namespace SiteParser
         {
             // Load settings from selected site into TextBoxes
             SiteSettings siteSettings = comboBoxSites.SelectedItem as SiteSettings;
+            generic = new MySiteUtil();
             generic.Initialize(siteSettings);
-            if (staticList == null)
-            {
-                staticList = new List<Category>();
-                foreach (Category cat in generic.Settings.Categories)
-                    staticList.Add(cat);
-            }
+            staticList = new List<Category>();
+            foreach (Category cat in generic.Settings.Categories)
+                staticList.Add(cat);
 
             UtilToGui(generic);
         }
@@ -380,7 +418,7 @@ namespace SiteParser
         {
             System.Diagnostics.Process.Start(
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Windows Media Player\\wmplayer.exe"),
-                ResultUrlTextBox.Text);
+                ResultUrlComboBox.SelectedItem as string);
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
