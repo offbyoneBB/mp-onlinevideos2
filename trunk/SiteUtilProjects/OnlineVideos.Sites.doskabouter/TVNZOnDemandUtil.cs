@@ -97,7 +97,7 @@ namespace OnlineVideos.Sites
                         video.Title += ": " + subTitle;
                     video.Description = episode.InnerText;
                     video.VideoUrl = baseUrl + episode.Attributes["href"].Value.Split('?')[0];
-                    video.ThumbnailImage = episode.Attributes["src"].Value;
+                    video.ImageUrl = episode.Attributes["src"].Value;
                     string[] epinfo = episode.Attributes["episode"].Value.Split('|');
                     if (epinfo.Length == 1)
                         video.Length = epinfo[0].Trim();
