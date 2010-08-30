@@ -1236,6 +1236,48 @@
               <ZipFileName>Installer{CopyFile}\{772a45ca-7f74-40bc-972a-ea9a10b376d4}-SouthParkWORLD.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SouthParkWORLD.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\academic earth.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{dc64df6b-d8a7-4abb-b6d1-65edb1aa63af}-academic earth.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\academic earth.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\EscapistMagazine.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{7d23a312-ec4f-4216-bde7-9cc1503ff0cd}-EscapistMagazine.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\EscapistMagazine.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\watch-movies.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b3113f22-1dc0-4d8d-83ea-37a9988ae097}-watch-movies.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\watch-movies.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\academic earth.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{550a6617-3b0c-4290-b0b4-d03a94f57c53}-academic earth.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\academic earth.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\EscapistMagazine.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{20568f42-f14f-4f56-9361-852e93b8af8f}-EscapistMagazine.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\EscapistMagazine.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\watch-movies.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{8db14530-2dcf-46b6-8618-c41392ffd509}-watch-movies.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-movies.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1257,37 +1299,44 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
-              <DestinationFilename>%Plugins%\Windows\OnlineVideos.dll</DestinationFilename>
+              <DestinationFilename>%Base%\plugins\Windows\OnlineVideos\OnlineVideos.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c795f3a7-881d-4376-b2a2-e8ac9eec9eaa}-OnlineVideos.MediaPortal1.dll</ZipFileName>
+              <DestinationFilename>%Base%\plugins\Windows\OnlineVideos.MediaPortal1.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1368,6 +1417,13 @@
               <LocalFileName>..\Language\OnlineVideos\no.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{ba83d647-abf4-4bcc-8946-be770917043b}-no.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\no.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\he.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c56c3e20-9f3d-4f43-b231-68a3b5349318}-he.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\he.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2058,33 +2114,19 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>24</Minor>
+      <Minor>25</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>fixed: YouTube
-added: possibility to retrieve sites from global list within Configuration.
-fixed: Configuration showing wrong state on 3state checkbox for autoupdate.
-
-fixed possible infinite loop while pre-buffering 
-fixed WindowsMediaPlayer crash with ExternalOSD
-Added a latest version check before AutoUpdate
-SiteManager shows reports for a site sorted by date (newest first)
-Added more localized strings
-Small Blue3wide skin improvements
-Successful start of a download shows a notification, else error message
-Added a possibility to Cancel a download in progress.
-Downloading no longer freezes MediaPortal's ContextMenu on slower systems
-Added a possibility for SiteUtils to create and handle their own ContextMenu entries.
-
-Added optional uninstall question to delete all settings, good for reseting OnlineVideos
-Popup Messages now use the configured name of the plugin.
-fixed missing url absolutify for thumb on dynamic categories in GenericSiteUtil
-fixed forceUTF8Encoding not used for all webrequests in GenericSiteUtil</VersionDescription>
+    <VersionDescription>moved to .net framewoirk 3.5 SP1 and VS2010
+split OnlineVideos framework in two seperate dlls (OnlineVideos core, MediaPortal GUI)
+SiteManager: Sites that are already in the local list are now dimmed
+Upped some timeouts in RTMP connection to fix slow connections and aborted playback
+added new RTMP connection parameters</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2010-07-28T18:01:51</ReleaseDate>
+    <ReleaseDate>2010-08-30T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -3339,40 +3381,89 @@ fixed forceUTF8Encoding not used for all webrequests in GenericSiteUtil</Version
         <ZipFileName>Installer{CopyFile}\{772a45ca-7f74-40bc-972a-ea9a10b376d4}-SouthParkWORLD.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SouthParkWORLD.png</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
-        <DestinationFilename>%Plugins%\Windows\OnlineVideos.dll</DestinationFilename>
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\academic earth.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{dc64df6b-d8a7-4abb-b6d1-65edb1aa63af}-academic earth.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\academic earth.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\EscapistMagazine.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7d23a312-ec4f-4216-bde7-9cc1503ff0cd}-EscapistMagazine.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\EscapistMagazine.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\watch-movies.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b3113f22-1dc0-4d8d-83ea-37a9988ae097}-watch-movies.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\watch-movies.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\academic earth.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{550a6617-3b0c-4290-b0b4-d03a94f57c53}-academic earth.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\academic earth.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\EscapistMagazine.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{20568f42-f14f-4f56-9361-852e93b8af8f}-EscapistMagazine.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\EscapistMagazine.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\watch-movies.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{8db14530-2dcf-46b6-8618-c41392ffd509}-watch-movies.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-movies.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
+        <DestinationFilename>%Base%\plugins\Windows\OnlineVideos\OnlineVideos.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c795f3a7-881d-4376-b2a2-e8ac9eec9eaa}-OnlineVideos.MediaPortal1.dll</ZipFileName>
+        <DestinationFilename>%Base%\plugins\Windows\OnlineVideos.MediaPortal1.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3443,6 +3534,13 @@ fixed forceUTF8Encoding not used for all webrequests in GenericSiteUtil</Version
         <LocalFileName>..\Language\OnlineVideos\no.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{ba83d647-abf4-4bcc-8946-be770917043b}-no.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\no.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\he.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c56c3e20-9f3d-4f43-b231-68a3b5349318}-he.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\he.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3665,7 +3763,7 @@ fixed forceUTF8Encoding not used for all webrequests in GenericSiteUtil</Version
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{8c9f1e9f-c82e-4fdd-95f5-b772bbb78ec1}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{e1866726-64cc-47f4-8760-b53119bfc4ed}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
@@ -3723,7 +3821,7 @@ fixed forceUTF8Encoding not used for all webrequests in GenericSiteUtil</Version
         <Recursive>true</Recursive>
       </FolderGroup>
     </FolderGroups>
-    <ProjectFilename>D:\devel\vs2005\onlinevideos\mp-onlinevideos2\MPEI\OnlineVideos.xmp2</ProjectFilename>
+    <ProjectFilename>C:\Users\offbyone\Documents\Code\CodeUnlimited\OnlineVideos\MPEI\OnlineVideos.xmp2</ProjectFilename>
     <UpdatePath1>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\update.xml</UpdatePath1>
     <UpdatePath2 />
     <UpdatePath3 />
