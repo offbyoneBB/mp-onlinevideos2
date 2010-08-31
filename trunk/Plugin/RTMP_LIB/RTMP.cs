@@ -146,6 +146,7 @@ namespace RTMP_LIB
         int lastSentBytesRead = 0;
         int m_numInvokes;
         int m_nBufferMS = (10 * 60 * 60 * 1000)	/* 10 hours default */;
+        int receiveTimeoutMS = 1500;
         int m_stream_id; // returned in _result from invoking createStream            
         int m_nBWCheckCounter;
         int m_nServerBW;
@@ -168,80 +169,125 @@ namespace RTMP_LIB
             tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             tcpSocket.Connect(Link.hostname, Link.port);
             tcpSocket.NoDelay = true;
-            tcpSocket.ReceiveTimeout = 30000;
+            tcpSocket.ReceiveTimeout = receiveTimeoutMS;
 
             if (!HandShake(true)) return false;
             if (!SendConnect()) return false;
+            if (!ConnectStream())
+            {
+                if (!ReconnectStream()) return false;
+            }
+
+            // after connection was successfull, set the timeouts for receiving data higher
+            receiveTimeoutMS = 30000;
+            tcpSocket.ReceiveTimeout = receiveTimeoutMS;
 
             return true;
         }
-        
+
         public bool IsConnected()
         {
             return tcpSocket != null && tcpSocket.Connected;
         }
 
-        public bool GetNextMediaPacket(out RTMPPacket packet)
+        bool ReconnectStream()
         {
-            packet = null;
-            bool bHasMediaPacket = false;
-            while (!bHasMediaPacket && IsConnected() && ReadPacket(out packet))
+            DeleteStream();
+            SendCreateStream();
+            return ConnectStream();
+        }
+
+        void DeleteStream()
+        {
+            if (m_stream_id < 0) return;
+            Playing = false;
+            SendDeleteStream();
+            m_stream_id = -1;
+        }
+
+        bool ConnectStream()
+        {
+            RTMPPacket packet = null;
+            while (!Playing && IsConnected() && ReadPacket(out packet))
             {
-                
-                if (!packet.IsReady())
-                {                    
+                if (!packet.IsReady()) continue; // keep reading until complete package has arrived
+
+                if (packet.PacketType == PacketType.Audio || packet.PacketType == PacketType.Video || packet.PacketType == PacketType.Metadata)
+                {
+                    Logger.Log("Received FLV packet before play()! Ignoring.");                    
                     continue;
                 }
 
-                switch (packet.PacketType)
-                {
-                    case PacketType.ChunkSize:                        
-                        HandleChangeChunkSize(packet);
-                        break;
-                    case PacketType.BytesRead:                        
-                        //CLog::Log(LOGDEBUG,"%s, received: bytes read report", __FUNCTION__);
-                        break;
-                    case PacketType.Control:
-                        HandlePing(packet);
-                        break;
-                    case PacketType.ServerBW:
-                        HandleServerBW(packet);
-                        break;
-                    case PacketType.ClientBW:
-                        HandleClientBW(packet);
-                        break;
-                    case PacketType.Audio:
-                        //CLog::Log(LOGDEBUG,"%s, received: audio %lu bytes", __FUNCTION__, packet.m_nBodySize);
-                        //HandleAudio(packet);
-                        bHasMediaPacket = true;
-                        break;
-                    case PacketType.Video:
-                        //CLog::Log(LOGDEBUG,"%s, received: video %lu bytes", __FUNCTION__, packet.m_nBodySize);
-                        //HandleVideo(packet);
-                        bHasMediaPacket = true;
-                        break;
-                    case PacketType.Metadata:
-                        //CLog::Log(LOGDEBUG,"%s, received: notify %lu bytes", __FUNCTION__, packet.m_nBodySize);
-                        HandleMetadata(packet);
-                        bHasMediaPacket = true;
-                        break;
-                    case PacketType.Invoke:
-                        //CLog::Log(LOGDEBUG,"%s, received: invoke %lu bytes", __FUNCTION__, packet.m_nBodySize);
-                        HandleInvoke(packet);
-                        break;
-                    case PacketType.FlvTags:
-                        //Logger.Log(string.Format("received: FLV tag(s) {0} bytes", packet.m_nBodySize));
-                        HandleFlvTags(packet);                        
-                        bHasMediaPacket = true;
-                        break;
-                    default:
-                        Logger.Log(string.Format("Ignoring packet of type {0}", packet.PacketType));
-                        break;
-                }
-                //if (!bHasMediaPacket) packet.FreePacket();
+                ClientPacket(packet);
+            }
+            return Playing;
+        }                
+
+        public bool GetNextMediaPacket(out RTMPPacket packet)
+        {
+            bool bHasMediaPacket = false;
+            packet = null;
+            
+            while (!bHasMediaPacket && IsConnected() && ReadPacket(out packet))
+            {                
+                if (!packet.IsReady()) continue; // keep reading until complete package has arrived
+                bHasMediaPacket = ClientPacket(packet) != 0;
                 packet.m_nBytesRead = 0;
             }
             if (bHasMediaPacket) Playing = true;
+            return bHasMediaPacket;
+        }
+
+        int ClientPacket(RTMPPacket packet)
+        {
+            int bHasMediaPacket = 0;
+
+            switch (packet.PacketType)
+            {
+                case PacketType.ChunkSize:
+                    HandleChangeChunkSize(packet);
+                    break;
+                case PacketType.BytesRead:
+                    //CLog::Log(LOGDEBUG,"%s, received: bytes read report", __FUNCTION__);
+                    break;
+                case PacketType.Control:
+                    HandlePing(packet);
+                    break;
+                case PacketType.ServerBW:
+                    HandleServerBW(packet);
+                    break;
+                case PacketType.ClientBW:
+                    HandleClientBW(packet);
+                    break;
+                case PacketType.Audio:
+                    //CLog::Log(LOGDEBUG,"%s, received: audio %lu bytes", __FUNCTION__, packet.m_nBodySize);
+                    //HandleAudio(packet);
+                    bHasMediaPacket = 1;
+                    break;
+                case PacketType.Video:
+                    //CLog::Log(LOGDEBUG,"%s, received: video %lu bytes", __FUNCTION__, packet.m_nBodySize);
+                    //HandleVideo(packet);
+                    bHasMediaPacket = 1;
+                    break;
+                case PacketType.Metadata:
+                    //CLog::Log(LOGDEBUG,"%s, received: notify %lu bytes", __FUNCTION__, packet.m_nBodySize);
+                    HandleMetadata(packet);
+                    bHasMediaPacket = 1;
+                    break;
+                case PacketType.Invoke:
+                    //CLog::Log(LOGDEBUG,"%s, received: invoke %lu bytes", __FUNCTION__, packet.m_nBodySize);
+                    if (HandleInvoke(packet) == true) bHasMediaPacket = 2;
+                    break;
+                case PacketType.FlvTags:
+                    //Logger.Log(string.Format("received: FLV tag(s) {0} bytes", packet.m_nBodySize));
+                    HandleFlvTags(packet);
+                    bHasMediaPacket = 1;
+                    break;
+                default:
+                    Logger.Log(string.Format("Ignoring packet of type {0}", packet.PacketType));
+                    break;
+            }
+
             return bHasMediaPacket;
         }
         
@@ -383,7 +429,10 @@ namespace RTMP_LIB
             }
 
             tcpSocket = null;
-            
+
+            m_nBufferMS = (10 * 60 * 60 * 1000)	/* 10 hours default */;
+            receiveTimeoutMS = 1500;
+
             InChunkSize = RTMP_DEFAULT_CHUNKSIZE;
             outChunkSize = RTMP_DEFAULT_CHUNKSIZE;
             Playing = false;
@@ -391,6 +440,7 @@ namespace RTMP_LIB
             CombinedTracksLength = 0;
             CombinedBitrates = 0;
 
+            m_stream_id = -1;
             m_nBWCheckCounter = 0;
             m_nClientBW = 2500000;
             m_nClientBW2 = 2;
@@ -656,6 +706,27 @@ namespace RTMP_LIB
             return SendRTMP(packet);
         }
 
+        bool SendDeleteStream()
+        {
+            RTMPPacket packet = new RTMPPacket();
+            packet.m_nChannel = 0x03;   // control channel (invoke)
+            packet.HeaderType = HeaderType.Medium;
+            packet.PacketType = PacketType.Invoke;
+
+            Logger.Log("Sending deleteStream");
+            List<byte> enc = new List<byte>();
+            EncodeString(enc, "deleteStream");
+            EncodeNumber(enc, ++m_numInvokes);
+            enc.Add(0x05); // NULL
+            EncodeNumber(enc, m_stream_id);
+
+            packet.m_nBodySize = (uint)enc.Count;
+            packet.m_body = enc.ToArray();
+
+            /* no response expected */
+            return SendRTMP(packet, false);
+        }
+
         bool SendSecureTokenResponse(string resp)
         {
             RTMPPacket packet = new RTMPPacket();
@@ -826,20 +897,27 @@ namespace RTMP_LIB
             Logger.Log(string.Format("HandleClientBW: client BW = {0} {1}", m_nClientBW, m_nClientBW2));
         }
 
-        void HandleInvoke(RTMPPacket packet)
+        /// <summary>
+        /// Analyzes and responds if required to the given <see cref="RTMPPacket"/>.
+        /// </summary>
+        /// <param name="packet">The <see cref="RTMPPacket"/> to inspect amnd react to.</param>
+        /// <returns>0 (false) for OK/Failed/error, 1 for 'Stop or Complete' (true)</returns>
+        bool HandleInvoke(RTMPPacket packet)
         {
+            bool ret = false;
+
             if (packet.m_body[0] != 0x02) // make sure it is a string method name we start with
             {
-                //CLog::Log(LOGWARNING,"%s, Sanity failed. no string method in invoke packet", __FUNCTION__);
-                return;
+                Logger.Log("HandleInvoke: Sanity failed. no string method in invoke packet");
+                return false;
             }
 
             AMFObject obj = new AMFObject();
             int nRes = obj.Decode(packet.m_body, 0, (int)packet.m_nBodySize, false);
             if (nRes < 0)
             {
-                //CLog::Log(LOGERROR,"%s, error decoding invoke packet", __FUNCTION__);
-                return;
+                Logger.Log("HandleInvoke: error decoding invoke packet");
+                return false;
             }
 
             obj.Dump();
@@ -879,7 +957,7 @@ namespace RTMP_LIB
                 }
                 else if (methodInvoked == "play")
                 {
-                    //Playing = true;
+                    Playing = true;
                 }
             }
             else if (method == "onBWDone")
@@ -915,17 +993,26 @@ namespace RTMP_LIB
 
                 Logger.Log(string.Format("onStatus: code :{0}, level: {1}", code, level));
 
-                if (code == "NetStream.Failed"
-                || code == "NetStream.Play.Failed"
-                || code == "NetStream.Play.Stop"
-                || code == "NetStream.Play.StreamNotFound"
-                || code == "NetConnection.Connect.InvalidApp")
+                if (code == "NetStream.Failed" || code == "NetStream.Play.Failed" || code == "NetStream.Play.StreamNotFound" || code == "NetConnection.Connect.InvalidApp")                    
+                {
                     Close();
+                }
+                else if (code == "NetStream.Play.Start" || code == "NetStream.Publish.Start")
+                {
+                    Playing = true;
+                }
+                else if (code == "NetStream.Play.Complete" || code == "NetStream.Play.Stop")
+                {
+                    Close();
+                    ret = true;
+                }
             }
             else
             {
 
             }
+
+            return ret;
         }
 
         void HandleMetadata(RTMPPacket packet)
@@ -1650,9 +1737,9 @@ namespace RTMP_LIB
         #endregion        
 
         int ReadN(byte[] buffer, int offset, int size)
-        {                   
-            // wait (max) 30 seconds until data is available
-            int i = 300;
+        {        
+            // wait until data is available
+            int i = receiveTimeoutMS / 100;
             while (tcpSocket.Available < size && i > 0)
             {
                 i--;
