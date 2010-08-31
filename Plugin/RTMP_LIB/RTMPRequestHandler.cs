@@ -79,19 +79,22 @@ namespace RTMP_LIB
 
                     invalidHeader = rtmp.invalidRTMPHeader;
 
-                    if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.Instance.UserAgent)
+                    if (responseStream != null)
                     {
-                        // keep appending "0" - bytes until we filled the estimated length when sending data to the File Source filter
-                        long zeroBytes = fs.EstimatedLength - fs.Length;
-                        while (zeroBytes > 0)
+                        if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.Instance.UserAgent)
                         {
-                            int chunk = (int)Math.Min(4096, zeroBytes);
-                            byte[] buffer = new byte[chunk];
-                            responseStream.Write(buffer, 0, chunk);
-                            zeroBytes -= chunk;
+                            // keep appending "0" - bytes until we filled the estimated length when sending data to the File Source filter
+                            long zeroBytes = fs.EstimatedLength - fs.Length;
+                            while (zeroBytes > 0)
+                            {
+                                int chunk = (int)Math.Min(4096, zeroBytes);
+                                byte[] buffer = new byte[chunk];
+                                responseStream.Write(buffer, 0, chunk);
+                                zeroBytes -= chunk;
+                            }
                         }
+                        responseStream.Close();
                     }
-                    if (responseStream != null) responseStream.Close();
                 }
                 else
                 {
@@ -101,7 +104,17 @@ namespace RTMP_LIB
             }
             catch (Exception ex)
             {
-                if (responseStream != null) responseStream.Close();
+                if (responseStream != null)
+                {
+                    responseStream.Close();
+                }
+                else
+                {
+                    // no data to play was ever received and send to the requesting client -> send an error now
+                    response.ContentLength = 0;
+                    response.StatusAndReason = HybridDSP.Net.HTTP.HTTPServerResponse.HTTPStatus.HTTP_INTERNAL_SERVER_ERROR;
+                    response.Send().Close();
+                }
                 Logger.Log(ex.ToString());                
             }
             finally

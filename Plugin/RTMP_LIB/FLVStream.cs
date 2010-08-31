@@ -22,8 +22,8 @@ namespace RTMP_LIB
 
         public void WriteFLV(RTMP rtmp, DataReadyHandler DataReady, System.Net.Sockets.Socket socket)
         {
-            // rtmp must be connected
-            if (!rtmp.IsConnected()) return;
+            // rtmp must be connected and ready for playback data
+            if (!rtmp.IsConnected() || !rtmp.Playing) return;
 
             Stream outputStream = null;
 
