@@ -263,7 +263,10 @@ namespace OnlineVideos.MediaPortal1.Player
                     if (sourceFilter != null) sourceFilter.AbortOperation();
                     BufferingStopped = true;                    
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Log.Instance.Warn("Could not stop buffering: {0}", ex.ToString());
+                }
             }
         }
 
@@ -287,10 +290,19 @@ namespace OnlineVideos.MediaPortal1.Player
                     PercentageBuffered = (float)current / (float)total * 100.0f;
                     if (current > last && current - last >= (double)total * 0.01) // log every percent
                     {
-                        Log.Instance.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)PercentageBuffered);
-                        GUIPropertyManager.SetProperty("#OnlineVideos.buffered", ((int)PercentageBuffered).ToString());
+                        Log.Instance.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)PercentageBuffered);                        
                         last = current;
                     }
+
+                    // set the percentage to a gui property, formatted according to percentage, so the user knows very early if anything is buffering                   
+                    string formatString = "###";
+                    if (PercentageBuffered == 0f) formatString = "0";
+                    else if (PercentageBuffered < 1f) formatString = ".##";
+                    else if (PercentageBuffered < 10f) formatString = "#.#";
+                    else if (PercentageBuffered < 100f) formatString = "##";
+
+                    GUIPropertyManager.SetProperty("#OnlineVideos.buffered", PercentageBuffered.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
+                    
                     Thread.Sleep(50); // no need to do this more often than 20 times per second
                 }
                 while (current < total && graphBuilder != null);
