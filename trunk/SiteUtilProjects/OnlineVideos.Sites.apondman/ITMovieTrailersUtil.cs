@@ -82,7 +82,7 @@ namespace OnlineVideos.Sites.apondman {
     /// <summary>
     /// iTunes Movie Trailers
     /// </summary>
-    public class ITMovieTrailersUtil : SiteUtilBase, ISimpleRequestHandler {
+    public class ITMovieTrailersUtil : SiteUtilBase, IChoice, ISimpleRequestHandler {
 
         #region iTunes Movie Trailers
 
@@ -202,11 +202,7 @@ namespace OnlineVideos.Sites.apondman {
             get {
                 return (_sectionPages.Count > 1);
             }
-        }
-
-        public override bool HasMultipleVideos {
-            get { return true; }
-        }
+        }        
 
         public override bool CanSearch { 
             get { return true; } 
@@ -264,7 +260,7 @@ namespace OnlineVideos.Sites.apondman {
             return getVideoList(section);
         }
 
-        public override List<VideoInfo> getOtherVideoList(VideoInfo video) {
+        public List<VideoInfo> getVideoChoices(VideoInfo video) {
             List<VideoInfo> clips = new List<VideoInfo>();
 
             // make the movie request

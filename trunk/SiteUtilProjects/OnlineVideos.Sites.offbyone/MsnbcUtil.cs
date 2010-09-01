@@ -44,8 +44,8 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            List<VideoInfo> loVideoList = new List<VideoInfo>();                
-            foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
+            List<VideoInfo> loVideoList = new List<VideoInfo>();
+            foreach (RssItem rssItem in GetWebData<RssDocument>(((RssLink)category).Url).Channel.Items)
             {
                 if (rssItem.MediaContents.Count == 0) continue;
                 if (rssItem.MediaContents[0].Medium != "video") continue;

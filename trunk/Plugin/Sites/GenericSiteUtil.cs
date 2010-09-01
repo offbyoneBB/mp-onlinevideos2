@@ -116,7 +116,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                string data = GetWebData(baseUrl, GetCookie(), forceUTF8Encoding);
+                string data = GetWebData(baseUrl, GetCookie(), forceUTF8:forceUTF8Encoding);
                 if (!string.IsNullOrEmpty(data))
                 {
                     List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a separate list
@@ -147,7 +147,7 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            string data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8Encoding);
+            string data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8:forceUTF8Encoding);
             if (!string.IsNullOrEmpty(data))
             {
                 parentCategory.SubCategories = new List<Category>();
@@ -230,7 +230,7 @@ namespace OnlineVideos.Sites
             // 3.a extra step to get a playlist file if needed
             if (regEx_PlaylistUrl != null)
             {
-                string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8Encoding);
+                string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8:forceUTF8Encoding);
                 Match matchPlaylistUrl = regEx_PlaylistUrl.Match(dataPage);
                 if (matchPlaylistUrl.Success)
                     return string.Format(playlistUrlFormatString, HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
@@ -242,7 +242,7 @@ namespace OnlineVideos.Sites
 
         public Dictionary<string, string> GetPlaybackOptions(string playlistUrl)
         {
-            string dataPage = GetWebData(playlistUrl, GetCookie(), forceUTF8Encoding);
+            string dataPage = GetWebData(playlistUrl, GetCookie(), forceUTF8:forceUTF8Encoding);
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             Match matchFileUrl = regEx_FileUrl.Match(dataPage);
@@ -343,7 +343,7 @@ namespace OnlineVideos.Sites
         protected List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
-            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), forceUTF8Encoding);
+            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), forceUTF8:forceUTF8Encoding);
             if (data.Length > 0)
             {
                 if (regEx_VideoList != null)

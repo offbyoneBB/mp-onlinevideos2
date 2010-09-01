@@ -9,7 +9,7 @@ using Google.GData.Extensions.MediaRss;
 
 namespace OnlineVideos.Sites
 {
-    public class YouTubeUtil : SiteUtilBase, IFilter, IFavorite
+    public class YouTubeUtil : SiteUtilBase, IFilter, IFavorite, IRelated
     {
         public enum VideoQuality { Low, High, HD };
 
@@ -101,13 +101,15 @@ namespace OnlineVideos.Sites
             service = new YouTubeService("OnlineVideos", CLIENT_ID, DEVELOPER_KEY);
         }
 
-        public override bool HasRelatedVideos { get { return true; } }
+        #region Related
 
-        public override List<VideoInfo> getRelatedVideos(VideoInfo video)
+        public List<VideoInfo> getRelatedVideos(VideoInfo video)
         {
             YouTubeQuery query = new YouTubeQuery() { Uri = new Uri((video.Other as YouTubeEntry).RelatedVideosUri.Content), NumberToRetrieve = pageSize };
             return parseGData(query);
         }
+
+        #endregion
 
         public override List<VideoInfo> getVideoList(Category category)
         {
