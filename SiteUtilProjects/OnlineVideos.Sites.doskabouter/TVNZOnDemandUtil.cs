@@ -80,7 +80,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            string webData = GetWebData((category as RssLink).Url, null, true);
+            string webData = GetWebData((category as RssLink).Url, null, null, null, true);
             List<VideoInfo> res = new List<VideoInfo>();
             if (!string.IsNullOrEmpty(webData))
             {

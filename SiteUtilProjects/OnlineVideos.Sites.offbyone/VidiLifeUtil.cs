@@ -35,8 +35,8 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
 		{            
-			List<VideoInfo> loVideoList = new List<VideoInfo>();			
-            foreach (RssToolkit.Rss.RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
+			List<VideoInfo> loVideoList = new List<VideoInfo>();
+            foreach (RssToolkit.Rss.RssItem rssItem in GetWebData<RssToolkit.Rss.RssDocument>(((RssLink)category).Url).Channel.Items)
             {
                 VideoInfo video = new VideoInfo();
 				video.Description = rssItem.Description;

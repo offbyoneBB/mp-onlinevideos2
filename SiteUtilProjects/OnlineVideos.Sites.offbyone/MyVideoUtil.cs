@@ -34,8 +34,8 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {            
-            List<VideoInfo> loVideoList = new List<VideoInfo>();            
-            foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
+            List<VideoInfo> loVideoList = new List<VideoInfo>();
+            foreach (RssItem rssItem in GetWebData<RssDocument>(((RssLink)category).Url).Channel.Items)
             {
                 Match mInfo = regEx_Info.Match(rssItem.Description);
                 if (mInfo.Success)

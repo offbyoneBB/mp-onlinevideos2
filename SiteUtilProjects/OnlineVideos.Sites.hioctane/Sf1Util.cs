@@ -105,7 +105,7 @@ namespace OnlineVideos.Sites
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
 
-            foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
+            foreach (RssItem rssItem in GetWebData<RssDocument>(((RssLink)category).Url).Channel.Items)
             {
                 Match m = regEx_VideoItem.Match(rssItem.Description);
                 if (m.Success) videoList.Add(new VideoInfo() { Title = rssItem.Title, VideoUrl = m.Groups["url"].Value });

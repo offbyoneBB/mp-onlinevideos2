@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites
         List<VideoInfo> GetVideoForCurrentCategory()
         {
             string finalUrl = string.Format("{0}&max-results={1}&start-index={2}", currentCategory.Url, pageSize, currentStart);
-            RssDocument rss = GetWebDataAsRss(finalUrl);
+            RssDocument rss = GetWebData<RssDocument>(finalUrl);
             currentCategory.EstimatedVideoCount = (uint)rss.Channel.TotalResults;
             List<VideoInfo> videoList = new List<VideoInfo>();
             foreach (RssItem rssItem in rss.Channel.Items)

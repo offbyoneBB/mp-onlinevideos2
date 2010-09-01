@@ -159,52 +159,7 @@ namespace OnlineVideos.Sites
         public virtual List<VideoInfo> getPreviousPageVideos()
         {
             return new List<VideoInfo>();
-        }
-
-        /// <summary>
-        /// Returns true, if the site supports querying for related videos (e.g. <see cref="YouTubeUtil"/>).
-        /// If true, a conext menu entry "show related videos" is added on a video.<br/>
-        /// default: false
-        /// </summary>
-        public virtual bool HasRelatedVideos
-        {
-            get { return false; }
-        }
-
-        /// <summary>
-        /// This function should return a list if videos that are related to the given video (e.g. <see cref="YouTubeUtil"/>).
-        /// It will only be called when <see cref="HasRelatedVideos"/> returns true.<br/>
-        /// default: empty list
-        /// </summary>
-        /// <param name="video">The <see cref="VideoInfo"/> object, for which to get a list of related of videos.</param>
-        /// <returns>a list of <see cref="VideoInfo"/> objects that are related to the input video</returns>
-        public virtual List<VideoInfo> getRelatedVideos(VideoInfo video)
-        {
-            return new List<VideoInfo>();
-        }
-
-        /// <summary>
-        /// Returns true, if the site has multiple choices for a video (e.g. <see cref="AppleTrailersUtil"/>).
-        /// The GUI will show a details view with a selection of videos, taken from <see cref="getOtherVideoList"/>.<br/>
-        /// default: false
-        /// </summary>
-        public virtual bool HasMultipleVideos
-        {
-            get { return false; }
-        }
-
-        /// <summary>
-        /// This function will  be called to retreive a list of videos, that will be displayed in the details view, 
-        /// as choices for a given video (e.g. <see cref="AppleTrailersUtil"/>). 
-        /// It will only be called when <see cref="HasMultipleVideos"/> returns true.<br/>
-        /// default: empty list
-        /// </summary>
-        /// <param name="video">The base <see cref="VideoInfo"/> object, for which to get a choice of videos.</param>
-        /// <returns>a list of <see cref="VideoInfo"/> objects</returns>
-        public virtual List<VideoInfo> getOtherVideoList(VideoInfo video)
-        {
-            return new List<VideoInfo>();
-        }
+        }        
 
         /// <summary>
         /// This function will be called to get the urls for playback of a video.<br/>
@@ -403,37 +358,27 @@ namespace OnlineVideos.Sites
             return url;
         }
 
-        public static string GetWebData(string url)
+        public static T GetWebData<T>(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false)
         {
-            return GetWebData(url, null, null, null, false);
+            string webData = GetWebData(url, cc, referer, proxy, forceUTF8, allowUnsafeHeader);
+            if (typeof(T) == typeof(string))
+            {
+                return (T)(object)webData;
+            }
+            else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JObject))
+            {
+                // attempt to convert the returned string into a Json object
+                return (T)(object)Newtonsoft.Json.Linq.JObject.Parse(webData);
+            }
+            else if (typeof(T) == typeof(RssToolkit.Rss.RssDocument))
+            {
+                // attempt to convert the returned string into a Rss Document
+                return (T)(object)RssToolkit.Rss.RssDocument.Load(webData);
+            }
+            return default(T);
         }
 
-        public static string GetWebData(string url, CookieContainer cc)
-        {
-            return GetWebData(url, cc, null, null, false);
-        }
-
-        public static string GetWebData(string url, CookieContainer cc, bool forceUTF8)
-        {
-            return GetWebData(url, cc, null, null, forceUTF8);
-        }
-
-        public static string GetWebData(string url, CookieContainer cc, string referer)
-        {
-            return GetWebData(url, cc, referer, null, false);
-        }
-
-        public static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy)
-        {
-            return GetWebData(url, cc, referer, proxy, false);
-        }
-
-        public static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy, bool forceUTF8)
-        {
-            return GetWebData(url, cc, referer, proxy, forceUTF8, false);
-        }
-
-        public static string GetWebData(string url, CookieContainer cc, string referer, IWebProxy proxy, bool forceUTF8, bool allowUnsafeHeader)
+        public static string GetWebData(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false)
         {
             try
             {
@@ -497,34 +442,6 @@ namespace OnlineVideos.Sites
                 StreamReader reader = new StreamReader(responseStream, Encoding.UTF8);
                 string str = reader.ReadToEnd();
                 return str.Trim();
-            }
-        }
-
-        protected static Newtonsoft.Json.Linq.JObject GetWebDataAsJson(string url)
-        {
-            string WebData = GetWebData(url);
-            try
-            {
-                // attempts to convert the returned string into a Json object
-                return Newtonsoft.Json.Linq.JObject.Parse(WebData);
-            }
-            catch (Exception e)
-            {
-                Log.Error("Error parsing results from {0} as JSON: {1}", url, e.Message);
-            }
-            return null;
-        }
-
-        protected static RssToolkit.Rss.RssDocument GetWebDataAsRss(string url)
-        {
-            try
-            {
-                return RssToolkit.Rss.RssDocument.Load(GetWebData(url));
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-                return new RssToolkit.Rss.RssDocument();
             }
         }
 

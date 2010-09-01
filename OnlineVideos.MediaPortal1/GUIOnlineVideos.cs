@@ -286,9 +286,9 @@ namespace OnlineVideos.MediaPortal1
 
             int liSelected = GUI_facadeView.SelectedListItemIndex - 1;
 
-            if (CurrentState == State.details && SelectedSite.HasMultipleVideos) liSelected = GUI_infoList.SelectedListItemIndex - 1;
+            if (CurrentState == State.details && SelectedSite is IChoice) liSelected = GUI_infoList.SelectedListItemIndex - 1;
 
-            if (liSelected < 0 || CurrentState == State.sites || CurrentState == State.categories || (SelectedSite.HasMultipleVideos && CurrentState == State.videos))
+            if (liSelected < 0 || CurrentState == State.sites || CurrentState == State.categories || (SelectedSite is IChoice && CurrentState == State.videos))
             {
                 return;
             }
@@ -317,7 +317,7 @@ namespace OnlineVideos.MediaPortal1
                 dlgSel.Add(Translation.RemoveFromFavorites);
                 dialogOptions.Add("RemoveFromFav");
             }
-            if (SelectedSite.HasRelatedVideos)
+            if (SelectedSite is IRelated)
             {
                 dlgSel.Add(Translation.RelatedVideos);
                 dialogOptions.Add("RelatedVideos");
@@ -569,7 +569,7 @@ namespace OnlineVideos.MediaPortal1
                     else
                     {
                         selectedVideo = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
-                        if (SelectedSite.HasMultipleVideos)
+                        if (SelectedSite is IChoice)
                         {
                             // show details view
                             DisplayDetails(selectedVideo);
@@ -1038,7 +1038,7 @@ namespace OnlineVideos.MediaPortal1
         {
             Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
             {
-                return SelectedSite.getOtherVideoList(foVideo);
+                return ((IChoice)SelectedSite).getVideoChoices(foVideo);
             },
             delegate(bool success, object result)
             {
@@ -1156,7 +1156,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-                    return SelectedSite.getRelatedVideos(video);
+                    return ((IRelated)SelectedSite).getRelatedVideos(video);
                 },
                 delegate(bool success, object result)
                 {
@@ -1657,7 +1657,7 @@ namespace OnlineVideos.MediaPortal1
         {
             currentPlaylist = new List<Player.PlayListItem>();
             currentPlaylistIndex = 0;
-            List<VideoInfo> loVideoList = SelectedSite.HasMultipleVideos ? currentTrailerList : currentVideoList;
+            List<VideoInfo> loVideoList = SelectedSite is IChoice ? currentTrailerList : currentVideoList;
             foreach (VideoInfo video in loVideoList)
             {
                 currentPlaylist.Add(new Player.PlayListItem(video.Title, null)

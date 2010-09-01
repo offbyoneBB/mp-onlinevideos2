@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites
     /// <summary>
     /// API Documentation at : http://www.yahooapis.com/music/
     /// </summary>
-    public class YahooMusicVideosUtil : SiteUtilBase
+    public class YahooMusicVideosUtil : SiteUtilBase, IRelated
     {
         public enum Locale 
         { 
@@ -329,14 +329,14 @@ namespace OnlineVideos.Sites
         #endregion
 
         #region Related
-        public override bool HasRelatedVideos { get { return true; } }
 
-        public override List<VideoInfo> getRelatedVideos(VideoInfo video)
+        public List<VideoInfo> getRelatedVideos(VideoInfo video)
         {
             currentCategory = new RssLink() { Url = video.VideoUrl, Name = "similar" } ;
             currentStart = 1;
             return GetVideoForCurrentCategory();
         }
+
         #endregion
 
         VideoInfo GetVideoInfoFromVideoResponse(VideoResponse vi)

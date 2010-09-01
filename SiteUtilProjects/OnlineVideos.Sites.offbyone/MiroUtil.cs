@@ -108,7 +108,7 @@ namespace OnlineVideos.Sites
             string catsString = GetWebData((category as RssLink).Url);
             if (!string.IsNullOrEmpty(catsString))
             {
-                foreach (RssItem rssItem in GetWebDataAsRss(((RssLink)category).Url).Channel.Items)
+                foreach (RssItem rssItem in GetWebData<RssDocument>(((RssLink)category).Url).Channel.Items)
                 {
                     loVideoList.Add(VideoInfo.FromRssItem(rssItem, false, new Predicate<string>(delegate(string url) { return url.StartsWith("http://"); })));
                 }

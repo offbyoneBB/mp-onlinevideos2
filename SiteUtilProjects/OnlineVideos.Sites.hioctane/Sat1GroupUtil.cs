@@ -34,7 +34,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            JObject contentData = GetWebDataAsJson(baseUrl);
+            JObject contentData = GetWebData<JObject>(baseUrl);
             if (contentData != null)
             {
                 foreach (var jObject in contentData)
@@ -123,7 +123,7 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videos = new List<VideoInfo>();
             VideoInfo video = new VideoInfo();
 
-            JObject contentData = GetWebDataAsJson((category as RssLink).Url);
+            JObject contentData = GetWebData<JObject>((category as RssLink).Url);
             if (contentData != null)
             {
                 foreach (var jObject in contentData)

@@ -211,7 +211,7 @@ namespace OnlineVideos.Sites
         List<VideoInfo> getVideoListInternal(string url)
         {
             List<VideoInfo> loVideoList = new List<VideoInfo>();
-            foreach (RssItem rssItem in GetWebDataAsRss(url).Channel.Items)
+            foreach (RssItem rssItem in GetWebData<RssDocument>(url).Channel.Items)
             {
                 VideoInfo video = VideoInfo.FromRssItem(rssItem, true, new Predicate<string>(isPossibleVideo));
                 video.VideoUrl = "http://www.bbc.co.uk/iplayer/playlist/" + rssItem.Guid.Text.Substring(rssItem.Guid.Text.LastIndexOf(':') + 1);
