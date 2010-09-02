@@ -62,26 +62,12 @@ namespace OnlineVideos.Sites
                             string combinedPlaypath = "";
                             if (playpath.Contains(".f4v"))
                                 combinedPlaypath = "mp4:" + playpath;
+                            else combinedPlaypath = playpath;
 
                             combinedPlaypath += "?ivw=" + ivw;
                             combinedPlaypath += "&client=videoplayer&type=content&user=2880224004&session=2289727260&angebot=rtlnow&starttime=00:00:00:00&timetype=" + timetype;
                             combinedPlaypath += "&fkcontent=" + fkcontent;
                             combinedPlaypath += "&season=" + season;
-
-                            //-C S:0 
-                            //-C S:718e64ad271752d80263459c9a968e83 
-                            //-C S:2010-08-12 11:05:40 
-                            //-C S: 
-                            //-C S: 
-                            //-C S:29482 
-                            //-C S:2/V_52030_BBF2_E81816_45570_16x9-lq-512x288-h264-c0_804b3855e95c396edad43b16081bbff9
-
-                            /*  - C1Command ist $para2
-                                - C2Command ist $secret
-                                - C3Command ist $onetime
-                                - C6Command ist $para1
-                                - C7Command ist $filename ohne das "rtmpe://" und ohne Dateiendung ".f4v"
-                                */
 
                             string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                         string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&swfurl={4}&swfsize={5}&swfhash={6}&pageurl={7}&playpath={8}&conn={9}&conn={10}&conn={11}&conn={12}&conn={13}&conn={14}&conn={15}",
@@ -89,14 +75,14 @@ namespace OnlineVideos.Sites
                                                 host, //host
                                                 tcUrl, //tcUrl
                                                 app, //app
-                                                baseUrl + "/includes/rtlnow_videoplayer09_2.swf", //swfurl
-                                                "444122",
-                                                "d7b8968195c92ab83c571c1329bfd473198ab19a1917c9d0a6b8c71222fab454",
+                                                baseUrl + "/includes/rtlnow_videoplayer09_2.swf@ts=20100902", //swfurl
+                                                "528902",
+                                                "b2e22eba4df6652e7debb934536d1d6ba981f26b51a01a5f5261b1cb1a713789",
                                                 video.VideoUrl, //pageUrl
-                                                combinedPlaypath, //playpath
+                                                HttpUtility.UrlEncode(combinedPlaypath), //playpath
                                                 "S:" + para2,
                                                 "S:" + secret,
-                                                "S:" + onetime,
+                                                "S:" + HttpUtility.UrlEncode(onetime),
                                                 "S:",
                                                 "S:",
                                                 "S:" + para1,
