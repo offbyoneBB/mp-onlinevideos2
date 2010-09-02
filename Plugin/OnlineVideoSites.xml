@@ -128,7 +128,7 @@
         <item key="dynamicCategoriesRegEx"><![CDATA[>FREE\s\|</a>\s*</div>\s*<div\sstyle=""\sclass="seriennavi_link">\s*<a\shref="(?<url>[^"]+)"\sstyle="">(?<title>[^<]+)</a>]]></item>
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]+)">(?<Title>[^<]+)</a>\s*</div>\s*<div\sclass="season">[^<]+</div><div\sclass="number">[^>]+><div\sclass="time">(?<Description>[^<]+)</div><div\sclass="buy">\s*<a\shref=[^>]+>kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://rtl-now.rtl.de]]></item>
-        <item key="app"><![CDATA[rtlnow]]></item>
+        <item key="app"><![CDATA[rtlnow_free]]></item>
       </Configuration>
       <Categories />
     </Site>
