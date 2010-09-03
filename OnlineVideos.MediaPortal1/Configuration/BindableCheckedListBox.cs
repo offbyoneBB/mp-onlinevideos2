@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -43,6 +44,19 @@ namespace OnlineVideos.MediaPortal1
                     SettingCheckStatesInternally = false;
                 }
             }
+        }
+
+        protected override void OnDrawItem(DrawItemEventArgs e)
+        {
+            base.OnDrawItem(
+                new DrawItemEventArgs(
+                    e.Graphics, 
+                    e.Font, 
+                    e.Bounds, 
+                    e.Index, 
+                    e.State, 
+                    SiteUtilFactory.UtilExists((this.Items[e.Index] as SiteSettings).UtilName) ? e.ForeColor : Color.Red, 
+                    e.BackColor));
         }
     }
 }

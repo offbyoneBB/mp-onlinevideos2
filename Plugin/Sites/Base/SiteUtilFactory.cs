@@ -58,6 +58,12 @@ namespace OnlineVideos
             }
 		}
 
+        public static bool UtilExists(string shortName)
+        {
+            if (string.IsNullOrEmpty(shortName)) return false;
+            else return utils.ContainsKey(shortName);
+        }
+
         public static SiteUtilBase CreateFromShortName(string name, SiteSettings settings)
 		{
             if (string.IsNullOrEmpty(name)) return null;

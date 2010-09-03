@@ -68,6 +68,14 @@ namespace OnlineVideos.MediaPortal1
             bindingSourceSiteSettings.DataSource = OnlineVideoSettings.Instance.SiteSettingsList;
         }
 
+        void SelectedSiteUtilChanged(object sender, EventArgs e)
+        {
+            if (cbSiteUtil.SelectedIndex != -1)
+            {
+                (siteList.SelectedItem as SiteSettings).UtilName = (string)cbSiteUtil.SelectedItem;
+            }
+        }
+
         void SiteListSelectedValueChanged(object sender, EventArgs e)
         {
             SiteSettings site = siteList.SelectedItem as SiteSettings;
@@ -80,27 +88,33 @@ namespace OnlineVideos.MediaPortal1
 
             if (site != null)
             {
-                foreach (Category aCat in site.Categories)
+                if (site.Categories != null)
                 {
-                    if (aCat is RssLink) rssLinks.Add(aCat as RssLink);
-                    else if (aCat is Group)
+                    foreach (Category aCat in site.Categories)
                     {
-                        TreeNode aGroupNode = new TreeNode(aCat.Name);
-                        aGroupNode.Tag = aCat;
-                        foreach (Channel aChannel in (aCat as Group).Channels)
+                        if (aCat is RssLink) rssLinks.Add(aCat as RssLink);
+                        else if (aCat is Group)
                         {
-                            TreeNode node = new TreeNode(aChannel.StreamName);
-                            node.Tag = aChannel;
-                            aGroupNode.Nodes.Add(node);
+                            TreeNode aGroupNode = new TreeNode(aCat.Name);
+                            aGroupNode.Tag = aCat;
+                            foreach (Channel aChannel in (aCat as Group).Channels)
+                            {
+                                TreeNode node = new TreeNode(aChannel.StreamName);
+                                node.Tag = aChannel;
+                                aGroupNode.Nodes.Add(node);
+                            }
+                            tvGroups.Nodes.Add(aGroupNode);
                         }
-                        tvGroups.Nodes.Add(aGroupNode);
                     }
+                    tvGroups.ExpandAll();
                 }
-                tvGroups.ExpandAll();
 
                 Sites.SiteUtilBase siteUtil = SiteUtilFactory.CreateFromShortName(site.UtilName, site);
                 propertyGridUserConfig.SelectedObject = siteUtil;
 
+                if (siteUtil == null) cbSiteUtil.SelectedIndex = -1;
+                else cbSiteUtil.SelectedItem = site.UtilName;
+                
                 string image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + site.Name + ".png";
                 if (System.IO.File.Exists(image)) iconSite.ImageLocation = image;
             }
@@ -671,5 +685,6 @@ namespace OnlineVideos.MediaPortal1
                 }
             }
         }
+       
     }
 }
