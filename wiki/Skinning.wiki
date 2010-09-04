@@ -25,7 +25,6 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
 || 8 || button || {{{#OnlineVideos.Translation.Refresh.Label}}} || Refresh view when filtering ||
 || 9 || selectbutton || {{{#OnlineVideos.Translation.Category.Label}}} || Category for search ||
 || 10 || button || {{{#OnlineVideos.Translation.Search.Label}}} || Search videos on current site ||
-|| 11 || button || {{{#OnlineVideos.Translation.Favourites.Label}}} || Show favorites for current site ||
 || 12 || button || {{{#OnlineVideos.Translation.EnterPin.Label}}} || Enter Pin for adult sites ||
 || 50 || facadeview || label1 - title, label2 - language (`#OnlineVideos.state = sites`) ||  main facade (required modes: list, large and small icons) ||
 || 51 || listcontrol || - || additional list used instead of facade in details view ||
