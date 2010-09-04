@@ -121,16 +121,6 @@
 					<label>Enter Pin</label>          
 					<visible>no</visible>
 				</control>
-		
-				<control>
-					<description>Favorites</description>
-					<type>button</type>
-					<id>11</id>
-					<onup>12</onup>
-					<ondown>10</ondown>
-					<label>932</label>
-					<visible>no</visible>
-				</control>
 
 				<control>
 					<description>Search</description>
