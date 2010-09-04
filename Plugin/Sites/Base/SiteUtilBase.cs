@@ -422,26 +422,55 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public static string GetWebDataFromPost(string url, string postData)
+        public static string GetWebDataFromPost(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false)
         {
-            byte[] data = Encoding.UTF8.GetBytes(postData);
-
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-            request.Timeout = 15000;
-            request.ContentLength = data.Length;
-            request.ProtocolVersion = HttpVersion.Version10;
-            Stream requestStream = request.GetRequestStream();
-            requestStream.Write(data, 0, data.Length);
-            requestStream.Close();
-            using (WebResponse response = request.GetResponse())
+            try
             {
-                Stream responseStream = response.GetResponseStream();
-                StreamReader reader = new StreamReader(responseStream, Encoding.UTF8);
-                string str = reader.ReadToEnd();
-                return str.Trim();
+                Log.Debug("get webdata from {0}", url);
+
+                // request the data
+                if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(true);
+                byte[] data = Encoding.UTF8.GetBytes(postData);
+
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                if (request == null) return "";
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+                request.Timeout = 15000;
+                request.ContentLength = data.Length;
+                request.ProtocolVersion = HttpVersion.Version10;
+                request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+                if (!String.IsNullOrEmpty(referer)) request.Referer = referer;
+                if (cc != null) request.CookieContainer = cc;
+                if (proxy != null) request.Proxy = proxy;
+
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(data, 0, data.Length);
+                requestStream.Close();
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                {
+                    Stream responseStream;
+                    if (response.ContentEncoding.ToLower().Contains("gzip"))
+                        responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                    else if (response.ContentEncoding.ToLower().Contains("deflate"))
+                        responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                    else
+                        responseStream = response.GetResponseStream();
+
+                    Encoding encoding = Encoding.UTF8;
+                    if (!forceUTF8 && !String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
+
+                    StreamReader reader = new StreamReader(responseStream, encoding, true);
+                    string str = reader.ReadToEnd();
+                    return str.Trim();
+                }
+
+            }
+            finally
+            {
+                // disable unsafe header parsing if it was enabled
+                if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(false);
             }
         }
 
