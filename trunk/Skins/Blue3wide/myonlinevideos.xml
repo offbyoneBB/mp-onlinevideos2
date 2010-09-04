@@ -440,19 +440,7 @@
           <height>37</height>
           <textYOff>3</textYOff>
           <visible>!Control.HasFocus(50)</visible>
-        </control>
-        <control>
-          <type>button</type>
-          <description>Favorites</description>
-          <id>11</id>
-          <onright>50</onright>
-          <onup>4</onup>
-          <label>#OnlineVideos.Translation.Favourites.Label</label>
-          <font>font11</font>
-          <height>37</height>
-          <textYOff>3</textYOff>
-          <visible>!Control.HasFocus(50)</visible>
-        </control>
+        </control>        
         <control>
           <type>button</type>
           <description>Do Age Check</description>

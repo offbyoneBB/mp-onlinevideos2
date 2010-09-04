@@ -9,7 +9,7 @@ using Google.GData.Extensions.MediaRss;
 
 namespace OnlineVideos.Sites
 {
-    public class YouTubeUtil : SiteUtilBase, IFilter, IFavorite, IRelated
+    public class YouTubeUtil : SiteUtilBase, IFilter, IRelated
     {
         public enum VideoQuality { Low, High, HD };
 
@@ -113,12 +113,19 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            string fsUrl = ((RssLink)category).Url;
-            YouTubeQuery query;
-            if (fsUrl.StartsWith("fav:")) query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateFavoritesUri(fsUrl.Substring(4))) };
-            else query = new YouTubeQuery() { Uri = new Uri(fsUrl) };
-            query.NumberToRetrieve = pageSize;
-            return parseGData(query);
+            if (category is RssLink)
+            {
+                string fsUrl = ((RssLink)category).Url;
+                YouTubeQuery query;
+                if (fsUrl.StartsWith("fav:")) query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateFavoritesUri(fsUrl.Substring(4))) };
+                else query = new YouTubeQuery() { Uri = new Uri(fsUrl) };
+                query.NumberToRetrieve = pageSize;
+                return parseGData(query);
+            }
+            else
+            {
+                return getFavorites();
+            }
         }
 
         public override string getUrl(VideoInfo foVideo)
@@ -177,6 +184,9 @@ namespace OnlineVideos.Sites
                 item.Url = query.Uri.ToString();
                 Settings.Categories.Add(item);
             }
+
+            if (!string.IsNullOrEmpty(username)) Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", username, Translation.Favourites) });
+
             Settings.DynamicCategoriesDiscovered = true;
             return categories.Count;
         }
@@ -348,16 +358,45 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        #region IFavorite Members
+        #region YouTube Favorites Handling
 
-        public List<VideoInfo> getFavorites()
+        public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        {
+            List<string> result = new List<string>();
+            if (selectedCategory is RssLink)
+            {
+                result.Add(Translation.AddToFavourites + " (" + Settings.Name + ")");
+            }
+            else
+            {
+                result.Add(Translation.RemoveFromFavorites + " (" + Settings.Name + ")");
+            }
+            return result;
+        }
+
+        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice)
+        {
+            if (choice == Translation.AddToFavourites + " (" + Settings.Name + ")")
+            {
+                addFavorite(selectedItem);
+                return false;
+            }
+            else if (choice == Translation.RemoveFromFavorites + " (" + Settings.Name + ")")
+            {
+                removeFavorite(selectedItem);
+                return true;
+            }
+            return false;
+        }
+
+        protected List<VideoInfo> getFavorites()
         {
             if (string.IsNullOrEmpty(username)) return new List<VideoInfo>();
             YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateFavoritesUri(username)), NumberToRetrieve = pageSize };
             return parseGData(query);
-        }               
+        }
 
-        public void addFavorite(VideoInfo video)
+        protected void addFavorite(VideoInfo video)
         {
             if (CheckUsernameAndPassword())
             {
@@ -367,7 +406,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public void removeFavorite(VideoInfo video)
+        protected void removeFavorite(VideoInfo video)
         {
             if (CheckUsernameAndPassword())
             {
@@ -376,7 +415,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        bool CheckUsernameAndPassword()
+        protected bool CheckUsernameAndPassword()
         {
             if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(username))
             {

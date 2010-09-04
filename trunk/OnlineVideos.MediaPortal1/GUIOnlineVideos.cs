@@ -108,8 +108,6 @@ namespace OnlineVideos.MediaPortal1
         protected GUISelectButtonControl GUI_btnSearchCategories = null;
         [SkinControlAttribute(10)]
         protected GUIButtonControl GUI_btnSearch = null;
-        [SkinControlAttribute(11)]
-        protected GUIButtonControl GUI_btnFavorite = null;
         [SkinControlAttribute(12)]
         protected GUIButtonControl GUI_btnEnterPin = null;
         [SkinControlAttribute(50)]
@@ -305,12 +303,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     dlgSel.Add(Translation.AddToFavourites);
                     dialogOptions.Add("AddToFav");
-                }
-                if (SelectedSite is IFavorite)
-                {
-                    dlgSel.Add(Translation.AddToFavourites + " (" + SelectedSite.Settings.Name + ")");
-                    dialogOptions.Add("AddToFavUtil");
-                }
+                }                
             }
             else
             {
@@ -338,13 +331,12 @@ namespace OnlineVideos.MediaPortal1
                     PlayAll();
                     break;
                 case "AddToFav":
-                    AddFavorite(loSelectedVideo, true);
-                    break;
-                case "AddToFavUtil":
-                    AddFavorite(loSelectedVideo, false);
-                    break;
+                    string suggestedTitle = SelectedSite.GetFileNameForDownload(loSelectedVideo, selectedCategory, null);
+                    FavoritesDatabase.Instance.addFavoriteVideo(loSelectedVideo, suggestedTitle, SelectedSite.Settings.Name);                    
+                    break;                
                 case "RemoveFromFav":
-                    RemoveFavorite(loSelectedVideo);
+                    FavoritesDatabase.Instance.removeFavoriteVideo(loSelectedVideo);
+                    DisplayVideos_Category(selectedCategory, true); // retrieve videos again and show the updated list
                     break;
                 case "RelatedVideos":
                     DisplayVideos_Related(loSelectedVideo);
@@ -360,7 +352,7 @@ namespace OnlineVideos.MediaPortal1
                     delegate(bool success, object result)
                     {
                         if (success && result != null && (bool)result) DisplayVideos_Category(selectedCategory, true);
-                    }, "executing " + dialogOptions[dlgSel.SelectedId - 1], true);
+                    }, ": " + dialogOptions[dlgSel.SelectedId - 1], true);
                     break;
             }
         }
@@ -663,12 +655,7 @@ namespace OnlineVideos.MediaPortal1
                         DisplayVideos_Search(query);
                     }
                 }
-            }
-            else if ((control == GUI_btnFavorite))
-            {
-                GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
-                DisplayVideos_Favorite();
-            }
+            }            
             else if (control == GUI_btnEnterPin)
             {
                 string pin = String.Empty;
@@ -1108,20 +1095,7 @@ namespace OnlineVideos.MediaPortal1
             },
             Translation.GettingCategoryVideos, true);
         }
-
-        private void DisplayVideos_Favorite()
-        {
-            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
-            {
-                return ((IFavorite)SelectedSite).getFavorites();
-            },
-            delegate(bool success, object result)
-            {
-                if (success) SetVideosToFacade(result as List<VideoInfo>, VideosMode.Favorites);
-            },
-            Translation.GettingFavoriteVideos, true);
-        }
-
+        
         private void DisplayVideos_Search(string query)
         {
             SelectedSearchCategoryIndex = GUI_btnSearchCategories.SelectedItem;
@@ -1910,8 +1884,7 @@ namespace OnlineVideos.MediaPortal1
                     HideAndDisable(GUI_btnPrevious.GetID);
                     HideFilterButtons();
                     ShowOrderButtons();
-                    HideSearchButtons();
-                    HideAndDisable(GUI_btnFavorite.GetID);
+                    HideSearchButtons();                    
                     if (OnlineVideoSettings.Instance.UseAgeConfirmation && !OnlineVideoSettings.Instance.AgeConfirmed)
                         ShowAndEnable(GUI_btnEnterPin.GetID);
                     else
@@ -1928,8 +1901,7 @@ namespace OnlineVideos.MediaPortal1
                     HideAndDisable(GUI_btnNext.GetID);
                     HideAndDisable(GUI_btnPrevious.GetID);
                     HideFilterButtons();
-                    if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
-                    if (SelectedSite is IFavorite) ShowAndEnable(GUI_btnFavorite.GetID); else HideAndDisable(GUI_btnFavorite.GetID);
+                    if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();                    
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetGuiProperties_SelectedVideo(null);
                     currentView = suggestedView != null ? suggestedView.Value : currentCategoryView;
@@ -1953,8 +1925,7 @@ namespace OnlineVideos.MediaPortal1
                     if (SelectedSite.HasPreviousPage) ShowAndEnable(GUI_btnPrevious.GetID); else HideAndDisable(GUI_btnPrevious.GetID);
                     if (SelectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
                     if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
-                    if (SelectedSite.HasFilterCategories) ShowCategoryButton();
-                    HideAndDisable(GUI_btnFavorite.GetID);
+                    if (SelectedSite.HasFilterCategories) ShowCategoryButton();                    
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetGuiProperties_SelectedVideo(selectedVideo);
                     currentView = suggestedView != null ? suggestedView.Value : currentVideoView;
@@ -1967,8 +1938,7 @@ namespace OnlineVideos.MediaPortal1
                     HideAndDisable(GUI_btnNext.GetID);
                     HideAndDisable(GUI_btnPrevious.GetID);
                     HideFilterButtons();
-                    HideSearchButtons();
-                    HideAndDisable(GUI_btnFavorite.GetID);
+                    HideSearchButtons();                    
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetGuiProperties_SelectedVideo(null);
                     SetGuiProperties_ExtendedVideoInfo(null);
@@ -2134,47 +2104,6 @@ namespace OnlineVideos.MediaPortal1
             int rememberIndex = GUI_facadeView.SelectedListItemIndex;
             GUI_facadeView.View = currentView; // explicitly set the view (fixes bug that facadeView.list isn't working at startup
             if (rememberIndex > -1) GUIControl.SelectItemControl(GetID, GUI_facadeView.GetID, rememberIndex);
-        }
-
-        private void AddFavorite(VideoInfo loSelectedVideo, bool db)
-        {
-            if (db)
-            {
-                string suggestedTitle = SelectedSite.GetFileNameForDownload(loSelectedVideo, selectedCategory, null);
-                FavoritesDatabase.Instance.addFavoriteVideo(loSelectedVideo, suggestedTitle, SelectedSite.Settings.Name);
-            }
-            else
-            {
-                Log.Instance.Info("Received request to add video to favorites.");
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
-                {
-                    ((IFavorite)SelectedSite).addFavorite(loSelectedVideo);
-                    return null;
-                }, null, Translation.AddingToFavorites, true);
-            }
-        }
-
-        private void RemoveFavorite(VideoInfo loSelectedVideo)
-        {
-            if (SelectedSite is IFavorite)
-            {
-                Log.Instance.Info("Received request to remove video from favorites.");
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
-                {
-                    ((IFavorite)SelectedSite).removeFavorite(loSelectedVideo);
-                    return null;
-                },
-                delegate(bool success, object result)
-                {
-                    if (success) DisplayVideos_Favorite(); // retrieve favorites again and show the updated list
-                },
-                Translation.RemovingFromFavorites, true);
-            }
-            else
-            {
-                FavoritesDatabase.Instance.removeFavoriteVideo(loSelectedVideo);
-                DisplayVideos_Category(selectedCategory, true); // retrieve videos again and show the updated list
-            }
         }
 
         /// <summary>
