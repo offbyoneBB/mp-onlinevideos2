@@ -25,6 +25,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -37,9 +38,9 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -148,6 +149,11 @@
     <Compile Include="DotNetZip\ZlibConstants.cs" />
     <Compile Include="DotNetZip\ZlibStream.cs" />
     <Compile Include="DownloadInfo.cs" />
+    <Compile Include="Hoster\Archiv.cs" />
+    <Compile Include="Hoster\Base\HosterBase.cs" />
+    <Compile Include="Hoster\MegaVideo.cs" />
+    <Compile Include="Hoster\VideoWeed.cs" />
+    <Compile Include="Hoster\zShare.cs" />
     <Compile Include="HTTPDownloader.cs" />
     <Compile Include="ImageDownloader.cs" />
     <Compile Include="Log.cs" />
@@ -424,6 +430,7 @@
     <Compile Include="Sites\Base\SiteUtilBase.cs" />
     <Compile Include="Sites\Base\SiteUtilFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sites\VideoHosterUtil.cs" />
     <Compile Include="Translation.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="VideoInfo.cs" />
