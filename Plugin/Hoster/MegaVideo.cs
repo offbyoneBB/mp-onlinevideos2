@@ -29,6 +29,7 @@ namespace OnlineVideos.Hoster
                     XmlNode node = doc.SelectSingleNode("ROWS/ROW");
                     string server = node.Attributes["s"].Value;
                     string decrypted = Decrypt(node.Attributes["un"].Value, node.Attributes["k1"].Value, node.Attributes["k2"].Value);
+                    videoType = VideoType.flv;
                     return String.Format("http://www{0}.megavideo.com/files/{1}/", server, decrypted);
                 }
                 else return "";
