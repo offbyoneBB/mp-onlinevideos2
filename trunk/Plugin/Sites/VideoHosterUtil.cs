@@ -55,11 +55,15 @@ namespace OnlineVideos.Sites
                             if (!string.IsNullOrEmpty(url))
                             {
                                 int i = 1;
-                                string playbackName = name + " - " + i;
+                                string videoType = "UNKNOWN";
+                                if (hosterUtil.getVideoType() == VideoType.flv) videoType = "FLV";
+                                else if (hosterUtil.getVideoType() == VideoType.divx) videoType = "DIVX";
+
+                                string playbackName = name + " - " + videoType + " - " + i;
                                 while (video.PlaybackOptions.ContainsKey(playbackName))
                                 {
                                     i++;
-                                    playbackName = name + " - " + i;
+                                    playbackName = name + " - " + videoType + " - " + i;
                                 }
                                 video.PlaybackOptions.Add(playbackName, url);
                             }
@@ -90,7 +94,7 @@ namespace OnlineVideos.Sites
             foreach (Type type in hoster.Values)
             {
                 HosterBase hosterUtil = (HosterBase)Activator.CreateInstance(type);
-                string regEx = @"(""|')(?<url>[^(""|')]+" + hosterUtil.getHosterUrl().ToLower() + @"[^(""|')]+)(""|')";
+                string regEx = @"(""|')(?<url>[^(""|')]+" + hosterUtil.getHosterUrl().ToLower()+ "/" + @"[^(""|')]+)(""|')";
 
                 Match m = Regex.Match(webData, regEx);
                 while (m.Success)

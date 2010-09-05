@@ -7,10 +7,19 @@ using OnlineVideos.Sites;
 
 namespace OnlineVideos.Hoster.Base
 {
+    public enum VideoType
+    {
+        flv,
+        divx,
+        unknown
+    }
     public abstract class HosterBase
     {
+        protected VideoType videoType;
+
         public abstract string getVideoUrls(string url);
         public abstract string getHosterUrl();
+        public virtual VideoType getVideoType() { return videoType; }
 
         protected static string FlashProvider(string url)
         {

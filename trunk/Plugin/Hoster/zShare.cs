@@ -38,6 +38,7 @@ namespace OnlineVideos.Hoster
                 foreach (Cookie cook in ccol)
                     CookieHelper.SetIECookie(String.Format("http://{0}.zshare.net", dic["serverid"]), cook);
 
+                videoType = VideoType.flv;
                 return turl;
             }
             return "";
