@@ -21,22 +21,26 @@
   <string Field="Buffered">bufret</string>
 
   <!-- C -->
+  <string Field="Cancel">Avbryt</string>
   <string Field="Category">Kategori</string>
   <string Field="Categories">Kategorier</string>
   <string Field="Creator">Lagd av</string>
   <string Field="CheckingForPluginUpdate">ser etter oppdatert plugin versjon</string>
 
   <!-- D -->
+  <string Field="Date">Dato</string>
   <string Field="DateOfRelease">Utgivelse dato</string>
   <string Field="Directors">Regissører</string>
   <string Field="Download">Nedlasting</string>
   <string Field="Downloading">Nedlaster</string>
   <string Field="DownloadingDescription">Vis listen med aktive nedlastinger.</string>
   <string Field="DownloadFailed">Nedlasting feilet: {0}</string>
-  <string Field="DownloadCancelled">Nedlasting kansellert</string>
+  <string Field="DownloadCancelled">Nedlasting avbrutt</string>
   <string Field="DownloadComplete">Nedlasting ferdig</string>
+  <string Field="DownloadStarted">Nedlasting startet</string>
   <string Field="DownloadedVideos">Nedlastede videoer</string>
   <string Field="Delete">Slett</string>
+  <string Field="DeleteAll">Slett alle</string>
   <string Field="Default">Standard</string>
   <string Field="Done">Ferdig</string>
   <string Field="DeletingOldThumbs">Sletter gamle miniatyrbilder</string>
@@ -115,6 +119,7 @@
   <string Field="SearchResults">Søkeresultater</string>
   <string Field="SelectSource">Velg kilde</string>
   <string Field="Sites">Sider</string>
+  <string Field="Size">Størrelse</string>
   <string Field="SortOptions">Sortering</string>
   <string Field="Search">Søk</string>
   <string Field="SetDownloadFolderInConfig">Angi en nedlastingsmappe under konfigurasjon!</string>
