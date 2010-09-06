@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites
         }
 
         public override List<VideoInfo> getVideoList(Category category)
-        {
+        {            
             return OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(((RssLink)category).Url.Substring(4), null);
         }
 
@@ -76,5 +76,15 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
+
+        public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        {
+            return new List<string>() { Translation.DeleteAll };
+        }
+
+        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice)
+        {
+            return OnlineVideoSettings.Instance.FavDB.removeAllFavoriteVideos(((RssLink)selectedCategory).Url.Substring(4));
+        }
     }
 }

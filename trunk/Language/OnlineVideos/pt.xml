@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Online Videos translation file -->
+<!-- Portuguese (PT) -->
+<!-- Note: English is the fallback for any strings not found in other languages -->
+<strings>
+
+  <!-- A -->
+  <string Field="Airdate">Emitido</string>
+  <string Field="AlreadyDownloading">Já foi descarregado este video.</string>
+  <string Field="Actions">Acções</string>
+  <string Field="Actors">Actores:</string>
+  <string Field="AddToMySites">Adicionar a Locais</string>
+  <string Field="All">Todos</string>
+  <string Field="AddToFavourites">Adicionar a Favoritos</string>  
+
+  <!-- B -->
+  <string Field="Broken">Danificado</string>
+
+  <!-- C -->
+  <string Field="Category">Categoria</string>
+  <string Field="Creator">Criador</string>  
+
+  <!-- D -->
+  <string Field="DateOfRelease">Adicionado em:</string>
+  <string Field="Download">Download</string>
+  <string Field="DownloadFailed">Erro ao descarregar: {0}</string>
+  <string Field="DownloadComplete">Download completo</string>
+  <string Field="DownloadedVideos">Vídeos descarregados</string>
+  <string Field="Delete">Eliminar</string>
+  <string Field="Default">Por defeito</string>
+
+  <!-- E -->
+  <string Field="Error">Erro</string>
+  <string Field="EnterPin">PIN</string>
+
+  <!-- F -->
+  <string Field="Favourites">Favoritos</string>
+  <string Field="Filter">Filtrar</string>
+  <string Field="FullUpdate">Actualização completa</string>
+
+  <!-- G -->
+  <string Field="Genre">Género:</string>
+
+  <!-- H -->
+
+  <!-- I -->
+
+  <!-- L -->
+  <string Field="LayoutList">Vista: Lista</string>
+  <string Field="LayoutIcons">Vista: Icones</string>
+  <string Field="LayoutBigIcons">Vista: Icones Grandes</string>
+
+  <!-- M -->
+  <string Field="ManageSites">Organizar Locais</string>
+  <string Field="MaxResults">Máx. Resultados</string>
+
+  <!-- N -->
+  <string Field="NextPage">Pág. Seguinte</string>
+  <string Field="None">Nada</string>
+  <string Field="NoVideoFound">Video não encontrado</string>
+  <string Field="NewDllRequired">É necessário um novo DLL!</string>
+
+  <!-- O -->
+
+  <!-- P -->
+  <string Field="PlayAll">Reproduzir todos</string>
+  <string Field="PlotOutline">Sinópse:</string>
+  <string Field="PreviousPage">Pág. Anterior</string>
+  <string Field="PerformAutomaticUpdate">Actualizar automáticamente?</string>
+
+  <!-- R -->
+  <string Field="RemoveFromFavorites">Eliminar de favoritos</string>
+  <string Field="Refresh">Actualizar</string>
+  <string Field="RelatedVideos">Vídeos similares</string>
+  <string Field="Reported">Reportado</string>
+  <string Field="Runtime">Duração:</string>
+  <string Field="RemoveFromMySites">Eliminar de Meus Locais</string>
+  <string Field="RestartMediaPortalAndAutomaticUpdate">Reiniciar MediaPortal e actualizar automaticamente!</string>
+
+  <!-- S -->
+  <string Field="SearchResults">Resultados da busca.</string>
+  <string Field="SelectSource">Seleccionar fonte</string>
+  <string Field="SortOptions">Filtar</string>  
+  <string Field="SortByName">Nome</string>
+  <string Field="SortByLanguage">Idioma</string>
+  <string Field="SortByUpdated">Actualizado</string>
+  <string Field="Search">Procurar</string>
+  <string Field="SetDownloadFolderInConfig">Configura a pasta de downloads!</string>
+
+  <!-- T -->
+  <string Field="Timeframe">Timeframe</string>
+  <string Field="Timeout">Fora de tempo</string>
+
+  <!-- U -->  
+  <string Field="Updatable">Actualizável</string>
+  <string Field="UpdateMySite">Actualizar Meus Locais</string>
+  <string Field="UpdateMySiteSkipCategories">Actualizar Meus Locais (excluir categorías)</string>
+  <string Field="UpdateAllYourSites">Actuakizará todos os seus sites.</string>
+  <string Field="UnableToPlayVideo">Impossivel reproduzir video. URL inexistente.</string>
+  <string Field="UnableToDownloadVideo">Impossivel descarregar video. URL inválida.</string>
+
+  <!-- V -->
+
+  <!-- W -->
+  <string Field="Working">Em processo</string>
+
+  <!-- Y -->
+
+</strings>

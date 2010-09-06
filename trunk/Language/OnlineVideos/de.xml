@@ -32,6 +32,7 @@
   <string Field="DownloadStarted">Herunterladen begonnen</string>
   <string Field="DownloadedVideos">Heruntergeladene Videos</string>
   <string Field="Delete">Löschen</string>
+  <string Field="DeleteAll">Alle Löschen</string>
   <string Field="Default">Standard</string>
   <string Field="Done">Fertig</string>
   <string Field="DeletingOldThumbs">Alte Miniaturbilder werden gelöscht</string>

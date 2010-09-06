@@ -110,14 +110,15 @@ namespace OnlineVideos.MediaPortal1
         {
             String lsSQL = string.Format("delete from FAVORITE_VIDEOS where VDO_ID='{0}' ", foVideo.Id);
             m_db.Execute(lsSQL);
-            if (m_db.ChangedRows() > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return m_db.ChangedRows() > 0;
+        }
+
+        public bool removeAllFavoriteVideos(string fsSiteId)
+        {
+            string sql = "delete from FAVORITE_VIDEOS";
+            if (!string.IsNullOrEmpty(fsSiteId)) sql += string.Format(" where VDO_SITE_ID='{0}'", fsSiteId);            
+            m_db.Execute(sql);
+            return m_db.ChangedRows() > 0;
         }
 
         public List<VideoInfo> getFavoriteVideos(string fsSiteId, string fsQuery)
