@@ -20,10 +20,18 @@ namespace OnlineVideos.Hoster
             string page = SiteUtilBase.GetWebData(url.Substring(0, url.LastIndexOf("/")));
             if (!string.IsNullOrEmpty(page))
             {
+                //flv
                 Match n = Regex.Match(page, @"addVariable\(""file"",""(?<url>[^""]+)""\);");
                 if (n.Success)
                 {
                     videoType = VideoType.flv;
+                    return n.Groups["url"].Value;
+                }
+                //divx
+                n = Regex.Match(page, @"video/divx""\ssrc=""(?<url>[^""]+)""");
+                if (n.Success)
+                {
+                    videoType = VideoType.divx;
                     return n.Groups["url"].Value;
                 }
             }
