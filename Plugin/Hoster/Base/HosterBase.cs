@@ -31,5 +31,15 @@ namespace OnlineVideos.Hoster.Base
             }
             return "";
         }
+        protected static string DivxProvider(string url)
+        {
+            string page = SiteUtilBase.GetWebData(url);
+            if (!string.IsNullOrEmpty(page))
+            {
+                Match n = Regex.Match(page, @"var\surl\s=\s'(?<url>[^']+)';");
+                if (n.Success) return n.Groups["url"].Value;
+            }
+            return "";
+        }
     }
 }
