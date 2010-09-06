@@ -40,6 +40,7 @@
   <string Field="DownloadStarted">Download Started</string>  
   <string Field="DownloadedVideos">Downloaded Videos</string>
   <string Field="Delete">Delete</string>
+  <string Field="DeleteAll">Delete All</string>
   <string Field="Default">Default</string>
   <string Field="Done">Done</string>
   <string Field="DeletingOldThumbs">Deleting old thumbnails</string>

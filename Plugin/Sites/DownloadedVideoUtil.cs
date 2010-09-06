@@ -42,20 +42,28 @@ namespace OnlineVideos.Sites
                 SiteUtilBase util = null;
                 if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Path.GetFileName(aDir), out util))
                 {
-                    SiteSettings aSite = util.Settings;
-                    if (aSite.IsEnabled &&
-                       (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
+                    DirectoryInfo dirInfo = new DirectoryInfo(aDir);
+                    if (dirInfo.GetFiles().Length == 0)
                     {
-                        if (!cachedCategories.TryGetValue(aSite.Name + " - " + Translation.DownloadedVideos, out cat))
+                        try { Directory.Delete(aDir); } catch {} // try to delete empty directories
+                    }
+                    else
+                    {
+                        SiteSettings aSite = util.Settings;
+                        if (aSite.IsEnabled &&
+                           (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
                         {
-                            cat = new RssLink();
-                            cat.Name = aSite.Name + " - " + Translation.DownloadedVideos;
-                            cat.Description = aSite.Description;
-                            ((RssLink)cat).Url = aDir;
-                            cat.Thumb = Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + aSite.Name + ".png");
-                            cachedCategories.Add(cat.Name, cat);
+                            if (!cachedCategories.TryGetValue(aSite.Name + " - " + Translation.DownloadedVideos, out cat))
+                            {
+                                cat = new RssLink();
+                                cat.Name = aSite.Name + " - " + Translation.DownloadedVideos;
+                                cat.Description = aSite.Description;
+                                ((RssLink)cat).Url = aDir;
+                                cat.Thumb = Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + aSite.Name + ".png");
+                                cachedCategories.Add(cat.Name, cat);
+                            }
+                            Settings.Categories.Add(cat);
                         }
-                        Settings.Categories.Add(cat);
                     }
                 }
             }
@@ -68,7 +76,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getVideoList(Category category)
         {
             return getVideoList(category is RssLink ? (category as RssLink).Url : null, "*", category.Name == Translation.All);
-        }
+        }        
 
         List<VideoInfo> getVideoList(string path, string search, bool recursive)
         {
@@ -79,7 +87,7 @@ namespace OnlineVideos.Sites
 
                 foreach (FileInfo file in files)
                 {
-                    if (isPossibleVideo(file.Name))
+                    if (isPossibleVideo(file.Name) && PassesAgeCheck(file.FullName))
                     {
                         VideoInfo loVideoInfo = new VideoInfo();
                         loVideoInfo.VideoUrl = file.FullName;
@@ -120,16 +128,19 @@ namespace OnlineVideos.Sites
                 {
                     foreach (DownloadInfo di in currentDownloads.Values)
                     {
-                        string progressInfo = (di.PercentComplete != 0 || di.KbTotal != 0 || di.KbDownloaded != 0) ?
-                            string.Format(" | {0}% / {1} KB - {2} KB/sec", di.PercentComplete, di.KbTotal > 0 ? di.KbTotal.ToString("n0") : di.KbDownloaded.ToString("n0"), (int)(di.KbDownloaded / (DateTime.Now - di.Start).TotalSeconds)) : "";
+                        if (PassesAgeCheck(di.LocalFile))
+                        {
+                            string progressInfo = (di.PercentComplete != 0 || di.KbTotal != 0 || di.KbDownloaded != 0) ?
+                                string.Format(" | {0}% / {1} KB - {2} KB/sec", di.PercentComplete, di.KbTotal > 0 ? di.KbTotal.ToString("n0") : di.KbDownloaded.ToString("n0"), (int)(di.KbDownloaded / (DateTime.Now - di.Start).TotalSeconds)) : "";
 
-                        VideoInfo loVideoInfo = new VideoInfo();
-                        loVideoInfo.Title = di.Title;                        
-                        loVideoInfo.ImageUrl = di.ThumbFile;
-                        loVideoInfo.Length = di.Start.ToString("HH:mm:ss") + progressInfo;
-                        loVideoInfo.Description = string.Format("{0}\n{1}", di.Url, di.LocalFile, progressInfo);
-                        loVideoInfo.Other = di;
-                        loVideoInfoList.Add(loVideoInfo);
+                            VideoInfo loVideoInfo = new VideoInfo();
+                            loVideoInfo.Title = di.Title;
+                            loVideoInfo.ImageUrl = di.ThumbFile;
+                            loVideoInfo.Length = di.Start.ToString("HH:mm:ss") + progressInfo;
+                            loVideoInfo.Description = string.Format("{0}\n{1}", di.Url, di.LocalFile, progressInfo);
+                            loVideoInfo.Other = di;
+                            loVideoInfoList.Add(loVideoInfo);
+                        }
                     }
                 }
             }
@@ -142,6 +153,7 @@ namespace OnlineVideos.Sites
             if (selectedCategory is RssLink)
             {
                 options.Add(Translation.Delete);
+                options.Add(Translation.DeleteAll);
             }
             else
             {
@@ -156,13 +168,29 @@ namespace OnlineVideos.Sites
             {
                 if (System.IO.File.Exists(selectedItem.ImageUrl)) System.IO.File.Delete(selectedItem.ImageUrl);
                 if (System.IO.File.Exists(selectedItem.VideoUrl)) System.IO.File.Delete(selectedItem.VideoUrl);
-                return true;
+            }
+            else if (choice == Translation.DeleteAll)
+            {
+                FileInfo[] files = new DirectoryInfo((selectedCategory as RssLink).Url).GetFiles("*", selectedCategory.Name == Translation.All ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+                foreach (FileInfo file in files)
+                {
+                    if (isPossibleVideo(file.Name))
+                    {
+                        try
+                        {
+                            string imageFileName = file.FullName.Substring(0, file.FullName.LastIndexOf(".")) + ".jpg";
+                            if (System.IO.File.Exists(imageFileName)) System.IO.File.Delete(imageFileName);
+                            System.IO.File.Delete(file.FullName);
+                        }
+                        catch { } // file might be locked (e.g. still downloading)
+                    }
+                }
             }
             else if (choice == Translation.Cancel)
             {
                 ((IDownloader)(selectedItem.Other as DownloadInfo).Downloader).CancelAsync();
             }
-            return false;
+            return true;
         }
 
         #region Search
@@ -218,5 +246,25 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
+
+        bool PassesAgeCheck(string fullFileName)
+        {
+            if (!OnlineVideoSettings.Instance.UseAgeConfirmation) return true;
+            if (OnlineVideoSettings.Instance.UseAgeConfirmation && OnlineVideoSettings.Instance.AgeConfirmed) return true;
+
+            try
+            {
+                // try to find out what site this video belongs to
+                string siteName = Path.GetDirectoryName(fullFileName);
+                siteName = siteName.Substring(siteName.LastIndexOf('\\') + 1);
+                SiteUtilBase util = null;
+                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(siteName, out util))
+                {
+                    return !util.Settings.ConfirmAge;
+                }
+            }
+            catch { }
+            return true;
+        }
     }
 }

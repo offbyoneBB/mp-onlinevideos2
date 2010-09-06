@@ -45,6 +45,7 @@ namespace OnlineVideos
         public static string DownloadStarted = "Download Started";
         public static string DownloadedVideos = "Downloaded Videos";
         public static string Delete = "Delete";
+        public static string DeleteAll = "Delete All";
         public static string Default = "Default";
         public static string Done = "Done";
         public static string DeletingOldThumbs = "Deleting old thumbnails";
