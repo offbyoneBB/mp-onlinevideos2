@@ -15,10 +15,12 @@
   <string Field="AutomaticUpdateDisabled">Automatische update niet beschikbaar</string>
   <string Field="Broken">Kapot</string>
   <string Field="Buffered">Gebufferd</string>
+  <string Field="Cancel">Annuleren</string>
   <string Field="Category">Categorie</string>
   <string Field="Categories">Categoriën</string>
   <string Field="Creator">Maker</string>
   <string Field="CheckingForPluginUpdate">Testen op geupdate plugin versie</string>
+  <string Field="Date">Datum</string>
   <string Field="DateOfRelease">Verschijningsdatum:</string>
   <string Field="Directors">Regisseurs</string>
   <string Field="Download">Download</string>
@@ -30,6 +32,7 @@
   <string Field="DownloadStarted">Download begonnen</string>
   <string Field="DownloadedVideos">Gedownloade videos</string>
   <string Field="Delete">Verwijderen</string>
+  <string Field="DeleteAll">Alles verwijderen</string>
   <string Field="Default">Standaard</string>
   <string Field="Done">Gereed</string>
   <string Field="DeletingOldThumbs">Wissen van oude thumbnails</string>
@@ -84,6 +87,7 @@
   <string Field="SearchResults">Zoekresultaten</string>
   <string Field="SelectSource">Kies bron</string>
   <string Field="Sites">Sites</string>
+  <string Field="Size">Grootte</string>
   <string Field="SortOptions">Sorteeropties</string>
   <string Field="Search">Zoek</string>
   <string Field="SetDownloadFolderInConfig">Kies eerst een download-map in de instellingen!</string>
