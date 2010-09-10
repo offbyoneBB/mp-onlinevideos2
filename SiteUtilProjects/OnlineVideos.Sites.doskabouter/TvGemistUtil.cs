@@ -417,7 +417,7 @@ namespace OnlineVideos.Sites
             string data = GetWebData(@"http://www.rtl.nl/service/gemist/dataset_xml.xml");
             doc.LoadXml(data);
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
-            nsmRequest.AddNamespace("a", @"http://interactief.rtl.nl/system/xmlns/s4m");
+            nsmRequest.AddNamespace("a", @"http://s4mns.rtl.nl/system/xmlns/s4m");
             XmlNodeList list = doc.SelectNodes(@"//a:episodes/a:episode", nsmRequest);
             SortedDictionary<string, List<VideoInfo>> cats = new SortedDictionary<string, List<VideoInfo>>();
             foreach (XmlNode node in list)
