@@ -145,8 +145,17 @@ namespace OnlineVideos.Sites
                 }
                 string url = vid.Attributes["src"].InnerText;
                 if (url.StartsWith("rtmp"))
-                    //rtmpe://fms-streaming.tvnz.co.nz/tvnz.co.nz/2010/thebigbandtheory_s3_e19_part1_700k
-                    url = url.Replace("rtmp:", "rtmpe://fms-streaming.tvnz.co.nz/tvnz.co.nz/");
+                {
+                    string plpath = url.Replace("rtmp:", "");
+                    url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&swfurl={2}&swfsize={3}&swfhash={4}&conn={5}",
+                    "rtmpe://fms-streaming.tvnz.co.nz/tvnz.co.nz/",
+                    plpath,
+                    "http://tvnz.co.nz/stylesheets/tvnz/entertainment/flash/ondemand/player.swf",
+                    "851812",
+                    "2a54a14bd813cd99ac776af676c39fc661528bbe1d85344ed2fdcbdd320cae5f",
+                    "S:-720"));
+                }
                 res.Add(url);
             }
             return res;
