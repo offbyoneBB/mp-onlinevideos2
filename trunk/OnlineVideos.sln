@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.doskabou
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.apondman", "SiteUtilProjects\OnlineVideos.Sites.apondman\OnlineVideos.Sites.apondman.csproj", "{D05B2288-6732-4211-9931-29C8511DC32F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiteParser", "SiteParser\SiteParser.csproj", "{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.MediaPortal1", "OnlineVideos.MediaPortal1\OnlineVideos.MediaPortal1.csproj", "{F229AF99-6CB8-48C7-81EF-BDAD4C2F0EC7}"
 EndProject
 Global
@@ -58,6 +60,12 @@ Global
 		{D05B2288-6732-4211-9931-29C8511DC32F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D05B2288-6732-4211-9931-29C8511DC32F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D05B2288-6732-4211-9931-29C8511DC32F}.Release|x86.ActiveCfg = Release|Any CPU
+		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DEAE4B4-70CB-41D1-AAF7-650B6E71DEB1}.Release|x86.ActiveCfg = Release|Any CPU
 		{F229AF99-6CB8-48C7-81EF-BDAD4C2F0EC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F229AF99-6CB8-48C7-81EF-BDAD4C2F0EC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F229AF99-6CB8-48C7-81EF-BDAD4C2F0EC7}.Debug|x86.ActiveCfg = Debug|Any CPU

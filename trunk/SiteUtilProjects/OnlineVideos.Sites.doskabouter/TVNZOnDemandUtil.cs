@@ -70,6 +70,7 @@ namespace OnlineVideos.Sites
                 {
                     RssLink subcat = new RssLink();
                     subcat.Name = letter.Attributes["label"].Value;
+                    subcat.ParentCategory = parentCategory;
                     parentCategory.SubCategories.Add(subcat);
                     AddSubcats(letter, subcat);
                 }

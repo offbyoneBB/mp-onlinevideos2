@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using OnlineVideos.Sites;
 using OnlineVideos;
+using OnlineVideos.MediaPortal1;
 using System.IO;
 
 namespace SiteParser
@@ -392,8 +393,10 @@ namespace SiteParser
                     int i = 0;
                     while (i < SiteSettingsList.Count)
                     {
-                        if (SiteSettingsList[i].UtilName != "GenericSite" || SiteSettingsList[i].Configuration == null) SiteSettingsList.RemoveAt(i);
-                        else i++;
+                        if (SiteSettingsList[i].UtilName != "GenericSite" || SiteSettingsList[i].Configuration == null)
+                            SiteSettingsList.RemoveAt(i);
+                        else
+                            i++;
                     }
                     comboBoxSites.ComboBox.DisplayMember = "Name";
                     comboBoxSites.ComboBox.DataSource = SiteSettingsList;
