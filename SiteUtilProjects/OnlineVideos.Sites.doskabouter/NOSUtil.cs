@@ -22,12 +22,13 @@ namespace OnlineVideos.Sites
         private string voetbalListLatestRegex = @"<a.*?href=""(?<url>[^""]+)""><img\ssrc=""(?<thumb>[^""]+)"".*?href=[^>]+>(?<title>[^<]+)</a><br\s/><br\s/>(?<descr>[^<]+)<";
         private string voetbalSubRegex = @"<a\shref=""(?<url>[^""]+)""[^>]+>(?<title>[^<]+)<";
         private string os2010ListRegex = @"<li\sid="".*?<a\shref=""(?<url>[^""]+)"".*?<span[^>]*>(?<title>[^<]+)<";
-
+        private string laatsteJournaalListRegex = @"<li[^>]*>\s*<a\shref=""(?<url>[^""]*)"">(?<title1>[^<]+)<strong>(?<title2>[^<]*)</strong></a><span>(?<airdate>[^<]*)</span></li>";
         private string baseVoetbalUrl = null;
 
         private string Pop = "POP";
         private string Latest = "LATEST";
         private string Live = "LIVE";
+        private string LaatsteJournaals = "LAATSTEJOURNAALS";
         private string Os2010 = "os2010";
 
         // Todo: search for voetbal. (should use baseVoetbalUrl)
@@ -43,6 +44,7 @@ namespace OnlineVideos.Sites
         private Regex regEx_VoetbalLatest;
         private Regex regEx_VoetbalSub;
         private Regex regEx_os2010List;
+        private Regex regEx_LaatsteJournaal;
 
         private string currentPageTitle;
 
@@ -77,6 +79,7 @@ namespace OnlineVideos.Sites
             regEx_VoetbalSub = new Regex(voetbalSubRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             regEx_os2010List = new Regex(os2010ListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            regEx_LaatsteJournaal = new Regex(laatsteJournaalListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
         }
 
         public override int DiscoverDynamicCategories()
@@ -102,6 +105,12 @@ namespace OnlineVideos.Sites
             cat = new RssLink();
             cat.Name = "Live";
             cat.Url = Live;
+            cat.HasSubCategories = false;
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink();
+            cat.Name = "Laatste journaals";
+            cat.Url = LaatsteJournaals;
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
@@ -192,8 +201,7 @@ namespace OnlineVideos.Sites
             if (Live.Equals(video.Other))
                 return ParseASX(video.VideoUrl)[0];
             string webData = GetWebData(video.VideoUrl);
-            string url;
-            url = video.VideoUrl;
+            string url = video.VideoUrl;
             if (!Os2010.Equals(video.Other))
             {
                 Match m = regEx_VideoUrl.Match(webData);
@@ -297,6 +305,23 @@ namespace OnlineVideos.Sites
             baseVoetbalUrl = null;
 
             List<VideoInfo> videos = new List<VideoInfo>();
+
+            if (url == LaatsteJournaals)
+            {
+                string webData2 = GetWebData(baseUrl);
+                Match m = regEx_LaatsteJournaal.Match(webData2);
+                while (m.Success)
+                {
+                    VideoInfo video = new VideoInfo();
+                    video.Title = m.Groups["title1"].Value + m.Groups["title2"].Value;
+                    video.VideoUrl = baseUrl + m.Groups["url"].Value;
+                    video.Length = '|' + Translation.Airdate + ": " + m.Groups["airdate"].Value;
+                    videos.Add(video);
+                    m = m.NextMatch();
+                }
+
+                return videos;
+            }
 
             if (url == Live)
             {
