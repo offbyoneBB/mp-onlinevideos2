@@ -132,6 +132,7 @@ namespace OnlineVideos
         public static string SavingLocalSiteList = "Saving local site list ...";
         public static string ShowReports = "Show creator's and user's reports";
         public static string StartingPlayback = "starting playback";
+        public static string Subscriptions = "Subscriptions";
 
         // T
         public static string Timeframe = "Timeframe";
