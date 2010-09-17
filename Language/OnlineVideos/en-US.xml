@@ -127,6 +127,7 @@
   <string Field="SavingLocalSiteList">Saving local site list ...</string>
   <string Field="ShowReports">Show creator's and user's reports</string>
   <string Field="StartingPlayback">starting playback</string>
+  <string Field="Subscriptions">Subscriptions</string>
   
   <!-- T -->
   <string Field="Timeframe">Timeframe</string>

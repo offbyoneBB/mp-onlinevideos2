@@ -84,7 +84,7 @@ namespace OnlineVideos.Sites
         private Dictionary<String, String> timeFrameList = new Dictionary<string, string>();
         private YouTubeQuery lastPerformedQuery;        
 
-        const string CLIENT_ID = "ytapi-GregZ-OnlineVideos-s2skvsf5-0";
+        //const string CLIENT_ID = "ytapi-GregZ-OnlineVideos-s2skvsf5-0";
         const string DEVELOPER_KEY = "AI39si5x-6x0Nybb_MvpC3vpiF8xBjpGgfq-HTbyxWP26hdlnZ3bTYyERHys8wyYsbx3zc5f9bGYj0_qfybCp-wyBF-9R5-5kA";        
         const string USER_PLAYLISTS_FEED = "http://gdata.youtube.com/feeds/api/users/[\\w]+/playlists";
         const string PLAYLIST_FEED = "http://gdata.youtube.com/feeds/api/playlists/{0}";                
@@ -98,7 +98,7 @@ namespace OnlineVideos.Sites
                                                             {"View Count", "viewCount"},
                                                             {"Rating", "rating"}};
             foreach (string name in Enum.GetNames(typeof(YouTubeQuery.UploadTime))) timeFrameList.Add(Utils.ToFriendlyCase(name), name);
-            service = new YouTubeService("OnlineVideos", CLIENT_ID, DEVELOPER_KEY);
+            service = new YouTubeService("OnlineVideos", DEVELOPER_KEY);
         }
 
         #region Related
@@ -116,9 +116,7 @@ namespace OnlineVideos.Sites
             if (category is RssLink)
             {
                 string fsUrl = ((RssLink)category).Url;
-                YouTubeQuery query;
-                if (fsUrl.StartsWith("fav:")) query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateFavoritesUri(fsUrl.Substring(4))) };
-                else query = new YouTubeQuery() { Uri = new Uri(fsUrl) };
+                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(fsUrl) };
                 query.NumberToRetrieve = pageSize;
                 return parseGData(query);
             }
@@ -162,7 +160,7 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            // walk the categories and see if there are user playlists - they need to be set to have subcategories
+            // walk the categories and see if there are user's playlists - they need to be set to have subcategories
             foreach (Category link in Settings.Categories)
             {
                 if ((link is RssLink) && Regex.Match(((RssLink)link).Url, USER_PLAYLISTS_FEED).Success)
@@ -185,7 +183,12 @@ namespace OnlineVideos.Sites
                 Settings.Categories.Add(item);
             }
 
-            if (!string.IsNullOrEmpty(username)) Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", username, Translation.Favourites) });
+            // if a username was set add a category for the users a) favorites and b) subscriptions
+            if (!string.IsNullOrEmpty(username))
+            {
+                Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", username, Translation.Favourites) });
+                Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", username, Translation.Subscriptions), HasSubCategories = true });
+            }
 
             Settings.DynamicCategoriesDiscovered = true;
             return categories.Count;
@@ -194,19 +197,36 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategories = new List<Category>();
-            YouTubeQuery ytq = new YouTubeQuery((parentCategory as RssLink).Url) { NumberToRetrieve = 50 };
-            YouTubeFeed feed = service.Query(ytq);
-            foreach (PlaylistsEntry entry in feed.Entries)
+            if (parentCategory is RssLink)
             {
-                RssLink playlistLink = new RssLink();
-                playlistLink.Name = entry.Title.Text;
-                playlistLink.EstimatedVideoCount = (uint)entry.CountHint;
-                XmlExtension playlistExt = entry.FindExtension(YouTubeNameTable.PlaylistId, YouTubeNameTable.NSYouTube) as XmlExtension;
-                if (playlistExt != null)
+                YouTubeQuery ytq = new YouTubeQuery((parentCategory as RssLink).Url) { NumberToRetrieve = 50 };
+                YouTubeFeed feed = service.Query(ytq);
+                foreach (PlaylistsEntry entry in feed.Entries)
                 {
-                    playlistLink.Url = string.Format(PLAYLIST_FEED, playlistExt.Node.InnerText);
-                    parentCategory.SubCategories.Add(playlistLink);
-                    playlistLink.ParentCategory = parentCategory;
+                    RssLink playlistLink = new RssLink();
+                    playlistLink.Name = entry.Title.Text;
+                    playlistLink.EstimatedVideoCount = (uint)entry.CountHint;
+                    XmlExtension playlistExt = entry.FindExtension(YouTubeNameTable.PlaylistId, YouTubeNameTable.NSYouTube) as XmlExtension;
+                    if (playlistExt != null)
+                    {
+                        playlistLink.Url = string.Format(PLAYLIST_FEED, playlistExt.Node.InnerText);
+                        parentCategory.SubCategories.Add(playlistLink);
+                        playlistLink.ParentCategory = parentCategory;
+                    }
+                }
+            }
+            else
+            {
+                // users subscriptions                
+                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateSubscriptionUri(username)), NumberToRetrieve = pageSize };
+                YouTubeFeed feed = service.Query(query);
+                foreach(SubscriptionEntry subScr in feed.Entries)
+                {
+                    RssLink subScrLink = new RssLink();
+                    subScrLink.Name = subScr.UserName;
+                    subScrLink.Url = YouTubeQuery.CreateUserUri(subScr.UserName); //subScr.SelfUri.ToString();
+                    parentCategory.SubCategories.Add(subScrLink);
+                    subScrLink.ParentCategory = parentCategory;
                 }
             }
             parentCategory.SubCategoriesDiscovered = true;

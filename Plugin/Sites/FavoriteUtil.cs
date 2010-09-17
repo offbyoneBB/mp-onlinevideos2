@@ -16,7 +16,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {            
-            return OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(((RssLink)category).Url.Substring(4), null);
+            return OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(((RssLink)category).Url, null);
         }
 
         // keep a reference of all Categories ever created and reuse them, to get them selected when returning to the category view
@@ -31,7 +31,7 @@ namespace OnlineVideos.Sites
             {
                 all = new RssLink();
                 all.Name = Translation.All;
-                all.Url = "fav:";
+                all.Url = string.Empty;
                 cachedCategories.Add(all.Name, all);
             }
             Settings.Categories.Add(all);
@@ -52,7 +52,7 @@ namespace OnlineVideos.Sites
                             cat = new RssLink();
                             cat.Name = aSite.Name + " - " + Translation.Favourites;
                             cat.Description = aSite.Description;
-                            cat.Url = "fav:" + aSite.Name;
+                            cat.Url = aSite.Name;
                             cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + aSite.Name + ".png");
                             cachedCategories.Add(cat.Name, cat);
                         }

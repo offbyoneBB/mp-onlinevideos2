@@ -94,7 +94,8 @@
   <string Field="State">Status</string>
   <string Field="SavingLocalSiteList">Speichere lokale Sites ...</string>
   <string Field="ShowReports">Meldungen von Benutzern und Ersteller anzeigen</string>
-  <string Field="StartingPlayback">beim Starten des Abspielens</string>
+  <string Field="StartingPlayback">beim Starten des Abspielens</string>  
+  <string Field="Subscriptions">Abonnements</string>  
   <string Field="Timeframe">Zeitraum</string>
   <string Field="Timeout">Zeitüberschreitung</string>
   <string Field="Tags">Schlagworte</string>
