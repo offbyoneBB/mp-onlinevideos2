@@ -158,12 +158,12 @@ namespace Standalone
 
                 waitCursor.Visibility = System.Windows.Visibility.Visible;
 
-                if (SelectedSite.HasMultipleVideos && detailsView.Visibility == System.Windows.Visibility.Hidden)
+                if (SelectedSite is IChoice && detailsView.Visibility == System.Windows.Visibility.Hidden)
                 {
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
                         delegate()
                         {
-                            return SelectedSite.getOtherVideoList(video);
+                            return ((IChoice)SelectedSite).getVideoChoices(video);
                         },
                         delegate(Gui2UtilConnector.ResultInfo resultInfo)
                         {
