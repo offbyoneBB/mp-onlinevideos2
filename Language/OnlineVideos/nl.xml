@@ -95,6 +95,7 @@
   <string Field="SavingLocalSiteList">Opslaan lokale site-lijst...</string>
   <string Field="ShowReports">Toon ontwikkelaars en gebruikers rapporten</string>
   <string Field="StartingPlayback">bij het starten van de video</string>
+  <string Field="Subscriptions">Abonnementen</string>
   <string Field="Timeframe">Periode</string>
   <string Field="Timeout">Time-out</string>
   <string Field="Tags">Kenmerken</string>
