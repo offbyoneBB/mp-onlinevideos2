@@ -71,15 +71,17 @@ namespace RTMP_LIB
                 /* app!=ondemand, so app is app[/appinstance] */
                 int slash2Index = url.PathAndQuery.IndexOf('/', 1);
                 int slash3Index = slash2Index >= 0 ? url.PathAndQuery.IndexOf('/', slash2Index+1) : -1;
+
+                if (url.PathAndQuery.Contains("mp4:")) slash3Index = url.PathAndQuery.IndexOf("mp4:");
                 
                 if(slash3Index >= 0) 
                 {
-                    link.app = url.PathAndQuery.Substring(1, slash3Index - 1);
+                    link.app = url.PathAndQuery.Substring(1, slash3Index - 1).Trim('/');
                     parsePlayPathFrom = url.PathAndQuery.Substring(slash3Index);
                 }
 		        else if(slash2Index >= 0) 
                 {
-                    link.app = url.PathAndQuery.Substring(1, slash2Index - 1);
+                    link.app = url.PathAndQuery.Substring(1, slash2Index - 1).Trim('/');
                     parsePlayPathFrom = url.PathAndQuery.Substring(slash2Index);
                 }
             }
