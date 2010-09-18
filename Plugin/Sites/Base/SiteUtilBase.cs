@@ -375,6 +375,14 @@ namespace OnlineVideos.Sites
                 // attempt to convert the returned string into a Rss Document
                 return (T)(object)RssToolkit.Rss.RssDocument.Load(webData);
             }
+            else if (typeof(T) == typeof(XmlDocument))
+            {
+                // attempt to convert the returned string into a Xml Document
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(webData);
+                return (T)(object)xmlDoc;
+            }
+
             return default(T);
         }
 
