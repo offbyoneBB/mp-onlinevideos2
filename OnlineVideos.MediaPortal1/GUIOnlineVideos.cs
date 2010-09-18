@@ -664,6 +664,7 @@ namespace OnlineVideos.MediaPortal1
                     if (pin == PluginConfiguration.Instance.pinAgeConfirmation)
                     {
                         OnlineVideoSettings.Instance.AgeConfirmed = true;
+                        GUIControl.UnfocusControl(GetID, GUI_btnEnterPin.GetID);
                         HideAndDisable(GUI_btnEnterPin.GetID);
                         DisplaySites();
                         GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
@@ -676,7 +677,7 @@ namespace OnlineVideos.MediaPortal1
         protected override void OnPageDestroy(int newWindowId)
         {
             // only handle if not just going to a full screen video
-            if (newWindowId != Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO)
+            if (newWindowId != Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO && newWindowId != GUISiteUpdater.WindowId)
             {
                 // Save view
                 using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
