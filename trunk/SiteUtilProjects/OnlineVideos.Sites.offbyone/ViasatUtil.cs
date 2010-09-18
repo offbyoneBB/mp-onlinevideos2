@@ -28,17 +28,15 @@ namespace OnlineVideos.Sites
             while (channelCategory.ParentCategory != null) channelCategory = channelCategory.ParentCategory;
             ViasatChannel channel = (ViasatChannel)Enum.Parse(typeof(ViasatChannel), channelCategory.Name);            
             string id = parentCategory is RssLink ? ((RssLink)parentCategory).Url : "0";
-            string doc = "";
+            XmlDocument xDoc;
             if (channel != ViasatChannel.Sport)
             {
-                doc = GetWebData("http://viastream.viasat.tv/siteMapData/se/" + ((int)channel).ToString() + "se/" + id);
+                xDoc = GetWebData<XmlDocument>("http://viastream.viasat.tv/siteMapData/se/" + ((int)channel).ToString() + "se/" + id);
             }
             else
             {
-                doc = GetWebData("http://viastream.player.mtgnewmedia.se/xml/xmltoplayer.php?type=siteMapData&channel=" + ((int)channel).ToString() + "se&country=se&category=" + id);
-            }
-            XmlDocument xDoc = new XmlDocument();
-            xDoc.LoadXml(doc);
+                xDoc = GetWebData<XmlDocument>("http://viastream.player.mtgnewmedia.se/xml/xmltoplayer.php?type=siteMapData&channel=" + ((int)channel).ToString() + "se&country=se&category=" + id);
+            }            
             parentCategory.SubCategories = new List<Category>();
             foreach (XmlElement e in xDoc.SelectNodes("//siteMapNode"))
             {
