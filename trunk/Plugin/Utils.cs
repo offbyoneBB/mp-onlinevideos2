@@ -253,5 +253,42 @@ namespace OnlineVideos
             string name = string.Format("Thumbs{0}L{1}", EncryptLine(url), possibleExtension);
             return System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, name);
         }
+
+        /// <summary>
+        /// find and set all configuration fields that are not default
+        /// </summary>
+        /// <param name="siteUtil"></param>
+        /// <param name="siteSettings"></param>
+        public static void AddConfigurationValues(Sites.SiteUtilBase siteUtil, SiteSettings siteSettings)
+        {
+            // 1. build a list of all the Fields that are used for OnlineVideosConfiguration
+            List<FieldInfo> fieldInfos = new List<FieldInfo>();
+            foreach (FieldInfo field in siteUtil.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                object[] attrs = field.GetCustomAttributes(typeof(System.ComponentModel.CategoryAttribute), false);
+                if (attrs.Length > 0 && ((System.ComponentModel.CategoryAttribute)attrs[0]).Category == "OnlineVideosConfiguration")
+                {
+                    fieldInfos.Add(field);
+                }
+            }
+
+            // 2. get a "clean" site by creating it with empty SiteSettings
+            siteSettings.Configuration = new StringHash();
+            Sites.SiteUtilBase cleanSiteUtil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
+
+            // 3. compare and collect different settings
+            foreach (FieldInfo field in fieldInfos)
+            {
+                object defaultValue = field.GetValue(cleanSiteUtil);
+                object newValue = field.GetValue(siteUtil);
+                if (defaultValue != newValue)
+                {
+                    // seems that if default value = false, and newvalue = false defaultvalue != newvalue returns true
+                    // so added extra check
+                    if (defaultValue == null || !defaultValue.Equals(newValue))
+                        siteSettings.Configuration.Add(field.Name, newValue.ToString());
+                }
+            }
+        }
     }
 }

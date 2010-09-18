@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Text;
-using System.Windows.Forms;
-using OnlineVideos.Sites;
 using OnlineVideos;
-using OnlineVideos.MediaPortal1;
-using System.IO;
+using OnlineVideos.Sites;
 
 namespace SiteParser
 {
@@ -427,7 +424,7 @@ namespace SiteParser
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GuiToUtil(generic);
-            Configuration.AddConfigurationValues(generic, generic.Settings);
+            Utils.AddConfigurationValues(generic, generic.Settings);
 
             XmlSerializer ser = new XmlSerializer(typeof(SiteSettings));
             StringBuilder sb = new StringBuilder();
