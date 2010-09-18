@@ -445,41 +445,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        public static void AddConfigurationValues(Sites.SiteUtilBase siteUtil, SiteSettings siteSettings)
-        {
-            // find and set all configuration fields that are not default
-
-            // 1. build a list of all the Fields that are used for OnlineVideosConfiguration
-            List<FieldInfo> fieldInfos = new List<FieldInfo>();
-            foreach (FieldInfo field in siteUtil.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
-            {
-                object[] attrs = field.GetCustomAttributes(typeof(CategoryAttribute), false);
-                if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosConfiguration")
-                {
-                    fieldInfos.Add(field);
-                }
-            }
-
-            // 2. get a "clean" site by creating it with empty SiteSettings
-            siteSettings.Configuration = new StringHash();
-            Sites.SiteUtilBase cleanSiteUtil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
-
-            // 3. compare and collect different settings
-            foreach (FieldInfo field in fieldInfos)
-            {
-                object defaultValue = field.GetValue(cleanSiteUtil);
-                object newValue = field.GetValue(siteUtil);
-                if (defaultValue != newValue)
-                {
-                    // seems that if default value = false, and newvalue = false defaultvalue != newvalue returns true
-                    // so added extra check
-                    if (defaultValue == null || !defaultValue.Equals(newValue))
-                        siteSettings.Configuration.Add(field.Name, newValue.ToString());
-                }
-            }
-        }
+        }        
 
         private void btnAdvanced_Click(object sender, EventArgs e)
         {
@@ -490,7 +456,7 @@ namespace OnlineVideos.MediaPortal1
             ca.Text += " - " + siteSettings.UtilName;
             ca.propertyGrid.SelectedObject = siteUtil;
             if (ca.ShowDialog() == DialogResult.OK)
-                AddConfigurationValues(siteUtil, siteSettings);
+                Utils.AddConfigurationValues(siteUtil, siteSettings);
         }
 
         private void CheckValidNumber(object sender, CancelEventArgs e)
