@@ -28,12 +28,29 @@
     </xsl:attribute>
   </xsl:template>
 
+  <xsl:template match="Site" priority="3">
+    <!-- required order for Site: name, util, agecheck, enabled, lang, player, lastUpdated, Description, Configuration, Categories -->
+    <xsl:element name="Site">
+      <xsl:if test="@name"><xsl:element name="name"><xsl:value-of select="@name"/></xsl:element></xsl:if>      
+      <xsl:if test="@util"><xsl:element name="util"><xsl:value-of select="@util"/></xsl:element></xsl:if>
+      <xsl:if test="@agecheck"><xsl:element name="agecheck"><xsl:value-of select="@agecheck"/></xsl:element></xsl:if>
+      <xsl:if test="@enabled"><xsl:element name="enabled"><xsl:value-of select="@enabled"/></xsl:element></xsl:if>
+      <xsl:if test="@lang"><xsl:element name="lang"><xsl:value-of select="@lang"/></xsl:element></xsl:if>
+      <xsl:if test="@player"><xsl:element name="player"><xsl:value-of select="@player"/></xsl:element></xsl:if>
+      <xsl:if test="@lastUpdated"><xsl:element name="lastUpdated"><xsl:value-of select="@lastUpdated"/></xsl:element></xsl:if>
+      <xsl:apply-templates select="Description"/>
+      <xsl:apply-templates select="Configuration"/>
+      <xsl:apply-templates select="Categories"/>      
+    </xsl:element>
+  </xsl:template>
+    
   <xsl:template match="@*" priority="2">
     <xsl:variable name="elementName" select="local-name()"/>
     <xsl:element name="{$elementName}">
       <xsl:value-of select="."/>
     </xsl:element>
   </xsl:template>
+  
 
   <xsl:template match="Channel/text()|Category/text()" priority="2">
     <xsl:if test="normalize-space(.)">
