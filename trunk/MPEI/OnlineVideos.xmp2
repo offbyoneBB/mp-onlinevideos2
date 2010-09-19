@@ -1425,6 +1425,13 @@
               <ZipFileName>Installer{CopyFile}\{c56c3e20-9f3d-4f43-b231-68a3b5349318}-he.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\he.xml</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\pt.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{24867284-8f73-4875-be33-ffd82d147861}-pt.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\pt.xml</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1695,6 +1702,23 @@
           </Items>
         </Files>
       </GroupItem>
+      <GroupItem Name="GenericSiteTool">
+        <ParentGroup />
+        <DisplayName>Site Creation Tool</DisplayName>
+        <DefaulChecked>true</DefaulChecked>
+        <Description>A tool that can help adding support for your own site to OnlineVideos, by using the configurable settings of the GenericSite.</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteParser\bin\Debug\SiteParser.exe</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d97676eb-b0ee-4f86-912a-c7d92baaf10b}-SiteParser.exe</ZipFileName>
+              <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
     </Items>
   </Groups>
   <Sections>
@@ -1747,7 +1771,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
               <Description>Description of section, shown in under section title</Description>
             </SectionParam>
             <SectionParam Name="Header image">
-              <Value>..\Plugin\OnlineVideos.png</Value>
+              <Value>..\OnlineVideos.MediaPortal1\OnlineVideos.png</Value>
               <ValueType>File</ValueType>
               <Description>Image in upper right part</Description>
             </SectionParam>
@@ -1770,6 +1794,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
           <string>Blue3</string>
           <string>Blue3Wide</string>
           <string>Xface</string>
+          <string>GenericSiteTool</string>
         </IncludedGroups>
         <PanelName>Tree View Selector</PanelName>
         <WizardButtonsEnum>BackNextCancel</WizardButtonsEnum>
@@ -1788,7 +1813,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
               <Description>Description of section, shown in under section title</Description>
             </SectionParam>
             <SectionParam Name="Header image">
-              <Value>..\Plugin\OnlineVideos.png</Value>
+              <Value>..\OnlineVideos.MediaPortal1\OnlineVideos.png</Value>
               <ValueType>File</ValueType>
               <Description>Image in upper right part</Description>
             </SectionParam>
@@ -2132,12 +2157,12 @@ added new RTMP connection parameters</VersionDescription>
     <Params>
       <Items>
         <SectionParam Name="Icon">
-          <Value>..\Plugin\OnlineVideos.png</Value>
+          <Value>..\OnlineVideos.MediaPortal1\OnlineVideos.png</Value>
           <ValueType>File</ValueType>
           <Description>The icon file of the package (jpg,png,bmp)</Description>
         </SectionParam>
         <SectionParam Name="Online Icon">
-          <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/Plugin/OnlineVideos.png</Value>
+          <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
           <ValueType>String</ValueType>
           <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
         </SectionParam>
@@ -3545,6 +3570,13 @@ added new RTMP connection parameters</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\pt.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{24867284-8f73-4875-be33-ffd82d147861}-pt.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\pt.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Skins\Blue3\myonlinevideos.details.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{2c7d271c-59d4-440f-9141-8b1c06530e79}-myonlinevideos.details.xml</ZipFileName>
         <DestinationFilename>%Skin%\Blue3\myonlinevideos.details.xml</DestinationFilename>
@@ -3759,11 +3791,25 @@ added new RTMP connection parameters</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
         <DestinationFilename>%Base%\extension_settings.xml</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteParser\bin\Debug\SiteParser.exe</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d97676eb-b0ee-4f86-912a-c7d92baaf10b}-SiteParser.exe</ZipFileName>
+        <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Plugin\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e1866726-64cc-47f4-8760-b53119bfc4ed}-OnlineVideos.png</ZipFileName>
+        <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ec055666-6a2a-4cf9-8df1-c606ca097336}-OnlineVideos.png</ZipFileName>
+        <DestinationFilename />
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{156646ca-edee-4698-8430-510f4dacf869}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
