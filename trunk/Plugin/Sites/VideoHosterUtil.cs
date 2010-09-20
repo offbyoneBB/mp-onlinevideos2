@@ -1,17 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 using OnlineVideos.Hoster.Base;
-using OnlineVideos.Hoster;
 using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
+
+    public class VideoInfoEx : VideoInfo
+    {
+        public override string GetPlaybackOptionUrl(string url)
+        {
+            string newUrl = base.GetPlaybackOptionUrl(url);
+
+            foreach (Type type in VideoHosterUtil.hoster.Values)
+            {
+                HosterBase hosterUtil = (HosterBase)Activator.CreateInstance(type);
+                if (newUrl.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                {
+                    string ret = hosterUtil.getVideoUrls(newUrl);
+                    if (!string.IsNullOrEmpty(ret))
+                        return ret;
+                }
+            }
+
+            return null;
+        }
+    }
+
     public class VideoHosterUtil : GenericSiteUtil
     {
-        private Dictionary<String, Type> hoster = new Dictionary<String, Type>();
+        public static Dictionary<String, Type> hoster = new Dictionary<String, Type>();
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -35,41 +54,11 @@ namespace OnlineVideos.Sites
             base.Initialize(siteSettings);
         }
 
-
         public override string getUrl(VideoInfo video)
         {
             if (video.PlaybackOptions == null)
             {
-                video.PlaybackOptions = new Dictionary<string, string>();
-                List<string> hosterLinks = getMirrorList(video.VideoUrl);
-
-                foreach (string link in hosterLinks)
-                {
-                    foreach (Type type in hoster.Values)
-                    {
-                        HosterBase hosterUtil = (HosterBase)Activator.CreateInstance(type);
-                        if (link.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
-                        {
-                            string name = hosterUtil.getHosterUrl();
-                            string url = hosterUtil.getVideoUrls(link);
-                            if (!string.IsNullOrEmpty(url))
-                            {
-                                int i = 1;
-                                string videoType = "UNKNOWN";
-                                if (hosterUtil.getVideoType() == VideoType.flv) videoType = "FLV";
-                                else if (hosterUtil.getVideoType() == VideoType.divx) videoType = "DIVX";
-
-                                string playbackName = name + " - " + videoType + " - " + i;
-                                while (video.PlaybackOptions.ContainsKey(playbackName))
-                                {
-                                    i++;
-                                    playbackName = name + " - " + videoType + " - " + i;
-                                }
-                                video.PlaybackOptions.Add(playbackName, url);
-                            }
-                        }
-                    }
-                }
+                video.PlaybackOptions = getMirrorList(video.VideoUrl);
             }
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
@@ -80,36 +69,51 @@ namespace OnlineVideos.Sites
             return "";
         }
 
-        public virtual List<string> getMirrorList(string url)
+        public virtual Dictionary<string, string> getMirrorList(string url)
         {
             string webData = GetWebData(url);
-            List<string> mirrors = parseHosterLinks(webData);
+            Dictionary<string, string> mirrors = parseHosterLinks(webData);
             return mirrors;
         }
 
-        public virtual List<string> parseHosterLinks(string webData)
+        public virtual Dictionary<string, string> parseHosterLinks(string webData)
         {
-            List<string> ret = new List<string>();
+            Dictionary<string, string> ret = new Dictionary<string, string>();
 
             foreach (Type type in hoster.Values)
             {
                 HosterBase hosterUtil = (HosterBase)Activator.CreateInstance(type);
-                string regEx = @"(""|')(?<url>[^(""|')]+" + hosterUtil.getHosterUrl().ToLower()+ "/" + @"[^(""|')]+)(""|')";
+                string regEx = @"(""|')(?<url>[^(""|')]+" + hosterUtil.getHosterUrl().ToLower() + "/" + @"[^(""|')]+)(""|')";
 
-                Match m = Regex.Match(webData, regEx);
-                while (m.Success)
+                MatchCollection n = Regex.Matches(webData, regEx);
+                foreach (Match m in n)
                 {
                     if (m.Groups["url"].Value.Length > (hosterUtil.getHosterUrl().ToLower().Length + 4))
                     {
                         string targetUrl = m.Groups["url"].Value;
                         if (targetUrl.Contains("\\/")) targetUrl = targetUrl.Replace("\\/", "/");
-                        if (!ret.Contains(targetUrl))
-                            ret.Add(targetUrl);
+
+                        if (n.Count > 1)
+                        {
+                            int i = 1;
+
+                            string playbackName = hosterUtil.getHosterUrl() + " - " + i + "/" + n.Count;
+                            while (ret.ContainsKey(playbackName))
+                            {
+                                i++;
+                                playbackName = hosterUtil.getHosterUrl() + " - " + i + "/" + n.Count;
+                            }
+                            ret.Add(playbackName, targetUrl);
+                        }
+                        else
+                        {
+                            ret.Add(hosterUtil.getHosterUrl(), targetUrl);
+                        }
                     }
-                    m = m.NextMatch();
                 }
             }
             return ret;
         }
+
     }
 }
