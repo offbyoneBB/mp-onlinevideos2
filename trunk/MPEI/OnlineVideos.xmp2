@@ -1716,6 +1716,13 @@
               <ZipFileName>Installer{CopyFile}\{d97676eb-b0ee-4f86-912a-c7d92baaf10b}-SiteParser.exe</ZipFileName>
               <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteParser\app.config</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2d84aca5-6979-4182-a582-20406d244f20}-app.config</ZipFileName>
+              <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe.config</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -3798,18 +3805,18 @@ added new RTMP connection parameters</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{d97676eb-b0ee-4f86-912a-c7d92baaf10b}-SiteParser.exe</ZipFileName>
         <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{ec055666-6a2a-4cf9-8df1-c606ca097336}-OnlineVideos.png</ZipFileName>
-        <DestinationFilename />
+        <LocalFileName>..\SiteParser\app.config</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2d84aca5-6979-4182-a582-20406d244f20}-app.config</ZipFileName>
+        <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe.config</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{156646ca-edee-4698-8430-510f4dacf869}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{f4273612-b6d8-4e6d-9714-e4f2c64db8f2}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
