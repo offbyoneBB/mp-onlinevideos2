@@ -29,7 +29,7 @@ namespace OnlineVideos.Hoster.Base
                 Match n = Regex.Match(page, @"addVariable\(""file"",""(?<url>[^""]+)""\);");
                 if (n.Success) return n.Groups["url"].Value;
             }
-            return "";
+            return String.Empty;
         }
         protected static string DivxProvider(string url)
         {
@@ -39,7 +39,7 @@ namespace OnlineVideos.Hoster.Base
                 Match n = Regex.Match(page, @"var\surl\s=\s'(?<url>[^']+)';");
                 if (n.Success) return n.Groups["url"].Value;
             }
-            return "";
+            return String.Empty;
         }
     }
 }
