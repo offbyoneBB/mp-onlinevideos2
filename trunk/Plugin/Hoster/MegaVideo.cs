@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using OnlineVideos.Hoster.Base;
 using System.Xml;
 using OnlineVideos.Sites;
@@ -18,23 +18,31 @@ namespace OnlineVideos.Hoster
         public override string getVideoUrls(string url)
         {
             XmlDocument doc = new XmlDocument();
-            string id = url.Substring(url.LastIndexOf("/") + 1, 8);
-            if (!id.Contains("v="))
+            string id = url.Substring(url.LastIndexOf("/") + 1, 11);
+            if (id.StartsWith("?v=")) id = id.Substring(3, 8);
+            if (id.StartsWith("?d="))
             {
-                string s = "http://www.megavideo.com/xml/videolink.php?v=" + id;
-                s = SiteUtilBase.GetWebData(s);
-                if (!s.Contains("This video has been removed due to infringement"))
-                {
-                    doc.LoadXml(s);
-                    XmlNode node = doc.SelectSingleNode("ROWS/ROW");
-                    string server = node.Attributes["s"].Value;
-                    string decrypted = Decrypt(node.Attributes["un"].Value, node.Attributes["k1"].Value, node.Attributes["k2"].Value);
-                    videoType = VideoType.flv;
-                    return String.Format("http://www{0}.megavideo.com/files/{1}/", server, decrypted);
-                }
-                else return "";
+                string webData = SiteUtilBase.GetWebData(url);
+                string regEx = @"flashvars.v = ""(?<url>[^""]+)"";";
+                Match m = Regex.Match(webData, regEx);
+                if (m.Success)
+                    id = m.Groups["url"].Value;
+                else
+                    return String.Empty;
             }
-            else return "";
+
+            string s = "http://www.megavideo.com/xml/videolink.php?v=" + id;
+            s = SiteUtilBase.GetWebData(s);
+            if (!s.Contains("This video has been removed due to infringement"))
+            {
+                doc.LoadXml(s);
+                XmlNode node = doc.SelectSingleNode("ROWS/ROW");
+                string server = node.Attributes["s"].Value;
+                string decrypted = Decrypt(node.Attributes["un"].Value, node.Attributes["k1"].Value, node.Attributes["k2"].Value);
+                videoType = VideoType.flv;
+                return String.Format("http://www{0}.megavideo.com/files/{1}/", server, decrypted);
+            }
+            else return String.Empty;
         }
 
         private static String Decrypt(String str_hex, String str_key1, String str_key2)
