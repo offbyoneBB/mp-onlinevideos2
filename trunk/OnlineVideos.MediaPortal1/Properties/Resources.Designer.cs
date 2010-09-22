@@ -67,6 +67,13 @@ namespace OnlineVideos.MediaPortal1.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap CreateSite {
+            get {
+                object obj = ResourceManager.GetObject("CreateSite", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap delete {
             get {
                 object obj = ResourceManager.GetObject("delete", resourceCulture);
