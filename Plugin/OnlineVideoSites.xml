@@ -938,30 +938,6 @@
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
       <Categories />
     </Site>
-    <Site name="LineCinemaRu" util="LineCinemaRu" agecheck="false" enabled="false" lang="ru">
-      <Categories>
-        <Category xsi:type="RssLink" name="Все">http://linecinema.ru</Category>
-        <Category xsi:type="RssLink" name="Боевик">http://linecinema.ru/news/1-0-1</Category>
-        <Category xsi:type="RssLink" name="Детектив">http://linecinema.ru/news/1-0-10</Category>
-        <Category xsi:type="RssLink" name="Исторический">http://linecinema.ru/news/1-0-11</Category>
-        <Category xsi:type="RssLink" name="Мистика">http://linecinema.ru/news/1-0-12</Category>
-        <Category xsi:type="RssLink" name="Мультфильм">http://linecinema.ru/news/1-0-13</Category>
-        <Category xsi:type="RssLink" name="Документальный">http://linecinema.ru/news/1-0-14</Category>
-        <Category xsi:type="RssLink" name="Юмор">http://linecinema.ru/news/1-0-15</Category>
-        <Category xsi:type="RssLink" name="Эротика 16+">http://linecinema.ru/news/1-0-16</Category>
-        <Category xsi:type="RssLink" name="Гоблин">http://linecinema.ru/news/1-0-17</Category>
-        <Category xsi:type="RssLink" name="Сериал">http://linecinema.ru/news/1-0-18</Category>
-        <Category xsi:type="RssLink" name="Анимэ">http://linecinema.ru/news/1-0-19</Category>
-        <Category xsi:type="RssLink" name="Комедия">http://linecinema.ru/news/1-0-2</Category>
-        <Category xsi:type="RssLink" name="Триллер">http://linecinema.ru/news/1-0-3</Category>
-        <Category xsi:type="RssLink" name="Мелодрама">http://linecinema.ru/news/1-0-4</Category>
-        <Category xsi:type="RssLink" name="Драма">http://linecinema.ru/news/1-0-5</Category>
-        <Category xsi:type="RssLink" name="Приключения">http://linecinema.ru/news/1-0-6</Category>
-        <Category xsi:type="RssLink" name="Фантастика">http://linecinema.ru/news/1-0-7</Category>
-        <Category xsi:type="RssLink" name="Ужасы">http://linecinema.ru/news/1-0-8</Category>
-        <Category xsi:type="RssLink" name="Отечественный">http://linecinema.ru/news/1-0-9</Category>
-      </Categories>
-    </Site>
     <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true" lang="--">
       <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country.</Description>
       <Configuration>
@@ -1108,32 +1084,6 @@
       </Categories>
     </Site>
     <Site name="TurboNick" util="TurboNick" agecheck="false" enabled="true" lang="nl">
-      <Categories />
-    </Site>
-    <Site name="Watch-Series" util="WatchSeries" agecheck="false" enabled="true" lang="en" player="Internal" lastUpdated="2010-06-18T23:41:46.4703588+02:00">
-      <Description>Watch tv series online for free, full episodes.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"[^>]*>(?<title>[^<]*)<[^>]*>(?<description>[^<]*)<]]></item>
-        <item key="videoListRegEx"><![CDATA[<li><a\shref="(?<VideoUrl>[^"]*)"[^>]*>(?<Title>[^<]*)</a></li>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<div\sclass="linktable"\s*>\s*[^<]*<[^<]*<div\sclass="site">\s*(?<n0>.*?)\s*<[^<]*<[^<]*<a\shref="(?<m0>[^"]*)".*?class="user">(?<n1>[^%]*)]]></item>
-        <item key="fileUrlNameFormatString"><![CDATA[{1}%{0}]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
-        <item key="baseUrl"><![CDATA[http://watch-series.com]]></item>
-      </Configuration>
-      <Categories />
-    </Site>
-    <Site name="Watch-Movies" util="WatchSeries" agecheck="false" enabled="true" lang="en" player="Internal">
-      <Description>Watch Movies Online For Free, Watch Latest Movies Online For Free, Latest Hollywood Movies.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"[^>]*>(?<title>[^<]*)</a></li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*<(?:/)?li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<li>\s+<a\shref="(?<VideoUrl>[^"]*)"[^>]+>(?<Title>[^<]*)</a>\s+</li>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<div\sclass="linewrap"\s*>\s*[^<]*<div\sclass="site">\s*(?<n0>[^<]*)\s*<[^<]*<[^<]*<a\shref="(?<m0>[^"]*)"[^>]*>([^\d]*)<.*?class="user">(?<n1>[^%]*)]]></item>
-        <item key="fileUrlNameFormatString"><![CDATA[{1}%{0}]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
-        <item key="baseUrl"><![CDATA[http://watch-movies-az.com]]></item>
-      </Configuration>
       <Categories />
     </Site>
     <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" lang="nl" player="WMP">
