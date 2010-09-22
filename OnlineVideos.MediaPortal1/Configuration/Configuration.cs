@@ -651,6 +651,19 @@ namespace OnlineVideos.MediaPortal1
                 }
             }
         }
+
+        private void btnCreateSite_Click(object sender, EventArgs e)
+        {
+            string file = System.IO.Path.Combine(Application.StartupPath, "OnlineVideos.SiteCreator.exe");
+            if (System.IO.File.Exists(file))
+            {
+                System.Diagnostics.Process.Start(file);
+            }
+            else
+            {
+                MessageBox.Show("Please reinstall OnlineVideos and select the option 'Site Creation Tool'.", "Tool not installed", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
+        }
        
     }
 }
