@@ -171,7 +171,6 @@
     <Compile Include="Google\GData\YouTube\youtuberequest.cs" />
     <Compile Include="Google\GData\YouTube\youtubeservice.cs" />
     <Compile Include="JustinTVUtil.cs" />
-    <Compile Include="LineCinemaRuUtil.cs" />
     <Compile Include="LiveVideoUtil.cs" />
     <Compile Include="MetaCafeUtil.cs" />
     <Compile Include="MiroUtil.cs" />
