@@ -18,7 +18,15 @@ namespace OnlineVideos.Hoster
         public override string getVideoUrls(string url)
         {
             XmlDocument doc = new XmlDocument();
-            string id = url.Substring(url.LastIndexOf("/") + 1, 11);
+            string id = string.Empty;
+
+            //www.megavideo.com/v/XXXXXXXX
+            if (url.Contains("/v/"))
+                id = url.Substring(url.LastIndexOf("/") + 1, 8);
+            else
+            //www.megavideo.com?v=XXXXXXXX
+                id = url.Substring(url.LastIndexOf("/") + 1, 11);
+
             if (id.StartsWith("?v=")) id = id.Substring(3, 8);
             if (id.StartsWith("?d="))
             {
@@ -40,7 +48,7 @@ namespace OnlineVideos.Hoster
                 string server = node.Attributes["s"].Value;
                 string decrypted = Decrypt(node.Attributes["un"].Value, node.Attributes["k1"].Value, node.Attributes["k2"].Value);
                 videoType = VideoType.flv;
-                return String.Format("http://www{0}.megavideo.com/files/{1}/", server, decrypted);
+                return String.Format("http://www{0}.megavideo.com/files/{1}", server, decrypted);
             }
             else return String.Empty;
         }
