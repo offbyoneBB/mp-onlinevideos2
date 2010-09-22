@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
 using DirectShowLib;
 using DShowNET.Helper;
-using MediaPortal.Configuration;
-using MediaPortal.Player;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.Profile;
-using System.Runtime.InteropServices;
-using System.Drawing;
-using System.Threading;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
@@ -260,7 +255,11 @@ namespace OnlineVideos.MediaPortal1.Player
                     graphBuilder.FindFilterByName("File Source (URL)", out filter);
                     sourceFilter = filter as IAMOpenProgress;
                     Marshal.ReleaseComObject(filter);
-                    if (sourceFilter != null) sourceFilter.AbortOperation();
+                    if (sourceFilter != null)
+                    {
+                        sourceFilter.AbortOperation();
+                        DirectShowUtil.ReleaseComObject(sourceFilter, 50);
+                    }
                     BufferingStopped = true;                    
                 }
                 catch (Exception ex)
@@ -275,10 +274,11 @@ namespace OnlineVideos.MediaPortal1.Player
             IAMOpenProgress sourceFilter = null;
             try
             {
+                
                 IBaseFilter filter = null;
                 graphBuilder.FindFilterByName("File Source (URL)", out filter);
                 sourceFilter = filter as IAMOpenProgress;
-                Marshal.ReleaseComObject(filter);
+                Marshal.ReleaseComObject(filter);                
                 if (sourceFilter == null) return;
 
                 int result = 0;
@@ -296,9 +296,9 @@ namespace OnlineVideos.MediaPortal1.Player
 
                     // set the percentage to a gui property, formatted according to percentage, so the user knows very early if anything is buffering                   
                     string formatString = "###";
-                    if (PercentageBuffered == 0f) formatString = "0";
-                    else if (PercentageBuffered < 1f) formatString = ".##";
-                    else if (PercentageBuffered < 10f) formatString = "#.#";
+                    if (PercentageBuffered == 0f) formatString = "0.0";
+                    else if (PercentageBuffered < 1f) formatString = ".00";
+                    else if (PercentageBuffered < 10f) formatString = "0.0";
                     else if (PercentageBuffered < 100f) formatString = "##";
 
                     GUIPropertyManager.SetProperty("#OnlineVideos.buffered", PercentageBuffered.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
@@ -320,7 +320,11 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 // if not 100% buffered, some error occured, set -1%, to signal the abort to any waiting threads
                 if (PercentageBuffered != 100.0f) PercentageBuffered = -1.0f;
-                if (sourceFilter != null) Marshal.ReleaseComObject(sourceFilter);
+                if (sourceFilter != null)
+                {
+                    Log.Instance.Info("OnlineVideosPlayer.MonitorBufferProgress: Releasing Source Filter");
+                    DirectShowUtil.ReleaseComObject(sourceFilter, 50);
+                }
             }
         }        
 
@@ -329,7 +333,7 @@ namespace OnlineVideos.MediaPortal1.Player
         /// starts building a graph by adding the preferred video and audio render to it.
         /// This needs to be called on the MpMain Thread.
         /// </summary>
-        /// <returns>true, if the url can be buffered</returns>
+        /// <returns>true, if the url can be buffered (a graph was started)</returns>
         public bool PrepareGraph()
         {
             Uri uri = new Uri(CurrentFile);
@@ -351,6 +355,14 @@ namespace OnlineVideos.MediaPortal1.Player
                     DirectShowUtil.AddAudioRendererToGraph(graphBuilder, audiorenderer, false);
                 }
 
+                // set fields for playback
+                mediaCtrl = (IMediaControl)graphBuilder;
+                mediaEvt = (IMediaEventEx)graphBuilder;
+                mediaSeek = (IMediaSeeking)graphBuilder;
+                mediaPos = (IMediaPosition)graphBuilder;
+                basicAudio = (IBasicAudio)graphBuilder;
+                videoWin = (IVideoWindow)graphBuilder;
+
                 return true;
             }
             else
@@ -360,16 +372,19 @@ namespace OnlineVideos.MediaPortal1.Player
         }      
 
         /// <summary>
-        /// This function can be called by a background thread. It finish building the graph and
-        /// wait until the buffer is filled to the configured percentage.
-        /// If a graph building requires the full file to be downloaded, the function will return when that is done.
+        /// This function can be called by a background thread. It finishes building the graph and
+        /// waits until the buffer is filled to the configured percentage.
+        /// If a filter in the graph requires the full file to be downloaded, the function will return only afterwards.
         /// </summary>
         /// <returns>true, when playback can be started</returns>
         public bool BufferFile()
         {            
-            // load the url with the source filter   
+            // load the url with the source filter
+            Log.Instance.Info("OnlineVideosPlayer.BufferFile: Adding 'File Source (URL)' to graph.");
             IBaseFilter sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "File Source (URL)");
+            Log.Instance.Info("OnlineVideosPlayer.BufferFile: Loading URL.");
             int result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
+            Log.Instance.Info("OnlineVideosPlayer.BufferFile: Loading URL {0}.", result != 0 ? "failed" : "successfull");
             if (result != 0) return false;
             // buffer before starting playback
             PercentageBuffered = 0.0f;
@@ -386,6 +401,7 @@ namespace OnlineVideos.MediaPortal1.Player
             // cleanup resources
             DirectShowUtil.ReleaseComObject(sourceFilterPins[0]);
             DirectShowUtil.ReleaseComObject(enumPins);
+            DirectShowUtil.ReleaseComObject(sourceFilter);
             // playback is ready when no error occured while buffering
             return PercentageBuffered >= 0.0f;
         }
@@ -410,13 +426,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 // now set VMR9 to Active
                 GUIGraphicsContext.Vmr9Active = true;
                 
-                // set fields for playback
-                mediaCtrl = (IMediaControl)graphBuilder;
-                mediaEvt = (IMediaEventEx)graphBuilder;
-                mediaSeek = (IMediaSeeking)graphBuilder;
-                mediaPos = (IMediaPosition)graphBuilder;
-                basicAudio = (IBasicAudio)graphBuilder;
-                videoWin = (IVideoWindow)graphBuilder;                
+                // set fields for playback                
                 m_iVideoWidth = Vmr9.VideoWidth;
                 m_iVideoHeight = Vmr9.VideoHeight;
                 
@@ -429,7 +439,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 Log.Instance.Error("OnlineVideosPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
                 return false;
             }
-        }        
+        }
 
         public override bool Play(string strFile)
         {
@@ -443,98 +453,90 @@ namespace OnlineVideos.MediaPortal1.Player
             m_ar = GUIGraphicsContext.ARType;
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
             _updateNeeded = true;
-            Log.Instance.Info("VideoPlayer:play {0}", strFile);
-            //lock ( typeof(VideoPlayerVMR7) )
+            Log.Instance.Info("OnlineVideosPlayer:Play {0}", strFile);
+
+            m_bStarted = false;
+            if (!GetInterfaces())
             {
-                //CloseInterfaces();
-                m_bStarted = false;
-                if (!GetInterfaces())
-                {
-                    m_strCurrentFile = "";
-                    CloseInterfaces();
-                    return false;
-                }
-                int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
-                if (hr < 0)
-                {
-                    Error.SetError("Unable to play movie", "Can not set notifications");
-                    m_strCurrentFile = "";
-                    CloseInterfaces();
-                    return false;
-                }
-                if (videoWin != null)
-                {
-                    videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-                    videoWin.put_WindowStyle(
-                      (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
-                    videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-                }
-                if (basicVideo != null)
-                {
-                    hr = basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-                    if (hr < 0)
-                    {
-                        Error.SetError("Unable to play movie", "Can not find movie width/height");
-                        m_strCurrentFile = "";
-                        CloseInterfaces();
-                        return false;
-                    }
-                }
-                /*
-                GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target, Color.Black, 1.0f, 0);
-                try
-                {
-                  // Show the frame on the primary surface.
-                  GUIGraphicsContext.DX9Device.Present();
-                }
-                catch(DeviceLostException)
-                {
-                }*/
-                DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);
-                // DsUtils.DumpFilters(graphBuilder);
-                try
-                {
-                    hr = mediaCtrl.Run();
-                    DsError.ThrowExceptionForHR(hr);
-                }
-                catch (Exception error)
-                {
-                    Log.Instance.Error("VideoPlayer: Unable to play with reason - {0}", error.Message);
-                }
-                if (hr < 0)
-                {
-                    Error.SetError("Unable to play movie", "Unable to start movie");
-                    m_strCurrentFile = "";
-                    CloseInterfaces();
-                    return false;
-                }
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
-                msg.Label = strFile;
-                GUIWindowManager.SendThreadMessage(msg);
-                m_state = PlayState.Playing;
-                //Brutus GUIGraphicsContext.IsFullScreenVideo=true;
-                m_iPositionX = GUIGraphicsContext.VideoWindow.X;
-                m_iPositionY = GUIGraphicsContext.VideoWindow.Y;
-                m_iWidth = GUIGraphicsContext.VideoWindow.Width;
-                m_iHeight = GUIGraphicsContext.VideoWindow.Height;
-                m_ar = GUIGraphicsContext.ARType;
-                _updateNeeded = true;
-                SetVideoWindow();
-                mediaPos.get_Duration(out m_dDuration);
-                Log.Instance.Info("VideoPlayer:Duration:{0}", m_dDuration);
-                AnalyseStreams();
-                //SelectSubtitles();
-                //SelectAudioLanguage();
-                OnInitialized();
+                m_strCurrentFile = "";
+                CloseInterfaces();
+                return false;
             }
+            int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
+            if (hr < 0)
+            {
+                Error.SetError("Unable to play movie", "Can not set notifications");
+                m_strCurrentFile = "";
+                CloseInterfaces();
+                return false;
+            }
+            if (videoWin != null)
+            {
+                videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
+                videoWin.put_WindowStyle(
+                  (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+                videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
+            }
+            if (basicVideo != null)
+            {
+                hr = basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
+                if (hr < 0)
+                {
+                    Error.SetError("Unable to play movie", "Can not find movie width/height");
+                    m_strCurrentFile = "";
+                    CloseInterfaces();
+                    return false;
+                }
+            }
+
+            DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);
+
+            try
+            {
+                hr = mediaCtrl.Run();
+                DsError.ThrowExceptionForHR(hr);
+            }
+            catch (Exception error)
+            {
+                Log.Instance.Error("VideoPlayer: Unable to play with reason - {0}", error.Message);
+            }
+            if (hr < 0)
+            {
+                Error.SetError("Unable to play movie", "Unable to start movie");
+                m_strCurrentFile = "";
+                CloseInterfaces();
+                return false;
+            }
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
+            msg.Label = strFile;
+            GUIWindowManager.SendThreadMessage(msg);
+            m_state = PlayState.Playing;
+            m_iPositionX = GUIGraphicsContext.VideoWindow.X;
+            m_iPositionY = GUIGraphicsContext.VideoWindow.Y;
+            m_iWidth = GUIGraphicsContext.VideoWindow.Width;
+            m_iHeight = GUIGraphicsContext.VideoWindow.Height;
+            m_ar = GUIGraphicsContext.ARType;
+            _updateNeeded = true;
+            SetVideoWindow();
+            mediaPos.get_Duration(out m_dDuration);
+            Log.Instance.Info("OnlineVideosPlayer:Duration:{0}", m_dDuration);
+            AnalyseStreams();
+            //SelectSubtitles();
+            //SelectAudioLanguage();
+            OnInitialized();
+
             return true;
         }
 
         public override void Stop()
         {
             BufferingStopped = true;
-            Thread.Sleep(200);
-            base.Stop();
+            while(PercentageBuffered != 100.0f && PercentageBuffered != -1.0f) Thread.Sleep(200);
+            Log.Instance.Info("OnlineVideosPlayer:ended {0}", m_strCurrentFile);
+            m_strCurrentFile = "";
+            CloseInterfaces();
+            m_state = PlayState.Init;
+            GUIGraphicsContext.IsPlaying = false;
         }
     }
 }
