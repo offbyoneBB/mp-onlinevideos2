@@ -12,18 +12,18 @@ namespace OnlineVideos.Sites
         public override string GetPlaybackOptionUrl(string url)
         {
             string newUrl = base.GetPlaybackOptionUrl(url);
-
-            foreach (Type type in VideoHosterUtil.hoster.Values)
+            Uri uri = new Uri(newUrl);
+            string key = uri.Host.Replace("www.", "");
+            key = key.Substring(0, key.IndexOf("."));
+            try
             {
-                HosterBase hosterUtil = (HosterBase)Activator.CreateInstance(type);
-                if (newUrl.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
-                {
-                    string ret = hosterUtil.getVideoUrls(newUrl);
-                    if (!string.IsNullOrEmpty(ret))
-                        return ret;
-                }
+                HosterBase hosterUtil = (HosterBase)Activator.CreateInstance(VideoHosterUtil.hoster[key]);
+                string ret = hosterUtil.getVideoUrls(newUrl);
+                if (!string.IsNullOrEmpty(ret))
+                    return ret;
             }
-
+            catch
+            {}
             return null;
         }
     }
@@ -46,20 +46,28 @@ namespace OnlineVideos.Sites
             {
                 if (type.BaseType != null && type.IsSubclassOf(typeof(HosterBase)) && type.Namespace.Contains("OnlineVideos.Hoster"))
                 {
-                    if (!hoster.ContainsKey(type.Name))
-                        hoster.Add(type.Name, type);
+                    if (!hoster.ContainsKey(type.Name.ToLower()))
+                        hoster.Add(type.Name.ToLower(), type);
                 }
             }
 
             base.Initialize(siteSettings);
         }
 
+        public override List<VideoInfo> getVideoList(Category category)
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            foreach (VideoInfo vid in base.getVideoList(category))
+                videos.Add((VideoInfoEx)vid);
+
+            return videos;
+        }
+
         public override string getUrl(VideoInfo video)
         {
             if (video.PlaybackOptions == null)
-            {
                 video.PlaybackOptions = getMirrorList(video.VideoUrl);
-            }
+
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
                 var enumer = video.PlaybackOptions.GetEnumerator();
@@ -86,22 +94,30 @@ namespace OnlineVideos.Sites
                 string regEx = @"(""|')(?<url>[^(""|')]+" + hosterUtil.getHosterUrl().ToLower() + "/" + @"[^(""|')]+)(""|')";
 
                 MatchCollection n = Regex.Matches(webData, regEx);
+                List<string> results = new List<string>();
                 foreach (Match m in n)
                 {
-                    if (m.Groups["url"].Value.Length > (hosterUtil.getHosterUrl().ToLower().Length + 4))
+                    if (!results.Contains(m.Groups["url"].Value))
+                        results.Add(m.Groups["url"].Value);
+                }
+
+                foreach (string url in results)
+                {
+                    if (url.Length > (hosterUtil.getHosterUrl().ToLower().Length + 4))
                     {
-                        string targetUrl = m.Groups["url"].Value;
+                        string targetUrl = url;
                         if (targetUrl.Contains("\\/")) targetUrl = targetUrl.Replace("\\/", "/");
 
-                        if (n.Count > 1)
+                        if (results.Count > 1)
                         {
                             int i = 1;
 
-                            string playbackName = hosterUtil.getHosterUrl() + " - " + i + "/" + n.Count;
+                            string playbackName = hosterUtil.getHosterUrl() + " - " + i + "/" + results.Count;
+                            
                             while (ret.ContainsKey(playbackName))
                             {
                                 i++;
-                                playbackName = hosterUtil.getHosterUrl() + " - " + i + "/" + n.Count;
+                                playbackName = hosterUtil.getHosterUrl() + " - " + i + "/" + results.Count;
                             }
                             ret.Add(playbackName, targetUrl);
                         }
