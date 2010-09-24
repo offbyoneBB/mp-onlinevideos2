@@ -270,36 +270,8 @@ namespace OnlineVideos.MediaPortal1.Player
         public bool BufferingStopped { get; protected set; }
         public void StopBuffering()
         {
-            if (!BufferingStopped)
-            {
-                BufferingStopped = true;
-            }
-            else
-            {/*
-                new Thread(delegate()
-                {
-                    IAMOpenProgress sourceFilter = null;
-                    try
-                    {
-                        IBaseFilter filter = null;
-                        graphBuilder.FindFilterByName("File Source (URL)", out filter);
-                        sourceFilter = filter as IAMOpenProgress;
-                        Marshal.ReleaseComObject(filter);
-                        if (sourceFilter != null)
-                        {
-                            graphBuilder.Abort();
-                            Log.Instance.Info("Calling AbortOperation on 'File Source (URL)' filter.");
-                            sourceFilter.AbortOperation();
-                            DirectShowUtil.ReleaseComObject(sourceFilter, 50);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Instance.Warn("Could not stop buffering: {0}", ex.ToString());
-                    }
-                }) { IsBackground = true }.Start();*/
-            }
-        }        
+            BufferingStopped = true;
+        }     
 
         /// <summary>
         /// If the url to be played can be buffered before starting playback, this function
