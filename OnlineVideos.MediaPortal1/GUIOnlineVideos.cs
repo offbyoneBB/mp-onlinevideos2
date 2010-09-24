@@ -1536,7 +1536,8 @@ namespace OnlineVideos.MediaPortal1
             else
             {
                 Log.Instance.Info("Preparing graph for playback of {0}", lsUrl);
-                if (((OnlineVideosPlayer)factory.PreparedPlayer).PrepareGraph())
+                bool? prepareResult = ((OnlineVideosPlayer)factory.PreparedPlayer).PrepareGraph();
+                if (prepareResult == true)
                 {
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                     {
@@ -1602,12 +1603,25 @@ namespace OnlineVideos.MediaPortal1
                     },
                     Translation.StartingPlayback, false);
                 }
-                else
+                else if (prepareResult == false)
                 {
                     IPlayerFactory savedFactory = g_Player.Factory;
                     g_Player.Factory = factory;
                     playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
                     g_Player.Factory = savedFactory;
+                }
+                else
+                {
+                    GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                    if (dlg != null)
+                    {
+                        dlg.Reset();
+                        dlg.SetHeading(Translation.Error);
+                        dlg.SetText(Translation.UnableToPlayVideo);
+                        dlg.DoModal(GUIWindowManager.ActiveWindow);
+                    }
+                    factory.PreparedPlayer.Dispose();
+                    return;
                 }
             }
 
