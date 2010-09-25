@@ -239,10 +239,12 @@ namespace OnlineVideos.MediaPortal1.Player
 
         float PercentageBuffered;
 
+        DateTime lastProgressCheck = DateTime.MinValue;
         public override void Process()
         {
-            if (PercentageBuffered < 100.0f && graphBuilder != null)
+            if (PercentageBuffered < 100.0f && graphBuilder != null && (DateTime.Now - lastProgressCheck).TotalMilliseconds > 100)
             {
+                lastProgressCheck = DateTime.Now;
                 IBaseFilter sourceFilter = null;
                 try
                 {
@@ -268,10 +270,7 @@ namespace OnlineVideos.MediaPortal1.Player
         }
 
         public bool BufferingStopped { get; protected set; }
-        public void StopBuffering()
-        {
-            BufferingStopped = true;
-        }     
+        public void StopBuffering() { BufferingStopped = true; }     
 
         /// <summary>
         /// If the url to be played can be buffered before starting playback, this function
@@ -416,6 +415,8 @@ namespace OnlineVideos.MediaPortal1.Player
         {
             try
             {
+                DirectShowUtil.EnableDeInterlace(graphBuilder);
+
                 if (Vmr9 == null || !Vmr9.IsVMR9Connected)
                 {
                     Log.Instance.Error("OnlineVideosPlayer: Failed to render file -> vmr9");
@@ -423,6 +424,8 @@ namespace OnlineVideos.MediaPortal1.Player
                     Cleanup();
                     return false;
                 }
+
+                this.Vmr9.SetDeinterlaceMode();
 
                 // now set VMR9 to Active
                 GUIGraphicsContext.Vmr9Active = true;
@@ -538,12 +541,6 @@ namespace OnlineVideos.MediaPortal1.Player
             CloseInterfaces();
             m_state = PlayState.Init;
             GUIGraphicsContext.IsPlaying = false;
-        }
-
-        protected override void CloseInterfaces()
-        {
-            //if (sourceFilter != null) DirectShowUtil.ReleaseComObject(sourceFilter);
-            base.CloseInterfaces();
         }
     }
 }
