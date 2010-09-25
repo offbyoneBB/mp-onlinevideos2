@@ -2151,14 +2151,22 @@ public class Script
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>moved to .net framewoirk 3.5 SP1 and VS2010
-split OnlineVideos framework in two seperate dlls (OnlineVideos core, MediaPortal GUI)
-SiteManager: Sites that are already in the local list are now dimmed
-Upped some timeouts in RTMP connection to fix slow connections and aborted playback
-added new RTMP connection parameters</VersionDescription>
+    <VersionDescription>Moved to .Net Framework 3.5 SP1 and VS2010.
+Split OnlineVideos in two seperate dlls (OnlineVideos core framework and MediaPortal GUI).
+Sites that are already in the local list are now dimmed in the SiteManager.
+Upped some timeouts in RTMP connection to fix slow connections and aborted playback.
+Added new RTMP connection parameters.
+Fixed freezes and endless waitcursor on fast repeated playback.
+Added tool to create and edit sites based on regexps (can be started from Configuration).
+Numeric display for percentage buffered shows one decimal place.
+Fixed Configuration overwriting siteutil on sites where the util was missing (sites now display red).
+Removed Favorites button from hidden menu.
+The pin was forgotten when going from the OnlineVideos window to the SiteManager window.
+Downloaded Videos - category "All" didn't filter videos from pin protected sites.
+Added a context menu option on Downloaded Videos and Favorites to delete all videos.</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2010-08-30T18:01:51</ReleaseDate>
+    <ReleaseDate>2010-09-25T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -3816,7 +3824,7 @@ added new RTMP connection parameters</VersionDescription>
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f4273612-b6d8-4e6d-9714-e4f2c64db8f2}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{673fd11d-2381-4727-9441-2eff7ae4e0ae}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
