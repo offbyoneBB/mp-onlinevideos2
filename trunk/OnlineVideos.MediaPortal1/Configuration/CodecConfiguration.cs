@@ -26,11 +26,10 @@ namespace OnlineVideos.MediaPortal1
             public bool IsInstalled;
         }
 
-        public Codec MPC_HC_FLVSplitter = new Codec() { CLSID = "{47E792CF-0BBE-4F7A-859C-194B0768650A}", Name = "MPC-HC FLV Splitter", FileTypes = new string[] { ".flv" } };
+        public Codec FLV_Splitter = new Codec() { FileTypes = new string[] { ".flv" } };
         public Codec MPC_HC_MP4Splitter = new Codec() { CLSID = "{61F47056-E400-43D3-AF1E-AB7DFFD4C4AD}", Name = "MPC-HC MP4 Splitter", FileTypes = new string[] { ".mp4", ".m4v", ".mov" } };
         public Codec HaaliMediaSplitter = new Codec() { CLSID = "{55DA30FC-F16B-49FC-BAA5-AE59FC65F82D}", Name = "Haali Media Splitter", FileTypes = new string[] { ".mp4", ".m4v", ".mov" } };
         public Codec AVI_Splitter = new Codec() { CLSID = "{1B544C20-FD0B-11CE-8C63-00AA0044B51E}", Name = "AVI Splitter", FileTypes = new string[] { ".avi" } };
-        public Codec FLV_Splitter = new Codec() { FileTypes = new string[] { ".flv" } };
         public Codec WM_ASFReader = new Codec() { CLSID = "{187463A0-5BB7-11D3-ACBE-0080C75E246E}", Name = "WM ASF Reader", FileTypes = new string[] { ".wmv" } };
 
         #region Singleton
