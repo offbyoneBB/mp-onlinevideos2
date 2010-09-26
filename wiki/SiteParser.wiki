@@ -1,0 +1,17 @@
+#summary A guide on how to add use the SiteParser to add your site to OnlineVideos.
+= Table of Contents =
+<wiki:toc max_depth="2" />
+
+= Introduction =
+
+The SiteParser is a tool that can be used for creating the necessary configuration parameters to add to the OnlineVideoSites.xml
+
+You can start the siteparser by
+= Menu Items =
+
+ * File: Opens an existing OnlineVideoSites.xml for further testing/editing
+ * ChoiceBox: If a file is opened, you can choose the site you want to test/edit
+ * Load: loads the configuration of the site selected in the choicebox
+ * Copy: copy the current configuration parameters as xml to the clipboard (So that you can easily paste them in the OnlineVideoSites.xml
+
+= Details =
