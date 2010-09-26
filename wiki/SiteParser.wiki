@@ -6,7 +6,7 @@
 
 The SiteParser is a tool that can be used for creating the necessary configuration parameters to add to the OnlineVideoSites.xml
 
-You can start the siteparser by
+You can start the siteparser by clicking it's button in the OnlineVideos Configuration
 = Menu Items =
 
  * File: Opens an existing OnlineVideoSites.xml for further testing/editing
