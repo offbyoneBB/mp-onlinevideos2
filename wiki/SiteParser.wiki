@@ -1,4 +1,4 @@
-#summary A guide on how to add use the SiteParser to add your site to OnlineVideos.
+#summary A guide on how to use the SiteParser to add your site to OnlineVideos.
 = Table of Contents =
 <wiki:toc max_depth="2" />
 
