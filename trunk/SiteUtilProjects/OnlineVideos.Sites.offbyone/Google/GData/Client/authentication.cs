@@ -28,6 +28,21 @@ using System.Security.Cryptography;
 namespace Google.GData.Client
 {
 
+    public interface ICreateHttpRequest
+    {
+        HttpWebRequest Create(Uri target);
+    
+    }
+
+
+    public class HttpRequestFactory : ICreateHttpRequest
+    {
+        public HttpWebRequest Create(Uri target)
+        {
+            return WebRequest.Create(target) as HttpWebRequest;
+        }
+    }
+
     /// <summary>
     ///  this is the static collection of all google service names
     /// </summary>
@@ -48,6 +63,7 @@ namespace Google.GData.Client
     {
         private string applicationName;
         private string developerKey;
+        private ICreateHttpRequest requestFactory;
             
         /// <summary>
         /// an unauthenticated use case
@@ -57,7 +73,22 @@ namespace Google.GData.Client
         public Authenticator(string applicationName)
         {
             this.applicationName = applicationName;
+            this.requestFactory = new HttpRequestFactory();
         }
+
+
+        public ICreateHttpRequest RequestFactory
+        {
+            get
+            {
+                return this.requestFactory;
+            }
+            set
+            {
+                this.requestFactory = value;
+            }
+        }
+
 
         /// <summary>
         /// Creates a HttpWebRequest object that can be used against a given service. 
@@ -75,12 +106,16 @@ namespace Google.GData.Client
         {
             Uri uriResult = ApplyAuthenticationToUri(targetUri);
 
-            HttpWebRequest request = WebRequest.Create(uriResult) as HttpWebRequest;
-            // turn off autoredirect
-            request.AllowAutoRedirect = false;
-            request.Method = httpMethod;
-            ApplyAuthenticationToRequest(request);
-            return request;
+            if (this.requestFactory != null)
+            {
+                HttpWebRequest request = this.requestFactory.Create(uriResult);
+                // turn off autoredirect
+                request.AllowAutoRedirect = false;
+                request.Method = httpMethod;
+                ApplyAuthenticationToRequest(request);
+                return request;
+            }
+            return null;
         }
 
         /// <summary>

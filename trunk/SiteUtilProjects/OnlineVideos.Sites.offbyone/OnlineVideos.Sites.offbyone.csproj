@@ -105,7 +105,6 @@
     <Compile Include="Google\GData\Client\gauthsubrequest.cs" />
     <Compile Include="Google\GData\Client\gdatabatch.cs" />
     <Compile Include="Google\GData\Client\goauthrequest.cs" />
-    <Compile Include="Google\GData\Client\gzipstream.cs" />
     <Compile Include="Google\GData\Client\HttpUtility.cs" />
     <Compile Include="Google\GData\Client\logrequest.cs" />
     <Compile Include="Google\GData\Client\mediaservice.cs" />

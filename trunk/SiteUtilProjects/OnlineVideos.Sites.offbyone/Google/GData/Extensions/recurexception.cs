@@ -29,139 +29,73 @@ namespace Google.GData.Extensions {
     /// <summary>
     /// GData schema extension describing an RFC 2445 recurrence rule.
     /// </summary>
-    public class RecurrenceException : IExtensionElementFactory
+    public class RecurrenceException : SimpleContainer
     {
-        /// <summary>optional nested entry</summary>
-        private EntryLink entryLink; 
 
-        /// <summary>specialized exception or not</summary>
-        private bool isSpecialized; 
-
-        /// <summary>
-        ///  Nested entry (optional).
-        /// </summary>
-        public EntryLink EntryLink
+        public RecurrenceException() :
+            base(GDataParserNameTable.XmlRecurrenceExceptionElement,
+                 BaseNameTable.gDataPrefix,
+                 BaseNameTable.gNamespace)
         {
-            get { return entryLink; }
-            set { entryLink = value; }
+            this.ExtensionFactories.Add(new OriginalEvent());
+            this.ExtensionFactories.Add(new EntryLink());
+            this.Attributes.Add(GDataParserNameTable.XmlAttributeSpecialized, null);
         }
 
+
         //////////////////////////////////////////////////////////////////////
-        // Date: 7/3/2006 
-        /// <summary>accessor method public bool Specialized </summary> 
+        /// <summary>Accessor for "specialized" attribute.</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
-        public bool Specialized 
+        public bool Specialized
         {
-            get {return this.isSpecialized;}
-            set {this.isSpecialized = value;}
-        }
-        /// <summary> holds the value property</summary>
-        private string value;
-        /// <summary>
-        ///  Accessor method for the Value property
-        /// </summary>
-        public string Value
-        {
-            get { return value; }
-            set { this.value = value; }
-        }
-
-
-        #region overloaded from IExtensionElementFactory
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>Parses an xml node to create a Where  object.</summary> 
-        /// <param name="node">the node to parse node</param>
-        /// <param name="parser">the xml parser to use if we need to dive deeper</param>
-        /// <returns>the created Where  object</returns>
-        //////////////////////////////////////////////////////////////////////
-        public IExtensionElementFactory CreateInstance(XmlNode node, AtomFeedParser parser)
-        {
-            Tracing.TraceCall();
-            RecurrenceException exception  = null;
-
-            if (node != null)
+            get
             {
-                object localname = node.LocalName;
-                if (localname.Equals(this.XmlName) == false ||
-                  node.NamespaceURI.Equals(this.XmlNameSpace) == false)
-                {
-                    return null;
-                }
+                return bool.Parse(this.Attributes[GDataParserNameTable.XmlAttributeSpecialized] as string);
             }
-
-            exception = new RecurrenceException(); 
-
-            if (node != null)
+            set
             {
-                if (node.Attributes != null)
-                {
-                    if (node.Attributes[GDataParserNameTable.XmlAttributeSpecialized] != null)
-                    {
-                        exception.Specialized = bool.Parse(node.Attributes[GDataParserNameTable.XmlAttributeSpecialized].Value); 
-                    }
-                }
-
-                if (node.HasChildNodes)
-                {
-                    XmlNode childNode = node.FirstChild;
-                    while (childNode != null && childNode is XmlElement)
-                    {
-                        if (childNode.LocalName == GDataParserNameTable.XmlEntryLinkElement)
-                        {
-                            exception.EntryLink = EntryLink.ParseEntryLink(childNode, parser); 
-                        }
-                        childNode = childNode.NextSibling;
-                    }
-                }
-                if (exception.EntryLink == null)
-                {
-                    throw new ArgumentException("g:recurringException/entryLink is required.");
-                }
+                this.Attributes[GDataParserNameTable.XmlAttributeSpecialized] = value;
             }
-
-            return exception; 
         }
-
-
-
-        #endregion
-
-        #region overloaded for persistence
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>Returns the constant representing this XML element.</summary> 
-        //////////////////////////////////////////////////////////////////////
-        public string XmlName
-        {
-            get { return GDataParserNameTable.XmlRecurrenceExceptionElement; }
-        }
-
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>Returns the constant representing this XML element.</summary> 
-        //////////////////////////////////////////////////////////////////////
-        public string XmlNameSpace
-        {
-            get { return BaseNameTable.gNamespace; }
-        }
-
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>Returns the constant representing this XML element.</summary> 
-        //////////////////////////////////////////////////////////////////////
-        public string XmlPrefix
-        {
-            get { return BaseNameTable.gDataPrefix; }
-        }
-
 
         /// <summary>
-        /// Persistence method for the RecurrenceException object
+        /// exposes the EntryLink element for this exception
         /// </summary>
-        /// <param name="writer">the xmlwriter to write into</param>
-        public void Save(XmlWriter writer)
+        /// <returns></returns>
+        public EntryLink EntryLink
         {
-            writer.WriteStartElement(BaseNameTable.gDataPrefix, XmlName, BaseNameTable.gNamespace);
-            writer.WriteEndElement();
+            get
+            {
+                return FindExtension(GDataParserNameTable.XmlEntryLinkElement,
+                                     BaseNameTable.gNamespace) as EntryLink;
+            }
+            set
+            {
+                ReplaceExtension(GDataParserNameTable.XmlEntryLinkElement,
+                                 BaseNameTable.gNamespace,
+                                 value);
+            }
         }
-        #endregion
-    }
+
+        /// <summary>
+        /// exposes the OriginalEvent element for this exception
+        /// </summary>
+        /// <returns></returns>
+        public OriginalEvent OriginalEvent
+        {
+            get
+            {
+                return FindExtension(GDataParserNameTable.XmlOriginalEventElement,
+                                     BaseNameTable.gNamespace) as OriginalEvent;
+            }
+            set
+            {
+                ReplaceExtension(GDataParserNameTable.XmlOriginalEventElement,
+                                 BaseNameTable.gNamespace,
+                                 value);
+            }
+        }
+
+     }
 }
