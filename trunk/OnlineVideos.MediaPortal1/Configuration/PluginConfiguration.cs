@@ -30,8 +30,8 @@ namespace OnlineVideos.MediaPortal1
         public const string CFG_SITEVIEW_ORDER = "siteview_order";
         public const string CFG_CATEGORYVIEW_MODE = "categoryview";
         public const string CFG_VIDEOVIEW_MODE = "videoview";
+        public const string CFG_BASICHOMESCREEN_NAME = "basicHomeScreenName";
         const string CFG_UPDATEONSTART = "updateOnStart";
-        const string CFG_BASICHOMESCREEN_NAME = "basicHomeScreenName";
         const string CFG_THUMBNAIL_DIR = "thumbDir";
         const string CFG_THUMBNAIL_AGE = "thumbAge";
         const string CFG_DOWNLOAD_DIR = "downloadDir";

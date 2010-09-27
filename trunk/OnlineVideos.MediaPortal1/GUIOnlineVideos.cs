@@ -56,7 +56,12 @@ namespace OnlineVideos.MediaPortal1
 
         bool ISetupForm.GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
         {
-            strButtonText = PluginConfiguration.Instance.BasicHomeScreenName;
+            // don't use PluginConfiguration.Instance here -> GetHome is already called when MediaPortal starts up into HomeScreen
+            // and we don't want to load all sites and config at that moment already
+            using (Settings settings = new MPSettings())
+            {
+                strButtonText = settings.GetValueAsString(PluginConfiguration.CFG_SECTION, PluginConfiguration.CFG_BASICHOMESCREEN_NAME, "Online Videos");
+            }
             strButtonImage = String.Empty;
             strButtonImageFocus = String.Empty;
             strPictureImage = @"hover_OnlineVideos.png";
