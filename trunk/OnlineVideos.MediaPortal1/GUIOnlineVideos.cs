@@ -21,7 +21,7 @@ namespace OnlineVideos.MediaPortal1
 
         public enum State { sites = 0, categories = 1, videos = 2, details = 3 }
 
-        public enum VideosMode { Category = 0, Favorites = 1, Search = 2, Related = 3 }
+        public enum VideosMode { Category = 0, Search = 1, Related = 2 }
 
         #region IShowPlugin Implementation
 
@@ -302,7 +302,7 @@ namespace OnlineVideos.MediaPortal1
             dlgSel.SetHeading(Translation.Actions);
             dlgSel.Add(Translation.PlayAll);
             dialogOptions.Add("PlayAll");
-            if (currentVideosDisplayMode != VideosMode.Favorites && !(SelectedSite is Sites.FavoriteUtil))
+            if (!(SelectedSite is Sites.FavoriteUtil))
             {
                 if (!(SelectedSite is Sites.DownloadedVideoUtil))
                 {
@@ -874,13 +874,7 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.Item = aSite;
                     loListItem.OnItemSelected += OnSiteSelected;
                     // use Icon with the same name as the Site
-                    string image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Settings.Name + ".png";
-                    if (!System.IO.File.Exists(image))
-                    {
-                        // if that does not exsist, try Icon with the same name as the Util
-                        image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Settings.UtilName + ".png";
-                        if (!System.IO.File.Exists(image)) image = string.Empty;
-                    }
+                    string image = GetImageForSite(aSite, "Icon");
                     if (!string.IsNullOrEmpty(image))
                     {
                         loListItem.ThumbnailImage = image;
@@ -889,7 +883,7 @@ namespace OnlineVideos.MediaPortal1
                     }
                     else
                     {
-                        Log.Instance.Debug("Icon {0} for site {1} not found", Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + aSite.Settings.Name + ".png", aSite.Settings.Name);
+                        Log.Instance.Debug("Icon for site {0} not found", aSite.Settings.Name);
                         MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                     }
                     if (currentFilter.Matches(name))
@@ -1916,7 +1910,7 @@ namespace OnlineVideos.MediaPortal1
                 case State.categories:
                     string cat_headerlabel = selectedCategory != null ? selectedCategory.Name : SelectedSite.Settings.Name;
                     GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
-                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(SelectedSite));
+                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
                     HideAndDisable(GUI_btnPrevious.GetID);
@@ -1930,7 +1924,6 @@ namespace OnlineVideos.MediaPortal1
                 case State.videos:
                     switch (currentVideosDisplayMode)
                     {
-                        case VideosMode.Favorites: GUIPropertyManager.SetProperty("#header.label", Translation.Favourites); break;
                         case VideosMode.Search: GUIPropertyManager.SetProperty("#header.label", Translation.SearchResults + " [" + lastSearchQuery + "]"); break;
                         case VideosMode.Related: GUIPropertyManager.SetProperty("#header.label", Translation.RelatedVideos); break;
                         default:
@@ -1939,7 +1932,7 @@ namespace OnlineVideos.MediaPortal1
                                 GUIPropertyManager.SetProperty("#header.label", proposedLabel != null ? proposedLabel : selectedCategory != null ? selectedCategory.Name : ""); break;
                             }
                     }
-                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(SelectedSite));
+                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite));
                     ShowAndEnable(GUI_facadeView.GetID);
                     if (SelectedSite.HasNextPage) ShowAndEnable(GUI_btnNext.GetID); else HideAndDisable(GUI_btnNext.GetID);
                     if (SelectedSite.HasPreviousPage) ShowAndEnable(GUI_btnPrevious.GetID); else HideAndDisable(GUI_btnPrevious.GetID);
@@ -1953,7 +1946,7 @@ namespace OnlineVideos.MediaPortal1
                     break;
                 case State.details:
                     GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
-                    GUIPropertyManager.SetProperty("#header.image", GetBannerForSite(SelectedSite));
+                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite));
                     HideAndDisable(GUI_facadeView.GetID);
                     HideAndDisable(GUI_btnNext.GetID);
                     HideAndDisable(GUI_btnPrevious.GetID);
@@ -2166,15 +2159,20 @@ namespace OnlineVideos.MediaPortal1
             return true;
         }
 
-        private string GetBannerForSite(Sites.SiteUtilBase site)
+        private string GetImageForSite(Sites.SiteUtilBase site, string type = "Banner")
         {
-            // use Banner with the same name as the Site
-            string image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + site.Settings.Name + ".png";
+            // use png with the same name as the Site - first check subfolder of current skin (allows skinners to use custom icons)
+            string image = string.Format(@"{0}\Media\OnlineVideos\{1}s\{2}.png", GUIGraphicsContext.Skin, type, site.Settings.Name);
             if (!System.IO.File.Exists(image))
             {
-                // if that does not exsist, try Banner with the same name as the Util
-                image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + site.Settings.UtilName + ".png";
-                if (!System.IO.File.Exists(image)) image = string.Empty;
+                // use png with the same name as the Site
+                image = string.Format(@"{0}\OnlineVideos\{1}s\{2}.png", Config.GetFolder(Config.Dir.Thumbs), type, site.Settings.Name);
+                if (!System.IO.File.Exists(image))
+                {
+                    // if that does not exist, try image with the same name as the Util
+                    image = string.Format(@"{0}\OnlineVideos\{1}s\{2}.png", Config.GetFolder(Config.Dir.Thumbs), type, site.Settings.UtilName);
+                    if (!System.IO.File.Exists(image)) image = string.Empty;
+                }
             }
             return image;
         }

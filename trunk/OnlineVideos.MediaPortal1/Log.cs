@@ -5,7 +5,6 @@ namespace OnlineVideos.MediaPortal1
 {    
     /// <summary>
     /// This static class simply delegates Log calls to the MediaPortal Logging facility and prefixes the Output with [OnlineVideos].
-    /// This will allow satellite SiteUtil dll Projects, to log into MediaPortal files without having to reference any MediaPortal dlls.
     /// </summary>
     public class Log : ILog
     {
