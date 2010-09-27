@@ -1,5 +1,5 @@
 <extension_settings>
 	<disable_entry>
-		<setting entryname="plugins" name="Online Videos" displayname="Plugin Enabled" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
+		<setting entryname="plugins" name="OnlineVideos" displayname="Plugin Enabled" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
 	</disable_entry>
 </extension_settings>
