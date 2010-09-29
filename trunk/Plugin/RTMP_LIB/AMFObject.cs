@@ -122,7 +122,7 @@ namespace RTMP_LIB
             {
                 AMFObjectProperty prop = GetProperty(n);
 
-                if (prop.GetPropName() == name)
+                if (prop.GetPropName().ToLower() == name.ToLower())
                 {
                     if (p == null) p = new List<AMFObjectProperty>();
                     p.Add(GetProperty(n));
