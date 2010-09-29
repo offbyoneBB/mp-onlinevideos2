@@ -16,7 +16,7 @@ Or start the program "Onlinevideos.SiteCreator" in the Mediaportal Installation 
  * Load: loads the configuration of the site selected in the choicebox
  * Copy: copy the current configuration parameters as xml to the clipboard (So that you can easily paste them in the OnlineVideoSites.xml
 
-= Step by step =
+= Step by step (simple version) =
 
  # for baseurl: fill the url of the page with the categories on it
  # click on "Create Regex" on the "Category" tab, and create the regex
