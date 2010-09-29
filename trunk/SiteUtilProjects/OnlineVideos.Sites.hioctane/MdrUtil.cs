@@ -34,13 +34,12 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(data))
             {
                 Match m = regEx_Xml.Match(data);
-                while (m.Success)
+                if (m.Success)
                 {
                     xmlUrl = m.Groups["url"].Value;
                     xmlUrl = xmlUrl.Substring(xmlUrl.LastIndexOf("/"));
                     xmlUrl = xmlUrl.Replace(".html", "-meta.xml");
                     xmlUrl = "http://www.mdr.de/mediathek/" + xmlUrl;
-                    m = m.NextMatch();
                 }
             }
             if(!string.IsNullOrEmpty(xmlUrl))
