@@ -18,16 +18,31 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
-
-            string code = url.Replace("http://www.sharehoster.com/wait/", "");
+            url = url.Replace("vid", "wait");
             CookieContainer cc = new CookieContainer();
-            string page = SiteUtilBase.GetWebData("http://www.sharehoster.com/flowplayer/config.php?movie=" + code, cc);
-            Match n = Regex.Match(page, @"'url':\s'(?<url>.*/video/[^']+)'");
+            string page = SiteUtilBase.GetWebData(url, cc);
+            string file = url.Substring(url.LastIndexOf(@"/")+1);
+            string wait = Regex.Match(page, @"name=""wait""\svalue=""(?<wait>[^""]+)""").Groups["wait"].Value;
+            string postdata = string.Format("continue=Fortfahren&open=show_wait&file={0}&wait={1}", file, wait);
+            page = SiteUtilBase.GetWebDataFromPost("http://www.sharehoster.com/vid/" + file, postdata, cc, url);
+
+            Match n = Regex.Match(page, @"name=""stream""\svalue=""(?<url>[^""]+)""");
             if (n.Success)
             {
-                videoType = VideoType.flv;
+                videoType = VideoType.divx;
                 return n.Groups["url"].Value;
             }
+            else
+            {
+                page = SiteUtilBase.GetWebData("http://www.sharehoster.com/flowplayer/config.php?movie=" + file, cc);
+                n = Regex.Match(page, @"'url':\s'(?<url>.*/video/[^']+)'");
+                if (n.Success)
+                {
+                    videoType = VideoType.flv;
+                    return n.Groups["url"].Value;
+                }
+            }
+
             return "";
         }
     }

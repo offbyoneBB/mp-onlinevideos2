@@ -32,7 +32,7 @@ namespace OnlineVideos.Hoster
                     }
                 }
             }
-            /*else
+            else
             {
                 string page = SiteUtilBase.GetWebData(url, cc);
 
@@ -74,7 +74,7 @@ namespace OnlineVideos.Hoster
                         }
                     }
                 }
-            }*/
+            }
             return "";
         }
 
