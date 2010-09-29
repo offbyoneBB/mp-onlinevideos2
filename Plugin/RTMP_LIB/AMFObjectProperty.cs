@@ -6,7 +6,7 @@ namespace RTMP_LIB
 {
     public class AMFObjectProperty
     {
-        internal string m_strName;
+        internal string m_strName = string.Empty;
         internal AMFDataType m_type;
         internal double m_dNumVal;
         internal AMFObject m_objVal;

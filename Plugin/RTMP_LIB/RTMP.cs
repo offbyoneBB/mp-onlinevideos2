@@ -120,6 +120,8 @@ namespace RTMP_LIB
         /// </summary>
         public bool Playing { get; protected set; }
 
+        public int Pausing { get; protected set; }
+
         /// <summary>
         /// Duration of stream in seconds returned by Metadata
         /// </summary>
@@ -148,6 +150,7 @@ namespace RTMP_LIB
         int m_nBufferMS = (10 * 60 * 60 * 1000)	/* 10 hours default */;
         int receiveTimeoutMS = 1500;
         int m_stream_id; // returned in _result from invoking createStream            
+        int m_mediaChannel = 0;
         int m_nBWCheckCounter;
         int m_nServerBW;
         int m_nClientBW;
@@ -179,7 +182,7 @@ namespace RTMP_LIB
             }
 
             // after connection was successfull, set the timeouts for receiving data higher
-            receiveTimeoutMS = 30000;
+            receiveTimeoutMS = 10000;
             tcpSocket.ReceiveTimeout = receiveTimeoutMS;
 
             return true;
@@ -190,11 +193,27 @@ namespace RTMP_LIB
             return tcpSocket != null && tcpSocket.Connected;
         }
 
-        bool ReconnectStream()
+        public bool ReconnectStream()
         {
             DeleteStream();
             SendCreateStream();
             return ConnectStream();
+        }
+
+        public bool ToggleStream()
+        {
+            bool res;
+            if (Pausing == 0)
+            {
+                res = SendPause(true);
+                if (!res) return res;
+
+                Pausing = 1;
+                System.Threading.Thread.Sleep(10);
+            }
+            res = SendPause(false);
+            Pausing = 3;
+            return res;
         }
 
         void DeleteStream()
@@ -223,21 +242,27 @@ namespace RTMP_LIB
             return Playing;
         }                
 
-        public bool GetNextMediaPacket(out RTMPPacket packet)
+        public int GetNextMediaPacket(out RTMPPacket packet)
         {
-            bool bHasMediaPacket = false;
+            int bHasMediaPacket = 0;
             packet = null;
             
-            while (!bHasMediaPacket && IsConnected() && ReadPacket(out packet))
-            {                
+            while (bHasMediaPacket == 0 && IsConnected() && ReadPacket(out packet))
+            {
                 if (!packet.IsReady()) continue; // keep reading until complete package has arrived
-                bHasMediaPacket = ClientPacket(packet) != 0;
+                bHasMediaPacket = ClientPacket(packet);
+                if (bHasMediaPacket > 0 && Pausing == 3) Pausing = 0;
                 packet.m_nBytesRead = 0;
             }
-            if (bHasMediaPacket) Playing = true;
+            if (bHasMediaPacket > 0) Playing = true;
             return bHasMediaPacket;
         }
 
+        /// <summary>
+        /// Reacts corresponding to the packet.
+        /// </summary>
+        /// <param name="packet"></param>
+        /// <returns>0 - no media packet, 1 - media packet, 2 - play complete</returns>
         int ClientPacket(RTMPPacket packet)
         {
             int bHasMediaPacket = 0;
@@ -262,11 +287,13 @@ namespace RTMP_LIB
                 case PacketType.Audio:
                     //CLog::Log(LOGDEBUG,"%s, received: audio %lu bytes", __FUNCTION__, packet.m_nBodySize);
                     //HandleAudio(packet);
+                    if (m_mediaChannel == 0) m_mediaChannel = packet.m_nChannel;
                     bHasMediaPacket = 1;
                     break;
                 case PacketType.Video:
                     //CLog::Log(LOGDEBUG,"%s, received: video %lu bytes", __FUNCTION__, packet.m_nBodySize);
                     //HandleVideo(packet);
+                    if (m_mediaChannel == 0) m_mediaChannel = packet.m_nChannel;
                     bHasMediaPacket = 1;
                     break;
                 case PacketType.Metadata:
@@ -431,6 +458,7 @@ namespace RTMP_LIB
             tcpSocket = null;
 
             m_nBufferMS = (10 * 60 * 60 * 1000)	/* 10 hours default */;
+            Pausing = 0;
             receiveTimeoutMS = 1500;
 
             InChunkSize = RTMP_DEFAULT_CHUNKSIZE;
@@ -440,6 +468,7 @@ namespace RTMP_LIB
             CombinedTracksLength = 0;
             CombinedBitrates = 0;
 
+            m_mediaChannel = 0;
             m_stream_id = -1;
             m_nBWCheckCounter = 0;
             m_nClientBW = 2500000;
@@ -519,9 +548,7 @@ namespace RTMP_LIB
 
             EncodeString(enc, "play");
             EncodeNumber(enc, ++m_numInvokes);
-            enc.Add(0x05); // NULL  
-
-            Logger.Log(string.Format("Sending play: '{0}'", Link.playpath));
+            enc.Add(0x05); // NULL              
 
             EncodeString(enc, Link.playpath);
 
@@ -532,7 +559,7 @@ namespace RTMP_LIB
              *  -1: plays a live stream
              * >=0: plays a recorded streams from 'start' milliseconds
             */
-            EncodeNumber(enc, 0.0);
+            EncodeNumber(enc, m_channelTimestamp[m_mediaChannel]);
             /* len: -1, 0, positive number
              *  -1: plays live or recorded stream to the end (default)
              *   0: plays a frame 'start' ms away from the beginning
@@ -542,6 +569,31 @@ namespace RTMP_LIB
 
             packet.m_body = enc.ToArray();
             packet.m_nBodySize = (uint)enc.Count;
+
+            Logger.Log(string.Format("Sending play: '{0}' from time: '{1}'", Link.playpath, m_channelTimestamp[m_mediaChannel]));
+
+            return SendRTMP(packet);
+        }
+
+        bool SendPause(bool doPause)
+        {
+            RTMPPacket packet = new RTMPPacket();
+            packet.m_nChannel = 0x08;   // we make 8 our stream channel
+            packet.HeaderType = HeaderType.Medium;
+            packet.PacketType = PacketType.Invoke;
+
+            List<byte> enc = new List<byte>();
+
+            EncodeString(enc, "pause");
+            EncodeNumber(enc, ++m_numInvokes);
+            enc.Add(0x05); // NULL  
+            EncodeBoolean(enc, doPause);
+            EncodeNumber(enc, (double)m_channelTimestamp[m_mediaChannel]);
+
+            packet.m_body = enc.ToArray();
+            packet.m_nBodySize = (uint)enc.Count;
+
+            Logger.Log(string.Format("Sending pause: ({0}), Time = {1}", doPause.ToString(), m_channelTimestamp[m_mediaChannel]));
 
             return SendRTMP(packet);
         }
@@ -604,7 +656,7 @@ namespace RTMP_LIB
                     EncodeInt32(buf, (int)nTime);
             }
             packet.m_body = buf.ToArray();
-            return SendRTMP(packet);
+            return SendRTMP(packet, false);
         }
 
         bool SendCheckBW()
@@ -626,7 +678,7 @@ namespace RTMP_LIB
             packet.m_body = enc.ToArray();
 
             // triggers _onbwcheck and eventually results in _onbwdone
-            return SendRTMP(packet);
+            return SendRTMP(packet, false);
         }
 
         bool SendCheckBWResult(double txn)
@@ -647,7 +699,7 @@ namespace RTMP_LIB
             packet.m_nBodySize = (uint)enc.Count;
             packet.m_body = enc.ToArray();
 
-            return SendRTMP(packet);
+            return SendRTMP(packet, false);
         }
         
         bool SendBytesReceived()
@@ -667,7 +719,7 @@ namespace RTMP_LIB
 
             lastSentBytesRead = bytesReadTotal;
             Logger.Log(string.Format("Send bytes report. ({0} bytes)", bytesReadTotal));
-            return SendRTMP(packet);
+            return SendRTMP(packet, false);
         }
 
         bool SendServerBW()
@@ -683,7 +735,7 @@ namespace RTMP_LIB
             List<byte> bytesToSend = new List<byte>();
             EncodeInt32(bytesToSend, m_nServerBW); // was hard coded : 0x001312d0
             packet.m_body = bytesToSend.ToArray();
-            return SendRTMP(packet);
+            return SendRTMP(packet, false);
         }
 
         bool SendCreateStream()
@@ -860,12 +912,51 @@ namespace RTMP_LIB
                 nType = (short)ReadInt16(packet.m_body, 0);
             
             Logger.Log(string.Format("received: ping, type: {0}", nType));
-            
-            if (nType == 0x06 && packet.m_nBodySize >= 6) // server ping. reply with pong.
+
+            if (packet.m_nBodySize >= 6)
             {
                 uint nTime = (uint)ReadInt32(packet.m_body, 2);
-                SendPing(0x07, nTime, 0);
-            }
+                switch (nType)
+                {
+                    case 0:
+                        Logger.Log(string.Format("Stream Begin {0}", nTime));
+                        break;
+                    case 1:
+                        Logger.Log(string.Format("Stream EOF {0}", nTime));
+                        if (Pausing == 1) Pausing = 2;
+                        break;
+                    case 2:
+                        Logger.Log(string.Format("Stream Dry {0}", nTime));
+                        break;
+                    case 4:
+                        Logger.Log(string.Format("Stream IsRecorded {0}", nTime));
+                        break;
+                    case 6:
+                        // server ping. reply with pong.
+                        Logger.Log(string.Format("Ping {0}", nTime));
+                        SendPing(0x07, nTime, 0);
+                        break;
+                    case 31:
+                        Logger.Log(string.Format("%s, Stream BufferEmpty {0}", nTime));
+                        if (Pausing == 0)
+                        {
+                            SendPause(true);
+                            Pausing = 1;
+                        }
+                        else if (Pausing == 2)
+                        {
+                            SendPause(false);
+                            Pausing = 3;
+                        }
+                        break;
+                    case 32:
+                        Logger.Log(string.Format("Stream BufferReady {0}", nTime));
+                        break;
+                    default:
+                        Logger.Log(string.Format("Stream xx {0}", nTime));
+                        break;
+                }
+            }            
 
             if (nType == 0x1A)
             {
@@ -944,10 +1035,10 @@ namespace RTMP_LIB
                             SendSecureTokenResponse(decodedToken);
                         }
                     }
-                    SendServerBW();                    
-                    if (!string.IsNullOrEmpty(Link.subscribepath)) SendFCSubscribe();                    
-                    SendCreateStream();
+                    SendServerBW();
                     SendPing(3, 0, 300);
+                    SendCreateStream();
+                    if (!string.IsNullOrEmpty(Link.subscribepath)) SendFCSubscribe();                    
                 }
                 else if (methodInvoked == "createStream")
                 {
@@ -962,7 +1053,7 @@ namespace RTMP_LIB
             }
             else if (method == "onBWDone")
             {
-                SendCheckBW();
+                if (m_nBWCheckCounter == 0) SendCheckBW();
             }
             else if (method == "_onbwcheck")
             {
@@ -1005,6 +1096,14 @@ namespace RTMP_LIB
                 {
                     Close();
                     ret = true;
+                }
+                else if (code == "NetStream.Pause.Notify")
+                {
+                    if (Pausing == 1 || Pausing == 2)
+                    {
+                        SendPause(false);
+                        Pausing = 3;
+                    }
                 }
             }
             else
@@ -1745,6 +1844,7 @@ namespace RTMP_LIB
                 i--;
                 System.Threading.Thread.Sleep(100);
             }
+            if (tcpSocket.Available < size) return 0;
 
             byte[] data = new byte[size];
             int read = tcpSocket.Receive(data);
