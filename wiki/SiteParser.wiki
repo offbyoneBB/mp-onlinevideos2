@@ -7,6 +7,7 @@
 The SiteParser is a tool that can be used for creating the necessary configuration parameters to add to the OnlineVideoSites.xml
 
 You can start the siteparser by clicking this <img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/CreateSite.png"/> button in the Online Videos Configuration, Sites-Tab
+Or start the program "Onlinevideos.SiteCreator" in the Mediaportal Installation directory
 
 = Menu Items =
 
@@ -15,4 +16,20 @@ You can start the siteparser by clicking this <img width="16" src="http://mp-onl
  * Load: loads the configuration of the site selected in the choicebox
  * Copy: copy the current configuration parameters as xml to the clipboard (So that you can easily paste them in the OnlineVideoSites.xml
 
-= Details =
+= Step by step =
+
+ # for baseurl: fill the url of the page with the categories on it
+ # click on "Create Regex" on the "Category" tab, and create the regex
+ # click on "GetCats" on the "Category" tab. You should now see the categories listed under "site" at the right panel
+ # if there are subcategories present then select a category, and goto the subcategories tab, if notL skip next step
+ # click on "Create Regex" and after that on GetSubcats. then select a subcategory
+ # goto the "VideoList" tab, and click on "Create Regex".
+ # create the regex, and after that, click "GetVideoList"
+ # now you should see the video's listed under the selected (sub)category
+ # select a video, and click on the "VideoUrl" tab.
+ # click "GetVideoUrl", click "GetPlaylistUrl" and click "Create Regex" next to "GetFileUrl"
+ # create the regex
+ # choose the url under "ResultUrl" and hit the play-button to verify
+ # click "Copy" in the main menu, open onlinevideosites.xml in your favourite texteditor, and paste the configuration in it. Then remove the categories (lines starting with <Category xsi:type="RssLink") that are to be dynamically discovered.
+ # Save the file, and enjoy your new creation!
+ # After the final approvement, you can publish the site through the onlinevideos configuration
