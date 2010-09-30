@@ -597,7 +597,7 @@ namespace OnlineVideos.MediaPortal1
             }
 
             Dictionary<string, SiteSettings> hashedLocalSites = new Dictionary<string, SiteSettings>();
-            foreach (SiteSettings ss in OnlineVideoSettings.Instance.SiteSettingsList) hashedLocalSites.Add(ss.Name, ss);
+            foreach (SiteSettings ss in OnlineVideoSettings.Instance.SiteSettingsList) if (!hashedLocalSites.ContainsKey(ss.Name)) hashedLocalSites.Add(ss.Name, ss);
 
             List<OnlineVideosWebservice.Site> onlyOnlineSites = new List<OnlineVideos.OnlineVideosWebservice.Site>();
 
