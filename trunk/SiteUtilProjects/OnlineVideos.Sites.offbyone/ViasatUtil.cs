@@ -102,11 +102,19 @@ namespace OnlineVideos.Sites
                 {
                     xDoc.LoadXml(GetWebData(playstr));
                     playstr = xDoc.SelectSingleNode("GeoLock/Url").InnerText;
+
+                    if (playstr.ToLower().StartsWith("rtmp"))
+                    {
+                        playstr = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl{1}=&swfhash={2}&swfsize={3}",
+                            System.Web.HttpUtility.UrlEncode(playstr),
+                            System.Web.HttpUtility.UrlEncode("http://flvplayer.viastream.viasat.tv/flvplayer/play/swf/player100920.swf"),
+                            "9d14a8849c059734a62544c44bdc252fe6961c00f50739c4cd12fca42a503b41",
+                            1326663));
+                    }
                 }
             }
 
-            //playstr += Viasat.GetAdString(channel, int.Parse(item.Attributes["id"].ToString())); - not sure if this is needed
-            
             return playstr;
         }
     }
