@@ -451,8 +451,12 @@ namespace RTMP_LIB
         {
             if (tcpSocket != null)
             {
-                tcpSocket.Shutdown(SocketShutdown.Both);
-                tcpSocket.Close();
+                try
+                {
+                    tcpSocket.Shutdown(SocketShutdown.Both);
+                    tcpSocket.Close();
+                }
+                catch { }
             }
 
             tcpSocket = null;
