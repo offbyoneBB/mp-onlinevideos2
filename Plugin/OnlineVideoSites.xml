@@ -936,7 +936,7 @@
       <Categories />
     </Site>
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
-      <Description>Videos from Swedish TV3 TV6 TV8 and Sport channels.</Description>
+      <Description>Videos from Swedish TV3 TV4 TV6 TV8 and Sport channels.</Description>
       <Categories />
     </Site>
     <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true" lang="--">
