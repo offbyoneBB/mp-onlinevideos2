@@ -92,7 +92,7 @@ namespace Vattenmelon.Nrk.Parser
             data = FetchUrl(MAIN_URL);
             Regex query =
                 new Regex(
-                    "<li><div><a href=\"/nett-tv/klipp/(?<id>[^\"]*)\" title=\"[^\"]*\"><img src=\"(?<imgsrc>[^\"]*)\" alt=\".*?\" width=\"100\" height=\"57\" /></a><h3><a href=\".*?\" title=\"(?<desc>[^\"]*)\">(?<title>[^<]*)</a></h3></div></li>",
+                    "<a href=\"/nett-tv/klipp/(?<id>[^\"]*)\" title=\"[^\"]*\"><img src=\"(?<imgsrc>[^\"]*)\" alt=\".*?\" width=\"\\d+\" height=\"\\d+\" /></a><h3><a href=\".*?\" title=\"(?<desc>[^\"]*)\">(?<title>[^<]*)</a></h3>",
                     RegexOptions.Compiled | RegexOptions.Singleline);
             MatchCollection matches = query.Matches(data);
             List<Item> clips = new List<Item>();
@@ -117,7 +117,7 @@ namespace Vattenmelon.Nrk.Parser
             data = FetchUrl(url);
             Regex query =
                 new Regex(
-                    "<li.*?><div><a href=\".*?/nett-tv/.*?/.*?\" title=\".*?\"><img src=\"(?<imgsrc>[^\"]*)\" .*? /></a><h3><a href=\".*?/nett-tv/(?<type>[^/]*)/(?<id>[^\"]*)\" title=\".*?\">(?<title>[^<]*)</a></h3><div class=\"summary\"><p>Vist (?<antallvist>[^ganger]*) ganger.</p></div></div></li>",
+                    "<li.*?><div><a href=\".*?/nett-tv/.*?/.*?\" title=\".*?\"><img src=\"(?<imgsrc>[^\"]*)\"[^/]*/></a><h3><a href=\".*?/nett-tv/(?<type>[^/]*)/(?<id>[^\"]*)\" title=\".*?\">(?<title>[^<]*)</a></h3><div class=\"summary\"><p>Vist (?<antallvist>[^ganger]*) ganger.</p></div></div></li>",
                     RegexOptions.Singleline);
             MatchCollection matches = query.Matches(data);
             List<Item> clips = new List<Item>();
@@ -568,7 +568,7 @@ namespace Vattenmelon.Nrk.Parser
             String data = FetchUrl(MAIN_URL);
             IList<Item> clips = new List<Item>();
             String strQuery =
-                "<div><a href=\".*?/nett-tv/(?<type>[^/]*)/(?<id>[^\"]*)\".*?><img src=\"(?<imgsrc>[^\"]*)\" alt=\".*?\" width=\"150\" height=\"85\" /></a><h3><a href=\".*?\" title=\".*?\">(?<title>[^<]*)</a></h3><div class=\"summary\"><p>(?<desc>[^<]*)</p></div>.*?</div>";
+                "<div class=\"summary\"><a href=\".*?/nett-tv/(?<type>[^/]*)/(?<id>[^\"]*)\".*?><img src=\"(?<imgsrc>[^\"]*)\" alt=\".*?\" width=\"\\d+\" height=\"\\d+\" /></a><h3><a href=\"[^\"]+\" title=\".*?\">(?<title>[^<]*)</a></h3><p>(?<desc>[^<]*)</p></div>";
             Regex query =
                 new Regex(strQuery);
             MatchCollection matches = query.Matches(data);
