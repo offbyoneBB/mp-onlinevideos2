@@ -14,6 +14,7 @@ namespace OnlineVideos.Sites
         {
             newUrls = new List<String>();
             string newUrl;
+            string savUrl = video.VideoUrl;
             if (url.StartsWith(@"http://www.youtube.com/p/"))
             {
                 int p = url.IndexOf(@"/p/");
@@ -50,8 +51,7 @@ namespace OnlineVideos.Sites
                             }
                             m = m.NextMatch();
                         }
-                        video.VideoUrl = null;
-
+                        video.VideoUrl = savUrl;
                     }
                 }
                 return newUrls.Count > 0;
