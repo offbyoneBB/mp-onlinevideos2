@@ -108,7 +108,8 @@ namespace OnlineVideos.Sites
                     video.Description = e.SelectSingleNode("ns1:text", nsmRequest).InnerText;
                     DateTime parsedPubDate;
                     video.Length = DateTime.TryParse(e.SelectSingleNode("ns1:publishedDate", nsmRequest).InnerText, out parsedPubDate) ? parsedPubDate.ToString("g", OnlineVideoSettings.Instance.Locale) : "";
-                    video.ImageUrl = e.SelectSingleNode("ns1:w219imageUrl", nsmRequest).InnerText;
+                    XmlNode imageNode = e.SelectSingleNode("ns1:w219imageUrl", nsmRequest);
+                    if (imageNode != null) video.ImageUrl = imageNode.InnerText;                    
                     video.VideoUrl = e.SelectSingleNode("ns1:vmanProgramId", nsmRequest).InnerText;
                     video.Other = "TV4";
                     videos.Add(video);
@@ -152,8 +153,8 @@ namespace OnlineVideos.Sites
                 string host = xDoc.SelectSingleNode("//meta[@base]/@base").Value;
                 foreach (XmlElement videoElem in xDoc.SelectNodes("//video[@src]"))
                 {
-                    if (result == string.Empty) result = host + videoElem.GetAttribute("src");
-                    video.PlaybackOptions.Add(string.Format("{0} kbps", int.Parse(videoElem.GetAttribute("system-bitrate")) / 1000), host + videoElem.GetAttribute("src"));
+                    result = host + videoElem.GetAttribute("src");
+                    video.PlaybackOptions.Add(string.Format("{0} kbps", int.Parse(videoElem.GetAttribute("system-bitrate")) / 1000), result);
                 }
                 return result;
             }
