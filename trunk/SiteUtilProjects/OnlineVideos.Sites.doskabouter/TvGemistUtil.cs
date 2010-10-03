@@ -31,7 +31,8 @@ namespace OnlineVideos.Sites
             //======================= uitzending gemist ===================
             cat = new RssLink();
             cat.Name = "Uitzending Gemist";
-            cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\Icons\Tvgemist\uitzendinggemist.png");
+            cat.Thumb = OnlineVideoSettings.Instance.ThumbsDir == null ? null :
+                System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\Icons\Tvgemist\uitzendinggemist.png");
             cat.HasSubCategories = true;
             Settings.Categories.Add(cat);
             string[] cats = { "Op alfabet", "Op dag", "Op zender" };
@@ -45,7 +46,8 @@ namespace OnlineVideos.Sites
             //======================= RTL gemist ===================
             cat = new RssLink();
             cat.Name = "Rtl Gemist";
-            cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\rtlgemist.png");
+            cat.Thumb = OnlineVideoSettings.Instance.ThumbsDir == null ? null :
+                System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\rtlgemist.png");
             cat.HasSubCategories = true;
             Settings.Categories.Add(cat);
             string[] cats2 = { "Op alfabet", "Op dag" };
@@ -57,7 +59,8 @@ namespace OnlineVideos.Sites
             //======================= NET5 gemist ===================
             cat = new RssLink();
             cat.Name = "Net5 Gemist";
-            cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\net5gemist.png");
+            cat.Thumb = OnlineVideoSettings.Instance.ThumbsDir == null ? null :
+                System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\net5gemist.png");
             cat.HasSubCategories = true;
             cat.Url = @"http://www.net5.nl/web/show/id=95681/langid=43";
             cat.Other = new Specifics(Source.Net5Gemist, @"http://www.net5.nl");
@@ -66,7 +69,8 @@ namespace OnlineVideos.Sites
             //======================= SBS6 gemist ===================
             cat = new RssLink();
             cat.Name = "SBS6 Gemist";
-            cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\sbsgemist.png");
+            cat.Thumb = OnlineVideoSettings.Instance.ThumbsDir == null ? null :
+                System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\sbsgemist.png");
             cat.HasSubCategories = true;
             cat.Url = @"http://www.sbs6.nl/web/show/id=73863/langid=43";
             cat.Other = new Specifics(Source.SBSGemist, @"http://www.sbs6.nl");
@@ -75,7 +79,8 @@ namespace OnlineVideos.Sites
             //======================= Veronica gemist ===================
             cat = new RssLink();
             cat.Name = "Veronica Gemist";
-            cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\veronicagemist.png");
+            cat.Thumb = OnlineVideoSettings.Instance.ThumbsDir == null ? null :
+                System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\veronicagemist.png");
             cat.HasSubCategories = true;
             cat.Url = @"http://www.veronicatv.nl/web/show/id=96520/langid=43";
             cat.Other = new Specifics(Source.VeronicaGemist, @"http://www.veronicatv.nl");
@@ -257,7 +262,7 @@ namespace OnlineVideos.Sites
                 do
                 {
                     pageNr++;
-                    string webData = GetWebData(pageNr == 1 ? parentCategory.Url : parentCategory.Url + @"/page=" + pageNr.ToString(), specifics.cc);
+                    string webData = GetWebData(pageNr == 1 ? parentCategory.Url : parentCategory.Url + @"&pgNum=" + pageNr.ToString(), specifics.cc);
                     hasNextPage = webData.Contains(@"populair_bottom_volgende");
                     Match m = regex_SubCatDepth1.Match(webData);
                     while (m.Success)
