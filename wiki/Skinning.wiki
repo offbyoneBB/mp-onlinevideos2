@@ -72,8 +72,8 @@ The State is one of the three: {{{Broken, Reported, Working}}}. In the default s
   * `#Play.Current.Plot` - description
   * `#Play.Current.Thumb` - thumbnail as in facade
   * `#Play.Current.Year` - duration and airdate if available
-  * `#OnlineVideos.IsBuffering` - "true" when a video is beeing buffered before playback will start
-  * `#OnlineVideos.buffered` - integer showing percentage buffered (localized label property: `#OnlineVideos.Translation.Buffered.Label`) 
+  * `#OnlineVideos.IsBuffering` - "true" while a video is beeing buffered before playback will start
+  * `#OnlineVideos.buffered` - float (2 digits + decimal point) showing percentage buffered (localized label property: `#OnlineVideos.Translation.Buffered.Label`) 
 = Details View =
 
  * iTunes Movie Trailers (`string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)`)
