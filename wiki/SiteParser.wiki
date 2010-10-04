@@ -21,7 +21,14 @@ Once you have put the baseurl into it's place, you are ready to find the categor
 Click the "Create Regex" button in the Categories section, and start creating the Regex for it.
 If you are ready with it, Click on the "GetCats" button, and you a "+" appearing at the right side (just left of "-site")
 
-Expand that "+", and select some categories and see if the results at the bottom of the screen are satisfactory. If not, you can change the url-format, and enable url-decoding if necessary. After changing those, you need to click on "GetCats" to see the updated results.
+Expand that "+", and select some categories and see if the results at the bottom of the screen are satisfactory.
+If not, you can change the url-format, and enable url-decoding if necessary. After changing those, you need to click on "GetCats" to see the updated results.
+
+After the categories are correctly configured, you can do the same for subcategories if present. If not, go to the "VideoList".
+
+VideoList:
+Under site (at the right side) you have to select a Category or Subcategory.
+Then create the regex for the videos.
 
 = Menu Items =
 
