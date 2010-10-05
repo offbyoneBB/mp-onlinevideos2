@@ -2,60 +2,74 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Xml;
 
 namespace OnlineVideos.Sites
 {
     public class ArtePlus7Util : SiteUtilBase
     {
-        string baseUrl = "http://videos.arte.tv/de/videos";
+        protected string baseUrl = "http://videos.arte.tv";
+        protected string videoListRegEx = @"<a\s+href=""(?<VideoUrl>[^""]+)""><img(?:(?!src).)*src=""(?<ImageUrl>[^""]+)""\s*/></a>\s*
+(<div[^>]*>\s*<p\s+class=""teaserText"">(?<Description>[^<]+)</p>\s*</div>)?
+(?:(?!<h2>).)*<h2><a[^>]*>(?<Title>[^<]*)?</a></h2>\s*
+(?:(?!<p>).)*<p>(?<Duration>[^<]+)</p>";
+
+        protected Regex regEx_VideoList;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+
+            RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
+
+            if (!string.IsNullOrEmpty(videoListRegEx)) regEx_VideoList = new Regex(videoListRegEx, defaultRegexOptions);
+        }
 
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            string data = GetWebData(baseUrl);
-            if (!string.IsNullOrEmpty(data))
-            {
-                string languageField = Regex.Match(data, @"Logout</a></li>\s*(?<inner>[^.]+)</ul>\s*</div>").Groups["inner"].Value;
-                Match m = Regex.Match(languageField, @"<li><a\shref=""(?<url>[^""]+)""(|[^>]+)>(?<title>[^<]+)</a></li>");
-                while (m.Success)
+            Settings.Categories.Add(
+                new RssLink()
                 {
-                    RssLink cat = new RssLink();
-                    cat.HasSubCategories = true;
-                    cat.Name = m.Groups["title"].Value;
-                    cat.Url = m.Groups["url"].Value;
-                    cat.Url = "http://videos.arte.tv" + cat.Url;
-
-                    Settings.Categories.Add(cat);
-                    m = m.NextMatch();
-                }
-                Settings.DynamicCategoriesDiscovered = true;
-                return Settings.Categories.Count;
-            }
-            return 0;
+                    Name = "DE - Sendungen",
+                    Url = "http://videos.arte.tv/de/videos/sendungen",
+                    HasSubCategories = true
+                });
+            Settings.Categories.Add(
+                new RssLink()
+                {
+                    Name = "FR - Programmes",
+                    Url = "http://videos.arte.tv/fr/videos/programmes",
+                    HasSubCategories = true
+                });
+            Settings.Categories.Add(
+                new RssLink()
+                {
+                    Name = "EN - Programs",
+                    Url = "http://videos.arte.tv/en/videos/programs",
+                    HasSubCategories = true
+                });
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
             string data = GetWebData((parentCategory as RssLink).Url);
-            data = data.Substring(data.IndexOf(@"<div class=""program"">"));
-
-            parentCategory.SubCategories = new List<Category>();
+            parentCategory.SubCategories = new List<Category>();            
             if (!string.IsNullOrEmpty(data))
             {
-                Match m = Regex.Match(data, @"<li>\s*<input\stype=""checkbox""\svalue=""[^""]+""/>\s*<label>\s*<a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a></label>");
+                Match m = Regex.Match(data, @"<a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a>\s*\((?<amount>\d+)\)");
                 while (m.Success)
                 {
-                    RssLink cat = new RssLink();
-                    cat.SubCategoriesDiscovered = true;
-                    cat.HasSubCategories = false;
-
-                    cat.Url = m.Groups["url"].Value;
-                    cat.Url = "http://videos.arte.tv" + cat.Url;
-
+                    RssLink cat = new RssLink() { ParentCategory = parentCategory };
+                    string url = "http://videos.arte.tv" + m.Groups["url"].Value.Replace("/videos", "/do_delegate/videos");
+                    if (!url.EndsWith(".html")) url += "/index.html";
+                    cat.Url = url.Replace(".html", "-3188698,view,asThumbnail.html?hash=tv/thumb///{0}/25/");
                     cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
-
+                    cat.EstimatedVideoCount = uint.Parse(m.Groups["amount"].Value);
                     parentCategory.SubCategories.Add(cat);
-                    cat.ParentCategory = parentCategory;
+                    
                     m = m.NextMatch();
                 }
                 parentCategory.SubCategoriesDiscovered = true;
@@ -142,27 +156,70 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
+            currentCategory = category as RssLink;
+            currentPage = 1;
+            currentCategoryMaxPages = 1;
+            return GetPagedVideoList();
+        }
+
+        List<VideoInfo> GetPagedVideoList()
+        {
             List<VideoInfo> videos = new List<VideoInfo>();
-            string data = GetWebData((category as RssLink).Url);
+            string data = GetWebData(string.Format((currentCategory as RssLink).Url, currentPage));
 
-            if (!string.IsNullOrEmpty(data))
+            foreach (Match pageMatch in Regex.Matches(data, @"<li><a\s+href=""\#""\s+class=""(current\s)?{page:'\d+'}"">(?<page>\d+)</a></li>"))
             {
-                Match m = Regex.Match(data, @"src=""(?<thumb>[^""]+)""\s*/></a>\s*<div\sclass=""videoHover"">\s*<p\sclass=""teaserText"">(?<description>[^<]+)</p>\s*</div>\s*</div>\s*<h2><a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a></h2>\s*<p>(?<airdate>[^<]+)</p>");
-                while(m.Success)
-                {
-                    VideoInfo video = new VideoInfo();
+                int counter = int.Parse(pageMatch.Groups["page"].Value);
+                if (counter > currentCategoryMaxPages) currentCategoryMaxPages = counter;
+            }
 
-                    video.Title = HttpUtility.HtmlDecode(m.Groups["title"].Value);
-                    video.ImageUrl = "http://videos.arte.tv" + m.Groups["thumb"].Value;
-                    video.VideoUrl = "http://videos.arte.tv" + m.Groups["url"].Value;
-                    video.Description = HttpUtility.HtmlDecode(m.Groups["description"].Value);
-                    video.Length = HttpUtility.HtmlDecode(m.Groups["airdate"].Value);
-
-                    videos.Add(video);
-                    m = m.NextMatch();
-                }
+            Match m = regEx_VideoList.Match(data);
+            while (m.Success)
+            {
+                VideoInfo videoInfo = new VideoInfo();
+                videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+                videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
+                if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
+                videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;                
+                if (!string.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
+                videoInfo.Length = Translation.Airdate + ": " + m.Groups["Duration"].Value;
+                videoInfo.Description = HttpUtility.HtmlDecode(m.Groups["Description"].Value);
+                videos.Add(videoInfo);
+                m = m.NextMatch();
             }
             return videos;
         }
+
+        #region Next/Previous Page
+
+        RssLink currentCategory = null;
+        int currentPage = 0;
+        int currentCategoryMaxPages = 0;
+
+        public override bool HasNextPage
+        {
+            get { return currentCategory != null && currentCategoryMaxPages > currentPage; }
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            currentPage++;
+            if (currentPage >= currentCategoryMaxPages) currentPage = currentCategoryMaxPages;
+            return GetPagedVideoList();
+        }
+
+        public override bool HasPreviousPage
+        {
+            get { return currentCategory != null && currentPage > 1; }
+        }
+
+        public override List<VideoInfo> getPreviousPageVideos()
+        {
+            currentPage--;
+            if (currentPage < 1) currentPage = 1;
+            return GetPagedVideoList();
+        }
+
+        #endregion        
     }
 }
