@@ -80,9 +80,15 @@ namespace ExternalOSDLibrary
       ShowInTaskbar = false;
       StartPosition = FormStartPosition.CenterParent;
       ResumeLayout();
-      Opacity = 1;
+      Opacity = 0.6;
       GotFocus += OSDForm_GotFocus;
       _parent.LocationChanged += _positionChanged;
+        SetStyle(ControlStyles.DoubleBuffer
+            | ControlStyles.AllPaintingInWmPaint
+            | ControlStyles.ResizeRedraw
+            | ControlStyles.UserPaint
+            | ControlStyles.SupportsTransparentBackColor
+            | ControlStyles.OptimizedDoubleBuffer , true);
     }
 
     #endregion
@@ -158,6 +164,17 @@ namespace ExternalOSDLibrary
       {
         Log.Error(ex);
       }
+    }
+    
+    protected override CreateParams CreateParams
+    {
+        get
+        {
+            CreateParams cp = base.CreateParams;
+            cp.ExStyle |= 0x00000020; //WS_EX_TRANSPARENT
+            cp.ExStyle |= 0x00080000; //WS_EX_LAYERED
+            return cp;
+        }
     }
     #endregion
 
