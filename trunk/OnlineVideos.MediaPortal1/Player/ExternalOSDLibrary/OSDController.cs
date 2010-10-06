@@ -64,12 +64,7 @@ namespace ExternalOSDLibrary
     /// Form of the osd
     /// </summary>
     private readonly OSDForm _osdForm;
-
-    /// <summary>
-    /// Second form of the osd
-    /// </summary>
-    private readonly OSDForm _osdForm2;
-
+    
     /// <summary>
     /// Indicates, if additional osd information is displayed
     /// </summary>
@@ -164,14 +159,13 @@ namespace ExternalOSDLibrary
       _videoOSDWindow = new VideoOSDWindow();
       _dialogWindow = new DialogWindow();
       _osdForm = new OSDForm();
-      _osdForm2 = new OSDForm();
       _parentForm = GUIGraphicsContext.form;
       _sizeChanged = parent_SizeChanged;
       _parentForm.SizeChanged += _sizeChanged;
       _minimized = false;
       using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
       {
-        _blankScreen = settings.GetValueAsBool("externalOSDLibrary", "blankScreen", true);
+        _blankScreen = settings.GetValueAsBool("externalOSDLibrary", "blankScreen", false);
       }
     }
     #endregion
@@ -188,7 +182,6 @@ namespace ExternalOSDLibrary
         _videoRectangle = GUIGraphicsContext.VideoWindow;
       }
       _osdForm.ShowForm();
-      _osdForm2.ShowForm();
       _needUpdate = true;
       UpdateGUI();
     }
@@ -265,8 +258,6 @@ namespace ExternalOSDLibrary
         _dialogWindow.DrawWindow(graph);
         _osdForm.Image = image;
         _osdForm.Refresh();
-        _osdForm2.Image = image;
-        _osdForm2.Refresh();
       }
     }
 
@@ -276,7 +267,6 @@ namespace ExternalOSDLibrary
     public void Deactivate()
     {
       _osdForm.Hide();
-      _osdForm2.Hide();
     }
 
     /// <summary>
@@ -378,7 +368,6 @@ namespace ExternalOSDLibrary
       _dialogWindow.Dispose();
       _videoOSDWindow.Dispose();
       _osdForm.Dispose();
-      _osdForm2.Dispose();
       _parentForm.SizeChanged -= _sizeChanged;
       ImageCache.Dispose();
       singleton = null;
