@@ -23,20 +23,22 @@ You have to play with this to get some experience, because if you leave too much
 
 = Regex-shortcuts =
 
-== "Skip to" ==
+== Skip to ==
 this will skip to multiple chars.
 f.e. if you have
-loads of uninteresting html<img src="http://url_of_thumbnail" />
 
-select loads of uninteresting html, choose "skip to" and click "insert"
-Then replace the selected text (@@) with the text after the part that you want to skip, in this case <img
+`loads of uninteresting html<img src="http://url_of_thumbnail" />`
 
-== "Skip to single char" ==
+select `loads of uninteresting html`, choose "skip to" and click "insert"
+Then replace the selected text (@@) with the text after the part that you want to skip, in this case `<img`
+
+== Skip to single char ==
 this will skip to a single char.
 f.e. if you have
-<img src="http://url_of_thumbnail" width="500" height="500"/>
 
-select width="500" height="500"/ choose "skip to single char" and click "insert".
+`<img src="http://url_of_thumbnail" width="500" height="500"/>`
 
-== "optional" ==
+select `width="500" height="500"/` choose "skip to single char" and click "insert".
+
+== optional ==
 this will make the selected text optional.
