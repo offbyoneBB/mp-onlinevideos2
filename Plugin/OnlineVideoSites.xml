@@ -95,12 +95,13 @@
       <Description>Eine Auswahl der Sendungen des ARTE-Programms steht nach der Fernsehausstrahlung weitere sieben Tage lang kostenfrei per Streaming im Internet zur Verfügung. </Description>
       <Categories />
     </Site>
-    <Site name="Sat1" util="Sat1Group" agecheck="false" enabled="true" lang="de" lastUpdated="2010-03-23T14:52:00.0625+01:00">
+    <Site name="Sat1" util="Sat1" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Senders Sat1.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://cms030.dc2.qcn3.movenetworks.com/cms/publish/vod2/vodchannelcatalog/sat1/15/catalog.json]]></item>
-        <item key="categoryUrlFormatString"><![CDATA[http://cms030.dc2.qcn3.movenetworks.com/cms/publish/pro7/vodtldatesorted//{0}/{1}/{2}/listing.json]]></item>
+        <item key="baseUrl"><![CDATA[http://www.sat1.de/videocenter/]]></item>
         <item key="rtmpBase"><![CDATA[rtmpt://pssimsat1fs.fplive.net:80/pssimsat1ls/]]></item>
+        <item key="regExPagingToken"><![CDATA[var\sparameter\s=\s"(?<token>[^"]+)";\s*var[^=]+=\snew\sPaging\('(?<tag>[^']+)',(?<pages>[^,]+),parameter\);]]></item>
+        <item key="regExDynamicCategory"><![CDATA[background-image:url\((?<ImageUrl>[^\)]+)\)">\s*<a\shref="(?<Url>[^"]+)"[^>]+><[^>]+></a><br\s/>\s*<[^>]+><[^>]+>[^<]+</h6><h6\sclass="channel">(?<Title>[^<]+)</h6><h6\sclass="format"></h6></div>\s*<h1><a\shref="[^"]+"\starget=""\sonClick="">(?<SubTitle>[^<]+)</a></h1>\s*<p><a\shref="[^"]+"\starget=""\sonClick="">(?<Date>[^<]+)</a></p>]]></item>
       </Configuration>
       <Categories />
     </Site>
