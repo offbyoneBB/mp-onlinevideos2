@@ -40,7 +40,7 @@ Then create the regex for the videos.
 = Step by step (simple version) =
 
  # for baseurl: fill the url of the page with the categories on it
- # click on "Create Regex" on the "Category" tab, and create the regex
+ # click on "Create Regex" on the "Category" tab, and create the regex [http://code.google.com/p/mp-onlinevideos2/wiki/CreateRegex explanation]
  # click on "GetCats" on the "Category" tab. You should now see the categories listed under "site" at the right panel
  # if there are subcategories present then select a category, and goto the subcategories tab, if notL skip next step
  # click on "Create Regex" and after that on GetSubcats. then select a subcategory
