@@ -47,8 +47,11 @@ namespace ExternalOSDLibrary
     {
       //_osdWindow = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_OSD) as GUIVideoOSD;
       _osdWindow = GUIWindowManager.GetWindow(OnlineVideos.MediaPortal1.Player.GUIOnlineVideoOSD.WINDOW_ONLINEVIDEOS_OSD) as GUIVideoOSD;
-      if (_osdWindow != null) _controlList = _osdWindow.controlList;
-      GenerateElements();
+      if (_osdWindow != null)
+      {
+          _controlList = _osdWindow.controlList;
+          GenerateElements();
+      }
     }
     #endregion
 

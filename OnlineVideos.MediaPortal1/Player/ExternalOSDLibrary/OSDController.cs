@@ -33,7 +33,6 @@ using MediaPortal.Configuration;
 
 namespace ExternalOSDLibrary
 {
-
   /// <summary>
   /// Controller for the ExternalOSDLibrary. This is the main entry point for usage in an external player
   /// </summary>
@@ -106,16 +105,6 @@ namespace ExternalOSDLibrary
     private bool _needUpdate;
 
     /// <summary>
-    /// Event handler for the size changed event
-    /// </summary>
-    private readonly EventHandler _sizeChanged;
-
-    /// <summary>
-    /// MP parent form
-    /// </summary>
-    private readonly Form _parentForm;
-
-    /// <summary>
     /// Indicates if MP is minimized
     /// </summary>
     private bool _minimized;
@@ -159,10 +148,7 @@ namespace ExternalOSDLibrary
       _videoOSDWindow = new VideoOSDWindow();
       _dialogWindow = new DialogWindow();
       _osdForm = new OSDForm();
-      _parentForm = GUIGraphicsContext.form;
-      _sizeChanged = parent_SizeChanged;
-      _parentForm.SizeChanged += _sizeChanged;
-      _minimized = false;
+      GUIGraphicsContext.form.SizeChanged += parent_SizeChanged;
       using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
       {
         _blankScreen = settings.GetValueAsBool("externalOSDLibrary", "blankScreen", false);
@@ -257,7 +243,6 @@ namespace ExternalOSDLibrary
         _videoOSDWindow.DrawWindow(graph);
         _dialogWindow.DrawWindow(graph);
         _osdForm.Image = image;
-        _osdForm.Refresh();
       }
     }
 
@@ -268,16 +253,7 @@ namespace ExternalOSDLibrary
     {
       _osdForm.Hide();
     }
-
-    /// <summary>
-    /// Indicates if the video osd is visible
-    /// </summary>
-    /// <returns></returns>
-    public bool IsOSDVisible()
-    {
-      return _videoOSDWindow.CheckVisibility();
-    }
-
+    
     /// <summary>
     /// Shows additional osd information
     /// </summary>
@@ -345,7 +321,7 @@ namespace ExternalOSDLibrary
     /// <param name="args"></param>
     private void parent_SizeChanged(Object sender, EventArgs args)
     {
-      if (_parentForm.WindowState == FormWindowState.Minimized)
+        if (GUIGraphicsContext.form.WindowState == FormWindowState.Minimized)
       {
         _minimized = true;
         return;
@@ -368,7 +344,7 @@ namespace ExternalOSDLibrary
       _dialogWindow.Dispose();
       _videoOSDWindow.Dispose();
       _osdForm.Dispose();
-      _parentForm.SizeChanged -= _sizeChanged;
+      GUIGraphicsContext.form.SizeChanged -= parent_SizeChanged;
       ImageCache.Dispose();
       singleton = null;
     }

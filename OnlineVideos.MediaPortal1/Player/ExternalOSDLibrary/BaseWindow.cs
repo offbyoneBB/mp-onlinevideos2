@@ -129,13 +129,14 @@ namespace ExternalOSDLibrary
     /// - GUIButtonControl
     /// - GUIFadeLabel
     /// - GUIProgressControl
+    /// - GUITVProgressControl
     /// - GUIVolumeBar
     /// - GUILabelControl
     /// - GUIImage
     /// - GUIGroup are handled directly
     /// </summary>
     /// <param name="control">Control</param>
-    /// <returns>Elmenet based on the GUIControl</returns>
+    /// <returns>Element based on the GUIControl</returns>
     public static BaseElement GenerateElement(GUIControl control)
     {
       if (control.GetType() == typeof(GUIImage))
@@ -153,6 +154,10 @@ namespace ExternalOSDLibrary
       if (control.GetType() == typeof(GUIProgressControl))
       {
         return new ProgressControlElement(control);
+      }
+      if (control.GetType() == typeof(GUITVProgressControl))
+      {
+          return new TVProgressControlElement(control);
       }
       if (control.GetType() == typeof(GUIFadeLabel))
       {
