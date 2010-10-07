@@ -46,8 +46,11 @@ namespace ExternalOSDLibrary
     public DialogWindow()
     {
       _dialogWindow = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU) as GUIDialogMenu;
-      if (_dialogWindow != null) _controlList = _dialogWindow.controlList;
-      GenerateElements();
+      if (_dialogWindow != null)
+      {
+          _controlList = _dialogWindow.controlList;
+          GenerateElements();
+      }
     }
     #endregion
 
@@ -62,7 +65,7 @@ namespace ExternalOSDLibrary
     }
 
     /// <summary>
-    /// Performs a base uinut if the window. This includes the following tasks
+    /// Performs a base init of the window. This includes the following tasks
     /// - Setting the reference to the window in MP
     /// - Setting the reference to the control list of the MP window
     /// </summary>

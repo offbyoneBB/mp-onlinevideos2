@@ -111,41 +111,44 @@ namespace ExternalOSDLibrary
     {
       //_fullscreenWindow = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) as GUIVideoFullscreen;
         _fullscreenWindow = GUIWindowManager.GetWindow(OnlineVideos.MediaPortal1.Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) as GUIVideoFullscreen;
-      if (_fullscreenWindow != null) _controlList = _fullscreenWindow.controlList;
-      GenerateElements();
-      _cacheElements = new List<BaseElement>();
-      _imageCacheElements = new List<BaseElement>();
-      GUIControl temp;
-      GUIGroup help;
-      foreach (UIElement element in _controlList)
-      {
-        temp = element as GUIControl;
-        if (temp != null)
+        if (_fullscreenWindow != null)
         {
-          if (temp.GetType() == typeof(GUIGroup))
-          {
-            help = temp as GUIGroup;
-            if (help != null)
-              foreach (UIElement uiElement in help.Children)
-              {
-                GUIControl temp2 = uiElement as GUIControl;
-                if (temp2 != null)
+            _controlList = _fullscreenWindow.controlList;
+            GenerateElements();
+            _cacheElements = new List<BaseElement>();
+            _imageCacheElements = new List<BaseElement>();
+            GUIControl temp;
+            GUIGroup help;
+            foreach (UIElement element in _controlList)
+            {
+                temp = element as GUIControl;
+                if (temp != null)
                 {
-                  CheckElement(temp2);
+                    if (temp.GetType() == typeof(GUIGroup))
+                    {
+                        help = temp as GUIGroup;
+                        if (help != null)
+                            foreach (UIElement uiElement in help.Children)
+                            {
+                                GUIControl temp2 = uiElement as GUIControl;
+                                if (temp2 != null)
+                                {
+                                    CheckElement(temp2);
+                                }
+                            }
+                    }
+                    CheckElement(temp);
                 }
-              }
-          }
-          CheckElement(temp);
+            }
+            if (_background == null)
+            {
+                _background = _background2;
+            }
+            if (_background == null)
+            {
+                _background = _background3;
+            }
         }
-      }
-      if (_background == null)
-      {
-        _background = _background2;
-      }
-      if (_background == null)
-      {
-        _background = _background3;
-      }
     }
     #endregion
 

@@ -142,6 +142,7 @@
     <Compile Include="Player\ExternalOSDLibrary\Elements\FadeLabelElement.cs" />
     <Compile Include="Player\ExternalOSDLibrary\Elements\ImageCache.cs" />
     <Compile Include="Player\ExternalOSDLibrary\Elements\ImageElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\Elements\TVProgressControlElement.cs" />
     <Compile Include="Player\ExternalOSDLibrary\Elements\LabelElement.cs" />
     <Compile Include="Player\ExternalOSDLibrary\Elements\ListElement.cs" />
     <Compile Include="Player\ExternalOSDLibrary\Elements\ProgressControlElement.cs" />
@@ -150,11 +151,10 @@
     <Compile Include="Player\ExternalOSDLibrary\Elements\ToggleButtonElement.cs" />
     <Compile Include="Player\ExternalOSDLibrary\Elements\VerticalScrollbarElement.cs" />
     <Compile Include="Player\ExternalOSDLibrary\Elements\VolumeBarElement.cs" />
+    <Compile Include="Player\ExternalOSDLibrary\FloatingWindow.cs" />
     <Compile Include="Player\ExternalOSDLibrary\FullscreenWindow.cs" />
     <Compile Include="Player\ExternalOSDLibrary\OSDController.cs" />
-    <Compile Include="Player\ExternalOSDLibrary\OSDForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Player\ExternalOSDLibrary\OSDForm.cs" />
     <Compile Include="Player\ExternalOSDLibrary\OSDWindow.cs" />
     <Compile Include="Player\GUIOnlineVideoFullscreen.cs" />
     <Compile Include="Player\GUIOnlineVideoOSD.cs" />

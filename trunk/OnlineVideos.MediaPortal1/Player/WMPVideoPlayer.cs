@@ -175,6 +175,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     case Action.ActionType.ACTION_STEP_BACK:
                     case Action.ActionType.ACTION_STEP_FORWARD:
                     case Action.ActionType.ACTION_SHOW_OSD:
+                    case Action.ActionType.ACTION_CONTEXT_MENU:
                         if (!_osdActive) { _osd.Activate(); _osdActive = true; }
                         break;
                     case Action.ActionType.ACTION_VOLUME_MUTE:
@@ -526,7 +527,11 @@ namespace OnlineVideos.MediaPortal1.Player
                 return;
             }
 
-            if (_osd != null) _osd.UpdateGUI();
+            if (_osd != null)
+            {
+                if (!_osdActive && GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU) { _osd.Activate(); _osdActive = true; }
+                _osd.UpdateGUI();
+            }
 
             if (GUIGraphicsContext.BlankScreen ||
                 (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
