@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Web;
@@ -51,7 +52,7 @@ namespace OnlineVideos.Sites
                         cat.Url = baseUrl + cat.Url;
 
                     cat.HasSubCategories = (parentCategory.Other == null) && !cat.Url.Equals(url);
-                        //cat.Name != "Recomendados";
+                    //cat.Name != "Recomendados";
                     cat.ParentCategory = parentCategory;
                     cat.Other = 1;
                     categories.Add(cat);
@@ -66,15 +67,19 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            string videoName = baseUrl + "/alacarta/player/" + Path.ChangeExtension(Path.GetFileName(video.VideoUrl), ".html");
-            string webData = GetWebData(videoName);
-            string url = GetSubString(webData, "'url':'", "'");
-            return url;
-
-            /*if (url.StartsWith("rtmp"))
-                return url.Replace(@"rtmp://stream.rtve.es/stream/resources", @"http://www.rtve.es/resources");
-            return url;
-             */
+            string videoId = Path.ChangeExtension(Path.GetFileName(video.VideoUrl), String.Empty).TrimEnd('.');
+            StringBuilder sb = new StringBuilder();
+            sb.Append(baseUrl);
+            sb.Append(@"/swf/data/es/videos/alacarta/");
+            for (int i = 0, j=videoId.Length-1; i < 4; i++,j--)
+            {
+                sb.Append(videoId[j]);
+                sb.Append('/');
+            }
+            sb.Append(videoId);
+            sb.Append(".xml");
+            string webData = GetWebData(sb.ToString());
+            return GetSubString(webData, @"<file>", @"</file>");
         }
 
 
