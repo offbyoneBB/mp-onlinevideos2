@@ -14,15 +14,15 @@ Or start the program "Onlinevideos.SiteCreator" in the Mediaportal Installation 
 A website in OnlineVideos consists of Categories, optional Subcategories, and Videolists.
 For each of these, the way of getting the correct information into OnlineVideos must be configured. Therefore, on the main screen, there are sections on which to create/test their configuration settings.
 
-First of all, and the most important one is the baseurl: That must be the url that holds the categories you want to have in the OnlineVideos.
-Most of the time, this is the url you type in your browser if you want to watch videos. However, sometimes this is buried a little deeper, and you have to use some other means to get that url (f.e. fiddler).
+First of all, and the most important one is the baseurl: That must be the URL that holds the categories you want to have in the OnlineVideos.
+Most of the time, this is the URL you type in your browser if you want to watch videos. However, sometimes this is buried a little deeper, and you have to use some other means to get that URL (e.g. fiddler).
 
 Once you have put the baseurl into it's place, you are ready to find the categories.
 Click the "Create Regex" button in the Categories section [http://code.google.com/p/mp-onlinevideos2/wiki/CreateRegex explanation], and start creating the Regex for it.
 If you are ready with it, Click on the "GetCats" button, and you a "+" appearing at the right side (just left of "-site")
 
 Expand that "+", and select some categories and see if the results at the bottom of the screen are satisfactory.
-If not, you can change the url-format, and enable url-decoding if necessary. After changing those, you need to click on "GetCats" to see the updated results.
+If not, you can change the URL-format, and enable URL-decoding if necessary. After changing those, you need to click on "GetCats" to see the updated results.
 
 After the categories are correctly configured, you can do the same for subcategories if present. If not, go to the "VideoList".
 
@@ -39,7 +39,7 @@ Then create the regex for the videos.
 
 = Step by step (simple version) =
 
- # for baseurl: fill the url of the page with the categories on it
+ # for baseurl: fill the URL of the page with the categories on it
  # click on "Create Regex" on the "Category" tab, and create the regex [http://code.google.com/p/mp-onlinevideos2/wiki/CreateRegex explanation]
  # click on "GetCats" on the "Category" tab. You should now see the categories listed under "site" at the right panel
  # if there are subcategories present then select a category, and goto the subcategories tab, if notL skip next step
@@ -50,7 +50,7 @@ Then create the regex for the videos.
  # select a video, and click on the "VideoUrl" tab.
  # click "GetVideoUrl", click "GetPlaylistUrl" and click "Create Regex" next to "GetFileUrl"
  # create the regex
- # choose the url under "ResultUrl" and hit the play-button to verify
+ # choose the URL under "ResultUrl" and hit the play-button to verify
  # click "Copy" in the main menu, open onlinevideosites.xml in your favourite texteditor, and paste the configuration in it. Then remove the categories (lines starting with <Category xsi:type="RssLink") that are to be dynamically discovered.
  # Save the file, and enjoy your new creation!
  # After the final approvement, you can publish the site through the onlinevideos configuration
