@@ -10,12 +10,12 @@ This part of the program is used as an aid to get the correct regex for the vari
 When this part is entered (through the "Create Regex" button), the relevant html is already loaded in the box at the right side. This is the base on which to create the regex.
 
 Make sure you have this page visible in your web-browser, that will make the next steps easier.
-First you enter a (part of the) text you are searching for, f.e. one of the Categories you see in your browser. Hit "Find" to go to that particular part of the html.
+First you enter a (part of the) text you are searching for, e.g. one of the Categories you see in your browser. Hit "Find" to go to that particular part of the html.
 Then you have to select the relevant part (this requires some experience) and click on the <leftdown>. This will overwrite the text selected in the top-left box with the selected text of the right part.
 
-Then for all the pieces in the top-left box that you recognize (f.e. the name, the url etc) you select them, choose the kind of item that it represents, and click <down insert>.
+Then for all the pieces in the top-left box that you recognize (e.g. the name, the URL etc) you select them, choose the kind of item that it represents, and click <down insert>.
 
-For all the remaining data, you can select parts, and choose f.e. "skip to" (multiple chars), "skip to single char" or "optional".
+For all the remaining data, you can select parts, and choose e.g. "skip to" (multiple chars), "skip to single char" or "optional".
 
 After that, you can click "Test" to see the results of your regex.
 
@@ -25,7 +25,7 @@ You have to play with this to get some experience, because if you leave too much
 
 == Skip to ==
 this will skip to multiple chars.
-f.e. if you have
+e.g. if you have
 
 `loads of uninteresting html<img src="http://url_of_thumbnail" />`
 
@@ -34,7 +34,7 @@ Then replace the selected text (@@) with the text after the part that you want t
 
 == Skip to single char ==
 this will skip to a single char.
-f.e. if you have
+e.g. if you have
 
 `<img src="http://url_of_thumbnail" width="500" height="500"/>`
 
