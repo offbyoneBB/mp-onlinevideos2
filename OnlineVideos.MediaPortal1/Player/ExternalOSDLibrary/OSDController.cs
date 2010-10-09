@@ -242,6 +242,8 @@ namespace ExternalOSDLibrary
         _videoOSDWindow.DrawWindow(graph); 
         _fullscreenWindow.DrawWindow(graph);       
         _dialogWindow.DrawWindow(graph);
+        graph.Dispose();
+        GC.Collect();
         _osdForm.Image = image;
       }
     }
