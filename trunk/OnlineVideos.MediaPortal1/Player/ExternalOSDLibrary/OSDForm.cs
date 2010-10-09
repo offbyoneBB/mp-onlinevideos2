@@ -60,7 +60,12 @@ namespace ExternalOSDLibrary
     public Bitmap Image
     {
       get { return _image; }
-        set { _image = value; Invalidate(); }
+        set 
+        { 
+            if (_image != null) _image.Dispose(); 
+            _image = value; 
+            Invalidate(); 
+        }
     }
     #endregion
 
