@@ -2204,7 +2204,7 @@ namespace OnlineVideos.MediaPortal1
                 else if (!string.IsNullOrEmpty(video.Title))
                     GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title + (string.IsNullOrEmpty(quality) ? "" : quality));
                 if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
-                if (!string.IsNullOrEmpty(video.ImageUrl)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ImageUrl);
+                if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
                 if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Length);
             }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
         }
