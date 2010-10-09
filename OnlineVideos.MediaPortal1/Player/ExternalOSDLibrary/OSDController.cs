@@ -239,8 +239,8 @@ namespace ExternalOSDLibrary
         {
           _fullscreenWindow.DrawCacheStatus(graph, _cacheFill);
         }
-        _fullscreenWindow.DrawWindow(graph);
-        _videoOSDWindow.DrawWindow(graph);
+        _videoOSDWindow.DrawWindow(graph); 
+        _fullscreenWindow.DrawWindow(graph);       
         _dialogWindow.DrawWindow(graph);
         _osdForm.Image = image;
       }

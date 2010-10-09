@@ -133,9 +133,10 @@ namespace ExternalOSDLibrary
     public bool CheckForUpdate()
     {
       _control.UpdateVisibility();
+      _control.DoRender(GUIGraphicsContext.TimePassed, (uint)System.Windows.Media.Animation.AnimationTimer.TickCount);
 
       int _visibleCondition = _control.GetVisibleCondition();
-      bool newVisible = _visibleCondition == 0 ? _control.IsVisible : GUIInfoManager.GetBool(_visibleCondition, _control.ParentID);
+      bool newVisible = _visibleCondition == 0 ? _control.Visible : GUIInfoManager.GetBool(_visibleCondition, _control.ParentID);
 
       if (newVisible == _wasVisible)
       {

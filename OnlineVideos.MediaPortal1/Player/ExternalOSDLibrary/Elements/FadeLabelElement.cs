@@ -91,7 +91,7 @@ namespace ExternalOSDLibrary
         int yFromAnim = 0;
         foreach (VisualEffect effect in _label.Animations)
         {
-            if (effect.QueuedProcess == AnimationProcess.Normal && effect.Effect == EffectType.Slide && (effect.Condition == 0 || GUIInfoManager.GetBool(effect.Condition, 0)))
+            if (effect.CurrentState != AnimationState.None && effect.Effect == EffectType.Slide && (effect.Condition == 0 || GUIInfoManager.GetBool(effect.Condition, 0)))
             {
                 xFromAnim += (int)effect.EndX;
                 yFromAnim += (int)effect.EndY;

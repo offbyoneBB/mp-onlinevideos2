@@ -69,10 +69,10 @@ namespace ExternalOSDLibrary
     {
         if (_wasVisible)
       {
-          if (_image.TextureHeight != 0 && _image.TextureWidth != 0)
-          {
+          //if (_image.TextureHeight != 0 && _image.TextureWidth != 0)
+          //{
               DrawElementAlternative(graph, GetImageRectangle());
-          }
+          //}
       }
     }
 
@@ -107,14 +107,14 @@ namespace ExternalOSDLibrary
         int yFromAnim = 0;
         foreach (VisualEffect effect in _image.Animations)
         {
-            if (/*effect.QueuedProcess == AnimationProcess.Normal &&*/ effect.Effect == EffectType.Slide && (effect.Condition == 0 || GUIInfoManager.GetBool(effect.Condition, 0)))
+            if (effect.CurrentState != AnimationState.None && effect.Effect == EffectType.Slide && (effect.Condition == 0 || GUIInfoManager.GetBool(effect.Condition, 0)))
             {
                 xFromAnim += (int)effect.EndX;
                 yFromAnim += (int)effect.EndY;
             }
         }
 
-      return new RectangleF(_image.rect.X + xFromAnim, _image.rect.Y + yFromAnim, _image.RenderWidth, _image.RenderHeight);
+      return new RectangleF(_image._positionX + xFromAnim, _image._positionY + yFromAnim, _image.RenderWidth, _image.RenderHeight);
     }
 
     /// <summary>
