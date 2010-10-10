@@ -210,7 +210,7 @@ namespace ExternalOSDLibrary
         _videoRectangle = GUIGraphicsContext.VideoWindow;
         update = true;
       }
-      if (update)
+      if (update && osdForm.Width > 0 && _osdForm.Height > 0)
       {
         Bitmap image = new Bitmap(_osdForm.Width, _osdForm.Height);
         Graphics graph = Graphics.FromImage(image);
