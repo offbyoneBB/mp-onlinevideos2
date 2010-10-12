@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 using RssToolkit.Rss;
 
@@ -119,12 +120,10 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             if (video.VideoUrl.ToLower().Contains("youtube.com")) 
-            { 
-                video.GetYouTubePlaybackOptions();
+            {
 
-                var enumer = video.PlaybackOptions.GetEnumerator();
-                enumer.MoveNext();
-                return enumer.Current.Value;
+                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(video.VideoUrl);
+                return (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0) ? "" : video.PlaybackOptions.First().Value;
             }
             else return base.getUrl(video);
         }

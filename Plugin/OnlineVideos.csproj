@@ -151,6 +151,7 @@
     <Compile Include="DownloadInfo.cs" />
     <Compile Include="Hoster\Archiv.cs" />
     <Compile Include="Hoster\Base\HosterBase.cs" />
+    <Compile Include="Hoster\Base\HosterFactory.cs" />
     <Compile Include="Hoster\DataUp.cs" />
     <Compile Include="Hoster\DivxDen.cs" />
     <Compile Include="Hoster\DivxStage.cs" />

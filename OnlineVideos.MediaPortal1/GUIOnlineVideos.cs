@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using OnlineVideos.MediaPortal1.Player;
 using MediaPortal.Configuration;
@@ -2191,7 +2192,10 @@ namespace OnlineVideos.MediaPortal1
                     var enumer = video.PlaybackOptions.GetEnumerator();
                     while (enumer.MoveNext())
                     {
-                        if (enumer.Current.Value == g_Player.CurrentFile)
+                        string compareTo = enumer.Current.Value.ToLower().StartsWith("rtmp") ? 
+                            ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(enumer.Current.Value)))
+                            : enumer.Current.Value;
+                        if (compareTo == g_Player.CurrentFile)
                         {
                             quality = " (" + enumer.Current.Key + ")";
                             break;

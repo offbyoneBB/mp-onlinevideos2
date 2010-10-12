@@ -19,10 +19,11 @@ namespace OnlineVideos.Hoster
         static readonly int[] fmtOptionsQualitySorted = new int[] { 37, 22, 35, 18, 34, 5, 0, 17, 13 };
         static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})|(?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-        public override string getVideoUrls(string url)
+        public override Dictionary<string, string> getPlaybackOptions(string url)
         {
+            Dictionary<string, string> PlaybackOptions = null;
+
             string videoId = url;
-            string ret = "";
             if (videoId.ToLower().Contains("youtube.com"))
             {
                 // get an Id from the Url
@@ -77,9 +78,7 @@ namespace OnlineVideos.Hoster
                     int index_b = Array.IndexOf(fmtOptionsQualitySorted, b_i);
                     return index_b.CompareTo(index_a);
                 }));
-
-                int bestQuality = 0;
-                
+                PlaybackOptions = new Dictionary<string, string>();
                 foreach (string fmtValue in FmtMap)
                 {
                     int fmtValueInt = int.Parse(fmtValue.Substring(0, fmtValue.IndexOf("|")));
@@ -88,23 +87,31 @@ namespace OnlineVideos.Hoster
                         case 0:
                         case 5:
                         case 34:
-                            if(fmtValueInt > bestQuality){ bestQuality = fmtValueInt; ret = string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "flv");}break;
+                            PlaybackOptions.Add("320x240 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "flv")); break;
                         case 13:
                         case 17:
-                            if(fmtValueInt > bestQuality){ bestQuality = fmtValueInt; ret = string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4");}break;
+                            PlaybackOptions.Add("176x144 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
                         case 18:
-                            if(fmtValueInt > bestQuality){ bestQuality = fmtValueInt; ret = string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4");}break;
+                            PlaybackOptions.Add("480x360 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
                         case 35:
-                            if(fmtValueInt > bestQuality){ bestQuality = fmtValueInt; ret = string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "flv");}break;
+                            PlaybackOptions.Add("640x480 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "flv")); break;
                         case 22:
-                            if(fmtValueInt > bestQuality){ bestQuality = fmtValueInt; ret = string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4");}break;
+                            PlaybackOptions.Add("1280x720 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
                         case 37:
-                            if(fmtValueInt > bestQuality){ bestQuality = fmtValueInt; ret = string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4");}break;
+                            PlaybackOptions.Add("1920x1080 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
                     }
                 }
-                
             }
-            return ret;
+
+            return PlaybackOptions;
+        }
+        
+        public override string getVideoUrls(string url)
+        {
+            // return highest quality by default
+            var result = getPlaybackOptions(url);
+            if (result != null && result.Count > 0) return result.Last().Value;
+            else return "";
         }
     }
 }

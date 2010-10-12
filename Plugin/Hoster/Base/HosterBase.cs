@@ -17,6 +17,10 @@ namespace OnlineVideos.Hoster.Base
     {
         protected VideoType videoType;
 
+        public virtual Dictionary<string, string> getPlaybackOptions(string url)
+        {
+            return null;
+        }
         public abstract string getVideoUrls(string url);
         public abstract string getHosterUrl();
         public virtual VideoType getVideoType() { return videoType; }
