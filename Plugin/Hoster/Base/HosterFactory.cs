@@ -14,9 +14,8 @@ namespace OnlineVideos.Hoster.Base
         static HosterFactory()
         {
             List<Assembly> assemblies = new List<Assembly>();
-            Assembly onlineVideosMainDll = Assembly.GetExecutingAssembly();
-            assemblies.Add(onlineVideosMainDll);
             assemblies.AddRange(AppDomain.CurrentDomain.GetAssemblies().Where(a => a.FullName.Contains("OnlineVideos.Sites")));
+            assemblies.Add(Assembly.GetExecutingAssembly());
             foreach (Assembly assembly in assemblies)
             {
                 foreach (Type type in assembly.GetExportedTypes())
