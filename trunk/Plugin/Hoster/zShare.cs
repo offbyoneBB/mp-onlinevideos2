@@ -41,18 +41,8 @@ namespace OnlineVideos.Hoster
                 videoType = VideoType.flv;
                 return turl;
             }
-            return "";
+            return String.Empty;
         }
 
-        private static string GetSubString(string s, string start, string until)
-        {
-            int p = s.IndexOf(start);
-            if (p == -1) return String.Empty;
-            p += start.Length;
-            if (until == null) return s.Substring(p);
-            int q = s.IndexOf(until, p);
-            if (q == -1) return s.Substring(p);
-            return s.Substring(p, q - p);
-        }
     }
 }

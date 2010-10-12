@@ -14,7 +14,6 @@ namespace OnlineVideos.Sites
         {
             newUrls = new List<String>();
             string newUrl;
-            string savUrl = video.VideoUrl;
             if (url.StartsWith(@"http://www.youtube.com/p/"))
             {
                 int p = url.IndexOf(@"/p/");
@@ -34,9 +33,8 @@ namespace OnlineVideos.Sites
                             string thisUrl = m.Groups["url"].Value;
                             if (!String.IsNullOrEmpty(thisUrl))
                             {
-                                video.VideoUrl = thisUrl;
                                 video.PlaybackOptions = null;
-                                video.GetYouTubePlaybackOptions();
+                                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(thisUrl);
                                 newUrl = null;
                                 if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
                                 {
@@ -51,7 +49,6 @@ namespace OnlineVideos.Sites
                             }
                             m = m.NextMatch();
                         }
-                        video.VideoUrl = savUrl;
                     }
                 }
                 return newUrls.Count > 0;
@@ -363,9 +360,8 @@ namespace OnlineVideos.Sites
 
         public static string YoutubeTrick(string url, VideoInfo video)
         {
-            video.VideoUrl = url;
             video.PlaybackOptions = null;
-            video.GetYouTubePlaybackOptions();
+            video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(url);
             return url;
         }
 

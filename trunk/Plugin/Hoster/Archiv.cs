@@ -15,7 +15,7 @@ namespace OnlineVideos.Hoster
         {
             return "Archiv.to";
         }
-        
+
         public override string getVideoUrls(string url)
         {
             string page = SiteUtilBase.GetWebData(url);
@@ -28,7 +28,7 @@ namespace OnlineVideos.Hoster
                     return Regex.Match(HttpUtility.UrlDecode(n.Groups["url"].Value), @"file=(?<url>[^&]+)&").Groups["url"].Value;
                 }
             }
-            return "";
+            return String.Empty;
         }
     }
 }
