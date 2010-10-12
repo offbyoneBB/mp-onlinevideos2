@@ -28,7 +28,7 @@ namespace OnlineVideos.Hoster
                 videoType = VideoType.flv;
                 return n.Groups["url"].Value;
             }
-            return "";
+            return String.Empty;
         }
     }
 }

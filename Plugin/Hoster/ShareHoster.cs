@@ -21,7 +21,7 @@ namespace OnlineVideos.Hoster
             url = url.Replace("vid", "wait");
             CookieContainer cc = new CookieContainer();
             string page = SiteUtilBase.GetWebData(url, cc);
-            string file = url.Substring(url.LastIndexOf(@"/")+1);
+            string file = url.Substring(url.LastIndexOf(@"/") + 1);
             string wait = Regex.Match(page, @"name=""wait""\svalue=""(?<wait>[^""]+)""").Groups["wait"].Value;
             string postdata = string.Format("continue=Fortfahren&open=show_wait&file={0}&wait={1}", file, wait);
             page = SiteUtilBase.GetWebDataFromPost("http://www.sharehoster.com/vid/" + file, postdata, cc, url);
@@ -43,7 +43,7 @@ namespace OnlineVideos.Hoster
                 }
             }
 
-            return "";
+            return String.Empty;
         }
     }
 }

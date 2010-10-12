@@ -35,7 +35,7 @@ namespace OnlineVideos.Hoster
                     return n.Groups["url"].Value;
                 }
             }
-            return "";
+            return String.Empty;
         }
     }
 }

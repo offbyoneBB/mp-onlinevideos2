@@ -38,7 +38,7 @@ namespace OnlineVideos.Hoster
                     return n.Groups["url"].Value;
                 }
                 //Flv
-                else if( page.Contains("duckloadplayer.swf"))
+                else if (page.Contains("duckloadplayer.swf"))
                 {
                     Match o = Regex.Match(page, @"duckloadplayer.swf\?id=(?<id>[^&]+)&");
                     if (o.Success)
@@ -49,10 +49,10 @@ namespace OnlineVideos.Hoster
                         string link = Regex.Match(page, @"""link"":\s""(?<link>[^""]+)""").Groups["link"].Value.Replace("\\/", "/");
                         return String.Format("http://dl{0}.duckload.com/{1}", ident, link);
                     }
-                    
+
                 }
             }
-            return "";
+            return String.Empty;
         }
     }
 }

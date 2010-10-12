@@ -105,13 +105,13 @@ namespace OnlineVideos.Hoster
 
             return PlaybackOptions;
         }
-        
+
         public override string getVideoUrls(string url)
         {
             // return highest quality by default
             var result = getPlaybackOptions(url);
             if (result != null && result.Count > 0) return result.Last().Value;
-            else return "";
+            else return String.Empty;
         }
     }
 }
