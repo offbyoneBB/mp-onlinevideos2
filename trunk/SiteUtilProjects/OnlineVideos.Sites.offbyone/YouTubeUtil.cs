@@ -128,11 +128,16 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo foVideo)
         {
-            foVideo.GetYouTubePlaybackOptions();
+            if (foVideo.PlaybackOptions == null || foVideo.PlaybackOptions.Count == 0)
+            {
+                // don't retrieve playback options more than once
+                foVideo.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(foVideo.VideoUrl);
+            }
 
             if (foVideo.PlaybackOptions == null || foVideo.PlaybackOptions.Count == 0)
             {
-                return ""; // no url to play available
+                // no url to play available
+                return "";
             }
             else if (foVideo.PlaybackOptions.Count == 1 || videoQuality == VideoQuality.Low)
             {
@@ -148,8 +153,9 @@ namespace OnlineVideos.Sites
                 foVideo.PlaybackOptions.Values.CopyTo(values, 0);
                 return values[values.Length - 1];
             }
-            else // choose a high quality from options (highest below the HD formats (37 22)
+            else
             {
+                // choose a high quality from options (highest below the HD formats (37 22)
                 string[] keys = new string[foVideo.PlaybackOptions.Count];
                 foVideo.PlaybackOptions.Keys.CopyTo(keys, 0);
                 int index = keys.Length - 1;

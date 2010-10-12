@@ -534,8 +534,6 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public override void Stop()
         {
-            //BufferingStopped = true;
-            //while(PercentageBuffered != 100.0f && PercentageBuffered != -1.0f) Thread.Sleep(200);
             Log.Instance.Info("OnlineVideosPlayer:ended {0}", m_strCurrentFile);
             m_strCurrentFile = "";
             CloseInterfaces();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
@@ -26,18 +27,8 @@ namespace OnlineVideos.Sites
             Match matchYouTube = regEx_youtubeCheckRegEx.Match(dataPage);
             if (matchYouTube.Success)
             {
-                string cachedUrl = video.VideoUrl;
-                video.PlaybackOptions = null;
-                video.VideoUrl = matchYouTube.Groups["yt"].Value;
-                video.GetYouTubePlaybackOptions();
-                video.VideoUrl = cachedUrl;
-                if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
-                {
-                    return "";// if no match, return empty url -> error
-                }
-                var enumer2 = video.PlaybackOptions.GetEnumerator();
-                enumer2.MoveNext();
-                return enumer2.Current.Value;
+                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(matchYouTube.Groups["yt"].Value);
+                return (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0) ? "" : video.PlaybackOptions.First().Value;
             }
             else
             {
