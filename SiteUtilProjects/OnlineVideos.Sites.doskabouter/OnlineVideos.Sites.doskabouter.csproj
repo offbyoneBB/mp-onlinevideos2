@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CinemassacreUtil.cs" />
+    <Compile Include="MyHosters.cs" />
     <Compile Include="Movies4Men.cs" />
     <Compile Include="NOSUtil.cs" />
     <Compile Include="OnsNetNuenenUtil.cs" />
