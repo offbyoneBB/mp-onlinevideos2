@@ -19,7 +19,7 @@ namespace OnlineVideos.Hoster.Base
 
         public virtual Dictionary<string, string> getPlaybackOptions(string url)
         {
-            return null;
+            return new Dictionary<string, string>() { { GetType().Name, getVideoUrls(url) } };
         }
         public abstract string getVideoUrls(string url);
         public abstract string getHosterUrl();

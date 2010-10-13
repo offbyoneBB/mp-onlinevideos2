@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using OnlineVideos.Hoster.Base;
 using System.Text.RegularExpressions;
 
@@ -17,7 +16,7 @@ namespace OnlineVideos.Sites
             key = key.Substring(0, key.IndexOf("."));
             try
             {
-                HosterBase hosterUtil = (HosterBase)Activator.CreateInstance(VideoHosterUtil.hoster[key]);
+                HosterBase hosterUtil = HosterFactory.GetHoster(key);
                 string ret = hosterUtil.getVideoUrls(newUrl);
                 if (!string.IsNullOrEmpty(ret))
                     return ret;
@@ -30,30 +29,6 @@ namespace OnlineVideos.Sites
 
     public class VideoHosterUtil : GenericSiteUtil
     {
-        public static Dictionary<String, Type> hoster = new Dictionary<String, Type>();
-
-        public override void Initialize(SiteSettings siteSettings)
-        {
-
-            //Load Hoster Classes
-            //A hoster is a Childclass of HosterBase in the Namespace OnlineVideos.Hoster and
-            //has to implement at least getVideoUrls() and getHosterUrl() Methods
-
-            Assembly mainLibrary = Assembly.GetExecutingAssembly();
-            Type[] typeArray = mainLibrary.GetExportedTypes();
-
-            foreach (Type type in typeArray)
-            {
-                if (type.BaseType != null && type.IsSubclassOf(typeof(HosterBase)) && type.Namespace.Contains("OnlineVideos.Hoster"))
-                {
-                    if (!hoster.ContainsKey(type.Name.ToLower()))
-                        hoster.Add(type.Name.ToLower(), type);
-                }
-            }
-
-            base.Initialize(siteSettings);
-        }
-
         public override List<VideoInfo> getVideoList(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
@@ -88,9 +63,8 @@ namespace OnlineVideos.Sites
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
 
-            foreach (Type type in hoster.Values)
+            foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
             {
-                HosterBase hosterUtil = (HosterBase)Activator.CreateInstance(type);
                 string regEx = @"(""|')(?<url>[^(""|')]+" + hosterUtil.getHosterUrl().ToLower() + "/" + @"[^(""|')]+)(""|')";
 
                 MatchCollection n = Regex.Matches(webData, regEx);
