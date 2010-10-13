@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace OnlineVideos.Hoster.Base
 {
@@ -34,6 +32,11 @@ namespace OnlineVideos.Hoster.Base
             HosterBase hb = null;
             if (hosters.TryGetValue(name.ToLower(), out hb)) return hb;
             return null;
+        }
+
+        public static List<HosterBase> GetAllHosters()
+        {
+            return hosters.Values.ToList();
         }
     }
 }
