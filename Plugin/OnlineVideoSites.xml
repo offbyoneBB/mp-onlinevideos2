@@ -480,7 +480,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="screwattack.com" util="Screwattack" agecheck="false" enabled="true" lang="en">
+    <Site name="screwattack.com" util="Screwattack" agecheck="false" enabled="true" lang="en" player="Internal">
       <Description>Shows from screwattack.com.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://screwattack.com]]></item>
