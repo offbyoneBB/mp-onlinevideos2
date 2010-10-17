@@ -170,7 +170,7 @@ namespace OnlineVideos.Sites
                         {
                             string rel = imgNode.Attributes["rel"].Value;
                             if (rel.StartsWith("http://player.omroep.nl/?aflID="))
-                                video.VideoUrl = UrlTricks.PlayerOmroepTrick(rel);
+                                video.VideoUrl = GenericSiteUtil.GetVideoUrl(rel, video);
                             else
                             {
                                 string data = GetWebData(rel);

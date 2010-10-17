@@ -5,7 +5,9 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
+using System.Linq;
 using RssToolkit.Rss;
+using OnlineVideos.Hoster.Base;
 
 namespace OnlineVideos.Sites
 {
@@ -85,6 +87,8 @@ namespace OnlineVideos.Sites
         protected bool forceUTF8Encoding;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'thumb' match retrieved from the videoThumbXml or 'ImageUrl' of the videoListRegEx.")]
         protected string videoThumbFormatString = "{0}";
+        [Category("OnlineVideosConfiguration"), Description("Boolean used to resolve video-hosters")]
+        protected bool resolveHoster = false;
 
         protected Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_VideoUrl, regEx_PlaylistUrl, regEx_FileUrl;
 
@@ -344,7 +348,28 @@ namespace OnlineVideos.Sites
                     video.PlaybackOptions.Add(string.Format("{0}:// {1}", new Uri(mmsUrl).Scheme, System.IO.Path.GetExtension(mmsUrl)), resultUrl);
                 }
             }
+
+            if (resolveHoster && (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0))
+                resultUrl = GetVideoUrl(resultUrl, video);
+
             return resultUrl;
+        }
+
+        public static string GetVideoUrl(string url, VideoInfo video)
+        {
+            Uri uri = new Uri(url);
+            if (uri.Host.ToLower().Contains("youtube.com"))
+            {
+                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(url);
+                if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0) return video.PlaybackOptions.Last().Value;
+                else return String.Empty;
+            }
+
+            foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
+                if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                    return hosterUtil.getVideoUrls(url);
+
+            return url;
         }
 
         protected List<VideoInfo> Parse(string url, string data)

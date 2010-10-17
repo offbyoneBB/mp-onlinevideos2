@@ -107,7 +107,7 @@ namespace OnlineVideos.Sites
             string data = GetWebData(url);
             string s = GetSubString(data, @"<center><iframe src=""", @"""");
             if (s != string.Empty && (s.StartsWith(@"http://player.omroep.nl/")))
-                return UrlTricks.PlayerOmroepTrick(s);
+                return GenericSiteUtil.GetVideoUrl(s, video);
 
             if (!string.IsNullOrEmpty(data))
             {

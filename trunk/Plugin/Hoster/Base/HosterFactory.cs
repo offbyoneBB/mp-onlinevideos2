@@ -38,5 +38,10 @@ namespace OnlineVideos.Hoster.Base
         {
             return hosters.Values.ToList();
         }
+
+        public static bool ContainsName(string name)
+        {
+            return hosters.ContainsKey(name);
+        }
     }
 }

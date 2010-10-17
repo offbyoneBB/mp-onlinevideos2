@@ -20,6 +20,13 @@ namespace OnlineVideos.Hoster
         {
             CookieContainer cc = new CookieContainer();
             string data = SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(url), cc);
+            if (!data.Contains(@"name=""flashvars"" value=""") && data.Contains(@"<iframe src="""))
+            {
+                string tmp = GetSubString(data, @"<iframe src=""", @"""");
+                cc = new CookieContainer();
+                data = SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(tmp), cc);
+            }
+
             CookieCollection ccol = cc.GetCookies(new Uri("http://tmp.zshare.net"));
             if (data.Contains(@"name=""flashvars"" value="""))
             {
