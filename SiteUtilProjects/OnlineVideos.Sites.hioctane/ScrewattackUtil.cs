@@ -1,6 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Collections.Generic;
 
 namespace OnlineVideos.Sites
 {
@@ -27,14 +30,17 @@ namespace OnlineVideos.Sites
                 if (m.Success)
                 {
                     string url = "http://v.giantrealm.com/sax/" + m.Groups["pid"].Value + "/" + m.Groups["vid"].Value;
-                    data = GetWebData(url);
-                    if (!string.IsNullOrEmpty(data))
-                    {
-                        m = Regex.Match(data, @"<file-hq>\s*(.+?)\s*</file-hq>");
-                        if (m.Success) return m.Groups[1].Value;
+                    XmlDocument xDoc = GetWebData<XmlDocument>(url);
 
-                        m = Regex.Match(data, @"<file>\s*(.+?)\s*</file>");
-                        if (m.Success) return m.Groups[1].Value;
+                    XmlElement fileElem = (XmlElement)xDoc.SelectSingleNode("//*[local-name() = 'file']");
+                    XmlElement fileHQElem = (XmlElement)xDoc.SelectSingleNode("//*[local-name() = 'file-hq']");
+
+                    if (fileElem != null || fileHQElem != null)
+                    {
+                        video.PlaybackOptions = new Dictionary<string, string>();
+                        if (fileElem != null) video.PlaybackOptions.Add("SD", fileElem.InnerText.Trim());
+                        if (fileHQElem != null) video.PlaybackOptions.Add("HD", fileHQElem.InnerText.Trim());
+                        return video.PlaybackOptions.First().Value;
                     }
                 }
             }
