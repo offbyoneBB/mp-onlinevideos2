@@ -111,6 +111,11 @@ namespace RTMP_LIB
         #region Public Properties
 
         /// <summary>
+        /// The <see cref="Link"/> used to establish the rtmp connection and respond to invokes.
+        /// </summary>
+        public Link Link { get; set; }
+
+        /// <summary>
         /// Current ChunkSize for incoming packets (default: 128 byte)
         /// </summary>
         public int InChunkSize { get; protected set; } 
@@ -140,8 +145,6 @@ namespace RTMP_LIB
         #endregion
 
         Socket tcpSocket = null;
-        
-        Link Link = new Link();
 
         int outChunkSize = RTMP_DEFAULT_CHUNKSIZE;
         int bytesReadTotal = 0;
@@ -161,12 +164,12 @@ namespace RTMP_LIB
         Queue<string> m_methodCalls = new Queue<string>(); //remote method calls queue
         public bool invalidRTMPHeader = false;
 
-        public bool Connect(Link link)
+        public bool Connect()
         {
+            if (Link == null) return false;
+
             // close any previous connection
             Close();
-
-            Link = link;
             
             // connect
             tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -563,13 +566,15 @@ namespace RTMP_LIB
              *  -1: plays a live stream
              * >=0: plays a recorded streams from 'start' milliseconds
             */
-            EncodeNumber(enc, m_channelTimestamp[m_mediaChannel]);
+            if (Link.seekTime > 0.0)
+                EncodeNumber(enc, Link.seekTime);
+            else
+                EncodeNumber(enc, 0.0d);
             /* len: -1, 0, positive number
              *  -1: plays live or recorded stream to the end (default)
              *   0: plays a frame 'start' ms away from the beginning
              *  >0: plays a live or recoded stream for 'len' milliseconds
              */
-            //EncodeNumber(enc, -2.0);
 
             packet.m_body = enc.ToArray();
             packet.m_nBodySize = (uint)enc.Count;

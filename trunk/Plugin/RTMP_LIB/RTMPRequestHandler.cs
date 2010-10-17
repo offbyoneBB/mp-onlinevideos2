@@ -54,8 +54,8 @@ namespace RTMP_LIB
                 if (!string.IsNullOrEmpty(paramsHash["conn"])) link.extras = Link.ParseAMF(paramsHash["conn"]);
                 if (link.tcUrl != null && link.tcUrl.ToLower().StartsWith("rtmpe")) link.protocol = Protocol.RTMPE;
 
-                rtmp = new RTMP();
-                bool connected = rtmp.Connect(link);
+                rtmp = new RTMP() { Link = link };
+                bool connected = rtmp.Connect();
                 
                 if (connected)
                 {

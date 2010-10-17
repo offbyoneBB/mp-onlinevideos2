@@ -34,78 +34,100 @@ namespace RTMP_LIB
             ms.Write(FLVStream.flvHeader, 0, FLVStream.flvHeader.Length);
 
             // write stream
-            uint timeStammp = 0;
+            uint timeStamp = 0;
             int result = 0;
             int packets = 0;
-            int retries = 0;
             int httpChunkSize = 1024 * 10; // first chunk should be big enough so the direct show filter can get all the info and do some buffering
+            int reconnects = 0;
             do
             {
-                RTMPPacket packet = null;
-                result = rtmp.GetNextMediaPacket(out packet);
-                if (result == 1)
+                try
                 {
-                    if (!WriteStream(packet, ms, out timeStammp)) break;
-
-                    packets++;
-                    if (packets > 10 && ms.Length > httpChunkSize)
+                    int retries = 0;
+                    do
                     {
-                        if (outputStream == null) // first time writing data
+                        RTMPPacket packet = null;
+                        result = rtmp.GetNextMediaPacket(out packet);
+                        if (result == 1)
                         {
-                            if (rtmp.CombinedTracksLength > 0)
-                            {
-                                EstimatedLength = rtmp.CombinedTracksLength + (rtmp.CombinedTracksLength / rtmp.InChunkSize) * 11;
-                            }
-                            else if (rtmp.CombinedBitrates > 0)
-                            {
-                                EstimatedLength = (long)(rtmp.CombinedBitrates * 1000 / 8 * rtmp.Duration);
-                            }
-                            else
-                            {
-                                EstimatedLength = (long)(2000 * 1000 / 8 * rtmp.Duration); // nothing was in the metadata -> just use duration and a birate of 2000
-                            }
+                            if (!WriteStream(packet, ms, out timeStamp)) break;
 
-                            EstimatedLength = (long)((double)EstimatedLength * 1.5d);
+                            packets++;
+                            if (packets > 10 && ms.Length > httpChunkSize)
+                            {
+                                if (outputStream == null) // first time writing data
+                                {
+                                    if (rtmp.CombinedTracksLength > 0)
+                                    {
+                                        EstimatedLength = rtmp.CombinedTracksLength + (rtmp.CombinedTracksLength / rtmp.InChunkSize) * 11;
+                                    }
+                                    else if (rtmp.CombinedBitrates > 0)
+                                    {
+                                        EstimatedLength = (long)(rtmp.CombinedBitrates * 1000 / 8 * rtmp.Duration);
+                                    }
+                                    else
+                                    {
+                                        EstimatedLength = (long)(2000 * 1000 / 8 * rtmp.Duration); // nothing was in the metadata -> just use duration and a birate of 2000
+                                    }
 
-                            outputStream = DataReady(); // get the stream
-                            httpChunkSize = 1024; // reduce chunksize
+                                    EstimatedLength = (long)((double)EstimatedLength * 1.5d);
+
+                                    outputStream = DataReady(); // get the stream
+                                    httpChunkSize = 1024; // reduce chunksize
+                                }
+
+                                byte[] buffer = ms.ToArray();
+                                outputStream.Write(buffer, 0, buffer.Length);
+                                Length += (uint)buffer.Length;
+                                ms = new MemoryStream();
+                            }
                         }
-
-                        //Logger.Log("Writing Data to Socket: " + ms.Length.ToString());
-                        byte[] buffer = ms.ToArray();
-                        outputStream.Write(buffer, 0, buffer.Length);
-                        Length += (uint)buffer.Length;
-                        ms = new MemoryStream();
+                        else if (result == 0)
+                        {
+                            if (retries > 0)
+                            {
+                                rtmp.invalidRTMPHeader = true;
+                                break;
+                            }
+                            /* Did we already try pausing, and it still didn't work? */
+                            if (rtmp.Pausing == 3)
+                            {
+                                // Only one try at reconnecting...
+                                retries = 1;
+                                if (!rtmp.ReconnectStream())
+                                {
+                                    rtmp.invalidRTMPHeader = true;
+                                    Logger.Log("Failed to reconnect the stream.");
+                                    break;
+                                }
+                            }
+                            else if (!rtmp.ToggleStream())
+                            {
+                                rtmp.invalidRTMPHeader = true;
+                                Logger.Log("Failed to resume the stream.");
+                                break;
+                            }
+                        }
                     }
+                    while (result != 2 && rtmp.Playing && socket.Connected);
                 }
-                else if (result == 0)
+                catch (Exception ex)
                 {
-                    if (retries > 0)
+                    Logger.Log(ex.ToString());
+                }
+                finally
+                {
+                    // if data already received and connection now closed - try reconnecting rtmp
+                    if (result != 2 && timeStamp > 0 && reconnects < 1)
                     {
-                        rtmp.invalidRTMPHeader = true;
-                        break;
-                    }
-                    /* Did we already try pausing, and it still didn't work? */
-                    if (rtmp.Pausing == 3)
-                    {
-                        // Only one try at reconnecting...
-                        retries = 1;
-                        if (!rtmp.ReconnectStream())
-                        {
-                            rtmp.invalidRTMPHeader = true;
-                            Logger.Log("Failed to reconnect the stream.");
-                            break;
-                        }
-                    }
-                    else if (!rtmp.ToggleStream())
-                    {
-                        rtmp.invalidRTMPHeader = true;
-                        Logger.Log("Failed to resume the stream.");
-                        break;
+                        Logger.Log("Connection failed before playback ended - trying reconnect");
+                        rtmp.Link.seekTime = timeStamp;
+                        reconnects++;
+                        if (rtmp.Connect()) reconnects = 0;
                     }
                 }
             }
-            while (result != 2 && rtmp.Playing && socket.Connected);
+            while (reconnects <= 1 && result != 2 && rtmp.Playing && socket.Connected);
         }
 
         bool WriteStream(RTMPPacket packet, Stream stream, out uint nTimeStamp)
