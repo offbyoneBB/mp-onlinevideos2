@@ -360,9 +360,17 @@ namespace OnlineVideos.MediaPortal1.Player
                         filterConnected = true;
                         new Thread(delegate()
                         {
-                            // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
-                            DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                            PlaybackReady = true;
+                            try
+                            {
+                                // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
+                                DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
+                                PlaybackReady = true;
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Instance.Warn(ex.Message);
+                                StopBuffering();
+                            }
                         }) { IsBackground = true }.Start();
                     }
                     // log every percent
