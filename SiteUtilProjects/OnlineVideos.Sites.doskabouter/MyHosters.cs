@@ -11,7 +11,6 @@ using System.Xml;
 
 namespace OnlineVideos.Hoster
 {
-
     public class BlipTv : HosterBase
     {
         public override string getHosterUrl()
@@ -108,6 +107,48 @@ namespace OnlineVideos.Hoster
 
             //return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfhash=a51d59f968ffb279f0a3c0bf398f2118b2cc811f04d86c940fd211193dee2013&swfsize=770329",
             return fileUrl.Replace("rtmp:", "rtmpe:");
+        }
+    }
+
+    public class PlayerOmroep : HosterBase
+    {
+
+        public override string getHosterUrl()
+        {
+            return "player.omroep.nl";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            int aflID = Convert.ToInt32(url.Split('&')[0].Split('=')[1]);
+            CookieContainer cc = new CookieContainer();
+            string step1 = SiteUtilBase.GetWebData(url, cc);
+            CookieCollection ccol = cc.GetCookies(new Uri("http://tmp.player.omroep.nl/"));
+            CookieContainer newcc = new CookieContainer();
+            foreach (Cookie c in ccol) newcc.Add(c);
+
+            step1 = SiteUtilBase.GetWebData("http://player.omroep.nl/js/initialization.js.php?aflID=" + aflID.ToString(), newcc);
+            if (!String.IsNullOrEmpty(step1))
+            {
+                int p = step1.IndexOf("securityCode = '");
+                if (p != -1)
+                {
+                    step1 = step1.Remove(0, p + 16);
+                    string sec = step1.Split('\'')[0];
+                    string step2 = SiteUtilBase.GetWebData("http://player.omroep.nl/xml/metaplayer.xml.php?aflID=" + aflID.ToString() + "&md5=" + sec, newcc);
+                    if (!String.IsNullOrEmpty(step2))
+                    {
+                        XmlDocument tdoc = new XmlDocument();
+                        tdoc.LoadXml(step2);
+                        XmlNode final = tdoc.SelectSingleNode("/media_export_player/aflevering/streams/stream[@compressie_kwaliteit='bb' and @compressie_formaat='wmv']");
+                        if (final != null)
+                            return final.InnerText;
+
+                    }
+                }
+
+            }
+            return null;
         }
     }
 

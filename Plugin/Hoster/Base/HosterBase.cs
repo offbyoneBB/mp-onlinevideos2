@@ -32,6 +32,8 @@ namespace OnlineVideos.Hoster.Base
             {
                 Match n = Regex.Match(page, @"addVariable\(""file"",""(?<url>[^""]+)""\);");
                 if (n.Success) return n.Groups["url"].Value;
+                n = Regex.Match(page, @"flashvars.file=""(?<url>[^""]+)"";");
+                if (n.Success) return n.Groups["url"].Value;
             }
             return String.Empty;
         }

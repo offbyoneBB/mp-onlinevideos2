@@ -7,10 +7,11 @@ using System.Xml;
 using System.Net;
 using System.IO;
 using System.Threading;
+using OnlineVideos.Hoster.Base;
 
 namespace OnlineVideos.Sites
 {
-    public class WatchSeriesUtil : GenericSiteUtil, ISimpleRequestHandler
+    public class WatchSeriesUtil : GenericSiteUtil
     {
         private enum Depth { MainMenu = 0, Alfabet = 1, Series = 2, Seasons = 3, BareList = 4 };
         public CookieContainer cc = null;
@@ -20,7 +21,7 @@ namespace OnlineVideos.Sites
         {
             base.Initialize(siteSettings);
             isWatchMovies = baseUrl.StartsWith(@"http://watch-movies");
-            ReverseProxy.AddHandler(this);
+            //ReverseProxy.AddHandler(this);
         }
 
         public override int DiscoverDynamicCategories()
@@ -163,7 +164,6 @@ namespace OnlineVideos.Sites
                 while (m.Success)
                 {
                     SeriesVideoInfo video = new SeriesVideoInfo();
-                    video.reqHandler = this;
                     video.cc = cc;
 
                     video.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
@@ -204,21 +204,8 @@ namespace OnlineVideos.Sites
                     else
                     {
                         element.status = "ns";
-                        if (element.server == "movshare.net" || element.server == "playmyvid.com" ||
-                            element.server == "divxden.com" || element.server == "smotri.com" ||
-                            element.server == "wisevid.com" || element.server == "megavideo.com" ||
-                            element.server == "zshare.net" || element.server == "vureel.com" ||
-                            element.server == "stagevu.com" || element.server == "56.com" ||
-                            element.server == "loombo.com" || element.server == "ufliq.com" ||
-                            element.server == "tudou.com" || element.server == "google.ca" ||
-                            element.server == "videoweed.com" || element.server == "novamov.com")
+                        if (HosterFactory.ContainsName(element.server.ToLower()))
                             element.status = String.Empty;
-                        else
-                            if (element.server == "livevideo.com" || element.server == "veehd.com" ||
-                                element.server == "myspace.com" || element.server == "cinshare.com" ||
-                                element.server == "2gb-hosting.com" || element.server == "gigabyteupload.com")
-                                element.status = "wip";
-
                         lst.Add(element);
                     }
                 }
@@ -269,12 +256,11 @@ namespace OnlineVideos.Sites
 
         public class SeriesVideoInfo : VideoInfo
         {
-            public ISimpleRequestHandler reqHandler;
             public CookieContainer cc;
 
             public override string GetPlaybackOptionUrl(string url)
             {
-                string newUrl = base.GetPlaybackOptionUrl(url);
+                string newUrl = base.PlaybackOptions[url];
                 if (newUrl.StartsWith(@"http://youtube.com/get_video?video_id=")) return newUrl; //already handled youtube link
 
                 string webData = GetWebData(newUrl, cc);
@@ -300,133 +286,7 @@ namespace OnlineVideos.Sites
                     else
                         url = GetRedirectedUrl(@"http://www.watch-series.com/open_link.php?vari=" + vidId);
                 }
-                string theUrl;
-                if (UrlTricks.GetUrlFromAll(url, this, out theUrl))
-                    return theUrl;
-
-                webData = GetWebData(url);
-
-                if (url.StartsWith("http://loombo.com"))
-                {
-                    string postData = String.Empty;
-                    Match m = Regex.Match(webData, @"<input\stype=""hidden""\sname=""(?<m0>[^""]*)""\svalue=""(?<m1>[^""]*)");
-                    while (m.Success)
-                    {
-                        if (!String.IsNullOrEmpty(postData))
-                            postData += "&";
-                        postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
-                        m = m.NextMatch();
-                    }
-                    if (String.IsNullOrEmpty(postData))
-                        return null;
-
-                    Thread.Sleep(5000);
-
-                    webData = GetWebDataFromPost(url, postData);
-                    string packed = GetSubString(webData, @"return p}", @"</script>");
-                    packed = packed.Replace(@"\'", @"'");
-                    string unpacked = UrlTricks.UnPack(packed);
-                    return GetSubString(unpacked, @"'file','", @"'");
-                }
-
-                if (url.StartsWith("http://www.2gb-hosting.com"))
-                {
-                    string postData = String.Empty;
-                    string post = GetSubString(webData, @"<form>", @"</form>");
-                    Match m = Regex.Match(webData, @"<input\stype=""[^""]*""\sname=""(?<m0>[^""]*)""\svalue=""(?<m1>[^""]*)");
-                    while (m.Success)
-                    {
-                        if (!String.IsNullOrEmpty(postData))
-                            postData += "&";
-                        postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
-                        m = m.NextMatch();
-                    }
-                    webData = GetWebDataFromPost(url, postData);
-                    string res = GetSubString(webData, @"embed", @">");
-                    res = GetSubString(res, @"src=""", @"""");
-                    return res;
-                }
-
-                if (url.StartsWith("http://www.ufliq.com"))
-                {
-                    string postData = String.Empty;
-                    Match m = Regex.Match(webData, @"<input\stype=""hidden""\sname=""(?<m0>[^""]*)""\svalue=""(?<m1>[^""]*)");
-                    while (m.Success)
-                    {
-                        if (!String.IsNullOrEmpty(postData))
-                            postData += "&";
-                        postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
-                        m = m.NextMatch();
-                    }
-                    if (String.IsNullOrEmpty(postData))
-                        return null;
-
-                    Thread.Sleep(5000);
-
-                    webData = GetWebDataFromPost(url, postData);
-                    string packed = GetSubString(webData, @"return p}", @"</script>");
-                    packed = packed.Replace(@"\'", @"'");
-                    string unpacked = UrlTricks.UnPack(packed);
-                    return GetSubString(unpacked, @"'file','", @"'");
-                }
-
-                if (url.StartsWith("http://www.cinshare.com"))
-                {
-                    string tmp = GetSubString(webData, @"<iframe src=""", @"""");
-                    webData = GetWebData(tmp);
-                    tmp = GetSubString(webData, @"<param name=""src"" value=""", @"""");
-                    return GetRedirectedUrl(tmp);
-                }
-                if (url.StartsWith("http://veehd.com"))
-                    return GetSubString(webData, @"name=""src"" value=""", @"""");
-
-                if (url.StartsWith("http://www2.videoweed.com"))
-                {
-                    string url2 = GetSubString(webData, @"""file"",""", @"""");
-                    if (String.IsNullOrEmpty(url2))
-                        return url2;
-                    return GetRedirectedUrl(url2);
-                }
-
-                if (url.StartsWith("http://www.novamov.com"))
-                    return GetSubString(webData, @"""file"",""", @"""");
-
-                if (url.StartsWith("http://www.tudou.com"))
-                {  //babylon 5
-                    string iid = GetSubString(webData, @"var iid = ", "\n");
-                    url = @"http://v2.tudou.com/v?it=" + iid;
-                    return UrlTricks.TudouTrick(url, reqHandler);
-                }
-
-                if (url.StartsWith("http://stagevu.com"))
-                {
-                    url = GetSubString(webData, @"url[", @"';");
-                    return GetSubString(url, @"'", @"'");
-                }
-
-                if (url.StartsWith("http://www.zshare.net"))
-                {
-                    url = GetSubString(webData, @"<iframe src=""", @"""");
-                    return UrlTricks.ZShareTrick(url);
-                }
-
-                if (url.StartsWith("http://www.playmyvid.com"))
-                {
-                    url = GetSubString(webData, @"flv=", @"&");
-                    return @"http://www.playmyvid.com/files/videos/" + url;
-                }
-
-                if (url.StartsWith("http://www.wisevid.com"))
-                {
-                    // (with age confirm)
-                    url = @"http://www.wisevid.com/play?v=" + GetSubString(webData,
-                        @"play?v=", @"""");
-                    string tmp2 = GetWebDataFromPost(url, "a=1");
-                    url = GetSubString(tmp2, "getF('", "'");
-                    return UrlTricks.WiseVidTrick(url);
-                }
-
-                return null;
+                return GetVideoUrl(url, this);
             }
         }
 
@@ -499,6 +359,7 @@ namespace OnlineVideos.Sites
             string[] tmp = aPlaybackName.Split('%');
             percentage = int.Parse(tmp[0]);
             server = tmp[1].TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }).Trim();
+            server = server.Substring(0, server.IndexOf("."));
             url = aUrl;
         }
 

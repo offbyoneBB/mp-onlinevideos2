@@ -54,10 +54,5 @@ namespace OnlineVideos.Sites
             return base.DiscoverDynamicCategories();
         }
 
-        public override string getUrl(VideoInfo video)
-        {
-            return UrlTricks.BlipTrick(base.getUrl(video));
-        }
-         
     }
 }
