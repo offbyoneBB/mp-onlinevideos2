@@ -87,7 +87,7 @@ namespace OnlineVideos.Sites
         protected bool forceUTF8Encoding;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'thumb' match retrieved from the videoThumbXml or 'ImageUrl' of the videoListRegEx.")]
         protected string videoThumbFormatString = "{0}";
-        [Category("OnlineVideosConfiguration"), Description("Boolean used to resolve video-hosters")]
+        [Category("OnlineVideosConfiguration"), Description("Enables checking if the video's url can be resolved via known hosters.")]
         protected bool resolveHoster = false;
 
         protected Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_VideoUrl, regEx_PlaylistUrl, regEx_FileUrl;
@@ -358,16 +358,18 @@ namespace OnlineVideos.Sites
         public static string GetVideoUrl(string url, VideoInfo video)
         {
             Uri uri = new Uri(url);
-            if (uri.Host.ToLower().Contains("youtube.com"))
-            {
-                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(url);
-                if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0) return video.PlaybackOptions.Last().Value;
-                else return String.Empty;
-            }
-
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
                 if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
-                    return hosterUtil.getVideoUrls(url);
+                {
+                    Dictionary<string, string> options = hosterUtil.getPlaybackOptions(url);
+                    if (options != null && options.Count > 0)
+                    {
+                        if (options.Count > 1) video.PlaybackOptions = options;
+                        return options.Last().Value;
+                    }
+                    else 
+                        return String.Empty;
+                }
 
             return url;
         }
