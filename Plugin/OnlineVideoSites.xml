@@ -978,7 +978,7 @@
     <Site name="OnsNetNuenen" util="OnsNetNuenen" agecheck="false" enabled="true" lang="nl">
       <Categories />
     </Site>
-    <Site name="EscapistMagazine" util="TheEscapist" agecheck="false" enabled="true" lang="en" lastUpdated="2010-08-10T23:15:26.5560583+02:00">
+    <Site name="EscapistMagazine" util="TheEscapist" agecheck="false" enabled="true" lang="en" lastUpdated="2010-08-10T23:19:13.7231593+02:00">
       <Description>The mouthpiece of the gaming generation, The Escapist aims to capture and celebrate the contemporary video gaming lifestyle and the diverse global video game culture by way of in-depth features, thought provoking articles and relevant columns authored by leading video game authorities, as well as cutting-edge video shorts, engaging forums and robust social media elements that incorporate the video gaming experience.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<a\shref='(?<url>/videos/[^']*)'\sid='[^>]*>(?<title>[^<]*)</a>]]></item>
@@ -989,7 +989,7 @@
         <item key="nextPageRegExUrlFormatString"><![CDATA[{0}]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='prev_page'>Prev</a>]]></item>
         <item key="prevPageRegExUrlFormatString"><![CDATA[{0}]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[<link\srel="video_src"\shref="http://cdn2\.themis-media\.com/media/global/movies/player/flowplayer\.commercial-3\.1\.5\.swf\?config=(?<url>.*?)%3Fembed%3D1%26fb%3D1">]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[<link\srel="video_src"\shref="http://cdn2\.themis-media\.com/media/global/movies/player/flowplayer\.commercial-\d\.\d\.\d\.swf\?config=(?<url>.*?)%3Fembed%3D1%26fb%3D1">]]></item>
         <item key="playlistUrlFormatString"><![CDATA[{0}?playerId=player_api&host=escapistmagazine.com]]></item>
         <item key="fileUrlRegEx"><![CDATA[,{'url':'(?<m0>[^']*)']]></item>
         <item key="baseUrl"><![CDATA[http://www.escapistmagazine.com/videos]]></item>
