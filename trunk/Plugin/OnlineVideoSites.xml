@@ -297,6 +297,17 @@
     </Site>
     <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en">
       <Description>Miro combines and categorizes collections of video channels from thousands of sources.</Description>
+      <Configuration>
+        <item key="resolveHoster"><![CDATA[True]]></item>
+        <item key="baseUrl"><![CDATA[https://www.miroguide.com/api/list_categories]]></item>        
+        <item key="dynamicCategoriesRegEx"><![CDATA[\{'url'\:\su'(?<url>[^']+)',\s'name'\:\su'(?<title>[^']+)']]></item>
+        <item key="dynamicSubCategoriesRegEx">
+          <![CDATA[<div\sclass="searchResultContent">\s*
+                    <h4><a\shref="(?<mirourl>[^"]+)"[^>]*>(?<name>[^<]*)</a></h4>\s*
+                    <p>(?<desc>(?:(?!</p>).)*)</p>\s*</div>
+                    (?:(?!http\://subscribe\.getmiro\.com).)*(?<url>[^"]*)"]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li\s*>\s*<span><a\s*href="[^"]+">\s*(?<lastPage>\d+)\s*</a></span>\s*</li>\s*</ul>]]></item>
+      </Configuration>
       <Categories />
     </Site>
     <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en">
