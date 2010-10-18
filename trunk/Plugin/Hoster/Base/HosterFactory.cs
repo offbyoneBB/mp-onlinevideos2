@@ -7,7 +7,8 @@ namespace OnlineVideos.Hoster.Base
 {
     public static class HosterFactory
     {
-        static Dictionary<String, HosterBase> hosters = new Dictionary<String, HosterBase>();
+        static Dictionary<String, HosterBase> hostersByName = new Dictionary<String, HosterBase>();
+        static Dictionary<String, HosterBase> hostersByDNS = new Dictionary<String, HosterBase>();
 
         static HosterFactory()
         {
@@ -20,8 +21,12 @@ namespace OnlineVideos.Hoster.Base
                 {
                     if (type.BaseType != null && type.IsSubclassOf(typeof(HosterBase)) && type.Namespace.Contains("OnlineVideos.Hoster"))
                     {
-                        if (!hosters.ContainsKey(type.Name.ToLower()))
-                            hosters.Add(type.Name.ToLower(), (HosterBase)Activator.CreateInstance(type));
+                        if (!hostersByName.ContainsKey(type.Name.ToLower()))
+                        {
+                            HosterBase hb = (HosterBase)Activator.CreateInstance(type);
+                            hostersByName.Add(type.Name.ToLower(), hb);
+                            if (!hostersByDNS.ContainsKey(hb.getHosterUrl().ToLower())) hostersByDNS.Add(hb.getHosterUrl().ToLower(), hb);
+                        }
                     }
                 }
             }
@@ -30,18 +35,23 @@ namespace OnlineVideos.Hoster.Base
         public static HosterBase GetHoster(string name)
         {
             HosterBase hb = null;
-            if (hosters.TryGetValue(name.ToLower(), out hb)) return hb;
+            if (hostersByName.TryGetValue(name.ToLower(), out hb)) return hb;
             return null;
         }
 
         public static List<HosterBase> GetAllHosters()
         {
-            return hosters.Values.ToList();
+            return hostersByName.Values.ToList();
         }
 
         public static bool ContainsName(string name)
         {
-            return hosters.ContainsKey(name);
+            return hostersByName.ContainsKey(name);
+        }
+
+        public static bool Contains(Uri uri)
+        {
+            return hostersByDNS.ContainsKey(uri.Host.Replace("www.", ""));
         }
     }
 }
