@@ -518,6 +518,18 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
+        public override bool isPossibleVideo(string url)
+        {
+            if (resolveHoster)
+            {
+                return HosterFactory.Contains(new Uri(url));
+            }
+            else
+            {
+                return base.isPossibleVideo(url);
+            }
+        }
+
         #region Next/Previous Page
 
         protected string nextPageUrl = "";

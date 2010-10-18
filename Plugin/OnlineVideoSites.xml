@@ -371,8 +371,11 @@
         <Category xsi:type="RssLink" name="Dating">http://www.dailymotion.com/rss/cluster/dating</Category>
       </Categories>
     </Site>
-    <Site name="Live Video" util="LiveVideo" agecheck="false" enabled="true" lang="en">
+    <Site name="Live Video" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Broadcast yourself live, watch, connect and share videos with people all over the world.</Description>
+      <Configuration>
+        <item key="resolveHoster"><![CDATA[True]]></item>
+      </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Featured Videos">http://rss.livevideo.com/rss/rss.ashx?v=Featured</Category>
         <Category xsi:type="RssLink" name="New Videos">http://rss.livevideo.com/rss/rss.ashx?v=Newest</Category>
