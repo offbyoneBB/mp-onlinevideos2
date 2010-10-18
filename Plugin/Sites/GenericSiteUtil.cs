@@ -522,7 +522,7 @@ namespace OnlineVideos.Sites
         {
             if (resolveHoster)
             {
-                return HosterFactory.Contains(new Uri(url));
+                return HosterFactory.Contains(new Uri(url)) || base.isPossibleVideo(url);
             }
             else
             {
