@@ -64,13 +64,18 @@ namespace OnlineVideos.Hoster
                         if (!string.IsNullOrEmpty(page2))
                         {
                             string packed = GetSubString(page2, @"return p}", @"</script>");
-                            packed = packed.Replace(@"\'", @"'");
-                            string unpacked = UnPack(packed);
-                            videoType = VideoType.divx;
-                            string res = GetSubString(unpacked, @"'file','", @"'");
-                            if (!String.IsNullOrEmpty(res))
-                                return res;
-                            return GetSubString(unpacked, @"name=""src""value=""", @"""");
+                            if (!String.IsNullOrEmpty(packed))
+                            {
+                                packed = packed.Replace(@"\'", @"'");
+                                string unpacked = UnPack(packed);
+                                videoType = VideoType.divx;
+                                string res = GetSubString(unpacked, @"'file','", @"'");
+                                if (!String.IsNullOrEmpty(res))
+                                    return res;
+                                return GetSubString(unpacked, @"name=""src""value=""", @"""");
+                            }
+                            else
+                                return GetSubString(page2, @"addVariable('file','", @"'");
                         }
                     }
                 }

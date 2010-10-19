@@ -39,8 +39,8 @@ namespace OnlineVideos.Sites
         private string[] videoUrlRegex = new String[3];
 
         //private Regex regEx_Category;
-        private Regex regEx_VideoList;
-        private Regex[] regEx_VideoUrl = new Regex[3];
+        //private Regex regEx_VideoList;
+        private new Regex[] regEx_VideoUrl = new Regex[3];
 
         public override void Initialize(SiteSettings siteSettings)
         {
