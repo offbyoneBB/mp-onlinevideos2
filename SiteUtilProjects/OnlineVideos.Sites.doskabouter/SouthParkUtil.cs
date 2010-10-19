@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Specialized;
 using System.Xml;
+using System.Web;
 using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
@@ -43,15 +44,8 @@ namespace OnlineVideos.Sites
         public override List<string> getMultipleVideoUrls(VideoInfo video)
         {
             List<string> result = new List<string>();
-            string tmmpUrl;
-            if (regEx_FileUrl != null)
-            {
-                tmmpUrl = base.getUrl(video);
-            }
-            else
-                tmmpUrl = video.VideoUrl;
 
-            string data = GetWebData(tmmpUrl);
+            string data = GetWebData(video.VideoUrl);
             if (!string.IsNullOrEmpty(data))
             {
                 Match m = episodePlayerRegEx.Match(data);
@@ -60,11 +54,25 @@ namespace OnlineVideos.Sites
                     string playerUrl = m.Groups["url"].Value;
                     playerUrl = GetRedirectedUrl(playerUrl);
                     playerUrl = System.Web.HttpUtility.ParseQueryString(new Uri(playerUrl).Query)["uri"];
-                    playerUrl = System.Web.HttpUtility.UrlDecode(playerUrl);
-                    playerUrl = new Uri(new Uri(baseUrl), @"/feeds/as3player/mrss.php?uri=" + playerUrl).AbsoluteUri;
+                    bool isSouthparkWorld = video.VideoUrl.Contains("southparkstudios.com");
+                    if (isSouthparkWorld)
+                    {
+                        playerUrl = System.Web.HttpUtility.UrlEncode(playerUrl);
+                        playerUrl = new Uri(new Uri(baseUrl), @"/feeds/video-player/mrss/" + playerUrl).AbsoluteUri;
+                    }
+                    else
+                    {
+                        playerUrl = System.Web.HttpUtility.UrlDecode(playerUrl);
+                        playerUrl = new Uri(new Uri(baseUrl), @"/feeds/as3player/mrss.php?uri=" + playerUrl).AbsoluteUri;
+                    }
+                    //http://www.southparkstudios.com/feeds/as3player/mrss.php?uri=mgid:cms:content:southparkstudios.com:164823
+                    //http://www.southparkstudios.com/feeds/video-player/mrss/mgid%3Acms%3Acontent%3Asouthparkstudios.com%3A164823
+
                     data = GetWebData(playerUrl);
                     if (!string.IsNullOrEmpty(data))
                     {
+                        data = data.Replace("&amp;", "&");
+                        data = data.Replace("&", "&amp;");
                         foreach (RssItem item in RssToolkit.Rss.RssDocument.Load(data).Channel.Items)
                         {
                             data = GetWebData(item.MediaGroups[0].MediaContents[0].Url);
@@ -102,9 +110,10 @@ namespace OnlineVideos.Sites
 
                             string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                 string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfsize={1}&swfhash={2}",
-                                    System.Web.HttpUtility.UrlEncode(url)
-                                    , "563963",
-                                    "1155163cece179766c97fedce8933ccfccb9a553e47c1fabbb5faeacc4e8ad70"));
+                                    System.Web.HttpUtility.UrlEncode(url),
+                                    isSouthparkWorld ? "1736855" : "563963",
+                                    isSouthparkWorld ? "b9e08f2a74186205942022494ab7054532ac2f9a7e6e458256d8e662cf14ba4f" :
+                                                       "1155163cece179766c97fedce8933ccfccb9a553e47c1fabbb5faeacc4e8ad70"));
                             result.Add(resultUrl);
                         }
                     }
@@ -112,6 +121,5 @@ namespace OnlineVideos.Sites
             }
             return result;
         }
-
     }
 }
