@@ -19,7 +19,7 @@ Most of the time, this is the URL you type in your browser if you want to watch 
 
 Once you have put the baseurl into it's place, you are ready to find the categories.
 Click the "Create Regex" button in the Categories section [http://code.google.com/p/mp-onlinevideos2/wiki/CreateRegex explanation], and start creating the Regex for it.
-If you are ready with it, Click on the "GetCats" button, and you a "+" appearing at the right side (just left of "-site")
+If you are ready with it, click on the "GetCats" button, and you'll see a "+" appearing at the right side (just left of "-site")
 
 Expand that "+", and select some categories and see if the results at the bottom of the screen are satisfactory.
 If not, you can change the URL-format, and enable URL-decoding if necessary. After changing those, you need to click on "GetCats" to see the updated results.
@@ -29,6 +29,28 @@ After the categories are correctly configured, you can do the same for subcatego
 VideoList:
 Under site (at the right side) you have to select a Category or Subcategory.
 Then create the regex for the videos.
+
+When that one is created click on the "GetVideoList", and you'll see a "+" appearing at the right side, just left of the category/subcategory selected.
+
+VideoUrl:
+This is a 3-step process:
+
+1: "GetVideoUrl" here you can transform the url from the VideoList to a more suitable string (not necessary a valid url) e.g. extract the id from the url
+
+You can use m0,m1 and so on to extract the parts that are needed, and they will be filled into the {0},{1} etc in the VideoUrlFormatString
+example:
+{{{
+Url from VideoList: http://www.website.com/video/today/706334
+VideoUrlRegex: http://.+/(?<m0>\d{4,10}) (this results in m0=706334)
+VideoUrlFormatString: http://www.website.com/flash/download?&movieId={0}
+VideoUrlResult: http://www.website.com/flash/download?&movieId=706334
+}}}
+
+2: "GetPlayListUrl" to be documented
+
+3: "GetFileUrl" here you can parse the html-result of the previous steps to extract the final url.
+Here you can also use the m0,m1, etc as explained in step 1.
+
 
 = Menu Items =
 
