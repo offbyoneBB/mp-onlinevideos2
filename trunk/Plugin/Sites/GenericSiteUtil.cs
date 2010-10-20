@@ -144,7 +144,7 @@ namespace OnlineVideos.Sites
                     }
                     // discovery finished, copy them to the actual list -> prevents double entries if error occurs in the middle of adding
                     foreach (Category cat in dynamicCategories) Settings.Categories.Add(cat);
-                    Settings.DynamicCategoriesDiscovered = true;
+                    Settings.DynamicCategoriesDiscovered = dynamicCategories.Count > 0; // only set to true if actually discovered (forces re-discovery until found)
                     return dynamicCategories.Count; // return the number of discovered categories
                 }
             }
