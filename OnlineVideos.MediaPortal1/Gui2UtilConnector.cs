@@ -46,7 +46,7 @@ namespace OnlineVideos.MediaPortal1
         {
             if (IsBusy && _CurrentTaskSuccess == null && backgroundThread != null && backgroundThread.IsAlive)
             {
-                Log.Instance.Info("Aborting background thread.");
+                Log.Instance.Info("Aborting background thread{0}.", byUserRequest ? " by User Request" : "");
                 backgroundThread.Abort();
                 abortedByUser = byUserRequest;
                 return;
