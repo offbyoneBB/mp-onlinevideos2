@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Net.Security;
 using System.Text;
 
 namespace RTMP_LIB
@@ -145,13 +146,14 @@ namespace RTMP_LIB
         #endregion
 
         Socket tcpSocket = null;
+        SslStream sslStream = null;
 
         int outChunkSize = RTMP_DEFAULT_CHUNKSIZE;
         int bytesReadTotal = 0;
         int lastSentBytesRead = 0;
         int m_numInvokes;
         int m_nBufferMS = (10 * 60 * 60 * 1000)	/* 10 hours default */;
-        int receiveTimeoutMS = 1500;
+        int receiveTimeoutMS = 5000; // intial timeout until stream is connected (don't set too low, as the server's answer after the handshake might take some time)
         int m_stream_id; // returned in _result from invoking createStream            
         int m_mediaChannel = 0;
         int m_nBWCheckCounter;
@@ -177,6 +179,12 @@ namespace RTMP_LIB
             tcpSocket.NoDelay = true;
             tcpSocket.ReceiveTimeout = receiveTimeoutMS;
 
+            /*if (Link.port == 443)
+            {
+                sslStream = new SslStream(new NetworkStream(tcpSocket));
+                sslStream.AuthenticateAsClient(String.Empty);
+            }*/
+
             if (!HandShake(true)) return false;
             if (!SendConnect()) return false;
             if (!ConnectStream())
@@ -189,8 +197,8 @@ namespace RTMP_LIB
             tcpSocket.ReceiveTimeout = receiveTimeoutMS;
 
             return true;
-        }
-
+        }        
+       
         public bool IsConnected()
         {
             return tcpSocket != null && tcpSocket.Connected;
@@ -452,6 +460,15 @@ namespace RTMP_LIB
 
         public void Close()
         {
+            if (sslStream != null)
+            {
+                try
+                {
+                sslStream.Close();
+                sslStream.Dispose();
+                }
+                catch { }
+            }
             if (tcpSocket != null)
             {
                 try
@@ -462,6 +479,7 @@ namespace RTMP_LIB
                 catch { }
             }
 
+            sslStream = null;
             tcpSocket = null;
 
             m_nBufferMS = (10 * 60 * 60 * 1000)	/* 10 hours default */;
