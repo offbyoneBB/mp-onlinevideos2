@@ -73,6 +73,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.videoListRegexTextBox = new System.Windows.Forms.TextBox();
             this.VideoUrlTabPage = new System.Windows.Forms.TabPage();
+            this.ResultUrlComboBox = new System.Windows.Forms.ComboBox();
+            this.getFileUrlButton = new System.Windows.Forms.Button();
             this.playListUrlResultTextBox = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.GetPlayListUrlButton = new System.Windows.Forms.Button();
@@ -111,8 +113,9 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.getFileUrlButton = new System.Windows.Forms.Button();
-            this.ResultUrlComboBox = new System.Windows.Forms.ComboBox();
+            this.getRedirectedFileUrlCheckBox = new System.Windows.Forms.CheckBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.fileUrlPostStringTextBox = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.categTabPage.SuspendLayout();
             this.subCatTabPage.SuspendLayout();
@@ -158,7 +161,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 30, 3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(468, 498);
+            this.tabControl1.Size = new System.Drawing.Size(468, 531);
             this.tabControl1.TabIndex = 16;
             // 
             // categTabPage
@@ -579,6 +582,9 @@
             // 
             // VideoUrlTabPage
             // 
+            this.VideoUrlTabPage.Controls.Add(this.fileUrlPostStringTextBox);
+            this.VideoUrlTabPage.Controls.Add(this.label18);
+            this.VideoUrlTabPage.Controls.Add(this.getRedirectedFileUrlCheckBox);
             this.VideoUrlTabPage.Controls.Add(this.ResultUrlComboBox);
             this.VideoUrlTabPage.Controls.Add(this.getFileUrlButton);
             this.VideoUrlTabPage.Controls.Add(this.playListUrlResultTextBox);
@@ -608,10 +614,29 @@
             this.VideoUrlTabPage.Location = new System.Drawing.Point(4, 22);
             this.VideoUrlTabPage.Name = "VideoUrlTabPage";
             this.VideoUrlTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.VideoUrlTabPage.Size = new System.Drawing.Size(460, 472);
+            this.VideoUrlTabPage.Size = new System.Drawing.Size(460, 505);
             this.VideoUrlTabPage.TabIndex = 3;
             this.VideoUrlTabPage.Text = "VideoUrl";
             this.VideoUrlTabPage.UseVisualStyleBackColor = true;
+            // 
+            // ResultUrlComboBox
+            // 
+            this.ResultUrlComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ResultUrlComboBox.FormattingEnabled = true;
+            this.ResultUrlComboBox.Location = new System.Drawing.Point(3, 478);
+            this.ResultUrlComboBox.Name = "ResultUrlComboBox";
+            this.ResultUrlComboBox.Size = new System.Drawing.Size(407, 21);
+            this.ResultUrlComboBox.TabIndex = 79;
+            // 
+            // getFileUrlButton
+            // 
+            this.getFileUrlButton.Location = new System.Drawing.Point(89, 327);
+            this.getFileUrlButton.Name = "getFileUrlButton";
+            this.getFileUrlButton.Size = new System.Drawing.Size(75, 23);
+            this.getFileUrlButton.TabIndex = 78;
+            this.getFileUrlButton.Text = "GetFileUrl";
+            this.getFileUrlButton.UseVisualStyleBackColor = true;
+            this.getFileUrlButton.Click += new System.EventHandler(this.getFileUrlButton_Click);
             // 
             // playListUrlResultTextBox
             // 
@@ -660,7 +685,7 @@
             // btnPlay
             // 
             this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPlay.Location = new System.Drawing.Point(413, 445);
+            this.btnPlay.Location = new System.Drawing.Point(416, 478);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(38, 23);
             this.btnPlay.TabIndex = 72;
@@ -671,7 +696,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(-3, 431);
+            this.label21.Location = new System.Drawing.Point(0, 464);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(50, 13);
             this.label21.TabIndex = 70;
@@ -691,7 +716,7 @@
             // 
             this.fileUrlFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.fileUrlFormatStringTextBox.Location = new System.Drawing.Point(0, 408);
+            this.fileUrlFormatStringTextBox.Location = new System.Drawing.Point(3, 441);
             this.fileUrlFormatStringTextBox.Name = "fileUrlFormatStringTextBox";
             this.fileUrlFormatStringTextBox.Size = new System.Drawing.Size(442, 20);
             this.fileUrlFormatStringTextBox.TabIndex = 67;
@@ -700,7 +725,7 @@
             // 
             this.fileUrlRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.fileUrlRegexTextBox.Location = new System.Drawing.Point(0, 369);
+            this.fileUrlRegexTextBox.Location = new System.Drawing.Point(3, 402);
             this.fileUrlRegexTextBox.Name = "fileUrlRegexTextBox";
             this.fileUrlRegexTextBox.Size = new System.Drawing.Size(442, 20);
             this.fileUrlRegexTextBox.TabIndex = 66;
@@ -708,7 +733,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(-3, 392);
+            this.label19.Location = new System.Drawing.Point(0, 425);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(92, 13);
             this.label19.TabIndex = 65;
@@ -717,7 +742,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(-3, 353);
+            this.label20.Location = new System.Drawing.Point(0, 386);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(65, 13);
             this.label20.TabIndex = 64;
@@ -846,7 +871,7 @@
             this.categoryInfoListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.categoryInfoListView.Location = new System.Drawing.Point(0, 0);
             this.categoryInfoListView.Name = "categoryInfoListView";
-            this.categoryInfoListView.Size = new System.Drawing.Size(955, 158);
+            this.categoryInfoListView.Size = new System.Drawing.Size(955, 125);
             this.categoryInfoListView.TabIndex = 25;
             this.categoryInfoListView.UseCompatibleStateImageBehavior = false;
             this.categoryInfoListView.View = System.Windows.Forms.View.Details;
@@ -866,7 +891,7 @@
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(483, 533);
+            this.treeView1.Size = new System.Drawing.Size(483, 566);
             this.treeView1.TabIndex = 26;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
@@ -885,7 +910,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.categoryInfoListView);
             this.splitContainer1.Size = new System.Drawing.Size(955, 695);
-            this.splitContainer1.SplitterDistance = 533;
+            this.splitContainer1.SplitterDistance = 566;
             this.splitContainer1.TabIndex = 27;
             // 
             // splitContainer2
@@ -902,7 +927,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.treeView1);
-            this.splitContainer2.Size = new System.Drawing.Size(955, 533);
+            this.splitContainer2.Size = new System.Drawing.Size(955, 566);
             this.splitContainer2.SplitterDistance = 468;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -970,24 +995,31 @@
             this.openFileDialog1.FileName = "OnlineVideoSites.xml";
             this.openFileDialog1.Filter = "xml-Files|*.xml";
             // 
-            // getFileUrlButton
+            // getRedirectedFileUrlCheckBox
             // 
-            this.getFileUrlButton.Location = new System.Drawing.Point(89, 327);
-            this.getFileUrlButton.Name = "getFileUrlButton";
-            this.getFileUrlButton.Size = new System.Drawing.Size(75, 23);
-            this.getFileUrlButton.TabIndex = 78;
-            this.getFileUrlButton.Text = "GetFileUrl";
-            this.getFileUrlButton.UseVisualStyleBackColor = true;
-            this.getFileUrlButton.Click += new System.EventHandler(this.getFileUrlButton_Click);
+            this.getRedirectedFileUrlCheckBox.AutoSize = true;
+            this.getRedirectedFileUrlCheckBox.Location = new System.Drawing.Point(186, 333);
+            this.getRedirectedFileUrlCheckBox.Name = "getRedirectedFileUrlCheckBox";
+            this.getRedirectedFileUrlCheckBox.Size = new System.Drawing.Size(122, 17);
+            this.getRedirectedFileUrlCheckBox.TabIndex = 80;
+            this.getRedirectedFileUrlCheckBox.Text = "getRedirectedFileUrl";
+            this.getRedirectedFileUrlCheckBox.UseVisualStyleBackColor = true;
             // 
-            // ResultUrlComboBox
+            // label18
             // 
-            this.ResultUrlComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ResultUrlComboBox.FormattingEnabled = true;
-            this.ResultUrlComboBox.Location = new System.Drawing.Point(0, 445);
-            this.ResultUrlComboBox.Name = "ResultUrlComboBox";
-            this.ResultUrlComboBox.Size = new System.Drawing.Size(407, 21);
-            this.ResultUrlComboBox.TabIndex = 79;
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(0, 353);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(81, 13);
+            this.label18.TabIndex = 81;
+            this.label18.Text = "fileUrlPostString";
+            // 
+            // fileUrlPostStringTextBox
+            // 
+            this.fileUrlPostStringTextBox.Location = new System.Drawing.Point(3, 366);
+            this.fileUrlPostStringTextBox.Name = "fileUrlPostStringTextBox";
+            this.fileUrlPostStringTextBox.Size = new System.Drawing.Size(439, 20);
+            this.fileUrlPostStringTextBox.TabIndex = 82;
             // 
             // Form1
             // 
@@ -1110,6 +1142,9 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button getFileUrlButton;
         private System.Windows.Forms.ComboBox ResultUrlComboBox;
+        private System.Windows.Forms.CheckBox getRedirectedFileUrlCheckBox;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox fileUrlPostStringTextBox;
     }
 }
 

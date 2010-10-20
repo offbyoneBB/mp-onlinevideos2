@@ -63,6 +63,9 @@ namespace SiteParser
 
             fileUrlRegexTextBox.Text = util.FileUrlRegEx;
             fileUrlFormatStringTextBox.Text = util.FileUrlFormatString;
+            fileUrlPostStringTextBox.Text = util.FileUrlPostString;
+            getRedirectedFileUrlCheckBox.Checked = util.GetRedirectedFileUrl;
+
 
             treeView1.Nodes.Clear();
             TreeNode root = treeView1.Nodes.Add("site");
@@ -110,6 +113,8 @@ namespace SiteParser
 
             util.FileUrlRegEx = fileUrlRegexTextBox.Text;
             util.FileUrlFormatString = fileUrlFormatStringTextBox.Text;
+            util.FileUrlPostString = fileUrlPostStringTextBox.Text;
+            util.GetRedirectedFileUrl = getRedirectedFileUrlCheckBox.Checked;
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -348,11 +353,17 @@ namespace SiteParser
 
         private void CreateFileUrlRegexButton_Click(object sender, EventArgs e)
         {
+            GuiToUtil(generic);
             if (String.IsNullOrEmpty(playListUrlResultTextBox.Text))
                 MessageBox.Show("PlaylistUrlResult is empty");
             else
             {
-                string webData = SiteUtilBase.GetWebData(playListUrlResultTextBox.Text);
+                string webData;
+                if (String.IsNullOrEmpty(generic.FileUrlPostString))
+                    webData = SiteUtilBase.GetWebData(playListUrlResultTextBox.Text);
+                else
+                    webData = SiteUtilBase.GetWebDataFromPost(playListUrlResultTextBox.Text, generic.FileUrlPostString);
+
                 Form2 f2 = new Form2();
                 fileUrlRegexTextBox.Text = f2.Execute(fileUrlRegexTextBox.Text, webData,
                     new string[] { "m0", "m1", "m2" });
@@ -476,6 +487,8 @@ namespace SiteParser
         public string PlaylistUrlFormatString { get { return playlistUrlFormatString; } set { playlistUrlFormatString = value; } }
         public string FileUrlRegEx { get { return GetRegex(regEx_FileUrl); } set { regEx_FileUrl = CreateRegex(value); fileUrlRegEx = value; } }
         public string FileUrlFormatString { get { return fileUrlFormatString; } set { fileUrlFormatString = value; } }
+        public string FileUrlPostString { get { return fileUrlPostString; } set { fileUrlPostString = value; } }
+        public bool GetRedirectedFileUrl { get { return getRedirectedFileUrl; } set { getRedirectedFileUrl = value; } }
 
         #region Regex_String
         private Regex CreateRegex(string s)

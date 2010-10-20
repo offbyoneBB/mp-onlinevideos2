@@ -89,6 +89,10 @@ namespace OnlineVideos.Sites
         protected string videoThumbFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("Enables checking if the video's url can be resolved via known hosters.")]
         protected bool resolveHoster = false;
+        [Category("OnlineVideosConfiguration"), Description("Post data which is send for getting the fileUrl for playback.")]
+        protected string fileUrlPostString = String.Empty;
+        [Category("OnlineVideosConfiguration"), Description("Enables getting the redirected url instead of the given url for playback.")]
+        protected bool getRedirectedFileUrl = false;
 
         protected Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_VideoUrl, regEx_PlaylistUrl, regEx_FileUrl;
 
@@ -253,7 +257,11 @@ namespace OnlineVideos.Sites
 
         public Dictionary<string, string> GetPlaybackOptions(string playlistUrl)
         {
-            string dataPage = GetWebData(playlistUrl, GetCookie(), forceUTF8: forceUTF8Encoding);
+            string dataPage;
+            if (String.IsNullOrEmpty(fileUrlPostString))
+                dataPage = GetWebData(playlistUrl, GetCookie(), forceUTF8: forceUTF8Encoding);
+            else
+                dataPage = GetWebDataFromPost(playlistUrl, fileUrlPostString, GetCookie(), forceUTF8: forceUTF8Encoding);
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             Match matchFileUrl = regEx_FileUrl.Match(dataPage);
@@ -311,6 +319,9 @@ namespace OnlineVideos.Sites
                 }
             }
 
+            if (getRedirectedFileUrl)
+                resultUrl = GetRedirectedUrl(resultUrl);
+
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
                 string[] keys = new string[video.PlaybackOptions.Count];
@@ -367,7 +378,7 @@ namespace OnlineVideos.Sites
                         if (options.Count > 1) video.PlaybackOptions = options;
                         return options.Last().Value;
                     }
-                    else 
+                    else
                         return String.Empty;
                 }
 
