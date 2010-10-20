@@ -536,7 +536,7 @@ namespace OnlineVideos.MediaPortal1
                 if (CurrentState == State.sites)
                 {
                     SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[GUI_facadeView.SelectedListItem.Path];
-                    DisplayCategories(null);
+                    DisplayCategories(null, true);
                 }
                 else if (CurrentState == State.categories)
                 {
@@ -549,7 +549,7 @@ namespace OnlineVideos.MediaPortal1
                         Category categoryToDisplay = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Category;
                         if (categoryToDisplay.HasSubCategories)
                         {
-                            DisplayCategories(categoryToDisplay);
+                            DisplayCategories(categoryToDisplay, true);
                         }
                         else
                         {
@@ -906,7 +906,7 @@ namespace OnlineVideos.MediaPortal1
             UpdateViewState();
         }
 
-        private void DisplayCategories(Category parentCategory)
+        private void DisplayCategories(Category parentCategory, bool? diveDownOrUpIfSingle = null)
         {
             if (parentCategory == null)
             {
@@ -923,14 +923,14 @@ namespace OnlineVideos.MediaPortal1
                     {
                         if (success)
                         {
-                            SetCategoriesToFacade(parentCategory, result as IList<Category>);                            
+                            SetCategoriesToFacade(parentCategory, result as IList<Category>, diveDownOrUpIfSingle);                            
                         }
                     },
                     Translation.GettingDynamicCategories, true);
                 }
                 else
                 {
-                    SetCategoriesToFacade(parentCategory, SelectedSite.Settings.Categories);                    
+                    SetCategoriesToFacade(parentCategory, SelectedSite.Settings.Categories, diveDownOrUpIfSingle);                    
                 }
             }
             else
@@ -948,20 +948,20 @@ namespace OnlineVideos.MediaPortal1
                     {
                         if (success)
                         {
-                            SetCategoriesToFacade(parentCategory, result as IList<Category>);
+                            SetCategoriesToFacade(parentCategory, result as IList<Category>, diveDownOrUpIfSingle);
                         }
                     },
                     Translation.GettingDynamicCategories, true);
                 }
                 else
                 {
-                    SetCategoriesToFacade(parentCategory, parentCategory.SubCategories);
+                    SetCategoriesToFacade(parentCategory, parentCategory.SubCategories, diveDownOrUpIfSingle);
                 }
             }
         }
 
-        private void SetCategoriesToFacade(Category parentCategory, IList<Category> categories)
-        {            
+        private void SetCategoriesToFacade(Category parentCategory, IList<Category> categories, bool? diveDownOrUpIfSingle)
+        {
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
 
             // add the first item that will go to the previous menu
@@ -1020,6 +1020,15 @@ namespace OnlineVideos.MediaPortal1
             CurrentState = State.categories;
             selectedCategory = parentCategory;
             UpdateViewState();
+
+            // automatically browse up or down if only showing a single category and parameter was set
+            if (categories.Count == 1 && diveDownOrUpIfSingle != null)
+            {
+                if (diveDownOrUpIfSingle.Value)
+                    OnClicked(GUI_facadeView.GetID, GUI_facadeView, Action.ActionType.ACTION_SELECT_ITEM);
+                else
+                    ShowPreviousMenu();
+            }
         }
 
         private void DisplayDetails(VideoInfo foVideo)
@@ -1090,7 +1099,7 @@ namespace OnlineVideos.MediaPortal1
                     selectedCategory = categoryToRestoreOnError;
                     if (displayCategoriesOnError)// an error occured or no videos were found -> return to the category selection if param was set
                     {
-                        DisplayCategories(category.ParentCategory);
+                        DisplayCategories(category.ParentCategory, false);
                     }
                 }
             },
@@ -1302,15 +1311,15 @@ namespace OnlineVideos.MediaPortal1
                 else
                 {
                     ImageDownloader.StopDownload = true;
-                    DisplayCategories(selectedCategory.ParentCategory);
+                    DisplayCategories(selectedCategory.ParentCategory, false);
                 }
             }
             else if (CurrentState == State.videos)
             {
                 ImageDownloader.StopDownload = true;
 
-                if (selectedCategory == null || selectedCategory.ParentCategory == null) DisplayCategories(null);
-                else DisplayCategories(selectedCategory.ParentCategory);
+                if (selectedCategory == null || selectedCategory.ParentCategory == null) DisplayCategories(null, false);
+                else DisplayCategories(selectedCategory.ParentCategory, false);
             }
             else if (CurrentState == State.details)
             {
