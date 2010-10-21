@@ -60,6 +60,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hoster\Archiv.cs" />
+    <Compile Include="Hoster\DataUp.cs" />
+    <Compile Include="Hoster\DivxDen.cs" />
+    <Compile Include="Hoster\DivxStage.cs" />
+    <Compile Include="Hoster\Duckload.cs" />
+    <Compile Include="Hoster\Loaded.cs" />
+    <Compile Include="Hoster\Loombo.cs" />
+    <Compile Include="Hoster\MegaVideo.cs" />
+    <Compile Include="Hoster\MovShare.cs" />
+    <Compile Include="Hoster\MyStream.cs" />
+    <Compile Include="Hoster\MyVideo.cs" />
+    <Compile Include="Hoster\NovaMov.cs" />
+    <Compile Include="Hoster\Quickload.cs" />
+    <Compile Include="Hoster\ShareHoster.cs" />
+    <Compile Include="Hoster\Tubeload.cs" />
+    <Compile Include="Hoster\Veoh.cs" />
+    <Compile Include="Hoster\VideoWeed.cs" />
+    <Compile Include="Hoster\Xtream.cs" />
+    <Compile Include="Hoster\zShare.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="CinemassacreUtil.cs" />
     <Compile Include="HardwareInfoUtil.cs" />
     <Compile Include="MyHosters.cs" />
