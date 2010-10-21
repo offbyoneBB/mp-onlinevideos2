@@ -107,6 +107,8 @@ namespace RTMP_LIB
         const int RTMP_SIG_SIZE = 1536;
         const int RTMP_CHANNELS = 65600;
 
+        const int TIMEOUT_RECEIVE = 15000;
+
         #endregion        
 
         #region Public Properties
@@ -153,7 +155,7 @@ namespace RTMP_LIB
         int lastSentBytesRead = 0;
         int m_numInvokes;
         int m_nBufferMS = (10 * 60 * 60 * 1000)	/* 10 hours default */;
-        int receiveTimeoutMS = 5000; // intial timeout until stream is connected (don't set too low, as the server's answer after the handshake might take some time)
+        int receiveTimeoutMS = TIMEOUT_RECEIVE; // intial timeout until stream is connected (don't set too low, as the server's answer after the handshake might take some time)
         int m_stream_id; // returned in _result from invoking createStream            
         int m_mediaChannel = 0;
         int m_nBWCheckCounter;
@@ -193,7 +195,7 @@ namespace RTMP_LIB
             }
 
             // after connection was successfull, set the timeouts for receiving data higher
-            receiveTimeoutMS = 10000;
+            receiveTimeoutMS = TIMEOUT_RECEIVE * 2;
             tcpSocket.ReceiveTimeout = receiveTimeoutMS;
 
             return true;
@@ -240,6 +242,7 @@ namespace RTMP_LIB
             RTMPPacket packet = null;
             while (!Playing && IsConnected() && ReadPacket(out packet))
             {
+                Logger.Log("First Packet after Connect received.");
                 if (!packet.IsReady()) continue; // keep reading until complete package has arrived
 
                 if (packet.PacketType == PacketType.Audio || packet.PacketType == PacketType.Video || packet.PacketType == PacketType.Metadata)
@@ -484,7 +487,7 @@ namespace RTMP_LIB
 
             m_nBufferMS = (10 * 60 * 60 * 1000)	/* 10 hours default */;
             Pausing = 0;
-            receiveTimeoutMS = 1500;
+            receiveTimeoutMS = TIMEOUT_RECEIVE;
 
             InChunkSize = RTMP_DEFAULT_CHUNKSIZE;
             outChunkSize = RTMP_DEFAULT_CHUNKSIZE;
