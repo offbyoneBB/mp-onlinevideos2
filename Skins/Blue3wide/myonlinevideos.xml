@@ -36,14 +36,14 @@
       <texture>#header.image</texture>
     </control>
     <control>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>1</id>      
       <posX>300</posX>
       <posY>30</posY>
-      <width>700</width>
+      <width>810</width>
       <label>#header.label</label>
-      <font>font15</font>
-      <textcolor>ffa9d0f7</textcolor>
+      <font>font14</font>
+      <textcolor>White</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -52,7 +52,7 @@
       <type>label</type>
       <id>1</id>      
       <posX>300</posX>
-      <posY>65</posY>
+      <posY>62</posY>
       <width>700</width>
       <label>#OnlineVideos.filter</label>
       <font>font10</font>
@@ -65,7 +65,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1200</posX>
-      <posY>15</posY>
+      <posY>6</posY>
       <label>#date</label>
       <align>right</align>
       <font>font13</font>
@@ -79,7 +79,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1200</posX>
-      <posY>40</posY>
+      <posY>35</posY>
       <label>#time</label>
       <align>right</align>
       <font>font13</font>
