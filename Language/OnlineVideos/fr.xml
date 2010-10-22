@@ -1,116 +1,111 @@
-ï»¿<?xml version="1.0" encoding="utf-8"?>
-<!-- Online Videos translation file -->
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Moving Pictures translation file -->
 <!-- French -->
+<!-- Note: English is the fallback for any strings not found in other languages -->
 <strings>
-
-  <!-- A -->
   <string Field="Airdate">Date de diffusion</string>
-  <string Field="AlreadyDownloading">PrÃªt pour le tÃ©lÃ©chargement de ce fichier.</string>
+  <string Field="AlreadyDownloading">Prêt pour le téléchargement de ce fichier.</string>
   <string Field="All">Tous</string>
   <string Field="Actions">Actions</string>
   <string Field="Actors">Acteurs</string>
-  <string Field="AddToMySites">Ajouter Ã  mes sites</string>
-  <string Field="AddToFavourites">Ajouter aux favoris</string>  
-
-  <!-- B -->
+  <string Field="AddToMySites">Ajouter à mes sites</string>
+  <string Field="AddToFavourites">Ajouter aux favoris</string>
+  <string Field="AddingToFavorites">Ajouter aux favoris</string>
+  <string Field="AutomaticUpdate">Mise à jour auto</string>
+  <string Field="AutomaticUpdateDisabled">Mise à jour auto désactivée.</string>
   <string Field="Broken">Non actif</string>
-
-  <!-- C -->
-  <string Field="Category">CatÃ©gorie</string>
-  <string Field="Creator">CrÃ©ateur</string>  
-
-  <!-- D -->
+  <string Field="Buffered">en cache</string>
+  <string Field="Cancel">Annuler</string>
+  <string Field="Category">Catégorie</string>
+  <string Field="Categories">Catégories</string>
+  <string Field="Creator">Créateur</string>
+  <string Field="CheckingForPluginUpdate">Vérifier la mise à jour des plugins</string>
+  <string Field="Date">Date</string>
   <string Field="DateOfRelease">Date de sortie</string>
-  <string Field="Directors">RÃ©alisateurs</string>
-  <string Field="Download">TÃ©lÃ©charger</string>
-  <string Field="DownloadFailed">Le tÃ©lÃ©chargement a Ã©chouÃ©: {0}</string>
-  <string Field="DownloadComplete">TÃ©lÃ©chargement terminÃ©</string>
-  <string Field="DownloadedVideos">VidÃ©os tÃ©lÃ©chargÃ©es</string>
+  <string Field="Directors">Réalisateurs</string>
+  <string Field="Download">Télécharger</string>
+  <string Field="Downloading">Téléchargement</string>
+  <string Field="DownloadingDescription">Voir la liste des téléchargements en cours.</string>
+  <string Field="DownloadFailed">Le téléchargement a échoué: {0}</string>
+  <string Field="DownloadCancelled">Téléchargement annulé</string>
+  <string Field="DownloadComplete">Téléchargement terminé</string>
+  <string Field="DownloadStarted">Téléchargement démarré</string>
+  <string Field="DownloadedVideos">Vidéos téléchargées</string>
   <string Field="Delete">Effacer</string>
-  <string Field="Default">Par dÃ©faut</string>
-  <string Field="Done">EffectuÃ©</string>
-
-  <!-- E -->
+  <string Field="DeleteAll">Effacer tout</string>
+  <string Field="Default">Par défaut</string>
+  <string Field="Done">Effectué</string>
+  <string Field="DeletingOldThumbs">Suppression d'anciennes vignettes</string>
   <string Field="Error">Erreur</string>
   <string Field="EnterPin">Entrez le code PIN</string>
-
-  <!-- F -->
   <string Field="Favourites">Favoris</string>
   <string Field="Filter">Tri par</string>
-  <string Field="FullUpdate">Mise Ã  jour complÃ¨te</string>
-
-  <!-- G -->
+  <string Field="FullUpdate">Mise à jour complète</string>
   <string Field="Genre">Genre</string>
-
-  <!-- H -->
-
-  <!-- I -->
-
-  <!-- L -->
+  <string Field="GettingVideoDetails">Récupération des détails vidéo</string>
+  <string Field="GettingCategoryVideos">Récupération des catégories</string>
+  <string Field="GettingFavoriteVideos">Récupération des favoris</string>
+  <string Field="GettingSearchResults">Récupération des résultats de la recherche</string>
+  <string Field="GettingRelatedVideos">Récupération des vidéos liées</string>
+  <string Field="GettingFilteredVideos">Récupération des vidéos filtrées</string>
+  <string Field="GettingNextPageVideos">Récupération des vidéos de la page suivante</string>
+  <string Field="GettingPreviousPageVideos">Récupération des vidéos de la page précédente</string>
+  <string Field="GettingPlaybackUrlsForVideo">Récupération de l'url pour lire la vidéo</string>
+  <string Field="GettingDynamicCategories">Récupération des catégories dynamiques</string>
+  <string Field="GettingReports">Récupération des rapports depuis le webservice</string>
+  <string Field="GettingSiteXml">Récupération de l'xml des sites depuis le webservice</string>
+  <string Field="GettingIcon">Récupération des icônes des sites depuis le webservice</string>
+  <string Field="GettingBanner">Récupération des bannières des sites depuis le webservice</string>
+  <string Field="GettingDll">Récupération des dll depuis le webservice</string>
+  <string Field="LatestVersionRequired">Dernière version ({0}) requise !</string>
   <string Field="Language">Par langage</string>
   <string Field="LayoutList">Disposition: Liste</string>
-  <string Field="LayoutIcons">Disposition: IcÃ´nes</string>
-  <string Field="LayoutBigIcons">Disposition: Grandes icÃ´nes</string>
-
-  <!-- M -->
-  <string Field="ManageSites">GÃ©rer les sites</string>
-  <string Field="MaxResults">Nombre de RÃ©sultats?</string>
-
-  <!-- N -->
+  <string Field="LayoutIcons">Disposition: Icônes</string>
+  <string Field="LayoutBigIcons">Disposition: Grandes icônes</string>
+  <string Field="ManageSites">Gérer les sites</string>
+  <string Field="MaxResults">Nombre de Résultats?</string>
   <string Field="Name">Par nom</string>
   <string Field="NextPage">Page suivante</string>
   <string Field="None">Aucun</string>
-  <string Field="NoVideoFound">Aucune vidÃ©o trouvÃ©e</string>
-  <string Field="NewDllDownloaded">Nouvelle DLL tÃ©lÃ©chargÃ©!</string>
-
-  <!-- O -->
-
-  <!-- P -->
-  <string Field="PlayAll">Lecture de la totalitÃ© des vidÃ©os</string>
-  <string Field="PlotOutline">AperÃ§u</string>
-  <string Field="PreviousPage">Page prÃ©cÃ©dente</string>
-  <string Field="PerformAutomaticUpdate">Effectuer la mise Ã  jour automatique?</string>
-
-  <!-- R -->
+  <string Field="NoVideoFound">Aucune vidéo trouvée</string>
+  <string Field="NoReportsForSite">Pas de rapport disponible pour ce site</string>
+  <string Field="NewDllDownloaded">Nouvelle DLL téléchargé!</string>
+  <string Field="PlayAll">Lecture de la totalité des vidéos</string>
+  <string Field="PlotOutline">Aperçu</string>
+  <string Field="PreviousPage">Page précédente</string>
+  <string Field="PerformAutomaticUpdate">Effectuer la mise à jour automatique?</string>
   <string Field="RemoveFromFavorites">Supprimer le fichier des favoris</string>
-  <string Field="Refresh">RafraÃ®chir</string>
-  <string Field="RelatedVideos">VidÃ©os Similaires</string>
+  <string Field="RemovingFromFavorites">Enlever des favoris</string>
+  <string Field="Refresh">Rafraîchir</string>
+  <string Field="RelatedVideos">Vidéos Similaires</string>
   <string Field="Reported">En maintenance</string>
-  <string Field="Runtime">DurÃ©e</string>
+  <string Field="Runtime">Durée</string>
   <string Field="RemoveFromMySites">Retirer de mes sites</string>
-  <string Field="RestartMediaPortal">RedÃ©marrez MediaPortal!</string>
-  <string Field="RetrievingRemoteDlls">RÃ©cupÃ©ration des DLL Ã  distance ...</string>
-  <string Field="RetrievingRemoteSites">RÃ©cupÃ©ration des sites distants ...</string>
-
-  <!-- S -->
-  <string Field="SearchResults">RÃ©sultats de la recherche</string>
-  <string Field="SelectSource">SÃ©lectionner une source</string>
+  <string Field="RestartMediaPortal">Redémarrez MediaPortal!</string>
+  <string Field="RetrievingRemoteDlls">Récupération des DLL à distance ...</string>
+  <string Field="RetrievingRemoteSites">Récupération des sites distants ...</string>
+  <string Field="SearchResults">Résultats de la recherche</string>
+  <string Field="SelectSource">Sélectionner une source</string>
+  <string Field="Sites">Sites</string>
+  <string Field="Size">Taille</string>
   <string Field="SortOptions">Options de tri</string>
   <string Field="Search">Recherche</string>
-  <string Field="SetDownloadFolderInConfig">S'il vous plaÃ®t dÃ©finissez le dossier pour le tÃ©lÃ©chargement dans le menu Configuration!</string>
+  <string Field="SetDownloadFolderInConfig">S'il vous plaît définissez le dossier pour le téléchargement dans le menu Configuration!</string>
   <string Field="State">Situation</string>
   <string Field="SavingLocalSiteList">Enregistrer la liste de site local ...</string>
   <string Field="ShowReports">Montrer les informations</string>
-
-  <!-- T -->
+  <string Field="StartingPlayback">Démarrage de la lecture</string>
+  <string Field="Subscriptions">Abonnements</string>
   <string Field="Timeframe">Calendrier</string>
   <string Field="Timeout">Pause</string>
   <string Field="Tags">Tags</string>
-
-  <!-- U -->
-  <string Field="Updated">Mise Ã  jour</string>
-  <string Field="Updatable">Mise Ã  niveau</string>
-  <string Field="UpdateMySite">Mettre Ã  jour mon site</string>
-  <string Field="UpdateMySiteSkipCategories">Mettre Ã  jour mon site (sans l'utilisation des filtres)</string>
-  <string Field="UpdateAllYourSites">Cela mettra Ã  jour tous vos sites en cours.</string>
-  <string Field="UnableToPlayVideo">Impossible de lire la vidÃ©o. Aucune URL.</string>
-  <string Field="UnableToDownloadVideo">Impossible de tÃ©lÃ©charger la vidÃ©o. URL incorrecte.</string>
-
-  <!-- V -->
-
-  <!-- W -->
+  <string Field="Updated">Mise à jour</string>
+  <string Field="Updatable">Mise à niveau</string>
+  <string Field="UpdateMySite">Mettre à jour mon site</string>
+  <string Field="UpdateMySiteSkipCategories">Mettre à jour mon site (sans l'utilisation des filtres)</string>
+  <string Field="UpdateAllYourSites">Cela mettra à jour tous vos sites en cours.</string>
+  <string Field="UnableToPlayVideo">Impossible de lire la vidéo. Aucune URL.</string>
+  <string Field="UnableToDownloadVideo">Impossible de télécharger la vidéo. URL incorrecte.</string>
+  <string Field="Videos">Vidéos</string>
   <string Field="Working">Actif</string>
-
-  <!-- Y -->
-
 </strings>
