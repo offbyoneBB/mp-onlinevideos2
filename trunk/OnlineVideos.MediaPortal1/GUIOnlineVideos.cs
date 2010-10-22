@@ -1918,7 +1918,7 @@ namespace OnlineVideos.MediaPortal1
                     SetFacadeViewMode();
                     break;
                 case State.categories:
-                    string cat_headerlabel = selectedCategory != null ? selectedCategory.Name : SelectedSite.Settings.Name;
+                    string cat_headerlabel = selectedCategory != null ? selectedCategory.RecursiveName() : SelectedSite.Settings.Name;
                     GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
                     GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite));
                     ShowAndEnable(GUI_facadeView.GetID);
@@ -1939,7 +1939,7 @@ namespace OnlineVideos.MediaPortal1
                         default:
                             {
                                 string proposedLabel = SelectedSite.getCurrentVideosTitle();
-                                GUIPropertyManager.SetProperty("#header.label", proposedLabel != null ? proposedLabel : selectedCategory != null ? selectedCategory.Name : ""); break;
+                                GUIPropertyManager.SetProperty("#header.label", proposedLabel != null ? proposedLabel : selectedCategory != null ? selectedCategory.RecursiveName() : ""); break;
                             }
                     }
                     GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite));

@@ -118,6 +118,18 @@ namespace OnlineVideos
         public object Other { get; set; }
 
         public override string ToString() { return Name; }
+
+        public string RecursiveName()
+        {
+            string result = "";
+            Category c = this;
+            while (c != null)
+            {
+                result = c.Name + (result == "" ? "" : " / ") + result;
+                c = c.ParentCategory;
+            }
+            return result;
+        }
         
         #region IComparable<Category> Member
 
