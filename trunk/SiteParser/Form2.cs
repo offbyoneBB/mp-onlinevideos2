@@ -143,18 +143,18 @@ namespace SiteParser
             richTextBox1.Rtf = sb.ToString();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void okButton_Click(object sender, EventArgs e)
         {
             result = RegexTextbox.Text;
             Close();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void cancelButton_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void findButton_Click(object sender, EventArgs e)
         {
             int searchStartInd = richTextBox1.SelectionStart + 1;
             int i = richTextBox1.Text.IndexOf(findTextBox.Text, searchStartInd, StringComparison.OrdinalIgnoreCase);
@@ -174,7 +174,7 @@ namespace SiteParser
         }
 
 
-        private void button5_Click(object sender, EventArgs e)
+        private void insertBbutton_Click(object sender, EventArgs e)
         {
             string strToInsert = ((RegexPart)insertComboBox.SelectedItem).Value;
             int p = strToInsert.IndexOf(@"@@@@");
@@ -193,7 +193,11 @@ namespace SiteParser
             int nextInd = RegexTextbox.SelectionStart + RegexTextbox.SelectionLength;
             string nextChar = String.Empty;
             if (nextInd < RegexTextbox.Text.Length)
+            {
                 nextChar = new String(RegexTextbox.Text[nextInd], 1);
+                if (nextChar == "\\" && nextInd + 1 < RegexTextbox.Text.Length)
+                    nextChar += new String(RegexTextbox.Text[nextInd + 1], 1);
+            }
 
             int insPos = RegexTextbox.SelectionStart;
             RegexTextbox.Text = RegexTextbox.Text.Substring(0, insPos) + strToInsert +
@@ -220,7 +224,7 @@ namespace SiteParser
             RegexTextbox.Focus();
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void testButton_Click(object sender, EventArgs e)
         {
             treeView1.BeginUpdate();
             treeView1.Nodes.Clear();
@@ -247,7 +251,7 @@ namespace SiteParser
             treeView1.EndUpdate();
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void textToRegexButton_Click(object sender, EventArgs e)
         {
             //string txt = Clipboard.GetText();
             string txt = richTextBox1.SelectedText.Trim();
