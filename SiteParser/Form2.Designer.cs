@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.okButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.Button();
             this.RegexTextbox = new System.Windows.Forms.TextBox();
             this.findTextBox = new System.Windows.Forms.TextBox();
             this.findButton = new System.Windows.Forms.Button();
             this.insertComboBox = new System.Windows.Forms.ComboBox();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.button7 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
+            this.textToRegexButton = new System.Windows.Forms.Button();
+            this.testButton = new System.Windows.Forms.Button();
+            this.insertButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -52,27 +52,27 @@
             this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // button1
+            // okButton
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(748, 469);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Ok";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.okButton.Location = new System.Drawing.Point(748, 469);
+            this.okButton.Name = "okButton";
+            this.okButton.Size = new System.Drawing.Size(75, 23);
+            this.okButton.TabIndex = 0;
+            this.okButton.Text = "Ok";
+            this.okButton.UseVisualStyleBackColor = true;
+            this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
-            // button2
+            // cancelButton
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(829, 469);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.Location = new System.Drawing.Point(829, 469);
+            this.cancelButton.Name = "cancelButton";
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.TabIndex = 1;
+            this.cancelButton.Text = "Cancel";
+            this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // RegexTextbox
             // 
@@ -103,7 +103,7 @@
             this.findButton.TabIndex = 30;
             this.findButton.Text = "find";
             this.findButton.UseVisualStyleBackColor = true;
-            this.findButton.Click += new System.EventHandler(this.button4_Click);
+            this.findButton.Click += new System.EventHandler(this.findButton_Click);
             // 
             // insertComboBox
             // 
@@ -124,46 +124,46 @@
             this.treeView1.Size = new System.Drawing.Size(321, 270);
             this.treeView1.TabIndex = 36;
             // 
-            // button7
+            // textToRegexButton
             // 
-            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button7.Image = global::SiteParser.Properties.Resources.curved;
-            this.button7.Location = new System.Drawing.Point(278, 4);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(46, 27);
-            this.button7.TabIndex = 38;
-            this.toolTip1.SetToolTip(this.button7, "Paste from web-data");
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
+            this.textToRegexButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textToRegexButton.Image = global::SiteParser.Properties.Resources.curved;
+            this.textToRegexButton.Location = new System.Drawing.Point(278, 4);
+            this.textToRegexButton.Name = "textToRegexButton";
+            this.textToRegexButton.Size = new System.Drawing.Size(46, 27);
+            this.textToRegexButton.TabIndex = 38;
+            this.toolTip1.SetToolTip(this.textToRegexButton, "Paste from web-data");
+            this.textToRegexButton.UseVisualStyleBackColor = true;
+            this.textToRegexButton.Click += new System.EventHandler(this.textToRegexButton_Click);
             // 
-            // button6
+            // testButton
             // 
-            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button6.Image = global::SiteParser.Properties.Resources.Intersect;
-            this.button6.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button6.Location = new System.Drawing.Point(270, 3);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(54, 23);
-            this.button6.TabIndex = 37;
-            this.button6.Text = "Test";
-            this.button6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.button6, "Test the regex with the web-data");
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.testButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.testButton.Image = global::SiteParser.Properties.Resources.Intersect;
+            this.testButton.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.testButton.Location = new System.Drawing.Point(270, 3);
+            this.testButton.Name = "testButton";
+            this.testButton.Size = new System.Drawing.Size(54, 23);
+            this.testButton.TabIndex = 37;
+            this.testButton.Text = "Test";
+            this.testButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.testButton, "Test the regex with the web-data");
+            this.testButton.UseVisualStyleBackColor = true;
+            this.testButton.Click += new System.EventHandler(this.testButton_Click);
             // 
-            // button5
+            // insertButton
             // 
-            this.button5.Image = global::SiteParser.Properties.Resources.arrowDn;
-            this.button5.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button5.Location = new System.Drawing.Point(3, 4);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(56, 27);
-            this.button5.TabIndex = 35;
-            this.button5.Text = "Insert";
-            this.button5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolTip1.SetToolTip(this.button5, "Insert template");
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.insertButton.Image = global::SiteParser.Properties.Resources.arrowDn;
+            this.insertButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.insertButton.Location = new System.Drawing.Point(3, 4);
+            this.insertButton.Name = "insertButton";
+            this.insertButton.Size = new System.Drawing.Size(56, 27);
+            this.insertButton.TabIndex = 35;
+            this.insertButton.Text = "Insert";
+            this.insertButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.insertButton, "Insert template");
+            this.insertButton.UseVisualStyleBackColor = true;
+            this.insertButton.Click += new System.EventHandler(this.insertBbutton_Click);
             // 
             // label1
             // 
@@ -193,6 +193,27 @@
             this.splitContainer1.SplitterDistance = 329;
             this.splitContainer1.TabIndex = 40;
             // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.RegexTextbox);
+            this.splitContainer2.Panel1.Controls.Add(this.insertButton);
+            this.splitContainer2.Panel1.Controls.Add(this.textToRegexButton);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.treeView1);
+            this.splitContainer2.Panel2.Controls.Add(this.testButton);
+            this.splitContainer2.Size = new System.Drawing.Size(329, 424);
+            this.splitContainer2.SplitterDistance = 115;
+            this.splitContainer2.TabIndex = 0;
+            // 
             // richTextBox1
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -207,27 +228,6 @@
             this.richTextBox1.TabIndex = 34;
             this.richTextBox1.Text = "";
             // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.RegexTextbox);
-            this.splitContainer2.Panel1.Controls.Add(this.button5);
-            this.splitContainer2.Panel1.Controls.Add(this.button7);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.treeView1);
-            this.splitContainer2.Panel2.Controls.Add(this.button6);
-            this.splitContainer2.Size = new System.Drawing.Size(329, 424);
-            this.splitContainer2.SplitterDistance = 115;
-            this.splitContainer2.TabIndex = 0;
-            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -238,8 +238,8 @@
             this.Controls.Add(this.insertComboBox);
             this.Controls.Add(this.findTextBox);
             this.Controls.Add(this.findButton);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.cancelButton);
+            this.Controls.Add(this.okButton);
             this.Name = "Form2";
             this.Text = "Create regex";
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -256,16 +256,16 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.TextBox RegexTextbox;
         private System.Windows.Forms.TextBox findTextBox;
         private System.Windows.Forms.Button findButton;
         private System.Windows.Forms.ComboBox insertComboBox;
-        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button insertButton;
         private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button testButton;
+        private System.Windows.Forms.Button textToRegexButton;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.SplitContainer splitContainer1;
