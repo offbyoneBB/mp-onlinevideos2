@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Xml.XPath;
 using OnlineVideos;
 using OnlineVideos.Sites;
 
@@ -437,15 +438,46 @@ namespace SiteParser
             GuiToUtil(generic);
             Utils.AddConfigurationValues(generic, generic.Settings);
 
+            XmlSerializer serializer = new XmlSerializer(typeof(SiteSettings));
+            XmlDocument doc = new XmlDocument();
+            XPathNavigator nav = doc.CreateNavigator();
+            XmlWriter writer = nav.AppendChild();
+            writer.WriteStartDocument();
+            serializer.Serialize(writer, generic.Settings);
+            //writer.WriteEndDocument();
+            //writer.Flush();
+            writer.Close();
+
+            XmlNode final = doc.CreateNode(XmlNodeType.Element, "Site", String.Empty);
+            XmlElement el = final as XmlElement;
+            el.SetAttribute("name", "please fill");
+            el.SetAttribute("util", "GenericSite");
+            el.SetAttribute("agecheck", "false");
+            el.SetAttribute("enabled", "true");
+            el.SetAttribute("lang", "please fill");
+            foreach (XmlNode node in doc.FirstChild.ChildNodes)
+                final.AppendChild(node.Clone());
+            if (final.FirstChild.Name != "Description")
+            {
+                final.InsertBefore(doc.CreateNode(XmlNodeType.Element, "Description", "please fill"), final.FirstChild);
+            }
+            doc.RemoveChild(doc.FirstChild);
+            doc.AppendChild(final);
+            foreach (XmlNode node in doc.SelectNodes("//item"))
+            {
+                if (String.IsNullOrEmpty(node.InnerText))
+                    node.ParentNode.RemoveChild(node);
+            }
+
             XmlSerializer ser = new XmlSerializer(typeof(SiteSettings));
             StringBuilder sb = new StringBuilder();
             XmlWriterSettings xmlSettings = new XmlWriterSettings();
             xmlSettings.Indent = true;
+            xmlSettings.OmitXmlDeclaration = true;
             using (XmlWriter ww = XmlWriter.Create(sb, xmlSettings))
             {
-                ser.Serialize(ww, generic.Settings);
+                doc.WriteContentTo(ww);
             }
-
             Clipboard.SetText(sb.ToString());
 
         }

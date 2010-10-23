@@ -250,7 +250,7 @@ namespace SiteParser
         private void button7_Click(object sender, EventArgs e)
         {
             //string txt = Clipboard.GetText();
-            string txt = richTextBox1.SelectedText;
+            string txt = richTextBox1.SelectedText.Trim();
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < txt.Length; i++)
             {
