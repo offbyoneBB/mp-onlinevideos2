@@ -22,7 +22,8 @@ namespace OnlineVideos.MediaPortal1
         public string pinAgeConfirmation = "";
         public bool? updateOnStart = null;
         public string email = "";
-        public string password = "";        
+        public string password = "";
+        public string httpSourceFilterName = "File Source (URL)";
 
         #region MediaPortal.xml attribute names
         public const string CFG_SECTION = "onlinevideos";
@@ -46,6 +47,7 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_PLAY_BUFFER = "playbuffer";
         const string CFG_EMAIL = "email";
         const string CFG_PASSWORD = "password";
+        const string CFG_HTTP_SOURCE_FILTER = "httpsourcefilter";
         #endregion
 
         #region Singleton
@@ -138,6 +140,8 @@ namespace OnlineVideos.MediaPortal1
                     if (!ovsconf.VideoExtensions.ContainsKey(".mov")) ovsconf.VideoExtensions.Add(".mov", false);
                     if (!ovsconf.VideoExtensions.ContainsKey(".mp4")) ovsconf.VideoExtensions.Add(".mp4", false);
                     if (!ovsconf.VideoExtensions.ContainsKey(".wmv")) ovsconf.VideoExtensions.Add(".wmv", false);
+
+                    httpSourceFilterName = settings.GetValueAsString(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
                 }
 
                 ovsconf.LoadSites();
@@ -172,6 +176,8 @@ namespace OnlineVideos.MediaPortal1
                     if (!string.IsNullOrEmpty(password)) settings.SetValue(CFG_SECTION, CFG_PASSWORD, password);
                     if (updateOnStart == null) settings.RemoveEntry(CFG_SECTION, CFG_UPDATEONSTART);
                     else settings.SetValueAsBool(CFG_SECTION, CFG_UPDATEONSTART, updateOnStart.Value);
+                    if (httpSourceFilterName == "File Source (URL)") settings.RemoveEntry(CFG_SECTION, CFG_HTTP_SOURCE_FILTER);
+                    else settings.SetValue(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
                 }
 
                 ovsconf.SaveSites();
