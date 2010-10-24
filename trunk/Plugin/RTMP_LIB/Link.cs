@@ -45,6 +45,17 @@ namespace RTMP_LIB
         {
             Link link = new Link();
 
+            try
+            {
+                link.protocol = (Protocol)Enum.Parse(typeof(Protocol), url.Scheme.ToUpper());
+            }
+            catch
+            {
+                Logger.Log(string.Format("Error parsing protocol from url ({0}), setting default: RTMP", url.Scheme));
+                link.protocol = Protocol.RTMP;
+            }
+            
+
             link.hostname = url.Host;
             link.port = url.Port > 0 ? url.Port : 1935;
 
