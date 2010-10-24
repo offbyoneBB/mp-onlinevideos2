@@ -248,7 +248,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 IBaseFilter sourceFilter = null;
                 try
                 {
-                    int result = graphBuilder.FindFilterByName("File Source (URL)", out sourceFilter);
+                    int result = graphBuilder.FindFilterByName(PluginConfiguration.Instance.httpSourceFilterName, out sourceFilter);
                     if (result == 0)
                     {
                         long total = 0, current = 0;
@@ -310,13 +310,13 @@ namespace OnlineVideos.MediaPortal1.Player
                 IBaseFilter sourceFilter = null;
                 try
                 {
-                    sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "File Source (URL)");
+                    sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, PluginConfiguration.Instance.httpSourceFilterName);
                     int result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
                     if (result != 0) return null;
                 }
                 catch (Exception ex)
                 {
-                    Log.Instance.Warn("Error adding 'File Source (URL)' filter to graph and loading with url: ", ex.Message);
+                    Log.Instance.Warn("Error adding '{0}' filter to graph and loading with url: {1}", PluginConfiguration.Instance.httpSourceFilterName, ex.Message);
                 }
                 finally
                 {
@@ -343,52 +343,61 @@ namespace OnlineVideos.MediaPortal1.Player
             IBaseFilter sourceFilter = null;
             try
             {
-                int result = graphBuilder.FindFilterByName("File Source (URL)", out sourceFilter);
+                int result = graphBuilder.FindFilterByName(PluginConfiguration.Instance.httpSourceFilterName, out sourceFilter);
                 if (result != 0) return false;
 
-                // buffer before starting playback
-                bool filterConnected = false;
-                PercentageBuffered = 0.0f;
-                long total = 0, current = 0, last = 0;
-                do
+                if (sourceFilter is IAMOpenProgress)
                 {
-                    result = ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
-                    PercentageBuffered = (float)current / (float)total * 100.0f;
-                    // after configured percentage has been buffered, connect the graph
-                    if (!filterConnected && PercentageBuffered >= PluginConfiguration.Instance.playbuffer)
+                    // buffer before starting playback
+                    bool filterConnected = false;
+                    PercentageBuffered = 0.0f;
+                    long total = 0, current = 0, last = 0;
+                    do
                     {
-                        filterConnected = true;
-                        new Thread(delegate()
+                        result = ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
+                        PercentageBuffered = (float)current / (float)total * 100.0f;
+                        // after configured percentage has been buffered, connect the graph
+                        if (!filterConnected && PercentageBuffered >= PluginConfiguration.Instance.playbuffer)
                         {
-                            try
+                            filterConnected = true;
+                            new Thread(delegate()
                             {
-                                // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
-                                DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                                PlaybackReady = true;
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Instance.Warn(ex.Message);
-                                StopBuffering();
-                            }
-                        }) { IsBackground = true }.Start();
+                                try
+                                {
+                                    // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
+                                    DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
+                                    PlaybackReady = true;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Instance.Warn(ex.Message);
+                                    StopBuffering();
+                                }
+                            }) { IsBackground = true }.Start();
+                        }
+                        // log every percent
+                        if (current > last && current - last >= (double)total * 0.01)
+                        {
+                            Log.Instance.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)PercentageBuffered);
+                            last = current;
+                        }
+                        // set the percentage to a gui property, formatted according to percentage, so the user knows very early if anything is buffering                   
+                        string formatString = "###";
+                        if (PercentageBuffered == 0f) formatString = "0.0";
+                        else if (PercentageBuffered < 1f) formatString = ".00";
+                        else if (PercentageBuffered < 10f) formatString = "0.0";
+                        else if (PercentageBuffered < 100f) formatString = "##";
+                        GUIPropertyManager.SetProperty("#OnlineVideos.buffered", PercentageBuffered.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
+                        Thread.Sleep(50); // no need to do this more often than 20 times per second
                     }
-                    // log every percent
-                    if (current > last && current - last >= (double)total * 0.01)
-                    {
-                        Log.Instance.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)PercentageBuffered);
-                        last = current;
-                    }
-                    // set the percentage to a gui property, formatted according to percentage, so the user knows very early if anything is buffering                   
-                    string formatString = "###";
-                    if (PercentageBuffered == 0f) formatString = "0.0";
-                    else if (PercentageBuffered < 1f) formatString = ".00";
-                    else if (PercentageBuffered < 10f) formatString = "0.0";
-                    else if (PercentageBuffered < 100f) formatString = "##";
-                    GUIPropertyManager.SetProperty("#OnlineVideos.buffered", PercentageBuffered.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
-                    Thread.Sleep(50); // no need to do this more often than 20 times per second
+                    while (!PlaybackReady && graphBuilder != null && !BufferingStopped);
                 }
-                while (!PlaybackReady && graphBuilder != null && !BufferingStopped);
+                else
+                {
+                    DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
+                    PercentageBuffered = 100.0f; // no progress reporing possible
+                    PlaybackReady = true;
+                }
             }
             catch (ThreadAbortException)
             {
@@ -405,7 +414,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     if (!PlaybackReady)
                     {
                         Log.Instance.Info("Buffering was aborted.");
-                        ((IAMOpenProgress)sourceFilter).AbortOperation();
+                        if (sourceFilter is IAMOpenProgress) ((IAMOpenProgress)sourceFilter).AbortOperation();
                     }
                     DirectShowUtil.ReleaseComObject(sourceFilter, 2000);
                 }

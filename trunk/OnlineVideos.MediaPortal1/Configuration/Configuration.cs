@@ -194,6 +194,7 @@ namespace OnlineVideos.MediaPortal1
                 catch { }
                 if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) PluginConfiguration.Instance.updateOnStart = null;
                 else PluginConfiguration.Instance.updateOnStart = chkDoAutoUpdate.Checked;
+                PluginConfiguration.Instance.httpSourceFilterName = tbxHttpSourceFilter.Text;
                 PluginConfiguration.Instance.Save();
             }
         }
@@ -375,6 +376,8 @@ namespace OnlineVideos.MediaPortal1
 
             chkAVISplitterInstalled.Checked = cc.AVI_Splitter.IsInstalled;
             tbxAVISplitter.Text = cc.AVI_Splitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.AVI_Splitter.Name, cc.AVI_Splitter.Version, cc.AVI_Splitter.CodecFile) : "";
+
+            tbxHttpSourceFilter.Text = PluginConfiguration.Instance.httpSourceFilterName;
         }
 
         private void btnAddSite_Click(object sender, EventArgs e)
