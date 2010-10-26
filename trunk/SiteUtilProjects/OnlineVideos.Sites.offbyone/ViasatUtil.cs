@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
@@ -14,11 +15,13 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("TV4 Base Url")]
         protected string tv4BaseUrl = "http://www.tv4play.se/";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the tv4BaseUrl for dynamic categories. Group names: 'url', 'title'.")]
-        protected string tv4DynamicCategoriesRegEx = @"<a\s+href=""(?<url>[^""]+\D)""\s+class=""play"">(?<title>[^""]*)</a>";
+        protected string tv4DynamicCategoriesRegEx;
 
-        protected string tv4DynamicSubCategoriesRegEx = @"<li\s+class=""button[^""]*"">\W+<h3><a\s+class=""\{tabUrl:\'[^=]+=(?<url>\d\.\d+)&amp;ajax=selection[^>]+>(?<title>[^<]+)</a>";
+        protected string tv4DynamicSubCategoriesRegEx = @"(?<!(/search/partial.*))<input\stype=""hidden""\sname=""(?<name>[^""]*)""\svalue=""(?<value>[^""]*)"">";
+        protected string tv4DynamicSubCategoriesRegEx2 = @"<li\s+class=""video-panel\s+(?!(clip))[^""]*"">\s*<p[^>]*>\s*<a\s+href=""(?<url>[^""]*)"">\s*<img\s+alt=""[^""]*""\s+src=""(?<thumb>[^""]*)"">\s*</a>\s*</p>\s*
+<div[^>]*>\s*<h3[^>]*>\s*<a[^>]*>(?<title>[^<]+)</a>\s*</h3>\s*<p[^>]*>\s*(?<desc>[^<]+)</p>";
 
-        Regex regEx_dynamicCategories, regEx_dynamicSubCategories;
+        Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_dynamicSubCategories2;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -26,6 +29,7 @@ namespace OnlineVideos.Sites
 
             if (!string.IsNullOrEmpty(tv4DynamicCategoriesRegEx)) regEx_dynamicCategories = new Regex(tv4DynamicCategoriesRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             if (!string.IsNullOrEmpty(tv4DynamicSubCategoriesRegEx)) regEx_dynamicSubCategories = new Regex(tv4DynamicSubCategoriesRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+            if (!string.IsNullOrEmpty(tv4DynamicSubCategoriesRegEx2)) regEx_dynamicSubCategories2 = new Regex(tv4DynamicSubCategoriesRegEx2, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
         }
 
         public override int DiscoverDynamicCategories()
@@ -51,18 +55,70 @@ namespace OnlineVideos.Sites
                 if (!string.IsNullOrEmpty(data))
                 {
                     parentCategory.SubCategories = new List<Category>();
-                    Match m = parentCategory.ParentCategory == null ? regEx_dynamicCategories.Match(data) : regEx_dynamicSubCategories.Match(data);
-                    while (m.Success)
+
+                    if (parentCategory.ParentCategory == null)
                     {
-                        RssLink cat = new RssLink();
-                        cat.Url = m.Groups["url"].Value;
-                        if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(tv4BaseUrl), cat.Url).AbsoluteUri;
-                        cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim().Replace('\n', ' '));
-                        parentCategory.SubCategories.Add(cat);
-                        cat.Other = "TV4";
-                        cat.HasSubCategories = parentCategory.ParentCategory == null;
-                        cat.ParentCategory = parentCategory;
-                        m = m.NextMatch();
+                        Match m = regEx_dynamicCategories.Match(data);
+                        while (m.Success)
+                        {
+                            RssLink cat = new RssLink();
+                            cat.Url = m.Groups["url"].Value;
+                            if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(tv4BaseUrl), cat.Url).AbsoluteUri;
+                            cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim().Replace('\n', ' '));
+                            parentCategory.SubCategories.Add(cat);
+                            cat.Other = "TV4";
+                            cat.HasSubCategories = true;
+                            cat.ParentCategory = parentCategory;
+                            m = m.NextMatch();
+                        }
+                    }
+                    else
+                    {
+                        string jsonUrl = "http://www.tv4play.se/programformatsearch?";
+                        bool found = false;
+                        Match m = regEx_dynamicSubCategories.Match(data);
+                        while (m.Success)
+                        {
+                            found = true;
+                            jsonUrl += string.Format("{0}{1}={2}", jsonUrl.EndsWith("?") ? "" : "&", m.Groups["name"].Value, m.Groups["name"].Value == "rows" ? "100" : System.Web.HttpUtility.UrlEncode(m.Groups["value"].Value));
+                            m = m.NextMatch();
+                        }
+                        if (found)
+                        {
+                            Newtonsoft.Json.Linq.JObject json = GetWebData<Newtonsoft.Json.Linq.JObject>(jsonUrl);
+                            if (json != null)
+                            {
+                                foreach (var result in json["results"])
+                                {
+                                    RssLink cat = new RssLink();
+                                    cat.Url = result.Value<string>("href");
+                                    if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(tv4BaseUrl), cat.Url).AbsoluteUri;
+                                    cat.Name = result.Value<string>("name");
+                                    cat.Thumb = result.Value<string>("smallformatimage");
+                                    cat.Description = result.Value<string>("text");
+                                    cat.Other = "TV4";
+                                    parentCategory.SubCategories.Add(cat);
+                                    cat.ParentCategory = parentCategory;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Match m2 = regEx_dynamicSubCategories2.Match(data);
+                            while (m2.Success)
+                            {
+                                RssLink cat = new RssLink();
+                                cat.Url = m2.Groups["url"].Value;
+                                if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(tv4BaseUrl), cat.Url).AbsoluteUri;
+                                cat.Name = HttpUtility.HtmlDecode(m2.Groups["title"].Value.Trim().Replace('\n', ' '));
+                                cat.Thumb = m2.Groups["thumb"].Value;
+                                cat.Description = HttpUtility.HtmlDecode(m2.Groups["desc"].Value.Trim());
+                                cat.Other = "TV4";
+                                parentCategory.SubCategories.Add(cat);
+                                cat.ParentCategory = parentCategory;
+                                m2 = m2.NextMatch();
+                            }
+                        }
                     }
                 }
             }
