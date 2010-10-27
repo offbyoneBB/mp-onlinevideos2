@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Online Videos translation file -->
+<!-- Greek (EL) Created & Updated 27/10/10 (dd/mm/yy)-->
+<!-- Note: English is the fallback for any strings not found in other languages -->
+<strings>  
+
+  <!-- A -->
+  <string Field="Airdate">Προβλήθηκε</string>
+  <string Field="AlreadyDownloading">Αυτό το αρχείο μεταφορτώνεται ήδη.</string>
+  <string Field="All">Όλα</string>
+  <string Field="Actions">Ενέργειες</string>
+  <string Field="Actors">Ηθοποιοί</string>
+  <string Field="AddToMySites">Προσθήκη στις ιστοσελίδες μου</string>
+  <string Field="AddToFavourites">Προσθήκη στα αγαπημένα</string>
+  <string Field="AddingToFavorites">Γίνεται προσθήκη στα αγαπημένα</string>
+  <string Field="AutomaticUpdate">Αυτόματη ενημέρωση</string>
+  <string Field="AutomaticUpdateDisabled">Αυτόματη ενημέρωση απενεργοποιημένη.</string>
+  
+  <!-- B -->
+  <string Field="Broken">Μη ολοκληρωμένο</string>
+  <string Field="Buffered">προσωρινά αποθηκευμένο</string>
+
+  <!-- C -->
+  <string Field="Cancel">Άκυρο</string>
+  <string Field="Category">Κατηγορία</string>
+  <string Field="Categories">Κατηγορίες</string>
+  <string Field="Creator">Δημιουργός</string>  
+  <string Field="CheckingForPluginUpdate">γίνεται έλεγχος για ενημερώσεις του πρόσθετου</string>
+
+  <!-- D -->
+  <string Field="Date">Ημερομηνία</string>
+  <string Field="DateOfRelease">Ημερομηνία έκδοσης</string>
+  <string Field="Directors">Σκηνοθέτες</string>
+  <string Field="Download">Μεταφόρτωση</string>
+  <string Field="Downloading">Γίνεται μεταφόρτωση</string>
+  <string Field="DownloadingDescription">Προβολή λίστας με τις τρέχουσες μεταφορτώσεις.</string>
+  <string Field="DownloadFailed">Αποτυχία μεταφόρτωσης: {0}</string>
+  <string Field="DownloadCancelled">Η μεταφόρτωση ακυρώθηκε</string>
+  <string Field="DownloadComplete">Η μεταφόρτωση ολοκληρώθηκε</string>
+  <string Field="DownloadStarted">Η μεταφόρτωση ξεκίνησε</string>  
+  <string Field="DownloadedVideos">Μεταφορτωμένα βίντεο</string>
+  <string Field="Delete">Διαγραφή</string>
+  <string Field="DeleteAll">Διαγραφή όλων</string>
+  <string Field="Default">Προκαθορισμένο</string>
+  <string Field="Done">Έγινε</string>
+  <string Field="DeletingOldThumbs">Διαγραφή παλαιών μικρογραφιών</string>
+
+  <!-- E -->
+  <string Field="Error">Σφάλμα</string>
+  <string Field="EnterPin">Εισάγετε Pin</string>
+
+  <!-- F -->
+  <string Field="Favourites">Αγαπημένα</string>
+  <string Field="Filter">Φίλτρο</string>
+  <string Field="FullUpdate">Πλήρης ενημέρωση</string>
+
+  <!-- G -->
+  <string Field="Genre">Είδος</string>
+  <string Field="GettingVideoDetails">ανάκτηση λεπτομερειών του βίντεο</string>
+  <string Field="GettingCategoryVideos">ανάκτηση βίντεο για την κατηγορία</string>
+  <string Field="GettingFavoriteVideos">ανάκτηση αγαπημένων βίντεο</string>
+  <string Field="GettingSearchResults">ανάκτηση αποτελεσμάτων αναζήτησης</string>
+  <string Field="GettingRelatedVideos">ανάκτηση σχετικών βίντεο</string>
+  <string Field="GettingFilteredVideos">ανάκτηση φιλτραρισμένων βίντεο</string>
+  <string Field="GettingNextPageVideos">ανάκτηση βίντεο της επόμενης σελίδας</string>
+  <string Field="GettingPreviousPageVideos">ανάκτηση βίντεο της προηγούμενης σελίδας</string>
+  <string Field="GettingPlaybackUrlsForVideo">ανάκτηση urls αναπαραγωγής για το βίντεο</string>
+  <string Field="GettingDynamicCategories">ανάκτηση δυναμικών κατηγοριών</string>
+  <string Field="GettingReports">ανάκτηση αναφορών από την υπηρεσία web</string>
+  <string Field="GettingSiteXml">ανάκτηση του xml της ιστοσελίδας από την υπηρεσία web</string>
+  <string Field="GettingIcon">ανάκτηση του εικονιδίου της ιστοσελίδας από την υπηρεσία web</string>
+  <string Field="GettingBanner">ανάκτηση του banner της ιστοσελίδας από την υπηρεσία web</string>
+  <string Field="GettingDll">ανάκτηση του dll από την υπηρεσία web</string>
+
+  <!-- H -->
+
+  <!-- I -->
+
+  <!-- L -->
+  <string Field="LatestVersionRequired">Απαιτείται η τελευταία έκδοση ({0})!</string>
+  <string Field="Language">Γλώσσα</string>
+  <string Field="LayoutList">Διάταξη: Λίστα</string>
+  <string Field="LayoutIcons">Διάταξη: Εικονίδια</string>
+  <string Field="LayoutBigIcons">Διάταξη: Μεγάλα εικονίδια</string>
+
+  <!-- M -->
+  <string Field="ManageSites">Διαχείριση ιστοσελίδων</string>
+  <string Field="MaxResults">Μέγιστος αριθμός αποτελεσμάτων</string>
+
+  <!-- N -->
+  <string Field="Name">Όνομα</string>
+  <string Field="NextPage">Επόμενη σελίδα</string>
+  <string Field="None">Κανένα</string>
+  <string Field="NoVideoFound">Δεν βρέθηκαν βίντεο</string>
+  <string Field="NoReportsForSite">Δεν υπάρχουν διαθέσιμες αναφορές για αυτή την ιστοσελίδα.</string>
+  <string Field="NewDllDownloaded">Μεταφορτώθηκε νέο dll!</string>
+
+  <!-- O -->
+
+  <!-- P -->
+  <string Field="PlayAll">Αναπαραγωγή όλων</string>
+  <string Field="PlotOutline">Πλοκή</string>
+  <string Field="PreviousPage">Προηγούμενη σελίδα</string>
+  <string Field="PerformAutomaticUpdate">Να γίνει αυτόματη ενημέρωση;</string>
+
+  <!-- R -->
+  <string Field="RemoveFromFavorites">Αφαίρεση από τα αγαπημένα</string>
+  <string Field="RemovingFromFavorites">Γίνεται αφαίρεση από τα αγαπημένα</string>
+  <string Field="Refresh">Ανανέωση</string>
+  <string Field="RelatedVideos">Σχετικά βίντεο</string>
+  <string Field="Reported">Αναφέρθηκαν</string>
+  <string Field="Runtime">Διάρκεια</string>
+  <string Field="RemoveFromMySites">Αφαίρεση από τις ιστοσελίδες μου</string>
+  <string Field="RestartMediaPortal">Επανεκκινήστε το MediaPortal!</string>
+  <string Field="RetrievingRemoteDlls">Ανάκτηση απομακρυσμένων dlls ...</string>
+  <string Field="RetrievingRemoteSites">Ανάκτηση απομακρυσμένων ιστοσελίδων ...</string>
+
+  <!-- S -->
+  <string Field="SearchResults">Αποτελέσματα αναζήτησης</string>
+  <string Field="SelectSource">Επιλέξτε πηγή</string>
+  <string Field="Sites">Ιστοσελίδες</string>
+  <string Field="Size">Μέγεθος</string>
+  <string Field="SortOptions">Επιλογές ταξινόμησης</string>
+  <string Field="Search">Αναζήτηση</string>
+  <string Field="SetDownloadFolderInConfig">Παρακαλώ ορίστε φάκελο για τις μεταφορτώσεις στις ρυθμίσεις!</string>
+  <string Field="State">Κατάσταση</string>
+  <string Field="SavingLocalSiteList">Αποθήκευση λίστας ιστοσελίδων τοπικά ...</string>
+  <string Field="ShowReports">Προβολή αναφορών δημιουργού και χρηστών</string>
+  <string Field="StartingPlayback">εκκίνηση αναπαραγωγής</string>
+  <string Field="Subscriptions">Συνδρομές</string>
+  
+  <!-- T -->
+  <string Field="Timeframe">Χρονοδιάγραμμα</string>
+  <string Field="Timeout">Εξάντληση χρονικού περιθωρίου</string>
+  <string Field="Tags">Ετικέτες</string>
+
+  <!-- U -->
+  <string Field="Updated">Ενημερώθηκε</string>
+  <string Field="Updatable">Δυνατή η ενημέρωση</string>
+  <string Field="UpdateMySite">Ενημέρωση της ιστοσελίδας μου</string>
+  <string Field="UpdateMySiteSkipCategories">Ενημέρωση της ιστοσελίδας μου (παράληψη κατηγοριών)</string>
+  <string Field="UpdateAllYourSites">Θα γίνει ενημέρωση όλων των τρέχουσων ιστοσελίδων σας.</string>
+  <string Field="UnableToPlayVideo">Αδύνατη η αναπαραγωγή. Δεν βρέθηκε το URL.</string>
+  <string Field="UnableToDownloadVideo">Αδύνατη η μεταφόρτωση. Μη έγκυρο URL.</string>
+
+  <!-- V -->
+  <string Field="Videos">Βίντεο</string>
+
+  <!-- W -->
+  <string Field="Working">Περιμένετε</string>
+
+  <!-- Y -->
+
+</strings>
