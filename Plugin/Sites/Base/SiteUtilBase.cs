@@ -317,13 +317,8 @@ namespace OnlineVideos.Sites
         }
 
         # region static helper functions
-
-        public static string GetRedirectedUrl(string url)
-        {
-            return GetRedirectedUrl(url, string.Empty);
-        }
-
-        public static string GetRedirectedUrl(string url, string referer)
+        
+        public static string GetRedirectedUrl(string url, string referer = null)
         {
             HttpWebResponse httpWebresponse = null;
             try
