@@ -2174,7 +2174,7 @@ Intoduced a Hoster-concept, RSS feeds can now link to pages of known hosters, th
           <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
         </SectionParam>
         <SectionParam Name="Configuration file">
-          <Value>%Plugins%\Windows\OnlineVideos.dll</Value>
+          <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
           <ValueType>Template</ValueType>
           <Description>The file used to configure the extension.
  If have .exe extension the will be executed
