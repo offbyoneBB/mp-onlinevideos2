@@ -1507,8 +1507,10 @@ namespace OnlineVideos.MediaPortal1
 
         void Play_Step3(PlayListItem playItem, string lsUrl, bool goFullScreen)
         {
-            // check for valid url
-            if (String.IsNullOrEmpty(lsUrl) || !(Uri.IsWellFormedUriString(lsUrl, UriKind.Absolute) || System.IO.Path.IsPathRooted(lsUrl)))
+            // check for valid url and cutoff additional parameter
+            if (String.IsNullOrEmpty(lsUrl) || 
+                !(Uri.IsWellFormedUriString((lsUrl.IndexOf("&&&&") > 0) ? lsUrl.Substring(0, lsUrl.IndexOf("&&&&")) : lsUrl, UriKind.Absolute)
+                || System.IO.Path.IsPathRooted((lsUrl.IndexOf("&&&&") > 0) ? lsUrl.Substring(0, lsUrl.IndexOf("&&&&")) : lsUrl)))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)

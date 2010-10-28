@@ -320,12 +320,18 @@ namespace OnlineVideos.Sites
 
         public static string GetRedirectedUrl(string url)
         {
+            return GetRedirectedUrl(url, string.Empty);
+        }
+
+        public static string GetRedirectedUrl(string url, string referer)
+        {
             HttpWebResponse httpWebresponse = null;
             try
             {
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return url;
                 request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+                if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
                 request.Timeout = 15000;
                 httpWebresponse = request.GetResponse() as HttpWebResponse;
                 if (httpWebresponse == null) return url;

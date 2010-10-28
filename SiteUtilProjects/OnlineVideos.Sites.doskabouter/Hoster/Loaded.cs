@@ -28,26 +28,15 @@ namespace OnlineVideos.Hoster
                 videoType = VideoType.flv;
                 return n.Groups["url"].Value;
             }
-            /*else
+            else
             {
-                string code2 = Regex.Match(first, @"name=""code""\svalue=""(?<value>[^""]+)""").Groups["value"].Value;
-                string hash = Regex.Match(first, @"name=""hash""\svalue=""(?<value>[^""]+)""").Groups["value"].Value;
-                string hostname = Regex.Match(first, @"name=""hostname""\svalue=""(?<value>[^""]+)""").Groups["value"].Value;
-                string filename = Regex.Match(first, @"name=""filename""\svalue=""(?<value>[^""]+)""").Groups["value"].Value;
+                string hash = Regex.Match(second, @"name=""hash""\svalue=""(?<value>[^""]+)""").Groups["value"].Value;
+                string hostname = Regex.Match(second, @"name=""hostname""\svalue=""(?<value>[^""]+)""").Groups["value"].Value;
+                string filename = Regex.Match(second, @"name=""filename""\svalue=""(?<value>[^""]+)""").Groups["value"].Value;
 
-                string postdata = "code=" + code2 +
-                  "&hash=" + hash +
-                  "&hostname=" + hostname +
-                  "&filename=" + filename;
-
-                string third = SiteUtilBase.GetWebDataFromPost("http://loaded.it/modules/getfile.php", postdata, cc, url);
-                n = Regex.Match(third, @"url:\s'(?<url>.*get/[^']+)'");
-                if (n.Success)
-                {
-                    videoType = VideoType.flv;
-                    return n.Groups["url"].Value;
-                }
-            }*/
+                if (!string.IsNullOrEmpty(hash) && !string.IsNullOrEmpty(hostname) && !string.IsNullOrEmpty(filename))
+                    return "http://" + hostname + "/get/" + hash + "/" + filename + "&&&&" + "Referer: " + url + "\\n"; ;
+            }
             return String.Empty;
         }
     }
