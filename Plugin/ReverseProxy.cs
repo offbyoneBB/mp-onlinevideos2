@@ -120,10 +120,9 @@ namespace OnlineVideos {
                     // updates the proxy request
                     ((ISimpleRequestHandler)handler).UpdateRequest(proxyRequest);
 
-                    WebResponse siteResponse = proxyRequest.GetResponse();
-                    // copy response settings
-                    response.ContentType = siteResponse.ContentType;
-                    response.ContentLength = siteResponse.ContentLength;
+                    HttpWebResponse siteResponse = proxyRequest.GetResponse() as HttpWebResponse;
+                    // copy headers
+                    foreach (string aKey in siteResponse.Headers.AllKeys) response.Set(aKey, siteResponse.Headers.Get(aKey));
                     // restream data
                     Stream responseStream = response.Send();
                     Stream siteResponseStream = siteResponse.GetResponseStream();
