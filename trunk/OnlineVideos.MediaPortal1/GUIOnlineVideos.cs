@@ -1750,8 +1750,9 @@ namespace OnlineVideos.MediaPortal1
 
         private void SaveVideo_Step3(VideoInfo video, string url)
         {
-            // check for valid url
-            if (String.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            // check for valid url and cutoff additional parameter
+            if (String.IsNullOrEmpty(url) ||
+                !(Uri.IsWellFormedUriString((url.IndexOf("&&&&") > 0) ? url.Substring(0, url.IndexOf("&&&&")) : url, UriKind.Absolute)))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
