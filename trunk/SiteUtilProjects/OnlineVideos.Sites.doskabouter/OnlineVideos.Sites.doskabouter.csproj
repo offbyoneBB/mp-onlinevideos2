@@ -65,6 +65,7 @@
     <Compile Include="Hoster\DivxDen.cs" />
     <Compile Include="Hoster\DivxStage.cs" />
     <Compile Include="Hoster\Duckload.cs" />
+    <Compile Include="Hoster\Freeload.cs" />
     <Compile Include="Hoster\Loaded.cs" />
     <Compile Include="Hoster\Loombo.cs" />
     <Compile Include="Hoster\MegaVideo.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Hoster\NovaMov.cs" />
     <Compile Include="Hoster\Quickload.cs" />
     <Compile Include="Hoster\ShareHoster.cs" />
+    <Compile Include="Hoster\Speedload.cs" />
     <Compile Include="Hoster\Tubeload.cs" />
     <Compile Include="Hoster\Veoh.cs" />
     <Compile Include="Hoster\VideoWeed.cs" />

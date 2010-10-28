@@ -9,11 +9,11 @@ using System.Web;
 
 namespace OnlineVideos.Hoster
 {
-    public class Archiv : HosterBase
+    public class Speedload : HosterBase
     {
         public override string getHosterUrl()
         {
-            return "Archiv.to";
+            return "Speedload.to";
         }
 
         public override string getVideoUrls(string url)
@@ -21,19 +21,14 @@ namespace OnlineVideos.Hoster
             string page = SiteUtilBase.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
-                Match n = Regex.Match(page, @"embed src=""(?<url>[^""]+)""");
+                Match n = Regex.Match(page, @"src=""(?<url>[^""]+)""\smovietitle");
                 if (n.Success)
                 {
-                    videoType = VideoType.flv;
-                    return Regex.Match(HttpUtility.UrlDecode(n.Groups["url"].Value), @"file=(?<url>[^&]+)&").Groups["url"].Value;
-                }
-                else
-                {
-                    n = Regex.Match(page, @"href=""(?<url>[^""]+)"">Download");
-                    if (n.Success)
+                    string referer = n.Groups["url"].Value;
+                    string link = SiteUtilBase.GetRedirectedUrl(referer,url);
+                    if (referer.CompareTo(link) != 0)
                     {
-                        videoType = VideoType.divx;
-                        return n.Groups["url"].Value + "&&&&" + "Referer: " + url + "\\n";
+                        return link + "&&&&" + "Referer: " + referer + "\\n";
                     }
                 }
             }
