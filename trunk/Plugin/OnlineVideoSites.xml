@@ -244,6 +244,7 @@
 		<item key="prevPageRegExUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/php/ajax.php?action={0}]]></item>
 		<item key="prevPageRegExUrlDecoding"><![CDATA[true]]></item>
         <item key="baseUrl"><![CDATA[http://www.myspass.de/myspass/shows/tvshows]]></item>
+        <item key="allowUnsafeHeaders"><![CDATA[true]]></item>
       </Configuration>
       <Categories />
     </Site>

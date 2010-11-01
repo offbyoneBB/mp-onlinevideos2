@@ -85,6 +85,8 @@ namespace OnlineVideos.Sites
         protected string videoAirDateXml;
         [Category("OnlineVideosConfiguration"), Description("Some webservers don't send a header that tells the content encoding. Use this bool to enforce UTF-8")]
         protected bool forceUTF8Encoding;
+        [Category("OnlineVideosConfiguration"), Description("Some webservers sent headers that are considered unsafe by the .Net Framework. Use this bool to allow them.")]
+        protected bool allowUnsafeHeaders;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'thumb' match retrieved from the videoThumbXml or 'ImageUrl' of the videoListRegEx.")]
         protected string videoThumbFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("Enables checking if the video's url can be resolved via known hosters.")]
@@ -126,7 +128,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                string data = GetWebData(baseUrl, GetCookie(), forceUTF8: forceUTF8Encoding);
+                string data = GetWebData(baseUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
                 if (!string.IsNullOrEmpty(data))
                 {
                     List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a separate list
@@ -157,7 +159,7 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            string data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding);
+            string data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
             if (!string.IsNullOrEmpty(data))
             {
                 parentCategory.SubCategories = new List<Category>();
@@ -245,7 +247,7 @@ namespace OnlineVideos.Sites
             // 3.a extra step to get a playlist file if needed
             if (regEx_PlaylistUrl != null)
             {
-                string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8: forceUTF8Encoding);
+                string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
                 Match matchPlaylistUrl = regEx_PlaylistUrl.Match(dataPage);
                 if (matchPlaylistUrl.Success)
                     return string.Format(playlistUrlFormatString, HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
@@ -259,9 +261,9 @@ namespace OnlineVideos.Sites
         {
             string dataPage;
             if (String.IsNullOrEmpty(fileUrlPostString))
-                dataPage = GetWebData(playlistUrl, GetCookie(), forceUTF8: forceUTF8Encoding);
+                dataPage = GetWebData(playlistUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
             else
-                dataPage = GetWebDataFromPost(playlistUrl, fileUrlPostString, GetCookie(), forceUTF8: forceUTF8Encoding);
+                dataPage = GetWebDataFromPost(playlistUrl, fileUrlPostString, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             Match matchFileUrl = regEx_FileUrl.Match(dataPage);
@@ -388,7 +390,7 @@ namespace OnlineVideos.Sites
         protected List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
-            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), forceUTF8: forceUTF8Encoding);
+            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
             if (data.Length > 0)
             {
                 if (regEx_VideoList != null)
@@ -472,13 +474,13 @@ namespace OnlineVideos.Sites
                         previousPageAvailable = true;
                         previousPageUrl = mPrev.Groups["url"].Value;
                         if (!string.IsNullOrEmpty(prevPageRegExUrlFormatString)) previousPageUrl = string.Format(prevPageRegExUrlFormatString, previousPageUrl);
+                        if (prevPageRegExUrlDecoding) previousPageUrl = HttpUtility.HtmlDecode(previousPageUrl);
                         if (!Uri.IsWellFormedUriString(previousPageUrl, System.UriKind.Absolute))
                         {
                             Uri uri = null;
                             if (Uri.TryCreate(new Uri(url), previousPageUrl, out uri))
                             {
                                 previousPageUrl = uri.ToString();
-                                if (prevPageRegExUrlDecoding) previousPageUrl = HttpUtility.HtmlDecode(previousPageUrl);
                             }
                             else
                             {
@@ -503,17 +505,17 @@ namespace OnlineVideos.Sites
                         nextPageAvailable = true;
                         nextPageUrl = mNext.Groups["url"].Value;
                         if (!string.IsNullOrEmpty(nextPageRegExUrlFormatString)) nextPageUrl = string.Format(nextPageRegExUrlFormatString, nextPageUrl);
+                        if (nextPageRegExUrlDecoding) nextPageUrl = HttpUtility.HtmlDecode(nextPageUrl);
                         if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute))
                         {
                             Uri uri = null;
                             if (Uri.TryCreate(new Uri(url), nextPageUrl, out uri))
                             {
                                 nextPageUrl = uri.ToString();
-                                if (nextPageRegExUrlDecoding) nextPageUrl = HttpUtility.HtmlDecode(nextPageUrl);
                             }
                             else
                             {
-                                previousPageAvailable = false;
+                                nextPageAvailable = false;
                                 nextPageUrl = "";
                             }
                         }
@@ -581,7 +583,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                return Parse(searchUrl, GetWebDataFromPost(searchUrl, string.Format(searchPostString, query)));
+                return Parse(searchUrl, GetWebDataFromPost(searchUrl, string.Format(searchPostString, query), allowUnsafeHeader: allowUnsafeHeaders));
             }
         }
 
