@@ -1084,8 +1084,19 @@
       <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
       <Categories />
     </Site>
+    <Site name="RTL XL" util="RTLXL" agecheck="false" enabled="true" lang="nl" player="WMP">
+      <Description>RTL XL</Description>
+      <Configuration>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Home">http://www.rtl.nl/system/xl/config/home.xml</Category>
+        <Category xsi:type="RssLink" name="A - Z">http://www.rtl.nl/system/xl/feed/a-z.xml</Category>
+        <Category xsi:type="RssLink" name="Gemist">http://www.rtl.nl/service/gemist/dataset_xml.xml</Category>
+        <Category xsi:type="RssLink" name="Films">http://www.rtl.nl/system/xl/feed/films.xml</Category>
+      </Categories>
+    </Site>
     <Site name="TvGemist" util="TvGemist" agecheck="false" enabled="true" lang="nl" player="WMP">
-      <Description>Alle uitzendingen van Nederland 1,2,3, Rtl 4,5,6,7,8, Net5, Sbs6 en Veronica</Description>
+      <Description>Alle uitzendingen van Nederland 1,2,3, Net5, Sbs6 en Veronica</Description>
       <Categories />
     </Site>
     <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" lang="nl" player="WMP">
