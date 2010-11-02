@@ -10,18 +10,11 @@ namespace OnlineVideos.Sites
 {
     public class TvGemistUtil : SiteUtilBase
     {
-        private SortedList<string, object> rtlBlackList;
-        private enum Source { Net5Gemist, SBSGemist, VeronicaGemist, UitzendingGemist, RtlGemist, RtlGemistOpDag };
+        private enum Source { Net5Gemist, SBSGemist, VeronicaGemist, UitzendingGemist };
         private RssLink baseCategory;
 
         public override void Initialize(OnlineVideos.SiteSettings siteSettings)
         {
-            string[] lst = { "Een", "Films Bij RTL", "Publieksservice", "RTL Forum", "RTL Gemist FAQ", "RTL Gids", 
-                               "RTL News Agent","RTL Shop", "RTL Tickets","RTL Video", "RTL Weer", 
-                               "Sex: How To Do Everything", "Spelsalon" ,"Teletext"};
-            rtlBlackList = new SortedList<string, object>(lst.Length);
-            foreach (string s in lst) rtlBlackList.Add(s, null);
-
             base.Initialize(siteSettings);
         }
 
@@ -42,19 +35,6 @@ namespace OnlineVideos.Sites
             cat.SubCategories[0].Other = new UitzendingGemistSpecifics(cc, @"<div id=""nav_letter"">", 0);
             cat.SubCategories[1].Other = new UitzendingGemistSpecifics(cc, @"<div id=""nav_dag"">", 0);
             cat.SubCategories[2].Other = new UitzendingGemistSpecifics(cc, @"<div id=""nav_net"">", 0);
-
-            //======================= RTL gemist ===================
-            cat = new RssLink();
-            cat.Name = "Rtl Gemist";
-            cat.Thumb = OnlineVideoSettings.Instance.ThumbsDir == null ? null :
-                System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\rtlgemist.png");
-            cat.HasSubCategories = true;
-            Settings.Categories.Add(cat);
-            string[] cats2 = { "Op alfabet", "Op dag" };
-            AddSubcats(cats2, cat);
-            cat.SubCategories[0].Other = new RtlGemistSpecifics(false);
-            ((RssLink)cat.SubCategories[0]).Url = @"http://rtl.nl/experience/rtlnl/";
-            cat.SubCategories[1].Other = new RtlGemistSpecifics(true);
 
             //======================= NET5 gemist ===================
             cat = new RssLink();
@@ -95,7 +75,6 @@ namespace OnlineVideos.Sites
             switch (((Specifics)parentCategory.Other).source)
             {
                 case Source.UitzendingGemist: return UitzendingGemistDiscoverSubCategories((RssLink)parentCategory);
-                case Source.RtlGemist: return RtlGemistDiscoverSubCategories((RssLink)parentCategory);
                 case Source.Net5Gemist: return Net5SbsVeronicaGemistDiscoverSubCategories((RssLink)parentCategory);
                 case Source.SBSGemist: return Net5SbsVeronicaGemistDiscoverSubCategories((RssLink)parentCategory);
                 case Source.VeronicaGemist: return Net5SbsVeronicaGemistDiscoverSubCategories((RssLink)parentCategory);
@@ -114,7 +93,6 @@ namespace OnlineVideos.Sites
                         specifics.pageNr = 0;
                         return UitzendingGemistGetVideoList(baseCategory, specifics);
                     }
-                case Source.RtlGemist: return RtlGemistGetVideoList(baseCategory);
                 case Source.Net5Gemist: return Net5SbsVeronicaGemistGetVideoList(baseCategory);
                 case Source.SBSGemist: return Net5SbsVeronicaGemistGetVideoList(baseCategory);
                 case Source.VeronicaGemist: return Net5SbsVeronicaGemistGetVideoList(baseCategory);
@@ -139,44 +117,6 @@ namespace OnlineVideos.Sites
             {
                 string webData = GetWebData(video.VideoUrl);
                 return GetSubString(webData, @"class=""wmv-player-holder"" href=""", @"""");
-            }
-            if (Source.RtlGemistOpDag.Equals(video.Other) || Source.RtlGemist.Equals(video.Other))
-            {
-                Regex regex_RtlDetails = Specifics.getRegex(@"bandwidth:\s*'(?<bandwidth>[^']*)(?:(?!file).)*file:\s*'(?<url>[^']*)");
-                string webData = GetWebData(video.VideoUrl);
-                Match detm = regex_RtlDetails.Match(webData);
-                int highest = 0;
-                string result = null;
-                while (detm.Success)
-                {
-                    int bw;
-                    if (!int.TryParse(detm.Groups["bandwidth"].Value, out bw))
-                        bw = 0;
-                    if (bw >= highest)
-                    {
-                        result = detm.Groups["url"].Value;
-                        highest = bw;
-                    }
-                    detm = detm.NextMatch();
-                }
-
-                if (result != null && result.IndexOf("http://av.rtl.nl/") >= 0 && result.IndexOf(@"rtlboulevard") == 0)
-                {
-                    string exp = result.Replace("http://av.rtl.nl/web/", "http://www.rtl.nl/system/video/wvx/");
-                    int ind = exp.LastIndexOf('/');
-                    ind = exp.LastIndexOf('/', ind - 1);
-                    exp = exp.Insert(ind, "/miMedia");
-                    exp = exp.Replace(".MiMedia_WM_1500K_V9.wmv", ".xml/1500.wvx");
-
-                    // transform 
-                    // http://av.rtl.nl/web/components/soaps/gtst/203350/203939.s4m.29707557.Goede_Tijden_Slechte_Tijden_s24_a4020.MiMedia_WM_1500K_V9.wmv
-                    // into
-                    // http://www.rtl.nl/system/video/wvx/components/soaps/gtst/miMedia/203350/203939.s4m.29707557.Goede_Tijden_Slechte_Tijden_s24_a4020.xml/1500.wvx
-
-                    result = exp;
-                }
-
-                return result;
             }
 
             return video.VideoUrl;
@@ -375,205 +315,6 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        #region RtlGemist
-        private int RtlGemistDiscoverSubCategories(RssLink parentCategory)
-        {
-            if (parentCategory.SubCategoriesDiscovered)
-                return parentCategory.SubCategories.Count;
-            RtlGemistSpecifics specifics = (RtlGemistSpecifics)parentCategory.Other;
-
-            if (specifics.opDag) return DiscoverRtlOpDag(parentCategory);
-
-            string url = parentCategory.Url;
-            IDictionary<string, Category> subCats = new SortedDictionary<string, Category>();
-
-            string webData = GetWebData(url);
-            webData = GetSubString(webData, @"portalProgrammas", @"this.");
-            if (!string.IsNullOrEmpty(webData))
-            {
-                Regex regex_SubCat = Specifics.getRegex(@"\[""(?<title>[^""]+)"",""(?<url>[^""]+)"",""[^""]+""\]");
-
-                Match m = regex_SubCat.Match(webData);
-                while (m.Success)
-                {
-                    RssLink cat = new RtlRssLink();
-                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
-                    cat.Url = m.Groups["url"].Value;
-                    if (!cat.Url.StartsWith(@"http://"))
-                        cat.Url = specifics.baseUrl + cat.Url;
-
-                    cat.Other = specifics;
-                    cat.ParentCategory = parentCategory;
-
-                    if (!rtlBlackList.ContainsKey(cat.Name))
-                        if (!subCats.ContainsKey(cat.Name))
-                            subCats.Add(cat.Name, cat);
-
-                    m = m.NextMatch();
-                }
-            }
-            parentCategory.SubCategories = new List<Category>(subCats.Values);
-            return parentCategory.SubCategories.Count;
-        }
-
-        private int DiscoverRtlOpDag(RssLink parentCategory)
-        {
-            XmlDocument doc = new XmlDocument();
-            string data = GetWebData(@"http://www.rtl.nl/service/gemist/dataset_xml.xml");
-            doc.LoadXml(data);
-            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
-            nsmRequest.AddNamespace("a", @"http://s4mns.rtl.nl/system/xmlns/s4m");
-            XmlNodeList list = doc.SelectNodes(@"//a:episodes/a:episode", nsmRequest);
-            SortedDictionary<string, List<VideoInfo>> cats = new SortedDictionary<string, List<VideoInfo>>();
-            foreach (XmlNode node in list)
-            {
-                string date = node.SelectSingleNode("broadcast_start").InnerText;
-                date = date.Split(' ')[0];
-                VideoInfo videoInfo = GetRtlOpDagVideo(node);
-                if (videoInfo != null)
-                {
-                    if (!cats.ContainsKey(date))
-                        cats.Add(date, new List<VideoInfo>());
-                    cats[date].Add(videoInfo);
-                }
-            }
-            List<string> t = new List<string>(cats.Keys);
-            t.Reverse();
-            parentCategory.SubCategories = new List<Category>();
-            foreach (string s in t)
-            {
-                RssLink cat = new RssLink();
-                cat.Name = s;
-                cat.HasSubCategories = false;
-                cat.Other = new RtlGemistSpecifics(cats[s]);
-                cat.ParentCategory = parentCategory;
-                parentCategory.SubCategories.Add(cat);
-            }
-
-            return parentCategory.SubCategories.Count;
-        }
-
-        private VideoInfo GetRtlOpDagVideo(XmlNode node)
-        {
-            VideoInfo result = new VideoInfo();
-            result.VideoUrl = node.SelectSingleNode("component_uri").InnerText;
-            if (String.IsNullOrEmpty(result.VideoUrl))
-                return null;
-            result.VideoUrl = @"http://www.rtl.nl" + result.VideoUrl;
-            result.Title = node.SelectSingleNode("name").InnerText;
-            // start of imageurl from http://data.rtl.nl/_rtl-internal/js/5494466d434556a34b5be354e0a96817.js
-            result.ImageUrl = @"http://data.rtl.nl/system/img/477623qchsb4rdxh6wai4ofb7/" + node.SelectSingleNode("thumbnail_id").InnerText;
-            result.Description = "afl. " + node.SelectSingleNode("episode_number").InnerText + " uitgezonden:" + node.SelectSingleNode("broadcast_start").InnerText + " op " +
-                node.SelectSingleNode("station").InnerText;
-            result.Other = Source.RtlGemistOpDag;
-            return result;
-        }
-
-        private List<VideoInfo> RtlGemistGetVideoList(RssLink category)
-        {
-            RtlGemistSpecifics specifics = (RtlGemistSpecifics)category.Other;
-            if (specifics.opDag) return specifics.videos;
-
-            List<VideoInfo> videos = new List<VideoInfo>();
-            string url = category.Url;
-            string webData = GetWebData(url);
-            if (!string.IsNullOrEmpty(webData) && webData.StartsWith(@"<?xml"))
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(webData);
-                XmlNodeList programs = doc.SelectNodes(("//li[@class='video']"));
-                string trimmed = specifics.baseUrl.TrimEnd('/');
-                foreach (XmlNode program in programs)
-                {
-                    VideoInfo video = new VideoInfo();
-                    video.Title = program.InnerText;
-                    XmlNode thumb = program.Attributes["thumb"];
-                    if (thumb != null)
-                        video.ImageUrl = trimmed + thumb.Value;
-                    int ctime = Int32.Parse(program.Attributes["ctime"].Value);
-                    string airdate = DateTime.FromFileTime(10000000 * (long)ctime + 116444736000000000).ToString();
-                    if (String.IsNullOrEmpty(video.Title))
-                        video.Title = "Aflevering van " + airdate;
-                    video.Length = '|' + Translation.Airdate + ": " + airdate;
-                    video.Other = specifics.source;
-                    video.VideoUrl = trimmed + program.Attributes["rel"].Value;
-                    videos.Add(video);
-                }
-            }
-            return videos;
-        }
-
-
-
-        private class RtlRssLink : RssLink
-        {
-            private bool hasSubCats = false;
-            private static string rtlSubRegex = @"menu_prefix[^']*'(?<part1>[^']*)'(?:(?!menu_prefix).)*menu_prefix[^']*'(?<part2>[^']*)'";
-            private static Regex regex_RtlSub = new Regex(rtlSubRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
-            private string prefix = String.Empty;
-            private bool GetSubCats()
-            {
-
-                Specifics specifics = Other as Specifics;
-                SubCategories = new List<Category>();
-
-                string url;
-                SubCategoriesDiscovered = true;
-
-                if (!Url.EndsWith(".xml"))
-                {
-                    url = GetRedirectedUrl(Url);
-                    prefix = "http://www.rtl.nl/system/video/menu";
-                    url = url.Replace("http://www.rtl.nl", prefix) + "videomenu.xml";
-                    url = url.Replace("/home/", "/");
-                }
-                else
-                    url = Url;
-                if (url.Equals(String.Empty)) return false;
-                XmlDocument doc = new XmlDocument();
-                try
-                {
-                    doc.Load(url);
-                }
-                catch
-                {
-                    return false;
-                }
-
-                foreach (XmlNode node in doc.SelectNodes("//li[@class='folder']"))
-                {
-                    RtlRssLink cat = new RtlRssLink();
-                    cat.Name = HttpUtility.HtmlDecode(node.InnerText);
-                    cat.Url = prefix + node.Attributes["rel"].Value;
-                    cat.prefix = prefix;
-                    cat.ParentCategory = this;
-                    cat.Other = Other;
-                    SubCategories.Add(cat);
-                }
-                if (SubCategories.Count == 0)
-                    return false;
-                if (SubCategories.Count == 1)
-                {
-                    Url = ((RssLink)SubCategories[0]).Url;
-                    return GetSubCats();
-                }
-
-                return true;
-
-            }
-
-            public override bool HasSubCategories
-            {
-                get
-                {
-                    if (!SubCategoriesDiscovered) hasSubCats = GetSubCats();
-                    return hasSubCats;
-                }
-            }
-        }
-
-        #endregion
-
         #region Net5SbsVeronicaGemist
         private int Net5SbsVeronicaGemistDiscoverSubCategories(RssLink parentCategory)
         {
@@ -700,23 +441,6 @@ namespace OnlineVideos.Sites
             public static Regex videolistOpDagRegex = Specifics.getRegex(@"<div\sstyle=""overflow[^<]*<a(?:(?!href).)*href=""(?<nourl>[^""]+)""[^>]*>(?<title>[^<]+)<(?:(?!<td).)*<td[^>]*>(?<airdate>[^<]*)<(?:(?!http://player.omroep.nl).)*(?<url>[^""]*)""");
         }
 
-        private class RtlGemistSpecifics : Specifics
-        {
-            public RtlGemistSpecifics(bool opDag)
-                : base(Source.RtlGemist, @"http://www.rtl.nl/")
-            {
-                this.opDag = opDag;
-            }
-
-            public RtlGemistSpecifics(List<VideoInfo> videos)
-                : base(Source.RtlGemist, @"http://www.rtl.nl/")
-            {
-                this.opDag = true;
-                this.videos = videos;
-            }
-            public bool opDag;
-            public List<VideoInfo> videos; // only valid for opdag
-        }
         #endregion
 
         private static string GetSubString(string s, string start, string until)
