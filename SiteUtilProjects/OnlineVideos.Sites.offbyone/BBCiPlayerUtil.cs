@@ -16,6 +16,10 @@ namespace OnlineVideos.Sites
         string searchUrl = "http://feeds.bbc.co.uk/iplayer/search/tv/?q={0}";
         [Category("OnlineVideosUserConfiguration"), Description("Group similar items from the rss feeds into subcategories.")]
         bool autoGrouping = true;
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used on a video thumbnail for matching a string to be replaced for higher quality")]
+        string thumbReplaceRegExPattern;
+        [Category("OnlineVideosConfiguration"), Description("The string used to replace the match if the pattern from the thumbReplaceRegExPattern matched")]
+        string thumbReplaceString;
 
         public override string getUrl(VideoInfo video)
         {
@@ -215,6 +219,7 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo video = VideoInfo.FromRssItem(rssItem, true, new Predicate<string>(isPossibleVideo));
                 video.VideoUrl = "http://www.bbc.co.uk/iplayer/playlist/" + rssItem.Guid.Text.Substring(rssItem.Guid.Text.LastIndexOf(':') + 1);
+                if (!string.IsNullOrEmpty(thumbReplaceRegExPattern)) video.ImageUrl = System.Text.RegularExpressions.Regex.Replace(video.ImageUrl, thumbReplaceRegExPattern, thumbReplaceString);
                 loVideoList.Add(video);
             }
             return loVideoList;
