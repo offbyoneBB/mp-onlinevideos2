@@ -118,13 +118,17 @@ namespace OnlineVideos.MediaPortal1
             this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.nUPSearchHistoryItemCount = new System.Windows.Forms.NumericUpDown();
+            this.label38 = new System.Windows.Forms.Label();
+            this.rbOff = new System.Windows.Forms.RadioButton();
+            this.rbExtendedSearchHistory = new System.Windows.Forms.RadioButton();
+            this.rbLastSearch = new System.Windows.Forms.RadioButton();
             this.Thumbnails = new System.Windows.Forms.GroupBox();
             this.label36 = new System.Windows.Forms.Label();
             this.tbxThumbAge = new System.Windows.Forms.TextBox();
             this.label35 = new System.Windows.Forms.Label();
             this.bntBrowseFolderForThumbs = new System.Windows.Forms.Button();
             this.label34 = new System.Windows.Forms.Label();
-            this.chkRememberLastSearch = new System.Windows.Forms.CheckBox();
             this.label33 = new System.Windows.Forms.Label();
             this.chkUseQuickSelect = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -148,6 +152,9 @@ namespace OnlineVideos.MediaPortal1
             this.lblVersion = new System.Windows.Forms.Label();
             this.tabSites = new System.Windows.Forms.TabPage();
             this.tabPageCodecs = new System.Windows.Forms.TabPage();
+            this.groupBoxSourceFilter = new System.Windows.Forms.GroupBox();
+            this.tbxHttpSourceFilter = new System.Windows.Forms.TextBox();
+            this.label37 = new System.Windows.Forms.Label();
             this.groupBoxSplitter = new System.Windows.Forms.GroupBox();
             this.tbxWMVSplitter = new System.Windows.Forms.TextBox();
             this.tbxAVISplitter = new System.Windows.Forms.TextBox();
@@ -163,9 +170,6 @@ namespace OnlineVideos.MediaPortal1
             this.label11 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.groupBoxSourceFilter = new System.Windows.Forms.GroupBox();
-            this.label37 = new System.Windows.Forms.Label();
-            this.tbxHttpSourceFilter = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -190,14 +194,15 @@ namespace OnlineVideos.MediaPortal1
             this.toolStripChannels.SuspendLayout();
             this.mainTabControl.SuspendLayout();
             this.tabGeneral.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nUPSearchHistoryItemCount)).BeginInit();
             this.Thumbnails.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabSites.SuspendLayout();
             this.tabPageCodecs.SuspendLayout();
+            this.groupBoxSourceFilter.SuspendLayout();
             this.groupBoxSplitter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
-            this.groupBoxSourceFilter.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtDownloadDir
@@ -1091,9 +1096,13 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.nUPSearchHistoryItemCount);
+            this.tabGeneral.Controls.Add(this.label38);
+            this.tabGeneral.Controls.Add(this.rbOff);
+            this.tabGeneral.Controls.Add(this.rbExtendedSearchHistory);
+            this.tabGeneral.Controls.Add(this.rbLastSearch);
             this.tabGeneral.Controls.Add(this.Thumbnails);
             this.tabGeneral.Controls.Add(this.label34);
-            this.tabGeneral.Controls.Add(this.chkRememberLastSearch);
             this.tabGeneral.Controls.Add(this.label33);
             this.tabGeneral.Controls.Add(this.chkUseQuickSelect);
             this.tabGeneral.Controls.Add(this.groupBox3);
@@ -1122,6 +1131,74 @@ namespace OnlineVideos.MediaPortal1
             this.tabGeneral.TabIndex = 0;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
+            // 
+            // nUPSearchHistoryItemCount
+            // 
+            this.nUPSearchHistoryItemCount.Location = new System.Drawing.Point(541, 161);
+            this.nUPSearchHistoryItemCount.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.nUPSearchHistoryItemCount.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.nUPSearchHistoryItemCount.Name = "nUPSearchHistoryItemCount";
+            this.nUPSearchHistoryItemCount.Size = new System.Drawing.Size(53, 20);
+            this.nUPSearchHistoryItemCount.TabIndex = 61;
+            this.toolTip1.SetToolTip(this.nUPSearchHistoryItemCount, "Defines the number of search strings stored per Site.");
+            this.nUPSearchHistoryItemCount.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(476, 165);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(32, 13);
+            this.label38.TabIndex = 60;
+            this.label38.Text = "Items";
+            // 
+            // rbOff
+            // 
+            this.rbOff.AutoSize = true;
+            this.rbOff.Location = new System.Drawing.Point(225, 163);
+            this.rbOff.Name = "rbOff";
+            this.rbOff.Size = new System.Drawing.Size(39, 17);
+            this.rbOff.TabIndex = 59;
+            this.rbOff.TabStop = true;
+            this.rbOff.Text = "Off";
+            this.rbOff.UseVisualStyleBackColor = true;
+            this.rbOff.CheckedChanged += new System.EventHandler(this.searchType_CheckedChanged);
+            // 
+            // rbExtendedSearchHistory
+            // 
+            this.rbExtendedSearchHistory.AutoSize = true;
+            this.rbExtendedSearchHistory.Location = new System.Drawing.Point(356, 163);
+            this.rbExtendedSearchHistory.Name = "rbExtendedSearchHistory";
+            this.rbExtendedSearchHistory.Size = new System.Drawing.Size(107, 17);
+            this.rbExtendedSearchHistory.TabIndex = 58;
+            this.rbExtendedSearchHistory.TabStop = true;
+            this.rbExtendedSearchHistory.Text = "Extended (dialog)";
+            this.rbExtendedSearchHistory.UseVisualStyleBackColor = true;
+            this.rbExtendedSearchHistory.CheckedChanged += new System.EventHandler(this.searchType_CheckedChanged);
+            // 
+            // rbLastSearch
+            // 
+            this.rbLastSearch.AutoSize = true;
+            this.rbLastSearch.Location = new System.Drawing.Point(270, 163);
+            this.rbLastSearch.Name = "rbLastSearch";
+            this.rbLastSearch.Size = new System.Drawing.Size(80, 17);
+            this.rbLastSearch.TabIndex = 57;
+            this.rbLastSearch.TabStop = true;
+            this.rbLastSearch.Text = "Last search";
+            this.rbLastSearch.UseVisualStyleBackColor = true;
+            this.rbLastSearch.CheckedChanged += new System.EventHandler(this.searchType_CheckedChanged);
             // 
             // Thumbnails
             // 
@@ -1187,19 +1264,9 @@ namespace OnlineVideos.MediaPortal1
             this.label34.AutoSize = true;
             this.label34.Location = new System.Drawing.Point(6, 163);
             this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(148, 13);
+            this.label34.Size = new System.Drawing.Size(74, 13);
             this.label34.TabIndex = 54;
-            this.label34.Text = "Remember last search on Site";
-            // 
-            // chkRememberLastSearch
-            // 
-            this.chkRememberLastSearch.AutoSize = true;
-            this.chkRememberLastSearch.Location = new System.Drawing.Point(225, 164);
-            this.chkRememberLastSearch.Name = "chkRememberLastSearch";
-            this.chkRememberLastSearch.Size = new System.Drawing.Size(15, 14);
-            this.chkRememberLastSearch.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.chkRememberLastSearch, "Will restore your last search string when searching again on the same site.");
-            this.chkRememberLastSearch.UseVisualStyleBackColor = true;
+            this.label34.Text = "Search history";
             // 
             // label33
             // 
@@ -1474,6 +1541,37 @@ namespace OnlineVideos.MediaPortal1
             this.tabPageCodecs.Text = "Codecs";
             this.tabPageCodecs.UseVisualStyleBackColor = true;
             // 
+            // groupBoxSourceFilter
+            // 
+            this.groupBoxSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxSourceFilter.Controls.Add(this.tbxHttpSourceFilter);
+            this.groupBoxSourceFilter.Controls.Add(this.label37);
+            this.groupBoxSourceFilter.Location = new System.Drawing.Point(6, 119);
+            this.groupBoxSourceFilter.Name = "groupBoxSourceFilter";
+            this.groupBoxSourceFilter.Size = new System.Drawing.Size(691, 45);
+            this.groupBoxSourceFilter.TabIndex = 2;
+            this.groupBoxSourceFilter.TabStop = false;
+            this.groupBoxSourceFilter.Text = "Source Filter";
+            // 
+            // tbxHttpSourceFilter
+            // 
+            this.tbxHttpSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxHttpSourceFilter.Location = new System.Drawing.Point(118, 13);
+            this.tbxHttpSourceFilter.Name = "tbxHttpSourceFilter";
+            this.tbxHttpSourceFilter.Size = new System.Drawing.Size(570, 20);
+            this.tbxHttpSourceFilter.TabIndex = 1;
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(6, 16);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(25, 13);
+            this.label37.TabIndex = 0;
+            this.label37.Text = "http";
+            // 
             // groupBoxSplitter
             // 
             this.groupBoxSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -1631,37 +1729,6 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.errorProvider1.ContainerControl = this;
             // 
-            // groupBoxSourceFilter
-            // 
-            this.groupBoxSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxSourceFilter.Controls.Add(this.tbxHttpSourceFilter);
-            this.groupBoxSourceFilter.Controls.Add(this.label37);
-            this.groupBoxSourceFilter.Location = new System.Drawing.Point(6, 119);
-            this.groupBoxSourceFilter.Name = "groupBoxSourceFilter";
-            this.groupBoxSourceFilter.Size = new System.Drawing.Size(691, 45);
-            this.groupBoxSourceFilter.TabIndex = 2;
-            this.groupBoxSourceFilter.TabStop = false;
-            this.groupBoxSourceFilter.Text = "Source Filter";
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(6, 16);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(25, 13);
-            this.label37.TabIndex = 0;
-            this.label37.Text = "http";
-            // 
-            // tbxHttpSourceFilter
-            // 
-            this.tbxHttpSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxHttpSourceFilter.Location = new System.Drawing.Point(118, 13);
-            this.tbxHttpSourceFilter.Name = "tbxHttpSourceFilter";
-            this.tbxHttpSourceFilter.Size = new System.Drawing.Size(570, 20);
-            this.tbxHttpSourceFilter.TabIndex = 1;
-            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -1716,6 +1783,7 @@ namespace OnlineVideos.MediaPortal1
             this.mainTabControl.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
             this.tabGeneral.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nUPSearchHistoryItemCount)).EndInit();
             this.Thumbnails.ResumeLayout(false);
             this.Thumbnails.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -1724,11 +1792,11 @@ namespace OnlineVideos.MediaPortal1
             this.groupBox2.PerformLayout();
             this.tabSites.ResumeLayout(false);
             this.tabPageCodecs.ResumeLayout(false);
+            this.groupBoxSourceFilter.ResumeLayout(false);
+            this.groupBoxSourceFilter.PerformLayout();
             this.groupBoxSplitter.ResumeLayout(false);
             this.groupBoxSplitter.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
-            this.groupBoxSourceFilter.ResumeLayout(false);
-            this.groupBoxSourceFilter.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1854,7 +1922,6 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.CheckBox chkUseQuickSelect;
         private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.CheckBox chkRememberLastSearch;
         private System.Windows.Forms.Button bntBrowseFolderForThumbs;
         private System.Windows.Forms.GroupBox Thumbnails;
         private System.Windows.Forms.TextBox tbxThumbAge;
@@ -1867,5 +1934,10 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.GroupBox groupBoxSourceFilter;
         private System.Windows.Forms.TextBox tbxHttpSourceFilter;
         private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.RadioButton rbExtendedSearchHistory;
+        private System.Windows.Forms.RadioButton rbLastSearch;
+        private System.Windows.Forms.RadioButton rbOff;
+        private System.Windows.Forms.NumericUpDown nUPSearchHistoryItemCount;
+        private System.Windows.Forms.Label label38;
 	}
 }

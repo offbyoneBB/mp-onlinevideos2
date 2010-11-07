@@ -94,6 +94,7 @@
   <string Field="NoVideoFound">No video found</string>
   <string Field="NoReportsForSite">No reports for this site available.</string>
   <string Field="NewDllDownloaded">New dll downloaded!</string>
+  <string Field="NewSearch">New search</string>
 
   <!-- O -->
 
@@ -116,6 +117,7 @@
   <string Field="RetrievingRemoteSites">Retrieving remote sites ...</string>
 
   <!-- S -->
+  <string Field="SearchHistory">Search history</string>
   <string Field="SearchResults">Search results</string>
   <string Field="SelectSource">Select source</string>
   <string Field="Sites">Sites</string>

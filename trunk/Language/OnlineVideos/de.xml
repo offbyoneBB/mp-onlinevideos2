@@ -70,6 +70,7 @@
   <string Field="NoVideoFound">Keine Videos gefunden</string>
   <string Field="NoReportsForSite">Keine Meldungen für diese Site vorhanden.</string>
   <string Field="NewDllDownloaded">Neue DLL heruntergeladen!</string>
+  <string Field="NewSearch">Neue Suche</string>
   <string Field="PlayAll">Alle abspielen</string>
   <string Field="PlotOutline">Handlung</string>
   <string Field="PreviousPage">Vorherige Seite</string>
@@ -84,6 +85,7 @@
   <string Field="RestartMediaPortal">Bitte MediaPortal neu starten!</string>
   <string Field="RetrievingRemoteDlls">Lade DLLs vom Server ...</string>
   <string Field="RetrievingRemoteSites">Lade Sites vom Server ...</string>
+  <string Field="SearchHistory">Suchverlauf</string>
   <string Field="SearchResults">Suchergebnisse</string>
   <string Field="SelectSource">Quelle wählen</string>
   <string Field="Sites">Sites</string>
@@ -94,8 +96,8 @@
   <string Field="State">Status</string>
   <string Field="SavingLocalSiteList">Speichere lokale Sites ...</string>
   <string Field="ShowReports">Meldungen von Benutzern und Ersteller anzeigen</string>
-  <string Field="StartingPlayback">beim Starten des Abspielens</string>  
-  <string Field="Subscriptions">Abonnements</string>  
+  <string Field="StartingPlayback">beim Starten des Abspielens</string>
+  <string Field="Subscriptions">Abonnements</string>
   <string Field="Timeframe">Zeitraum</string>
   <string Field="Timeout">Zeitüberschreitung</string>
   <string Field="Tags">Schlagworte</string>

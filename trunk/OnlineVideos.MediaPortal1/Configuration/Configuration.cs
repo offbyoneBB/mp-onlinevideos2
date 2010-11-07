@@ -46,7 +46,14 @@ namespace OnlineVideos.MediaPortal1
             tbxWMPBuffer.Text = PluginConfiguration.Instance.wmpbuffer.ToString();
             udPlayBuffer.SelectedItem = PluginConfiguration.Instance.playbuffer.ToString();
             chkUseQuickSelect.Checked = PluginConfiguration.Instance.useQuickSelect;
-            chkRememberLastSearch.Checked = PluginConfiguration.Instance.rememberLastSearch;
+            nUPSearchHistoryItemCount.Value = PluginConfiguration.Instance.searchHistoryNum;
+            if (PluginConfiguration.Instance.searchHistoryType == PluginConfiguration.SearchHistoryType.Simple)
+                rbLastSearch.Checked = true;
+            else if (PluginConfiguration.Instance.searchHistoryType == PluginConfiguration.SearchHistoryType.Extended)
+                rbExtendedSearchHistory.Checked = true;
+            else
+                rbOff.Checked = true;
+
             if (PluginConfiguration.Instance.updateOnStart != null) chkDoAutoUpdate.CheckState = PluginConfiguration.Instance.updateOnStart.Value ? CheckState.Checked : CheckState.Unchecked;
             else chkDoAutoUpdate.CheckState = CheckState.Indeterminate;
 
@@ -185,7 +192,13 @@ namespace OnlineVideos.MediaPortal1
                 OnlineVideoSettings.Instance.UseAgeConfirmation = chkUseAgeConfirmation.Checked;
                 PluginConfiguration.Instance.pinAgeConfirmation = tbxPin.Text;
                 PluginConfiguration.Instance.useQuickSelect = chkUseQuickSelect.Checked;
-                PluginConfiguration.Instance.rememberLastSearch = chkRememberLastSearch.Checked;
+                PluginConfiguration.Instance.searchHistoryNum = (int)nUPSearchHistoryItemCount.Value;
+                if (rbLastSearch.Checked)
+                    PluginConfiguration.Instance.searchHistoryType = PluginConfiguration.SearchHistoryType.Simple;
+                else if (rbExtendedSearchHistory.Checked)
+                    PluginConfiguration.Instance.searchHistoryType = PluginConfiguration.SearchHistoryType.Extended;
+                else
+                    PluginConfiguration.Instance.searchHistoryType = PluginConfiguration.SearchHistoryType.Off;
                 int.TryParse(tbxWMPBuffer.Text, out PluginConfiguration.Instance.wmpbuffer);
                 int.TryParse(udPlayBuffer.SelectedItem.ToString(), out PluginConfiguration.Instance.playbuffer);
                 try { OnlineVideoSettings.Instance.CacheTimeout = int.Parse(tbxWebCacheTimeout.Text); }
@@ -195,7 +208,7 @@ namespace OnlineVideos.MediaPortal1
                 if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) PluginConfiguration.Instance.updateOnStart = null;
                 else PluginConfiguration.Instance.updateOnStart = chkDoAutoUpdate.Checked;
                 PluginConfiguration.Instance.httpSourceFilterName = tbxHttpSourceFilter.Text;
-                PluginConfiguration.Instance.Save();
+                PluginConfiguration.Instance.Save(false);
             }
         }
 
@@ -666,6 +679,11 @@ namespace OnlineVideos.MediaPortal1
             {
                 MessageBox.Show("Please reinstall OnlineVideos and select the option 'Site Creation Tool'.", "Tool not installed", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
+        }
+
+        private void searchType_CheckedChanged(object sender, EventArgs e)
+        {
+            nUPSearchHistoryItemCount.Enabled = rbExtendedSearchHistory.Checked;
         }
        
     }
