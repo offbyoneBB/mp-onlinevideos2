@@ -18,8 +18,6 @@ namespace OnlineVideos.MediaPortal1
     {
         public const int WindowId = 4755;
 
-        public enum SiteOrder { AsInFile = 0, Name = 1, Language = 2 }
-
         public enum State { sites = 0, categories = 1, videos = 2, details = 3 }
 
         public enum VideosMode { Category = 0, Search = 1, Related = 2 }
@@ -122,15 +120,12 @@ namespace OnlineVideos.MediaPortal1
         protected GUIListControl GUI_infoList = null;
         #endregion
 
+        #region state variables
+
         #region Facade ViewModes
         protected GUIFacadeControl.ViewMode currentView = GUIFacadeControl.ViewMode.List;
-        protected GUIFacadeControl.ViewMode currentSiteView = GUIFacadeControl.ViewMode.List;
-        protected GUIFacadeControl.ViewMode currentCategoryView = GUIFacadeControl.ViewMode.List;
-        protected GUIFacadeControl.ViewMode currentVideoView = GUIFacadeControl.ViewMode.SmallIcons;
         protected GUIFacadeControl.ViewMode? suggestedView;
         #endregion
-
-        #region state variables
         #region CurrentState
         State currentState = State.sites;
         State CurrentState
@@ -180,8 +175,7 @@ namespace OnlineVideos.MediaPortal1
         int selectedClipIndex = 0;  // used to remember the position the last selected Trailer
 
         VideosMode currentVideosDisplayMode = VideosMode.Category;
-        SiteOrder siteOrder = SiteOrder.AsInFile;
-
+        
         List<VideoInfo> currentVideoList = new List<VideoInfo>();
         List<VideoInfo> currentTrailerList = new List<VideoInfo>();
         List<Player.PlayListItem> currentPlaylist = null;
@@ -243,6 +237,12 @@ namespace OnlineVideos.MediaPortal1
                 preventDialogOnLoad = (lastActiveModuleSetting && (lastActiveModule == GetID));
             }
             return result;
+        }
+
+        public override void DeInit()
+        {
+            PluginConfiguration.Instance.Save(true);
+            base.DeInit();
         }
 
         protected override void OnPageLoad()
@@ -630,7 +630,7 @@ namespace OnlineVideos.MediaPortal1
             else if (control == GUI_btnOrderBy)
             {
                 GUIControl.SelectItemControl(GetID, GUI_btnOrderBy.GetID, GUI_btnOrderBy.SelectedItem);
-                if (CurrentState == State.sites) siteOrder = (SiteOrder)GUI_btnOrderBy.SelectedItem;
+                if (CurrentState == State.sites) PluginConfiguration.Instance.siteOrder = (PluginConfiguration.SiteOrder)GUI_btnOrderBy.SelectedItem;
             }
             else if (control == GUI_btnTimeFrame)
             {
@@ -651,12 +651,69 @@ namespace OnlineVideos.MediaPortal1
             }
             else if (control == GUI_btnSearch)
             {
-                string query = PluginConfiguration.Instance.rememberLastSearch ? lastSearchQuery : string.Empty;
+                string query = PluginConfiguration.Instance.searchHistoryType == PluginConfiguration.SearchHistoryType.Simple ? lastSearchQuery : string.Empty;
+                List<string> searchHistoryForSite = null;
+
+                if (PluginConfiguration.Instance.searchHistoryType == PluginConfiguration.SearchHistoryType.Extended && PluginConfiguration.Instance.searchHistory != null && PluginConfiguration.Instance.searchHistory.Count > 0 && 
+                    PluginConfiguration.Instance.searchHistory.ContainsKey(SelectedSite.Settings.Name))
+                {                    
+                    searchHistoryForSite = PluginConfiguration.Instance.searchHistory[SelectedSite.Settings.Name];
+                    if (searchHistoryForSite != null && searchHistoryForSite.Count > 0)
+                    {
+                        GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                        if (dlgSel != null)
+                        {
+                            dlgSel.Reset();
+                            dlgSel.SetHeading(Translation.SearchHistory);
+                            dlgSel.Add(Translation.NewSearch);
+                            int numAdded = 0;
+                            for (int i = searchHistoryForSite.Count - 1; i>=0; i--)
+                            {
+                                searchHistoryForSite[i] = searchHistoryForSite[i].Trim();
+                                if (!string.IsNullOrEmpty(searchHistoryForSite[i]))
+                                {
+                                    dlgSel.Add(searchHistoryForSite[i]);
+                                    numAdded++;
+                                }
+                                else
+                                {
+                                    searchHistoryForSite.RemoveAt(i);
+                                }
+                                // if the user set the number of searchhistoryitems lower than what was already stored - remove older entries
+                                if (numAdded >= PluginConfiguration.Instance.searchHistoryNum && i > 0)
+                                {
+                                    searchHistoryForSite.RemoveRange(0, i);
+                                    break;
+                                }
+                            }
+                       
+                            dlgSel.DoModal(GetID);
+
+                            if (dlgSel.SelectedId == -1) return;
+
+                            if (dlgSel.SelectedLabel == 0) query = "";
+                            else query = dlgSel.SelectedLabelText;
+                        }
+                    }
+                }
+
                 if (GetUserInputString(ref query, false))
                 {
                     GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
+                    query = query.Trim();
                     if (query != String.Empty)
                     {
+                        if (null == searchHistoryForSite) searchHistoryForSite = new List<string>();
+                        if (searchHistoryForSite.Contains(query))
+                            searchHistoryForSite.Remove(query);
+                        searchHistoryForSite.Add(query);
+                        if (searchHistoryForSite.Count > PluginConfiguration.Instance.searchHistoryNum)
+                            searchHistoryForSite.RemoveAt(0);
+                        if (PluginConfiguration.Instance.searchHistory.ContainsKey(SelectedSite.Settings.Name))
+                            PluginConfiguration.Instance.searchHistory[SelectedSite.Settings.Name] = searchHistoryForSite;
+                        else
+                            PluginConfiguration.Instance.searchHistory.Add(SelectedSite.Settings.Name, searchHistoryForSite);
+
                         lastSearchQuery = query;
                         DisplayVideos_Search(query);
                     }
@@ -685,15 +742,6 @@ namespace OnlineVideos.MediaPortal1
             // only handle if not just going to a full screen video
             if (newWindowId != Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO && newWindowId != GUISiteUpdater.WindowId)
             {
-                // Save view
-                using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
-                {
-                    settings.SetValue(PluginConfiguration.CFG_SECTION, PluginConfiguration.CFG_SITEVIEW_MODE, (int)currentSiteView);
-                    settings.SetValue(PluginConfiguration.CFG_SECTION, PluginConfiguration.CFG_SITEVIEW_ORDER, (int)siteOrder);
-                    settings.SetValue(PluginConfiguration.CFG_SECTION, PluginConfiguration.CFG_VIDEOVIEW_MODE, (int)currentVideoView);
-                    settings.SetValue(PluginConfiguration.CFG_SECTION, PluginConfiguration.CFG_CATEGORYVIEW_MODE, (int)currentCategoryView);
-                }
-
                 // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
                 if (OnlineVideoSettings.Instance.AgeConfirmed)
                 {
@@ -768,7 +816,7 @@ namespace OnlineVideos.MediaPortal1
                     if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, Translation.Done); dlgPrgrs.Close(); }
                 }) { Name = "OnlineVideosThumbnail", IsBackground = true }.Start();
             }
-            LoadSettings();
+            OnlineVideoSettings.Instance.BuildSiteUtilsList();
             firstLoadDone = true;
         }
 
@@ -800,19 +848,7 @@ namespace OnlineVideos.MediaPortal1
         {
             GUIControl.HideControl(GetID, iControlId);
             GUIControl.DisableControl(GetID, iControlId);
-        }
-
-        private void LoadSettings()
-        {
-            using (Settings settings = new MPSettings())
-            {
-                currentSiteView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(PluginConfiguration.CFG_SECTION, PluginConfiguration.CFG_SITEVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
-                siteOrder = (SiteOrder)settings.GetValueAsInt(PluginConfiguration.CFG_SECTION, PluginConfiguration.CFG_SITEVIEW_ORDER, 0);
-                currentVideoView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(PluginConfiguration.CFG_SECTION, PluginConfiguration.CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
-                currentCategoryView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(PluginConfiguration.CFG_SECTION, PluginConfiguration.CFG_CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
-            }
-            OnlineVideoSettings.Instance.BuildSiteUtilsList();
-        }
+        }        
 
         private void DisplaySites()
         {
@@ -826,17 +862,17 @@ namespace OnlineVideos.MediaPortal1
             GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Default);
             GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Name);
             GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Language);
-            GUI_btnOrderBy.SelectedItem = (int)siteOrder;
+            GUI_btnOrderBy.SelectedItem = (int)PluginConfiguration.Instance.siteOrder;
 
             // get names in right order
             string[] names = new string[OnlineVideoSettings.Instance.SiteUtilsList.Count];
-            switch (siteOrder)
+            switch (PluginConfiguration.Instance.siteOrder)
             {
-                case SiteOrder.Name:
+                case PluginConfiguration.SiteOrder.Name:
                     OnlineVideoSettings.Instance.SiteUtilsList.Keys.CopyTo(names, 0);
                     Array.Sort(names);
                     break;
-                case SiteOrder.Language:
+                case PluginConfiguration.SiteOrder.Language:
                     Dictionary<string, List<string>> sitenames = new Dictionary<string, List<string>>();
                     foreach (Sites.SiteUtilBase aSite in OnlineVideoSettings.Instance.SiteUtilsList.Values)
                     {
@@ -1917,7 +1953,7 @@ namespace OnlineVideos.MediaPortal1
                     else
                         HideAndDisable(GUI_btnEnterPin.GetID);
                     SetGuiProperties_SelectedVideo(null);
-                    currentView = currentSiteView;
+                    currentView = PluginConfiguration.Instance.currentSiteView;
                     SetFacadeViewMode();
                     break;
                 case State.categories:
@@ -1931,7 +1967,7 @@ namespace OnlineVideos.MediaPortal1
                     if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();                    
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetGuiProperties_SelectedVideo(null);
-                    currentView = suggestedView != null ? suggestedView.Value : currentCategoryView;
+                    currentView = suggestedView != null ? suggestedView.Value : PluginConfiguration.Instance.currentCategoryView;
                     SetFacadeViewMode();
                     break;
                 case State.videos:
@@ -1954,7 +1990,7 @@ namespace OnlineVideos.MediaPortal1
                     if (SelectedSite.HasFilterCategories) ShowCategoryButton();                    
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetGuiProperties_SelectedVideo(selectedVideo);
-                    currentView = suggestedView != null ? suggestedView.Value : currentVideoView;
+                    currentView = suggestedView != null ? suggestedView.Value : PluginConfiguration.Instance.currentVideoView;
                     SetFacadeViewMode();
                     break;
                 case State.details:
@@ -2097,9 +2133,9 @@ namespace OnlineVideos.MediaPortal1
             }
             switch (CurrentState)
             {
-                case State.sites: currentSiteView = currentView; break;
-                case State.categories: currentCategoryView = currentView; break;
-                case State.videos: currentVideoView = currentView; break;
+                case State.sites: PluginConfiguration.Instance.currentSiteView = currentView; break;
+                case State.categories: PluginConfiguration.Instance.currentCategoryView = currentView; break;
+                case State.videos: PluginConfiguration.Instance.currentVideoView = currentView; break;
             }
             if (CurrentState != State.details) SetFacadeViewMode();
         }

@@ -2,9 +2,12 @@
 using MediaPortal.Configuration;
 using System.IO;
 using System.Globalization;
+using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using System.Runtime.Serialization;
+using System.Xml;
 
 namespace OnlineVideos.MediaPortal1
 {
@@ -12,33 +15,43 @@ namespace OnlineVideos.MediaPortal1
     {
         public const string PLUGIN_NAME = "OnlineVideos";
 
+        public enum SearchHistoryType { Off = 0, Simple = 1, Extended = 2 }
+        public enum SiteOrder { AsInFile = 0, Name = 1, Language = 2 }
+
         public string BasicHomeScreenName = "Online Videos";
         public int wmpbuffer = 5000;  // milliseconds
         public int playbuffer = 2;   // percent        
         public int ThumbsAge = 100; // days
         public bool useQuickSelect = false;
         public string[] FilterArray;
-        public bool rememberLastSearch = true;
         public string pinAgeConfirmation = "";
         public bool? updateOnStart = null;
         public string email = "";
         public string password = "";
         public string httpSourceFilterName = "File Source (URL)";
+        public SearchHistoryType searchHistoryType = SearchHistoryType.Simple;
+        public int searchHistoryNum = 9;        
+
+        // runtime (inside MediaPortal) changeable values
+        public Dictionary<string, List<string>> searchHistory;
+        public SiteOrder siteOrder = SiteOrder.AsInFile;
+        public GUIFacadeControl.ViewMode currentSiteView = GUIFacadeControl.ViewMode.List;
+        public GUIFacadeControl.ViewMode currentCategoryView = GUIFacadeControl.ViewMode.List;
+        public GUIFacadeControl.ViewMode currentVideoView = GUIFacadeControl.ViewMode.SmallIcons;
 
         #region MediaPortal.xml attribute names
         public const string CFG_SECTION = "onlinevideos";
-        public const string CFG_SITEVIEW_MODE = "siteview";
-        public const string CFG_SITEVIEW_ORDER = "siteview_order";
-        public const string CFG_CATEGORYVIEW_MODE = "categoryview";
-        public const string CFG_VIDEOVIEW_MODE = "videoview";
         public const string CFG_BASICHOMESCREEN_NAME = "basicHomeScreenName";
+        const string CFG_SITEVIEW_MODE = "siteview";
+        const string CFG_SITEVIEW_ORDER = "siteview_order";
+        const string CFG_CATEGORYVIEW_MODE = "categoryview";
+        const string CFG_VIDEOVIEW_MODE = "videoview";
         const string CFG_UPDATEONSTART = "updateOnStart";
         const string CFG_THUMBNAIL_DIR = "thumbDir";
         const string CFG_THUMBNAIL_AGE = "thumbAge";
         const string CFG_DOWNLOAD_DIR = "downloadDir";
         const string CFG_FILTER = "filter";
         const string CFG_USE_QUICKSELECT = "useQuickSelect";
-        const string CFG_REMEMBER_LAST_SEARCH = "rememberLastSearch";
         const string CFG_USE_AGECONFIRMATION = "useAgeConfirmation";
         const string CFG_PIN_AGECONFIRMATION = "pinAgeConfirmation";
         const string CFG_CACHE_TIMEOUT = "cacheTimeout";
@@ -48,6 +61,10 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_EMAIL = "email";
         const string CFG_PASSWORD = "password";
         const string CFG_HTTP_SOURCE_FILTER = "httpsourcefilter";
+        const string CFG_SEARCHHISTORY_ENABLED = "searchHistoryEnabled";
+        const string CFG_SEARCHHISTORY_NUM = "searchHistoryNum";
+        const string CFG_SEARCHHISTORY = "searchHistory";
+        const string CFG_SEARCHHISTORYTYPE = "searchHistoryType";
         #endregion
 
         #region Singleton
@@ -93,7 +110,10 @@ namespace OnlineVideos.MediaPortal1
                 using (Settings settings = new MPSettings())
                 {
                     BasicHomeScreenName = settings.GetValueAsString(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
-
+                    currentSiteView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_SITEVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
+                    siteOrder = (SiteOrder)settings.GetValueAsInt(CFG_SECTION, CFG_SITEVIEW_ORDER, (int)SiteOrder.AsInFile);
+                    currentVideoView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
+                    currentCategoryView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
                     ovsconf.ThumbsDir = settings.GetValueAsString(CFG_SECTION, CFG_THUMBNAIL_DIR, ovsconf.ThumbsDir).Replace("/", @"\");
                     if (!ovsconf.ThumbsDir.EndsWith(@"\")) ovsconf.ThumbsDir = ovsconf.ThumbsDir + @"\"; // fix thumbnail dir to include the trailing slash
                     try { if (!Directory.Exists(ovsconf.ThumbsDir)) Directory.CreateDirectory(ovsconf.ThumbsDir); }
@@ -112,15 +132,35 @@ namespace OnlineVideos.MediaPortal1
                     // set an almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
                     pinAgeConfirmation = settings.GetValueAsString(CFG_SECTION, CFG_PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
                     useQuickSelect = settings.GetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
-                    rememberLastSearch = settings.GetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);                    
                     wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                     playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
                     email = settings.GetValueAsString(CFG_SECTION, CFG_EMAIL, "");
                     password = settings.GetValueAsString(CFG_SECTION, CFG_PASSWORD, "");
                     string lsFilter = settings.GetValueAsString(CFG_SECTION, CFG_FILTER, "").Trim();
                     FilterArray = lsFilter != "" ? lsFilter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries) : null;
+                    searchHistoryNum = settings.GetValueAsInt(CFG_SECTION, CFG_SEARCHHISTORY_NUM, searchHistoryNum);
+                    searchHistoryType = (SearchHistoryType)settings.GetValueAsInt(CFG_SECTION, CFG_SEARCHHISTORYTYPE, (int)searchHistoryType);
 
-                    // set updateOnStart only when defined, so we have 3 modi: undefined = ask, true = don't ask and update, false = don't ask and don't update
+                    string searchHistoryXML = settings.GetValueAsString(CFG_SECTION, CFG_SEARCHHISTORY, "").Trim();
+                    if ("" != searchHistoryXML)
+                    {
+                        try
+                        {
+                            byte[] searchHistoryBytes = System.Text.Encoding.GetEncoding(0).GetBytes(searchHistoryXML);
+                            MemoryStream xmlMem = new MemoryStream(searchHistoryBytes);
+                            xmlMem.Position = 0;
+                            System.Runtime.Serialization.DataContractSerializer dcs = new System.Runtime.Serialization.DataContractSerializer(typeof(Dictionary<string, List<string>>));
+                            searchHistory = (Dictionary<string, List<string>>)dcs.ReadObject(xmlMem);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Instance.Warn("Error reading search history from configuration: {0}:{1}! Clearing...", e.GetType(), e.Message);
+                            searchHistory = null;
+                        }
+                    }
+                    if (null == searchHistory) searchHistory = new Dictionary<string, List<string>>();
+
+                    // set updateOnStart only when defined, so we have 3 modes: undefined = ask, true = don't ask and update, false = don't ask and don't update
                     string doUpdateString = settings.GetValue(CFG_SECTION, CFG_UPDATEONSTART);
                     if (!string.IsNullOrEmpty(doUpdateString)) updateOnStart = settings.GetValueAsBool(CFG_SECTION, CFG_UPDATEONSTART, true);
 
@@ -152,35 +192,60 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        public void Save()
+        public void Save(bool saveOnlyRuntimeModifyable)
         {
             OnlineVideos.OnlineVideoSettings ovsconf = OnlineVideos.OnlineVideoSettings.Instance;
             try
             {
                 using (Settings settings = new MPSettings())
                 {
-                    settings.SetValue(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
-                    settings.SetValue(CFG_SECTION, CFG_THUMBNAIL_DIR, ovsconf.ThumbsDir);
-                    settings.SetValue(CFG_SECTION, CFG_THUMBNAIL_AGE, ThumbsAge);
-                    settings.SetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, ovsconf.UseAgeConfirmation);
-                    settings.SetValue(CFG_SECTION, CFG_PIN_AGECONFIRMATION, pinAgeConfirmation);
-                    settings.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
-                    settings.SetValueAsBool(CFG_SECTION, CFG_REMEMBER_LAST_SEARCH, rememberLastSearch);
-                    settings.SetValue(CFG_SECTION, CFG_CACHE_TIMEOUT, ovsconf.CacheTimeout);
-                    settings.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, ovsconf.UtilTimeout);
-                    settings.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
-                    settings.SetValue(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
-                    if (FilterArray != null && FilterArray.Length > 0) settings.SetValue(CFG_SECTION, CFG_FILTER, string.Join(",", FilterArray));
-                    if (!string.IsNullOrEmpty(ovsconf.DownloadDir)) settings.SetValue(CFG_SECTION, CFG_DOWNLOAD_DIR, ovsconf.DownloadDir);
-                    if (!string.IsNullOrEmpty(email)) settings.SetValue(CFG_SECTION, CFG_EMAIL, email);
-                    if (!string.IsNullOrEmpty(password)) settings.SetValue(CFG_SECTION, CFG_PASSWORD, password);
-                    if (updateOnStart == null) settings.RemoveEntry(CFG_SECTION, CFG_UPDATEONSTART);
-                    else settings.SetValueAsBool(CFG_SECTION, CFG_UPDATEONSTART, updateOnStart.Value);
-                    if (httpSourceFilterName == "File Source (URL)") settings.RemoveEntry(CFG_SECTION, CFG_HTTP_SOURCE_FILTER);
-                    else settings.SetValue(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
-                }
+                    settings.SetValue(CFG_SECTION, CFG_SITEVIEW_MODE, (int)currentSiteView);
+                    settings.SetValue(CFG_SECTION, CFG_SITEVIEW_ORDER, (int)siteOrder);
+                    settings.SetValue(CFG_SECTION, CFG_VIDEOVIEW_MODE, (int)currentVideoView);
+                    settings.SetValue(CFG_SECTION, CFG_CATEGORYVIEW_MODE, (int)currentCategoryView);
+                    try
+                    {
+                        MemoryStream xmlMem = new MemoryStream();
+                        System.Runtime.Serialization.DataContractSerializer dcs = new System.Runtime.Serialization.DataContractSerializer(typeof(Dictionary<string, List<string>>));
+                        dcs.WriteObject(xmlMem, searchHistory);
+                        xmlMem.Position = 0;
+                        XmlDocument xmlDoc = new XmlDocument();
+                        xmlDoc.Load(xmlMem);
+                        settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORY, xmlDoc.InnerXml);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Instance.Warn("Error saving search history to configuration: {0}:{1}! Will be reset on next load...", e.GetType(), e.Message);
+                        searchHistory = null;
+                        settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORY, "");
+                    }
 
-                ovsconf.SaveSites();
+                    if (!saveOnlyRuntimeModifyable)
+                    {
+                        settings.SetValue(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
+                        settings.SetValue(CFG_SECTION, CFG_THUMBNAIL_DIR, ovsconf.ThumbsDir);
+                        settings.SetValue(CFG_SECTION, CFG_THUMBNAIL_AGE, ThumbsAge);
+                        settings.SetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, ovsconf.UseAgeConfirmation);
+                        settings.SetValue(CFG_SECTION, CFG_PIN_AGECONFIRMATION, pinAgeConfirmation);
+                        settings.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
+                        settings.SetValue(CFG_SECTION, CFG_CACHE_TIMEOUT, ovsconf.CacheTimeout);
+                        settings.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, ovsconf.UtilTimeout);
+                        settings.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
+                        settings.SetValue(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
+                        if (FilterArray != null && FilterArray.Length > 0) settings.SetValue(CFG_SECTION, CFG_FILTER, string.Join(",", FilterArray));
+                        if (!string.IsNullOrEmpty(ovsconf.DownloadDir)) settings.SetValue(CFG_SECTION, CFG_DOWNLOAD_DIR, ovsconf.DownloadDir);
+                        if (!string.IsNullOrEmpty(email)) settings.SetValue(CFG_SECTION, CFG_EMAIL, email);
+                        if (!string.IsNullOrEmpty(password)) settings.SetValue(CFG_SECTION, CFG_PASSWORD, password);
+                        if (updateOnStart == null) settings.RemoveEntry(CFG_SECTION, CFG_UPDATEONSTART);
+                        else settings.SetValueAsBool(CFG_SECTION, CFG_UPDATEONSTART, updateOnStart.Value);
+                        if (httpSourceFilterName == "File Source (URL)") settings.RemoveEntry(CFG_SECTION, CFG_HTTP_SOURCE_FILTER);
+                        else settings.SetValue(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
+                        settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORY_NUM, searchHistoryNum);
+                        settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORYTYPE, (int)searchHistoryType);
+
+                        ovsconf.SaveSites();
+                    }
+                }
             }
             catch (Exception ex)
             {

@@ -99,6 +99,7 @@ namespace OnlineVideos
         public static string NoVideoFound = "No video found";
         public static string NoReportsForSite = "No reports for this site available.";
         public static string NewDllDownloaded = "New dll downloaded!";
+        public static string NewSearch = "New search";
 
         // O
 
@@ -133,6 +134,7 @@ namespace OnlineVideos
         public static string ShowReports = "Show creator's and user's reports";
         public static string StartingPlayback = "starting playback";
         public static string Subscriptions = "Subscriptions";
+        public static string SearchHistory = "Search history";
 
         // T
         public static string Timeframe = "Timeframe";
