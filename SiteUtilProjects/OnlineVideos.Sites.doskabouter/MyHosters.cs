@@ -382,11 +382,17 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
-            string webData = SiteUtilBase.GetWebData(url);
+            CookieContainer cc = new CookieContainer();
+            string webData = SiteUtilBase.GetWebData(url, cc, @"http://www.wisevid.com/");
+
+            CookieCollection ccol = cc.GetCookies(new Uri("http://www.wisevid.com/"));
+            CookieContainer newcc = new CookieContainer();
+            foreach (Cookie c in ccol) newcc.Add(c);
             // (with age confirm)
             url = @"http://www.wisevid.com/play?v=" + GetSubString(webData,
-                @"play?v=", @"""");
-            string tmp2 = SiteUtilBase.GetWebDataFromPost(url, "a=1");
+                @"play?v=", @"'");
+            //string tmp2 = SiteUtilBase.GetWebDataFromPost(url, "a=1");
+            string tmp2 = SiteUtilBase.GetWebData(url, newcc);
             url = GetSubString(tmp2, "getF('", "'");
             byte[] tmp = Convert.FromBase64String(url);
             return Encoding.ASCII.GetString(tmp);

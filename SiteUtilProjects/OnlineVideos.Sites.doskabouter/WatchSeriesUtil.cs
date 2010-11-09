@@ -359,7 +359,9 @@ namespace OnlineVideos.Sites
             string[] tmp = aPlaybackName.Split('%');
             percentage = int.Parse(tmp[0]);
             server = tmp[1].TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }).Trim();
-            server = server.Substring(0, server.IndexOf("."));
+            int i = server.IndexOf(".");
+            if (i >= 0)
+                server = server.Substring(0, i);
             url = aUrl;
         }
 
