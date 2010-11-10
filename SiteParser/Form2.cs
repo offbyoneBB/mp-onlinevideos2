@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Text;
 using System.Windows.Forms;
+using OnlineVideos.Sites;
 
 namespace SiteParser
 {
@@ -20,7 +21,13 @@ namespace SiteParser
         private string[] fields;
         private string testData;
 
-        public string Execute(string regexString, string webData, string[] names)
+        public string Execute(string regexString, string url, string[] names)
+        {
+            string webData = SiteUtilBase.GetWebData(url);
+            return Execute(regexString, webData, url, names);
+        }
+
+        public string Execute(string regexString, string webData, string url, string[] names)
         {
             result = regexString;
             RegexTextbox.Text = result;
@@ -34,6 +41,10 @@ namespace SiteParser
             insertComboBox.SelectedIndex = 0;
             fields = names;
             testData = webData;
+            webBrowser1.Visible = (url != null);
+            if (url != null)
+                webBrowser1.Url = new Uri(url);
+            findButton.Focus();
             ShowDialog();
             return result;
         }
@@ -298,6 +309,16 @@ namespace SiteParser
         {
             richTextBox1.SelectionStart = 0;
             findButton.Text = "Find";
+        }
+
+        private void findTextBox_Enter(object sender, EventArgs e)
+        {
+            AcceptButton = findButton;
+        }
+
+        private void findTextBox_Leave(object sender, EventArgs e)
+        {
+            AcceptButton = null;
         }
     }
 

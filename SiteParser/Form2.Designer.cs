@@ -43,13 +43,20 @@
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.TextViewTab = new System.Windows.Forms.TabPage();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.WebViewTab = new System.Windows.Forms.TabPage();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.TextViewTab.SuspendLayout();
+            this.WebViewTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // okButton
@@ -94,6 +101,8 @@
             this.findTextBox.Size = new System.Drawing.Size(175, 20);
             this.findTextBox.TabIndex = 31;
             this.findTextBox.TextChanged += new System.EventHandler(this.findTextBox_TextChanged);
+            this.findTextBox.Enter += new System.EventHandler(this.findTextBox_Enter);
+            this.findTextBox.Leave += new System.EventHandler(this.findTextBox_Leave);
             // 
             // findButton
             // 
@@ -188,7 +197,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.richTextBox1);
+            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer1.Size = new System.Drawing.Size(892, 424);
             this.splitContainer1.SplitterDistance = 329;
             this.splitContainer1.TabIndex = 40;
@@ -214,6 +223,32 @@
             this.splitContainer2.SplitterDistance = 115;
             this.splitContainer2.TabIndex = 0;
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.TextViewTab);
+            this.tabControl1.Controls.Add(this.WebViewTab);
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.Padding = new System.Drawing.Point(0, 0);
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(559, 421);
+            this.tabControl1.TabIndex = 35;
+            // 
+            // TextViewTab
+            // 
+            this.TextViewTab.Controls.Add(this.richTextBox1);
+            this.TextViewTab.Location = new System.Drawing.Point(4, 22);
+            this.TextViewTab.Margin = new System.Windows.Forms.Padding(0);
+            this.TextViewTab.Name = "TextViewTab";
+            this.TextViewTab.Size = new System.Drawing.Size(551, 395);
+            this.TextViewTab.TabIndex = 0;
+            this.TextViewTab.Text = "TextView";
+            this.TextViewTab.UseVisualStyleBackColor = true;
+            // 
             // richTextBox1
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -221,15 +256,40 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox1.DetectUrls = false;
             this.richTextBox1.HideSelection = false;
-            this.richTextBox1.Location = new System.Drawing.Point(3, 3);
+            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox1.Margin = new System.Windows.Forms.Padding(0);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(553, 418);
-            this.richTextBox1.TabIndex = 34;
+            this.richTextBox1.Size = new System.Drawing.Size(551, 395);
+            this.richTextBox1.TabIndex = 35;
             this.richTextBox1.Text = "";
+            // 
+            // WebViewTab
+            // 
+            this.WebViewTab.Controls.Add(this.webBrowser1);
+            this.WebViewTab.Location = new System.Drawing.Point(4, 22);
+            this.WebViewTab.Margin = new System.Windows.Forms.Padding(0);
+            this.WebViewTab.Name = "WebViewTab";
+            this.WebViewTab.Size = new System.Drawing.Size(551, 395);
+            this.WebViewTab.TabIndex = 1;
+            this.WebViewTab.Text = "WebView";
+            this.WebViewTab.UseVisualStyleBackColor = true;
+            // 
+            // webBrowser1
+            // 
+            this.webBrowser1.AllowNavigation = false;
+            this.webBrowser1.AllowWebBrowserDrop = false;
+            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser1.Location = new System.Drawing.Point(0, 0);
+            this.webBrowser1.Margin = new System.Windows.Forms.Padding(0);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.Size = new System.Drawing.Size(551, 395);
+            this.webBrowser1.TabIndex = 0;
             // 
             // Form2
             // 
+            this.AcceptButton = this.findButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(916, 504);
@@ -249,6 +309,9 @@
             this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.TextViewTab.ResumeLayout(false);
+            this.WebViewTab.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -269,7 +332,11 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage TextViewTab;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.TabPage WebViewTab;
+        private System.Windows.Forms.WebBrowser webBrowser1;
     }
 }
