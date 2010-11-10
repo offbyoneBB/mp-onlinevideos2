@@ -169,8 +169,7 @@ namespace SiteParser
         private void CreateCategoryRegexButton_Click(object sender, EventArgs e)
         {
             Form2 f2 = new Form2();
-            string webData = SiteUtilBase.GetWebData(BaseUrlTextbox.Text);
-            CategoryRegexTextbox.Text = f2.Execute(CategoryRegexTextbox.Text, webData,
+            CategoryRegexTextbox.Text = f2.Execute(CategoryRegexTextbox.Text, BaseUrlTextbox.Text,
                 new string[] { "url", "title", "thumb", "description" });
         }
 
@@ -201,8 +200,7 @@ namespace SiteParser
             if (parentCat != null)
             {
                 Form2 f2 = new Form2();
-                string webData = SiteUtilBase.GetWebData(((RssLink)parentCat).Url);
-                SubcategorieRegexTextBox.Text = f2.Execute(SubcategorieRegexTextBox.Text, webData,
+                SubcategorieRegexTextBox.Text = f2.Execute(SubcategorieRegexTextBox.Text, ((RssLink)parentCat).Url,
                     new string[] { "url", "title", "thumb", "description" });
             }
             else
@@ -238,8 +236,7 @@ namespace SiteParser
             if (parentCat != null)
             {
                 Form2 f2 = new Form2();
-                string webData = SiteUtilBase.GetWebData(((RssLink)parentCat).Url);
-                videoListRegexTextBox.Text = f2.Execute(videoListRegexTextBox.Text, webData,
+                videoListRegexTextBox.Text = f2.Execute(videoListRegexTextBox.Text, ((RssLink)parentCat).Url,
                     new string[] { "Title", "VideoUrl", "ImageUrl", "Description", "Duration", "Airdate" });
             }
             else
@@ -281,8 +278,7 @@ namespace SiteParser
             if (parentCat != null)
             {
                 Form2 f2 = new Form2();
-                string webData = SiteUtilBase.GetWebData(((RssLink)parentCat).Url);
-                nextPageRegExTextBox.Text = f2.Execute(nextPageRegExTextBox.Text, webData,
+                nextPageRegExTextBox.Text = f2.Execute(nextPageRegExTextBox.Text, ((RssLink)parentCat).Url,
                     new string[] { "url" });
             }
             else
@@ -295,8 +291,7 @@ namespace SiteParser
             if (parentCat != null)
             {
                 Form2 f2 = new Form2();
-                string webData = SiteUtilBase.GetWebData(((RssLink)parentCat).Url);
-                prevPageRegExTextBox.Text = f2.Execute(prevPageRegExTextBox.Text, webData,
+                prevPageRegExTextBox.Text = f2.Execute(prevPageRegExTextBox.Text, ((RssLink)parentCat).Url,
                     new string[] { "url" });
             }
             else
@@ -311,7 +306,7 @@ namespace SiteParser
             if (video != null)
             {
                 Form2 f2 = new Form2();
-                videoUrlRegExTextBox.Text = f2.Execute(videoUrlRegExTextBox.Text, video.VideoUrl,
+                videoUrlRegExTextBox.Text = f2.Execute(videoUrlRegExTextBox.Text, video.VideoUrl, null,
                     new string[] { "m0", "m1", "m2" });
             }
             else
@@ -336,9 +331,8 @@ namespace SiteParser
                 MessageBox.Show("VideoUrlResult is empty");
             else
             {
-                string webData = SiteUtilBase.GetWebData(videoUrlResultTextBox.Text);
                 Form2 f2 = new Form2();
-                playlistUrlRegexTextBox.Text = f2.Execute(playlistUrlRegexTextBox.Text, webData,
+                playlistUrlRegexTextBox.Text = f2.Execute(playlistUrlRegexTextBox.Text, videoUrlResultTextBox.Text,
                     new string[] { "url" });
             }
         }
@@ -366,7 +360,7 @@ namespace SiteParser
                     webData = SiteUtilBase.GetWebDataFromPost(playListUrlResultTextBox.Text, generic.FileUrlPostString);
 
                 Form2 f2 = new Form2();
-                fileUrlRegexTextBox.Text = f2.Execute(fileUrlRegexTextBox.Text, webData,
+                fileUrlRegexTextBox.Text = f2.Execute(fileUrlRegexTextBox.Text, webData, playListUrlResultTextBox.Text,
                     new string[] { "m0", "m1", "m2" });
             }
         }
@@ -384,6 +378,8 @@ namespace SiteParser
                 if (playList != null)
                     foreach (string item in playList.Values)
                         ResultUrlComboBox.Items.Add(item);
+                if (ResultUrlComboBox.Items.Count > 0)
+                    ResultUrlComboBox.SelectedIndex = 0;
             }
         }
 

@@ -70,6 +70,7 @@
   <string Field="NoVideoFound">Geen video gevonden</string>
   <string Field="NoReportsForSite">Geen rapportering van deze site beschikbaar</string>
   <string Field="NewDllDownloaded">Nieuwe dll gedownload!</string>
+  <string Field="NewSearch">Nieuwe zoekopdracht</string>
   <string Field="PlayAll">Alles afspelen</string>
   <string Field="PlotOutline">Samenvatting</string>
   <string Field="PreviousPage">Vorige pagina</string>
@@ -84,6 +85,7 @@
   <string Field="RestartMediaPortal">Herstart Mediaportal!</string>
   <string Field="RetrievingRemoteDlls">Ophalen externe dll's...</string>
   <string Field="RetrievingRemoteSites">Ophalen externe sites...</string>
+  <string Field="SearchHistory">Zoekgeschiedenis</string>
   <string Field="SearchResults">Zoekresultaten</string>
   <string Field="SelectSource">Kies bron</string>
   <string Field="Sites">Sites</string>
