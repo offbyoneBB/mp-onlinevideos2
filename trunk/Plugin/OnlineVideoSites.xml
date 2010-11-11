@@ -1093,12 +1093,12 @@
     </Site>
     <Site name="RTL XL" util="RTLXL" agecheck="false" enabled="true" lang="nl" player="WMP">
       <Description>RTL XL</Description>
-      <Configuration>
-      </Configuration>
+      <Configuration />
       <Categories>
         <Category xsi:type="RssLink" name="Home">http://www.rtl.nl/system/xl/config/home.xml</Category>
         <Category xsi:type="RssLink" name="A - Z">http://www.rtl.nl/system/xl/feed/a-z.xml</Category>
         <Category xsi:type="RssLink" name="Gemist">http://www.rtl.nl/service/gemist/dataset_xml.xml</Category>
+        <Category xsi:type="RssLink" name="Gemist 2">http://www.rtl.nl/service/gemist/device/ipad/feed/index.xml</Category>
         <Category xsi:type="RssLink" name="Films">http://www.rtl.nl/system/xl/feed/films.xml</Category>
       </Categories>
     </Site>
