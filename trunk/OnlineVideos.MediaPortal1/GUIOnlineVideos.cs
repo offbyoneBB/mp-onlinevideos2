@@ -2305,19 +2305,25 @@ namespace OnlineVideos.MediaPortal1
         /// <param name="videoInfo">if this param is null, the <see cref="selectedVideo"/> will be used</param>
         private void SetGuiProperties_ExtendedVideoInfo(VideoInfo videoInfo)
         {
-            ResetExtendedGuiProperties();
-
-            string prefix = "DetailsItem";
+            string prefix = "#OnlineVideos.";
             if (videoInfo == null)
             {
-                videoInfo = selectedVideo; prefix = "Details";
+                videoInfo = selectedVideo;
+                prefix = prefix + "Details.";
             }
+            else
+            {
+                prefix = prefix + "DetailsItem.";
+            }
+
+            ResetExtendedGuiProperties(prefix);
+
             if (videoInfo != null && videoInfo.Other is IVideoDetails)
             {
                 Dictionary<string, string> custom = ((IVideoDetails)videoInfo.Other).GetExtendedProperties();
                 foreach (string property in custom.Keys)
                 {
-                    string label = "#OnlineVideos." + prefix + "." + property;
+                    string label = prefix + property;
                     string value = custom[property];
                     SetExtendedGuiProperty(label, value);
                 }
@@ -2338,14 +2344,15 @@ namespace OnlineVideos.MediaPortal1
         /// <summary>
         /// Clears all known set extended property values
         /// </summary>
-        public void ResetExtendedGuiProperties()
+        /// <param name="prefix">prefix</param>
+        public void ResetExtendedGuiProperties(string prefix)
         {
             if (extendedProperties.Count == 0)
             {
                 return;
             }
             
-            string[] keys = extendedProperties.ToArray();
+            string[] keys = extendedProperties.Where(s => s.StartsWith(prefix)).ToArray();
             for (int i = 0; i < keys.Length; i++)
             {
                 GUIPropertyManager.SetProperty(keys[i], string.Empty);
