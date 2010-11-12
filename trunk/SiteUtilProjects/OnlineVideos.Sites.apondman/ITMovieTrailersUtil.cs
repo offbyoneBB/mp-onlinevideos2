@@ -4,85 +4,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using Pondman.Metadata.ITunes.MovieTrailers;
+using OnlineVideos.Sites.apondman.ITMovieTrailers;
 
 namespace OnlineVideos.Sites.apondman {
-
-    public static class ITStringExtensions {
-
-        /// <summary>
-        /// Creates a comma seperated string using the elements of the collection
-        /// </summary>
-        /// <param name="self"></param>
-        /// <returns></returns>
-        public static string ToCommaSeperatedString(this List<string> self) {
-            return self.Count > 0 ? self.ToString(", ") : " ";
-        }
-
-        /// <summary>
-        /// Joins a string[] together with the the given seperator
-        /// </summary>
-        /// <param name="seperator"></param>
-        /// <returns>string output</returns>
-        public static string ToString(this List<string> self, string seperator) {
-            return string.Join(seperator, self.ToArray());
-        }
-
-        public static string ToTitleString(this VideoQuality self) {
-            switch (self) {
-                case VideoQuality.FULLHD:
-                    return "HD 1080p";
-                case VideoQuality.HD720:
-                    return "HD 720p";
-                case VideoQuality.HD480:
-                    return "HD 480p";
-                default:
-                    return self.ToString();
-            }
-        }
-
-    }
-
-    /// <summary>
-    /// Wrapper class to be able to publish the movie details to online videos
-    /// </summary>
-    public class MovieDetails : IVideoDetails {
-
-        public MovieDetails(ITMovie movie) {
-            _movie = movie;
-        }
-
-        public ITMovie Movie {
-            get {
-                return _movie;
-            }
-        } ITMovie _movie;
-
-        #region IVideoDetails Members
-
-        public Dictionary<string, string> GetExtendedProperties() {
-            Dictionary<string, string> properties = new Dictionary<string, string>();
-            
-            properties.Add("Title", Movie.Title);
-            properties.Add("Synopsis", Movie.Synopsis);
-            properties.Add("Directors", Movie.Directors.ToCommaSeperatedString());
-            properties.Add("Actors", Movie.Actors.ToCommaSeperatedString());
-            properties.Add("Genres", Movie.Genres.ToCommaSeperatedString());
-            properties.Add("Studio", Movie.Studio);
-            properties.Add("Rating", Movie.Rating);
-            string releaseDate = Movie.ReleaseDate != DateTime.MinValue ? Movie.ReleaseDate.ToShortDateString() : "Coming Soon";
-            properties.Add("ReleaseDate", releaseDate);
-            properties.Add("Year", Movie.Year.ToString());
-
-            return properties;
-        }
-
-        #endregion
-    }
 
     /// <summary>
     /// iTunes Movie Trailers
     /// </summary>
-    public class ITMovieTrailersUtil : SiteUtilBase, IChoice, ISimpleRequestHandler {
+    public partial class ITMovieTrailersUtil : SiteUtilBase, IChoice, ISimpleRequestHandler {
 
         #region iTunes Movie Trailers
 
@@ -170,23 +99,6 @@ namespace OnlineVideos.Sites.apondman {
         public void UpdateRequest(HttpWebRequest request) {
             request.UserAgent = QuickTimeUserAgent;
         }
-
-        #endregion
-
-        #region Configuration
-
-        [Category("OnlineVideosConfiguration"), Description("Defines the QuickTime user-agent string")]
-        string QuickTimeUserAgent = "QuickTime/7.6.2";
-
-        #endregion
-
-        #region User Configuration
-
-        [Category("OnlineVideosUserConfiguration"), Description("Always playback the highest available quality.")]
-        bool AlwaysPlaybackHighestQuality = false;
-
-        [Category("OnlineVideosUserConfiguration"), Description("Defines the preferred quality for trailer playback.")]
-        VideoQuality PreferredVideoQuality = VideoQuality.HD480;
 
         #endregion
 
@@ -287,11 +199,13 @@ namespace OnlineVideos.Sites.apondman {
             // get initial video list
             foreach (ITVideo clip in movie.Videos) {
                 VideoInfo vid = new VideoInfo();
-                vid.Other = clip;
+                //vid.Other = clip;
+                vid.Other = VideoDetails.Create(clip);
                 vid.Title = movie.Title + " - " + clip.Title;
                 vid.Title2 = clip.Title;
                 vid.Description = movie.Synopsis;
-                vid.Length = clip.Duration.ToString();
+                //vid.Length = clip.Duration.ToString();
+                vid.Length = clip.Published != DateTime.MinValue ? clip.Published.ToShortDateString() : "N/A";
                 vid.ImageUrl = movie.Poster != null ? movie.Poster.Uri.AbsoluteUri : string.Empty;
                 vid.ThumbnailImage = video.ThumbnailImage;
                 vid.VideoUrl = clip.Uri.AbsoluteUri;
