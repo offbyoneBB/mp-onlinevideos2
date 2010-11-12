@@ -181,6 +181,8 @@ namespace OnlineVideos.MediaPortal1
         List<Player.PlayListItem> currentPlaylist = null;
         int currentPlaylistIndex = 0;
 
+        HashSet<string> extendedProperties = new HashSet<string>();
+
         SmsT9Filter currentFilter = new SmsT9Filter();        
         #endregion
 
@@ -1112,12 +1114,19 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.IconImage = "defaultVideo.png";
                     loListItem.ItemId = liIdx;
                     loListItem.Item = loVideoInfo;
+                    loListItem.Label2 = loVideoInfo.Length;
                     loListItem.OnItemSelected += OnDetailsVideoItemSelected;
                     GUI_infoList.Add(loListItem);
                     currentTrailerList.Add(loVideoInfo);
                 }
             }
             UpdateViewState();
+
+            if (loVideoList.Count > 0)
+            {
+                GUI_infoList.SelectedListItemIndex = 1;
+                OnDetailsVideoItemSelected(GUI_infoList[1], GUI_infoList);
+            }
         }
 
         private void DisplayVideos_Category(Category category, bool displayCategoriesOnError)
@@ -2296,6 +2305,8 @@ namespace OnlineVideos.MediaPortal1
         /// <param name="videoInfo">if this param is null, the <see cref="selectedVideo"/> will be used</param>
         private void SetGuiProperties_ExtendedVideoInfo(VideoInfo videoInfo)
         {
+            ResetExtendedGuiProperties();
+
             string prefix = "DetailsItem";
             if (videoInfo == null)
             {
@@ -2308,9 +2319,39 @@ namespace OnlineVideos.MediaPortal1
                 {
                     string label = "#OnlineVideos." + prefix + "." + property;
                     string value = custom[property];
-                    GUIPropertyManager.SetProperty(label, value);
+                    SetExtendedGuiProperty(label, value);
                 }
             }
+        }
+
+        /// <summary>
+        /// Set an extended property in the GUIPropertyManager
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void SetExtendedGuiProperty(string key, string value) 
+        {
+            extendedProperties.Add(key);
+            GUIPropertyManager.SetProperty(key, value);
+        }
+
+        /// <summary>
+        /// Clears all known set extended property values
+        /// </summary>
+        public void ResetExtendedGuiProperties()
+        {
+            if (extendedProperties.Count == 0)
+            {
+                return;
+            }
+            
+            string[] keys = extendedProperties.ToArray();
+            for (int i = 0; i < keys.Length; i++)
+            {
+                GUIPropertyManager.SetProperty(keys[i], string.Empty);
+            }
+
+            extendedProperties.Clear();
         }
 
         private void ResetSelectedSite()
