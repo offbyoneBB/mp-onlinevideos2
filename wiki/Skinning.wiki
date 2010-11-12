@@ -87,3 +87,4 @@ The State is one of the three: {{{Broken, Reported, Working}}}. In the default s
   * `#OnlineVideos.Details.Title` - also set in `#header.label`
   * `#OnlineVideos.Details.Studio` - movie studio creating the moview
   * `#OnlineVideos.Details.Year` - release year of the movie
+  * `#OnlineVideos.DetailsItem.Date` - release date of a trailer (also set to Label2)
