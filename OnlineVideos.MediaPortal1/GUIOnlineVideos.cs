@@ -2365,9 +2365,8 @@ namespace OnlineVideos.MediaPortal1
             for (int i = 0; i < keys.Length; i++)
             {
                 GUIPropertyManager.SetProperty(keys[i], string.Empty);
+                extendedProperties.Remove(keys[i]);
             }
-
-            extendedProperties.Clear();
         }
 
         private void ResetSelectedSite()
