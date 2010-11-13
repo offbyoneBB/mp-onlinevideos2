@@ -114,17 +114,12 @@ namespace SiteParser
 
         private void FillPageData(string webData)
         {
-            webData = webData.Replace(@"\", @"\\").Replace(@"{", @"\{").Replace(@"}", @"\}").Replace("\n", "\\par\n").Replace("\r", String.Empty);
+            richTextBox1.Text = webData;
+            webData = richTextBox1.Rtf;
+            int q = webData.IndexOf('{', 1);
+            webData = webData.Insert(q, @"{\colortbl ;\red177\green19\blue128;\red100\green128\blue0;\red255\green65\blue0;\red58\green110\blue165;\red0\green128\blue0;}");
+
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(@"{\rtf1\ansi\deff0{\fonttbl{\f0\fnil\fcharset0 Microsoft Sans Serif;}}");
-            sb.AppendLine(@"{\colortbl ;");
-            sb.AppendLine(@"\red177\green19\blue128;");
-            sb.AppendLine(@"\red100\green128\blue0;");
-            sb.AppendLine(@"\red255\green65\blue0;");
-            sb.AppendLine(@"\red58\green110\blue165;");
-            sb.AppendLine(@"\red0\green128\blue0;");
-            sb.AppendLine(@"}");
-            sb.Append(@"\viewkind4\uc1\pard\cf0\lang1043\f0\fs17 ");
             int i = -1;
             int j = 0;
             do
@@ -150,7 +145,6 @@ namespace SiteParser
             } while (i >= 0 && (i + 1) < webData.Length);
             if (i == -1)
                 append2(sb, webData.Substring(j, webData.Length - j));
-            sb.Append('}');
             richTextBox1.Rtf = sb.ToString();
         }
 
