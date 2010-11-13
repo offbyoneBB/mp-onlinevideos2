@@ -77,7 +77,23 @@ namespace OnlineVideos
         public BindingList<Category> Categories { get; set; }
                
         [XmlIgnore]
-        public bool DynamicCategoriesDiscovered { get; set; }        
+        public bool DynamicCategoriesDiscovered { get; set; }
+
+        [OnSerializing()]
+        internal void OnSerializingMethod(StreamingContext context)
+        {
+            // remove all Categories that are dynamically discovered before serializing to xml
+            if (Categories != null)
+            {
+                int i = 0;
+                while (i < Categories.Count)
+                {
+                    if (!Categories[i].IsDeserialized) Categories.RemoveAt(i);
+                    else i++;
+                }
+                DynamicCategoriesDiscovered = false; // have the siteutil re-discover them the next time
+            }
+        }
         
         public override string ToString() { return Name; }
     }
@@ -90,15 +106,15 @@ namespace OnlineVideos
     [XmlInclude(typeof(Group))]
     public class Category : IComparable<Category>, INotifyPropertyChanged
     {
-        [DataMember(Name="name")]
+        [DataMember(Name = "name", Order = 0)]
         [XmlAttribute("name")]
         public string Name { get; set; }
 
-        [DataMember(Name="thumb", EmitDefaultValue = false)]
+        [DataMember(Name = "thumb", Order = 1, EmitDefaultValue = false)]
         [XmlAttribute("thumb")]
         public string Thumb { get; set; }
 
-        [DataMember(Name = "desc", EmitDefaultValue = false)]
+        [DataMember(Name = "desc", Order = 2, EmitDefaultValue = false)]
         [XmlAttribute("desc")]
         public string Description { get; set; }
 
@@ -108,8 +124,36 @@ namespace OnlineVideos
         [XmlIgnore]
         public bool SubCategoriesDiscovered { get; set; }
 
-        [XmlIgnore]
+        [DataMember(Name = "SubCategories", Order = 3, EmitDefaultValue = false)]
         public List<Category> SubCategories { get; set; }
+
+        [OnSerializing()]
+        internal void OnSerializingMethod(StreamingContext context)
+        {
+            // remove all SubCategories that are dynamically discovered before serializing to xml
+            if (SubCategories != null)
+            {
+                int i = 0;
+                while (i < SubCategories.Count)
+                {
+                    if (!SubCategories[i].IsDeserialized) SubCategories.RemoveAt(i);
+                    else i++;
+                }
+                SubCategoriesDiscovered = false; // have the siteutil re-discover them the next time
+            }
+        }
+
+        [OnDeserialized]
+        internal void OnDeserializedMethod(StreamingContext context)
+        {
+            IsDeserialized = true;
+            if (SubCategories != null)
+            {
+                foreach (Category c in SubCategories) c.ParentCategory = this;
+                HasSubCategories = true;
+            }
+        }
+        protected internal bool IsDeserialized { get; set; }
 
         [XmlIgnore]
         public Category ParentCategory { get; set; }

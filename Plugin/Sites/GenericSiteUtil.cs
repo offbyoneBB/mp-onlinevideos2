@@ -159,29 +159,36 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            string data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
-            if (!string.IsNullOrEmpty(data))
+            if (parentCategory is RssLink && regEx_dynamicSubCategories != null)
             {
-                parentCategory.SubCategories = new List<Category>();
-                Match m = regEx_dynamicSubCategories.Match(data);
-                while (m.Success)
+                string data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+                if (!string.IsNullOrEmpty(data))
                 {
-                    RssLink cat = new RssLink();
-                    cat.Url = m.Groups["url"].Value;
-                    if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
-                    if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
-                    if (dynamicSubCategoryUrlDecoding) cat.Url = HttpUtility.HtmlDecode(cat.Url);
-                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
-                    cat.Thumb = m.Groups["thumb"].Value;
-                    if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
-                    cat.Description = m.Groups["description"].Value;
-                    cat.ParentCategory = parentCategory;
-                    parentCategory.SubCategories.Add(cat);
-                    m = m.NextMatch();
+                    parentCategory.SubCategories = new List<Category>();
+                    Match m = regEx_dynamicSubCategories.Match(data);
+                    while (m.Success)
+                    {
+                        RssLink cat = new RssLink();
+                        cat.Url = m.Groups["url"].Value;
+                        if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
+                        if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
+                        if (dynamicSubCategoryUrlDecoding) cat.Url = HttpUtility.HtmlDecode(cat.Url);
+                        cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
+                        cat.Thumb = m.Groups["thumb"].Value;
+                        if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
+                        cat.Description = m.Groups["description"].Value;
+                        cat.ParentCategory = parentCategory;
+                        parentCategory.SubCategories.Add(cat);
+                        m = m.NextMatch();
+                    }
+                    parentCategory.SubCategoriesDiscovered = true;
                 }
-                parentCategory.SubCategoriesDiscovered = true;
+                return parentCategory.SubCategories == null ? 0 : parentCategory.SubCategories.Count;
             }
-            return parentCategory.SubCategories == null ? 0 : parentCategory.SubCategories.Count;
+            else
+            {
+                return base.DiscoverSubCategories(parentCategory);
+            }
         }
 
         public virtual VideoInfo CreateVideoInfo()
