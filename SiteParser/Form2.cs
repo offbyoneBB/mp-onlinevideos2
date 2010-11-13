@@ -38,6 +38,8 @@ namespace SiteParser
             insertComboBox.Items.Add(new RegexPart("skip to", @"(?:(?!@@).)*"));
             insertComboBox.Items.Add(new RegexPart("skip to single char", @"[^@@@]*"));
             insertComboBox.Items.Add(new RegexPart("optional", @"(?:@@@@)?"));
+            insertComboBox.Items.Add(new RegexPart("match after", @"(?<=@@.*)"));
+            insertComboBox.Items.Add(new RegexPart("match before", @"(?<!@@.*)"));
             insertComboBox.SelectedIndex = 0;
             fields = names;
             testData = webData;
@@ -205,6 +207,11 @@ namespace SiteParser
             }
 
             int insPos = RegexTextbox.SelectionStart;
+            if (strToInsert.StartsWith(@"(?<=") || strToInsert.StartsWith(@"(?<!"))
+            {
+                insPos = 0;
+                RegexTextbox.SelectionLength = 0;
+            }
             RegexTextbox.Text = RegexTextbox.Text.Substring(0, insPos) + strToInsert +
                 RegexTextbox.Text.Substring(insPos + RegexTextbox.SelectionLength);
             if (replaceWithLast)
