@@ -266,6 +266,15 @@ namespace OnlineVideos.MediaPortal1
                 }
             }
 
+            // check if running version of mediaportal supports loading with parameter
+            System.Reflection.FieldInfo fi = typeof(GUIWindow).GetField("_loadParameter", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (fi != null)
+            {
+                string loadParam = (string)fi.GetValue(this);
+                //site:<sitename>|category:<categoryname>|search:<searchstring>|return:<locked|root>|view:<list|smallthumbs|largethumbs>
+                //add bool option on search to popup VK if nothing found or not
+            }
+
             Log.Instance.Debug("OnPageLoad. CurrentState:" + CurrentState);
             if (CurrentState == State.sites)
             {
