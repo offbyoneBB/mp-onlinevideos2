@@ -37,6 +37,7 @@ namespace OnlineVideos.Sites
                 if (attrs.Length > 0)
                 {
                     if (((CategoryAttribute)attrs[0]).Category == "OnlineVideosConfiguration"
+                        && siteSettings != null
                         && siteSettings.Configuration != null
                         && siteSettings.Configuration.ContainsKey(field.Name))
                     {

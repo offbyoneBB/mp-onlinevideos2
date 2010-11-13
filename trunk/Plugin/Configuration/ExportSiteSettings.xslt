@@ -46,7 +46,7 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="*[local-name() = 'Category' or local-name() = 'Channel']/*[local-name() != 'Url' and local-name() != 'Channels']" priority="2">
+  <xsl:template match="*[local-name() = 'Category' or local-name() = 'Channel']/*[local-name() != 'Url' and local-name() != 'Channels' and local-name() != 'SubCategories']" priority="2">
     <xsl:variable name="attrName" select="local-name()"/>
     <xsl:attribute name="{$attrName}">
       <xsl:value-of select="text()"/>
