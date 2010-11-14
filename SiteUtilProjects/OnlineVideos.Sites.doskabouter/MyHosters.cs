@@ -216,18 +216,19 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
-            //babylon 5
             string webData = SiteUtilBase.GetWebData(url);
             string iid = GetSubString(webData, @"var iid = ", "\n");
-            url = @"http://v2.tudou.com/v?it=" + iid;
-
+            //url = @"http://v2.tudou.com/v?it=" + iid;
+            url = @"http://v2.tudou.com/v?vn=02&ui=0&refurl=" + HttpUtility.UrlEncode(url) + @"&it=" + iid + @"&pw=&noCache=13678&st=1%2C2&si=sp";
+            //http://v2.tudou.com/v?vn=02&ui=0&refurl=http%3A%2F%2Fwww%2Etudou%2Ecom%2Fprograms%2Fview%2FXQ1dE6XJWnU&it=20391047&pw=&noCache=13678&st=1%2C2&si=sp
             XmlDocument doc = new XmlDocument();
             webData = SiteUtilBase.GetWebData(url);
             doc.LoadXml(webData);
-            XmlNodeList nodes = doc.SelectNodes("//v/b/f");
+            XmlNodeList nodes = doc.SelectNodes("//v/f");
             string largest = null;
+            // not quite sure which of the nodes gives a valid result, but the one that does, gives a time-out in mediaportal
             foreach (XmlNode node in nodes)
-                if (largest == null || String.Compare(largest, node.InnerText) == -1)
+                if (largest == null)// || String.Compare(largest, node.InnerText) == -1)
                     largest = node.InnerText;
 
             return largest;
