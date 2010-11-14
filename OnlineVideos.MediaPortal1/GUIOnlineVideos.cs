@@ -183,7 +183,8 @@ namespace OnlineVideos.MediaPortal1
 
         HashSet<string> extendedProperties = new HashSet<string>();
 
-        SmsT9Filter currentFilter = new SmsT9Filter();        
+        SmsT9Filter currentFilter = new SmsT9Filter();
+        LoadParameterInfo loadParamInfo;
         #endregion
 
         #region filter variables
@@ -256,7 +257,7 @@ namespace OnlineVideos.MediaPortal1
             // everytime the plugin is shown, after some other window was shown
             if (OnlineVideoSettings.Instance.AgeConfirmed && PreviousWindowId == 0)
             {
-                // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last                
+                // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
                 OnlineVideoSettings.Instance.AgeConfirmed = false;
                 Log.Instance.Debug("Age Confirmed set to false.");
                 if (SelectedSite != null && SelectedSite.Settings.ConfirmAge)
@@ -266,13 +267,29 @@ namespace OnlineVideos.MediaPortal1
                 }
             }
 
-            // check if running version of mediaportal supports loading with parameter
-            System.Reflection.FieldInfo fi = typeof(GUIWindow).GetField("_loadParameter", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            if (fi != null)
+            // don't check for loadParam if OnPageLoad is called after fullscreen playback
+            if (PreviousWindowId != 4758)
             {
-                string loadParam = (string)fi.GetValue(this);
-                //site:<sitename>|category:<categoryname>|search:<searchstring>|return:<locked|root>|view:<list|smallthumbs|largethumbs>
-                //add bool option on search to popup VK if nothing found or not
+                // check if running version of mediaportal supports loading with parameter
+                System.Reflection.FieldInfo fi = typeof(GUIWindow).GetField("_loadParameter", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (fi != null)
+                {
+                    string loadParam = (string)fi.GetValue(this);
+                    loadParamInfo = new LoadParameterInfo(loadParam);
+
+                    // set all state variables to reflect the state we were called with
+                    if (!string.IsNullOrEmpty(loadParamInfo.Site) && OnlineVideoSettings.Instance.SiteUtilsList.ContainsKey(loadParamInfo.Site))
+                    {
+                        SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[loadParamInfo.Site];
+                        CurrentState = State.categories;
+                        selectedCategory = null;
+                    }
+                    if (SelectedSite != null && SelectedSite.CanSearch && !string.IsNullOrEmpty(loadParamInfo.Search))
+                    {
+                        DisplayVideos_Search(loadParamInfo.Search);
+                        return;
+                    }
+                }
             }
 
             Log.Instance.Debug("OnPageLoad. CurrentState:" + CurrentState);
@@ -1167,7 +1184,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-                    if (moSupportedSearchCategoryList.Count > 1 && GUI_btnSearchCategories.SelectedLabel != Translation.All)
+                    if (moSupportedSearchCategoryList != null && moSupportedSearchCategoryList.Count > 1 && GUI_btnSearchCategories.SelectedLabel != Translation.All)
                     {
                         string category = moSupportedSearchCategoryList[GUI_btnSearchCategories.SelectedLabel];
                         Log.Instance.Info("Searching for {0} in category {1}", query, category);
