@@ -133,6 +133,7 @@
     <Compile Include="Gui2UtilConnector.cs" />
     <Compile Include="GUIOnlineVideos.cs" />
     <Compile Include="GUISiteUpdater.cs" />
+    <Compile Include="LoadParameterInfo.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="OnlineVideosGuiListItem.cs" />
     <Compile Include="Player\ExternalOSDLibrary\BaseWindow.cs" />
