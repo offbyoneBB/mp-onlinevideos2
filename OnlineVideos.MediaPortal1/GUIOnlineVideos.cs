@@ -854,7 +854,7 @@ namespace OnlineVideos.MediaPortal1
         /// <returns></returns>
         private static bool ShowFullScreenWindowHandler()
         {
-            if (g_Player.HasVideo && (g_Player.Player is Player.OnlineVideosPlayer || g_Player.Player is Player.WMPVideoPlayer))
+            if (g_Player.HasVideo && (g_Player.Player.GetType().Assembly == typeof(GUIOnlineVideos).Assembly))
             {
                 if (GUIWindowManager.ActiveWindow == Player.GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO) return true;
 
@@ -1451,7 +1451,7 @@ namespace OnlineVideos.MediaPortal1
         {
             if (currentPlaylist != null)
             {
-                if (g_Player.Player is OnlineVideosPlayer || g_Player.Player is WMPVideoPlayer)
+                if (g_Player.Player.GetType().Assembly == typeof(GUIOnlineVideos).Assembly)
                 {
                     if (currentPlaylist.Count > currentPlaylistIndex + 1)
                     {
