@@ -202,10 +202,9 @@ namespace OnlineVideos.MediaPortal1
                         // send a GUI Message to Onlinevideos GUI that it can now execute the ResultHandler on the Main Thread
                         GUIWindowManager.SendThreadMessage(new GUIMessage() { TargetWindowId = GUIOnlineVideos.WindowId, SendToTargetWindow = true, Object = this });
                     }) { Name = "OnlineVideos", IsBackground = true };
-
-                    backgroundThread.Start();
                     // disable timeout when debugging
                     if (timeout && !System.Diagnostics.Debugger.IsAttached) timeoutTimer.Start();
+                    backgroundThread.Start();
                     // successfully started the background task
                     return true;
                 }
@@ -274,6 +273,7 @@ namespace OnlineVideos.MediaPortal1
             backgroundThread = null;
             abortedByUser = false;
             IsBusy = false;
+            timeoutTimer.Stop();
             Monitor.Exit(this);
 
             // execute the result handler

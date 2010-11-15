@@ -307,12 +307,11 @@ namespace OnlineVideos.MediaPortal1.Player
                 basicAudio = (IBasicAudio)graphBuilder;
                 videoWin = (IVideoWindow)graphBuilder;
 
+                // add the http source filter
                 IBaseFilter sourceFilter = null;
                 try
                 {
                     sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, PluginConfiguration.Instance.httpSourceFilterName);
-                    int result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
-                    if (result != 0) return null;
                 }
                 catch (Exception ex)
                 {
@@ -344,6 +343,9 @@ namespace OnlineVideos.MediaPortal1.Player
             try
             {
                 int result = graphBuilder.FindFilterByName(PluginConfiguration.Instance.httpSourceFilterName, out sourceFilter);
+                if (result != 0) return false;
+
+                result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
                 if (result != 0) return false;
 
                 if (sourceFilter is IAMOpenProgress)
