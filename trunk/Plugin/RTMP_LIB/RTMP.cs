@@ -242,8 +242,9 @@ namespace RTMP_LIB
             RTMPPacket packet = null;
             while (!Playing && IsConnected() && ReadPacket(out packet))
             {
-                Logger.Log("First Packet after Connect received.");
                 if (!packet.IsReady()) continue; // keep reading until complete package has arrived
+
+                Logger.Log("First Packet after Connect received.");
 
                 if (packet.PacketType == PacketType.Audio || packet.PacketType == PacketType.Video || packet.PacketType == PacketType.Metadata)
                 {
