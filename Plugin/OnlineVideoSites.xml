@@ -1001,7 +1001,18 @@
       <Categories>
       </Categories>
     </Site>
-    <Site name="OnsNetNuenen" util="OnsNetNuenen" agecheck="false" enabled="true" lang="nl">
+    <Site name="OnsNetNuenen" util="OnsNetNuenen" agecheck="false" enabled="true" lang="nl" lastUpdated="2010-11-14T23:28:00.2524617+01:00">
+      <Description>Videos van en over Nuenen</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="[^\s]+\sSubMenuItem[^"]*"><a\shref="(?<url>[^"]*)"\s*><span>(?<title>[^<]*)</span></a></li>]]></item>
+        <item key="dynamicCategoryUrlDecoding"><![CDATA[True]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<=videoalbumsubject.*)<option\s*value="(?<url>[^"]*)">(?<title>[^<]*)</option>]]></item>
+        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.onsnet.tv/corp/index.php?itemid={0}&page=52&site=4&ln=nl]]></item>
+        <item key="videoListRegEx"><![CDATA[onclick="playItemInPlayer\('video',\s(?<VideoUrl>[^,]*),'[^>]*><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>(?<Title>[^<]*)<]]></item>
+        <item key="videoListRegExFormatString"><![CDATA[http://www.onsnet.tv/corp/index.php?site=4&ln=nl&playerxml=1&type=video&id={0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<movie\surl="(?<m0>[^"]*)"]]></item>
+        <item key="baseUrl"><![CDATA[http://www.onsnet.tv/corp/index.php?page=48&site=4]]></item>
+      </Configuration>
       <Categories />
     </Site>
     <Site name="EscapistMagazine" util="TheEscapist" agecheck="false" enabled="true" lang="en" lastUpdated="2010-08-10T23:19:13.7231593+02:00">
