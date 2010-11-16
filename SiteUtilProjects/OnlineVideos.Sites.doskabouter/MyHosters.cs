@@ -75,6 +75,88 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class FrogMovz : Loombo
+    {
+        public override string getHosterUrl()
+        {
+            return "frogmovz.com";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            CookieContainer cc = new CookieContainer();
+            if (url.Contains("embed"))
+            {
+                string page = SiteUtilBase.GetWebData(url);
+                if (!string.IsNullOrEmpty(page))
+                {
+                    Match n = Regex.Match(page, @"'file=(?<url>[^']+)'");
+                    if (n.Success)
+                    {
+                        videoType = VideoType.flv;
+                        return n.Groups["url"].Value;
+                    }
+                }
+            }
+            else
+            {
+                string page = SiteUtilBase.GetWebData(url, cc);
+
+                if (!string.IsNullOrEmpty(page))
+                {
+
+                    string op = Regex.Match(page, @"<input\stype=""hidden""\sname=""op""\svalue=""(?<value>[^""]+)""\s/>").Groups["value"].Value;
+                    string id = Regex.Match(page, @"<input\stype=""hidden""\sname=""id""\svalue=""(?<value>[^""]+)""\s/>").Groups["value"].Value;
+                    string rand = Regex.Match(page, @"<input\stype=""hidden""\sname=""rand""\svalue=""(?<value>[^""]+)""\s/>").Groups["value"].Value;
+                    string referer = Regex.Match(page, @"<input\stype=""hidden""\sname=""referer""\svalue=""(?<value>[^""]+)""\s/>").Groups["value"].Value;
+                    string method_free = Regex.Match(page, @"<input\stype=""hidden""\sname=""method_free""\svalue=""(?<value>[^""]+)""\s/>").Groups["value"].Value;
+                    string method_premium = Regex.Match(page, @"<input\stype=""hidden""\sname=""method_premium""\svalue=""(?<value>[^""]+)""\s/>").Groups["value"].Value;
+
+                    string timeToWait = Regex.Match(page, @"<span\sid=""countdown_str"">[^>]*>[^>]*>[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
+                    if (Convert.ToInt32(timeToWait) < 10)
+                    {
+                        string postdata = "op=" + op +
+                                          "&id=" + id +
+                                          "&rand=" + rand +
+                                          "&referer=" + referer +
+                                          "&method_free=" + method_free +
+                                          "&method_premium=" + method_premium +
+                                          "&down_direct=1";
+
+                        System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
+
+                        string page2 = SiteUtilBase.GetWebDataFromPost(url, postdata, cc, url);
+
+                        if (!string.IsNullOrEmpty(page2))
+                        {
+                            string packed = null;
+                            int i = page2.LastIndexOf(@"return p}");
+                            if (i >= 0)
+                            {
+                                int j = page2.IndexOf(@"</script>", i);
+                                if (j >= 0)
+                                    packed = page2.Substring(i + 9, j - i - 9);
+                            }
+                            if (!String.IsNullOrEmpty(packed))
+                            {
+                                packed = packed.Replace(@"\'", @"'");
+                                string unpacked = UnPack(packed);
+                                videoType = VideoType.divx;
+                                string res = GetSubString(unpacked, @"'file','", @"'");
+                                if (!String.IsNullOrEmpty(res))
+                                    return res;
+                                return GetSubString(unpacked, @"name=""src""value=""", @"""");
+                            }
+                            else
+                                return GetSubString(page2, @"addVariable('file','", @"'");
+                        }
+                    }
+                }
+            }
+            return String.Empty;
+        }
+    }
+
     public class GoogleVideo : HosterBase
     {
         public override string getHosterUrl()
@@ -89,6 +171,14 @@ namespace OnlineVideos.Hoster
             if (!String.IsNullOrEmpty(result))
                 return result;
             return HttpUtility.UrlDecode(GetSubString(webData, @"videoUrl=", @"&amp;"));
+        }
+    }
+
+    public class KarambaVidz : FrogMovz
+    {
+        public override string getHosterUrl()
+        {
+            return "karambavidz.com";
         }
     }
 
