@@ -137,6 +137,7 @@ namespace OnlineVideos.Hoster
                                 if (j >= 0)
                                     packed = page2.Substring(i + 9, j - i - 9);
                             }
+                            string resUrl;
                             if (!String.IsNullOrEmpty(packed))
                             {
                                 packed = packed.Replace(@"\'", @"'");
@@ -144,11 +145,14 @@ namespace OnlineVideos.Hoster
                                 videoType = VideoType.divx;
                                 string res = GetSubString(unpacked, @"'file','", @"'");
                                 if (!String.IsNullOrEmpty(res))
-                                    return res;
-                                return GetSubString(unpacked, @"name=""src""value=""", @"""");
+                                    resUrl = res;
+                                else
+                                    resUrl = GetSubString(unpacked, @"name=""src""value=""", @"""");
                             }
                             else
-                                return GetSubString(page2, @"addVariable('file','", @"'");
+                                resUrl = GetSubString(page2, @"addVariable('file','", @"'");
+                            resUrl = resUrl.Replace("[", "%5b").Replace("]", "%5d");
+                            return resUrl;
                         }
                     }
                 }
