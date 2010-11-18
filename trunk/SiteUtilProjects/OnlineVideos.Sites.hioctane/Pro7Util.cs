@@ -73,8 +73,8 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
-            string webData = HttpUtility.UrlDecode( GetWebData(video.VideoUrl));
-            webData = webData.Replace("\\\"","\"");
+            string webData = HttpUtility.UrlDecode(GetWebData(video.VideoUrl));
+            webData = webData.Replace("\\\"", "\"");
             string url = string.Empty;
 
             //TODO: Fix flashdrm Videos
@@ -108,6 +108,19 @@ namespace OnlineVideos.Sites
                     url = rtmpBase + geoblock + filename + "flv";
 
             }
+            string clipId = Regex.Match(webData, @",""id"":""(?<Value>[^""]+)""").Groups["Value"].Value;
+            if (!string.IsNullOrEmpty(clipId))
+            {
+                string link = GetRedirectedUrl("http://www.prosieben.de/dynamic/h264/h264map/?ClipID=" + clipId);
+                if (!string.IsNullOrEmpty(link))
+                {
+                    video.PlaybackOptions = new Dictionary<string, string>();
+                    video.PlaybackOptions.Add("Flv", url);
+                    video.PlaybackOptions.Add("Mp4", link);
+                }
+            }
+
+
             return url;
         }
 
