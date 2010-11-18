@@ -118,6 +118,19 @@ namespace OnlineVideos.Sites
                     "89b2c799c23569599472e3ed8b00a292a78de2ef7f181d4de64dccc99e43e1ff", //swfhash
                     System.Web.HttpUtility.UrlEncode(playpath) //playpath
                     ));
+
+            string clipId = Regex.Match(webData, @",""id"":""(?<Value>[^""]+)""").Groups["Value"].Value;
+            if (!string.IsNullOrEmpty(clipId))
+            {
+                string link = GetRedirectedUrl("http://www.prosieben.de/dynamic/h264/h264map/?ClipID=" + clipId);
+                if (!string.IsNullOrEmpty(link))
+                {
+                    video.PlaybackOptions = new Dictionary<string, string>();
+                    video.PlaybackOptions.Add("Flv", resultUrl);
+                    video.PlaybackOptions.Add("Mp4", link);
+                }
+            }
+
             return resultUrl;
         }
 
