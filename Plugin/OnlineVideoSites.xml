@@ -101,16 +101,17 @@
         <item key="baseUrl"><![CDATA[http://www.sat1.de/videocenter/]]></item>
         <item key="rtmpBase"><![CDATA[rtmpt://pssimsat1fs.fplive.net:80/pssimsat1ls/]]></item>
         <item key="regExPagingToken"><![CDATA[var\sparameter\s=\s"(?<token>[^"]+)";\s*var[^=]+=\snew\sPaging\('(?<tag>[^']+)',(?<pages>[^,]+),parameter\);]]></item>
-        <item key="regExDynamicCategory"><![CDATA[background-image:url\((?<ImageUrl>[^\)]+)\)">\s*<a\shref="(?<Url>[^"]+)"[^>]+><[^>]+></a><br\s/>\s*<[^>]+><[^>]+>[^<]+</h6><h6\sclass="channel">(?<Title>[^<]+)</h6><h6\sclass="format"></h6></div>\s*<h1><a\shref="[^"]+"\starget=""\sonClick="">(?<SubTitle>[^<]+)</a></h1>\s*<p><a\shref="[^"]+"\starget=""\sonClick="">(?<Date>[^<]+)</a></p>]]></item>
+        <item key="regExDynamicCategory"><![CDATA[background.image:url\((?<ImageUrl>[^\)]+)\)">\s*<[^<]+<[^<]+</a><br\s*/>\s<[^<]+<[^<]+</h6><[^>]+>(?<Title>[^<]+)</h6><[^>]+></h6></div>\s*<h1><a\shref="(?<Url>[^"]+)"\starget="">(?<SubTitle>[^<]+)</a></h1>\s*<p><[^>]+>(?<Date>[^<]+)</a></p>]]></item>
       </Configuration>
       <Categories />
     </Site>
-    <Site name="Pro7" util="Sat1Group" agecheck="false" enabled="true" lang="de" lastUpdated="2010-03-23T14:52:08.765625+01:00">
+    <Site name="Pro7" util="Pro7" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Senders Pro7.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://cms002.dc2.qcn3.movenetworks.com/cms/publish/vod2/vodchannelcatalog/pro7/7/catalog.json]]></item>
-        <item key="categoryUrlFormatString"><![CDATA[http://cms002.dc2.qcn3.movenetworks.com/cms/publish/pro7/vodtldatesorted//{0}/{1}/{2}/listing.json]]></item>
-        <item key="rtmpBase"><![CDATA[rtmpt://pssimp7lsfs.fplive.net:80/pssimp7ls/]]></item>
+        <item key="baseUrl"><![CDATA[http://www.prosieben.de/video/]]></item>
+        <item key="rtmpBase"><![CDATA[rtmp://pssimp7lsfs.fplive.net:1935/pssimp7ls/]]></item>
+        <item key="regExPagingToken"><![CDATA['(?<url>.*cmlink[^']+)',\s*'(?<query>[^']+)',\s*'(?<pages>[^']+)']]></item>
+        <item key="regExDynamicCategory"><![CDATA[<h3>(?<Title>[^<]+)</h3>\s*</div>\s*<[^>]+>\s*<[^>]+>\s*<img\ssrc="(?<ImageUrl>[^"]+)"\s/>\s*</a>\s*</div>\s*<[^>]+>\s*<h4><a\shref="(?<Url>[^"]+)">(?<SubTitle>[^<]+)</a></h4>\s*<p>(?<Date>[^<]+)</p>]]></item>
       </Configuration>
       <Categories />
     </Site>
