@@ -435,7 +435,7 @@ namespace OnlineVideos.Sites
             public int depth;
             public bool hasNextPage;
             public int pageNr;
-            public static Regex videoListPage0Regex = Specifics.getRegex(@"<tr\sclass=""bg(odd|even)[^<]*<[^>]*>\s*(?<airdate>[^<]*)<[^>]*>[^>]*>\s*(?<descr>[^\(]*)\(<a\shref=""(?<url>[^""]*)""");
+            public static Regex videoListPage0Regex = Specifics.getRegex(@"<tr\sclass=""bg(odd|even)[^<]*<[^>]*>\s*(?<airdate>[^<]*)<[^>]*>[^>]*>\s*(?<descr>(?:(?!\(<).)*)\(<a\shref=""(?<url>[^""]*)""");
             public static Regex videoListPage1Regex = Specifics.getRegex(@"<tr\sclass=""bg(odd|even)[^>]*>[^>]*>\s*(?<airdate>[^<]*)<(?:(?!href).)*href=""(?<url>[^""]*)"">(?<descr>[^<]*)<");
             public static Regex detailsRegex = Specifics.getRegex(@"(<p>Datum\suitzending[^>]*>(?<airdate>[^<]*).*?)?(Deze\saflevering:(?<descr>[^<]*).*?)?<a\shref=""(?<url>[^""]*)""\s*target=""player""");
             public static Regex videolistOpDagRegex = Specifics.getRegex(@"<div\sstyle=""overflow[^<]*<a(?:(?!href).)*href=""(?<nourl>[^""]+)""[^>]*>(?<title>[^<]+)<(?:(?!<td).)*<td[^>]*>(?<airdate>[^<]*)<(?:(?!http://player.omroep.nl).)*(?<url>[^""]*)""");
