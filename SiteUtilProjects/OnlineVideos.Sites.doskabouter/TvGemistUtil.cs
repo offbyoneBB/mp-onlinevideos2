@@ -239,8 +239,7 @@ namespace OnlineVideos.Sites
                 url = url.Replace("serie?", "serie2?");
             url = getUrlForPage(url, specifics.pageNr);
 
-            string webData;
-            webData = GetWebData(specifics.pageNr == 0 ? url : url + @"/page=" + specifics.pageNr.ToString(), specifics.cc, referer);
+            string webData = GetWebData(url, specifics.cc, referer);
             if (specifics.pageNr == 0)
                 specifics.hasNextPage = webData.Contains(@"alt=""meer afleveringen""");
             else
