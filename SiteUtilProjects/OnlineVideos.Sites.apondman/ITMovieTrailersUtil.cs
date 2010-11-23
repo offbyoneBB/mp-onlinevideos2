@@ -106,13 +106,13 @@ namespace OnlineVideos.Sites.apondman {
 
         public override bool HasNextPage {
             get {
-                return ( _sectionPages.Count > 0 && _sectionPages.Peek().Sections.Count > 0);
+                return ( _sectionPages != null && _sectionPages.Count > 0 && _sectionPages.Peek().Sections.Count > 0);
             }
         }
 
         public override bool HasPreviousPage {
             get {
-                return (_sectionPages.Count > 1);
+                return (_sectionPages != null && _sectionPages.Count > 1);
             }
         }        
 
