@@ -270,24 +270,31 @@ namespace OnlineVideos.MediaPortal1
             // don't check for loadParam if OnPageLoad is called after fullscreen playback
             if (PreviousWindowId != 4758)
             {
+                loadParamInfo = null; // reset the LoadParameterInfo
+
                 // check if running version of mediaportal supports loading with parameter
                 System.Reflection.FieldInfo fi = typeof(GUIWindow).GetField("_loadParameter", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 if (fi != null)
                 {
                     string loadParam = (string)fi.GetValue(this);
-                    loadParamInfo = new LoadParameterInfo(loadParam);
 
-                    // set all state variables to reflect the state we were called with
-                    if (!string.IsNullOrEmpty(loadParamInfo.Site) && OnlineVideoSettings.Instance.SiteUtilsList.ContainsKey(loadParamInfo.Site))
+                    if (!string.IsNullOrEmpty(loadParam))
                     {
-                        SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[loadParamInfo.Site];
-                        CurrentState = State.categories;
-                        selectedCategory = null;
-                    }
-                    if (SelectedSite != null && SelectedSite.CanSearch && !string.IsNullOrEmpty(loadParamInfo.Search))
-                    {
-                        DisplayVideos_Search(loadParamInfo.Search);
-                        return;
+                        loadParamInfo = new LoadParameterInfo(loadParam);
+
+                        // set all state variables to reflect the state we were called with
+                        if (!string.IsNullOrEmpty(loadParamInfo.Site) && OnlineVideoSettings.Instance.SiteUtilsList.ContainsKey(loadParamInfo.Site))
+                        {
+                            SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[loadParamInfo.Site];
+                            CurrentState = State.categories;
+                            selectedCategory = null;
+                        }
+                        if (SelectedSite != null && SelectedSite.CanSearch && !string.IsNullOrEmpty(loadParamInfo.Search))
+                        {
+                            lastSearchQuery = loadParamInfo.Search;
+                            DisplayVideos_Search(loadParamInfo.Search);
+                            return;
+                        }
                     }
                 }
             }
@@ -544,13 +551,25 @@ namespace OnlineVideos.MediaPortal1
             {
                 case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
                     {
-                        base.OnMessage(message);
+                        bool result = base.OnMessage(message);
                         GUI_btnSearchCategories.RestoreSelection = false;
                         GUI_btnOrderBy.RestoreSelection = false;
                         GUI_btnTimeFrame.RestoreSelection = false;
                         GUI_btnMaxResult.RestoreSelection = false;
-                        return true;
+                        return result;
                     }
+                case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
+                    if (message.Param1 != GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO)
+                    {
+                        // if the plugin was called with a loadParam, reset the states, so when entering without loadParam, the default view will be shown
+                        if (loadParamInfo != null)
+                        {
+                            SelectedSite = null;
+                            CurrentState = State.sites;
+                            selectedCategory = null;
+                        }
+                    }
+                    break;
             }
             return base.OnMessage(message);
         }
@@ -1373,24 +1392,33 @@ namespace OnlineVideos.MediaPortal1
 
         private void ShowPreviousMenu()
         {
+            ImageDownloader.StopDownload = true;
+
             if (CurrentState == State.categories)
             {
                 if (selectedCategory == null)
                 {
-                    DisplaySites();
+                    // if plugin was called with loadParameter set to the current site and return locked -> go to previous window 
+                    if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Site == selectedSite.Settings.Name)
+                        OnPreviousWindow();
+                    else
+                        DisplaySites();
                 }
                 else
                 {
-                    ImageDownloader.StopDownload = true;
                     DisplayCategories(selectedCategory.ParentCategory, false);
                 }
             }
             else if (CurrentState == State.videos)
             {
-                ImageDownloader.StopDownload = true;
-
-                if (selectedCategory == null || selectedCategory.ParentCategory == null) DisplayCategories(null, false);
-                else DisplayCategories(selectedCategory.ParentCategory, false);
+                // if plugin was called with loadParameter set to the current site with searchstring and return locked and currently displaying the searchresults -> go to previous window 
+                if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Site == selectedSite.Settings.Name && currentVideosDisplayMode == VideosMode.Search)
+                    OnPreviousWindow();
+                else
+                {
+                    if (selectedCategory == null || selectedCategory.ParentCategory == null) DisplayCategories(null, false);
+                    else DisplayCategories(selectedCategory.ParentCategory, false);
+                }
             }
             else if (CurrentState == State.details)
             {
@@ -1403,7 +1431,6 @@ namespace OnlineVideos.MediaPortal1
                 GUI_infoList.Focus = false;
                 ///------------------------------------------------------------------------
 
-                ImageDownloader.StopDownload = true;
                 SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
             }
         }
