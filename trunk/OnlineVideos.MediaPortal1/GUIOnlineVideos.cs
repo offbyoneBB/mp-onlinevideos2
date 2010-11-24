@@ -698,73 +698,7 @@ namespace OnlineVideos.MediaPortal1
             }
             else if (control == GUI_btnSearch)
             {
-                string query = PluginConfiguration.Instance.searchHistoryType == PluginConfiguration.SearchHistoryType.Simple ? lastSearchQuery : string.Empty;
-                List<string> searchHistoryForSite = null;
-
-                if (PluginConfiguration.Instance.searchHistoryType == PluginConfiguration.SearchHistoryType.Extended && PluginConfiguration.Instance.searchHistory != null && PluginConfiguration.Instance.searchHistory.Count > 0 && 
-                    PluginConfiguration.Instance.searchHistory.ContainsKey(SelectedSite.Settings.Name))
-                {                    
-                    searchHistoryForSite = PluginConfiguration.Instance.searchHistory[SelectedSite.Settings.Name];
-                    if (searchHistoryForSite != null && searchHistoryForSite.Count > 0)
-                    {
-                        GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-                        if (dlgSel != null)
-                        {
-                            dlgSel.Reset();
-                            dlgSel.SetHeading(Translation.SearchHistory);
-                            dlgSel.Add(Translation.NewSearch);
-                            int numAdded = 0;
-                            for (int i = searchHistoryForSite.Count - 1; i>=0; i--)
-                            {
-                                searchHistoryForSite[i] = searchHistoryForSite[i].Trim();
-                                if (!string.IsNullOrEmpty(searchHistoryForSite[i]))
-                                {
-                                    dlgSel.Add(searchHistoryForSite[i]);
-                                    numAdded++;
-                                }
-                                else
-                                {
-                                    searchHistoryForSite.RemoveAt(i);
-                                }
-                                // if the user set the number of searchhistoryitems lower than what was already stored - remove older entries
-                                if (numAdded >= PluginConfiguration.Instance.searchHistoryNum && i > 0)
-                                {
-                                    searchHistoryForSite.RemoveRange(0, i);
-                                    break;
-                                }
-                            }
-                       
-                            dlgSel.DoModal(GetID);
-
-                            if (dlgSel.SelectedId == -1) return;
-
-                            if (dlgSel.SelectedLabel == 0) query = "";
-                            else query = dlgSel.SelectedLabelText;
-                        }
-                    }
-                }
-
-                if (GetUserInputString(ref query, false))
-                {
-                    GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
-                    query = query.Trim();
-                    if (query != String.Empty)
-                    {
-                        if (null == searchHistoryForSite) searchHistoryForSite = new List<string>();
-                        if (searchHistoryForSite.Contains(query))
-                            searchHistoryForSite.Remove(query);
-                        searchHistoryForSite.Add(query);
-                        if (searchHistoryForSite.Count > PluginConfiguration.Instance.searchHistoryNum)
-                            searchHistoryForSite.RemoveAt(0);
-                        if (PluginConfiguration.Instance.searchHistory.ContainsKey(SelectedSite.Settings.Name))
-                            PluginConfiguration.Instance.searchHistory[SelectedSite.Settings.Name] = searchHistoryForSite;
-                        else
-                            PluginConfiguration.Instance.searchHistory.Add(SelectedSite.Settings.Name, searchHistoryForSite);
-
-                        lastSearchQuery = query;
-                        DisplayVideos_Search(query);
-                    }
-                }
+                DisplayVideos_Search();
             }            
             else if (control == GUI_btnEnterPin)
             {
@@ -1196,8 +1130,83 @@ namespace OnlineVideos.MediaPortal1
             Translation.GettingCategoryVideos, true);
         }
         
-        private void DisplayVideos_Search(string query)
+        private void DisplayVideos_Search(string query = null)
         {
+            bool directSearch = !string.IsNullOrEmpty(query);
+            if (!directSearch) query = PluginConfiguration.Instance.searchHistoryType == PluginConfiguration.SearchHistoryType.Simple ? lastSearchQuery : string.Empty;
+            List<string> searchHistoryForSite = null;
+
+            if (!directSearch && PluginConfiguration.Instance.searchHistoryType == PluginConfiguration.SearchHistoryType.Extended && PluginConfiguration.Instance.searchHistory != null && PluginConfiguration.Instance.searchHistory.Count > 0 &&
+                PluginConfiguration.Instance.searchHistory.ContainsKey(SelectedSite.Settings.Name))
+            {
+                searchHistoryForSite = PluginConfiguration.Instance.searchHistory[SelectedSite.Settings.Name];
+                if (searchHistoryForSite != null && searchHistoryForSite.Count > 0)
+                {
+                    GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                    if (dlgSel != null)
+                    {
+                        dlgSel.Reset();
+                        dlgSel.SetHeading(Translation.SearchHistory);
+                        dlgSel.Add(Translation.NewSearch);
+                        int numAdded = 0;
+                        for (int i = searchHistoryForSite.Count - 1; i >= 0; i--)
+                        {
+                            searchHistoryForSite[i] = searchHistoryForSite[i].Trim();
+                            if (!string.IsNullOrEmpty(searchHistoryForSite[i]))
+                            {
+                                dlgSel.Add(searchHistoryForSite[i]);
+                                numAdded++;
+                            }
+                            else
+                            {
+                                searchHistoryForSite.RemoveAt(i);
+                            }
+                            // if the user set the number of searchhistoryitems lower than what was already stored - remove older entries
+                            if (numAdded >= PluginConfiguration.Instance.searchHistoryNum && i > 0)
+                            {
+                                searchHistoryForSite.RemoveRange(0, i);
+                                break;
+                            }
+                        }
+
+                        dlgSel.DoModal(GetID);
+
+                        if (dlgSel.SelectedId == -1) return;
+
+                        if (dlgSel.SelectedLabel == 0) query = "";
+                        else query = dlgSel.SelectedLabelText;
+                    }
+                }
+            }
+
+            if (!directSearch)
+            {
+                if (GetUserInputString(ref query, false))
+                {
+                    GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
+                    query = query.Trim();
+                    if (query != String.Empty)
+                    {
+                        if (null == searchHistoryForSite) searchHistoryForSite = new List<string>();
+                        if (searchHistoryForSite.Contains(query))
+                            searchHistoryForSite.Remove(query);
+                        searchHistoryForSite.Add(query);
+                        if (searchHistoryForSite.Count > PluginConfiguration.Instance.searchHistoryNum)
+                            searchHistoryForSite.RemoveAt(0);
+                        if (PluginConfiguration.Instance.searchHistory.ContainsKey(SelectedSite.Settings.Name))
+                            PluginConfiguration.Instance.searchHistory[SelectedSite.Settings.Name] = searchHistoryForSite;
+                        else
+                            PluginConfiguration.Instance.searchHistory.Add(SelectedSite.Settings.Name, searchHistoryForSite);
+
+                        lastSearchQuery = query;
+                    }
+                }
+                else
+                {
+                    return; // user cancelled from VK
+                }
+            }
+
             SelectedSearchCategoryIndex = GUI_btnSearchCategories.SelectedItem;
             if (query != String.Empty)
             {
@@ -1218,7 +1227,9 @@ namespace OnlineVideos.MediaPortal1
                 },
                 delegate(bool success, object result)
                 {
-                    if (success) SetVideosToFacade(result as List<VideoInfo>, VideosMode.Search);
+                    // set videos to the facade -> if none were found and an empty facade is currently shown, go to previous menu
+                    if ((!success || !SetVideosToFacade(result as List<VideoInfo>, VideosMode.Search)) && GUI_facadeView.Count == 0)
+                        ShowPreviousMenu();
                 },
                 Translation.GettingSearchResults, true);
             }
