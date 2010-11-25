@@ -413,13 +413,16 @@ namespace SiteParser
         {
             // Load settings from selected site into TextBoxes
             SiteSettings siteSettings = comboBoxSites.SelectedItem as SiteSettings;
-            generic = new MySiteUtil();
-            generic.Initialize(siteSettings);
-            staticList = new List<Category>();
-            foreach (Category cat in generic.Settings.Categories)
-                staticList.Add(cat);
+            if (siteSettings != null)
+            {
+                generic = new MySiteUtil();
+                generic.Initialize(siteSettings);
+                staticList = new List<Category>();
+                foreach (Category cat in generic.Settings.Categories)
+                    staticList.Add(cat);
 
-            UtilToGui(generic);
+                UtilToGui(generic);
+            }
         }
 
         private void btnPlay_Click(object sender, EventArgs e)
