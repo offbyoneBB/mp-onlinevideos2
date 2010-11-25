@@ -62,7 +62,7 @@ The State is one of the three: {{{Broken, Reported, Working}}}. In the default s
 
  * Facade (both Windows)
   * `#itemcount` - total number of items 
-    * localized itemtypes using 3 conditional labels: `#OnlineVideos.state = [sites|categories|videos]` -> `#OnlineVideos.Translation.[Sites|Categories|Videos].Label`
+  * `#itemtype` - localized name of items
   * `#selecteditem` - title of the current selected item
   * `#selectedthumb` - thumb (if available) for the current selected item
   * `#OnlineVideos.desc` - description (if available) of the current selected item
