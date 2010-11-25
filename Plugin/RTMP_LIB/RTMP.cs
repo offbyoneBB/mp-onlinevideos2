@@ -588,10 +588,17 @@ namespace RTMP_LIB
              *  -1: plays a live stream
              * >=0: plays a recorded streams from 'start' milliseconds
             */
-            if (Link.seekTime > 0.0)
-                EncodeNumber(enc, Link.seekTime);
+            if (Link.bLiveStream)
+            {
+                EncodeNumber(enc, -1000.0d);
+            }
             else
-                EncodeNumber(enc, 0.0d);
+            {
+                if (Link.seekTime > 0.0)
+                    EncodeNumber(enc, Link.seekTime);
+                else
+                    EncodeNumber(enc, 0.0d);
+            }
             /* len: -1, 0, positive number
              *  -1: plays live or recorded stream to the end (default)
              *   0: plays a frame 'start' ms away from the beginning
@@ -830,19 +837,19 @@ namespace RTMP_LIB
             return SendRTMP(packet, false);
         }
 
-        bool SendFCSubscribe()
+        bool SendFCSubscribe(string subscribepath)
         {
             RTMPPacket packet = new RTMPPacket();
             packet.m_nChannel = 0x03;   // control channel (invoke)
             packet.HeaderType = HeaderType.Medium;
             packet.PacketType = PacketType.Invoke;
 
-            Logger.Log(string.Format("Sending FCSubscribe: {0}", Link.subscribepath));
+            Logger.Log(string.Format("Sending FCSubscribe: {0}", subscribepath));
             List<byte> enc = new List<byte>();
             EncodeString(enc, "FCSubscribe");
             EncodeNumber(enc, ++m_numInvokes);
             enc.Add(0x05); // NULL
-            EncodeString(enc, Link.subscribepath);
+            EncodeString(enc, subscribepath);
 
             packet.m_nBodySize = (uint)enc.Count;
             packet.m_body = enc.ToArray();
@@ -968,16 +975,19 @@ namespace RTMP_LIB
                         SendPing(0x07, nTime, 0);
                         break;
                     case 31:
-                        Logger.Log(string.Format("%s, Stream BufferEmpty {0}", nTime));
-                        if (Pausing == 0)
+                        Logger.Log(string.Format("Stream BufferEmpty {0}", nTime));
+                        if (!Link.bLiveStream)
                         {
-                            SendPause(true);
-                            Pausing = 1;
-                        }
-                        else if (Pausing == 2)
-                        {
-                            SendPause(false);
-                            Pausing = 3;
+                            if (Pausing == 0)
+                            {
+                                SendPause(true);
+                                Pausing = 1;
+                            }
+                            else if (Pausing == 2)
+                            {
+                                SendPause(false);
+                                Pausing = 3;
+                            }
                         }
                         break;
                     case 32:
@@ -1069,7 +1079,8 @@ namespace RTMP_LIB
                     SendServerBW();
                     SendPing(3, 0, 300);
                     SendCreateStream();
-                    if (!string.IsNullOrEmpty(Link.subscribepath)) SendFCSubscribe();                    
+                    if (!string.IsNullOrEmpty(Link.subscribepath)) SendFCSubscribe(Link.subscribepath);
+                    else if (Link.bLiveStream) SendFCSubscribe(Link.playpath);
                 }
                 else if (methodInvoked == "createStream")
                 {
