@@ -2028,6 +2028,7 @@ namespace OnlineVideos.MediaPortal1
                     SetGuiProperties_SelectedVideo(null);
                     currentView = PluginConfiguration.Instance.currentSiteView;
                     SetFacadeViewMode();
+                    GUIPropertyManager.SetProperty("#itemtype", Translation.Sites);
                     break;
                 case State.categories:
                     string cat_headerlabel = selectedCategory != null ? selectedCategory.RecursiveName() : SelectedSite.Settings.Name;
@@ -2042,6 +2043,7 @@ namespace OnlineVideos.MediaPortal1
                     SetGuiProperties_SelectedVideo(null);
                     currentView = suggestedView != null ? suggestedView.Value : PluginConfiguration.Instance.currentCategoryView;
                     SetFacadeViewMode();
+                    GUIPropertyManager.SetProperty("#itemtype", Translation.Categories);
                     break;
                 case State.videos:
                     switch (currentVideosDisplayMode)
@@ -2065,6 +2067,7 @@ namespace OnlineVideos.MediaPortal1
                     SetGuiProperties_SelectedVideo(selectedVideo);
                     currentView = suggestedView != null ? suggestedView.Value : PluginConfiguration.Instance.currentVideoView;
                     SetFacadeViewMode();
+                    GUIPropertyManager.SetProperty("#itemtype", Translation.Videos);
                     break;
                 case State.details:
                     GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
