@@ -227,77 +227,34 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
-    <!-- Number of Items Label for all views -->
     <control>
-      <description>Number of Items Label in Sites View</description>
+      <description>Label for Current, Total Amount and Localized Type of items</description>
       <type>label</type>
       <id>0</id>
       <posX>1195</posX>
       <posY>551</posY>
-      <label>#selectedindex/#itemcount #OnlineVideos.Translation.Sites.Label</label>
+      <label>#selectedindex/#itemcount #itemtype</label>
       <align>right</align>
       <textcolor>White</textcolor>
       <font>font10</font>
-      <visible>string.equals(#selectedindex)+string.equals(#OnlineVideos.state, sites)</visible>
+      <visible>string.equals(#selectedindex)+!string.equals(#OnlineVideos.state, details)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-    </control>
+    </control>    
     <control>
-      <description>Number of Items Label in categories view without a selected one</description>
+      <description>Label for Total Amount and Localized Type of items</description>
       <type>label</type>
       <id>0</id>
       <posX>1195</posX>
       <posY>551</posY>
-      <label>#itemcount #OnlineVideos.Translation.Categories.Label</label>
+      <label>#itemcount #itemtype</label>
       <align>right</align>
       <textcolor>White</textcolor>
       <font>font10</font>
-      <visible>!string.equals(#selectedindex)+string.equals(#OnlineVideos.state, categories)</visible>
+      <visible>!string.equals(#selectedindex)+!string.equals(#OnlineVideos.state, details)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>Number of Items Label in categories view</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>1195</posX>
-      <posY>551</posY>
-      <label>#selectedindex/#itemcount #OnlineVideos.Translation.Categories.Label</label>
-      <align>right</align>
-      <textcolor>White</textcolor>
-      <font>font10</font>
-      <visible>string.equals(#selectedindex)+string.equals(#OnlineVideos.state, categories)</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>Number of Items Label in Videos view without a selected one</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>1195</posX>
-      <posY>551</posY>
-      <label>#itemcount #OnlineVideos.Translation.Videos.Label</label>
-      <align>right</align>
-      <textcolor>White</textcolor>
-      <font>font10</font>
-      <visible>!string.equals(#selectedindex)+string.equals(#OnlineVideos.state, videos)</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>Number of Items Label in Videos view</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>1195</posX>
-      <posY>551</posY>
-      <label>#selectedindex/#itemcount #OnlineVideos.Translation.Videos.Label</label>
-      <align>right</align>
-      <textcolor>White</textcolor>
-      <font>font10</font>
-      <visible>string.equals(#selectedindex)+string.equals(#OnlineVideos.state, videos)</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
+    </control>    
     
     <!-- *** HIDDEN MENU *** -->
 
