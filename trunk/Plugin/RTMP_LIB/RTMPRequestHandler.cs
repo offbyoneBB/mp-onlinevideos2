@@ -49,6 +49,7 @@ namespace RTMP_LIB
                 if (!string.IsNullOrEmpty(paramsHash["swfurl"])) link.swfUrl = paramsHash["swfurl"];
                 if (!string.IsNullOrEmpty(paramsHash["swfsize"])) link.SWFSize = int.Parse(paramsHash["swfsize"]);
                 if (!string.IsNullOrEmpty(paramsHash["swfhash"])) link.SWFHash = Link.ArrayFromHexString(paramsHash["swfhash"]);
+                if (!string.IsNullOrEmpty(paramsHash["live"])) bool.TryParse(paramsHash["live"], out link.bLiveStream);
                 if (!string.IsNullOrEmpty(paramsHash["auth"])) link.auth = paramsHash["auth"];
                 if (!string.IsNullOrEmpty(paramsHash["token"])) link.token = paramsHash["token"];
                 if (!string.IsNullOrEmpty(paramsHash["conn"])) link.extras = Link.ParseAMF(paramsHash["conn"]);

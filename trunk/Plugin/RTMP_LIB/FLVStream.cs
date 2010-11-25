@@ -63,11 +63,12 @@ namespace RTMP_LIB
                                     }
                                     else if (rtmp.CombinedBitrates > 0)
                                     {
-                                        EstimatedLength = (long)(rtmp.CombinedBitrates * 1000 / 8 * rtmp.Duration);
+                                        EstimatedLength = (long)(rtmp.CombinedBitrates * 1000 / 8 * (rtmp.Duration <= 0 ? 10800 : rtmp.Duration)); // set 3h if no duration in metadata
                                     }
                                     else
                                     {
-                                        EstimatedLength = (long)(2000 * 1000 / 8 * rtmp.Duration); // nothing was in the metadata -> just use duration and a birate of 2000
+                                        // nothing was in the metadata -> just use duration and a bitrate of 2000
+                                        EstimatedLength = (long)(2000 * 1000 / 8 * (rtmp.Duration <= 0 ? 10800 : rtmp.Duration)); // set 3h if no duration in metadata
                                     }
 
                                     EstimatedLength = (long)((double)EstimatedLength * 1.5d);
