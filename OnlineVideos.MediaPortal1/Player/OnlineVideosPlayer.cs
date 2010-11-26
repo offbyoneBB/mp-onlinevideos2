@@ -348,7 +348,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
                 if (result != 0) return false;
 
-                if (sourceFilter is IAMOpenProgress)
+                if (sourceFilter is IAMOpenProgress && !CurrentFile.Contains("live=true"))
                 {
                     // buffer before starting playback
                     bool filterConnected = false;
