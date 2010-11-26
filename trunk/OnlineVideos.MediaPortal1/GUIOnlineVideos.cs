@@ -940,7 +940,7 @@ namespace OnlineVideos.MediaPortal1
                     {
                         if (success)
                         {
-                            SetCategoriesToFacade(parentCategory, result as IList<Category>, diveDownOrUpIfSingle);                            
+                            SetCategoriesToFacade(parentCategory, result as IList<Category>, diveDownOrUpIfSingle);
                         }
                     },
                     Translation.GettingDynamicCategories, true);
@@ -979,6 +979,23 @@ namespace OnlineVideos.MediaPortal1
 
         private void SetCategoriesToFacade(Category parentCategory, IList<Category> categories, bool? diveDownOrUpIfSingle)
         {
+            if (loadParamInfo != null && loadParamInfo.Site == SelectedSite.Settings.Name && parentCategory == null && !string.IsNullOrEmpty(loadParamInfo.Category))
+            {
+                var foundCat = categories.FirstOrDefault(r => r.Name == loadParamInfo.Category);
+                if (foundCat != null)
+                {
+                    if (foundCat.HasSubCategories)
+                    {
+                        DisplayCategories(foundCat, true);
+                    }
+                    else
+                    {
+                        DisplayVideos_Category(foundCat, false);
+                    }
+                }
+                return;
+            }
+
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
 
             // add the first item that will go to the previous menu
@@ -1420,13 +1437,20 @@ namespace OnlineVideos.MediaPortal1
                 }
                 else
                 {
-                    DisplayCategories(selectedCategory.ParentCategory, false);
+                    // if plugin was called with loadParameter set to the current site and return locked and currently displaying subcategories of category from loadParam -> go to previous window 
+                    if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Site == selectedSite.Settings.Name && loadParamInfo.Category == selectedCategory.Name)
+                        OnPreviousWindow();
+                    else
+                        DisplayCategories(selectedCategory.ParentCategory, false);
                 }
             }
             else if (CurrentState == State.videos)
             {
-                // if plugin was called with loadParameter set to the current site with searchstring and return locked and currently displaying the searchresults -> go to previous window 
-                if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Site == selectedSite.Settings.Name && currentVideosDisplayMode == VideosMode.Search)
+                // if plugin was called with loadParameter set to the current site with searchstring and return locked and currently displaying the searchresults or videos for the category from loadParam -> go to previous window 
+                if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Site == selectedSite.Settings.Name && 
+                    (currentVideosDisplayMode == VideosMode.Search || 
+                    (currentVideosDisplayMode == VideosMode.Category && selectedCategory != null && loadParamInfo.Category == selectedCategory.Name))
+                   )
                     OnPreviousWindow();
                 else
                 {
