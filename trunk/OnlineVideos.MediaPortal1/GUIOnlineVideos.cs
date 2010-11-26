@@ -451,7 +451,7 @@ namespace OnlineVideos.MediaPortal1
                     }
                     break;
                 case Action.ActionType.ACTION_KEY_PRESSED:
-                    if (GUI_facadeView.Visible && GUI_facadeView.Focus)
+                    if (GUI_facadeView.CurrentView.Visible && GUI_facadeView.Focus)
                     {
                         // search items (starting from current selected) by title and select first found one
                         char pressedChar = (char)action.m_key.KeyChar;
@@ -484,7 +484,7 @@ namespace OnlineVideos.MediaPortal1
                     }
                     break;
                 case Action.ActionType.ACTION_NEXT_ITEM:
-                    if (currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
+                    if (currentState == State.videos && GUI_facadeView.CurrentView.Visible && GUI_facadeView.Focus)
                     {
                         currentFilter.Clear();
                         if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
@@ -496,7 +496,7 @@ namespace OnlineVideos.MediaPortal1
                     }
                     break;
                 case Action.ActionType.ACTION_PREV_ITEM:
-                    if (currentState == State.videos && GUI_facadeView.Visible && GUI_facadeView.Focus)
+                    if (currentState == State.videos && GUI_facadeView.CurrentView.Visible && GUI_facadeView.Focus)
                     {
                         currentFilter.Clear();
                         if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish

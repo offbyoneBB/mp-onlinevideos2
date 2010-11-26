@@ -27,6 +27,9 @@
       <type>listcontrol</type>
       <description>videolist</description>      
       <id>51</id>
+      <font2>font9</font2>
+      <textYOff2>8</textYOff2>
+      <textXOff2>398</textXOff2>
       <scrollOffset>1</scrollOffset>
       <posX>850</posX>
       <height>320</height>
