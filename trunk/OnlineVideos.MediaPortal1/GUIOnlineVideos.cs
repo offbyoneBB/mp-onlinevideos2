@@ -1229,7 +1229,10 @@ namespace OnlineVideos.MediaPortal1
                 {
                     // set videos to the facade -> if none were found and an empty facade is currently shown, go to previous menu
                     if ((!success || !SetVideosToFacade(result as List<VideoInfo>, VideosMode.Search)) && GUI_facadeView.Count == 0)
-                        ShowPreviousMenu();
+                    {
+                        if (loadParamInfo != null && loadParamInfo.ShowVKonFailedSearch && GetUserInputString(ref query, false)) DisplayVideos_Search(query);
+                        else ShowPreviousMenu();
+                    }
                 },
                 Translation.GettingSearchResults, true);
             }
