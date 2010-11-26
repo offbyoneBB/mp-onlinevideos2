@@ -1,0 +1,24 @@
+#summary Specification for the possibilities of opening OnlineVideos with a parameter
+
+= Introduction =
+
+Starting with MediaPortal 1.2 a designer can add a button in the skinfile that calls any Plugin with a parameter.
+
+= Details =
+
+{{{
+site:<sitename>|category:<categoryname>|search:<searchstring>|VKonfail:<true,false>|return:<Locked,Root>
+}}}
+
+Go directly to:
+
+   # a Site (not found = stay at 'All Sites view')
+   # a Category of a Site (not found = stay at 'All Categories View')
+   # the searchresults of a site (nothing found =
+          * return after showing 'Nothing Found message'
+          * open virtual keyboard with given searchstring)
+
+Return Mode (PreviousMenu):
+
+   # Go back up to the all sites view of OnlineVideos before returning to the window you came from (default)
+   # When at the view OnlineVideos was called with, PreviousMenu will return to the window you came from
