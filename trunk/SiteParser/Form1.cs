@@ -377,7 +377,12 @@ namespace SiteParser
 
                 if (playList != null)
                     foreach (string item in playList.Values)
-                        ResultUrlComboBox.Items.Add(item);
+                    {
+                        if (generic.GetRedirectedFileUrl)
+                            ResultUrlComboBox.Items.Add(SiteUtilBase.GetRedirectedUrl(item));
+                        else
+                            ResultUrlComboBox.Items.Add(item);
+                    }
                 if (ResultUrlComboBox.Items.Count > 0)
                     ResultUrlComboBox.SelectedIndex = 0;
             }
