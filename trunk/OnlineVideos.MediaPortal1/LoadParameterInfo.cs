@@ -17,11 +17,10 @@ namespace OnlineVideos.MediaPortal1
         public string Search { get; protected set; }
         public bool ShowVKonFailedSearch { get { return _ShowVKonFailedSearch; } }
         public ReturnMode Return { get; protected set; }
-        public GUIFacadeControl.ViewMode? View { get; protected set; }
 
         public LoadParameterInfo(string loadParam)
         {
-            // site:<sitename>|category:<categoryname>|search:<searchstring>|VKonfail:<true|false>|return:<Locked|Root>|view:<List|SmallIcons|LargeIcons>
+            // site:<sitename>|category:<categoryname>|search:<searchstring>|VKonfail:<true,false>|return:<Locked,Root>
             Return = ReturnMode.Root;
 
             if (string.IsNullOrEmpty(loadParam)) return;
@@ -32,8 +31,6 @@ namespace OnlineVideos.MediaPortal1
             if (!bool.TryParse(Regex.Match(loadParam, "VKonfail:([^|]*)").Groups[1].Value, out _ShowVKonFailedSearch)) _ShowVKonFailedSearch = true;
             try { Return = (ReturnMode)Enum.Parse(typeof(ReturnMode), Regex.Match(loadParam, "return:([^|]*)").Groups[1].Value); }
             catch { Return = ReturnMode.Root; }
-            try { View = (GUIFacadeControl.ViewMode)Enum.Parse(typeof(GUIFacadeControl.ViewMode), Regex.Match(loadParam, "view:([^|]*)").Groups[1].Value); }
-            catch { View = null; }
         }
     }
 }
