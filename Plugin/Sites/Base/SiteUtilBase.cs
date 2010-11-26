@@ -160,7 +160,7 @@ namespace OnlineVideos.Sites
         public virtual List<VideoInfo> getPreviousPageVideos()
         {
             return new List<VideoInfo>();
-        }        
+        }
 
         /// <summary>
         /// This function will be called to get the urls for playback of a video.<br/>
@@ -318,7 +318,7 @@ namespace OnlineVideos.Sites
         }
 
         # region static helper functions
-        
+
         public static string GetRedirectedUrl(string url, string referer = null)
         {
             HttpWebResponse httpWebresponse = null;
@@ -360,9 +360,9 @@ namespace OnlineVideos.Sites
             return url;
         }
 
-        public static T GetWebData<T>(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false)
+        public static T GetWebData<T>(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null)
         {
-            string webData = GetWebData(url, cc, referer, proxy, forceUTF8, allowUnsafeHeader);
+            string webData = GetWebData(url, cc, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent);
             if (typeof(T) == typeof(string))
             {
                 return (T)(object)webData;
@@ -388,7 +388,7 @@ namespace OnlineVideos.Sites
             return default(T);
         }
 
-        public static string GetWebData(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false)
+        public static string GetWebData(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null)
         {
             try
             {
@@ -401,7 +401,10 @@ namespace OnlineVideos.Sites
                 if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(true);
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return "";
-                request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+                if (!String.IsNullOrEmpty(userAgent))
+                    request.UserAgent = userAgent;
+                else
+                    request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
                 request.Accept = "*/*";
                 request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
                 if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set refere if give
@@ -432,7 +435,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public static string GetWebDataFromPost(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false)
+        public static string GetWebDataFromPost(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null)
         {
             try
             {
@@ -446,7 +449,10 @@ namespace OnlineVideos.Sites
                 if (request == null) return "";
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+                if (!String.IsNullOrEmpty(userAgent))
+                    request.UserAgent = userAgent;
+                else
+                    request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
                 request.Timeout = 15000;
                 request.ContentLength = data.Length;
                 request.ProtocolVersion = HttpVersion.Version10;
@@ -677,7 +683,7 @@ namespace OnlineVideos.Sites
                     if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
                     {
                         string siteName = (component as Sites.SiteUtilBase).Settings.Name;
-                        OnlineVideoSettings.Instance.UserStore.SetValue(string.Format("{0}.{1}", Utils.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());                        
+                        OnlineVideoSettings.Instance.UserStore.SetValue(string.Format("{0}.{1}", Utils.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());
                     }
                 }
             }

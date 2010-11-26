@@ -266,54 +266,6 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        //TODO: move to siteutilbase before releasing 0.27
-        private static string GetWebData(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null)
-        {
-            try
-            {
-                Log.Debug("get webdata from {0}", url);
-                // try cache first
-                string cachedData = WebCache.Instance[url];
-                if (cachedData != null) return cachedData;
-
-                // request the data
-                if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(true);
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                if (request == null) return "";
-                if (userAgent == null)
-                    request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-                else
-                    request.UserAgent = userAgent;
-                request.Accept = "*/*";
-                request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
-                if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set refere if give
-                if (cc != null) request.CookieContainer = cc; // set cookies if given
-                if (proxy != null) request.Proxy = proxy;
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream responseStream;
-                if (response.ContentEncoding.ToLower().Contains("gzip"))
-                    responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
-                else if (response.ContentEncoding.ToLower().Contains("deflate"))
-                    responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
-                else
-                    responseStream = response.GetResponseStream();
-                Encoding encoding = Encoding.UTF8;
-                if (!forceUTF8 && !String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
-                using (StreamReader reader = new StreamReader(responseStream, encoding, true))
-                {
-                    string str = reader.ReadToEnd().Trim();
-                    // add to cache if HTTP Status was 200 and we got more than 500 bytes (might just be an errorpage otherwise)
-                    if (response.StatusCode == HttpStatusCode.OK && str.Length > 500) WebCache.Instance[url] = str;
-                    return str;
-                }
-            }
-            finally
-            {
-                // disable unsafe header parsing if it was enabled
-                if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(false);
-            }
-        }
-
         private int Ipad(Category parentCategory)
         {
             string webData = GetWebData(((RssLink)parentCategory).Url, null, null, null, false, false, @"Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10");
