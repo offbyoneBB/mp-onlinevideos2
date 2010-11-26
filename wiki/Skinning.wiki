@@ -29,6 +29,9 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
 || 50 || facadeview || label1 - title, label2 - language (`#OnlineVideos.state = sites`) ||  main facade (required modes: list, large and small icons) ||
 || 51 || listcontrol || - || additional list used instead of facade in details view ||
 
+
+The icon shown for each site in the facade can be overridden by the skin if a png in {{{[CurrentSkinFolder]\Media\OnlineVideos\Icons\}}} is found. <br/>The same goes for the site's banner ({{{[CurrentSkinFolder]\Media\OnlineVideos\Banners\}}}).
+
 = Window 4757 required controls =
 || *Id* || *type* || *default localized label* || *description* ||
 || 50 || listcontrol || label1 - site name, label2 - language, label3 - updatedate || main list ||
