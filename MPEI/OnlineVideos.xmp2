@@ -1001,13 +1001,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Tvgemist\rtlgemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d99b8a94-961b-48f7-83fd-3396188cf0b1}-rtlgemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\rtlgemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Tvgemist\sbsgemist.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{2c56e58e-0dbf-4354-a51b-016f7b2ab154}-sbsgemist.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\sbsgemist.png</DestinationFilename>
@@ -1278,6 +1271,20 @@
               <ZipFileName>Installer{CopyFile}\{5363de9c-ee5a-4db5-9fcf-538e5e838263}-Kabouter Wesley.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Kabouter Wesley.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\rtl xl.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e2a5faff-6716-447a-b751-6631c08ef55f}-rtl xl.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\rtl xl.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\rtl xl.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{aca124d3-d00d-4705-95ae-9c03411b0773}-rtl xl.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\rtl xl.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1343,7 +1350,7 @@
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.26.0.0\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.27.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1445,6 +1452,20 @@
               <LocalFileName>..\Language\OnlineVideos\fi.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{6b3e2e10-225f-4849-95f7-98064a56b913}-fi.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\fi.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\ca.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{be49db00-e099-4a81-8dce-c0ab56ca7b29}-ca.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\ca.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\el.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f8042d61-6ed9-4898-a481-173dc6adb055}-el.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\el.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1616,72 +1637,6 @@
           </Items>
         </Files>
       </GroupItem>
-      <GroupItem Name="Xface">
-        <ParentGroup>Skins</ParentGroup>
-        <DisplayName>Xface</DisplayName>
-        <DefaulChecked>false</DefaulChecked>
-        <Description>Xface</Description>
-        <Files>
-          <Items>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\myonlinevideos.details.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{1966ca53-8f98-4b86-89e0-cb8fb8a828eb}-myonlinevideos.details.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\myonlinevideos.details.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\myonlinevideos.facade.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{49748432-4fc7-4da1-ac27-6f8e75314432}-myonlinevideos.facade.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\myonlinevideos.facade.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\myonlinevideos.window.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{316cb2fe-002f-4a17-af03-7b2f7fb631cf}-myonlinevideos.window.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\myonlinevideos.window.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\myonlinevideos.xml</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{33d7329f-7b7e-40b0-887b-54dd8201cafa}-myonlinevideos.xml</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\myonlinevideos.xml</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\Media\buttonNF_online videos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{fc76fabd-65bb-4c05-a878-93e87d6eada6}-buttonNF_online videos.png</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\Media\buttonNF_online videos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\Media\button_online videos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{1dd71cf3-5e6a-41b4-a7d1-a4cd7f4470e1}-button_online videos.png</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\Media\button_online videos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\Media\hover_onlinevideos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{742e2b0d-1c71-4296-9a73-e4662306fb86}-hover_onlinevideos.png</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\Media\hover_onlinevideos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\Skins\Xface\Media\OnlineVideos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{88a11a1c-b730-46cf-a1ab-a36863a7c52f}-OnlineVideos.png</ZipFileName>
-              <DestinationFilename>%Skin%\Xface\Media\OnlineVideos.png</DestinationFilename>
-            </FileItem>
-          </Items>
-        </Files>
-      </GroupItem>
       <GroupItem Name="FLVSplitter">
         <ParentGroup />
         <DisplayName>FLV Splitter</DisplayName>
@@ -1797,7 +1752,6 @@ Click Next to continue or Cancel to exit Setup.</Value>
           <string>Skins</string>
           <string>Blue3</string>
           <string>Blue3Wide</string>
-          <string>Xface</string>
           <string>GenericSiteTool</string>
         </IncludedGroups>
         <PanelName>Tree View Selector</PanelName>
@@ -2143,22 +2097,25 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>26</Minor>
+      <Minor>27</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>Improved MediaPortal startup speed by loading settings at first plugin entering.
-Skins can now override Site Icons and Banners.
-Improved ExternalOSD for WMPPLayer.
-RTMP reconnect added.
-Category lists with one category are now automatically skipped.
-#header.label now holds the recursive name of the current category.
-Made HTTP Source Filter configurable.
-Intoduced a Hoster-concept, RSS feeds can now link to pages of known hosters, the url will be resolved to the playback file.</VersionDescription>
+    <VersionDescription>Added: SearchHistory 
+Added: SubCategories will now be read from OnlineVideoSites.xml 
+Fixed: Duplicate Categories on Sites with dynamic categories when using SiteManager
+Added: Support for starting Plugin with a parameter
+Fixed: Buffering stopped prematurely because webdata timeout was used on playback start
+Fixed: MePo GUI freeze while SourceFiler connect sto the http server
+Added: support for rtmp live streams
+Fixed: Not able to use SMS style (T9) Filter
+Skinning Enhancement: Added support for #itemtype
+DetailsView: Trailer date shown and first trailer selected
+Many other small bugfixes/enhancements</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2010-10-24T18:01:51</ReleaseDate>
+    <ReleaseDate>2010-11-27T18:01:51</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -3178,13 +3135,6 @@ Intoduced a Hoster-concept, RSS feeds can now link to pages of known hosters, th
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Tvgemist\rtlgemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d99b8a94-961b-48f7-83fd-3396188cf0b1}-rtlgemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\rtlgemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\Tvgemist\sbsgemist.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{2c56e58e-0dbf-4354-a51b-016f7b2ab154}-sbsgemist.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\sbsgemist.png</DestinationFilename>
@@ -3455,6 +3405,20 @@ Intoduced a Hoster-concept, RSS feeds can now link to pages of known hosters, th
         <ZipFileName>Installer{CopyFile}\{5363de9c-ee5a-4db5-9fcf-538e5e838263}-Kabouter Wesley.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Kabouter Wesley.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\rtl xl.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e2a5faff-6716-447a-b751-6631c08ef55f}-rtl xl.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\rtl xl.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\rtl xl.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{aca124d3-d00d-4705-95ae-9c03411b0773}-rtl xl.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\rtl xl.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -3496,6 +3460,13 @@ Intoduced a Hoster-concept, RSS feeds can now link to pages of known hosters, th
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c795f3a7-881d-4376-b2a2-e8ac9eec9eaa}-OnlineVideos.MediaPortal1.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>extension_settings.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
+        <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.27.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3587,6 +3558,20 @@ Intoduced a Hoster-concept, RSS feeds can now link to pages of known hosters, th
         <LocalFileName>..\Language\OnlineVideos\fi.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{6b3e2e10-225f-4849-95f7-98064a56b913}-fi.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\fi.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\ca.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{be49db00-e099-4a81-8dce-c0ab56ca7b29}-ca.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\ca.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\el.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f8042d61-6ed9-4898-a481-173dc6adb055}-el.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\el.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3735,75 +3720,12 @@ Intoduced a Hoster-concept, RSS feeds can now link to pages of known hosters, th
         <ZipFileName>Installer{CopyFile}\{edcb4aec-b880-41d2-a708-4cdb4a5e9f4f}-myonlinevideosOSD.xml</ZipFileName>
         <DestinationFilename>%Skin%\Blue3Wide\myonlinevideosOSD.xml</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\myonlinevideos.details.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{1966ca53-8f98-4b86-89e0-cb8fb8a828eb}-myonlinevideos.details.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\myonlinevideos.details.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\myonlinevideos.facade.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{49748432-4fc7-4da1-ac27-6f8e75314432}-myonlinevideos.facade.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\myonlinevideos.facade.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\myonlinevideos.window.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{316cb2fe-002f-4a17-af03-7b2f7fb631cf}-myonlinevideos.window.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\myonlinevideos.window.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\myonlinevideos.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{33d7329f-7b7e-40b0-887b-54dd8201cafa}-myonlinevideos.xml</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\myonlinevideos.xml</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\Media\buttonNF_online videos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{fc76fabd-65bb-4c05-a878-93e87d6eada6}-buttonNF_online videos.png</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\Media\buttonNF_online videos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\Media\button_online videos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{1dd71cf3-5e6a-41b4-a7d1-a4cd7f4470e1}-button_online videos.png</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\Media\button_online videos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\Media\hover_onlinevideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{742e2b0d-1c71-4296-9a73-e4662306fb86}-hover_onlinevideos.png</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\Media\hover_onlinevideos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\Skins\Xface\Media\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{88a11a1c-b730-46cf-a1ab-a36863a7c52f}-OnlineVideos.png</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\Media\OnlineVideos.png</DestinationFilename>
-      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>FLVSplitter.ax</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{24aa2ae9-effd-4774-919c-25d70ce7ea3f}-FLVSplitter.ax</ZipFileName>
         <DestinationFilename>%Base%\FLVSplitter.ax</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>extension_settings.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.26.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -3823,7 +3745,7 @@ Intoduced a Hoster-concept, RSS feeds can now link to pages of known hosters, th
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2f7ab2a1-4233-45ff-84e0-dce92b861184}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{3012169a-a5a2-48e9-9e21-f9903766e7df}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
@@ -3868,16 +3790,6 @@ Intoduced a Hoster-concept, RSS feeds can now link to pages of known hosters, th
         <DestinationFilename>%Skin%\Blue3Wide\</DestinationFilename>
         <Folder>..\Skins\Blue3wide</Folder>
         <Group>Blue3Wide</Group>
-        <Recursive>true</Recursive>
-      </FolderGroup>
-      <FolderGroup InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName />
-        <ZipFileName>Installer{CopyFile}\{fd77545e-85ea-434f-b5dd-4379ece1737f}-</ZipFileName>
-        <DestinationFilename>%Skin%\Xface\</DestinationFilename>
-        <Folder>..\Skins\Xface</Folder>
-        <Group>Xface</Group>
         <Recursive>true</Recursive>
       </FolderGroup>
     </FolderGroups>
