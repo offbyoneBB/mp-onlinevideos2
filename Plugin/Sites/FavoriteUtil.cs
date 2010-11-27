@@ -26,6 +26,10 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
 
+            string[] lsSiteIds = OnlineVideoSettings.Instance.FavDB.getSiteIDs();
+
+            if (lsSiteIds == null || lsSiteIds.Length == 0) return 0;
+
             RssLink all = null;
             if (!cachedCategories.TryGetValue(Translation.All, out all))
             {
@@ -36,7 +40,6 @@ namespace OnlineVideos.Sites
             }
             Settings.Categories.Add(all);
 
-            string[] lsSiteIds = OnlineVideoSettings.Instance.FavDB.getSiteIDs();            
             foreach (string lsSiteId in lsSiteIds)
             {
                 SiteUtilBase util = null;
