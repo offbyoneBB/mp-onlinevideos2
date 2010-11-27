@@ -94,7 +94,7 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#header.image",
                                            Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
 
-            DisplayOnlineSites();            
+            DisplayOnlineSites();
         }
 
         void DisplayOnlineSites()
@@ -105,6 +105,8 @@ namespace OnlineVideos.MediaPortal1
             if (GetRemoteOverviews()) SetFilterButtonOptions();
 
             if (onlineSites == null || onlineSites.Length == 0) return;
+
+            GUIListItem selectedItem = GUI_infoList.SelectedListItem;
 
             GUIControl.ClearControl(GetID, GUI_infoList.GetID);
 
@@ -126,10 +128,11 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
                     loListItem.IsPlayed = GetLocalSite(site.Name) != -1;
                     GUI_infoList.Add(loListItem);
+                    if (selectedItem != null && selectedItem.Label == loListItem.Label) GUI_infoList.SelectedListItemIndex = GUI_infoList.Count -1;
                 }
             }
 
-            if (GUI_infoList.Count > 0) GUIControl.SelectItemControl(GetID, GUI_infoList.GetID, 0);
+            if (GUI_infoList.Count > 0) GUIControl.SelectItemControl(GetID, GUI_infoList.GetID, GUI_infoList.SelectedListItemIndex);
 
             //set object count label
             GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(GUI_infoList.Count));
@@ -249,6 +252,7 @@ namespace OnlineVideos.MediaPortal1
                     OnlineVideoSettings.Instance.SaveSites();
                     OnlineVideoSettings.Instance.BuildSiteUtilsList();
                     if (DownloadRequiredDllIfNeeded(site.RequiredDll)) ShowRestartMessage();
+                    DisplayOnlineSites();
                 }
             }
             else if (dlgSel.SelectedLabelText == Translation.UpdateMySite)
@@ -279,6 +283,7 @@ namespace OnlineVideos.MediaPortal1
                 OnlineVideoSettings.Instance.SiteSettingsList.RemoveAt(localSiteIndex);
                 OnlineVideoSettings.Instance.SaveSites();
                 OnlineVideoSettings.Instance.BuildSiteUtilsList();
+                DisplayOnlineSites();
             }
             else if (dlgSel.SelectedLabelText == Translation.ShowReports)
             {
