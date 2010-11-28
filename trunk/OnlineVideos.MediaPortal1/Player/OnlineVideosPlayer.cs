@@ -7,6 +7,10 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using System.Globalization;
+#if !MP11
+using MediaPortal.Player.Subtitles;
+using MediaPortal.Player.PostProcessing;
+#endif
 
 namespace OnlineVideos.MediaPortal1.Player
 {
@@ -485,6 +489,26 @@ namespace OnlineVideos.MediaPortal1.Player
                 CloseInterfaces();
                 return false;
             }
+
+#if !MP11
+            string tmpstr;
+            ISubEngine engine = SubEngine.GetInstance(true);
+            if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+            {
+                tmpstr = engine.ToString().Substring(engine.ToString().LastIndexOf(".") + 1);
+                Log.Instance.Error("VideoPlayerVMR7_OnlineVideo: {0} subtitle configured in MP but misconfigured, disabled!", tmpstr);
+                SubEngine.engine = new SubEngine.DummyEngine();
+            }
+
+            IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+            if (!postengine.LoadPostProcessing(graphBuilder))
+            {
+                tmpstr = postengine.ToString().Substring(postengine.ToString().LastIndexOf(".") + 1);
+                Log.Instance.Error("VideoPlayerVMR7_OnlineVideo: {0} postprocessing configured in MP but misconfigured!", tmpstr);
+                PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+            }
+#endif
+
             int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
             if (hr < 0)
             {
@@ -544,8 +568,10 @@ namespace OnlineVideos.MediaPortal1.Player
             mediaPos.get_Duration(out m_dDuration);
             Log.Instance.Info("OnlineVideosPlayer:Duration:{0}", m_dDuration);
             AnalyseStreams();
-            //SelectSubtitles();
-            //SelectAudioLanguage();
+#if !MP11
+            SelectSubtitles();
+            SelectAudioLanguage();
+#endif
             OnInitialized();
 
             return true;
