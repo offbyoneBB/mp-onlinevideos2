@@ -835,6 +835,7 @@
             <Channel name="Russian Tv - RTR Planeta" thumb="http://www.rtr-planeta.com/i/h1_1.jpg">mms://video.rfn.ru/rtr-planeta</Channel>
             <Channel name="Russian Tv - First Baltic Music Channel" thumb="http://www.tv-port.net/wp-content/uploads/2009/05/1baltic.jpg">mms://195.244.137.207:81</Channel>
             <Channel name="Israel Plus" thumb="http://images.zman.com/1_2008/16_01_2008_14_01_27_logochannel9.jpg">mms://192.117.188.41/VJ289CWP7ef2kF15mGIoNUNKU</Channel>
+            <Channel name="NTV" thumb="http://www.iyfproductions.de/referenzen/ntv.png">rtmp://fms.rtl.de/ntvlive/livestream/channel1</Channel>
           </Channels>
         </Category>
       </Categories>

@@ -210,7 +210,16 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = CreateVideoInfo();
                     video.Title = channel.StreamName;
-                    video.VideoUrl = channel.Url;
+                    // translate rtmp live stream urls
+                    if (channel.Url.ToLower().StartsWith("rtmp") && channel.Url.ToLower().Contains("live"))
+                    {
+                        video.VideoUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&live=true", System.Web.HttpUtility.UrlEncode(channel.Url)));
+                    }
+                    else
+                    {
+                        video.VideoUrl = channel.Url;
+                    }
                     video.ImageUrl = channel.Thumb;
                     loVideoList.Add(video);
                 }
