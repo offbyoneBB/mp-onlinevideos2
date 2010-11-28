@@ -70,6 +70,7 @@
   <string Field="NoVideoFound">Aucune vidéo trouvée</string>
   <string Field="NoReportsForSite">Pas de rapport disponible pour ce site</string>
   <string Field="NewDllDownloaded">Nouvelle DLL téléchargé!</string>
+  <string Field="NewSearch">Nouvelle recherche</string>
   <string Field="PlayAll">Lecture de la totalité des vidéos</string>
   <string Field="PlotOutline">Aperçu</string>
   <string Field="PreviousPage">Page précédente</string>
@@ -84,6 +85,7 @@
   <string Field="RestartMediaPortal">Redémarrez MediaPortal!</string>
   <string Field="RetrievingRemoteDlls">Récupération des DLL à distance ...</string>
   <string Field="RetrievingRemoteSites">Récupération des sites distants ...</string>
+  <string Field="SearchHistory">Historique de la recherche</string>
   <string Field="SearchResults">Résultats de la recherche</string>
   <string Field="SelectSource">Sélectionner une source</string>
   <string Field="Sites">Sites</string>
