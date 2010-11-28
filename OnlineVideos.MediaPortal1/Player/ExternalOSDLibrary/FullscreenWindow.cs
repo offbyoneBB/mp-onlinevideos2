@@ -119,7 +119,7 @@ namespace ExternalOSDLibrary
             _imageCacheElements = new List<BaseElement>();
             GUIControl temp;
             GUIGroup help;
-            foreach (UIElement element in _controlList)
+            foreach (var element in _controlList)
             {
                 temp = element as GUIControl;
                 if (temp != null)
@@ -128,7 +128,7 @@ namespace ExternalOSDLibrary
                     {
                         help = temp as GUIGroup;
                         if (help != null)
-                            foreach (UIElement uiElement in help.Children)
+                            foreach (var uiElement in help.Children)
                             {
                                 GUIControl temp2 = uiElement as GUIControl;
                                 if (temp2 != null)
