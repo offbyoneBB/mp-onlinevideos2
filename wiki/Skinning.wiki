@@ -62,6 +62,7 @@ The State is one of the three: {{{Broken, Reported, Working}}}. In the default s
   * `#OnlineVideos.length` - runtime and airdate (if available) of the current selected item (localized label property: {{{#OnlineVideos.Translation.Runtime.Label}}})
   * `#OnlineVideos.selectedSite` - name of the Site currently selected (e.g. "GameTrailers") that can be used for conditional visibility
   * `#OnlineVideos.selectedSiteUtil` - name of the Util used by the currently selected Site (e.g. "GenericSite") that can be used for conditional visibility
+  * While the list of Sites is shown the language of the selected Site is set in {{{#selecteditem2}}}<br/>and can be shown instead of the length with a visible condition: {{{string.equals(#OnlineVideos.state, sites)}}}.<br/>The localized label for "Language" is 248 (MediaPortal supplied).
 
  * Facade (both Windows)
   * `#itemcount` - total number of items 
