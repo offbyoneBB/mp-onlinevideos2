@@ -35,9 +35,15 @@ namespace OnlineVideos.MediaPortal1
         // runtime (inside MediaPortal) changeable values
         public Dictionary<string, List<string>> searchHistory;
         public SiteOrder siteOrder = SiteOrder.AsInFile;
+#if MP11
         public GUIFacadeControl.ViewMode currentSiteView = GUIFacadeControl.ViewMode.List;
         public GUIFacadeControl.ViewMode currentCategoryView = GUIFacadeControl.ViewMode.List;
         public GUIFacadeControl.ViewMode currentVideoView = GUIFacadeControl.ViewMode.SmallIcons;
+#else
+        public GUIFacadeControl.Layout currentSiteView = GUIFacadeControl.Layout.List;
+        public GUIFacadeControl.Layout currentCategoryView = GUIFacadeControl.Layout.List;
+        public GUIFacadeControl.Layout currentVideoView = GUIFacadeControl.Layout.SmallIcons;
+#endif
 
         #region MediaPortal.xml attribute names
         public const string CFG_SECTION = "onlinevideos";
@@ -110,10 +116,16 @@ namespace OnlineVideos.MediaPortal1
                 using (Settings settings = new MPSettings())
                 {
                     BasicHomeScreenName = settings.GetValueAsString(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
-                    currentSiteView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_SITEVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
                     siteOrder = (SiteOrder)settings.GetValueAsInt(CFG_SECTION, CFG_SITEVIEW_ORDER, (int)SiteOrder.AsInFile);
+#if MP11
+                    currentSiteView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_SITEVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
                     currentVideoView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
                     currentCategoryView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
+#else
+                    currentSiteView = (GUIFacadeControl.Layout)settings.GetValueAsInt(CFG_SECTION, CFG_SITEVIEW_MODE, (int)GUIFacadeControl.Layout.List);
+                    currentVideoView = (GUIFacadeControl.Layout)settings.GetValueAsInt(CFG_SECTION, CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.Layout.SmallIcons);
+                    currentCategoryView = (GUIFacadeControl.Layout)settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYVIEW_MODE, (int)GUIFacadeControl.Layout.List);
+#endif
                     ovsconf.ThumbsDir = settings.GetValueAsString(CFG_SECTION, CFG_THUMBNAIL_DIR, ovsconf.ThumbsDir).Replace("/", @"\");
                     if (!ovsconf.ThumbsDir.EndsWith(@"\")) ovsconf.ThumbsDir = ovsconf.ThumbsDir + @"\"; // fix thumbnail dir to include the trailing slash
                     try { if (!Directory.Exists(ovsconf.ThumbsDir)) Directory.CreateDirectory(ovsconf.ThumbsDir); }

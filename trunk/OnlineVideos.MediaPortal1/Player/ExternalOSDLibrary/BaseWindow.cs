@@ -59,7 +59,11 @@ namespace ExternalOSDLibrary
     /// <summary>
     /// List of all elements of the window
     /// </summary>
+#if MP11
     protected UIElementCollection _controlList;
+#else
+    protected GUIControlCollection _controlList;
+#endif
     #endregion
 
     #region protected methods
@@ -72,7 +76,7 @@ namespace ExternalOSDLibrary
       _elementList = new List<BaseElement>();
       GUIControl controlElement;
       GUIGroup groupElement;
-      foreach (UIElement uiElement in _controlList)
+      foreach (var uiElement in _controlList)
       {
         controlElement = uiElement as GUIControl;
         if (controlElement != null)
@@ -81,7 +85,7 @@ namespace ExternalOSDLibrary
           {
             groupElement = controlElement as GUIGroup;
             if (groupElement != null)
-              foreach (UIElement uiElement2 in groupElement.Children)
+              foreach (var uiElement2 in groupElement.Children)
               {
                 GUIControl groupControlElement = uiElement2 as GUIControl;
                 if (groupControlElement != null)
