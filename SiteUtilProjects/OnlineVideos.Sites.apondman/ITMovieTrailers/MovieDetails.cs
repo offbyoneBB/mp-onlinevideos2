@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Pondman.Metadata.ITunes.MovieTrailers;
+using Pondman.OnlineVideos.ITunes.Nodes;
 
 namespace OnlineVideos.Sites.apondman.ITMovieTrailers
 {
@@ -11,19 +11,18 @@ namespace OnlineVideos.Sites.apondman.ITMovieTrailers
     /// </summary>
     public class MovieDetails : IVideoDetails
     {
-
-        public MovieDetails(ITMovie movie)
+        public MovieDetails(Movie movie)
         {
-            _movie = movie;
+            this.movie = movie;
         }
 
-        public ITMovie Movie
+        public Movie Movie
         {
             get
             {
-                return _movie;
+                return this.movie;
             }
-        } ITMovie _movie;
+        } Movie movie;
 
         #region IVideoDetails Members
 

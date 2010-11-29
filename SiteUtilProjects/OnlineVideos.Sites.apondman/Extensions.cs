@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Pondman.Metadata.ITunes.MovieTrailers;
+using Pondman.OnlineVideos;
 
 namespace OnlineVideos.Sites.apondman
 {
@@ -40,7 +40,7 @@ namespace OnlineVideos.Sites.apondman
         {
             switch (self)
             {
-                case VideoQuality.FULLHD:
+                case VideoQuality.FullHD:
                     return "HD 1080p";
                 case VideoQuality.HD720:
                     return "HD 720p";

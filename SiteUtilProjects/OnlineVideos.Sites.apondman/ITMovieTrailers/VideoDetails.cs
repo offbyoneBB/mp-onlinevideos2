@@ -2,17 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Pondman.Metadata.ITunes.MovieTrailers;
+using Pondman.OnlineVideos.ITunes.Nodes;
 
 namespace OnlineVideos.Sites.apondman.ITMovieTrailers
 {
     /// <summary>
     /// Inherited class to be able to publish the movie details to online videos
     /// </summary>
-    public class VideoDetails : ITVideo, IVideoDetails
+    public class VideoDetails : Video, IVideoDetails
     {
-        public VideoDetails(string uri) : base(uri) { }
+        public VideoDetails(Video video)
+        {
+            this.video = video;
+        }
 
+        public Video Video
+        {
+            get
+            {
+                return this.video;
+            }
+        } Video video;
+        
+        
         #region IVideoDetails Members
 
         public Dictionary<string, string> GetExtendedProperties()
@@ -23,28 +35,5 @@ namespace OnlineVideos.Sites.apondman.ITMovieTrailers
         }
 
         #endregion
-
-        /// <summary>
-        /// Creates a VideoDetails object from another object
-        /// </summary>
-        /// <param name="vid">ITVideo object instance</param>
-        /// <returns>VideoDetails object instance</returns>
-        public static VideoDetails Create(ITVideo vid)
-        {
-            try
-            {
-                VideoDetails result = new VideoDetails(vid.Uri.AbsoluteUri);
-                result.Duration = vid.Duration;
-                result.Published = vid.Published;
-                result.State = vid.State;
-                result.Title = vid.Title;
-                result.Uri = vid.Uri;
-                return result;
-            }
-            catch
-            {
-                return null;
-            }
-        }
     }
 }

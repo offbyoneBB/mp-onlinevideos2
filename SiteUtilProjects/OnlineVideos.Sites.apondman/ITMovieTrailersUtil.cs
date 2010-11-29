@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
-using Pondman.Metadata.ITunes.MovieTrailers;
+using Pondman.OnlineVideos;
+using Pondman.OnlineVideos.ITunes;
+using Pondman.OnlineVideos.ITunes.Nodes;
 using OnlineVideos.Sites.apondman.ITMovieTrailers;
+using Pondman.OnlineVideos.Interfaces;
+using HtmlAgilityPack;
 
 namespace OnlineVideos.Sites.apondman {
 
@@ -15,18 +19,20 @@ namespace OnlineVideos.Sites.apondman {
 
         #region iTunes Movie Trailers
 
-        ITunesTrailersApi _trailersApi;
-        Stack<ITSection> _sectionPages;
+        ISession apiSession = null;
+
+        Stack<Section> _sectionPages;
 
         /// <summary>
         /// Initialize
         /// </summary>
         private void Init() {
             
-            // create api instance
-            if (_trailersApi == null) {
-                _trailersApi = new ITunesTrailersApi();
-                _trailersApi.DoWebRequest = doWebRequest;
+            // create movie trailer session
+            if (apiSession == null) 
+            {
+                apiSession = API.GetSession();
+                apiSession.MakeRequest = doWebRequest;
             }
 
             // add a special reversed proxy handler
@@ -39,8 +45,8 @@ namespace OnlineVideos.Sites.apondman {
         /// </summary>
         /// <param name="uri"></param>
         /// <returns></returns>
-        private string doWebRequest(Uri uri) {
-            return GetWebData(uri.AbsoluteUri, null, null, null, false, true);
+        private string doWebRequest(string uri) {
+            return GetWebData(uri, null, null, null, false, true);
         }
 
         /// <summary>
@@ -48,11 +54,11 @@ namespace OnlineVideos.Sites.apondman {
         /// </summary>
         /// <param name="movie"></param>
         /// <returns></returns>
-        private VideoInfo createVideoInfoFromMovie(ITMovie movie) {
+        private VideoInfo createVideoInfoFromMovie(Movie movie) {
             VideoInfo video = new VideoInfo();
             video.Other = new MovieDetails(movie);
             video.Title = movie.Title;
-            video.ImageUrl = movie.Poster != null ? movie.Poster.Uri.AbsoluteUri : string.Empty;
+            video.ImageUrl = movie.Poster != null ? movie.Poster.Uri : string.Empty;
             
             // extra
             string actors = movie.Actors.ToCommaSeperatedString();
@@ -62,29 +68,29 @@ namespace OnlineVideos.Sites.apondman {
             return video;
         }
 
-        private bool hasSubCategories(ITSection section) {
-            string uri = section.Uri.AbsoluteUri;
+        private bool hasSubCategories(Section section) {
+            string uri = section.Uri;
 
             // the following sections have sub categories
-            if (uri == _trailersApi.Configuration.FeaturedGenresUri || uri == _trailersApi.Configuration.FeaturedStudiosUri ||
-                 uri == ITSection.FeaturedUri || uri == ITSection.StudiosUri || uri == ITSection.GenresUri) {
+            if (uri == apiSession.Config.FeaturedGenresUri || uri == apiSession.Config.FeaturedStudiosUri ||
+                 uri == Section.FeaturedUri || uri == Section.StudiosUri || uri == Section.GenresUri) {
                 return true;
             }
 
             return false;
         }
 
-        private List<VideoInfo> getVideoList(ITSection section) {
+        private List<VideoInfo> getVideoList(Section section) {
             List<VideoInfo> videos = new List<VideoInfo>();
 
-            ITResult result = _trailersApi.Update(section);
+            ITResult result = section.Update();
             if (section.State != ITState.Complete) {
                 return videos;
             }
 
             _sectionPages.Push(section);
 
-            foreach (ITMovie movie in section.Movies) {
+            foreach (Movie movie in section.Movies) {
                 VideoInfo video = createVideoInfoFromMovie(movie);
                 videos.Add(video);
             }
@@ -128,9 +134,9 @@ namespace OnlineVideos.Sites.apondman {
         public override int DiscoverDynamicCategories() {
             Settings.Categories.Clear();
 
-            ITSection rootSection = _trailersApi.Browse();
+            Section rootSection = API.Browse(apiSession);
 
-            foreach (ITSection section in rootSection.Sections) {
+            foreach (Section section in rootSection.Sections) {
                 Category cat = new Category();
                 cat.Name = section.Name;
                 cat.Other = section;
@@ -143,17 +149,19 @@ namespace OnlineVideos.Sites.apondman {
         }
 
         public override int DiscoverSubCategories(Category parentCategory) {
-            ITSection section = (ITSection)parentCategory.Other;
+            Section section = (Section)parentCategory.Other;
             
             parentCategory.Other = section;
             parentCategory.SubCategories = new List<Category>();
 
-            ITResult result = _trailersApi.Get(section);
+            ITResult result = section.Update();
             if (result == ITResult.Failed)
+            {
                 return parentCategory.SubCategories.Count;
+            }
 
             parentCategory.SubCategories = new List<Category>();
-            foreach (ITSection subSection in section.Sections) {
+            foreach (Section subSection in section.Sections) {
                 Category cat = new Category();
                 cat.ParentCategory = parentCategory;
                 cat.Name = subSection.Name;
@@ -167,8 +175,8 @@ namespace OnlineVideos.Sites.apondman {
         }
 
         public override List<VideoInfo> getVideoList(Category category) {
-            ITSection section = (ITSection)category.Other;
-            _sectionPages = new Stack<ITSection>();
+            Section section = (Section)category.Other;
+            _sectionPages = new Stack<Section>();
             return getVideoList(section);
         }
 
@@ -176,39 +184,41 @@ namespace OnlineVideos.Sites.apondman {
             List<VideoInfo> clips = new List<VideoInfo>();
 
             // make the movie request
-            ITMovie movie;
+            Movie movie;
 
             if (video.Other != null && video.Other is MovieDetails) {
                 movie = ((MovieDetails)video.Other).Movie;
             }
             else {
-                movie = new ITMovie(video.VideoUrl);
+                movie = apiSession.Get<Movie>(video.VideoUrl);
                 video.Other = new MovieDetails(movie);
             }
 
-            ITResult result = _trailersApi.Update(movie);
+            ITResult result = movie.Update();
             if (movie.State != ITState.Complete)
+            {
                 return clips;
+            }
 
             // complete movie metadata
             video.Description = movie.Synopsis;
             video.Length = movie.ReleaseDate != DateTime.MinValue ? movie.ReleaseDate.ToShortDateString() : "Coming Soon";
-            video.ImageUrl = movie.Poster != null ? movie.Poster.Large.AbsoluteUri : string.Empty;
-            video.VideoUrl = movie.Uri.AbsoluteUri;
+            video.ImageUrl = movie.Poster != null ? movie.Poster.Large : string.Empty;
+            video.VideoUrl = movie.Uri;
 
             // get initial video list
-            foreach (ITVideo clip in movie.Videos) {
+            foreach (Video clip in movie.Videos) {
                 VideoInfo vid = new VideoInfo();
                 //vid.Other = clip;
-                vid.Other = VideoDetails.Create(clip);
+                vid.Other = new VideoDetails(clip);
                 vid.Title = movie.Title + " - " + clip.Title;
                 vid.Title2 = clip.Title;
                 vid.Description = movie.Synopsis;
                 //vid.Length = clip.Duration.ToString();
                 vid.Length = clip.Published != DateTime.MinValue ? clip.Published.ToShortDateString() : "N/A";
-                vid.ImageUrl = movie.Poster != null ? movie.Poster.Uri.AbsoluteUri : string.Empty;
+                vid.ImageUrl = movie.Poster != null ? movie.Poster.Uri : string.Empty;
                 vid.ThumbnailImage = video.ThumbnailImage;
-                vid.VideoUrl = clip.Uri.AbsoluteUri;
+                vid.VideoUrl = clip.Uri;
                 clips.Add(vid);
             }
 
@@ -216,13 +226,13 @@ namespace OnlineVideos.Sites.apondman {
         }
 
         public override List<VideoInfo> getNextPageVideos() {
-            ITSection nextSection = _sectionPages.Peek().Sections[0];
+            Section nextSection = _sectionPages.Peek().Sections[0];
             return getVideoList(nextSection);
         }
 
         public override List<VideoInfo> getPreviousPageVideos() {
-            ITSection currentSection = _sectionPages.Pop();
-            ITSection prevSection = _sectionPages.Pop();
+            Section currentSection = _sectionPages.Pop();
+            Section prevSection = _sectionPages.Pop();
 
             return getVideoList(prevSection);
         }       
@@ -230,18 +240,20 @@ namespace OnlineVideos.Sites.apondman {
         public override string getUrl(VideoInfo video) {
             string videoUrl = string.Empty;
             
-            ITVideo clip;
-            if (video.Other != null && video.Other is ITVideo) {
-                clip = (ITVideo)video.Other;
+            Video clip;
+            if (video.Other != null && video.Other is Video) {
+                clip = apiSession.Get<Video>(video.VideoUrl);
             }
             else {
-                clip = new ITVideo(video.VideoUrl);
-                video.Other = clip;
+                clip = apiSession.Get<Video>(video.VideoUrl);
+                video.Other = new VideoDetails(clip);
             }
 
-            ITResult result = _trailersApi.Update(clip);
+            ITResult result = clip.Update();
             if (clip.State != ITState.Complete)
+            {
                 return videoUrl;
+            }
 
             video.Length = clip.Duration.ToString();
 
@@ -255,9 +267,12 @@ namespace OnlineVideos.Sites.apondman {
             if (files.Count == 0)
                 return videoUrl;
 
-            if (AlwaysPlaybackHighestQuality) {
-                // todo: the last value should be the highest quality tho dictionary doesn't garantee order (should verify this)
-                videoUrl = files.Values.ToArray()[files.Count - 1];
+            if (AlwaysPlaybackPreferredQuality) {
+                if (files.Count > 0 && !files.TryGetValue(PreferredVideoQuality.ToTitleString(), out videoUrl))
+                {
+                    video.PlaybackOptions = files;
+                    videoUrl = files.Values.ToArray()[files.Count - 1];
+                }
             }
             else {
                 video.PlaybackOptions = files;
@@ -271,9 +286,9 @@ namespace OnlineVideos.Sites.apondman {
 
         public override List<VideoInfo> Search(string query) {
             List<VideoInfo> videos = new List<VideoInfo>();
-            List<ITMovie> movies = _trailersApi.Search(query);
+            List<Movie> movies = API.Search(apiSession, query);
             
-            foreach (ITMovie movie in movies) {
+            foreach (Movie movie in movies) {
                 VideoInfo video = createVideoInfoFromMovie(movie);
                 videos.Add(video);
             }
