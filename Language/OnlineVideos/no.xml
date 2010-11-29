@@ -94,6 +94,7 @@
   <string Field="NoVideoFound">Ingen video funnet</string>
   <string Field="NoReportsForSite">Rapporter for denne side er utilgjengelig.</string>
   <string Field="NewDllDownloaded">Ny dll lastet ned!</string>
+  <string Field="NewSearch">Nytt søk</string>
 
   <!-- O -->
 
@@ -116,6 +117,7 @@
   <string Field="RetrievingRemoteSites">Mottar sider ...</string>
 
   <!-- S -->
+  <string Field="SearchHistory">Søkelogg</string>
   <string Field="SearchResults">Søkeresultater</string>
   <string Field="SelectSource">Velg kilde</string>
   <string Field="Sites">Sider</string>
@@ -127,8 +129,9 @@
   <string Field="SavingLocalSiteList">Lagrer lokal liste ...</string>
   <string Field="ShowReports">Vis skaper og bruker rapporter</string>
   <string Field="StartingPlayback">starter avspilling</string>
+  <string Field="Subscriptions">Abonnement</string>
 
-   <!-- T -->
+  <!-- T -->
   <string Field="Timeframe">Tidsramme</string>
   <string Field="Timeout">Tidsavbrudd</string>
   <string Field="Tags">Tagg</string>
