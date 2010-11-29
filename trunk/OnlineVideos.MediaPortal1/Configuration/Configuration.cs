@@ -104,11 +104,14 @@ namespace OnlineVideos.MediaPortal1
                         {
                             TreeNode aGroupNode = new TreeNode(aCat.Name);
                             aGroupNode.Tag = aCat;
-                            foreach (Channel aChannel in (aCat as Group).Channels)
+                            if ((aCat as Group).Channels != null)
                             {
-                                TreeNode node = new TreeNode(aChannel.StreamName);
-                                node.Tag = aChannel;
-                                aGroupNode.Nodes.Add(node);
+                                foreach (Channel aChannel in (aCat as Group).Channels)
+                                {
+                                    TreeNode node = new TreeNode(aChannel.StreamName);
+                                    node.Tag = aChannel;
+                                    aGroupNode.Nodes.Add(node);
+                                }
                             }
                             tvGroups.Nodes.Add(aGroupNode);
                         }
@@ -150,9 +153,8 @@ namespace OnlineVideos.MediaPortal1
 
         void BtnAddRssClick(object sender, EventArgs e)
         {
-            SiteSettings site = siteList.SelectedItem as SiteSettings;
             RssLink link = new RssLink() { Name = "new", Url = "http://" };
-            site.Categories.Add(link);
+            (siteList.SelectedItem as SiteSettings).AddCategoryForSerialization(link);
             ((CurrencyManager)BindingContext[bindingSourceRssLink]).List.Add(link);
             RssLinkList.SelectedIndex = RssLinkList.Items.Count - 1;
             RssLinkListSelectedIndexChanged(this, EventArgs.Empty);
@@ -329,7 +331,7 @@ namespace OnlineVideos.MediaPortal1
             SiteSettings site = siteList.SelectedItem as SiteSettings;
             Group g = new Group();
             g.Name = "New";
-            site.Categories.Add(g);
+            site.AddCategoryForSerialization(g);
             TreeNode node = new TreeNode("New");
             node.Tag = g;
             tvGroups.Nodes.Add(node);
