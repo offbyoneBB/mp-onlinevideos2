@@ -1054,9 +1054,11 @@
       <Categories>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
-            <Channel name="DR1 Live" thumb="http://www.tvnyt.com/images/feed/logoer/dr1_logo_2005_200.jpg">http://www.dr.dk/Forms/Published/PlaylistGen.aspx?qid=786405</Channel>
-            <Channel name="DR2 Live" thumb="http://www.tvnyt.com/images/feed/logoer/dr2_logo_2005_200.jpg">http://www.dr.dk/Forms/Published/PlaylistGen.aspx?qid=786410</Channel>
-            <Channel name="DR Update Live" thumb="http://www.dr.dk/NR/rdonlyres/D622289C-9BD0-4B77-A6FB-EEA964F1D486/643194/drupdateolog.jpg">http://www.dr.dk/tjenester/podcast/update.asx?qid=288417</Channel>
+            <Channel name="DR1 Live" thumb="http://www.tvnyt.com/images/feed/logoer/dr1_logo_2005_200.jpg">rtmp://rtmplive.dr.dk/live/livedr01astream3</Channel>
+            <Channel name="DR2 Live" thumb="http://www.tvnyt.com/images/feed/logoer/dr2_logo_2005_200.jpg">rtmp://rtmplive.dr.dk/live/livedr02astream3</Channel>
+            <Channel name="DR Update Live" thumb="http://www.dr.dk/NR/rdonlyres/D622289C-9BD0-4B77-A6FB-EEA964F1D486/643194/drupdateolog.jpg">rtmp://rtmplive.dr.dk/live/livedr03astream3</Channel>
+            <Channel name="DR K">rtmp://rtmplive.dr.dk/live/livedr04astream3</Channel>
+            <Channel name="DR Ramasjang">rtmp://rtmplive.dr.dk/live/livedr05astream3</Channel>
           </Channels>
         </Category>
       </Categories>
