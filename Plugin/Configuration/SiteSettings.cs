@@ -94,6 +94,12 @@ namespace OnlineVideos
                 DynamicCategoriesDiscovered = false; // have the siteutil re-discover them the next time
             }
         }
+
+        public void AddCategoryForSerialization(Category cat)
+        {
+            cat.IsDeserialized = true;
+            Categories.Add(cat);
+        }
         
         public override string ToString() { return Name; }
     }
@@ -106,13 +112,16 @@ namespace OnlineVideos
     [XmlInclude(typeof(Group))]
     public class Category : IComparable<Category>, INotifyPropertyChanged
     {
+        protected string _Name;
+        protected string _Thumb;
+
         [DataMember(Name = "name", Order = 0)]
         [XmlAttribute("name")]
-        public string Name { get; set; }
+        public string Name { get { return _Name; } set { if (_Name != value) { _Name = value; NotifyPropertyChanged("Name"); } } }
 
         [DataMember(Name = "thumb", Order = 1, EmitDefaultValue = false)]
         [XmlAttribute("thumb")]
-        public string Thumb { get; set; }
+        public string Thumb { get { return _Thumb; } set { if (_Thumb != value) { _Thumb = value; NotifyPropertyChanged("Thumb"); } } }
 
         [DataMember(Name = "desc", Order = 2, EmitDefaultValue = false)]
         [XmlAttribute("desc")]
@@ -197,9 +206,11 @@ namespace OnlineVideos
     [Serializable]
     public class RssLink : Category
     {
+        protected string _Url;
+
         [DataMember]
         [XmlText]
-        public string Url { get; set; }
+        public string Url { get { return _Url; } set { if (_Url != value) { _Url = value; NotifyPropertyChanged("Url"); } } }
         
         [XmlIgnore]
         public uint? EstimatedVideoCount  { get; set; }
