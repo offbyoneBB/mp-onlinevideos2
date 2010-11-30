@@ -102,23 +102,6 @@ namespace OnlineVideos.Sites
                     url = rtmpBase + geoblock + filename + "flv";
 
             }
-            string host = url.Substring(url.IndexOf(":") + 3, url.IndexOf("/", url.IndexOf(":") + 3) - (url.IndexOf(":") + 3));
-            string app = url.Substring(host.Length + url.IndexOf(host) + 1, (url.IndexOf("/", url.IndexOf("/", (host.Length + url.IndexOf(host) + 1)) + 1)) - (host.Length + url.IndexOf(host) + 1));
-            if (host.Contains(":")) host = host.Substring(0, host.IndexOf(":"));
-            string tcUrl = "rtmpe://" + host + ":1935" + "/" + app;
-            string playpath = url.Substring(url.IndexOf(app) + app.Length + 1);
-
-            string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&swfurl={4}&swfsize={5}&swfhash={6}&playpath={7}",
-                    System.Web.HttpUtility.UrlEncode(tcUrl), //rtmpUrl
-                    host, //host
-                    System.Web.HttpUtility.UrlEncode(tcUrl), //tcUrl
-                    app, //app
-                    "http://www.sat1.de/php-bin/apps/VideoPlayer20/mediacenter/HybridPlayer.swf", //swfurl
-                    "850680", //swfsize
-                    "89b2c799c23569599472e3ed8b00a292a78de2ef7f181d4de64dccc99e43e1ff", //swfhash
-                    System.Web.HttpUtility.UrlEncode(playpath) //playpath
-                    ));
 
             string clipId = Regex.Match(webData, @",""id"":""(?<Value>[^""]+)""").Groups["Value"].Value;
             if (!string.IsNullOrEmpty(clipId))
@@ -127,12 +110,12 @@ namespace OnlineVideos.Sites
                 if (!string.IsNullOrEmpty(link))
                 {
                     video.PlaybackOptions = new Dictionary<string, string>();
-                    video.PlaybackOptions.Add("Flv", resultUrl);
+                    video.PlaybackOptions.Add("Flv", url);
                     video.PlaybackOptions.Add("Mp4", link);
                 }
             }
 
-            return resultUrl;
+            return url;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
