@@ -84,8 +84,8 @@ namespace OnlineVideos.Sites
                                 string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}&swfsize={2}&swfhash={3}",                                
                                     System.Web.HttpUtility.UrlEncode(url),
                                     "http://videoportal.sf.tv/flash/videoplayer.swf", //swfurl
-                                    "966431", //swfsize
-                                    "68e1041936257eeecf65717bcbfcb789c752bdf53d155c10eb8a3bc86d0eed6a")); //swfhash
+                                    "992927", //swfsize
+                                    "8810868d219610fd6abc652d69bdc24ab1f51fabf194b4c72c3df2479f82a003")); //swfhash
                             video.PlaybackOptions.Add(title, url);
                         }
                     }
