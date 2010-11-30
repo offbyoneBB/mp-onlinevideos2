@@ -115,12 +115,13 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="Kabel1" util="Sat1Group" agecheck="false" enabled="true" lang="de" lastUpdated="2010-03-23T14:52:11.640625+01:00">
+    <Site name="Kabel1" util="Sat1" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Senders Kabel1.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://cms029.dc2.qcn3.movenetworks.com/cms/publish/vod2/vodchannelcatalog/kabel1/36/catalog.json]]></item>
-        <item key="categoryUrlFormatString"><![CDATA[http://cms029.dc2.qcn3.movenetworks.com/cms/publish/pro7/vodtldatesorted//{0}/{1}/{2}/listing.json]]></item>
+        <item key="baseUrl"><![CDATA[http://www.kabeleins.de/videos/]]></item>
         <item key="rtmpBase"><![CDATA[rtmpt://pssimkabel1fs.fplive.net:80/pssimkabel1ls/]]></item>
+        <item key="regExPagingToken"><![CDATA[var\sparameterp01s02m01\s=\s"(?<token>[^"]+)";\s*[^=]+=\snew\sPaging\('(?<tag>[^']+)','(?<pages>[^']+)',parameter]]></item>
+        <item key="regExDynamicCategory"><![CDATA[:url\((?<ImageUrl>[^\)]+)\)">[^>]+><a\s*href="(?<Url>[^"]+)"[^<]+<[^<]+</a></div></td>[^>]+>[^>]+>[^>]+>[^>]+>(?<SubTitle>[^<]+)</a>\s*</h2>\s*<p>(?<Title>[^<]+)</p>\s*<p>(?<Date>[^<]+)</p>]]></item>
       </Configuration>
       <Categories />
     </Site>
