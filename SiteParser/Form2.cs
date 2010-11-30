@@ -283,6 +283,7 @@ namespace SiteParser
                     case '?':
                     case '*':
                     case '+':
+                    case '#':
                         sb.Append('\\'); sb.Append(txt[i]); break;
                     case ' ':
                     case '\t':
