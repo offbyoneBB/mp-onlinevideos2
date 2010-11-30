@@ -30,13 +30,14 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
             string page = GetWebData(baseUrl);
+            string host = new Uri(baseUrl).Host;
 
             Match m = Regex.Match(page, regExPagingToken);
             if (m.Success)
             {
                 for (int i = 0; i < Convert.ToInt32(m.Groups["pages"].Value); i++)
                 {
-                    string queryUrl = "http://www.sat1.de/imperia/teasermanager/ajax_pagination.php?uebersicht_" + m.Groups["tag"].Value + "=" + i + ":1:0:0&parameter=" + m.Groups["token"].Value;
+                    string queryUrl = "http://" + host + "/imperia/teasermanager/ajax_pagination.php?uebersicht_" + m.Groups["tag"].Value + "=" + i + ":1:0:0&parameter=" + m.Groups["token"].Value;
                     string webData = GetWebData(queryUrl);
 
                     Match n = Regex.Match(webData, regExDynamicCategory);
@@ -48,14 +49,14 @@ namespace OnlineVideos.Sites
 
                             RssLink cat = new RssLink();
                             cat.Name = n.Groups["Title"].Value;
-                            cat.Thumb = "http://www.sat1.de" + n.Groups["ImageUrl"].Value;
+                            cat.Thumb = "http://" + host + n.Groups["ImageUrl"].Value;
                             Settings.Categories.Add(cat);
                         }
 
                         VideoInfo video = new VideoInfo();
-                        video.ImageUrl = "http://www.sat1.de" + n.Groups["ImageUrl"].Value;
+                        video.ImageUrl = "http://" + host + n.Groups["ImageUrl"].Value;
                         video.Title = n.Groups["SubTitle"].Value;
-                        video.VideoUrl = "http://www.sat1.de" + n.Groups["Url"].Value;
+                        video.VideoUrl = "http://" + host + n.Groups["Url"].Value;
                         video.Description = n.Groups["Date"].Value;
 
                         data[n.Groups["Title"].Value].Add(video);
