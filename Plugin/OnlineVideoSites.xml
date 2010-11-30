@@ -99,7 +99,7 @@
       <Description>Kostenlos verfügbare Sendungen des Senders Sat1.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.sat1.de/videocenter/]]></item>
-        <item key="rtmpBase"><![CDATA[rtmpt://pssimsat1fs.fplive.net:80/pssimsat1ls/]]></item>
+        <item key="rtmpBase"><![CDATA[rtmp://pssimsat1fs.fplive.net:1935/pssimsat1ls/]]></item>
         <item key="regExPagingToken"><![CDATA[var\sparameter\s=\s"(?<token>[^"]+)";\s*var[^=]+=\snew\sPaging\('(?<tag>[^']+)',(?<pages>[^,]+),parameter\);]]></item>
         <item key="regExDynamicCategory"><![CDATA[:url\((?<ImageUrl>[^\)]+)\)">[^>]+>[^>]+></a><br\s*/>\s*<[^<]+<[^<]+</h6><[^>]+>(?<Title>[^<]+)</h6><[^>]+></h6></div>\s*<h1><a\shref="(?<Url>[^"]+)"\s*target=""[^>]+>(?<SubTitle>[^<]+)</a></h1>\s*<p><[^>]+>(?<Date>[^<]+)</a></p>]]></item>
       </Configuration>
@@ -119,7 +119,7 @@
       <Description>Kostenlos verfügbare Sendungen des Senders Kabel1.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.kabeleins.de/videos/]]></item>
-        <item key="rtmpBase"><![CDATA[rtmpt://pssimkabel1fs.fplive.net:80/pssimkabel1ls/]]></item>
+        <item key="rtmpBase"><![CDATA[rtmp://pssimkabel1fs.fplive.net:1935/pssimkabel1ls/]]></item>
         <item key="regExPagingToken"><![CDATA[var\sparameterp01s02m01\s=\s"(?<token>[^"]+)";\s*[^=]+=\snew\sPaging\('(?<tag>[^']+)','(?<pages>[^']+)',parameter]]></item>
         <item key="regExDynamicCategory"><![CDATA[:url\((?<ImageUrl>[^\)]+)\)">[^>]+><a\s*href="(?<Url>[^"]+)"[^<]+<[^<]+</a></div></td>[^>]+>[^>]+>[^>]+>[^>]+>(?<SubTitle>[^<]+)</a>\s*</h2>\s*<p>(?<Title>[^<]+)</p>\s*<p>(?<Date>[^<]+)</p>]]></item>
       </Configuration>
