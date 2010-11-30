@@ -111,9 +111,9 @@ namespace OnlineVideos.Sites
                             string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                 string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfsize={1}&swfhash={2}",
                                     System.Web.HttpUtility.UrlEncode(url),
-                                    isSouthparkWorld ? "1736855" : "563963",
+                                    isSouthparkWorld ? "1736855" : "933967",
                                     isSouthparkWorld ? "b9e08f2a74186205942022494ab7054532ac2f9a7e6e458256d8e662cf14ba4f" :
-                                                       "1155163cece179766c97fedce8933ccfccb9a553e47c1fabbb5faeacc4e8ad70"));
+                                                       "4506d4a6b8ad72c7946bf063a3599896e52ee46bb7d6f1a8d7e0f9d661284c30"));
                             result.Add(resultUrl);
                         }
                     }
