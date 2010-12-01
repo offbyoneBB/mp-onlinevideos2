@@ -313,7 +313,7 @@ namespace OnlineVideos.MediaPortal1
                 case State.categories: DisplayCategories(selectedCategory); break;
                 case State.videos: SetVideosToFacade(currentVideoList, currentVideosDisplayMode); break;
                 default:
-                    DisplayDetails(selectedVideo);
+                    DisplayDetails();
                     if (selectedClipIndex < GUI_infoList.Count) GUI_infoList.SelectedListItemIndex = selectedClipIndex;
                     break;
             }
@@ -626,7 +626,7 @@ namespace OnlineVideos.MediaPortal1
                         if (SelectedSite is IChoice)
                         {
                             // show details view
-                            DisplayDetails(selectedVideo);
+                            DisplayDetails();
                         }
                         else
                         {
@@ -1135,11 +1135,11 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        private void DisplayDetails(VideoInfo foVideo)
+        private void DisplayDetails()
         {
             Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
             {
-                return ((IChoice)SelectedSite).getVideoChoices(foVideo);
+                return ((IChoice)SelectedSite).getVideoChoices(selectedVideo);
             },
             delegate(bool success, object result)
             {
@@ -1148,10 +1148,10 @@ namespace OnlineVideos.MediaPortal1
                     CurrentState = State.details;
 
                     // make the Thumb of the VideoInfo available to the details view
-                    if (string.IsNullOrEmpty(foVideo.ImageUrl))
+                    if (string.IsNullOrEmpty(selectedVideo.ImageUrl))
                         GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", string.Empty);
                     else
-                        GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", foVideo.ImageUrl);
+                        GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", selectedVideo.ImageUrl);
 
                     SetVideosToInfoList(result as List<VideoInfo>);
                 }
@@ -1319,6 +1319,15 @@ namespace OnlineVideos.MediaPortal1
                     {
                         if (loadParamInfo != null && loadParamInfo.ShowVKonFailedSearch && GetUserInputString(ref query, false)) DisplayVideos_Search(query);
                         else ShowPreviousMenu();
+                    }
+                    else
+                    {
+                        // if only 1 result found and the current site has a details view - open it right away
+                        if (SelectedSite is IChoice && (result as List<VideoInfo>).Count == 1)
+                        {
+                            selectedVideo = (GUI_facadeView[1] as OnlineVideosGuiListItem).Item as VideoInfo;
+                            DisplayDetails();
+                        }
                     }
                 },
                 Translation.GettingSearchResults, true);
