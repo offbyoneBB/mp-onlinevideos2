@@ -57,6 +57,7 @@
   <string Field="GettingIcon">Ontvangen van het site-icoon van de webservice</string>
   <string Field="GettingBanner">Ontvangen van de site-banner van de webservice</string>
   <string Field="GettingDll">Ontvangen van de dll van de webservice</string>
+  <string Field="Groups">Groepen</string>
   <string Field="LatestVersionRequired">Laatste versie {0} benodigd!</string>
   <string Field="Language">Taal</string>
   <string Field="LayoutList">Lay-out: Lijst</string>
@@ -71,6 +72,7 @@
   <string Field="NoReportsForSite">Geen rapportering van deze site beschikbaar</string>
   <string Field="NewDllDownloaded">Nieuwe dll gedownload!</string>
   <string Field="NewSearch">Nieuwe zoekopdracht</string>
+  <string Field="Others">Overige</string>
   <string Field="PlayAll">Alles afspelen</string>
   <string Field="PlotOutline">Samenvatting</string>
   <string Field="PreviousPage">Vorige pagina</string>
