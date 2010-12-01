@@ -167,7 +167,6 @@ namespace OnlineVideos.MediaPortal1
             this.listViewSitesNotInGroup = new System.Windows.Forms.ListView();
             this.label40 = new System.Windows.Forms.Label();
             this.listViewSitesInGroup = new System.Windows.Forms.ListView();
-            this.sitesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.label41 = new System.Windows.Forms.Label();
             this.tabSites = new System.Windows.Forms.TabPage();
             this.tabPageCodecs = new System.Windows.Forms.TabPage();
@@ -187,8 +186,11 @@ namespace OnlineVideos.MediaPortal1
             this.label12 = new System.Windows.Forms.Label();
             this.chkFLVSplitterInstalled = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
+            this.sitesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.label42 = new System.Windows.Forms.Label();
+            this.tbxSitesGroupThumb = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -231,11 +233,11 @@ namespace OnlineVideos.MediaPortal1
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.sitesBindingSource)).BeginInit();
             this.tabSites.SuspendLayout();
             this.tabPageCodecs.SuspendLayout();
             this.groupBoxSourceFilter.SuspendLayout();
             this.groupBoxSplitter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.sitesBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -1568,6 +1570,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.tbxSitesGroupThumb);
+            this.splitContainer1.Panel1.Controls.Add(this.label42);
             this.splitContainer1.Panel1.Controls.Add(this.tbxSitesGroupName);
             this.splitContainer1.Panel1.Controls.Add(this.label39);
             this.splitContainer1.Panel1.Controls.Add(this.toolStripContainer4);
@@ -1724,14 +1728,14 @@ namespace OnlineVideos.MediaPortal1
             this.splitContainer2.SplitterDistance = 339;
             this.splitContainer2.TabIndex = 0;
             // 
-            // listBoxSitesNotInGroup
+            // listViewSitesNotInGroup
             // 
             this.listViewSitesNotInGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listViewSitesNotInGroup.View = System.Windows.Forms.View.LargeIcon;
             this.listViewSitesNotInGroup.Location = new System.Drawing.Point(0, 23);
-            this.listViewSitesNotInGroup.Name = "listBoxSitesNotInGroup";
+            this.listViewSitesNotInGroup.Name = "listViewSitesNotInGroup";
             this.listViewSitesNotInGroup.Size = new System.Drawing.Size(339, 251);
             this.listViewSitesNotInGroup.TabIndex = 0;
+            this.listViewSitesNotInGroup.UseCompatibleStateImageBehavior = false;
             this.listViewSitesNotInGroup.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSitesNotInGroup_MouseDoubleClick);
             // 
             // label40
@@ -1744,20 +1748,15 @@ namespace OnlineVideos.MediaPortal1
             this.label40.Text = "Not in Group (doubleclick to add)";
             this.label40.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // listBoxSitesInGroup
+            // listViewSitesInGroup
             // 
             this.listViewSitesInGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listViewSitesInGroup.View = System.Windows.Forms.View.LargeIcon;
             this.listViewSitesInGroup.Location = new System.Drawing.Point(0, 23);
-            this.listViewSitesInGroup.Name = "listBoxSitesInGroup";
+            this.listViewSitesInGroup.Name = "listViewSitesInGroup";
             this.listViewSitesInGroup.Size = new System.Drawing.Size(361, 251);
             this.listViewSitesInGroup.TabIndex = 0;
+            this.listViewSitesInGroup.UseCompatibleStateImageBehavior = false;
             this.listViewSitesInGroup.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSitesInGroup_MouseDoubleClick);
-            // 
-            // sitesBindingSource
-            // 
-            this.sitesBindingSource.DataMember = "Sites";
-            this.sitesBindingSource.DataSource = this.bindingSourceSitesGroup;
             // 
             // label41
             // 
@@ -1980,9 +1979,33 @@ namespace OnlineVideos.MediaPortal1
             this.label11.TabIndex = 0;
             this.label11.Text = "flv";
             // 
+            // sitesBindingSource
+            // 
+            this.sitesBindingSource.DataMember = "Sites";
+            this.sitesBindingSource.DataSource = this.bindingSourceSitesGroup;
+            // 
             // errorProvider1
             // 
             this.errorProvider1.ContainerControl = this;
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(185, 54);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(40, 13);
+            this.label42.TabIndex = 3;
+            this.label42.Text = "Thumb";
+            // 
+            // tbxSitesGroupThumb
+            // 
+            this.tbxSitesGroupThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxSitesGroupThumb.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSitesGroup, "Thumbnail", true));
+            this.tbxSitesGroupThumb.Location = new System.Drawing.Point(240, 51);
+            this.tbxSitesGroupThumb.Name = "tbxSitesGroupThumb";
+            this.tbxSitesGroupThumb.Size = new System.Drawing.Size(456, 20);
+            this.tbxSitesGroupThumb.TabIndex = 4;
             // 
             // Configuration
             // 
@@ -2065,13 +2088,13 @@ namespace OnlineVideos.MediaPortal1
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.sitesBindingSource)).EndInit();
             this.tabSites.ResumeLayout(false);
             this.tabPageCodecs.ResumeLayout(false);
             this.groupBoxSourceFilter.ResumeLayout(false);
             this.groupBoxSourceFilter.PerformLayout();
             this.groupBoxSplitter.ResumeLayout(false);
             this.groupBoxSplitter.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.sitesBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
 
@@ -2234,5 +2257,7 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.BindingSource bindingSourceSitesGroup;
         private System.Windows.Forms.BindingSource sitesBindingSource;
+        private System.Windows.Forms.TextBox tbxSitesGroupThumb;
+        private System.Windows.Forms.Label label42;
 	}
 }
