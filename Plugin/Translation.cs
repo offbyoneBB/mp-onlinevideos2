@@ -76,6 +76,7 @@ namespace OnlineVideos
         public static string GettingIcon = "getting site icon from webservice";
         public static string GettingBanner = "getting site banner from webservice";
         public static string GettingDll = "getting dll from webservice";
+        public static string Groups = "Groups";
 
         // H
 
@@ -102,6 +103,7 @@ namespace OnlineVideos
         public static string NewSearch = "New search";
 
         // O
+        public static string Others = "Others";
 
         // P
         public static string PlayAll = "Play all";

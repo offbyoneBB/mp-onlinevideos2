@@ -57,6 +57,7 @@
   <string Field="GettingIcon">beim Abrufen des Icons vom Server</string>
   <string Field="GettingBanner">beim Abrufen des Banners vom Server</string>
   <string Field="GettingDll">beim Herunterladen der DLL vom Server</string>
+  <string Field="Groups">Gruppen</string>
   <string Field="LatestVersionRequired">Neueste Version ({0}) erforderlich!</string>
   <string Field="Language">Sprache</string>
   <string Field="LayoutList">Ansicht: Liste</string>
@@ -71,6 +72,7 @@
   <string Field="NoReportsForSite">Keine Meldungen für diese Site vorhanden.</string>
   <string Field="NewDllDownloaded">Neue DLL heruntergeladen!</string>
   <string Field="NewSearch">Neue Suche</string>
+  <string Field="Others">Sonstige</string>
   <string Field="PlayAll">Alle abspielen</string>
   <string Field="PlotOutline">Handlung</string>
   <string Field="PreviousPage">Vorherige Seite</string>

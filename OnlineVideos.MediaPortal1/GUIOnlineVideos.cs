@@ -870,11 +870,11 @@ namespace OnlineVideos.MediaPortal1
             foreach(SitesGroup sg in PluginConfiguration.Instance.SitesGroups)
                 foreach(string site in sg.Sites)
                     if (!groupedSites.Contains(site)) groupedSites.Add(site);
-            SitesGroup othersGroup = new SitesGroup() { Name = "Others" };
+            SitesGroup othersGroup = new SitesGroup() { Name = Translation.Others };
             foreach (string site in OnlineVideoSettings.Instance.SiteUtilsList.Keys) if (!groupedSites.Contains(site)) othersGroup.Sites.Add(site);
             if (othersGroup.Sites.Count > 0)
             {
-                OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem("Others");
+                OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(othersGroup.Name);
                 listItem.Label2 = othersGroup.Sites.Count.ToString();
                 listItem.IsFolder = true;
                 listItem.Item = othersGroup;
@@ -2130,7 +2130,7 @@ namespace OnlineVideos.MediaPortal1
                     HideSearchButtons();
                     currentView = PluginConfiguration.Instance.currentGroupView;
                     SetFacadeViewMode();
-                    GUIPropertyManager.SetProperty("#itemtype", "Groups");
+                    GUIPropertyManager.SetProperty("#itemtype", Translation.Groups);
                     break;
                 case State.sites:
                     GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
