@@ -71,6 +71,7 @@
   <string Field="GettingIcon">getting site icon from webservice</string>
   <string Field="GettingBanner">getting site banner from webservice</string>
   <string Field="GettingDll">getting dll from webservice</string>
+  <string Field="Groups">Groups</string>  
 
   <!-- H -->
 
@@ -97,6 +98,7 @@
   <string Field="NewSearch">New search</string>
 
   <!-- O -->
+  <string Field="Others">Others</string>
 
   <!-- P -->
   <string Field="PlayAll">Play all</string>
