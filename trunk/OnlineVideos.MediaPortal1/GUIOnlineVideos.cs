@@ -938,6 +938,7 @@ namespace OnlineVideos.MediaPortal1
                 loListItem = new OnlineVideosGuiListItem("..");
                 loListItem.IsFolder = true;
                 loListItem.ItemId = 0;
+                loListItem.OnItemSelected += OnSiteSelected;
                 MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                 GUI_facadeView.Add(loListItem);
             }
@@ -1069,6 +1070,7 @@ namespace OnlineVideos.MediaPortal1
             loListItem = new OnlineVideosGuiListItem("..");
             loListItem.IsFolder = true;
             loListItem.ItemId = 0;
+            loListItem.OnItemSelected += OnCategorySelected;
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
             GUI_facadeView.Add(loListItem);
 
@@ -1452,7 +1454,7 @@ namespace OnlineVideos.MediaPortal1
             OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem("..");
             listItem.IsFolder = true;
             listItem.ItemId = 0;
-            listItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
+            listItem.OnItemSelected += OnVideoItemSelected;
             MediaPortal.Util.Utils.SetDefaultIcons(listItem);
             GUI_facadeView.Add(listItem);
             // add the items
@@ -1566,7 +1568,7 @@ namespace OnlineVideos.MediaPortal1
         void OnSiteSelected(GUIListItem item, GUIControl parent)
         {
             Sites.SiteUtilBase site = (item as OnlineVideosGuiListItem).Item as Sites.SiteUtilBase;
-            string desc = site.Settings.Description;
+            string desc = site == null ? null : site.Settings.Description;
             if (!string.IsNullOrEmpty(desc)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", desc);
             else GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
         }
@@ -1574,7 +1576,7 @@ namespace OnlineVideos.MediaPortal1
         void OnCategorySelected(GUIListItem item, GUIControl parent)
         {
             Category cat = (item as OnlineVideosGuiListItem).Item as Category;
-            string desc = cat.Description;
+            string desc = cat == null ? null : cat.Description;
             if (!string.IsNullOrEmpty(desc)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", desc);
             else GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
         }
@@ -2588,6 +2590,7 @@ namespace OnlineVideos.MediaPortal1
         {
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
         }
 
         #endregion
