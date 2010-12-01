@@ -150,6 +150,25 @@ namespace OnlineVideos.MediaPortal1
             this.label21 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblVersion = new System.Windows.Forms.Label();
+            this.tabGroups = new System.Windows.Forms.TabPage();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tbxSitesGroupName = new System.Windows.Forms.TextBox();
+            this.bindingSourceSitesGroup = new System.Windows.Forms.BindingSource(this.components);
+            this.label39 = new System.Windows.Forms.Label();
+            this.toolStripContainer4 = new System.Windows.Forms.ToolStripContainer();
+            this.listBoxSitesGroups = new System.Windows.Forms.ListBox();
+            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.btnSitesGroupUp = new System.Windows.Forms.ToolStripButton();
+            this.btnSitesGroupDown = new System.Windows.Forms.ToolStripButton();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btnAddSitesGroup = new System.Windows.Forms.ToolStripButton();
+            this.btnDeleteSitesGroup = new System.Windows.Forms.ToolStripButton();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.listViewSitesNotInGroup = new System.Windows.Forms.ListView();
+            this.label40 = new System.Windows.Forms.Label();
+            this.listViewSitesInGroup = new System.Windows.Forms.ListView();
+            this.sitesBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.label41 = new System.Windows.Forms.Label();
             this.tabSites = new System.Windows.Forms.TabPage();
             this.tabPageCodecs = new System.Windows.Forms.TabPage();
             this.groupBoxSourceFilter = new System.Windows.Forms.GroupBox();
@@ -198,6 +217,21 @@ namespace OnlineVideos.MediaPortal1
             this.Thumbnails.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.tabGroups.SuspendLayout();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSitesGroup)).BeginInit();
+            this.toolStripContainer4.ContentPanel.SuspendLayout();
+            this.toolStripContainer4.LeftToolStripPanel.SuspendLayout();
+            this.toolStripContainer4.TopToolStripPanel.SuspendLayout();
+            this.toolStripContainer4.SuspendLayout();
+            this.toolStrip2.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.sitesBindingSource)).BeginInit();
             this.tabSites.SuspendLayout();
             this.tabPageCodecs.SuspendLayout();
             this.groupBoxSourceFilter.SuspendLayout();
@@ -1084,6 +1118,7 @@ namespace OnlineVideos.MediaPortal1
             // mainTabControl
             // 
             this.mainTabControl.Controls.Add(this.tabGeneral);
+            this.mainTabControl.Controls.Add(this.tabGroups);
             this.mainTabControl.Controls.Add(this.tabSites);
             this.mainTabControl.Controls.Add(this.tabPageCodecs);
             this.mainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1514,6 +1549,226 @@ namespace OnlineVideos.MediaPortal1
             this.lblVersion.Text = "Version";
             this.lblVersion.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // tabGroups
+            // 
+            this.tabGroups.Controls.Add(this.splitContainer1);
+            this.tabGroups.Location = new System.Drawing.Point(4, 22);
+            this.tabGroups.Name = "tabGroups";
+            this.tabGroups.Size = new System.Drawing.Size(704, 518);
+            this.tabGroups.TabIndex = 3;
+            this.tabGroups.Text = "Groups";
+            this.tabGroups.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.tbxSitesGroupName);
+            this.splitContainer1.Panel1.Controls.Add(this.label39);
+            this.splitContainer1.Panel1.Controls.Add(this.toolStripContainer4);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Size = new System.Drawing.Size(704, 518);
+            this.splitContainer1.SplitterDistance = 240;
+            this.splitContainer1.TabIndex = 0;
+            // 
+            // tbxSitesGroupName
+            // 
+            this.tbxSitesGroupName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxSitesGroupName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSitesGroup, "Name", true));
+            this.tbxSitesGroupName.Location = new System.Drawing.Point(240, 22);
+            this.tbxSitesGroupName.Name = "tbxSitesGroupName";
+            this.tbxSitesGroupName.Size = new System.Drawing.Size(456, 20);
+            this.tbxSitesGroupName.TabIndex = 2;
+            // 
+            // bindingSourceSitesGroup
+            // 
+            this.bindingSourceSitesGroup.DataSource = typeof(OnlineVideos.MediaPortal1.SitesGroup);
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(185, 25);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(35, 13);
+            this.label39.TabIndex = 1;
+            this.label39.Text = "Name";
+            // 
+            // toolStripContainer4
+            // 
+            // 
+            // toolStripContainer4.ContentPanel
+            // 
+            this.toolStripContainer4.ContentPanel.Controls.Add(this.listBoxSitesGroups);
+            this.toolStripContainer4.ContentPanel.Size = new System.Drawing.Size(155, 215);
+            this.toolStripContainer4.Dock = System.Windows.Forms.DockStyle.Left;
+            // 
+            // toolStripContainer4.LeftToolStripPanel
+            // 
+            this.toolStripContainer4.LeftToolStripPanel.Controls.Add(this.toolStrip2);
+            this.toolStripContainer4.Location = new System.Drawing.Point(0, 0);
+            this.toolStripContainer4.Name = "toolStripContainer4";
+            this.toolStripContainer4.Size = new System.Drawing.Size(179, 240);
+            this.toolStripContainer4.TabIndex = 0;
+            this.toolStripContainer4.Text = "toolStripContainer4";
+            // 
+            // toolStripContainer4.TopToolStripPanel
+            // 
+            this.toolStripContainer4.TopToolStripPanel.Controls.Add(this.toolStrip1);
+            // 
+            // listBoxSitesGroups
+            // 
+            this.listBoxSitesGroups.DataSource = this.bindingSourceSitesGroup;
+            this.listBoxSitesGroups.DisplayMember = "Name";
+            this.listBoxSitesGroups.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBoxSitesGroups.FormattingEnabled = true;
+            this.listBoxSitesGroups.Location = new System.Drawing.Point(0, 0);
+            this.listBoxSitesGroups.Name = "listBoxSitesGroups";
+            this.listBoxSitesGroups.Size = new System.Drawing.Size(155, 215);
+            this.listBoxSitesGroups.TabIndex = 0;
+            this.listBoxSitesGroups.SelectedValueChanged += new System.EventHandler(this.listBoxSitesGroups_SelectedValueChanged);
+            // 
+            // toolStrip2
+            // 
+            this.toolStrip2.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnSitesGroupUp,
+            this.btnSitesGroupDown});
+            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip2.Name = "toolStrip2";
+            this.toolStrip2.Size = new System.Drawing.Size(24, 215);
+            this.toolStrip2.Stretch = true;
+            this.toolStrip2.TabIndex = 0;
+            // 
+            // btnSitesGroupUp
+            // 
+            this.btnSitesGroupUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnSitesGroupUp.Enabled = false;
+            this.btnSitesGroupUp.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Up;
+            this.btnSitesGroupUp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSitesGroupUp.Name = "btnSitesGroupUp";
+            this.btnSitesGroupUp.Size = new System.Drawing.Size(22, 20);
+            this.btnSitesGroupUp.Text = "Move Group Up";
+            this.btnSitesGroupUp.Click += new System.EventHandler(this.btnSitesGroupUp_Click);
+            // 
+            // btnSitesGroupDown
+            // 
+            this.btnSitesGroupDown.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.btnSitesGroupDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnSitesGroupDown.Enabled = false;
+            this.btnSitesGroupDown.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Down;
+            this.btnSitesGroupDown.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSitesGroupDown.Name = "btnSitesGroupDown";
+            this.btnSitesGroupDown.Size = new System.Drawing.Size(22, 20);
+            this.btnSitesGroupDown.Text = "Move Group Down";
+            this.btnSitesGroupDown.Click += new System.EventHandler(this.btnSitesGroupDown_Click);
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnAddSitesGroup,
+            this.btnDeleteSitesGroup});
+            this.toolStrip1.Location = new System.Drawing.Point(3, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(49, 25);
+            this.toolStrip1.TabIndex = 0;
+            // 
+            // btnAddSitesGroup
+            // 
+            this.btnAddSitesGroup.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnAddSitesGroup.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.Add;
+            this.btnAddSitesGroup.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnAddSitesGroup.Name = "btnAddSitesGroup";
+            this.btnAddSitesGroup.Size = new System.Drawing.Size(23, 22);
+            this.btnAddSitesGroup.Text = "Add Group";
+            this.btnAddSitesGroup.Click += new System.EventHandler(this.btnAddSitesGroup_Click);
+            // 
+            // btnDeleteSitesGroup
+            // 
+            this.btnDeleteSitesGroup.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDeleteSitesGroup.Enabled = false;
+            this.btnDeleteSitesGroup.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.delete;
+            this.btnDeleteSitesGroup.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDeleteSitesGroup.Name = "btnDeleteSitesGroup";
+            this.btnDeleteSitesGroup.Size = new System.Drawing.Size(23, 22);
+            this.btnDeleteSitesGroup.Text = "Delete Group";
+            this.btnDeleteSitesGroup.Click += new System.EventHandler(this.btnDeleteSitesGroup_Click);
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.listViewSitesNotInGroup);
+            this.splitContainer2.Panel1.Controls.Add(this.label40);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.listViewSitesInGroup);
+            this.splitContainer2.Panel2.Controls.Add(this.label41);
+            this.splitContainer2.Size = new System.Drawing.Size(704, 274);
+            this.splitContainer2.SplitterDistance = 339;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // listBoxSitesNotInGroup
+            // 
+            this.listViewSitesNotInGroup.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewSitesNotInGroup.View = System.Windows.Forms.View.LargeIcon;
+            this.listViewSitesNotInGroup.Location = new System.Drawing.Point(0, 23);
+            this.listViewSitesNotInGroup.Name = "listBoxSitesNotInGroup";
+            this.listViewSitesNotInGroup.Size = new System.Drawing.Size(339, 251);
+            this.listViewSitesNotInGroup.TabIndex = 0;
+            this.listViewSitesNotInGroup.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSitesNotInGroup_MouseDoubleClick);
+            // 
+            // label40
+            // 
+            this.label40.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label40.Location = new System.Drawing.Point(0, 0);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(339, 23);
+            this.label40.TabIndex = 1;
+            this.label40.Text = "Not in Group (doubleclick to add)";
+            this.label40.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // listBoxSitesInGroup
+            // 
+            this.listViewSitesInGroup.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewSitesInGroup.View = System.Windows.Forms.View.LargeIcon;
+            this.listViewSitesInGroup.Location = new System.Drawing.Point(0, 23);
+            this.listViewSitesInGroup.Name = "listBoxSitesInGroup";
+            this.listViewSitesInGroup.Size = new System.Drawing.Size(361, 251);
+            this.listViewSitesInGroup.TabIndex = 0;
+            this.listViewSitesInGroup.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSitesInGroup_MouseDoubleClick);
+            // 
+            // sitesBindingSource
+            // 
+            this.sitesBindingSource.DataMember = "Sites";
+            this.sitesBindingSource.DataSource = this.bindingSourceSitesGroup;
+            // 
+            // label41
+            // 
+            this.label41.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label41.Location = new System.Drawing.Point(0, 0);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(361, 23);
+            this.label41.TabIndex = 1;
+            this.label41.Text = "In Group (doubleclick to remove)";
+            this.label41.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // tabSites
             // 
             this.tabSites.AutoScroll = true;
@@ -1790,6 +2045,27 @@ namespace OnlineVideos.MediaPortal1
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.tabGroups.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSitesGroup)).EndInit();
+            this.toolStripContainer4.ContentPanel.ResumeLayout(false);
+            this.toolStripContainer4.LeftToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer4.LeftToolStripPanel.PerformLayout();
+            this.toolStripContainer4.TopToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer4.TopToolStripPanel.PerformLayout();
+            this.toolStripContainer4.ResumeLayout(false);
+            this.toolStripContainer4.PerformLayout();
+            this.toolStrip2.ResumeLayout(false);
+            this.toolStrip2.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.sitesBindingSource)).EndInit();
             this.tabSites.ResumeLayout(false);
             this.tabPageCodecs.ResumeLayout(false);
             this.groupBoxSourceFilter.ResumeLayout(false);
@@ -1939,5 +2215,24 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.RadioButton rbOff;
         private System.Windows.Forms.NumericUpDown nUPSearchHistoryItemCount;
         private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.TabPage tabGroups;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.ToolStripContainer toolStripContainer4;
+        private System.Windows.Forms.ToolStrip toolStrip2;
+        private System.Windows.Forms.ToolStripButton btnSitesGroupUp;
+        private System.Windows.Forms.ToolStripButton btnSitesGroupDown;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton btnAddSitesGroup;
+        private System.Windows.Forms.ToolStripButton btnDeleteSitesGroup;
+        private System.Windows.Forms.ListBox listBoxSitesGroups;
+        private System.Windows.Forms.TextBox tbxSitesGroupName;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.ListView listViewSitesNotInGroup;
+        private System.Windows.Forms.ListView listViewSitesInGroup;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.BindingSource bindingSourceSitesGroup;
+        private System.Windows.Forms.BindingSource sitesBindingSource;
 	}
 }
