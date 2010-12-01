@@ -18,7 +18,7 @@ namespace OnlineVideos.MediaPortal1
     {
         public const int WindowId = 4755;
 
-        public enum State { sites = 0, categories = 1, videos = 2, details = 3 }
+        public enum State { sites = 0, categories = 1, videos = 2, details = 3, groups = 4 }
 
         public enum VideosMode { Category = 0, Search = 1, Related = 2 }
 
@@ -171,6 +171,7 @@ namespace OnlineVideos.MediaPortal1
         }
         #endregion
 
+        SitesGroup selectedSitesGroup;
         Category selectedCategory;
         VideoInfo selectedVideo;
 
@@ -305,22 +306,16 @@ namespace OnlineVideos.MediaPortal1
             }
 
             Log.Instance.Debug("OnPageLoad. CurrentState:" + CurrentState);
-            if (CurrentState == State.sites)
+            switch(CurrentState)
             {
-                DisplaySites();
-            }
-            else if (CurrentState == State.categories)
-            {
-                DisplayCategories(selectedCategory);
-            }
-            else if (CurrentState == State.videos)
-            {
-                SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
-            }
-            else
-            {
-                DisplayDetails(selectedVideo);
-                if (selectedClipIndex < GUI_infoList.Count) GUI_infoList.SelectedListItemIndex = selectedClipIndex;
+                case State.groups: DisplayGroups(); break;
+                case State.sites: DisplaySites(); break;
+                case State.categories: DisplayCategories(selectedCategory); break;
+                case State.videos: SetVideosToFacade(currentVideoList, currentVideosDisplayMode); break;
+                default:
+                    DisplayDetails(selectedVideo);
+                    if (selectedClipIndex < GUI_infoList.Count) GUI_infoList.SelectedListItemIndex = selectedClipIndex;
+                    break;
             }
         }
 
@@ -332,7 +327,7 @@ namespace OnlineVideos.MediaPortal1
 
             if (CurrentState == State.details && SelectedSite is IChoice) liSelected = GUI_infoList.SelectedListItemIndex - 1;
 
-            if (liSelected < 0 || CurrentState == State.sites || CurrentState == State.categories || (SelectedSite is IChoice && CurrentState == State.videos))
+            if (liSelected < 0 || CurrentState == State.groups || CurrentState == State.sites || CurrentState == State.categories || (SelectedSite is IChoice && CurrentState == State.videos))
             {
                 return;
             }
@@ -432,25 +427,10 @@ namespace OnlineVideos.MediaPortal1
                         ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).StopBuffering();
                         Gui2UtilConnector.Instance.StopBackgroundTask();
                         return;
-                    }                    
-                    if (CurrentState != State.sites)
+                    }   
+                    if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
+                    if (CurrentState != State.groups)
                     {
-                        if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
-
-                        // 2009-05-21 MichelC - Prevents a bug when hitting ESC and the hidden menu is opened.
-                        GUIControl focusedControl = GetControl(GetFocusControlId());
-                        if (focusedControl != null)
-                        {
-                            if (focusedControl.Type == "button" || focusedControl.Type == "selectbutton")
-                            {
-                                int focusedControlId = GetFocusControlId();
-                                if (focusedControlId >= 0)
-                                {
-                                    GUIControl.UnfocusControl(GetID, focusedControlId);
-                                }
-                            }
-                        }
-
                         ShowPreviousMenu();
                         return;
                     }
@@ -597,10 +577,22 @@ namespace OnlineVideos.MediaPortal1
             if (control == GUI_facadeView && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
                 currentFilter.Clear();
-                if (CurrentState == State.sites)
+                if (CurrentState == State.groups)
                 {
-                    SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[GUI_facadeView.SelectedListItem.Path];
-                    DisplayCategories(null, true);
+                    selectedSitesGroup = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as SitesGroup;
+                    DisplaySites();
+                }
+                else if (CurrentState == State.sites)
+                {
+                    if (GUI_facadeView.SelectedListItem.Label == "..")
+                    {
+                        ShowPreviousMenu();
+                    }
+                    else
+                    {
+                        SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[GUI_facadeView.SelectedListItem.Path];
+                        DisplayCategories(null, true);
+                    }
                 }
                 else if (CurrentState == State.categories)
                 {
@@ -815,6 +807,7 @@ namespace OnlineVideos.MediaPortal1
                 }) { Name = "OnlineVideosThumbnail", IsBackground = true }.Start();
             }
             OnlineVideoSettings.Instance.BuildSiteUtilsList();
+            if (PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) CurrentState = State.groups;
             firstLoadDone = true;
         }
 
@@ -846,7 +839,53 @@ namespace OnlineVideos.MediaPortal1
         {
             GUIControl.HideControl(GetID, iControlId);
             GUIControl.DisableControl(GetID, iControlId);
-        }        
+        }
+
+        private void DisplayGroups()
+        {
+            SelectedSite = null;
+            GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
+            foreach(SitesGroup sitesGroup in PluginConfiguration.Instance.SitesGroups)
+            {
+                if (sitesGroup.Sites != null && sitesGroup.Sites.Count > 0)
+                {
+                    OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem(sitesGroup.Name);
+                    loListItem.Label2 = sitesGroup.Sites.Count.ToString();
+                    loListItem.IsFolder = true;
+                    loListItem.Item = sitesGroup;
+                    MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
+                    if (!string.IsNullOrEmpty(sitesGroup.Thumbnail))
+                    {
+                        loListItem.ThumbnailImage = sitesGroup.Thumbnail;
+                        loListItem.IconImage = sitesGroup.Thumbnail;
+                        loListItem.IconImageBig = sitesGroup.Thumbnail;
+                    }
+                    GUI_facadeView.Add(loListItem);
+                    if (selectedSitesGroup != null && selectedSitesGroup.Name == sitesGroup.Name) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
+                }
+            }
+
+            // add the item for all ungrouped sites if there are any
+            HashSet<string> groupedSites = new HashSet<string>();
+            foreach(SitesGroup sg in PluginConfiguration.Instance.SitesGroups)
+                foreach(string site in sg.Sites)
+                    if (!groupedSites.Contains(site)) groupedSites.Add(site);
+            SitesGroup othersGroup = new SitesGroup() { Name = "Others" };
+            foreach (string site in OnlineVideoSettings.Instance.SiteUtilsList.Keys) if (!groupedSites.Contains(site)) othersGroup.Sites.Add(site);
+            if (othersGroup.Sites.Count > 0)
+            {
+                OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem("Others");
+                listItem.Label2 = othersGroup.Sites.Count.ToString();
+                listItem.IsFolder = true;
+                listItem.Item = othersGroup;
+                MediaPortal.Util.Utils.SetDefaultIcons(listItem);
+                GUI_facadeView.Add(listItem);
+                if (selectedSitesGroup != null && selectedSitesGroup.Name == othersGroup.Name) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
+            }
+
+            CurrentState = State.groups;
+            UpdateViewState();
+        }
 
         private void DisplaySites()
         {
@@ -862,44 +901,54 @@ namespace OnlineVideos.MediaPortal1
             GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Language);
             GUI_btnOrderBy.SelectedItem = (int)PluginConfiguration.Instance.siteOrder;
 
+            string[] names = selectedSitesGroup == null ? OnlineVideoSettings.Instance.SiteUtilsList.Keys.ToArray() : selectedSitesGroup.Sites.ToArray();
+
             // get names in right order
-            string[] names = new string[OnlineVideoSettings.Instance.SiteUtilsList.Count];
             switch (PluginConfiguration.Instance.siteOrder)
             {
                 case PluginConfiguration.SiteOrder.Name:
-                    OnlineVideoSettings.Instance.SiteUtilsList.Keys.CopyTo(names, 0);
                     Array.Sort(names);
                     break;
                 case PluginConfiguration.SiteOrder.Language:
                     Dictionary<string, List<string>> sitenames = new Dictionary<string, List<string>>();
-                    foreach (Sites.SiteUtilBase aSite in OnlineVideoSettings.Instance.SiteUtilsList.Values)
+                    foreach (string name in names)
                     {
-                        string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "zzzzz" : aSite.Settings.Language; // puts empty lang at the end
-                        List<string> listForLang = null;
-                        if (!sitenames.TryGetValue(key, out listForLang)) { listForLang = new List<string>(); sitenames.Add(key, listForLang); }
-                        listForLang.Add(aSite.Settings.Name);
+                        Sites.SiteUtilBase aSite;
+                        if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(name, out aSite))
+                        {
+                            string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "zzzzz" : aSite.Settings.Language; // puts empty lang at the end
+                            List<string> listForLang = null;
+                            if (!sitenames.TryGetValue(key, out listForLang)) { listForLang = new List<string>(); sitenames.Add(key, listForLang); }
+                            listForLang.Add(aSite.Settings.Name);
+                        }
                     }
                     string[] langs = new string[sitenames.Count];
                     sitenames.Keys.CopyTo(langs, 0);
                     Array.Sort(langs);
-                    int index = 0;
-                    foreach (string lang in langs)
-                    {
-                        sitenames[lang].CopyTo(names, index);
-                        index += sitenames[lang].Count;
-                    }
+                    List<string> sortedByLang = new List<string>();
+                    foreach (string lang in langs) sortedByLang.AddRange(sitenames[lang]);
+                    names = sortedByLang.ToArray();
                     break;
-                default:
-                    OnlineVideoSettings.Instance.SiteUtilsList.Keys.CopyTo(names, 0);
-                    break;
+            }
+
+            if (PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0)
+            {
+                // add the first item that will go to the groups menu
+                OnlineVideosGuiListItem loListItem;
+                loListItem = new OnlineVideosGuiListItem("..");
+                loListItem.IsFolder = true;
+                loListItem.ItemId = 0;
+                MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
+                GUI_facadeView.Add(loListItem);
             }
 
             int selectedSiteIndex = 0;  // used to remember the position of the last selected site
             currentFilter.StartMatching();
             foreach (string name in names)
             {
-                Sites.SiteUtilBase aSite = OnlineVideoSettings.Instance.SiteUtilsList[name];
-                if (aSite.Settings.IsEnabled &&
+                Sites.SiteUtilBase aSite;
+                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(name, out aSite) &&
+                    aSite.Settings.IsEnabled &&
                     (!aSite.Settings.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
                 {
                     OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem(aSite.Settings.Name);
@@ -1450,7 +1499,14 @@ namespace OnlineVideos.MediaPortal1
         {
             ImageDownloader.StopDownload = true;
 
-            if (CurrentState == State.categories)
+            if (CurrentState == State.sites)
+            {
+                if (PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0)
+                    DisplayGroups();
+                else
+                    OnPreviousWindow();
+            }
+            else if (CurrentState == State.categories)
             {
                 if (selectedCategory == null)
                 {
@@ -2064,6 +2120,18 @@ namespace OnlineVideos.MediaPortal1
         {
             switch (CurrentState)
             {
+                case State.groups:
+                    GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
+                    GUIPropertyManager.SetProperty("#header.image", Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
+                    ShowAndEnable(GUI_facadeView.GetID);
+                    HideAndDisable(GUI_btnNext.GetID);
+                    HideAndDisable(GUI_btnPrevious.GetID);
+                    HideFilterButtons();
+                    HideSearchButtons();
+                    currentView = PluginConfiguration.Instance.currentGroupView;
+                    SetFacadeViewMode();
+                    GUIPropertyManager.SetProperty("#itemtype", "Groups");
+                    break;
                 case State.sites:
                     GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
                     GUIPropertyManager.SetProperty("#header.image", Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
@@ -2270,6 +2338,7 @@ namespace OnlineVideos.MediaPortal1
             }
             switch (CurrentState)
             {
+                case State.groups: PluginConfiguration.Instance.currentGroupView = currentView; break;
                 case State.sites: PluginConfiguration.Instance.currentSiteView = currentView; break;
                 case State.categories: PluginConfiguration.Instance.currentCategoryView = currentView; break;
                 case State.videos: PluginConfiguration.Instance.currentVideoView = currentView; break;
@@ -2309,7 +2378,9 @@ namespace OnlineVideos.MediaPortal1
             GUIControl.SetControlLabel(GetID, GUI_btnViewAs.GetID, strLine);
 
             //set object count label
-            GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(CurrentState == State.sites ? GUI_facadeView.Count : GUI_facadeView.Count - 1));
+            int itemcount = GUI_facadeView.Count;
+            if (GUI_facadeView[0].Label == "..") itemcount--;
+            GUIPropertyManager.SetProperty("#itemcount", itemcount.ToString());
 
             // keep track of the currently selected item (is lost when switching view)
             int rememberIndex = GUI_facadeView.SelectedListItemIndex;

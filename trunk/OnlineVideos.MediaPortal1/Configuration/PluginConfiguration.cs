@@ -8,12 +8,15 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using System.Runtime.Serialization;
 using System.Xml;
+using System.ComponentModel;
 
 namespace OnlineVideos.MediaPortal1
 {
     public class PluginConfiguration
     {
         public const string PLUGIN_NAME = "OnlineVideos";
+
+        public const string SitesGroupsFileName = "OnlineVideoGroups.xml";
 
         public enum SearchHistoryType { Off = 0, Simple = 1, Extended = 2 }
         public enum SiteOrder { AsInFile = 0, Name = 1, Language = 2 }
@@ -30,16 +33,19 @@ namespace OnlineVideos.MediaPortal1
         public string password = "";
         public string httpSourceFilterName = "File Source (URL)";
         public SearchHistoryType searchHistoryType = SearchHistoryType.Simple;
-        public int searchHistoryNum = 9;        
+        public int searchHistoryNum = 9;
+        public BindingList<SitesGroup> SitesGroups = new BindingList<SitesGroup>();
 
         // runtime (inside MediaPortal) changeable values
         public Dictionary<string, List<string>> searchHistory;
         public SiteOrder siteOrder = SiteOrder.AsInFile;
 #if MP11
+        public GUIFacadeControl.ViewMode currentGroupView = GUIFacadeControl.ViewMode.List;
         public GUIFacadeControl.ViewMode currentSiteView = GUIFacadeControl.ViewMode.List;
         public GUIFacadeControl.ViewMode currentCategoryView = GUIFacadeControl.ViewMode.List;
         public GUIFacadeControl.ViewMode currentVideoView = GUIFacadeControl.ViewMode.SmallIcons;
 #else
+        public GUIFacadeControl.Layout currentGroupView = GUIFacadeControl.Layout.List;
         public GUIFacadeControl.Layout currentSiteView = GUIFacadeControl.Layout.List;
         public GUIFacadeControl.Layout currentCategoryView = GUIFacadeControl.Layout.List;
         public GUIFacadeControl.Layout currentVideoView = GUIFacadeControl.Layout.SmallIcons;
@@ -48,6 +54,7 @@ namespace OnlineVideos.MediaPortal1
         #region MediaPortal.xml attribute names
         public const string CFG_SECTION = "onlinevideos";
         public const string CFG_BASICHOMESCREEN_NAME = "basicHomeScreenName";
+        const string CFG_GROUPVIEW_MODE = "groupview";
         const string CFG_SITEVIEW_MODE = "siteview";
         const string CFG_SITEVIEW_ORDER = "siteview_order";
         const string CFG_CATEGORYVIEW_MODE = "categoryview";
@@ -118,13 +125,15 @@ namespace OnlineVideos.MediaPortal1
                     BasicHomeScreenName = settings.GetValueAsString(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
                     siteOrder = (SiteOrder)settings.GetValueAsInt(CFG_SECTION, CFG_SITEVIEW_ORDER, (int)SiteOrder.AsInFile);
 #if MP11
+                    currentGroupView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_GROUPVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
                     currentSiteView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_SITEVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
-                    currentVideoView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
                     currentCategoryView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYVIEW_MODE, (int)GUIFacadeControl.ViewMode.List);
+                    currentVideoView = (GUIFacadeControl.ViewMode)settings.GetValueAsInt(CFG_SECTION, CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.ViewMode.SmallIcons);
 #else
+                    currentGroupView = (GUIFacadeControl.Layout)settings.GetValueAsInt(CFG_SECTION, CFG_GROUPVIEW_MODE, (int)GUIFacadeControl.Layout.List);
                     currentSiteView = (GUIFacadeControl.Layout)settings.GetValueAsInt(CFG_SECTION, CFG_SITEVIEW_MODE, (int)GUIFacadeControl.Layout.List);
-                    currentVideoView = (GUIFacadeControl.Layout)settings.GetValueAsInt(CFG_SECTION, CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.Layout.SmallIcons);
                     currentCategoryView = (GUIFacadeControl.Layout)settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYVIEW_MODE, (int)GUIFacadeControl.Layout.List);
+                    currentVideoView = (GUIFacadeControl.Layout)settings.GetValueAsInt(CFG_SECTION, CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.Layout.SmallIcons);
 #endif
                     ovsconf.ThumbsDir = settings.GetValueAsString(CFG_SECTION, CFG_THUMBNAIL_DIR, ovsconf.ThumbsDir).Replace("/", @"\");
                     if (!ovsconf.ThumbsDir.EndsWith(@"\")) ovsconf.ThumbsDir = ovsconf.ThumbsDir + @"\"; // fix thumbnail dir to include the trailing slash
@@ -195,7 +204,7 @@ namespace OnlineVideos.MediaPortal1
 
                     httpSourceFilterName = settings.GetValueAsString(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
                 }
-
+                LoadSitesGroups();
                 ovsconf.LoadSites();
             }
             catch (Exception e)
@@ -211,6 +220,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 using (Settings settings = new MPSettings())
                 {
+                    settings.SetValue(CFG_SECTION, CFG_GROUPVIEW_MODE, (int)currentGroupView);
                     settings.SetValue(CFG_SECTION, CFG_SITEVIEW_MODE, (int)currentSiteView);
                     settings.SetValue(CFG_SECTION, CFG_SITEVIEW_ORDER, (int)siteOrder);
                     settings.SetValue(CFG_SECTION, CFG_VIDEOVIEW_MODE, (int)currentVideoView);
@@ -218,7 +228,7 @@ namespace OnlineVideos.MediaPortal1
                     try
                     {
                         MemoryStream xmlMem = new MemoryStream();
-                        System.Runtime.Serialization.DataContractSerializer dcs = new System.Runtime.Serialization.DataContractSerializer(typeof(Dictionary<string, List<string>>));
+                        DataContractSerializer dcs = new DataContractSerializer(typeof(Dictionary<string, List<string>>));
                         dcs.WriteObject(xmlMem, searchHistory);
                         xmlMem.Position = 0;
                         XmlDocument xmlDoc = new XmlDocument();
@@ -254,6 +264,7 @@ namespace OnlineVideos.MediaPortal1
                         else settings.SetValue(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORY_NUM, searchHistoryNum);
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORYTYPE, (int)searchHistoryType);
+                        SaveSitesGroups();
 
                         ovsconf.SaveSites();
                     }
@@ -262,6 +273,60 @@ namespace OnlineVideos.MediaPortal1
             catch (Exception ex)
             {
                 Log.Instance.Error(ex);
+            }
+        }
+
+        void LoadSitesGroups()
+        {
+            if (File.Exists(Path.Combine(Config.GetFolder(Config.Dir.Config), SitesGroupsFileName)))
+            {
+                try
+                {
+                    using (FileStream fso = new FileStream(Path.Combine(Config.GetFolder(Config.Dir.Config), SitesGroupsFileName), FileMode.Open))
+                    {
+                        DataContractSerializer dcs = new DataContractSerializer(SitesGroups.GetType());
+                        SitesGroups = (BindingList<SitesGroup>)dcs.ReadObject(fso);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Instance.Warn("Error loading {0}:{1}", SitesGroupsFileName, e.Message);
+                }
+            }
+        }
+
+        void SaveSitesGroups()
+        {
+            if (SitesGroups.Count > 0)
+            {
+                try
+                {
+                    using (FileStream fso = new FileStream(Path.Combine(Config.GetFolder(Config.Dir.Config), SitesGroupsFileName), FileMode.Create))
+                    {
+                        DataContractSerializer dcs = new DataContractSerializer(SitesGroups.GetType());
+                        XmlWriter xmlWriter = XmlWriter.Create(fso, new XmlWriterSettings() { Indent = true });
+                        dcs.WriteObject(xmlWriter, SitesGroups);
+                        xmlWriter.Flush();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Instance.Warn("Error saving {0}:{1}", SitesGroupsFileName, e.Message);
+                }
+            }
+            else
+            {
+                if (File.Exists(Path.Combine(Config.GetFolder(Config.Dir.Config), SitesGroupsFileName)))
+                {
+                    try
+                    {
+                        File.Delete(Path.Combine(Config.GetFolder(Config.Dir.Config), SitesGroupsFileName));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Instance.Warn("Error deleting {0}:{1}", SitesGroupsFileName, ex.Message);
+                    }
+                }
             }
         }
     }

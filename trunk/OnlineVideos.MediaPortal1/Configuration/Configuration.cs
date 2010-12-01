@@ -73,6 +73,16 @@ namespace OnlineVideos.MediaPortal1
 
             // set bindings            
             bindingSourceSiteSettings.DataSource = OnlineVideoSettings.Instance.SiteSettingsList;
+            bindingSourceSitesGroup.DataSource = PluginConfiguration.Instance.SitesGroups;
+
+            // load site image into a list for use with the listviews
+            ImageList allSitesImageList = new ImageList() { ColorDepth = ColorDepth.Depth32Bit, ImageSize = new Size(32,32) };
+            foreach(string imagefile in System.IO.Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\", "*.png"))
+            {
+                allSitesImageList.Images.Add(System.IO.Path.GetFileNameWithoutExtension(imagefile), Image.FromFile(imagefile));
+            }
+            listViewSitesInGroup.LargeImageList = allSitesImageList;
+            listViewSitesNotInGroup.LargeImageList = allSitesImageList;
         }
 
         void SelectedSiteUtilChanged(object sender, EventArgs e)
@@ -687,6 +697,110 @@ namespace OnlineVideos.MediaPortal1
         {
             nUPSearchHistoryItemCount.Enabled = rbExtendedSearchHistory.Checked;
         }
-       
+
+        #region Group Tab events
+        private void btnAddSitesGroup_Click(object sender, EventArgs e)
+        {
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).AddNew();
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).EndCurrentEdit();
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Refresh();
+
+            btnDeleteSitesGroup.Enabled = ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Count > 0;
+            btnSitesGroupUp.Enabled = ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Count > 1;
+            btnSitesGroupDown.Enabled = ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Count > 1;
+        }
+
+        private void btnDeleteSitesGroup_Click(object sender, EventArgs e)
+        {
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).RemoveAt(((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Position);
+
+            btnDeleteSitesGroup.Enabled = ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Count > 0;
+            btnSitesGroupUp.Enabled = ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Count > 1;
+            btnSitesGroupDown.Enabled = ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Count > 1;
+        }
+
+        private void btnSitesGroupUp_Click(object sender, EventArgs e)
+        {
+            int currentPos = ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Position;
+            SitesGroup item = ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Current as SitesGroup;
+
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).SuspendBinding();
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).RemoveAt(currentPos);
+
+            if (currentPos == 0) ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).List.Add(item);
+            else ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).List.Insert(currentPos - 1, item);
+
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).ResumeBinding();
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Refresh();
+
+            bindingSourceSitesGroup.Position = currentPos == 0 ? bindingSourceSitesGroup.Count - 1 : currentPos - 1;
+            bindingSourceSitesGroup.ResetCurrentItem();
+        }
+
+        private void btnSitesGroupDown_Click(object sender, EventArgs e)
+        {
+            int currentPos = ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Position;
+            SitesGroup item = ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Current as SitesGroup;
+
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).SuspendBinding();
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).RemoveAt(currentPos);
+
+            if (currentPos >= bindingSourceSitesGroup.Count) ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).List.Insert(0, item);
+            else ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).List.Insert(currentPos + 1, item);
+
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).ResumeBinding();
+            ((CurrencyManager)BindingContext[bindingSourceSitesGroup]).Refresh();
+
+            bindingSourceSitesGroup.Position = currentPos >= bindingSourceSitesGroup.Count - 1 ? 0 : currentPos + 1;
+            bindingSourceSitesGroup.ResetCurrentItem();
+        }
+
+        private void listBoxSitesNotInGroup_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (listViewSitesNotInGroup.SelectedItems.Count > 0)
+            {
+                string site = listViewSitesNotInGroup.SelectedItems[0].Text;
+                SitesGroup sg = listBoxSitesGroups.SelectedValue as SitesGroup;
+                if (sg != null)
+                {
+                    sg.Sites.Add(site);
+                    listViewSitesNotInGroup.Items.RemoveByKey(site);
+                    listBoxSitesGroups_SelectedValueChanged(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        private void listBoxSitesInGroup_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (listViewSitesInGroup.SelectedItems.Count > 0)
+            {
+                string site = listViewSitesInGroup.SelectedItems[0].Text;
+                SitesGroup sg = listBoxSitesGroups.SelectedValue as SitesGroup;
+                if (sg != null)
+                {
+                    sg.Sites.Remove(site);
+                    listBoxSitesGroups_SelectedValueChanged(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        private void listBoxSitesGroups_SelectedValueChanged(object sender, EventArgs e)
+        {
+            listViewSitesNotInGroup.Items.Clear();
+            listViewSitesInGroup.Items.Clear();
+            SitesGroup sg = listBoxSitesGroups.SelectedValue as SitesGroup;
+            if (sg != null)
+            {
+                foreach (var item in OnlineVideoSettings.Instance.SiteSettingsList)
+                {
+                    if (!sg.Sites.Contains(item.Name)) listViewSitesNotInGroup.Items.Add(item.Name, item.Name, item.Name);
+                }
+                foreach (string site in sg.Sites)
+                {
+                    listViewSitesInGroup.Items.Add(site, site, site);
+                }
+            }
+        }
+        #endregion
     }
 }

@@ -170,6 +170,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SitesGroup.cs" />
     <Compile Include="SmsT9Filter.cs" />
     <Compile Include="Translator.cs" />
   </ItemGroup>
@@ -183,6 +184,7 @@
     <EmbeddedResource Include="OnlineVideosDisabled.png" />
     <None Include="Properties\DataSources\RssLink.datasource" />
     <None Include="Properties\DataSources\SiteSettings.datasource" />
+    <None Include="Properties\DataSources\SitesGroup.datasource" />
     <None Include="Resources\Add.png" />
     <None Include="Resources\Delete.png" />
     <None Include="Resources\Down.png" />
