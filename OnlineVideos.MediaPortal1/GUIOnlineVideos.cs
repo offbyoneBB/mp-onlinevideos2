@@ -96,10 +96,6 @@ namespace OnlineVideos.MediaPortal1
         #region Skin Controls
         [SkinControlAttribute(2)]
         protected GUIButtonControl GUI_btnViewAs = null;
-        [SkinControlAttribute(3)]
-        protected GUIButtonControl GUI_btnNext = null;
-        [SkinControlAttribute(4)]
-        protected GUIButtonControl GUI_btnPrevious = null;
         [SkinControlAttribute(5)]
         protected GUISelectButtonControl GUI_btnMaxResult = null;
         [SkinControlAttribute(6)]
@@ -472,38 +468,6 @@ namespace OnlineVideos.MediaPortal1
                         }
                     }
                     break;
-                case Action.ActionType.ACTION_NEXT_ITEM:
-#if MP11
-                    if (currentState == State.videos && GUI_facadeView.CurrentView.Visible && GUI_facadeView.Focus)
-#else
-                    if (currentState == State.videos && GUI_facadeView.LayoutControl.Visible && GUI_facadeView.Focus)
-#endif
-                    {
-                        currentFilter.Clear();
-                        if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
-
-                        if (GUI_btnNext.IsEnabled)
-                        {
-                            DisplayVideos_NextPage();
-                        }
-                    }
-                    break;
-                case Action.ActionType.ACTION_PREV_ITEM:
-#if MP11
-                    if (currentState == State.videos && GUI_facadeView.CurrentView.Visible && GUI_facadeView.Focus)
-#else
-                    if (currentState == State.videos && GUI_facadeView.LayoutControl.Visible && GUI_facadeView.Focus)
-#endif
-                    {
-                        currentFilter.Clear();
-                        if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
-
-                        if (GUI_btnPrevious.IsEnabled)
-                        {
-                            DisplayVideos_PreviousPage();
-                        }
-                    }
-                    break;
             }
             GUI_btnOrderBy.Label = Translation.SortOptions;
             GUI_btnMaxResult.Label = Translation.MaxResults;
@@ -620,6 +584,10 @@ namespace OnlineVideos.MediaPortal1
                     {
                         ShowPreviousMenu();
                     }
+                    else if (GUI_facadeView.SelectedListItem.Label == Translation.NextPage)
+                    {
+                        DisplayVideos_NextPage();
+                    }
                     else
                     {
                         selectedVideo = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
@@ -668,16 +636,6 @@ namespace OnlineVideos.MediaPortal1
             else if (control == GUI_btnViewAs)
             {
                 ToggleFacadeViewMode();
-            }
-            else if (control == GUI_btnNext)
-            {
-                GUIControl.UnfocusControl(GetID, GUI_btnNext.GetID);
-                DisplayVideos_NextPage();
-            }
-            else if (control == GUI_btnPrevious)
-            {
-                GUIControl.UnfocusControl(GetID, GUI_btnPrevious.GetID);
-                DisplayVideos_PreviousPage();
             }
             else if (control == GUI_btnMaxResult)
             {
@@ -1415,25 +1373,12 @@ namespace OnlineVideos.MediaPortal1
             },
             delegate(bool success, object result)
             {
-                if (success) SetVideosToFacade(result as List<VideoInfo>, currentVideosDisplayMode);
+                if (success) SetVideosToFacade(result as List<VideoInfo>, currentVideosDisplayMode, true);
             },
             Translation.GettingNextPageVideos, true);
         }
 
-        private void DisplayVideos_PreviousPage()
-        {
-            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
-            {
-                return SelectedSite.getPreviousPageVideos();
-            },
-            delegate(bool success, object result)
-            {
-                if (success) SetVideosToFacade(result as List<VideoInfo>, currentVideosDisplayMode);
-            },
-            Translation.GettingPreviousPageVideos, true);
-        }
-
-        private bool SetVideosToFacade(List<VideoInfo> videos, VideosMode mode)
+        private bool SetVideosToFacade(List<VideoInfo> videos, VideosMode mode, bool append = false)
         {
             // Check for received data
             if (videos == null || videos.Count == 0)
@@ -1449,44 +1394,48 @@ namespace OnlineVideos.MediaPortal1
                 return false;
             }
 
+            int indextoSelect = -1;
+            if (append)
+            {
+                currentFilter.Clear();
+                indextoSelect = currentVideoList.Count + 1;
+                currentVideoList.AddRange(videos);
+            }
+            else
+            {
+                currentVideoList = videos;
+            }
+
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
             // add the first item that will go to the previous menu
-            OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem("..");
-            listItem.IsFolder = true;
-            listItem.ItemId = 0;
-            listItem.OnItemSelected += OnVideoItemSelected;
-            MediaPortal.Util.Utils.SetDefaultIcons(listItem);
-            GUI_facadeView.Add(listItem);
+            OnlineVideosGuiListItem backItem = new OnlineVideosGuiListItem("..");
+            backItem.IsFolder = true;
+            backItem.OnItemSelected += OnVideoItemSelected;
+            MediaPortal.Util.Utils.SetDefaultIcons(backItem);
+            GUI_facadeView.Add(backItem);
+
             // add the items
             Dictionary<string, bool> imageHash = new Dictionary<string, bool>();
-            int liIdx = 0;
             currentFilter.StartMatching();
 
-            int selectedVideoIndex = 0; // used to remember the position of the last selected Video
-
-            foreach (VideoInfo videoInfo in videos)
+            foreach (VideoInfo videoInfo in currentVideoList)
             {
-                liIdx++;
                 videoInfo.CleanDescriptionAndTitle();
-                if (!currentFilter.Matches(videoInfo.Title) || FilterOut(videoInfo.Title) || FilterOut(videoInfo.Description))
-                {
-                    continue;
-                }
-                listItem = new OnlineVideosGuiListItem(videoInfo.Title);
+                if (!currentFilter.Matches(videoInfo.Title) || FilterOut(videoInfo.Title) || FilterOut(videoInfo.Description)) continue;
+
+                OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(videoInfo.Title);
                 listItem.Path = videoInfo.VideoUrl;
-                listItem.ItemId = liIdx;
                 listItem.Item = videoInfo;
                 listItem.IconImage = "defaultVideo.png";
                 listItem.IconImageBig = "defaultVideoBig.png";
-                listItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnVideoItemSelected);
+                listItem.OnItemSelected += OnVideoItemSelected;
                 GUI_facadeView.Add(listItem);
-
-                if (listItem.Item == selectedVideo) selectedVideoIndex = GUI_facadeView.Count - 1;
-
+                
+                if (listItem.Item == selectedVideo) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
                 if (!string.IsNullOrEmpty(videoInfo.ImageUrl)) imageHash[videoInfo.ImageUrl] = true;
             }
             // fall back to list view if there are no items with thumbs
-            if (imageHash.Count > 0) ImageDownloader.GetImages<VideoInfo>(videos);
+            if (imageHash.Count > 0) ImageDownloader.GetImages<VideoInfo>(currentVideoList);
             suggestedView = null;
 #if MP11
             if (imageHash.Count == 0 || (videos.Count > 1 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.ViewMode.List;
@@ -1494,11 +1443,19 @@ namespace OnlineVideos.MediaPortal1
             if (imageHash.Count == 0 || (videos.Count > 1 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.Layout.List;
 #endif
 
-            // position the cursor on the selected video if restore index was true
-            if (selectedVideoIndex < GUI_facadeView.Count)
-                GUI_facadeView.SelectedListItemIndex = selectedVideoIndex;
+            if (SelectedSite.HasNextPage)
+            {
+                OnlineVideosGuiListItem nextPageItem = new OnlineVideosGuiListItem(Translation.NextPage);
+                nextPageItem.IsFolder = true;
+                nextPageItem.IconImage = "DefaultShortcutBig.png";
+                nextPageItem.IconImageBig = "DefaultShortcutBig.png";
+                nextPageItem.ThumbnailImage = "DefaultShortcutBig.png";
+                nextPageItem.OnItemSelected += OnVideoItemSelected;
+                GUI_facadeView.Add(nextPageItem);
+            }
 
-            currentVideoList = videos;
+            if (indextoSelect > -1 && indextoSelect < GUI_facadeView.Count) GUI_facadeView.SelectedListItemIndex = indextoSelect;
+
             currentVideosDisplayMode = mode;
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             CurrentState = State.videos;
@@ -2135,8 +2092,6 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
                     GUIPropertyManager.SetProperty("#header.image", Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
                     ShowAndEnable(GUI_facadeView.GetID);
-                    HideAndDisable(GUI_btnNext.GetID);
-                    HideAndDisable(GUI_btnPrevious.GetID);
                     HideFilterButtons();
                     HideSearchButtons();
                     currentView = PluginConfiguration.Instance.currentGroupView;
@@ -2147,8 +2102,6 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
                     GUIPropertyManager.SetProperty("#header.image", Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
                     ShowAndEnable(GUI_facadeView.GetID);
-                    HideAndDisable(GUI_btnNext.GetID);
-                    HideAndDisable(GUI_btnPrevious.GetID);
                     HideFilterButtons();
                     ShowOrderButtons();
                     HideSearchButtons();                    
@@ -2166,8 +2119,6 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
                     GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite));
                     ShowAndEnable(GUI_facadeView.GetID);
-                    HideAndDisable(GUI_btnNext.GetID);
-                    HideAndDisable(GUI_btnPrevious.GetID);
                     HideFilterButtons();
                     if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();                    
                     HideAndDisable(GUI_btnEnterPin.GetID);
@@ -2189,8 +2140,6 @@ namespace OnlineVideos.MediaPortal1
                     }
                     GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite));
                     ShowAndEnable(GUI_facadeView.GetID);
-                    if (SelectedSite.HasNextPage) ShowAndEnable(GUI_btnNext.GetID); else HideAndDisable(GUI_btnNext.GetID);
-                    if (SelectedSite.HasPreviousPage) ShowAndEnable(GUI_btnPrevious.GetID); else HideAndDisable(GUI_btnPrevious.GetID);
                     if (SelectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
                     if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
                     if (SelectedSite.HasFilterCategories) ShowCategoryButton();                    
@@ -2204,8 +2153,6 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
                     GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite));
                     HideAndDisable(GUI_facadeView.GetID);
-                    HideAndDisable(GUI_btnNext.GetID);
-                    HideAndDisable(GUI_btnPrevious.GetID);
                     HideFilterButtons();
                     HideSearchButtons();                    
                     HideAndDisable(GUI_btnEnterPin.GetID);
@@ -2220,11 +2167,7 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-                // set the selected item to -1 and afterwards back, so the displayed title gets refreshed
-                int temp = GUI_facadeView.SelectedListItemIndex;
-                GUI_facadeView.SelectedListItemIndex = -1;
-                GUI_facadeView.SelectedListItemIndex = temp;
-
+                GUI_facadeView.NeedRefresh();
                 GUI_facadeView.Focus = true;
                 GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
             }
@@ -2390,7 +2333,11 @@ namespace OnlineVideos.MediaPortal1
 
             //set object count label
             int itemcount = GUI_facadeView.Count;
-            if (GUI_facadeView[0].Label == "..") itemcount--;
+            if (itemcount > 0)
+            {
+                if (GUI_facadeView[0].Label == "..") itemcount--;
+                if (itemcount > 0 && (GUI_facadeView[GUI_facadeView.Count - 1] as OnlineVideosGuiListItem).Item == null) itemcount--;
+            }
             GUIPropertyManager.SetProperty("#itemcount", itemcount.ToString());
 
             // keep track of the currently selected item (is lost when switching view)

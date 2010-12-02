@@ -7,17 +7,10 @@
   <define>#header.image</define>
   <controls>
     
-    <!-- *** WINDOW DEFAULTS *** -->
-
-    <control><!-- *** This is only needed for compatibility with 1.02 *** -->
-      <description>BG</description>
-      <type>image</type>
-      <id>1</id>
-      <width>1280</width>
-      <height>720</height>
-    </control>
+    <!-- *** WINDOW DEFAULTS *** -->    
+    
      <control>
-      <description>BG2</description>
+      <description>BackGround</description>
       <type>image</type>
       <id>1</id>
       <width>1280</width>
@@ -368,6 +361,7 @@
           <id>8</id>
           <onright>50</onright>
           <onup>7</onup>
+          <ondown>12</ondown>
           <label>#OnlineVideos.Translation.Refresh.Label</label>
           <font>font11</font>
           <height>37</height>
@@ -376,34 +370,10 @@
         </control>
         <control>
           <type>button</type>
-          <description>Next Page</description>
-          <id>3</id>
-          <onright>50</onright>
-          <onup>8</onup>
-          <label>#OnlineVideos.Translation.NextPage.Label</label>
-          <font>font11</font>
-          <height>37</height>
-          <textYOff>3</textYOff>
-          <visible>!Control.HasFocus(50)</visible>
-        </control>
-        <control>
-          <type>button</type>
-          <description>Previous Page</description>
-          <id>4</id>
-          <onright>50</onright>
-          <onup>3</onup>
-          <label>#OnlineVideos.Translation.PreviousPage.Label</label>
-          <font>font11</font>
-          <height>37</height>
-          <textYOff>3</textYOff>
-          <visible>!Control.HasFocus(50)</visible>
-        </control>        
-        <control>
-          <type>button</type>
           <description>Do Age Check</description>
           <id>12</id>
           <onright>50</onright>
-          <onup>11</onup>
+          <onup>8</onup>
           <ondown>13</ondown>
           <label>#OnlineVideos.Translation.EnterPin.Label</label>
           <font>font11</font>
