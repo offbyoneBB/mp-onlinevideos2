@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
             this.BaseUrlTextbox = new System.Windows.Forms.TextBox();
@@ -84,6 +85,10 @@
             this.videoUrlResultTextBox = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
             this.btnPlay = new System.Windows.Forms.Button();
+            this.playButtonContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.play = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyUrl = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkValid = new System.Windows.Forms.ToolStripMenuItem();
             this.label21 = new System.Windows.Forms.Label();
             this.CreateFileUrlRegexButton = new System.Windows.Forms.Button();
             this.fileUrlFormatStringTextBox = new System.Windows.Forms.TextBox();
@@ -121,6 +126,7 @@
             this.subCatTabPage.SuspendLayout();
             this.videoListTabPage.SuspendLayout();
             this.VideoUrlTabPage.SuspendLayout();
+            this.playButtonContextMenuStrip.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -711,6 +717,7 @@
             // btnPlay
             // 
             this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPlay.ContextMenuStrip = this.playButtonContextMenuStrip;
             this.btnPlay.Location = new System.Drawing.Point(416, 478);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(38, 23);
@@ -718,6 +725,36 @@
             this.btnPlay.Text = "Play";
             this.btnPlay.UseVisualStyleBackColor = true;
             this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
+            // 
+            // playButtonContextMenuStrip
+            // 
+            this.playButtonContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.play,
+            this.copyUrl,
+            this.checkValid});
+            this.playButtonContextMenuStrip.Name = "playButtonContextMenuStrip";
+            this.playButtonContextMenuStrip.Size = new System.Drawing.Size(153, 92);
+            // 
+            // play
+            // 
+            this.play.Name = "play";
+            this.play.Size = new System.Drawing.Size(152, 22);
+            this.play.Text = "Play";
+            this.play.Click += new System.EventHandler(this.btnPlay_Click);
+            // 
+            // copyUrl
+            // 
+            this.copyUrl.Name = "copyUrl";
+            this.copyUrl.Size = new System.Drawing.Size(152, 22);
+            this.copyUrl.Text = "Copy Url";
+            this.copyUrl.Click += new System.EventHandler(this.copyUrl_Click);
+            // 
+            // checkValid
+            // 
+            this.checkValid.Name = "checkValid";
+            this.checkValid.Size = new System.Drawing.Size(152, 22);
+            this.checkValid.Text = "Check Validity";
+            this.checkValid.Click += new System.EventHandler(this.checkValid_Click);
             // 
             // label21
             // 
@@ -1041,6 +1078,7 @@
             this.videoListTabPage.PerformLayout();
             this.VideoUrlTabPage.ResumeLayout(false);
             this.VideoUrlTabPage.PerformLayout();
+            this.playButtonContextMenuStrip.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
@@ -1145,6 +1183,10 @@
         private System.Windows.Forms.CheckBox getRedirectedFileUrlCheckBox;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox fileUrlPostStringTextBox;
+        private System.Windows.Forms.ContextMenuStrip playButtonContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem play;
+        private System.Windows.Forms.ToolStripMenuItem copyUrl;
+        private System.Windows.Forms.ToolStripMenuItem checkValid;
     }
 }
 
