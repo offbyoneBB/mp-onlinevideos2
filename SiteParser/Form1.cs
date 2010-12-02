@@ -486,6 +486,18 @@ namespace SiteParser
 
         }
 
+        private void copyUrl_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(ResultUrlComboBox.SelectedItem as string);
+        }
+
+        private void checkValid_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(@"""" + ResultUrlComboBox.SelectedItem as string + @""" is " +
+                (!Uri.IsWellFormedUriString(ResultUrlComboBox.SelectedItem as string, UriKind.Absolute) ? "NOT " : String.Empty) +
+                "valid");
+        }
+
     }
 
     class MySiteUtil : GenericSiteUtil
