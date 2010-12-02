@@ -52,6 +52,9 @@ VideoUrlResult: http://www.website.com/flash/download?&movieId=706334
 Here you can also use the m0,m1, etc as explained in step 1.
 Also you can enable parsing redirected urls with getRedirectedFileUrl, and fill in data to put in a http-POST message (in fileUrlPostString)
 
+4: "Result" a list of the final urls found.
+Next to it is a "play" button, which opens the selected url in Windows Media Player.
+Right-click on that button will give more options, like "copy to clipboard" and "check if url is valid"
 
 = Menu Items =
 
