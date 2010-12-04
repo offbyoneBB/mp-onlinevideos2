@@ -359,22 +359,24 @@ namespace OnlineVideos.MediaPortal1
                         System.IO.Directory.CreateDirectory(dllTempDir);
                         // update or download dll if needed
                         string location = dllDir + anOnlineDll.Name + ".dll";
+                        bool download = true;
                         if (System.IO.File.Exists(location))
                         {
                             byte[] data = null;
                             data = System.IO.File.ReadAllBytes(location);
                             System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
                             string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
-                            if (md5LocalDll != anOnlineDll.MD5)
+                            if (md5LocalDll == anOnlineDll.MD5) download = false;
+                        }
+                        if (download)
+                        {
+                            // download dll to temp dir first
+                            if (DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll"))
                             {
-                                // download dll to temp dir first
-                                if (DownloadDll(anOnlineDll.Name, dllTempDir + anOnlineDll.Name + ".dll"))
-                                {
-                                    // if download was successfull, try to copy to target dir (if not successfull, do UAC prompted copy)
-                                    try { System.IO.File.Copy(dllTempDir + anOnlineDll.Name + ".dll", location, true); }
-                                    catch { CopyDlls(dllTempDir, dllDir); }
-                                    return true;
-                                }                                
+                                // if download was successfull, try to copy to target dir (if not successfull, do UAC prompted copy)
+                                try { System.IO.File.Copy(dllTempDir + anOnlineDll.Name + ".dll", location, true); }
+                                catch { CopyDlls(dllTempDir, dllDir); }
+                                return true;
                             }
                         }
                         break;   
