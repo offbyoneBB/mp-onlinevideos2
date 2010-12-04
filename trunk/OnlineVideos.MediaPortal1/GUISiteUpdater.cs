@@ -177,6 +177,18 @@ namespace OnlineVideos.MediaPortal1
             base.OnAction(action);
         }
 
+        protected override void OnShowContextMenu()
+        {
+            if (GUI_infoList.Focus && GUI_infoList.SelectedListItem.TVTag is OnlineVideosWebservice.Site)
+            {
+                ShowOptionsForSite(GUI_infoList.SelectedListItem.TVTag as OnlineVideosWebservice.Site);
+            }
+            else
+            {
+                base.OnShowContextMenu();
+            }
+        }
+
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
             if (control == GUI_btnUpdate)
