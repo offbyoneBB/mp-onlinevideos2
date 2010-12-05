@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Online Videos translation file -->
+<!-- Slovak -->
+<!-- Note: English is the fallback for any strings not found in other languages -->
+<strings>  
+
+  <!-- A -->
+  <string Field="Airdate">Vysielané</string>
+  <string Field="AlreadyDownloading">Tento súbor sa už sťahuje.</string>
+  <string Field="All">Všetko</string>
+  <string Field="Actions">Akcie</string>
+  <string Field="Actors">Herci</string>
+  <string Field="AddToMySites">Pridať k mojim stránkám</string>
+  <string Field="AddToFavourites">Pridať k obľúbeným</string>
+  <string Field="AddingToFavorites">pridávam k obľúbeným</string>
+  <string Field="AutomaticUpdate">Automatická aktualizácia</string>
+  <string Field="AutomaticUpdateDisabled">Automatická aktualizácia vypnutá.</string>
+
+  <!-- B -->
+  <string Field="Broken">Nefungujúce</string>
+  <string Field="Buffered">načítané</string>
+
+  <!-- C -->
+  <string Field="Cancel">Zrušiť</string>
+  <string Field="Category">Kategória</string>
+  <string Field="Categories">Kategórie</string>
+  <string Field="Creator">Autor</string>
+  <string Field="CheckingForPluginUpdate">kontrolujem nové verzie modulov</string>
+
+  <!-- D -->
+  <string Field="Date">Dátum</string>
+  <string Field="DateOfRelease">Dátum vydania</string>
+  <string Field="Directors">Režiséri</string>
+  <string Field="Download">Stiahnuť</string>
+  <string Field="Downloading">Sťahujem</string>
+  <string Field="DownloadingDescription">Zobrazí zoznam momentálne sťahovaných videí.</string>
+  <string Field="DownloadFailed">Sťahovanie neúspešné: {0}</string>
+  <string Field="DownloadCancelled">Sťahovanie zrušené</string>
+  <string Field="DownloadComplete">Sťahovanie skončené</string>
+  <string Field="DownloadStarted">Sťahovanie začaté</string>  
+  <string Field="DownloadedVideos">Stiahnuté videá</string>
+  <string Field="Delete">Vymazať</string>
+  <string Field="DeleteAll">Vymazať všetko</string>
+  <string Field="Default">Predvolené</string>
+  <string Field="Done">Hotovo</string>
+  <string Field="DeletingOldThumbs">Vymazávam staré náhľady</string>
+
+  <!-- E -->
+  <string Field="Error">Error</string>
+  <string Field="EnterPin">Zadaj Pin</string>
+
+  <!-- F -->
+  <string Field="Favourites">Obľúbené</string>
+  <string Field="Filter">Filter</string>
+  <string Field="FullUpdate">Úplná aktualizácia</string>
+
+  <!-- G -->
+  <string Field="Genre">Genre</string>
+  <string Field="GettingVideoDetails">getting video details</string>
+  <string Field="GettingCategoryVideos">getting category videos</string>
+  <string Field="GettingFavoriteVideos">getting favorite videos</string>
+  <string Field="GettingSearchResults">getting search results</string>
+  <string Field="GettingRelatedVideos">getting related videos</string>
+  <string Field="GettingFilteredVideos">getting filtered videos</string>
+  <string Field="GettingNextPageVideos">getting next page videos</string>
+  <string Field="GettingPreviousPageVideos">getting previous page videos</string>
+  <string Field="GettingPlaybackUrlsForVideo">getting playback urls for video</string>
+  <string Field="GettingDynamicCategories">getting dynamic categories</string>
+  <string Field="GettingReports">getting reports from webservice</string>
+  <string Field="GettingSiteXml">getting site xml from webservice</string>
+  <string Field="GettingIcon">getting site icon from webservice</string>
+  <string Field="GettingBanner">getting site banner from webservice</string>
+  <string Field="GettingDll">getting dll from webservice</string>
+
+  <!-- H -->
+
+  <!-- I -->
+
+  <!-- L -->
+  <string Field="LatestVersionRequired">Je potrebná najnovšia verzia ({0})!</string>
+  <string Field="Language">Jazyk</string>
+  <string Field="LayoutList">Vzhľad: Zoznam</string>
+  <string Field="LayoutIcons">Vzhľad: Ikony</string>
+  <string Field="LayoutBigIcons">Vzhľad: Veľké ikony</string>
+
+  <!-- M -->
+  <string Field="ManageSites">Spravovať videá</string>
+  <string Field="MaxResults">Počet výsledkov</string>
+
+  <!-- N -->
+  <string Field="Name">Meno</string>
+  <string Field="NextPage">Ďalšia strana</string>
+  <string Field="None">Nič</string>
+  <string Field="NoVideoFound">Žiadne video nebolo nájdené</string>
+  <string Field="NoReportsForSite">Žiadne recenzie pre túto stránku nie sú k dispozícii.</string>
+  <string Field="NewDllDownloaded">Nová DLL stiahnutá!</string>
+  <string Field="NewSearch">Nové hľadanie</string>
+
+  <!-- O -->
+
+  <!-- P -->
+  <string Field="PlayAll">Prehrať všetko</string>
+  <string Field="PlotOutline">Obsah</string>
+  <string Field="PreviousPage">Predchádzajúca strana</string>
+  <string Field="PerformAutomaticUpdate">Uskutočniť automatickú aktualizáciu?</string>
+
+  <!-- R -->
+  <string Field="RemoveFromFavorites">Odstrániť z obľúbených</string>
+  <string Field="RemovingFromFavorites">odstraňujem z obľúbených</string>
+  <string Field="Refresh">Obnoviť</string>
+  <string Field="RelatedVideos">Príbuzné videá</string>
+  <string Field="Reported">Recenzované</string>
+  <string Field="Runtime">Dĺžka</string>
+  <string Field="RemoveFromMySites">Odstrániť z mojich stránok</string>
+  <string Field="RestartMediaPortal">Reštaruj MediaPortal!</string>
+  <string Field="RetrievingRemoteDlls">Získavam vzdialené DLL ...</string>
+  <string Field="RetrievingRemoteSites">Získavam vzdialené stránky ...</string>
+
+  <!-- S -->
+  <string Field="SearchHistory">História hľadania</string>
+  <string Field="SearchResults">Výsledky hľadania</string>
+  <string Field="SelectSource">Vyber zdroj</string>
+  <string Field="Sites">Stránky</string>
+  <string Field="Size">Veľkosť</string>  
+  <string Field="SortOptions">Trediť podľa</string>
+  <string Field="Search">Hľadať</string>
+  <string Field="SetDownloadFolderInConfig">Nastav v konfigurácii adresár pre sťahovanie!</string>
+  <string Field="State">Stav</string>
+  <string Field="SavingLocalSiteList">Ukladám zoznam lokálnych stránok ...</string>
+  <string Field="ShowReports">Zobraz autorské a užívateľské recenzie</string>
+  <string Field="StartingPlayback">spúšťam prehrávanie</string>
+  <string Field="Subscriptions">odoberania</string>
+  
+  <!-- T -->
+  <string Field="Timeframe">Časové obdobie</string>
+  <string Field="Timeout">Timeout</string>
+  <string Field="Tags">Tagy</string>
+
+  <!-- U -->
+  <string Field="Updated">Aktualizované</string>
+  <string Field="Updatable">Aktualizovateľné</string>
+  <string Field="UpdateMySite">Aktualizovať stránku</string>
+  <string Field="UpdateMySiteSkipCategories">Aktualizovať stránku (preskočiť kategórie)</string>
+  <string Field="UpdateAllYourSites">Toto aktualizuje všetky tvoje stránky.</string>
+  <string Field="UnableToPlayVideo">Nie je možné prehrať video. Žiadna adresa URL.</string>
+  <string Field="UnableToDownloadVideo">Nie je možné stiahnuť video. Nesprávna adresa URL.</string>
+
+  <!-- V -->
+  <string Field="Videos">Videá</string>
+
+  <!-- W -->
+  <string Field="Working">Fungujúce</string>
+
+  <!-- Y -->
+
+</strings>
