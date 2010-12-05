@@ -1027,9 +1027,9 @@
         <item key="nextPageRegExUrlFormatString"><![CDATA[{0}]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='prev_page'>Prev</a>]]></item>
         <item key="prevPageRegExUrlFormatString"><![CDATA[{0}]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[<link\srel="video_src"\shref="http://cdn2\.themis-media\.com/media/global/movies/player/flowplayer\.commercial-\d\.\d\.\d\.swf\?config=(?<url>.*?)%3Fembed%3D1%26fb%3D1">]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[<meta\sproperty="og:video"\scontent="http://cdn2\.themis-media\.com/media/global/movies/player/flowplayer\.commercial-\d\.\d\.\d\.swf\?config=(?<url>.*?)%3Fembed%3D1%26fb%3D1">]]></item>
         <item key="playlistUrlFormatString"><![CDATA[{0}?playerId=player_api&host=escapistmagazine.com]]></item>
-        <item key="fileUrlRegEx"><![CDATA[,{'url':'(?<m0>[^']*)']]></item>
+        <item key="fileUrlRegEx"><![CDATA[,{'url':'(?<m0>[^']*)','a]]></item>
         <item key="baseUrl"><![CDATA[http://www.escapistmagazine.com/videos]]></item>
       </Configuration>
       <Categories />
