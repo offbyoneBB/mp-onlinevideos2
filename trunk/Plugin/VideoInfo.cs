@@ -10,6 +10,7 @@ namespace OnlineVideos
     public class VideoInfo: System.ComponentModel.INotifyPropertyChanged
     {
         public string Title { get; set; }
+        /// <summary>Used as label for the clips retrieved by <see cref="IChoice.getVideoChoices"/></summary>
         public string Title2 { get; set; }
         public string Description { get; set; }
         public string VideoUrl { get; set; }

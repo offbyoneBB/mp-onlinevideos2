@@ -10,7 +10,7 @@ namespace OnlineVideos.Sites
     {        
         public enum VideoQuality { Low, High, Max };
 
-        [Category("OnlineVideosUserConfiguration"), Description("Chose your preferred quality for the videos according to bandwidth.")]
+        [Category("OnlineVideosUserConfiguration"), Description("Choose your preferred quality for the videos according to bandwidth.")]
         VideoQuality videoQuality = VideoQuality.High;
 
         [Category("OnlineVideosConfiguration")]
