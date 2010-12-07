@@ -34,6 +34,7 @@
             this.BaseUrlTextbox = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.categTabPage = new System.Windows.Forms.TabPage();
+            this.manageStaticCategoriesButton = new System.Windows.Forms.Button();
             this.CreateCategoryRegexButton = new System.Windows.Forms.Button();
             this.dynamicCategoryUrlDecodingCheckBox = new System.Windows.Forms.CheckBox();
             this.dynamicCategoryUrlFormatTextBox = new System.Windows.Forms.TextBox();
@@ -121,6 +122,8 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.manageStaticSubCategoriesButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.categTabPage.SuspendLayout();
             this.subCatTabPage.SuspendLayout();
@@ -172,6 +175,7 @@
             // 
             // categTabPage
             // 
+            this.categTabPage.Controls.Add(this.manageStaticCategoriesButton);
             this.categTabPage.Controls.Add(this.CreateCategoryRegexButton);
             this.categTabPage.Controls.Add(this.dynamicCategoryUrlDecodingCheckBox);
             this.categTabPage.Controls.Add(this.dynamicCategoryUrlFormatTextBox);
@@ -186,6 +190,16 @@
             this.categTabPage.TabIndex = 0;
             this.categTabPage.Text = "Category";
             this.categTabPage.UseVisualStyleBackColor = true;
+            // 
+            // manageStaticCategoriesButton
+            // 
+            this.manageStaticCategoriesButton.Location = new System.Drawing.Point(3, 196);
+            this.manageStaticCategoriesButton.Name = "manageStaticCategoriesButton";
+            this.manageStaticCategoriesButton.Size = new System.Drawing.Size(97, 23);
+            this.manageStaticCategoriesButton.TabIndex = 30;
+            this.manageStaticCategoriesButton.Text = "Static Categories";
+            this.manageStaticCategoriesButton.UseVisualStyleBackColor = true;
+            this.manageStaticCategoriesButton.Click += new System.EventHandler(this.manageStaticCategoriesButton_Click);
             // 
             // CreateCategoryRegexButton
             // 
@@ -256,6 +270,7 @@
             // 
             // subCatTabPage
             // 
+            this.subCatTabPage.Controls.Add(this.manageStaticSubCategoriesButton);
             this.subCatTabPage.Controls.Add(this.CreateSubcategoriesRegexButton);
             this.subCatTabPage.Controls.Add(this.dynamicSubCategoryUrlDecodingCheckBox);
             this.subCatTabPage.Controls.Add(this.SubcategorieUrlFormatTextBox);
@@ -723,6 +738,7 @@
             this.btnPlay.Size = new System.Drawing.Size(38, 23);
             this.btnPlay.TabIndex = 72;
             this.btnPlay.Text = "Play";
+            this.toolTip1.SetToolTip(this.btnPlay, "Right-click for more options");
             this.btnPlay.UseVisualStyleBackColor = true;
             this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
             // 
@@ -733,26 +749,26 @@
             this.copyUrl,
             this.checkValid});
             this.playButtonContextMenuStrip.Name = "playButtonContextMenuStrip";
-            this.playButtonContextMenuStrip.Size = new System.Drawing.Size(153, 92);
+            this.playButtonContextMenuStrip.Size = new System.Drawing.Size(150, 70);
             // 
             // play
             // 
             this.play.Name = "play";
-            this.play.Size = new System.Drawing.Size(152, 22);
+            this.play.Size = new System.Drawing.Size(149, 22);
             this.play.Text = "Play";
             this.play.Click += new System.EventHandler(this.btnPlay_Click);
             // 
             // copyUrl
             // 
             this.copyUrl.Name = "copyUrl";
-            this.copyUrl.Size = new System.Drawing.Size(152, 22);
+            this.copyUrl.Size = new System.Drawing.Size(149, 22);
             this.copyUrl.Text = "Copy Url";
             this.copyUrl.Click += new System.EventHandler(this.copyUrl_Click);
             // 
             // checkValid
             // 
             this.checkValid.Name = "checkValid";
-            this.checkValid.Size = new System.Drawing.Size(152, 22);
+            this.checkValid.Size = new System.Drawing.Size(149, 22);
             this.checkValid.Text = "Check Validity";
             this.checkValid.Click += new System.EventHandler(this.checkValid_Click);
             // 
@@ -1058,6 +1074,16 @@
             this.openFileDialog1.FileName = "OnlineVideoSites.xml";
             this.openFileDialog1.Filter = "xml-Files|*.xml";
             // 
+            // manageStaticSubCategoriesButton
+            // 
+            this.manageStaticSubCategoriesButton.Location = new System.Drawing.Point(3, 205);
+            this.manageStaticSubCategoriesButton.Name = "manageStaticSubCategoriesButton";
+            this.manageStaticSubCategoriesButton.Size = new System.Drawing.Size(115, 23);
+            this.manageStaticSubCategoriesButton.TabIndex = 34;
+            this.manageStaticSubCategoriesButton.Text = "Static Subcategories";
+            this.manageStaticSubCategoriesButton.UseVisualStyleBackColor = true;
+            this.manageStaticSubCategoriesButton.Click += new System.EventHandler(this.manageStaticSubCategoriesButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1187,6 +1213,9 @@
         private System.Windows.Forms.ToolStripMenuItem play;
         private System.Windows.Forms.ToolStripMenuItem copyUrl;
         private System.Windows.Forms.ToolStripMenuItem checkValid;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button manageStaticCategoriesButton;
+        private System.Windows.Forms.Button manageStaticSubCategoriesButton;
     }
 }
 
