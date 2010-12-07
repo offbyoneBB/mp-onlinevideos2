@@ -118,17 +118,25 @@ namespace OnlineVideos.MediaPortal1
             this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
-            this.nUPSearchHistoryItemCount = new System.Windows.Forms.NumericUpDown();
-            this.label38 = new System.Windows.Forms.Label();
+            this.pictureBox5 = new System.Windows.Forms.PictureBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label34 = new System.Windows.Forms.Label();
             this.rbOff = new System.Windows.Forms.RadioButton();
-            this.rbExtendedSearchHistory = new System.Windows.Forms.RadioButton();
             this.rbLastSearch = new System.Windows.Forms.RadioButton();
+            this.rbExtendedSearchHistory = new System.Windows.Forms.RadioButton();
+            this.label38 = new System.Windows.Forms.Label();
+            this.nUPSearchHistoryItemCount = new System.Windows.Forms.NumericUpDown();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.Thumbnails = new System.Windows.Forms.GroupBox();
             this.label36 = new System.Windows.Forms.Label();
             this.tbxThumbAge = new System.Windows.Forms.TextBox();
             this.label35 = new System.Windows.Forms.Label();
             this.bntBrowseFolderForThumbs = new System.Windows.Forms.Button();
-            this.label34 = new System.Windows.Forms.Label();
             this.label33 = new System.Windows.Forms.Label();
             this.chkUseQuickSelect = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -147,13 +155,14 @@ namespace OnlineVideos.MediaPortal1
             this.tbxWMPBuffer = new System.Windows.Forms.TextBox();
             this.label23 = new System.Windows.Forms.Label();
             this.chkDoAutoUpdate = new System.Windows.Forms.CheckBox();
-            this.label21 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblVersion = new System.Windows.Forms.Label();
             this.tabGroups = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.tbxSitesGroupName = new System.Windows.Forms.TextBox();
+            this.tbxSitesGroupThumb = new System.Windows.Forms.TextBox();
             this.bindingSourceSitesGroup = new System.Windows.Forms.BindingSource(this.components);
+            this.label42 = new System.Windows.Forms.Label();
+            this.tbxSitesGroupName = new System.Windows.Forms.TextBox();
             this.label39 = new System.Windows.Forms.Label();
             this.toolStripContainer4 = new System.Windows.Forms.ToolStripContainer();
             this.listBoxSitesGroups = new System.Windows.Forms.ListBox();
@@ -189,8 +198,6 @@ namespace OnlineVideos.MediaPortal1
             this.sitesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.label42 = new System.Windows.Forms.Label();
-            this.tbxSitesGroupThumb = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -215,7 +222,14 @@ namespace OnlineVideos.MediaPortal1
             this.toolStripChannels.SuspendLayout();
             this.mainTabControl.SuspendLayout();
             this.tabGeneral.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
+            this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nUPSearchHistoryItemCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.Thumbnails.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -245,7 +259,7 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.txtDownloadDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDownloadDir.Location = new System.Drawing.Point(225, 58);
+            this.txtDownloadDir.Location = new System.Drawing.Point(225, 35);
             this.txtDownloadDir.Name = "txtDownloadDir";
             this.txtDownloadDir.Size = new System.Drawing.Size(429, 20);
             this.txtDownloadDir.TabIndex = 4;
@@ -253,11 +267,11 @@ namespace OnlineVideos.MediaPortal1
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 61);
+            this.label3.Location = new System.Drawing.Point(6, 38);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(90, 13);
+            this.label3.Size = new System.Drawing.Size(87, 13);
             this.label3.TabIndex = 19;
-            this.label3.Text = "Download Folder:";
+            this.label3.Text = "Download Folder";
             // 
             // RssLinkList
             // 
@@ -682,7 +696,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.txtFilters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFilters.Location = new System.Drawing.Point(225, 85);
+            this.txtFilters.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFilters.Location = new System.Drawing.Point(225, 50);
             this.txtFilters.Name = "txtFilters";
             this.txtFilters.Size = new System.Drawing.Size(460, 20);
             this.txtFilters.TabIndex = 6;
@@ -691,7 +706,8 @@ namespace OnlineVideos.MediaPortal1
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 88);
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(6, 53);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(155, 13);
             this.label2.TabIndex = 3;
@@ -701,7 +717,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.txtThumbLoc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtThumbLoc.Location = new System.Drawing.Point(222, 22);
+            this.txtThumbLoc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtThumbLoc.Location = new System.Drawing.Point(225, 50);
             this.txtThumbLoc.Name = "txtThumbLoc";
             this.txtThumbLoc.Size = new System.Drawing.Size(429, 20);
             this.txtThumbLoc.TabIndex = 14;
@@ -709,25 +726,28 @@ namespace OnlineVideos.MediaPortal1
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 25);
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(6, 53);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(51, 13);
+            this.label1.Size = new System.Drawing.Size(48, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Location:";
+            this.label1.Text = "Location";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 35);
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(6, 25);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(112, 13);
+            this.label5.Size = new System.Drawing.Size(109, 13);
             this.label5.TabIndex = 23;
-            this.label5.Text = "Use Age Confirmation:";
+            this.label5.Text = "Use Age Confirmation";
             // 
             // chkUseAgeConfirmation
             // 
             this.chkUseAgeConfirmation.AutoSize = true;
-            this.chkUseAgeConfirmation.Location = new System.Drawing.Point(225, 36);
+            this.chkUseAgeConfirmation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkUseAgeConfirmation.Location = new System.Drawing.Point(225, 25);
             this.chkUseAgeConfirmation.Name = "chkUseAgeConfirmation";
             this.chkUseAgeConfirmation.Size = new System.Drawing.Size(15, 14);
             this.chkUseAgeConfirmation.TabIndex = 2;
@@ -1079,11 +1099,12 @@ namespace OnlineVideos.MediaPortal1
             this.tbxPin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxPin.Enabled = false;
-            this.tbxPin.Location = new System.Drawing.Point(274, 33);
+            this.tbxPin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbxPin.Location = new System.Drawing.Point(276, 22);
             this.tbxPin.Margin = new System.Windows.Forms.Padding(2);
             this.tbxPin.Name = "tbxPin";
             this.tbxPin.PasswordChar = '*';
-            this.tbxPin.Size = new System.Drawing.Size(411, 20);
+            this.tbxPin.Size = new System.Drawing.Size(409, 20);
             this.tbxPin.TabIndex = 3;
             // 
             // tbxScreenName
@@ -1100,18 +1121,18 @@ namespace OnlineVideos.MediaPortal1
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(6, 11);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(132, 13);
+            this.label7.Size = new System.Drawing.Size(129, 13);
             this.label7.TabIndex = 30;
-            this.label7.Text = "BasicHome Screen Name:";
+            this.label7.Text = "BasicHome Screen Name";
             // 
             // btnBrowseForDlFolder
             // 
             this.btnBrowseForDlFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBrowseForDlFolder.AutoSize = true;
-            this.btnBrowseForDlFolder.Location = new System.Drawing.Point(655, 57);
+            this.btnBrowseForDlFolder.Location = new System.Drawing.Point(655, 34);
             this.btnBrowseForDlFolder.Margin = new System.Windows.Forms.Padding(2);
             this.btnBrowseForDlFolder.Name = "btnBrowseForDlFolder";
-            this.btnBrowseForDlFolder.Size = new System.Drawing.Size(30, 27);
+            this.btnBrowseForDlFolder.Size = new System.Drawing.Size(30, 23);
             this.btnBrowseForDlFolder.TabIndex = 5;
             this.btnBrowseForDlFolder.Text = "...";
             this.btnBrowseForDlFolder.UseVisualStyleBackColor = true;
@@ -1133,33 +1154,28 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tabGeneral
             // 
-            this.tabGeneral.Controls.Add(this.nUPSearchHistoryItemCount);
-            this.tabGeneral.Controls.Add(this.label38);
-            this.tabGeneral.Controls.Add(this.rbOff);
-            this.tabGeneral.Controls.Add(this.rbExtendedSearchHistory);
-            this.tabGeneral.Controls.Add(this.rbLastSearch);
+            this.tabGeneral.Controls.Add(this.pictureBox5);
+            this.tabGeneral.Controls.Add(this.groupBox5);
+            this.tabGeneral.Controls.Add(this.pictureBox4);
+            this.tabGeneral.Controls.Add(this.groupBox4);
+            this.tabGeneral.Controls.Add(this.pictureBox3);
+            this.tabGeneral.Controls.Add(this.pictureBox2);
+            this.tabGeneral.Controls.Add(this.pictureBox1);
             this.tabGeneral.Controls.Add(this.Thumbnails);
-            this.tabGeneral.Controls.Add(this.label34);
             this.tabGeneral.Controls.Add(this.label33);
             this.tabGeneral.Controls.Add(this.chkUseQuickSelect);
             this.tabGeneral.Controls.Add(this.groupBox3);
             this.tabGeneral.Controls.Add(this.groupBox2);
             this.tabGeneral.Controls.Add(this.label23);
             this.tabGeneral.Controls.Add(this.chkDoAutoUpdate);
-            this.tabGeneral.Controls.Add(this.label21);
             this.tabGeneral.Controls.Add(this.btnCancel);
             this.tabGeneral.Controls.Add(this.lblVersion);
             this.tabGeneral.Controls.Add(this.btnBrowseForDlFolder);
             this.tabGeneral.Controls.Add(this.btnSave);
             this.tabGeneral.Controls.Add(this.tbxScreenName);
-            this.tabGeneral.Controls.Add(this.label2);
             this.tabGeneral.Controls.Add(this.label7);
-            this.tabGeneral.Controls.Add(this.txtFilters);
-            this.tabGeneral.Controls.Add(this.tbxPin);
             this.tabGeneral.Controls.Add(this.label3);
             this.tabGeneral.Controls.Add(this.txtDownloadDir);
-            this.tabGeneral.Controls.Add(this.label5);
-            this.tabGeneral.Controls.Add(this.chkUseAgeConfirmation);
             this.tabGeneral.Location = new System.Drawing.Point(4, 22);
             this.tabGeneral.Margin = new System.Windows.Forms.Padding(2);
             this.tabGeneral.Name = "tabGeneral";
@@ -1169,9 +1185,136 @@ namespace OnlineVideos.MediaPortal1
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
+            // pictureBox5
+            // 
+            this.pictureBox5.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.key;
+            this.pictureBox5.Location = new System.Drawing.Point(4, 100);
+            this.pictureBox5.Name = "pictureBox5";
+            this.pictureBox5.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox5.TabIndex = 66;
+            this.pictureBox5.TabStop = false;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox5.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox5.Controls.Add(this.label5);
+            this.groupBox5.Controls.Add(this.chkUseAgeConfirmation);
+            this.groupBox5.Controls.Add(this.label21);
+            this.groupBox5.Controls.Add(this.tbxPin);
+            this.groupBox5.Controls.Add(this.label2);
+            this.groupBox5.Controls.Add(this.txtFilters);
+            this.groupBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox5.Location = new System.Drawing.Point(0, 105);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(699, 80);
+            this.groupBox5.TabIndex = 65;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "      Adult content";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label21.Location = new System.Drawing.Point(246, 25);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(22, 13);
+            this.label21.TabIndex = 39;
+            this.label21.Text = "Pin";
+            // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.search;
+            this.pictureBox4.Location = new System.Drawing.Point(5, 187);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox4.TabIndex = 64;
+            this.pictureBox4.TabStop = false;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.label34);
+            this.groupBox4.Controls.Add(this.rbOff);
+            this.groupBox4.Controls.Add(this.rbLastSearch);
+            this.groupBox4.Controls.Add(this.rbExtendedSearchHistory);
+            this.groupBox4.Controls.Add(this.label38);
+            this.groupBox4.Controls.Add(this.nUPSearchHistoryItemCount);
+            this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox4.Location = new System.Drawing.Point(0, 192);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(699, 56);
+            this.groupBox4.TabIndex = 63;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "      Search history";
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label34.Location = new System.Drawing.Point(6, 26);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(34, 13);
+            this.label34.TabIndex = 62;
+            this.label34.Text = "Mode";
+            // 
+            // rbOff
+            // 
+            this.rbOff.AutoSize = true;
+            this.rbOff.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rbOff.Location = new System.Drawing.Point(225, 24);
+            this.rbOff.Name = "rbOff";
+            this.rbOff.Size = new System.Drawing.Size(39, 17);
+            this.rbOff.TabIndex = 59;
+            this.rbOff.TabStop = true;
+            this.rbOff.Text = "Off";
+            this.rbOff.UseVisualStyleBackColor = true;
+            this.rbOff.CheckedChanged += new System.EventHandler(this.searchType_CheckedChanged);
+            // 
+            // rbLastSearch
+            // 
+            this.rbLastSearch.AutoSize = true;
+            this.rbLastSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rbLastSearch.Location = new System.Drawing.Point(270, 24);
+            this.rbLastSearch.Name = "rbLastSearch";
+            this.rbLastSearch.Size = new System.Drawing.Size(80, 17);
+            this.rbLastSearch.TabIndex = 57;
+            this.rbLastSearch.TabStop = true;
+            this.rbLastSearch.Text = "Last search";
+            this.rbLastSearch.UseVisualStyleBackColor = true;
+            this.rbLastSearch.CheckedChanged += new System.EventHandler(this.searchType_CheckedChanged);
+            // 
+            // rbExtendedSearchHistory
+            // 
+            this.rbExtendedSearchHistory.AutoSize = true;
+            this.rbExtendedSearchHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rbExtendedSearchHistory.Location = new System.Drawing.Point(356, 24);
+            this.rbExtendedSearchHistory.Name = "rbExtendedSearchHistory";
+            this.rbExtendedSearchHistory.Size = new System.Drawing.Size(107, 17);
+            this.rbExtendedSearchHistory.TabIndex = 58;
+            this.rbExtendedSearchHistory.TabStop = true;
+            this.rbExtendedSearchHistory.Text = "Extended (dialog)";
+            this.rbExtendedSearchHistory.UseVisualStyleBackColor = true;
+            this.rbExtendedSearchHistory.CheckedChanged += new System.EventHandler(this.searchType_CheckedChanged);
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label38.Location = new System.Drawing.Point(638, 26);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(32, 13);
+            this.label38.TabIndex = 60;
+            this.label38.Text = "Items";
+            // 
             // nUPSearchHistoryItemCount
             // 
-            this.nUPSearchHistoryItemCount.Location = new System.Drawing.Point(541, 161);
+            this.nUPSearchHistoryItemCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nUPSearchHistoryItemCount.Location = new System.Drawing.Point(541, 21);
             this.nUPSearchHistoryItemCount.Maximum = new decimal(new int[] {
             15,
             0,
@@ -1183,7 +1326,7 @@ namespace OnlineVideos.MediaPortal1
             0,
             0});
             this.nUPSearchHistoryItemCount.Name = "nUPSearchHistoryItemCount";
-            this.nUPSearchHistoryItemCount.Size = new System.Drawing.Size(53, 20);
+            this.nUPSearchHistoryItemCount.Size = new System.Drawing.Size(76, 20);
             this.nUPSearchHistoryItemCount.TabIndex = 61;
             this.toolTip1.SetToolTip(this.nUPSearchHistoryItemCount, "Defines the number of search strings stored per Site.");
             this.nUPSearchHistoryItemCount.Value = new decimal(new int[] {
@@ -1192,50 +1335,35 @@ namespace OnlineVideos.MediaPortal1
             0,
             0});
             // 
-            // label38
+            // pictureBox3
             // 
-            this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(476, 165);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(32, 13);
-            this.label38.TabIndex = 60;
-            this.label38.Text = "Items";
+            this.pictureBox3.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.thumbnail;
+            this.pictureBox3.Location = new System.Drawing.Point(5, 380);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox3.TabIndex = 62;
+            this.pictureBox3.TabStop = false;
             // 
-            // rbOff
+            // pictureBox2
             // 
-            this.rbOff.AutoSize = true;
-            this.rbOff.Location = new System.Drawing.Point(225, 163);
-            this.rbOff.Name = "rbOff";
-            this.rbOff.Size = new System.Drawing.Size(39, 17);
-            this.rbOff.TabIndex = 59;
-            this.rbOff.TabStop = true;
-            this.rbOff.Text = "Off";
-            this.rbOff.UseVisualStyleBackColor = true;
-            this.rbOff.CheckedChanged += new System.EventHandler(this.searchType_CheckedChanged);
+            this.pictureBox2.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.cache;
+            this.pictureBox2.Location = new System.Drawing.Point(5, 315);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox2.TabIndex = 50;
+            this.pictureBox2.TabStop = false;
             // 
-            // rbExtendedSearchHistory
+            // pictureBox1
             // 
-            this.rbExtendedSearchHistory.AutoSize = true;
-            this.rbExtendedSearchHistory.Location = new System.Drawing.Point(356, 163);
-            this.rbExtendedSearchHistory.Name = "rbExtendedSearchHistory";
-            this.rbExtendedSearchHistory.Size = new System.Drawing.Size(107, 17);
-            this.rbExtendedSearchHistory.TabIndex = 58;
-            this.rbExtendedSearchHistory.TabStop = true;
-            this.rbExtendedSearchHistory.Text = "Extended (dialog)";
-            this.rbExtendedSearchHistory.UseVisualStyleBackColor = true;
-            this.rbExtendedSearchHistory.CheckedChanged += new System.EventHandler(this.searchType_CheckedChanged);
-            // 
-            // rbLastSearch
-            // 
-            this.rbLastSearch.AutoSize = true;
-            this.rbLastSearch.Location = new System.Drawing.Point(270, 163);
-            this.rbLastSearch.Name = "rbLastSearch";
-            this.rbLastSearch.Size = new System.Drawing.Size(80, 17);
-            this.rbLastSearch.TabIndex = 57;
-            this.rbLastSearch.TabStop = true;
-            this.rbLastSearch.Text = "Last search";
-            this.rbLastSearch.UseVisualStyleBackColor = true;
-            this.rbLastSearch.CheckedChanged += new System.EventHandler(this.searchType_CheckedChanged);
+            this.pictureBox1.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.timeout;
+            this.pictureBox1.Location = new System.Drawing.Point(5, 251);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.TabIndex = 45;
+            this.pictureBox1.TabStop = false;
             // 
             // Thumbnails
             // 
@@ -1247,17 +1375,19 @@ namespace OnlineVideos.MediaPortal1
             this.Thumbnails.Controls.Add(this.label1);
             this.Thumbnails.Controls.Add(this.bntBrowseFolderForThumbs);
             this.Thumbnails.Controls.Add(this.txtThumbLoc);
-            this.Thumbnails.Location = new System.Drawing.Point(3, 315);
+            this.Thumbnails.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Thumbnails.Location = new System.Drawing.Point(0, 384);
             this.Thumbnails.Name = "Thumbnails";
-            this.Thumbnails.Size = new System.Drawing.Size(682, 80);
+            this.Thumbnails.Size = new System.Drawing.Size(699, 80);
             this.Thumbnails.TabIndex = 56;
             this.Thumbnails.TabStop = false;
-            this.Thumbnails.Text = "Thumbnails";
+            this.Thumbnails.Text = "      Thumbnails";
             // 
             // label36
             // 
             this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(288, 53);
+            this.label36.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label36.Location = new System.Drawing.Point(291, 26);
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(29, 13);
             this.label36.TabIndex = 45;
@@ -1265,7 +1395,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxThumbAge
             // 
-            this.tbxThumbAge.Location = new System.Drawing.Point(222, 50);
+            this.tbxThumbAge.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbxThumbAge.Location = new System.Drawing.Point(225, 23);
             this.tbxThumbAge.Name = "tbxThumbAge";
             this.tbxThumbAge.Size = new System.Drawing.Size(53, 20);
             this.tbxThumbAge.TabIndex = 16;
@@ -1277,38 +1408,31 @@ namespace OnlineVideos.MediaPortal1
             // label35
             // 
             this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(3, 53);
+            this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label35.Location = new System.Drawing.Point(6, 26);
             this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(76, 13);
+            this.label35.Size = new System.Drawing.Size(73, 13);
             this.label35.TabIndex = 56;
-            this.label35.Text = "Maximum Age:";
+            this.label35.Text = "Maximum Age";
             // 
             // bntBrowseFolderForThumbs
             // 
             this.bntBrowseFolderForThumbs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.bntBrowseFolderForThumbs.AutoSize = true;
-            this.bntBrowseFolderForThumbs.Location = new System.Drawing.Point(652, 20);
+            this.bntBrowseFolderForThumbs.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.bntBrowseFolderForThumbs.Location = new System.Drawing.Point(655, 48);
             this.bntBrowseFolderForThumbs.Margin = new System.Windows.Forms.Padding(2);
             this.bntBrowseFolderForThumbs.Name = "bntBrowseFolderForThumbs";
-            this.bntBrowseFolderForThumbs.Size = new System.Drawing.Size(30, 27);
+            this.bntBrowseFolderForThumbs.Size = new System.Drawing.Size(30, 23);
             this.bntBrowseFolderForThumbs.TabIndex = 15;
             this.bntBrowseFolderForThumbs.Text = "...";
             this.bntBrowseFolderForThumbs.UseVisualStyleBackColor = true;
             this.bntBrowseFolderForThumbs.Click += new System.EventHandler(this.bntBrowseFolderForThumbs_Click);
             // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(6, 163);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(74, 13);
-            this.label34.TabIndex = 54;
-            this.label34.Text = "Search history";
-            // 
             // label33
             // 
             this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(6, 138);
+            this.label33.Location = new System.Drawing.Point(6, 81);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(90, 13);
             this.label33.TabIndex = 52;
@@ -1317,7 +1441,7 @@ namespace OnlineVideos.MediaPortal1
             // chkUseQuickSelect
             // 
             this.chkUseQuickSelect.AutoSize = true;
-            this.chkUseQuickSelect.Location = new System.Drawing.Point(225, 139);
+            this.chkUseQuickSelect.Location = new System.Drawing.Point(225, 81);
             this.chkUseQuickSelect.Name = "chkUseQuickSelect";
             this.chkUseQuickSelect.Size = new System.Drawing.Size(15, 14);
             this.chkUseQuickSelect.TabIndex = 8;
@@ -1329,22 +1453,25 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.groupBox3.Controls.Add(this.label32);
             this.groupBox3.Controls.Add(this.label31);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.tbxWebCacheTimeout);
             this.groupBox3.Controls.Add(this.label15);
             this.groupBox3.Controls.Add(this.tbxUtilTimeout);
-            this.groupBox3.Location = new System.Drawing.Point(0, 183);
+            this.groupBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox3.Location = new System.Drawing.Point(0, 256);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(682, 56);
+            this.groupBox3.Size = new System.Drawing.Size(699, 56);
             this.groupBox3.TabIndex = 50;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Timeouts";
+            this.groupBox3.Text = "      Timeouts";
             // 
             // label32
             // 
             this.label32.AutoSize = true;
+            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label32.Location = new System.Drawing.Point(638, 26);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(24, 13);
@@ -1354,6 +1481,7 @@ namespace OnlineVideos.MediaPortal1
             // label31
             // 
             this.label31.AutoSize = true;
+            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label31.Location = new System.Drawing.Point(291, 26);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(23, 13);
@@ -1363,6 +1491,7 @@ namespace OnlineVideos.MediaPortal1
             // label6
             // 
             this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(6, 26);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(91, 13);
@@ -1371,6 +1500,7 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxWebCacheTimeout
             // 
+            this.tbxWebCacheTimeout.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxWebCacheTimeout.Location = new System.Drawing.Point(225, 23);
             this.tbxWebCacheTimeout.Name = "tbxWebCacheTimeout";
             this.tbxWebCacheTimeout.Size = new System.Drawing.Size(53, 20);
@@ -1383,6 +1513,7 @@ namespace OnlineVideos.MediaPortal1
             // label15
             // 
             this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label15.Location = new System.Drawing.Point(393, 26);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(70, 13);
@@ -1391,6 +1522,7 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxUtilTimeout
             // 
+            this.tbxUtilTimeout.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxUtilTimeout.Location = new System.Drawing.Point(541, 23);
             this.tbxUtilTimeout.Name = "tbxUtilTimeout";
             this.tbxUtilTimeout.Size = new System.Drawing.Size(76, 20);
@@ -1410,16 +1542,18 @@ namespace OnlineVideos.MediaPortal1
             this.groupBox2.Controls.Add(this.label16);
             this.groupBox2.Controls.Add(this.label24);
             this.groupBox2.Controls.Add(this.tbxWMPBuffer);
-            this.groupBox2.Location = new System.Drawing.Point(0, 249);
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox2.Location = new System.Drawing.Point(0, 321);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(682, 56);
+            this.groupBox2.Size = new System.Drawing.Size(699, 56);
             this.groupBox2.TabIndex = 49;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Playback Buffer";
+            this.groupBox2.Text = "      Playback Buffer";
             // 
             // label30
             // 
             this.label30.AutoSize = true;
+            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label30.Location = new System.Drawing.Point(291, 26);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(15, 13);
@@ -1429,6 +1563,7 @@ namespace OnlineVideos.MediaPortal1
             // label29
             // 
             this.label29.AutoSize = true;
+            this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label29.Location = new System.Drawing.Point(638, 26);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(32, 13);
@@ -1438,6 +1573,7 @@ namespace OnlineVideos.MediaPortal1
             // udPlayBuffer
             // 
             this.udPlayBuffer.BackColor = System.Drawing.SystemColors.Window;
+            this.udPlayBuffer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.udPlayBuffer.Items.Add("1");
             this.udPlayBuffer.Items.Add("2");
             this.udPlayBuffer.Items.Add("3");
@@ -1470,6 +1606,7 @@ namespace OnlineVideos.MediaPortal1
             // label16
             // 
             this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label16.Location = new System.Drawing.Point(393, 26);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(115, 13);
@@ -1479,6 +1616,7 @@ namespace OnlineVideos.MediaPortal1
             // label24
             // 
             this.label24.AutoSize = true;
+            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label24.Location = new System.Drawing.Point(6, 26);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(101, 13);
@@ -1487,6 +1625,7 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxWMPBuffer
             // 
+            this.tbxWMPBuffer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxWMPBuffer.Location = new System.Drawing.Point(541, 23);
             this.tbxWMPBuffer.Name = "tbxWMPBuffer";
             this.tbxWMPBuffer.Size = new System.Drawing.Size(76, 20);
@@ -1498,7 +1637,7 @@ namespace OnlineVideos.MediaPortal1
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(6, 113);
+            this.label23.Location = new System.Drawing.Point(6, 61);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(125, 13);
             this.label23.TabIndex = 46;
@@ -1509,7 +1648,7 @@ namespace OnlineVideos.MediaPortal1
             this.chkDoAutoUpdate.AutoSize = true;
             this.chkDoAutoUpdate.Checked = true;
             this.chkDoAutoUpdate.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.chkDoAutoUpdate.Location = new System.Drawing.Point(225, 113);
+            this.chkDoAutoUpdate.Location = new System.Drawing.Point(225, 61);
             this.chkDoAutoUpdate.Name = "chkDoAutoUpdate";
             this.chkDoAutoUpdate.Size = new System.Drawing.Size(15, 14);
             this.chkDoAutoUpdate.TabIndex = 7;
@@ -1518,20 +1657,12 @@ namespace OnlineVideos.MediaPortal1
                     "diaPortal Session. If indeterminated, plugin will ask.");
             this.chkDoAutoUpdate.UseVisualStyleBackColor = true;
             // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(244, 36);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(25, 13);
-            this.label21.TabIndex = 39;
-            this.label21.Text = "Pin:";
-            // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.CausesValidation = false;
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.No;
+            this.btnCancel.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.delete;
             this.btnCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnCancel.Location = new System.Drawing.Point(595, 474);
             this.btnCancel.Name = "btnCancel";
@@ -1583,6 +1714,29 @@ namespace OnlineVideos.MediaPortal1
             this.splitContainer1.SplitterDistance = 240;
             this.splitContainer1.TabIndex = 0;
             // 
+            // tbxSitesGroupThumb
+            // 
+            this.tbxSitesGroupThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxSitesGroupThumb.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSitesGroup, "Thumbnail", true));
+            this.tbxSitesGroupThumb.Location = new System.Drawing.Point(240, 51);
+            this.tbxSitesGroupThumb.Name = "tbxSitesGroupThumb";
+            this.tbxSitesGroupThumb.Size = new System.Drawing.Size(456, 20);
+            this.tbxSitesGroupThumb.TabIndex = 4;
+            // 
+            // bindingSourceSitesGroup
+            // 
+            this.bindingSourceSitesGroup.DataSource = typeof(OnlineVideos.MediaPortal1.SitesGroup);
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(185, 54);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(40, 13);
+            this.label42.TabIndex = 3;
+            this.label42.Text = "Thumb";
+            // 
             // tbxSitesGroupName
             // 
             this.tbxSitesGroupName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -1592,10 +1746,6 @@ namespace OnlineVideos.MediaPortal1
             this.tbxSitesGroupName.Name = "tbxSitesGroupName";
             this.tbxSitesGroupName.Size = new System.Drawing.Size(456, 20);
             this.tbxSitesGroupName.TabIndex = 2;
-            // 
-            // bindingSourceSitesGroup
-            // 
-            this.bindingSourceSitesGroup.DataSource = typeof(OnlineVideos.MediaPortal1.SitesGroup);
             // 
             // label39
             // 
@@ -1649,7 +1799,7 @@ namespace OnlineVideos.MediaPortal1
             this.btnSitesGroupDown});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(24, 215);
+            this.toolStrip2.Size = new System.Drawing.Size(24, 240);
             this.toolStrip2.Stretch = true;
             this.toolStrip2.TabIndex = 0;
             // 
@@ -1988,25 +2138,6 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.errorProvider1.ContainerControl = this;
             // 
-            // label42
-            // 
-            this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(185, 54);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(40, 13);
-            this.label42.TabIndex = 3;
-            this.label42.Text = "Thumb";
-            // 
-            // tbxSitesGroupThumb
-            // 
-            this.tbxSitesGroupThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxSitesGroupThumb.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSitesGroup, "Thumbnail", true));
-            this.tbxSitesGroupThumb.Location = new System.Drawing.Point(240, 51);
-            this.tbxSitesGroupThumb.Name = "tbxSitesGroupThumb";
-            this.tbxSitesGroupThumb.Size = new System.Drawing.Size(456, 20);
-            this.tbxSitesGroupThumb.TabIndex = 4;
-            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -2061,7 +2192,16 @@ namespace OnlineVideos.MediaPortal1
             this.mainTabControl.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
             this.tabGeneral.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nUPSearchHistoryItemCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.Thumbnails.ResumeLayout(false);
             this.Thumbnails.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -2220,7 +2360,6 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.CheckBox chkUseQuickSelect;
-        private System.Windows.Forms.Label label34;
         private System.Windows.Forms.Button bntBrowseFolderForThumbs;
         private System.Windows.Forms.GroupBox Thumbnails;
         private System.Windows.Forms.TextBox tbxThumbAge;
@@ -2259,5 +2398,13 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.BindingSource sitesBindingSource;
         private System.Windows.Forms.TextBox tbxSitesGroupThumb;
         private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.PictureBox pictureBox3;
+        private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.PictureBox pictureBox5;
 	}
 }

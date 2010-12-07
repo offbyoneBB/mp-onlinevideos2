@@ -230,6 +230,21 @@
   <ItemGroup>
     <None Include="Resources\CreateSite.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\timeout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cache.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\thumbnail.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\key.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -67,6 +67,13 @@ namespace OnlineVideos.MediaPortal1.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap cache {
+            get {
+                object obj = ResourceManager.GetObject("cache", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap CreateSite {
             get {
                 object obj = ResourceManager.GetObject("CreateSite", resourceCulture);
@@ -109,6 +116,13 @@ namespace OnlineVideos.MediaPortal1.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap key {
+            get {
+                object obj = ResourceManager.GetObject("key", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap NewFolderHS {
             get {
                 object obj = ResourceManager.GetObject("NewFolderHS", resourceCulture);
@@ -133,6 +147,27 @@ namespace OnlineVideos.MediaPortal1.Properties {
         internal static System.Drawing.Bitmap Save {
             get {
                 object obj = ResourceManager.GetObject("Save", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap search {
+            get {
+                object obj = ResourceManager.GetObject("search", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap thumbnail {
+            get {
+                object obj = ResourceManager.GetObject("thumbnail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap timeout {
+            get {
+                object obj = ResourceManager.GetObject("timeout", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
