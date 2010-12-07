@@ -60,6 +60,13 @@ namespace SiteParser.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Add {
+            get {
+                object obj = ResourceManager.GetObject("Add", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap arrowDn {
             get {
                 object obj = ResourceManager.GetObject("arrowDn", resourceCulture);
@@ -70,6 +77,13 @@ namespace SiteParser.Properties {
         internal static System.Drawing.Bitmap curved {
             get {
                 object obj = ResourceManager.GetObject("curved", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Delete {
+            get {
+                object obj = ResourceManager.GetObject("Delete", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

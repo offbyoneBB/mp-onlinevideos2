@@ -26,7 +26,7 @@ namespace SiteParser
 
         System.ComponentModel.BindingList<SiteSettings> SiteSettingsList;
         MySiteUtil generic;
-        List<Category> staticList = null;
+        List<RssLink> staticList = new List<RssLink>();
 
 
         private void UtilToGui(MySiteUtil util)
@@ -70,12 +70,11 @@ namespace SiteParser
 
             treeView1.Nodes.Clear();
             TreeNode root = treeView1.Nodes.Add("site");
-            if (staticList != null)
-                foreach (Category cat in staticList)
-                {
-                    root.Nodes.Add(cat.Name).Tag = cat;
-                    cat.HasSubCategories = true;
-                }
+            foreach (Category cat in staticList)
+            {
+                root.Nodes.Add(cat.Name).Tag = cat;
+                cat.HasSubCategories = true;
+            }
 
         }
 
@@ -177,11 +176,12 @@ namespace SiteParser
         {
             //get categories
             GuiToUtil(generic);
+            generic.Settings.Categories.Clear();
+            foreach (Category cat in staticList)
+                generic.Settings.Categories.Add(cat);
+
             if (generic.DynamicCategoriesRegEx != null)
-            {
-                generic.Settings.Categories.Clear();
                 generic.DiscoverDynamicCategories();
-            }
             treeView1.Nodes.Clear();
             TreeNode root = treeView1.Nodes.Add("site");
             foreach (Category cat in generic.Settings.Categories)
@@ -191,6 +191,14 @@ namespace SiteParser
             }
 
         }
+
+        private void manageStaticCategoriesButton_Click(object sender, EventArgs e)
+        {
+            Form3 f3 = new Form3();
+            staticList = f3.Execute(staticList);
+            GetCategoriesButton_Click(sender, e);
+        }
+
         #endregion
 
         #region SubCategories
@@ -227,6 +235,22 @@ namespace SiteParser
             else
                 MessageBox.Show("no valid category selected");
         }
+
+        private void manageStaticSubCategoriesButton_Click(object sender, EventArgs e)
+        {
+
+            Form3 f3 = new Form3();
+            RssLink parentCat = GetTreeViewSelectedNode() as RssLink;
+            if (parentCat != null && staticList.Contains(parentCat))
+            {
+                List<RssLink> subcats = new List<RssLink>();
+                foreach (RssLink tmp in parentCat.SubCategories)
+                    subcats.Add(tmp);
+                parentCat.SubCategories = new List<Category>(f3.Execute(subcats).ToArray());
+            }
+            GetSubCategoriesButton_Click(sender, e);
+        }
+
         #endregion
 
         #region VideoList
@@ -388,6 +412,25 @@ namespace SiteParser
             }
         }
 
+        private void btnPlay_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Windows Media Player\\wmplayer.exe"),
+                ResultUrlComboBox.SelectedItem as string);
+        }
+
+        private void copyUrl_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(ResultUrlComboBox.SelectedItem as string);
+        }
+
+        private void checkValid_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(@"""" + ResultUrlComboBox.SelectedItem as string + @""" is " +
+                (!Uri.IsWellFormedUriString(ResultUrlComboBox.SelectedItem as string, UriKind.Absolute) ? "NOT " : String.Empty) +
+                "valid");
+        }
+
         #endregion
 
         private void loadSitesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -422,24 +465,20 @@ namespace SiteParser
             {
                 generic = new MySiteUtil();
                 generic.Initialize(siteSettings);
-                staticList = new List<Category>();
-                foreach (Category cat in generic.Settings.Categories)
+                staticList = new List<RssLink>();
+                foreach (RssLink cat in generic.Settings.Categories)
                     staticList.Add(cat);
 
                 UtilToGui(generic);
             }
         }
 
-        private void btnPlay_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start(
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Windows Media Player\\wmplayer.exe"),
-                ResultUrlComboBox.SelectedItem as string);
-        }
-
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GuiToUtil(generic);
+            generic.Settings.Categories.Clear();
+            foreach (Category cat in staticList)
+                generic.Settings.Categories.Add(cat);
             Utils.AddConfigurationValues(generic, generic.Settings);
 
             XmlSerializer serializer = new XmlSerializer(typeof(SiteSettings));
@@ -484,18 +523,6 @@ namespace SiteParser
             }
             Clipboard.SetText(sb.ToString());
 
-        }
-
-        private void copyUrl_Click(object sender, EventArgs e)
-        {
-            Clipboard.SetText(ResultUrlComboBox.SelectedItem as string);
-        }
-
-        private void checkValid_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show(@"""" + ResultUrlComboBox.SelectedItem as string + @""" is " +
-                (!Uri.IsWellFormedUriString(ResultUrlComboBox.SelectedItem as string, UriKind.Absolute) ? "NOT " : String.Empty) +
-                "valid");
         }
 
     }
