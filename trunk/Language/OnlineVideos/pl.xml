@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Online Videos translation file -->
+<!-- Polish (PL) -->
+<!-- Note: English is the fallback for any strings not found in other languages -->
+<strings>  
+
+  <!-- A -->
+  <string Field="Airdate">Emitowane</string>
+  <string Field="AlreadyDownloading">Już ściągam ten plik.</string>
+  <string Field="All">Wszystkie</string>
+  <string Field="Actions">Akcje</string>
+  <string Field="Actors">Aktorzy</string>
+  <string Field="AddToMySites">Dodaj do moich witryn</string>
+  <string Field="AddToFavourites">Dodaj do ulubionych</string>
+  <string Field="AddingToFavorites">dodawanie do ulubionych</string>
+  <string Field="AutomaticUpdate">Automatyczna aktualizacja</string>
+  <string Field="AutomaticUpdateDisabled">Automatyczna aktualizacja jest nieaktywna.</string>
+
+  <!-- B -->
+  <string Field="Broken">Nieaktualne</string>
+  <string Field="Buffered">zbuforowane</string>
+
+  <!-- C -->
+  <string Field="Cancel">Anuluj</string>
+  <string Field="Category">Kategoria</string>
+  <string Field="Categories">Kategorie</string>
+  <string Field="Creator">Kreator</string>
+  <string Field="CheckingForPluginUpdate">sprawdzanie dostępności nowej wersji wtyczki</string>
+
+  <!-- D -->
+  <string Field="Date">Data</string>
+  <string Field="DateOfRelease">Date wypuszczenia</string>
+  <string Field="Directors">Reżyserzy</string>
+  <string Field="Download">Ściągnij</string>
+  <string Field="Downloading">Ściąganie</string>
+  <string Field="DownloadingDescription">Pokazuje listę aktualnych ściągań.</string>
+  <string Field="DownloadFailed">Ściąganie nieudane: {0}</string>
+  <string Field="DownloadCancelled">Ściąganie nieudane</string>
+  <string Field="DownloadComplete">Ściąganie zakończone</string>
+  <string Field="DownloadStarted">Ściąganie rozpoczęte</string>  
+  <string Field="DownloadedVideos">Ściągnięte wideo</string>
+  <string Field="Delete">Usuń</string>
+  <string Field="DeleteAll">Usuń wszystkie</string>
+  <string Field="Default">Domyślne</string>
+  <string Field="Done">Gotowe</string>
+  <string Field="DeletingOldThumbs">Usuwanie starych miniatur</string>
+
+  <!-- E -->
+  <string Field="Error">Błąd</string>
+  <string Field="EnterPin">Wpisz Pin</string>
+
+  <!-- F -->
+  <string Field="Favourites">Ulubione</string>
+  <string Field="Filter">Filtr</string>
+  <string Field="FullUpdate">Pełna aktualizacja</string>
+
+  <!-- G -->
+  <string Field="Genre">Rodzaj</string>
+  <string Field="GettingVideoDetails">uzyskiwanie szczegółów filmu</string>
+  <string Field="GettingCategoryVideos">uzyskiwanie kategorii filmów</string>
+  <string Field="GettingFavoriteVideos">uzyskiwanie ulubionych filmów</string>
+  <string Field="GettingSearchResults">uzyskiwanie wyników wyszukiwania</string>
+  <string Field="GettingRelatedVideos">uzyskiwanie podobnych wideo</string>
+  <string Field="GettingFilteredVideos">uzyskiwanie przefiltrowanych wideo</string>
+  <string Field="GettingNextPageVideos">uzyskiwanie następnej strony wideo</string>
+  <string Field="GettingPreviousPageVideos">uzyskiwanie poprzedniej strony wideo</string>
+  <string Field="GettingPlaybackUrlsForVideo">uzyskiwanie adresów odtwarzania</string>
+  <string Field="GettingDynamicCategories">uzyskiwanie dynamicznych kategorii</string>
+  <string Field="GettingReports">uzyskiwanie raportów z sieci</string>
+  <string Field="GettingSiteXml">uzyskiwanie xml strony z sieci</string>
+  <string Field="GettingIcon">uzyskiwanie ikony witryny z sieci</string>
+  <string Field="GettingBanner">uzyskiwanie banera strony z sieci</string>
+  <string Field="GettingDll">uzyskiwanie biblioteki dll z sieci</string>
+
+  <!-- H -->
+
+  <!-- I -->
+
+  <!-- L -->
+  <string Field="LatestVersionRequired">Najnowsza wersja ({0}) jest niezbędna!</string>
+  <string Field="Language">Język</string>
+  <string Field="LayoutList">Widok: Lista</string>
+  <string Field="LayoutIcons">Widok: Ikony</string>
+  <string Field="LayoutBigIcons">Widok: Duże ikony</string>
+
+  <!-- M -->
+  <string Field="ManageSites">Zarządzaj stronami</string>
+  <string Field="MaxResults">Maksymalne wyniki</string>
+
+  <!-- N -->
+  <string Field="Name">Nazwa</string>
+  <string Field="NextPage">Następna strona</string>
+  <string Field="None">Żaden</string>
+  <string Field="NoVideoFound">Nie znaleziono wideo</string>
+  <string Field="NoReportsForSite">Żadne raporty nie są dostępne dla tej strony.</string>
+  <string Field="NewDllDownloaded">Nowa biblioteka dll ściągnięta!</string>
+
+  <!-- O -->
+
+  <!-- P -->
+  <string Field="PlayAll">Odtwarzaj wszystko</string>
+  <string Field="PlotOutline">Skrót</string>
+  <string Field="PreviousPage">Poprzednia strona</string>
+  <string Field="PerformAutomaticUpdate">Przeprowadzić automatyczną aktualizację?</string>
+
+  <!-- R -->
+  <string Field="RemoveFromFavorites">Usuń z ulubionych</string>
+  <string Field="RemovingFromFavorites">usuwanie z ulubionych</string>
+  <string Field="Refresh">Odśwież</string>
+  <string Field="RelatedVideos">Podobne wideo</string>
+  <string Field="Reported">Zgłoszone</string>
+  <string Field="Runtime">Czas trwania</string>
+  <string Field="RemoveFromMySites">Usuń z moich stron</string>
+  <string Field="RestartMediaPortal">Uruchom MediaPortal ponownie!</string>
+  <string Field="RetrievingRemoteDlls">Uzyskiwanie zdalnych bibliotek dll ...</string>
+  <string Field="RetrievingRemoteSites">Uzyskiwanie zdalnych stron ...</string>
+
+  <!-- S -->
+  <string Field="SearchResults">Wyniki szukania</string>
+  <string Field="SelectSource">Wybierz źródło</string>
+  <string Field="Sites">Witryny</string>
+  <string Field="Size">Rozmiar</string>  
+  <string Field="SortOptions">Opcje sortowania</string>
+  <string Field="Search">Szukaj</string>
+  <string Field="SetDownloadFolderInConfig">Wybierz katalog ściągania w konfiguracji!</string>
+  <string Field="State">Stan</string>
+  <string Field="SavingLocalSiteList">Zapisywanie lokalnej listy stron ...</string>
+  <string Field="ShowReports">Pokaż raporty kreatorów i użytkowników</string>
+  <string Field="StartingPlayback">rozpoczynanie odtwarzania</string>
+  <string Field="Subscriptions">Subskrypcje</string>
+  
+  <!-- T -->
+  <string Field="Timeframe">Rama czasowa</string>
+  <string Field="Timeout">Przekroczenie czasu</string>
+  <string Field="Tags">Tagi</string>
+
+  <!-- U -->
+  <string Field="Updated">Zaktualizowane</string>
+  <string Field="Updatable">Możliwe do zaktualizowania</string>
+  <string Field="UpdateMySite">Aktualizuj moją stronę</string>
+  <string Field="UpdateMySiteSkipCategories">Aktualizuj moją stronę (pomiń kategorie)</string>
+  <string Field="UpdateAllYourSites">Zaktualizowane zostaną wszystkie twoje aktualne strony.</string>
+  <string Field="UnableToPlayVideo">Nie można odtworzyć. Brak adresu.</string>
+  <string Field="UnableToDownloadVideo">Nie można ściągnąć wideo. Nieprawidłowy adres.</string>
+
+  <!-- V -->
+  <string Field="Videos">Wideo</string>
+
+  <!-- W -->
+  <string Field="Working">Działa</string>
+
+  <!-- Y -->
+
+</strings>
