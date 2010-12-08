@@ -112,7 +112,7 @@ namespace OnlineVideos.Sites
             }
 
             if (Source.UitzendingGemist.Equals(video.Other))
-                return GenericSiteUtil.GetVideoUrl(video.VideoUrl, video);
+                return GenericSiteUtil.GetVideoUrl(video.VideoUrl);
             if (Source.VeronicaGemist.Equals(video.Other) || Source.SBSGemist.Equals(video.Other) || Source.Net5Gemist.Equals(video.Other))
             {
                 string webData = GetWebData(video.VideoUrl);
