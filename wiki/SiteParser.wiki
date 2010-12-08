@@ -20,11 +20,13 @@ Most of the time, this is the URL you type in your browser if you want to watch 
 Once you have put the baseurl into it's place, you are ready to find the categories.
 Click the "Create Regex" button in the Categories section [http://code.google.com/p/mp-onlinevideos2/wiki/CreateRegex explanation], and start creating the Regex for it.
 If you are ready with it, click on the "GetCats" button, and you'll see a "+" appearing at the right side (just left of "-site")
+You can also add static categories by clicking the "Static Categories" button.
 
 Expand that "+", and select some categories and see if the results at the bottom of the screen are satisfactory.
 If not, you can change the URL-format, and enable URL-decoding if necessary. After changing those, you need to click on "GetCats" to see the updated results.
 
 After the categories are correctly configured, you can do the same for subcategories if present. If not, go to the "VideoList".
+For static categeories, you can also add static subcategories by clicking the "Static Subcategories" button.
 
 VideoList:
 Under site (at the right side) you have to select a Category or Subcategory.
