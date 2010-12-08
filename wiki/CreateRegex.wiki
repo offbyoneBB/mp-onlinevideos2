@@ -11,7 +11,7 @@ When this part is entered (through the "Create Regex" button), the relevant html
 
 Make sure you have this page visible in your web-browser, that will make the next steps easier.
 First you enter a (part of the) text you are searching for, e.g. one of the Categories you see in your browser. Hit "Find" to go to that particular part of the html.
-Then you have to select the relevant part (this requires some experience) and click on the <leftdown>. This will overwrite the text selected in the top-left box with the selected text of the right part.
+Then you have to select the relevant part (this requires some experience) and click on the <img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteParser/Resources/curved.png"/>. This will overwrite the text selected in the top-left box with the selected text of the right part.
 
 Then for all the pieces in the top-left box that you recognize (e.g. the name, the URL etc) you select them, choose the kind of item that it represents, and click <down insert>.
 
