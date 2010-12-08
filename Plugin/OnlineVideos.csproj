@@ -456,7 +456,6 @@
     <Compile Include="Sites\Base\SiteUtilBase.cs" />
     <Compile Include="Sites\Base\SiteUtilFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sites\VideoHosterUtil.cs" />
     <Compile Include="Translation.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="VideoInfo.cs" />
