@@ -26,6 +26,15 @@ namespace OnlineVideos.Hoster
                     videoType = VideoType.divx;
                     return n.Groups["url"].Value;
                 }
+                else
+                {
+                    n = Regex.Match(page, @"addVariable\('file','(?<url>[^']+)'");
+                    if (n.Success)
+                    {
+                        videoType = VideoType.flv;
+                        return n.Groups["url"].Value;
+                    }
+                }
             }
             return String.Empty;
         }

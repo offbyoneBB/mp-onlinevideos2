@@ -286,7 +286,7 @@ namespace OnlineVideos.Sites
                     else
                         url = GetRedirectedUrl(@"http://www.watch-series.com/open_link.php?vari=" + vidId);
                 }
-                return GetVideoUrl(url, this);
+                return GetVideoUrl(url);
             }
         }
 

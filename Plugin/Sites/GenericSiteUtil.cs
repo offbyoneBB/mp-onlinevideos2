@@ -379,27 +379,108 @@ namespace OnlineVideos.Sites
             }
 
             if (resolveHoster && (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0))
-                resultUrl = GetVideoUrl(resultUrl, video);
+            {
+                resultUrl = parseHosterLinks(resultUrl, video);
+                if (video.PlaybackOptions == null) resultUrl = GetVideoUrl(resultUrl);
+            }
+            else if (resolveHoster)
+            {
+                List<string> valueList = video.PlaybackOptions.Values.ToList();
+                video.PlaybackOptions.Clear();
+                foreach (string value in valueList)
+                    parseHosterLinks(value, video);
+            }
 
             return resultUrl;
         }
 
-        public static string GetVideoUrl(string url, VideoInfo video)
+        private static string parseHosterLinks(string link, VideoInfo video)
+        {
+            string webData = GetWebData(link);
+            Dictionary<string, string> options = new Dictionary<string, string>();
+
+            foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
+            {
+                string regEx = @"(""|')(?<url>[^(""|')]+" + hosterUtil.getHosterUrl().ToLower() + "/" + @"[^(""|')]+)(""|')";
+
+                MatchCollection n = Regex.Matches(webData, regEx);
+                List<string> results = new List<string>();
+                foreach (Match m in n)
+                {
+                    if (!results.Contains(m.Groups["url"].Value))
+                        results.Add(m.Groups["url"].Value);
+                }
+
+                foreach (string url in results)
+                {
+                    if (Uri.IsWellFormedUriString(url, System.UriKind.Absolute))
+                    {
+                        Uri uri = new Uri(url);
+                        if (!(uri.Host.Length == uri.AbsoluteUri.Length))
+                        {
+                            string targetUrl = url;
+                            if (targetUrl.Contains("\\/")) targetUrl = targetUrl.Replace("\\/", "/");
+
+                            if (results.Count > 1)
+                            {
+                                int i = 1;
+                                string playbackName = hosterUtil.getHosterUrl() + " - " + i + "/" + results.Count;
+                                while (options.ContainsKey(playbackName))
+                                {
+                                    i++;
+                                    playbackName = hosterUtil.getHosterUrl() + " - " + i + "/" + results.Count;
+                                }
+                                options.Add(playbackName, targetUrl);
+                            }
+                            else
+                                options.Add(hosterUtil.getHosterUrl(), targetUrl);
+                        }
+                    }
+                }
+            }
+            if (options != null && options.Count > 0)
+            {
+                if (video.PlaybackOptions == null)
+                {
+                    if (options.Count > 1)
+                    {
+                        video.PlaybackOptions = new Dictionary<string, string>();
+                        foreach (KeyValuePair<String, String> entry in options) video.PlaybackOptions.Add(entry.Key, entry.Value);
+                    }
+                    else
+                        return options.Last().Value;
+                }
+                else
+                    foreach (KeyValuePair<String, String> entry in options)
+                    {
+                        if(video.PlaybackOptions.ContainsKey(entry.Key)){
+                            int i = 2;
+                            while (video.PlaybackOptions.ContainsKey(entry.Key + " - " + i))
+                                i++;
+                            video.PlaybackOptions.Add(entry.Key + " - " + i, entry.Value);
+                        }
+                        else
+                            video.PlaybackOptions.Add(entry.Key, entry.Value);
+                    }
+                return options.Last().Value;
+                
+            }
+            else
+                return String.Empty;
+        }
+
+        public static string GetVideoUrl(string url)
         {
             Uri uri = new Uri(url);
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
                 if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
                 {
-                    Dictionary<string, string> options = hosterUtil.getPlaybackOptions(url);
-                    if (options != null && options.Count > 0)
-                    {
-                        if (options.Count > 1) video.PlaybackOptions = options;
-                        return options.Last().Value;
-                    }
+                    string ret = hosterUtil.getVideoUrls(url);
+                    if (!string.IsNullOrEmpty(ret))
+                        return ret;
                     else
                         return String.Empty;
                 }
-
             return url;
         }
 

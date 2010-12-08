@@ -156,7 +156,7 @@ namespace OnlineVideos.Sites
             if (thisUrl == null) return null;
 
             if (thisUrl.StartsWith("http://blip.tv/play"))
-                return GetVideoUrl(thisUrl, video);
+                return GetVideoUrl(thisUrl);
 
             if (thisUrl.StartsWith("http://screwattack.com"))
             {

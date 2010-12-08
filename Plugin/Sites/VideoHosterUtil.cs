@@ -8,12 +8,42 @@ namespace OnlineVideos.Sites
 
     public class VideoInfoEx : VideoInfo
     {
+        // Copy constructor.
+        public VideoInfoEx(VideoInfo old)
+        {
+            this.Description = old.Description;
+            this.Id = old.Id;
+            this.ImageUrl = old.ImageUrl;
+            this.Length = old.Length;
+            this.Other = old.Other;
+            this.SiteName = old.SiteName;
+            this.StartTime = old.StartTime;
+            this.ThumbnailImage = old.ThumbnailImage;
+            this.Title = old.Title;
+            this.Title2 = old.Title2;
+            this.VideoUrl = old.VideoUrl;
+        }
+        public VideoInfoEx()
+        {
+            Title = string.Empty;
+            Title2 = string.Empty;
+            Description = string.Empty;
+            VideoUrl = string.Empty;
+            ImageUrl = string.Empty;
+            Length = string.Empty;
+            StartTime = string.Empty;
+            SiteName = string.Empty;
+        }
         public override string GetPlaybackOptionUrl(string url)
         {
             string newUrl = base.GetPlaybackOptionUrl(url);
             Uri uri = new Uri(newUrl);
             string key = uri.Host.Replace("www.", "");
+
+            while (key.IndexOf(".") != key.LastIndexOf("."))
+                key = key.Substring(key.IndexOf(".")+1);
             key = key.Substring(0, key.IndexOf("."));
+
             try
             {
                 HosterBase hosterUtil = HosterFactory.GetHoster(key);
@@ -33,7 +63,7 @@ namespace OnlineVideos.Sites
         {
             List<VideoInfo> videos = new List<VideoInfo>();
             foreach (VideoInfo vid in base.getVideoList(category))
-                videos.Add((VideoInfoEx)vid);
+                videos.Add(new VideoInfoEx(vid));
 
             return videos;
         }
