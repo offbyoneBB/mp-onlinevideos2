@@ -13,11 +13,11 @@ Make sure you have this page visible in your web-browser, that will make the nex
 First you enter a (part of the) text you are searching for, e.g. one of the Categories you see in your browser. Hit "Find" to go to that particular part of the html.
 Then you have to select the relevant part (this requires some experience) and click on the <img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteParser/Resources/curved.png"/>. This will overwrite the text selected in the top-left box with the selected text of the right part.
 
-Then for all the pieces in the top-left box that you recognize (e.g. the name, the URL etc) you select them, choose the kind of item that it represents, and click <down insert>.
+Then for all the pieces in the top-left box that you recognize (e.g. the name, the URL etc) you select them, choose the kind of item that it represents, and click "<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteParser/Resources/arrowDn.png"/>Insert"
 
 For all the remaining data, you can select parts, and choose e.g. "skip to" (multiple chars), "skip to single char" or "optional".
 
-After that, you can click "Test" to see the results of your regex.
+After that, you can click "Test<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/SiteParser/Resources/Intersect.png"/> " to see the results of your regex.
 
 You have to play with this to get some experience, because if you leave too much data in your regex, there will only be 1 match instead of a list, and if you remove too much, there will be more matches than you actually want.
 
