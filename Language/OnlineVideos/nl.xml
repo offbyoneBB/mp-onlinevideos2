@@ -82,6 +82,7 @@
   <string Field="Refresh">Verversen</string>
   <string Field="RelatedVideos">Gerelateerde videos</string>
   <string Field="Reported">Gerapporteerd</string>
+  <string Field="Reports">Rapporten</string>
   <string Field="Runtime">Duur:</string>
   <string Field="RemoveFromMySites">Verwijderen uit mijn sites</string>
   <string Field="RestartMediaPortal">Herstart Mediaportal!</string>
