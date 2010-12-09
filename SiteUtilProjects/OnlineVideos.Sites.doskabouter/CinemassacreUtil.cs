@@ -154,6 +154,8 @@ namespace OnlineVideos.Sites
                 }
 
             if (thisUrl == null) return null;
+            if (thisUrl.StartsWith("http://www.youtube.com"))
+                return GetVideoUrl(thisUrl);
 
             if (thisUrl.StartsWith("http://blip.tv/play"))
                 return GetVideoUrl(thisUrl);
