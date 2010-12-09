@@ -252,67 +252,10 @@ namespace OnlineVideos.MediaPortal1
 
         protected override void OnPageLoad()
         {
-            if (!firstLoadDone) DoFirstLoad();
-
             base.OnPageLoad(); // let animations run
 
-            // everytime the plugin is shown, after some other window was shown
-            if (OnlineVideoSettings.Instance.AgeConfirmed && PreviousWindowId == 0)
-            {
-                // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
-                OnlineVideoSettings.Instance.AgeConfirmed = false;
-                Log.Instance.Debug("Age Confirmed set to false.");
-                if (SelectedSite != null && SelectedSite.Settings.ConfirmAge)
-                {
-                    CurrentState = State.sites;
-                    SelectedSite = null;
-                }
-            }
-
-            // don't check for loadParam if OnPageLoad is called after fullscreen playback
-            if (PreviousWindowId != 4758)
-            {
-                loadParamInfo = null; // reset the LoadParameterInfo
-
-                // check if running version of mediaportal supports loading with parameter
-                System.Reflection.FieldInfo fi = typeof(GUIWindow).GetField("_loadParameter", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                if (fi != null)
-                {
-                    string loadParam = (string)fi.GetValue(this);
-
-                    if (!string.IsNullOrEmpty(loadParam))
-                    {
-                        loadParamInfo = new LoadParameterInfo(loadParam);
-
-                        // set all state variables to reflect the state we were called with
-                        if (!string.IsNullOrEmpty(loadParamInfo.Site) && OnlineVideoSettings.Instance.SiteUtilsList.ContainsKey(loadParamInfo.Site))
-                        {
-                            SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[loadParamInfo.Site];
-                            CurrentState = State.categories;
-                            selectedCategory = null;
-                        }
-                        if (SelectedSite != null && SelectedSite.CanSearch && !string.IsNullOrEmpty(loadParamInfo.Search))
-                        {
-                            lastSearchQuery = loadParamInfo.Search;
-                            DisplayVideos_Search(loadParamInfo.Search);
-                            return;
-                        }
-                    }
-                }
-            }
-
-            Log.Instance.Debug("OnPageLoad. CurrentState:" + CurrentState);
-            switch(CurrentState)
-            {
-                case State.groups: DisplayGroups(); break;
-                case State.sites: DisplaySites(); break;
-                case State.categories: DisplayCategories(selectedCategory); break;
-                case State.videos: SetVideosToFacade(currentVideoList, currentVideosDisplayMode); break;
-                default:
-                    DisplayDetails();
-                    if (selectedClipIndex < GUI_infoList.Count) GUI_infoList.SelectedListItemIndex = selectedClipIndex;
-                    break;
-            }
+            if (!firstLoadDone) DoFirstLoad_Step1();
+            else DoPageLoad();
         }
 
         protected override void OnShowContextMenu()
@@ -360,7 +303,7 @@ namespace OnlineVideos.MediaPortal1
             VideoInfo loSelectedVideo = CurrentState == State.videos ? currentVideoList[liSelected] : currentTrailerList[liSelected];
             List<string> siteSpecificEntries = SelectedSite.GetContextMenuEntries(selectedCategory, loSelectedVideo);
             if (siteSpecificEntries != null) foreach (string entry in siteSpecificEntries) {dlgSel.Add(entry); dialogOptions.Add(entry);}
-            dlgSel.DoModal(GetID);
+            dlgSel.DoModal(GUIWindowManager.ActiveWindow);
             if (dlgSel.SelectedId == -1) return;            
             switch (dialogOptions[dlgSel.SelectedId - 1])
             {
@@ -478,12 +421,6 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool OnMessage(GUIMessage message)
         {
-            if (message.Object is Gui2UtilConnector)
-            {
-                (message.Object as Gui2UtilConnector).ExecuteTaskResultHandler();
-                return true;
-            }
-
             if (message.Object is GUIOnlineVideoFullscreen)
             {
                 if (message.Param1 == 1)
@@ -709,7 +646,68 @@ namespace OnlineVideos.MediaPortal1
 
         #region new methods
 
-        void DoFirstLoad()
+        private void DoPageLoad()
+        {
+            // everytime the plugin is shown, after some other window was shown
+            if (OnlineVideoSettings.Instance.AgeConfirmed && PreviousWindowId == 0)
+            {
+                // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
+                OnlineVideoSettings.Instance.AgeConfirmed = false;
+                Log.Instance.Debug("Age Confirmed set to false.");
+                if (SelectedSite != null && SelectedSite.Settings.ConfirmAge)
+                {
+                    CurrentState = State.sites;
+                    SelectedSite = null;
+                }
+            }
+
+            // don't check for loadParam if OnPageLoad is called after fullscreen playback
+            if (PreviousWindowId != 4758)
+            {
+                loadParamInfo = null; // reset the LoadParameterInfo
+
+                // check if running version of mediaportal supports loading with parameter
+                System.Reflection.FieldInfo fi = typeof(GUIWindow).GetField("_loadParameter", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (fi != null)
+                {
+                    string loadParam = (string)fi.GetValue(this);
+
+                    if (!string.IsNullOrEmpty(loadParam))
+                    {
+                        loadParamInfo = new LoadParameterInfo(loadParam);
+
+                        // set all state variables to reflect the state we were called with
+                        if (!string.IsNullOrEmpty(loadParamInfo.Site) && OnlineVideoSettings.Instance.SiteUtilsList.ContainsKey(loadParamInfo.Site))
+                        {
+                            SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[loadParamInfo.Site];
+                            CurrentState = State.categories;
+                            selectedCategory = null;
+                        }
+                        if (SelectedSite != null && SelectedSite.CanSearch && !string.IsNullOrEmpty(loadParamInfo.Search))
+                        {
+                            lastSearchQuery = loadParamInfo.Search;
+                            DisplayVideos_Search(loadParamInfo.Search);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            Log.Instance.Debug("OnPageLoad. CurrentState:" + CurrentState);
+            switch (CurrentState)
+            {
+                case State.groups: DisplayGroups(); break;
+                case State.sites: DisplaySites(); break;
+                case State.categories: DisplayCategories(selectedCategory); break;
+                case State.videos: SetVideosToFacade(currentVideoList, currentVideosDisplayMode); break;
+                default:
+                    DisplayDetails();
+                    if (selectedClipIndex < GUI_infoList.Count) GUI_infoList.SelectedListItemIndex = selectedClipIndex;
+                    break;
+            }
+        }
+
+        private void DoFirstLoad_Step1()
         {
             // replace g_player's ShowFullScreenWindowVideo
             g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowHandler;
@@ -717,7 +715,7 @@ namespace OnlineVideos.MediaPortal1
 
             GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
             Translator.TranslateSkin();
-            
+
             if (PluginConfiguration.Instance.updateOnStart != false)
             {
                 bool? doUpdate = PluginConfiguration.Instance.updateOnStart;
@@ -737,9 +735,39 @@ namespace OnlineVideos.MediaPortal1
                 if (doUpdate == true)
                 {
                     GUISiteUpdater guiUpdater = (GUISiteUpdater)GUIWindowManager.GetWindow(GUISiteUpdater.WindowId);
-                    guiUpdater.AutoUpdate(false);
+                    if (guiUpdater != null)
+                    {
+                        GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+                        if (dlgPrgrs != null)
+                        {
+                            dlgPrgrs.Reset();
+                            dlgPrgrs.DisplayProgressBar = true;
+                            dlgPrgrs.ShowWaitCursor = false;
+                            dlgPrgrs.DisableCancel(true);
+                            dlgPrgrs.SetHeading(string.Format("{0} - {1}", PluginConfiguration.Instance.BasicHomeScreenName, Translation.AutomaticUpdate));
+                            dlgPrgrs.StartModal(GUIWindowManager.ActiveWindow);
+
+                            new System.Threading.Thread(delegate()
+                            {
+                                guiUpdater.AutoUpdate(false, dlgPrgrs);
+                                GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { DoFirstLoad_Step2(); return 0; }, 0, 0, null);
+                            }
+                            ) { Name = "OnlineVideosAutoUpdate", IsBackground = true }.Start();
+                            return;
+                        }
+                    }
                 }
             }
+
+            DoFirstLoad_Step2();
+        }
+
+        private void DoFirstLoad_Step2()
+        {
+            OnlineVideoSettings.Instance.BuildSiteUtilsList();
+            if (PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) CurrentState = State.groups;
+            firstLoadDone = true;
+
             if (PluginConfiguration.Instance.ThumbsAge >= 0)
             {
                 GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
@@ -750,7 +778,7 @@ namespace OnlineVideos.MediaPortal1
                     dlgPrgrs.ShowWaitCursor = false;
                     dlgPrgrs.DisableCancel(false);
                     dlgPrgrs.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
-                    dlgPrgrs.StartModal(GUIOnlineVideos.WindowId);
+                    dlgPrgrs.StartModal(GUIWindowManager.ActiveWindow);
                     dlgPrgrs.SetLine(1, Translation.DeletingOldThumbs);
                     dlgPrgrs.Percentage = 0;
                 }
@@ -762,11 +790,12 @@ namespace OnlineVideos.MediaPortal1
                             return dlgPrgrs.ShouldRenderLayer();
                         });
                     if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, Translation.Done); dlgPrgrs.Close(); }
+                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { DoPageLoad(); return 0; }, 0, 0, null);
                 }) { Name = "OnlineVideosThumbnail", IsBackground = true }.Start();
+                return;
             }
-            OnlineVideoSettings.Instance.BuildSiteUtilsList();
-            if (PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) CurrentState = State.groups;
-            firstLoadDone = true;
+            
+            DoPageLoad();
         }
 
         /// <summary>
@@ -1216,7 +1245,7 @@ namespace OnlineVideos.MediaPortal1
                             }
                         }
 
-                        dlgSel.DoModal(GetID);
+                        dlgSel.DoModal(GUIWindowManager.ActiveWindow);
 
                         if (dlgSel.SelectedId == -1) return;
 
@@ -1556,7 +1585,7 @@ namespace OnlineVideos.MediaPortal1
             keyBoard.IsSearchKeyboard = true;
             keyBoard.Text = sString;
             keyBoard.Password = password;
-            keyBoard.DoModal(GetID); // show it...
+            keyBoard.DoModal(GUIWindowManager.ActiveWindow); // show it...
             if (keyBoard.IsConfirmed) sString = keyBoard.Text;
             return keyBoard.IsConfirmed;
         }
@@ -2385,7 +2414,7 @@ namespace OnlineVideos.MediaPortal1
                 }
             }
             if (defaultOption != -1) dlgSel.SelectedLabel = defaultOption;
-            dlgSel.DoModal(GetID);
+            dlgSel.DoModal(GUIWindowManager.ActiveWindow);
             defaultUrl = (dlgSel.SelectedId == -1) ? "-1" : dlgSel.SelectedLabelText;
             return true;
         }

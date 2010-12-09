@@ -112,6 +112,7 @@
   <string Field="Refresh">Refresh</string>
   <string Field="RelatedVideos">Related Videos</string>
   <string Field="Reported">Reported</string>
+  <string Field="Reports">Reports</string>
   <string Field="Runtime">Runtime</string>
   <string Field="RemoveFromMySites">Remove from my sites</string>
   <string Field="RestartMediaPortal">Restart MediaPortal!</string>
