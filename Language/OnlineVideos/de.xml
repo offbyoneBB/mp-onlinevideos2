@@ -82,6 +82,7 @@
   <string Field="Refresh">Ansicht aktualisieren</string>
   <string Field="RelatedVideos">Ähnliche Videos</string>
   <string Field="Reported">Gemeldet</string>
+  <string Field="Reports">Meldungen</string>
   <string Field="Runtime">Laufzeit</string>
   <string Field="RemoveFromMySites">Aus meinen Sites entfernen</string>
   <string Field="RestartMediaPortal">Bitte MediaPortal neu starten!</string>

@@ -168,7 +168,7 @@
       <id>0</id>
       <posX>1195</posX>
       <posY>551</posY>
-      <label>#itemcount</label>
+      <label>#selectedindex/#itemcount #itemtype</label>
       <align>right</align>
       <textcolor>White</textcolor>
       <font>font10</font>

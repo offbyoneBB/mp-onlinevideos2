@@ -117,6 +117,7 @@ namespace OnlineVideos
         public static string Refresh = "Refresh";
         public static string RelatedVideos = "Related Videos";
         public static string Reported = "Reported";
+        public static string Reports = "Reports";
         public static string Runtime = "Runtime";
         public static string RemoveFromMySites = "Remove from my sites";
         public static string RestartMediaPortal = "Restart MediaPortal!";
