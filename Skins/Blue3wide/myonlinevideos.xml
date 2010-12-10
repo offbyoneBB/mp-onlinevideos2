@@ -181,7 +181,31 @@
       <visible>string.equals(#OnlineVideos.state, sites)+control.hastext(502)</visible>
     </control>
     <control>
-      <description>Language</description>
+      <description>Videos Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>579</posY>
+      <width>120</width>
+      <font>font10</font>
+      <label>#OnlineVideos.Translation.Videos.Label:</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>string.equals(#OnlineVideos.state, categories)+control.hastext(502)</visible>
+    </control>    
+    <control>
+      <description>Sites Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>579</posY>
+      <width>120</width>
+      <font>font10</font>
+      <label>#OnlineVideos.Translation.Sites.Label:</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>string.equals(#OnlineVideos.state, groups)+control.hastext(502)</visible>
+    </control>    
+    <control>
+      <description>Language of site | number of sites in group | number of videos in category</description>
       <type>label</type>
       <id>502</id>
       <posX>420</posX>
@@ -190,7 +214,7 @@
       <font>font10</font>
       <label>#selecteditem2</label>
       <textcolor>ffa9d0f7</textcolor>
-      <visible>string.equals(#OnlineVideos.state, sites)</visible>
+      <visible>!string.equals(#OnlineVideos.state, videos)</visible>
     </control>
     <control>
       <description>Description</description>
