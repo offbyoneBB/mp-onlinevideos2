@@ -648,25 +648,16 @@ namespace OnlineVideos.MediaPortal1
 
         private void DoPageLoad()
         {
-            // everytime the plugin is shown, after some other window was shown
-            if (OnlineVideoSettings.Instance.AgeConfirmed && PreviousWindowId == 0)
-            {
-                // if a pin was inserted before, reset to false and show the home page in case the user was browsing some adult site last
-                OnlineVideoSettings.Instance.AgeConfirmed = false;
-                Log.Instance.Debug("Age Confirmed set to false.");
-                if (SelectedSite != null && SelectedSite.Settings.ConfirmAge)
-                {
-                    CurrentState = State.sites;
-                    SelectedSite = null;
-                }
-            }
-
-            // don't check for loadParam if OnPageLoad is called after fullscreen playback
+            // called everytime the plugin is shown, after some other window was shown (also after fullscreen playback)
             if (PreviousWindowId != 4758)
             {
-                loadParamInfo = null; // reset the LoadParameterInfo
+                // reload settings that can be modyfied with the MPEI plugin
+                PluginConfiguration.Instance.ReLoadRuntimeSettings();
 
-                // check if running version of mediaportal supports loading with parameter
+                // reset the LoadParameterInfo
+                loadParamInfo = null;
+
+                // check if running version of mediaportal supports loading with parameter and handle _loadParameter
                 System.Reflection.FieldInfo fi = typeof(GUIWindow).GetField("_loadParameter", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 if (fi != null)
                 {
@@ -693,7 +684,7 @@ namespace OnlineVideos.MediaPortal1
                 }
             }
 
-            Log.Instance.Debug("OnPageLoad. CurrentState:" + CurrentState);
+            Log.Instance.Debug("DoPageLoad. CurrentState:" + CurrentState);
             switch (CurrentState)
             {
                 case State.groups: DisplayGroups(); break;
@@ -704,7 +695,7 @@ namespace OnlineVideos.MediaPortal1
                     DisplayDetails();
                     if (selectedClipIndex < GUI_infoList.Count) GUI_infoList.SelectedListItemIndex = selectedClipIndex;
                     break;
-            }
+            }            
         }
 
         private void DoFirstLoad_Step1()

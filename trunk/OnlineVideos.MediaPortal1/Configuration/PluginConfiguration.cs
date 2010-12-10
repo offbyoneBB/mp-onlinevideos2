@@ -93,6 +93,21 @@ namespace OnlineVideos.MediaPortal1
         private PluginConfiguration() { Load(); }
         #endregion
 
+        public void ReLoadRuntimeSettings()
+        {
+            using (Settings settings = new MPSettings())
+            {
+                BasicHomeScreenName = settings.GetValueAsString(CFG_SECTION, CFG_BASICHOMESCREEN_NAME, BasicHomeScreenName);
+                useQuickSelect = settings.GetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
+                searchHistoryType = (SearchHistoryType)settings.GetValueAsInt(CFG_SECTION, CFG_SEARCHHISTORYTYPE, (int)searchHistoryType);
+                ThumbsAge = settings.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, ThumbsAge);
+                OnlineVideos.OnlineVideoSettings.Instance.CacheTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, OnlineVideos.OnlineVideoSettings.Instance.CacheTimeout);
+                OnlineVideos.OnlineVideoSettings.Instance.UtilTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, OnlineVideos.OnlineVideoSettings.Instance.UtilTimeout);
+                wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
+                playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
+            }
+        }
+
         void Load()
         {
             OnlineVideos.OnlineVideoSettings ovsconf = OnlineVideos.OnlineVideoSettings.Instance;
