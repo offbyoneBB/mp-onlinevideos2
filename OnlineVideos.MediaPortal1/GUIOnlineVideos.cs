@@ -847,6 +847,7 @@ namespace OnlineVideos.MediaPortal1
                         loListItem.IconImage = sitesGroup.Thumbnail;
                         loListItem.IconImageBig = sitesGroup.Thumbnail;
                     }
+                    loListItem.OnItemSelected += OnGroupSelected;
                     GUI_facadeView.Add(loListItem);
                     if (selectedSitesGroup != null && selectedSitesGroup.Name == sitesGroup.Name) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
                 }
@@ -866,6 +867,7 @@ namespace OnlineVideos.MediaPortal1
                 listItem.IsFolder = true;
                 listItem.Item = othersGroup;
                 MediaPortal.Util.Utils.SetDefaultIcons(listItem);
+                listItem.OnItemSelected += OnGroupSelected;
                 GUI_facadeView.Add(listItem);
                 if (selectedSitesGroup != null && selectedSitesGroup.Name == othersGroup.Name) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
             }
@@ -1549,6 +1551,14 @@ namespace OnlineVideos.MediaPortal1
 
                 SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
             }
+        }
+
+        void OnGroupSelected(GUIListItem item, GUIControl parent)
+        {
+            SitesGroup group = (item as OnlineVideosGuiListItem).Item as SitesGroup;
+            string desc = group == null ? null : group.Description;
+            if (!string.IsNullOrEmpty(desc)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", desc);
+            else GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
         }
 
         void OnSiteSelected(GUIListItem item, GUIControl parent)

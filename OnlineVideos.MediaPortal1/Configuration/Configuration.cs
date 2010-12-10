@@ -801,6 +801,15 @@ namespace OnlineVideos.MediaPortal1
                 }
             }
         }
+
+        private void btnBrowseSitesGroupThumb_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                tbxSitesGroupThumb.Text = openFileDialog1.FileName;
+            }
+        }
+
         #endregion
     }
 }
