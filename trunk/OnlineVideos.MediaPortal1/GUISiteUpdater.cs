@@ -93,7 +93,7 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#header.label",
                                            PluginConfiguration.Instance.BasicHomeScreenName + ": " + Translation.ManageSites);
             GUIPropertyManager.SetProperty("#header.image",
-                                           Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
+                                           GUIOnlineVideos.GetImageForSite("OnlineVideos"));
 
             RefreshDisplayedOnlineSites();
         }
@@ -136,8 +136,8 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.TVTag = site;
                     loListItem.Label2 = site.Language;
                     loListItem.Label3 = site.LastUpdated.ToString("g", OnlineVideoSettings.Instance.Locale);
-                    string image = Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + site.Name + ".png";
-                    if (System.IO.File.Exists(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
+                    string image = GUIOnlineVideos.GetImageForSite(site.Name, "Icon");
+                    if (!string.IsNullOrEmpty(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
                     loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
                     loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
                     loListItem.IsPlayed = GetLocalSite(site.Name) != -1;
