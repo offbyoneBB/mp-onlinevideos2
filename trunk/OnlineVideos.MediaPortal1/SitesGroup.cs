@@ -15,6 +15,7 @@ namespace OnlineVideos.MediaPortal1
         }
         public string Name { get; set; }
         public string Thumbnail { get; set; }
+        public string Description { get; set; }
         public BindingList<string> Sites { get; set; }
     }
 }

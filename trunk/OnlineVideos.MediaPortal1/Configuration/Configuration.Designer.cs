@@ -159,8 +159,11 @@ namespace OnlineVideos.MediaPortal1
             this.lblVersion = new System.Windows.Forms.Label();
             this.tabGroups = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.tbxSitesGroupThumb = new System.Windows.Forms.TextBox();
+            this.btnBrowseSitesGroupThumb = new System.Windows.Forms.Button();
+            this.tbxSitesGroupDesc = new System.Windows.Forms.TextBox();
             this.bindingSourceSitesGroup = new System.Windows.Forms.BindingSource(this.components);
+            this.label43 = new System.Windows.Forms.Label();
+            this.tbxSitesGroupThumb = new System.Windows.Forms.TextBox();
             this.label42 = new System.Windows.Forms.Label();
             this.tbxSitesGroupName = new System.Windows.Forms.TextBox();
             this.label39 = new System.Windows.Forms.Label();
@@ -198,6 +201,7 @@ namespace OnlineVideos.MediaPortal1
             this.sitesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -1701,6 +1705,9 @@ namespace OnlineVideos.MediaPortal1
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnBrowseSitesGroupThumb);
+            this.splitContainer1.Panel1.Controls.Add(this.tbxSitesGroupDesc);
+            this.splitContainer1.Panel1.Controls.Add(this.label43);
             this.splitContainer1.Panel1.Controls.Add(this.tbxSitesGroupThumb);
             this.splitContainer1.Panel1.Controls.Add(this.label42);
             this.splitContainer1.Panel1.Controls.Add(this.tbxSitesGroupName);
@@ -1714,19 +1721,53 @@ namespace OnlineVideos.MediaPortal1
             this.splitContainer1.SplitterDistance = 240;
             this.splitContainer1.TabIndex = 0;
             // 
+            // btnBrowseSitesGroupThumb
+            // 
+            this.btnBrowseSitesGroupThumb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseSitesGroupThumb.AutoSize = true;
+            this.btnBrowseSitesGroupThumb.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBrowseSitesGroupThumb.Location = new System.Drawing.Point(666, 49);
+            this.btnBrowseSitesGroupThumb.Margin = new System.Windows.Forms.Padding(2);
+            this.btnBrowseSitesGroupThumb.Name = "btnBrowseSitesGroupThumb";
+            this.btnBrowseSitesGroupThumb.Size = new System.Drawing.Size(30, 23);
+            this.btnBrowseSitesGroupThumb.TabIndex = 16;
+            this.btnBrowseSitesGroupThumb.Text = "...";
+            this.btnBrowseSitesGroupThumb.UseVisualStyleBackColor = true;
+            this.btnBrowseSitesGroupThumb.Click += new System.EventHandler(this.btnBrowseSitesGroupThumb_Click);
+            // 
+            // tbxSitesGroupDesc
+            // 
+            this.tbxSitesGroupDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxSitesGroupDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSitesGroup, "Description", true));
+            this.tbxSitesGroupDesc.Location = new System.Drawing.Point(264, 77);
+            this.tbxSitesGroupDesc.Multiline = true;
+            this.tbxSitesGroupDesc.Name = "tbxSitesGroupDesc";
+            this.tbxSitesGroupDesc.Size = new System.Drawing.Size(432, 60);
+            this.tbxSitesGroupDesc.TabIndex = 6;
+            // 
+            // bindingSourceSitesGroup
+            // 
+            this.bindingSourceSitesGroup.DataSource = typeof(OnlineVideos.MediaPortal1.SitesGroup);
+            // 
+            // label43
+            // 
+            this.label43.AutoSize = true;
+            this.label43.Location = new System.Drawing.Point(185, 80);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(60, 13);
+            this.label43.TabIndex = 5;
+            this.label43.Text = "Description";
+            // 
             // tbxSitesGroupThumb
             // 
             this.tbxSitesGroupThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxSitesGroupThumb.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSitesGroup, "Thumbnail", true));
-            this.tbxSitesGroupThumb.Location = new System.Drawing.Point(240, 51);
+            this.tbxSitesGroupThumb.Location = new System.Drawing.Point(264, 51);
             this.tbxSitesGroupThumb.Name = "tbxSitesGroupThumb";
-            this.tbxSitesGroupThumb.Size = new System.Drawing.Size(456, 20);
+            this.tbxSitesGroupThumb.Size = new System.Drawing.Size(397, 20);
             this.tbxSitesGroupThumb.TabIndex = 4;
-            // 
-            // bindingSourceSitesGroup
-            // 
-            this.bindingSourceSitesGroup.DataSource = typeof(OnlineVideos.MediaPortal1.SitesGroup);
             // 
             // label42
             // 
@@ -1742,9 +1783,9 @@ namespace OnlineVideos.MediaPortal1
             this.tbxSitesGroupName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxSitesGroupName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSitesGroup, "Name", true));
-            this.tbxSitesGroupName.Location = new System.Drawing.Point(240, 22);
+            this.tbxSitesGroupName.Location = new System.Drawing.Point(264, 22);
             this.tbxSitesGroupName.Name = "tbxSitesGroupName";
-            this.tbxSitesGroupName.Size = new System.Drawing.Size(456, 20);
+            this.tbxSitesGroupName.Size = new System.Drawing.Size(432, 20);
             this.tbxSitesGroupName.TabIndex = 2;
             // 
             // label39
@@ -2138,6 +2179,10 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -2406,5 +2451,9 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.PictureBox pictureBox5;
+        private System.Windows.Forms.TextBox tbxSitesGroupDesc;
+        private System.Windows.Forms.Label label43;
+        private System.Windows.Forms.Button btnBrowseSitesGroupThumb;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
 	}
 }
