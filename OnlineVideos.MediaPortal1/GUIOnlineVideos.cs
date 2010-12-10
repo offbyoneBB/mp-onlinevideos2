@@ -2197,7 +2197,6 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-                GUI_facadeView.NeedRefresh();
                 GUI_facadeView.Focus = true;
                 GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
             }

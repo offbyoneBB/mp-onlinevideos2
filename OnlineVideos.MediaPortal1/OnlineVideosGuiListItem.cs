@@ -12,7 +12,7 @@ namespace OnlineVideos.MediaPortal1
 
         protected object _Item;
         /// <summary>
-        /// The <see cref="SiteUtilBase"/>, <see cref="Category"/> or <see cref="VideoInfo"/> that belongs to this object.
+        /// The <see cref="SiteUtilBase"/>, <see cref="Category"/>, <see cref="VideoInfo"/> or <see cref="SitesGroup"/> that belongs to this object.
         /// </summary>
         public object Item 
         {
@@ -34,7 +34,17 @@ namespace OnlineVideos.MediaPortal1
             ThumbnailImage = imageFilePath;
             IconImage = imageFilePath;
             IconImageBig = imageFilePath;
-            RefreshCoverArt();
+
+            // if selected and OnlineVideos is current window force an update of #selectedthumb
+            GUIOnlineVideos ovsWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow) as GUIOnlineVideos;
+            if (ovsWindow != null)
+            {
+                GUIListItem selectedItem = GUIControl.GetSelectedListItem(GUIOnlineVideos.WindowId, 50);
+                if (selectedItem == this)
+                {
+                    GUIWindowManager.SendThreadMessage(new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GUIWindowManager.ActiveWindow, 0, 50, ItemId ,0,null));
+                }
+            }
         }
     }
 }
