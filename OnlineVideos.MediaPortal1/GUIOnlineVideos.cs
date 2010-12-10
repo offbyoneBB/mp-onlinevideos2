@@ -948,7 +948,7 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.Item = aSite;
                     loListItem.OnItemSelected += OnSiteSelected;
                     // use Icon with the same name as the Site
-                    string image = GetImageForSite(aSite, "Icon");
+                    string image = GetImageForSite(aSite.Settings.Name, aSite.Settings.UtilName, "Icon");
                     if (!string.IsNullOrEmpty(image))
                     {
                         loListItem.ThumbnailImage = image;
@@ -2129,7 +2129,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 case State.groups:
                     GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
-                    GUIPropertyManager.SetProperty("#header.image", Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
+                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite("OnlineVideos"));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     HideSearchButtons();
@@ -2139,7 +2139,7 @@ namespace OnlineVideos.MediaPortal1
                     break;
                 case State.sites:
                     GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
-                    GUIPropertyManager.SetProperty("#header.image", Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\OnlineVideos.png");
+                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite("OnlineVideos"));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     ShowOrderButtons();
@@ -2156,7 +2156,7 @@ namespace OnlineVideos.MediaPortal1
                 case State.categories:
                     string cat_headerlabel = selectedCategory != null ? selectedCategory.RecursiveName() : SelectedSite.Settings.Name;
                     GUIPropertyManager.SetProperty("#header.label", cat_headerlabel);
-                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite));
+                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();                    
@@ -2177,7 +2177,7 @@ namespace OnlineVideos.MediaPortal1
                                 GUIPropertyManager.SetProperty("#header.label", proposedLabel != null ? proposedLabel : selectedCategory != null ? selectedCategory.RecursiveName() : ""); break;
                             }
                     }
-                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite));
+                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
                     ShowAndEnable(GUI_facadeView.GetID);
                     if (SelectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
                     if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
@@ -2190,7 +2190,7 @@ namespace OnlineVideos.MediaPortal1
                     break;
                 case State.details:
                     GUIPropertyManager.SetProperty("#header.label", selectedVideo.Title);
-                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite));
+                    GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
                     HideAndDisable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     HideSearchButtons();                    
@@ -2429,19 +2429,23 @@ namespace OnlineVideos.MediaPortal1
             return true;
         }
 
-        private string GetImageForSite(Sites.SiteUtilBase site, string type = "Banner")
+        internal static string GetImageForSite(string siteName, string utilName = "", string type = "Banner")
         {
             // use png with the same name as the Site - first check subfolder of current skin (allows skinners to use custom icons)
-            string image = string.Format(@"{0}\Media\OnlineVideos\{1}s\{2}.png", GUIGraphicsContext.Skin, type, site.Settings.Name);
+            string image = string.Format(@"{0}\Media\OnlineVideos\{1}s\{2}.png", GUIGraphicsContext.Skin, type, siteName);
             if (!System.IO.File.Exists(image))
             {
                 // use png with the same name as the Site
-                image = string.Format(@"{0}\OnlineVideos\{1}s\{2}.png", Config.GetFolder(Config.Dir.Thumbs), type, site.Settings.Name);
+                image = string.Format(@"{0}\OnlineVideos\{1}s\{2}.png", Config.GetFolder(Config.Dir.Thumbs), type, siteName);
                 if (!System.IO.File.Exists(image))
                 {
+                    image = string.Empty;
                     // if that does not exist, try image with the same name as the Util
-                    image = string.Format(@"{0}\OnlineVideos\{1}s\{2}.png", Config.GetFolder(Config.Dir.Thumbs), type, site.Settings.UtilName);
-                    if (!System.IO.File.Exists(image)) image = string.Empty;
+                    if (!string.IsNullOrEmpty(utilName))
+                    {
+                        image = string.Format(@"{0}\OnlineVideos\{1}s\{2}.png", Config.GetFolder(Config.Dir.Thumbs), type, utilName);
+                        if (!System.IO.File.Exists(image)) image = string.Empty;
+                    }
                 }
             }
             return image;
