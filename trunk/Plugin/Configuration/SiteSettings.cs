@@ -121,7 +121,7 @@ namespace OnlineVideos
 
         [DataMember(Name = "thumb", Order = 1, EmitDefaultValue = false)]
         [XmlAttribute("thumb")]
-        public string Thumb { get { return _Thumb; } set { if (_Thumb != value) { _Thumb = value; NotifyPropertyChanged("Thumb"); } } }
+        public string Thumb { get { return _Thumb; } set { _Thumb = value; NotifyPropertyChanged("Thumb"); } }
 
         [DataMember(Name = "desc", Order = 2, EmitDefaultValue = false)]
         [XmlAttribute("desc")]

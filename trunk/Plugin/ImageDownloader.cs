@@ -63,7 +63,7 @@ namespace OnlineVideos
 
                             if (System.IO.Path.IsPathRooted(aFinalUrl))
                             {
-                                if (System.IO.File.Exists(aFinalUrl)) imageLocation = aFinalUrl;                                
+                                if (System.IO.File.Exists(aFinalUrl)) imageLocation = aFinalUrl;
                             }
                             else
                             {
@@ -77,7 +77,6 @@ namespace OnlineVideos
                                 if (item is Category)
                                 {
                                     (item as Category).Thumb = imageLocation;
-                                    (item as Category).NotifyPropertyChanged("Thumb");
                                 }
                                 else
                                 {
