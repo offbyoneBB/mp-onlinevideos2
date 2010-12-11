@@ -58,7 +58,7 @@ namespace OnlineVideos.Sites.apondman {
             VideoInfo video = new VideoInfo();
             video.Other = new MovieDetails(movie);
             video.Title = movie.Title;
-            video.ImageUrl = movie.Poster != null ? movie.Poster.Uri : string.Empty;
+            video.ImageUrl = movie.Poster != null ? movie.Poster.Large : string.Empty;
             
             // extra
             string actors = movie.Actors.ToCommaSeperatedString();
