@@ -36,7 +36,7 @@ namespace OnlineVideos.Sites
         {
             Dictionary<string, string> teamLogos = GetTeamLogoUrls();
 
-            string js = GetWebData("http://i.cdn.turner.com/nba/nba/z/.e/js/pkg/video/652.js");
+            string js = GetWebData("http://i.cdn.turner.com/nba/nba/z/.e/js/pkg/video/901.js");
             string json = Regex.Match(js, @"var\snbaChannelConfig=(?<json>.+)").Groups["json"].Value;
 
             List<Category> categories = new List<Category>();
@@ -63,7 +63,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getVideoList(Category category)
         {
             currentPage = 1; pagesInCategory = 1; sectionBaseUrl = ((RssLink)category).Url; // reset next/prev fields
-            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=1&npp=" + itemsPerPage + "&" + ((RssLink)category).Url + "&season=0910&sort=recent");
+            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=1&npp=" + itemsPerPage + "&" + ((RssLink)category).Url + "&season=1011&sort=recent");
         }
 
         List<VideoInfo> getVideoList(string inUrl)
