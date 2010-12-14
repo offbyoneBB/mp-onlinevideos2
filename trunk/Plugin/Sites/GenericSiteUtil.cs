@@ -378,17 +378,20 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            if (resolveHoster && (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0))
+            if (resolveHoster)
             {
-                resultUrl = parseHosterLinks(resultUrl, video);
-                if (video.PlaybackOptions == null) resultUrl = GetVideoUrl(resultUrl);
-            }
-            else if (resolveHoster)
-            {
-                List<string> valueList = video.PlaybackOptions.Values.ToList();
-                video.PlaybackOptions.Clear();
-                foreach (string value in valueList)
-                    parseHosterLinks(value, video);
+                if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
+                {
+                    resultUrl = parseHosterLinks(resultUrl, video);
+                    if (video.PlaybackOptions == null) resultUrl = GetVideoUrl(resultUrl);
+                }
+                else
+                {
+                    List<string> valueList = video.PlaybackOptions.Values.ToList();
+                    video.PlaybackOptions.Clear();
+                    foreach (string value in valueList)
+                        parseHosterLinks(value, video);
+                }
             }
 
             return resultUrl;
@@ -453,7 +456,8 @@ namespace OnlineVideos.Sites
                 else
                     foreach (KeyValuePair<String, String> entry in options)
                     {
-                        if(video.PlaybackOptions.ContainsKey(entry.Key)){
+                        if (video.PlaybackOptions.ContainsKey(entry.Key))
+                        {
                             int i = 2;
                             while (video.PlaybackOptions.ContainsKey(entry.Key + " - " + i))
                                 i++;
@@ -463,7 +467,7 @@ namespace OnlineVideos.Sites
                             video.PlaybackOptions.Add(entry.Key, entry.Value);
                     }
                 return options.Last().Value;
-                
+
             }
             else
                 return String.Empty;

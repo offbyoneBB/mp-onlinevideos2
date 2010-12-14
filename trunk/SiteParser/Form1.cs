@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.XPath;
+using System.Diagnostics;
 using OnlineVideos;
 using OnlineVideos.Sites;
 
@@ -19,7 +20,13 @@ namespace SiteParser
             InitializeComponent();
             generic = new MySiteUtil();
             generic.Initialize(new SiteSettings());
+            generic.Name = "please fill";
+            generic.Description = "please fill";
+            generic.Language = "please fill";
             generic.Settings.UtilName = "GenericSite";
+            foreach (PlayerType pt in Enum.GetValues(typeof(PlayerType)))
+                playerComboBox.Items.Add(pt);
+            playerComboBox.SelectedIndex = 0;
 
             UtilToGui(generic);
         }
@@ -31,7 +38,12 @@ namespace SiteParser
 
         private void UtilToGui(MySiteUtil util)
         {
+            nameTextBox.Text = util.Name;
             BaseUrlTextbox.Text = util.BaseUrl;
+            descriptionTextBox.Text = util.Description;
+            playerComboBox.SelectedIndex = playerComboBox.Items.IndexOf(util.Player);
+            ageCheckBox.Checked = util.AgeCheck;
+            languageTextBox.Text = util.Language;
 
             CategoryRegexTextbox.Text = util.DynamicCategoriesRegEx;
             dynamicCategoryUrlFormatTextBox.Text = util.DynamicCategoryUrlFormatString;
@@ -50,10 +62,6 @@ namespace SiteParser
             nextPageRegExUrlFormatStringTextBox.Text = util.NextPageRegExUrlFormatString;
             nextPageRegExUrlDecodingCheckBox.Checked = util.NextPageRegExUrlDecoding;
 
-            prevPageRegExTextBox.Text = util.PrevPageRegEx;
-            prevPageRegExUrlFormatStringTextBox.Text = util.PrevPageRegExUrlFormatString;
-            prevPageRegExUrlDecodingCheckBox.Checked = util.PrevPageRegExUrlDecoding;
-
             videoUrlRegExTextBox.Text = util.VideoUrlRegEx;
             videoUrlFormatStringTextBox.Text = util.VideoUrlFormatString;
             videoListUrlDecodingCheckBox.Checked = util.VideoListUrlDecoding;
@@ -66,7 +74,7 @@ namespace SiteParser
             fileUrlFormatStringTextBox.Text = util.FileUrlFormatString;
             fileUrlPostStringTextBox.Text = util.FileUrlPostString;
             getRedirectedFileUrlCheckBox.Checked = util.GetRedirectedFileUrl;
-
+            resolveHosterCheckBox.Checked = util.ResolveHoster;
 
             treeView1.Nodes.Clear();
             TreeNode root = treeView1.Nodes.Add("site");
@@ -80,7 +88,12 @@ namespace SiteParser
 
         private void GuiToUtil(MySiteUtil util)
         {
+            util.Name = nameTextBox.Text;
             util.BaseUrl = BaseUrlTextbox.Text;
+            util.Description = descriptionTextBox.Text;
+            util.Player = (PlayerType)playerComboBox.SelectedItem;
+            util.AgeCheck = ageCheckBox.Checked;
+            util.Language = languageTextBox.Text;
 
             util.DynamicCategoriesRegEx = CategoryRegexTextbox.Text;
             util.DynamicCategoryUrlFormatString = dynamicCategoryUrlFormatTextBox.Text;
@@ -99,10 +112,6 @@ namespace SiteParser
             util.NextPageRegExUrlFormatString = nextPageRegExUrlFormatStringTextBox.Text;
             util.NextPageRegExUrlDecoding = nextPageRegExUrlDecodingCheckBox.Checked;
 
-            util.PrevPageRegEx = prevPageRegExTextBox.Text;
-            util.PrevPageRegExUrlFormatString = prevPageRegExUrlFormatStringTextBox.Text;
-            util.PrevPageRegExUrlDecoding = prevPageRegExUrlDecodingCheckBox.Checked;
-
             util.VideoUrlRegEx = videoUrlRegExTextBox.Text;
             util.VideoUrlFormatString = videoUrlFormatStringTextBox.Text;
             util.VideoListUrlDecoding = videoListUrlDecodingCheckBox.Checked;
@@ -115,6 +124,7 @@ namespace SiteParser
             util.FileUrlFormatString = fileUrlFormatStringTextBox.Text;
             util.FileUrlPostString = fileUrlPostStringTextBox.Text;
             util.GetRedirectedFileUrl = getRedirectedFileUrlCheckBox.Checked;
+            util.ResolveHoster = resolveHosterCheckBox.Checked;
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -247,8 +257,10 @@ namespace SiteParser
                 foreach (RssLink tmp in parentCat.SubCategories)
                     subcats.Add(tmp);
                 parentCat.SubCategories = new List<Category>(f3.Execute(subcats).ToArray());
+                GetSubCategoriesButton_Click(sender, e);
             }
-            GetSubCategoriesButton_Click(sender, e);
+            else
+                MessageBox.Show("no valid (static) category selected");
         }
 
         #endregion
@@ -285,10 +297,6 @@ namespace SiteParser
                     nextPageLabel.Text = generic.NextPageUrl;
                 else
                     nextPageLabel.Text = String.Empty;
-                if (generic.HasPreviousPage)
-                    prevPageLabel.Text = generic.PrevPageUrl;
-                else
-                    prevPageLabel.Text = String.Empty;
             }
             else
                 MessageBox.Show("no valid category selected");
@@ -309,18 +317,6 @@ namespace SiteParser
                 MessageBox.Show("no valid category selected");
         }
 
-        private void CreatePrevPageRegexButton_Click(object sender, EventArgs e)
-        {
-            Category parentCat = GetTreeViewSelectedNode() as Category;
-            if (parentCat != null)
-            {
-                Form2 f2 = new Form2();
-                prevPageRegExTextBox.Text = f2.Execute(prevPageRegExTextBox.Text, ((RssLink)parentCat).Url,
-                    new string[] { "url" });
-            }
-            else
-                MessageBox.Show("no valid category selected");
-        }
         #endregion
 
         #region VideoUrl
@@ -487,25 +483,9 @@ namespace SiteParser
             XmlWriter writer = nav.AppendChild();
             writer.WriteStartDocument();
             serializer.Serialize(writer, generic.Settings);
-            //writer.WriteEndDocument();
-            //writer.Flush();
             writer.Close();
 
             XmlNode final = doc.CreateNode(XmlNodeType.Element, "Site", String.Empty);
-            XmlElement el = final as XmlElement;
-            el.SetAttribute("name", "please fill");
-            el.SetAttribute("util", "GenericSite");
-            el.SetAttribute("agecheck", "false");
-            el.SetAttribute("enabled", "true");
-            el.SetAttribute("lang", "please fill");
-            foreach (XmlNode node in doc.FirstChild.ChildNodes)
-                final.AppendChild(node.Clone());
-            if (final.FirstChild.Name != "Description")
-            {
-                final.InsertBefore(doc.CreateNode(XmlNodeType.Element, "Description", "please fill"), final.FirstChild);
-            }
-            doc.RemoveChild(doc.FirstChild);
-            doc.AppendChild(final);
             foreach (XmlNode node in doc.SelectNodes("//item"))
             {
                 if (String.IsNullOrEmpty(node.InnerText))
@@ -521,8 +501,14 @@ namespace SiteParser
             {
                 doc.WriteContentTo(ww);
             }
-            Clipboard.SetText(sb.ToString());
+            Clipboard.SetText(sb.ToString().Replace(@" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""", String.Empty
+                ).Replace(@" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""", String.Empty));// damn namespaces
 
+        }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(@"http://code.google.com/p/mp-onlinevideos2/wiki/SiteParser");
         }
 
     }
@@ -530,6 +516,11 @@ namespace SiteParser
     class MySiteUtil : GenericSiteUtil
     {
         public string BaseUrl { get { return baseUrl; } set { baseUrl = value; } }
+        public string Name { get { return Settings.Name; } set { Settings.Name = value; } }
+        public string Description { get { return Settings.Description; } set { Settings.Description = value; } }
+        public PlayerType Player { get { return Settings.Player; } set { Settings.Player = value; } }
+        public bool AgeCheck { get { return Settings.ConfirmAge; } set { Settings.ConfirmAge = value; } }
+        public string Language { get { return Settings.Language; } set { Settings.Language = value; } }
 
         public string DynamicCategoriesRegEx { get { return GetRegex(regEx_dynamicCategories); } set { regEx_dynamicCategories = CreateRegex(value); dynamicCategoriesRegEx = value; } }
         public string DynamicCategoryUrlFormatString { get { return dynamicCategoryUrlFormatString; } set { dynamicCategoryUrlFormatString = value; } }
@@ -549,11 +540,6 @@ namespace SiteParser
         public bool NextPageRegExUrlDecoding { get { return nextPageRegExUrlDecoding; } set { nextPageRegExUrlDecoding = value; } }
         public string NextPageUrl { get { return nextPageUrl; } }
 
-        public string PrevPageRegEx { get { return GetRegex(regEx_PrevPage); } set { regEx_PrevPage = CreateRegex(value); prevPageRegEx = value; } }
-        public string PrevPageRegExUrlFormatString { get { return prevPageRegExUrlFormatString; } set { prevPageRegExUrlFormatString = value; } }
-        public bool PrevPageRegExUrlDecoding { get { return prevPageRegExUrlDecoding; } set { prevPageRegExUrlDecoding = value; } }
-        public string PrevPageUrl { get { return previousPageUrl; } }
-
         public string VideoUrlRegEx { get { return GetRegex(regEx_VideoUrl); } set { regEx_VideoUrl = CreateRegex(value); videoUrlRegEx = value; } }
         public string VideoUrlFormatString { get { return videoUrlFormatString; } set { videoUrlFormatString = value; } }
         public bool VideoUrlDecoding { get { return videoUrlDecoding; } set { videoUrlDecoding = value; } }
@@ -564,6 +550,7 @@ namespace SiteParser
         public string FileUrlFormatString { get { return fileUrlFormatString; } set { fileUrlFormatString = value; } }
         public string FileUrlPostString { get { return fileUrlPostString; } set { fileUrlPostString = value; } }
         public bool GetRedirectedFileUrl { get { return getRedirectedFileUrl; } set { getRedirectedFileUrl = value; } }
+        public bool ResolveHoster { get { return resolveHoster; } set { resolveHoster = value; } }
 
         #region Regex_String
         private Regex CreateRegex(string s)
