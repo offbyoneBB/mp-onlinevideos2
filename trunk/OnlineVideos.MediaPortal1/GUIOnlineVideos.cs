@@ -491,7 +491,7 @@ namespace OnlineVideos.MediaPortal1
                     }
                     else
                     {
-                        SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[GUI_facadeView.SelectedListItem.Path];
+                        SelectedSite = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Sites.SiteUtilBase;
                         DisplayCategories(null, true);
                     }
                 }
@@ -839,6 +839,7 @@ namespace OnlineVideos.MediaPortal1
                         loListItem.IconImageBig = sitesGroup.Thumbnail;
                     }
                     loListItem.OnItemSelected += OnGroupSelected;
+                    loListItem.ItemId = GUI_facadeView.Count;
                     GUI_facadeView.Add(loListItem);
                     if (selectedSitesGroup != null && selectedSitesGroup.Name == sitesGroup.Name) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
                 }
@@ -859,6 +860,7 @@ namespace OnlineVideos.MediaPortal1
                 listItem.Item = othersGroup;
                 MediaPortal.Util.Utils.SetDefaultIcons(listItem);
                 listItem.OnItemSelected += OnGroupSelected;
+                listItem.ItemId = GUI_facadeView.Count;
                 GUI_facadeView.Add(listItem);
                 if (selectedSitesGroup != null && selectedSitesGroup.Name == othersGroup.Name) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
             }
@@ -916,8 +918,8 @@ namespace OnlineVideos.MediaPortal1
                 // add the first item that will go to the groups menu
                 OnlineVideosGuiListItem loListItem;
                 loListItem = new OnlineVideosGuiListItem("..");
-                loListItem.IsFolder = true;
                 loListItem.ItemId = 0;
+                loListItem.IsFolder = true;
                 loListItem.OnItemSelected += OnSiteSelected;
                 MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                 GUI_facadeView.Add(loListItem);
@@ -934,7 +936,6 @@ namespace OnlineVideos.MediaPortal1
                 {
                     OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem(aSite.Settings.Name);
                     loListItem.Label2 = aSite.Settings.Language;
-                    loListItem.Path = aSite.Settings.Name;
                     loListItem.IsFolder = true;
                     loListItem.Item = aSite;
                     loListItem.OnItemSelected += OnSiteSelected;
@@ -954,6 +955,7 @@ namespace OnlineVideos.MediaPortal1
                     if (currentFilter.Matches(name))
                     {
                         if (loListItem.Item == SelectedSite) selectedSiteIndex = GUI_facadeView.Count;
+                        loListItem.ItemId = GUI_facadeView.Count;
                         GUI_facadeView.Add(loListItem);
                     }
                 }
@@ -1060,14 +1062,13 @@ namespace OnlineVideos.MediaPortal1
             currentFilter.StartMatching();
             if (categories != null)
             {
-                for (int i = 0; i < categories.Count; i++)
+                foreach (Category loCat  in categories)
                 {
-                    Category loCat = categories[i];
                     if (currentFilter.Matches(loCat.Name))
                     {
                         loListItem = new OnlineVideosGuiListItem(loCat.Name);
                         loListItem.IsFolder = true;
-                        loListItem.ItemId = i + 1;
+                        loListItem.ItemId = GUI_facadeView.Count;
                         MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
                         if (!string.IsNullOrEmpty(loCat.Thumb)) numCategoriesWithThumb++;
                         loListItem.Item = loCat;
@@ -1078,15 +1079,9 @@ namespace OnlineVideos.MediaPortal1
                         if (loCat is RssLink)
                         {
                             RssLink link = loCat as RssLink;
-                            loListItem.Path = link.Url;
                             if (link.EstimatedVideoCount > 0) loListItem.Label2 = link.EstimatedVideoCount.ToString();
                         }
-                        else
-                        {
-                            loListItem.Path = loCat.Name;
-                        }
-
-                        if (loCat is Group)
+                        else if (loCat is Group)
                         {
                             loListItem.Label2 = (loCat as Group).Channels.Count.ToString();
                         }
@@ -1153,14 +1148,11 @@ namespace OnlineVideos.MediaPortal1
             GUI_infoList.Add(loListItem);
             if (loVideoList != null)
             {
-                int liIdx = 0;
                 foreach (VideoInfo loVideoInfo in loVideoList)
                 {
-                    liIdx++;
                     loListItem = new OnlineVideosGuiListItem(loVideoInfo.Title2);
-                    loListItem.Path = loVideoInfo.VideoUrl;
                     loListItem.IconImage = "defaultVideo.png";
-                    loListItem.ItemId = liIdx;
+                    loListItem.ItemId = GUI_infoList.Count;
                     loListItem.Item = loVideoInfo;
                     loListItem.Label2 = loVideoInfo.Length;
                     loListItem.OnItemSelected += OnDetailsVideoItemSelected;
@@ -1431,6 +1423,7 @@ namespace OnlineVideos.MediaPortal1
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
             // add the first item that will go to the previous menu
             OnlineVideosGuiListItem backItem = new OnlineVideosGuiListItem("..");
+            backItem.ItemId = 0;
             backItem.IsFolder = true;
             backItem.OnItemSelected += OnVideoItemSelected;
             MediaPortal.Util.Utils.SetDefaultIcons(backItem);
@@ -1446,7 +1439,7 @@ namespace OnlineVideos.MediaPortal1
                 if (!currentFilter.Matches(videoInfo.Title) || FilterOut(videoInfo.Title) || FilterOut(videoInfo.Description)) continue;
 
                 OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(videoInfo.Title);
-                listItem.Path = videoInfo.VideoUrl;
+                listItem.ItemId = GUI_facadeView.Count;
                 listItem.Item = videoInfo;
                 listItem.IconImage = "defaultVideo.png";
                 listItem.IconImageBig = "defaultVideoBig.png";
@@ -1468,6 +1461,7 @@ namespace OnlineVideos.MediaPortal1
             if (SelectedSite.HasNextPage)
             {
                 OnlineVideosGuiListItem nextPageItem = new OnlineVideosGuiListItem(Translation.NextPage);
+                nextPageItem.ItemId = GUI_facadeView.Count;
                 nextPageItem.IsFolder = true;
                 nextPageItem.IconImage = "DefaultShortcutBig.png";
                 nextPageItem.IconImageBig = "DefaultShortcutBig.png";
