@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Text;
+using System.Diagnostics;
 using System.Windows.Forms;
 using OnlineVideos.Sites;
 
@@ -30,8 +31,8 @@ namespace SiteParser
         public string Execute(string regexString, string webData, string url, string[] names)
         {
             result = regexString;
-            RegexTextbox.Text = result;
-            FillPageData(webData);
+            FillPageData(result, regexRichText);
+            FillPageData(webData, richTextBox1);
             insertComboBox.Items.Clear();
             foreach (string s in names)
                 insertComboBox.Items.Add(new RegexPart(s, @"(?<" + s + @">[^@@@]*)"));
@@ -114,45 +115,45 @@ namespace SiteParser
         }
 
 
-        private void FillPageData(string webData)
+        private void FillPageData(string textData, RichTextBox textBox)
         {
-            richTextBox1.Text = webData;
-            webData = richTextBox1.Rtf;
-            int q = webData.IndexOf('{', 1);
-            webData = webData.Insert(q, @"{\colortbl ;\red177\green19\blue128;\red100\green128\blue0;\red255\green65\blue0;\red58\green110\blue165;\red0\green128\blue0;}");
+            textBox.Text = textData;
+            textData = textBox.Rtf;
+            int q = textData.IndexOf('{', 1);
+            textData = textData.Insert(q, @"{\colortbl ;\red177\green19\blue128;\red100\green128\blue0;\red255\green65\blue0;\red58\green110\blue165;\red0\green128\blue0;}");
 
             StringBuilder sb = new StringBuilder();
             int i = -1;
             int j = 0;
             do
             {
-                i = webData.IndexOf('<', j);
+                i = textData.IndexOf('<', j);
                 if (i != -1)
                 {
                     if (i != j)
-                        append2(sb, webData.Substring(j, i - j));
-                    j = webData.IndexOf('>', i + 1);
+                        append2(sb, textData.Substring(j, i - j));
+                    j = textData.IndexOf('>', i + 1);
                     if (j >= 0)
                     {
-                        int k = webData.LastIndexOf('<', j - 1);
+                        int k = textData.LastIndexOf('<', j - 1);
                         if (k != i)
                         {
-                            append2(sb, webData.Substring(i, k - i));
+                            append2(sb, textData.Substring(i, k - i));
                             i = k;
                         }
-                        append(sb, webData.Substring(i, j - i + 1));
+                        append(sb, textData.Substring(i, j - i + 1));
                         j++;
                     }
                 }
-            } while (i >= 0 && (i + 1) < webData.Length);
+            } while (i >= 0 && (i + 1) < textData.Length);
             if (i == -1)
-                append2(sb, webData.Substring(j, webData.Length - j));
-            richTextBox1.Rtf = sb.ToString();
+                append2(sb, textData.Substring(j, textData.Length - j));
+            textBox.Rtf = sb.ToString();
         }
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            result = RegexTextbox.Text;
+            result = regexRichText.Text;
             Close();
         }
 
@@ -187,7 +188,7 @@ namespace SiteParser
             int p = strToInsert.IndexOf(@"@@@@");
             if (p >= 0)
             {
-                strToInsert = strToInsert.Substring(0, p) + RegexTextbox.SelectedText + strToInsert.Substring(p + 4);
+                strToInsert = strToInsert.Substring(0, p) + regexRichText.SelectedText + strToInsert.Substring(p + 4);
                 p = -1; // prevent further processing
             }
             bool replaceWithLast = false;
@@ -197,43 +198,48 @@ namespace SiteParser
                 replaceWithLast = p >= 0;
                 if (p < 0) p = strToInsert.IndexOf(@"@@");
             }
-            int nextInd = RegexTextbox.SelectionStart + RegexTextbox.SelectionLength;
+            int nextInd = regexRichText.SelectionStart + regexRichText.SelectionLength;
             string nextChar = String.Empty;
-            if (nextInd < RegexTextbox.Text.Length)
+            string regexRichTextString = regexRichText.Text;
+            if (nextInd < regexRichTextString.Length)
             {
-                nextChar = new String(RegexTextbox.Text[nextInd], 1);
-                if (nextChar == "\\" && nextInd + 1 < RegexTextbox.Text.Length)
-                    nextChar += new String(RegexTextbox.Text[nextInd + 1], 1);
+                nextChar = new String(regexRichTextString[nextInd], 1);
+                if (nextChar == "\\" && nextInd + 1 < regexRichTextString.Length)
+                    nextChar += new String(regexRichTextString[nextInd + 1], 1);
             }
 
-            int insPos = RegexTextbox.SelectionStart;
+            int insPos = regexRichText.SelectionStart;
             if (strToInsert.StartsWith(@"(?<=") || strToInsert.StartsWith(@"(?<!"))
             {
                 insPos = 0;
-                RegexTextbox.SelectionLength = 0;
+                regexRichText.SelectionLength = 0;
             }
-            RegexTextbox.Text = RegexTextbox.Text.Substring(0, insPos) + strToInsert +
-                RegexTextbox.Text.Substring(insPos + RegexTextbox.SelectionLength);
+            regexRichTextString = regexRichTextString.Substring(0, insPos) + strToInsert +
+                regexRichTextString.Substring(insPos + regexRichText.SelectionLength);
             if (replaceWithLast)
             {
                 insPos += p;
-                RegexTextbox.Text = RegexTextbox.Text.Substring(0, insPos) + nextChar +
-                    RegexTextbox.Text.Substring(insPos + 3);
-                RegexTextbox.SelectionStart = insPos;
-                RegexTextbox.SelectionLength = 0;
+                regexRichTextString = regexRichTextString.Substring(0, insPos) + nextChar +
+                    regexRichTextString.Substring(insPos + 3);
+                FillPageData(regexRichTextString, regexRichText);
+                regexRichText.SelectionStart = insPos;
+                regexRichText.SelectionLength = 0;
             }
             else
+            {
+                FillPageData(regexRichTextString, regexRichText);
                 if (p >= 0)
                 {
-                    RegexTextbox.SelectionStart = insPos + p;
-                    RegexTextbox.SelectionLength = 2;
+                    regexRichText.SelectionStart = insPos + p;
+                    regexRichText.SelectionLength = 2;
                 }
                 else
                 {
-                    RegexTextbox.SelectionStart = insPos;
-                    RegexTextbox.SelectionLength = 0;
+                    regexRichText.SelectionStart = insPos;
+                    regexRichText.SelectionLength = 0;
                 }
-            RegexTextbox.Focus();
+            }
+            regexRichText.Focus();
         }
 
         private void testButton_Click(object sender, EventArgs e)
@@ -243,7 +249,7 @@ namespace SiteParser
 
             try
             {
-                Regex test = new Regex(RegexTextbox.Text, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+                Regex test = new Regex(regexRichText.Text, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
                 Match m = test.Match(testData);
                 while (m.Success)
                 {
@@ -302,8 +308,8 @@ namespace SiteParser
                     default: sb.Append(txt[i]); break;
                 }
             }
-            RegexTextbox.Text = RegexTextbox.Text.Substring(0, RegexTextbox.SelectionStart) + sb.ToString() +
-                RegexTextbox.Text.Substring(RegexTextbox.SelectionStart + RegexTextbox.SelectionLength);
+            regexRichText.Text = regexRichText.Text.Substring(0, regexRichText.SelectionStart) + sb.ToString() +
+                regexRichText.Text.Substring(regexRichText.SelectionStart + regexRichText.SelectionLength);
 
         }
 
@@ -321,6 +327,11 @@ namespace SiteParser
         private void findTextBox_Leave(object sender, EventArgs e)
         {
             AcceptButton = null;
+        }
+
+        private void helpButton_Click(object sender, EventArgs e)
+        {
+            Process.Start(@"http://code.google.com/p/mp-onlinevideos2/wiki/CreateRegex");
         }
     }
 

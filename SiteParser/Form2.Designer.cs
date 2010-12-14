@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.RegexTextbox = new System.Windows.Forms.TextBox();
             this.findTextBox = new System.Windows.Forms.TextBox();
             this.findButton = new System.Windows.Forms.Button();
             this.insertComboBox = new System.Windows.Forms.ComboBox();
@@ -40,14 +39,15 @@
             this.textToRegexButton = new System.Windows.Forms.Button();
             this.testButton = new System.Windows.Forms.Button();
             this.insertButton = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.regexRichText = new System.Windows.Forms.RichTextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.TextViewTab = new System.Windows.Forms.TabPage();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.WebViewTab = new System.Windows.Forms.TabPage();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.helpButton = new System.Windows.Forms.Button();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -81,22 +81,9 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
-            // RegexTextbox
-            // 
-            this.RegexTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.RegexTextbox.HideSelection = false;
-            this.RegexTextbox.Location = new System.Drawing.Point(3, 37);
-            this.RegexTextbox.Multiline = true;
-            this.RegexTextbox.Name = "RegexTextbox";
-            this.RegexTextbox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.RegexTextbox.Size = new System.Drawing.Size(321, 75);
-            this.RegexTextbox.TabIndex = 17;
-            // 
             // findTextBox
             // 
-            this.findTextBox.Location = new System.Drawing.Point(414, 4);
+            this.findTextBox.Location = new System.Drawing.Point(349, 5);
             this.findTextBox.Name = "findTextBox";
             this.findTextBox.Size = new System.Drawing.Size(175, 20);
             this.findTextBox.TabIndex = 31;
@@ -106,7 +93,7 @@
             // 
             // findButton
             // 
-            this.findButton.Location = new System.Drawing.Point(595, 2);
+            this.findButton.Location = new System.Drawing.Point(530, 3);
             this.findButton.Name = "findButton";
             this.findButton.Size = new System.Drawing.Size(75, 23);
             this.findButton.TabIndex = 30;
@@ -174,15 +161,6 @@
             this.insertButton.UseVisualStyleBackColor = true;
             this.insertButton.Click += new System.EventHandler(this.insertBbutton_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(334, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 13);
-            this.label1.TabIndex = 39;
-            this.label1.Text = "Web-data";
-            // 
             // splitContainer1
             // 
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -211,7 +189,7 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.RegexTextbox);
+            this.splitContainer2.Panel1.Controls.Add(this.regexRichText);
             this.splitContainer2.Panel1.Controls.Add(this.insertButton);
             this.splitContainer2.Panel1.Controls.Add(this.textToRegexButton);
             // 
@@ -222,6 +200,14 @@
             this.splitContainer2.Size = new System.Drawing.Size(329, 424);
             this.splitContainer2.SplitterDistance = 115;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // regexRichText
+            // 
+            this.regexRichText.Location = new System.Drawing.Point(5, 37);
+            this.regexRichText.Name = "regexRichText";
+            this.regexRichText.Size = new System.Drawing.Size(321, 75);
+            this.regexRichText.TabIndex = 39;
+            this.regexRichText.Text = "";
             // 
             // tabControl1
             // 
@@ -284,8 +270,20 @@
             this.webBrowser1.Margin = new System.Windows.Forms.Padding(0);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.ScriptErrorsSuppressed = true;
             this.webBrowser1.Size = new System.Drawing.Size(551, 395);
             this.webBrowser1.TabIndex = 0;
+            // 
+            // helpButton
+            // 
+            this.helpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpButton.Location = new System.Drawing.Point(829, 5);
+            this.helpButton.Name = "helpButton";
+            this.helpButton.Size = new System.Drawing.Size(75, 23);
+            this.helpButton.TabIndex = 41;
+            this.helpButton.Text = "Help";
+            this.helpButton.UseVisualStyleBackColor = true;
+            this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
             // 
             // Form2
             // 
@@ -293,8 +291,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(916, 504);
+            this.Controls.Add(this.helpButton);
             this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.insertComboBox);
             this.Controls.Add(this.findTextBox);
             this.Controls.Add(this.findButton);
@@ -306,7 +304,6 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
@@ -321,7 +318,6 @@
 
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.TextBox RegexTextbox;
         private System.Windows.Forms.TextBox findTextBox;
         private System.Windows.Forms.Button findButton;
         private System.Windows.Forms.ComboBox insertComboBox;
@@ -330,7 +326,6 @@
         private System.Windows.Forms.Button testButton;
         private System.Windows.Forms.Button textToRegexButton;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TabControl tabControl1;
@@ -338,5 +333,7 @@
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.TabPage WebViewTab;
         private System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.RichTextBox regexRichText;
+        private System.Windows.Forms.Button helpButton;
     }
 }
