@@ -1450,7 +1450,6 @@ namespace OnlineVideos.MediaPortal1
                 if (!string.IsNullOrEmpty(videoInfo.ImageUrl)) imageHash[videoInfo.ImageUrl] = true;
             }
             // fall back to list view if there are no items with thumbs
-            if (imageHash.Count > 0) ImageDownloader.GetImages<VideoInfo>(currentVideoList);
             suggestedView = null;
 #if MP11
             if (imageHash.Count == 0 || (videos.Count > 1 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.ViewMode.List;
@@ -1471,6 +1470,8 @@ namespace OnlineVideos.MediaPortal1
             }
 
             if (indextoSelect > -1 && indextoSelect < GUI_facadeView.Count) GUI_facadeView.SelectedListItemIndex = indextoSelect;
+
+            if (imageHash.Count > 0) ImageDownloader.GetImages<VideoInfo>(currentVideoList);
 
             currentVideosDisplayMode = mode;
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
