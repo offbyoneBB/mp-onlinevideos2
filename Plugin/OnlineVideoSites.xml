@@ -283,8 +283,8 @@
       <Description>Videoportal des heise ctTVs</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<li><a\shref="(?<VideoUrl>[^"]+)"><img\s*src="(?<ImageUrl>[^"]+)"\swidth="([^"]+)?"\sheight="([^"]+)?"\salt="([^"]+)?"\stitle="([^"]+)?"\stitle="(?<Title>[^"]+)"\sclass="titelbild"]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[<param\sname="FlashVars"\svalue="(?<url>[^"]+)"]]></item>
-        <item key="playlistUrlFormatString"><![CDATA[http://www.heise.de/fastbin/mmcms-frontend?{0}]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[var\sflashvars\s=\s{\s*sequenz:\s(?<url>\d+)]]></item>
+        <item key="playlistUrlFormatString"><![CDATA[http://www.heise.de/fastbin/mmcms-frontend?sequenz={0}]]></item>
         <item key="fileUrlRegEx"><![CDATA[<stream>\s*<src>(?<m0>[^<]+)</src>]]></item>
         <item key="baseUrl"><![CDATA[http://www.heise.de]]></item>
       </Configuration>
