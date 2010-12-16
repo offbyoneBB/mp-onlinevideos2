@@ -1,64 +1,137 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- Moving Pictures translation file -->
-<!-- Russian -->
+<!-- Online Videos translation file -->
+<!-- English (US) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
 <strings>
-  <string Field="AlreadyDownloading">Видео уже загружается.</string>
-  <string Field="Actions">Действия</string>
-  <string Field="Actors">Исполнители:</string>
-  <string Field="AddToMySites">Добавить к моим страницам</string>
-  <string Field="All">Все</string>
-  <string Field="AddToFavourites">Добавить к фаворитам</string>
-  <string Field="Broken">Дефект</string>
-  <string Field="Category">Рубрика</string>
-  <string Field="Creator">Создатель</string>
-  <string Field="DateOfRelease">Дата издания:</string>
-  <string Field="Download">Загрузить</string>
-  <string Field="DownloadFailed">Загрузка не удалась: {0}</string>
-  <string Field="DownloadComplete">Загрузка окончена</string>
-  <string Field="DownloadedVideos">Загруженные видео</string>
-  <string Field="Delete">Удалить</string>
-  <string Field="Default">Стандарт</string>
-  <string Field="Error">Ошибка</string>
-  <string Field="EnterPin">Ввести код</string>
-  <string Field="Favourites">Фавориты</string>
-  <string Field="Filter">Фильтр</string>
-  <string Field="FullUpdate">Полное актуализирование</string>
-  <string Field="Genre">Жанр:</string>
-  <string Field="LayoutList">Вид: Список</string>
-  <string Field="LayoutIcons">Вид: Маленькие символы</string>
-  <string Field="LayoutBigIcons">Вид: Большие символы</string>
-  <string Field="ManageSites">Управлять страницами</string>
-  <string Field="MaxResults">Максимальные результаты</string>
-  <string Field="NextPage">Следующая страница</string>
-  <string Field="None">Ничего</string>
-  <string Field="NoVideoFound">Видео не найдены</string>
-  <string Field="NewDllRequired">Необходимо новое DLL!</string>
-  <string Field="PlayAll">Все проиграть</string>
-  <string Field="PlotOutline">Действие:</string>
-  <string Field="PreviousPage">Предыдущая страница</string>
-  <string Field="PerformAutomaticUpdate">Выполнить автоматическое актуализирование?</string>
-  <string Field="RemoveFromFavorites">Удалить из фаворитов</string>
-  <string Field="Refresh">Актуализировать вид </string>
-  <string Field="RelatedVideos">Похожие видео</string>
-  <string Field="Reported">Заявлено</string>
-  <string Field="Runtime">Продолжительность:</string>
-  <string Field="RemoveFromMySites">Удалить из моих страниц</string>
-  <string Field="RestartMediaPortalAndAutomaticUpdate">Перезагрузи MediaPortal и выполни автоматическое актуализирование.</string>
-  <string Field="SearchResults">Результаты поиска</string>
-  <string Field="SelectSource">Выбрать источник</string>
-  <string Field="SortOptions">Сортировка</string>
-  <string Field="SortByName">Имя</string>
-  <string Field="SortByLanguage">Язык</string>
-  <string Field="SortByUpdated">Актуализировано</string>
-  <string Field="Search">Искать</string>
-  <string Field="Timeframe">Срок</string>
-  <string Field="Timeout">Превышение времени</string>
-  <string Field="Updatable">Подлежит актуализированию</string>
-  <string Field="UpdateMySite">Актуализировать эту страницу</string>
-  <string Field="UpdateMySiteSkipCategories">Актуализировать эту страницу (рубрики перескочить)</string>
-  <string Field="UpdateAllYourSites">Вследствие этого будут актуализированы все имеющиеся страницы.</string>
-  <string Field="UnableToPlayVideo">Видео невозможно воспроизвести. Отсутствует URL. </string>
-  <string Field="UnableToDownloadVideo">Видео невозможно загрузить. Недействительный URL.</string>
-  <string Field="Working">Функционирующий</string>
-</strings>
+<!-- A -->
+<string Field="Airdate">Эфир</string>
+<string Field="AlreadyDownloading">Этот файл уже загружается.</string>
+<string Field="All">Все</string>
+<string Field="Actions">Действия</string>
+<string Field="Actors">Актеры</string>
+<string Field="AddToMySites">Добавить в Мои Сайты</string>
+<string Field="AddToFavourites">Добавить в Избранное</string>
+<string Field="AddingToFavorites">добавление в избранное</string>
+<string Field="AutomaticUpdate">Автоматическое Обновление</string>
+<string Field="AutomaticUpdateDisabled">Автоматическое обновление отключено.</string>
+<!-- B -->
+<string Field="Broken">Испорчено</string>
+<string Field="Buffered">буфферизовано</string>
+<!-- C -->
+<string Field="Cancel">Отмена</string>
+<string Field="Category">Категория</string>
+<string Field="Categories">Категории</string>
+<string Field="Creator">Создатель</string>
+<string Field="CheckingForPluginUpdate">проверка обновленной версии плагина</string>
+<!-- D -->
+<string Field="Date">Дата</string>
+<string Field="DateOfRelease">Дата Релиза</string>
+<string Field="Directors">Режиссеры</string>
+<string Field="Download">Загрузка</string>
+<string Field="Downloading">Загружается</string>
+<string Field="DownloadingDescription">Показать список текущих загрузок.</string>
+<string Field="DownloadFailed">Загрузка прервана: {0}</string>
+<string Field="DownloadCancelled">Загрузка Отменена</string>
+<string Field="DownloadComplete">Загрузка Завершана</string>
+<string Field="DownloadStarted">Загрузка Начата</string>
+<string Field="DownloadedVideos">Загруженное Видео</string>
+<string Field="Delete">Удалить</string>
+<string Field="DeleteAll">Удалить Все</string>
+<string Field="Default">Стандарт</string>
+<string Field="Done">Выполнено</string>
+<string Field="DeletingOldThumbs">Удаление старых эскизов</string>
+<!-- E -->
+<string Field="Error">Ошибка</string>
+<string Field="EnterPin">Введите код</string>
+<!-- F -->
+<string Field="Favourites">Избранное</string>
+<string Field="Filter">Фильтр</string>  
+<string Field="FullUpdate">Полное Обновление</string>
+<!-- G -->
+<string Field="Genre">Жанр</string>
+<string Field="GettingVideoDetails">получение деталей видео</string>
+<string Field="GettingCategoryVideos">получение категории видео</string>
+<string Field="GettingFavoriteVideos">получение избранного видео</string>
+<string Field="GettingSearchResults">получение результатов поиска</string>
+<string Field="GettingRelatedVideos">получение похожих видео</string>
+<string Field="GettingFilteredVideos">получение отфильтрованных видео</string>
+<string Field="GettingNextPageVideos">получение следующей страницы видео</string>
+<string Field="GettingPreviousPageVideos">получение предыдущей страницы видео</string>
+<string Field="GettingPlaybackUrlsForVideo">получениессылки на видео</string>
+<string Field="GettingDynamicCategories">получение динамических категорий</string>
+<string Field="GettingReports">получение ответа от вебсервисов</string>
+<string Field="GettingSiteXml">получение xml сайта от вебсервиса</string>
+<string Field="GettingIcon">получение значкоа сайта от вебсервиса</string>
+<string Field="GettingBanner">получение баннера сайта от вебсервиса</string>
+<string Field="GettingDll">получение dll от вебсервиса</string>
+<string Field="Groups">Группы</string>
+<!-- H -->
+<!-- I -->
+<!-- L -->
+<string Field="LatestVersionRequired">Необходима последняя версия ({0})!</string>
+<string Field="Language">Язык</string>
+<string Field="LayoutList">Вид: Список</string>
+<string Field="LayoutIcons">Вид: Значки</string>
+<string Field="LayoutBigIcons">Вид: Большие значки</string>
+<!-- M -->
+<string Field="ManageSites">Управление сайтами</string>
+<string Field="MaxResults">Максимально результатов</string>
+<!-- N -->
+<string Field="Name">Имя</string>
+<string Field="NextPage">Следующая страница</string>
+<string Field="None">Никто</string>
+<string Field="NoVideoFound">Видео не найдено</string>
+<string Field="NoReportsForSite">Для этого сайта недоступны сообщения.</string>
+<string Field="NewDllDownloaded">Новая dll Загружена!</string>
+<string Field="NewSearch">Новый Поиск</string>
+<!-- O -->
+<string Field="Others">Другие</string>
+<!-- P -->
+<string Field="PlayAll">Играть Все</string>
+<string Field="PlotOutline">Действие:</string>
+<string Field="PreviousPage">Предыдущая страница</string>
+<string Field="PerformAutomaticUpdate">Выполнять автоматическое обновление?</string>
+<!-- R -->
+<string Field="RemoveFromFavorites">Удалить из Избранного</string>
+<string Field="RemovingFromFavorites">удаляется из избранного</string>
+<string Field="Refresh">Обновить</string>
+<string Field="RelatedVideos">Похожие Видео Videos</string>
+<string Field="Reported">Отмеченные</string>
+<string Field="Reports">Отчеты</string>
+<string Field="Runtime">Продолжительность</string>
+<string Field="RemoveFromMySites">Удалить из Моих Сайтов</string>
+<string Field="RestartMediaPortal">Перезапустить MediaPortal!</string>
+<string Field="RetrievingRemoteDlls">Получение уделенных dlls ...</string>
+<string Field="RetrievingRemoteSites">Получение удаленных сайтов ...</string>
+<!-- S -->
+<string Field="SearchHistory">История Поиска</string>
+<string Field="SearchResults">Результаты Поиска</string>
+<string Field="SelectSource">Выбрать Источник</string>
+<string Field="Sites">Сайты</string>
+<string Field="Size">Размер</string>
+<string Field="SortOptions">Опции Сортировки</string>
+<string Field="Search">Поиск</string>
+<string Field="SetDownloadFolderInConfig">Пожалуйста выберите папку сохранения в Настройках!</string>
+<string Field="State">Страна</string>
+<string Field="SavingLocalSiteList">Сохранение локального списка сайтов ...</string>
+<string Field="ShowReports">Показывать комментарии создателя и пользователей</string>
+<string Field="StartingPlayback">запуск проигрывания</string>
+<string Field="Subscriptions">Подписки</string>
+<!-- T -->
+<string Field="Timeframe">Временной промежуток</string>
+<string Field="Timeout">Таймаут</string>
+<string Field="Tags">Тэги</string>
+<!-- U -->
+<string Field="Updated">Обновлено</string>
+<string Field="Updatable">Доступно обновление</string>
+<string Field="UpdateMySite">Обновить Мои Сайты</string>
+<string Field="UpdateMySiteSkipCategories">Обновить Мои Сайты (пропустить категории)</string>
+<string Field="UpdateAllYourSites">Это обновит все ваши текущие сайты.</string>
+<string Field="UnableToPlayVideo">Невозможно проиграть видео. Нет URL.</string>
+<string Field="UnableToDownloadVideo">Невозможно скачать видео. Неправильный URL.</string>
+<!-- V -->
+<string Field="Videos">Видео</string>
+<!-- W -->
+<string Field="Working">Работает</string>
+<!-- Y -->
+</strings> 
