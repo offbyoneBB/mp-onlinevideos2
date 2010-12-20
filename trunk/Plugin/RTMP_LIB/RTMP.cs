@@ -239,12 +239,17 @@ namespace RTMP_LIB
 
         bool ConnectStream()
         {
+            bool firstPacketReceived = false;
             RTMPPacket packet = null;
             while (!Playing && IsConnected() && ReadPacket(out packet))
             {
                 if (!packet.IsReady()) continue; // keep reading until complete package has arrived
 
-                Logger.Log("First Packet after Connect received.");
+                if (!firstPacketReceived)
+                {
+                    firstPacketReceived = true;
+                    Logger.Log("First Packet after Connect received.");
+                }
 
                 if (packet.PacketType == PacketType.Audio || packet.PacketType == PacketType.Video || packet.PacketType == PacketType.Metadata)
                 {
@@ -1176,6 +1181,8 @@ namespace RTMP_LIB
 
             if (metastring == "onMetaData")
             {
+                if (Playing) obj.Dump(); // always dump metadata for further analyzing
+
                 List<AMFObjectProperty> props = new List<AMFObjectProperty>();
                 obj.FindMatchingProperty("duration", props, 1);
                 if (props.Count > 0)
