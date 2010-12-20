@@ -491,21 +491,16 @@ namespace OnlineVideos.MediaPortal1.Player
             }
 
 #if !MP11
-            string tmpstr;
             ISubEngine engine = SubEngine.GetInstance(true);
             if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
             {
-                tmpstr = engine.ToString().Substring(engine.ToString().LastIndexOf(".") + 1);
-                Log.Instance.Info("VideoPlayerVMR7_OnlineVideo: {0} subtitle configured in MP but misconfigured, disabled!", tmpstr);
-                SubEngine.engine = new SubEngine.DummyEngine();
+              SubEngine.engine = new SubEngine.DummyEngine();
             }
 
             IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
             if (!postengine.LoadPostProcessing(graphBuilder))
             {
-                tmpstr = postengine.ToString().Substring(postengine.ToString().LastIndexOf(".") + 1);
-                Log.Instance.Info("VideoPlayerVMR7_OnlineVideo: {0} postprocessing configured in MP but misconfigured!", tmpstr);
-                PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+              PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
             }
 #endif
 
