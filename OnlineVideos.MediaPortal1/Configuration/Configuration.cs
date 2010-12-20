@@ -76,7 +76,7 @@ namespace OnlineVideos.MediaPortal1
             bindingSourceSitesGroup.DataSource = PluginConfiguration.Instance.SitesGroups;
 
             // load site image into a list for use with the listviews
-            ImageList allSitesImageList = new ImageList() { ColorDepth = ColorDepth.Depth32Bit, ImageSize = new Size(32,32) };
+            ImageList allSitesImageList = new ImageList() { ColorDepth = ColorDepth.Depth32Bit, ImageSize = new Size(28,28) };
             foreach(string imagefile in System.IO.Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\", "*.png"))
             {
                 allSitesImageList.Images.Add(System.IO.Path.GetFileNameWithoutExtension(imagefile), Image.FromFile(imagefile));

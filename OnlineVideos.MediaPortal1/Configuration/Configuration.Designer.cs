@@ -266,7 +266,7 @@ namespace OnlineVideos.MediaPortal1
             this.txtDownloadDir.Location = new System.Drawing.Point(225, 35);
             this.txtDownloadDir.Name = "txtDownloadDir";
             this.txtDownloadDir.Size = new System.Drawing.Size(429, 20);
-            this.txtDownloadDir.TabIndex = 4;
+            this.txtDownloadDir.TabIndex = 2;
             // 
             // label3
             // 
@@ -274,7 +274,7 @@ namespace OnlineVideos.MediaPortal1
             this.label3.Location = new System.Drawing.Point(6, 38);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(87, 13);
-            this.label3.TabIndex = 19;
+            this.label3.TabIndex = 0;
             this.label3.Text = "Download Folder";
             // 
             // RssLinkList
@@ -363,6 +363,7 @@ namespace OnlineVideos.MediaPortal1
             // 
             // descriptionTextBox
             // 
+            this.descriptionTextBox.AcceptsReturn = true;
             this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.descriptionTextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSiteSettings, "Description", true));
@@ -704,7 +705,7 @@ namespace OnlineVideos.MediaPortal1
             this.txtFilters.Location = new System.Drawing.Point(225, 50);
             this.txtFilters.Name = "txtFilters";
             this.txtFilters.Size = new System.Drawing.Size(460, 20);
-            this.txtFilters.TabIndex = 6;
+            this.txtFilters.TabIndex = 8;
             this.toolTip1.SetToolTip(this.txtFilters, "Comma seperated list of words that will be used to filter out videos.");
             // 
             // label2
@@ -714,7 +715,7 @@ namespace OnlineVideos.MediaPortal1
             this.label2.Location = new System.Drawing.Point(6, 53);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(155, 13);
-            this.label2.TabIndex = 3;
+            this.label2.TabIndex = 0;
             this.label2.Text = "Filter out videos with these tags";
             // 
             // txtThumbLoc
@@ -725,7 +726,7 @@ namespace OnlineVideos.MediaPortal1
             this.txtThumbLoc.Location = new System.Drawing.Point(225, 50);
             this.txtThumbLoc.Name = "txtThumbLoc";
             this.txtThumbLoc.Size = new System.Drawing.Size(429, 20);
-            this.txtThumbLoc.TabIndex = 14;
+            this.txtThumbLoc.TabIndex = 18;
             // 
             // label1
             // 
@@ -744,7 +745,7 @@ namespace OnlineVideos.MediaPortal1
             this.label5.Location = new System.Drawing.Point(6, 25);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(109, 13);
-            this.label5.TabIndex = 23;
+            this.label5.TabIndex = 0;
             this.label5.Text = "Use Age Confirmation";
             // 
             // chkUseAgeConfirmation
@@ -754,7 +755,7 @@ namespace OnlineVideos.MediaPortal1
             this.chkUseAgeConfirmation.Location = new System.Drawing.Point(225, 25);
             this.chkUseAgeConfirmation.Name = "chkUseAgeConfirmation";
             this.chkUseAgeConfirmation.Size = new System.Drawing.Size(15, 14);
-            this.chkUseAgeConfirmation.TabIndex = 2;
+            this.chkUseAgeConfirmation.TabIndex = 6;
             this.chkUseAgeConfirmation.UseVisualStyleBackColor = true;
             this.chkUseAgeConfirmation.CheckedChanged += new System.EventHandler(this.chkUseAgeConfirmation_CheckedChanged);
             // 
@@ -768,7 +769,7 @@ namespace OnlineVideos.MediaPortal1
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.btnSave.Size = new System.Drawing.Size(90, 25);
-            this.btnSave.TabIndex = 17;
+            this.btnSave.TabIndex = 20;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             // 
@@ -1109,7 +1110,7 @@ namespace OnlineVideos.MediaPortal1
             this.tbxPin.Name = "tbxPin";
             this.tbxPin.PasswordChar = '*';
             this.tbxPin.Size = new System.Drawing.Size(409, 20);
-            this.tbxPin.TabIndex = 3;
+            this.tbxPin.TabIndex = 7;
             // 
             // tbxScreenName
             // 
@@ -1126,7 +1127,7 @@ namespace OnlineVideos.MediaPortal1
             this.label7.Location = new System.Drawing.Point(6, 11);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(129, 13);
-            this.label7.TabIndex = 30;
+            this.label7.TabIndex = 0;
             this.label7.Text = "BasicHome Screen Name";
             // 
             // btnBrowseForDlFolder
@@ -1137,7 +1138,7 @@ namespace OnlineVideos.MediaPortal1
             this.btnBrowseForDlFolder.Margin = new System.Windows.Forms.Padding(2);
             this.btnBrowseForDlFolder.Name = "btnBrowseForDlFolder";
             this.btnBrowseForDlFolder.Size = new System.Drawing.Size(30, 23);
-            this.btnBrowseForDlFolder.TabIndex = 5;
+            this.btnBrowseForDlFolder.TabIndex = 3;
             this.btnBrowseForDlFolder.Text = "...";
             this.btnBrowseForDlFolder.UseVisualStyleBackColor = true;
             this.btnBrowseForDlFolder.Click += new System.EventHandler(this.btnBrowseForDlFolder_Click);
@@ -1225,7 +1226,7 @@ namespace OnlineVideos.MediaPortal1
             this.label21.Location = new System.Drawing.Point(246, 25);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(22, 13);
-            this.label21.TabIndex = 39;
+            this.label21.TabIndex = 0;
             this.label21.Text = "Pin";
             // 
             // pictureBox4
@@ -1263,7 +1264,7 @@ namespace OnlineVideos.MediaPortal1
             this.label34.Location = new System.Drawing.Point(6, 26);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(34, 13);
-            this.label34.TabIndex = 62;
+            this.label34.TabIndex = 0;
             this.label34.Text = "Mode";
             // 
             // rbOff
@@ -1273,7 +1274,7 @@ namespace OnlineVideos.MediaPortal1
             this.rbOff.Location = new System.Drawing.Point(225, 24);
             this.rbOff.Name = "rbOff";
             this.rbOff.Size = new System.Drawing.Size(39, 17);
-            this.rbOff.TabIndex = 59;
+            this.rbOff.TabIndex = 9;
             this.rbOff.TabStop = true;
             this.rbOff.Text = "Off";
             this.rbOff.UseVisualStyleBackColor = true;
@@ -1286,7 +1287,7 @@ namespace OnlineVideos.MediaPortal1
             this.rbLastSearch.Location = new System.Drawing.Point(270, 24);
             this.rbLastSearch.Name = "rbLastSearch";
             this.rbLastSearch.Size = new System.Drawing.Size(80, 17);
-            this.rbLastSearch.TabIndex = 57;
+            this.rbLastSearch.TabIndex = 10;
             this.rbLastSearch.TabStop = true;
             this.rbLastSearch.Text = "Last search";
             this.rbLastSearch.UseVisualStyleBackColor = true;
@@ -1299,7 +1300,7 @@ namespace OnlineVideos.MediaPortal1
             this.rbExtendedSearchHistory.Location = new System.Drawing.Point(356, 24);
             this.rbExtendedSearchHistory.Name = "rbExtendedSearchHistory";
             this.rbExtendedSearchHistory.Size = new System.Drawing.Size(107, 17);
-            this.rbExtendedSearchHistory.TabIndex = 58;
+            this.rbExtendedSearchHistory.TabIndex = 11;
             this.rbExtendedSearchHistory.TabStop = true;
             this.rbExtendedSearchHistory.Text = "Extended (dialog)";
             this.rbExtendedSearchHistory.UseVisualStyleBackColor = true;
@@ -1312,7 +1313,7 @@ namespace OnlineVideos.MediaPortal1
             this.label38.Location = new System.Drawing.Point(638, 26);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(32, 13);
-            this.label38.TabIndex = 60;
+            this.label38.TabIndex = 0;
             this.label38.Text = "Items";
             // 
             // nUPSearchHistoryItemCount
@@ -1331,7 +1332,7 @@ namespace OnlineVideos.MediaPortal1
             0});
             this.nUPSearchHistoryItemCount.Name = "nUPSearchHistoryItemCount";
             this.nUPSearchHistoryItemCount.Size = new System.Drawing.Size(76, 20);
-            this.nUPSearchHistoryItemCount.TabIndex = 61;
+            this.nUPSearchHistoryItemCount.TabIndex = 12;
             this.toolTip1.SetToolTip(this.nUPSearchHistoryItemCount, "Defines the number of search strings stored per Site.");
             this.nUPSearchHistoryItemCount.Value = new decimal(new int[] {
             2,
@@ -1403,7 +1404,7 @@ namespace OnlineVideos.MediaPortal1
             this.tbxThumbAge.Location = new System.Drawing.Point(225, 23);
             this.tbxThumbAge.Name = "tbxThumbAge";
             this.tbxThumbAge.Size = new System.Drawing.Size(53, 20);
-            this.tbxThumbAge.TabIndex = 16;
+            this.tbxThumbAge.TabIndex = 17;
             this.tbxThumbAge.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.tbxThumbAge, "Thumbnails older than this will be deleted on first OnlineVideos start each time " +
                     "MediaPortal runs. Set to 0 to delete all and -1 to keep all.");
@@ -1428,7 +1429,7 @@ namespace OnlineVideos.MediaPortal1
             this.bntBrowseFolderForThumbs.Margin = new System.Windows.Forms.Padding(2);
             this.bntBrowseFolderForThumbs.Name = "bntBrowseFolderForThumbs";
             this.bntBrowseFolderForThumbs.Size = new System.Drawing.Size(30, 23);
-            this.bntBrowseFolderForThumbs.TabIndex = 15;
+            this.bntBrowseFolderForThumbs.TabIndex = 19;
             this.bntBrowseFolderForThumbs.Text = "...";
             this.bntBrowseFolderForThumbs.UseVisualStyleBackColor = true;
             this.bntBrowseFolderForThumbs.Click += new System.EventHandler(this.bntBrowseFolderForThumbs_Click);
@@ -1439,7 +1440,7 @@ namespace OnlineVideos.MediaPortal1
             this.label33.Location = new System.Drawing.Point(6, 81);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(90, 13);
-            this.label33.TabIndex = 52;
+            this.label33.TabIndex = 0;
             this.label33.Text = "Use Quick Select";
             // 
             // chkUseQuickSelect
@@ -1448,7 +1449,7 @@ namespace OnlineVideos.MediaPortal1
             this.chkUseQuickSelect.Location = new System.Drawing.Point(225, 81);
             this.chkUseQuickSelect.Name = "chkUseQuickSelect";
             this.chkUseQuickSelect.Size = new System.Drawing.Size(15, 14);
-            this.chkUseQuickSelect.TabIndex = 8;
+            this.chkUseQuickSelect.TabIndex = 5;
             this.toolTip1.SetToolTip(this.chkUseQuickSelect, "Allows you to quickly select entries that start with the letter or number you pre" +
                     "ssed in the list.");
             this.chkUseQuickSelect.UseVisualStyleBackColor = true;
@@ -1508,7 +1509,7 @@ namespace OnlineVideos.MediaPortal1
             this.tbxWebCacheTimeout.Location = new System.Drawing.Point(225, 23);
             this.tbxWebCacheTimeout.Name = "tbxWebCacheTimeout";
             this.tbxWebCacheTimeout.Size = new System.Drawing.Size(53, 20);
-            this.tbxWebCacheTimeout.TabIndex = 10;
+            this.tbxWebCacheTimeout.TabIndex = 13;
             this.tbxWebCacheTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.tbxWebCacheTimeout, "WebRequests are cached internally. This number determines the minutes after which" +
                     " the cached data becomes invalid. Set to 0 to disable.");
@@ -1530,7 +1531,7 @@ namespace OnlineVideos.MediaPortal1
             this.tbxUtilTimeout.Location = new System.Drawing.Point(541, 23);
             this.tbxUtilTimeout.Name = "tbxUtilTimeout";
             this.tbxUtilTimeout.Size = new System.Drawing.Size(76, 20);
-            this.tbxUtilTimeout.TabIndex = 11;
+            this.tbxUtilTimeout.TabIndex = 14;
             this.tbxUtilTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.tbxUtilTimeout, "When the GUI request data from the web you can specifiy how many seconds to wait " +
                     "before a timeout will occur.");
@@ -1602,7 +1603,7 @@ namespace OnlineVideos.MediaPortal1
             this.udPlayBuffer.Name = "udPlayBuffer";
             this.udPlayBuffer.ReadOnly = true;
             this.udPlayBuffer.Size = new System.Drawing.Size(53, 20);
-            this.udPlayBuffer.TabIndex = 12;
+            this.udPlayBuffer.TabIndex = 15;
             this.udPlayBuffer.Text = "1";
             this.udPlayBuffer.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.udPlayBuffer, "Percentage of the file to buffer from web before starting playback.");
@@ -1633,7 +1634,7 @@ namespace OnlineVideos.MediaPortal1
             this.tbxWMPBuffer.Location = new System.Drawing.Point(541, 23);
             this.tbxWMPBuffer.Name = "tbxWMPBuffer";
             this.tbxWMPBuffer.Size = new System.Drawing.Size(76, 20);
-            this.tbxWMPBuffer.TabIndex = 13;
+            this.tbxWMPBuffer.TabIndex = 16;
             this.tbxWMPBuffer.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.tbxWMPBuffer, "Number of milliseconds to use as buffer for playback with Windows Media Player.");
             this.tbxWMPBuffer.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
@@ -1644,7 +1645,7 @@ namespace OnlineVideos.MediaPortal1
             this.label23.Location = new System.Drawing.Point(6, 61);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(125, 13);
-            this.label23.TabIndex = 46;
+            this.label23.TabIndex = 0;
             this.label23.Text = "Update Sites on first load";
             // 
             // chkDoAutoUpdate
@@ -1655,7 +1656,7 @@ namespace OnlineVideos.MediaPortal1
             this.chkDoAutoUpdate.Location = new System.Drawing.Point(225, 61);
             this.chkDoAutoUpdate.Name = "chkDoAutoUpdate";
             this.chkDoAutoUpdate.Size = new System.Drawing.Size(15, 14);
-            this.chkDoAutoUpdate.TabIndex = 7;
+            this.chkDoAutoUpdate.TabIndex = 4;
             this.chkDoAutoUpdate.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkDoAutoUpdate, "If checked plugin will perform an autoupdate the first time it is started each Me" +
                     "diaPortal Session. If indeterminated, plugin will ask.");
@@ -1671,7 +1672,7 @@ namespace OnlineVideos.MediaPortal1
             this.btnCancel.Location = new System.Drawing.Point(595, 474);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 25);
-            this.btnCancel.TabIndex = 18;
+            this.btnCancel.TabIndex = 21;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
@@ -1718,7 +1719,7 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Size = new System.Drawing.Size(704, 518);
-            this.splitContainer1.SplitterDistance = 240;
+            this.splitContainer1.SplitterDistance = 230;
             this.splitContainer1.TabIndex = 0;
             // 
             // btnBrowseSitesGroupThumb
@@ -1737,6 +1738,7 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxSitesGroupDesc
             // 
+            this.tbxSitesGroupDesc.AcceptsReturn = true;
             this.tbxSitesGroupDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxSitesGroupDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSitesGroup, "Description", true));
@@ -1803,7 +1805,7 @@ namespace OnlineVideos.MediaPortal1
             // toolStripContainer4.ContentPanel
             // 
             this.toolStripContainer4.ContentPanel.Controls.Add(this.listBoxSitesGroups);
-            this.toolStripContainer4.ContentPanel.Size = new System.Drawing.Size(155, 215);
+            this.toolStripContainer4.ContentPanel.Size = new System.Drawing.Size(155, 205);
             this.toolStripContainer4.Dock = System.Windows.Forms.DockStyle.Left;
             // 
             // toolStripContainer4.LeftToolStripPanel
@@ -1811,7 +1813,7 @@ namespace OnlineVideos.MediaPortal1
             this.toolStripContainer4.LeftToolStripPanel.Controls.Add(this.toolStrip2);
             this.toolStripContainer4.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer4.Name = "toolStripContainer4";
-            this.toolStripContainer4.Size = new System.Drawing.Size(179, 240);
+            this.toolStripContainer4.Size = new System.Drawing.Size(179, 230);
             this.toolStripContainer4.TabIndex = 0;
             this.toolStripContainer4.Text = "toolStripContainer4";
             // 
@@ -1827,7 +1829,7 @@ namespace OnlineVideos.MediaPortal1
             this.listBoxSitesGroups.FormattingEnabled = true;
             this.listBoxSitesGroups.Location = new System.Drawing.Point(0, 0);
             this.listBoxSitesGroups.Name = "listBoxSitesGroups";
-            this.listBoxSitesGroups.Size = new System.Drawing.Size(155, 215);
+            this.listBoxSitesGroups.Size = new System.Drawing.Size(155, 205);
             this.listBoxSitesGroups.TabIndex = 0;
             this.listBoxSitesGroups.SelectedValueChanged += new System.EventHandler(this.listBoxSitesGroups_SelectedValueChanged);
             // 
@@ -1840,7 +1842,7 @@ namespace OnlineVideos.MediaPortal1
             this.btnSitesGroupDown});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(24, 240);
+            this.toolStrip2.Size = new System.Drawing.Size(24, 230);
             this.toolStrip2.Stretch = true;
             this.toolStrip2.TabIndex = 0;
             // 
@@ -1915,16 +1917,18 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.splitContainer2.Panel2.Controls.Add(this.listViewSitesInGroup);
             this.splitContainer2.Panel2.Controls.Add(this.label41);
-            this.splitContainer2.Size = new System.Drawing.Size(704, 274);
-            this.splitContainer2.SplitterDistance = 339;
+            this.splitContainer2.Size = new System.Drawing.Size(704, 284);
+            this.splitContainer2.SplitterDistance = 352;
+            this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 0;
             // 
             // listViewSitesNotInGroup
             // 
+            this.listViewSitesNotInGroup.BackColor = System.Drawing.Color.AliceBlue;
             this.listViewSitesNotInGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewSitesNotInGroup.Location = new System.Drawing.Point(0, 23);
             this.listViewSitesNotInGroup.Name = "listViewSitesNotInGroup";
-            this.listViewSitesNotInGroup.Size = new System.Drawing.Size(339, 251);
+            this.listViewSitesNotInGroup.Size = new System.Drawing.Size(352, 261);
             this.listViewSitesNotInGroup.TabIndex = 0;
             this.listViewSitesNotInGroup.UseCompatibleStateImageBehavior = false;
             this.listViewSitesNotInGroup.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSitesNotInGroup_MouseDoubleClick);
@@ -1932,19 +1936,21 @@ namespace OnlineVideos.MediaPortal1
             // label40
             // 
             this.label40.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label40.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label40.Location = new System.Drawing.Point(0, 0);
             this.label40.Name = "label40";
-            this.label40.Size = new System.Drawing.Size(339, 23);
+            this.label40.Size = new System.Drawing.Size(352, 23);
             this.label40.TabIndex = 1;
             this.label40.Text = "Not in Group (doubleclick to add)";
             this.label40.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // listViewSitesInGroup
             // 
+            this.listViewSitesInGroup.BackColor = System.Drawing.Color.AliceBlue;
             this.listViewSitesInGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listViewSitesInGroup.Location = new System.Drawing.Point(0, 23);
             this.listViewSitesInGroup.Name = "listViewSitesInGroup";
-            this.listViewSitesInGroup.Size = new System.Drawing.Size(361, 251);
+            this.listViewSitesInGroup.Size = new System.Drawing.Size(351, 261);
             this.listViewSitesInGroup.TabIndex = 0;
             this.listViewSitesInGroup.UseCompatibleStateImageBehavior = false;
             this.listViewSitesInGroup.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSitesInGroup_MouseDoubleClick);
@@ -1952,9 +1958,10 @@ namespace OnlineVideos.MediaPortal1
             // label41
             // 
             this.label41.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label41.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label41.Location = new System.Drawing.Point(0, 0);
             this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(361, 23);
+            this.label41.Size = new System.Drawing.Size(351, 23);
             this.label41.TabIndex = 1;
             this.label41.Text = "In Group (doubleclick to remove)";
             this.label41.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
