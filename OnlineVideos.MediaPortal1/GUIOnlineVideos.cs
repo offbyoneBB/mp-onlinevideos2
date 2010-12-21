@@ -657,29 +657,61 @@ namespace OnlineVideos.MediaPortal1
                 // reset the LoadParameterInfo
                 loadParamInfo = null;
 
+                string loadParam = null;
                 // check if running version of mediaportal supports loading with parameter and handle _loadParameter
                 System.Reflection.FieldInfo fi = typeof(GUIWindow).GetField("_loadParameter", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 if (fi != null)
                 {
-                    string loadParam = (string)fi.GetValue(this);
-
-                    if (!string.IsNullOrEmpty(loadParam))
+                    loadParam = (string)fi.GetValue(this);
+                }
+                // check for LoadParameters by GUIproperties if not yet set by the _loadParameter
+                if (string.IsNullOrEmpty(loadParam))
+                {
+                    List<string> paramsFromGuiProps = new List<string>();
+                    if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Site")))
                     {
-                        loadParamInfo = new LoadParameterInfo(loadParam);
+                        paramsFromGuiProps.Add("site:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Site"));
+                        GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Site", string.Empty);
+                    }
+                    if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Category")))
+                    {
+                        paramsFromGuiProps.Add("category:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Category"));
+                        GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Category", string.Empty);
+                    }
+                    if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Search")))
+                    {
+                        paramsFromGuiProps.Add("search:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Search"));
+                        GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Search", string.Empty);
+                    }
+                    if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.VKonfail")))
+                    {
+                        paramsFromGuiProps.Add("VKonfail:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.VKonfail"));
+                        GUIPropertyManager.SetProperty("#OnlineVideos.startparams.VKonfail", string.Empty);
+                    }
+                    if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Return")))
+                    {
+                        paramsFromGuiProps.Add("return:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Return"));
+                        GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Return", string.Empty);
+                    }
+                    if (paramsFromGuiProps.Count > 0) loadParam = string.Join("|", paramsFromGuiProps.ToArray());
+                }
 
-                        // set all state variables to reflect the state we were called with
-                        if (!string.IsNullOrEmpty(loadParamInfo.Site) && OnlineVideoSettings.Instance.SiteUtilsList.ContainsKey(loadParamInfo.Site))
-                        {
-                            SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[loadParamInfo.Site];
-                            CurrentState = State.categories;
-                            selectedCategory = null;
-                        }
-                        if (SelectedSite != null && SelectedSite.CanSearch && !string.IsNullOrEmpty(loadParamInfo.Search))
-                        {
-                            lastSearchQuery = loadParamInfo.Search;
-                            DisplayVideos_Search(loadParamInfo.Search);
-                            return;
-                        }
+                if (!string.IsNullOrEmpty(loadParam))
+                {
+                    loadParamInfo = new LoadParameterInfo(loadParam);
+
+                    // set all state variables to reflect the state we were called with
+                    if (!string.IsNullOrEmpty(loadParamInfo.Site) && OnlineVideoSettings.Instance.SiteUtilsList.ContainsKey(loadParamInfo.Site))
+                    {
+                        SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[loadParamInfo.Site];
+                        CurrentState = State.categories;
+                        selectedCategory = null;
+                    }
+                    if (SelectedSite != null && SelectedSite.CanSearch && !string.IsNullOrEmpty(loadParamInfo.Search))
+                    {
+                        lastSearchQuery = loadParamInfo.Search;
+                        DisplayVideos_Search(loadParamInfo.Search);
+                        return;
                     }
                 }
             }
