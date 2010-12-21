@@ -203,6 +203,10 @@
             // 
             // regexRichText
             // 
+            this.regexRichText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.regexRichText.HideSelection = false;
             this.regexRichText.Location = new System.Drawing.Point(5, 37);
             this.regexRichText.Name = "regexRichText";
             this.regexRichText.Size = new System.Drawing.Size(321, 75);

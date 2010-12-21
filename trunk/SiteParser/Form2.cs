@@ -127,7 +127,7 @@ namespace SiteParser
             int j = 0;
             do
             {
-                i = textData.IndexOf('<', j);
+                i = j != -1 ? textData.IndexOf('<', j) : -1;
                 if (i != -1)
                 {
                     if (i != j)
@@ -147,7 +147,7 @@ namespace SiteParser
                 }
             } while (i >= 0 && (i + 1) < textData.Length);
             if (i == -1)
-                append2(sb, textData.Substring(j, textData.Length - j));
+                append2(sb, j == -1 ? textData : textData.Substring(j, textData.Length - j));
             textBox.Rtf = sb.ToString();
         }
 
@@ -214,20 +214,22 @@ namespace SiteParser
                 insPos = 0;
                 regexRichText.SelectionLength = 0;
             }
-            regexRichTextString = regexRichTextString.Substring(0, insPos) + strToInsert +
-                regexRichTextString.Substring(insPos + regexRichText.SelectionLength);
+            regexRichText.SelectionStart = insPos;
+            regexRichText.SelectedText = strToInsert;
+            regexRichText.SelectionStart = insPos;
+            regexRichText.SelectionLength = strToInsert.Length;
+            regexRichText.SelectionColor = Color.Black;
             if (replaceWithLast)
             {
                 insPos += p;
-                regexRichTextString = regexRichTextString.Substring(0, insPos) + nextChar +
-                    regexRichTextString.Substring(insPos + 3);
-                FillPageData(regexRichTextString, regexRichText);
+                regexRichText.SelectionStart = insPos;
+                regexRichText.SelectionLength = 3;
+                regexRichText.SelectedText = nextChar;
                 regexRichText.SelectionStart = insPos;
                 regexRichText.SelectionLength = 0;
             }
             else
             {
-                FillPageData(regexRichTextString, regexRichText);
                 if (p >= 0)
                 {
                     regexRichText.SelectionStart = insPos + p;
@@ -239,6 +241,7 @@ namespace SiteParser
                     regexRichText.SelectionLength = 0;
                 }
             }
+
             regexRichText.Focus();
         }
 
@@ -269,48 +272,71 @@ namespace SiteParser
             treeView1.EndUpdate();
         }
 
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern bool LockWindowUpdate(IntPtr hWndLock);
+
         private void textToRegexButton_Click(object sender, EventArgs e)
         {
-            //string txt = Clipboard.GetText();
-            string txt = richTextBox1.SelectedText.Trim();
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < txt.Length; i++)
+            try
             {
-                switch (txt[i])
+                LockWindowUpdate(regexRichText.Handle);
+                regexRichText.SelectedRtf = richTextBox1.SelectedRtf;
+                for (int i = 0; i < regexRichText.Text.Length; i++)
                 {
-                    case '(':
-                    case ')':
-                    case '[':
-                    case '\\':
-                    case '^':
-                    case '$':
-                    case '.':
-                    case '|':
-                    case '?':
-                    case '*':
-                    case '+':
-                    case '#':
-                        sb.Append('\\'); sb.Append(txt[i]); break;
-                    case ' ':
-                    case '\t':
-                    case '\r':
-                    case '\n':
-                        {
-                            int j = i + 1;
-                            while (j < txt.Length && (txt[j] == ' ' || txt[j] == '\t' || txt[j] == '\r' || txt[j] == '\n'))
-                                j++;
-                            if (j - i > 1 || txt[i] == '\n') sb.Append(@"\s*");
-                            else
-                                sb.Append(@"\s");
-                            i = j - 1;
+                    switch (regexRichText.Text[i])
+                    {
+                        case '(':
+                        case ')':
+                        case '[':
+                        case '\\':
+                        case '^':
+                        case '$':
+                        case '.':
+                        case '|':
+                        case '?':
+                        case '*':
+                        case '+':
+                        case '#':
+                            regexRichText.SelectionStart = i;
+                            regexRichText.SelectionLength = 1;
+                            regexRichText.SelectedText = @"\" + regexRichText.Text[i];
+                            i += 2;
                             break;
-                        }
-                    default: sb.Append(txt[i]); break;
-                }
-            }
-            regexRichText.Text = regexRichText.Text.Substring(0, regexRichText.SelectionStart) + sb.ToString() +
-                regexRichText.Text.Substring(regexRichText.SelectionStart + regexRichText.SelectionLength);
+                        case ' ':
+                        case '\t':
+                        case '\r':
+                        case '\n':
+                            {
+                                int j = i + 1;
+                                string txt2 = regexRichText.Text;
+                                while (j < txt2.Length && (txt2[j] == ' ' || txt2[j] == '\t' || txt2[j] == '\r' || txt2[j] == '\n'))
+                                    j++;
+                                regexRichText.SelectionStart = i;
+                                regexRichText.SelectionLength = j - i;
+                                string newText;
+                                if (i == 0 || j >= txt2.Length)
+                                    newText = String.Empty;
+                                else
+                                    if (j - i > 1 || txt2[i] == '\n')
+                                        newText = @"\s*";
+                                    else
+                                        newText = @"\s";
 
+                                regexRichText.SelectedText = newText;
+                                regexRichText.SelectionStart = i;
+                                regexRichText.SelectionLength = newText.Length;
+                                regexRichText.SelectionColor = Color.Gray;
+                                i = j - 1;
+                                break;
+                            }
+                    }
+                }
+                regexRichText.SelectionLength = 0;
+            }
+            finally
+            {
+                LockWindowUpdate(IntPtr.Zero);
+            }
         }
 
         private void findTextBox_TextChanged(object sender, EventArgs e)
