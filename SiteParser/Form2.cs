@@ -326,7 +326,7 @@ namespace SiteParser
                                 regexRichText.SelectionStart = i;
                                 regexRichText.SelectionLength = newText.Length;
                                 regexRichText.SelectionColor = Color.Gray;
-                                i = j - 1;
+                                i = i + newText.Length;
                                 break;
                             }
                     }

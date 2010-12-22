@@ -472,6 +472,7 @@ namespace SiteParser
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GuiToUtil(generic);
+            generic.Settings.IsEnabled = true;
             generic.Settings.Categories.Clear();
             foreach (Category cat in staticList)
                 generic.Settings.Categories.Add(cat);
@@ -501,8 +502,11 @@ namespace SiteParser
             {
                 doc.WriteContentTo(ww);
             }
-            Clipboard.SetText(sb.ToString().Replace(@" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""", String.Empty
-                ).Replace(@" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""", String.Empty));// damn namespaces
+            string res = sb.ToString();
+            res = res.Replace(@" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""", String.Empty);
+            res = res.Replace(@" xmlns:xsd=""http://www.w3.org/2001/XMLSchema""", String.Empty);// damn namespaces
+            res = res.Replace("SiteSettings", "Site");
+            Clipboard.SetText(res);
 
         }
 
