@@ -13,6 +13,8 @@ namespace OnlineVideos.Sites
 {
     public class GenericSiteUtil : SiteUtilBase
     {
+        public enum HosterResolving { None, FromUrl, ByRequest };
+
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for dynamic categories. Group names: 'url', 'title', 'thumb', 'description'. Will not be used if not set.")]
         protected string dynamicCategoriesRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the dynamicCategoriesRegEx.")]
@@ -89,8 +91,8 @@ namespace OnlineVideos.Sites
         protected bool allowUnsafeHeaders;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'thumb' match retrieved from the videoThumbXml or 'ImageUrl' of the videoListRegEx.")]
         protected string videoThumbFormatString = "{0}";
-        [Category("OnlineVideosConfiguration"), Description("Enables checking if the video's url can be resolved via known hosters.")]
-        protected bool resolveHoster = false;
+        [Category("OnlineVideosConfiguration"), Description("Enables checking if the video's url or data from the url can be resolved via known hosters.")]
+        protected HosterResolving resolveHoster = HosterResolving.None;        
         [Category("OnlineVideosConfiguration"), Description("Post data which is send for getting the fileUrl for playback.")]
         protected string fileUrlPostString = String.Empty;
         [Category("OnlineVideosConfiguration"), Description("Enables getting the redirected url instead of the given url for playback.")]
@@ -378,7 +380,27 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            if (resolveHoster)
+            if (resolveHoster == HosterResolving.FromUrl && (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0))
+            {
+                Uri uri = new Uri(resultUrl);
+                foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
+                    if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                    {
+                        Dictionary<string, string> options = hosterUtil.getPlaybackOptions(resultUrl);
+                        if (options != null && options.Count > 0)
+                        {
+                            if (options.Count > 1) video.PlaybackOptions = options;
+                            resultUrl = options.Last().Value;
+                            break;
+                        }
+                        else
+                        {
+                            resultUrl = String.Empty;
+                            break;
+                        }
+                    }
+            }
+            else if (resolveHoster == HosterResolving.ByRequest)
             {
                 if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
                 {
@@ -399,7 +421,7 @@ namespace OnlineVideos.Sites
 
         private static string parseHosterLinks(string link, VideoInfo video)
         {
-            string webData = GetWebData(link);
+            string webData = GetWebData(link);// todo : previous version did NOT work on the result of the data behind the link, but on the link directly - > current breaks Youtube and Miro and all other sites with direct links to hosters
             Dictionary<string, string> options = new Dictionary<string, string>();
 
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
@@ -634,7 +656,7 @@ namespace OnlineVideos.Sites
 
         public override bool isPossibleVideo(string url)
         {
-            if (resolveHoster)
+            if (resolveHoster != HosterResolving.None)
             {
                 return HosterFactory.Contains(new Uri(url)) || base.isPossibleVideo(url);
             }
