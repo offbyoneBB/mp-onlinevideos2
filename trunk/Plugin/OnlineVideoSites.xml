@@ -301,7 +301,7 @@
     <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en">
       <Description>Miro combines and categorizes collections of video channels from thousands of sources.</Description>
       <Configuration>
-        <item key="resolveHoster"><![CDATA[True]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
         <item key="baseUrl"><![CDATA[https://www.miroguide.com/api/list_categories]]></item>        
         <item key="dynamicCategoriesRegEx"><![CDATA[\{'url'\:\su'(?<url>[^']+)',\s'name'\:\su'(?<title>[^']+)']]></item>
         <item key="dynamicSubCategoriesRegEx">
@@ -388,7 +388,7 @@
     <Site name="Live Video" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Broadcast yourself live, watch, connect and share videos with people all over the world.</Description>
       <Configuration>
-        <item key="resolveHoster"><![CDATA[True]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Featured Videos">http://rss.livevideo.com/rss/rss.ashx?v=Featured</Category>

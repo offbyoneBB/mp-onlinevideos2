@@ -53,11 +53,7 @@ namespace OnlineVideos
 
         public virtual string GetPlaybackOptionUrl(string url)
         {
-            string hosterUrl = GenericSiteUtil.GetVideoUrl(PlaybackOptions[url]);
-            if (!string.IsNullOrEmpty(hosterUrl))
-                return hosterUrl;
-            else
-                return PlaybackOptions[url];
+            return PlaybackOptions[url];
         }
 
         /// <summary>
