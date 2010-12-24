@@ -170,6 +170,9 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
+            if (url.Contains("googleplayer.swf"))
+                url = string.Format("http://video.google.de/videoplay?docid={0}", GetSubString(url, @"docid=", @"&"));
+
             string webData = SiteUtilBase.GetWebData(url);
             string result = HttpUtility.UrlDecode(GetSubString(webData, @"videoUrl\x3d", @"\x26"));
             if (!String.IsNullOrEmpty(result))

@@ -426,7 +426,7 @@ namespace OnlineVideos.Sites
 
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
             {
-                string regEx = @"(""|')(?<url>[^(""|')]+" + hosterUtil.getHosterUrl().ToLower() + "/" + @"[^(""|')]+)(""|')";
+                string regEx = @"(""|')(?<url>[^(""|')]+" + hosterUtil.getHosterUrl().ToLower() + @"[^(""|')]+)(""|')";
 
                 MatchCollection n = Regex.Matches(webData, regEx);
                 List<string> results = new List<string>();
@@ -438,13 +438,13 @@ namespace OnlineVideos.Sites
 
                 foreach (string url in results)
                 {
-                    if (Uri.IsWellFormedUriString(url, System.UriKind.Absolute))
+                    string decodedUrl = HttpUtility.HtmlDecode(url);
+                    if (Uri.IsWellFormedUriString(decodedUrl, System.UriKind.Absolute))
                     {
-                        Uri uri = new Uri(url);
+                        Uri uri = new Uri(decodedUrl);
                         if (!(uri.Host.Length == uri.AbsoluteUri.Length))
                         {
-                            string targetUrl = url;
-                            if (targetUrl.Contains("\\/")) targetUrl = targetUrl.Replace("\\/", "/");
+                            if (decodedUrl.Contains("\\/")) decodedUrl = decodedUrl.Replace("\\/", "/");
 
                             if (results.Count > 1)
                             {
@@ -455,10 +455,10 @@ namespace OnlineVideos.Sites
                                     i++;
                                     playbackName = hosterUtil.getHosterUrl() + " - " + i + "/" + results.Count;
                                 }
-                                options.Add(playbackName, targetUrl);
+                                options.Add(playbackName, decodedUrl);
                             }
                             else
-                                options.Add(hosterUtil.getHosterUrl(), targetUrl);
+                                options.Add(hosterUtil.getHosterUrl(), decodedUrl);
                         }
                     }
                 }
