@@ -24,6 +24,7 @@ namespace OnlineVideos.Sites
                     string url = HttpUtility.UrlDecode(m.Groups["url"].Value);
                     if (!Uri.IsWellFormedUriString(url, System.UriKind.Absolute)) url = new Uri(new Uri(baseUrl), url).AbsoluteUri;
                     data = GetWebData(url);
+                    data = data.Replace("<!-- live -->", "");
                     if (!string.IsNullOrEmpty(data))
                     {
                         XmlDocument doc = new XmlDocument();
@@ -57,12 +58,12 @@ namespace OnlineVideos.Sites
 
                             string host = rtmpeUrl.Substring(rtmpeUrl.IndexOf("//") + 2, rtmpeUrl.IndexOf("/", rtmpeUrl.IndexOf("//") + 2) - rtmpeUrl.IndexOf("//") - 2);
                             string tcUrl = "rtmpe://" + host + ":1935" + "/" + app;
-                            string playpath = rtmpeUrl.Substring(rtmpeUrl.IndexOf(app) + app.Length + 1);
+                            string playpath = rtmpeUrl.Substring(rtmpeUrl.IndexOf(app.Replace("_free", "")) + app.Replace("_free", "").Length + 1);
 
                             string combinedPlaypath = "";
                             if (playpath.Contains(".f4v"))
                                 combinedPlaypath = "mp4:" + playpath;
-                            else combinedPlaypath = playpath;
+                            else combinedPlaypath = playpath.Replace(".flv","");
 
                             combinedPlaypath += "?ivw=" + ivw;
                             combinedPlaypath += "&client=videoplayer&type=content&user=2880224004&session=2289727260&angebot=rtlnow&starttime=00:00:00:00&timetype=" + timetype;
@@ -75,9 +76,9 @@ namespace OnlineVideos.Sites
                                                 host, //host
                                                 tcUrl, //tcUrl
                                                 app, //app
-                                                baseUrl + "/includes/rtlnow_videoplayer09_2.swf@ts=20100902", //swfurl
-                                                "528902",
-                                                "b2e22eba4df6652e7debb934536d1d6ba981f26b51a01a5f5261b1cb1a713789",
+                                                baseUrl + "/includes/rtlnow_videoplayer09_2.swf", //swfurl
+                                                "800197",
+                                                "fbb8d89b02eb7712c308a673291e1bf4440167830d923d3c361cd282cce3a2ee",
                                                 video.VideoUrl, //pageUrl
                                                 HttpUtility.UrlEncode(combinedPlaypath), //playpath
                                                 "S:" + para2,
