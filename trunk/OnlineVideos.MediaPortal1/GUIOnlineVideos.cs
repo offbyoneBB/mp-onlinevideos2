@@ -1481,12 +1481,12 @@ namespace OnlineVideos.MediaPortal1
                 if (listItem.Item == selectedVideo) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
                 if (!string.IsNullOrEmpty(videoInfo.ImageUrl)) imageHash[videoInfo.ImageUrl] = true;
             }
-            // fall back to list view if there are no items with thumbs
+            // fall back to list view if there are no items with thumbs or more than one item and all have the same thumb
             suggestedView = null;
 #if MP11
-            if (imageHash.Count == 0 || (videos.Count > 1 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.ViewMode.List;
+            if ((GUI_facadeView.Count > 1 && imageHash.Count == 0) || (GUI_facadeView.Count > 2 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.ViewMode.List;
 #else
-            if (imageHash.Count == 0 || (videos.Count > 1 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.Layout.List;
+            if ((GUI_facadeView.Count > 1 && imageHash.Count == 0) || (GUI_facadeView.Count > 2 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.Layout.List;
 #endif
 
             if (SelectedSite.HasNextPage)
