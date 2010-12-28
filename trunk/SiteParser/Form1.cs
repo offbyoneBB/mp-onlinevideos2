@@ -26,6 +26,8 @@ namespace SiteParser
             generic.Settings.UtilName = "GenericSite";
             foreach (PlayerType pt in Enum.GetValues(typeof(PlayerType)))
                 playerComboBox.Items.Add(pt);
+            foreach (GenericSiteUtil.HosterResolving pt in Enum.GetValues(typeof(GenericSiteUtil.HosterResolving)))
+                comboBoxResolving.Items.Add(pt);
             playerComboBox.SelectedIndex = 0;
 
             UtilToGui(generic);
@@ -74,7 +76,7 @@ namespace SiteParser
             fileUrlFormatStringTextBox.Text = util.FileUrlFormatString;
             fileUrlPostStringTextBox.Text = util.FileUrlPostString;
             getRedirectedFileUrlCheckBox.Checked = util.GetRedirectedFileUrl;
-            resolveHosterCheckBox.Checked = util.ResolveHoster;
+            comboBoxResolving.SelectedItem = util.ResolveHoster;
 
             treeView1.Nodes.Clear();
             TreeNode root = treeView1.Nodes.Add("site");
@@ -124,7 +126,7 @@ namespace SiteParser
             util.FileUrlFormatString = fileUrlFormatStringTextBox.Text;
             util.FileUrlPostString = fileUrlPostStringTextBox.Text;
             util.GetRedirectedFileUrl = getRedirectedFileUrlCheckBox.Checked;
-            util.ResolveHoster = resolveHosterCheckBox.Checked;
+            util.ResolveHoster = (GenericSiteUtil.HosterResolving)comboBoxResolving.SelectedItem;
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -554,7 +556,7 @@ namespace SiteParser
         public string FileUrlFormatString { get { return fileUrlFormatString; } set { fileUrlFormatString = value; } }
         public string FileUrlPostString { get { return fileUrlPostString; } set { fileUrlPostString = value; } }
         public bool GetRedirectedFileUrl { get { return getRedirectedFileUrl; } set { getRedirectedFileUrl = value; } }
-        public bool ResolveHoster { get { return resolveHoster; } set { resolveHoster = value; } }
+        public HosterResolving ResolveHoster { get { return resolveHoster; } set { resolveHoster = value; } }
 
         #region Regex_String
         private Regex CreateRegex(string s)

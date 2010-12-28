@@ -79,7 +79,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.videoListRegexTextBox = new System.Windows.Forms.TextBox();
             this.VideoUrlTabPage = new System.Windows.Forms.TabPage();
-            this.resolveHosterCheckBox = new System.Windows.Forms.CheckBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.comboBoxResolving = new System.Windows.Forms.ComboBox();
             this.fileUrlPostStringTextBox = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.getRedirectedFileUrlCheckBox = new System.Windows.Forms.CheckBox();
@@ -323,7 +324,7 @@
             this.dynamicCategoryUrlDecodingCheckBox.AutoSize = true;
             this.dynamicCategoryUrlDecodingCheckBox.Location = new System.Drawing.Point(3, 173);
             this.dynamicCategoryUrlDecodingCheckBox.Name = "dynamicCategoryUrlDecodingCheckBox";
-            this.dynamicCategoryUrlDecodingCheckBox.Size = new System.Drawing.Size(166, 17);
+            this.dynamicCategoryUrlDecodingCheckBox.Size = new System.Drawing.Size(168, 17);
             this.dynamicCategoryUrlDecodingCheckBox.TabIndex = 27;
             this.dynamicCategoryUrlDecodingCheckBox.Text = "DynamicCategoryUrlDecoding";
             this.dynamicCategoryUrlDecodingCheckBox.UseVisualStyleBackColor = true;
@@ -342,7 +343,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(0, 131);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(133, 13);
+            this.label3.Size = new System.Drawing.Size(135, 13);
             this.label3.TabIndex = 25;
             this.label3.Text = "DynamicCategoryUrlFormat";
             // 
@@ -418,7 +419,7 @@
             this.dynamicSubCategoryUrlDecodingCheckBox.AutoSize = true;
             this.dynamicSubCategoryUrlDecodingCheckBox.Location = new System.Drawing.Point(3, 173);
             this.dynamicSubCategoryUrlDecodingCheckBox.Name = "dynamicSubCategoryUrlDecodingCheckBox";
-            this.dynamicSubCategoryUrlDecodingCheckBox.Size = new System.Drawing.Size(185, 17);
+            this.dynamicSubCategoryUrlDecodingCheckBox.Size = new System.Drawing.Size(187, 17);
             this.dynamicSubCategoryUrlDecodingCheckBox.TabIndex = 32;
             this.dynamicSubCategoryUrlDecodingCheckBox.Text = "DynamicSubCategoryUrlDecoding";
             this.dynamicSubCategoryUrlDecodingCheckBox.UseVisualStyleBackColor = true;
@@ -437,7 +438,7 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(0, 131);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(152, 13);
+            this.label4.Size = new System.Drawing.Size(154, 13);
             this.label4.TabIndex = 30;
             this.label4.Text = "DynamicSubCategoryUrlFormat";
             // 
@@ -501,7 +502,7 @@
             this.videoListUrlDecodingCheckBox.AutoSize = true;
             this.videoListUrlDecodingCheckBox.Location = new System.Drawing.Point(4, 128);
             this.videoListUrlDecodingCheckBox.Name = "videoListUrlDecodingCheckBox";
-            this.videoListUrlDecodingCheckBox.Size = new System.Drawing.Size(127, 17);
+            this.videoListUrlDecodingCheckBox.Size = new System.Drawing.Size(128, 17);
             this.videoListUrlDecodingCheckBox.TabIndex = 55;
             this.videoListUrlDecodingCheckBox.Text = "VideoListUrlDecoding";
             this.videoListUrlDecodingCheckBox.UseVisualStyleBackColor = true;
@@ -540,7 +541,7 @@
             this.nextPageRegExUrlDecodingCheckBox.AutoSize = true;
             this.nextPageRegExUrlDecodingCheckBox.Location = new System.Drawing.Point(4, 312);
             this.nextPageRegExUrlDecodingCheckBox.Name = "nextPageRegExUrlDecodingCheckBox";
-            this.nextPageRegExUrlDecodingCheckBox.Size = new System.Drawing.Size(162, 17);
+            this.nextPageRegExUrlDecodingCheckBox.Size = new System.Drawing.Size(164, 17);
             this.nextPageRegExUrlDecodingCheckBox.TabIndex = 44;
             this.nextPageRegExUrlDecodingCheckBox.Text = "NextPageRegExUrlDecoding";
             this.nextPageRegExUrlDecodingCheckBox.UseVisualStyleBackColor = true;
@@ -568,7 +569,7 @@
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(1, 270);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(156, 13);
+            this.label10.Size = new System.Drawing.Size(158, 13);
             this.label10.TabIndex = 41;
             this.label10.Text = "NextPageRegExUrlFormatString";
             // 
@@ -577,7 +578,7 @@
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(1, 231);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(84, 13);
+            this.label9.Size = new System.Drawing.Size(86, 13);
             this.label9.TabIndex = 40;
             this.label9.Text = "NextPageRegEx";
             // 
@@ -595,7 +596,7 @@
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(1, 163);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(125, 13);
+            this.label8.Size = new System.Drawing.Size(126, 13);
             this.label8.TabIndex = 38;
             this.label8.Text = "VideoThumbFormatString";
             // 
@@ -648,7 +649,8 @@
             // 
             // VideoUrlTabPage
             // 
-            this.VideoUrlTabPage.Controls.Add(this.resolveHosterCheckBox);
+            this.VideoUrlTabPage.Controls.Add(this.label11);
+            this.VideoUrlTabPage.Controls.Add(this.comboBoxResolving);
             this.VideoUrlTabPage.Controls.Add(this.fileUrlPostStringTextBox);
             this.VideoUrlTabPage.Controls.Add(this.label18);
             this.VideoUrlTabPage.Controls.Add(this.getRedirectedFileUrlCheckBox);
@@ -686,15 +688,23 @@
             this.VideoUrlTabPage.Text = "VideoUrl";
             this.VideoUrlTabPage.UseVisualStyleBackColor = true;
             // 
-            // resolveHosterCheckBox
+            // label11
             // 
-            this.resolveHosterCheckBox.AutoSize = true;
-            this.resolveHosterCheckBox.Location = new System.Drawing.Point(298, 331);
-            this.resolveHosterCheckBox.Name = "resolveHosterCheckBox";
-            this.resolveHosterCheckBox.Size = new System.Drawing.Size(96, 17);
-            this.resolveHosterCheckBox.TabIndex = 83;
-            this.resolveHosterCheckBox.Text = "ResolveHoster";
-            this.resolveHosterCheckBox.UseVisualStyleBackColor = true;
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(300, 332);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(77, 13);
+            this.label11.TabIndex = 85;
+            this.label11.Text = "ResolveHoster";
+            // 
+            // comboBoxResolving
+            // 
+            this.comboBoxResolving.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxResolving.FormattingEnabled = true;
+            this.comboBoxResolving.Location = new System.Drawing.Point(383, 329);
+            this.comboBoxResolving.Name = "comboBoxResolving";
+            this.comboBoxResolving.Size = new System.Drawing.Size(58, 21);
+            this.comboBoxResolving.TabIndex = 84;
             // 
             // fileUrlPostStringTextBox
             // 
@@ -710,7 +720,7 @@
             this.label18.AutoSize = true;
             this.label18.Location = new System.Drawing.Point(0, 353);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(81, 13);
+            this.label18.Size = new System.Drawing.Size(84, 13);
             this.label18.TabIndex = 81;
             this.label18.Text = "FileUrlPostString";
             // 
@@ -878,7 +888,7 @@
             this.label19.AutoSize = true;
             this.label19.Location = new System.Drawing.Point(0, 425);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(92, 13);
+            this.label19.Size = new System.Drawing.Size(95, 13);
             this.label19.TabIndex = 65;
             this.label19.Text = "FileUrlFormatString";
             // 
@@ -887,7 +897,7 @@
             this.label20.AutoSize = true;
             this.label20.Location = new System.Drawing.Point(0, 386);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(65, 13);
+            this.label20.Size = new System.Drawing.Size(68, 13);
             this.label20.TabIndex = 64;
             this.label20.Text = "FileUrlRegEx";
             // 
@@ -924,7 +934,7 @@
             this.label16.AutoSize = true;
             this.label16.Location = new System.Drawing.Point(-3, 247);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(110, 13);
+            this.label16.Size = new System.Drawing.Size(111, 13);
             this.label16.TabIndex = 59;
             this.label16.Text = "PlaylistUrlFormatString";
             // 
@@ -942,7 +952,7 @@
             this.videoUrlDecodingCheckBox.AutoSize = true;
             this.videoUrlDecodingCheckBox.Location = new System.Drawing.Point(0, 115);
             this.videoUrlDecodingCheckBox.Name = "videoUrlDecodingCheckBox";
-            this.videoUrlDecodingCheckBox.Size = new System.Drawing.Size(111, 17);
+            this.videoUrlDecodingCheckBox.Size = new System.Drawing.Size(112, 17);
             this.videoUrlDecodingCheckBox.TabIndex = 57;
             this.videoUrlDecodingCheckBox.Text = "VideoUrlDecoding";
             this.videoUrlDecodingCheckBox.UseVisualStyleBackColor = true;
@@ -1270,7 +1280,8 @@
         private System.Windows.Forms.TextBox nameTextBox;
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.CheckBox resolveHosterCheckBox;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ComboBox comboBoxResolving;
     }
 }
 
