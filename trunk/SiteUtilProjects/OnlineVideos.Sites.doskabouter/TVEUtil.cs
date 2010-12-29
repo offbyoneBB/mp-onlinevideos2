@@ -67,19 +67,43 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            // copy from http://code.google.com/p/xbmc-tvalacarta/source/browse/trunk/tvalacarta/tvalacarta/channels/rtve.py
             string videoId = Path.ChangeExtension(Path.GetFileName(video.VideoUrl), String.Empty).TrimEnd('.');
             StringBuilder sb = new StringBuilder();
-            sb.Append(baseUrl);
-            sb.Append(@"/swf/data/es/videos/alacarta/");
-            for (int i = 0, j=videoId.Length-1; i < 4; i++,j--)
+            for (int i = 0, j = videoId.Length - 1; i < 4; i++, j--)
             {
                 sb.Append(videoId[j]);
                 sb.Append('/');
             }
             sb.Append(videoId);
             sb.Append(".xml");
-            string webData = GetWebData(sb.ToString());
-            return GetSubString(webData, @"<file>", @"</file>");
+            string webData = GetWebData(baseUrl + @"/swf/data/es/videos/alacarta/" + sb.ToString());
+            string res = GetSubString(webData, @"<file>", @"</file>");
+            if (!String.IsNullOrEmpty(res))
+                return res;
+
+            webData = GetWebData(baseUrl + @"/swf/data/es/videos/video/" + sb.ToString());
+            res = GetSubString(webData, @"<file>", @"</file>");
+            if (!String.IsNullOrEmpty(res))
+                return res;
+            string assetID = GetSubString(webData, @"assetDataId::", @"""");
+
+            sb = new StringBuilder();
+            sb.Append(baseUrl);
+            sb.Append(@"/scd/CONTENTS/ASSET_DATA_VIDEO/");
+            for (int i = 0, j = assetID.Length - 1; i < 4; i++, j--)
+            {
+                sb.Append(assetID[j]);
+                sb.Append('/');
+            }
+            sb.Append(@"ASSET_DATA_VIDEO-");
+            sb.Append(assetID);
+            sb.Append(".xml");
+            webData = GetWebData(sb.ToString());
+            Match m = Regex.Match(webData, @"<key>ASD_FILE</key>\s*<value>(?<url>[^<]*)<");
+            if (m.Success)
+                res = baseUrl + @"/resources/TE_NGVA" + m.Groups["url"].Value.Substring(@"/deliverty/demo/resources".Length);
+            return res;
         }
 
 
