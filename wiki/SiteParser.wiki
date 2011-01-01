@@ -79,6 +79,6 @@ Right-click on that button will give more options, like "copy to clipboard" and 
  # click "GetVideoUrl", click "GetPlaylistUrl" and click "Create Regex" next to "GetFileUrl"
  # create the regex
  # choose the URL under "ResultUrl" and hit the play-button to verify
- # click "Copy" in the main menu, open onlinevideosites.xml in your favourite texteditor, and paste the configuration in it. Then remove the categories (lines starting with <Category xsi:type="RssLink") that are to be dynamically discovered.
+ # click "Copy" in the main menu, open onlinevideosites.xml (located in either the c:\programdata\team mediaportal\mediaportal, or c:\program files\team mediaportal\mediaportal) in your favourite texteditor, and paste the configuration in it. Then remove the categories (lines starting with <Category xsi:type="RssLink") that are to be dynamically discovered.
  # Save the file, and enjoy your new creation!
  # After the final approvement, you can publish the site through the onlinevideos configuration
