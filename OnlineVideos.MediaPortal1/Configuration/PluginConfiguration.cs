@@ -35,6 +35,7 @@ namespace OnlineVideos.MediaPortal1
         public SearchHistoryType searchHistoryType = SearchHistoryType.Simple;
         public int searchHistoryNum = 9;
         public BindingList<SitesGroup> SitesGroups = new BindingList<SitesGroup>();
+        public bool useRtmpProxy = true;
 
         // runtime (inside MediaPortal) changeable values
         public Dictionary<string, List<string>> searchHistory;
@@ -78,6 +79,7 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_SEARCHHISTORY_NUM = "searchHistoryNum";
         const string CFG_SEARCHHISTORY = "searchHistory";
         const string CFG_SEARCHHISTORYTYPE = "searchHistoryType";
+        const string CFG_USE_RTMP_PROXY = "useRtmpProxy";
         #endregion
 
         #region Singleton
@@ -105,6 +107,7 @@ namespace OnlineVideos.MediaPortal1
                 OnlineVideos.OnlineVideoSettings.Instance.UtilTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, OnlineVideos.OnlineVideoSettings.Instance.UtilTimeout);
                 wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                 playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
+                useRtmpProxy = settings.GetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
             }
         }
 
@@ -170,6 +173,7 @@ namespace OnlineVideos.MediaPortal1
                     useQuickSelect = settings.GetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
                     wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                     playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
+                    useRtmpProxy = settings.GetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
                     email = settings.GetValueAsString(CFG_SECTION, CFG_EMAIL, "");
                     password = settings.GetValueAsString(CFG_SECTION, CFG_PASSWORD, "");
                     string lsFilter = settings.GetValueAsString(CFG_SECTION, CFG_FILTER, "").Trim();
@@ -279,6 +283,7 @@ namespace OnlineVideos.MediaPortal1
                         else settings.SetValue(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORY_NUM, searchHistoryNum);
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORYTYPE, (int)searchHistoryType);
+                        settings.SetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
                         SaveSitesGroups();
 
                         ovsconf.SaveSites();
