@@ -349,7 +349,18 @@ namespace OnlineVideos.MediaPortal1.Player
                 int result = graphBuilder.FindFilterByName(PluginConfiguration.Instance.httpSourceFilterName, out sourceFilter);
                 if (result != 0) return false;
 
-                result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
+                string urlToLoad = CurrentFile;
+                if (!PluginConfiguration.Instance.useRtmpProxy)
+                {
+                    string proxyIndicator = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, "rtmp://");
+                    if (CurrentFile.StartsWith(proxyIndicator))
+                    {
+                        urlToLoad = Uri.UnescapeDataString("rtmp://" + CurrentFile.Replace(proxyIndicator, ""));
+                    }
+                }
+
+                result = ((IFileSourceFilter)sourceFilter).Load(urlToLoad, null);
+
                 if (result != 0) return false;
 
                 if (sourceFilter is IAMOpenProgress && !CurrentFile.Contains("live=true"))
