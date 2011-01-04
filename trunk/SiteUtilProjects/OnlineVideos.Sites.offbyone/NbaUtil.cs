@@ -185,14 +185,14 @@ namespace OnlineVideos.Sites
         {
             currentPage++;
             int start = ((currentPage - 1) * itemsPerPage) + 1;
-            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + start.ToString() + "&npp=" + itemsPerPage + "&" + sectionBaseUrl + "&season=0910&sort=recent");
+            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + start.ToString() + "&npp=" + itemsPerPage + "&" + sectionBaseUrl + "&season=1011&sort=recent");
         }
 
         public override List<VideoInfo> getPreviousPageVideos()
         {
             currentPage--;
             int start = ((currentPage - 1) * itemsPerPage) + 1;
-            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + start.ToString() + "&npp=" + itemsPerPage + "&" + sectionBaseUrl + "&season=0910&sort=recent");
+            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + start.ToString() + "&npp=" + itemsPerPage + "&" + sectionBaseUrl + "&season=1011&sort=recent");
         }
 
         #endregion
