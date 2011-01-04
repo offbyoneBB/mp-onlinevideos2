@@ -158,11 +158,11 @@ namespace OnlineVideos.MediaPortal1
         OnlineVideos.MediaPortal1.Player.PlayerFactory BufferingPlayerFactory
         {
             get { return _bufferingPlayerFactory; }
-            set 
-            { 
+            set
+            {
                 _bufferingPlayerFactory = value;
                 GUIPropertyManager.SetProperty("#OnlineVideos.buffered", "0");
-                GUIPropertyManager.SetProperty("#OnlineVideos.IsBuffering", (value != null).ToString()); 
+                GUIPropertyManager.SetProperty("#OnlineVideos.IsBuffering", (value != null).ToString());
             }
         }
         #endregion
@@ -177,7 +177,7 @@ namespace OnlineVideos.MediaPortal1
         int selectedClipIndex = 0;  // used to remember the position the last selected Trailer
 
         VideosMode currentVideosDisplayMode = VideosMode.Category;
-        
+
         List<VideoInfo> currentVideoList = new List<VideoInfo>();
         List<VideoInfo> currentTrailerList = new List<VideoInfo>();
         List<Player.PlayListItem> currentPlaylist = null;
@@ -283,7 +283,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     dlgSel.Add(Translation.AddToFavourites);
                     dialogOptions.Add("AddToFav");
-                }                
+                }
             }
             else
             {
@@ -302,9 +302,9 @@ namespace OnlineVideos.MediaPortal1
             }
             VideoInfo loSelectedVideo = CurrentState == State.videos ? currentVideoList[liSelected] : currentTrailerList[liSelected];
             List<string> siteSpecificEntries = SelectedSite.GetContextMenuEntries(selectedCategory, loSelectedVideo);
-            if (siteSpecificEntries != null) foreach (string entry in siteSpecificEntries) {dlgSel.Add(entry); dialogOptions.Add(entry);}
+            if (siteSpecificEntries != null) foreach (string entry in siteSpecificEntries) { dlgSel.Add(entry); dialogOptions.Add(entry); }
             dlgSel.DoModal(GUIWindowManager.ActiveWindow);
-            if (dlgSel.SelectedId == -1) return;            
+            if (dlgSel.SelectedId == -1) return;
             switch (dialogOptions[dlgSel.SelectedId - 1])
             {
                 case "PlayAll":
@@ -312,8 +312,8 @@ namespace OnlineVideos.MediaPortal1
                     break;
                 case "AddToFav":
                     string suggestedTitle = SelectedSite.GetFileNameForDownload(loSelectedVideo, selectedCategory, null);
-                    FavoritesDatabase.Instance.addFavoriteVideo(loSelectedVideo, suggestedTitle, SelectedSite.Settings.Name);                    
-                    break;                
+                    FavoritesDatabase.Instance.addFavoriteVideo(loSelectedVideo, suggestedTitle, SelectedSite.Settings.Name);
+                    break;
                 case "RemoveFromFav":
                     FavoritesDatabase.Instance.removeFavoriteVideo(loSelectedVideo);
                     DisplayVideos_Category(selectedCategory, true); // retrieve videos again and show the updated list
@@ -366,7 +366,7 @@ namespace OnlineVideos.MediaPortal1
                         ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).StopBuffering();
                         Gui2UtilConnector.Instance.StopBackgroundTask();
                         return;
-                    }   
+                    }
                     if (Gui2UtilConnector.Instance.IsBusy) return; // wait for any background action e.g. dynamic category discovery to finish
                     if (CurrentState != State.groups)
                     {
@@ -384,7 +384,7 @@ namespace OnlineVideos.MediaPortal1
                         // search items (starting from current selected) by title and select first found one
                         char pressedChar = (char)action.m_key.KeyChar;
                         if (char.IsDigit(pressedChar) || (pressedChar == '\b' && !currentFilter.IsEmpty()))
-                        {                            
+                        {
                             currentFilter.Add(pressedChar);
                             switch (CurrentState)
                             {
@@ -603,7 +603,7 @@ namespace OnlineVideos.MediaPortal1
             else if (control == GUI_btnSearch)
             {
                 DisplayVideos_Search();
-            }            
+            }
             else if (control == GUI_btnEnterPin)
             {
                 string pin = String.Empty;
@@ -727,7 +727,7 @@ namespace OnlineVideos.MediaPortal1
                     DisplayDetails();
                     if (selectedClipIndex < GUI_infoList.Count) GUI_infoList.SelectedListItemIndex = selectedClipIndex;
                     break;
-            }            
+            }
         }
 
         private void DoFirstLoad_Step1()
@@ -817,7 +817,7 @@ namespace OnlineVideos.MediaPortal1
                 }) { Name = "OnlineVideosThumbnail", IsBackground = true }.Start();
                 return;
             }
-            
+
             DoPageLoad();
         }
 
@@ -855,7 +855,7 @@ namespace OnlineVideos.MediaPortal1
         {
             SelectedSite = null;
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
-            foreach(SitesGroup sitesGroup in PluginConfiguration.Instance.SitesGroups)
+            foreach (SitesGroup sitesGroup in PluginConfiguration.Instance.SitesGroups)
             {
                 if (sitesGroup.Sites != null && sitesGroup.Sites.Count > 0)
                 {
@@ -879,8 +879,8 @@ namespace OnlineVideos.MediaPortal1
 
             // add the item for all ungrouped sites if there are any
             HashSet<string> groupedSites = new HashSet<string>();
-            foreach(SitesGroup sg in PluginConfiguration.Instance.SitesGroups)
-                foreach(string site in sg.Sites)
+            foreach (SitesGroup sg in PluginConfiguration.Instance.SitesGroups)
+                foreach (string site in sg.Sites)
                     if (!groupedSites.Contains(site)) groupedSites.Add(site);
             SitesGroup othersGroup = new SitesGroup() { Name = Translation.Others };
             foreach (string site in OnlineVideoSettings.Instance.SiteUtilsList.Keys) if (!groupedSites.Contains(site)) othersGroup.Sites.Add(site);
@@ -1028,7 +1028,7 @@ namespace OnlineVideos.MediaPortal1
                 }
                 else
                 {
-                    SetCategoriesToFacade(parentCategory, SelectedSite.Settings.Categories, diveDownOrUpIfSingle);                    
+                    SetCategoriesToFacade(parentCategory, SelectedSite.Settings.Categories, diveDownOrUpIfSingle);
                 }
             }
             else
@@ -1094,7 +1094,7 @@ namespace OnlineVideos.MediaPortal1
             currentFilter.StartMatching();
             if (categories != null)
             {
-                foreach (Category loCat  in categories)
+                foreach (Category loCat in categories)
                 {
                     if (currentFilter.Matches(loCat.Name))
                     {
@@ -1222,7 +1222,7 @@ namespace OnlineVideos.MediaPortal1
             },
             Translation.GettingCategoryVideos, true);
         }
-        
+
         private void DisplayVideos_Search(string query = null)
         {
             bool directSearch = !string.IsNullOrEmpty(query);
@@ -1477,7 +1477,7 @@ namespace OnlineVideos.MediaPortal1
                 listItem.IconImageBig = "defaultVideoBig.png";
                 listItem.OnItemSelected += OnVideoItemSelected;
                 GUI_facadeView.Add(listItem);
-                
+
                 if (listItem.Item == selectedVideo) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
                 if (!string.IsNullOrEmpty(videoInfo.ImageUrl)) imageHash[videoInfo.ImageUrl] = true;
             }
@@ -1545,8 +1545,8 @@ namespace OnlineVideos.MediaPortal1
             else if (CurrentState == State.videos)
             {
                 // if plugin was called with loadParameter set to the current site with searchstring and return locked and currently displaying the searchresults or videos for the category from loadParam -> go to previous window 
-                if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Site == selectedSite.Settings.Name && 
-                    (currentVideosDisplayMode == VideosMode.Search || 
+                if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Site == selectedSite.Settings.Name &&
+                    (currentVideosDisplayMode == VideosMode.Search ||
                     (currentVideosDisplayMode == VideosMode.Category && selectedCategory != null && loadParamInfo.Category == selectedCategory.Name))
                    )
                     OnPreviousWindow();
@@ -1603,6 +1603,34 @@ namespace OnlineVideos.MediaPortal1
         void OnDetailsVideoItemSelected(GUIListItem item, GUIControl parent)
         {
             SetGuiProperties_ExtendedVideoInfo((item as OnlineVideosGuiListItem).Item as VideoInfo);
+        }
+
+        private bool UrlOk(string url)
+        {
+            return Uri.IsWellFormedUriString(url, UriKind.Absolute) ||
+                Uri.IsWellFormedUriString(Uri.EscapeUriString(url), UriKind.Absolute) ||
+                System.IO.Path.IsPathRooted(url);
+        }
+
+        private void removeInvalidEntries(List<string> loUrlList)
+        {
+            // remove all invalid entries from the list of playback urls
+            if (loUrlList != null)
+            {
+                int i = 0;
+                while (i < loUrlList.Count)
+                {
+                    if (String.IsNullOrEmpty(loUrlList[i]) || !UrlOk(loUrlList[i]))
+                    {
+                        Log.Instance.Debug("removed invalid url {0}", loUrlList[i]);
+                        loUrlList.RemoveAt(i);
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+            }
         }
 
         private bool GetUserInputString(ref string sString, bool password)
@@ -1667,23 +1695,9 @@ namespace OnlineVideos.MediaPortal1
         }
 
         private void Play_Step2(PlayListItem playItem, List<String> loUrlList, bool goFullScreen)
-        {            
-            // remove all invalid entries from the list of playback urls
-            if (loUrlList != null)
-            {
-                int i = 0;
-                while (i < loUrlList.Count)
-                {
-                    if (String.IsNullOrEmpty(loUrlList[i]) || !(Uri.IsWellFormedUriString(loUrlList[i], UriKind.Absolute) || System.IO.Path.IsPathRooted(loUrlList[i])))
-                    {
-                        loUrlList.RemoveAt(i);
-                    }
-                    else
-                    {
-                        i++;
-                    }
-                }
-            }
+        {
+            removeInvalidEntries(loUrlList);
+
             // if no valid urls were returned show error msg
             if (loUrlList == null || loUrlList.Count == 0)
             {
@@ -1750,9 +1764,8 @@ namespace OnlineVideos.MediaPortal1
         void Play_Step3(PlayListItem playItem, string lsUrl, bool goFullScreen)
         {
             // check for valid url and cutoff additional parameter
-            if (String.IsNullOrEmpty(lsUrl) || 
-                !(Uri.IsWellFormedUriString((lsUrl.IndexOf("&&&&") > 0) ? lsUrl.Substring(0, lsUrl.IndexOf("&&&&")) : lsUrl, UriKind.Absolute)
-                || System.IO.Path.IsPathRooted((lsUrl.IndexOf("&&&&") > 0) ? lsUrl.Substring(0, lsUrl.IndexOf("&&&&")) : lsUrl)))
+            if (String.IsNullOrEmpty(lsUrl) ||
+                !UrlOk((lsUrl.IndexOf("&&&&") > 0) ? lsUrl.Substring(0, lsUrl.IndexOf("&&&&")) : lsUrl))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
@@ -1808,7 +1821,7 @@ namespace OnlineVideos.MediaPortal1
                                 Log.Instance.Info("Prebuffering failed.");
                                 return null;
                             }
-                        }                        
+                        }
                         finally
                         {
                             BufferingPlayerFactory = null;
@@ -1819,7 +1832,7 @@ namespace OnlineVideos.MediaPortal1
                         if (success)
                         {
                             if (result != null)
-                            {                                
+                            {
                                 IPlayerFactory savedFactory = g_Player.Factory;
                                 g_Player.Factory = result as Player.PlayerFactory;
                                 playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
@@ -1940,22 +1953,8 @@ namespace OnlineVideos.MediaPortal1
 
         private void SaveVideo_Step2(VideoInfo video, List<String> loUrlList)
         {
-            // remove all invalid entries from the list of playback urls
-            if (loUrlList != null)
-            {
-                int i = 0;
-                while (i < loUrlList.Count)
-                {
-                    if (String.IsNullOrEmpty(loUrlList[i]) || !(Uri.IsWellFormedUriString(loUrlList[i], UriKind.Absolute) || System.IO.Path.IsPathRooted(loUrlList[i])))
-                    {
-                        loUrlList.RemoveAt(i);
-                    }
-                    else
-                    {
-                        i++;
-                    }
-                }
-            }            
+            removeInvalidEntries(loUrlList);
+
             // if no valid urls were returned show error msg
             if (loUrlList == null || loUrlList.Count == 0)
             {
@@ -1994,7 +1993,7 @@ namespace OnlineVideos.MediaPortal1
         {
             // check for valid url and cutoff additional parameter
             if (String.IsNullOrEmpty(url) ||
-                !(Uri.IsWellFormedUriString((url.IndexOf("&&&&") > 0) ? url.Substring(0, url.IndexOf("&&&&")) : url, UriKind.Absolute)))
+                !UrlOk((url.IndexOf("&&&&") > 0) ? url.Substring(0, url.IndexOf("&&&&")) : url))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
@@ -2161,7 +2160,7 @@ namespace OnlineVideos.MediaPortal1
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     ShowOrderButtons();
-                    HideSearchButtons();                    
+                    HideSearchButtons();
                     if (OnlineVideoSettings.Instance.UseAgeConfirmation && !OnlineVideoSettings.Instance.AgeConfirmed)
                         ShowAndEnable(GUI_btnEnterPin.GetID);
                     else
@@ -2177,7 +2176,7 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
-                    if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();                    
+                    if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetGuiProperties_SelectedVideo(null);
                     currentView = suggestedView != null ? suggestedView.Value : PluginConfiguration.Instance.currentCategoryView;
@@ -2199,7 +2198,7 @@ namespace OnlineVideos.MediaPortal1
                     ShowAndEnable(GUI_facadeView.GetID);
                     if (SelectedSite is IFilter) ShowFilterButtons(); else HideFilterButtons();
                     if (SelectedSite.CanSearch) ShowSearchButtons(); else HideSearchButtons();
-                    if (SelectedSite.HasFilterCategories) ShowCategoryButton();                    
+                    if (SelectedSite.HasFilterCategories) ShowCategoryButton();
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetGuiProperties_SelectedVideo(selectedVideo);
                     currentView = suggestedView != null ? suggestedView.Value : PluginConfiguration.Instance.currentVideoView;
@@ -2211,7 +2210,7 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#header.image", GetImageForSite(SelectedSite.Settings.Name, SelectedSite.Settings.UtilName));
                     HideAndDisable(GUI_facadeView.GetID);
                     HideFilterButtons();
-                    HideSearchButtons();                    
+                    HideSearchButtons();
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     SetGuiProperties_SelectedVideo(null);
                     SetGuiProperties_ExtendedVideoInfo(null);
@@ -2482,7 +2481,7 @@ namespace OnlineVideos.MediaPortal1
                     var enumer = video.PlaybackOptions.GetEnumerator();
                     while (enumer.MoveNext())
                     {
-                        string compareTo = enumer.Current.Value.ToLower().StartsWith("rtmp") ? 
+                        string compareTo = enumer.Current.Value.ToLower().StartsWith("rtmp") ?
                             ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(enumer.Current.Value)))
                             : enumer.Current.Value;
                         if (compareTo == g_Player.CurrentFile)
@@ -2517,8 +2516,8 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#OnlineVideos.length", Translation.None);
                 }
                 else
-                {                                        
-                    GUIPropertyManager.SetProperty("#OnlineVideos.length", VideoInfo.GetDuration(foVideo.Length));                    
+                {
+                    GUIPropertyManager.SetProperty("#OnlineVideos.length", VideoInfo.GetDuration(foVideo.Length));
                 }
                 if (String.IsNullOrEmpty(foVideo.Description))
                 {
@@ -2568,7 +2567,7 @@ namespace OnlineVideos.MediaPortal1
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public void SetExtendedGuiProperty(string key, string value) 
+        public void SetExtendedGuiProperty(string key, string value)
         {
             extendedProperties.Add(key);
             GUIPropertyManager.SetProperty(key, value);
@@ -2584,7 +2583,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 return;
             }
-            
+
             string[] keys = extendedProperties.Where(s => s.StartsWith(prefix)).ToArray();
             for (int i = 0; i < keys.Length; i++)
             {
