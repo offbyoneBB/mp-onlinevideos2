@@ -208,9 +208,13 @@ namespace RTMP_LIB
 
         public bool ReconnectStream()
         {
-            DeleteStream();
-            SendCreateStream();
-            return ConnectStream();
+            if (IsConnected())
+            {
+                DeleteStream();
+                SendCreateStream();
+                return ConnectStream();
+            }
+            return false;
         }
 
         public bool ToggleStream()

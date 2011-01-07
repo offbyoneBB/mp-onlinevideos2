@@ -90,10 +90,14 @@ namespace RTMP_LIB
                     link.app = url.PathAndQuery.Substring(1, slash3Index - 1).Trim('/');
                     parsePlayPathFrom = url.PathAndQuery.Substring(slash3Index);
                 }
-		        else if(slash2Index >= 0) 
+                else if (slash2Index >= 0)
                 {
                     link.app = url.PathAndQuery.Substring(1, slash2Index - 1).Trim('/');
                     parsePlayPathFrom = url.PathAndQuery.Substring(slash2Index);
+                }
+                else
+                {
+                    link.app = url.PathAndQuery.Trim('/');
                 }
             }
 

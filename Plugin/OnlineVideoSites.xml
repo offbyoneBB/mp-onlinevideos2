@@ -170,12 +170,13 @@
     <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
       <Description>Deutscher YouTube Clone.</Description>
       <Categories>
-        <Category xsi:type="RssLink" name="Top 10 Today">http://www.myvideo.de/feeds/myVideo-Top10-daily.rss</Category>
-        <Category xsi:type="RssLink" name="Top 10 Week">http://www.myvideo.de/feeds/myVideo-Top10-weekly.rss</Category>
-        <Category xsi:type="RssLink" name="Top 10 Month">http://www.myvideo.de/feeds/myVideo-Top10-monthly.rss</Category>
+        <Category xsi:type="RssLink" name="Top 10 Heute">http://www.myvideo.de/feeds/myVideo-Top10-daily.rss</Category>
+        <Category xsi:type="RssLink" name="Top 10 der Woche">http://www.myvideo.de/feeds/myVideo-Top10-weekly.rss</Category>
+        <Category xsi:type="RssLink" name="Top 10 des Monats">http://www.myvideo.de/feeds/myVideo-Top10-monthly.rss</Category>
         <Category xsi:type="RssLink" name="Top 10 Alltime">http://www.myvideo.de/feeds/myVideo-Top10-alltime.rss</Category>
-        <Category xsi:type="RssLink" name="Top 10 Music Charts">http://www.myvideo.de/feeds/myVideo-Top10-music_charts.rss</Category>
+        <Category xsi:type="RssLink" name="Top 10 Musik Charts">http://www.myvideo.de/feeds/myVideo-Top10-music_charts.rss</Category>
         <Category xsi:type="RssLink" name="Top 10 Entertainment">http://www.myvideo.de/feeds/myVideo-Top10_entertainment.rss</Category>
+        <Category xsi:type="RssLink" name="Top 10 Serien">http://www.myvideo.de/feeds/myVideo-Top10-serien_charts.rss</Category>
       </Categories>
     </Site>
     <Site name="MyVideo - Serien" util="MyVideoSerien" agecheck="false" enabled="true" lang="de">
@@ -1185,9 +1186,9 @@
 <a\shref="[^"]*/(?<VideoUrl>\d{1,})"\stitle="(?<Title>[^"]*)"[^>]*>\s*
 <img\s(?:(?!src).)*src="(?<ImageUrl>[^"]*)"
 (?:(?!<div\sclass="time">).)*<div\sclass="time">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\stitle="Next\spage"\shref="(?<url>[^"]*page=\d{1,})">Next</a>]]></item>
+        <item key="nextPageRegEx"><![CDATA[title="Next\s*Page\s*"\s+href="(?<url>[^"]*page=\d{1,})">]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\stitle="Previous\spage"\shref="(?<url>[^"]*page=\d{1,})">Prev</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[so\.addParam\("flashvars","[^"]+hashlink=(?<m0>[^"]+)"\);]]></item>
+        <item key="fileUrlRegEx"><![CDATA[so\.addParam\("flashvars","[^"]+hashlink=(?<m0>(?:(?!\%0A).)*)]]></item>
         <item key="searchUrl"><![CDATA[http://www.redtube.com/?search={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.redtube.com]]></item>
         <item key="cookies"><![CDATA[pp=1]]></item>
