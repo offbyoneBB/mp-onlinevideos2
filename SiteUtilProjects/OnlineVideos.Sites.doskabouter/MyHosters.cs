@@ -49,6 +49,21 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class DailyMotion : HosterBase
+    {
+        public override string getHosterUrl()
+        {
+            return "dailymotion.com";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            string webData = SiteUtilBase.GetWebData(url);
+            return GetSubString(webData, @"""video"", """, @"""");
+        }
+    }
+
+
     public class FiftySix : HosterBase
     {
         public override string getHosterUrl()
