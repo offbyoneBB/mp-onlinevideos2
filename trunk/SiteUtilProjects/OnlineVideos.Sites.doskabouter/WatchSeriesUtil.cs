@@ -24,8 +24,9 @@ namespace OnlineVideos.Sites
             //ReverseProxy.AddHandler(this);
         }
 
-        public override int DiscoverDynamicCategories()
+        public void GetBaseCookie()
         {
+            WebCache.Instance[baseUrl] = null;
             CookieContainer tmpcc = new CookieContainer();
             GetWebData(baseUrl, tmpcc);
 
@@ -33,6 +34,11 @@ namespace OnlineVideos.Sites
             CookieCollection ccol = tmpcc.GetCookies(new Uri(baseUrl));
             foreach (Cookie c in ccol)
                 cc.Add(c);
+        }
+
+        public override int DiscoverDynamicCategories()
+        {
+            GetBaseCookie();
 
             base.DiscoverDynamicCategories();
             int i = 0;
@@ -164,7 +170,7 @@ namespace OnlineVideos.Sites
                 while (m.Success)
                 {
                     SeriesVideoInfo video = new SeriesVideoInfo();
-                    video.cc = cc;
+                    video.parent = this;
 
                     video.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                     video.VideoUrl = m.Groups["VideoUrl"].Value.Replace("..", baseUrl);
@@ -204,7 +210,8 @@ namespace OnlineVideos.Sites
                     else
                     {
                         element.status = "ns";
-                        if (HosterFactory.ContainsName(element.server.ToLower()))
+                        if (element.server.Equals("videoclipuri") ||
+                            HosterFactory.ContainsName(element.server.ToLower().Replace("google", "googlevideo")))
                             element.status = String.Empty;
                         lst.Add(element);
                     }
@@ -256,14 +263,15 @@ namespace OnlineVideos.Sites
 
         public class SeriesVideoInfo : VideoInfo
         {
-            public CookieContainer cc;
+            public WatchSeriesUtil parent;
 
             public override string GetPlaybackOptionUrl(string url)
             {
                 string newUrl = base.PlaybackOptions[url];
                 if (newUrl.StartsWith(@"http://youtube.com/get_video?video_id=")) return newUrl; //already handled youtube link
 
-                string webData = GetWebData(newUrl, cc);
+                parent.GetBaseCookie();
+                string webData = GetWebData(newUrl, parent.cc);
                 string savUrl = url;
 
                 string vidId = GetSubString(webData, @"FlashVars=""input=", @"""");
@@ -317,15 +325,6 @@ namespace OnlineVideos.Sites
                 return String.Compare(e1.server, e2.server);
         }
 
-
-        #region ISimpleRequestHandler Members
-
-        public void UpdateRequest(HttpWebRequest request)
-        {
-            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-        }
-
-        #endregion
     }
 
     internal class PlaybackElement
