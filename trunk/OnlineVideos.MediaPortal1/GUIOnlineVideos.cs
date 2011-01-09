@@ -2018,7 +2018,7 @@ namespace OnlineVideos.MediaPortal1
                 Url = url,
                 Title = video.Title,
                 LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, SelectedSite.Settings.Name), SelectedSite.GetFileNameForDownload(video, selectedCategory, url)),
-                ThumbFile = Utils.GetThumbFile(video.ImageUrl)
+                ThumbFile = string.IsNullOrEmpty(video.ThumbnailImage) ? video.ImageUrl : video.ThumbnailImage
             };
 
             Dictionary<string, DownloadInfo> currentDownloads = ((OnlineVideos.Sites.DownloadedVideoUtil)OnlineVideoSettings.Instance.SiteUtilsList[Translation.DownloadedVideos]).currentDownloads;
@@ -2087,8 +2087,15 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
+                // if the image given was an url -> check if thumb exists otherwise download
+                if (downloadInfo.ThumbFile.ToLower().StartsWith("http"))
+                {
+                    string thumbFile = Utils.GetThumbFile(downloadInfo.ThumbFile);
+                    if (System.IO.File.Exists(thumbFile)) downloadInfo.ThumbFile = thumbFile;
+                    else if (ImageDownloader.DownloadAndCheckImage(downloadInfo.ThumbFile, thumbFile)) downloadInfo.ThumbFile = thumbFile;
+                }
                 // save thumb for this video as well if it exists
-                if (System.IO.File.Exists(downloadInfo.ThumbFile))
+                if (!downloadInfo.ThumbFile.ToLower().StartsWith("http") && System.IO.File.Exists(downloadInfo.ThumbFile))
                 {
                     string localImageName = System.IO.Path.Combine(
                         System.IO.Path.GetDirectoryName(downloadInfo.LocalFile),

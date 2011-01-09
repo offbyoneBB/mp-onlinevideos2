@@ -95,7 +95,7 @@ namespace OnlineVideos
             }
         }
 
-        static bool DownloadAndCheckImage(string url, string file)
+        public static bool DownloadAndCheckImage(string url, string file)
         {
             try
             {
