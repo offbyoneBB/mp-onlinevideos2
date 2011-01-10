@@ -664,37 +664,8 @@ namespace OnlineVideos.MediaPortal1
                 {
                     loadParam = (string)fi.GetValue(this);
                 }
-                // check for LoadParameters by GUIproperties if not yet set by the _loadParameter
-                if (string.IsNullOrEmpty(loadParam))
-                {
-                    List<string> paramsFromGuiProps = new List<string>();
-                    if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Site")))
-                    {
-                        paramsFromGuiProps.Add("site:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Site"));
-                        GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Site", string.Empty);
-                    }
-                    if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Category")))
-                    {
-                        paramsFromGuiProps.Add("category:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Category"));
-                        GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Category", string.Empty);
-                    }
-                    if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Search")))
-                    {
-                        paramsFromGuiProps.Add("search:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Search"));
-                        GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Search", string.Empty);
-                    }
-                    if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.VKonfail")))
-                    {
-                        paramsFromGuiProps.Add("VKonfail:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.VKonfail"));
-                        GUIPropertyManager.SetProperty("#OnlineVideos.startparams.VKonfail", string.Empty);
-                    }
-                    if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Return")))
-                    {
-                        paramsFromGuiProps.Add("return:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Return"));
-                        GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Return", string.Empty);
-                    }
-                    if (paramsFromGuiProps.Count > 0) loadParam = string.Join("|", paramsFromGuiProps.ToArray());
-                }
+                // check for LoadParameters by GUIproperties if nothing was set by the _loadParameter
+                if (string.IsNullOrEmpty(loadParam)) loadParam = LoadParameterInfo.FromGuiProperties();
 
                 if (!string.IsNullOrEmpty(loadParam))
                 {
