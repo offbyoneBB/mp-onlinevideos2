@@ -65,6 +65,10 @@ namespace OnlineVideos.MediaPortal1.Player
                             }
                             return;
                         }
+                        if (translatedAction.wID == Action.ActionType.ACTION_ASPECT_RATIO)
+                        {
+                            base.OnAction(translatedAction);
+                        }
                     }
                 }
             }
