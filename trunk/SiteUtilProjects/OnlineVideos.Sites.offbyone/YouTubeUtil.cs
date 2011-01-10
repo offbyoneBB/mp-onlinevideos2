@@ -73,7 +73,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Defines the default number of videos to display per page.")]
         int pageSize = 27;
         [Category("OnlineVideosUserConfiguration"), Description("Try to retrieve data specific for your region.")]
-        bool localize = true;
+        bool localize = false;
 
         [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
         bool useDynamicCategories = true;               
