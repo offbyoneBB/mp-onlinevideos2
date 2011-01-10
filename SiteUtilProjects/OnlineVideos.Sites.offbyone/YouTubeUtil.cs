@@ -66,9 +66,9 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum quality for the video to be played.")]
         VideoQuality videoQuality = VideoQuality.High;
-        [Category("OnlineVideosUserConfiguration"), Description("Your YouTube username. Used for favorites.")]
+        [Category("OnlineVideosUserConfiguration"), Description("Your YouTube account name (not Email!). Used for favorites and subscriptions.")]
         string username = "";
-        [Category("OnlineVideosUserConfiguration"), Description("Your YouTube password. Used for favorites.")]
+        [Category("OnlineVideosUserConfiguration"), Description("Your YouTube password. Used for favorites and subscriptions."), PasswordPropertyText(true)]
         string password = "";
         [Category("OnlineVideosUserConfiguration"), Description("Defines the default number of videos to display per page.")]
         int pageSize = 27;
