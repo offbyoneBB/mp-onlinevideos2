@@ -71,7 +71,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Your YouTube password. Used for favorites and subscriptions."), PasswordPropertyText(true)]
         string password = "";
         [Category("OnlineVideosUserConfiguration"), Description("Defines the default number of videos to display per page.")]
-        int pageSize = 27;
+        int pageSize = 26;
         [Category("OnlineVideosUserConfiguration"), Description("Try to retrieve data specific for your region.")]
         bool localize = false;
 
@@ -340,6 +340,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getNextPageVideos()
         {
+            if (lastPerformedQuery.StartIndex == 0) lastPerformedQuery.StartIndex = 1;
             lastPerformedQuery.StartIndex += lastPerformedQuery.NumberToRetrieve;
             return parseGData(lastPerformedQuery);
         }
