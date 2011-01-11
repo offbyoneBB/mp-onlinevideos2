@@ -152,6 +152,7 @@ namespace OnlineVideos.MediaPortal1
                     if (dlg_error != null)
                     {
                         dlg_error.Reset();
+                        dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type:"Icon"));
                         dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                         if (_CurrentTaskSuccess.HasValue)
                             dlg_error.SetText(string.Format("{0} {1}", Translation.Error, _CurrentTaskDescription));
