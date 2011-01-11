@@ -1404,6 +1404,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg_error != null)
                 {
                     dlg_error.Reset();
+                    dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                     dlg_error.SetText(Translation.NoVideoFound);
                     dlg_error.DoModal(GUIWindowManager.ActiveWindow);
@@ -1676,6 +1677,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg != null)
                 {
                     dlg.Reset();
+                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg.SetHeading(Translation.Error);
                     dlg.SetText(Translation.UnableToPlayVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -1742,6 +1744,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg != null)
                 {
                     dlg.Reset();
+                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg.SetHeading(Translation.Error);
                     dlg.SetText(Translation.UnableToPlayVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -1825,6 +1828,7 @@ namespace OnlineVideos.MediaPortal1
                                     if (dlg != null)
                                     {
                                         dlg.Reset();
+                                        dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                                         dlg.SetHeading(Translation.Error);
                                         dlg.SetText(Translation.UnableToPlayVideo);
                                         dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -1853,6 +1857,7 @@ namespace OnlineVideos.MediaPortal1
                     if (dlg != null)
                     {
                         dlg.Reset();
+                        dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                         dlg.SetHeading(Translation.Error);
                         dlg.SetText(Translation.UnableToPlayVideo);
                         dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -1904,6 +1909,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg != null)
                 {
                     dlg.Reset();
+                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg.SetHeading(Translation.Error);
                     dlg.SetText(Translation.SetDownloadFolderInConfig);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -1933,6 +1939,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg != null)
                 {
                     dlg.Reset();
+                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg.SetHeading(Translation.Error);
                     dlg.SetText(Translation.UnableToDownloadVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -1970,6 +1977,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg != null)
                 {
                     dlg.Reset();
+                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg.SetHeading(Translation.Error);
                     dlg.SetText(Translation.UnableToDownloadVideo);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -2000,6 +2008,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlg != null)
                 {
                     dlg.Reset();
+                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                     dlg.SetHeading(Translation.Error);
                     dlg.SetText(Translation.AlreadyDownloading);
                     dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -2034,6 +2043,7 @@ namespace OnlineVideos.MediaPortal1
             if (dlgNotify != null)
             {
                 dlgNotify.Reset();
+                dlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                 dlgNotify.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                 dlgNotify.SetText(Translation.DownloadStarted);
                 dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
@@ -2051,6 +2061,7 @@ namespace OnlineVideos.MediaPortal1
                 if (loDlgNotify != null)
                 {
                     loDlgNotify.Reset();
+                    loDlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                     loDlgNotify.SetHeading(Translation.Error);
                     loDlgNotify.SetText(string.Format(Translation.DownloadFailed, downloadInfo.Title));
                     loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
@@ -2087,6 +2098,7 @@ namespace OnlineVideos.MediaPortal1
                 if (loDlgNotify != null)
                 {
                     loDlgNotify.Reset();
+                    loDlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                     if (downloadInfo.Downloader.Cancelled)
                         loDlgNotify.SetHeading(Translation.DownloadCancelled);
                     else

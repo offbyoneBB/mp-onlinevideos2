@@ -379,6 +379,7 @@ namespace OnlineVideos.MediaPortal1
                                 if (dlg != null)
                                 {
                                     dlg.Reset();
+                                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                                     dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                                     dlg.SetText(Translation.NoReportsForSite);
                                     dlg.DoModal(GUIWindowManager.ActiveWindow);

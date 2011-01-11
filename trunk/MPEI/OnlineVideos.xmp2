@@ -1285,6 +1285,27 @@
               <ZipFileName>Installer{CopyFile}\{aca124d3-d00d-4705-95ae-9c03411b0773}-rtl xl.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\rtl xl.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\OnlineVideos.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c564ec32-9cf7-45a5-b616-20cbd81bc6c3}-OnlineVideos.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\OnlineVideos.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\SuperRTL Now.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{762c940f-ef66-46fa-a798-6e6d14ebff3f}-SuperRTL Now.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SuperRTL Now.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\SuperRTL Now.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{36ac3ce1-4138-47a9-8e18-8dcd6ee2a3e3}-SuperRTL Now.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SuperRTL Now.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1350,7 +1371,7 @@
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.27.0.0\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.28.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1466,6 +1487,27 @@
               <LocalFileName>..\Language\OnlineVideos\el.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{f8042d61-6ed9-4898-a481-173dc6adb055}-el.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\el.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\cs.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{fd1454c3-8bbb-4225-9a56-2b6780460b3d}-cs.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\cs.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\pl.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3d75d8be-8173-4c65-90bf-0ce8f03421d5}-pl.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\pl.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\sk.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f8de3a45-3e77-48b5-a978-5d3a1f02fd0c}-sk.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\sk.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2097,25 +2139,23 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>27</Minor>
+      <Minor>28</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>Added: SearchHistory 
-Added: SubCategories will now be read from OnlineVideoSites.xml 
-Fixed: Duplicate Categories on Sites with dynamic categories when using SiteManager
-Added: Support for starting Plugin with a parameter
-Fixed: Buffering stopped prematurely because webdata timeout was used on playback start
-Fixed: MePo GUI freeze while SourceFiler connect sto the http server
-Added: support for rtmp live streams
-Fixed: Not able to use SMS style (T9) Filter
-Skinning Enhancement: Added support for #itemtype
-DetailsView: Trailer date shown and first trailer selected
-Many other small bugfixes/enhancements</VersionDescription>
+    <VersionDescription>New Feature: Allow user to group Sites in Configuration. Will be shown as another view prior to the sites
+Reworked: Paging in the VideoList now done with a single extra item at the end of the list. Click to append the next page videos to the list
+Fixed: Added RssLinks and Channels in Configuration were not saved
+New Feature: Jump straight to Details if you search for a movie with an exact match
+Fixed: Relevant DLL (if needed) is not downloaded if user choose site in "Manage Sites"
+#itemtype now also supported in SiteManager
+Reworked: all background execution to correctly invoke results on GuiThread
+Settings that can be modified at runtime using the MPEI plugin are now reloaded when entering the plugin
+Loading plugin with startparameters now also possible using GUIProperties</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2010-11-28T20:00:00</ReleaseDate>
+    <ReleaseDate>2011-01-11T20:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -3419,6 +3459,27 @@ Many other small bugfixes/enhancements</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{aca124d3-d00d-4705-95ae-9c03411b0773}-rtl xl.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\rtl xl.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\OnlineVideos.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c564ec32-9cf7-45a5-b616-20cbd81bc6c3}-OnlineVideos.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\OnlineVideos.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\SuperRTL Now.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{762c940f-ef66-46fa-a798-6e6d14ebff3f}-SuperRTL Now.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SuperRTL Now.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\SuperRTL Now.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{36ac3ce1-4138-47a9-8e18-8dcd6ee2a3e3}-SuperRTL Now.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SuperRTL Now.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -3466,7 +3527,7 @@ Many other small bugfixes/enhancements</VersionDescription>
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.27.0.0\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.28.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3572,6 +3633,27 @@ Many other small bugfixes/enhancements</VersionDescription>
         <LocalFileName>..\Language\OnlineVideos\el.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{f8042d61-6ed9-4898-a481-173dc6adb055}-el.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\el.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\cs.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{fd1454c3-8bbb-4225-9a56-2b6780460b3d}-cs.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\cs.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\pl.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3d75d8be-8173-4c65-90bf-0ce8f03421d5}-pl.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\pl.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\sk.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f8de3a45-3e77-48b5-a978-5d3a1f02fd0c}-sk.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\sk.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3745,7 +3827,7 @@ Many other small bugfixes/enhancements</VersionDescription>
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{3012169a-a5a2-48e9-9e21-f9903766e7df}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{dea8677a-94bd-4a32-8438-61dcb99d7b98}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
