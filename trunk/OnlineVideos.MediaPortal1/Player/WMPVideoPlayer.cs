@@ -432,21 +432,19 @@ namespace OnlineVideos.MediaPortal1.Player
             try { if (_osd != null) _osd.Dispose(); }
             catch (Exception ex) { Log.Instance.Warn(ex.ToString()); }
 
-            if (_wmp10Player == null)
+            if (_wmp10Player != null)
             {
-                return;
+                try
+                {
+
+                    _wmp10Player.ClientSize = new Size(0, 0);
+                    _wmp10Player.Visible = false;
+                    // GUIGraphicsContext.form.Controls.Remove(_wmp10Player);
+                    _wmp10Player.Dispose();
+                    _wmp10Player = null;
+                }
+                catch (Exception ex) { Log.Instance.Warn(ex.ToString()); }
             }
-            _wmp10Player.ClientSize = new Size(0, 0);
-            _wmp10Player.Visible = false;
-            /*
-            try
-            {
-              GUIGraphicsContext.form.Controls.Remove(_wmp10Player);
-            }
-            catch (Exception) { }
-            _wmp10Player.Dispose();
-            _wmp10Player = null;
-             * */
         }
 
         #endregion
