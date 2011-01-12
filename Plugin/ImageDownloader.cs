@@ -54,6 +54,7 @@ namespace OnlineVideos
                         if (StopDownload) break;
 
                         string thumb = item is Category ? (item as Category).Thumb : (item as VideoInfo).ImageUrl;
+                        float? forcedAspect = item is VideoInfo ? (item as VideoInfo).ImageForcedAspectRatio : null;
                         if (string.IsNullOrEmpty(thumb)) continue;
                         string[] urls = thumb.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -68,8 +69,8 @@ namespace OnlineVideos
                             else
                             {
                                 string thumbFile = Utils.GetThumbFile(aFinalUrl);
-                                if (System.IO.File.Exists(thumbFile)) imageLocation = thumbFile;                                
-                                else if (DownloadAndCheckImage(aFinalUrl, thumbFile)) imageLocation = thumbFile;                                
+                                if (System.IO.File.Exists(thumbFile)) imageLocation = thumbFile;
+                                else if (DownloadAndCheckImage(aFinalUrl, thumbFile, forcedAspect)) imageLocation = thumbFile;
                             }
 
                             if (imageLocation != string.Empty)
@@ -95,10 +96,12 @@ namespace OnlineVideos
             }
         }
 
-        public static bool DownloadAndCheckImage(string url, string file)
+        public static bool DownloadAndCheckImage(string url, string file, float? forcedAspectRatio = null)
         {
             try
             {
+                if (forcedAspectRatio != null && forcedAspectRatio.Value == 0.0f) forcedAspectRatio = null; // don't use 0.0 but null
+
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return false;
                 request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
@@ -115,18 +118,19 @@ namespace OnlineVideos
                     responseStream = response.GetResponseStream();
                 System.Drawing.Image image = System.Drawing.Image.FromStream(responseStream, true, true);                
                 // resample if needed
-                int maxSize = OnlineVideoSettings.Instance.ThumbsResizeOptions.MaxSize;
-                if (image.Width > maxSize || image.Height > maxSize)
+                float imageAspectRatio = image.Width / (float)image.Height;
+                if (image.Width > OnlineVideoSettings.Instance.ThumbsResizeOptions.MaxSize || image.Height > OnlineVideoSettings.Instance.ThumbsResizeOptions.MaxSize
+                    || (forcedAspectRatio != null && Math.Abs(forcedAspectRatio.Value - imageAspectRatio) > 0.1))
                 {
-                    int iWidth = maxSize;
-                    int iHeight = maxSize;
+                    int iWidth = Math.Min(image.Width, OnlineVideoSettings.Instance.ThumbsResizeOptions.MaxSize);
+                    int iHeight = Math.Min(image.Height, OnlineVideoSettings.Instance.ThumbsResizeOptions.MaxSize);
 
-                    float fAR = (image.Width) / ((float)image.Height);
+                    if (forcedAspectRatio != null && Math.Abs(forcedAspectRatio.Value - imageAspectRatio) > 0.1) imageAspectRatio = forcedAspectRatio.Value;
 
                     if (image.Width > image.Height)
-                        iHeight = (int)Math.Floor((((float)iWidth) / fAR));
+                        iHeight = (int)Math.Floor((((float)iWidth) / imageAspectRatio));
                     else
-                        iWidth = (int)Math.Floor((fAR * ((float)iHeight)));
+                        iWidth = (int)Math.Floor((imageAspectRatio * ((float)iHeight)));
                     
                     Bitmap tmp = new Bitmap(iWidth, iHeight, image.PixelFormat);
                     using (Graphics g = Graphics.FromImage(tmp))
