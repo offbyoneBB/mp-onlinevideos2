@@ -15,6 +15,8 @@ namespace OnlineVideos
         public string Description { get; set; }
         public string VideoUrl { get; set; }
         public string ImageUrl { get; set; }
+        /// <summary>optional property is used by the <see cref="ImageDownloader"/> to resize the thumbnail after downloading from <see cref="ImageUrl"/> to a given aspect ratio (width/height).</summary>
+        public float? ImageForcedAspectRatio { get; set; }
         public string Length { get; set; }
         public string StartTime { get; set; }
         public object Other { get; set; }
