@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.IO;
 
 namespace RTMP_LIB
 {
@@ -33,6 +36,8 @@ namespace RTMP_LIB
         public double seekTime;
         public bool bLiveStream;
 
+        public bool swfVerify = false;
+
         public int timeout; // number of seconds before connection times out
 
         public Org.BouncyCastle.Crypto.IStreamCipher rc4In;
@@ -65,11 +70,11 @@ namespace RTMP_LIB
 	         * application = app[/appinstance]
 	         */
             string parsePlayPathFrom = "";
-            if (url.PathAndQuery.Contains("?slist="))
+            if (url.PathAndQuery.Contains("slist="))
             {
                 /* whatever it is, the '?' and slist= means we need to use everything as app and parse playpath from slist= */
                 link.app = url.PathAndQuery.Substring(1);
-                parsePlayPathFrom = url.PathAndQuery.Substring(url.PathAndQuery.IndexOf("?slist="));
+                parsePlayPathFrom = url.PathAndQuery.Substring(url.PathAndQuery.IndexOf("slist="));
             }
             else if (url.PathAndQuery.StartsWith("/ondemand/"))
             {
@@ -118,7 +123,7 @@ namespace RTMP_LIB
 
             // use slist parameter, if there is one
             int nPos = parsePlayPathFrom.IndexOf("slist=");
-            if (nPos > 0)
+            if (nPos >= 0)
             {
                 parsePlayPathFrom = parsePlayPathFrom.Substring(nPos + 6);
             }
@@ -246,6 +251,89 @@ namespace RTMP_LIB
             }
 
             return obj;
+        }
+
+        struct SwFInfo
+        {
+            internal byte[] Hash;
+            internal int Size;
+            internal DateTime Time;
+        }
+        static Dictionary<string, SwFInfo> swfCache = new Dictionary<string, SwFInfo>();
+
+        public void GetSwf()
+        {
+            try
+            {
+                // check if we can retrieve
+                if (string.IsNullOrEmpty(swfUrl)) return;
+                Uri swfUri = new Uri(swfUrl);
+
+                if (swfCache.ContainsKey(swfUrl))
+                {
+                    SWFHash = swfCache[swfUrl].Hash;
+                    SWFSize = swfCache[swfUrl].Size;
+                }
+                else
+                {
+                    // get the swf file from the web
+                    HttpWebRequest request = WebRequest.Create(swfUri) as HttpWebRequest;
+                    if (request == null) return;
+                    request.Accept = "*/*";
+                    request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+                    request.Timeout = 5000; // don't wait longer than 5 seconds
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                    System.IO.Stream responseStream;
+                    if (response.ContentEncoding.ToLower().Contains("gzip"))
+                        responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                    else if (response.ContentEncoding.ToLower().Contains("deflate"))
+                        responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+                    else
+                        responseStream = response.GetResponseStream();
+
+                    byte[] tempBuff = new byte[1024 * 1024 * 10];
+                    int bytesRead = 0;
+                    int totalBytesRead = 0;
+                    while ((bytesRead = responseStream.Read(tempBuff, totalBytesRead, tempBuff.Length - totalBytesRead)) > 0)
+                    {
+                        totalBytesRead += bytesRead;
+                    }
+                    byte[] buff = new byte[totalBytesRead];
+                    Array.Copy(tempBuff, buff, totalBytesRead);
+
+                    MemoryStream ms = new MemoryStream(buff);
+                    BinaryReader br = new BinaryReader(ms);
+                    // compressed swf?
+                    if (br.PeekChar() == 'C')
+                    {
+                        // read size
+                        br.BaseStream.Position = 4; // skip signature
+                        SWFSize = Convert.ToInt32(br.ReadUInt32());
+                        // read swf head
+                        byte[] uncompressed = new byte[SWFSize];
+                        br.BaseStream.Position = 0;
+                        br.Read(uncompressed, 0, 8); // header data is not compressed
+                        uncompressed[0] = System.Text.Encoding.ASCII.GetBytes(new char[] { 'F' })[0];
+                        // un-zip
+                        byte[] compressed = br.ReadBytes(SWFSize);
+                        Ionic.Zlib.ZlibStream dStream = new Ionic.Zlib.ZlibStream(new MemoryStream(compressed), Ionic.Zlib.CompressionMode.Decompress);
+                        int read = dStream.Read(uncompressed, 8, SWFSize - 8);
+
+                        byte[] finalUncompressed = new byte[8 + read];
+                        Array.Copy(uncompressed, finalUncompressed, 8 + read);
+                        buff = finalUncompressed;
+                    }
+                    System.Security.Cryptography.HMACSHA256 sha256Hmac = new System.Security.Cryptography.HMACSHA256(System.Text.Encoding.ASCII.GetBytes("Genuine Adobe Flash Player 001"));
+                    SWFHash = sha256Hmac.ComputeHash(buff);
+                    Logger.Log(string.Format("Size of decompressed SWF: {0}, Hash:", SWFSize));
+                    Logger.LogHex(SWFHash, 0, SWFHash.Length);
+                    swfCache.Add(swfUrl, new SwFInfo() { Hash = SWFHash, Size = SWFSize, Time = DateTime.Now });
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(string.Format("Error while getting swf ({0}): {1}", swfUrl, ex.Message));
+            }
         }
     }
 }

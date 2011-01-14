@@ -49,11 +49,14 @@ namespace RTMP_LIB
                 if (!string.IsNullOrEmpty(paramsHash["swfurl"])) link.swfUrl = paramsHash["swfurl"];
                 if (!string.IsNullOrEmpty(paramsHash["swfsize"])) link.SWFSize = int.Parse(paramsHash["swfsize"]);
                 if (!string.IsNullOrEmpty(paramsHash["swfhash"])) link.SWFHash = Link.ArrayFromHexString(paramsHash["swfhash"]);
+                if (!string.IsNullOrEmpty(paramsHash["swfVfy"])) { link.swfUrl = paramsHash["swfVfy"]; link.swfVerify = true; }
                 if (!string.IsNullOrEmpty(paramsHash["live"])) bool.TryParse(paramsHash["live"], out link.bLiveStream);
                 if (!string.IsNullOrEmpty(paramsHash["auth"])) link.auth = paramsHash["auth"];
                 if (!string.IsNullOrEmpty(paramsHash["token"])) link.token = paramsHash["token"];
                 if (!string.IsNullOrEmpty(paramsHash["conn"])) link.extras = Link.ParseAMF(paramsHash["conn"]);
                 if (link.tcUrl != null && link.tcUrl.ToLower().StartsWith("rtmpe")) link.protocol = Protocol.RTMPE;
+
+                if (link.swfVerify) link.GetSwf();
 
                 rtmp = new RTMP() { Link = link };
                 bool connected = rtmp.Connect();
