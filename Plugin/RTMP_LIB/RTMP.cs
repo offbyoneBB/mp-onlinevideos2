@@ -1407,7 +1407,9 @@ namespace RTMP_LIB
         # region Handshake
 
         bool HandShake(bool FP9HandShake)
-        {            
+        {
+            int offalg = 0;
+
             bool encrypted = Link.protocol == Protocol.RTMPE || Link.protocol == Protocol.RTMPTE;
 
             if (encrypted && !FP9HandShake)
@@ -1417,9 +1419,13 @@ namespace RTMP_LIB
             }
 
             byte[] clientsig = new byte[RTMP_SIG_SIZE + 1];
-            byte[] serversig = new byte[RTMP_SIG_SIZE];            
+            byte[] serversig = new byte[RTMP_SIG_SIZE];
 
-            if (encrypted) clientsig[0] = 0x06; // 0x08 is RTMPE as well
+            if (encrypted)
+            {
+                clientsig[0] = 0x06; // 0x08 is RTMPE as well
+                offalg = 1;
+            }
             else clientsig[0] = 0x03;
 
             int uptime = System.Environment.TickCount;
@@ -1488,7 +1494,7 @@ namespace RTMP_LIB
                     Logger.Log("truncated public key length to 128");
                 }
                 
-                dhposClient = (int)GetDHOffset1(clientsig, 1, RTMP_SIG_SIZE);
+                dhposClient = (int)GetDHOffset(offalg, clientsig, 1, RTMP_SIG_SIZE);
                 Logger.Log(string.Format("DH pubkey position: {0}", dhposClient));
 
                 Array.Copy(publicKey, 0, clientsig, 1 + dhposClient, 128);                
@@ -1497,7 +1503,7 @@ namespace RTMP_LIB
             // set handshake digest
             if (FP9HandShake)
             {
-                int digestPosClient = (int)GetDigestOffset1(clientsig,1, RTMP_SIG_SIZE); // maybe reuse this value in verification
+                int digestPosClient = (int)GetDigestOffset(offalg, clientsig,1, RTMP_SIG_SIZE); // maybe reuse this value in verification
                 Logger.Log(string.Format("Client digest offset: {0}", digestPosClient));
 
                 CalculateDigest(digestPosClient, clientsig, 1, GenuineFPKey, 30, clientsig, 1 + digestPosClient);
@@ -1533,14 +1539,15 @@ namespace RTMP_LIB
             if (FP9HandShake)
             {
                 // we have to use this signature now to find the correct algorithms for getting the digest and DH positions
-                int digestPosServer = (int)GetDigestOffset2(serversig, 0, RTMP_SIG_SIZE);
-                int dhposServer = (int)GetDHOffset2(serversig, 0, RTMP_SIG_SIZE);
+                int digestPosServer = (int)GetDigestOffset(offalg, serversig, 0, RTMP_SIG_SIZE);
+                int dhposServer = (int)GetDHOffset(offalg, serversig, 0, RTMP_SIG_SIZE);
 
                 if (!VerifyDigest(digestPosServer, serversig, GenuineFMSKey, 36))
                 {
                     Logger.Log("Trying different position for server digest!");
-                    digestPosServer = (int)GetDigestOffset1(serversig, 0, RTMP_SIG_SIZE);
-                    dhposServer = (int)GetDHOffset1(serversig, 0, RTMP_SIG_SIZE);
+                    offalg ^= 1;
+                    digestPosServer = (int)GetDigestOffset(offalg, serversig, 0, RTMP_SIG_SIZE);
+                    dhposServer = (int)GetDHOffset(offalg, serversig, 0, RTMP_SIG_SIZE);
 
                     if (!VerifyDigest(digestPosServer, serversig, GenuineFMSKey, 36))
                     {
@@ -1642,7 +1649,7 @@ namespace RTMP_LIB
                 }
 
                 // verify server response
-                int digestPosClient = (int)GetDigestOffset1(clientsig, 1, RTMP_SIG_SIZE);
+                int digestPosClient = (int)GetDigestOffset(offalg, clientsig, 1, RTMP_SIG_SIZE);
 
                 byte[] signature = new byte[SHA256_DIGEST_LENGTH];
                 byte[] digest = new byte[SHA256_DIGEST_LENGTH];
@@ -1709,6 +1716,18 @@ namespace RTMP_LIB
 
             Logger.Log("Handshaking finished....");
             return true;
+        }
+
+        uint GetDHOffset(int alg, byte[] handshake, int bufferoffset, uint len)
+        {
+            if (alg == 0) return GetDHOffset1(handshake, bufferoffset, len);
+            else return GetDHOffset2(handshake, bufferoffset, len);
+        }
+
+        uint GetDigestOffset(int alg, byte[] handshake, int bufferoffset, uint len)
+        {
+            if (alg == 0) return GetDigestOffset1(handshake, bufferoffset, len);
+            else return GetDigestOffset2(handshake, bufferoffset, len);
         }
 
         uint GetDHOffset1(byte[] handshake, int bufferoffset, uint len)

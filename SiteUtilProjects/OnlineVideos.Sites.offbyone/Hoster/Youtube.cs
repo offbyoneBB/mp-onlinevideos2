@@ -37,13 +37,15 @@ namespace OnlineVideos.Hoster
             }
 
             NameValueCollection Items = new NameValueCollection();
+            string contents = "";
             try
             {
-                string contents = Sites.SiteUtilBase.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}", videoId));
+                System.Net.WebProxy proxyObj = /*null; //*/ new System.Net.WebProxy("127.0.0.1", 8118);
+                contents = Sites.SiteUtilBase.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}&has_verified=1", videoId), proxy:proxyObj);
                 Items = System.Web.HttpUtility.ParseQueryString(contents);
                 if (Items["status"] == "fail")
                 {
-                    contents = Sites.SiteUtilBase.GetWebData(string.Format("http://www.youtube.com/watch?v={0}", videoId));
+                    contents = Sites.SiteUtilBase.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxyObj);
                     Match m = swfJsonArgs.Match(contents);
                     if (m.Success)
                     {
@@ -97,6 +99,61 @@ namespace OnlineVideos.Hoster
                             PlaybackOptions.Add("1280x720 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
                         case 37:
                             PlaybackOptions.Add("1920x1080 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", string.Format("{0}&ext=.{1}", fmtValue.Substring(fmtValue.IndexOf("|") + 1), "mp4")); break;
+                    }
+                }
+            }
+            else if (Items.Get("fmt_stream_map") != "")
+            {
+                string swfUrl = Regex.Match(contents, "\"url\":\\s\"([^\"]+)\"").Groups[1].Value.Replace("\\/", "/");// "url": "http:\/\/s.ytimg.com\/yt\/swfbin\/watch_as3-vflOCLBVA.swf"
+
+                FmtMap = Items["fmt_stream_map"].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                Array.Sort(FmtMap, new Comparison<string>(delegate(string a, string b)
+                {
+                    int a_i = int.Parse(a.Substring(0, a.IndexOf("|")));
+                    int b_i = int.Parse(b.Substring(0, b.IndexOf("|")));
+                    int index_a = Array.IndexOf(fmtOptionsQualitySorted, a_i);
+                    int index_b = Array.IndexOf(fmtOptionsQualitySorted, b_i);
+                    return index_b.CompareTo(index_a);
+                }));
+                PlaybackOptions = new Dictionary<string, string>();
+                foreach (string fmtValue in FmtMap)
+                {
+                    int fmtValueInt = int.Parse(fmtValue.Substring(0, fmtValue.IndexOf("|")));
+                    switch (fmtValueInt)
+                    {
+                        case 0:
+                        case 5:
+                        case 34:
+                            PlaybackOptions.Add("320x240 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}",
+                                System.Web.HttpUtility.UrlEncode(fmtValue.Substring(fmtValue.IndexOf("rtmp"))),
+                                System.Web.HttpUtility.UrlEncode(swfUrl)))); break;
+                        case 13:
+                        case 17:
+                            PlaybackOptions.Add("176x144 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}",
+                                System.Web.HttpUtility.UrlEncode(fmtValue.Substring(fmtValue.IndexOf("rtmp"))),
+                                System.Web.HttpUtility.UrlEncode(swfUrl)))); break;
+                        case 18:
+                            PlaybackOptions.Add("480x360 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}",
+                                System.Web.HttpUtility.UrlEncode(fmtValue.Substring(fmtValue.IndexOf("rtmp"))),
+                                System.Web.HttpUtility.UrlEncode(swfUrl)))); break;
+                        case 35:
+                            PlaybackOptions.Add("640x480 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .flv", ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}",
+                                System.Web.HttpUtility.UrlEncode(fmtValue.Substring(fmtValue.IndexOf("rtmp"))),
+                                System.Web.HttpUtility.UrlEncode(swfUrl)))); break;
+                        case 22:
+                            PlaybackOptions.Add("1280x720 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}",
+                                System.Web.HttpUtility.UrlEncode(fmtValue.Substring(fmtValue.IndexOf("rtmp"))),
+                                System.Web.HttpUtility.UrlEncode(swfUrl)))); break;
+                        case 37:
+                            PlaybackOptions.Add("1920x1080 | (" + fmtValueInt.ToString().PadLeft(2, ' ') + ") | .mp4", ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}",
+                                System.Web.HttpUtility.UrlEncode(fmtValue.Substring(fmtValue.IndexOf("rtmp"))),
+                                System.Web.HttpUtility.UrlEncode(swfUrl)))); break;
                     }
                 }
             }

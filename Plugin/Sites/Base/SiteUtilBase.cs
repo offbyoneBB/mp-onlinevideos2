@@ -407,7 +407,7 @@ namespace OnlineVideos.Sites
                     request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
                 request.Accept = "*/*";
                 request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
-                if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set refere if give
+                if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set referer if given
                 if (cc != null) request.CookieContainer = cc; // set cookies if given
                 if (proxy != null) request.Proxy = proxy;
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
