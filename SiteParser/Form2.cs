@@ -280,8 +280,10 @@ namespace SiteParser
             try
             {
                 LockWindowUpdate(regexRichText.Handle);
+                int selStart = regexRichText.SelectionStart;
+                int selEnd = selStart + richTextBox1.SelectionLength;
                 regexRichText.SelectedRtf = richTextBox1.SelectedRtf;
-                for (int i = 0; i < regexRichText.Text.Length; i++)
+                for (int i = selStart; i < selEnd; )
                 {
                     switch (regexRichText.Text[i])
                     {
@@ -300,6 +302,7 @@ namespace SiteParser
                             regexRichText.SelectionStart = i;
                             regexRichText.SelectionLength = 1;
                             regexRichText.SelectedText = @"\" + regexRichText.Text[i];
+                            selEnd++;
                             i += 2;
                             break;
                         case ' ':
@@ -326,9 +329,11 @@ namespace SiteParser
                                 regexRichText.SelectionStart = i;
                                 regexRichText.SelectionLength = newText.Length;
                                 regexRichText.SelectionColor = Color.Gray;
-                                i = i + newText.Length;
+                                selEnd += newText.Length - (j - i);
+                                i += newText.Length;
                                 break;
                             }
+                        default: { i++; break; }
                     }
                 }
                 regexRichText.SelectionLength = 0;
