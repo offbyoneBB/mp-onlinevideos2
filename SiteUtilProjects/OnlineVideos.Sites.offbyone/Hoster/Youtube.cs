@@ -40,12 +40,11 @@ namespace OnlineVideos.Hoster
             string contents = "";
             try
             {
-                System.Net.WebProxy proxyObj = /*null; //*/ new System.Net.WebProxy("127.0.0.1", 8118);
-                contents = Sites.SiteUtilBase.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}&has_verified=1", videoId), proxy:proxyObj);
+                contents = Sites.SiteUtilBase.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}&has_verified=1", videoId));
                 Items = System.Web.HttpUtility.ParseQueryString(contents);
                 if (Items["status"] == "fail")
                 {
-                    contents = Sites.SiteUtilBase.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxyObj);
+                    contents = Sites.SiteUtilBase.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId));
                     Match m = swfJsonArgs.Match(contents);
                     if (m.Success)
                     {
