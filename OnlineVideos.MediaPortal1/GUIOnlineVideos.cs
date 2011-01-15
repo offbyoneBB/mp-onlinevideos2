@@ -1466,9 +1466,9 @@ namespace OnlineVideos.MediaPortal1
                 OnlineVideosGuiListItem nextPageItem = new OnlineVideosGuiListItem(Translation.NextPage);
                 nextPageItem.ItemId = GUI_facadeView.Count;
                 nextPageItem.IsFolder = true;
-                nextPageItem.IconImage = "DefaultShortcutBig.png";
-                nextPageItem.IconImageBig = "DefaultShortcutBig.png";
-                nextPageItem.ThumbnailImage = "DefaultShortcutBig.png";
+                nextPageItem.IconImage = "OnlineVideos\\NextPage.png";
+                nextPageItem.IconImageBig = "OnlineVideos\\NextPage.png";
+                nextPageItem.ThumbnailImage = "OnlineVideos\\NextPage.png";
                 nextPageItem.OnItemSelected += OnVideoItemSelected;
                 GUI_facadeView.Add(nextPageItem);
             }
