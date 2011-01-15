@@ -540,7 +540,7 @@
         <item key="fileUrlRegEx"><![CDATA[<embed.*?src="(?<m0>[^"]*)"]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
         <item key="baseUrl"><![CDATA[http://thatguywiththeglasses.com]]></item>
-        <item key="resolveHoster"><![CDATA[True]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
       <Categories />
     </Site>
@@ -1007,7 +1007,7 @@
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass="thumb">\s*<a\sclass="thumb"\shref="(?<url>[^"]*)">\s*<img\ssrc="(?<thumb>[^"]*)"[^>]*>\s*</a>\s*<[^>]*><i[^>]*></a>\s*</div>\s*<div\sclass="info">\s*<h3><[^>]*>(?<title>[^<]*)</a></h3>\s*<h4><[^>]*>[^>]*>\s/\s<[^>]*>[^>]*></h4>\s*<[^>]*>\s*<[^>]*>\s*(?<Description>[^<]*)</a>]]></item>
         <item key="videoListRegEx"><![CDATA[<a\sclass="thumb"\shref="(?<VideoUrl>[^"]*)"[^<]*<img[^>]*>\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^<]*</a>\s*<[^<]*</a>\s*<div\sclass="description">\s*<h4><[^>]*>(?<Title>[^<]*)</a></h4>\s*]]></item>
         <item key="fileUrlRegEx"><![CDATA[<textarea\sid="clip-embed"\sreadonly="readonly"\sstyle="display:none;"><div><embed\ssrc="(?<m0>[^"]*)"]]></item>
-        <item key="resolveHoster"><![CDATA[True]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
       <Categories>
       </Categories>
@@ -1051,7 +1051,7 @@
         <item key="fileUrlRegEx"><![CDATA[<param\sname="movie"\svalue="(?<m0>[^"]*)">]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.kabouterwesley.be/]]></item>
-        <item key="resolveHoster"><![CDATA[True]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Videos">http://www.kabouterwesley.be/</Category>

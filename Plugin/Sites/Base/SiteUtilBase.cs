@@ -54,7 +54,7 @@ namespace OnlineVideos.Sites
                         }
                         catch (Exception ex)
                         {
-                            Log.Error("Could not set Configuration Value: {0}. Error: {1}", field.Name, ex.Message);
+                            Log.Warn("{0} - could not set Configuration Value: {1}. Error: {2}", siteSettings.Name, field.Name, ex.Message);
                         }
                     }
                     else if (((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration"
@@ -76,7 +76,7 @@ namespace OnlineVideos.Sites
                             }
                             catch (Exception ex)
                             {
-                                Log.Error("Could not set Configuration Value: {0}. Error: {1}", field.Name, ex.Message);
+                                Log.Warn("{0} - ould not set User Configuration Value: {1}. Error: {2}", siteSettings.Name, field.Name, ex.Message);
                             }
                         }
                     }
