@@ -17,7 +17,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
         string searchUrl = "http://api.mtvnservices.com/1/video/search/?term={0}&sort=date_descending";
         [Category("OnlineVideosUserConfiguration"), Description("Defines number of videos to display per page.")]
-        int pageSize = 27;
+        int pageSize = 26;
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for getting the playback url. Define like this: 83.84.85.86:8118")]
         string proxy = null;
 
@@ -48,7 +48,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getVideoList(Category category)
         {
             currentCategory = category as RssLink;
-            currentStart = 0;
+            currentStart = 1;
             return GetVideoForCurrentCategory();
         }
 
@@ -81,7 +81,7 @@ namespace OnlineVideos.Sites
         #region Next/Previous Page
 
         RssLink currentCategory;
-        int currentStart = 0;
+        int currentStart = 1;
 
         public override bool HasNextPage
         {
@@ -96,13 +96,13 @@ namespace OnlineVideos.Sites
 
         public override bool HasPreviousPage
         {
-            get { return currentCategory != null && currentStart > 0; }
+            get { return currentCategory != null && currentStart > 1; }
         }
 
         public override List<VideoInfo> getPreviousPageVideos()
         {
             currentStart -= pageSize;
-            if (currentStart < 0) currentStart = 0;
+            if (currentStart < 1) currentStart = 1;
             return GetVideoForCurrentCategory();
         }
 

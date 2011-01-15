@@ -35,7 +35,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("How each video title is displayed. These tags will be replaced: %artist% %title% %year% %rating%.")]
         string format_Title = "%artist% - %title% (%year%)";
         [Category("OnlineVideosUserConfiguration"), Description("Defines number of videos to display per page.")]
-        int pageSize = 27;
+        int pageSize = 26;
 
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the video id to create an url for getting the playlist file.")]
         protected string videoUrlFormatString = "http://cosmos.bcst.yahoo.com/up/yep/process/getPlaylistFOP.php?node_id=v{0}&tech=flash&mode=playlist&lg=R0xx6idZnW2zlrKP8xxAIR&bitrate=700&eventid=1301797";
