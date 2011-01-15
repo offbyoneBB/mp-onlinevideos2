@@ -552,16 +552,15 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="CollegeHumor" util="GenericSite" agecheck="false" enabled="true" lang="en">
+    <Site name="CollegeHumor" util="GenericSite" agecheck="false" enabled="true" lang="en" lastUpdated="2011-01-15T04:30:50.7137515+01:00">
       <Description>Funny videos from CollegeHumor.com.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[(?<=<li\sid="nav-b">(?:(?!<ul>).)*<ul>\s*(<li[^>]*>(<a[^>]*>[^<]*</a>)?[^<]*</li>\s*)*)<li><a\shref="(?<url>[^"]+)">(?<title>[^<]+)</a></li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\shref="http://www.collegehumor.com/video:(?<VideoUrl>[^"]+)"\stitle="(?<Title>[^"]+)"\sdata-json="{context[^<]*<img\ssrc="(?<ImageUrl>[^"]+)"[^>]*>\s*</a>.+?<p>(?<Description>[^<]*)</p>]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="http://www.collegehumor.com/video:(?<VideoUrl>[^"]+)"\stitle="(?<Title>[^"]+)"\sdata-json="{context[^<]*<img\ssrc="(?<ImageUrl>[^"]+)"[^>]*>\s*.+?<p>(?<Description>[^<]*)</p>]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www.collegehumor.com/moogaloop/video:{0}]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><span\sclass="next">Next</span></a>]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><span\sclass="previous">Previous</span></a>]]></item>
         <item key="fileUrlRegEx"><![CDATA[<file>(?<m0>[^<]+)</file>]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.collegehumor.com/]]></item>
       </Configuration>
       <Categories />
