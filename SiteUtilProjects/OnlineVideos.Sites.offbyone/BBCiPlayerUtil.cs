@@ -29,7 +29,7 @@ namespace OnlineVideos.Sites
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/emp/playlist");
             string id = doc.SelectSingleNode("//ns1:item[@kind='programme']/@identifier", nsmRequest).Value;
 
-            System.Net.WebProxy proxyObj = null; // new System.Net.WebProxy("127.0.0.1", 8118);
+            System.Net.WebProxy proxyObj = null; //new System.Net.WebProxy("127.0.0.1", 8118);
             if (!string.IsNullOrEmpty(proxy)) proxyObj = new System.Net.WebProxy(proxy);
 
             doc = new XmlDocument();
@@ -59,71 +59,45 @@ namespace OnlineVideos.Sites
                         string identifier = connectionElem.Attributes["identifier"].Value;
                         string auth = connectionElem.Attributes["authString"].Value;
                         string application = connectionElem.GetAttribute("application");
+                        if (string.IsNullOrEmpty(application)) application = "ondemand";
                         string SWFPlayer = "http://www.bbc.co.uk/emp/10player.swf";
-                        string PlayPath = identifier;
 
-                        info = string.Format("{0}x{1} | {2} kbps", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"));
+                        info = string.Format("{0}x{1} | {2} kbps | {3}", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"), connectionElem.Attributes["kind"].Value);
                         resultUrl = "";
 
                         if (connectionElem.Attributes["kind"].Value == "limelight")
                         {
-                            application += "?" + auth;
-
                             resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfurl={5}&swfhash={6}&swfsize={7}",
+                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfVfy={5}",
                                 System.Web.HttpUtility.UrlEncode(server),
                                 "1935",
-                                System.Web.HttpUtility.UrlEncode(application),
-                                System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}", server, application)),
-                                System.Web.HttpUtility.UrlEncode(PlayPath),
-                                System.Web.HttpUtility.UrlEncode(SWFPlayer),
-                                System.Web.HttpUtility.UrlEncode("49b854ef76a2c8e0f6f7431c11eeca550ee732e9f09efe2968aafae80fc31d4e"),
-                                "1020525"));
+                                System.Web.HttpUtility.UrlEncode(application + "?" + auth),
+                                System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth)),
+                                System.Web.HttpUtility.UrlEncode(identifier),
+                                System.Web.HttpUtility.UrlEncode(SWFPlayer)));
                         }
                         else if (connectionElem.Attributes["kind"].Value == "level3")
                         {
-                            continue;
                             application += "?" + auth;
 
                             if (auth.StartsWith("token=")) auth = auth.Substring(6);
                             resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfurl={5}&token={6}&swfhash={7}&swfsize={8}",
+                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfVfy={5}&token={6}",
                                 System.Web.HttpUtility.UrlEncode(server),
                                 "1935",
                                 System.Web.HttpUtility.UrlEncode(application),
                                 System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}", server, application)),
-                                System.Web.HttpUtility.UrlEncode(PlayPath),
+                                System.Web.HttpUtility.UrlEncode(identifier),
                                 System.Web.HttpUtility.UrlEncode(SWFPlayer),
-                                System.Web.HttpUtility.UrlEncode(auth),
-                                System.Web.HttpUtility.UrlEncode("49b854ef76a2c8e0f6f7431c11eeca550ee732e9f09efe2968aafae80fc31d4e"),
-                                "1020525"));
+                                System.Web.HttpUtility.UrlEncode(auth)));
                         }
                         else if (connectionElem.Attributes["kind"].Value == "akamai")
                         {
-                            continue;
-                            //http://stream-recorder.com/forum/rtmpdump-v2-2d-command-exit-code-1-t6663.html
-
-                            //application = "ondemand";
-                            // authString contains more params (like slist=) -> strip them
-                            int andIndex = auth.IndexOf("&");
-                            if (andIndex > 0)
-                                auth = auth.Substring(0, andIndex);
-                            if (auth.StartsWith("auth="))
-                                auth = auth.Substring(5);
-
-                            application = string.Format("ondemand?_fcs_vhost={0}&auth={1}&aifp=v001&slist={2}", server, auth, identifier);
-    
                             resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfurl={5}&auth={6}&swfhash={7}&swfsize={8}",
-                                System.Web.HttpUtility.UrlEncode(server),
-                                "1935",
-                                System.Web.HttpUtility.UrlEncode(application),
-                                System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:80/{1}", server, application)),
-                                System.Web.HttpUtility.UrlEncode(PlayPath),
-                                System.Web.HttpUtility.UrlEncode(SWFPlayer),
-                                System.Web.HttpUtility.UrlEncode(auth),
-                                System.Web.HttpUtility.UrlEncode("49b854ef76a2c8e0f6f7431c11eeca550ee732e9f09efe2968aafae80fc31d4e"),
-                                "1020525"));
+                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&swfVfy={2}",
+                                System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}?{2}", server, application, auth)),
+                                System.Web.HttpUtility.UrlEncode(identifier),
+                                System.Web.HttpUtility.UrlEncode(SWFPlayer)));
                         }                                                
                     }
                     if (resultUrl != "") sortedPlaybackOptions.Add(info, resultUrl);
