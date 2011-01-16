@@ -656,6 +656,8 @@ namespace OnlineVideos.Sites
 
         public override bool isPossibleVideo(string url)
         {
+            if (string.IsNullOrEmpty(url)) return false; // empty string is not a video
+
             if (resolveHoster != HosterResolving.None)
             {
                 return HosterFactory.Contains(new Uri(url)) || base.isPossibleVideo(url);

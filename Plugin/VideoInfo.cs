@@ -199,16 +199,23 @@ namespace OnlineVideos
             }
 
             if (!playbackOptions.ContainsValue(content.Url))
-                playbackOptions.Add(
-                    string.Format("{0}x{1} ({2}) | {3}:// | {4}",
+            {
+                string baseInfo = string.Format("{0}x{1} ({2}) | {3}:// | {4}",
                         content.Width,
                         content.Height,
                         content.Bitrate != 0 ?
                             content.Bitrate.ToString() + " kbps" :
                             (sizeInBytes != 0 ? (sizeInBytes / 1024).ToString("N0") + " KB" : ""),
                         new Uri(content.Url).Scheme,
-                        System.IO.Path.GetExtension(content.Url)),
-                    content.Url);
+                        System.IO.Path.GetExtension(content.Url));
+                string info = baseInfo;
+                int i = 1;
+                while (playbackOptions.ContainsKey(info))
+                {
+                    info = string.Format("{0} ({1})", baseInfo, i.ToString().PadLeft(2, ' '));
+                }
+                playbackOptions.Add(info, content.Url);
+            }
         }
 
         public static string GetDuration(string duration)
