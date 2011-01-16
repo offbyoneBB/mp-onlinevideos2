@@ -192,41 +192,6 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="MyVideo - Filme" util="MyVideoFilme" agecheck="false" enabled="true" lang="de" lastUpdated="2010-03-24T04:21:51.25+01:00">
-      <Description>Ganze Filme des deutschen Videoportals MyVideo.de.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<category\scategory_ID="(?<url>[^"]+)">(?<title>[^<]+)</category>]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://statix.myvideo.de/dev_syncro/resources/xml/{0}.xml]]></item>
-        <item key="videoItemXml"><![CDATA[/nowtilus/content]]></item>
-        <item key="videoTitleXml"><![CDATA[content_title]]></item>
-        <item key="videoThumbXml"><![CDATA[content_id]]></item>
-        <item key="videoUrlXml"><![CDATA[content_id]]></item>
-        <item key="videoDescriptionXml"><![CDATA[long_description]]></item>
-        <item key="videoDurationXml"><![CDATA[title_length]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://88.198.16.200/myvideo/?content_id={0}]]></item>
-        <item key="videoThumbFormatString"><![CDATA[http://statix.myvideo.de/dev_syncro/resources/assets/{0}/cover.jpg]]></item>
-        <item key="baseUrl"><![CDATA[http://statix.myvideo.de/dev_syncro/resources/xml/category.xml]]></item>
-      </Configuration>
-      <Categories />
-    </Site>
-    <Site name="MSN Movies" util="MSNMovies" agecheck="false" enabled="true" lang="de" lastUpdated="2010-03-24T04:21:51.25+01:00">
-      <Description>Ganze Filme des deutschen MSN Videoportals.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<category\scategory_ID=("|')(?<url>[^("|')]+)("|')>(?<title>[^<]+)</category>]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://movies.msn.de/msn/xml/{0}.xml]]></item>
-        <item key="videoItemXml"><![CDATA[/nowtilus/content]]></item>
-        <item key="videoTitleXml"><![CDATA[content_title]]></item>
-        <item key="videoThumbXml"><![CDATA[content_id]]></item>
-        <item key="videoUrlXml"><![CDATA[content_id]]></item>
-        <item key="videoDescriptionXml"><![CDATA[long_description]]></item>
-        <item key="videoDurationXml"><![CDATA[title_length]]></item>
-        <item key="videoLicensorXml"><![CDATA[licensor]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://88.198.16.200/getstream/?content_id={0}]]></item>
-        <item key="videoThumbFormatString"><![CDATA[http://movies.msn.de/msn/assets/{0}/cover.jpg]]></item>
-        <item key="baseUrl"><![CDATA[http://movies.msn.de/msn/xml/category.xml]]></item>
-      </Configuration>
-      <Categories />
-    </Site>
     <Site name="Bild.de Filme" util="BildFilme" agecheck="false" enabled="true" lang="de" lastUpdated="2010-03-24T04:21:51.25+01:00">
       <Description>Ganze Filme des deutschen Videoportals Bild.de.</Description>
       <Configuration>
@@ -313,10 +278,9 @@
       <Description>Miro combines and categorizes collections of video channels from thousands of sources.</Description>
       <Configuration>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
-        <item key="baseUrl"><![CDATA[https://www.miroguide.com/api/list_categories]]></item>        
+        <item key="baseUrl"><![CDATA[https://www.miroguide.com/api/list_categories]]></item>
         <item key="dynamicCategoriesRegEx"><![CDATA[\{'url'\:\su'(?<url>[^']+)',\s'name'\:\su'(?<title>[^']+)']]></item>
-        <item key="dynamicSubCategoriesRegEx">
-          <![CDATA[<div\sclass="searchResultContent">\s*
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass="searchResultContent">\s*
                     <h4><a\shref="(?<mirourl>[^"]+)"[^>]*>(?<name>[^<]*)</a></h4>\s*
                     <p>(?<desc>(?:(?!</p>).)*)</p>\s*</div>
                     (?:(?!http\://subscribe\.getmiro\.com).)*(?<url>[^"]*)"]]></item>
@@ -901,34 +865,20 @@
         <Category xsi:type="RssLink" name="Soundtracks / Musicals">http://api.mtvnservices.com/1/genre/soundtracks_musicals/videos/?sort=date_descending</Category>
       </Categories>
     </Site>
-    <Site name="JustinTV" util="JustinTV" agecheck="false" enabled="false" lang="en">
-      <Categories>
-        <Category xsi:type="RssLink" name="Producers">http://api.justin.tv/api/stream/list.xml?category=featured</Category>
-        <Category xsi:type="RssLink" name="Social">http://api.justin.tv/api/stream/list.xml?category=social</Category>
-        <Category xsi:type="RssLink" name="Entertainment">http://api.justin.tv/api/stream/list.xml?category=entertainment</Category>
-        <Category xsi:type="RssLink" name="Gaming">http://api.justin.tv/api/stream/list.xml?category=gaming</Category>
-        <Category xsi:type="RssLink" name="Sports">http://api.justin.tv/api/stream/list.xml?category=sports</Category>
-        <Category xsi:type="RssLink" name="News &amp; Events">http://api.justin.tv/api/stream/list.xml?category=news</Category>
-        <Category xsi:type="RssLink" name="Animals">http://api.justin.tv/api/stream/list.xml?category=animals</Category>
-        <Category xsi:type="RssLink" name="Science &amp; Tech">http://api.justin.tv/api/stream/list.xml?category=science_tech</Category>
-        <Category xsi:type="RssLink" name="Educational">http://api.justin.tv/api/stream/list.xml?category=educational</Category>
-        <Category xsi:type="RssLink" name="Other">http://api.justin.tv/api/stream/list.xml?category=other</Category>
-      </Categories>
-    </Site>
-    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" lang="--" player="WMP">
+    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" lang="--" player="WMP" lastUpdated="2011-01-16T17:27:56.8529929+01:00">
       <Description>Collection of live music streams.</Description>
       <Categories>
         <Category xsi:type="Group" name="RockTelevision" thumb="http://www.tv-port.net/wp-content/uploads/2009/05/rock-tv.jpg">
           <Channels>
-            <Channel name="RockTV">mms://mediatv2.topix.it/chTV</Channel>
-            <Channel name="21st">mms://mediatv2.topix.it/ch00</Channel>
-            <Channel name="90s">mms://mediatv2.topix.it/ch90</Channel>
-            <Channel name="80s">mms://mediatv2.topix.it/ch80</Channel>
-            <Channel name="70s">mms://mediatv2.topix.it/ch70</Channel>
-            <Channel name="60s">mms://mediatv2.topix.it/60</Channel>
-            <Channel name="Hard &amp; Heavy">mms://mediatv2.topix.it/chhard</Channel>
-            <Channel name="Prog Rock">mms://mediatv2.topix.it/chprog</Channel>
-            <Channel name="Soft &amp; Ballads">mms://mediatv2.topix.it/chsoft</Channel>
+            <Channel name="RockTV">mms://mediatv2.topix.it/chTv</Channel>
+            <Channel name="21st">mms://mediatv2.topix.it/00xy123</Channel>
+            <Channel name="90s">mms://mediatv2.topix.it/90xy123</Channel>
+            <Channel name="80s">mms://mediatv2.topix.it/80xy123</Channel>
+            <Channel name="70s">mms://mediatv2.topix.it/70xy123</Channel>
+            <Channel name="60s">mms://mediatv2.topix.it/60xy123</Channel>
+            <Channel name="Hard &amp; Heavy">mms://mediatv2.topix.it/hardxy123</Channel>
+            <Channel name="Prog Rock">mms://mediatv2.topix.it/progxy123</Channel>
+            <Channel name="Soft &amp; Ballads">mms://mediatv2.topix.it/softxy123</Channel>
           </Channels>
         </Category>
       </Categories>
