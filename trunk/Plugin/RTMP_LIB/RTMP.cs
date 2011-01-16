@@ -167,6 +167,7 @@ namespace RTMP_LIB
         uint[] m_channelTimestamp = new uint[RTMP_CHANNELS]; // abs timestamp of last packet
         Queue<string> m_methodCalls = new Queue<string>(); //remote method calls queue
         public bool invalidRTMPHeader = false;
+        uint m_mediaStamp = 0;
 
         public bool Connect()
         {
@@ -312,12 +313,14 @@ namespace RTMP_LIB
                     //CLog::Log(LOGDEBUG,"%s, received: audio %lu bytes", __FUNCTION__, packet.m_nBodySize);
                     //HandleAudio(packet);
                     if (m_mediaChannel == 0) m_mediaChannel = packet.m_nChannel;
+                    if (Pausing == 0) m_mediaStamp = packet.m_nTimeStamp;
                     bHasMediaPacket = 1;
                     break;
                 case PacketType.Video:
                     //CLog::Log(LOGDEBUG,"%s, received: video %lu bytes", __FUNCTION__, packet.m_nBodySize);
                     //HandleVideo(packet);
                     if (m_mediaChannel == 0) m_mediaChannel = packet.m_nChannel;
+                    if (Pausing == 0) m_mediaStamp = packet.m_nTimeStamp;
                     bHasMediaPacket = 1;
                     break;
                 case PacketType.Metadata:
@@ -1237,6 +1240,7 @@ namespace RTMP_LIB
         {
             // go through FLV packets and handle metadata packets
             int pos = 0;
+            uint nTimeStamp = packet.m_nTimeStamp;
 
             while (pos + 11 < packet.m_nBodySize)
             {
@@ -1251,8 +1255,14 @@ namespace RTMP_LIB
                 {
                     HandleMetadata(packet.m_body, pos + 11, dataSize);
                 }
+                else if (packet.m_body[pos] == 8 || packet.m_body[pos] == 9)
+                {
+                    nTimeStamp = (uint)ReadInt24(packet.m_body, pos + 4);
+                    nTimeStamp |= (uint)(packet.m_body[pos + 7] << 24);
+                }
                 pos += (11 + dataSize + 4);
-            }	
+            }
+            if (Pausing == 0) m_mediaStamp = nTimeStamp;
         }
 
         #endregion        
@@ -1320,9 +1330,13 @@ namespace RTMP_LIB
         /// </summary>
         /// <param name="output"></param>
         /// <param name="nVal"></param>
-        public static void EncodeInt32(List<byte> output, int nVal)
+        public static void EncodeInt32(List<byte> output, int nVal, uint offset = 0)
         {
-            output.AddRange(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(nVal)));
+            byte[] bytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(nVal));
+            if (offset == 0)
+                output.AddRange(bytes);
+            else
+                for (int i = 0; i < bytes.Length; i++) output[(int)offset + i] = bytes[i];
         }
 
         /// <summary>

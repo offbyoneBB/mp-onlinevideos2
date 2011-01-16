@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace RTMP_LIB
 {
@@ -158,9 +159,6 @@ namespace RTMP_LIB
             // construct 11 byte header then add rtmp packet's data
             if (packet.PacketType == PacketType.Audio || packet.PacketType == PacketType.Video || packet.PacketType == PacketType.Metadata)
             {
-                // set data type
-                //*dataType |= (((packet.m_packetType == 0x08)<<2)|(packet.m_packetType == 0x09));
-
                 nTimeStamp = (uint)packet.m_nTimeStamp;
                 prevTagSize = 11 + packet.m_nBodySize;
 
@@ -178,11 +176,20 @@ namespace RTMP_LIB
                 RTMP.EncodeInt24(somebytes, 0);
                 stream.Write(somebytes.ToArray(), 0, somebytes.Count);
                 somebytes.Clear();
-            }
 
+                // body
+                stream.Write(packet.m_body, 0, (int)packet.m_nBodySize);
+
+                // prevTagSize
+                RTMP.EncodeInt32(somebytes, (int)prevTagSize);
+                stream.Write(somebytes.ToArray(), 0, somebytes.Count);
+                somebytes.Clear();
+            }
             // correct tagSize and obtain timestamp if we have an FLV stream
-            if (packet.PacketType == PacketType.FlvTags)
+            else if (packet.PacketType == PacketType.FlvTags)
             {
+                List<byte> data = packet.m_body.ToList();
+
                 uint pos = 0;
 
                 while (pos + 11 < packet.m_nBodySize)
@@ -191,9 +198,6 @@ namespace RTMP_LIB
                     nTimeStamp = (uint)RTMP.ReadInt24(packet.m_body, (int)pos + 4);
                     nTimeStamp |= (uint)(packet.m_body[pos + 7] << 24);
 
-                    // set data type
-                    //*dataType |= (((*(packetBody+pos) == 0x08)<<2)|(*(packetBody+pos) == 0x09));
-
                     if (pos + 11 + dataSize + 4 > packet.m_nBodySize)
                     {
                         if (pos + 11 + dataSize > packet.m_nBodySize)
@@ -201,18 +205,9 @@ namespace RTMP_LIB
                             Logger.Log(string.Format("Wrong data size ({0}), stream corrupted, aborting!", dataSize));
                             return false;
                         }
-                        //Log(LOGWARNING, "No tagSize found, appending!");
-
                         // we have to append a last tagSize!
                         prevTagSize = dataSize + 11;
-
-                        List<byte> somemorebytes = new List<byte>();
-                        RTMP.EncodeInt32(somemorebytes, (int)prevTagSize);
-                        //stream.Write(somemorebytes.ToArray(), 0, somemorebytes.Count);
-                        // todo : does Append mean that the Array is too small?
-                        Array.Copy(somemorebytes.ToArray(), 0, packet.m_body, pos + 11 + dataSize, somemorebytes.Count);
-                        //RTMP.EncodeInt32(ptr + pos + 11 + dataSize, prevTagSize);                            
-                        somemorebytes.Clear();
+                        RTMP.EncodeInt32(data, (int)prevTagSize);
                     }
                     else
                     {
@@ -220,33 +215,17 @@ namespace RTMP_LIB
 
                         if (prevTagSize != (dataSize + 11))
                         {
+                            //Tag and data size are inconsistent, writing tag size according to dataSize+11
                             prevTagSize = dataSize + 11;
-
-                            List<byte> somemorebytes = new List<byte>();
-                            RTMP.EncodeInt32(somemorebytes, (int)prevTagSize);
-                            Array.Copy(somemorebytes.ToArray(), 0, packet.m_body, pos + 11 + dataSize, somemorebytes.Count);
-                            //RTMP.EncodeInt32(ptr + pos + 11 + dataSize, prevTagSize);
-                            somemorebytes.Clear();
+                            RTMP.EncodeInt32(data, (int)prevTagSize, pos + 11 + dataSize);
                         }
                     }
 
                     pos += prevTagSize + 4;//(11+dataSize+4);
                 }
+
+                stream.Write(data.ToArray(), 0, data.Count);
             }
-
-            stream.Write(packet.m_body, 0, (int)packet.m_nBodySize);
-
-            if (packet.PacketType != PacketType.FlvTags)
-            {
-                // FLV tag packets contain their own prevTagSize
-                List<byte> somemorebytes = new List<byte>();
-                RTMP.EncodeInt32(somemorebytes, (int)prevTagSize);
-                stream.Write(somemorebytes.ToArray(), 0, somemorebytes.Count);
-                //RTMP.EncodeInt32(ptr, prevTagSize);
-                //ptr += 4;
-                somemorebytes.Clear();
-            }
-
             return true;
         }
     }
