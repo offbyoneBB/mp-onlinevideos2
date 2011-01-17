@@ -129,6 +129,8 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.fileUrlNameFormatStringTextBox = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.generalTabPage.SuspendLayout();
             this.categTabPage.SuspendLayout();
@@ -157,7 +159,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 30, 3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(468, 538);
+            this.tabControl1.Size = new System.Drawing.Size(468, 581);
             this.tabControl1.TabIndex = 16;
             // 
             // generalTabPage
@@ -649,6 +651,8 @@
             // 
             // VideoUrlTabPage
             // 
+            this.VideoUrlTabPage.Controls.Add(this.fileUrlNameFormatStringTextBox);
+            this.VideoUrlTabPage.Controls.Add(this.label12);
             this.VideoUrlTabPage.Controls.Add(this.label11);
             this.VideoUrlTabPage.Controls.Add(this.comboBoxResolving);
             this.VideoUrlTabPage.Controls.Add(this.fileUrlPostStringTextBox);
@@ -683,7 +687,7 @@
             this.VideoUrlTabPage.Location = new System.Drawing.Point(4, 22);
             this.VideoUrlTabPage.Name = "VideoUrlTabPage";
             this.VideoUrlTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.VideoUrlTabPage.Size = new System.Drawing.Size(460, 512);
+            this.VideoUrlTabPage.Size = new System.Drawing.Size(460, 555);
             this.VideoUrlTabPage.TabIndex = 3;
             this.VideoUrlTabPage.Text = "VideoUrl";
             this.VideoUrlTabPage.UseVisualStyleBackColor = true;
@@ -740,7 +744,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.ResultUrlComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ResultUrlComboBox.FormattingEnabled = true;
-            this.ResultUrlComboBox.Location = new System.Drawing.Point(3, 478);
+            this.ResultUrlComboBox.Location = new System.Drawing.Point(3, 528);
             this.ResultUrlComboBox.Name = "ResultUrlComboBox";
             this.ResultUrlComboBox.Size = new System.Drawing.Size(407, 21);
             this.ResultUrlComboBox.TabIndex = 79;
@@ -807,7 +811,7 @@
             // 
             this.btnPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPlay.ContextMenuStrip = this.playButtonContextMenuStrip;
-            this.btnPlay.Location = new System.Drawing.Point(416, 477);
+            this.btnPlay.Location = new System.Drawing.Point(416, 527);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(38, 23);
             this.btnPlay.TabIndex = 72;
@@ -849,7 +853,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(0, 464);
+            this.label21.Location = new System.Drawing.Point(0, 514);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(50, 13);
             this.label21.TabIndex = 70;
@@ -1024,7 +1028,7 @@
             this.categoryInfoListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.categoryInfoListView.Location = new System.Drawing.Point(0, 0);
             this.categoryInfoListView.Name = "categoryInfoListView";
-            this.categoryInfoListView.Size = new System.Drawing.Size(955, 119);
+            this.categoryInfoListView.Size = new System.Drawing.Size(955, 129);
             this.categoryInfoListView.TabIndex = 25;
             this.categoryInfoListView.UseCompatibleStateImageBehavior = false;
             this.categoryInfoListView.View = System.Windows.Forms.View.Details;
@@ -1044,7 +1048,7 @@
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(483, 538);
+            this.treeView1.Size = new System.Drawing.Size(483, 581);
             this.treeView1.TabIndex = 26;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
@@ -1062,8 +1066,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.categoryInfoListView);
-            this.splitContainer1.Size = new System.Drawing.Size(955, 661);
-            this.splitContainer1.SplitterDistance = 538;
+            this.splitContainer1.Size = new System.Drawing.Size(955, 714);
+            this.splitContainer1.SplitterDistance = 581;
             this.splitContainer1.TabIndex = 27;
             // 
             // splitContainer2
@@ -1079,7 +1083,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.treeView1);
-            this.splitContainer2.Size = new System.Drawing.Size(955, 538);
+            this.splitContainer2.Size = new System.Drawing.Size(955, 581);
             this.splitContainer2.SplitterDistance = 468;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -1145,11 +1149,29 @@
             this.openFileDialog1.FileName = "OnlineVideoSites.xml";
             this.openFileDialog1.Filter = "xml-Files|*.xml";
             // 
+            // fileUrlNameFormatStringTextBox
+            // 
+            this.fileUrlNameFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.fileUrlNameFormatStringTextBox.Location = new System.Drawing.Point(3, 480);
+            this.fileUrlNameFormatStringTextBox.Name = "fileUrlNameFormatStringTextBox";
+            this.fileUrlNameFormatStringTextBox.Size = new System.Drawing.Size(442, 20);
+            this.fileUrlNameFormatStringTextBox.TabIndex = 87;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(0, 464);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(123, 13);
+            this.label12.TabIndex = 86;
+            this.label12.Text = "FileUrlNameFormatString";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(955, 688);
+            this.ClientSize = new System.Drawing.Size(955, 741);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1282,6 +1304,8 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.ComboBox comboBoxResolving;
+        private System.Windows.Forms.TextBox fileUrlNameFormatStringTextBox;
+        private System.Windows.Forms.Label label12;
     }
 }
 

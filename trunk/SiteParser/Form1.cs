@@ -75,6 +75,7 @@ namespace SiteParser
             fileUrlRegexTextBox.Text = util.FileUrlRegEx;
             fileUrlFormatStringTextBox.Text = util.FileUrlFormatString;
             fileUrlPostStringTextBox.Text = util.FileUrlPostString;
+            fileUrlNameFormatStringTextBox.Text = util.FileUrlNameFormatString;
             getRedirectedFileUrlCheckBox.Checked = util.GetRedirectedFileUrl;
             comboBoxResolving.SelectedItem = util.ResolveHoster;
 
@@ -125,6 +126,7 @@ namespace SiteParser
             util.FileUrlRegEx = fileUrlRegexTextBox.Text;
             util.FileUrlFormatString = fileUrlFormatStringTextBox.Text;
             util.FileUrlPostString = fileUrlPostStringTextBox.Text;
+            util.FileUrlNameFormatString = fileUrlNameFormatStringTextBox.Text;
             util.GetRedirectedFileUrl = getRedirectedFileUrlCheckBox.Checked;
             util.ResolveHoster = (GenericSiteUtil.HosterResolving)comboBoxResolving.SelectedItem;
         }
@@ -383,7 +385,7 @@ namespace SiteParser
 
                 Form2 f2 = new Form2();
                 fileUrlRegexTextBox.Text = f2.Execute(fileUrlRegexTextBox.Text, webData, playListUrlResultTextBox.Text,
-                    new string[] { "m0", "m1", "m2" });
+                    new string[] { "m0", "m1", "m2", "n0", "n1", "n2" });
             }
         }
 
@@ -398,13 +400,14 @@ namespace SiteParser
                 ResultUrlComboBox.Items.Clear();
 
                 if (playList != null)
-                    foreach (string item in playList.Values)
+                    foreach (KeyValuePair<string, string> entry in playList)
                     {
+                        PlaybackOption po = new PlaybackOption(entry);
                         if (generic.GetRedirectedFileUrl)
-                            ResultUrlComboBox.Items.Add(SiteUtilBase.GetRedirectedUrl(item));
-                        else
-                            ResultUrlComboBox.Items.Add(item);
+                            po.Url = SiteUtilBase.GetRedirectedUrl(po.Url);
+                        ResultUrlComboBox.Items.Add(po);
                     }
+
                 if (ResultUrlComboBox.Items.Count > 0)
                     ResultUrlComboBox.SelectedIndex = 0;
             }
@@ -414,18 +417,18 @@ namespace SiteParser
         {
             System.Diagnostics.Process.Start(
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Windows Media Player\\wmplayer.exe"),
-                ResultUrlComboBox.SelectedItem as string);
+                (ResultUrlComboBox.SelectedItem as PlaybackOption).Url);
         }
 
         private void copyUrl_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(ResultUrlComboBox.SelectedItem as string);
+            Clipboard.SetText((ResultUrlComboBox.SelectedItem as PlaybackOption).Url);
         }
 
         private void checkValid_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(@"""" + ResultUrlComboBox.SelectedItem as string + @""" is " +
-                (!Uri.IsWellFormedUriString(ResultUrlComboBox.SelectedItem as string, UriKind.Absolute) ? "NOT " : String.Empty) +
+            MessageBox.Show(@"""" + (ResultUrlComboBox.SelectedItem as PlaybackOption).Url + @""" is " +
+                (!Uri.IsWellFormedUriString((ResultUrlComboBox.SelectedItem as PlaybackOption).Url, UriKind.Absolute) ? "NOT " : String.Empty) +
                 "valid");
         }
 
@@ -517,6 +520,23 @@ namespace SiteParser
             Process.Start(@"http://code.google.com/p/mp-onlinevideos2/wiki/SiteParser");
         }
 
+        #region PlaybackOption
+        private class PlaybackOption
+        {
+            public PlaybackOption(KeyValuePair<string, string> val)
+            {
+                Name = val.Key;
+                Url = val.Value;
+            }
+            public string Name;
+            public string Url;
+            public override string ToString()
+            {
+                return (String.IsNullOrEmpty(Name) ? String.Empty : Name + " | ") + Url;
+            }
+        }
+
+        #endregion
     }
 
     class MySiteUtil : GenericSiteUtil
@@ -555,6 +575,7 @@ namespace SiteParser
         public string FileUrlRegEx { get { return GetRegex(regEx_FileUrl); } set { regEx_FileUrl = CreateRegex(value); fileUrlRegEx = value; } }
         public string FileUrlFormatString { get { return fileUrlFormatString; } set { fileUrlFormatString = value; } }
         public string FileUrlPostString { get { return fileUrlPostString; } set { fileUrlPostString = value; } }
+        public string FileUrlNameFormatString { get { return fileUrlNameFormatString; } set { fileUrlNameFormatString = value; } }
         public bool GetRedirectedFileUrl { get { return getRedirectedFileUrl; } set { getRedirectedFileUrl = value; } }
         public HosterResolving ResolveHoster { get { return resolveHoster; } set { resolveHoster = value; } }
 
@@ -572,6 +593,7 @@ namespace SiteParser
             return r.ToString().TrimStart('{').TrimEnd('}');
         }
         #endregion
+
     }
 
 }
