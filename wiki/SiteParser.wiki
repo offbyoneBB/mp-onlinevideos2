@@ -52,6 +52,8 @@ VideoUrlResult: http://www.website.com/flash/download?&movieId=706334
 
 3: "GetFileUrl" here you can parse the html-result of the previous steps to extract the final url.
 Here you can also use the m0,m1, etc as explained in step 1.
+Optionally you can also specify n0,n1 etc for the name (useful in case of multiple urls for 1 video, like youtube).
+In that case you can specify the Formatted name at FileUrlNameFormatString.
 Also you can enable parsing redirected urls with getRedirectedFileUrl, and fill in data to put in a http-POST message (in fileUrlPostString)
 
 4: "Result" a list of the final urls found.
