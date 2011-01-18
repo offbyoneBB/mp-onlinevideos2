@@ -430,6 +430,20 @@ namespace OnlineVideos.Hoster
         public override string getVideoUrls(string url)
         {
             string webData = SiteUtilBase.GetWebData(url);
+            string postData = String.Empty;
+            Match m = Regex.Match(webData, @"<input\sname=""(?<m0>[^""]*)""\stype=""hidden""\svalue=""(?<m1>[^""]*)");
+            while (m.Success)
+            {
+                if (!String.IsNullOrEmpty(postData))
+                    postData += "&";
+                postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
+                m = m.NextMatch();
+            }
+            postData += "&method_free=Continue+to+Video";
+
+            if (String.IsNullOrEmpty(postData))
+                return null;
+            webData = SiteUtilBase.GetWebDataFromPost(url, postData);
             string packed = GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = UnPack(packed);
@@ -450,16 +464,21 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
-            if (url.Contains("embed"))
+            string webData = SiteUtilBase.GetWebData(url);
+            string postData = String.Empty;
+            Match m = Regex.Match(webData, @"<input\sname=""(?<m0>[^""]*)""\stype=""hidden""\svalue=""(?<m1>[^""]*)");
+            while (m.Success)
             {
-                string page = SiteUtilBase.GetWebData(url);
-                url = Regex.Match(page, @"<div><a\shref=""(?<url>[^""]+)""").Groups["url"].Value;
+                if (!String.IsNullOrEmpty(postData))
+                    postData += "&";
+                postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
+                m = m.NextMatch();
             }
+            postData += "&method_free=Continue+to+Video";
 
-            string[] urlParts = url.Split('/');
-
-            string postData = @"op=download1&usr_login=&id=" + urlParts[3] + "&fname=" + urlParts[4] + "&referer=&method_free=Free+Stream";
-            string webData = SiteUtilBase.GetWebDataFromPost(url, postData);
+            if (String.IsNullOrEmpty(postData))
+                return null;
+            webData = SiteUtilBase.GetWebDataFromPost(url, postData);
             string packed = GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = UnPack(packed);
@@ -468,7 +487,6 @@ namespace OnlineVideos.Hoster
             if (!String.IsNullOrEmpty(res))
                 return res;
             return GetSubString(unpacked, @"name=""src""value=""", @"""");
-
         }
     }
 
