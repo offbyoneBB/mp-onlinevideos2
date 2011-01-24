@@ -6,6 +6,9 @@ using Google.GData.Client;
 using Google.GData.Extensions;
 using Google.GData.YouTube;
 using Google.GData.Extensions.MediaRss;
+using System.Linq;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace OnlineVideos.Sites
 {
@@ -67,7 +70,9 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum quality for the video to be played.")]
         VideoQuality videoQuality = VideoQuality.High;
         [Category("OnlineVideosUserConfiguration"), Description("Your YouTube account name (not Email!). Used for favorites and subscriptions.")]
-        string username = "";
+        string accountname = "";
+        [Category("OnlineVideosUserConfiguration"), Description("Your YouTube login (mostly an Email!). Used for favorites and subscriptions.")]
+        string login = "";
         [Category("OnlineVideosUserConfiguration"), Description("Your YouTube password. Used for favorites and subscriptions."), PasswordPropertyText(true)]
         string password = "";
         [Category("OnlineVideosUserConfiguration"), Description("Defines the default number of videos to display per page.")]
@@ -84,7 +89,7 @@ namespace OnlineVideos.Sites
         private Dictionary<String, String> timeFrameList = new Dictionary<string, string>();
         private YouTubeQuery lastPerformedQuery;        
 
-        //const string CLIENT_ID = "ytapi-GregZ-OnlineVideos-s2skvsf5-0";
+        const string CLIENT_ID = "ytapi-GregZ-OnlineVideos-s2skvsf5-0";
         const string DEVELOPER_KEY = "AI39si5x-6x0Nybb_MvpC3vpiF8xBjpGgfq-HTbyxWP26hdlnZ3bTYyERHys8wyYsbx3zc5f9bGYj0_qfybCp-wyBF-9R5-5kA";        
         const string USER_PLAYLISTS_FEED = "http://gdata.youtube.com/feeds/api/users/[\\w]+/playlists";
         const string PLAYLIST_FEED = "http://gdata.youtube.com/feeds/api/playlists/{0}";                
@@ -190,10 +195,10 @@ namespace OnlineVideos.Sites
             }
 
             // if a username was set add a category for the users a) favorites and b) subscriptions
-            if (!string.IsNullOrEmpty(username))
+            if (!string.IsNullOrEmpty(accountname))
             {
-                Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", username, Translation.Favourites) });
-                Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", username, Translation.Subscriptions), HasSubCategories = true });
+                Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Favourites) });
+                Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Subscriptions), HasSubCategories = true });
             }
 
             Settings.DynamicCategoriesDiscovered = true;
@@ -223,9 +228,20 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                // users subscriptions                
-                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateSubscriptionUri(username)), NumberToRetrieve = pageSize };
-                YouTubeFeed feed = service.Query(query);
+                // users subscriptions    
+                Login();
+                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateSubscriptionUri(accountname)), NumberToRetrieve = pageSize };
+                YouTubeFeed feed = null;
+                try
+                {
+                    feed = service.Query(query);
+                }
+                catch (Google.GData.Client.GDataRequestException queryEx)
+                {
+                    string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
+                    if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
+                    else throw queryEx;
+                }
                 foreach(SubscriptionEntry subScr in feed.Entries)
                 {
                     RssLink subScrLink = new RssLink();
@@ -266,8 +282,18 @@ namespace OnlineVideos.Sites
                     query.LR = OnlineVideoSettings.Instance.Locale.TwoLetterISOLanguageName;
                 }
             }
-
-            YouTubeFeed feed = service.Query(query);
+            YouTubeFeed feed = null;
+            try
+            {
+                feed = service.Query(query);
+            }
+            catch (Google.GData.Client.GDataRequestException queryEx)
+            {
+                string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
+                if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
+                else throw queryEx;
+            }
+            
             hasPreviousPage = !string.IsNullOrEmpty(feed.PrevChunk);
             hasNextPage = !string.IsNullOrEmpty(feed.NextChunk);
             foreach (YouTubeEntry entry in feed.Entries)
@@ -418,8 +444,8 @@ namespace OnlineVideos.Sites
 
         protected List<VideoInfo> getFavorites()
         {
-            if (string.IsNullOrEmpty(username)) return new List<VideoInfo>();
-            YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateFavoritesUri(username)), NumberToRetrieve = pageSize };
+            Login();
+            YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateFavoritesUri(accountname)), NumberToRetrieve = pageSize };
             return parseGData(query);
         }
 
@@ -427,9 +453,9 @@ namespace OnlineVideos.Sites
         {
             if (CheckUsernameAndPassword())
             {
-                service.setUserCredentials(username, password);
+                Login();
                 YouTubeEntry entry = (YouTubeEntry)video.Other;
-                service.Insert(new Uri(YouTubeQuery.CreateFavoritesUri(username)), entry);                
+                service.Insert(new Uri(YouTubeQuery.CreateFavoritesUri(accountname)), entry);                
             }
         }
 
@@ -437,21 +463,37 @@ namespace OnlineVideos.Sites
         {
             if (CheckUsernameAndPassword())
             {
-                service.setUserCredentials(username, password);
+                Login();
                 ((YouTubeEntry)video.Other).Delete();               
             }
         }
 
         protected bool CheckUsernameAndPassword()
         {
-            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(login))
             {
-                throw new OnlineVideosException("Please set your username and password in the Configuration");
+                throw new OnlineVideosException("Please set your login and password in the Configuration");
             }
             else
             {
                 return true;
             }
+        }
+
+        protected bool Login()
+        {
+            //check if already logged in
+            if (!string.IsNullOrEmpty((service.RequestFactory as Google.GData.Client.GDataGAuthRequestFactory).GAuthToken)) return true;
+            // check if we can login
+            if (!string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(login))
+            {
+                // do login
+                service.setUserCredentials(login, password);
+                string token = service.QueryClientLoginToken();
+                service.SetAuthenticationToken(token);
+                return true;
+            }
+            return false;
         }
 
         #endregion        
