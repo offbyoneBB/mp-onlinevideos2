@@ -1579,9 +1579,16 @@ namespace OnlineVideos.MediaPortal1
 
         private bool UrlOk(string url)
         {
-            return Uri.IsWellFormedUriString(url, UriKind.Absolute) ||
-                Uri.IsWellFormedUriString(Uri.EscapeUriString(url), UriKind.Absolute) ||
-                System.IO.Path.IsPathRooted(url);
+            try
+            {
+                return Uri.IsWellFormedUriString(url, UriKind.Absolute) ||
+                    Uri.IsWellFormedUriString(Uri.EscapeUriString(url), UriKind.Absolute) ||
+                    System.IO.Path.IsPathRooted(url);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private void removeInvalidEntries(List<string> loUrlList)
@@ -1650,7 +1657,15 @@ namespace OnlineVideos.MediaPortal1
         {
             if (!string.IsNullOrEmpty(playItem.FileName))
             {
-                Play_Step2(playItem, new List<string>(new string[] { playItem.FileName }), goFullScreen);
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                {
+                    return SelectedSite.getPlaylistItemUrl(playItem.Video, currentPlaylist[0].ChosenPlaybackOption);
+                },
+                delegate(bool success, object result)
+                {
+                    if (success) Play_Step2(playItem, new List<String>() { result as string }, goFullScreen);
+                }
+                , Translation.GettingPlaybackUrlsForVideo, true);
             }
             else
             {
@@ -1690,12 +1705,17 @@ namespace OnlineVideos.MediaPortal1
                 List<PlayListItem> playbackItems = new List<PlayListItem>();
                 foreach (string url in loUrlList)
                 {
-                    playbackItems.Add(new PlayListItem(string.Format("{0} - {1} / {2}", playItem.Video.Title, (playbackItems.Count + 1).ToString(), loUrlList.Count), url)
+                    VideoInfo vi = playItem.Video.CloneForPlayList(url, url == loUrlList[0]);
+                    string url_new = url;
+                    if (url == loUrlList[0])
                     {
-                        Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
-                        Video = playItem.Video,
-                        Util = playItem.Util
-                    });
+                        url_new = SelectedSite.getPlaylistItemUrl(vi, string.Empty);
+                    }
+                    PlayListItem pli = new PlayListItem(string.Format("{0} - {1} / {2}", playItem.Video.Title, (playbackItems.Count + 1).ToString(), loUrlList.Count), url_new);
+                    pli.Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream;
+                    pli.Video = vi;
+                    pli.Util = playItem.Util;
+                    playbackItems.Add(pli);
                 }
                 if (currentPlaylist == null)
                 {
@@ -1710,15 +1730,20 @@ namespace OnlineVideos.MediaPortal1
                 playItem = playbackItems[0];
                 loUrlList = new List<string>(new string[] { playItem.FileName });
             }
-            // if multiple quality choices are available show a selection dialogue (not on playlist playback)
+            // if multiple quality choices are available show a selection dialogue (also on playlist playback)
             string lsUrl = loUrlList[0];
-            if (currentPlaylist == null || currentPlaylist.Count == 0)
+            bool resolve = DisplayPlaybackOptions(playItem.Video, ref lsUrl); // resolve only when any playbackoptions were set
+            if (lsUrl == "-1") return; // the user did not chose an option but canceled the dialog
+            if (resolve)
             {
-                bool resolve = DisplayPlaybackOptions(playItem.Video, ref lsUrl);
-                if (lsUrl == "-1") return; // the user did not chose an option but canceled the dialog
-                // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
-                if (resolve)
+                playItem.ChosenPlaybackOption = lsUrl;
+                if (playItem.Video.GetType().FullName == typeof(VideoInfo).FullName)
                 {
+                    Play_Step3(playItem, playItem.Video.GetPlaybackOptionUrl(lsUrl), goFullScreen);
+                }
+                else
+                {
+                    // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                     {
                         return playItem.Video.GetPlaybackOptionUrl(lsUrl);
@@ -1728,10 +1753,12 @@ namespace OnlineVideos.MediaPortal1
                         if (success) Play_Step3(playItem, result as string, goFullScreen);
                     }
                     , Translation.GettingPlaybackUrlsForVideo, true);
-                    return; // don't execute rest of function, we are waiting for callback
                 }
             }
-            Play_Step3(playItem, lsUrl, goFullScreen);
+            else
+            {
+                Play_Step3(playItem, lsUrl, goFullScreen);
+            }
         }
 
         void Play_Step3(PlayListItem playItem, string lsUrl, bool goFullScreen)
@@ -2400,8 +2427,8 @@ namespace OnlineVideos.MediaPortal1
         /// only if PlaybackOptions holds more than one entry.
         /// </summary>
         /// <param name="videoInfo"></param>
-        /// <param name="defaultUrl">will be set to -1 when the user canceled the dialog</param>
-        /// <returns>true when a choice from the PlaybackOptions was made and defaultUrl hold the key of that choice</returns>
+        /// <param name="defaultUrl">will be set to -1 when the user canceled the dialog, will not be touched if no playbackoptions are set, otherwise set to the chosen key</param>
+        /// <returns>true when a choice from the PlaybackOptions was made (or only one option was available)</returns>
         private bool DisplayPlaybackOptions(VideoInfo videoInfo, ref string defaultUrl)
         {
             // with no options set, return the VideoUrl field
@@ -2409,29 +2436,29 @@ namespace OnlineVideos.MediaPortal1
             // with just one option set, return that options url
             if (videoInfo.PlaybackOptions.Count == 1)
             {
-                var enumer = videoInfo.PlaybackOptions.GetEnumerator();
-                enumer.MoveNext();
-                defaultUrl = enumer.Current.Value;
-                return false;
+                defaultUrl= videoInfo.PlaybackOptions.First().Key;
             }
-            int defaultOption = -1;
-            // show a list of available options and let the user decide
-            GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-            if (dlgSel != null)
+            else
             {
-                dlgSel.Reset();
-                dlgSel.SetHeading(Translation.SelectSource);
-                int option = 0;
-                foreach (string key in videoInfo.PlaybackOptions.Keys)
+                int defaultOption = -1;
+                // show a list of available options and let the user decide
+                GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                if (dlgSel != null)
                 {
-                    dlgSel.Add(key);
-                    if (videoInfo.PlaybackOptions[key] == defaultUrl) defaultOption = option;
-                    option++;
+                    dlgSel.Reset();
+                    dlgSel.SetHeading(Translation.SelectSource);
+                    int option = 0;
+                    foreach (string key in videoInfo.PlaybackOptions.Keys)
+                    {
+                        dlgSel.Add(key);
+                        if (videoInfo.PlaybackOptions[key] == defaultUrl) defaultOption = option;
+                        option++;
+                    }
                 }
+                if (defaultOption != -1) dlgSel.SelectedLabel = defaultOption;
+                dlgSel.DoModal(GUIWindowManager.ActiveWindow);
+                defaultUrl = (dlgSel.SelectedId == -1) ? "-1" : dlgSel.SelectedLabelText;
             }
-            if (defaultOption != -1) dlgSel.SelectedLabel = defaultOption;
-            dlgSel.DoModal(GUIWindowManager.ActiveWindow);
-            defaultUrl = (dlgSel.SelectedId == -1) ? "-1" : dlgSel.SelectedLabelText;
             return true;
         }
 

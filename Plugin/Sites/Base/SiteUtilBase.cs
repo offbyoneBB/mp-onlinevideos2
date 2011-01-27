@@ -176,6 +176,17 @@ namespace OnlineVideos.Sites
         }
 
         /// <summary>
+        /// Allows the Util to resolve the url of a playlist item to playback options or a new url directly before playback.
+        /// </summary>
+        /// <param name="clonedVideoInfo">A clone of the original <see cref="VideoInfo"/> object, given in <see cref="getMultipleVideoUrls"/>, with the VideoUrl set to one of the urls returned.</param>
+        /// <param name="chosenPlaybackOption">the key from the <see cref="VideoInfo.PlaybackOptions"/> of the first video chosen by the user</param>
+        /// <returns>the resolved url (by default just the clonedVideoInfo.VideoUrl that was given in <see cref="getMultipleVideoUrls"/></returns>
+        public virtual string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption)
+        {
+            return clonedVideoInfo.VideoUrl;
+        }
+
+        /// <summary>
         /// This function will be called when the user selects a video for playback. It should return the absolute url to the video file.<br/>
         /// By default, the <see cref="VideoInfo.VideoUrl"/> fields value will be returned.
         /// </summary>

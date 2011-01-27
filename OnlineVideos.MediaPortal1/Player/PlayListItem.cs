@@ -10,5 +10,7 @@ namespace OnlineVideos.MediaPortal1.Player
         public VideoInfo Video { get; set; }
 
         public Sites.SiteUtilBase Util { get; set; }
+
+        public string ChosenPlaybackOption { get; set; }
     }
 }

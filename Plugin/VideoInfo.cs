@@ -53,9 +53,15 @@ namespace OnlineVideos
             return string.Format("Title:{0}\nDesc:{1}\nVidUrl:{2}\nImgUrl:{3}\nLength:{4}\n", Title, Description, VideoUrl, ImageUrl, Length);
         }
 
-        public virtual string GetPlaybackOptionUrl(string url)
+        /// <summary>
+        /// Can be overriden to further resolve the urls of a playbackoption.
+        /// By default it only returns the url for the option given as parameter.
+        /// </summary>
+        /// <param name="option">key from the <see cref="PlaybackOptions"/> to get a playback url for</param>
+        /// <returns>url that points to the file that can be played</returns>
+        public virtual string GetPlaybackOptionUrl(string option)
         {
-            return PlaybackOptions[url];
+            return PlaybackOptions[option];
         }
 
         /// <summary>
@@ -237,5 +243,20 @@ namespace OnlineVideos
         {
             if (PropertyChanged != null) PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
+
+        public VideoInfo CloneForPlayList(string videoUrl, bool withPlaybackOptions)
+        {
+            VideoInfo newVideoInfo = this.MemberwiseClone() as VideoInfo;
+            if (withPlaybackOptions)
+            {
+                if (PlaybackOptions != null) newVideoInfo.PlaybackOptions = new Dictionary<string, string>(PlaybackOptions);
+            }
+            else
+            {
+                newVideoInfo.PlaybackOptions = null;
+            }
+            newVideoInfo.VideoUrl = videoUrl;
+            return newVideoInfo;
+        } 
     }
 }
