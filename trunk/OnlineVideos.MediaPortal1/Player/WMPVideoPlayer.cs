@@ -238,7 +238,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 case 0xc00d1197: _criticalErrorEncountered = true; break;  //NS_E_WMP_CANNOT_FIND_FILE
                 default: _criticalErrorEncountered = true; break; // for now: abort on all errors
             }
-            Log.Instance.Error("WMPVideoPlayer: " + error.errorDescription);
+            Log.Instance.Warn("WMPVideoPlayer: " + error.errorDescription);
         }
 
         private void OnBuffering(object sender, _WMPOCXEvents_BufferingEvent e)

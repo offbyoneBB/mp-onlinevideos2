@@ -70,17 +70,25 @@ namespace OnlineVideos
         /// <returns></returns>
         public double GetSecondsFromStartTime()
         {
-            double hours = 0.0d;
-            double minutes = 0.0d;
-            double seconds = 0.0d;
+            try
+            {
+                double hours = 0.0d;
+                double minutes = 0.0d;
+                double seconds = 0.0d;
 
-            double.TryParse(StartTime.Substring(0, 2), out hours);
-            double.TryParse(StartTime.Substring(3, 2), out minutes);
-            double.TryParse(StartTime.Substring(6, 2), out seconds);
+                double.TryParse(StartTime.Substring(0, 2), out hours);
+                double.TryParse(StartTime.Substring(3, 2), out minutes);
+                double.TryParse(StartTime.Substring(6, 2), out seconds);
 
-            seconds += (((hours * 60) + minutes) * 60);
+                seconds += (((hours * 60) + minutes) * 60);
 
-            return seconds;
+                return seconds;
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("Error getting seconds from StartTime ({0}): {1}", StartTime, ex.Message);
+                return 0.0d;
+            }
         }
 
         public static VideoInfo FromRssItem(RssItem rssItem, bool useLink, System.Predicate<string> isPossibleVideo)

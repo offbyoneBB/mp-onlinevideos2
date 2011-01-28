@@ -29,46 +29,31 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public override void OnAction(Action action)
         {
-            if (action.wID == Action.ActionType.ACTION_NEXT_ITEM)
+            if (action.wID == Action.ActionType.ACTION_VOLUME_UP ||
+                action.wID == Action.ActionType.ACTION_VOLUME_DOWN ||
+                action.wID == Action.ActionType.ACTION_VOLUME_MUTE)
             {
-                // send a GUI Message to Onlinevideos GUI that it can now play the next item if any
-                GUIWindowManager.SendMessage(new GUIMessage() { TargetWindowId = GUIOnlineVideos.WindowId, SendToTargetWindow = true, Object = this, Param1 = 1 });
-                return;
-            }
-            else if (action.wID == Action.ActionType.ACTION_PREV_ITEM)
-            {
-                // send a GUI Message to Onlinevideos GUI that it can now play the previous item if any
-                GUIWindowManager.SendMessage(new GUIMessage() { TargetWindowId = GUIOnlineVideos.WindowId, SendToTargetWindow = true, Object = this, Param1 = -1 });
+                // MediaPortal core sends this message to the Fullscreenwindow, we need to do it ourselves to make the Volume OSD show up
+                base.OnAction(new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0));
                 return;
             }
             else
             {
-                if (action.wID == Action.ActionType.ACTION_VOLUME_UP ||
-                    action.wID == Action.ActionType.ACTION_VOLUME_DOWN ||
-                    action.wID == Action.ActionType.ACTION_VOLUME_MUTE)
+                Action translatedAction = new Action();
+                if (ActionTranslator.GetAction((int)Window.WINDOW_FULLSCREEN_VIDEO, action.m_key, ref translatedAction))
                 {
-                    // MediaPortal core sends this message to the Fullscreenwindow, we need to do it ourselves to make the Volume OSD show up
-                    base.OnAction(new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0));
-                    return;
-                }
-                else
-                {
-                    Action translatedAction = new Action();
-                    if (ActionTranslator.GetAction((int)Window.WINDOW_FULLSCREEN_VIDEO, action.m_key, ref translatedAction))
+                    if (translatedAction.wID == Action.ActionType.ACTION_SHOW_OSD)
                     {
-                        if (translatedAction.wID == Action.ActionType.ACTION_SHOW_OSD)
+                        base.OnAction(translatedAction);
+                        if (GUIWindowManager.VisibleOsd == Window.WINDOW_OSD)
                         {
-                            base.OnAction(translatedAction);
-                            if (GUIWindowManager.VisibleOsd == Window.WINDOW_OSD)
-                            {
-                                GUIWindowManager.VisibleOsd = (Window)GUIOnlineVideoOSD.WINDOW_ONLINEVIDEOS_OSD;
-                            }
-                            return;
+                            GUIWindowManager.VisibleOsd = (Window)GUIOnlineVideoOSD.WINDOW_ONLINEVIDEOS_OSD;
                         }
-                        if (translatedAction.wID == Action.ActionType.ACTION_ASPECT_RATIO)
-                        {
-                            base.OnAction(translatedAction);
-                        }
+                        return;
+                    }
+                    if (translatedAction.wID == Action.ActionType.ACTION_ASPECT_RATIO)
+                    {
+                        base.OnAction(translatedAction);
                     }
                 }
             }

@@ -174,7 +174,7 @@ namespace OnlineVideos.MediaPortal1
         bool preventDialogOnLoad = false;
         bool firstLoadDone = false;
 
-        int selectedClipIndex = 0;  // used to remember the position the last selected Trailer
+        int selectedClipIndex = 0;  // used to remember the position of the last selected Trailer
 
         VideosMode currentVideosDisplayMode = VideosMode.Category;
 
@@ -421,31 +421,6 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool OnMessage(GUIMessage message)
         {
-            if (message.Object is GUIOnlineVideoFullscreen && currentPlaylist != null)
-            {
-                int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
-                if (message.Param1 == 1)
-                {
-                    // move to next
-                    if (currentPlaylist.Count > currentPlaylistIndex + 1)
-                    {
-                        currentPlaylistIndex++;
-                        Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
-                        return true;
-                    }
-                }
-                else if (message.Param1 == -1)
-                {
-                    // move to previous
-                    if (currentPlaylistIndex - 1 >= 0)
-                    {
-                        currentPlaylistIndex--;
-                        Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
-                        return true;
-                    }
-                }
-            }
-
             switch (message.Message)
             {
                 case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
@@ -471,6 +446,33 @@ namespace OnlineVideos.MediaPortal1
                     break;
             }
             return base.OnMessage(message);
+        }
+
+        private void GUIWindowManager_OnNewAction(Action action)
+        {
+            if (currentPlaylist != null && g_Player.HasVideo && g_Player.Player.GetType().Assembly == typeof(GUIOnlineVideos).Assembly)
+            {
+                if (action.wID == Action.ActionType.ACTION_NEXT_ITEM)
+                {
+                    int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
+                    // move to next
+                    if (currentPlaylist.Count > currentPlaylistIndex + 1)
+                    {
+                        currentPlaylistIndex++;
+                        Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                    }
+                }
+                else if (action.wID == Action.ActionType.ACTION_PREV_ITEM)
+                {
+                    int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
+                    // move to previous
+                    if (currentPlaylistIndex - 1 >= 0)
+                    {
+                        currentPlaylistIndex--;
+                        Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                    }
+                }
+            }
         }
 
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -707,6 +709,9 @@ namespace OnlineVideos.MediaPortal1
             // replace g_player's ShowFullScreenWindowVideo
             g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowHandler;
             g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
+
+            // attach to global action event, to handle next and previous for playlist playback
+            GUIWindowManager.OnNewAction += new OnActionHandler(this.GUIWindowManager_OnNewAction);
 
             GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
             Translator.TranslateSkin();
@@ -1769,7 +1774,7 @@ namespace OnlineVideos.MediaPortal1
 
         void Play_Step3(PlayListItem playItem, string lsUrl, bool goFullScreen)
         {
-            // check for valid url and cutoff additional parameter
+            // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(lsUrl) ||
                 !UrlOk((lsUrl.IndexOf("&&&&") > 0) ? lsUrl.Substring(0, lsUrl.IndexOf("&&&&")) : lsUrl))
             {
@@ -1785,8 +1790,6 @@ namespace OnlineVideos.MediaPortal1
                 return;
             }
 
-            bool playing = false;
-
             // stop player if currently playing some other video
             if (g_Player.Playing) g_Player.Stop();
 
@@ -1800,13 +1803,10 @@ namespace OnlineVideos.MediaPortal1
             }
 
             OnlineVideos.MediaPortal1.Player.PlayerFactory factory = new OnlineVideos.MediaPortal1.Player.PlayerFactory(playItem.Util.Settings.Player, lsUrl);
-            // external players cannot be created from a seperate thread
             if (factory.PreparedPlayerType != PlayerType.Internal)
             {
-                IPlayerFactory savedFactory = g_Player.Factory;
-                g_Player.Factory = factory;
-                playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
-                g_Player.Factory = savedFactory;
+                // external players can only be created on the main thread
+                Play_Step4(playItem, lsUrl, goFullScreen, factory, true);
             }
             else
             {
@@ -1823,7 +1823,7 @@ namespace OnlineVideos.MediaPortal1
                             if (((OnlineVideosPlayer)factory.PreparedPlayer).BufferFile())
                             {
                                 Log.Instance.Info("Prebuffering finished.");
-                                return factory;
+                                return true;
                             }
                             else
                             {
@@ -1838,56 +1838,25 @@ namespace OnlineVideos.MediaPortal1
                     },
                     delegate(bool success, object result)
                     {
-                        if (success)
-                        {
-                            if (result != null)
-                            {
-                                IPlayerFactory savedFactory = g_Player.Factory;
-                                g_Player.Factory = result as Player.PlayerFactory;
-                                playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
-                                g_Player.Factory = savedFactory;
-                                if (playing)
-                                {
-                                    currentPlayingItem = playItem;
-                                    SetGuiProperties_PlayingVideo(playItem.Video, playItem.Description);
-                                    if (goFullScreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
-                                }
-                            }
-                            else
-                            {
-                                bool showMessage = true;
-                                if (factory.PreparedPlayer is OnlineVideosPlayer && (factory.PreparedPlayer as OnlineVideosPlayer).BufferingStopped == true) showMessage = false;
-                                factory.PreparedPlayer.Dispose();
-                                if (showMessage)
-                                {
-                                    GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                                    if (dlg != null)
-                                    {
-                                        dlg.Reset();
-                                        dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-                                        dlg.SetHeading(Translation.Error);
-                                        dlg.SetText(Translation.UnableToPlayVideo);
-                                        dlg.DoModal(GUIWindowManager.ActiveWindow);
-                                    }
-                                }
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            factory.PreparedPlayer.Dispose();
-                        }
+                        Play_Step4(playItem, lsUrl, goFullScreen, factory, result as bool?);
                     },
                     Translation.StartingPlayback, false);
                 }
-                else if (prepareResult == false)
-                {
-                    IPlayerFactory savedFactory = g_Player.Factory;
-                    g_Player.Factory = factory;
-                    playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
-                    g_Player.Factory = savedFactory;
-                }
                 else
+                {
+                    Play_Step4(playItem, lsUrl, goFullScreen, factory, prepareResult);
+                }
+            }
+        }
+
+        void Play_Step4(PlayListItem playItem, string lsUrl, bool goFullScreen, OnlineVideos.MediaPortal1.Player.PlayerFactory factory, bool? factoryPrepareResult)
+        {
+            if (factoryPrepareResult == null)
+            {
+                bool showMessage = true;
+                if (factory.PreparedPlayer is OnlineVideosPlayer && (factory.PreparedPlayer as OnlineVideosPlayer).BufferingStopped == true) showMessage = false;
+                factory.PreparedPlayer.Dispose();
+                if (showMessage)
                 {
                     GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                     if (dlg != null)
@@ -1898,26 +1867,31 @@ namespace OnlineVideos.MediaPortal1
                         dlg.SetText(Translation.UnableToPlayVideo);
                         dlg.DoModal(GUIWindowManager.ActiveWindow);
                     }
-                    factory.PreparedPlayer.Dispose();
-                    return;
                 }
             }
-
-            if (playing && g_Player.Player != null && g_Player.HasVideo)
+            else
             {
-                if (!string.IsNullOrEmpty(playItem.Video.StartTime))
+                IPlayerFactory savedFactory = g_Player.Factory;
+                g_Player.Factory = factory;
+                bool playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
+                g_Player.Factory = savedFactory;
+
+                if (g_Player.Player != null && g_Player.HasVideo)
                 {
-                    Log.Instance.Info("Found starttime: {0}", playItem.Video.StartTime);
-                    double seconds = playItem.Video.GetSecondsFromStartTime();
-                    if (seconds > 0.0d)
+                    if (!string.IsNullOrEmpty(playItem.Video.StartTime))
                     {
-                        Log.Instance.Info("SeekingAbsolute: {0}", seconds);
-                        g_Player.SeekAbsolute(seconds);
+                        Log.Instance.Info("Found starttime: {0}", playItem.Video.StartTime);
+                        double seconds = playItem.Video.GetSecondsFromStartTime();
+                        if (seconds > 0.0d)
+                        {
+                            Log.Instance.Info("SeekingAbsolute: {0}", seconds);
+                            g_Player.SeekAbsolute(seconds);
+                        }
                     }
+                    currentPlayingItem = playItem;
+                    SetGuiProperties_PlayingVideo(playItem.Video, playItem.Description);
+                    if (goFullScreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
                 }
-                currentPlayingItem = playItem;
-                SetGuiProperties_PlayingVideo(playItem.Video, playItem.Description);
-                if (goFullScreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
             }
         }
 
