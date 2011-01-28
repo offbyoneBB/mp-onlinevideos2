@@ -58,10 +58,20 @@ The configuration form for the OnlineVideos plugin has three tabs.
  * timeout for cached data from the internet
 ==Sites==
  * change the order of sites
- * delete, disable, crreate and import sites
+ * delete, disable, create and import sites
  * change the name and description of a site
  * edit settings that the util of that site exposes (e.g. quality for videos on YouTube)
  * add and delete categories, groups and streams (lower part)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png"/>
+ 
+=== Howto for adding live-streams: ===
+ * Create a new site (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/Add.png"/> at sites) or select the site where you want to add the live streams to.
+ * Select the "Channels" tab at the lower part.
+ * Create a new group (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/NewFolder.png"/>)
+ * Fill the name and optional url to logo
+ * Select that group and add a new channel (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/Add.png"/>)
+ * Fill the streamname, streamUrl (remember: this must be the direct url of the stream, and not some url to a page with a flashplayer playing that stream), and optionally the url of the logo.
+ * Save, Start Mediaportal and enjoy.
+ 
 ==Codecs== 
 This tab ist currently only an informational page, that can help fighting playback issues. Each codec should have a reference to a file. If you are missing some, you won't be able to play videos of that type.
 
