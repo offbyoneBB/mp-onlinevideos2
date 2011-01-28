@@ -213,6 +213,12 @@ namespace SiteParser
             GetCategoriesButton_Click(sender, e);
         }
 
+        private void makeStaticButton_Click(object sender, EventArgs e)
+        {
+            foreach (Category cat in generic.Settings.Categories)
+                staticList.Add(cat as RssLink);
+        }
+
         #endregion
 
         #region SubCategories
@@ -498,6 +504,12 @@ namespace SiteParser
                     node.ParentNode.RemoveChild(node);
             }
 
+            foreach (XmlNode node in doc.SelectNodes("//SubCategories"))
+            {
+                if (String.IsNullOrEmpty(node.InnerText))
+                    node.ParentNode.RemoveChild(node);
+            }
+
             XmlSerializer ser = new XmlSerializer(typeof(SiteSettings));
             StringBuilder sb = new StringBuilder();
             XmlWriterSettings xmlSettings = new XmlWriterSettings();
@@ -537,6 +549,7 @@ namespace SiteParser
         }
 
         #endregion
+
     }
 
     class MySiteUtil : GenericSiteUtil
