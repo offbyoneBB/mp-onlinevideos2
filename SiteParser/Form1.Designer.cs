@@ -79,6 +79,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.videoListRegexTextBox = new System.Windows.Forms.TextBox();
             this.VideoUrlTabPage = new System.Windows.Forms.TabPage();
+            this.fileUrlNameFormatStringTextBox = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.comboBoxResolving = new System.Windows.Forms.ComboBox();
             this.fileUrlPostStringTextBox = new System.Windows.Forms.TextBox();
@@ -129,8 +131,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.fileUrlNameFormatStringTextBox = new System.Windows.Forms.TextBox();
-            this.label12 = new System.Windows.Forms.Label();
+            this.makeStaticButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.generalTabPage.SuspendLayout();
             this.categTabPage.SuspendLayout();
@@ -178,7 +179,7 @@
             this.generalTabPage.Location = new System.Drawing.Point(4, 22);
             this.generalTabPage.Name = "generalTabPage";
             this.generalTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.generalTabPage.Size = new System.Drawing.Size(460, 512);
+            this.generalTabPage.Size = new System.Drawing.Size(460, 555);
             this.generalTabPage.TabIndex = 4;
             this.generalTabPage.Text = "General";
             this.generalTabPage.UseVisualStyleBackColor = true;
@@ -285,6 +286,7 @@
             // 
             // categTabPage
             // 
+            this.categTabPage.Controls.Add(this.makeStaticButton);
             this.categTabPage.Controls.Add(this.manageStaticCategoriesButton);
             this.categTabPage.Controls.Add(this.CreateCategoryRegexButton);
             this.categTabPage.Controls.Add(this.dynamicCategoryUrlDecodingCheckBox);
@@ -296,7 +298,7 @@
             this.categTabPage.Location = new System.Drawing.Point(4, 22);
             this.categTabPage.Name = "categTabPage";
             this.categTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.categTabPage.Size = new System.Drawing.Size(460, 512);
+            this.categTabPage.Size = new System.Drawing.Size(460, 555);
             this.categTabPage.TabIndex = 0;
             this.categTabPage.Text = "Category";
             this.categTabPage.UseVisualStyleBackColor = true;
@@ -391,7 +393,7 @@
             this.subCatTabPage.Location = new System.Drawing.Point(4, 22);
             this.subCatTabPage.Name = "subCatTabPage";
             this.subCatTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.subCatTabPage.Size = new System.Drawing.Size(460, 512);
+            this.subCatTabPage.Size = new System.Drawing.Size(460, 555);
             this.subCatTabPage.TabIndex = 1;
             this.subCatTabPage.Text = "Subcategories";
             this.subCatTabPage.UseVisualStyleBackColor = true;
@@ -494,7 +496,7 @@
             this.videoListTabPage.Location = new System.Drawing.Point(4, 22);
             this.videoListTabPage.Name = "videoListTabPage";
             this.videoListTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.videoListTabPage.Size = new System.Drawing.Size(460, 512);
+            this.videoListTabPage.Size = new System.Drawing.Size(460, 555);
             this.videoListTabPage.TabIndex = 2;
             this.videoListTabPage.Text = "VideoList";
             this.videoListTabPage.UseVisualStyleBackColor = true;
@@ -691,6 +693,24 @@
             this.VideoUrlTabPage.TabIndex = 3;
             this.VideoUrlTabPage.Text = "VideoUrl";
             this.VideoUrlTabPage.UseVisualStyleBackColor = true;
+            // 
+            // fileUrlNameFormatStringTextBox
+            // 
+            this.fileUrlNameFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.fileUrlNameFormatStringTextBox.Location = new System.Drawing.Point(3, 480);
+            this.fileUrlNameFormatStringTextBox.Name = "fileUrlNameFormatStringTextBox";
+            this.fileUrlNameFormatStringTextBox.Size = new System.Drawing.Size(442, 20);
+            this.fileUrlNameFormatStringTextBox.TabIndex = 87;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(0, 464);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(123, 13);
+            this.label12.TabIndex = 86;
+            this.label12.Text = "FileUrlNameFormatString";
             // 
             // label11
             // 
@@ -1149,23 +1169,15 @@
             this.openFileDialog1.FileName = "OnlineVideoSites.xml";
             this.openFileDialog1.Filter = "xml-Files|*.xml";
             // 
-            // fileUrlNameFormatStringTextBox
+            // makeStaticButton
             // 
-            this.fileUrlNameFormatStringTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.fileUrlNameFormatStringTextBox.Location = new System.Drawing.Point(3, 480);
-            this.fileUrlNameFormatStringTextBox.Name = "fileUrlNameFormatStringTextBox";
-            this.fileUrlNameFormatStringTextBox.Size = new System.Drawing.Size(442, 20);
-            this.fileUrlNameFormatStringTextBox.TabIndex = 87;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(0, 464);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(123, 13);
-            this.label12.TabIndex = 86;
-            this.label12.Text = "FileUrlNameFormatString";
+            this.makeStaticButton.Location = new System.Drawing.Point(106, 196);
+            this.makeStaticButton.Name = "makeStaticButton";
+            this.makeStaticButton.Size = new System.Drawing.Size(99, 23);
+            this.makeStaticButton.TabIndex = 31;
+            this.makeStaticButton.Text = "Dynamic -> Static";
+            this.makeStaticButton.UseVisualStyleBackColor = true;
+            this.makeStaticButton.Click += new System.EventHandler(this.makeStaticButton_Click);
             // 
             // Form1
             // 
@@ -1306,6 +1318,7 @@
         private System.Windows.Forms.ComboBox comboBoxResolving;
         private System.Windows.Forms.TextBox fileUrlNameFormatStringTextBox;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button makeStaticButton;
     }
 }
 
