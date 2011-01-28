@@ -181,7 +181,7 @@ namespace OnlineVideos.MediaPortal1
         List<VideoInfo> currentVideoList = new List<VideoInfo>();
         List<VideoInfo> currentTrailerList = new List<VideoInfo>();
         List<Player.PlayListItem> currentPlaylist = null;
-        int currentPlaylistIndex = 0;
+        Player.PlayListItem currentPlayingItem = null;
 
         HashSet<string> extendedProperties = new HashSet<string>();
 
@@ -421,12 +421,13 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool OnMessage(GUIMessage message)
         {
-            if (message.Object is GUIOnlineVideoFullscreen)
+            if (message.Object is GUIOnlineVideoFullscreen && currentPlaylist != null)
             {
+                int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
                 if (message.Param1 == 1)
                 {
                     // move to next
-                    if (currentPlaylist != null && currentPlaylist.Count > currentPlaylistIndex + 1)
+                    if (currentPlaylist.Count > currentPlaylistIndex + 1)
                     {
                         currentPlaylistIndex++;
                         Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
@@ -436,7 +437,7 @@ namespace OnlineVideos.MediaPortal1
                 else if (message.Param1 == -1)
                 {
                     // move to previous
-                    if (currentPlaylist != null && currentPlaylistIndex - 1 >= 0)
+                    if (currentPlaylistIndex - 1 >= 0)
                     {
                         currentPlaylistIndex--;
                         Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
@@ -537,7 +538,7 @@ namespace OnlineVideos.MediaPortal1
                         {
                             //play the video
                             currentPlaylist = null;
-                            currentPlaylistIndex = 0;
+                            currentPlayingItem = null;
 
                             Play_Step1(new PlayListItem(null, null)
                                     {
@@ -561,7 +562,7 @@ namespace OnlineVideos.MediaPortal1
                     selectedClipIndex = GUI_infoList.SelectedListItemIndex;
                     //play the video
                     currentPlaylist = null;
-                    currentPlaylistIndex = 0;
+                    currentPlayingItem = null;
                     Play_Step1(new PlayListItem(null, null)
                     {
                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
@@ -1631,6 +1632,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (g_Player.Player.GetType().Assembly == typeof(GUIOnlineVideos).Assembly)
                 {
+                    int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
                     if (currentPlaylist.Count > currentPlaylistIndex + 1)
                     {
                         // if playing a playlist item, move to the next            
@@ -1641,15 +1643,19 @@ namespace OnlineVideos.MediaPortal1
                     {
                         // if last item -> clear the list
                         currentPlaylist = null;
-                        currentPlaylistIndex = 0;
+                        currentPlayingItem = null;
                     }
                 }
                 else
                 {
                     // some other playback ended, and a playlist is still set here -> clear it
                     currentPlaylist = null;
-                    currentPlaylistIndex = 0;
+                    currentPlayingItem = null;
                 }
+            }
+            else
+            {
+                currentPlayingItem = null;
             }
         }
 
@@ -1719,11 +1725,11 @@ namespace OnlineVideos.MediaPortal1
                 }
                 if (currentPlaylist == null)
                 {
-                    currentPlaylistIndex = 0;
                     currentPlaylist = playbackItems;
                 }
                 else
                 {
+                    int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
                     currentPlaylist.InsertRange(currentPlaylistIndex, playbackItems);
                 }
                 // make the first item the current to be played now
@@ -1784,6 +1790,8 @@ namespace OnlineVideos.MediaPortal1
             // stop player if currently playing some other video
             if (g_Player.Playing) g_Player.Stop();
 
+            currentPlayingItem = null;
+
             // translate rtmp urls to the local proxy
             if (new Uri(lsUrl).Scheme.ToLower().StartsWith("rtmp"))
             {
@@ -1840,6 +1848,7 @@ namespace OnlineVideos.MediaPortal1
                                 g_Player.Factory = savedFactory;
                                 if (playing)
                                 {
+                                    currentPlayingItem = playItem;
                                     SetGuiProperties_PlayingVideo(playItem.Video, playItem.Description);
                                     if (goFullScreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
                                 }
@@ -1906,6 +1915,7 @@ namespace OnlineVideos.MediaPortal1
                         g_Player.SeekAbsolute(seconds);
                     }
                 }
+                currentPlayingItem = playItem;
                 SetGuiProperties_PlayingVideo(playItem.Video, playItem.Description);
                 if (goFullScreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
             }
@@ -1914,7 +1924,7 @@ namespace OnlineVideos.MediaPortal1
         private void PlayAll()
         {
             currentPlaylist = new List<Player.PlayListItem>();
-            currentPlaylistIndex = 0;
+            currentPlayingItem = null;
             List<VideoInfo> loVideoList = SelectedSite is IChoice ? currentTrailerList : currentVideoList;
             foreach (VideoInfo video in loVideoList)
             {
