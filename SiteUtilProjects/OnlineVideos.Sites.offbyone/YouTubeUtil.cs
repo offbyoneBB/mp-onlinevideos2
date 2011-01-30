@@ -230,26 +230,33 @@ namespace OnlineVideos.Sites
             {
                 // users subscriptions    
                 Login();
-                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateSubscriptionUri(accountname)), NumberToRetrieve = pageSize };
-                YouTubeFeed feed = null;
-                try
+
+                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateSubscriptionUri(accountname)), StartIndex = 1, NumberToRetrieve = 50 }; // max. 50 per query
+                bool hasNextPage = false;
+                do
                 {
-                    feed = service.Query(query);
-                }
-                catch (Google.GData.Client.GDataRequestException queryEx)
-                {
-                    string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
-                    if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
-                    else throw queryEx;
-                }
-                foreach(SubscriptionEntry subScr in feed.Entries)
-                {
-                    RssLink subScrLink = new RssLink();
-                    subScrLink.Name = subScr.UserName;
-                    subScrLink.Url = YouTubeQuery.CreateUserUri(subScr.UserName); //subScr.SelfUri.ToString();
-                    parentCategory.SubCategories.Add(subScrLink);
-                    subScrLink.ParentCategory = parentCategory;
-                }
+                    YouTubeFeed feed = null;
+                    try
+                    {
+                        feed = service.Query(query);
+                    }
+                    catch (Google.GData.Client.GDataRequestException queryEx)
+                    {
+                        string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
+                        if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
+                        else throw queryEx;
+                    }
+                    foreach (SubscriptionEntry subScr in feed.Entries)
+                    {
+                        RssLink subScrLink = new RssLink();
+                        subScrLink.Name = subScr.UserName;
+                        subScrLink.Url = YouTubeQuery.CreateUserUri(subScr.UserName);
+                        parentCategory.SubCategories.Add(subScrLink);
+                        subScrLink.ParentCategory = parentCategory;
+                    }
+                    hasNextPage = !string.IsNullOrEmpty(feed.NextChunk);
+                    query.StartIndex += 50;
+                } while (hasNextPage);
             }
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
