@@ -95,7 +95,7 @@ namespace OnlineVideos.MediaPortal1.Player
             _wmp10Player.Visible = false;
 
             // When file is internetstream
-            if (_wmp10Player.URL.ToLower().StartsWith("http") || _wmp10Player.URL.ToLower().StartsWith("mms"))
+            if (_wmp10Player.URL.ToLower().StartsWith("http") || _wmp10Player.URL.ToLower().StartsWith("mms") || _wmp10Player.URL.ToLower().StartsWith("sop"))
             {
                 _bufferCompleted = false;
                 GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
