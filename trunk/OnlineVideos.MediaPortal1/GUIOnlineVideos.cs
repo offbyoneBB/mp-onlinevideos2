@@ -322,7 +322,7 @@ namespace OnlineVideos.MediaPortal1
                     DisplayVideos_Related(loSelectedVideo);
                     break;
                 case "Download":
-                    SaveVideo_Step1(loSelectedVideo);
+                    SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = loSelectedVideo, Util = selectedSite } });
                     break;
                 default:
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
@@ -1912,7 +1912,7 @@ namespace OnlineVideos.MediaPortal1
             Play_Step1(currentPlaylist[0], true);
         }
 
-        private void SaveVideo_Step1(VideoInfo video)
+        private void SaveVideo_Step1(DownloadList saveItems)
         {
             if (string.IsNullOrEmpty(OnlineVideoSettings.Instance.DownloadDir))
             {
@@ -1928,18 +1928,33 @@ namespace OnlineVideos.MediaPortal1
                 return;
             }
 
-            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+            if (!string.IsNullOrEmpty(saveItems.CurrentItem.Url))
             {
-                return SelectedSite.getMultipleVideoUrls(video);
-            },
-            delegate(bool success, object result)
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                {
+                    return saveItems.CurrentItem.Util.getPlaylistItemUrl(saveItems.CurrentItem.VideoInfo, saveItems.ChosenPlaybackOption);
+                },
+                delegate(bool success, object result)
+                {
+                    if (success) SaveVideo_Step2(saveItems, new List<string>() { result as string });
+                },
+                Translation.GettingPlaybackUrlsForVideo, true);
+            }
+            else
             {
-                if (success) SaveVideo_Step2(video, result as List<String>);
-            },
-            Translation.GettingPlaybackUrlsForVideo, true);
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                {
+                    return saveItems.CurrentItem.Util.getMultipleVideoUrls(saveItems.CurrentItem.VideoInfo);
+                },
+                delegate(bool success, object result)
+                {
+                    if (success) SaveVideo_Step2(saveItems, result as List<String>);
+                },
+                Translation.GettingPlaybackUrlsForVideo, true);
+            }
         }
 
-        private void SaveVideo_Step2(VideoInfo video, List<String> loUrlList)
+        private void SaveVideo_Step2(DownloadList saveItems, List<String> loUrlList)
         {
             removeInvalidEntries(loUrlList);
 
@@ -1957,30 +1972,65 @@ namespace OnlineVideos.MediaPortal1
                 }
                 return;
             }
-            // if multiple quality choices are available show a selection dialogue (
-            string url = loUrlList[0];
-            bool resolve = DisplayPlaybackOptions(video, ref url); //downloads the first file from the list, todo: download all if multiple
-            if (url == "-1") return; // user canceled the dialog -> don't download
-            // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
+            // create download list if more than one url
+            if (loUrlList.Count > 1)
+            {
+                saveItems.DownloadItems = new List<DownloadInfo>();
+                foreach (string url in loUrlList)
+                {
+                    VideoInfo vi = saveItems.CurrentItem.VideoInfo.CloneForPlayList(url, url == loUrlList[0]);
+                    string url_new = url;
+                    if (url == loUrlList[0])
+                    {
+                        url_new = saveItems.CurrentItem.Util.getPlaylistItemUrl(vi, string.Empty);
+                    }
+                    DownloadInfo pli = new DownloadInfo()
+                    {
+                        Title = string.Format("{0} - {1} / {2}", vi.Title, (saveItems.DownloadItems.Count + 1).ToString(), loUrlList.Count),
+                        Url = url_new,
+                        VideoInfo = vi,
+                        Util = saveItems.CurrentItem.Util
+                    };
+                    saveItems.DownloadItems.Add(pli);
+                }
+                // make the first item the current to be played now
+                saveItems.CurrentItem = saveItems.DownloadItems[0];
+                loUrlList = new List<string>(new string[] { saveItems.CurrentItem.Url });
+            }
+            // if multiple quality choices are available show a selection dialogue
+            string lsUrl = loUrlList[0];
+            bool resolve = DisplayPlaybackOptions(saveItems.CurrentItem.VideoInfo, ref lsUrl);
+            if (lsUrl == "-1") return; // user canceled the dialog -> don't download
             if (resolve)
             {
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                saveItems.ChosenPlaybackOption = lsUrl;
+                if (saveItems.CurrentItem.VideoInfo.GetType().FullName == typeof(VideoInfo).FullName)
                 {
-                    return video.GetPlaybackOptionUrl(url);
-                },
-                delegate(bool success, object result)
-                {
-                    if (success) SaveVideo_Step3(video, result as string);
+                    SaveVideo_Step3(saveItems, saveItems.CurrentItem.VideoInfo.GetPlaybackOptionUrl(lsUrl));
                 }
-                , Translation.GettingPlaybackUrlsForVideo, true);
-                return; // don't execute rest of function, we are waiting for callback
+                else
+                {
+                    // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    {
+                        return saveItems.CurrentItem.VideoInfo.GetPlaybackOptionUrl(lsUrl);
+                    },
+                    delegate(bool success, object result)
+                    {
+                        if (success) SaveVideo_Step3(saveItems, result as string);
+                    }
+                    , Translation.GettingPlaybackUrlsForVideo, true);
+                }
             }
-            SaveVideo_Step3(video, url);
+            else
+            {
+                SaveVideo_Step3(saveItems, lsUrl);
+            }
         }
 
-        private void SaveVideo_Step3(VideoInfo video, string url)
+        private void SaveVideo_Step3(DownloadList saveItems, string url)
         {
-            // check for valid url and cutoff additional parameter
+            // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(url) ||
                 !UrlOk((url.IndexOf("&&&&") > 0) ? url.Substring(0, url.IndexOf("&&&&")) : url))
             {
@@ -2003,17 +2053,24 @@ namespace OnlineVideos.MediaPortal1
                                 string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
             }
 
-            DownloadInfo downloadInfo = new DownloadInfo()
+            saveItems.CurrentItem.Url = url;
+            if (string.IsNullOrEmpty(saveItems.CurrentItem.Title)) saveItems.CurrentItem.Title = saveItems.CurrentItem.VideoInfo.Title;
+            saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, saveItems.CurrentItem.Util.Settings.Name), saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, selectedCategory, url));
+            if (saveItems.DownloadItems != null && saveItems.DownloadItems.Count > 1)
             {
-                Url = url,
-                Title = video.Title,
-                LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, SelectedSite.Settings.Name), SelectedSite.GetFileNameForDownload(video, selectedCategory, url)),
-                ThumbFile = string.IsNullOrEmpty(video.ThumbnailImage) ? video.ImageUrl : video.ThumbnailImage
-            };
+                saveItems.CurrentItem.LocalFile = string.Format(@"{0}\{1} - {2}#{3}{4}",
+                    System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
+                    System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile), 
+                    (saveItems.DownloadItems.IndexOf(saveItems.CurrentItem) + 1).ToString().PadLeft((saveItems.DownloadItems.Count).ToString().Length, '0'), 
+                    (saveItems.DownloadItems.Count).ToString(), 
+                    System.IO.Path.GetExtension(saveItems.CurrentItem.LocalFile));
+            }
+
+            saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.ImageUrl : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
 
             Dictionary<string, DownloadInfo> currentDownloads = ((OnlineVideos.Sites.DownloadedVideoUtil)OnlineVideoSettings.Instance.SiteUtilsList[Translation.DownloadedVideos]).currentDownloads;
 
-            if (currentDownloads.ContainsKey(url) || System.IO.File.Exists(downloadInfo.LocalFile))
+            if (currentDownloads.ContainsKey(url) || System.IO.File.Exists(saveItems.CurrentItem.LocalFile))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
@@ -2028,45 +2085,46 @@ namespace OnlineVideos.MediaPortal1
             }
 
             // make sure the target dir exists
-            if (!(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile))))
+            if (!(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile))))
             {
-                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(downloadInfo.LocalFile));
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile));
             }
 
-            lock (currentDownloads) currentDownloads.Add(url, downloadInfo); // make access threadsafe
+            lock (currentDownloads) currentDownloads.Add(url, saveItems.CurrentItem); // make access threadsafe
 
             System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
             {
+                DownloadList dlList = o as DownloadList;
                 IDownloader dlHelper = null;
-                if (url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloadHelper();
+                if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloadHelper();
                 else dlHelper = new HTTPDownloader();
-                DownloadInfo dlInfo = o as DownloadInfo;
-                dlInfo.Downloader = dlHelper;
-                Exception exception = dlHelper.Download(dlInfo);
-                if (exception != null) Log.Instance.Error("Error downloading {0}, Msg: ", dlInfo.Url, exception.Message);
-                OnDownloadFileCompleted(dlInfo, exception);
+                dlList.CurrentItem.Downloader = dlHelper;
+                dlList.CurrentItem.Start = DateTime.Now;
+                Exception exception = dlHelper.Download(dlList.CurrentItem);
+                if (exception != null) Log.Instance.Error("Error downloading {0}, Msg: ", dlList.CurrentItem.Url, exception.Message);
+                OnDownloadFileCompleted(dlList, exception);
             });
             downloadThread.IsBackground = true;
             downloadThread.Name = "OnlineVideosDownload";
-            downloadThread.Start(downloadInfo);
+            downloadThread.Start(saveItems);
 
             GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
             if (dlgNotify != null)
             {
                 dlgNotify.Reset();
                 dlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-                dlgNotify.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
-                dlgNotify.SetText(Translation.DownloadStarted);
+                dlgNotify.SetHeading(Translation.DownloadStarted);
+                dlgNotify.SetText(saveItems.CurrentItem.Title);
                 dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
             }
         }
 
-        private void OnDownloadFileCompleted(DownloadInfo downloadInfo, Exception error)
+        private void OnDownloadFileCompleted(DownloadList saveItems, Exception error)
         {
             Dictionary<string, DownloadInfo> currentDownloads = ((OnlineVideos.Sites.DownloadedVideoUtil)OnlineVideoSettings.Instance.SiteUtilsList[Translation.DownloadedVideos]).currentDownloads;
-            lock (currentDownloads) currentDownloads.Remove(downloadInfo.Url); // make access threadsafe
+            lock (currentDownloads) currentDownloads.Remove(saveItems.CurrentItem.Url); // make access threadsafe
 
-            if (error != null && !downloadInfo.Downloader.Cancelled)
+            if (error != null && !saveItems.CurrentItem.Downloader.Cancelled)
             {
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (loDlgNotify != null)
@@ -2074,34 +2132,34 @@ namespace OnlineVideos.MediaPortal1
                     loDlgNotify.Reset();
                     loDlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                     loDlgNotify.SetHeading(Translation.Error);
-                    loDlgNotify.SetText(string.Format(Translation.DownloadFailed, downloadInfo.Title));
+                    loDlgNotify.SetText(string.Format(Translation.DownloadFailed, saveItems.CurrentItem.Title));
                     loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
                 }
             }
             else
             {
                 // if the image given was an url -> check if thumb exists otherwise download
-                if (downloadInfo.ThumbFile.ToLower().StartsWith("http"))
+                if (saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http"))
                 {
-                    string thumbFile = Utils.GetThumbFile(downloadInfo.ThumbFile);
-                    if (System.IO.File.Exists(thumbFile)) downloadInfo.ThumbFile = thumbFile;
-                    else if (ImageDownloader.DownloadAndCheckImage(downloadInfo.ThumbFile, thumbFile)) downloadInfo.ThumbFile = thumbFile;
+                    string thumbFile = Utils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
+                    if (System.IO.File.Exists(thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
+                    else if (ImageDownloader.DownloadAndCheckImage(saveItems.CurrentItem.ThumbFile, thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
                 }
                 // save thumb for this video as well if it exists
-                if (!downloadInfo.ThumbFile.ToLower().StartsWith("http") && System.IO.File.Exists(downloadInfo.ThumbFile))
+                if (!saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http") && System.IO.File.Exists(saveItems.CurrentItem.ThumbFile))
                 {
                     string localImageName = System.IO.Path.Combine(
-                        System.IO.Path.GetDirectoryName(downloadInfo.LocalFile),
-                        System.IO.Path.GetFileNameWithoutExtension(downloadInfo.LocalFile))
-                        + System.IO.Path.GetExtension(downloadInfo.ThumbFile);
-                    System.IO.File.Copy(downloadInfo.ThumbFile, localImageName, true);
+                        System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
+                        System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile))
+                        + System.IO.Path.GetExtension(saveItems.CurrentItem.ThumbFile);
+                    System.IO.File.Copy(saveItems.CurrentItem.ThumbFile, localImageName, true);
                 }
 
                 // get file size
-                int fileSize = downloadInfo.KbTotal;
+                int fileSize = saveItems.CurrentItem.KbTotal;
                 if (fileSize <= 0)
                 {
-                    try { fileSize = (int)((new System.IO.FileInfo(downloadInfo.LocalFile)).Length / 1024); }
+                    try { fileSize = (int)((new System.IO.FileInfo(saveItems.CurrentItem.LocalFile)).Length / 1024); }
                     catch { }
                 }
 
@@ -2110,12 +2168,23 @@ namespace OnlineVideos.MediaPortal1
                 {
                     loDlgNotify.Reset();
                     loDlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-                    if (downloadInfo.Downloader.Cancelled)
+                    if (saveItems.CurrentItem.Downloader.Cancelled)
                         loDlgNotify.SetHeading(Translation.DownloadCancelled);
                     else
                         loDlgNotify.SetHeading(Translation.DownloadComplete);
-                    loDlgNotify.SetText(string.Format("{0}{1}", downloadInfo.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""));
+                    loDlgNotify.SetText(string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""));
                     loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+                }
+            }
+
+            // download the next if list not empty and not last in list and not cancelled by the user
+            if (saveItems.DownloadItems != null && saveItems.DownloadItems.Count > 1 && !saveItems.CurrentItem.Downloader.Cancelled)
+            {
+                int currentDlIndex = saveItems.DownloadItems.IndexOf(saveItems.CurrentItem);
+                if (currentDlIndex >= 0 && currentDlIndex + 1 < saveItems.DownloadItems.Count)
+                {
+                    saveItems.CurrentItem = saveItems.DownloadItems[currentDlIndex + 1];
+                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { SaveVideo_Step1(saveItems); return 0; }, 0, 0, null);
                 }
             }
         }

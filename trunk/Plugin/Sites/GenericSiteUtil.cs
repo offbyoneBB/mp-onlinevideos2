@@ -421,7 +421,7 @@ namespace OnlineVideos.Sites
 
         private static string parseHosterLinks(string link, VideoInfo video)
         {
-            string webData = GetWebData(link);// todo : previous version did NOT work on the result of the data behind the link, but on the link directly - > current breaks Youtube and Miro and all other sites with direct links to hosters
+            string webData = GetWebData(link);
             Dictionary<string, string> options = new Dictionary<string, string>();
 
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
