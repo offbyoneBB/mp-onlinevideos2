@@ -23,7 +23,7 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 Uri uri = new Uri(PreparedUrl);
 
-                if (uri.Scheme == "rtsp" || uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asf"))
+                if (uri.Scheme == "rtsp" || uri.Scheme == "sop" || uri.Scheme == "mms" || uri.PathAndQuery.Contains(".asf"))
                 {
                     PreparedPlayerType = PlayerType.Internal;
                 }
