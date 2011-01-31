@@ -1796,39 +1796,51 @@ namespace OnlineVideos.MediaPortal1
             {
                 Log.Instance.Info("Preparing graph for playback of {0}", lsUrl);
                 bool? prepareResult = ((OnlineVideosPlayer)factory.PreparedPlayer).PrepareGraph();
-                if (prepareResult == true)
+                switch (prepareResult)
                 {
-                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
-                    {
-                        try
+                    case true:// buffer in background
+                        Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                         {
-                            Log.Instance.Info("Start prebuffering ...");
-                            BufferingPlayerFactory = factory;
-                            if (((OnlineVideosPlayer)factory.PreparedPlayer).BufferFile())
+                            try
                             {
-                                Log.Instance.Info("Prebuffering finished.");
-                                return true;
+                                Log.Instance.Info("Start prebuffering ...");
+                                BufferingPlayerFactory = factory;
+                                if (((OnlineVideosPlayer)factory.PreparedPlayer).BufferFile())
+                                {
+                                    Log.Instance.Info("Prebuffering finished.");
+                                    return true;
+                                }
+                                else
+                                {
+                                    Log.Instance.Info("Prebuffering failed.");
+                                    return null;
+                                }
                             }
-                            else
+                            finally
                             {
-                                Log.Instance.Info("Prebuffering failed.");
-                                return null;
+                                BufferingPlayerFactory = null;
                             }
-                        }
-                        finally
+                        },
+                        delegate(bool success, object result)
                         {
-                            BufferingPlayerFactory = null;
+                            Play_Step4(playItem, lsUrl, goFullScreen, factory, result as bool?);
+                        },
+                        Translation.StartingPlayback, false);
+                        break;
+                    case false:// play without buffering in background
+                        Play_Step4(playItem, lsUrl, goFullScreen, factory, prepareResult);
+                        break;
+                    default: // error building graph
+                        GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                        if (dlg != null)
+                        {
+                            dlg.Reset();
+                            dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+                            dlg.SetHeading(Translation.Error);
+                            dlg.SetText(Translation.UnableToPlayVideo);
+                            dlg.DoModal(GUIWindowManager.ActiveWindow);
                         }
-                    },
-                    delegate(bool success, object result)
-                    {
-                        Play_Step4(playItem, lsUrl, goFullScreen, factory, result as bool?);
-                    },
-                    Translation.StartingPlayback, false);
-                }
-                else
-                {
-                    Play_Step4(playItem, lsUrl, goFullScreen, factory, prepareResult);
+                        break;
                 }
             }
         }
