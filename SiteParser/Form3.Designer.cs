@@ -29,9 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form3));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.RssLinkList = new System.Windows.Forms.ListBox();
+            this.bindingSourceRssLink = new System.Windows.Forms.BindingSource(this.components);
             this.toolStripRss = new System.Windows.Forms.ToolStrip();
             this.btnAddRss = new System.Windows.Forms.ToolStripButton();
             this.btnDeleteRss = new System.Windows.Forms.ToolStripButton();
@@ -45,15 +47,14 @@
             this.label1 = new System.Windows.Forms.Label();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
-            this.bindingSourceRssLink = new System.Windows.Forms.BindingSource(this.components);
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
-            this.toolStripRss.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
+            this.toolStripRss.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -115,6 +116,10 @@
             this.RssLinkList.Size = new System.Drawing.Size(196, 419);
             this.RssLinkList.TabIndex = 6;
             this.RssLinkList.SelectedIndexChanged += new System.EventHandler(this.categoryListBox_SelectedIndexChanged);
+            // 
+            // bindingSourceRssLink
+            // 
+            this.bindingSourceRssLink.DataSource = typeof(OnlineVideos.RssLink);
             // 
             // toolStripRss
             // 
@@ -245,10 +250,6 @@
             this.okButton.Text = "Ok";
             this.okButton.UseVisualStyleBackColor = true;
             // 
-            // bindingSourceRssLink
-            // 
-            this.bindingSourceRssLink.DataSource = typeof(OnlineVideos.RssLink);
-            // 
             // Form3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -257,6 +258,7 @@
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.splitContainer1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form3";
             this.Text = "Form3";
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -268,9 +270,9 @@
             this.toolStripContainer1.TopToolStripPanel.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
             this.toolStripContainer1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).EndInit();
             this.toolStripRss.ResumeLayout(false);
             this.toolStripRss.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).EndInit();
             this.ResumeLayout(false);
 
         }

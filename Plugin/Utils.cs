@@ -290,5 +290,19 @@ namespace OnlineVideos
                 }
             }
         }
+
+        public static bool IsValidUri(string url)
+        {
+            try
+            {
+                return Uri.IsWellFormedUriString(url, UriKind.Absolute) ||
+                    Uri.IsWellFormedUriString(Uri.EscapeUriString(url), UriKind.Absolute) ||
+                    System.IO.Path.IsPathRooted(url);
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
