@@ -434,7 +434,7 @@ namespace SiteParser
         private void checkValid_Click(object sender, EventArgs e)
         {
             MessageBox.Show(@"""" + (ResultUrlComboBox.SelectedItem as PlaybackOption).Url + @""" is " +
-                (!Uri.IsWellFormedUriString((ResultUrlComboBox.SelectedItem as PlaybackOption).Url, UriKind.Absolute) ? "NOT " : String.Empty) +
+                (!Utils.IsValidUri((ResultUrlComboBox.SelectedItem as PlaybackOption).Url) ? "NOT " : String.Empty) +
                 "valid");
         }
 
