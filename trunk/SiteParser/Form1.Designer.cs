@@ -44,6 +44,7 @@
             this.BaseUrlTextbox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.categTabPage = new System.Windows.Forms.TabPage();
+            this.makeStaticButton = new System.Windows.Forms.Button();
             this.manageStaticCategoriesButton = new System.Windows.Forms.Button();
             this.CreateCategoryRegexButton = new System.Windows.Forms.Button();
             this.dynamicCategoryUrlDecodingCheckBox = new System.Windows.Forms.CheckBox();
@@ -131,7 +132,6 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.makeStaticButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.generalTabPage.SuspendLayout();
             this.categTabPage.SuspendLayout();
@@ -302,6 +302,16 @@
             this.categTabPage.TabIndex = 0;
             this.categTabPage.Text = "Category";
             this.categTabPage.UseVisualStyleBackColor = true;
+            // 
+            // makeStaticButton
+            // 
+            this.makeStaticButton.Location = new System.Drawing.Point(106, 196);
+            this.makeStaticButton.Name = "makeStaticButton";
+            this.makeStaticButton.Size = new System.Drawing.Size(99, 23);
+            this.makeStaticButton.TabIndex = 31;
+            this.makeStaticButton.Text = "Dynamic -> Static";
+            this.makeStaticButton.UseVisualStyleBackColor = true;
+            this.makeStaticButton.Click += new System.EventHandler(this.makeStaticButton_Click);
             // 
             // manageStaticCategoriesButton
             // 
@@ -1168,16 +1178,6 @@
             // 
             this.openFileDialog1.FileName = "OnlineVideoSites.xml";
             this.openFileDialog1.Filter = "xml-Files|*.xml";
-            // 
-            // makeStaticButton
-            // 
-            this.makeStaticButton.Location = new System.Drawing.Point(106, 196);
-            this.makeStaticButton.Name = "makeStaticButton";
-            this.makeStaticButton.Size = new System.Drawing.Size(99, 23);
-            this.makeStaticButton.TabIndex = 31;
-            this.makeStaticButton.Text = "Dynamic -> Static";
-            this.makeStaticButton.UseVisualStyleBackColor = true;
-            this.makeStaticButton.Click += new System.EventHandler(this.makeStaticButton_Click);
             // 
             // Form1
             // 

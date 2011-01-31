@@ -183,6 +183,7 @@ namespace OnlineVideos.MediaPortal1
             this.tabSites = new System.Windows.Forms.TabPage();
             this.tabPageCodecs = new System.Windows.Forms.TabPage();
             this.groupBoxSourceFilter = new System.Windows.Forms.GroupBox();
+            this.chkUseRtmpProxy = new System.Windows.Forms.CheckBox();
             this.tbxHttpSourceFilter = new System.Windows.Forms.TextBox();
             this.label37 = new System.Windows.Forms.Label();
             this.groupBoxSplitter = new System.Windows.Forms.GroupBox();
@@ -202,7 +203,6 @@ namespace OnlineVideos.MediaPortal1
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.chkUseRtmpProxy = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -2008,6 +2008,16 @@ namespace OnlineVideos.MediaPortal1
             this.groupBoxSourceFilter.TabStop = false;
             this.groupBoxSourceFilter.Text = "Source Filter";
             // 
+            // chkUseRtmpProxy
+            // 
+            this.chkUseRtmpProxy.AutoSize = true;
+            this.chkUseRtmpProxy.Location = new System.Drawing.Point(100, 39);
+            this.chkUseRtmpProxy.Name = "chkUseRtmpProxy";
+            this.chkUseRtmpProxy.Size = new System.Drawing.Size(144, 17);
+            this.chkUseRtmpProxy.TabIndex = 2;
+            this.chkUseRtmpProxy.Text = "Use internal RTMP proxy";
+            this.chkUseRtmpProxy.UseVisualStyleBackColor = true;
+            // 
             // tbxHttpSourceFilter
             // 
             this.tbxHttpSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -2191,16 +2201,6 @@ namespace OnlineVideos.MediaPortal1
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // chkUseRtmpProxy
-            // 
-            this.chkUseRtmpProxy.AutoSize = true;
-            this.chkUseRtmpProxy.Location = new System.Drawing.Point(100, 39);
-            this.chkUseRtmpProxy.Name = "chkUseRtmpProxy";
-            this.chkUseRtmpProxy.Size = new System.Drawing.Size(144, 17);
-            this.chkUseRtmpProxy.TabIndex = 2;
-            this.chkUseRtmpProxy.Text = "Use internal RTMP proxy";
-            this.chkUseRtmpProxy.UseVisualStyleBackColor = true;
             // 
             // Configuration
             // 

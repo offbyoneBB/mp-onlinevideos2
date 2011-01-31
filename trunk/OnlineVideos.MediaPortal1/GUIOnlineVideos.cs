@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Net;
-using OnlineVideos.MediaPortal1.Player;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using Action = MediaPortal.GUI.Library.Action;
 using MediaPortal.Profile;
+using OnlineVideos.MediaPortal1.Player;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace OnlineVideos.MediaPortal1
 {
@@ -654,7 +652,7 @@ namespace OnlineVideos.MediaPortal1
             // called everytime the plugin is shown, after some other window was shown (also after fullscreen playback)
             if (PreviousWindowId != 4758)
             {
-                // reload settings that can be modyfied with the MPEI plugin
+                // reload settings that can be modified with the MPEI plugin
                 PluginConfiguration.Instance.ReLoadRuntimeSettings();
 
                 // reset the LoadParameterInfo
@@ -1583,20 +1581,6 @@ namespace OnlineVideos.MediaPortal1
             SetGuiProperties_ExtendedVideoInfo((item as OnlineVideosGuiListItem).Item as VideoInfo);
         }
 
-        private bool UrlOk(string url)
-        {
-            try
-            {
-                return Uri.IsWellFormedUriString(url, UriKind.Absolute) ||
-                    Uri.IsWellFormedUriString(Uri.EscapeUriString(url), UriKind.Absolute) ||
-                    System.IO.Path.IsPathRooted(url);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         private void removeInvalidEntries(List<string> loUrlList)
         {
             // remove all invalid entries from the list of playback urls
@@ -1605,7 +1589,7 @@ namespace OnlineVideos.MediaPortal1
                 int i = 0;
                 while (i < loUrlList.Count)
                 {
-                    if (String.IsNullOrEmpty(loUrlList[i]) || !UrlOk(loUrlList[i]))
+                    if (String.IsNullOrEmpty(loUrlList[i]) || !Utils.IsValidUri(loUrlList[i]))
                     {
                         Log.Instance.Debug("removed invalid url {0}", loUrlList[i]);
                         loUrlList.RemoveAt(i);
@@ -1776,7 +1760,7 @@ namespace OnlineVideos.MediaPortal1
         {
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(lsUrl) ||
-                !UrlOk((lsUrl.IndexOf("&&&&") > 0) ? lsUrl.Substring(0, lsUrl.IndexOf("&&&&")) : lsUrl))
+                !Utils.IsValidUri((lsUrl.IndexOf("&&&&") > 0) ? lsUrl.Substring(0, lsUrl.IndexOf("&&&&")) : lsUrl))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
@@ -2032,7 +2016,7 @@ namespace OnlineVideos.MediaPortal1
         {
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(url) ||
-                !UrlOk((url.IndexOf("&&&&") > 0) ? url.Substring(0, url.IndexOf("&&&&")) : url))
+                !Utils.IsValidUri((url.IndexOf("&&&&") > 0) ? url.Substring(0, url.IndexOf("&&&&")) : url))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
