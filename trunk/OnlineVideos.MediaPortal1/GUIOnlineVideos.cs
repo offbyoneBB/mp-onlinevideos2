@@ -1448,6 +1448,7 @@ namespace OnlineVideos.MediaPortal1
 
                 OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(videoInfo.Title);
                 listItem.ItemId = GUI_facadeView.Count;
+                listItem.Label2 = videoInfo.Length;
                 listItem.Item = videoInfo;
                 listItem.IconImage = "defaultVideo.png";
                 listItem.IconImageBig = "defaultVideoBig.png";
