@@ -222,6 +222,7 @@ namespace OnlineVideos.Sites
                     {
                         video.VideoUrl = channel.Url;
                     }
+                    video.Other = "livestream";
                     video.ImageUrl = channel.Thumb;
                     loVideoList.Add(video);
                 }
@@ -231,10 +232,6 @@ namespace OnlineVideos.Sites
 
         public string getFormattedVideoUrl(VideoInfo video)
         {
-            // Get playbackoptins back from favorite video if they were saved in Other object
-            if (!string.IsNullOrEmpty(video.SiteName) && video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
-                video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
-
             string resultUrl = video.VideoUrl;
             // 1. do some formatting with the videoUrl
             if (regEx_VideoUrl != null)
@@ -314,6 +311,12 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            // Get playbackoptins back from favorite video if they were saved in Other object
+            if (!string.IsNullOrEmpty(video.SiteName) && video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
+                video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
+
+            if (video.Other as string == "livestream") return video.VideoUrl;
+
             string resultUrl = getFormattedVideoUrl(video);
 
             // 3. retrieve a file from the web to find the actual playback url
