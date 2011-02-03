@@ -129,6 +129,7 @@
       <visible>!videoplayer.usingoverlays + !player.hasmedia + !Control.IsVisible(51)</visible>
       <animation effect="fade" time="250" reversible="false">visible</animation>
     </control>
+    
     <control>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -143,7 +144,6 @@
       <textcolor>White</textcolor>
       <visible>!Control.IsVisible(51)</visible>
     </control>    
-    
     <control>
       <description>Length Label</description>
       <type>label</type>
@@ -152,22 +152,10 @@
       <posY>579</posY>
       <width>120</width>
       <font>font10</font>
-      <label>#OnlineVideos.Translation.Runtime.Label</label>
+      <label>#OnlineVideos.Translation.Runtime.Label:</label>
       <textcolor>ffa9d0f7</textcolor>
-      <visible>!Control.IsVisible(51)+control.hastext(501)</visible>
-    </control>
-    <control>
-      <description>Length</description>
-      <type>label</type>
-      <id>501</id>
-      <posX>420</posX>
-      <posY>579</posY>
-      <width>780</width>
-      <font>font10</font>
-      <label>#OnlineVideos.length</label>
-      <textcolor>ffa9d0f7</textcolor>
-      <visible>!Control.IsVisible(51)</visible>
-    </control>
+      <visible>string.equals(#OnlineVideos.state, videos)+control.hastext(502)</visible>
+    </control>    
     <control>
       <description>Language Label</description>
       <type>label</type>
@@ -205,7 +193,7 @@
       <visible>string.equals(#OnlineVideos.state, groups)+control.hastext(502)</visible>
     </control>    
     <control>
-      <description>Language of site | number of sites in group | number of videos in category</description>
+      <description>language of site | number of sites in group | number of videos in category | length of video</description>
       <type>label</type>
       <id>502</id>
       <posX>420</posX>
@@ -214,7 +202,7 @@
       <font>font10</font>
       <label>#selecteditem2</label>
       <textcolor>ffa9d0f7</textcolor>
-      <visible>!string.equals(#OnlineVideos.state, videos)</visible>
+      <visible>!string.equals(#OnlineVideos.state, details)</visible>
     </control>
     <control>
       <description>Description</description>
@@ -229,7 +217,8 @@
       <label>#OnlineVideos.desc</label>
       <textcolor>White</textcolor>
       <visible>!Control.IsVisible(51)</visible>
-    </control>    
+    </control>
+    
     <control>
       <description>Buffering Label</description>
       <type>label</type>
@@ -244,6 +233,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
+    
     <control>
       <description>Label for Current, Total Amount and Localized Type of items</description>
       <type>label</type>

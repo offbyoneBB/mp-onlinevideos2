@@ -27,7 +27,9 @@
       <type>listcontrol</type>
       <description>listcontrol</description>
       <id>51</id>
-      <scrollOffset>0</scrollOffset>
+      <font2>font10</font2>
+      <textYOff2>6</textYOff2>
+      <scrollOffset>1</scrollOffset>
       <posX>490</posX>      
       <height>220</height>
       <width>220</width>
