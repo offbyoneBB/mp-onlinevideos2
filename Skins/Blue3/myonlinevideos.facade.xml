@@ -28,6 +28,8 @@
           <spinPosX>660</spinPosX>
           <spinPoxY>565</spinPoxY>          
           <scrollOffset>2</scrollOffset>
+          <font2>font10</font2>
+          <textYOff2>6</textYOff2>          
         </control>
         <control>
           <description>Thumbnail Panel</description>
