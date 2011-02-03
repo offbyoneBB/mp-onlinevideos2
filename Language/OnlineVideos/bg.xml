@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Online Videos translation file -->
+<!-- Bulgarian -->
+<!-- Note: English is the fallback for any strings not found in other languages -->
+<strings>  
+
+  <!-- A -->
+  <string Field="Airdate">Ефир</string>
+  <string Field="AlreadyDownloading">Вече сте свалили този файл.</string>
+  <string Field="All">Всичко</string>
+  <string Field="Actions">Действия</string>
+  <string Field="Actors">Актьори</string>
+  <string Field="AddToMySites">Добави към моите сайтове</string>
+  <string Field="AddToFavourites">Добави към любими</string>
+  <string Field="AddingToFavorites">добавяне към любими</string>
+  <string Field="AutomaticUpdate">Автоматичен ъпдейт</string>
+  <string Field="AutomaticUpdateDisabled">Автоматичният ъпдейт забранен.</string>
+
+  <!-- B -->
+  <string Field="Broken">Прекъснат</string>
+  <string Field="Buffered">буфериране</string>
+
+  <!-- C -->
+  <string Field="Cancel">Отмени</string>
+  <string Field="Category">Категория</string>
+  <string Field="Categories">Категории</string>
+  <string Field="Creator">Автор</string>
+  <string Field="CheckingForPluginUpdate">проверка за нова версия на плъгина</string>
+
+  <!-- D -->
+  <string Field="Date">Дата</string>
+  <string Field="DateOfRelease">Дата на пускане</string>
+  <string Field="Directors">Режисьори</string>
+  <string Field="Download">Изтегли</string>
+  <string Field="Downloading">Изтегляне</string>
+  <string Field="DownloadingDescription">Списък на текущите изтегляния.</string>
+  <string Field="DownloadFailed">Изтеглянето провалено: {0}</string>
+  <string Field="DownloadCancelled">Изтеглянето отменено</string>
+  <string Field="DownloadComplete">Изтеглянето готово</string>
+  <string Field="DownloadStarted">Начало на изтегляне</string>  
+  <string Field="DownloadedVideos">Изтеглени видеа</string>
+  <string Field="Delete">Изтрий</string>
+  <string Field="DeleteAll">Изтрий всичко</string>
+  <string Field="Default">По подразбиране</string>
+  <string Field="Done">Готово</string>
+  <string Field="DeletingOldThumbs">Изтриване на старите thumbnails</string>
+
+  <!-- E -->
+  <string Field="Error">Грешка</string>
+  <string Field="EnterPin">Въведи Pin</string>
+
+  <!-- F -->
+  <string Field="Favourites">Любими</string>
+  <string Field="Filter">Филтър</string>
+  <string Field="FullUpdate">Пълен Ъпдейт</string>
+
+  <!-- G -->
+  <string Field="Genre">Жанр</string>
+  <string Field="GettingVideoDetails">сваляне на инфо за видеото</string>
+  <string Field="GettingCategoryVideos">сваляне на видео категориите</string>
+  <string Field="GettingFavoriteVideos">сваляне на любими видея</string>
+  <string Field="GettingSearchResults">сваляне на резултатие от търсенето</string>
+  <string Field="GettingRelatedVideos">сваляне на подобни видеа</string>
+  <string Field="GettingFilteredVideos">сваляне на филтрирани видеа</string>
+  <string Field="GettingNextPageVideos">сваляне на следващата страница с видеа</string>
+  <string Field="GettingPreviousPageVideos">сваляне на предишната страница с видеа</string>
+  <string Field="GettingPlaybackUrlsForVideo">сваляне на url адреси за видеата</string>
+  <string Field="GettingDynamicCategories">сваляне на динамични категории</string>
+  <string Field="GettingReports">сваляне на отчети от интернет страница</string>
+  <string Field="GettingSiteXml">сваляне на xml от интернет</string>
+  <string Field="GettingIcon">сваляне на сайт икона от интернет</string>
+  <string Field="GettingBanner">сваляне на сайт банер от интернет</string>
+  <string Field="GettingDll">сваляне на библиотеки dll от интернет</string>
+  <string Field="Groups">Групи</string>  
+
+  <!-- H -->
+
+  <!-- I -->
+
+  <!-- L -->
+  <string Field="LatestVersionRequired">Необходима е последната версия ({0})!</string>
+  <string Field="Language">Език</string>
+  <string Field="LayoutList">Интерфейс: Списък</string>
+  <string Field="LayoutIcons">Интерфейс: Икони</string>
+  <string Field="LayoutBigIcons">Интерфейс: Големи икони</string>
+
+  <!-- M -->
+  <string Field="ManageSites">Управление на сайтовете</string>
+  <string Field="MaxResults">Максимални резултати</string>
+
+  <!-- N -->
+  <string Field="Name">Име</string>
+  <string Field="NextPage">Следваща страница</string>
+  <string Field="None">Няма</string>
+  <string Field="NoVideoFound">Не е намерено видео</string>
+  <string Field="NoReportsForSite">Не са налични отчети за този сайт.</string>
+  <string Field="NewDllDownloaded">Новата dll библиотека е изтеглена!</string>
+  <string Field="NewSearch">Ново търсене</string>
+
+  <!-- O -->
+  <string Field="Others">Други</string>
+
+  <!-- P -->
+  <string Field="PlayAll">Пусни всички</string>
+  <string Field="PlotOutline">Сюжет</string>
+  <string Field="PreviousPage">Предишна страница</string>
+  <string Field="PerformAutomaticUpdate">Да започна ли автоматичен ъпдейт?</string>
+
+  <!-- R -->
+  <string Field="RemoveFromFavorites">Премахни от любими</string>
+  <string Field="RemovingFromFavorites">премахване от любими</string>
+  <string Field="Refresh">Опресни</string>
+  <string Field="RelatedVideos">Подобни видеа</string>
+  <string Field="Reported">Докладван</string>
+  <string Field="Reports">Доклади</string>
+  <string Field="Runtime">Времетраене</string>
+  <string Field="RemoveFromMySites">Изтрий от моите сайтове</string>
+  <string Field="RestartMediaPortal">Рестарт на MediaPortal!</string>
+  <string Field="RetrievingRemoteDlls">Получаване на отдалечените dlls ...</string>
+  <string Field="RetrievingRemoteSites">Получаване на отдалечените сайтове ...</string>
+
+  <!-- S -->
+  <string Field="SearchHistory">История на търсенето</string>
+  <string Field="SearchResults">Резултати от търсенето</string>
+  <string Field="SelectSource">Избери източник</string>
+  <string Field="Sites">Сайтове</string>
+  <string Field="Size">Размер</string>  
+  <string Field="SortOptions">Опции за сортиране</string>
+  <string Field="Search">Търси</string>
+  <string Field="SetDownloadFolderInConfig">Моля, укажете директорията за сваляне в Configuration!</string>
+  <string Field="State">Състояние</string>
+  <string Field="SavingLocalSiteList">Записване на локалния списък със сайтове...</string>
+  <string Field="ShowReports">Покажи отчет за автора и потребителя</string>
+  <string Field="StartingPlayback">старт playback</string>
+  <string Field="Subscriptions">Подписки</string>
+  
+  <!-- T -->
+  <string Field="Timeframe">Кадри</string>
+  <string Field="Timeout">Прекъсване</string>
+  <string Field="Tags">Тагове</string>
+
+  <!-- U -->
+  <string Field="Updated">Ъпдейтнато</string>
+  <string Field="Updatable">Ъпдейтвам</string>
+  <string Field="UpdateMySite">Ъпдейтни моя сайт</string>
+  <string Field="UpdateMySiteSkipCategories">Ъпдейтни моя сайт (пропусни категориите)</string>
+  <string Field="UpdateAllYourSites">Това ще ъпдейтне всички твои текущи сайтове.</string>
+  <string Field="UnableToPlayVideo">Не може да се пусне видеото. Няма URL адрес.</string>
+  <string Field="UnableToDownloadVideo">Не може да се свали видеото. Невалиден URL адрес.</string>
+
+  <!-- V -->
+  <string Field="Videos">Видеа</string>
+
+  <!-- W -->
+  <string Field="Working">Работи</string>
+
+  <!-- Y -->
+
+</strings>
