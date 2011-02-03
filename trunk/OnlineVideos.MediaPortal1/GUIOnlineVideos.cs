@@ -544,7 +544,7 @@ namespace OnlineVideos.MediaPortal1
                                     {
                                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                                         Video = selectedVideo,
-                                        Util = selectedSite
+                                        Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
                                     }, true);
                         }
                     }
@@ -567,7 +567,7 @@ namespace OnlineVideos.MediaPortal1
                     {
                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                         Video = (GUI_infoList.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo,
-                        Util = selectedSite
+                        Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
                     }, true);
                 }
             }
