@@ -13,9 +13,9 @@
       </GroupItem>
       <GroupItem Name="Thumbs">
         <ParentGroup />
-        <DisplayName>Site Icons and Banners</DisplayName>
+        <DisplayName>Site Icons and Banners, Language Flags</DisplayName>
         <DefaulChecked>true</DefaulChecked>
-        <Description>PNG images for all sites.</Description>
+        <Description>PNG images for all sites and thumbnails for languages.</Description>
         <Files>
           <Items>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
@@ -1306,6 +1306,118 @@
               <ZipFileName>Installer{CopyFile}\{36ac3ce1-4138-47a9-8e18-8dcd6ee2a3e3}-SuperRTL Now.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SuperRTL Now.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\--.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{94d59f3b-8fe7-4398-9aca-6f3ad9d82cc1}---.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\--.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\cs.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e7dfc0ed-730d-4e74-990a-2d5c041cf213}-cs.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\cs.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\da.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4e170801-62d1-49e2-a850-fc28b700e05e}-da.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\da.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\de.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2cd863fd-cb27-49bd-ae6c-2b795f2c8255}-de.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\de.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\en.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{be61a1a1-fc03-4eca-a6da-48d3109554c2}-en.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\en.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\es.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{7aab6221-602f-4f71-8c9f-f0d587991842}-es.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\es.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\fi.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{dc3239fb-c3af-4cce-b086-e238d01f8635}-fi.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\fi.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\fr.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{adca421b-7a12-43db-bff0-fd7f435cface}-fr.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\fr.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\hr.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2b34b4d0-bc06-4fa0-b344-985c428e427c}-hr.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\hr.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\it.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{926b3844-daac-41b1-bfce-2be8e7bad4de}-it.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\it.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\nl.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{a6923477-2c9b-4923-971e-05da840ba215}-nl.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\nl.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\no.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{aea48db7-e594-43d2-887b-34480851651f}-no.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\no.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\pl.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e77b976c-b0fe-4f6c-b976-e359a3585761}-pl.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\pl.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\ru.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c041ae70-c8cf-4901-a199-a723579ffd9d}-ru.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\ru.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\sk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e2a91a31-6c34-45c8-9a44-516652510ea2}-sk.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\sk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\sv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6a41cfc8-5906-49ef-91e5-62e889f67f86}-sv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\sv.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1509,6 +1621,20 @@
               <ZipFileName>Installer{CopyFile}\{f8de3a45-3e77-48b5-a978-5d3a1f02fd0c}-sk.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\sk.xml</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\bg.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c97bfb83-6f23-4199-bfa8-7244ee11f245}-bg.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\bg.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\tr.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{55db6ca6-1b27-42cc-a2e9-676333c306ae}-tr.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\tr.xml</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1596,6 +1722,13 @@
               <ZipFileName>Installer{CopyFile}\{fb58d0e5-b90d-489d-8926-d76747cf627d}-myonlinevideosOSD.xml</ZipFileName>
               <DestinationFilename>%Skin%\Blue3\myonlinevideosOSD.xml</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\NextPage.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d5286f71-1543-4446-9726-faa7c926637a}-NextPage.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\NextPage.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1675,6 +1808,13 @@
               <LocalFileName>..\Skins\Blue3wide\myonlinevideosOSD.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{edcb4aec-b880-41d2-a708-4cdb4a5e9f4f}-myonlinevideosOSD.xml</ZipFileName>
               <DestinationFilename>%Skin%\Blue3Wide\myonlinevideosOSD.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\NextPage.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4c9f91b6-571e-41a4-9694-d4741e49203c}-NextPage.png</ZipFileName>
+              <DestinationFilename>%Skin%\Blue3Wide\Media\OnlineVideos\NextPage.png</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -3480,6 +3620,118 @@ Loading plugin with startparameters now also possible using GUIProperties</Versi
         <ZipFileName>Installer{CopyFile}\{36ac3ce1-4138-47a9-8e18-8dcd6ee2a3e3}-SuperRTL Now.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SuperRTL Now.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\--.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{94d59f3b-8fe7-4398-9aca-6f3ad9d82cc1}---.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\--.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\cs.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e7dfc0ed-730d-4e74-990a-2d5c041cf213}-cs.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\cs.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\da.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4e170801-62d1-49e2-a850-fc28b700e05e}-da.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\da.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\de.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2cd863fd-cb27-49bd-ae6c-2b795f2c8255}-de.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\de.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\en.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{be61a1a1-fc03-4eca-a6da-48d3109554c2}-en.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\en.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\es.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7aab6221-602f-4f71-8c9f-f0d587991842}-es.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\es.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\fi.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{dc3239fb-c3af-4cce-b086-e238d01f8635}-fi.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\fi.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\fr.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{adca421b-7a12-43db-bff0-fd7f435cface}-fr.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\fr.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\hr.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2b34b4d0-bc06-4fa0-b344-985c428e427c}-hr.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\hr.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\it.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{926b3844-daac-41b1-bfce-2be8e7bad4de}-it.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\it.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\nl.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{a6923477-2c9b-4923-971e-05da840ba215}-nl.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\nl.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\no.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{aea48db7-e594-43d2-887b-34480851651f}-no.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\no.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\pl.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e77b976c-b0fe-4f6c-b976-e359a3585761}-pl.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\pl.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\ru.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c041ae70-c8cf-4901-a199-a723579ffd9d}-ru.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\ru.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\sk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e2a91a31-6c34-45c8-9a44-516652510ea2}-sk.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\sk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\sv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6a41cfc8-5906-49ef-91e5-62e889f67f86}-sv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\sv.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -3658,6 +3910,20 @@ Loading plugin with startparameters now also possible using GUIProperties</Versi
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\bg.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c97bfb83-6f23-4199-bfa8-7244ee11f245}-bg.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\bg.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\tr.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{55db6ca6-1b27-42cc-a2e9-676333c306ae}-tr.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\tr.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Skins\Blue3\myonlinevideos.details.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{2c7d271c-59d4-440f-9141-8b1c06530e79}-myonlinevideos.details.xml</ZipFileName>
         <DestinationFilename>%Skin%\Blue3\myonlinevideos.details.xml</DestinationFilename>
@@ -3735,6 +4001,13 @@ Loading plugin with startparameters now also possible using GUIProperties</Versi
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3\Media\OnlineVideos\NextPage.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d5286f71-1543-4446-9726-faa7c926637a}-NextPage.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3\Media\OnlineVideos\NextPage.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Skins\Blue3wide\myonlinevideos.details.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e2949e3c-41a5-460f-a1ba-1ac27a266003}-myonlinevideos.details.xml</ZipFileName>
         <DestinationFilename>%Skin%\Blue3Wide\myonlinevideos.details.xml</DestinationFilename>
@@ -3802,6 +4075,13 @@ Loading plugin with startparameters now also possible using GUIProperties</Versi
         <ZipFileName>Installer{CopyFile}\{edcb4aec-b880-41d2-a708-4cdb4a5e9f4f}-myonlinevideosOSD.xml</ZipFileName>
         <DestinationFilename>%Skin%\Blue3Wide\myonlinevideosOSD.xml</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Blue3wide\Media\OnlineVideos\NextPage.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4c9f91b6-571e-41a4-9694-d4741e49203c}-NextPage.png</ZipFileName>
+        <DestinationFilename>%Skin%\Blue3Wide\Media\OnlineVideos\NextPage.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -3827,7 +4107,7 @@ Loading plugin with startparameters now also possible using GUIProperties</Versi
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{dea8677a-94bd-4a32-8438-61dcb99d7b98}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{aabfc10f-5e9c-49ba-85e1-ba4f046d7fcb}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
