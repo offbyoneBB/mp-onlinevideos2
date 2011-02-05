@@ -203,6 +203,7 @@ namespace OnlineVideos.MediaPortal1
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.chkAutoGroupByLang = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -1707,6 +1708,7 @@ namespace OnlineVideos.MediaPortal1
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.chkAutoGroupByLang);
             this.splitContainer1.Panel1.Controls.Add(this.btnBrowseSitesGroupThumb);
             this.splitContainer1.Panel1.Controls.Add(this.tbxSitesGroupDesc);
             this.splitContainer1.Panel1.Controls.Add(this.label43);
@@ -1843,7 +1845,7 @@ namespace OnlineVideos.MediaPortal1
             this.btnSitesGroupDown});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(24, 230);
+            this.toolStrip2.Size = new System.Drawing.Size(24, 205);
             this.toolStrip2.Stretch = true;
             this.toolStrip2.TabIndex = 0;
             // 
@@ -2202,6 +2204,16 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // chkAutoGroupByLang
+            // 
+            this.chkAutoGroupByLang.AutoSize = true;
+            this.chkAutoGroupByLang.Location = new System.Drawing.Point(264, 179);
+            this.chkAutoGroupByLang.Name = "chkAutoGroupByLang";
+            this.chkAutoGroupByLang.Size = new System.Drawing.Size(353, 17);
+            this.chkAutoGroupByLang.TabIndex = 17;
+            this.chkAutoGroupByLang.Text = "Automatically group all sites by their language if no groups are defined";
+            this.chkAutoGroupByLang.UseVisualStyleBackColor = true;
+            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -2475,5 +2487,6 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.Button btnBrowseSitesGroupThumb;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.CheckBox chkUseRtmpProxy;
+        private System.Windows.Forms.CheckBox chkAutoGroupByLang;
 	}
 }
