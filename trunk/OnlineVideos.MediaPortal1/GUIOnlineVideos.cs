@@ -763,7 +763,7 @@ namespace OnlineVideos.MediaPortal1
         private void DoFirstLoad_Step2()
         {
             OnlineVideoSettings.Instance.BuildSiteUtilsList();
-            if (PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) CurrentState = State.groups;
+            if ((PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) || PluginConfiguration.Instance.autoGroupByLang) CurrentState = State.groups;
             firstLoadDone = true;
 
             if (PluginConfiguration.Instance.ThumbsAge >= 0)
@@ -828,9 +828,12 @@ namespace OnlineVideos.MediaPortal1
 
         private void DisplayGroups()
         {
+            var sitesGroups = PluginConfiguration.Instance.SitesGroups;
+            if ((sitesGroups == null || sitesGroups.Count == 0) && PluginConfiguration.Instance.autoGroupByLang) sitesGroups = PluginConfiguration.Instance.GetAutomaticSitesGroups();
+
             SelectedSite = null;
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
-            foreach (SitesGroup sitesGroup in PluginConfiguration.Instance.SitesGroups)
+            foreach (SitesGroup sitesGroup in sitesGroups)
             {
                 if (sitesGroup.Sites != null && sitesGroup.Sites.Count > 0)
                 {
@@ -854,7 +857,7 @@ namespace OnlineVideos.MediaPortal1
 
             // add the item for all ungrouped sites if there are any
             HashSet<string> groupedSites = new HashSet<string>();
-            foreach (SitesGroup sg in PluginConfiguration.Instance.SitesGroups)
+            foreach (SitesGroup sg in sitesGroups)
                 foreach (string site in sg.Sites)
                     if (!groupedSites.Contains(site)) groupedSites.Add(site);
             SitesGroup othersGroup = new SitesGroup() { Name = Translation.Others };
@@ -920,7 +923,7 @@ namespace OnlineVideos.MediaPortal1
                     break;
             }
 
-            if (PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0)
+            if ((PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) || PluginConfiguration.Instance.autoGroupByLang)
             {
                 // add the first item that will go to the groups menu
                 OnlineVideosGuiListItem loListItem;
@@ -1495,7 +1498,7 @@ namespace OnlineVideos.MediaPortal1
 
             if (CurrentState == State.sites)
             {
-                if (PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0)
+                if ((PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) || PluginConfiguration.Instance.autoGroupByLang)
                     DisplayGroups();
                 else
                     OnPreviousWindow();

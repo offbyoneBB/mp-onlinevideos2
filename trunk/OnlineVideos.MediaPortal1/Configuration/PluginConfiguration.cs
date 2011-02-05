@@ -1,6 +1,7 @@
 ﻿using System;
 using MediaPortal.Configuration;
 using System.IO;
+using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
@@ -35,6 +36,7 @@ namespace OnlineVideos.MediaPortal1
         public SearchHistoryType searchHistoryType = SearchHistoryType.Simple;
         public int searchHistoryNum = 9;
         public BindingList<SitesGroup> SitesGroups = new BindingList<SitesGroup>();
+        public bool autoGroupByLang = true;
         public bool useRtmpProxy = true;
 
         // runtime (inside MediaPortal) changeable values
@@ -80,6 +82,7 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_SEARCHHISTORY = "searchHistory";
         const string CFG_SEARCHHISTORYTYPE = "searchHistoryType";
         const string CFG_USE_RTMP_PROXY = "useRtmpProxy";
+        const string CFG_AUTO_LANG_GROUPS = "autoGroupByLang";
         #endregion
 
         #region Singleton
@@ -108,6 +111,7 @@ namespace OnlineVideos.MediaPortal1
                 wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                 playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
                 useRtmpProxy = settings.GetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
+                autoGroupByLang = settings.GetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
             }
         }
 
@@ -222,6 +226,7 @@ namespace OnlineVideos.MediaPortal1
                     if (!ovsconf.VideoExtensions.ContainsKey(".wmv")) ovsconf.VideoExtensions.Add(".wmv", false);
 
                     httpSourceFilterName = settings.GetValueAsString(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
+                    autoGroupByLang = settings.GetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
                 }
                 LoadSitesGroups();
                 ovsconf.LoadSites();
@@ -284,8 +289,9 @@ namespace OnlineVideos.MediaPortal1
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORY_NUM, searchHistoryNum);
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORYTYPE, (int)searchHistoryType);
                         settings.SetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
-                        SaveSitesGroups();
+                        settings.SetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
 
+                        SaveSitesGroups();
                         ovsconf.SaveSites();
                     }
                 }
@@ -313,6 +319,42 @@ namespace OnlineVideos.MediaPortal1
                     Log.Instance.Warn("Error loading {0}:{1}", SitesGroupsFileName, e.Message);
                 }
             }
+        }
+
+        public BindingList<SitesGroup> GetAutomaticSitesGroups()
+        {
+            Dictionary<string, BindingList<string>> sitenames = new Dictionary<string, BindingList<string>>();
+            foreach (string name in OnlineVideoSettings.Instance.SiteUtilsList.Keys)
+            {
+                Sites.SiteUtilBase aSite;
+                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(name, out aSite))
+                {
+                    string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "--" : aSite.Settings.Language;
+                    BindingList<string> listForLang = null;
+                    if (!sitenames.TryGetValue(key, out listForLang)) { listForLang = new BindingList<string>(); sitenames.Add(key, listForLang); }
+                    listForLang.Add(aSite.Settings.Name);
+                }
+            }
+            BindingList<SitesGroup> result = new BindingList<SitesGroup>();
+            foreach (string aLang in sitenames.Keys.ToList().OrderBy(l => l))
+            {
+                string name = aLang;
+                try
+                {
+                    name = aLang != "--" ? System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag(aLang).DisplayName : "Global";
+                }
+                catch
+                {
+                    Log.Instance.Warn("Non RFC 4646 compliant language identifier: '{0}'", name);
+                }
+                result.Add(new SitesGroup()
+                {
+                    Name = name,
+                    Sites = sitenames[aLang],
+                    Thumbnail = string.Format(@"{0}\OnlineVideos\Langs\{1}.png", Config.GetFolder(Config.Dir.Thumbs), aLang)
+                });
+            }
+            return result;
         }
 
         void SaveSitesGroups()

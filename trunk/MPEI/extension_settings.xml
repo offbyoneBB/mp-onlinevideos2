@@ -7,6 +7,7 @@
 			<setting entryname="plugins" name="OnlineVideos" displayname="Plugin Enabled" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
 			<setting entryname="home" name="OnlineVideos" displayname="Listed in Home" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
 			<setting entryname="myplugins" name="OnlineVideos" displayname="Listed in My Plugins" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/>
+      <setting entryname="onlinevideos" name="autoGroupByLang" displayname="Automatically group all sites by their language" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
       <setting entryname="onlinevideos" name="useQuickSelect" displayname="Use alphanumeric keys to quickly select items by first letter" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
       <setting entryname="onlinevideos" name="searchHistoryType" displayname="Search history" defaultvalue="1" type="int" listvalues="0|1|2" displaylistvalues="Off|Simple|Extended"/>
       <setting entryname="onlinevideos" name="thumbAge" displayname="Maximum age (days) for thumbnails" defaultvalue="100" type="int" listvalues="" displaylistvalues=""/>
