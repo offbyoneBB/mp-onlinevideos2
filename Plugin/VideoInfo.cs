@@ -27,6 +27,9 @@ namespace OnlineVideos
         /// <summary>This property is only used by the <see cref="FavoriteUtil"/> to store the Id of Video, so it can be deleted from the DB.</summary>
         public int Id { get; set; }
 
+        /// <summary>If the SiteUtil for this VideoInfo implements <see cref="IChoice"/> setting this to true will show the details view (default), false will play the video</summary>
+        public bool HasDetails { get; set; }
+
         /// <summary>This property is set by the <see cref="ImageDownloader"/> to the file after downloading from <see cref="ImageUrl"/>.</summary>
         public string ThumbnailImage { get; set; }
 
@@ -40,6 +43,7 @@ namespace OnlineVideos
             Length = string.Empty;
             StartTime = string.Empty;
             SiteName = string.Empty;
+            HasDetails = true;
         }
 
         public void CleanDescriptionAndTitle()

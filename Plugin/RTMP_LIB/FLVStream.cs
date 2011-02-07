@@ -74,6 +74,8 @@ namespace RTMP_LIB
 
                                     EstimatedLength = (long)((double)EstimatedLength * 1.5d);
 
+                                    if (EstimatedLength > 0x7fffffff) EstimatedLength = 0x7fffffff; // honor 2GB size limit
+
                                     outputStream = DataReady(); // get the stream
                                     httpChunkSize = 1024; // reduce chunksize
                                 }
