@@ -529,7 +529,7 @@ namespace OnlineVideos.MediaPortal1
                     else
                     {
                         selectedVideo = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
-                        if (SelectedSite is IChoice)
+                        if (SelectedSite is IChoice && selectedVideo.HasDetails)
                         {
                             // show details view
                             DisplayDetails();
