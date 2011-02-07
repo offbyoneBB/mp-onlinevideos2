@@ -31,6 +31,9 @@ namespace SiteParser
             playerComboBox.SelectedIndex = 0;
 
             UtilToGui(generic);
+#if !DEBUG
+            debugToolStripMenuItem.Visible = false;
+#endif
         }
 
         System.ComponentModel.BindingList<SiteSettings> SiteSettingsList;
@@ -550,6 +553,21 @@ namespace SiteParser
 
         #endregion
 
+        #region debug
+        private void categoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form2 f2 = new Form2();
+            f2.Execute(String.Empty, BaseUrlTextbox.Text,
+                new string[] { "url", "title", "thumb", "description" });
+        }
+
+        private void videoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form2 f2 = new Form2();
+            f2.Execute(String.Empty, BaseUrlTextbox.Text,
+                new string[] { "Title", "VideoUrl", "ImageUrl", "Description", "Duration", "Airdate" });
+        }
+        #endregion
     }
 
     class MySiteUtil : GenericSiteUtil
