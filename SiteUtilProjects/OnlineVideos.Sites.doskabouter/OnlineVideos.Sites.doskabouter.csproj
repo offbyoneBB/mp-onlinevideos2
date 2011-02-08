@@ -81,6 +81,7 @@
     <Compile Include="Hoster\VideoWeed.cs" />
     <Compile Include="Hoster\Xtream.cs" />
     <Compile Include="Hoster\zShare.cs" />
+    <Compile Include="YleAreenaUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CinemassacreUtil.cs" />
