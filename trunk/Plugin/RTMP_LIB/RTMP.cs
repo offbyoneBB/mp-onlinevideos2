@@ -7,47 +7,47 @@ using System.Text;
 
 namespace RTMP_LIB
 {
-    public enum Protocol : short 
-    { 
-        UNDEFINED = -1, 
-        RTMP      =  0, 
-        RTMPT     =  1, 
-        RTMPS     =  2, 
-        RTMPE     =  3, 
-        RTMPTE    =  4, 
-        RTMFP     =  5 
+    public enum Protocol : short
+    {
+        UNDEFINED = -1,
+        RTMP = 0,
+        RTMPT = 1,
+        RTMPS = 2,
+        RTMPE = 3,
+        RTMPTE = 4,
+        RTMFP = 5
     };
 
     public enum PacketType : byte
     {
-        Undefined         = 0x00,
-        ChunkSize         = 0x01, 
-        Abort             = 0x02, 
-        BytesRead         = 0x03, 
-        Control           = 0x04,
-        ServerBW          = 0x05, 
-        ClientBW          = 0x06, 
-        Audio             = 0x08, 
-        Video             = 0x09,
-        Metadata_AMF3     = 0x0F, 
-        SharedObject_AMF3 = 0x10, 
-        Invoke_AMF3       = 0x11,
-        Metadata          = 0x12, 
-        SharedObject      = 0x13, 
-        Invoke            = 0x14, 
-        FlvTags           = 0x16
+        Undefined = 0x00,
+        ChunkSize = 0x01,
+        Abort = 0x02,
+        BytesRead = 0x03,
+        Control = 0x04,
+        ServerBW = 0x05,
+        ClientBW = 0x06,
+        Audio = 0x08,
+        Video = 0x09,
+        Metadata_AMF3 = 0x0F,
+        SharedObject_AMF3 = 0x10,
+        Invoke_AMF3 = 0x11,
+        Metadata = 0x12,
+        SharedObject = 0x13,
+        Invoke = 0x14,
+        FlvTags = 0x16
     };
 
     public enum HeaderType : byte
     {
-        Large   = 0,
-        Medium  = 1,
-        Small   = 2,
+        Large = 0,
+        Medium = 1,
+        Small = 2,
         Minimum = 3
     };
 
     public class RTMP
-    {        
+    {
         #region  Constants
 
         static readonly byte[] DH_MODULUS_BYTES = new byte[128] 
@@ -57,7 +57,7 @@ namespace RTMP_LIB
             0x4F, 0xE1, 0x35, 0x6D, 0x6D, 0x51, 0xC2, 0x45, 0xE4, 0x85, 0xB5, 0x76, 0x62, 0x5E, 0x7E, 0xC6, 0xF4, 0x4C, 0x42, 0xE9, 0xA6, 0x37, 0xED, 0x6B, 0x0B, 0xFF, 0x5C, 0xB6, 0xF4, 0x06, 0xB7, 0xED, 
             0xEE, 0x38, 0x6B, 0xFB, 0x5A, 0x89, 0x9F, 0xA5, 0xAE, 0x9F, 0x24, 0x11, 0x7C, 0x4B, 0x1F, 0xE6, 0x49, 0x28, 0x66, 0x51, 0xEC, 0xE6, 0x53, 0x81, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
         };
-        
+
         static readonly byte[] GenuineFPKey = new byte[62] 
         {
             0x47,0x65,0x6E,0x75,0x69,0x6E,0x65,0x20,0x41,0x64,0x6F,0x62,0x65,0x20,0x46,0x6C,
@@ -109,7 +109,7 @@ namespace RTMP_LIB
 
         const int TIMEOUT_RECEIVE = 15000;
 
-        #endregion        
+        #endregion
 
         #region Public Properties
 
@@ -121,8 +121,8 @@ namespace RTMP_LIB
         /// <summary>
         /// Current ChunkSize for incoming packets (default: 128 byte)
         /// </summary>
-        public int InChunkSize { get; protected set; } 
-        
+        public int InChunkSize { get; protected set; }
+
         /// <summary>
         /// indicates if currently streaming a media file
         /// </summary>
@@ -134,12 +134,12 @@ namespace RTMP_LIB
         /// Duration of stream in seconds returned by Metadata
         /// </summary>
         public double Duration { get; protected set; }
-        
+
         /// <summary>
         /// Sum of bytes of all tracks in the stream (if Metadata was received and held that information)
         /// </summary>
         public long CombinedTracksLength { get; protected set; } // number of bytes
-        
+
         /// <summary>
         /// sum of bitrates of all tracks in the stream (if Metadata was received and held that information)
         /// </summary>
@@ -168,6 +168,9 @@ namespace RTMP_LIB
         Queue<string> m_methodCalls = new Queue<string>(); //remote method calls queue
         public bool invalidRTMPHeader = false;
         uint m_mediaStamp = 0;
+        public delegate bool MethodHook(string method, AMFObject obj, RTMP rtmp);
+        public MethodHook MethodHookHandler = null;
+        public bool SkipCreateStream = false;
 
         public bool Connect()
         {
@@ -175,7 +178,7 @@ namespace RTMP_LIB
 
             // close any previous connection
             Close();
-            
+
             // connect
             tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             tcpSocket.Connect(Link.hostname, Link.port);
@@ -200,8 +203,8 @@ namespace RTMP_LIB
             tcpSocket.ReceiveTimeout = receiveTimeoutMS;
 
             return true;
-        }        
-       
+        }
+
         public bool IsConnected()
         {
             return tcpSocket != null && tcpSocket.Connected;
@@ -258,20 +261,20 @@ namespace RTMP_LIB
 
                 if (packet.PacketType == PacketType.Audio || packet.PacketType == PacketType.Video || packet.PacketType == PacketType.Metadata)
                 {
-                    Logger.Log("Received FLV packet before play()! Ignoring.");                    
+                    Logger.Log("Received FLV packet before play()! Ignoring.");
                     continue;
                 }
 
                 ClientPacket(packet);
             }
             return Playing;
-        }                
+        }
 
         public int GetNextMediaPacket(out RTMPPacket packet)
         {
             int bHasMediaPacket = 0;
             packet = null;
-            
+
             while (bHasMediaPacket == 0 && IsConnected() && ReadPacket(out packet))
             {
                 if (!packet.IsReady()) continue; // keep reading until complete package has arrived
@@ -344,7 +347,7 @@ namespace RTMP_LIB
 
             return bHasMediaPacket;
         }
-        
+
         bool ReadPacket(out RTMPPacket packet)
         {
             // Chunk Basic Header (1, 2 or 3 bytes)
@@ -403,12 +406,12 @@ namespace RTMP_LIB
 
             nSize--;
 
-            byte[] header = new byte[RTMP_LARGE_HEADER_SIZE];            
+            byte[] header = new byte[RTMP_LARGE_HEADER_SIZE];
             if (nSize > 0 && ReadN(header, 0, (int)nSize) != nSize)
             {
                 Logger.Log(string.Format("failed to read RTMP packet header. type: {0}", type));
                 return false;
-            }            
+            }
 
             if (nSize >= 3)
                 packet.m_nInfoField1 = ReadInt24(header, 0);
@@ -447,12 +450,12 @@ namespace RTMP_LIB
                 Logger.Log(string.Format("failed to read RTMP packet body. len: {0}", packet.m_nBodySize));
                 packet.m_body = null; // we dont want it deleted since its pointed to from the stored packets (m_vecChannelsIn)
                 return false;
-            }            
+            }
 
             packet.m_nBytesRead += nChunk;
 
             // keep the packet as ref for other packets on this channel
-            m_vecChannelsIn[packet.m_nChannel] = packet;                        
+            m_vecChannelsIn[packet.m_nChannel] = packet;
 
             if (packet.IsReady())
             {
@@ -460,7 +463,7 @@ namespace RTMP_LIB
                 packet.m_nTimeStamp = (uint)packet.m_nInfoField1;
 
                 // make packet's timestamp absolute 
-                if (!packet.m_hasAbsTimestamp) 
+                if (!packet.m_hasAbsTimestamp)
                     packet.m_nTimeStamp += m_channelTimestamp[packet.m_nChannel]; // timestamps seem to be always relative!! 
                 m_channelTimestamp[packet.m_nChannel] = packet.m_nTimeStamp;
 
@@ -480,8 +483,8 @@ namespace RTMP_LIB
             {
                 try
                 {
-                sslStream.Close();
-                sslStream.Dispose();
+                    sslStream.Close();
+                    sslStream.Dispose();
                 }
                 catch { }
             }
@@ -532,7 +535,7 @@ namespace RTMP_LIB
         #region Send Client Packets
 
         bool SendConnect()
-        {            
+        {
             RTMPPacket packet = new RTMPPacket();
             packet.m_nChannel = 0x03;   // control channel (invoke)
             packet.HeaderType = HeaderType.Large;
@@ -545,7 +548,10 @@ namespace RTMP_LIB
             EncodeNumber(enc, ++m_numInvokes);
             enc.Add(0x03); //Object Datatype                
             EncodeString(enc, "app", Link.app); Logger.Log(string.Format("app : {0}", Link.app));
-            EncodeString(enc, "flashVer", "WIN 10,0,32,18");
+            if (String.IsNullOrEmpty(Link.flashVer))
+                EncodeString(enc, "flashVer", "WIN 10,0,32,18");
+            else
+                EncodeString(enc, "flashVer", Link.flashVer);
             if (!string.IsNullOrEmpty(Link.swfUrl)) EncodeString(enc, "swfUrl", Link.swfUrl);
             EncodeString(enc, "tcUrl", Link.tcUrl); Logger.Log(string.Format("tcUrl : {0}", Link.tcUrl));
             EncodeBoolean(enc, "fpad", false);
@@ -572,12 +578,12 @@ namespace RTMP_LIB
 
             Array.Copy(enc.ToArray(), packet.m_body, enc.Count);
             packet.m_nBodySize = (uint)enc.Count;
-            
+
             return SendRTMP(packet);
         }
 
         bool SendPlay()
-        {            
+        {
             RTMPPacket packet = new RTMPPacket();
             packet.m_nChannel = 0x08;   // we make 8 our stream channel
             packet.HeaderType = HeaderType.Large;
@@ -644,6 +650,51 @@ namespace RTMP_LIB
             packet.m_nBodySize = (uint)enc.Count;
 
             Logger.Log(string.Format("Sending pause: ({0}), Time = {1}", doPause.ToString(), m_channelTimestamp[m_mediaChannel]));
+
+            return SendRTMP(packet);
+        }
+
+        public bool SendFlex(string name, double number)
+        {
+            RTMPPacket packet = new RTMPPacket();
+            packet.m_nChannel = 0x03;   // control channel (invoke)
+            packet.HeaderType = HeaderType.Large;
+            packet.PacketType = PacketType.Invoke_AMF3;
+
+            List<byte> enc = new List<byte>();
+            enc.Add(0x00);
+            EncodeString(enc, name);
+            EncodeNumber(enc, 0);
+            enc.Add(0x05); // NULL  
+            EncodeNumber(enc, number);
+
+            packet.m_body = enc.ToArray();
+            packet.m_nBodySize = (uint)enc.Count;
+
+            Logger.Log(string.Format("Sending flex: ({0},{1})", name, number.ToString()));
+
+            return SendRTMP(packet);
+        }
+
+        public bool SendRequestData(string id, string request)
+        {
+            RTMPPacket packet = new RTMPPacket();
+            packet.m_nChannel = 0x03;   // control channel (invoke)
+            packet.HeaderType = HeaderType.Large;
+            packet.PacketType = PacketType.Invoke_AMF3;
+
+            List<byte> enc = new List<byte>();
+            enc.Add(0x00);
+            EncodeString(enc, "requestData");
+            EncodeNumber(enc, 0);
+            enc.Add(0x05); // NULL  
+            EncodeString(enc, id);
+            EncodeString(enc, request);
+
+            packet.m_body = enc.ToArray();
+            packet.m_nBodySize = (uint)enc.Count;
+
+            Logger.Log(string.Format("Sending requestData: ({0},{1})", id, request));
 
             return SendRTMP(packet);
         }
@@ -751,7 +802,7 @@ namespace RTMP_LIB
 
             return SendRTMP(packet, false);
         }
-        
+
         bool SendBytesReceived()
         {
             RTMPPacket packet = new RTMPPacket();
@@ -778,7 +829,7 @@ namespace RTMP_LIB
             packet.m_nChannel = 0x02;   // control channel (invoke)
             packet.HeaderType = HeaderType.Large;
             packet.PacketType = PacketType.ServerBW;
-            
+
             packet.AllocPacket(4);
             packet.m_nBodySize = 4;
 
@@ -788,7 +839,7 @@ namespace RTMP_LIB
             return SendRTMP(packet, false);
         }
 
-        bool SendCreateStream()
+        public bool SendCreateStream()
         {
             RTMPPacket packet = new RTMPPacket();
             packet.m_nChannel = 0x03;   // control channel (invoke)
@@ -867,7 +918,7 @@ namespace RTMP_LIB
             packet.m_body = enc.ToArray();
 
             return SendRTMP(packet);
-        }        
+        }
 
         bool SendRTMP(RTMPPacket packet) { return SendRTMP(packet, true); }
         bool SendRTMP(RTMPPacket packet, bool queue)
@@ -882,7 +933,7 @@ namespace RTMP_LIB
                 if (prevPacket != null && prevPacket.m_nInfoField2 == packet.m_nInfoField2 && packet.HeaderType == HeaderType.Small)
                     packet.HeaderType = HeaderType.Minimum;
             }
-            
+
             uint nSize = packetSize[(byte)packet.HeaderType];
             List<byte> header = new List<byte>();//byte[RTMP_LARGE_HEADER_SIZE];
             byte c = (byte)(((byte)packet.HeaderType << 6) | packet.m_nChannel);
@@ -897,16 +948,16 @@ namespace RTMP_LIB
             }
 
             if (nSize > 8)
-                EncodeInt32LE(header, packet.m_nInfoField2);            
-            
+                EncodeInt32LE(header, packet.m_nInfoField2);
+
             uint hSize = nSize;
             byte[] headerBuffer = header.ToArray();
             nSize = packet.m_nBodySize;
             byte[] buffer = packet.m_body;
             uint bufferOffset = 0;
-            uint nChunkSize = (uint)outChunkSize; 
-            while (nSize+hSize > 0)
-            {                
+            uint nChunkSize = (uint)outChunkSize;
+            while (nSize + hSize > 0)
+            {
                 if (nSize < nChunkSize) nChunkSize = nSize;
 
                 if (hSize > 0)
@@ -931,14 +982,14 @@ namespace RTMP_LIB
                     hSize = 1;
                     headerBuffer = new byte[1] { sep };
                 }
-            }            
+            }
 
             if (packet.PacketType == PacketType.Invoke && queue) // we invoked a remote method, keep it in call queue till result arrives
                 m_methodCalls.Enqueue(ReadString(packet.m_body, 1));
 
             m_vecChannelsOut[packet.m_nChannel] = packet;
             m_vecChannelsOut[packet.m_nChannel].m_body = null;
-            
+
             return true;
         }
 
@@ -960,7 +1011,7 @@ namespace RTMP_LIB
             short nType = -1;
             if (packet.m_body != null && packet.m_nBodySize >= 2)
                 nType = (short)ReadInt16(packet.m_body, 0);
-            
+
             Logger.Log(string.Format("received: ping, type: {0}", nType));
 
             if (packet.m_nBodySize >= 6)
@@ -1009,7 +1060,7 @@ namespace RTMP_LIB
                         Logger.Log(string.Format("Stream xx {0}", nTime));
                         break;
                 }
-            }            
+            }
 
             if (nType == 0x1A)
             {
@@ -1039,6 +1090,47 @@ namespace RTMP_LIB
             else
                 m_nClientBW2 = 0;
             Logger.Log(string.Format("HandleClientBW: client BW = {0} {1}", m_nClientBW, m_nClientBW2));
+        }
+
+        public bool GetExpectedPacket(string expectedMethod, out AMFObject obj)
+        {
+            RTMPPacket packet = null;
+            obj = null;
+            bool ready = false;
+            while (!ready && IsConnected() && ReadPacket(out packet))
+            {
+                if (!packet.IsReady()) continue; // keep reading until complete package has arrived
+                if (packet.PacketType != PacketType.Invoke)
+                    Logger.Log(string.Format("Ignoring packet of type {0}", packet.PacketType));
+                else
+                {
+                    if (packet.m_body[0] != 0x02) // make sure it is a string method name we start with
+                    {
+                        Logger.Log("GetExpectedPacket: Sanity failed. no string method in invoke packet");
+                        return false;
+                    }
+
+                    obj = new AMFObject();
+                    int nRes = obj.Decode(packet.m_body, 0, (int)packet.m_nBodySize, false);
+                    if (nRes < 0)
+                    {
+                        Logger.Log("GetExpectedPacket: error decoding invoke packet");
+                        return false;
+                    }
+
+                    obj.Dump();
+                    string method = obj.GetProperty(0).GetString();
+                    double txn = obj.GetProperty(1).GetNumber();
+                    Logger.Log(string.Format("server invoking <{0}>", method));
+                    if (method == "_result" && m_methodCalls.Count > 0)
+                    {
+                        string methodInvoked = m_methodCalls.Dequeue();
+                        Logger.Log(string.Format("received result for method call <{0}>", methodInvoked));
+                    }
+                    ready = method == expectedMethod;
+                }
+            }
+            return ready;
         }
 
         /// <summary>
@@ -1072,7 +1164,7 @@ namespace RTMP_LIB
 
             if (method == "_result")
             {
-                string methodInvoked = m_methodCalls.Dequeue();                
+                string methodInvoked = m_methodCalls.Dequeue();
 
                 Logger.Log(string.Format("received result for method call <{0}>", methodInvoked));
 
@@ -1089,8 +1181,11 @@ namespace RTMP_LIB
                         }
                     }
                     SendServerBW();
-                    SendPing(3, 0, 300);
-                    SendCreateStream();
+                    if (!SkipCreateStream)
+                    {
+                        SendPing(3, 0, 300);
+                        SendCreateStream();
+                    }
                     if (!string.IsNullOrEmpty(Link.subscribepath)) SendFCSubscribe(Link.subscribepath);
                     else if (Link.bLiveStream) SendFCSubscribe(Link.playpath);
                 }
@@ -1138,7 +1233,7 @@ namespace RTMP_LIB
 
                 Logger.Log(string.Format("onStatus: code :{0}, level: {1}", code, level));
 
-                if (code == "NetStream.Failed" || code == "NetStream.Play.Failed" || code == "NetStream.Play.StreamNotFound" || code == "NetConnection.Connect.InvalidApp")                    
+                if (code == "NetStream.Failed" || code == "NetStream.Play.Failed" || code == "NetStream.Play.StreamNotFound" || code == "NetConnection.Connect.InvalidApp")
                 {
                     Close();
                 }
@@ -1160,6 +1255,10 @@ namespace RTMP_LIB
                     }
                 }
             }
+            else if (MethodHookHandler != null)
+            {
+                ret = MethodHookHandler(method, obj, this);
+            }
             else
             {
 
@@ -1174,7 +1273,7 @@ namespace RTMP_LIB
         }
 
         void HandleMetadata(byte[] buffer, int offset, int size)
-        {            
+        {
             AMFObject obj = new AMFObject();
             int nRes = obj.Decode(buffer, offset, size, false);
             if (nRes < 0)
@@ -1197,7 +1296,7 @@ namespace RTMP_LIB
                     Duration = props[0].GetNumber();
                     Logger.Log(string.Format("Set duration: {0}", Duration));
                 }
-                props.Clear();                
+                props.Clear();
                 obj.FindMatchingProperty("audiodatarate", props, 1);
                 if (props.Count > 0)
                 {
@@ -1232,7 +1331,7 @@ namespace RTMP_LIB
                         CombinedTracksLength = (int)props[0].GetNumber();
                         Logger.Log(string.Format("Set CombinedTracksLength from datasize: {0}", CombinedTracksLength));
                     }
-                }   
+                }
             }
         }
 
@@ -1265,7 +1364,7 @@ namespace RTMP_LIB
             if (Pausing == 0) m_mediaStamp = nTimeStamp;
         }
 
-        #endregion        
+        #endregion
 
         #region Encode Functions
 
@@ -1372,12 +1471,12 @@ namespace RTMP_LIB
 
         public static ushort ReadInt16(byte[] data, int offset)
         {
-            return (ushort)((data[offset] << 8) | data[offset+1]);
+            return (ushort)((data[offset] << 8) | data[offset + 1]);
         }
 
         public static int ReadInt24(byte[] data, int offset)
         {
-            return (data[offset] << 16) | (data[offset + 1] << 8) | data[offset+2];
+            return (data[offset] << 16) | (data[offset + 1] << 8) | data[offset + 2];
         }
 
         /// <summary>
@@ -1388,7 +1487,7 @@ namespace RTMP_LIB
         /// <returns></returns>
         public static int ReadInt32(byte[] data, int offset)
         {
-            return (data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset+3];
+            return (data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset + 3];
         }
 
         /// <summary>
@@ -1416,7 +1515,7 @@ namespace RTMP_LIB
             return BitConverter.ToDouble(bytes, 0);
         }
 
-        #endregion        
+        #endregion
 
         # region Handshake
 
@@ -1447,7 +1546,7 @@ namespace RTMP_LIB
             Array.Copy(uptime_bytes, 0, clientsig, 1, uptime_bytes.Length);
 
             if (FP9HandShake)
-            {                
+            {
                 /* set version to at least 9.0.115.0 */
                 if (encrypted)
                 {
@@ -1461,7 +1560,7 @@ namespace RTMP_LIB
                 }
                 clientsig[6] = 0;
                 clientsig[8] = 2;
-                
+
                 Logger.Log(string.Format("Client type: {0}", clientsig[0]));
             }
             else
@@ -1480,12 +1579,12 @@ namespace RTMP_LIB
             if (encrypted)
             {
                 // generate Diffie-Hellmann parameters                                
-                Org.BouncyCastle.Crypto.Parameters.DHParameters dhParams = 
+                Org.BouncyCastle.Crypto.Parameters.DHParameters dhParams =
                     new Org.BouncyCastle.Crypto.Parameters.DHParameters(
                         new Org.BouncyCastle.Math.BigInteger(1, DH_MODULUS_BYTES),
                         Org.BouncyCastle.Math.BigInteger.ValueOf(2));
                 Org.BouncyCastle.Crypto.Parameters.DHKeyGenerationParameters keySpec = new Org.BouncyCastle.Crypto.Parameters.DHKeyGenerationParameters(new Org.BouncyCastle.Security.SecureRandom(), dhParams);
-                Org.BouncyCastle.Crypto.Generators.DHBasicKeyPairGenerator keyGen = new Org.BouncyCastle.Crypto.Generators.DHBasicKeyPairGenerator();                
+                Org.BouncyCastle.Crypto.Generators.DHBasicKeyPairGenerator keyGen = new Org.BouncyCastle.Crypto.Generators.DHBasicKeyPairGenerator();
                 keyGen.Init(keySpec);
                 Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair pair = keyGen.GenerateKeyPair();
                 Org.BouncyCastle.Crypto.Agreement.DHBasicAgreement keyAgreement = new Org.BouncyCastle.Crypto.Agreement.DHBasicAgreement();
@@ -1507,24 +1606,24 @@ namespace RTMP_LIB
                     publicKey = temp;
                     Logger.Log("truncated public key length to 128");
                 }
-                
+
                 dhposClient = (int)GetDHOffset(offalg, clientsig, 1, RTMP_SIG_SIZE);
                 Logger.Log(string.Format("DH pubkey position: {0}", dhposClient));
 
-                Array.Copy(publicKey, 0, clientsig, 1 + dhposClient, 128);                
+                Array.Copy(publicKey, 0, clientsig, 1 + dhposClient, 128);
             }
 
             // set handshake digest
             if (FP9HandShake)
             {
-                int digestPosClient = (int)GetDigestOffset(offalg, clientsig,1, RTMP_SIG_SIZE); // maybe reuse this value in verification
+                int digestPosClient = (int)GetDigestOffset(offalg, clientsig, 1, RTMP_SIG_SIZE); // maybe reuse this value in verification
                 Logger.Log(string.Format("Client digest offset: {0}", digestPosClient));
 
                 CalculateDigest(digestPosClient, clientsig, 1, GenuineFPKey, 30, clientsig, 1 + digestPosClient);
 
                 Logger.Log("Initial client digest: ");
                 string digestAsHexString = "";
-                for(int i = 1 + digestPosClient; i<1 + digestPosClient+SHA256_DIGEST_LENGTH;i++) digestAsHexString += clientsig[i].ToString("X2") + " ";
+                for (int i = 1 + digestPosClient; i < 1 + digestPosClient + SHA256_DIGEST_LENGTH; i++) digestAsHexString += clientsig[i].ToString("X2") + " ";
                 Logger.Log(digestAsHexString);
             }
 
@@ -1541,9 +1640,9 @@ namespace RTMP_LIB
             if (ReadN(serversig, 0, RTMP_SIG_SIZE) != RTMP_SIG_SIZE) return false;
 
             // decode server response
-            uint suptime = (uint)ReadInt32(serversig,0);            
+            uint suptime = (uint)ReadInt32(serversig, 0);
 
-            Logger.Log(string.Format("Server Uptime : {0}",suptime));
+            Logger.Log(string.Format("Server Uptime : {0}", suptime));
             Logger.Log(string.Format("FMS Version   : {0}.{1}.{2}.{3}", serversig[4], serversig[5], serversig[6], serversig[7]));
 
             if (FP9HandShake && type == 3 && serversig[4] == 0) FP9HandShake = false;
@@ -1668,9 +1767,9 @@ namespace RTMP_LIB
                 byte[] signature = new byte[SHA256_DIGEST_LENGTH];
                 byte[] digest = new byte[SHA256_DIGEST_LENGTH];
 
-                Logger.Log(string.Format("Client signature digest position: {0}", digestPosClient));                
+                Logger.Log(string.Format("Client signature digest position: {0}", digestPosClient));
                 HMACsha256(clientsig, 1 + digestPosClient, SHA256_DIGEST_LENGTH, GenuineFMSKey, GenuineFMSKey.Length, digest, 0);
-                HMACsha256(resp,0, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digest, SHA256_DIGEST_LENGTH, signature, 0);
+                HMACsha256(resp, 0, RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH, digest, SHA256_DIGEST_LENGTH, signature, 0);
 
                 // show some information
                 Logger.Log("Digest key: ");
@@ -1716,7 +1815,7 @@ namespace RTMP_LIB
                     byte[] dummyBytes = new byte[RTMP_SIG_SIZE];
                     Link.rc4In.ProcessBytes(dummyBytes, 0, RTMP_SIG_SIZE, new byte[RTMP_SIG_SIZE], 0);
                     Link.rc4Out.ProcessBytes(dummyBytes, 0, RTMP_SIG_SIZE, new byte[RTMP_SIG_SIZE], 0);
-                }                
+                }
             }
             else
             {
@@ -1726,7 +1825,7 @@ namespace RTMP_LIB
                         Logger.Log("client signature does not match!");
                         return false;
                     }
-            }            
+            }
 
             Logger.Log("Handshaking finished....");
             return true;
@@ -1830,7 +1929,7 @@ namespace RTMP_LIB
 
         void CalculateDigest(int digestPos, byte[] handshakeMessage, int handshakeOffset, byte[] key, int keyLen, byte[] digest, int digestOffset)
         {
-	        const int messageLen = RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH;
+            const int messageLen = RTMP_SIG_SIZE - SHA256_DIGEST_LENGTH;
             byte[] message = new byte[messageLen];
 
             Array.Copy(handshakeMessage, handshakeOffset, message, 0, digestPos);
@@ -1843,39 +1942,39 @@ namespace RTMP_LIB
         {
             byte[] calcDigest = new byte[SHA256_DIGEST_LENGTH];
 
-	        CalculateDigest(digestPos, handshakeMessage, 0, key, keyLen, calcDigest, 0);
+            CalculateDigest(digestPos, handshakeMessage, 0, key, keyLen, calcDigest, 0);
 
             for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
             {
                 if (handshakeMessage[digestPos + i] != calcDigest[i]) return false;
             }
-            return true;            	        
+            return true;
         }
 
         void HMACsha256(byte[] message, int messageOffset, int messageLen, byte[] key, int keylen, byte[] digest, int digestOffset)
         {
             System.Security.Cryptography.HMAC hmac = System.Security.Cryptography.HMACSHA256.Create("HMACSHA256");
-            byte[] actualKey = new byte[keylen]; Array.Copy(key, actualKey, keylen);                       
+            byte[] actualKey = new byte[keylen]; Array.Copy(key, actualKey, keylen);
             hmac.Key = actualKey;
 
             byte[] actualMessage = new byte[messageLen];
             Array.Copy(message, messageOffset, actualMessage, 0, messageLen);
-            
+
             byte[] calcDigest = hmac.ComputeHash(actualMessage);
             Array.Copy(calcDigest, 0, digest, digestOffset, calcDigest.Length);
         }
 
         void InitRC4Encryption(byte[] secretKey, byte[] pubKeyIn, int inOffset, byte[] pubKeyOut, int outOffset, out byte[] rc4keyIn, out byte[] rc4keyOut)
         {
-            byte[] digest = new byte[SHA256_DIGEST_LENGTH];            
+            byte[] digest = new byte[SHA256_DIGEST_LENGTH];
 
-            System.Security.Cryptography.HMAC hmac = System.Security.Cryptography.HMACSHA256.Create("HMACSHA256");            
+            System.Security.Cryptography.HMAC hmac = System.Security.Cryptography.HMACSHA256.Create("HMACSHA256");
             hmac.Key = secretKey;
 
             byte[] actualpubKeyIn = new byte[128];
             Array.Copy(pubKeyIn, inOffset, actualpubKeyIn, 0, 128);
             digest = hmac.ComputeHash(actualpubKeyIn);
-            
+
             rc4keyOut = new byte[16];
             Array.Copy(digest, rc4keyOut, 16);
             Logger.Log("RC4 Out Key: ");
@@ -1883,7 +1982,7 @@ namespace RTMP_LIB
 
             hmac = System.Security.Cryptography.HMACSHA256.Create("HMACSHA256");
             hmac.Key = secretKey;
-            
+
             byte[] actualpubKeyOut = new byte[128];
             Array.Copy(pubKeyOut, outOffset, actualpubKeyOut, 0, 128);
             digest = hmac.ComputeHash(actualpubKeyOut);
@@ -1919,10 +2018,10 @@ namespace RTMP_LIB
             Array.Copy(BitConverter.GetBytes(v1), 0, array, offset + 4, 4);
         }
 
-        #endregion        
+        #endregion
 
         int ReadN(byte[] buffer, int offset, int size)
-        {        
+        {
             // wait until data is available
             int i = receiveTimeoutMS / 100;
             while (tcpSocket.Available < size && i > 0)
@@ -1946,25 +2045,25 @@ namespace RTMP_LIB
             }
 
             bytesReadTotal += read;
-            
+
             if (bytesReadTotal > lastSentBytesRead + (m_nClientBW / 2)) SendBytesReceived(); // report bytes read
 
             return read;
-        }        
+        }
 
         void WriteN(byte[] buffer, int offset, int size)
-        {            
+        {
             // encrypt if needed
             if (Link.rc4Out != null)
             {
                 byte[] result = new byte[size];
                 Link.rc4Out.ProcessBytes(buffer, offset, size, result, 0);
-                tcpSocket.Send(result);                
+                tcpSocket.Send(result);
             }
             else
             {
                 tcpSocket.Send(buffer, offset, size, SocketFlags.None);
             }
-        }        
+        }
     }
 }

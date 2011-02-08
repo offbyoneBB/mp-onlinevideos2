@@ -1105,6 +1105,39 @@
     <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" lang="nl" player="WMP">
       <Categories />
     </Site>
+    <Site name="Yle Areena" util="YleAreena" agecheck="false" enabled="true" lang="fi">
+      <Description>Areena - Ylen netti-tv ja -radio</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)">\s*<span\sid="[^"]*"\sclass="topline">(?<title>[^<]*)</span>\s*</a>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\shref="/ohjelmat\#(?<url>anchor[^"]*)">(?<title>[^<]*)</a></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="showlistitem-image">\s*<[^>]*><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>(?:(?!</div>).)*</div><!--\sshowlistitem-image\s-->\s*
+<div\sclass="showlistitem-description\sseriestitle">\s*
+<div\sclass="showlistitem-type[^>]*><span\sclass="hide">[^<]*</span></div>\s*
+<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>\s*
+</div>\s*
+<div\sclass="showlistitem-info">\s*
+<div\sclass="showlistitem-description">\s*
+(?:<ul\sclass="showlistitem-description\sfirst-list">\s*<li\sclass="showlistitem-channel">(?<Channel>[^<]*)</li>)?\s*
+(?:<li\sclass="showlistitem-showtime">(?<Airdate>[^<]*)</li>\s*)?
+(?:</ul>)?\s*
+<ul\sclass="showlistitem-description\ssecond-list">\s*(?:(?!</ul>).)*</ul>\s*
+</div>
+<!--\sshowlistitem-description-->\s*
+<div\sclass="showlistitem-description">\s*<p>(?<Description>[^<]*)</p>\s*</div>\s*
+<div\sclass="showlistitem-description">\s*
+<ul\sclass="first-list\saddinfo">\s*
+<li\sclass="showlistitem-duration">[^<]*<span\sclass="strong">(?<Duration>[^<]*)</span></li>]]></item>
+        <item key="baseUrl"><![CDATA[http://areena.yle.fi/]]></item>
+        <item key="forceUTF8Encoding"><![CDATA[true]]></item>
+        <item key="flashurl"><![CDATA[flashk.yle.fi]]></item>
+        <item key="atozVideolist"><![CDATA[<li>\s*<a\sclass="related\svideo"\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>\s*(?:<span\sclass="related\ssmall\sclearfix">(?<Airdate>[^<]*)</span>)?\s*<div\sclass="showlistitem-image\scarousel">\s*<[^>]*><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*></a>\s*<p\sclass="showlistitem-timeleft\scarousel">\s*<[^>]*>(?<Description>.*?)</a>]]></item>
+        <item key="atozCategories"><![CDATA[<li><a\shref="/ohjelmat\#(?<url>anchor[^"]*)">(?<title>[^<]*)</a></li>]]></item>
+        <item key="atozSubcategories"><![CDATA[<td\sclass="programname"><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></td>\s*<td\sclass="videocount">(?<videocount>[^<]*)</td>\s*<td\sclass="audiocount">(?<audiocount>[^<]*)</td>]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Ohjelmat A-Ö">http://areena.yle.fi/ohjelmat</Category>
+      </Categories>
+    </Site>
     <Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
       <Configuration>
