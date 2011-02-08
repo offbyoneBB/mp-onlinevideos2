@@ -2639,8 +2639,11 @@ namespace OnlineVideos.MediaPortal1
         /// <param name="value"></param>
         public void SetExtendedGuiProperty(string key, string value)
         {
-            extendedProperties.Add(key);
-            GUIPropertyManager.SetProperty(key, value);
+            lock (extendedProperties)
+            {
+                extendedProperties.Add(key);
+                GUIPropertyManager.SetProperty(key, value);
+            }
         }
 
         /// <summary>
@@ -2649,16 +2652,19 @@ namespace OnlineVideos.MediaPortal1
         /// <param name="prefix">prefix</param>
         public void ResetExtendedGuiProperties(string prefix)
         {
-            if (extendedProperties.Count == 0)
+            lock (extendedProperties)
             {
-                return;
-            }
+                if (extendedProperties.Count == 0)
+                {
+                    return;
+                }
 
-            string[] keys = extendedProperties.Where(s => s.StartsWith(prefix)).ToArray();
-            for (int i = 0; i < keys.Length; i++)
-            {
-                GUIPropertyManager.SetProperty(keys[i], string.Empty);
-                extendedProperties.Remove(keys[i]);
+                string[] keys = extendedProperties.Where(s => s.StartsWith(prefix)).ToArray();
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    GUIPropertyManager.SetProperty(keys[i], string.Empty);
+                    extendedProperties.Remove(keys[i]);
+                }
             }
         }
 
