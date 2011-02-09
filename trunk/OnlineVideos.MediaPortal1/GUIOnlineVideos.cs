@@ -264,7 +264,7 @@ namespace OnlineVideos.MediaPortal1
 
             if (CurrentState == State.details && SelectedSite is IChoice) liSelected = GUI_infoList.SelectedListItemIndex - 1;
 
-            if (liSelected < 0 || CurrentState == State.groups || CurrentState == State.sites || CurrentState == State.categories || (SelectedSite is IChoice && CurrentState == State.videos))
+            if (liSelected < 0 || CurrentState == State.groups || CurrentState == State.sites || CurrentState == State.categories || (SelectedSite is IChoice && CurrentState == State.videos && currentVideoList[liSelected].HasDetails))
             {
                 return;
             }
@@ -1306,8 +1306,8 @@ namespace OnlineVideos.MediaPortal1
                     }
                     else
                     {
-                        // if only 1 result found and the current site has a details view - open it right away
-                        if (SelectedSite is IChoice && (result as List<VideoInfo>).Count == 1)
+                        // if only 1 result found and the current site has a details view for this video - open it right away
+                        if (SelectedSite is IChoice && (result as List<VideoInfo>).Count == 1 && (result as List<VideoInfo>)[0].HasDetails)
                         {
                             selectedVideo = (GUI_facadeView[1] as OnlineVideosGuiListItem).Item as VideoInfo;
                             DisplayDetails();
@@ -1899,9 +1899,10 @@ namespace OnlineVideos.MediaPortal1
         {
             currentPlaylist = new List<Player.PlayListItem>();
             currentPlayingItem = null;
-            List<VideoInfo> loVideoList = SelectedSite is IChoice ? currentTrailerList : currentVideoList;
+            List<VideoInfo> loVideoList = (SelectedSite is IChoice && currentState == State.details) ? currentTrailerList : currentVideoList;
             foreach (VideoInfo video in loVideoList)
             {
+                if (currentState != State.details && video.HasDetails) continue; // while in videos view of a site with details view only take videos that don't have details
                 currentPlaylist.Add(new Player.PlayListItem(video.Title, null)
                 {
                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
@@ -1909,7 +1910,7 @@ namespace OnlineVideos.MediaPortal1
                     Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName] : SelectedSite
                 });
             }
-            Play_Step1(currentPlaylist[0], true);
+            if (currentPlaylist.Count > 0) Play_Step1(currentPlaylist[0], true);
         }
 
         private void SaveVideo_Step1(DownloadList saveItems)
