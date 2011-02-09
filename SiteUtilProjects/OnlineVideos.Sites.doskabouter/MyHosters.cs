@@ -530,5 +530,41 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Xtshare : HosterBase
+    {
+        public override string getHosterUrl()
+        {
+            return "xtshare.com";
+        }
+
+        public override string getVideoUrls(string url)
+        {
+            CookieContainer cc = new CookieContainer();
+            string webData = SiteUtilBase.GetWebData(url, cc);
+            if (url.Contains("humancheck.php"))
+            {
+
+                CookieCollection ccol = cc.GetCookies(new Uri("http://xtshare.com/humancheck.php"));
+                CookieContainer newcc = new CookieContainer();
+                foreach (Cookie c in ccol)
+                {
+                    c.Path = String.Empty;
+                    newcc.Add(c);
+                }
+                url = url.Replace("humancheck", "toshare");
+                webData = SiteUtilBase.GetWebDataFromPost(url, "submit=I+am+human+now+let+me+watch+this+video", newcc);
+            }
+            string file = GetSubString(webData, "'file','", "'");
+            string streamer = GetSubString(webData, "'streamer','", "'");
+            string resultUrl = string.Format("rtmpurl={0}&swfurl={1}&pageurl={2}&tcUrl={3}",
+                                        System.Web.HttpUtility.UrlEncode(streamer + file),
+                                        System.Web.HttpUtility.UrlEncode(@"http://xtshare.com/player.swf"),
+                                        System.Web.HttpUtility.UrlEncode(url),
+                                        System.Web.HttpUtility.UrlEncode(streamer));
+            return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                "http://127.0.0.1/stream.flv?" + resultUrl);
+        }
+    }
+
 
 }

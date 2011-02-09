@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Web;
 using System.IO;
 
 namespace RTMP_LIB
@@ -12,7 +13,7 @@ namespace RTMP_LIB
         public string hostname;
         public int port;
         public Protocol protocol;
-        
+
         public string playpath;
         public string subscribepath;
 
@@ -59,7 +60,7 @@ namespace RTMP_LIB
                 Logger.Log(string.Format("Error parsing protocol from url ({0}), setting default: RTMP", url.Scheme));
                 link.protocol = Protocol.RTMP;
             }
-            
+
 
             link.hostname = url.Host;
             link.port = url.Port > 0 ? url.Port : 1935;
@@ -86,11 +87,11 @@ namespace RTMP_LIB
             {
                 /* app!=ondemand, so app is app[/appinstance] */
                 int slash2Index = url.PathAndQuery.IndexOf('/', 1);
-                int slash3Index = slash2Index >= 0 ? url.PathAndQuery.IndexOf('/', slash2Index+1) : -1;
+                int slash3Index = slash2Index >= 0 ? url.PathAndQuery.IndexOf('/', slash2Index + 1) : -1;
 
                 if (url.PathAndQuery.Contains("mp4:")) slash3Index = url.PathAndQuery.IndexOf("mp4:");
-                
-                if(slash3Index >= 0) 
+
+                if (slash3Index >= 0)
                 {
                     link.app = url.PathAndQuery.Substring(1, slash3Index - 1).Trim('/');
                     parsePlayPathFrom = url.PathAndQuery.Substring(slash3Index);
@@ -137,7 +138,7 @@ namespace RTMP_LIB
                 if (!parsePlayPathFrom.StartsWith("mp4:")) parsePlayPathFrom = "mp4:" + parsePlayPathFrom;
             }
 
-            link.playpath = parsePlayPathFrom;
+            link.playpath = HttpUtility.UrlDecode(parsePlayPathFrom);
 
             link.tcUrl = string.Format("{0}://{1}:{2}/{3}", url.Scheme, link.hostname, link.port, link.app);
 
@@ -148,9 +149,9 @@ namespace RTMP_LIB
         {
             byte[] result = new byte[data.Length / 2];
 
-            for (int i = 0; i < data.Length-1; i += 2)
+            for (int i = 0; i < data.Length - 1; i += 2)
             {
-                result[i/2] = byte.Parse(data[i].ToString()+data[i+1].ToString(), System.Globalization.NumberStyles.AllowHexSpecifier);
+                result[i / 2] = byte.Parse(data[i].ToString() + data[i + 1].ToString(), System.Globalization.NumberStyles.AllowHexSpecifier);
             }
 
             return result;
@@ -162,7 +163,7 @@ namespace RTMP_LIB
 
             AMFObject obj = new AMFObject();
 
-            string[] args = amfString.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
+            string[] args = amfString.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (string arg in args)
             {
@@ -208,7 +209,7 @@ namespace RTMP_LIB
                 else if (arg[2] == ':' && arg[0] == 'N')
                 {
                     int secondColonIndex = arg.IndexOf(':', 3);
-                    if (secondColonIndex < 0 ||depth <= 0) return null;
+                    if (secondColonIndex < 0 || depth <= 0) return null;
                     prop.m_strName = arg.Substring(3);
                     p = arg.Substring(secondColonIndex + 1);
                     switch (arg[1])
@@ -247,7 +248,7 @@ namespace RTMP_LIB
                 obj.AddProperty(prop);
 
                 if (prop.m_type == AMFDataType.AMF_OBJECT)
-                    depth++;               
+                    depth++;
             }
 
             return obj;
