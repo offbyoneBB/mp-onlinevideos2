@@ -139,7 +139,7 @@ namespace Google.GData.Extensions {
 
             EnumConstruct ec = (EnumConstruct)obj;
 
-            if (Type.Equals(ec.Type) == false)
+            if (!Type.Equals(ec.Type))
                 return false;
 
             if (Value != null)

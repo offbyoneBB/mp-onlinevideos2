@@ -190,16 +190,17 @@ namespace Google.GData.Extensions
         }
 
         /// <summary>
-        /// removes an element at a given index
+        /// removes an element from the collection
         /// </summary>
         /// <param name="value"></param>
-        public void Remove(T value)
+        public bool Remove(T value)
         {
-            _items.Remove(value);
-            if (this.container != null)
+            bool success = _items.Remove(value);
+            if (success && this.container != null)
             {
-                this.container.ExtensionElements.Remove(value);
+                success &= this.container.ExtensionElements.Remove(value);
             }
+            return success;
         }
 
         /// <summary>standard typed indexOf method </summary>
@@ -233,7 +234,7 @@ namespace Google.GData.Extensions
         public void RemoveAt(int index)
         {
             T item = _items[index];
-            _items.RemoveAt(index);
+            //_items.RemoveAt(index);
             Remove(item);
         }
 
@@ -243,7 +244,7 @@ namespace Google.GData.Extensions
 
         void ICollection<T>.Add(T item)
         {
-            _items.Add(item);
+            Add(item);
         }
 
         public void Clear()
@@ -275,7 +276,7 @@ namespace Google.GData.Extensions
 
         bool ICollection<T>.Remove(T item)
         {
-            return _items.Remove(item);
+            return Remove(item);
         }
 
         #endregion

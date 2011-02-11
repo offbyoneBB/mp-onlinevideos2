@@ -235,9 +235,9 @@ namespace Google.GData.Extensions
         /// </summary>
         public const string GivenNameElement = "givenName";
         /// <summary>
-        /// Additonal name of the person, e.g. middle name
+        /// Additional name of the person, e.g. middle name
         /// </summary>
-        public const string AdditonalNameElement = "additonalName";
+        public const string AdditionalNameElement = "additionalName";
         /// <summary>
         /// Person's family Name
         /// </summary>

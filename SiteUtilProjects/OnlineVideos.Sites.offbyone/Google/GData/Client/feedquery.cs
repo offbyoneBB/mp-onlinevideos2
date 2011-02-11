@@ -340,7 +340,7 @@ namespace Google.GData.Client
         {
             get 
             {
-                return this.UseSSL == true ? "https://" : "http://"; 
+                return this.UseSSL ? "https://" : "http://"; 
             }
             
         }
@@ -349,7 +349,7 @@ namespace Google.GData.Client
         {
             get 
             {
-                return this.UseSSL == true ? "http://" : "https://"; 
+                return this.UseSSL ? "http://" : "https://"; 
             }
         }
 
@@ -572,12 +572,12 @@ namespace Google.GData.Client
                 foreach (string part in parts)
                 {
                     string segment = CleanPart(part);
-                    if (segment.Equals("-") == true)
+                    if (segment.Equals("-"))
                     {
                         // found the category simulator
                         fCategory = true; 
                     }
-                    else if (fCategory == true)
+                    else if (fCategory)
                     {
                         ParseCategoryString(segment);
                     }
@@ -842,8 +842,8 @@ namespace Google.GData.Client
 
             int iLen = builder.Length;
 
-            string prePendString = this.CategoryQueriesAsParameter == true ? connect + "category=" : "/-/";
-            string seperator =  this.CategoryQueriesAsParameter == true ? "," : "/";
+            string prePendString = this.CategoryQueriesAsParameter ? connect + "category=" : "/-/";
+            string seperator =  this.CategoryQueriesAsParameter ? "," : "/";
 
             foreach (QueryCategory category in this.Categories )
             {
@@ -851,7 +851,7 @@ namespace Google.GData.Client
 
                 if (Utilities.IsPersistable(strCategory))
                 {
-                    if (firstTime == true)
+                    if (firstTime)
                     {
                         builder.Append(prePendString); 
                     }
@@ -869,7 +869,7 @@ namespace Google.GData.Client
                         }
                     }
                     firstTime = false; 
-                    if (category.Excluded == true)
+                    if (category.Excluded)
                     {
                         builder.AppendFormat(CultureInfo.InvariantCulture, "-{0}", strCategory);
                     }
@@ -884,7 +884,7 @@ namespace Google.GData.Client
                 }
             }
 
-            if (builder.Length > iLen && this.CategoryQueriesAsParameter == true)
+            if (builder.Length > iLen && this.CategoryQueriesAsParameter)
             {
                 return '&';
             }

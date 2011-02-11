@@ -496,7 +496,7 @@ namespace Google.GData.Client
         {
             lock (userStateToLifetime.SyncRoot)
             {
-                if (userStateToLifetime.Contains(userData) == false)
+                if (!userStateToLifetime.Contains(userData))
                 {
                     return true;
                 }
@@ -545,7 +545,7 @@ namespace Google.GData.Client
             // is about to raise the completed event.
             lock (this.userStateToLifetime.SyncRoot)
             {
-                if (userStateToLifetime.Contains(data.UserData) == false)
+                if (!userStateToLifetime.Contains(data.UserData))
                 {
                     asyncOp = null;
                 }
@@ -614,7 +614,7 @@ namespace Google.GData.Client
                     // see if we are still in the list...
                     // Multiple threads will access the task dictionary,
                     // so it must be locked to serialize access.
-                    if (CheckIfOperationIsCancelled(data.UserData) == true)
+                    if (CheckIfOperationIsCancelled(data.UserData))
                     {
                         throw new ArgumentException("Operation was cancelled");
                     }
@@ -638,7 +638,7 @@ namespace Google.GData.Client
             // In this case, don't allow cancellation, as the method 
             // is about to raise the completed event.
             bool ret = !CheckIfOperationIsCancelled(data.UserData);
-            if (ret == true)
+            if (ret)
             {
                 data.Operation.Post(data.Delegate, args);
             }

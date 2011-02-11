@@ -142,7 +142,7 @@ namespace Google.GData.YouTube {
             }
             set
             {
-                setYouTubeExtension(YouTubeNameTable.Private, value == false ? null : "");
+                setYouTubeExtension(YouTubeNameTable.Private, value ? "" : null);
             }
         }
 

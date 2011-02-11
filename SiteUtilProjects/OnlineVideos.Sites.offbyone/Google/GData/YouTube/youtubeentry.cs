@@ -464,7 +464,7 @@ namespace Google.GData.YouTube {
                     p =  Media.FindExtension(YouTubeNameTable.Private,
                                     YouTubeNameTable.NSYouTube) as Private;
                 }
-                if (value == true)
+                if (value)
                 {
                     if (p == null)
                     {

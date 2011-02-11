@@ -149,7 +149,7 @@ namespace Google.GData.Client
                         throw new ArgumentException("The entry is already part of this collection");
                     }
                     // now we need to see if this is the same feed. If not, copy
-                    if (AtomFeed.IsFeedIdentical(value.Feed, this.feed) == false)
+                    if (!AtomFeed.IsFeedIdentical(value.Feed, this.feed))
                     {
                         AtomEntry newEntry = AtomEntry.ImportFromFeed(value);
                         newEntry.setFeed(this.feed);

@@ -109,7 +109,7 @@ namespace Google.GData.Extensions {
         public virtual bool BooleanValue
         {
             get { return Utilities.XSDTrue == this.Value;}
-            set { this.Value = value == true? Utilities.XSDTrue : Utilities.XSDFalse;}
+            set { this.Value = value ? Utilities.XSDTrue : Utilities.XSDFalse;}
         }
 
    
@@ -140,8 +140,8 @@ namespace Google.GData.Extensions {
             if (node != null)
             {
                 object localname = node.LocalName;
-                if (localname.Equals(this.XmlName) == false ||
-                    node.NamespaceURI.Equals(this.XmlNameSpace) == false)
+                if (!localname.Equals(this.XmlName) ||
+                    !node.NamespaceURI.Equals(this.XmlNameSpace))
                 {
                     return null;
                 }
@@ -154,7 +154,7 @@ namespace Google.GData.Extensions {
             if (node != null)
             {
                 e.ProcessAttributes(node);
-                if (node.HasChildNodes == true)
+                if (node.HasChildNodes)
                 {
                     XmlNode n = node.ChildNodes[0];
                     if (n.NodeType == XmlNodeType.Text && node.ChildNodes.Count == 1)

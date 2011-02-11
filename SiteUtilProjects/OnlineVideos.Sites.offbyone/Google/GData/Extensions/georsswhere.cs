@@ -150,7 +150,7 @@ namespace Google.GData.Extensions.Location {
 
             GeoKmlPosition position = null;
 
-            if (point == null && create == true)
+            if (point == null && create)
             {
                 point = new GeoKmlPoint();
                 this.ExtensionElements.Add(point);
@@ -161,7 +161,7 @@ namespace Google.GData.Extensions.Location {
                                                GeoNametable.NSGeoKml) as GeoKmlPosition;
 
 
-                if (position == null && create == true)
+                if (position == null && create)
                 {
                     position = new GeoKmlPosition("0 0");
                     point.ExtensionElements.Add(position);

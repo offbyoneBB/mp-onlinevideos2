@@ -595,7 +595,7 @@ namespace Google.GData.Client
                 throw new ArgumentNullException("entry"); 
             }
 
-            if (entry.ReadOnly == true)
+            if (entry.ReadOnly)
             {
                 throw new GDataRequestException("Can not update a read-only entry"); 
             }
@@ -630,7 +630,7 @@ namespace Google.GData.Client
                 throw new ArgumentNullException("entry"); 
             }
 
-            if (feed.ReadOnly == true)
+            if (feed.ReadOnly)
             {
                 throw new GDataRequestException("Can not update a read-only feed"); 
             }
@@ -1166,7 +1166,7 @@ namespace Google.GData.Client
                 throw new ArgumentNullException("entry");
             }
 
-            if (entry.ReadOnly == true)
+            if (entry.ReadOnly)
             {
                 throw new GDataRequestException("Can not update a read-only entry");
             }

@@ -271,9 +271,10 @@ namespace Google.GData.Client
             set 
             {
                 this.Dirty = true; 
-                this.uriBase = value; 
-                if (this.fAllowRecalc == true)
-                    BaseUriChanged(value);
+                this.uriBase = value;
+				if (this.fAllowRecalc) {
+					BaseUriChanged(value);
+				}
             }
         }
         /////////////////////////////////////////////////////////////////////////////
@@ -790,7 +791,7 @@ namespace Google.GData.Client
             {
                 throw new ArgumentNullException("writer"); 
             }
-            if (IsAtomDefaultNamespace(writer) == false)
+            if (!IsAtomDefaultNamespace(writer))
             {
                 writer.WriteStartElement("atom", elementName, BaseNameTable.NSAtom);
             }

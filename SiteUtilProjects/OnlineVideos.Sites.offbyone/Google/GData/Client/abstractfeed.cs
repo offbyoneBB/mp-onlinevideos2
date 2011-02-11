@@ -69,16 +69,14 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         protected override bool SkipNode(XmlNode node)
         {
-            if (base.SkipNode(node)==true)
+            if (base.SkipNode(node))
             {
                 return true; 
             }
 
-            if (node.NodeType == XmlNodeType.Attribute && 
-                (node.Name.StartsWith("xmlns") == true) && 
-                (String.Compare(node.Value,BaseNameTable.gNamespace)==0))
-                return true;
-            return false; 
+            return (node.NodeType == XmlNodeType.Attribute && 
+                    node.Name.StartsWith("xmlns") && 
+                   (String.Compare(node.Value,BaseNameTable.gNamespace)==0));
         }
 
 
@@ -94,7 +92,7 @@ namespace Google.GData.Client
             {
                 throw new ArgumentNullException("e");
             }
-            if (e.CreatingEntry == true)
+            if (e.CreatingEntry)
             {
                 e.Entry = CreateFeedEntry();
             }

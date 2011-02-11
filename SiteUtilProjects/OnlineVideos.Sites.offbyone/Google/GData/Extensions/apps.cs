@@ -391,6 +391,55 @@ namespace Google.GData.Extensions.Apps
     }
 
     /// <summary>
+    /// Name table for Google Apps extensions specific to the Organization Units Provisioning
+    /// </summary>
+    public class AppsOrganizationNameTable : AppsNameTable
+    {
+        public const string AppsOrgUnitBaseFeedUri = "https://apps-apis.google.com/a/feeds/orgunit/2.0";
+        public const string AppsOrgUserBaseFeedUri = "https://apps-apis.google.com/a/feeds/orguser/2.0";
+        public const string AppsCustomerBaseFeedUri = "https://apps-apis.google.com/a/feeds/customer/2.0";
+        public const string CustomerId = "customerId";
+        public const string Description = "description";
+        public const string OrgUnitName = "name";
+        public const string BlockInheritance = "blockInheritance";
+        public const string UsersToMove = "usersToMove";
+        public const string OldOrgUnitPath = "oldOrgUnitPath";
+        public const string NewOrgUnitPath = "orgUnitPath";
+        public const string ParentOrgUnitPath = "parentOrgUnitPath";
+    }
+
+	/// <summary>
+	/// Name table for Google Apps extensions specific to the Multidomain Provisioning
+	/// </summary>
+	public class AppsMultiDomainNameTable : AppsNameTable {
+		public const string AppsMultiDomainAliasBaseFeedUri = "https://apps-apis.google.com/a/feeds/alias/2.0";
+		public const string AppsMultiDomainUserBaseFeedUri = "https://apps-apis.google.com/a/feeds/user/2.0";
+		public const string AliasEmail = "aliasEmail";
+		public const string FirstName = "firstName";
+		public const string IpWhitelisted = "ipWhitelisted";
+		public const string IsAdmin = "isAdmin";
+		public const string IsChangePasswordAtNextLogin = "isChangePasswordAtNextLogin";
+		public const string IsSuspended = "isSuspended";
+		public const string LastName = "lastName";
+		public const string NewEmail = "newEmail";
+		public const string Password = "password";
+		public const string UserEmail = "userEmail";
+	}
+
+    /// <summary>
+    /// Name table for Google Apps extensions specific to the Calendar Resources
+    /// </summary>
+    public class AppsCalendarResourceNameTable : AppsNameTable
+    {
+        public const string AppsCalendarResourceBaseFeedUri = "https://apps-apis.google.com/a/feeds/calendar/resource/2.0";
+        public const string resourceId = "resourceId";
+        public const string resourceCommonName = "resourceCommonName";
+        public const string resourceEmail = "resourceEmail";
+        public const string resourceDescription = "resourceDescription";
+        public const string resourceType = "resourceType";
+    }
+
+    /// <summary>
     /// Extension element sed to model a Google Apps email list.
     /// Has attribute "name".
     /// </summary>
@@ -881,8 +930,8 @@ namespace Google.GData.Extensions.Apps
             if (node != null)
             {
                 object localname = node.LocalName;
-                if (localname.Equals(this.XmlName) == false ||
-                    node.NamespaceURI.Equals(this.XmlNameSpace) == false)
+                if (!localname.Equals(this.XmlName) ||
+                    !node.NamespaceURI.Equals(this.XmlNameSpace))
                 {
                     return null;
                 }

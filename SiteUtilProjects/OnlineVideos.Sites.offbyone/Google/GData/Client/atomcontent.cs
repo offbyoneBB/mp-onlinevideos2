@@ -18,7 +18,6 @@
 
 using System;
 using System.Xml;
-using System.Web;
 using System.IO; 
 using System.Globalization;
 using System.ComponentModel;
@@ -140,7 +139,7 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public override bool ShouldBePersisted()
         {
-            if (base.ShouldBePersisted() == false)
+            if (!base.ShouldBePersisted())
             {
                 return Utilities.IsPersistable(this.src) || Utilities.IsPersistable(this.type) || Utilities.IsPersistable(this.content); 
             }

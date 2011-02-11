@@ -179,11 +179,11 @@ namespace Google.GData.Client
             Tracing.TraceMsg("in skipnode for node: " + node.Name + "--" + node.Value); 
             if (this.BatchData != null)
             {
-                if (node.NodeType == XmlNodeType.Attribute && 
-                    (node.Name.StartsWith("xmlns") == true) && 
-                    (String.Compare(node.Value,BaseNameTable.gBatchNamespace)==0))
-                    return true;
-
+				if (node.NodeType == XmlNodeType.Attribute &&
+					node.Name.StartsWith("xmlns") &&
+					(String.Compare(node.Value, BaseNameTable.gBatchNamespace) == 0)) {
+					return true;
+				}
             }
             return false; 
         }
@@ -914,61 +914,61 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public override bool WalkTree(IBaseWalkerAction action)
         {
-            if (base.WalkTree(action) == true)
+            if (base.WalkTree(action))
             {
                 return true;
             }
             foreach (AtomPerson person in this.Authors)
             {
-                if (person.WalkTree(action) == true)
+                if (person.WalkTree(action))
                     return true;
             }
             // saving Contributors
             foreach (AtomPerson person in this.Contributors)
             {
-                if (person.WalkTree(action) == true)
+                if (person.WalkTree(action))
                     return true;
             }
             // saving Categories
             foreach (AtomCategory category in this.Categories )
             {
-                if (category.WalkTree(action) == true)
+                if (category.WalkTree(action))
                     return true;
             }
             if (this.id != null)
             {
-                if (this.id.WalkTree(action) == true)
+                if (this.id.WalkTree(action))
                     return true;
             }
             // save the Links
             foreach (AtomLink link in this.Links)
             {
-                if (link.WalkTree(action) == true)
+                if (link.WalkTree(action))
                     return true;
             }
             if (this.rights != null)
             {
-                if (this.rights.WalkTree(action) == true)
+                if (this.rights.WalkTree(action))
                     return true;
             }
             if (this.title != null)
             {
-                if (this.title.WalkTree(action) == true)
+                if (this.title.WalkTree(action))
                     return true;
             }
             if (this.summary != null)
             {
-                if (this.summary.WalkTree(action) == true)
+                if (this.summary.WalkTree(action))
                     return true;
             }
             if (this.content != null)
             {
-                if (this.content.WalkTree(action) == true)
+                if (this.content.WalkTree(action))
                     return true;
             }
             if (this.source != null)
             {
-                if (this.source.WalkTree(action) == true)
+                if (this.source.WalkTree(action))
                     return true;
             }
             // nothing dirty at all

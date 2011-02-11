@@ -114,18 +114,28 @@ namespace Google.GData.Client
         private string captchaAnswer;       // indicates the captcha Answer in a challenge
         private string captchaToken;        // indicates the captchaToken in a challenge
 
-        
+		private const int RetryCount = 3;	// default retry count for failed requests       
                                          
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>default constructor</summary> 
         //////////////////////////////////////////////////////////////////////
-        public GDataGAuthRequestFactory(string service, string applicationName) : base(applicationName)
+		public GDataGAuthRequestFactory(string service, string applicationName)
+			: this(service, applicationName, RetryCount)
         {
-    	    this.Service = service;
-    	    this.ApplicationName = applicationName;
         }
         /////////////////////////////////////////////////////////////////////////////
+
+		//////////////////////////////////////////////////////////////////////
+		/// <summary>overloaded constructor</summary> 
+		//////////////////////////////////////////////////////////////////////
+		public GDataGAuthRequestFactory(string service, string applicationName, int numberOfRetries)
+			: base(applicationName) {
+			this.Service = service;
+			this.ApplicationName = applicationName;
+			this.NumberOfRetries = numberOfRetries;
+		}
+		/////////////////////////////////////////////////////////////////////////////
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>default constructor</summary> 
@@ -168,7 +178,7 @@ namespace Google.GData.Client
         ////////////////////////////////////////////////////////////////////////////////
         public override string UserAgent
         {
-            get { return (base.UserAgent + (this.UseGZip == true ? " (gzip)" : "")); }
+            get { return (base.UserAgent + (this.UseGZip ? " (gzip)" : "")); }
             set { base.UserAgent = value; }
         }
 
@@ -378,11 +388,11 @@ namespace Google.GData.Client
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing); 
-            if (this.disposed == true)
+            if (this.disposed)
             {
                 return;
             }
-            if (disposing == true)
+            if (disposing)
             {
                 if (this.requestCopy != null)
                 {
@@ -469,7 +479,7 @@ namespace Google.GData.Client
                 // we do not want this to autoredirect, our security header will be 
                 // lost in that case
                 http.AllowAutoRedirect = false;
-                if (this.factory.MethodOverride == true && 
+                if (this.factory.MethodOverride && 
                     http.Method != HttpMethods.Get &&
                     http.Method != HttpMethods.Post)
                 {
@@ -513,7 +523,7 @@ namespace Google.GData.Client
             GDataCredentials gdc = new GDataCredentials(gc.Username, gc.getPassword());
             gdc.CaptchaToken = this.factory.CaptchaToken;
             gdc.CaptchaAnswer = this.factory.CaptchaAnswer;
-            gdc.AccountType = this.factory.AccountType;
+            gdc.AccountType = gc.AccountType;
 
             try 
             {
@@ -580,7 +590,7 @@ namespace Google.GData.Client
                 Tracing.TraceMsg("Got a redirect to: " + re.Location);
                 // only reset the base, the auth cookie is still valid
                 // and cookies are stored in the factory
-                if (this.factory.StrictRedirect == true)
+                if (this.factory.StrictRedirect)
                 {
                     HttpWebRequest http = this.Request as HttpWebRequest; 
                     if (http != null)
@@ -604,8 +614,14 @@ namespace Google.GData.Client
                 CopyRequestData();
                 base.Execute();
             }
-            catch (GDataRequestException)
+            catch (GDataRequestException re)
             {
+                if (((HttpWebResponse)re.Response).StatusCode != HttpStatusCode.InternalServerError)
+                {
+                    Tracing.TraceMsg("Not a server error. Possibly a Bad request or forbidden resource.");
+                    Tracing.TraceMsg("We don't want to retry non 500 errors.");
+                    throw;
+                }
                 if (retryCounter > this.factory.NumberOfRetries)
                 {
                     Tracing.TraceMsg("Number of retries exceeded");
@@ -619,7 +635,7 @@ namespace Google.GData.Client
             }
             catch (Exception e)
             {
-                Tracing.TraceCall("*** EXCEPTION " + e.GetType().Name + " CAUGTH ***");
+                Tracing.TraceCall("*** EXCEPTION " + e.GetType().Name + " CAUGHT ***");
                 throw; 
             }
             finally
@@ -693,7 +709,7 @@ namespace Google.GData.Client
                                             this.Request.Method,
                                             this.asyncData.UserData);
                             current += oneLoop;
-                            if (this.asyncData.DataHandler.SendProgressData(asyncData, args) == false)
+                            if (!this.asyncData.DataHandler.SendProgressData(asyncData, args))
                                 break;         
                         }
 #endif

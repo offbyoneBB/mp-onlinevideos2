@@ -231,7 +231,7 @@ namespace Google.GData.Client
         /// <returns></returns>
         public override Stream GetDataStream()
         {
-            if (String.IsNullOrEmpty(this.file) == false)
+            if (!String.IsNullOrEmpty(this.file))
             {
                 FileStream f = File.OpenRead(this.file);
                 return f;

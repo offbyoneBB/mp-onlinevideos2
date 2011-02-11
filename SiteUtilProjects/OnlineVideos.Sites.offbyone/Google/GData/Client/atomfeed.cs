@@ -326,7 +326,7 @@ namespace Google.GData.Client
                 int id = 1; 
                 foreach (AtomEntry entry in this.Entries)
                 {
-                    if (entry.Dirty == true)
+                    if (entry.Dirty)
                     {
                         AtomEntry batchEntry = batchFeed.Entries.CopyOrMove(entry); 
                         batchEntry.BatchData = new GDataBatchEntryData();
@@ -549,7 +549,7 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         protected override bool SkipNode(XmlNode node)
         {
-            if (base.SkipNode(node)==true)
+            if (base.SkipNode(node))
             {
                 return true; 
             }
@@ -558,7 +558,7 @@ namespace Google.GData.Client
             if (this.BatchData != null)
             {
                 if (node.NodeType == XmlNodeType.Attribute && 
-                    (node.Name.StartsWith("xmlns") == true) && 
+                    node.Name.StartsWith("xmlns") && 
                     (String.Compare(node.Value,BaseNameTable.gBatchNamespace)==0))
                     return true;
 
@@ -656,9 +656,9 @@ namespace Google.GData.Client
                 this.NewAtomEntry(this, e);
             }
             // now check the return
-            if (e.DiscardEntry != true)
+            if (!e.DiscardEntry)
             {
-                if (e.CreatingEntry == false)
+                if (!e.CreatingEntry)
                 {
                     if (e.Entry != null)
                     {
@@ -684,7 +684,7 @@ namespace Google.GData.Client
                 }
             }
 
-            if (e.DoneParsing == true)
+            if (e.DoneParsing)
             {
                 this.BaseUriChanged(this.ImpliedBase);
             }
@@ -768,7 +768,7 @@ namespace Google.GData.Client
             {
                 newEntry.setFeed(this);
             }
-            else if (AtomFeed.IsFeedIdentical(newEntry.Feed, this) == false)
+            else if (!AtomFeed.IsFeedIdentical(newEntry.Feed, this))
             {
                 newEntry = AtomEntry.ImportFromFeed(newEntry) as TEntry;
                 newEntry.setFeed(this);
@@ -792,7 +792,7 @@ namespace Google.GData.Client
                 for (int i=0; i<this.Entries.Count;i++)
                 {
                     AtomEntry entry = this.Entries[i];
-                    if (entry.IsDirty() == true)
+                    if (entry.IsDirty())
                     {
                         if (entry.Id.Uri == null)
                         {
