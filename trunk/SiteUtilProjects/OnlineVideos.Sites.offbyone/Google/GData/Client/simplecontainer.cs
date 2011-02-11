@@ -205,8 +205,8 @@ namespace Google.GData.Extensions {
             if (node != null)
             {
                 object localname = node.LocalName;
-                if (localname.Equals(this.XmlName) == false ||
-                    node.NamespaceURI.Equals(this.XmlNameSpace) == false)
+                if (!localname.Equals(this.XmlName) ||
+                    !node.NamespaceURI.Equals(this.XmlNameSpace))
                 {
                     return null;
                 }
@@ -262,7 +262,7 @@ namespace Google.GData.Extensions {
                             }
                         }
                     }
-                    if (fProcessed == false)
+                    if (!fProcessed)
                     {
                         this.ChildNodes.Add(childNode);
                     }
@@ -291,7 +291,7 @@ namespace Google.GData.Extensions {
         protected void SetStringValue<T>(string value, string elementName, string ns) where T : SimpleElement, new()
         {
             T v = null;
-            if (String.IsNullOrEmpty(value) == false)
+            if (!String.IsNullOrEmpty(value))
             {
                 v = new T();
                 v.Value = value;

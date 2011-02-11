@@ -119,7 +119,8 @@ namespace Google.GData.Client.ResumableUpload
     {
         // chunksize in Megabytes
         private int chunkSize;
-        private static int MB = 1048576;
+        private long lastChunk = 0; // the index of the last chunk uploaded
+        private static long MB = 1024000;  
    
         /// <summary>
         /// The relationship value to be used to find the resumable 
@@ -142,7 +143,7 @@ namespace Google.GData.Client.ResumableUpload
         /// <summary>
         /// ResumableUploader constructor. 
         /// </summary>
-        /// <param name="chunkSize">the upload chunksize in Megabytes, needs to be greater 0</param>
+        /// <param name="chunkSize">the upload chunksize in Megabytes, needs to be greater than 0</param>
         /// <returns></returns>
         public ResumableUploader(int chunkSize)
         {
@@ -333,6 +334,7 @@ namespace Google.GData.Client.ResumableUpload
         {
             return Update(authentication, payload, null);
         }
+
         /// <summary>
         /// Uploads just the media media to the uri given.
         /// </summary>
@@ -355,8 +357,8 @@ namespace Google.GData.Client.ResumableUpload
                 throw new ArgumentException("payload did not contain a resumabled edit media Uri");
 
             Uri resumeUri = InitiateUpload(initialUri, authentication, payload);
+            
             // get the stream
-
             using (Stream s = payload.MediaSource.GetDataStream())
             {
                 r = UploadStream(HttpMethods.Put, resumeUri, authentication, s, payload.MediaSource.ContentType, data);
@@ -426,7 +428,7 @@ namespace Google.GData.Client.ResumableUpload
         }
 
         /// <summary>
-        ///  worker method for the the resume
+        /// worker method for the resume
         /// </summary>
         /// <param name="data"></param>
         /// <param name="asyncOp"></param>
@@ -436,7 +438,6 @@ namespace Google.GData.Client.ResumableUpload
         {
             try
             {
-
                 using (var response = Resume(data.Authentication, data.UriToUse, data.HttpVerb, data.DataStream, data.ContentType, data))
                 {
                     HandleResponseStream(data, response.GetResponseStream(), -1);
@@ -450,11 +451,8 @@ namespace Google.GData.Client.ResumableUpload
             this.CompletionMethodDelegate(data);
         }
 
-
-
-
         /// <summary>
-        ///  worker method for the the resumable update
+        /// worker method for the resumable update
         /// </summary>
         /// <param name="data"></param>
         /// <param name="asyncOp"></param>
@@ -487,8 +485,6 @@ namespace Google.GData.Client.ResumableUpload
             this.CompletionMethodDelegate(data);
         }
 
-
- 
         /// <summary>
         /// Note the URI passed in here, is the session URI obtained by InitiateUpload
         /// </summary>
@@ -526,7 +522,7 @@ namespace Google.GData.Client.ResumableUpload
                 try
                 {
                     response = UploadStreamPart(index, httpMethod, sessionUri, authentication, payload, mediaType, data);
-                    if (data != null && CheckIfOperationIsCancelled(data.UserData) == true)
+                    if (data != null && CheckIfOperationIsCancelled(data.UserData))
                     {
                         break;
                     }
@@ -547,7 +543,6 @@ namespace Google.GData.Client.ResumableUpload
                                 break;
                             default:
                                 throw new ApplicationException("Unexpected return code during resumable upload");
-
                         }
 
                     }
@@ -556,7 +551,7 @@ namespace Google.GData.Client.ResumableUpload
                 {
                     response = null;
                 }
-            } while (isDone == false);
+            } while (!isDone);
             return returnResponse;
         }
 
@@ -594,7 +589,6 @@ namespace Google.GData.Client.ResumableUpload
 
         }
 
-
         //////////////////////////////////////////////////////////////////////
         /// <summary>takes our copy of the stream, and puts it into the request stream
         /// returns FALSE when we are done by reaching the end of the input stream</summary> 
@@ -603,7 +597,8 @@ namespace Google.GData.Client.ResumableUpload
         {
            
             long chunkCounter = 0;
-            long chunkStart = partIndex * this.chunkSize * ResumableUploader.MB;
+            long chunkStart = lastChunk;
+            long chunkSizeMb = this.chunkSize * ResumableUploader.MB;
             long dataLength;
 
             dataLength = GetStreamLength(input);
@@ -613,11 +608,11 @@ namespace Google.GData.Client.ResumableUpload
             // move the source stream to the correct position
             input.Seek(chunkStart, SeekOrigin.Begin);
 
-            const int size = 16384;
+            // to reduce memory consumption, we read in 256K chunks
+            const int size = 262144;
             byte[] bytes = new byte[size];
             int numBytes;
 
-            // to reduce memory consumption, we read in 16K chunks
             // first calculate the contentlength. We can not modify
             // headers AFTER we started writing to the stream
             // Note: we want to read in chunksize*MB, but it might be less
@@ -626,36 +621,35 @@ namespace Google.GData.Client.ResumableUpload
             {
                 chunkCounter += numBytes;
 
-                if (chunkCounter >= (this.chunkSize * ResumableUploader.MB))
+                if (chunkCounter >= chunkSizeMb)
                     break;
             }
             request.ContentLength = chunkCounter;
+            long chunkEnd = chunkStart + chunkCounter;
            
-            // modify the content-range header
-        
-            string contentRange = String.Format("bytes {0}-{1}/{2}", chunkStart, chunkStart + chunkCounter - 1, dataLength > 0 ? dataLength.ToString() : "*");
+            // modify the content-range header        
+            string contentRange = String.Format("bytes {0}-{1}/{2}", chunkStart, chunkEnd - 1, dataLength > 0 ? dataLength.ToString() : "*");
             request.Headers.Add(HttpRequestHeader.ContentRange, contentRange);
-
+            
+            lastChunk = chunkEnd; // save the last start index, need to add 503 error handling to this
 
             // stream it into the real request stream
             using (Stream req = request.GetRequestStream())
             {
-                 // move the source stream to the correct position
+                // move the source stream to the correct position
                 input.Seek(chunkStart, SeekOrigin.Begin);
                 chunkCounter = 0;
 
-                // to reduce memory consumption, we read in 16K chunks
-            
+                // to reduce memory consumption, we read in 256K chunks            
                 while ((numBytes = input.Read(bytes, 0, size)) > 0)
                 {
                     req.Write(bytes, 0, numBytes);
                     chunkCounter += numBytes;
 
-            
                     // while we are writing along, send notifications out
                     if (data != null)
                     {
-                        if (CheckIfOperationIsCancelled(data.UserData) == true)
+                        if (CheckIfOperationIsCancelled(data.UserData))
                         {
                             break;
                         }
@@ -663,10 +657,12 @@ namespace Google.GData.Client.ResumableUpload
                             data.DataHandler != null)
                         {
                             AsyncOperationProgressEventArgs args;
-                            int current = (int)((double)(chunkStart + chunkCounter - 1) / dataLength * 100);
+                            long position = chunkStart + chunkCounter - 1;
+                            int percentage = (int)((double)position / dataLength * 100);
 
-                            args = new AsyncOperationProgressEventArgs(dataLength, (chunkStart + chunkCounter - 1),
-                                (int)current,
+                            args = new AsyncOperationProgressEventArgs(dataLength, 
+                                position,
+                                percentage,
                                 request.RequestUri,
                                 request.Method,
                                 data.UserData);
@@ -680,7 +676,7 @@ namespace Google.GData.Client.ResumableUpload
                 }
             }
 
-            return chunkCounter < (this.chunkSize * ResumableUploader.MB);
+            return chunkCounter < chunkSizeMb;
     
         }
         /////////////////////////////////////////////////////////////////////////////
@@ -730,7 +726,7 @@ namespace Google.GData.Client.ResumableUpload
             }
             
             ISupportsEtag e = entry as ISupportsEtag;
-            if (e != null && Utilities.IsWeakETag(e) == false)
+            if (e != null && !Utilities.IsWeakETag(e))
             {
                 request.Headers.Add(GDataRequestFactory.IfMatch, e.Etag);
              }

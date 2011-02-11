@@ -177,7 +177,7 @@ namespace Google.GData.Extensions {
                 throw new ArgumentNullException("e"); 
             }
 
-            if (e.CreatingEntry == false)
+            if (!e.CreatingEntry)
             {
                 if (e.Entry != null)
                 {

@@ -449,7 +449,7 @@ namespace Google.GData.Extensions
         public bool Primary
         {
             get {return ("true" == (this.Attributes[GDataParserNameTable.XmlAttributePrimary] as string));}
-            set {this.Attributes[GDataParserNameTable.XmlAttributePrimary] = value == true? Utilities.XSDTrue : Utilities.XSDFalse;}
+            set {this.Attributes[GDataParserNameTable.XmlAttributePrimary] = value ? Utilities.XSDTrue : Utilities.XSDFalse;}
         }
 
         //////////////////////////////////////////////////////////////////////
@@ -813,7 +813,7 @@ namespace Google.GData.Extensions
         public bool Primary
         {
             get {return ("true" == (this.Attributes[GDataParserNameTable.XmlAttributePrimary] as string));}
-            set {this.Attributes[GDataParserNameTable.XmlAttributePrimary] = value == true? Utilities.XSDTrue : Utilities.XSDFalse;}
+            set {this.Attributes[GDataParserNameTable.XmlAttributePrimary] = value ? Utilities.XSDTrue : Utilities.XSDFalse;}
         }
 
         /// <summary>
@@ -1066,7 +1066,7 @@ namespace Google.GData.Extensions
                    BaseNameTable.gNamespace)
         {
             this.ExtensionFactories.Add(new GivenName());
-            this.ExtensionFactories.Add(new AdditonalName());
+            this.ExtensionFactories.Add(new AdditionalName());
             this.ExtensionFactories.Add(new FamilyName());
             this.ExtensionFactories.Add(new NamePrefix());
             this.ExtensionFactories.Add(new NameSuffix());
@@ -1116,36 +1116,36 @@ namespace Google.GData.Extensions
         /// Additional name of the person, eg. middle name.
         /// </summary>
         /// <returns></returns>
-        public string AdditonalName 
+        public string AdditionalName 
         {
             get 
             {
-                return GetStringValue<AdditonalName>(GDataParserNameTable.AdditonalNameElement,
+                return GetStringValue<AdditionalName>(GDataParserNameTable.AdditionalNameElement,
                         BaseNameTable.gNamespace);
 
             }
             set
             {
-                SetStringValue<AdditonalName>(value, GDataParserNameTable.AdditonalNameElement,
+                SetStringValue<AdditionalName>(value, GDataParserNameTable.AdditionalNameElement,
                                         BaseNameTable.gNamespace);
        
             }
         }
 
         /// <summary>
-        /// Person's additonal name phonetics
+        /// Person's additional name phonetics
         /// </summary>
         /// <returns></returns>
         public string AdditionalNamePhonetics
         {
             get 
             {
-                return GetYomiValue<AdditonalName>(GDataParserNameTable.AdditonalNameElement,
+                return GetYomiValue<AdditionalName>(GDataParserNameTable.AdditionalNameElement,
                                         BaseNameTable.gNamespace);
             }
             set
             {
-                SetYomiValue<AdditonalName>(value, GDataParserNameTable.AdditonalNameElement,
+                SetYomiValue<AdditionalName>(value, GDataParserNameTable.AdditionalNameElement,
                                         BaseNameTable.gNamespace);
             }
         }
@@ -1276,26 +1276,26 @@ namespace Google.GData.Extensions
    
 
     /// <summary>
-    /// AdditonalName schema extension 
+    /// AdditionalName schema extension 
     /// </summary>
-    public class AdditonalName : PhoneticName
+    public class AdditionalName : PhoneticName
     {
         /// <summary>
-        /// default constructor for AdditonalName
+        /// default constructor for AdditionalName
         /// </summary>
-        public AdditonalName()
-            : base(GDataParserNameTable.AdditonalNameElement, 
+        public AdditionalName()
+            : base(GDataParserNameTable.AdditionalNameElement, 
                    BaseNameTable.gDataPrefix,
                    BaseNameTable.gNamespace)
         {
         }
     
         /// <summary>
-        /// default constructor for AdditonalName with an initial value
+        /// default constructor for AdditionalName with an initial value
         /// </summary>
         /// <param name="initValue"/>
-        public AdditonalName(string initValue, string initYomi)
-            : base(GDataParserNameTable.AdditonalNameElement, 
+        public AdditionalName(string initValue, string initYomi)
+            : base(GDataParserNameTable.AdditionalNameElement, 
                    BaseNameTable.gDataPrefix,
                    BaseNameTable.gNamespace, initValue, initYomi)
         {
@@ -1308,7 +1308,7 @@ namespace Google.GData.Extensions
     public class FamilyName : PhoneticName
     {
         /// <summary>
-        /// default constructor for AdditonalName
+        /// default constructor for AdditionalName
         /// </summary>
         public FamilyName()
             : base(GDataParserNameTable.FamilyNameElement, 
@@ -1318,7 +1318,7 @@ namespace Google.GData.Extensions
         }
     
         /// <summary>
-        /// default constructor for AdditonalName with an initial value
+        /// default constructor for AdditionalName with an initial value
         /// </summary>
         /// <param name="initValue"/>
         public FamilyName(string initValue, string initYomi)
@@ -1459,7 +1459,7 @@ namespace Google.GData.Extensions
         public bool Primary
         {
             get {return ("true" == (this.Attributes[GDataParserNameTable.XmlAttributePrimary] as string));}
-            set {this.Attributes[GDataParserNameTable.XmlAttributePrimary] = value == true? Utilities.XSDTrue : Utilities.XSDFalse;}
+            set {this.Attributes[GDataParserNameTable.XmlAttributePrimary] = value ? Utilities.XSDTrue : Utilities.XSDFalse;}
         }
 
         //////////////////////////////////////////////////////////////////////

@@ -631,7 +631,7 @@ namespace Google.GData.Client
                         }
                     }
                 }
-                if (noChildren == false)
+                if (!noChildren)
                 {
                     reader.MoveToElement();
                     int lvl = -1;
@@ -709,7 +709,7 @@ namespace Google.GData.Client
                     }
                 }
             }
-            if (noChildren == false)
+            if (!noChildren)
             {
                 reader.MoveToElement();
                 int lvl = -1;
@@ -1124,7 +1124,7 @@ namespace Google.GData.Client
                     }
                 }
 
-                if (MoveToStartElement(reader) == true)
+                if (MoveToStartElement(reader))
                 {
                     if (content.Type.Equals("text") ||
                         content.Type.Equals("html") || 
@@ -1139,7 +1139,7 @@ namespace Google.GData.Client
                              content.Type.Contains("+xml"))
                     {
                         // do not get childlists if the element is empty. That would skip to the next element
-                        if (reader.IsEmptyElement == false)
+                        if (!reader.IsEmptyElement)
                         {
                             // everything else will be nodes in the extension element list
                             // different media type. Create extension elements

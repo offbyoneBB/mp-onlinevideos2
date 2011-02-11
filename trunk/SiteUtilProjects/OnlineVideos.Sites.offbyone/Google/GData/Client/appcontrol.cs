@@ -96,7 +96,7 @@ namespace Google.GData.Extensions.AppControl {
         public override bool BooleanValue
         {
             get { return this.Value == "yes" ? true : false; } 
-            set { this.Value = (value == true) ? "yes" : "no"; }
+            set { this.Value = value ? "yes" : "no"; }
         }
 
         /// <summary>

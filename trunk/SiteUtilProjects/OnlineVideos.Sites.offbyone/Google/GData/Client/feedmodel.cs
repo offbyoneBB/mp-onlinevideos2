@@ -231,7 +231,7 @@ namespace Google.GData.Client
 
                 do
                 {
-                    looping = af.NextChunk != null && this.paging == true;
+                    looping = af.NextChunk != null && this.paging;
                     foreach (AtomEntry e in af.Entries)
                     {
                         T t = new T();
@@ -1102,7 +1102,7 @@ namespace Google.GData.Client
         public HttpWebRequest CreateHttpWebRequest(string serviceName, string httpMethod, Uri targetUri)
         {
 
-            if (this.UseSSL == true && (targetUri.Scheme.ToLower().Equals("https") == false))
+            if (this.UseSSL && (!targetUri.Scheme.ToLower().Equals("https")))
             {
                 targetUri = new Uri("https://" + targetUri.Host + targetUri.PathAndQuery);
             }
@@ -1410,7 +1410,7 @@ namespace Google.GData.Client
         }
 
         /// <summary>
-        /// called to set additonal proxies if required. Overloaded on the document service
+        /// called to set additional proxies if required. Overloaded on the document service
         /// </summary>
         /// <param name="proxy"></param>
         /// <returns></returns>
@@ -1477,7 +1477,7 @@ namespace Google.GData.Client
                     spec = feed.AtomFeed.Self; 
                     break;
             }
-            if (String.IsNullOrEmpty(spec) == false)
+            if (!String.IsNullOrEmpty(spec))
             {
                 FeedQuery q =  new FeedQuery(spec);
                 if (operation == FeedRequestType.Refresh)
@@ -1642,7 +1642,7 @@ namespace Google.GData.Client
 
             string spec =entry.AtomEntry.SelfUri.ToString();
 
-            if (String.IsNullOrEmpty(spec) == false)
+            if (!String.IsNullOrEmpty(spec))
             {
                 FeedQuery q = new FeedQuery(spec);
                 ISupportsEtag ise = entry.AtomEntry as ISupportsEtag;
@@ -1663,7 +1663,7 @@ namespace Google.GData.Client
         public Y Retrieve<Y>(Uri entryUri) where Y : Entry, new()
         {
             string spec = entryUri.AbsoluteUri;
-            if (String.IsNullOrEmpty(spec) == false)
+            if (!String.IsNullOrEmpty(spec))
             {
                 FeedQuery q = new FeedQuery(spec);
                 return Retrieve<Y>(q); 

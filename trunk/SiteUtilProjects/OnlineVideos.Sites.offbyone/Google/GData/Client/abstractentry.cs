@@ -72,11 +72,9 @@ namespace Google.GData.Client
                 return true;
             }
 
-            if (node.NodeType == XmlNodeType.Attribute && 
-                (node.Name.StartsWith("xmlns") == true) && 
-                (String.Compare(node.Value,BaseNameTable.gNamespace)==0))
-                return true;
-            return false; 
+            return (node.NodeType == XmlNodeType.Attribute && 
+                    node.Name.StartsWith("xmlns") && 
+                    (String.Compare(node.Value,BaseNameTable.gNamespace)==0));
         }
 
 
@@ -87,9 +85,9 @@ namespace Google.GData.Client
         /// <param name="value"></param>
         public void ToggleCategory(AtomCategory cat, bool value)
         {
-            if (value == true)
+            if (value)
             {
-                if (this.Categories.Contains(cat) == false)
+                if (!this.Categories.Contains(cat))
                 {
                     this.Categories.Add(cat);
                 }
@@ -211,7 +209,7 @@ namespace Google.GData.Client
         protected void SetStringValue<T>(string value, string elementName, string ns) where T : SimpleElement, new()
         {
             T v = null;
-            if (String.IsNullOrEmpty(value) == false)
+            if (!String.IsNullOrEmpty(value))
             {
                 v = new T();
                 v.Value = value;

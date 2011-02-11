@@ -344,16 +344,16 @@ namespace Google.GData.YouTube {
         private bool IsProfileUri(Uri uri)
         {
             String str = uri.AbsolutePath;
-            if (str.StartsWith("/") == true)
+            if (str.StartsWith("/"))
             {
                 str = str.Substring(1);
             }
-            if (str.EndsWith("/") == true)
+            if (str.EndsWith("/"))
             {
                 // remove the last char
                 str.Remove(str.Length - 1, 1);
             }
-            if (str.StartsWith("feeds/api/users/") == true)
+            if (str.StartsWith("feeds/api/users/"))
             {
                 str = str.Substring(16);
                 // now there should be one word left, no more slashes

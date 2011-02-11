@@ -46,7 +46,7 @@ namespace Google.GData.Client
 #if WindowsCE || PocketPC
             this.strContent = uri.ToString(); 
 #else
-            this.strContent = System.Web.HttpUtility.UrlDecode(uri.ToString());
+            this.strContent = HttpUtility.UrlDecode(uri.ToString());
 #endif
         }
 
@@ -110,7 +110,7 @@ namespace Google.GData.Client
 			if (obj == null)
 				return -1;
 
-            if (obj is AtomUri == false)
+            if (!(obj is AtomUri))
                 return -1; 
 
 			return String.Compare(this.ToString(), obj.ToString());

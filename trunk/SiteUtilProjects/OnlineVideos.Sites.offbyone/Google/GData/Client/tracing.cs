@@ -121,7 +121,7 @@ namespace Google.GData.Client
 
                     outMsg.Append("--> " + method.DeclaringType.Name + "." + method.Name + "()");
 
-                    if (String.IsNullOrEmpty(msg) == false)
+                    if (!String.IsNullOrEmpty(msg))
                         outMsg.Append(": " + msg);
 
                     Tracing.TraceMsg(outMsg.ToString());
@@ -203,7 +203,7 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         [Conditional("TRACE")] static public void Assert(bool condition, string msg)
         {
-            if (condition == false)
+            if (!condition)
             {
                 Trace.WriteLine(msg); 
                 Trace.Assert(condition, msg);

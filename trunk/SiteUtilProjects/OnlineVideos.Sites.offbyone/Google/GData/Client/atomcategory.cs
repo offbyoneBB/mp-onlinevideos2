@@ -137,7 +137,7 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public override bool ShouldBePersisted()
         {
-            if (base.ShouldBePersisted() == false)
+            if (!base.ShouldBePersisted())
             {
                 return Utilities.IsPersistable(this.term) || Utilities.IsPersistable(this.label) || Utilities.IsPersistable(this.scheme); 
             }

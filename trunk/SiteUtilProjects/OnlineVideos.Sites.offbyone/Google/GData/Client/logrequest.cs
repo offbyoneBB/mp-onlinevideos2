@@ -300,7 +300,7 @@ namespace Google.GData.Client
         {
             if (outputStream != null && headers != null)
             {
-                if (isRequest == true)
+                if (isRequest)
                 {
                     outputStream.WriteLine("Request at: " + DateTime.Now);
                 } 

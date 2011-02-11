@@ -158,8 +158,8 @@ namespace Google.GData.Extensions
             if (node != null)
             {
                 object localname = node.LocalName;
-                if (localname.Equals(this.XmlName) == false ||
-                  node.NamespaceURI.Equals(this.XmlNameSpace) == false)
+                if (!localname.Equals(this.XmlName) ||
+                    !node.NamespaceURI.Equals(this.XmlNameSpace))
                 {
                     return null;
                 }

@@ -148,7 +148,7 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public override bool ShouldBePersisted()
         {
-            if (base.ShouldBePersisted() == false)
+            if (!base.ShouldBePersisted())
             {
                 if (this.uri != null && Utilities.IsPersistable(this.uri.ToString()))
                 {

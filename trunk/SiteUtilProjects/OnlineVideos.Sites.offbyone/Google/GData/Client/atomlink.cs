@@ -215,7 +215,7 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         public override bool ShouldBePersisted()
         {
-            if (base.ShouldBePersisted() == true)
+            if (base.ShouldBePersisted())
             {
                 return true;
             }

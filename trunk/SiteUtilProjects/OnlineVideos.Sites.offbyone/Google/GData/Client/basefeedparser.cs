@@ -295,7 +295,7 @@ namespace Google.GData.Client
             {
                 this.NewExtensionElement(this, args);
             }
-            if (args.DiscardEntry == false)
+            if (!args.DiscardEntry)
             {
                 baseObject.ExtensionElements.Add(new XmlExtension(node));
             }

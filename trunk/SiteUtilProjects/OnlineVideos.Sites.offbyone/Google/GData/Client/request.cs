@@ -488,11 +488,11 @@ namespace Google.GData.Client
         //////////////////////////////////////////////////////////////////////
         protected virtual void Dispose(bool disposing)
         {
-            if (this.disposed == true)
+            if (this.disposed)
             {
                 return;
             }
-            if (disposing == true)
+            if (disposing)
             {
                 Tracing.TraceMsg("disposing of request"); 
                 Reset(); 
@@ -625,7 +625,7 @@ namespace Google.GData.Client
         {
             if (this.webRequest == null && this.targetUri != null)
             {
-                if (this.factory.UseSSL == true && (this.targetUri.Scheme.ToLower().Equals("https") == false))
+                if (this.factory.UseSSL && !this.targetUri.Scheme.ToLower().Equals("https"))
                 {
                     this.targetUri = new Uri("https://" + this.targetUri.Host + this.targetUri.PathAndQuery);
                 }
@@ -658,7 +658,7 @@ namespace Google.GData.Client
                             break;
 
                     }
-                    if (this.useGZip == true)
+                    if (this.useGZip)
                         web.Headers.Add("Accept-Encoding", "gzip");
 
                     if (this.Etag != null)
@@ -671,7 +671,7 @@ namespace Google.GData.Client
                         {
                             case GDataRequestType.Update:
                             case GDataRequestType.Delete:
-                                if (Utilities.IsWeakETag(this) == false)
+                                if (!Utilities.IsWeakETag(this))
                                 {
                                     web.Headers.Add(GDataRequestFactory.IfMatch, this.Etag);
                                 }
@@ -693,7 +693,7 @@ namespace Google.GData.Client
                     web.CookieContainer = this.factory.Cookies;
 #endif
                     // add all custom headers
-                    if (this.factory.hasCustomHeaders == true)
+                    if (this.factory.hasCustomHeaders)
                     {
                         foreach (string s in this.factory.CustomHeaders)
                         {
@@ -788,7 +788,7 @@ namespace Google.GData.Client
                 HttpWebRequest request = this.webRequest as HttpWebRequest;
 
                 this.useGZip = (string.Compare(response.ContentEncoding, "gzip", true, CultureInfo.InvariantCulture) == 0);
-                if (this.useGZip == true)
+                if (this.useGZip)
                     this.responseStream = new GZipStream(this.responseStream, CompressionMode.Decompress);
 
                 Tracing.Assert(response != null, "The response should not be NULL"); 
