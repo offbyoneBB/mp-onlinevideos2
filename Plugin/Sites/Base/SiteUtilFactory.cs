@@ -40,7 +40,7 @@ namespace OnlineVideos
                 Type[] typeArray = assembly.GetExportedTypes();
                 foreach (Type type in typeArray)
                 {
-                    if (type.BaseType != null && type.IsSubclassOf(typeof(SiteUtilBase)))
+                    if (type.BaseType != null && type.IsSubclassOf(typeof(SiteUtilBase)) && !type.IsAbstract)
                     {
                         string shortName = type.Name;
                         if (shortName.EndsWith("Util")) shortName = shortName.Substring(0, shortName.Length - 4);
