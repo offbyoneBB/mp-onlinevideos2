@@ -144,6 +144,11 @@ namespace SiteParser
                         append(sb, textData.Substring(i, j - i + 1));
                         j++;
                     }
+                    else
+                    {
+                        j = i;
+                        i = -1;
+                    }
                 }
             } while (i >= 0 && (i + 1) < textData.Length);
             if (i == -1)
