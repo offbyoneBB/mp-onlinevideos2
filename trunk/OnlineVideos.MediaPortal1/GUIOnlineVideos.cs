@@ -1156,6 +1156,7 @@ namespace OnlineVideos.MediaPortal1
             loListItem.ItemId = 0;
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
             GUI_infoList.Add(loListItem);
+            Dictionary<string, bool> imageHash = new Dictionary<string, bool>();
             if (loVideoList != null)
             {
                 foreach (VideoInfo loVideoInfo in loVideoList)
@@ -1168,8 +1169,10 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.OnItemSelected += OnDetailsVideoItemSelected;
                     GUI_infoList.Add(loListItem);
                     currentTrailerList.Add(loVideoInfo);
+                    if (!string.IsNullOrEmpty(loVideoInfo.ImageUrl)) imageHash[loVideoInfo.ImageUrl] = true;
                 }
             }
+            if (imageHash.Count > 0) ImageDownloader.GetImages<VideoInfo>(currentTrailerList);
             UpdateViewState();
 
             if (loVideoList.Count > 0)
