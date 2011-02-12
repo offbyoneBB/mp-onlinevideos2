@@ -174,6 +174,9 @@ namespace OnlineVideos.Sites
 
                     video.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                     video.VideoUrl = m.Groups["VideoUrl"].Value.Replace("..", baseUrl);
+                    Match m2 = Regex.Match(video.VideoUrl, @"-(?<id>\d+).html");
+
+                    if (m2.Success) video.VideoUrl = baseUrl + "/getlinks.php?q=" + m2.Groups["id"].Value;
                     videos.Add(video);
                     m = m.NextMatch();
                 }
