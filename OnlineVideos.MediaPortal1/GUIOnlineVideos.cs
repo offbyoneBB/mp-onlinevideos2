@@ -347,6 +347,13 @@ namespace OnlineVideos.MediaPortal1
                         return;
                     }
                     break;
+                case Action.ActionType.ACTION_MUSIC_PLAY:
+                    if (BufferingPlayerFactory != null)
+                    {
+                        ((OnlineVideosPlayer)BufferingPlayerFactory.PreparedPlayer).SkipBuffering();
+                        return;
+                    }
+                    break;
                 case Action.ActionType.ACTION_PREVIOUS_MENU:
                     if (!currentFilter.IsEmpty())
                     {
