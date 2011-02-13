@@ -1418,6 +1418,20 @@
               <ZipFileName>Installer{CopyFile}\{6a41cfc8-5906-49ef-91e5-62e889f67f86}-sv.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Langs\sv.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Yle Areena.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5f8c405a-7d4d-4feb-83c0-996d8dfd8463}-Yle Areena.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Yle Areena.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Yle Areena.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{470126db-99fd-400f-9c0e-560e251ba177}-Yle Areena.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Yle Areena.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2285,17 +2299,20 @@ public class Script
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
     <VersionDescription>New Feature: Allow user to group Sites in Configuration. Will be shown as another view prior to the sites
-Reworked: Paging in the VideoList now done with a single extra item at the end of the list. Click to append the next page videos to the list
-Fixed: Added RssLinks and Channels in Configuration were not saved
+New Feature: skip buffering by pressing play during pre-buffering
 New Feature: Jump straight to Details if you search for a movie with an exact match
-Fixed: Relevant DLL (if needed) is not downloaded if user choose site in "Manage Sites"
-#itemtype now also supported in SiteManager
+New Feature: #itemtype now also supported in SiteManager
+New Feature: thumbnails for listitems details view
+Reworked: Paging in the VideoList now done with a single extra item at the end of the list. Click to append the next page videos to the list
 Reworked: all background execution to correctly invoke results on GuiThread
-Settings that can be modified at runtime using the MPEI plugin are now reloaded when entering the plugin
-Loading plugin with startparameters now also possible using GUIProperties</VersionDescription>
+Fixed: Added RssLinks and Channels in Configuration were not saved
+Fixed: Relevant DLL (if needed) is not downloaded if user choose site in "Manage Sites"
+Fixed: Not able to download clips with equal names
+Fiexed: Settings that can be modified at runtime using the MPEI plugin are now reloaded when entering the plugin
+New Feature: Loading plugin with startparameters now also possible using GUIProperties</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2011-01-11T20:00:00</ReleaseDate>
+    <ReleaseDate>2011-02-13T20:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -3732,6 +3749,20 @@ Loading plugin with startparameters now also possible using GUIProperties</Versi
         <ZipFileName>Installer{CopyFile}\{6a41cfc8-5906-49ef-91e5-62e889f67f86}-sv.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Langs\sv.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Yle Areena.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5f8c405a-7d4d-4feb-83c0-996d8dfd8463}-Yle Areena.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Yle Areena.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Yle Areena.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{470126db-99fd-400f-9c0e-560e251ba177}-Yle Areena.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Yle Areena.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -4107,7 +4138,7 @@ Loading plugin with startparameters now also possible using GUIProperties</Versi
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{aabfc10f-5e9c-49ba-85e1-ba4f046d7fcb}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{afa0b082-1b2c-4d3d-994e-1e0e7e3d9a8c}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
@@ -4155,7 +4186,7 @@ Loading plugin with startparameters now also possible using GUIProperties</Versi
         <Recursive>true</Recursive>
       </FolderGroup>
     </FolderGroups>
-    <ProjectFilename>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.xmp2</ProjectFilename>
+    <ProjectFilename>C:\Users\offbyone\Documents\Code\CodeUnlimited\OnlineVideos\MPEI\OnlineVideos.xmp2</ProjectFilename>
     <UpdatePath1>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\update.xml</UpdatePath1>
     <UpdatePath2 />
     <UpdatePath3 />
