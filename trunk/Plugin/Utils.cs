@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Reflection;
@@ -303,6 +304,33 @@ namespace OnlineVideos
             {
                 return false;
             }
+        }
+
+        public static string GetNextFileName(string fullFileName)
+        {
+            if (string.IsNullOrEmpty(fullFileName)) throw new ArgumentNullException("fullFileName");
+            if (!File.Exists(fullFileName)) return fullFileName;
+
+            string baseFileName = Path.GetFileNameWithoutExtension(fullFileName);
+            string ext = Path.GetExtension(fullFileName);
+
+            string filePath = Path.GetDirectoryName(fullFileName);
+            var numbersUsed = Directory.GetFiles(filePath, baseFileName + "_(*)" + ext)
+                    .Select(x => Path.GetFileNameWithoutExtension(x).Substring(baseFileName.Length+1))
+                    .Select(x =>
+                    {
+                        int result;
+                        return Int32.TryParse(x.Trim(new char[] { '(', ')' }), out result) ? result : 0;
+                    })
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .ToList();
+
+            var firstGap = numbersUsed
+                    .Select((x, i) => new { Index = i, Item = x })
+                    .FirstOrDefault(x => x.Index != x.Item);
+            int numberToUse = firstGap != null ? firstGap.Item : numbersUsed.Count;
+            return Path.Combine(filePath, baseFileName) + "_(" + numberToUse + ")" + ext;
         }
     }
 }
