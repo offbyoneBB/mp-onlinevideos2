@@ -2070,11 +2070,12 @@ namespace OnlineVideos.MediaPortal1
                     System.IO.Path.GetExtension(saveItems.CurrentItem.LocalFile));
             }
 
+            saveItems.CurrentItem.LocalFile = Utils.GetNextFileName(saveItems.CurrentItem.LocalFile);
             saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.ImageUrl : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
 
             Dictionary<string, DownloadInfo> currentDownloads = ((OnlineVideos.Sites.DownloadedVideoUtil)OnlineVideoSettings.Instance.SiteUtilsList[Translation.DownloadedVideos]).currentDownloads;
 
-            if (currentDownloads.ContainsKey(url) || System.IO.File.Exists(saveItems.CurrentItem.LocalFile))
+            if (currentDownloads.ContainsKey(url))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
