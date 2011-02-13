@@ -3,9 +3,9 @@
 = Windows =
 
 !OnlineVideos requires 4 window skin files:
- * Id: *4755* ( _myonlinevideos.xml_ )<br/>The main OnlineVideos window where the user can browse sites and play videos.<br/><br/>
- * Id: *4757* ( _myonlinevideosUpdater.xml_ )<br/>A secondary window that allows management and updating of sites.<br/><br/>
- * Id: *4758* ( _myonlinevideosFullScreen.xml_ )<br/>A copy of the default videoFullScreen, with the TV progress bar added and the default progress bar hidden.<br/><br/> 
+ * Id: *4755* ( _myonlinevideos.xml_ )<br/>The main OnlineVideos window where the user can browse sites and play videos.<br/>
+ * Id: *4757* ( _myonlinevideosUpdater.xml_ )<br/>A secondary window that allows management and updating of sites.<br/>
+ * Id: *4758* ( _myonlinevideosFullScreen.xml_ )<br/>A copy of the default videoFullScreen, with the TV progress bar added and the default progress bar hidden.<br/>
  * Id: *4759* ( _myonlinevideosOSD.xml_ )<br/>A copy of the default videoOSD, with the TV progress bar added and the default progress bar hidden. 
 
 The Blue3Wide skinfiles that are installed with the plugin are always kept updated and should be used as a reference when creating skinfiles.
@@ -17,8 +17,6 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
 = Window 4755 required controls =
 || *Id* || *type* || *default localized label* || *description* ||
 || 2 || button || {{{#OnlineVideos.Translation.LayoutList.Label}}} || Change facade viewmode ||
-|| 3 || button || {{{#OnlineVideos.Translation.NextPage.Label}}} || Next page ||
-|| 4 || button || {{{#OnlineVideos.Translation.PreviousPage.Label}}} || Previous page ||
 || 5 || selectbutton || {{{#OnlineVideos.Translation.MaxResults.Label}}} || Max. results when filtering ||
 || 6 || selectbutton || {{{#OnlineVideos.Translation.SortOptions.Label}}} || Set sort criteria ||
 || 7 || selectbutton || {{{#OnlineVideos.Translation.Timeframe.Label}}} || Timeframe when filtering ||
@@ -26,15 +24,16 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
 || 9 || selectbutton || {{{#OnlineVideos.Translation.Category.Label}}} || Category for search ||
 || 10 || button || {{{#OnlineVideos.Translation.Search.Label}}} || Search videos on current site ||
 || 12 || button || {{{#OnlineVideos.Translation.EnterPin.Label}}} || Enter Pin for adult sites ||
-|| 50 || facadeview || label1 - title, label2 - language (`#OnlineVideos.state = sites`) ||  main facade (required modes: list, large and small icons) ||
+|| 50 || facadeview || {{{label1}}} - title, {{{label2}}} - language or length or number of childs ||  main facade (required modes: list, large and small icons) ||
 || 51 || listcontrol || - || additional list used instead of facade in details view ||
 
 
-The icon shown for each site in the facade can be overridden by the skin if a png in {{{[CurrentSkinFolder]\Media\OnlineVideos\Icons\}}} is found. <br/>The same goes for the site's banner ({{{[CurrentSkinFolder]\Media\OnlineVideos\Banners\}}}).
+The icon shown for each site in the facade can be overridden by the skin if a png in {{{[CurrentSkinFolder]\Media\OnlineVideos\Icons\}}} is found. <br/>The same goes for the site's banner ({{{[CurrentSkinFolder]\Media\OnlineVideos\Banners\}}}).<br/>
+A new icon is needed for an item in the facade for retrieving the next page videos: ({{{[CurrentSkinFolder]\Media\OnlineVideos\NextPage.png}}}).
 
 = Window 4757 required controls =
 || *Id* || *type* || *default localized label* || *description* ||
-|| 50 || listcontrol || label1 - site name, label2 - language, label3 - updatedate || main list ||
+|| 50 || listcontrol || {{{label1}}} - site name, {{{label2}}} - language, {{{label3}}} - updatedate || main list ||
 || 502 || button || {{{#OnlineVideos.Translation.Refresh.Label}}} || Refresh view ||
 || 503 || selectbutton || {{{#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.State.Label}}} || State filter ||
 || 504 || selectbutton || {{{#OnlineVideos.Translation.SortOptions.Label}}} || Set sort criteria ||
@@ -58,11 +57,14 @@ The State is one of the three: {{{Broken, Reported, Working}}}. In the default s
 
  * OnlineVideos Window (4755) only
   * `#OnlineVideos.filter` - Current SMS T9 Filter
-  * `#OnlineVideos.state` - Current View (values: sites, categories, videos, details)
-  * `#OnlineVideos.length` - runtime and airdate (if available) of the current selected item (localized label property: {{{#OnlineVideos.Translation.Runtime.Label}}})
+  * `#OnlineVideos.state` - Current View (values: groups, sites, categories, videos, details)
+  * `#selecteditem2`
+   * groups view: number of sites in that group
+   * sites view: language of the selected Site (localized label id for "Language": 248)
+   * categories view: number of videos in that category (if known)
+   * videos view: runtime and airdate (if available) of the current selected item (localized label property: {{{#OnlineVideos.Translation.Runtime.Label}}})
   * `#OnlineVideos.selectedSite` - name of the Site currently selected (e.g. "!GameTrailers") that can be used for conditional visibility
   * `#OnlineVideos.selectedSiteUtil` - name of the Util used by the currently selected Site (e.g. "!GenericSite") that can be used for conditional visibility
-  * While the list of Sites is shown the language of the selected Site is set in {{{#selecteditem2}}}<br/>and can be shown instead of the length with a visible condition: {{{string.equals(#OnlineVideos.state, sites)}}}.<br/>The localized label for "Language" is 248 (MediaPortal supplied).
 
  * Facade (both Windows)
   * `#itemcount` - total number of items 
