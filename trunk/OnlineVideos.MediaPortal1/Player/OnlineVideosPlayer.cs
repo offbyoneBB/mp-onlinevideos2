@@ -72,6 +72,9 @@ namespace OnlineVideos.MediaPortal1.Player
         public bool BufferingStopped { get; protected set; }
         public void StopBuffering() { BufferingStopped = true; }
 
+        protected bool skipBuffering = false;
+        public void SkipBuffering() { skipBuffering = true; }
+
         /// <summary>
         /// If the url to be played can be buffered before starting playback, this function
         /// starts building a graph by adding the preferred video and audio render to it.
@@ -174,7 +177,7 @@ namespace OnlineVideos.MediaPortal1.Player
                         result = ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
                         PercentageBuffered = (float)current / (float)total * 100.0f;
                         // after configured percentage has been buffered, connect the graph
-                        if (!filterConnected && PercentageBuffered >= PluginConfiguration.Instance.playbuffer)
+                        if (!filterConnected && PercentageBuffered >= PluginConfiguration.Instance.playbuffer || skipBuffering)
                         {
                             filterConnected = true;
                             new Thread(delegate()
