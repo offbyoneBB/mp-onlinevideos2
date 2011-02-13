@@ -1430,5 +1430,159 @@ Many other small bugfixes/enhancements</VersionDescription>
         <FolderGroups />
       </ProjectSettings>
     </PackageClass>
+    <PackageClass>
+      <Version>2.0</Version>
+      <Groups>
+        <Items>
+          <GroupItem Name="Default">
+            <DisplayName>Default</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Default</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Thumbs">
+            <DisplayName>Thumbs</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Thumbs</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Skins">
+            <DisplayName>Skins</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Skins</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Plugin">
+            <DisplayName>Plugin</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Plugin</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Language">
+            <DisplayName>Language</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Language</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Blue3">
+            <DisplayName>Blue3</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Blue3</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Blue3Wide">
+            <DisplayName>Blue3Wide</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Blue3Wide</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="FLVSplitter">
+            <DisplayName>FLVSplitter</DisplayName>
+            <DefaulChecked>false</DefaulChecked>
+            <Description>FLVSplitter</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="GenericSiteTool">
+            <DisplayName>GenericSiteTool</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>GenericSiteTool</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+        </Items>
+      </Groups>
+      <Sections>
+        <Items />
+      </Sections>
+      <Dependencies>
+        <Items />
+      </Dependencies>
+      <GeneralInfo>
+        <Name>OnlineVideos</Name>
+        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
+        <Author>offbyone</Author>
+        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
+        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
+        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
+        <Version>
+          <Major>0</Major>
+          <Minor>28</Minor>
+          <Build>0</Build>
+          <Revision>0</Revision>
+        </Version>
+        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
+        <VersionDescription>New Feature: Allow user to group Sites in Configuration. Will be shown as another view prior to the sites
+New Feature: skip buffering by pressing play during pre-buffering
+New Feature: Jump straight to Details if you search for a movie with an exact match
+New Feature: #itemtype now also supported in SiteManager
+New Feature: thumbnails for listitems details view
+Reworked: Paging in the VideoList now done with a single extra item at the end of the list. Click to append the next page videos to the list
+Reworked: all background execution to correctly invoke results on GuiThread
+Fixed: Added RssLinks and Channels in Configuration were not saved
+Fixed: Relevant DLL (if needed) is not downloaded if user choose site in "Manage Sites"
+Fixed: Not able to download clips with equal names
+Fiexed: Settings that can be modified at runtime using the MPEI plugin are now reloaded when entering the plugin
+New Feature: Loading plugin with startparameters now also possible using GUIProperties</VersionDescription>
+        <DevelopmentStatus>Stable</DevelopmentStatus>
+        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.28.0.0.mpe1</OnlineLocation>
+        <ReleaseDate>2011-02-13T20:00:00</ReleaseDate>
+        <Tags>online,videos,youtube</Tags>
+        <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
+        <Params>
+          <Items>
+            <SectionParam Name="Icon">
+              <Value>C:\Users\offbyone\Documents\Code\CodeUnlimited\OnlineVideos\OnlineVideos.MediaPortal1\OnlineVideos.png</Value>
+              <ValueType>File</ValueType>
+              <Description>The icon file of the package (jpg,png,bmp)</Description>
+            </SectionParam>
+            <SectionParam Name="Online Icon">
+              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
+              <ValueType>String</ValueType>
+              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
+            </SectionParam>
+            <SectionParam Name="Configuration file">
+              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
+              <ValueType>Template</ValueType>
+              <Description>The file used to configure the extension.
+ If have .exe extension the will be executed
+ If have .dll extension used like MP plugin configuration</Description>
+            </SectionParam>
+            <SectionParam Name="Online Screenshots">
+              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
+              <ValueType>String</ValueType>
+              <Description>Online stored screenshot urls separated by ; </Description>
+            </SectionParam>
+            <SectionParam Name="Force to uninstall on update">
+              <Value>YES</Value>
+              <ValueType>Bool</ValueType>
+              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+      </GeneralInfo>
+      <UniqueFileList>
+        <Items />
+      </UniqueFileList>
+      <ProjectSettings>
+        <FolderGroups />
+      </ProjectSettings>
+    </PackageClass>
   </Items>
 </ExtensionCollection>
