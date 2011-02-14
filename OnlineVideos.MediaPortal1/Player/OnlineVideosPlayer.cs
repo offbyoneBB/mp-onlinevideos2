@@ -177,8 +177,9 @@ namespace OnlineVideos.MediaPortal1.Player
                         result = ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
                         PercentageBuffered = (float)current / (float)total * 100.0f;
                         // after configured percentage has been buffered, connect the graph
-                        if (!filterConnected && PercentageBuffered >= PluginConfiguration.Instance.playbuffer || skipBuffering)
+                        if (!filterConnected && (PercentageBuffered >= PluginConfiguration.Instance.playbuffer || skipBuffering))
                         {
+                            if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", PercentageBuffered);
                             filterConnected = true;
                             new Thread(delegate()
                             {
