@@ -1293,7 +1293,8 @@ namespace OnlineVideos.MediaPortal1
             {
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-                    if (moSupportedSearchCategoryList != null && moSupportedSearchCategoryList.Count > 1 && GUI_btnSearchCategories.SelectedLabel != Translation.All)
+                    if (moSupportedSearchCategoryList != null && moSupportedSearchCategoryList.Count > 1 && GUI_btnSearchCategories.SelectedLabel != Translation.All
+                        && !string.IsNullOrEmpty(GUI_btnSearchCategories.SelectedLabel) && moSupportedSearchCategoryList.ContainsKey(GUI_btnSearchCategories.SelectedLabel))
                     {
                         string category = moSupportedSearchCategoryList[GUI_btnSearchCategories.SelectedLabel];
                         Log.Instance.Info("Searching for {0} in category {1}", query, category);
