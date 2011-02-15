@@ -62,8 +62,10 @@ namespace OnlineVideos.Sites
 
                         cat.Url = node.SelectSingleNode("../nimex").InnerText;
                         cat.Url = cat.Url.Replace(".xml", "-meta.xml");
-                        
-                        cat.Thumb = node.SelectSingleNode("../image/data").InnerText;
+
+                        var imageNode = node.SelectSingleNode("../image/data");
+                        if (imageNode != null) cat.Thumb = imageNode.InnerText;
+
                         cat.Description = node.SelectSingleNode("../description").InnerText;
 
                         XmlNodeList videoItems;
