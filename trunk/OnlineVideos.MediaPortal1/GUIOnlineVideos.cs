@@ -1913,7 +1913,8 @@ namespace OnlineVideos.MediaPortal1
             List<VideoInfo> loVideoList = (SelectedSite is IChoice && currentState == State.details) ? currentTrailerList : currentVideoList;
             foreach (VideoInfo video in loVideoList)
             {
-                if (currentState != State.details && video.HasDetails) continue; // while in videos view of a site with details view only take videos that don't have details
+                // when not in details view of a site with details view only include videos that don't have details
+                if (currentState != State.details && SelectedSite is IChoice && video.HasDetails) continue; 
                 currentPlaylist.Add(new Player.PlayListItem(video.Title, null)
                 {
                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
