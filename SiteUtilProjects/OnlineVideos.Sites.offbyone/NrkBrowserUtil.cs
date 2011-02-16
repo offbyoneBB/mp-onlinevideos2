@@ -49,7 +49,7 @@ namespace OnlineVideos.Sites
                 nrkParser = new NrkParser(speed);
             }
 
-            Settings.Categories.Clear();
+            Settings.Categories = new BindingList<Category>();
 
             Settings.Categories.Add(new RssLink() { Url = NrkBrowserConstants.MENU_ITEM_ID_ALPHABETICAL_LIST, 
                                                     Name = NrkTranslatableStrings.MENU_ITEM_TITLE_ALPHABETICAL_LIST, 
