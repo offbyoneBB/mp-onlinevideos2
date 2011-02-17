@@ -356,7 +356,7 @@
         <Category xsi:type="RssLink" name="Webcam">http://www.dailymotion.com/rss/cluster/webcam</Category>
       </Categories>
     </Site>
-    <Site name="Live Video" util="GenericSite" agecheck="false" enabled="true" lang="en">
+    <Site name="Live Video" util="GenericSite" agecheck="false" enabled="true" lang="en" lastUpdated="2011-02-17T12:02:33.0892181+01:00">
       <Description>Broadcast yourself live, watch, connect and share videos with people all over the world.</Description>
       <Configuration>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
