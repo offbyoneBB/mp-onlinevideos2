@@ -877,20 +877,20 @@
         <Category xsi:type="RssLink" name="Soundtracks / Musicals">http://api.mtvnservices.com/1/genre/soundtracks_musicals/videos/?sort=date_descending</Category>
       </Categories>
     </Site>
-    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" lang="--" player="WMP" lastUpdated="2011-01-16T17:27:56.8529929+01:00">
+    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" lang="--" player="WMP" lastUpdated="2011-02-17T19:06:25.8986675+01:00">
       <Description>Collection of live music streams.</Description>
       <Categories>
         <Category xsi:type="Group" name="RockTelevision" thumb="http://www.tv-port.net/wp-content/uploads/2009/05/rock-tv.jpg">
           <Channels>
-            <Channel name="RockTV">mms://mediatv2.topix.it/chTv</Channel>
-            <Channel name="21st">mms://mediatv2.topix.it/00xy123</Channel>
-            <Channel name="90s">mms://mediatv2.topix.it/90xy123</Channel>
-            <Channel name="80s">mms://mediatv2.topix.it/80xy123</Channel>
-            <Channel name="70s">mms://mediatv2.topix.it/70xy123</Channel>
-            <Channel name="60s">mms://mediatv2.topix.it/60xy123</Channel>
-            <Channel name="Hard &amp; Heavy">mms://mediatv2.topix.it/hardxy123</Channel>
-            <Channel name="Prog Rock">mms://mediatv2.topix.it/progxy123</Channel>
-            <Channel name="Soft &amp; Ballads">mms://mediatv2.topix.it/softxy123</Channel>
+            <Channel name="RockTV">http://mediatv2.topix.it/24rocktelevision66</Channel>
+            <Channel name="21st">http://mediatv2.topix.it/242166</Channel>
+            <Channel name="90s">http://mediatv2.topix.it/249066</Channel>
+            <Channel name="80s">http://mediatv2.topix.it/248066</Channel>
+            <Channel name="70s">http://mediatv2.topix.it/247066</Channel>
+            <Channel name="60s">http://mediatv2.topix.it/246066</Channel>
+            <Channel name="Hard &amp; Heavy">http://mediatv2.topix.it/24hard66</Channel>
+            <Channel name="Prog Rock">http://mediatv2.topix.it/24prog66</Channel>
+            <Channel name="Soft &amp; Ballads">http://mediatv2.topix.it/24soft66</Channel>
           </Channels>
         </Category>
       </Categories>
