@@ -34,6 +34,15 @@ namespace OnlineVideos.Sites
             {
                 string result = base.getUrl(video);
                 if (!string.IsNullOrEmpty(result)) result = result.Replace("\\", "");
+                else
+                {
+                    Match m = Regex.Match(dataPage, "&errorTitle=(?<error>.*?)&", RegexOptions.Singleline | RegexOptions.Multiline);
+                    if (m.Success)
+                    {
+                        string error = HttpUtility.UrlDecode(m.Groups["error"].Value);
+                        if (!string.IsNullOrEmpty(error)) throw new OnlineVideosException(error);
+                    }
+                }
                 return result;
             }
         }
