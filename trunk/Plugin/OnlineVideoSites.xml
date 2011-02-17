@@ -192,12 +192,21 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="Bild.de Filme" util="BildFilme" agecheck="false" enabled="true" lang="de" lastUpdated="2010-03-24T04:21:51.25+01:00">
-      <Description>Ganze Filme des deutschen Videoportals Bild.de.</Description>
+    <Site name="Bild.de Filme" util="BildFilme" agecheck="false" enabled="true" lang="de" lastUpdated="2011-02-17T18:15:18.8183176+01:00">
+      <Description>Ganze Filme des deutschen Bild.de Videoportals.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[category_id=("|')(?<url>[^("|')]+)("|')\s*category_name=("|')(?<title>[^("|')]+)("|')>]]></item>
         <item key="dynamicCategoryUrlFormatString"><![CDATA[http://film.bild.de/nav.aspx?s=list&c={0}]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\shref="detail.aspx\?s=detail&m=(?<VideoUrl>[^&]+)&pl=t"><div\s*id="[^"]+"\sclass="naw_movieBoxT1_movieImage\snaw_column"\sstyle="background-image:\surl\s*\((?<ImageUrl>[^\)]+)\);">\s*[^;]+;[^>]+>(?<Title>[^<]+)</div></a>]]></item>
+        <item key="videoListRegEx">
+          <![CDATA[<div\s+class="naw_movieBoxT1_box_inner">\s*
+<a\shref="javascript:onGoToDetailPage\((?<VideoUrl>[^,]+).*?background-image:\surl\s*\((?<ImageUrl>[^\)]+)\);">
+.*?
+<div\s+class="naw_tipBox_movieTitle">(?<Title>.*?)</div>
+.*?
+<div\s+class="naw_tipBox_description">(?<Description>.*?)</div>]]>
+        </item>
+        <item key="nextPageRegEx"><![CDATA[<a\s+href="\#(?<url>[^"]+)"><div[^>]*>Weiter</div></a>]]></item>
+        <item key="nextPageRegExUrlFormatString"><![CDATA[/nav.aspx?{0}]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://film.bild.de/nav.aspx?s=movie&m={0}&pl=m]]></item>
         <item key="baseUrl"><![CDATA[http://film.bild.de/]]></item>
       </Configuration>
@@ -811,29 +820,36 @@
         </Category>
       </Categories>
     </Site>
-    <Site name="BUNCHTV" util="GenericSite" agecheck="false" enabled="true" lang="de">
-      <Description>Videocontent from bunch.tv.</Description>
+    <Site name="BUNCHTV" util="GenericSite" agecheck="false" enabled="true" lang="de" lastUpdated="2011-02-17T18:15:00.7852306+01:00">
+      <Description>Wir bringen dir die News aus der Musikszene, aus den Bereichen Games und Kino/Film, informieren dich über die neuesten Veröffentlichungen, sind für dich auf den wichtigsten Festivals, Events und Konzerten.</Description>
       <Configuration>
-        <item key="videoItemXml"><![CDATA[/root/bunchTvPlaylist/bunchTvClip]]></item>
-        <item key="videoTitleXml"><![CDATA[title]]></item>
-        <item key="videoThumbXml"><![CDATA[thumbnail_large]]></item>
-        <item key="videoUrlXml"><![CDATA[streaminName]]></item>
-        <item key="videoDescriptionXml"><![CDATA[description]]></item>
-        <item key="videoDurationXml"><![CDATA[duration]]></item>
+        <item key="baseUrl"><![CDATA[http://www.bunch.tv]]></item>
+        <item key="videoListRegEx">
+          <![CDATA[<div\s+class="news_img\s+type-news">\s+<a\s+href="(?<VideoUrl>[^"]*)"><img\s+src="(?<ImageUrl>[^"]*)"[^/]*/>\s*</a>\s*</div>
+.*?<div\s+class="news_title\s+type-news">\s*<a.*?>(?<Title>.*?)</a></div>
+.*?<div\s+class="news_date">\s*<span[^>]*>(?<Duration>[^<]*)</span>\s*</div>\s*
+<div\s+class="news_text">(?<Description>.*?)</div>]]>
+        </item>
+        <item key="nextPageRegEx"><![CDATA[<li\s+class="pager-next"><a\s+href="(?<url>[^"]+)".*?>next.*?</a></li>]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://streaming04.exozet.com/bunchtv-streaming/{0}]]></item>
         <item key="forceUTF8Encoding"><![CDATA[true]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Hiphop">http://bunch.tv/xml/playlist/13119/playlist.xml</Category>
-        <Category xsi:type="RssLink" name="Reggae Funk n Soul">http://bunch.tv/xml/playlist/19587/playlist.xml</Category>
-        <Category xsi:type="RssLink" name="Metal">http://bunch.tv/xml/playlist/13117/playlist.xml</Category>
-        <Category xsi:type="RssLink" name="Independent">http://bunch.tv/xml/playlist/13120/playlist.xml</Category>
-        <Category xsi:type="RssLink" name="Electronic">http://bunch.tv/xml/playlist/13118/playlist.xml</Category>
-        <Category xsi:type="RssLink" name="Games">http://bunch.tv/xml/playlist/3929/playlist.xml</Category>
-        <Category xsi:type="RssLink" name="Cinema">http://bunch.tv/xml/playlist/19541/playlist.xml</Category>
-        <Category xsi:type="RssLink" name="Sports">http://bunch.tv/xml/playlist/19534/playlist.xml</Category>
-        <Category xsi:type="RssLink" name="Travel">http://bunch.tv/xml/playlist/27270/playlist.xml</Category>
-        <Category xsi:type="RssLink" name="Festivals">http://bunch.tv/xml/playlist/27372/playlist.xml</Category>
+        <Category xsi:type="RssLink" name="Music - Hiphop" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/music/mixery.jpg">http://www.bunch.tv/mixeryrawdeluxe?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Music - Reggae Funk n Soul" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/music/tunes.jpg">http://www.bunch.tv/tunes?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Music - Metal" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/music/metal.jpg">http://www.bunch.tv/metal?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Music - Independent" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/music/noise.jpg">http://www.bunch.tv/noise?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Music - Electronic" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/music/tronic.jpg">http://www.bunch.tv/tronic?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Music - Desperados Stagedive" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/specials/desperados-stagedive.jpg">http://www.bunch.tv/desperadosstagedive?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Festivals - 2010" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/festivals/festivals2010.png">http://www.bunch.tv/festivals-2010?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Festivals - 2009" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/festivals/festivals2009.png">http://www.bunch.tv/festivals-2009?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Festivals - 2008" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/festivals/festivals2008.png">http://www.bunch.tv/festivals-2008?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Games - Playd" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/games/playd.jpg">http://www.bunch.tv/playd?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Cinema - Seen" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/cinema/seen.jpg">http://www.bunch.tv/seen?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Travel - Boarding" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/travel/boarding.jpg">http://www.bunch.tv/boarding?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Sports - Ride" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/sports/travel.jpg">http://www.bunch.tv/ride?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Specials - Electronic Beats" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/specials/electronic-beats.jpg">http://www.bunch.tv/electronicbeats?ajax=true&amp;ajax=true</Category>
+        <Category xsi:type="RssLink" name="Specials - Night.Live TV" thumb="http://www.bunch.tv/sites/all/themes/bunch/images/submenu/specials/virtual-nights.jpg">http://www.bunch.tv/virtualnights?ajax=true&amp;ajax=true</Category>
       </Categories>
     </Site>
     <Site name="YahooMusicVideos" util="YahooMusicVideos" agecheck="false" enabled="true" lang="en">
