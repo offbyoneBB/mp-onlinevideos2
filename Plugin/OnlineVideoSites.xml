@@ -327,37 +327,33 @@
         <Category xsi:type="RssLink" name="MassageNerd">http://www.metacafe.com/channels/massagenerd/rss.xml</Category>
       </Categories>
     </Site>
-    <Site name="DailyMotion" util="GenericSite" agecheck="false" enabled="true" lang="en">
+    <Site name="DailyMotion" util="GenericSite" agecheck="false" enabled="true" lang="en" lastUpdated="2011-02-17T11:28:06.4470061+01:00">
       <Description>Dailymotion is a video sharing service website, based in Paris (France).</Description>
       <Configuration>
         <item key="searchUrl"><![CDATA[http://www.dailymotion.com/rss/relevance/search/{0}]]></item>
         <item key="fileUrlRegEx"><![CDATA[addVariable\("video",\s*"(?<m0>[^"]+)"\);]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}&txe=.flv]]></item>
+        <item key="nextPageRegEx"><![CDATA[<dm:link\s+rel="next"\s+href="(?<url>.*?)".*?/>]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Front Page">http://www.dailymotion.com/rss</Category>
-        <Category xsi:type="RssLink" name="Ads">http://www.dailymotion.com/rss/cluster/ads</Category>
         <Category xsi:type="RssLink" name="Animals">http://www.dailymotion.com/rss/cluster/animals</Category>
         <Category xsi:type="RssLink" name="Fun">http://www.dailymotion.com/rss/cluster/fun</Category>
         <Category xsi:type="RssLink" name="Auto">http://www.dailymotion.com/rss/cluster/auto</Category>
-        <Category xsi:type="RssLink" name="Street">http://www.dailymotion.com/rss/cluster/street</Category>
         <Category xsi:type="RssLink" name="Creation">http://www.dailymotion.com/rss/cluster/creation</Category>
         <Category xsi:type="RssLink" name="Short Films">http://www.dailymotion.com/rss/cluster/shortfilms</Category>
-        <Category xsi:type="RssLink" name="Business">http://www.dailymotion.com/rss/cluster/business</Category>
         <Category xsi:type="RssLink" name="Tech">http://www.dailymotion.com/rss/cluster/tech</Category>
         <Category xsi:type="RssLink" name="Sport">http://www.dailymotion.com/rss/cluster/sport</Category>
-        <Category xsi:type="RssLink" name="Extreme">http://www.dailymotion.com/rss/cluster/extreme</Category>
-        <Category xsi:type="RssLink" name="Events">http://www.dailymotion.com/rss/cluster/events</Category>
-        <Category xsi:type="RssLink" name="Family">http://www.dailymotion.com/rss/cluster/family</Category>
         <Category xsi:type="RssLink" name="Music">http://www.dailymotion.com/rss/cluster/music</Category>
         <Category xsi:type="RssLink" name="News">http://www.dailymotion.com/rss/cluster/news</Category>
         <Category xsi:type="RssLink" name="Parties">http://www.dailymotion.com/rss/cluster/parties</Category>
         <Category xsi:type="RssLink" name="School">http://www.dailymotion.com/rss/cluster/school</Category>
         <Category xsi:type="RssLink" name="Travel">http://www.dailymotion.com/rss/cluster/travel</Category>
         <Category xsi:type="RssLink" name="Video Games">http://www.dailymotion.com/rss/cluster/videogames</Category>
-        <Category xsi:type="RssLink" name="Blog">http://www.dailymotion.com/rss/cluster/blog</Category>
-        <Category xsi:type="RssLink" name="3D">http://www.dailymotion.com/rss/cluster/3D</Category>
-        <Category xsi:type="RssLink" name="Dating">http://www.dailymotion.com/rss/cluster/dating</Category>
+        <Category xsi:type="RssLink" name="Lifestyle">http://www.dailymotion.com/rss/cluster/lifestyle</Category>
+        <Category xsi:type="RssLink" name="People">http://www.dailymotion.com/rss/cluster/people</Category>
+        <Category xsi:type="RssLink" name="Sexy">http://www.dailymotion.com/rss/cluster/sexy</Category>
+        <Category xsi:type="RssLink" name="Webcam">http://www.dailymotion.com/rss/cluster/webcam</Category>
       </Categories>
     </Site>
     <Site name="Live Video" util="GenericSite" agecheck="false" enabled="true" lang="en">
