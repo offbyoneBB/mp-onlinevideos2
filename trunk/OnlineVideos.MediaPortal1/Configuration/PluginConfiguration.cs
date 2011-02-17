@@ -345,7 +345,16 @@ namespace OnlineVideos.MediaPortal1
                 }
                 catch
                 {
-                    Log.Instance.Warn("Non RFC 4646 compliant language identifier: '{0}'", name);
+                    var temp = System.Globalization.CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
+                        ci => ci.IetfLanguageTag == aLang || ci.ThreeLetterISOLanguageName == aLang || ci.TwoLetterISOLanguageName == aLang || ci.ThreeLetterWindowsLanguageName == aLang);
+                    if (temp != null)
+                    {
+                        name = temp.DisplayName;
+                    }
+                    else
+                    {
+                        Log.Instance.Warn("Unable to find CultureInfo for language identifier: '{0}'", name);
+                    }
                 }
                 result.Add(new SitesGroup()
                 {
