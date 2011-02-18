@@ -608,8 +608,16 @@ namespace OnlineVideos.MediaPortal1
                                 if (updatedSite != null)
                                 {
                                     OnlineVideoSettings.Instance.SiteSettingsList[i] = updatedSite;
+                                    localSite = updatedSite;
                                     saveRequired = true;
                                 }
+                            }
+                            // disable local site if status of online site is broken
+                            if (remoteSite.State == OnlineVideos.OnlineVideosWebservice.SiteState.Broken && localSite.IsEnabled)
+                            {
+                                localSite.IsEnabled = false;
+                                OnlineVideoSettings.Instance.SiteSettingsList[i] = localSite;
+                                saveRequired = true;
                             }
                         }
                     }
