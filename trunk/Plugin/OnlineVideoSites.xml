@@ -924,14 +924,20 @@
         <Category xsi:type="RssLink" name="PodSurf">http://www.podsurf.tv/podsurftv.xml</Category>
       </Categories>
     </Site>
-    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sv">
+    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sv" lastUpdated="2011-02-19T17:28:27.0767746+01:00">
       <Description>Se dina favoritprogram när du vill i SVT Play - fri television på nätet.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://svtplay.se/alfabetisk]]></item>
+        <item key="baseUrl"><![CDATA[http://svtplay.se/]]></item>
+        <item key="kategorierRegEx"><![CDATA[<li[^>]*>\s*<div\s+class="container">\s*<a\s+href="(?<url>[^"]+)".*?>\s*<img.*?src="(?<thumb>[^"]+)".*?/>.*?<span\s+class="category-header">(?<title>[^<]+)</span>\s*</a>\s*</div>\s*</li>]]></item>
+        <item key="kategorierSubRegEx"><![CDATA[(<li[^>]*>\s*<a\s+href="[^"]+?(?<url>\d+)[^"]+?">(?<title>[^<]+)</a>\s*</li>)|(<li[^>]*>\s*<a\s+href="[^"]+?(?<url>\d+)[^"]+?"\s+title="(?<description>[^"]+)".*?>\s*<img\s+src="(?<thumb>[^"]+)".*?/>.*?<span>(?<title>[^<]+)</span>\s*</a>\s*</li>)]]></item>
+        <item key="kategorierSubPagingRegEx"><![CDATA[(?<!(clip-browser.*))<li\s+class=""><a\s+href=".*?1,f,-1/(?<url>[^"]+)"\s+class="internal">\d+</a></li>]]></item>
+        <item key="alfabetiskRegEx"><![CDATA[(?<HTML><a[^>]*href\s*=\s*[\"\'']?/t/(?<url>[^/]*)(?<thumb>[^"''>\s]*)[\"\'']?[^>]*>((<img\ssrc='[^']+'\salt="(?<title>[^"]+)"\s/>)|((?<title>[^<]+|.*?)?</a\s*>)))]]></item>
         <item key="dynamicCategoryUrlFormatString"><![CDATA[http://xml.svtplay.se/v1/video/list/{0}]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[(?<HTML><a[^>]*href\s*=\s*[\"\'']?/t/(?<url>[^/]*)(?<thumb>[^"''>\s]*)[\"\'']?[^>]*>((<img\ssrc='[^']+'\salt="(?<title>[^"]+)"\s/>)|((?<title>[^<]+|.*?)?</a\s*>)))]]></item>
       </Configuration>
-      <Categories />
+      <Categories>
+        <Category xsi:type="RssLink" name="Program A-Ö">http://svtplay.se/alfabetisk</Category>
+        <Category xsi:type="RssLink" name="Kategorier">http://svtplay.se/kategorier</Category>
+      </Categories>
     </Site>
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
       <Description>Videos from Swedish TV3 TV4 TV6 TV8 and Sport channels.</Description>
