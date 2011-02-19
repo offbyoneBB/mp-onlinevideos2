@@ -816,5 +816,18 @@ namespace OnlineVideos.MediaPortal1
         }
 
         #endregion
+
+        private void btnWiki_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("http://code.google.com/p/mp-onlinevideos2/wiki/Introduction");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("http://code.google.com/p/mp-onlinevideos2/wiki/Introduction.", "Error opening the Wiki", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
+        }
     }
 }

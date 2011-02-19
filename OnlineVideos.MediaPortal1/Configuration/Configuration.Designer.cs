@@ -118,6 +118,7 @@ namespace OnlineVideos.MediaPortal1
             this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.btnWiki = new System.Windows.Forms.Button();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label21 = new System.Windows.Forms.Label();
@@ -159,6 +160,7 @@ namespace OnlineVideos.MediaPortal1
             this.lblVersion = new System.Windows.Forms.Label();
             this.tabGroups = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.chkAutoGroupByLang = new System.Windows.Forms.CheckBox();
             this.btnBrowseSitesGroupThumb = new System.Windows.Forms.Button();
             this.tbxSitesGroupDesc = new System.Windows.Forms.TextBox();
             this.bindingSourceSitesGroup = new System.Windows.Forms.BindingSource(this.components);
@@ -203,7 +205,6 @@ namespace OnlineVideos.MediaPortal1
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.chkAutoGroupByLang = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -1161,6 +1162,7 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.btnWiki);
             this.tabGeneral.Controls.Add(this.pictureBox5);
             this.tabGeneral.Controls.Add(this.groupBox5);
             this.tabGeneral.Controls.Add(this.pictureBox4);
@@ -1191,6 +1193,17 @@ namespace OnlineVideos.MediaPortal1
             this.tabGeneral.TabIndex = 0;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
+            // 
+            // btnWiki
+            // 
+            this.btnWiki.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.help;
+            this.btnWiki.Location = new System.Drawing.Point(9, 476);
+            this.btnWiki.Name = "btnWiki";
+            this.btnWiki.Size = new System.Drawing.Size(23, 23);
+            this.btnWiki.TabIndex = 67;
+            this.toolTip1.SetToolTip(this.btnWiki, "Open the OnlineVideos Wiki.");
+            this.btnWiki.UseVisualStyleBackColor = true;
+            this.btnWiki.Click += new System.EventHandler(this.btnWiki_Click);
             // 
             // pictureBox5
             // 
@@ -1725,6 +1738,16 @@ namespace OnlineVideos.MediaPortal1
             this.splitContainer1.SplitterDistance = 230;
             this.splitContainer1.TabIndex = 0;
             // 
+            // chkAutoGroupByLang
+            // 
+            this.chkAutoGroupByLang.AutoSize = true;
+            this.chkAutoGroupByLang.Location = new System.Drawing.Point(264, 179);
+            this.chkAutoGroupByLang.Name = "chkAutoGroupByLang";
+            this.chkAutoGroupByLang.Size = new System.Drawing.Size(353, 17);
+            this.chkAutoGroupByLang.TabIndex = 17;
+            this.chkAutoGroupByLang.Text = "Automatically group all sites by their language if no groups are defined";
+            this.chkAutoGroupByLang.UseVisualStyleBackColor = true;
+            // 
             // btnBrowseSitesGroupThumb
             // 
             this.btnBrowseSitesGroupThumb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1845,7 +1868,7 @@ namespace OnlineVideos.MediaPortal1
             this.btnSitesGroupDown});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(24, 205);
+            this.toolStrip2.Size = new System.Drawing.Size(24, 230);
             this.toolStrip2.Stretch = true;
             this.toolStrip2.TabIndex = 0;
             // 
@@ -2204,16 +2227,6 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // chkAutoGroupByLang
-            // 
-            this.chkAutoGroupByLang.AutoSize = true;
-            this.chkAutoGroupByLang.Location = new System.Drawing.Point(264, 179);
-            this.chkAutoGroupByLang.Name = "chkAutoGroupByLang";
-            this.chkAutoGroupByLang.Size = new System.Drawing.Size(353, 17);
-            this.chkAutoGroupByLang.TabIndex = 17;
-            this.chkAutoGroupByLang.Text = "Automatically group all sites by their language if no groups are defined";
-            this.chkAutoGroupByLang.UseVisualStyleBackColor = true;
-            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -2488,5 +2501,6 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.CheckBox chkUseRtmpProxy;
         private System.Windows.Forms.CheckBox chkAutoGroupByLang;
+        private System.Windows.Forms.Button btnWiki;
 	}
 }
