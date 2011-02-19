@@ -1,36 +1,36 @@
-#summary Screen shots of the plugin running in MediaPortal using Blue3Wide skin.
+#summary Screenshots of the plugin running in MediaPortal using Blue3Wide skin.
 
-=Groups View in Small Icon Mode=
+=state: {{{groups}}}, layout: {{{small icons}}}=
 <img width="640" src="https://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg"/>
 
-=Sites View in Small Icon Mode=
+=state: {{{sites}}}, layout: {{{small icons}}}=
 
 <img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg"/>
 
-=Sites View in List Mode=
+=state: {{{sites}}}, layout: {{{list}}}=
 
 <img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg"/>
 
-=Categories View with Side Menu=
+=state: {{{categories}}}, layout: {{{list}}}, showing hidden menu=
 
 <img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg"/>
 
-=Videos View in Small Icon Mode=
+=state: {{{videos}}}, layout: {{{small icons}}}=
 
 <img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg"/>
 
-=Videos View with Side Menu=
+=state: {{{videos}}}, layout: {{{small icons}}}, showing hidden menu=
 
 <img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg"/>
 
-=Videos View with Context Menu=
+=state: {{{videos}}}, layout: {{{small icons}}}, showing context menu=
 
 <img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg"/>
 
-=Details View on Apple Trailers=
+=state: {{{details}}}, selectedSite: {{{iTunes Movie Trailers}}}=
 
 <img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg"/>
 
 =Configuration=
 
-<img src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png"/>
+<img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png"/>
