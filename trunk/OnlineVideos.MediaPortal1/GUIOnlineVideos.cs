@@ -347,6 +347,7 @@ namespace OnlineVideos.MediaPortal1
                         return;
                     }
                     break;
+                case Action.ActionType.ACTION_PLAY:
                 case Action.ActionType.ACTION_MUSIC_PLAY:
                     if (BufferingPlayerFactory != null)
                     {
