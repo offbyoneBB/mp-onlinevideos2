@@ -1,5 +1,8 @@
 #summary Screen shots of the plugin running in MediaPortal using Blue3Wide skin.
 
+=Groups View in Small Icon Mode=
+<img width="640" src="https://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg"/>
+
 =Sites View in Small Icon Mode=
 
 <img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg"/>
