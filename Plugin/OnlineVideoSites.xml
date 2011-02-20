@@ -1093,6 +1093,17 @@
         <Category xsi:type="RssLink" name="Films">http://www.rtl.nl/system/xl/feed/films.xml</Category>
       </Categories>
     </Site>
+    <Site name="TV3NZ" util="TV3NZOnDemand" agecheck="false" enabled="true" lang="en" lastUpdated="2011-02-20T22:38:58.0985192+01:00">
+      <Description>Television New Zealand: TV3, TV four</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="item"\s*><a\shref="(?<url>[^"]*)"\s*(?:title="[^"]*")?\srel="nofollow">(?<title>[^<]*)</a></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="left">(?<Description>[^<]*)</div>\s*</div>\s*<img\ssrc="(?<ImageUrl>[^"]*)"\swidth="145px"\sheight="96px"\stitle="[^"]*"\sclass="imgPadRight"\s*alt="[^"]*"/>\s</div>\s*<h4><a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a></h4>\s*<span\sclass="title">[^<]*</span><br/>\s*<span\sclass="dateAdded"><strong>Air\sDate:</strong>(?<Airdate>[^&]*)&[^\(]*\((?<Duration>[^\)]*)\)</span><br\s/>\s*<[^>]*>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[var\svideo\s="\*(?<m0>[^\*]*)\*(?<m1>[^\*]*)\*(?<m2>[^"]*)";]]></item>
+        <item key="fileUrlFormatString"><![CDATA[rtmpe://nzcontent.mediaworks.co.nz/tv3/_definst_/mp4:/{0}/{1}/{2}_]]></item>
+        <item key="baseUrl"><![CDATA[http://ondemand.tv3.co.nz/tabid/56/default.aspx]]></item>
+      </Configuration>
+      <Categories />
+    </Site>
     <Site name="TvGemist" util="TvGemist" agecheck="false" enabled="true" lang="nl" player="WMP">
       <Description>Alle uitzendingen van Nederland 1,2,3, Net5, Sbs6 en Veronica</Description>
       <Categories />

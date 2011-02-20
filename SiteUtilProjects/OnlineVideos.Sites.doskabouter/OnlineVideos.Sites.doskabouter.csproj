@@ -82,6 +82,7 @@
     <Compile Include="Hoster\Xtream.cs" />
     <Compile Include="Hoster\zShare.cs" />
     <Compile Include="TouTvUtil.cs" />
+    <Compile Include="TV3NZOnDemandUtil.cs" />
     <Compile Include="YleAreenaUtil.cs" />
   </ItemGroup>
   <ItemGroup>
