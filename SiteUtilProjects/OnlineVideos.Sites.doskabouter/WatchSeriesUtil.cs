@@ -293,9 +293,9 @@ namespace OnlineVideos.Sites
                 else
                 {
                     if (newUrl.StartsWith(@"http://watch-movies"))
-                        url = GetRedirectedUrl(@"http://www.watch-movies.ro/open_link.php?input=" + vidId);
+                        url = GetRedirectedUrl(parent.baseUrl + @"/open_link.php?input=" + vidId);
                     else
-                        url = GetRedirectedUrl(@"http://www.watch-series.com/open_link.php?vari=" + vidId);
+                        url = GetRedirectedUrl(parent.baseUrl + @"/open_link.php?vari=" + vidId);
                 }
                 return GetVideoUrl(url);
             }
