@@ -273,6 +273,8 @@ namespace OnlineVideos.MediaPortal1
             if (dlgSel == null) return;
             dlgSel.Reset();
             dlgSel.SetHeading(Translation.Actions);
+            dlgSel.Add(Translation.PlayWith);
+            dialogOptions.Add("PlayWith");
             dlgSel.Add(Translation.PlayAll);
             dialogOptions.Add("PlayAll");
             if (!(SelectedSite is Sites.FavoriteUtil))
@@ -303,35 +305,68 @@ namespace OnlineVideos.MediaPortal1
             if (siteSpecificEntries != null) foreach (string entry in siteSpecificEntries) { dlgSel.Add(entry); dialogOptions.Add(entry); }
             dlgSel.DoModal(GUIWindowManager.ActiveWindow);
             if (dlgSel.SelectedId == -1) return;
-            switch (dialogOptions[dlgSel.SelectedId - 1])
+            else
             {
-                case "PlayAll":
-                    PlayAll();
-                    break;
-                case "AddToFav":
-                    string suggestedTitle = SelectedSite.GetFileNameForDownload(loSelectedVideo, selectedCategory, null);
-                    FavoritesDatabase.Instance.addFavoriteVideo(loSelectedVideo, suggestedTitle, SelectedSite.Settings.Name);
-                    break;
-                case "RemoveFromFav":
-                    FavoritesDatabase.Instance.removeFavoriteVideo(loSelectedVideo);
-                    DisplayVideos_Category(selectedCategory, true); // retrieve videos again and show the updated list
-                    break;
-                case "RelatedVideos":
-                    DisplayVideos_Related(loSelectedVideo);
-                    break;
-                case "Download":
-                    SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = loSelectedVideo, Util = selectedSite } });
-                    break;
-                default:
-                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
-                    {
-                        return SelectedSite.ExecuteContextMenuEntry(selectedCategory, loSelectedVideo, dialogOptions[dlgSel.SelectedId - 1]);
-                    },
-                    delegate(bool success, object result)
-                    {
-                        if (success && result != null && (bool)result) DisplayVideos_Category(selectedCategory, true);
-                    }, ": " + dialogOptions[dlgSel.SelectedId - 1], true);
-                    break;
+                switch (dialogOptions[dlgSel.SelectedId - 1])
+                {
+                    case "PlayWith":
+                        dialogOptions.Clear();
+                        dlgSel.Reset();
+                        dlgSel.SetHeading(Translation.Actions);
+                        dlgSel.Add("MediaPortal");
+                        dialogOptions.Add(OnlineVideos.PlayerType.Internal.ToString());
+                        dlgSel.Add("Windows Media Player");
+                        dialogOptions.Add(OnlineVideos.PlayerType.WMP.ToString());
+                        if (Vlc.DotNet.Forms.VlcManager.IsInstalled)
+                        {
+                            dlgSel.Add("VLC media player");
+                            dialogOptions.Add(OnlineVideos.PlayerType.VLC.ToString());
+                        }
+                        dlgSel.DoModal(GUIWindowManager.ActiveWindow);
+                        if (dlgSel.SelectedId == -1) return;
+                        else
+                        {
+                            OnlineVideos.PlayerType forcedPlayer = (OnlineVideos.PlayerType)Enum.Parse(typeof(OnlineVideos.PlayerType), dialogOptions[dlgSel.SelectedId - 1]);
+                            //play the video
+                            currentPlaylist = null;
+                            currentPlayingItem = null;
+                            Play_Step1(new PlayListItem(null, null)
+                                    {
+                                        Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
+                                        Video = loSelectedVideo,
+                                        Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite,
+                                        ForcedPlayer = forcedPlayer
+                                    }, true);
+                        }
+                break;
+                    case "PlayAll":
+                        PlayAll();
+                        break;
+                    case "AddToFav":
+                        string suggestedTitle = SelectedSite.GetFileNameForDownload(loSelectedVideo, selectedCategory, null);
+                        FavoritesDatabase.Instance.addFavoriteVideo(loSelectedVideo, suggestedTitle, SelectedSite.Settings.Name);
+                        break;
+                    case "RemoveFromFav":
+                        FavoritesDatabase.Instance.removeFavoriteVideo(loSelectedVideo);
+                        DisplayVideos_Category(selectedCategory, true); // retrieve videos again and show the updated list
+                        break;
+                    case "RelatedVideos":
+                        DisplayVideos_Related(loSelectedVideo);
+                        break;
+                    case "Download":
+                        SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = loSelectedVideo, Util = selectedSite } });
+                        break;
+                    default:
+                        Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                        {
+                            return SelectedSite.ExecuteContextMenuEntry(selectedCategory, loSelectedVideo, dialogOptions[dlgSel.SelectedId - 1]);
+                        },
+                        delegate(bool success, object result)
+                        {
+                            if (success && result != null && (bool)result) DisplayVideos_Category(selectedCategory, true);
+                        }, ": " + dialogOptions[dlgSel.SelectedId - 1], true);
+                        break;
+                }
             }
         }
 
@@ -1726,6 +1761,7 @@ namespace OnlineVideos.MediaPortal1
                     pli.Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream;
                     pli.Video = vi;
                     pli.Util = playItem.Util;
+                    pli.ForcedPlayer = playItem.ForcedPlayer;
                     playbackItems.Add(pli);
                 }
                 if (currentPlaylist == null)
@@ -1802,7 +1838,7 @@ namespace OnlineVideos.MediaPortal1
                                 string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(lsUrl)));
             }
 
-            OnlineVideos.MediaPortal1.Player.PlayerFactory factory = new OnlineVideos.MediaPortal1.Player.PlayerFactory(playItem.Util.Settings.Player, lsUrl);
+            OnlineVideos.MediaPortal1.Player.PlayerFactory factory = new OnlineVideos.MediaPortal1.Player.PlayerFactory(playItem.ForcedPlayer != null ? playItem.ForcedPlayer.Value : playItem.Util.Settings.Player, lsUrl);
             if (factory.PreparedPlayerType != PlayerType.Internal)
             {
                 // external players can only be created on the main thread

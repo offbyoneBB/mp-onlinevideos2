@@ -102,6 +102,7 @@
 
   <!-- P -->
   <string Field="PlayAll">Play all</string>
+  <string Field="PlayWith">Play with ...</string>
   <string Field="PlotOutline">Plot outline</string>
   <string Field="PreviousPage">Previous page</string>
   <string Field="PerformAutomaticUpdate">Perform automatic update?</string>

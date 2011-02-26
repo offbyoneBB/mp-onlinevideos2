@@ -142,6 +142,8 @@ namespace OnlineVideos.MediaPortal1.Player
         /// <returns>true, when playback can be started</returns>
         public bool BufferFile()
         {
+            VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent; // prevents the BlackRectangle on first time playback
+
             Uri uri = new Uri(CurrentFile);
             bool PlaybackReady = false;
             IBaseFilter sourceFilter = null;
@@ -395,6 +397,12 @@ namespace OnlineVideos.MediaPortal1.Player
             CloseInterfaces();
             m_state = PlayState.Init;
             GUIGraphicsContext.IsPlaying = false;
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            GUIPropertyManager.SetProperty("#TV.Record.percent3", 0.0f.ToString());
         }
     }
 }

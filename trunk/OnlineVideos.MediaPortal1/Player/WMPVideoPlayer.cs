@@ -12,87 +12,42 @@ namespace OnlineVideos.MediaPortal1.Player
 {
     public class WMPVideoPlayer : IPlayer
     {
-        public enum PlayState { Init, Playing, Paused, Ended };
+        enum PlayState { Init, Playing, Paused, Ended };
 
-        private static AxWindowsMediaPlayer _wmp10Player = null;
-        private string _currentFile = "";
-        private PlayState _graphState = PlayState.Init;
-        private bool _isFullScreen = false;
-        private int _positionX = 10, _positionY = 10, _videoWidth = 100, _videoHeight = 100;
-        private bool _needUpdate = true;
-        private bool _notifyPlaying = true;
-        private bool _bufferCompleted = true;
-        private bool _criticalErrorEncountered = false;
-        private OSDController _osd;
-        private bool _osdActive = false;
+        AxWindowsMediaPlayer _wmp10Player = null;
+        PlayState _graphState = PlayState.Init;
+        OSDController _osd;
+        int _positionX = 10, _positionY = 10, _videoWidth = 100, _videoHeight = 100;
+        string _currentFile = "";
+        bool _needUpdate = true;
+        bool _bufferCompleted = true;
+        bool _isFullScreen;
+        bool _criticalErrorEncountered;
+        
 
-        private static void CreateInstance()
+        public override bool Play(string strFile)
         {
-            if (_wmp10Player != null) return; // single instance
+            Log.Instance.Info("WMPVideoPlayer.Play '{0}'", strFile);
+
+            _currentFile = strFile;
 
             _wmp10Player = new AxWindowsMediaPlayer();
-            _wmp10Player.BeginInit();
-            GUIGraphicsContext.form.SuspendLayout();
-            _wmp10Player.Enabled = true;
-
-            //ComponentResourceManager resources = new ComponentResourceManager(typeof (Resource1));
-            _wmp10Player.Location = new Point(8, 16);
-            _wmp10Player.Name = "axWindowsMediaPlayer1";
-            //_wmp10Player.OcxState = ((AxHost.State) (resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            _wmp10Player.Size = new Size(264, 240);
-            _wmp10Player.TabIndex = 0;
-
             GUIGraphicsContext.form.Controls.Add(_wmp10Player);
-
-            try { _wmp10Player.EndInit(); }
-            catch { }
-
+            _wmp10Player.Enabled = false;
             _wmp10Player.uiMode = "none";
             _wmp10Player.windowlessVideo = true;
             _wmp10Player.enableContextMenu = false;
             _wmp10Player.Ctlenabled = false;
-            _wmp10Player.ClientSize = new Size(0, 0);
             _wmp10Player.Visible = false;
-            GUIGraphicsContext.form.ResumeLayout(false);
+            _wmp10Player.ClientSize = new Size(0, 0);
 
-        }
-
-        public override bool Play(string strFile)
-        {
-            _criticalErrorEncountered = false;
-            _graphState = PlayState.Init;
-            _currentFile = strFile;
-
-            Log.Instance.Info("WMPVideoPlayer: Disabling DX9 exclusive mode");
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-            GUIWindowManager.SendMessage(msg);
-
-            _notifyPlaying = true;
-            GC.Collect();
-            CreateInstance();
-
-            if (_wmp10Player == null) return false;
-
-            VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
             _wmp10Player.ErrorEvent += OnError;
             _wmp10Player.PlayStateChange += OnPlayStateChange;
             _wmp10Player.Buffering += OnBuffering;
-
-            if (_osd == null)
-            {
-                _osd = OSDController.getInstance();
-                GUIWindowManager.OnNewAction += GUIWindowManager_OnNewAction;
-            }
-
-            //_wmp10Player.enableContextMenu = false;
-            //_wmp10Player.Ctlenabled = false;
-            Log.Instance.Info("WMPVideoPlayer:play {0}", strFile);
+            
             _wmp10Player.URL = strFile;
-
             _wmp10Player.network.bufferingTime = PluginConfiguration.Instance.wmpbuffer;
             _wmp10Player.Ctlcontrols.play();
-            _wmp10Player.ClientSize = new Size(0, 0);
-            _wmp10Player.Visible = false;
 
             // When file is internetstream
             if (_wmp10Player.URL.ToLower().StartsWith("http") || _wmp10Player.URL.ToLower().StartsWith("mms") || _wmp10Player.URL.ToLower().StartsWith("sop"))
@@ -116,10 +71,6 @@ namespace OnlineVideos.MediaPortal1.Player
                             if (_wmp10Player.playState.Equals(WMPPlayState.wmppsReady))
                             {
                                 _criticalErrorEncountered = true;
-                            }
-                            if (GUIGraphicsContext.Overlay)
-                            {
-                                GUIGraphicsContext.Overlay = false;
                             }
                             _graphState = PlayState.Playing;
                             GUIWindowManager.Process();
@@ -148,8 +99,8 @@ namespace OnlineVideos.MediaPortal1.Player
 
             GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
             msgPb.Label = strFile;
-
             GUIWindowManager.SendThreadMessage(msgPb);
+
             _graphState = PlayState.Playing;
             GC.Collect();
             _needUpdate = true;
@@ -161,47 +112,9 @@ namespace OnlineVideos.MediaPortal1.Player
 
             SetVideoWindow();
 
-            return true;
-        }
+            _osd = OSDController.Instance;
 
-        void GUIWindowManager_OnNewAction(Action action)
-        {
-            if (_graphState == PlayState.Playing || _graphState == PlayState.Paused)
-            {
-                switch (action.wID)
-                {
-                    case Action.ActionType.ACTION_BIG_STEP_FORWARD:
-                    case Action.ActionType.ACTION_BIG_STEP_BACK:
-                    case Action.ActionType.ACTION_STEP_BACK:
-                    case Action.ActionType.ACTION_STEP_FORWARD:
-                    case Action.ActionType.ACTION_SHOW_OSD:
-                    case Action.ActionType.ACTION_CONTEXT_MENU:
-                        if (!_osdActive) { _osd.Activate(); _osdActive = true; }
-                        break;
-                    case Action.ActionType.ACTION_VOLUME_MUTE:
-                        _wmp10Player.settings.mute = VolumeHandler.Instance.IsMuted;
-                        if (!_osdActive) { _osd.Activate(); _osdActive = true; }
-                        break;
-                    case Action.ActionType.ACTION_VOLUME_DOWN:
-                        _wmp10Player.settings.volume = (int)((double)MediaPortal.Player.VolumeHandler.Instance.Previous / MediaPortal.Player.VolumeHandler.Instance.Maximum * 100);
-                        if (!_osdActive) { _osd.Activate(); _osdActive = true; }
-                        break;
-                    case Action.ActionType.ACTION_VOLUME_UP:
-                        _wmp10Player.settings.volume = (int)((double)VolumeHandler.Instance.Next / MediaPortal.Player.VolumeHandler.Instance.Maximum * 100);
-                        if (!_osdActive) { _osd.Activate(); _osdActive = true; }
-                        break;
-                    default:
-                        Action translatedAction = new Action();
-                        if (ActionTranslator.GetAction((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO, action.m_key, ref translatedAction))
-                        {
-                            if (translatedAction.wID == Action.ActionType.ACTION_SHOW_OSD)
-                            {
-                                if (!_osdActive) { _osd.Activate(); _osdActive = true; }
-                            }
-                        }
-                        break;
-                }
-            }
+            return true;
         }
 
         private void OnPlayStateChange(object sender, _WMPOCXEvents_PlayStateChangeEvent e)
@@ -265,7 +178,6 @@ namespace OnlineVideos.MediaPortal1.Player
             //}
             Log.Instance.Info("WMPVideoPlayer:ended {0} {1}", _currentFile, bManualStop);
             _currentFile = "";
-            if (_osdActive) { _osd.Deactivate(); _osdActive = false; }
             if (_wmp10Player != null)
             {
                 _bufferCompleted = true;
@@ -335,13 +247,11 @@ namespace OnlineVideos.MediaPortal1.Player
             }
             if (_graphState == PlayState.Paused)
             {
-                if (_osdActive) { _osd.Deactivate(); _osdActive = false; }
                 _graphState = PlayState.Playing;
                 _wmp10Player.Ctlcontrols.play();
             }
             else if (_graphState == PlayState.Playing)
             {
-                if (!_osdActive) { _osd.Activate(); _osdActive = true; }
                 _wmp10Player.Ctlcontrols.pause();
                 if (_wmp10Player.playState == WMPPlayState.wmppsPaused)
                 {
@@ -423,32 +333,6 @@ namespace OnlineVideos.MediaPortal1.Player
             get { return false; }
         }
 
-        #region IDisposable Members
-
-        public override void Dispose()
-        {
-            GUIWindowManager.OnNewAction -= GUIWindowManager_OnNewAction;
-
-            try { if (_osd != null) _osd.Dispose(); }
-            catch (Exception ex) { Log.Instance.Warn(ex.ToString()); }
-
-            if (_wmp10Player != null)
-            {
-                try
-                {
-
-                    _wmp10Player.ClientSize = new Size(0, 0);
-                    _wmp10Player.Visible = false;
-                    // GUIGraphicsContext.form.Controls.Remove(_wmp10Player);
-                    _wmp10Player.Dispose();
-                    _wmp10Player = null;
-                }
-                catch (Exception ex) { Log.Instance.Warn(ex.ToString()); }
-            }
-        }
-
-        #endregion
-
         public override bool FullScreen
         {
             get { return GUIGraphicsContext.IsFullScreenVideo; }
@@ -516,52 +400,27 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public override void Process()
         {
-            if (!Playing)
+            if (_wmp10Player != null && Playing)
             {
-                return;
-            }
-            if (_wmp10Player == null)
-            {
-                return;
-            }
+                if (_osd != null) _osd.UpdateGUI();
 
-            if (_osd != null)
-            {
-                if (!_osdActive && GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU) { _osd.Activate(); _osdActive = true; }
-                _osd.UpdateGUI();
-            }
-
-            if (GUIGraphicsContext.BlankScreen ||
-                (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
-            {
-                if (_wmp10Player.Visible)
+                if (GUIGraphicsContext.BlankScreen ||
+                    (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
                 {
-                    _wmp10Player.ClientSize = new Size(0, 0);
-                    _wmp10Player.Visible = false;
-                    //_wmp10Player.uiMode = "invisible";
+                    if (_wmp10Player.Visible)
+                    {
+                        _wmp10Player.ClientSize = new Size(0, 0);
+                        _wmp10Player.Visible = false;
+                    }
                 }
-            }
-            else if (!_wmp10Player.Visible)
-            {
-                _needUpdate = true;
-                SetVideoWindow();
-                //_wmp10Player.uiMode = "none";
-                _wmp10Player.Visible = true;
-            }
-
-            if (CurrentPosition >= 10.0)
-            {
-                if (_notifyPlaying)
+                else if (!_wmp10Player.Visible)
                 {
-                    _notifyPlaying = false;
-                    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC, 0, 0, 0, 0, 0, null);
-                    msg.Label = CurrentFile;
-                    GUIWindowManager.SendThreadMessage(msg);
+                    _needUpdate = true;
+                    SetVideoWindow();
+                    _wmp10Player.Visible = true;
                 }
             }
         }
-
-        public delegate void SafeInvoke();
 
         public override void SetVideoWindow()
         {
@@ -582,22 +441,18 @@ namespace OnlineVideos.MediaPortal1.Player
 
             if (_isFullScreen)
             {
-                Log.Instance.Info("WMPVideoPlayer:Fullscreen");
-
                 _positionX = GUIGraphicsContext.OverScanLeft;
                 _positionY = GUIGraphicsContext.OverScanTop;
                 _videoWidth = GUIGraphicsContext.OverScanWidth;
                 _videoHeight = GUIGraphicsContext.OverScanHeight;
 
-                SafeInvoke si = new SafeInvoke(delegate()
-                                                 {
-                                                     _wmp10Player.Location = new Point(0, 0);
-                                                     _wmp10Player.ClientSize = new Size(GUIGraphicsContext.Width,
-                                                                                        GUIGraphicsContext.Height);
-                                                     _wmp10Player.Size = new Size(GUIGraphicsContext.Width,
-                                                                                  GUIGraphicsContext.Height);
-                                                     _wmp10Player.stretchToFit = true;
-                                                 });
+                System.Action si = () =>
+                    {
+                        _wmp10Player.Location = new Point(0, 0);
+                        _wmp10Player.ClientSize = new Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
+                        _wmp10Player.Size = new Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
+                        _wmp10Player.stretchToFit = true;
+                    };
 
                 if (_wmp10Player.InvokeRequired)
                 {
@@ -611,18 +466,14 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 _videoRectangle = new Rectangle(0, 0, _wmp10Player.ClientSize.Width, _wmp10Player.ClientSize.Height);
                 _sourceRectangle = _videoRectangle;
-
-                //_wmp10Player.fullScreen=true;
-                Log.Instance.Info("WMPVideoPlayer:done");
-                return;
             }
             else
             {
-                SafeInvoke si = new SafeInvoke(delegate()
-                                                 {
-                                                     _wmp10Player.ClientSize = new Size(_videoWidth, _videoHeight);
-                                                     _wmp10Player.Location = new Point(_positionX, _positionY);
-                                                 });
+                System.Action si = () =>
+                    {
+                        _wmp10Player.ClientSize = new Size(_videoWidth, _videoHeight);
+                        _wmp10Player.Location = new Point(_positionX, _positionY);
+                    };
                 if (_wmp10Player.InvokeRequired)
                 {
                     IAsyncResult iar = _wmp10Player.BeginInvoke(si);
@@ -637,43 +488,15 @@ namespace OnlineVideos.MediaPortal1.Player
                 _sourceRectangle = _videoRectangle;
                 //Log.Instance.Info("WMPVideoPlayer:set window:({0},{1})-({2},{3})",_positionX,_positionY,_positionX+_wmp10Player.ClientSize.Width,_positionY+_wmp10Player.ClientSize.Height);
             }
-            //_wmp10Player.uiMode = "none";
-            //_wmp10Player.windowlessVideo = true;
-            //_wmp10Player.enableContextMenu = false;
-            //_wmp10Player.Ctlenabled = false;
-            GUIGraphicsContext.form.Controls[0].Enabled = false;
         }
 
-        /*
-            public override int AudioStreams
-            {
-              get { return _wmp10Player.Ctlcontrols.audioLanguageCount;}
-            }
-            public override int CurrentAudioStream
-            {
-              get { return _wmp10Player.Ctlcontrols.currentAudioLanguage;}
-              set { _wmp10Player.Ctlcontrols.currentAudioLanguage=value;}
-            }
-            public override string AudioLanguage(int iStream)
-            {
-              return _wmp10Player.controls.getLanguageName(iStream);
-            }
-        */
-
+        
         public override void SeekRelative(double dTime)
         {
-            if (_wmp10Player == null)
+            if (_wmp10Player != null && _graphState != PlayState.Init)
             {
-                return;
-            }
-            if (_graphState != PlayState.Init)
-            {
-                double dCurTime = CurrentPosition;
-                dTime = dCurTime + dTime;
-                if (dTime < 0.0d)
-                {
-                    dTime = 0.0d;
-                }
+                dTime = CurrentPosition + dTime;
+                if (dTime < 0.0d) dTime = 0.0d;
                 if (dTime < Duration)
                 {
                     _wmp10Player.Ctlcontrols.currentPosition = dTime;
@@ -683,43 +506,25 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public override void SeekAbsolute(double dTime)
         {
-            if (_wmp10Player == null)
+            if (_wmp10Player != null && _graphState != PlayState.Init)
             {
-                return;
-            }
-            if (_graphState != PlayState.Init)
-            {
-                if (dTime < 0.0d)
-                {
-                    dTime = 0.0d;
-                }
+                if (dTime < 0.0d) dTime = 0.0d;
                 if (dTime < Duration)
                 {
                     _wmp10Player.Ctlcontrols.currentPosition = dTime;
                 }
-                if (_osdActive) { _osd.Deactivate(); _osdActive = false; }
             }
         }
 
         public override void SeekRelativePercentage(int iPercentage)
         {
-            if (_wmp10Player == null)
+            if (_wmp10Player != null && _graphState != PlayState.Init)
             {
-                return;
-            }
-            if (_graphState != PlayState.Init)
-            {
-                double dCurrentPos = CurrentPosition;
-                double dDuration = Duration;
-
-                double fCurPercent = (dCurrentPos / Duration) * 100.0d;
+                double fCurPercent = (CurrentPosition / Duration) * 100.0d;
                 double fOnePercent = Duration / 100.0d;
                 fCurPercent = fCurPercent + (double)iPercentage;
                 fCurPercent *= fOnePercent;
-                if (fCurPercent < 0.0d)
-                {
-                    fCurPercent = 0.0d;
-                }
+                if (fCurPercent < 0.0d) fCurPercent = 0.0d;
                 if (fCurPercent < Duration)
                 {
                     _wmp10Player.Ctlcontrols.currentPosition = fCurPercent;
@@ -727,23 +532,12 @@ namespace OnlineVideos.MediaPortal1.Player
             }
         }
 
-
         public override void SeekAsolutePercentage(int iPercentage)
         {
-            if (_wmp10Player == null)
+            if (_wmp10Player != null && _graphState != PlayState.Init)
             {
-                return;
-            }
-            if (_graphState != PlayState.Init)
-            {
-                if (iPercentage < 0)
-                {
-                    iPercentage = 0;
-                }
-                if (iPercentage >= 100)
-                {
-                    iPercentage = 100;
-                }
+                if (iPercentage < 0) iPercentage = 0;
+                else if (iPercentage >= 100) iPercentage = 100;
                 double fPercent = Duration / 100.0f;
                 fPercent *= (double)iPercentage;
                 _wmp10Player.Ctlcontrols.currentPosition = fPercent;
@@ -754,40 +548,35 @@ namespace OnlineVideos.MediaPortal1.Player
         {
             get
             {
-                if (_graphState == PlayState.Init)
-                {
+                if (_wmp10Player == null || _graphState == PlayState.Init || _graphState == PlayState.Ended || !_wmp10Player.settings.get_isAvailable("Rate"))
                     return 1;
-                }
-                if (_wmp10Player == null)
-                {
-                    return 1;
-                }
-                return (int)_wmp10Player.settings.rate;
+                else 
+                    return (int)_wmp10Player.settings.rate;
             }
             set
             {
-                if (_wmp10Player == null)
+                if (_wmp10Player != null && _graphState != PlayState.Init && _graphState != PlayState.Ended && _wmp10Player.settings.get_isAvailable("Rate"))
                 {
-                    return;
-                }
-                if (_graphState != PlayState.Init)
-                {
-                    if (value < 0)
+                    try
                     {
-                        _wmp10Player.Ctlcontrols.currentPosition += (double)value;
+                        _wmp10Player.settings.rate = (double)value;
                     }
-                    else
-                    {
-                        try
-                        {
-                            _wmp10Player.settings.rate = (double)value;
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
+                    catch { }
                 }
             }
         }
+
+        #region IDisposable Members
+
+        public override void Dispose()
+        {
+            try { if (_osd != null) _osd.Dispose(); }
+            catch (Exception ex) { Log.Instance.Warn(ex.ToString()); }
+
+            try { if (_wmp10Player != null)_wmp10Player.Dispose(); }
+            catch (Exception ex) { Log.Instance.Warn(ex.ToString()); }
+        }
+
+        #endregion
     }
 }

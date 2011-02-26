@@ -11,7 +11,8 @@ namespace OnlineVideos
     {
         [XmlEnum(Name = "Auto")] Auto,
         [XmlEnum(Name = "Internal")] Internal,
-        [XmlEnum(Name = "WMP")] WMP
+        [XmlEnum(Name = "WMP")] WMP,
+        [XmlEnum(Name = "VLC")] VLC
     }
 
     [DataContract(Name = "OnlineVideoSites")]

@@ -163,6 +163,39 @@
     <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Player\PlayerFactory.cs" />
     <Compile Include="Player\PlayListItem.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\AudioChannels.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\AudioDeviceTypes.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\CommonStrings.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Extensions\IntPtrExtensions.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\FileMedia.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Helpers\EventsHelper.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlc.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcEvents.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcMedia.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcMediaPlayer.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcStructures.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\MediaBase.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\MediaNotAttachedToVlcControlException.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\MediaStates.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\MediaStatistics.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\MediaTrackInfos.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\MediaTrackTypes.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\MediaTypes.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\MetaTypes.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\MrlMedia.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\PlayerNotAttachedToVlcControlException.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VideoAdjustOptions.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VideoLogoOptions.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcEventArgs%27.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcEventHandler%27.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Forms\VlcControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Forms\VlcLogOptions.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Forms\VlcManager.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Player\VLCPlayer.cs" />
     <Compile Include="Player\WMPVideoPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
