@@ -70,25 +70,29 @@
       <Description>Mediathek des Zweiten Deutschen Fernsehens.</Description>
       <Categories />
     </Site>
-    <Site name="3sat" util="GenericSite" agecheck="false" enabled="true" lang="de">
+    <Site name="3sat" util="GenericSite" agecheck="false" enabled="true" lang="de" lastUpdated="2011-02-26T19:57:33.9610361+01:00">
       <Description>Einziges öffentlich-rechtliches Gemeinschaftsprogramm des deutschen Sprachraums (ZDF – ORF – SRG – ARD).</Description>
       <Categories>
-        <Category xsi:type="RssLink" name="Kulturzeit">http://www.3sat.de/mediathek/rss/mediathek_Kulturzeit.xml</Category>
-        <Category xsi:type="RssLink" name="nano">http://www.3sat.de/mediathek/rss/mediathek_nano.xml</Category>
-        <Category xsi:type="RssLink" name="hitec">http://www.3sat.de/mediathek/rss/mediathek_hitec.xml</Category>
-        <Category xsi:type="RssLink" name="scobel">http://www.3sat.de/mediathek/rss/mediathek_scobel.xml</Category>
-        <Category xsi:type="RssLink" name="3satbörse">http://www.3sat.de/mediathek/rss/mediathek_boerse.xml</Category>
-        <Category xsi:type="RssLink" name="Bauerfeind">http://www.3sat.de/mediathek/rss/mediathek_bauerfeind.xml</Category>
-        <Category xsi:type="RssLink" name="vivo">http://www.3sat.de/mediathek/rss/mediathek_vivo.xml</Category>
-        <Category xsi:type="RssLink" name="neues">http://www.3sat.de/mediathek/rss/mediathek_neues.xml</Category>
-        <Category xsi:type="RssLink" name="bookmark">http://www.3sat.de/mediathek/rss/mediathek_bookmark.xml</Category>
-        <Category xsi:type="RssLink" name="Peter Voß fragt">http://www.3sat.de/mediathek/rss/mediathek_begegnungen.xml</Category>
-        <Category xsi:type="RssLink" name="Gero von Boehm">http://www.3sat.de/mediathek/rss/mediathek_gero.xml</Category>
-        <Category xsi:type="RssLink" name="hessenreporter ">http://www.3sat.de/mediathek/rss/mediathek_hessenreporter.xml</Category>
-        <Category xsi:type="RssLink" name="Recht brisant ">http://www.3sat.de/mediathek/rss/mediathek_Recht%20brisant.xml</Category>
-        <Category xsi:type="RssLink" name="Kabarett">http://www.3sat.de/mediathek/rss/mediathek_kabarett.xml</Category>
-        <Category xsi:type="RssLink" name="Musik">http://www.3sat.de/mediathek/rss/mediathek_musik.xml</Category>
-        <Category xsi:type="RssLink" name="Theater und Foyer ">http://www.3sat.de/mediathek/rss/mediathek_theater.xml</Category>
+        <Category xsi:type="RssLink" name="Kulturzeit" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_kulturzeit.jpg">http://www.3sat.de/mediathek/rss/mediathek_Kulturzeit.xml</Category>
+        <Category xsi:type="RssLink" name="nano" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_nano.jpg">http://www.3sat.de/mediathek/rss/mediathek_nano.xml</Category>
+        <Category xsi:type="RssLink" name="hitec" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_hitec.jpg">http://www.3sat.de/mediathek/rss/mediathek_hitec.xml</Category>
+        <Category xsi:type="RssLink" name="scobel" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_scobel.jpg">http://www.3sat.de/mediathek/rss/mediathek_scobel.xml</Category>
+        <Category xsi:type="RssLink" name="3satbörse" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_boerse.jpg">http://www.3sat.de/mediathek/rss/mediathek_boerse.xml</Category>
+        <Category xsi:type="RssLink" name="Hessenreporter" thumb="http://www.3sat.de/dynamic/mediathek/images/m_hessenreporter.jpg">http://www.3sat.de/mediathek/rss/mediathek_hessenreporter.xml</Category>
+        <Category xsi:type="RssLink" name="vivo" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_vivo.jpg">http://www.3sat.de/mediathek/rss/mediathek_vivo.xml</Category>
+        <Category xsi:type="RssLink" name="SchweizWeit" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_schweizweit.jpg">http://www.3sat.de/mediathek/rss/mediathek_schweizweit.xml</Category>
+        <Category xsi:type="RssLink" name="neues" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_neues.jpg">http://www.3sat.de/mediathek/rss/mediathek_neues.xml</Category>
+        <Category xsi:type="RssLink" name="bookmark" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_bookmark.jpg">http://www.3sat.de/mediathek/rss/mediathek_bookmark.xml</Category>
+        <Category xsi:type="RssLink" name="Peter Voß fragt" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_petervossfragt.jpg">http://www.3sat.de/mediathek/rss/mediathek_begegnungen.xml</Category>
+        <Category xsi:type="RssLink" name="Gero von Boehm" thumb="http://www.3sat.de/dynamic/mediathek/images/m_gero.jpg">http://www.3sat.de/mediathek/rss/mediathek_gero.xml</Category>
+        <Category xsi:type="RssLink" name="Bauerfeind" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_bauerfeind.jpg">http://www.3sat.de/mediathek/rss/mediathek_bauerfeind.xml</Category>
+        <Category xsi:type="RssLink" name="Buchzeit" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_buchzeit.jpg">http://www.3sat.de/mediathek/rss/mediathek_buchzeit.xml</Category>
+        <Category xsi:type="RssLink" name="Delta" thumb="http://www.3sat.de/dynamic/mediathek/images/m_delta.jpg">http://www.3sat.de/mediathek/rss/mediathek_delta.xml</Category>
+        <Category xsi:type="RssLink" name="Kabarett" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_kabarett.jpg">http://www.3sat.de/mediathek/rss/mediathek_kabarett.xml</Category>
+        <Category xsi:type="RssLink" name="Film" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_film.jpg">http://www.3sat.de/mediathek/rss/mediathek_film.xml</Category>
+        <Category xsi:type="RssLink" name="Musik" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_musik.jpg">http://www.3sat.de/mediathek/rss/mediathek_musik.xml</Category>
+        <Category xsi:type="RssLink" name="Theater und Foyer" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_theater.jpg">http://www.3sat.de/mediathek/rss/mediathek_theater.xml</Category>
+        <Category xsi:type="RssLink" name="Recht brisant" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_rechtbrisant.jpg">http://www.3sat.de/mediathek/rss/mediathek_Recht%20brisant.xml</Category>
       </Categories>
     </Site>
     <Site name="Arte+7" util="ArtePlus7" agecheck="false" enabled="true" lang="de">
