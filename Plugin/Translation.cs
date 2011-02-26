@@ -107,6 +107,7 @@ namespace OnlineVideos
 
         // P
         public static string PlayAll = "Play all";
+        public static string PlayWith = "Play with ...";
         public static string PlotOutline = "Plot outline";
         public static string PreviousPage = "Previous page";
         public static string PerformAutomaticUpdate = "Perform automatic update?";

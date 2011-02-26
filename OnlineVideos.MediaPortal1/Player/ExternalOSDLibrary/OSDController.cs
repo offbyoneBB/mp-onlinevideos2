@@ -26,6 +26,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using System.Diagnostics;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -123,6 +124,8 @@ namespace ExternalOSDLibrary
     /// Rectangle of the video window
     /// </summary>
     private Rectangle _videoRectangle;
+
+    private bool _isActive;
     #endregion
 
     #region ctor
@@ -130,13 +133,16 @@ namespace ExternalOSDLibrary
     /// Returns the singleton instance
     /// </summary>
     /// <returns>Singleton instance</returns>
-    public static OSDController getInstance()
+    public static OSDController Instance
     {
-      if (singleton == null)
-      {
-        singleton = new OSDController();
-      }
-      return singleton;
+        get
+        {
+            if (singleton == null)
+            {
+                singleton = new OSDController();
+            }
+            return singleton;
+        }
     }
 
     /// <summary>
@@ -155,28 +161,23 @@ namespace ExternalOSDLibrary
       }
     }
     #endregion
-
+     
     #region public methods
-    /// <summary>
-    /// Activates the osd. This methods must be called first, otherwise nothing will displayed
-    /// </summary>
-    public void Activate()
-    {
-      _fullscreen = g_Player.Player != null && g_Player.FullScreen;
-      if (GUIGraphicsContext.VideoWindow != null)
-      {
-        _videoRectangle = GUIGraphicsContext.VideoWindow;
-      }
-      _osdForm.ShowForm();
-      _needUpdate = true;
-      UpdateGUI();
-    }
 
     /// <summary>
     /// Performs an update on the osd, should be called from the process method of the player
     /// </summary>
     public void UpdateGUI()
     {
+        if (!_isActive && GUIGraphicsContext.IsFullScreenVideo && !g_Player.Stopped /* && (GUIWindowManager.IsOsdVisible || g_Player.Paused || g_Player.Speed != 1 || GUIWindowManager.RoutedWindow != -1)*/)
+        {
+            Activate();
+        }
+        else if (_isActive && !GUIGraphicsContext.IsFullScreenVideo)
+        {
+            Deactivate();
+        }
+
       bool a1 = _needUpdate;
       bool a2 = _videoOSDWindow.CheckForUpdate();
       bool a3 = _dialogWindow.CheckForUpdate();
@@ -249,14 +250,6 @@ namespace ExternalOSDLibrary
     }
 
     /// <summary>
-    /// Deactivates the osd. Nothing will be displayed until it will be reactivated.
-    /// </summary>
-    public void Deactivate()
-    {
-      _osdForm.Hide();
-    }
-    
-    /// <summary>
     /// Shows additional osd information
     /// </summary>
     /// <param name="label">Label content</param>
@@ -316,6 +309,31 @@ namespace ExternalOSDLibrary
     #endregion
 
     #region private methods
+
+    /// <summary>
+    /// Activates the osd. This methods must be called first, otherwise nothing will displayed
+    /// </summary>
+    private void Activate()
+    {
+        _fullscreen = g_Player.Player != null && g_Player.FullScreen;
+        if (GUIGraphicsContext.VideoWindow != null)
+        {
+            _videoRectangle = GUIGraphicsContext.VideoWindow;
+        }
+        _osdForm.ShowForm();
+        _needUpdate = true;
+        _isActive = true;
+    }
+
+    /// <summary>
+    /// Deactivates the osd. Nothing will be displayed until it will be reactivated.
+    /// </summary>
+    private void Deactivate()
+    {
+        _osdForm.Hide();
+        _isActive = false;
+    }
+    
     /// <summary>
     /// Event handler to adjust this form to the new location/size of the parent
     /// </summary>

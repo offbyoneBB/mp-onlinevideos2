@@ -74,6 +74,7 @@
   <string Field="NewSearch">Neue Suche</string>
   <string Field="Others">Sonstige</string>
   <string Field="PlayAll">Alle abspielen</string>
+  <string Field="PlayWith">Abspielen mit ...</string>
   <string Field="PlotOutline">Handlung</string>
   <string Field="PreviousPage">Vorherige Seite</string>
   <string Field="PerformAutomaticUpdate">Automatische Aktualisierung ausführen?</string>
