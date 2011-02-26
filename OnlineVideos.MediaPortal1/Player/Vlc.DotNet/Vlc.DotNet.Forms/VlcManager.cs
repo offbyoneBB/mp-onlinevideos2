@@ -16,6 +16,7 @@ namespace Vlc.DotNet.Forms
         public VlcManager()
         {
             PluginsPath = CommonStrings.PLUGINS_PATH_DEFAULT_VALUE;
+            if (IsInstalled) PluginsPath = Path.Combine(vlcPath, "plugins");
             ScreenSaverEnabled = false;
             LogOptions = new VlcLogOptions();
             IgnoreConfig = true;
