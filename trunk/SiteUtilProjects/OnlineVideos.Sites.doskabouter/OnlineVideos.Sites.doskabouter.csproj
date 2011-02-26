@@ -107,7 +107,7 @@
     <Compile Include="Wetenschap24Util.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Plugin\OnlineVideos.csproj">
+    <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
       <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
       <Name>OnlineVideos</Name>
       <Private>False</Private>
