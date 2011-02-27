@@ -26,8 +26,15 @@ namespace OnlineVideos.Sites
         protected string dynamicCategoryUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Url used for prepending relative links.")]
         protected string baseUrl;
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to find the current start index and total amount of items and page size. Groups should be named 'max', 'start' and 'pageSize'.")]
+        protected string nextPageRegEx;
 
-        protected Regex regEx_Alfabetisk, regEx_Kategorier, regEx_SubKategorier, regEx_SubPagingKategorier;
+        protected uint currentPageSize = 20;
+        protected uint currentStartIndex = 1;
+        protected uint currentMaxVideos = 0;
+        protected string currentCategoryUrl = "";
+
+        protected Regex regEx_Alfabetisk, regEx_Kategorier, regEx_SubKategorier, regEx_SubPagingKategorier, regEx_NextPage;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -39,6 +46,7 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(kategorierRegEx)) regEx_Kategorier = new Regex(kategorierRegEx, defaultRegexOptions);
             if (!string.IsNullOrEmpty(kategorierSubRegEx)) regEx_SubKategorier = new Regex(kategorierSubRegEx, defaultRegexOptions);
             if (!string.IsNullOrEmpty(kategorierSubPagingRegEx)) regEx_SubPagingKategorier = new Regex(kategorierSubPagingRegEx, defaultRegexOptions);
+            if (!string.IsNullOrEmpty(nextPageRegEx)) regEx_NextPage = new Regex(nextPageRegEx, defaultRegexOptions);
         }
 
         public override int DiscoverDynamicCategories()
@@ -49,10 +57,26 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
+            currentCategoryUrl = (category as RssLink).Url;
+            currentPageSize = 20;
+            currentStartIndex = 1;
+            currentMaxVideos = 0;
+            return VideosForCurrentCategory();
+        }
+
+        private List<VideoInfo> VideosForCurrentCategory()
+        {
             List<VideoInfo> videoList = new List<VideoInfo>();
-            string data = GetWebData((category as RssLink).Url);
+            string data = GetWebData(currentCategoryUrl + (currentStartIndex > 1 ? "?start=" + currentStartIndex : ""));
             if (data.Length > 0)
             {
+                Match m = regEx_NextPage.Match(data);
+                if (m.Success)
+                {
+                    currentPageSize = uint.Parse(m.Groups["pageSize"].Value);
+                    currentStartIndex = uint.Parse(m.Groups["start"].Value);
+                    currentMaxVideos = uint.Parse(m.Groups["max"].Value);
+                }
                 foreach (RssItem rssItem in RssToolkit.Rss.RssDocument.Load(data).Channel.Items)
                 {
                     VideoInfo video = VideoInfo.FromRssItem(rssItem, false, new Predicate<string>(isPossibleVideo));
@@ -68,6 +92,24 @@ namespace OnlineVideos.Sites
                 }
             }
             return videoList;
+        }
+
+        public override bool HasNextPage
+        {
+            get
+            {
+                return currentStartIndex + currentPageSize < currentMaxVideos;
+            }
+            protected set
+            {
+                base.HasNextPage = value;
+            }
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            currentStartIndex += currentPageSize;
+            return VideosForCurrentCategory();
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
