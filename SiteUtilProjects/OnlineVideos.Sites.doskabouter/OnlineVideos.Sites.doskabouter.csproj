@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CBCUtil.cs" />
     <Compile Include="Hoster\Archiv.cs" />
     <Compile Include="Hoster\DataUp.cs" />
     <Compile Include="Hoster\DivxDen.cs" />
@@ -107,13 +108,6 @@
     <Compile Include="Wetenschap24Util.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
-      <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
-      <Name>OnlineVideos</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -129,6 +123,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
+      <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
+      <Name>OnlineVideos</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
