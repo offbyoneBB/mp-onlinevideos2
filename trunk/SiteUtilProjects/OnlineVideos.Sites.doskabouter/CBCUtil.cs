@@ -24,7 +24,6 @@ namespace OnlineVideos.Sites
             if (m.Success)
                 feedPID = m.Groups["feedPID"].Value;
 
-            Search("being erica");
             foreach (Category cat in getChildren("0"))
                 Settings.Categories.Add(cat);
             Settings.DynamicCategoriesDiscovered = true;
