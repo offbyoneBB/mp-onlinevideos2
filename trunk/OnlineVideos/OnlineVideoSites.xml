@@ -984,6 +984,11 @@
       <Categories>
       </Categories>
     </Site>
+    <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
+      <Description>Videos from cbc.ca</Description>
+      <Configuration />
+      <Categories />
+    </Site>
     <Site name="OnsNetNuenen" util="OnsNetNuenen" agecheck="false" enabled="true" lang="nl" lastUpdated="2010-11-14T23:28:00.2524617+01:00">
       <Description>Videos van en over Nuenen</Description>
       <Configuration>
