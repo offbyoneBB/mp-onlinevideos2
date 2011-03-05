@@ -595,7 +595,7 @@
         <Category xsi:type="RssLink" name="Weather">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_weather.xml</Category>
       </Categories>
     </Site>
-    <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en">
+    <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en" lastUpdated="2011-03-05T18:27:46.2170353+01:00">
       <Description>The BBC iPlayer allows to catch up on the last 7 days of BBC TV (only available in the UK).</Description>
       <Configuration>
         <item key="thumbReplaceRegExPattern"><![CDATA[_\d{2,3}_\d{2,3}\.jpg]]></item>
@@ -621,6 +621,16 @@
         <Category xsi:type="RssLink" name="Scotland" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vt75w_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/scotland/tv/list</Category>
         <Category xsi:type="RssLink" name="Wales" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vnwf1_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/wales/tv/list</Category>
         <Category xsi:type="RssLink" name="Lifestyle &amp; Leisure" thumb="http://node2.bbcimg.co.uk/iplayer/images/episode/b00vv3n1_406_228.jpg">http://feeds.bbc.co.uk/iplayer/categories/lifestyle_and_leisure/tv/list</Category>
+        <Category xsi:type="RssLink" name="BBC One" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/BBC_One_logo.svg/200px-BBC_One_logo.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_one/list</Category>
+        <Category xsi:type="RssLink" name="BBC Two" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/b/b9/Bbctwo-logo2007.svg/200px-Bbctwo-logo2007.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_two/list</Category>
+        <Category xsi:type="RssLink" name="BBC Three" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/f/f2/Logo_BBC_Three.svg/200px-Logo_BBC_Three.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_three/list</Category>
+        <Category xsi:type="RssLink" name="BBC Four" thumb="http://upload.wikimedia.org/wikipedia/fr/d/d3/BBC_Four.png">http://feeds.bbc.co.uk/iplayer/bbc_four/list</Category>
+        <Category xsi:type="RssLink" name="BBC HD" thumb="http://www.bbc.co.uk/bbctrust/images/placeholders/tv_logos/bbc_hd.gif">http://feeds.bbc.co.uk/iplayer/bbc_hd/list</Category>
+        <Category xsi:type="RssLink" name="CBBC" thumb="http://news.bbc.co.uk/media/images/45416000/jpg/_45416982_cbbc_logo.jpg">http://feeds.bbc.co.uk/iplayer/cbbc/list</Category>
+        <Category xsi:type="RssLink" name="CBeebies" thumb="http://www.bbc.co.uk/pressoffice/images/bank/logos/300cbeebies.jpg">http://feeds.bbc.co.uk/iplayer/cbeebies/list</Category>
+        <Category xsi:type="RssLink" name="BBC Parliment" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/7/7c/BBC_Parliament.svg/200px-BBC_Parliament.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_parliament/list</Category>
+        <Category xsi:type="RssLink" name="BBC News" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/BBC_News.svg/200px-BBC_News.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_news24/list</Category>
+        <Category xsi:type="RssLink" name="BBC Alba" thumb="http://upload.wikimedia.org/wikipedia/en/thumb/a/a5/BBC_Alba.svg/200px-BBC_Alba.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_alba/list</Category>
       </Categories>
     </Site>
     <Site name="NBA" util="Nba" agecheck="false" enabled="true" lang="en">
