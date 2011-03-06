@@ -11,13 +11,15 @@ using ExternalOSDLibrary;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
-    public class VLCPlayer : IPlayer
+    public class VLCPlayer : IPlayer, OVSPLayer
     {
         VlcControl vlcCtrl;
         FileMedia media;
-        float playPosition;
-        string url;
+        PlayState playState;
         OSDController osd;
+        string url;
+        bool bufferingDone;
+        float playPosition;        
 
         public override bool Play(string strFile)
         {
@@ -28,54 +30,114 @@ namespace OnlineVideos.MediaPortal1.Player
             vlcCtrl.Enabled = false;
             vlcCtrl.Manager = new VlcManager();
 
-            vlcCtrl.PositionChanged += delegate(VlcControl sender, VlcEventArgs<float> e) { playPosition = e.Data; };
+            vlcCtrl.PositionChanged += vlcCtrl_PositionChanged;
+            vlcCtrl.EncounteredError += vlcCtrl_EncounteredError;
 
             media = new FileMedia() { Path = strFile };
+
             vlcCtrl.Play(media);
 
-            SetVideoWindow();
-
-            osd = OSDController.Instance;
-
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
-            msg.Label = strFile;
-            GUIWindowManager.SendThreadMessage(msg);
+            GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
 
             return true;
         }
 
+        void vlcCtrl_EncounteredError(VlcControl sender, VlcEventArgs<EventArgs> e)
+        {
+            GUIWindowManager.SendThreadCallbackAndWait((p1, p2, o) =>
+            {
+                Log.Instance.Warn("VLCPlayer Error: '{0}'", Vlc.DotNet.Core.Interop.LibVlcMethods.libvlc_errmsg());
+                if (!bufferingDone && Initializing) GUIWaitCursor.Hide(); // hide the wait cursor if still showing
+                MediaPortal.Dialogs.GUIDialogOK dlg_error = (MediaPortal.Dialogs.GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                if (dlg_error != null)
+                {
+                    dlg_error.Reset();
+                    dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+                    dlg_error.SetLine(1, Translation.Error);
+                    dlg_error.SetLine(2, Vlc.DotNet.Core.Interop.LibVlcMethods.libvlc_errmsg());
+                    dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                }
+                PlaybackEnded();
+                return 0;
+            }, 0, 0, null);
+        }
+
+        void vlcCtrl_PositionChanged(VlcControl sender, VlcEventArgs<float> e)
+        {
+            playPosition = e.Data;
+        }
+
         public override void Process()
         {
+            if (media == null) return;
+
+            if (media.State == MediaStates.Ended || media.State == MediaStates.Stopped) 
+                playState = PlayState.Ended;
+            if (Initializing && media.State == MediaStates.Playing) playState = PlayState.Playing;
+
+            if (!bufferingDone && !Initializing)
+            {
+                GUIWaitCursor.Hide(); // hide the wait cursor
+                bufferingDone = true;
+
+                if (Ended)
+                {
+                    PlaybackEnded();
+                }
+                else
+                {
+                    if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                    GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
+                    msgPb.Label = CurrentFile;
+                    GUIWindowManager.SendThreadMessage(msgPb);
+                    SetVideoWindow();
+                    osd = OSDController.Instance;
+                }
+            }
+
             if (osd != null) osd.UpdateGUI();
         }
 
         public override void SetVideoWindow()
         {
-            if (FullScreen)
+            vlcCtrl.Location = new Point(FullScreen ? 0 : GUIGraphicsContext.VideoWindow.X, FullScreen ? 0 : GUIGraphicsContext.VideoWindow.Y);
+            vlcCtrl.ClientSize = new Size(FullScreen ? GUIGraphicsContext.Width : GUIGraphicsContext.VideoWindow.Width, FullScreen ? GUIGraphicsContext.Height : GUIGraphicsContext.VideoWindow.Height);
+            _videoRectangle = new Rectangle(vlcCtrl.Location.X, vlcCtrl.Location.Y, vlcCtrl.ClientSize.Width, vlcCtrl.ClientSize.Height);
+            _sourceRectangle = _videoRectangle;
+        }
+
+        private void PlaybackEnded()
+        {
+            Log.Instance.Info("VLCPlayer:ended {0}", url);
+            playState = PlayState.Ended;            
+            if (vlcCtrl != null)
             {
-                _videoRectangle = new Rectangle(0, 0, vlcCtrl.ClientSize.Width, vlcCtrl.ClientSize.Height);
-                _sourceRectangle = _videoRectangle;
                 vlcCtrl.Location = new Point(0, 0);
-                vlcCtrl.ClientSize = new Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
-            }
-            else
-            {
-                _videoRectangle = new Rectangle(GUIGraphicsContext.VideoWindow.X, GUIGraphicsContext.VideoWindow.Y, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-                _sourceRectangle = _videoRectangle;
-                vlcCtrl.ClientSize = new Size(GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-                vlcCtrl.Location = new Point(GUIGraphicsContext.VideoWindow.X, GUIGraphicsContext.VideoWindow.Y);
+                vlcCtrl.ClientSize = new Size(0, 0);
+                vlcCtrl.Visible = false;
             }
         }
 
         public override void Pause()
         {
-            vlcCtrl.Pause();
+            if (media != null && playState == PlayState.Playing || playState == PlayState.Paused)
+            {
+                vlcCtrl.Pause();
+            if (media.State == MediaStates.Paused)
+                playState = PlayState.Paused;
+            else 
+                playState = PlayState.Playing;
+            }
         }
 
         public override void Stop()
         {
-            vlcCtrl.Stop();
-            vlcCtrl.Visible = false;
+            if (vlcCtrl != null)
+            {
+                if (media.State != MediaStates.Stopped && media.State != MediaStates.Ended)
+                    vlcCtrl.Stop();
+                PlaybackEnded();
+            }
         }
 
         public override double Duration
@@ -88,36 +150,29 @@ namespace OnlineVideos.MediaPortal1.Player
             get { return playPosition * Duration; }
         }
 
-        public override bool Paused
+        public override bool Initializing
         {
-            get { return media != null && media.State == MediaStates.Paused ? true : false; }
+            get { return playState == PlayState.Init; }
         }
 
-        public override bool Stopped
+        public override bool Paused
         {
-            get { return media != null && (media.State == MediaStates.Ended || media.State == MediaStates.Stopped || media.State == MediaStates.NothingSpecial) ? true : false; }
+            get { return playState == PlayState.Paused; }
         }
 
         public override bool Playing
         {
-            get { return media != null && (media.State == MediaStates.Opening || media.State == MediaStates.Buffering || media.State == MediaStates.Playing || media.State == MediaStates.Paused) ? true : false; }
+            get { return !Ended; }
+        }
+
+        public override bool Stopped
+        {
+            get { return Initializing || Ended; }
         }
 
         public override bool Ended
         {
-            get { return media != null && (media.State == MediaStates.Ended || media.State == MediaStates.Error); }
-        }
-
-        public override int Volume
-        {
-            get
-            {
-                return vlcCtrl != null ? vlcCtrl.VolumeLevel : MediaPortal.Player.VolumeHandler.Instance.Volume;
-            }
-            set
-            {
-                if (vlcCtrl != null) vlcCtrl.VolumeLevel = value; else MediaPortal.Player.VolumeHandler.Instance.Volume = value;
-            }
+            get { return playState == PlayState.Ended; }
         }
 
         public override int Speed
@@ -196,9 +251,16 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public override void Dispose()
         {
+            if (!bufferingDone) GUIWaitCursor.Hide(); // hide the wait cursor
             if (osd != null) osd.Dispose();
             if (media != null) media.Dispose();
             if (vlcCtrl != null) vlcCtrl.Dispose();
         }
+
+        #region OVSPLayer Member
+
+        public bool GoFullscreen { get; set; }
+
+        #endregion
     }
 }

@@ -13,7 +13,7 @@ using MediaPortal.Player.PostProcessing;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
-    public class OnlineVideosPlayer : VideoPlayerVMR9
+    public class OnlineVideosPlayer : VideoPlayerVMR9, OVSPLayer
     {
         public OnlineVideosPlayer()
             : base(g_Player.MediaType.Video)
@@ -367,6 +367,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 CloseInterfaces();
                 return false;
             }
+            if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
             msg.Label = strFile;
             GUIWindowManager.SendThreadMessage(msg);
@@ -404,5 +405,11 @@ namespace OnlineVideos.MediaPortal1.Player
             base.Dispose();
             GUIPropertyManager.SetProperty("#TV.Record.percent3", 0.0f.ToString());
         }
+
+        #region OVSPLayer Member
+
+        public bool GoFullscreen { get; set; }
+
+        #endregion
     }
 }

@@ -3,6 +3,13 @@ using MediaPortal.Player;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
+    enum PlayState { Init, Playing, Paused, Ended };
+
+    public interface OVSPLayer
+    {
+        bool GoFullscreen { get; set; }
+    }
+
     public class PlayerFactory : IPlayerFactory
     {
         public string PreparedUrl { get; protected set; }
