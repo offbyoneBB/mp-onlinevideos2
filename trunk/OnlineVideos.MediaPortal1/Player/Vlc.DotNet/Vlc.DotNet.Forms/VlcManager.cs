@@ -148,6 +148,7 @@ namespace Vlc.DotNet.Forms
 
             args.Add("--no-video-title-show");
 
+            args.Add("--http-caching=" + OnlineVideos.MediaPortal1.PluginConfiguration.Instance.wmpbuffer);
 
             var argsArray = new string[args.Count];
             args.CopyTo(argsArray, 0);

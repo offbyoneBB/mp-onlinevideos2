@@ -52,8 +52,6 @@ namespace OnlineVideos
             SiteUtilsList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
             VideoExtensions = new SortedList<string, bool>();
             ThumbsResizeOptions = ImageDownloader.ResizeOptions.Default;
-            // add a special reversed proxy handler for rtmp
-            ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); 
         }
 
         public void LoadSites()

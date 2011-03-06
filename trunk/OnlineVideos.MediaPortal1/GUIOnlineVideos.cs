@@ -747,6 +747,9 @@ namespace OnlineVideos.MediaPortal1
 
         private void DoFirstLoad_Step1()
         {
+            // add a special reversed proxy handler for rtmp
+            ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); 
+
             // replace g_player's ShowFullScreenWindowVideo
             g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowHandler;
             g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
@@ -1919,6 +1922,8 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
+                (factory.PreparedPlayer as OVSPLayer).GoFullscreen = goFullScreen;
+
                 IPlayerFactory savedFactory = g_Player.Factory;
                 g_Player.Factory = factory;
                 bool playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
@@ -1938,7 +1943,6 @@ namespace OnlineVideos.MediaPortal1
                     }
                     currentPlayingItem = playItem;
                     SetGuiProperties_PlayingVideo(playItem.Video, playItem.Description);
-                    if (goFullScreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
                 }
             }
         }

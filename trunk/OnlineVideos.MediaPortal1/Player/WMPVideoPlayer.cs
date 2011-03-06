@@ -1,225 +1,234 @@
 using System;
 using System.Drawing;
-using System.Windows.Forms;
-using MediaPortal.GUI.Library;
-using MediaPortal.Player;
 using AxWMPLib;
 using WMPLib;
 using ExternalOSDLibrary;
-using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Dialogs;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
-    public class WMPVideoPlayer : IPlayer
+    public class WMPVideoPlayer : IPlayer, OVSPLayer
     {
-        enum PlayState { Init, Playing, Paused, Ended };
-
-        AxWindowsMediaPlayer _wmp10Player = null;
-        PlayState _graphState = PlayState.Init;
-        OSDController _osd;
-        int _positionX = 10, _positionY = 10, _videoWidth = 100, _videoHeight = 100;
-        string _currentFile = "";
-        bool _needUpdate = true;
-        bool _bufferCompleted = true;
-        bool _isFullScreen;
-        bool _criticalErrorEncountered;
-        
+        AxWindowsMediaPlayer wmpCtrl;
+        PlayState playState;
+        OSDController osd;
+        string currentFile;
+        bool bufferCompleted;
 
         public override bool Play(string strFile)
         {
             Log.Instance.Info("WMPVideoPlayer.Play '{0}'", strFile);
 
-            _currentFile = strFile;
+            currentFile = strFile;
 
-            _wmp10Player = new AxWindowsMediaPlayer();
-            GUIGraphicsContext.form.Controls.Add(_wmp10Player);
-            _wmp10Player.Enabled = false;
-            _wmp10Player.uiMode = "none";
-            _wmp10Player.windowlessVideo = true;
-            _wmp10Player.enableContextMenu = false;
-            _wmp10Player.Ctlenabled = false;
-            _wmp10Player.Visible = false;
-            _wmp10Player.ClientSize = new Size(0, 0);
+            wmpCtrl = new AxWindowsMediaPlayer();
+            GUIGraphicsContext.form.Controls.Add(wmpCtrl);
+            wmpCtrl.Enabled = false;
+            wmpCtrl.uiMode = "none";
+            wmpCtrl.windowlessVideo = true;
+            wmpCtrl.enableContextMenu = false;
+            wmpCtrl.Ctlenabled = false;
+            wmpCtrl.Visible = false;
+            wmpCtrl.stretchToFit = true;
 
-            _wmp10Player.ErrorEvent += OnError;
-            _wmp10Player.PlayStateChange += OnPlayStateChange;
-            _wmp10Player.Buffering += OnBuffering;
+            wmpCtrl.PlayStateChange += WMP_OnPlayStateChange;
+            wmpCtrl.Buffering += WMP_OnBuffering;
+            wmpCtrl.ErrorEvent += WMP_OnError;
             
-            _wmp10Player.URL = strFile;
-            _wmp10Player.network.bufferingTime = PluginConfiguration.Instance.wmpbuffer;
-            _wmp10Player.Ctlcontrols.play();
+            wmpCtrl.URL = strFile;
+            wmpCtrl.network.bufferingTime = PluginConfiguration.Instance.wmpbuffer;
+            wmpCtrl.Ctlcontrols.play();
 
-            // When file is internetstream
-            if (_wmp10Player.URL.ToLower().StartsWith("http") || _wmp10Player.URL.ToLower().StartsWith("mms") || _wmp10Player.URL.ToLower().StartsWith("sop"))
-            {
-                _bufferCompleted = false;
-                GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
-                try
-                {
-                    GUIGraphicsContext.Overlay = false;
-                    while (_bufferCompleted != true && !_criticalErrorEncountered)
-                    {
-                        {
-                            //if true then wmp is playing, so exit loop
-                            if (_wmp10Player.playState.Equals(WMPPlayState.wmppsPlaying))
-                            {
-                                _bufferCompleted = true;
-                            }
-                            // if true then could not load stream because of (in my test case) a drm-box
-                            // for example tvgemist/rtl/crime scene inv./las vegas/season 10/ep 11
-                            //http://www.rtl.nl/system/video/wvx/components/programma/csi/crimesceneinvestigation/miMedia/209061/209072.s4m8wk.29781180.Crime_Scene_Investigation_s10_a11.xml/1500.wvx
-                            if (_wmp10Player.playState.Equals(WMPPlayState.wmppsReady))
-                            {
-                                _criticalErrorEncountered = true;
-                            }
-                            _graphState = PlayState.Playing;
-                            GUIWindowManager.Process();
-                        }
-                    }
-                    GUIGraphicsContext.Overlay = true;
-                }
-                finally
-                {
-                    GUIWaitCursor.Hide(); // hide the wait cursor
-                }
-
-                if (_bufferCompleted && _wmp10Player.playState.Equals(WMPPlayState.wmppsReady))
-                    _criticalErrorEncountered = true;
-            }
-
-            _wmp10Player.Buffering -= OnBuffering;
-
-            if (_criticalErrorEncountered)
-            {
-                Log.Instance.Info("WMPVideoPlayer: error encountered while trying to play {0}", strFile);
-                _wmp10Player.PlayStateChange -= OnPlayStateChange;
-                _wmp10Player.ErrorEvent -= OnError;
-                return false;
-            }
-
-            GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
-            msgPb.Label = strFile;
-            GUIWindowManager.SendThreadMessage(msgPb);
-
-            _graphState = PlayState.Playing;
-            GC.Collect();
-            _needUpdate = true;
-            _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
-            _positionX = GUIGraphicsContext.VideoWindow.Left;
-            _positionY = GUIGraphicsContext.VideoWindow.Top;
-            _videoWidth = GUIGraphicsContext.VideoWindow.Width;
-            _videoHeight = GUIGraphicsContext.VideoWindow.Height;
-
-            SetVideoWindow();
-
-            _osd = OSDController.Instance;
-
+            GUIWindowManager.OnNewAction += GUIWindowManager_OnNewAction;
+            
+            GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
             return true;
         }
 
-        private void OnPlayStateChange(object sender, _WMPOCXEvents_PlayStateChangeEvent e)
+        void GUIWindowManager_OnNewAction(MediaPortal.GUI.Library.Action action)
         {
-            if (_wmp10Player == null)
+            if (Playing)
             {
-                return;
+                // IPlayer.Volume Property is never set by MediaPortal -> need to trap volume changes this way
+                switch (action.wID)
+                {
+                    case MediaPortal.GUI.Library.Action.ActionType.ACTION_VOLUME_MUTE:
+                        wmpCtrl.settings.mute = VolumeHandler.Instance.IsMuted;
+                        break;
+                    case MediaPortal.GUI.Library.Action.ActionType.ACTION_VOLUME_DOWN:
+                        wmpCtrl.settings.volume = (int)((double)MediaPortal.Player.VolumeHandler.Instance.Previous / MediaPortal.Player.VolumeHandler.Instance.Maximum * 100);
+                        break;
+                    case MediaPortal.GUI.Library.Action.ActionType.ACTION_VOLUME_UP:
+                        wmpCtrl.settings.volume = (int)((double)VolumeHandler.Instance.Next / MediaPortal.Player.VolumeHandler.Instance.Maximum * 100);
+                        break;
+                }
             }
-            switch (_wmp10Player.playState)
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.Synchronized)]
+        public override void Process()
+        {
+            if (wmpCtrl != null)
             {
-                case WMPPlayState.wmppsStopped:
-                    PlaybackEnded(false);
-                    break;
-                case WMPPlayState.wmppsMediaEnded:
-                    if (_wmp10Player.currentMedia.isMemberOf(_wmp10Player.currentPlaylist))
+                if (Initializing)
+                {
+                    if (!bufferCompleted && wmpCtrl.playState.Equals(WMPPlayState.wmppsPlaying)) bufferCompleted = true;
+
+                    if (wmpCtrl.playState.Equals(WMPPlayState.wmppsReady))
                     {
-                        if (_wmp10Player.currentMedia.get_isIdentical(_wmp10Player.currentPlaylist.get_Item(_wmp10Player.currentPlaylist.count - 1)))
-                        {
-                            PlaybackEnded(false);
-                        }
+                        GUIWaitCursor.Hide(); // hide the wait cursor
+                        Log.Instance.Info("WMPVideoPlayer: error encountered while trying to play {0}", CurrentFile);
+                        bufferCompleted = true;
+                        PlaybackEnded();
                     }
-                    else
-                        PlaybackEnded(false);
-                    break;
+                    else if (bufferCompleted)
+                    {
+                        GUIWaitCursor.Hide(); // hide the wait cursor
+                        wmpCtrl.Visible = true;
+                        playState = PlayState.Playing;
+                        if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                        GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
+                        msgPb.Label = CurrentFile;
+                        GUIWindowManager.SendThreadMessage(msgPb);
+                        SetVideoWindow();
+                        osd = OSDController.Instance;
+                    }
+                }
+                else if (Playing && osd != null) osd.UpdateGUI();
             }
         }
 
-        private void OnError(object sender, EventArgs e)
+        public override void SetVideoWindow()
         {
-            IWMPErrorItem error = _wmp10Player.Error.get_Item(0);
-            // error codes see http://msdn.microsoft.com/en-us/library/cc704587(PROT.10).aspx
-            switch ((uint)error.errorCode)
+            if (wmpCtrl != null)
             {
-                case 0xc00d1197: _criticalErrorEncountered = true; break;  //NS_E_WMP_CANNOT_FIND_FILE
-                default: _criticalErrorEncountered = true; break; // for now: abort on all errors
+                System.Action si = () =>
+                {
+                    wmpCtrl.Location = new Point(FullScreen ? 0 : GUIGraphicsContext.VideoWindow.X, FullScreen ? 0 : GUIGraphicsContext.VideoWindow.Y);
+                    wmpCtrl.ClientSize = new Size(FullScreen ? GUIGraphicsContext.Width : GUIGraphicsContext.VideoWindow.Width, FullScreen ? GUIGraphicsContext.Height : GUIGraphicsContext.VideoWindow.Height);
+                };
+
+                if (wmpCtrl.InvokeRequired)
+                {
+                    IAsyncResult iar = wmpCtrl.BeginInvoke(si);
+                    iar.AsyncWaitHandle.WaitOne();
+                }
+                else
+                {
+                    si();
+                }
+
+                _videoRectangle = new Rectangle(wmpCtrl.Location.X, wmpCtrl.Location.Y, wmpCtrl.ClientSize.Width, wmpCtrl.ClientSize.Height);
+                _sourceRectangle = _videoRectangle;
             }
-            Log.Instance.Warn("WMPVideoPlayer: " + error.errorDescription);
         }
 
-        private void OnBuffering(object sender, _WMPOCXEvents_BufferingEvent e)
+        private void PlaybackEnded()
         {
-            Log.Instance.Debug("WMPVideoPlayer: bandWidth: {0}", _wmp10Player.network.bandWidth);
-            Log.Instance.Debug("WMPVideoPlayer: bitRate: {0}", _wmp10Player.network.bitRate);
-            Log.Instance.Debug("WMPVideoPlayer: receivedPackets: {0}", _wmp10Player.network.receivedPackets);
-            Log.Instance.Debug("WMPVideoPlayer: receptionQuality: {0}", _wmp10Player.network.receptionQuality);
-
-            //_wmp10Player.network.bufferingTime = _bufferTime;
-
-            _bufferCompleted = !e.start;
-            Log.Instance.Debug("WMPVideoPlayer: onbuffer start:{0}", e.start.ToString());
+            Log.Instance.Info("WMPVideoPlayer:ended {0}", currentFile);
+            playState = PlayState.Ended;
+            if (wmpCtrl != null)
+            {
+                wmpCtrl.Location = new Point(0,0);
+                wmpCtrl.ClientSize = new Size(0, 0);
+                wmpCtrl.Visible = false;
+                wmpCtrl.Buffering -= WMP_OnBuffering;
+                wmpCtrl.PlayStateChange -= WMP_OnPlayStateChange;
+                wmpCtrl.ErrorEvent -= WMP_OnError;
+            }
         }
 
-        private void PlaybackEnded(bool bManualStop)
+        public override void Pause()
         {
-            // this is triggered only if movie has ended
-            // ifso, stop the movie which will trigger MovieStopped
-
-            //if (!Util.Utils.IsAudio(_currentFile))
-            //{
-            GUIGraphicsContext.IsFullScreenVideo = false;
-            //}
-            Log.Instance.Info("WMPVideoPlayer:ended {0} {1}", _currentFile, bManualStop);
-            _currentFile = "";
-            if (_wmp10Player != null)
+            if (wmpCtrl != null)
             {
-                _bufferCompleted = true;
-                _wmp10Player.ClientSize = new Size(0, 0);
-                _wmp10Player.Visible = false;
-                _wmp10Player.PlayStateChange -= OnPlayStateChange;
-                _wmp10Player.ErrorEvent -= OnError;
-                _criticalErrorEncountered = false;
+                if (playState == PlayState.Paused)
+                {
+                    playState = PlayState.Playing;
+                    wmpCtrl.Ctlcontrols.play();
+                }
+                else if (playState == PlayState.Playing)
+                {
+                    wmpCtrl.Ctlcontrols.pause();
+                    if (wmpCtrl.playState == WMPPlayState.wmppsPaused)
+                    {
+                        playState = PlayState.Paused;
+                    }
+                }
             }
-            //GUIGraphicsContext.IsFullScreenVideo=false;
-            GUIGraphicsContext.IsPlaying = false;
-            if (!bManualStop)
-            {
-                _graphState = PlayState.Ended;
-            }
-            else
-            {
-                _graphState = PlayState.Init;
-            }
-            GC.Collect();
         }
 
-
-        public override bool Ended
+        public override void Stop()
         {
-            get { return _graphState == PlayState.Ended; }
+            if (wmpCtrl != null)
+            {
+                wmpCtrl.Ctlcontrols.stop();
+                PlaybackEnded();
+            }
         }
+
+        public override void SeekRelative(double dTime)
+        {
+            if (wmpCtrl != null && playState != PlayState.Init)
+            {
+                dTime = CurrentPosition + dTime;
+                if (dTime < 0.0d) dTime = 0.0d;
+                if (dTime < Duration)
+                {
+                    wmpCtrl.Ctlcontrols.currentPosition = dTime;
+                }
+            }
+        }
+
+        public override void SeekAbsolute(double dTime)
+        {
+            if (wmpCtrl != null && playState != PlayState.Init)
+            {
+                if (dTime < 0.0d) dTime = 0.0d;
+                if (dTime < Duration)
+                {
+                    wmpCtrl.Ctlcontrols.currentPosition = dTime;
+                }
+            }
+        }
+
+        public override void SeekRelativePercentage(int iPercentage)
+        {
+            if (wmpCtrl != null && playState != PlayState.Init)
+            {
+                double fCurPercent = (CurrentPosition / Duration) * 100.0d;
+                double fOnePercent = Duration / 100.0d;
+                fCurPercent = fCurPercent + (double)iPercentage;
+                fCurPercent *= fOnePercent;
+                if (fCurPercent < 0.0d) fCurPercent = 0.0d;
+                if (fCurPercent < Duration)
+                {
+                    wmpCtrl.Ctlcontrols.currentPosition = fCurPercent;
+                }
+            }
+        }
+
+        public override void SeekAsolutePercentage(int iPercentage)
+        {
+            if (wmpCtrl != null && playState != PlayState.Init)
+            {
+                if (iPercentage < 0) iPercentage = 0;
+                else if (iPercentage >= 100) iPercentage = 100;
+                double fPercent = Duration / 100.0f;
+                fPercent *= (double)iPercentage;
+                wmpCtrl.Ctlcontrols.currentPosition = fPercent;
+            }
+        }
+
+        #region overridden Properties
 
         public override double Duration
         {
             get
             {
-                if (_graphState != PlayState.Init && _wmp10Player != null)
-                {
-                    try
-                    {
-                        return _wmp10Player.currentMedia.duration;
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
+                if (wmpCtrl != null && wmpCtrl.currentMedia != null) try { return wmpCtrl.currentMedia.duration; } catch {}
                 return 0.0d;
             }
         }
@@ -228,94 +237,57 @@ namespace OnlineVideos.MediaPortal1.Player
         {
             get
             {
-                try
-                {
-                    return _wmp10Player.Ctlcontrols.currentPosition;
-                }
-                catch (Exception)
-                {
-                }
+                if (wmpCtrl != null && !Initializing) try { return wmpCtrl.Ctlcontrols.currentPosition; } catch {}
                 return 0.0d;
             }
         }
 
-        public override void Pause()
+        public override int Speed
         {
-            if (_wmp10Player == null)
+            get
             {
-                return;
+                if (playState == PlayState.Init || playState == PlayState.Ended || wmpCtrl == null || !wmpCtrl.settings.get_isAvailable("Rate"))
+                    return 1;
+                else
+                    return (int)wmpCtrl.settings.rate;
             }
-            if (_graphState == PlayState.Paused)
+            set
             {
-                _graphState = PlayState.Playing;
-                _wmp10Player.Ctlcontrols.play();
-            }
-            else if (_graphState == PlayState.Playing)
-            {
-                _wmp10Player.Ctlcontrols.pause();
-                if (_wmp10Player.playState == WMPPlayState.wmppsPaused)
+                if (playState != PlayState.Init && playState != PlayState.Ended && wmpCtrl != null && wmpCtrl.settings.get_isAvailable("Rate"))
                 {
-                    _graphState = PlayState.Paused;
+                    wmpCtrl.settings.rate = (double)value;
                 }
             }
+        }
+
+        public override bool Initializing 
+        {
+            get { return playState == PlayState.Init; } 
         }
 
         public override bool Paused
         {
-            get { return (_graphState == PlayState.Paused); }
+            get { return playState == PlayState.Paused; }
         }
 
         public override bool Playing
         {
-            get { return (_graphState == PlayState.Playing || _graphState == PlayState.Paused); }
+            get { return !Ended; }
         }
 
         public override bool Stopped
         {
-            get { return (_graphState == PlayState.Init || _graphState == PlayState.Ended); }
+            get { return Initializing || Ended; }
+        }
+
+        public override bool Ended
+        {
+            get { return playState == PlayState.Ended; }
         }
 
         public override string CurrentFile
         {
-            get { return _currentFile; }
-        }
-
-        public override void Stop()
-        {
-            if (_wmp10Player == null)
-            {
-                return;
-            }
-            if (_graphState != PlayState.Init)
-            {
-                _wmp10Player.Ctlcontrols.stop();
-                _wmp10Player.ClientSize = new Size(0, 0);
-                _wmp10Player.Visible = false;
-                PlaybackEnded(true);
-            }
-        }
-
-        public override int Volume
-        {
-            get
-            {
-                if (_wmp10Player == null)
-                {
-                    return 100;
-                }
-                return _wmp10Player.settings.volume;
-            }
-            set
-            {
-                if (_wmp10Player == null)
-                {
-                    return;
-                }
-                if (_wmp10Player.settings.volume != value)
-                {
-                    _wmp10Player.settings.volume = value;
-                }
-            }
+            get { return currentFile; }
         }
 
         public override bool HasVideo
@@ -333,249 +305,91 @@ namespace OnlineVideos.MediaPortal1.Player
             get { return false; }
         }
 
-        public override bool FullScreen
-        {
-            get { return GUIGraphicsContext.IsFullScreenVideo; }
-            set
-            {
-                if (value != _isFullScreen)
-                {
-                    _isFullScreen = value;
-                    _needUpdate = true;
-                }
-            }
-        }
-
-        public override int PositionX
-        {
-            get { return _positionX; }
-            set
-            {
-                if (value != _positionX)
-                {
-                    _positionX = value;
-                    _needUpdate = true;
-                }
-            }
-        }
-
-        public override int PositionY
-        {
-            get { return _positionY; }
-            set
-            {
-                if (value != _positionY)
-                {
-                    _positionY = value;
-                    _needUpdate = true;
-                }
-            }
-        }
-
-        public override int RenderWidth
-        {
-            get { return _videoWidth; }
-            set
-            {
-                if (value != _videoWidth)
-                {
-                    _videoWidth = value;
-                    _needUpdate = true;
-                }
-            }
-        }
-
-        public override int RenderHeight
-        {
-            get { return _videoHeight; }
-            set
-            {
-                if (value != _videoHeight)
-                {
-                    _videoHeight = value;
-                    _needUpdate = true;
-                }
-            }
-        }
-
-        public override void Process()
-        {
-            if (_wmp10Player != null && Playing)
-            {
-                if (_osd != null) _osd.UpdateGUI();
-
-                if (GUIGraphicsContext.BlankScreen ||
-                    (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
-                {
-                    if (_wmp10Player.Visible)
-                    {
-                        _wmp10Player.ClientSize = new Size(0, 0);
-                        _wmp10Player.Visible = false;
-                    }
-                }
-                else if (!_wmp10Player.Visible)
-                {
-                    _needUpdate = true;
-                    SetVideoWindow();
-                    _wmp10Player.Visible = true;
-                }
-            }
-        }
-
-        public override void SetVideoWindow()
-        {
-            if (_wmp10Player == null)
-            {
-                return;
-            }
-            if (GUIGraphicsContext.IsFullScreenVideo != _isFullScreen)
-            {
-                _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
-                _needUpdate = true;
-            }
-            if (!_needUpdate)
-            {
-                return;
-            }
-            _needUpdate = false;
-
-            if (_isFullScreen)
-            {
-                _positionX = GUIGraphicsContext.OverScanLeft;
-                _positionY = GUIGraphicsContext.OverScanTop;
-                _videoWidth = GUIGraphicsContext.OverScanWidth;
-                _videoHeight = GUIGraphicsContext.OverScanHeight;
-
-                System.Action si = () =>
-                    {
-                        _wmp10Player.Location = new Point(0, 0);
-                        _wmp10Player.ClientSize = new Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
-                        _wmp10Player.Size = new Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
-                        _wmp10Player.stretchToFit = true;
-                    };
-
-                if (_wmp10Player.InvokeRequired)
-                {
-                    IAsyncResult iar = _wmp10Player.BeginInvoke(si);
-                    iar.AsyncWaitHandle.WaitOne();
-                }
-                else
-                {
-                    si();
-                }
-
-                _videoRectangle = new Rectangle(0, 0, _wmp10Player.ClientSize.Width, _wmp10Player.ClientSize.Height);
-                _sourceRectangle = _videoRectangle;
-            }
-            else
-            {
-                System.Action si = () =>
-                    {
-                        _wmp10Player.ClientSize = new Size(_videoWidth, _videoHeight);
-                        _wmp10Player.Location = new Point(_positionX, _positionY);
-                    };
-                if (_wmp10Player.InvokeRequired)
-                {
-                    IAsyncResult iar = _wmp10Player.BeginInvoke(si);
-                    iar.AsyncWaitHandle.WaitOne();
-                }
-                else
-                {
-                    si();
-                }
-                _videoRectangle = new Rectangle(_positionX, _positionY, _wmp10Player.ClientSize.Width,
-                                                _wmp10Player.ClientSize.Height);
-                _sourceRectangle = _videoRectangle;
-                //Log.Instance.Info("WMPVideoPlayer:set window:({0},{1})-({2},{3})",_positionX,_positionY,_positionX+_wmp10Player.ClientSize.Width,_positionY+_wmp10Player.ClientSize.Height);
-            }
-        }
-
-        
-        public override void SeekRelative(double dTime)
-        {
-            if (_wmp10Player != null && _graphState != PlayState.Init)
-            {
-                dTime = CurrentPosition + dTime;
-                if (dTime < 0.0d) dTime = 0.0d;
-                if (dTime < Duration)
-                {
-                    _wmp10Player.Ctlcontrols.currentPosition = dTime;
-                }
-            }
-        }
-
-        public override void SeekAbsolute(double dTime)
-        {
-            if (_wmp10Player != null && _graphState != PlayState.Init)
-            {
-                if (dTime < 0.0d) dTime = 0.0d;
-                if (dTime < Duration)
-                {
-                    _wmp10Player.Ctlcontrols.currentPosition = dTime;
-                }
-            }
-        }
-
-        public override void SeekRelativePercentage(int iPercentage)
-        {
-            if (_wmp10Player != null && _graphState != PlayState.Init)
-            {
-                double fCurPercent = (CurrentPosition / Duration) * 100.0d;
-                double fOnePercent = Duration / 100.0d;
-                fCurPercent = fCurPercent + (double)iPercentage;
-                fCurPercent *= fOnePercent;
-                if (fCurPercent < 0.0d) fCurPercent = 0.0d;
-                if (fCurPercent < Duration)
-                {
-                    _wmp10Player.Ctlcontrols.currentPosition = fCurPercent;
-                }
-            }
-        }
-
-        public override void SeekAsolutePercentage(int iPercentage)
-        {
-            if (_wmp10Player != null && _graphState != PlayState.Init)
-            {
-                if (iPercentage < 0) iPercentage = 0;
-                else if (iPercentage >= 100) iPercentage = 100;
-                double fPercent = Duration / 100.0f;
-                fPercent *= (double)iPercentage;
-                _wmp10Player.Ctlcontrols.currentPosition = fPercent;
-            }
-        }
-
-        public override int Speed
-        {
-            get
-            {
-                if (_wmp10Player == null || _graphState == PlayState.Init || _graphState == PlayState.Ended || !_wmp10Player.settings.get_isAvailable("Rate"))
-                    return 1;
-                else 
-                    return (int)_wmp10Player.settings.rate;
-            }
-            set
-            {
-                if (_wmp10Player != null && _graphState != PlayState.Init && _graphState != PlayState.Ended && _wmp10Player.settings.get_isAvailable("Rate"))
-                {
-                    try
-                    {
-                        _wmp10Player.settings.rate = (double)value;
-                    }
-                    catch { }
-                }
-            }
-        }
+        #endregion
 
         #region IDisposable Members
 
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.Synchronized)]
         public override void Dispose()
         {
-            try { if (_osd != null) _osd.Dispose(); }
+            GUIWindowManager.OnNewAction -= GUIWindowManager_OnNewAction;
+
+            if (!bufferCompleted) GUIWaitCursor.Hide();
+
+            try { if (osd != null) { osd.Dispose(); osd = null; } }
             catch (Exception ex) { Log.Instance.Warn(ex.ToString()); }
 
-            try { if (_wmp10Player != null)_wmp10Player.Dispose(); }
+            try { if (wmpCtrl != null) { wmpCtrl.Dispose(); wmpCtrl = null; } }
             catch (Exception ex) { Log.Instance.Warn(ex.ToString()); }
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
+
+        #endregion
+
+        #region WMP event handling
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.Synchronized)]
+        private void WMP_OnPlayStateChange(object sender, _WMPOCXEvents_PlayStateChangeEvent e)
+        {
+            if (wmpCtrl != null)
+            {
+                switch ((WMPPlayState)e.newState)
+                {
+                    case WMPPlayState.wmppsStopped:
+                        PlaybackEnded();
+                        break;
+                    case WMPPlayState.wmppsMediaEnded:
+                        if (wmpCtrl.currentMedia.isMemberOf(wmpCtrl.currentPlaylist))
+                        {
+                            if (wmpCtrl.currentMedia.get_isIdentical(wmpCtrl.currentPlaylist.get_Item(wmpCtrl.currentPlaylist.count - 1)))
+                            {
+                                PlaybackEnded();
+                            }
+                        }
+                        else
+                            PlaybackEnded();
+                        break;
+                }
+            }
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.Synchronized)]
+        private void WMP_OnBuffering(object sender, _WMPOCXEvents_BufferingEvent e)
+        {
+            Log.Instance.Debug("WMPVideoPlayer: bandWidth: {0}", wmpCtrl.network.bandWidth);
+            Log.Instance.Debug("WMPVideoPlayer: bitRate: {0}", wmpCtrl.network.bitRate);
+            Log.Instance.Debug("WMPVideoPlayer: receivedPackets: {0}", wmpCtrl.network.receivedPackets);
+            Log.Instance.Debug("WMPVideoPlayer: receptionQuality: {0}", wmpCtrl.network.receptionQuality);
+            Log.Instance.Debug("WMPVideoPlayer: onbuffer start:{0}", e.start.ToString());
+            bufferCompleted = !e.start;
+            if (bufferCompleted) wmpCtrl.Buffering -= WMP_OnBuffering;
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.Synchronized)]
+        void WMP_OnError(object sender, EventArgs e)
+        {
+            IWMPErrorItem error = wmpCtrl.Error.get_Item(0);
+            // error codes see http://msdn.microsoft.com/en-us/library/cc704587(PROT.10).aspx
+            Log.Instance.Warn("WMPVideoPlayer Error '{0}': {1}",error.errorCode, error.errorDescription);
+            MediaPortal.Dialogs.GUIDialogOK dlg_error = (MediaPortal.Dialogs.GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+            if (dlg_error != null)
+            {
+                dlg_error.Reset();
+                dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+                dlg_error.SetLine(1, Translation.Error);
+                dlg_error.SetLine(2, error.errorDescription);
+                dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+            }
+            PlaybackEnded();
+        }
+
+        #endregion
+
+        #region OVSPLayer Member
+
+        public bool GoFullscreen { get; set; }
 
         #endregion
     }
