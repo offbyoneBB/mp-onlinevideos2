@@ -15,7 +15,7 @@ namespace OnlineVideos.Hoster
         }
 
         static readonly int[] fmtOptionsQualitySorted = new int[] { 37, 22, 35, 18, 34, 5, 0, 17, 13 };
-        static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})|(?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})|(?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|(flashvars=""(?<params>[^""]+)"")", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public override Dictionary<string, string> getPlaybackOptions(string url)
         {
@@ -50,7 +50,7 @@ namespace OnlineVideos.Hoster
                     {
                         if (m.Groups["params"].Success)
                         {
-                            Items = System.Web.HttpUtility.ParseQueryString(m.Groups["params"].Value);
+                            Items = System.Web.HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(m.Groups["params"].Value));
                         }
                         else if (m.Groups["json"].Success)
                         {
