@@ -1276,14 +1276,10 @@
         <Category xsi:type="RssLink" name="Wildcrazy">http://www.redtube.com/redtube/wildcrazy</Category>
       </Categories>
     </Site>
-    <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
+    <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en" lastUpdated="2011-03-07T19:27:17.6460869+01:00">
       <Description>xHamster - just porn, no bullshit.</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[<img\ssrc='(?<ImageUrl>[^']+)'[^/]*/>(?:(?!<div).)*
-<div\sclass="moduleFeaturedTitle">\s*
-<a\shref="(?<VideoUrl>[^"]+)">(?<Title>(?:(?!</a>).)*)</a>\s*
-</div>\s*
-<div\sclass="moduleFeaturedDetails">Runtime:\s*(?<Duration>[^<]+)<]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass='hRotator'>\s*<img\ssrc='(?<ImageUrl>[^']*)'\swidth='160'\sheight='120'\salt="(?<Title>[^"]*)"/>\s*<img[^>]*>\s*<u>[^<]*</u>\s*</a>\s*<div\sclass="moduleFeaturedDetails">Runtime:\s(?<Duration>[^<]*)<BR>[^<]*</div>]]></item>
         <item key="nextPageRegEx"><![CDATA[<SPAN\sclass=navNext><A\sHREF="(?<url>.+)">Next</A></SPAN>]]></item>
         <item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
         <item key="fileUrlRegEx"><![CDATA['srv':\s'(?<m0>[^']+)',\s*
