@@ -143,7 +143,7 @@ namespace OnlineVideos.Sites
                 else
                 {
                     data = GetSubString(data, @"<div id=""content"" class=""content page"">", @"<div id=""comments"">");
-                    thisUrl = GetSubString(data, @"href=""", @"""");
+                    thisUrl = GetSubString(data, @"<p><a href=""", @"""");
                     if (String.IsNullOrEmpty(thisUrl))
                     {
                         thisUrl = GetSubString(data, @"src=""", @"""");
