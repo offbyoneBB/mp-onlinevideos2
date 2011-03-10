@@ -266,26 +266,9 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        private int Ipad(Category parentCategory)
-        {
-            string webData = GetWebData(((RssLink)parentCategory).Url, null, null, null, false, false, @"Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10");
-
-            Match m = Regex.Match(webData, @"<li><a\shref=""(?<url>\?day[^""]*)"">(?<title>[^<]*)<");
-            while (m.Success)
-            {
-                RssLink tab = AddtoParent(parentCategory, m.Groups["title"].Value, @"http://www.rtl.nl/service/gemist/device/ipad/feed/index.xml" + m.Groups["url"].Value);
-                tab.Other = true;
-                m = m.NextMatch();
-            }
-            parentCategory.SubCategoriesDiscovered = true;
-            return parentCategory.SubCategories.Count;
-        }
-
         public override int DiscoverSubCategories(Category parentCategory)
         {
             string url = ((RssLink)parentCategory).Url;
-            if (url.Contains("ipad"))
-                return Ipad(parentCategory);
             string webData = GetWebData(url);
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(webData);
