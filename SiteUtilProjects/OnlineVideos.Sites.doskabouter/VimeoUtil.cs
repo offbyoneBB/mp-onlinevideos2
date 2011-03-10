@@ -12,7 +12,7 @@ namespace OnlineVideos.Sites
     {
         [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
         bool useDynamicCategories = true;
-        [Category("OnlineVideosUserConfiguration"), Description("Defines the default number of videos to display per page.")]
+        [Category("OnlineVideosUserConfiguration"), Description("Defines the default number of videos to display per page. (max 50)")]
         int pageSize = 26;
 
         private const string StandardAdvancedApiUrl = "http://vimeo.com/api/rest/v2";
