@@ -1170,17 +1170,7 @@
     </Site>
     <Site name="Vimeo" util="Vimeo" agecheck="false" enabled="true" lang="en">
       <Description>Video sharing for you</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass="thumbnail"><a\shref="(?<url>[^"]*)">\s<img\ssrc="(?<thumb>[^"]*)"[^>]*>\s*</a></div>\s*<div\sclass="digest">\s*<h3><a[^>]*>(?<title>[^<]*)</a></h3>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>/categories/[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[{0}/videos]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="item[^>]*>\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*<div\sclass="title">\s*<a[^>]*>(?<Title>[^<]*)</a>\s*<div\sclass="clear"></div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<li\sclass="arrow"><a\shref="(?<url>[^"]*)"><img\ssrc="http://a\.vimeocdn\.com/images/page_arrow_next_on\.gif"\salt="next"\s/>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[{"cached_timestamp":[^,]*,"source":"cache","signature":"(?<m1>[^"]*)","timestamp":(?<m2>[^,]*),"referrer":null,"vimeo_url":"vimeo\.com","player_url":"player\.vimeo\.com","cdn_url":"a\.vimeocdn\.com","cookie_domain":"\.vimeo\.com"},"video":{"id":(?<m0>[^,]*),"title]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://player.vimeo.com/play_redirect?clip_id={0}&sig={1}&time={2}&codecs=H264,VP8,VP6]]></item>
-        <item key="baseUrl"><![CDATA[http://vimeo.com/ajax/user/home_explore]]></item>
-        <item key="getRedirectedFileUrl"><![CDATA[True]]></item>
-      </Configuration>
+      <Configuration />
       <Categories />
     </Site>
     <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" lang="nl" player="WMP">
