@@ -18,11 +18,13 @@ namespace OnlineVideos.Sites
         protected string tv4DynamicCategoriesRegEx;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the videos from html. Group names: 'url', 'title', 'thumb', 'date'.")]
         protected string tv4VideolistRegEx;
-        protected string tv4VideolistRegEx2 = @"(?<=(Visa\sfler.*))<input\stype=""hidden""\sname=""(?<name>[^""]*)""\svalue=""(?<value>[^""]*)"">";
-        protected string tv4DynamicSubCategoriesRegEx = @"(?<!(/search/partial.*))<input\stype=""hidden""\sname=""(?<name>[^""]*)""\svalue=""(?<value>[^""]*)"">";
-        protected string tv4DynamicSubCategoriesRegEx2 = @"<li\s+class=""video-panel\s+(?!(clip))[^""]*"">\s*<p[^>]*>\s*<a\s+href=""(?<url>[^""]*)"">\s*<img\s+alt=""[^""]*""\s+src=""(?<thumb>[^""]*)"">\s*</a>\s*</p>\s*<div[^>]*>\s*<h3[^>]*>\s*<a[^>]*>(?<title>[^<]+)</a>\s*</h3>\s*<p[^>]*>\s*(?<desc>[^<]+)</p>";                
 
-        Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_dynamicSubCategories2, regEx_tv4VideoList, regEx_tv4VideoList2;
+        protected string tv4VideolistDividingRegEx = @"<div\sclass=""module-center-wrapper"">.*?<h2>.*?{0}.*?</h2>(?<data>.*?)</section>";
+        protected string tv4VideolistNextPageRegEx = @"<a\s+href=""(?<url>/search\?categoryids=[^""]+)"".*?><span>Visa\sfler</span></a>";
+        protected string tv4DynamicSubCategoriesRegEx = @"(<a\s+href=""/program_format_searches\.json\?ids=(?<ids>[^""&]+)[^""]*""><span>Alla</span></a>)|(<input\s+id=""ids""\s+name=""ids""\s+type=""hidden""\s+value=""(?<ids>[^""]*)"".*?/>)";
+        protected string tv4DynamicSubCategoriesRegEx2 = @"<li\s+class=""video-panel\s+(?!(clip))[^""]*"">\s*<p[^>]*>\s*<a\s+href=""(?<url>[^""]*)"">\s*<img\s+alt=""[^""]*""\s+src=""(?<thumb>[^""]*)"">\s*</a>\s*</p>\s*<div[^>]*>\s*<h3[^>]*>\s*<a[^>]*>(?<title>[^<]+)</a>\s*</h3>\s*<p[^>]*>\s*(?<desc>[^<]+)</p>";
+
+        Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_dynamicSubCategories2, regEx_tv4VideoList, regEx_tv4VideoListNextPage;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -32,7 +34,7 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(tv4DynamicSubCategoriesRegEx)) regEx_dynamicSubCategories = new Regex(tv4DynamicSubCategoriesRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             if (!string.IsNullOrEmpty(tv4DynamicSubCategoriesRegEx2)) regEx_dynamicSubCategories2 = new Regex(tv4DynamicSubCategoriesRegEx2, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             if (!string.IsNullOrEmpty(tv4VideolistRegEx)) regEx_tv4VideoList = new Regex(tv4VideolistRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
-            if (!string.IsNullOrEmpty(tv4VideolistRegEx2)) regEx_tv4VideoList2 = new Regex(tv4VideolistRegEx2, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+            if (!string.IsNullOrEmpty(tv4VideolistNextPageRegEx)) regEx_tv4VideoListNextPage = new Regex(tv4VideolistNextPageRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
         }
 
         public override int DiscoverDynamicCategories()
@@ -57,10 +59,9 @@ namespace OnlineVideos.Sites
                 string data = GetWebData((parentCategory as RssLink).Url);
                 if (!string.IsNullOrEmpty(data))
                 {
-                    parentCategory.SubCategories = new List<Category>();
-
                     if (parentCategory.ParentCategory == null)
                     {
+                        parentCategory.SubCategories = new List<Category>();
                         Match m = regEx_dynamicCategories.Match(data);
                         while (m.Success)
                         {
@@ -72,19 +73,19 @@ namespace OnlineVideos.Sites
                             cat.Other = "TV4";
                             cat.HasSubCategories = true;
                             cat.ParentCategory = parentCategory;
+                            cat.SubCategories = new List<Category>();
                             m = m.NextMatch();
                         }
                     }
-                    else
+                    else if (parentCategory.SubCategories != null)
                     {
-                        string jsonUrl = "http://www.tv4play.se/programformatsearch?";
+                        string jsonUrl = "http://www.tv4play.se/program_format_searches.json?ids=";
                         bool found = false;
                         Match m = regEx_dynamicSubCategories.Match(data);
-                        while (m.Success)
+                        if (m.Success)
                         {
                             found = true;
-                            jsonUrl += string.Format("{0}{1}={2}", jsonUrl.EndsWith("?") ? "" : "&", m.Groups["name"].Value, m.Groups["name"].Value == "rows" ? "100" : System.Web.HttpUtility.UrlEncode(m.Groups["value"].Value));
-                            m = m.NextMatch();
+                            jsonUrl += System.Web.HttpUtility.UrlDecode(m.Groups["ids"].Value) + "&rows=100";
                         }
                         if (found)
                         {
@@ -100,6 +101,7 @@ namespace OnlineVideos.Sites
                                     cat.Thumb = result.Value<string>("smallformatimage");
                                     cat.Description = result.Value<string>("text");
                                     cat.Other = "TV4";
+                                    cat.HasSubCategories = true;
                                     parentCategory.SubCategories.Add(cat);
                                     cat.ParentCategory = parentCategory;
                                 }
@@ -117,10 +119,20 @@ namespace OnlineVideos.Sites
                                 cat.Thumb = m2.Groups["thumb"].Value;
                                 cat.Description = HttpUtility.HtmlDecode(m2.Groups["desc"].Value.Trim());
                                 cat.Other = "TV4";
-                                parentCategory.SubCategories.Add(cat);
+                                cat.HasSubCategories = true;
                                 cat.ParentCategory = parentCategory;
                                 m2 = m2.NextMatch();
                             }
+                        }
+                    }
+                    else
+                    {
+                        Match m3 = Regex.Match(data, @"<h2><span>(?<title>[^<]+)</span></h2>");
+                        parentCategory.SubCategories = new List<Category>();
+                        while (m3.Success)
+                        {
+                            parentCategory.SubCategories.Add(new RssLink() { Name = m3.Groups["title"].Value, ParentCategory = parentCategory, Url = (parentCategory as RssLink).Url, Other = "TV4" });
+                            m3 = m3.NextMatch();
                         }
                     }
                 }
@@ -152,48 +164,18 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        int pagingCurrentStart = 0;
-        string pagingUrl;
+        int currentStart = 0;
+        string pagingUrl = "";
         public override List<VideoInfo> getNextPageVideos()
         {
-            string rowsString = Regex.Match(pagingUrl, @"rows=(\d+)").Groups[1].Value;
-            int rows = 12;
-            if (rowsString != "") int.TryParse(rowsString, out rows);
-            int incrementIndex = pagingUrl.IndexOf("start=");
-            if (incrementIndex < 0)
-            {
-                pagingCurrentStart += rows;
-                pagingUrl += "&start=" + pagingCurrentStart.ToString();
-            }
-            HasPreviousPage = true;
-            return ParseVideos(new RssLink() { Url = pagingUrl, Other = "TV4" });
-        }
-
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            string rowsString = Regex.Match(pagingUrl, @"rows=(\d+)").Groups[1].Value;
-            int rows = 12;
-            if (rowsString != "") int.TryParse(rowsString, out rows);
-            int incrementIndex = pagingUrl.IndexOf("start=");
-            if (incrementIndex < 0)
-            {
-                pagingCurrentStart -= rows;
-                if (pagingCurrentStart <= 0)
-                {
-                    pagingCurrentStart = 0;
-                    HasPreviousPage = false;
-                }
-                else
-                    pagingUrl += "&start=" + pagingCurrentStart.ToString();
-            }
             return ParseVideos(new RssLink() { Url = pagingUrl, Other = "TV4" });
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            pagingCurrentStart = 0;
             HasNextPage = false;
-            HasPreviousPage = false;
+            currentStart = 0;
+            pagingUrl = "";
             return ParseVideos(category);
         }
 
@@ -202,7 +184,17 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videos = new List<VideoInfo>();
             if (category.Other == "TV4")
             {
-                string data = GetWebData((category as RssLink).Url);
+                string data = "";
+                if (category.ParentCategory != null)
+                {
+                    data = GetWebData((category.ParentCategory as RssLink).Url);
+                    data = Regex.Match(data, string.Format(tv4VideolistDividingRegEx, category.Name.Replace(" ", "\\s")), RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture).Groups["data"].Value;
+                }
+                else
+                {
+                    // called from getNextPageVideos()
+                    data = GetWebData((category as RssLink).Url);
+                }
                 Match m = regEx_tv4VideoList.Match(data);
                 while (m.Success)
                 {
@@ -215,13 +207,37 @@ namespace OnlineVideos.Sites
                     videos.Add(video);
                     m = m.NextMatch();
                 }
-                pagingUrl = "http://www.tv4play.se/search/partial?";
-                m = regEx_tv4VideoList2.Match(data);
-                while (m.Success)
+                HasNextPage = false;
+                pagingUrl = "";
+                int currentMaxVideos = -1;
+                int.TryParse(Regex.Match(data, @"<p\sclass=""info"">Visar\s\d+\sav\s(?<max>\d+)</p>", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture).Groups["max"].Value, out currentMaxVideos);
+                if (currentMaxVideos > 0) (category as RssLink).EstimatedVideoCount = (uint)currentMaxVideos;
+                m = regEx_tv4VideoListNextPage.Match(data);
+                if (m.Success)
                 {
-                    HasNextPage = true;
-                    pagingUrl += string.Format("{0}{1}={2}", pagingUrl.EndsWith("?") ? "" : "&", m.Groups["name"].Value, System.Web.HttpUtility.UrlEncode(m.Groups["value"].Value));
-                    m = m.NextMatch();
+                    pagingUrl = HttpUtility.HtmlDecode(m.Groups["url"].Value);
+                    if (!Uri.IsWellFormedUriString(pagingUrl, System.UriKind.Absolute)) pagingUrl = new Uri(new Uri(tv4BaseUrl), pagingUrl).AbsoluteUri;
+
+
+
+                    string incString = Regex.Match(pagingUrl, @"increment=(\d+)").Groups[1].Value;
+                    int inc = 12;
+                    if (incString != "") int.TryParse(incString, out inc);
+
+                    string rowsString = Regex.Match(pagingUrl, @"rows=(\d+)").Groups[1].Value;
+                    int rows = 12;
+                    if (rowsString != "") int.TryParse(rowsString, out rows);
+
+                    pagingUrl = Regex.Replace(pagingUrl, @"rows=(\d+)", "rows=" + inc.ToString());
+
+                    currentStart += inc;
+
+                    if (currentStart < currentMaxVideos)
+                    {
+                        pagingUrl += "&start=" + currentStart.ToString();
+
+                        HasNextPage = true;
+                    }
                 }
             }
             else
