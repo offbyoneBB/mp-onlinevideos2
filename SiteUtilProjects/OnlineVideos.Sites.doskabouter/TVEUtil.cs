@@ -27,6 +27,7 @@ namespace OnlineVideos.Sites
 
             return base.DiscoverDynamicCategories();
         }
+
         public override int DiscoverSubCategories(Category parentCategory)
         {
             string url = ((RssLink)parentCategory).Url;
@@ -65,6 +66,13 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
+        public override List<VideoInfo> getVideoList(Category category)
+        {
+            List<VideoInfo> res = base.getVideoList(category);
+            foreach (VideoInfo video in res)
+                video.Length = Regex.Replace(video.Length, @"[\t\r\n]", String.Empty, RegexOptions.Multiline);
+            return res;
+        }
         public override string getUrl(VideoInfo video)
         {
             // copy from http://code.google.com/p/xbmc-tvalacarta/source/browse/trunk/tvalacarta/tvalacarta/channels/rtve.py
