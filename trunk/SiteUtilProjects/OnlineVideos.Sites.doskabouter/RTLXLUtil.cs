@@ -128,12 +128,13 @@ namespace OnlineVideos.Sites
             if (parentCategory.SubCategories == null)
             {
                 parentCategory.SubCategories = new List<Category>();
-                parentCategory.SubCategoriesDiscovered = true;
                 parentCategory.HasSubCategories = true;
             }
+            parentCategory.SubCategoriesDiscovered = true;
             parentCategory.SubCategories.Add(tmp);
             return tmp;
         }
+
         private VideoInfo GetVideoFromNode(XmlNode node, Dictionary<string, XmlNode> episodes)
         {
             XmlNode epNode;
@@ -266,9 +267,119 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
+        private void AddVideo(Category parentCategory, string path, VideoInfo video)
+        {
+            string[] subPaths = path.Split('\t');
+
+            Category curr = parentCategory;
+
+            foreach (string sub in subPaths)
+            {
+                RssLink tab = (curr.SubCategories == null) ? null :
+                 (RssLink)curr.SubCategories.Find(item => item.Name.Equals(sub, StringComparison.InvariantCultureIgnoreCase));
+                if (tab == null)
+                    tab = AddtoParent(curr, sub, String.Empty);
+                curr = tab;
+            }
+
+            if (curr.Other == null)
+                curr.Other = new List<VideoInfo>();
+            ((List<VideoInfo>)curr.Other).Add(video);
+        }
+
+        private DateTime lastChecked = DateTime.MinValue;
+
+        private int Ipad(Category parentCategory)
+        {
+            lastChecked = DateTime.Now;
+            XmlDocument doc = new XmlDocument();
+            HttpWebRequest request = WebRequest.Create(((RssLink)parentCategory).Url) as HttpWebRequest;
+            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+            request.Accept = "* /*";
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            StringBuilder sb = new StringBuilder();
+            using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+            {
+                try
+                {
+                    while (!sr.EndOfStream)
+                    {
+                        sb.Append((char)sr.Read());
+                    }
+                }
+                catch (System.IO.IOException)
+                { }
+            }
+
+            doc.LoadXml(sb.ToString());
+
+            foreach (XmlNode item in doc.SelectNodes("//items/item"))
+            {
+                string title = item.SelectSingleNode("title").InnerText;
+                string serieNaam = item.SelectSingleNode("serienaam").InnerText;
+                DateTime aired = DateTime.Parse(item.SelectSingleNode("broadcastdatetime").InnerText);
+
+                VideoInfo videoInfo = new VideoInfo();
+                videoInfo.Other = true; // url is direct link to mp4, so no geturl needed
+                videoInfo.Title = title;
+                videoInfo.VideoUrl = item.SelectSingleNode("movie").InnerText;
+                videoInfo.ImageUrl = item.SelectSingleNode("thumbnail").InnerText;
+                videoInfo.Length = '|' + Translation.Airdate + ": " + aired.ToString();
+                videoInfo.Description = item.SelectSingleNode("episodetitel").InnerText;
+
+                if (serieNaam.Equals(title, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    videoInfo.Title = videoInfo.Description;
+                    videoInfo.Description = String.Empty;
+                }
+
+                string airDate = aired.ToShortDateString();
+                AddVideo(parentCategory, "Datum\t" + airDate, videoInfo);
+                if (!String.IsNullOrEmpty(serieNaam))
+                {
+                    string pre = serieNaam.ToUpperInvariant();
+                    if (!(pre[0] >= 'A' && pre[0] <= 'Z'))
+                        pre = "0-9";
+                    else
+                        pre = pre[0].ToString();
+                    AddVideo(parentCategory, "A - Z\t" + pre + '\t' + serieNaam,
+                        videoInfo);
+                }
+
+            }
+
+            Category az = parentCategory.SubCategories.Find(item => item.Name.Equals("A - Z"));
+            if (az != null && az.SubCategories != null)
+            {
+                az.SubCategories.Sort(CategoryComparer);
+                foreach (Category sub in az.SubCategories)
+                {
+                    if (sub.SubCategories != null)
+                        sub.SubCategories.Sort(CategoryComparer);
+                }
+            }
+            parentCategory.SubCategoriesDiscovered = false;
+            return parentCategory.SubCategories.Count;
+        }
+
+        private int CategoryComparer(Category cat1, Category cat2)
+        {
+            return String.Compare(cat1.Name, cat2.Name);
+
+        }
+
         public override int DiscoverSubCategories(Category parentCategory)
         {
             string url = ((RssLink)parentCategory).Url;
+            if (url.StartsWith("http://iptv.rtl.nl/"))
+            {
+                if (OnlineVideoSettings.Instance.CacheTimeout > 0 &&
+                    (DateTime.Now - lastChecked).TotalMinutes < OnlineVideoSettings.Instance.CacheTimeout)
+                    return parentCategory.SubCategories.Count;
+
+                return Ipad(parentCategory);
+            }
             string webData = GetWebData(url);
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(webData);
@@ -322,52 +433,10 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        private List<VideoInfo> IpadVideoList(Category category)
-        {
-            string webData = GetWebData(((RssLink)category).Url, null, null, null, false, false, @"Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10");
-            Match m = Regex.Match(webData, @"&files=(?<data>[^\)]*)\)");
-            string[] imageUrls1 = null;
-            string[] imageUrls2 = null;
-            if (m.Success)
-            {
-                imageUrls1 = m.Groups["data"].Value.Split('~');
-                m = m.NextMatch();
-                if (m.Success)
-                    imageUrls2 = m.Groups["data"].Value.Split('~');
-            }
-            string[] imageUrls = new string[2 * (Math.Max(imageUrls1.Length, imageUrls2.Length))];
-            for (int i = 0; i < imageUrls.Length; i++)
-            {
-                if (i % 2 == 0)
-                    imageUrls[i] = imageUrls1 != null && i / 2 < imageUrls1.Length ? imageUrls1[i / 2] : String.Empty;
-                else
-                    imageUrls[i] = imageUrls2 != null && i / 2 < imageUrls2.Length ? imageUrls2[i / 2] : String.Empty;
-            }
-
-            List<VideoInfo> result = new List<VideoInfo>();
-            int cnt = 0;
-            m = Regex.Match(webData, @"<li\sclass=""video_item"">(?:(?!ns_url).)*ns_url=(?<VideoUrl>[^""]*)""[^>]*>[^>]*>[^>]*>(?<Title>[^<]*)[^>]*>[^>]*>(?<Airdate>[^<]*)");
-            while (m.Success)
-            {
-                VideoInfo videoInfo = new VideoInfo();
-                videoInfo.Other = true;
-                videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
-                videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
-                videoInfo.ImageUrl = cnt < imageUrls.Length ? @"http://iptv.rtl.nl/nettv/" + imageUrls[cnt].Split(',')[0] : null;
-                string Airdate = m.Groups["Airdate"].Value;
-                if (!String.IsNullOrEmpty(Airdate))
-                    videoInfo.Length = videoInfo.Length + '|' + Translation.Airdate + ": " + Airdate;
-                result.Add(videoInfo);
-                m = m.NextMatch();
-                cnt++;
-            }
-            return result;
-        }
-
         public override List<VideoInfo> getVideoList(Category category)
         {
-            if (true.Equals(category.Other))
-                return IpadVideoList(category);
+            if (category.Other != null)
+                return (List<VideoInfo>)category.Other;
             if (videos.ContainsKey(category))
                 return videos[category];
             else
@@ -386,5 +455,6 @@ namespace OnlineVideos.Sites
             string url2 = urls.Count > 1 ? urls[1] : urls[0];
             return url2;
         }
+
     }
 }
