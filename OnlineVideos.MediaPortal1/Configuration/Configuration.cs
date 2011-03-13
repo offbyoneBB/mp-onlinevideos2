@@ -57,6 +57,7 @@ namespace OnlineVideos.MediaPortal1
 
             if (PluginConfiguration.Instance.updateOnStart != null) chkDoAutoUpdate.CheckState = PluginConfiguration.Instance.updateOnStart.Value ? CheckState.Checked : CheckState.Unchecked;
             else chkDoAutoUpdate.CheckState = CheckState.Indeterminate;
+            tbxUpdatePeriod.Text = PluginConfiguration.Instance.updatePeriod.ToString();
 
             /** fill "Sites" tab **/
             // utils combobox
@@ -223,6 +224,7 @@ namespace OnlineVideos.MediaPortal1
                 catch { }
                 if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) PluginConfiguration.Instance.updateOnStart = null;
                 else PluginConfiguration.Instance.updateOnStart = chkDoAutoUpdate.Checked;
+                PluginConfiguration.Instance.updatePeriod = uint.Parse(tbxUpdatePeriod.Text);
                 PluginConfiguration.Instance.httpSourceFilterName = tbxHttpSourceFilter.Text;
                 PluginConfiguration.Instance.autoGroupByLang = chkAutoGroupByLang.Checked;
                 PluginConfiguration.Instance.Save(false);

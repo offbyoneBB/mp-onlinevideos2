@@ -205,6 +205,9 @@ namespace OnlineVideos.MediaPortal1
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.label44 = new System.Windows.Forms.Label();
+            this.label45 = new System.Windows.Forms.Label();
+            this.tbxUpdatePeriod = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -1162,6 +1165,9 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.tbxUpdatePeriod);
+            this.tabGeneral.Controls.Add(this.label45);
+            this.tabGeneral.Controls.Add(this.label44);
             this.tabGeneral.Controls.Add(this.btnWiki);
             this.tabGeneral.Controls.Add(this.pictureBox5);
             this.tabGeneral.Controls.Add(this.groupBox5);
@@ -2227,6 +2233,34 @@ namespace OnlineVideos.MediaPortal1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(246, 61);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(57, 13);
+            this.label44.TabIndex = 68;
+            this.label44.Text = "Only every";
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Location = new System.Drawing.Point(367, 61);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(33, 13);
+            this.label45.TabIndex = 69;
+            this.label45.Text = "hours";
+            // 
+            // tbxUpdatePeriod
+            // 
+            this.tbxUpdatePeriod.Location = new System.Drawing.Point(309, 58);
+            this.tbxUpdatePeriod.Name = "tbxUpdatePeriod";
+            this.tbxUpdatePeriod.Size = new System.Drawing.Size(40, 20);
+            this.tbxUpdatePeriod.TabIndex = 70;
+            this.toolTip1.SetToolTip(this.tbxUpdatePeriod, "Automatic update and thumbnail deletion on startup will only run after this many " +
+                    "hours passed since the last run.");
+            this.tbxUpdatePeriod.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
+            // 
             // Configuration
             // 
             this.AcceptButton = this.btnSave;
@@ -2502,5 +2536,8 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.CheckBox chkUseRtmpProxy;
         private System.Windows.Forms.CheckBox chkAutoGroupByLang;
         private System.Windows.Forms.Button btnWiki;
+        private System.Windows.Forms.TextBox tbxUpdatePeriod;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.Label label44;
 	}
 }

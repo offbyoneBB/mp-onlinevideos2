@@ -38,6 +38,8 @@ namespace OnlineVideos.MediaPortal1
         public BindingList<SitesGroup> SitesGroups = new BindingList<SitesGroup>();
         public bool autoGroupByLang = true;
         public bool useRtmpProxy = true;
+        public DateTime lastFirstRun;
+        public uint updatePeriod = 0;
 
         // runtime (inside MediaPortal) changeable values
         public Dictionary<string, List<string>> searchHistory;
@@ -83,6 +85,8 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_SEARCHHISTORYTYPE = "searchHistoryType";
         const string CFG_USE_RTMP_PROXY = "useRtmpProxy";
         const string CFG_AUTO_LANG_GROUPS = "autoGroupByLang";
+        const string CFG_LAST_FIRSTRUN = "lastFirstRun";
+        const string CFG_UPDATEPERIOD = "updatePeriod";
         #endregion
 
         #region Singleton
@@ -208,6 +212,12 @@ namespace OnlineVideos.MediaPortal1
                     string doUpdateString = settings.GetValue(CFG_SECTION, CFG_UPDATEONSTART);
                     if (!string.IsNullOrEmpty(doUpdateString)) updateOnStart = settings.GetValueAsBool(CFG_SECTION, CFG_UPDATEONSTART, true);
 
+                    // last point in time the plugin was run in mediaportal
+                    string tempDate = settings.GetValueAsString(CFG_SECTION, CFG_LAST_FIRSTRUN, string.Empty);
+                    if (!string.IsNullOrEmpty(tempDate)) DateTime.TryParse(tempDate, out lastFirstRun);
+
+                    updatePeriod = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_UPDATEPERIOD, (int)updatePeriod);
+
                     // read the video extensions configured in MediaPortal                    
                     string[] mediaportal_user_configured_video_extensions;
                     string strTmp = settings.GetValueAsString("movies", "extensions", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts");
@@ -249,6 +259,7 @@ namespace OnlineVideos.MediaPortal1
                     settings.SetValue(CFG_SECTION, CFG_SITEVIEW_ORDER, (int)siteOrder);
                     settings.SetValue(CFG_SECTION, CFG_VIDEOVIEW_MODE, (int)currentVideoView);
                     settings.SetValue(CFG_SECTION, CFG_CATEGORYVIEW_MODE, (int)currentCategoryView);
+                    if (lastFirstRun != default(DateTime)) settings.SetValue(CFG_SECTION, CFG_LAST_FIRSTRUN, lastFirstRun.ToString("s"));
                     try
                     {
                         MemoryStream xmlMem = new MemoryStream();
@@ -278,6 +289,7 @@ namespace OnlineVideos.MediaPortal1
                         settings.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, ovsconf.UtilTimeout);
                         settings.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                         settings.SetValue(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
+                        settings.SetValue(CFG_SECTION, CFG_UPDATEPERIOD, updatePeriod);
                         if (FilterArray != null && FilterArray.Length > 0) settings.SetValue(CFG_SECTION, CFG_FILTER, string.Join(",", FilterArray));
                         if (!string.IsNullOrEmpty(ovsconf.DownloadDir)) settings.SetValue(CFG_SECTION, CFG_DOWNLOAD_DIR, ovsconf.DownloadDir);
                         if (!string.IsNullOrEmpty(email)) settings.SetValue(CFG_SECTION, CFG_EMAIL, email);

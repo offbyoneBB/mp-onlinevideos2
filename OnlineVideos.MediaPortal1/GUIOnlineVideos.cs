@@ -760,7 +760,7 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
             Translator.TranslateSkin();
 
-            if (PluginConfiguration.Instance.updateOnStart != false)
+            if (PluginConfiguration.Instance.updateOnStart != false && PluginConfiguration.Instance.lastFirstRun.AddHours(PluginConfiguration.Instance.updatePeriod) < DateTime.Now)
             {
                 bool? doUpdate = PluginConfiguration.Instance.updateOnStart;
                 if (!PluginConfiguration.Instance.updateOnStart.HasValue && !preventDialogOnLoad)
@@ -812,7 +812,7 @@ namespace OnlineVideos.MediaPortal1
             if ((PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) || PluginConfiguration.Instance.autoGroupByLang) CurrentState = State.groups;
             firstLoadDone = true;
 
-            if (PluginConfiguration.Instance.ThumbsAge >= 0)
+            if (PluginConfiguration.Instance.ThumbsAge >= 0 && PluginConfiguration.Instance.lastFirstRun.AddHours(PluginConfiguration.Instance.updatePeriod) < DateTime.Now)
             {
                 GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
                 if (dlgPrgrs != null)
@@ -834,11 +834,17 @@ namespace OnlineVideos.MediaPortal1
                             return dlgPrgrs.ShouldRenderLayer();
                         });
                     if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, Translation.Done); dlgPrgrs.Close(); }
-                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { DoPageLoad(); return 0; }, 0, 0, null);
+                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => 
+                    {
+                        PluginConfiguration.Instance.lastFirstRun = DateTime.Now;
+                        DoPageLoad(); 
+                        return 0; 
+                    }, 0, 0, null);
                 }) { Name = "OnlineVideosThumbnail", IsBackground = true }.Start();
                 return;
             }
 
+            PluginConfiguration.Instance.lastFirstRun = DateTime.Now;
             DoPageLoad();
         }
 
