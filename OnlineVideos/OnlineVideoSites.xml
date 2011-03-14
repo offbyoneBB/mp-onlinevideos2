@@ -1069,7 +1069,7 @@
       <Description>Las series y programas de TVE, cuando quieras en rtve.es</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.rtve.es]]></item>
-        <item key="videoListRegEx"><![CDATA[<li\sid="video-(?<videoid>[^"]*)"\sclass="videoThumbnail">\s*<div>\s*<a\shref='(?<VideoUrl>[^']*)'[^>]*>\s*<img\ssrc="(?<ImageUrl>[^"]*).*?<h3>[^>]*>(?<Title>[^<]*)<.*?</h3>\s*<p>\s*(?<Description>[^<]*)</p>.*?Emitido:\s*(?<Airdate>[^<]*)<.*?Duraci&oacute;n:\s*(?<Duration>[^<]*)<]]></item>
+        <item key="videoListRegEx"><![CDATA[<li\sid="video-(?<videoid>[^"]*)"\sclass="videoThumbnail">\s*<div>\s*<a\shref='(?<VideoUrl>[^']*)'[^>]*>\s*<img\ssrc="(?<ImageUrl>[^"]*).*?<h3>[^>]*>(?<Title>[^<]*)<.*?</h3>\s*<p>\s*(?<Description>[^<]*)</p>.*?Emitido:\s*(?<Airdate>[^\n\t\r]*)[\n\t\r].*?Duraci&oacute;n:\s*(?<Duration>[^\s]*)\s*<]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\sclass="adelante">\s*<a\shref="(?<url>[^"]*)"]]></item>
         <item key="prevPageRegEx"><![CDATA[<li\sclass="atras">\s*<a\shref="(?<url>[^"]*)"]]></item>
       </Configuration>
