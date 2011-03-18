@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CBCUtil.cs" />
+    <Compile Include="EuroSportUtil.cs" />
     <Compile Include="Hoster\Archiv.cs" />
     <Compile Include="Hoster\DataUp.cs" />
     <Compile Include="Hoster\DivxDen.cs" />
