@@ -1035,6 +1035,15 @@
       </Configuration>
       <Categories />
     </Site>
+    <Site name="EuroSport" util="EuroSport" agecheck="false" enabled="true" lang="en">
+      <Description>Eurosport live streams</Description>
+      <Configuration>
+        <item key="tld"><![CDATA[de]]></item>
+        <item key="emailAddress"><![CDATA[]]></item>
+        <item key="password"><![CDATA[]]></item>
+      </Configuration>
+      <Categories />
+    </Site>
     <Site name="Kabouter Wesley" util="GenericSite" agecheck="false" enabled="true" lang="nl">
       <Description>Kabouter Wesley. Elke dinsdag een nieuw filmpje!</Description>
       <Configuration>
