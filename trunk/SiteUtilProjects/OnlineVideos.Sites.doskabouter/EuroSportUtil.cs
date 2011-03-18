@@ -12,12 +12,12 @@ namespace OnlineVideos.Sites
     public class EuroSportUtil : SiteUtilBase
     {
 
-        [Category("OnlineVideosConfiguration"), Description("The tld for the eurosportplayer url, e.g. nl, co.uk or de")]
+        [Category("OnlineVideosUserConfiguration"), Description("The tld for the eurosportplayer url, e.g. nl, co.uk or de")]
         string tld = null;
 
-        [Category("OnlineVideosConfiguration"), Description("Email address of your eurosport account")]
+        [Category("OnlineVideosUserConfiguration"), Description("Email address of your eurosport account")]
         string emailAddress = null;
-        [Category("OnlineVideosConfiguration"), Description("Password of your eurosport account")]
+        [Category("OnlineVideosUserConfiguration"), Description("Password of your eurosport account")]
         string password = null;
 
         private string baseUrl;
