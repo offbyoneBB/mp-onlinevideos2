@@ -6,6 +6,7 @@ using System.Text;
 using System.Net;
 using System.Xml;
 using System.IO;
+using System.Web;
 
 namespace OnlineVideos.Sites
 {
@@ -21,13 +22,19 @@ namespace OnlineVideos.Sites
         string password = null;
 
         private string baseUrl;
+        private Regex SubcatRegex;
 
         private XmlNamespaceManager nsmRequest;
+        private enum kind { Live, Video };
+        private CookieContainer newcc = new CookieContainer();
 
         public override int DiscoverDynamicCategories()
         {
             if (tld == null || emailAddress == null || password == null)
                 return 0;
+            Log.Debug("tld, emailaddress and password != null");
+
+            SubcatRegex = new Regex(@"<option value=""UpdateAjaxVod\('(?<url>[^']*)'\);"">(?<title>[^<]*)</option>");
             baseUrl = String.Format(@"http://www.eurosportplayer.{0}/", tld);
 
             CookieContainer cc = new CookieContainer();
@@ -48,30 +55,88 @@ namespace OnlineVideos.Sites
                 cc.Add(c);
             }
 
-            string post = GetWebDataFromPost(url, postData, cc);
+            GetWebDataFromPost(url, postData, cc);
 
-            CookieContainer newcc = new CookieContainer();
             CookieCollection ccol = cc.GetCookies(new Uri(baseUrl));
             foreach (Cookie c in ccol)
+            {
+                Log.Debug("Add cookie " + c.ToString());
                 newcc.Add(c);
+            }
 
-            string getData = GetWebData(baseUrl + "tv.shtml", newcc);
 
-            Category category = new Category();
+            RssLink category = new RssLink();
+            category.Url = baseUrl + "tv.shtml";
             category.Name = "Live TV";
-
-            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""(?<value>[^&]*)&#xA;\s*lang=(?<lang>[^&]*)&#xA;\s*,geoloc=(?<geoloc>[^&]*)&#xA;\s*,realip=(?<realip>[^&]*)&#xA;\s*,ut=(?<ut>[^&]*)&#xA;\s*,ht=(?<ht>[^&]*)&#xA;\s*,vidid=(?<vidid>[^&]*)&#xA;\s*,cuvid=(?<cuvid>[^&]*)&#xA;\s*,prdid=(?<prdid>[^&]*)&");
-            if (m.Success)
-                category.Other = m;
-
+            category.Other = kind.Live;
             Settings.Categories.Add(category);
+
+            category = new RssLink();
+            category.Url = baseUrl + "vod.shtml";
+            category.Name = "Videos";
+            category.Other = kind.Video;
+            category.HasSubCategories = true;
+            Settings.Categories.Add(category);
+
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
+
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            // currently: only for Videos
+            string data = GetWebData((parentCategory as RssLink).Url, newcc);
+            if (!string.IsNullOrEmpty(data))
+            {
+                parentCategory.SubCategories = new List<Category>();
+                Match m = SubcatRegex.Match(data);
+                while (m.Success)
+                {
+                    RssLink cat = new RssLink();
+                    cat.Url = baseUrl + m.Groups["url"].Value.TrimStart('/');
+                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
+                    cat.ParentCategory = parentCategory;
+                    cat.Other = parentCategory.Other;
+                    parentCategory.SubCategories.Add(cat);
+                    m = m.NextMatch();
+                }
+                parentCategory.SubCategoriesDiscovered = true;
+            }
+            return parentCategory.SubCategories == null ? 0 : parentCategory.SubCategories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            Match m = (Match)category.Other;
+            if (kind.Live.Equals(category.Other))
+                return GetVideoListFromLive(category);
+            else
+                return GetVideoListFromVideo(category);
+        }
+
+        private List<VideoInfo> GetVideoListFromVideo(Category category)
+        {
+            XmlDocument doc = new XmlDocument();
+            string webData = GetWebData(((RssLink)category).Url, newcc).Replace(@"xmlns:genExt=""http://twilight.eurosport.com/XsltExtensions/General""", String.Empty);
+            doc.LoadXml(webData);
+            List<VideoInfo> result = new List<VideoInfo>();
+            foreach (XmlNode node in doc.SelectNodes("//array"))
+            {
+                VideoInfo video = new VideoInfo();
+                video.Title = node.SelectSingleNode("title").InnerText;
+                video.ImageUrl = node.SelectSingleNode("img").InnerText;
+                video.Length = '|' + Translation.Airdate + ": " + node.SelectSingleNode("date").InnerText;
+                video.VideoUrl = baseUrl + node.SelectSingleNode("link").InnerText.TrimStart('/');
+                video.Other = category.Other;
+                result.Add(video);
+            }
+            return result;
+        }
+
+        private List<VideoInfo> GetVideoListFromLive(Category category)
+        {
+            string getData = GetWebData(((RssLink)category).Url, newcc);
+            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""(?<value>[^&]*)&#xA;\s*lang=(?<lang>[^&]*)&#xA;\s*,geoloc=(?<geoloc>[^&]*)&#xA;\s*,realip=(?<realip>[^&]*)&#xA;\s*,ut=(?<ut>[^&]*)&#xA;\s*,ht=(?<ht>[^&]*)&#xA;\s*,vidid=(?<vidid>[^&]*)&#xA;\s*,cuvid=(?<cuvid>[^&]*)&#xA;\s*,prdid=(?<prdid>[^&]*)&");
 
             string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
 <s:Body xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
@@ -134,6 +199,49 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
+            if (kind.Video.Equals(video.Other))
+                return GetUrlFromVideo(video);
+            return GetUrlFromLive(video);
+        }
+
+        private string GetUrlFromVideo(VideoInfo video)
+        {
+            string getData = GetWebData(video.VideoUrl, newcc);
+            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""(?<value>[^&]*)&#xA;\s*lang=(?<lang>[^&]*)&#xA;\s*,geoloc=(?<geoloc>[^&]*)&#xA;\s*,realip=(?<realip>[^&]*)&#xA;\s*,ut=(?<ut>[^&]*)&#xA;\s*,ht=(?<ht>[^&]*)&#xA;\s*,vidid=(?<vidid>[^&]*)&#xA;\s*,cuvid=(?<cuvid>[^&]*)&#xA;\s*,prdid=(?<prdid>[^&]*)&");
+
+            string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
+<s:Body xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+<GetVideoSecurizedAsync xmlns=""http://tempuri.org/"">
+<videoId>171969</videoId>
+<videoPartnerCode />
+<countryCode>{0}</countryCode>
+<videoLanguageId>{1}</videoLanguageId>
+<service>{2}</service>
+<realIp>{3}</realIp>
+<userId>{4}</userId>
+<hkey>{5}</hkey>
+<responseLangId>{1}</responseLangId>
+</GetVideoSecurizedAsync>
+</s:Body></s:Envelope>", tld.ToUpperInvariant(), m.Groups["lang"].Value, 1, m.Groups["realip"].Value,
+                   m.Groups["ut"].Value, m.Groups["ht"].Value);
+
+            string postData = GetWebDataFromPost("http://videoshop.ws.eurosport.com/PlayerVideoService.asmx",
+                post, @"SOAPAction: ""http://tempuri.org/GetVideoSecurizedAsync""");
+
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(postData);
+
+            nsmRequest = new XmlNamespaceManager(doc.NameTable);
+            nsmRequest.AddNamespace("a", "http://tempuri.org/");
+
+            XmlNode uri = doc.SelectSingleNode("//a:playlistitem/a:uri", nsmRequest);
+            if (uri != null)
+                return uri.InnerText;
+            return null;
+        }
+
+        private string GetUrlFromLive(VideoInfo video)
+        {
             XmlNodeList streams = (XmlNodeList)video.Other;
             video.PlaybackOptions = new Dictionary<string, string>();
             foreach (XmlNode stream in streams)
@@ -165,6 +273,8 @@ namespace OnlineVideos.Sites
         private static string GetWebDataFromPost(string url, string postData, string headerExtra)
         {
             Log.Debug("get webdata from {0}", url);
+            Log.Debug("postdata = " + postData);
+            Log.Debug("headerExtra = " + headerExtra);
 
             // request the data
             byte[] data = Encoding.UTF8.GetBytes(postData);
