@@ -89,6 +89,7 @@ namespace OnlineVideos.Sites
         {
             string data = GetWebData(baseUrl);
             data = GetSubString(data, @"<!-- nav -->", @"<!-- /nav -->");
+            data = Regex.Replace(data, @"http://survey.cinemassacre[^""]*",String.Empty, RegexOptions.Multiline);
             data = @"<?xml version=""1.0"" encoding=""iso-8859-1""?>" + data;
 
             XmlDocument doc = new XmlDocument();
