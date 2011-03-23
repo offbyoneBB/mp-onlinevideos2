@@ -39,15 +39,6 @@ This is a 3-step process:
 
 1: "GetVideoUrl" here you can transform the url from the VideoList to a more suitable string (not necessary a valid url) e.g. extract the id from the url
 
-You can use m0,m1 and so on to extract the parts that are needed, and they will be filled into the {0},{1} etc in the VideoUrlFormatString
-example:
-{{{
-Url from VideoList: http://www.website.com/video/today/706334
-VideoUrlRegex: http://.+/(?<m0>\d{4,10}) (this results in m0=706334)
-VideoUrlFormatString: http://www.website.com/flash/download?&movieId={0}
-VideoUrlResult: http://www.website.com/flash/download?&movieId=706334
-}}}
-
 2: "GetPlayListUrl" to be documented
 
 3: "GetFileUrl" here you can parse the html-result of the previous steps to extract the final url.
