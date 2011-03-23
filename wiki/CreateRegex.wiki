@@ -75,12 +75,12 @@ VideoUrlFormatString: http://www.website.com/flash/download?&movieId={0}
 VideoUrlResult: http://www.website.com/flash/download?&movieId=706334
 }}}
 
-== For PlaylistUrl: ==
+== For Playlist Url: ==
 
 === url ===
 This is used to replace the url of the playlist files.
 
-== For FileUrl: ==
+== For File Url: ==
 
 === m0..m2 ===
 You can use m0,m1 and so on to extract the parts that are needed, and they will be filled into the {0},{1} etc in the FileUrlFormatString
