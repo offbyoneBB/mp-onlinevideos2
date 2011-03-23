@@ -23,20 +23,74 @@ You have to play with this to get some experience, because if you leave too much
 
 = Regex-shortcuts =
 
-== url ==
-This is used to replace the url of the video stream your looking to add.
+== For Categories/Subcategories: ==
 
-== title ==
-This is used to replace the title string of the video stream your looking to add.
+=== url ===
+This is used to replace the url of the page with (sub)categories to add.
 
-== thumb ==
-This is used to replace the url string of thumbnail image of the video stream your looking to add.
+=== title ===
+This is used to replace the title string of the (sub)category to add.
 
-== description ==
-This is used to replace the description string of the video stream your looking to add.
+=== thumb ===
+This is used to replace the url string of thumbnail image of the (sub)category to add.
 
+=== description ===
+This is used to replace the description string of the (sub)category to add.
 
-== Skip to ==
+== For videos: ===
+
+=== Title ===
+This is used to replace the title string of the video stream you're looking to add.
+
+=== VideoUrl ===
+This is used to replace the url of the video stream you're looking to add.
+
+=== ImageUrl ===
+This is used to replace the url string of thumbnail image of the video stream you're looking to add.
+
+=== Description ===
+This is used to replace the description string of the video stream you're looking to add.
+
+=== Duration ===
+This is used to replace the duration or length string of the video stream you're looking to add.
+
+=== Airdate ===
+This is used to replace the airdate or upload date string of the video stream you're looking to add.
+
+== For next page: ==
+
+=== url ===
+This is used to replace the url of the next page of videos.
+
+== For the Video URL ==
+
+=== m0..m2 ===
+
+You can use m0,m1 and so on to extract the parts that are needed, and they will be filled into the {0},{1} etc in the VideoUrlFormatString
+example:
+{{{
+Url from VideoList: http://www.website.com/video/today/706334
+VideoUrlRegex: http://.+/(?<m0>\d{4,10}) (this results in m0=706334)
+VideoUrlFormatString: http://www.website.com/flash/download?&movieId={0}
+VideoUrlResult: http://www.website.com/flash/download?&movieId=706334
+}}}
+
+== For PlaylistUrl: ==
+
+=== url ===
+This is used to replace the url of the playlist files.
+
+== For FileUrl: ==
+
+=== m0..m2 ===
+You can use m0,m1 and so on to extract the parts that are needed, and they will be filled into the {0},{1} etc in the FileUrlFormatString
+
+=== n0..n2 ===
+Here you optionally can specify n0,n1 etc for the name (useful in case of multiple urls for 1 video, like youtube).
+
+== For all: ==
+
+=== Skip to ===
 this will skip to multiple chars.
 e.g. if you have
 
@@ -45,7 +99,7 @@ e.g. if you have
 select `loads of uninteresting html`, choose "skip to" and click "insert"
 Then replace the selected text (@@) with the text after the part that you want to skip, in this case `<img`
 
-== Skip to single char ==
+=== Skip to single char ===
 this will skip to a single char.
 e.g. if you have
 
@@ -53,15 +107,15 @@ e.g. if you have
 
 select `width="500" height="500"/` choose "skip to single char" and click "insert".
 
-== optional ==
+=== optional ===
 this will make the selected text optional.
 
-== match after ==
+=== match after ===
 This will make sure only matches after "some text" are returned
 Choose "match after", click insert.
 Then replace the selected text (@@) with "some text" 
 
-== match before ==
+=== match before ===
 This will make sure only matches before "some text" are returned
 Choose "match after", click insert.
 Then replace the selected text (@@) with "some text" 
