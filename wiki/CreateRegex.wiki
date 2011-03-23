@@ -23,6 +23,19 @@ You have to play with this to get some experience, because if you leave too much
 
 = Regex-shortcuts =
 
+== url ==
+This is used to replace the url of the video stream your looking to add.
+
+== title ==
+This is used to replace the title string of the video stream your looking to add.
+
+== thumb ==
+This is used to replace the url string of thumbnail image of the video stream your looking to add.
+
+== description ==
+This is used to replace the description string of the video stream your looking to add.
+
+
 == Skip to ==
 this will skip to multiple chars.
 e.g. if you have
@@ -42,3 +55,9 @@ select `width="500" height="500"/` choose "skip to single char" and click "inser
 
 == optional ==
 this will make the selected text optional.
+
+== match after ==
+?
+
+== match before ==
+?
