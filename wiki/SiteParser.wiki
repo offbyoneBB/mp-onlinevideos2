@@ -38,12 +38,12 @@ VideoUrl:
 This is a 3-step process:
 
 1: "GetVideoUrl" here you can transform the url from the VideoList to a more suitable string (not necessary a valid url) e.g. extract the id from the url
+[http://code.google.com/p/mp-onlinevideos2/wiki/CreateRegex?ts=1300917626&updated=CreateRegex#For_the_Video_URL Explanation of dropdownlist items]
 
 2: "GetPlayListUrl" to be documented
 
 3: "GetFileUrl" here you can parse the html-result of the previous steps to extract the final url.
-Here you can also use the m0,m1, etc as explained in step 1.
-Optionally you can also specify n0,n1 etc for the name (useful in case of multiple urls for 1 video, like youtube).
+[http://code.google.com/p/mp-onlinevideos2/wiki/CreateRegex?ts=1300917626&updated=CreateRegex#For_File_Url: Explanation of dropdownlist items]
 In that case you can specify the Formatted name at FileUrlNameFormatString.
 Also you can enable parsing redirected urls with getRedirectedFileUrl, and fill in data to put in a http-POST message (in fileUrlPostString)
 
@@ -61,6 +61,7 @@ Right-click on that button will give more options, like "copy to clipboard" and 
 ===Parameters in Regex Dropdown list===
 
 They are explained in detail [http://code.google.com/p/mp-onlinevideos2/wiki/CreateRegex#Regex-shortcuts here]
+
 = Step by step (simple version) =
 
  # for baseurl: fill the URL of the page with the categories on it
