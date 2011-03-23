@@ -89,7 +89,7 @@ namespace OnlineVideos.Sites
         {
             string data = GetWebData(baseUrl);
             data = GetSubString(data, @"<!-- nav -->", @"<!-- /nav -->");
-            data = Regex.Replace(data, @"http://survey.cinemassacre[^""]*",String.Empty, RegexOptions.Multiline);
+            data = Regex.Replace(data, @"http://survey.cinemassacre[^""]*", String.Empty, RegexOptions.Multiline);
             data = @"<?xml version=""1.0"" encoding=""iso-8859-1""?>" + data;
 
             XmlDocument doc = new XmlDocument();
@@ -399,6 +399,20 @@ namespace OnlineVideos.Sites
             if (p >= 0) data = data.Substring(0, p);
             return Parse(((RssLink)category).Url, data);
         }
+
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            if (string.IsNullOrEmpty(url)) // called for adding to favorites
+                return video.Title;
+            else // called for downloading
+            {
+                string safeName = Utils.GetSaveFilename(video.Title);
+                if (url.Contains("gametrailers.com"))
+                    return safeName + ".mp4";
+                return safeName + ".flv";
+            }
+        }
+
 
         private static string GetSubString(string s, string start, string until)
         {
