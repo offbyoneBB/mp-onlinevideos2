@@ -57,7 +57,11 @@ select `width="500" height="500"/` choose "skip to single char" and click "inser
 this will make the selected text optional.
 
 == match after ==
-?
+This will make sure only matches after "some text" are returned
+Choose "match after", click insert.
+Then replace the selected text (@@) with "some text" 
 
 == match before ==
-?
+This will make sure only matches before "some text" are returned
+Choose "match after", click insert.
+Then replace the selected text (@@) with "some text" 
