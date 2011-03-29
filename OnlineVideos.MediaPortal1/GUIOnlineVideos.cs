@@ -738,10 +738,7 @@ namespace OnlineVideos.MediaPortal1
                 case State.sites: DisplaySites(); break;
                 case State.categories: DisplayCategories(selectedCategory); break;
                 case State.videos: SetVideosToFacade(currentVideoList, currentVideosDisplayMode); break;
-                default:
-                    DisplayDetails();
-                    if (selectedClipIndex < GUI_infoList.Count) GUI_infoList.SelectedListItemIndex = selectedClipIndex;
-                    break;
+                default: DisplayDetails(); break;
             }
         }
 
@@ -1229,8 +1226,9 @@ namespace OnlineVideos.MediaPortal1
 
             if (loVideoList.Count > 0)
             {
-                GUI_infoList.SelectedListItemIndex = 1;
-                OnDetailsVideoItemSelected(GUI_infoList[1], GUI_infoList);
+                if (selectedClipIndex == 0 || selectedClipIndex >= GUI_infoList.Count) selectedClipIndex = 1;
+                GUI_infoList.SelectedListItemIndex = selectedClipIndex;
+                OnDetailsVideoItemSelected(GUI_infoList[selectedClipIndex], GUI_infoList);
             }
         }
 
@@ -1594,15 +1592,9 @@ namespace OnlineVideos.MediaPortal1
             }
             else if (CurrentState == State.details)
             {
-                ///------------------------------------------------------------------------
-                /// 2009-05-31 MichelC
-                /// For some reason, without like, the menu functionality gets weird after
-                /// viewing the Apple Trailer Details section in Blue3 & Blue3Wide skins.
-                ///------------------------------------------------------------------------
                 GUIControl.UnfocusControl(GetID, GUI_infoList.GetID);
                 GUI_infoList.Focus = false;
-                ///------------------------------------------------------------------------
-
+                selectedClipIndex = 0;
                 SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
             }
         }
