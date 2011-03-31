@@ -75,7 +75,16 @@ namespace OnlineVideos.Hoster
                                 return GetSubString(unpacked, @"name=""src""value=""", @"""");
                             }
                             else
-                                return GetSubString(page2, @"addVariable('file','", @"'");
+                            {
+                                string res = GetSubString(page2, @"addVariable('file','", @"'");
+                                if (String.IsNullOrEmpty(res))
+                                {
+                                    Match m = Regex.Match(page2, @"<!--\sDIRECT\sLINK\sDL-->\s*<span\sstyle=""[^""]*"">\s*<a\shref=""[^""]*"">(?<url>[^<]*)</a>\s*</span>");
+                                    if (m.Success)
+                                        res = m.Groups["url"].Value;
+                                }
+                                return res;
+                            }
                         }
                     }
                 }
