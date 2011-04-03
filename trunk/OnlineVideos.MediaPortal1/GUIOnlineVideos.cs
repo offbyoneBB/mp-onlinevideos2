@@ -1922,26 +1922,54 @@ namespace OnlineVideos.MediaPortal1
             {
                 (factory.PreparedPlayer as OVSPLayer).GoFullscreen = goFullScreen;
 
-                IPlayerFactory savedFactory = g_Player.Factory;
-                g_Player.Factory = factory;
-                bool playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
-                g_Player.Factory = savedFactory;
-
-                if (g_Player.Player != null && g_Player.HasVideo)
+                if (!string.IsNullOrEmpty(playItem.Video.SubtitleUrl) && Utils.IsValidUri(playItem.Video.SubtitleUrl))
                 {
-                    if (!string.IsNullOrEmpty(playItem.Video.StartTime))
+                    // download subtitle file before starting playback
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                     {
-                        Log.Instance.Info("Found starttime: {0}", playItem.Video.StartTime);
-                        double seconds = playItem.Video.GetSecondsFromStartTime();
-                        if (seconds > 0.0d)
+                        string subs = Sites.SiteUtilBase.GetWebData(playItem.Video.SubtitleUrl);
+                        if (!string.IsNullOrEmpty(subs))
                         {
-                            Log.Instance.Info("SeekingAbsolute: {0}", seconds);
-                            g_Player.SeekAbsolute(seconds);
+                            string subFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "OnlineVideoSubtitles.txt");
+                            System.IO.File.WriteAllText(subFile, subs, System.Text.Encoding.UTF8);
+                            (factory.PreparedPlayer as OVSPLayer).SubtitleFile = subFile;
                         }
-                    }
-                    currentPlayingItem = playItem;
-                    SetGuiProperties_PlayingVideo(playItem.Video, playItem.Description);
+                        return true;
+                    },
+                    delegate(bool success, object result)
+                    {
+                        Play_Step5(playItem, lsUrl, factory);
+                    },
+                    Translation.DownloadingSubtitle, true);
                 }
+                else
+                {
+                    Play_Step5(playItem, lsUrl, factory);
+                }
+            }
+        }
+
+        private void Play_Step5(PlayListItem playItem, string lsUrl, OnlineVideos.MediaPortal1.Player.PlayerFactory factory)
+        {
+            IPlayerFactory savedFactory = g_Player.Factory;
+            g_Player.Factory = factory;
+            bool playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
+            g_Player.Factory = savedFactory;
+
+            if (g_Player.Player != null && g_Player.HasVideo)
+            {
+                if (!string.IsNullOrEmpty(playItem.Video.StartTime))
+                {
+                    Log.Instance.Info("Found starttime: {0}", playItem.Video.StartTime);
+                    double seconds = playItem.Video.GetSecondsFromStartTime();
+                    if (seconds > 0.0d)
+                    {
+                        Log.Instance.Info("SeekingAbsolute: {0}", seconds);
+                        g_Player.SeekAbsolute(seconds);
+                    }
+                }
+                currentPlayingItem = playItem;
+                SetGuiProperties_PlayingVideo(playItem.Video, playItem.Description);
             }
         }
 

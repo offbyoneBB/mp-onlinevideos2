@@ -260,6 +260,7 @@ namespace OnlineVideos.MediaPortal1.Player
         #region OVSPLayer Member
 
         public bool GoFullscreen { get; set; }
+        public string SubtitleFile { get; set; }
 
         #endregion
     }

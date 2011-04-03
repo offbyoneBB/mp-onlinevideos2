@@ -8,6 +8,7 @@ namespace OnlineVideos.MediaPortal1.Player
     public interface OVSPLayer
     {
         bool GoFullscreen { get; set; }
+        string SubtitleFile { get; set; }
     }
 
     public class PlayerFactory : IPlayerFactory

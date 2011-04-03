@@ -38,6 +38,7 @@ namespace OnlineVideos
         public static string Directors = "Directors";
         public static string Download = "Download";
         public static string Downloading = "Downloading";
+        public static string DownloadingSubtitle = "DownloadingSubtitle";
         public static string DownloadingDescription = "Shows a list of downloads currently running.";
         public static string DownloadFailed = "Download failed: {0}";
         public static string DownloadCancelled = "Download Cancelled";
