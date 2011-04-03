@@ -26,6 +26,7 @@
   <string Field="Download">Herunterladen</string>
   <string Field="Downloading">Ladend</string>
   <string Field="DownloadingDescription">Liste der aktuell herunterladenden Videos.</string>
+  <string Field="DownloadingSubtitle">Untertitel herunterladen</string>
   <string Field="DownloadFailed">Herunterladen fehlgeschlagen: {0}</string>
   <string Field="DownloadCancelled">Herunterladen abgebrochen</string>
   <string Field="DownloadComplete">Herunterladen beendet</string>

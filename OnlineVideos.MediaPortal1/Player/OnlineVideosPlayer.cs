@@ -309,16 +309,32 @@ namespace OnlineVideos.MediaPortal1.Player
             }
 
 #if !MP11
-            ISubEngine engine = SubEngine.GetInstance(true);
-            if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+            if (!string.IsNullOrEmpty(SubtitleFile))
             {
-              SubEngine.engine = new SubEngine.DummyEngine();
+                ISubEngine engine = SubEngine.GetInstance(true);
+                if (!engine.LoadSubtitles(graphBuilder, SubtitleFile))
+                {
+                    SubEngine.engine = new SubEngine.DummyEngine();
+                }
+                else
+                {
+                    engine.Enable = true;
+                }
             }
 
             IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
             if (!postengine.LoadPostProcessing(graphBuilder))
             {
               PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+            }
+#else
+            if (!string.IsNullOrEmpty(SubtitleFile))
+            {
+                ISubEngine engine = SubEngine.GetInstance();
+                if (engine != null)
+                {
+                    engine.Enable = engine.LoadSubtitles(graphBuilder, SubtitleFile);
+                }
             }
 #endif
 
@@ -409,6 +425,7 @@ namespace OnlineVideos.MediaPortal1.Player
         #region OVSPLayer Member
 
         public bool GoFullscreen { get; set; }
+        public string SubtitleFile { get; set; }
 
         #endregion
     }
