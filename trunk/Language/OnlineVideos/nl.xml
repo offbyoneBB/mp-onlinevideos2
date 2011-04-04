@@ -26,6 +26,7 @@
   <string Field="Download">Download</string>
   <string Field="Downloading">Downloaden</string>
   <string Field="DownloadingDescription">Toont lijst van huidige downloads</string>
+  <string Field="DownloadingSubtitle">Ondertiteling downloaden</string>
   <string Field="DownloadFailed">Download mislukt: {0}</string>
   <string Field="DownloadCancelled">Download geannuleerd</string>
   <string Field="DownloadComplete">Download gereed</string>
@@ -74,6 +75,7 @@
   <string Field="NewSearch">Nieuwe zoekopdracht</string>
   <string Field="Others">Overige</string>
   <string Field="PlayAll">Alles afspelen</string>
+  <string Field="PlayWith">Afspelen met...</string>
   <string Field="PlotOutline">Samenvatting</string>
   <string Field="PreviousPage">Vorige pagina</string>
   <string Field="PerformAutomaticUpdate">Automatische update uitvoeren?</string>
