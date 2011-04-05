@@ -1659,7 +1659,9 @@ namespace OnlineVideos.MediaPortal1
             VirtualKeyboard keyBoard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
             if (keyBoard == null) return false;
             keyBoard.Reset();
+#if MP11
             keyBoard.IsSearchKeyboard = true;
+#endif
             keyBoard.Text = sString;
             keyBoard.Password = password;
             keyBoard.DoModal(GUIWindowManager.ActiveWindow); // show it...
