@@ -332,5 +332,17 @@ namespace OnlineVideos
             int numberToUse = firstGap != null ? firstGap.Item : numbersUsed.Count;
             return Path.Combine(filePath, baseFileName) + "_(" + numberToUse + ")" + ext;
         }
+
+        public static T DeepCopy<T>(object objectToCopy)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                System.Runtime.Serialization.Formatters.Binary.BinaryFormatter binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                binaryFormatter.Serialize(memoryStream, objectToCopy);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                return (T)binaryFormatter.Deserialize(memoryStream);
+            }
+        }
+
     }
 }

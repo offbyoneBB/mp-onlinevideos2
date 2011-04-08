@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
+#if !MP11
+using MediaPortal.Common.Utils;
+#endif
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
@@ -33,3 +35,12 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 [assembly: AssemblyVersion("0.29.0.0")]
 [assembly: AssemblyFileVersion("0.29.0.0")]
+
+#if !MP11
+[assembly: CompatibleVersion("1.1.6.27644")]
+[assembly: UsesSubsystem("MP.SkinEngine")]
+[assembly: UsesSubsystem("MP.Players.Video")]
+[assembly: UsesSubsystem("MP.Input")]
+[assembly: UsesSubsystem("MP.Externals.SQLite")]
+[assembly: UsesSubsystem("MP.Config")]
+#endif
