@@ -330,7 +330,7 @@ namespace OnlineVideos.MediaPortal1.Player
 #else
             if (!string.IsNullOrEmpty(SubtitleFile))
             {
-                ISubEngine engine = SubEngine.GetInstance();
+                MediaPortal.Player.Subtitles.ISubEngine engine = MediaPortal.Player.Subtitles.SubEngine.GetInstance();
                 if (engine != null)
                 {
                     engine.Enable = engine.LoadSubtitles(graphBuilder, SubtitleFile);
