@@ -260,6 +260,19 @@ namespace OnlineVideos.MediaPortal1
         {
             if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. getting next page videos to finish
 
+            if (CurrentState == State.sites && GetFocusControlId() == GUI_facadeView.GetID)
+            {
+                OnlineVideosGuiListItem selectedItem = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
+                if (selectedItem == null || selectedItem.Item == null) return; // only context menu for items with an object backing them
+
+                if (selectedItem.Item is Sites.SiteUtilBase)
+                {
+                    selectedSite = SiteUserSettingsDialog.ShowDialog(selectedItem.Item as Sites.SiteUtilBase);
+                    selectedItem.Item = selectedSite;
+                }
+                return; // site's context menu was handled
+            }
+
             int liSelected = GUI_facadeView.SelectedListItemIndex - 1;
 
             if (CurrentState == State.details && SelectedSite is IChoice) liSelected = GUI_infoList.SelectedListItemIndex - 1;
@@ -1654,7 +1667,7 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        private bool GetUserInputString(ref string sString, bool password)
+        internal static bool GetUserInputString(ref string sString, bool password)
         {
             VirtualKeyboard keyBoard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
             if (keyBoard == null) return false;

@@ -35,6 +35,10 @@
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\AxInterop.WMPLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Common.Utils">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Common.Utils.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Core">
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
       <Private>False</Private>
@@ -204,6 +208,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SitesGroup.cs" />
+    <Compile Include="SiteUserSettingsDialog.cs" />
     <Compile Include="SmsT9Filter.cs" />
     <Compile Include="Translator.cs" />
   </ItemGroup>
