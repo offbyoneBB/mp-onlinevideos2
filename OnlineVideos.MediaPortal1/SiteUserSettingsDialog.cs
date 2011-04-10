@@ -22,7 +22,13 @@ namespace OnlineVideos.MediaPortal1
                 int selectIndex = 0;
                 do
                 {
-                    GUIDialogMenu dlgSiteOptions = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                    int windowId = GUIDialogSiteUserSettings.GUIDIALOGMENU_ONLINEVIDEO; // try our special dialog first
+                    GUIDialogMenu dlgSiteOptions = (GUIDialogMenu)GUIWindowManager.GetWindow(windowId);
+                    if (dlgSiteOptions == null) // if not available use the default one
+                    {
+                        windowId = (int)GUIWindow.Window.WINDOW_DIALOG_MENU; 
+                        dlgSiteOptions = (GUIDialogMenu)GUIWindowManager.GetWindow(windowId);
+                    }
                     if (dlgSiteOptions == null) return selectedSite;
                     dlgSiteOptions.Reset();
                     dlgSiteOptions.SetHeading(5);
@@ -34,7 +40,11 @@ namespace OnlineVideos.MediaPortal1
                             value = new string('*', value.Length);
                         }
                         var descAttr = ovsUserCfg.Attributes[typeof(DescriptionAttribute)];
-                        dlgSiteOptions.Add(new GUIListItem(ovsUserCfg.DisplayName, value, "", false, null) /*{ Label3 = descAttr != null ? ((DescriptionAttribute)descAttr).Description : string.Empty }*/);
+                        dlgSiteOptions.Add(new GUIListItem(ovsUserCfg.DisplayName, value, "", false, null) 
+                        {
+                            // don't set Label3 if we are not using our custom dialog
+                            Label3 = windowId == GUIDialogSiteUserSettings.GUIDIALOGMENU_ONLINEVIDEO && descAttr != null ? ((DescriptionAttribute)descAttr).Description : string.Empty 
+                        });
                     }
                     dlgSiteOptions.SelectedLabel = selectIndex;
                     dlgSiteOptions.DoModal(GUIWindowManager.ActiveWindow);
@@ -45,7 +55,7 @@ namespace OnlineVideos.MediaPortal1
                         System.ComponentModel.PropertyDescriptor prop = actualProps.First(a => a.DisplayName == dlgSiteOptions.SelectedLabelText);
                         if (prop.PropertyType.Equals(typeof(bool)))
                         {
-                            GUIDialogMenu dlgTrueFalse = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                            GUIDialogMenu dlgTrueFalse = (GUIDialogMenu)GUIWindowManager.GetWindow(windowId);
                             dlgTrueFalse.Reset();
                             dlgTrueFalse.SetHeading(prop.DisplayName);
                             dlgTrueFalse.Add(true.ToString());
@@ -65,7 +75,7 @@ namespace OnlineVideos.MediaPortal1
                         }
                         else if (prop.PropertyType.IsEnum)
                         {
-                            GUIDialogMenu dlgEnum = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                            GUIDialogMenu dlgEnum = (GUIDialogMenu)GUIWindowManager.GetWindow(windowId);
                             dlgEnum.Reset();
                             dlgEnum.SetHeading(prop.DisplayName);
                             string value = prop.GetValue(selectedSite).ToString();
@@ -134,6 +144,37 @@ namespace OnlineVideos.MediaPortal1
                 }
             }
             return selectedSite;
+        }
+    }
+
+    public class GUIDialogSiteUserSettings : GUIDialogMenu
+    {
+        public const int GUIDIALOGMENU_ONLINEVIDEO = 4760;
+        public override int GetID { get { return GUIDIALOGMENU_ONLINEVIDEO; } set { } }
+
+        public override bool Init()
+        {
+            bool bResult = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.DialogMenu.xml");
+            return bResult;
+        }
+
+        public override bool OnMessage(GUIMessage message)
+        {
+            bool result = base.OnMessage(message);
+
+            if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED && message.TargetWindowId == GUIDIALOGMENU_ONLINEVIDEO && message.SenderControlId == 3)
+            {
+                if (base.listView.SelectedListItem != null)
+                {
+                    GUIPropertyManager.SetProperty("#OnlineVideos.DialogSelectedItemDescription", base.listView.SelectedListItem.Label3);
+                }
+                else
+                {
+                    GUIPropertyManager.SetProperty("#OnlineVideos.DialogSelectedItemDescription", string.Empty);
+                }
+            }
+
+            return result;
         }
     }
 }
