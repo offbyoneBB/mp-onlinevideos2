@@ -24,7 +24,7 @@ namespace OnlineVideos.MediaPortal1
                 if (notifier != null) notifier.PropertyChanged += (s, e) => 
                 {
                     if (s is VideoInfo && e.PropertyName == "ThumbnailImage") SetImageToGui((s as VideoInfo).ThumbnailImage);
-                    if (s is Category && e.PropertyName == "Thumb") SetImageToGui((s as Category).Thumb);
+                    if (s is Category && e.PropertyName == "ThumbnailImage") SetImageToGui((s as Category).ThumbnailImage);
                 };
             }
         }        

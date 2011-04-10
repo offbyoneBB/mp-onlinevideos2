@@ -272,6 +272,44 @@ namespace OnlineVideos.MediaPortal1
                 }
                 return; // site's context menu was handled
             }
+            else if (CurrentState == State.categories && GetFocusControlId() == GUI_facadeView.GetID)
+            {
+                OnlineVideosGuiListItem selectedItem = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
+                if (selectedItem == null || selectedItem.Item == null) return; // only context menu for items with an object backing them
+                
+                if (selectedItem.Item is Category)
+                {
+                    Category aCategory = selectedItem.Item as Category;
+                    GUIDialogMenu dlgCat = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                    if (dlgCat == null) return;
+                    dlgCat.Reset();
+                    dlgCat.SetHeading(Translation.Actions);
+                    if (!(SelectedSite is Sites.FavoriteUtil) && !aCategory.HasSubCategories) dlgCat.Add(Translation.AddToFavourites);
+                    foreach (string entry in SelectedSite.GetContextMenuEntries(aCategory, null)) dlgCat.Add(entry);
+                    dlgCat.DoModal(GUIWindowManager.ActiveWindow);
+                    if (dlgCat.SelectedId == -1) return;
+                    else
+                    {
+                        if (dlgCat.SelectedLabelText == Translation.AddToFavourites)
+                        {
+                            OnlineVideoSettings.Instance.FavDB.addFavoriteCategory(aCategory, SelectedSite.Settings.Name);
+                        }
+                        else
+                        {
+                            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                            {
+                                return SelectedSite.ExecuteContextMenuEntry(aCategory, null, dlgCat.SelectedLabelText);
+                            },
+                            delegate(bool success, object result)
+                            {
+                                if (success && result != null && (bool)result) DisplayCategories(selectedCategory, null);
+                            },
+                            ": " + dlgCat.SelectedLabelText, true);
+                        }
+                    }
+                }
+                return; // category's context menu was handled
+            }
 
             int liSelected = GUI_facadeView.SelectedListItemIndex - 1;
 
@@ -290,18 +328,10 @@ namespace OnlineVideos.MediaPortal1
             dialogOptions.Add("PlayWith");
             dlgSel.Add(Translation.PlayAll);
             dialogOptions.Add("PlayAll");
-            if (!(SelectedSite is Sites.FavoriteUtil))
+            if (!(SelectedSite is Sites.FavoriteUtil) && !(SelectedSite is Sites.DownloadedVideoUtil))
             {
-                if (!(SelectedSite is Sites.DownloadedVideoUtil))
-                {
-                    dlgSel.Add(Translation.AddToFavourites);
-                    dialogOptions.Add("AddToFav");
-                }
-            }
-            else
-            {
-                dlgSel.Add(Translation.RemoveFromFavorites);
-                dialogOptions.Add("RemoveFromFav");
+                dlgSel.Add(Translation.AddToFavourites);
+                dialogOptions.Add("AddToFav");
             }
             if (SelectedSite is IRelated)
             {
@@ -357,11 +387,7 @@ namespace OnlineVideos.MediaPortal1
                         break;
                     case "AddToFav":
                         string suggestedTitle = SelectedSite.GetFileNameForDownload(loSelectedVideo, selectedCategory, null);
-                        FavoritesDatabase.Instance.addFavoriteVideo(loSelectedVideo, suggestedTitle, SelectedSite.Settings.Name);
-                        break;
-                    case "RemoveFromFav":
-                        FavoritesDatabase.Instance.removeFavoriteVideo(loSelectedVideo);
-                        DisplayVideos_Category(selectedCategory, true); // retrieve videos again and show the updated list
+                        OnlineVideoSettings.Instance.FavDB.addFavoriteVideo(loSelectedVideo, suggestedTitle, SelectedSite.Settings.Name);
                         break;
                     case "RelatedVideos":
                         DisplayVideos_Related(loSelectedVideo);

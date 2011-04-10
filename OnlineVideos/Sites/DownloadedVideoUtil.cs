@@ -150,14 +150,17 @@ namespace OnlineVideos.Sites
         public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
             List<string> options = new List<string>();
-            if (selectedCategory is RssLink)
+            if (selectedItem != null)
             {
-                options.Add(Translation.Delete);
-                options.Add(Translation.DeleteAll);
-            }
-            else
-            {
-                options.Add(Translation.Cancel);
+                if (selectedCategory is RssLink)
+                {
+                    options.Add(Translation.Delete);
+                    options.Add(Translation.DeleteAll);
+                }
+                else
+                {
+                    options.Add(Translation.Cancel);
+                }
             }
             return options;
         }

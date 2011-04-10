@@ -423,13 +423,16 @@ namespace OnlineVideos.Sites
         public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
             List<string> result = new List<string>();
-            if (selectedCategory is RssLink)
+            if (selectedItem != null)
             {
-                result.Add(Translation.AddToFavourites + " (" + Settings.Name + ")");
-            }
-            else
-            {
-                result.Add(Translation.RemoveFromFavorites + " (" + Settings.Name + ")");
+                if (selectedCategory is RssLink)
+                {
+                    result.Add(Translation.AddToFavourites + " (" + Settings.Name + ")");
+                }
+                else
+                {
+                    result.Add(Translation.RemoveFromFavorites + " (" + Settings.Name + ")");
+                }
             }
             return result;
         }
