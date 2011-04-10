@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace OnlineVideos.Sites
@@ -8,6 +9,20 @@ namespace OnlineVideos.Sites
     /// </summary>
     public class FavoriteUtil : SiteUtilBase
     {
+        public class FavoriteCategory : Category
+        {
+            public SiteUtilBase Site { get; protected set; }
+
+            public FavoriteCategory(RssLink favCat, SiteUtilBase util)
+            {
+                this.Site = util;
+                Other = favCat;
+                Name = favCat.Name;
+                Description = favCat.Description;
+                Thumb = favCat.Thumb;
+            }
+        }
+
         public override List<string> getMultipleVideoUrls(VideoInfo video)
         {
             SiteUtilBase util = OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName];
@@ -15,8 +30,50 @@ namespace OnlineVideos.Sites
         }
 
         public override List<VideoInfo> getVideoList(Category category)
-        {            
-            return OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(((RssLink)category).Url, null);
+        {
+            currentCategory = category;
+            HasNextPage = false;
+            if (category is RssLink)
+                return OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(((RssLink)category).Url, null);
+            else if (category is FavoriteCategory)
+            {
+                FavoriteCategory fc = category as FavoriteCategory;
+                string[] hierarchy = ((string)(fc.Other as RssLink).Other).Split('|');
+                Category cat = null;
+                for (int i = 0; i < hierarchy.Length; i++)
+                {
+                    if (cat != null)
+                    {
+                        if (!cat.SubCategoriesDiscovered) fc.Site.DiscoverSubCategories(cat);
+                        cat = cat.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                    }
+                    else
+                    {
+                        if (!fc.Site.Settings.DynamicCategoriesDiscovered) fc.Site.DiscoverDynamicCategories();
+                        cat = fc.Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                    }
+                    if (cat == null) break;
+                }
+                if (cat != null)
+                {
+                    var result = fc.Site.getVideoList(cat);
+                    result.ForEach(r => r.SiteName = fc.Site.Settings.Name);
+                    HasNextPage = fc.Site.HasNextPage;
+                    return result;
+                }
+                return null;
+            }
+            else
+                return null;
+        }
+
+        Category currentCategory = null;
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            if (currentCategory is FavoriteCategory)
+                return (currentCategory as FavoriteCategory).Site.getNextPageVideos();
+            else
+                return base.getNextPageVideos();
         }
 
         // keep a reference of all Categories ever created and reuse them, to get them selected when returning to the category view
@@ -60,6 +117,20 @@ namespace OnlineVideos.Sites
                             cachedCategories.Add(cat.Name, cat);
                         }
                         Settings.Categories.Add(cat);
+
+                        // create subcategories if any
+                        List<Category> favCats = OnlineVideoSettings.Instance.FavDB.getFavoriteCategories(aSite.Name);
+                        if (favCats.Count > 0)
+                        {
+                            cat.HasSubCategories = true;
+                            cat.SubCategoriesDiscovered = true;
+                            cat.SubCategories = new List<Category>();
+                            cat.SubCategories.Add(new RssLink() { Name = Translation.All, Url = aSite.Name, ParentCategory = cat });
+                            foreach (Category favCat in favCats)
+                            {
+                                cat.SubCategories.Add(new FavoriteCategory(favCat as RssLink, util) { ParentCategory = cat });
+                            }
+                        }
                     }
                 }
             }
@@ -82,12 +153,36 @@ namespace OnlineVideos.Sites
 
         public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
-            return new List<string>() { Translation.DeleteAll };
+            List<string> result = new List<string>();
+            if (selectedCategory is FavoriteCategory)
+            {
+                if (selectedItem == null) result.Add(Translation.RemoveFromFavorites);
+            }
+            else if (selectedItem != null)
+            {
+                result.Add(Translation.RemoveFromFavorites);
+                result.Add(Translation.DeleteAll);
+            }
+            return result;
         }
 
         public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice)
         {
-            return OnlineVideoSettings.Instance.FavDB.removeAllFavoriteVideos(((RssLink)selectedCategory).Url.Substring(4));
+            if (choice == Translation.DeleteAll)
+                return OnlineVideoSettings.Instance.FavDB.removeAllFavoriteVideos(((RssLink)selectedCategory).Url);
+            else
+            {
+                if (selectedCategory is FavoriteCategory)
+                {
+                    bool result = OnlineVideoSettings.Instance.FavDB.removeFavoriteCategory(((FavoriteCategory)selectedCategory).Other as Category);
+                    if (result) selectedCategory.ParentCategory.SubCategories.Remove(selectedCategory);
+                    return result;
+                }
+                else
+                {
+                    return OnlineVideoSettings.Instance.FavDB.removeFavoriteVideo(selectedItem);
+                }
+            }
         }
     }
 }

@@ -77,7 +77,8 @@ namespace OnlineVideos
                             {
                                 if (item is Category)
                                 {
-                                    (item as Category).Thumb = imageLocation;
+                                    (item as Category).ThumbnailImage = imageLocation;
+                                    (item as Category).NotifyPropertyChanged("ThumbnailImage");
                                 }
                                 else
                                 {

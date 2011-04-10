@@ -23,24 +23,12 @@ namespace OnlineVideos.MediaPortal1
 
         private FavoritesDatabase()
         {
-            bool dbExists;
             try
             {
-                // Open database
-                try
-                {
-                    System.IO.Directory.CreateDirectory("database");
-                }
-                catch (Exception) { }
-                dbExists = System.IO.File.Exists(Config.GetFile(Config.Dir.Database, "OnlineVideoDatabase.db3"));
                 m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "OnlineVideoDatabase.db3"));
-
-                MediaPortal.Database.DatabaseUtility.SetPragmas(m_db);
-
-                if (!dbExists)
-                {
-                    m_db.Execute("CREATE TABLE FAVORITE_VIDEOS(VDO_ID integer primary key autoincrement,VDO_NM text,VDO_URL text,VDO_DESC text,VDO_TAGS text,VDO_LENGTH text,VDO_OTHER_NFO text,VDO_IMG_URL text,VDO_SITE_ID text)\n");
-                }
+                DatabaseUtility.SetPragmas(m_db);
+                DatabaseUtility.AddTable(m_db, "FAVORITE_VIDEOS", "CREATE TABLE FAVORITE_VIDEOS(VDO_ID integer primary key autoincrement,VDO_NM text,VDO_URL text,VDO_DESC text,VDO_TAGS text,VDO_LENGTH text,VDO_OTHER_NFO text,VDO_IMG_URL text,VDO_SITE_ID text)\n");
+                DatabaseUtility.AddTable(m_db, "FAVORITE_Categories", "CREATE TABLE FAVORITE_Categories(CAT_ID integer primary key autoincrement,CAT_Name text,CAT_Desc text,CAT_ThumbUrl text,CAT_Hierarchy text,CAT_SITE_ID text)\n");
             }
             catch (SQLiteException ex)
             {
@@ -60,7 +48,7 @@ namespace OnlineVideos.MediaPortal1
 
         public string[] getSiteIDs()
         {
-            string lsSQL = "select distinct VDO_SITE_ID from favorite_videos";
+            string lsSQL = "select distinct VDO_SITE_ID from favorite_videos UNION select distinct CAT_SITE_ID from Favorite_Categories";
             SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
             string[] siteIdList = new string[loResultSet.Rows.Count];
             for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
@@ -163,6 +151,60 @@ namespace OnlineVideos.MediaPortal1
                 }
             }
             return loFavoriteList;
-        }     
+        }
+
+        public bool addFavoriteCategory(Category cat, string siteName)
+        {
+            //check if the category is already in the favorite list
+            if (m_db.Execute(string.Format("select CAT_ID from FAVORITE_Categories where CAT_Hierarchy='{0}' AND CAT_SITE_ID='{1}'", cat.RecursiveName("|"), siteName)).Rows.Count > 0)
+            {
+                Log.Instance.Info("Favorite Category {0} already in database", cat.Name);
+                return true;
+            }
+
+            Log.Instance.Info("inserting favorite category on site {0} with name: {1}, desc: {2}, image: {3}", 
+                siteName, cat.Name, cat.Description, cat.Thumb, siteName);
+
+            string lsSQL =
+                string.Format(
+                    "insert into FAVORITE_Categories(CAT_Name,CAT_Desc,CAT_ThumbUrl,CAT_Hierarchy,CAT_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}')",
+                    DatabaseUtility.RemoveInvalidChars(cat.Name), cat.Description == null ? "" : DatabaseUtility.RemoveInvalidChars(cat.Description), cat.Thumb, cat.RecursiveName("|"), siteName);
+            m_db.Execute(lsSQL);
+            if (m_db.ChangedRows() > 0)
+            {
+                Log.Instance.Info("Favorite Category {0} inserted successfully into database", cat.Name);
+                return true;
+            }
+            else
+            {
+                Log.Instance.Warn("Favorite Category {0} failed to insert into database", cat.Name);
+                return false;
+            }
+        }
+
+        public List<Category> getFavoriteCategories(string siteId)
+        {
+            List<Category> results = new List<Category>();
+            SQLiteResultSet resultSet = m_db.Execute(string.Format("select * from Favorite_Categories where CAT_SITE_ID = '{0}'", siteId));
+            for (int iRow = 0; iRow < resultSet.Rows.Count; iRow++)
+            {
+                results.Add(
+                    new RssLink() { 
+                        Name = DatabaseUtility.Get(resultSet, iRow, "CAT_Name"), 
+                        Description = DatabaseUtility.Get(resultSet, iRow, "CAT_Desc"),
+                        Thumb = DatabaseUtility.Get(resultSet, iRow, "CAT_ThumbUrl"),
+                        Url = DatabaseUtility.Get(resultSet, iRow, "CAT_ID"),
+                        Other = DatabaseUtility.Get(resultSet, iRow, "CAT_Hierarchy")
+                    });
+            }
+            return results;
+        }
+
+        public bool removeFavoriteCategory(Category cat)
+        {
+            String lsSQL = string.Format("delete from Favorite_Categories where CAT_ID = '{0}'", (cat as RssLink).Url);
+            m_db.Execute(lsSQL);
+            return m_db.ChangedRows() > 0;
+        }
     }
 }

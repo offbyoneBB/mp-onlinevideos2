@@ -17,5 +17,13 @@ namespace OnlineVideos
         /// <param name="fsQuery">A search string to filter the resulting videos. (if null, don't restrict to a term)</param>
         /// <returns>A list of <see cref="VideoInfo"/> objects matching the parameters.</returns>
         List<VideoInfo> getFavoriteVideos(string fsSiteId, string fsQuery);
+        /// <summary>
+        /// Get a list of categories the use
+        /// </summary>
+        /// <param name="siteId">The name of a site to return categories for</param>
+        /// <returns>A list of <see cref="Category"/> objects for the given site.</returns>
+        List<Category> getFavoriteCategories(string siteId);
+        bool addFavoriteCategory(Category cat, string siteName);
+        bool removeFavoriteCategory(Category cat);
     }
 }

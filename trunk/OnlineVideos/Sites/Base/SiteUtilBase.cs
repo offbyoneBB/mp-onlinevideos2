@@ -308,11 +308,11 @@ namespace OnlineVideos.Sites
         /// Override it to add your own entries (which should be localized).
         /// </summary>
         /// <param name="selectedCategory"></param>
-        /// <param name="selectedItem"></param>
+        /// <param name="selectedItem">when this is null the context menu was called on the category</param>
         /// <returns>A list of string to be added to the context menu for the given VideoInfo.</returns>
         public virtual List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
-            return null;
+            return new List<string>();
         }
 
         /// <summary>

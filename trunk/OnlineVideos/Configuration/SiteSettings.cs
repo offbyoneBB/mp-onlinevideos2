@@ -120,6 +120,9 @@ namespace OnlineVideos
         [XmlAttribute("name")]
         public string Name { get { return _Name; } set { if (_Name != value) { _Name = value; NotifyPropertyChanged("Name"); } } }
 
+        /// <summary>This property is set by the <see cref="ImageDownloader"/> to the file after downloading from <see cref="Thumb"/>.</summary>
+        public string ThumbnailImage { get; set; }
+
         [DataMember(Name = "thumb", Order = 1, EmitDefaultValue = false)]
         [XmlAttribute("thumb")]
         public string Thumb { get { return _Thumb; } set { _Thumb = value; NotifyPropertyChanged("Thumb"); } }
@@ -173,13 +176,13 @@ namespace OnlineVideos
 
         public override string ToString() { return Name; }
 
-        public string RecursiveName()
+        public string RecursiveName(string divider = " / ")
         {
             string result = "";
             Category c = this;
             while (c != null)
             {
-                result = c.Name + (result == "" ? "" : " / ") + result;
+                result = c.Name + (result == "" ? "" : divider) + result;
                 c = c.ParentCategory;
             }
             return result;
