@@ -156,10 +156,11 @@ namespace ExternalOSDLibrary
 
         // render first color
         int xoff = GUIGraphicsContext.ScaleHorizontal(3);
+        int yoff = GUIGraphicsContext.ScaleVertical(_progressControl.TopTextureYOffset);
 
         int xPos = _progressControl.XPosition + _progressControl.FillX + xoff;
 
-        int yPos = _progressControl.YPosition + _progressControl.FillY - (_progressControl.FillHeight / 2);
+        int yPos = _progressControl.YPosition + (_progressControl.FillY / 2) - (_progressControl.FillHeight / 2) + (yoff / 2);
         
         float fWidth = (float)iWidth;
         fWidth /= 100.0f;
