@@ -1,0 +1,112 @@
+    <Site name="NOVA TV Videoteka" util="NovaTV" agecheck="false" enabled="true" lang="hr">
+      <Description>Nova TV je prva hrvatska komercijalna televizija s nacionalnom koncesijom, èlanica je CME grupe.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[]]></item>
+        <item key="dynamicCategoryUrlDecoding"><![CDATA[False]]></item>
+        <item key="dynamicSubCategoryUrlDecoding"><![CDATA[False]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="thumb">\s+<div\sclass="img">\s+<a[^>]*><img[^>]*></a>\s+<a\shref="(?<VideoUrl>[^"]+)"><img\ssrc="(?<ImageUrl>[^"]+)"[^>]*></a>\s+</div>\s+<h2><a[^>]*>(?<Title>[^<]+)</a></h2>\s+<p>(?<Description>[^<]*)]]></item>
+        <item key="videoUrlDecoding"><![CDATA[False]]></item>
+        <item key="nextPageRegEx"><![CDATA[<span\sclass='next\snext_page'><a\shref='(?<url>[^']+)]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[True]]></item>
+        <item key="prevPageRegEx"><![CDATA[<span\sclass='previous\sprevious_page'><a\shref='(?<url>[^']+)]]></item>
+        <item key="prevPageRegExUrlDecoding"><![CDATA[True]]></item>
+        <item key="baseUrl"><![CDATA[http://videoteka.novatv.hr]]></item>
+        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
+      </Configuration>
+      <Categories>
+        <Category name="Informativne emisije">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Sve">http://videoteka.novatv.hr/pretraga?parent_id=4&amp;group=false</Category>
+            <Category xsi:type="RssLink" name="Vijesti">http://videoteka.novatv.hr/pretraga?type_id=8&amp;parent_id=8&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Vrijeme">http://videoteka.novatv.hr/pretraga?type_id=10&amp;parent_id=10&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Dnevnik">http://videoteka.novatv.hr/pretraga?type_id=22778&amp;parent_id=22778&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Provjereno">http://videoteka.novatv.hr/pretraga?type_id=13&amp;parent_id=13&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Tjedni pregled">http://videoteka.novatv.hr/pretraga?type_id=188818&amp;parent_id=188818&amp;group=true&amp;order=date</Category>
+          </SubCategories>
+        </Category>
+        <Category name="Serije">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Sve">http://videoteka.novatv.hr/pretraga?parent_id=6&amp;group=false</Category>
+            <!--<Category xsi:type="RssLink" name="Naša mala klinika">http://videoteka.novatv.hr/pretraga?parent_id=77590&amp;type_id=77590&amp;group=false&amp;order=date</Category>-->
+            <Category xsi:type="RssLink" name="Lud, zbunjen, normalan">http://videoteka.novatv.hr/pretraga?parent_id=28&amp;type_id=28&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Najbolje godine">http://videoteka.novatv.hr/pretraga?parent_id=64178&amp;type_id=64178&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Periferija city">http://videoteka.novatv.hr/pretraga?parent_id=30798&amp;type_id=30798&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Dva smo svijeta razlièita">http://videoteka.novatv.hr/pretraga?parent_id=196903&amp;type_id=196903&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Lov u mutnom">http://videoteka.novatv.hr/pretraga?parent_id=119172&amp;type_id=119172&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Od vrata do vrata">http://videoteka.novatv.hr/pretraga?parent_id=30809&amp;type_id=30809&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Hitna 94">http://videoteka.novatv.hr/pretraga?parent_id=27&amp;type_id=27&amp;group=false&amp;order=date</Category>
+          </SubCategories>
+        </Category>
+        <Category name="Mini TV">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Sve">http://videoteka.novatv.hr/pretraga?parent_id=485&amp;group=false</Category>
+            <Category xsi:type="RssLink" name="Peppa prašèiæ">http://videoteka.novatv.hr/pretraga?parent_id=17467&amp;type_id=17467&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Fifi">http://videoteka.novatv.hr/pretraga?parent_id=60534&amp;type_id=60534&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Roary">http://videoteka.novatv.hr/pretraga?parent_id=17458&amp;type_id=17458&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Traktor Tom 1">http://videoteka.novatv.hr/pretraga?parent_id=491&amp;type_id=491&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Traktor Tom 2">http://videoteka.novatv.hr/pretraga?parent_id=3155&amp;type_id=3155&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Beba Felix">http://videoteka.novatv.hr/pretraga?parent_id=1378&amp;type_id=1378&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Bratz">http://videoteka.novatv.hr/pretraga?parent_id=60535&amp;type_id=60535&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Winx">http://videoteka.novatv.hr/pretraga?parent_id=60533&amp;type_id=60533&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Ninja kornjaèe">http://videoteka.novatv.hr/pretraga?parent_id=3102&amp;type_id=3102&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Yu-Gi-Oh">http://videoteka.novatv.hr/pretraga?parent_id=60532&amp;type_id=60532&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Pokemoni">http://videoteka.novatv.hr/pretraga?parent_id=1413&amp;type_id=1413&amp;group=false&amp;order=date</Category>
+          </SubCategories>
+        </Category>
+        <Category name="Gol.hr">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Sve">http://videoteka.novatv.hr/pretraga?parent_id=27274&amp;type_id=27274&amp;group=false</Category>
+            <Category xsi:type="RssLink" name="Gol.hr">http://videoteka.novatv.hr/pretraga?type_id=27274&amp;parent_id=27274&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Liga prvaka">http://videoteka.novatv.hr/pretraga?type_id=60539&amp;parent_id=27274&amp;group=true&amp;order=date</Category>
+          </SubCategories>
+        </Category>
+        <Category name="Dnevnik.hr">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Sve">http://videoteka.novatv.hr/pretraga?parent_id=27263&amp;type_id=27263&amp;group=false</Category>
+            <Category xsi:type="RssLink" name="Dnevnik.hr">http://videoteka.novatv.hr/pretraga?parent_id=27263&amp;type_id=27263&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Zanimljivosti">http://videoteka.novatv.hr/pretraga?parent_id=27263&amp;type_id=25&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Predsjednièka utrka 2010">http://videoteka.novatv.hr/pretraga?parent_id=27263&amp;type_id=81820&amp;group=true&amp;order=date</Category>
+          </SubCategories>
+        </Category>
+        <Category xsi:type="RssLink" name="Zadovoljna.com.hr">http://videoteka.novatv.hr/pretraga?parent_id=27270&amp;type_id=27270&amp;group=false</Category>
+        <Category name="Showbizz">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Sve">http://videoteka.novatv.hr/pretraga?parent_id=30924&amp;type_id=30924&amp;group=false</Category>
+            <Category xsi:type="RssLink" name="Showbizz">http://videoteka.novatv.hr/pretraga?parent_id=30924&amp;type_id=30924&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Scena">http://videoteka.novatv.hr/pretraga?parent_id=30924&amp;type_id=71224&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Film/TV">http://videoteka.novatv.hr/pretraga?parent_id=30924&amp;type_id=24&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Glazba">http://videoteka.novatv.hr/pretraga?parent_id=30924&amp;type_id=23&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Paparazzi">http://videoteka.novatv.hr/pretraga?parent_id=30924&amp;type_id=22&amp;group=true&amp;order=date</Category>
+          </SubCategories>
+        </Category>
+        <Category name="Emisije i magazini">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Sve">http://videoteka.novatv.hr/pretraga?parent_id=40878&amp;type_id=40878&amp;group=false</Category>
+            <Category xsi:type="RssLink" name="IN Magazin">http://videoteka.novatv.hr/pretraga?parent_id=40879&amp;type_id=40879&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Red Carpet">http://videoteka.novatv.hr/pretraga?parent_id=41314&amp;type_id=41314&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Automotiv">http://videoteka.novatv.hr/pretraga?parent_id=41347&amp;type_id=41347&amp;group=false&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Novac">http://videoteka.novatv.hr/pretraga?parent_id=41348&amp;type_id=41348&amp;group=false&amp;order=date</Category>
+          </SubCategories>
+        </Category>
+        <Category name="Zabava">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Sve">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=42517&amp;group=false</Category>
+            <Category xsi:type="RssLink" name="Farma - Emisije">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=119176&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Farma">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=5805&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Supertalent - Emisije">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=71005&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Supertalent">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=64186&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Gotovèevi">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=64185&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Nad lipom 35">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=20&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Operacija trijumf">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=2486&amp;group=true&amp;order=date</Category>
+            <!--<Category xsi:type="RssLink" name="Ne zaboravi stihove">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=142&amp;group=true&amp;order=date</Category>-->
+            <Category xsi:type="RssLink" name="Moj tata je bolji od tvog tate">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=2245&amp;group=true&amp;order=date</Category>
+            <!--<Category xsi:type="RssLink" name="Trenutak Istine">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=18&amp;group=true&amp;order=date</Category>-->
+            <!--<Category xsi:type="RssLink" name="Pazi, zid!">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=19&amp;group=true&amp;order=date</Category>-->
+            <Category xsi:type="RssLink" name="Izbor za Miss Universe">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=134970&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="Gole vijesti">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=21&amp;group=true&amp;order=date</Category>
+            <Category xsi:type="RssLink" name="10 godina Nove TV">http://videoteka.novatv.hr/pretraga?parent_id=42517&amp;type_id=134969&amp;group=true&amp;order=date</Category>
+          </SubCategories>
+        </Category>
+        <Category xsi:type="RssLink" name="Svi videi">http://videoteka.novatv.hr/pretraga?parent_id=&amp;group=false</Category>
+      </Categories>
+    </Site>
