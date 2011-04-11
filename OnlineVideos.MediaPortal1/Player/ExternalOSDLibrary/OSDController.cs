@@ -164,18 +164,27 @@ namespace ExternalOSDLibrary
      
     #region public methods
 
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern IntPtr GetForegroundWindow();
+
     /// <summary>
     /// Performs an update on the osd, should be called from the process method of the player
     /// </summary>
     public void UpdateGUI()
     {
-        if (!_isActive && GUIGraphicsContext.IsFullScreenVideo && !g_Player.Stopped /* && (GUIWindowManager.IsOsdVisible || g_Player.Paused || g_Player.Speed != 1 || GUIWindowManager.RoutedWindow != -1)*/)
+        if (_isActive)
         {
-            Activate();
+            if (!GUIGraphicsContext.IsFullScreenVideo || GetForegroundWindow() != Application.OpenForms[0].Handle)
+            {
+                Deactivate();
+            }
         }
-        else if (_isActive && !GUIGraphicsContext.IsFullScreenVideo)
+        else
         {
-            Deactivate();
+            if (GUIGraphicsContext.IsFullScreenVideo && !g_Player.Stopped && GetForegroundWindow() == Application.OpenForms[0].Handle)
+            {
+                Activate();
+            }
         }
 
       bool a1 = _needUpdate;
