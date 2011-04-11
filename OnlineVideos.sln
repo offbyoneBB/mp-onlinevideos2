@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.MediaPortal1",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.pilehave", "SiteUtilProjects\OnlineVideos.Sites.pilehave\OnlineVideos.Sites.pilehave.csproj", "{3B158828-6940-4A5F-A6B6-23A7FD6CD524}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.SilentException", "SiteUtilProjects\OnlineVideos.Sites.SilentException\OnlineVideos.Sites.SilentException.csproj", "{D01E921D-961C-41E6-B8DD-B811F5BC5A76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,12 @@ Global
 		{3B158828-6940-4A5F-A6B6-23A7FD6CD524}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B158828-6940-4A5F-A6B6-23A7FD6CD524}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3B158828-6940-4A5F-A6B6-23A7FD6CD524}.Release|x86.ActiveCfg = Release|Any CPU
+		{D01E921D-961C-41E6-B8DD-B811F5BC5A76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D01E921D-961C-41E6-B8DD-B811F5BC5A76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D01E921D-961C-41E6-B8DD-B811F5BC5A76}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D01E921D-961C-41E6-B8DD-B811F5BC5A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D01E921D-961C-41E6-B8DD-B811F5BC5A76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D01E921D-961C-41E6-B8DD-B811F5BC5A76}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,5 +98,6 @@ Global
 		{D43B3A93-FDF8-4B5C-8BD0-714FBBF9AF31} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{D05B2288-6732-4211-9931-29C8511DC32F} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{3B158828-6940-4A5F-A6B6-23A7FD6CD524} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
+		{D01E921D-961C-41E6-B8DD-B811F5BC5A76} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 	EndGlobalSection
 EndGlobal
