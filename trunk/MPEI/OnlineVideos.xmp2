@@ -1432,6 +1432,90 @@
               <ZipFileName>Installer{CopyFile}\{470126db-99fd-400f-9c0e-560e251ba177}-Yle Areena.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Yle Areena.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\lt.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e650cfad-06da-4b35-a25b-78b4933ee39e}-lt.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\lt.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\zh.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{45d0a587-732d-4dfb-ba27-0ecee037d867}-zh.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\zh.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\cbc.ca.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{175c973f-43d4-497c-aeb4-4d5bdae823df}-cbc.ca.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\cbc.ca.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\EuroSport.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{92a0bdd8-57ff-4279-9046-a49973230502}-EuroSport.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\EuroSport.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\toutv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{10d7dfda-a8b8-46b7-acb7-a83366fdbb22}-toutv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\toutv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TV3NZ.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6d90ab1e-b388-43ae-92a4-3632dae2c342}-TV3NZ.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV3NZ.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\vimeo.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ccb4460c-f029-4b71-9573-ab2aee7a99bd}-vimeo.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\vimeo.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\cbc.ca.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{320ebe25-d921-45dd-ac13-8eb16801c80b}-cbc.ca.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\cbc.ca.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\EuroSport.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f3fa5759-2a7a-43f1-b132-d8b8170fee61}-EuroSport.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\EuroSport.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\toutv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2a954bb3-e686-4909-af40-dc570ba8258d}-toutv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\toutv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\TV3NZ.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{347aba78-0a88-44b2-a3d9-3fd555da2afa}-TV3NZ.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV3NZ.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\vimeo.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{8e21e587-1921-4b43-a0e1-29a9e4056abb}-vimeo.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\vimeo.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1497,7 +1581,7 @@
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.28.0.0\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.29.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2282,7 +2366,27 @@ public class Script
     </Items>
   </Sections>
   <Dependencies>
-    <Items />
+    <Items>
+      <DependencyItem>
+        <Type>MediaPortal</Type>
+        <Id />
+        <MinVersion>
+          <Major>1</Major>
+          <Minor>1</Minor>
+          <Build>1</Build>
+          <Revision>0</Revision>
+        </MinVersion>
+        <MaxVersion>
+          <Major>1</Major>
+          <Minor>1</Minor>
+          <Build>3</Build>
+          <Revision>0</Revision>
+        </MaxVersion>
+        <WarnOnly>false</WarnOnly>
+        <Message>Need version of MediaPortal with version betwen 1.1.1 - 1.1.3</Message>
+        <Name>MediaPortal</Name>
+      </DependencyItem>
+    </Items>
   </Dependencies>
   <GeneralInfo>
     <Name>OnlineVideos</Name>
@@ -2293,26 +2397,27 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>28</Minor>
+      <Minor>29</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>New Feature: Allow user to group Sites in Configuration. Will be shown as another view prior to the sites
-New Feature: skip buffering by pressing play during pre-buffering
-New Feature: Jump straight to Details if you search for a movie with an exact match
-New Feature: #itemtype now also supported in SiteManager
-New Feature: thumbnails for listitems details view
-Reworked: Paging in the VideoList now done with a single extra item at the end of the list. Click to append the next page videos to the list
-Reworked: all background execution to correctly invoke results on GuiThread
-Fixed: Added RssLinks and Channels in Configuration were not saved
-Fixed: Relevant DLL (if needed) is not downloaded if user choose site in "Manage Sites"
-Fixed: Not able to download clips with equal names
-Fiexed: Settings that can be modified at runtime using the MPEI plugin are now reloaded when entering the plugin
-New Feature: Loading plugin with startparameters now also possible using GUIProperties</VersionDescription>
+    <VersionDescription>compatible with MediaPortal 1.2 (including new default skin)
+Added: support VLC media player as external player
+Added: Categories can now be added to favorites
+Added: context menu allows play with: MediaPortal, Windows Media Player, VLC media player
+Added: contextMenu on a site to configure user settings inside MediaPortal (e.g. VideoQuality on YouTube)
+Added: subtitle support (for internal player)
+Added: Only prompt for update if last update older then x hours
+Fixed: SkipBuffering now also reacts to the Play button on remotes
+Fixed: AutoUpdate now also disables broken sites (previously only FullUpdate did)
+Fixed: removed black rectangle in upper left corner on first playback
+Fixed: PlayAll was not working
+Fixed: A direct search on sites with "search categories" (via startup parameters) failed
+Fixed: threading issue when skipping buffering (was trying to start playback multiple times)</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2011-02-13T20:00:00</ReleaseDate>
+    <ReleaseDate>2011-04-13T20:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -3763,6 +3868,90 @@ New Feature: Loading plugin with startparameters now also possible using GUIProp
         <ZipFileName>Installer{CopyFile}\{470126db-99fd-400f-9c0e-560e251ba177}-Yle Areena.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Yle Areena.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\lt.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e650cfad-06da-4b35-a25b-78b4933ee39e}-lt.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\lt.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\zh.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{45d0a587-732d-4dfb-ba27-0ecee037d867}-zh.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\zh.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\cbc.ca.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{175c973f-43d4-497c-aeb4-4d5bdae823df}-cbc.ca.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\cbc.ca.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\EuroSport.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{92a0bdd8-57ff-4279-9046-a49973230502}-EuroSport.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\EuroSport.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\toutv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{10d7dfda-a8b8-46b7-acb7-a83366fdbb22}-toutv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\toutv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TV3NZ.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6d90ab1e-b388-43ae-92a4-3632dae2c342}-TV3NZ.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV3NZ.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\vimeo.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ccb4460c-f029-4b71-9573-ab2aee7a99bd}-vimeo.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\vimeo.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\cbc.ca.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{320ebe25-d921-45dd-ac13-8eb16801c80b}-cbc.ca.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\cbc.ca.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\EuroSport.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f3fa5759-2a7a-43f1-b132-d8b8170fee61}-EuroSport.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\EuroSport.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\toutv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2a954bb3-e686-4909-af40-dc570ba8258d}-toutv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\toutv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\TV3NZ.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{347aba78-0a88-44b2-a3d9-3fd555da2afa}-TV3NZ.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV3NZ.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\vimeo.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{8e21e587-1921-4b43-a0e1-29a9e4056abb}-vimeo.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\vimeo.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -3810,7 +3999,7 @@ New Feature: Loading plugin with startparameters now also possible using GUIProp
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.28.0.0\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.29.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4138,7 +4327,7 @@ New Feature: Loading plugin with startparameters now also possible using GUIProp
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{afa0b082-1b2c-4d3d-994e-1e0e7e3d9a8c}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{502d8e4d-9804-49b1-aaea-5aa5a32c2bf1}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
@@ -4186,7 +4375,7 @@ New Feature: Loading plugin with startparameters now also possible using GUIProp
         <Recursive>true</Recursive>
       </FolderGroup>
     </FolderGroups>
-    <ProjectFilename>C:\Users\offbyone\Documents\Code\CodeUnlimited\OnlineVideos\MPEI\OnlineVideos.xmp2</ProjectFilename>
+    <ProjectFilename>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\OnlineVideos.xmp2</ProjectFilename>
     <UpdatePath1>D:\Dokumente\Visual Studio Projects\MediaPortal Plugins\OnlineVideos\MPEI\update.xml</UpdatePath1>
     <UpdatePath2 />
     <UpdatePath3 />
