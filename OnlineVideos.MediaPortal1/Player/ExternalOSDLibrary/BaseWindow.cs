@@ -273,7 +273,7 @@ namespace ExternalOSDLibrary
           result = result | element.CheckForUpdate();
         }
       }
-      return true;
+      return result;
     }
     #endregion
 

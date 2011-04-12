@@ -41,6 +41,8 @@ namespace OnlineVideos.MediaPortal1.Player
             wmpCtrl.network.bufferingTime = PluginConfiguration.Instance.wmpbuffer;
             wmpCtrl.Ctlcontrols.play();
 
+            GUIPropertyManager.SetProperty("#TV.Record.percent3", 0.0f.ToString()); // set to 0, as this player doesn't support download progress reporting
+
             GUIWindowManager.OnNewAction += GUIWindowManager_OnNewAction;
             
             GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
