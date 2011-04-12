@@ -37,6 +37,8 @@ namespace OnlineVideos.MediaPortal1.Player
 
             vlcCtrl.Play(media);
 
+            GUIPropertyManager.SetProperty("#TV.Record.percent3", 0.0f.ToString()); // set to 0, as this player doesn't support download progress reporting
+
             GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
 
             return true;
