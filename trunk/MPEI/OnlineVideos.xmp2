@@ -2373,17 +2373,17 @@ public class Script
         <MinVersion>
           <Major>1</Major>
           <Minor>1</Minor>
-          <Build>1</Build>
+          <Build>0</Build>
           <Revision>0</Revision>
         </MinVersion>
         <MaxVersion>
           <Major>1</Major>
           <Minor>1</Minor>
-          <Build>3</Build>
-          <Revision>0</Revision>
+          <Build>0</Build>
+          <Revision>3</Revision>
         </MaxVersion>
         <WarnOnly>false</WarnOnly>
-        <Message>Need version of MediaPortal with version betwen 1.1.1 - 1.1.3</Message>
+        <Message>This version of OnlineVideos requires MediaPortal version 1.1.0 - 1.1.3</Message>
         <Name>MediaPortal</Name>
       </DependencyItem>
     </Items>
@@ -2417,7 +2417,7 @@ Fixed: A direct search on sites with "search categories" (via startup parameters
 Fixed: threading issue when skipping buffering (was trying to start playback multiple times)</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2011-04-13T20:00:00</ReleaseDate>
+    <ReleaseDate>2011-04-14T20:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -4327,7 +4327,7 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{502d8e4d-9804-49b1-aaea-5aa5a32c2bf1}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{30ef0731-d4cb-4f1b-b47d-ecae5409e6f7}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
