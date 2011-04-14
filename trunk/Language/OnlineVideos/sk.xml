@@ -34,6 +34,7 @@
   <string Field="Download">Stiahnuť</string>
   <string Field="Downloading">Sťahujem</string>
   <string Field="DownloadingDescription">Zobrazí zoznam momentálne sťahovaných videí.</string>
+  <string Field="DownloadingSubtitle">downloading subtitle</string>
   <string Field="DownloadFailed">Sťahovanie neúspešné: {0}</string>
   <string Field="DownloadCancelled">Sťahovanie zrušené</string>
   <string Field="DownloadComplete">Sťahovanie skončené</string>
@@ -71,6 +72,7 @@
   <string Field="GettingIcon">getting site icon from webservice</string>
   <string Field="GettingBanner">getting site banner from webservice</string>
   <string Field="GettingDll">getting dll from webservice</string>
+  <string Field="Groups">Skupiny</string>
 
   <!-- H -->
 
@@ -97,9 +99,11 @@
   <string Field="NewSearch">Nové hľadanie</string>
 
   <!-- O -->
+  <string Field="Others">Iné</string>
 
   <!-- P -->
   <string Field="PlayAll">Prehrať všetko</string>
+  <string Field="PlayWith">Prehrať s ...</string>
   <string Field="PlotOutline">Obsah</string>
   <string Field="PreviousPage">Predchádzajúca strana</string>
   <string Field="PerformAutomaticUpdate">Uskutočniť automatickú aktualizáciu?</string>
@@ -110,6 +114,7 @@
   <string Field="Refresh">Obnoviť</string>
   <string Field="RelatedVideos">Príbuzné videá</string>
   <string Field="Reported">Recenzované</string>
+  <string Field="Reports">Reports</string>
   <string Field="Runtime">Dĺžka</string>
   <string Field="RemoveFromMySites">Odstrániť z mojich stránok</string>
   <string Field="RestartMediaPortal">Reštaruj MediaPortal!</string>
