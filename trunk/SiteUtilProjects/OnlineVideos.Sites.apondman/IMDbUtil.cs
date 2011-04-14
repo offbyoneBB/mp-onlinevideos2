@@ -127,8 +127,37 @@ namespace OnlineVideos.Sites.Pondman
             cat.Name = "Bottom 100 movies";
             Settings.Categories.Add(cat);
 
+            cat = new Category();
+            cat.Other = "7";
+            cat.Name = "Full-length Movies";
+            cat.HasSubCategories = true;
+            Settings.Categories.Add(cat);
+
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
+        }
+
+        public override int DiscoverSubCategories(Category parent)
+        {
+            parent.SubCategories = new List<Category>();
+
+            string catid = parent.Other as string;
+
+            // Full Length Movies
+            if (catid == "7")
+            {
+                string index = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                foreach (char letter in index)
+                {
+                    Category cat = new Category();
+                    cat.ParentCategory = parent;
+                    cat.Other = catid + letter.ToString();
+                    cat.Name = letter.ToString();
+                    parent.SubCategories.Add(cat);
+                }
+            }
+
+            return parent.SubCategories.Count;
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -157,6 +186,12 @@ namespace OnlineVideos.Sites.Pondman
                     break;
                 case "1":
                     titles = IMDbAPI.GetTrailersTopHD(apiSession);
+                    break;
+                default:
+                    if (catid.StartsWith("7"))
+                    {
+                        titles = IMDbAPI.GetFullLengthMovies(apiSession, catid.Substring(1));
+                    }
                     break;
             }
 

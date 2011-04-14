@@ -195,8 +195,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                         }                       
                         
                         video.ID = v.Attributes["viconst"].Value;
-                        video.Title = HttpUtility.HtmlDecode(title);
-                        video.Description = HttpUtility.HtmlDecode(desc);
+                        video.Title = HttpUtility.UrlDecode(title);
+                        video.Description = HttpUtility.UrlDecode(desc);
                         
 
                         videos.Add(video);
@@ -348,6 +348,34 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         public static List<TitleReference> GetTrailersPopular(Session session)
         {
             return GetTrailers(session, session.Settings.TrailersPopular);
+        }
+
+        public static List<TitleReference> GetFullLengthMovies(Session session, string index)
+        {
+            List<TitleReference> titles = new List<TitleReference>();
+            
+            string uri = string.Format(session.Settings.FullLengthMovies, index);
+            HtmlNode data = GetResponseFromSite(session, uri);
+
+            HtmlNodeCollection nodes = data.SelectNodes("//a[contains(@href,'title/tt')]");
+
+            foreach (HtmlNode node in nodes)
+            {
+                string href = node.Attributes["href"].Value;
+                string tt = GetTitleConstFromInput(href);
+
+                if (tt != null)
+                {
+                    TitleReference title = new TitleReference();
+                    title.Type = TitleType.Movie;
+                    title.session = session;
+                    title.ID = tt;
+                    title.Title = node.InnerText;
+                    titles.Add(title);
+                }
+            }
+
+            return titles;
         }
 
         /// <summary>
