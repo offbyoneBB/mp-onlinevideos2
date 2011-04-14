@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Pondman.OnlineVideos;
+using OnlineVideos.Sites.Pondman;
+using HtmlAgilityPack;
+using System.Web;
 
-namespace OnlineVideos.Sites.apondman
+namespace OnlineVideos.Sites.Pondman
 {
     /// <summary>
     /// Extension utility container for SiteUtils in this library
@@ -30,25 +32,15 @@ namespace OnlineVideos.Sites.apondman
         {
             return string.Join(seperator, self.ToArray());
         }
-
+        
         /// <summary>
-        /// Returns a String.Object that represents the current VideoQuality value
+        /// Converts a HtmlNodeCollection to a generic string list
         /// </summary>
-        /// <param name="self"></param>
-        /// <returns></returns>
-        public static string ToTitleString(this VideoQuality self)
+        /// <param name="nodeList"></param>
+        /// <param name="stringList"></param>
+        public static List<string> ToStringList(this IList<HtmlNode> self)
         {
-            switch (self)
-            {
-                case VideoQuality.FullHD:
-                    return "HD 1080p";
-                case VideoQuality.HD720:
-                    return "HD 720p";
-                case VideoQuality.HD480:
-                    return "HD 480p";
-                default:
-                    return self.ToString();
-            }
+            return self.Select(n => HttpUtility.HtmlDecode(n.InnerText.Trim())).ToList();
         }
 
     }

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OnlineVideos.Sites.apondman")]
+[assembly: AssemblyTitle("OnlineVideos.Sites.Pondman")]
 [assembly: AssemblyDescription("Site library for  MediaPortal OnlineVideos plugin")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Armand Pondman")]
-[assembly: AssemblyProduct("OnlineVideos.Sites.apondman")]
+[assembly: AssemblyProduct("OnlineVideos.Sites.Pondman")]
 [assembly: AssemblyCopyright("Copyright © Armand Pondman 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
