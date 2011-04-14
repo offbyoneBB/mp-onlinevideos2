@@ -166,6 +166,17 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             }
         } private string trailersPopular = "http://www.imdb.com/video/trailers/data/_json?list=popular";
 
+        public string FullLengthMovies {
+            get
+            {
+                return this.fullLengthMovies;
+            }
+            set
+            {
+                this.fullLengthMovies = value;
+            }
+        } private string fullLengthMovies = "http://www.imdb.com/features/video/browse/?c={0}";
+
     }
     
 }
