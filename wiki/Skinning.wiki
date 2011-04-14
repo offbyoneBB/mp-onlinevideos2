@@ -97,7 +97,7 @@ detect by (`string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)`)
   * `#OnlineVideos.DetailsItem.Date` - release date of a trailer (also set to Label2)
 
 ===IMDb Movie Trailers===
-detect by (`string.equals(#OnlineVideos.selectedSiteUtil, IMDbUtil)`)
+detect by (`string.equals(#OnlineVideos.selectedSiteUtil, IMDb)`)
 
   * `#OnlineVideos.Details.Plot` - (localized label property: {{{#OnlineVideos.Translation.PlotOutline.Label}}})
   * `#OnlineVideos.Details.Genres` - (localized label property: {{{#OnlineVideos.Translation.Genre.Label}}})
