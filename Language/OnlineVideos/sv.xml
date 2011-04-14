@@ -26,6 +26,7 @@
   <string Field="Download">Ladda ner</string>
   <string Field="Downloading">Laddar ner</string>
   <string Field="DownloadingDescription">Visa lista över aktiva nerladdningar</string>
+  <string Field="DownloadingSubtitle">laddar ned undertext</string>
   <string Field="DownloadFailed">Nedladdning misslyckades: {0}</string>
   <string Field="DownloadCancelled">Nerladdning avbruten</string>
   <string Field="DownloadComplete">Nedladdning klar</string>
@@ -54,7 +55,10 @@
   <string Field="GettingDynamicCategories">hämtar dynamiska kategorier</string>
   <string Field="GettingReports">hämtar rapporter från webservice</string>
   <string Field="GettingSiteXml">hämtar "site" xml från webservice</string>
+  <string Field="GettingIcon">hämtat platsikon från webservice</string>
+  <string Field="GettingBanner">hämtar platsrubrik från webservice</string>
   <string Field="GettingDll">Tar emot dll från websida</string>
+  <string Field="Groups">Grupper</string>
   <string Field="LatestVersionRequired">Senaste version ({0}) krävs!</string>
   <string Field="Language">Språk</string>
   <string Field="LayoutList">Layout: Lista</string>
@@ -68,7 +72,10 @@
   <string Field="NoVideoFound">Ingen film hittad</string>
   <string Field="NoReportsForSite">Inga rapporter för denna site finns.</string>
   <string Field="NewDllDownloaded">Ny dll nerladdad!</string>
+  <string Field="NewSearch">Ny sökning</string>
+  <string Field="Others">Andra</string>
   <string Field="PlayAll">Spela alla</string>
+  <string Field="PlayWith">Spela med ...</string>
   <string Field="PlotOutline">Handling</string>
   <string Field="PreviousPage">Föregående sida</string>
   <string Field="PerformAutomaticUpdate">Kör automatisk uppdatering?</string>
@@ -77,11 +84,13 @@
   <string Field="Refresh">Uppdatera</string>
   <string Field="RelatedVideos">Relaterade filmer</string>
   <string Field="Reported">Rapporterad</string>
+  <string Field="Reports">Rapporter</string>
   <string Field="Runtime">Speltid</string>
   <string Field="RemoveFromMySites">Ta bort från mina sajter</string>
   <string Field="RestartMediaPortal">Starta om MediaPortal!</string>
   <string Field="RetrievingRemoteDlls">Tar emot dlls....</string>
   <string Field="RetrievingRemoteSites">Tar emot sites...</string>
+  <string Field="SearchHistory">Sökhistoria</string>
   <string Field="SearchResults">Sök resultat</string>
   <string Field="SelectSource">Välj källa</string>
   <string Field="Sites">Sites</string>
@@ -89,9 +98,12 @@
   <string Field="SortOptions">Sorterings val</string>
   <string Field="Search">Sök</string>
   <string Field="SetDownloadFolderInConfig">Vänligen ställ in en nedladdningsmapp i konfigurationen!</string>
+  <string Field="State">Status</string>
+  <string Field="SavingLocalSiteList">Sparal lokal platslista ...</string>
+  <string Field="ShowReports">Visa skapar- och användarrapporter</string>
   <string Field="StartingPlayback">Startar uppspelning</string>
   <string Field="Subscriptions">Prenumerationer</string>
-  <string Field="Timeframe">Timeframe</string>
+  <string Field="Timeframe">Tidsram</string>
   <string Field="Timeout">Timeout</string>
   <string Field="Tags">Taggar</string>
   <string Field="Updated">Uppdaterad</string>
