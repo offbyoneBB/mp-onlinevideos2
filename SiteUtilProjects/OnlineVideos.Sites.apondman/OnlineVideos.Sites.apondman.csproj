@@ -36,7 +36,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>C:\Program Files %28x86%29\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -68,17 +68,6 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack, Version=1.4.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\HtmlAgilityPack.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Pondman.OnlineVideos">
-      <HintPath>lib\Pondman.OnlineVideos.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -90,14 +79,73 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="ITMovieTrailersUtil.Config.cs">
-      <DependentUpon>ITMovieTrailersUtil.cs</DependentUpon>
+    <Compile Include="BaseUtil.cs" />
+    <Compile Include="Cache\DataObjectCache.cs" />
+    <Compile Include="Cache\DataObjectExtensions.cs" />
+    <Compile Include="Cache\DataObjectManager.cs" />
+    <Compile Include="IMDbUtil.Config.cs">
+      <DependentUpon>IMDbUtil.cs</DependentUpon>
     </Compile>
-    <Compile Include="ITMovieTrailersUtil.cs" />
-    <Compile Include="ITMovieTrailers\MovieDetails.cs" />
-    <Compile Include="ITMovieTrailers\VideoDetails.cs" />
+    <Compile Include="IMDbUtil.cs" />
+    <Compile Include="IMDb\Json\IMDbTrailer.cs" />
+    <Compile Include="ITunes\Enumerations.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="IMDb\IMDbAPI.cs" />
+    <Compile Include="IMDb\Json\IMDbCertificate.cs" />
+    <Compile Include="IMDb\Json\IMDbImage.cs" />
+    <Compile Include="IMDb\Json\IMDbList.cs" />
+    <Compile Include="IMDb\Json\IMDbName.cs" />
+    <Compile Include="IMDb\Json\IMDbNameListItem.cs" />
+    <Compile Include="IMDb\Json\IMDbPhoto.cs" />
+    <Compile Include="IMDb\Json\IMDbPlot.cs" />
+    <Compile Include="IMDb\Json\IMDbPrincipal.cs" />
+    <Compile Include="IMDb\Json\IMDbResponse.cs" />
+    <Compile Include="IMDb\Json\IMDbResults.cs" />
+    <Compile Include="IMDb\Json\IMDbRole.cs" />
+    <Compile Include="IMDb\Json\IMDbStaff.cs" />
+    <Compile Include="IMDb\Json\IMDbTitle.cs" />
+    <Compile Include="IMDb\Json\IMDbTitleDetails.cs" />
+    <Compile Include="IMDb\Json\IMDbTitleListItem.cs" />
+    <Compile Include="IMDb\Json\IMDbVideo.cs" />
+    <Compile Include="IMDb\Json\IMDbVideoFormat.cs" />
+    <Compile Include="IMDb\Model\Certificate.cs" />
+    <Compile Include="IMDb\Model\Character.cs" />
+    <Compile Include="IMDb\Model\Enumerations.cs" />
+    <Compile Include="IMDb\Model\Extensions.cs" />
+    <Compile Include="IMDb\Model\NameDetails.cs" />
+    <Compile Include="IMDb\Model\NameReference.cs" />
+    <Compile Include="IMDb\Model\Reference.cs" />
+    <Compile Include="IMDb\Model\SearchResults.cs" />
+    <Compile Include="IMDb\Model\TitleBase.cs" />
+    <Compile Include="IMDb\Model\TitleDetails.cs" />
+    <Compile Include="IMDb\Model\TitleReference.cs" />
+    <Compile Include="IMDb\Model\VideoDetails.cs" />
+    <Compile Include="IMDb\Model\VideoReference.cs" />
+    <Compile Include="IMDb\Session.cs" />
+    <Compile Include="IMDb\Settings.cs" />
+    <Compile Include="Interfaces\IDataObject.cs" />
+    <Compile Include="Interfaces\IExternalContentNode.cs" />
+    <Compile Include="Interfaces\ISession.cs" />
+    <Compile Include="Interfaces\ISessionSettings.cs" />
+    <Compile Include="ITMTUtil.Config.cs">
+      <DependentUpon>ITMTUtil.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ITMTUtil.cs" />
+    <Compile Include="ITunes\API.cs" />
+    <Compile Include="ITunes\Configuration.cs" />
+    <Compile Include="ITunes\DTO\MovieDTO.cs" />
+    <Compile Include="ITunes\DTO\VideoDTO.cs" />
+    <Compile Include="ITunes\Extensions.cs" />
+    <Compile Include="ITunes\Nodes\Movie.cs" />
+    <Compile Include="ITunes\Nodes\Poster.cs" />
+    <Compile Include="ITunes\Nodes\Section.cs" />
+    <Compile Include="ITunes\Nodes\Video.cs" />
+    <Compile Include="ITunes\Session.cs" />
+    <Compile Include="Nodes\Enumerations.cs" />
+    <Compile Include="Nodes\ExternalContentNodeBase.cs" />
+    <Compile Include="Nodes\ExternalContentNodeCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -122,6 +170,7 @@
       <Name>OnlineVideos</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -131,6 +180,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)Tools\ILMerge.exe" "$(TargetPath)" "$(TargetDir)Pondman.OnlineVideos.dll"  "$(TargetDir)HtmlAgilityPack.dll" "$(TargetDir)Newtonsoft.Json.dll" /out:"%25PROGRAMFILES%25\Team MediaPortal\MediaPortal\Plugins\Windows\OnlineVideos\$(TargetFileName)"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

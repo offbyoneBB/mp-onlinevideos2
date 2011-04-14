@@ -1,0 +1,526 @@
+﻿{
+  "photos": [
+    {
+      "image": {
+        "width": 2048,
+        "url": "http://ia.media-imdb.com/images/M/MV5BMTYyNDQyOTEyMV5BMl5BanBnXkFtZTcwNTI4MTc4Mw@@._V1_.jpg",
+        "height": 1074
+      }
+    },
+    {
+      "image": {
+        "width": 1342,
+        "url": "http://ia.media-imdb.com/images/M/MV5BMTc0OTQ3MDE5OV5BMl5BanBnXkFtZTcwNDI4MTc4Mw@@._V1_.jpg",
+        "height": 2048
+      }
+    },
+    {
+      "image": {
+        "width": 2000,
+        "url": "http://ia.media-imdb.com/images/M/MV5BMTM3ODA2NTY3M15BMl5BanBnXkFtZTcwMDU3MTIxNA@@._V1_.jpg",
+        "height": 1059
+      }
+    },
+    {
+      "image": {
+        "width": 1710,
+        "url": "http://ia.media-imdb.com/images/M/MV5BMTMxMDg1MjY4OF5BMl5BanBnXkFtZTcwMTU3MTIxNA@@._V1_.jpg",
+        "height": 1130
+      }
+    },
+    {
+      "image": {
+        "width": 1710,
+        "url": "http://ia.media-imdb.com/images/M/MV5BMjQ4NTAzNTE2OV5BMl5BanBnXkFtZTcwMjU3MTIxNA@@._V1_.jpg",
+        "height": 787
+      }
+    },
+    {
+      "image": {
+        "width": 1710,
+        "url": "http://ia.media-imdb.com/images/M/MV5BMjAxNzc2ODE2NF5BMl5BanBnXkFtZTcwMzU3MTIxNA@@._V1_.jpg",
+        "height": 1092
+      }
+    }
+  ],
+  "directors_summary": [
+    {
+      "as": "(as The Wachowski Brothers)",
+      "name": {
+        "nconst": "nm0905152",
+        "name": "Andy Wachowski"
+      }
+    },
+    {
+      "as": "(as The Wachowski Brothers)",
+      "name": {
+        "nconst": "nm0905154",
+        "name": "Lana Wachowski"
+      }
+    }
+  ],
+  "user_comment": {
+    "user_rating": 9,
+    "date": "2005-06-11",
+    "status": "G",
+    "user_name": "John Foster",
+    "summary": "The Matrix has Buddhist  themes",
+    "user_score": 161,
+    "text": "A large part of the appeal of 'The Matrix' for me was the special effects and action-packed scenes. But, on reflection, part of the appeal is also its philosophical and religious underpinnings...\n\nWhen asked whether Buddhist ideas influenced them, the Wachowski brothers offered an unqualified \"Yes!\" and at a very basic level, the movie portrays two levels of reality: our everyday existence and a deeper, more significant, underlying reality (the matrix). This is very much like the Two Truths in Buddhism: relative truth, in which everything is perception, and ultimate truth which is the way things really are (objective reality). \n\nBecause of our ignorance, we mistake the everyday world for something real and objective, and this is the cause of our suffering. As in 'The Matrix', breaking through relative truth to direct contact with ultimate truth represents a high spiritual attainment, some would say enlightenment, an awakening. (Remember the message on Neo's computer screen: \"Wake up, Neo!\")\n\nMahayana Buddhism suggests that there are great spiritual warriors (like Neo?) who are walking the path from ignorance to enlightenment, and who can in turn guide us on the path.",
+    "user_location": "Australia",
+    "user_score_count": 305
+  },
+  "certificate": {
+    "certificate": "R",
+    "attr": "(certificate #36569)"
+  },
+  "has": [
+    "more_cast",
+    "trivia",
+    "goofs",
+    "quotes",
+    "more_plot",
+    "user_comments",
+    "external_reviews",
+    "parentalguide",
+    "synopsis",
+    "photos"
+  ],
+  "writers_summary": [
+    {
+      "as": "(as The Wachowski Brothers)",
+      "name": {
+        "nconst": "nm0905152",
+        "name": "Andy Wachowski"
+      },
+      "attr": "(written by) &"
+    },
+    {
+      "as": "(as The Wachowski Brothers)",
+      "name": {
+        "nconst": "nm0905154",
+        "name": "Lana Wachowski"
+      },
+      "attr": "(written by)"
+    }
+  ],
+  "rating": 8.7,
+  "num_votes": 402599,
+  "tconst": "tt0133093",
+  "genres": [
+    "Action",
+    "Adventure",
+    "Sci-Fi"
+  ],
+  "quote": {
+    "lines": [
+      {
+        "stage": "first lines"
+      },
+      {
+        "stage": "phone rings"
+      },
+      {
+        "quote": "Yeah. ",
+        "chars": [
+          {
+            "nconst": "nm0001592",
+            "char": "Cypher"
+          }
+        ]
+      },
+      {
+        "quote": "Is everything in place? ",
+        "chars": [
+          {
+            "nconst": "nm0005251",
+            "char": "Trinity"
+          }
+        ]
+      },
+      {
+        "quote": "You weren't supposed to relieve me. ",
+        "chars": [
+          {
+            "nconst": "nm0001592",
+            "char": "Cypher"
+          }
+        ]
+      },
+      {
+        "quote": "I know, but I felt like taking a shift. ",
+        "chars": [
+          {
+            "nconst": "nm0005251",
+            "char": "Trinity"
+          }
+        ]
+      },
+      {
+        "quote": "You like him, don't you? You like watching him. ",
+        "chars": [
+          {
+            "nconst": "nm0001592",
+            "char": "Cypher"
+          }
+        ]
+      },
+      {
+        "quote": "Don't be ridiculous. ",
+        "chars": [
+          {
+            "nconst": "nm0005251",
+            "char": "Trinity"
+          }
+        ]
+      },
+      {
+        "quote": "We're gonna kill him. You understand that? ",
+        "chars": [
+          {
+            "nconst": "nm0001592",
+            "char": "Cypher"
+          }
+        ]
+      },
+      {
+        "quote": "Morpheus believes he is the one. ",
+        "chars": [
+          {
+            "nconst": "nm0005251",
+            "char": "Trinity"
+          }
+        ]
+      },
+      {
+        "stage": "..."
+      }
+    ],
+    "qconst": "qt0324300"
+  },
+  "can_rate": true,
+  "trailer": {
+    "content_type": "Trailer",
+    "encodings": {
+      "H.264 640x480": {
+        "format": "H.264 640x480",
+        "url": "http://www.totaleclips.com/Player/Bounce.aspx?eclipid=e44573&bitrateid=471&vendorid=102&type=.mp4"
+      },
+      "H.264 480x360": {
+        "format": "H.264 480x360",
+        "url": "http://www.totaleclips.com/Player/Bounce.aspx?eclipid=e44573&bitrateid=455&vendorid=102&type=.mp4"
+      },
+      "iPhone EDGE": {
+        "format": "iPhone EDGE",
+        "url": "http://www.totaleclips.com/Player/Bounce.aspx?eclipid=e44573&bitrateid=458&vendorid=102&type=.mov"
+      },
+      "iPhone 3G": {
+        "format": "iPhone 3G",
+        "url": "http://www.totaleclips.com/Player/Bounce.aspx?eclipid=e44573&bitrateid=459&vendorid=102&type=.mov"
+      }
+    },
+    "slates": [
+      {
+        "width": 266,
+        "url": "http://ia.media-imdb.com/images/M/MV5BMjA1NDI4NDAxMV5BMl5BanBnXkFtZTcwMDUyNTAyMg@@._V1_.jpg",
+        "height": 200
+      }
+    ],
+    "title": "The Matrix",
+    "description": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against the controllers of it.",
+    "@type": "mobile.media.video",
+    "duration_seconds": 145
+  },
+  "release_date": {
+    "normal": "1999-03-31"
+  },
+  "trivium": "According to weapon provider John Bowring, guns for Keanu Reeves in the lobby sequence and the elevator sequence, were actually plastic lightweight weapons. They made a very faithful cast of MP5K, which weighs about 150-200 grams, so that Keanu could carry them quite easily without worrying about the weight. Heavy versions of the same thing were also made, if it gets dropped on the ground.",
+  "goof": "When Neo is in the old Lincoln with Trinity, Switch, and Apoc, Trinity says, \"Apoc, lights.\" A close-up of the light switch follows. The external lights should be off because the switch is all the way in, yet it is night and the lights have been shown to be on. Apoc then pulls the switch halfway out, which would turn on the exterior running lights only, not the interior lights. He should've turned the switch, not pulled it.",
+  "image": {
+    "width": 338,
+    "url": "http://ia.media-imdb.com/images/M/MV5BMjEzNjg1NTg2NV5BMl5BanBnXkFtZTYwNjY3MzQ5._V1_.jpg",
+    "height": 475
+  },
+  "tagline": "Free your mind",
+  "runtime": {
+    "time": 8160
+  },
+  "cast_summary": [
+    {
+      "char": "Neo",
+      "name": {
+        "nconst": "nm0000206",
+        "name": "Keanu Reeves",
+        "image": {
+          "width": 273,
+          "url": "http://ia.media-imdb.com/images/M/MV5BMTM5MDE3MzExNV5BMl5BanBnXkFtZTYwMTI3OTEz._V1_.jpg",
+          "height": 400
+        }
+      }
+    },
+    {
+      "char": "Morpheus",
+      "name": {
+        "nconst": "nm0000401",
+        "name": "Laurence Fishburne",
+        "image": {
+          "width": 267,
+          "url": "http://ia.media-imdb.com/images/M/MV5BMTc0NjczNDc1MV5BMl5BanBnXkFtZTYwMDU0Mjg1._V1_.jpg",
+          "height": 400
+        }
+      }
+    },
+    {
+      "char": "Trinity",
+      "name": {
+        "nconst": "nm0005251",
+        "name": "Carrie-Anne Moss",
+        "image": {
+          "width": 289,
+          "url": "http://ia.media-imdb.com/images/M/MV5BNTA3MzU0NjE5MV5BMl5BanBnXkFtZTcwMzYyODU2Mw@@._V1_.jpg",
+          "height": 400
+        }
+      }
+    },
+    {
+      "char": "Agent Smith",
+      "name": {
+        "nconst": "nm0915989",
+        "name": "Hugo Weaving",
+        "image": {
+          "width": 281,
+          "url": "http://ia.media-imdb.com/images/M/MV5BMjAxMzAyNDQyMF5BMl5BanBnXkFtZTcwOTM4ODcxMw@@._V1_.jpg",
+          "height": 400
+        }
+      }
+    }
+  ],
+  "plot": {
+    "more": 1,
+    "outline": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers."
+  },
+  "news": {
+    "channel": "tt0133093",
+    "total": 627,
+    "sources": {
+      "ns0000185": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMTQ2NjM5Mzc4MF5BMl5BanBnXkFtZTcwNTQzNjMzMg@@._V1._SY140_.jpg",
+        "url": "http://www.worstpreviews.com",
+        "label": "Worst Previews"
+      },
+      "ns0000157": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMTQ4MTc3OTc2MF5BMl5BanBnXkFtZTcwMzQ3NzAyMg@@._V1._SY140_.jpg",
+        "url": "http://www.realbollywood.com",
+        "label": "RealBollywood"
+      },
+      "ns0000278": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMTM0NDgzNDYxMV5BMl5BanBnXkFtZTcwMzgwNjk3Mg@@._V1._SY140_.jpg",
+        "url": "http://insidemovies.ew.com",
+        "label": "EW.com - Inside Movies"
+      },
+      "ns0000262": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMTczMzkzNDUyN15BMl5BanBnXkFtZTcwOTk5OTk1Mg@@._V1._SY140_.jpg",
+        "url": "http://www.soundonsight.org",
+        "label": "SoundOnSight"
+      },
+      "ns0012997": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMTkwMzU5NzM5NV5BMl5BanBnXkFtZTcwMDU1NjcxNA@@._V1.jpg",
+        "url": "http://www.bloginity.com",
+        "label": "Bloginity"
+      },
+      "ns0000041": {
+        "url": "http://www.theinsider.com/news/",
+        "label": "The Insider"
+      },
+      "ns0000303": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMjEwNzcyNzczMF5BMl5BanBnXkFtZTcwNTEwNzU2Mg@@._V1._SY140_.jpg",
+        "url": "http://www.movieline.com",
+        "label": "Movieline"
+      },
+      "ns0000680": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMTQ5MDY1OTc1OV5BMl5BanBnXkFtZTcwMDYzNzg5Mg@@._V1._SY140_.jpg",
+        "url": "http://www.guardian.co.uk/film",
+        "label": "The Guardian - Film News"
+      },
+      "ns0000152": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMTczNDA4MDkxMF5BMl5BanBnXkFtZTcwNDY3MDAyMg@@._V1._SY140_.jpg",
+        "url": "http://www.collider.com/",
+        "label": "Collider.com"
+      },
+      "ns0000111": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMjAyODkxNTA4NF5BMl5BanBnXkFtZTcwNzg5Nzc5MQ@@._V1._SY140_.jpg",
+        "url": "http://www.reelzchannel.com",
+        "label": "ReelzChannel"
+      },
+      "ns0000310": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMjE1MTgzNjU3Nl5BMl5BanBnXkFtZTcwMjAxNzcwMw@@._V1._SY140_.jpg",
+        "url": "http://wearemoviegeeks.com",
+        "label": "WeAreMovieGeeks.com"
+      },
+      "ns0000098": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMTQzODY2MjI5NV5BMl5BanBnXkFtZTcwNjYyMTQ2Mg@@._V1._SY140_.jpg",
+        "url": "http://www.cinemablend.com",
+        "label": "Cinema Blend"
+      },
+      "ns0001095": {
+        "url": "http://clothesonfilm.com/",
+        "label": "Clothes on Film"
+      },
+      "ns0000002": {
+        "logo": "http://ia.media-imdb.com/media/imdb/01/I/89/51/58.gif",
+        "url": "http://www.wenn.com/",
+        "label": "WENN"
+      },
+      "ns0003561": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMTQ5MzA1NDA2OV5BMl5BanBnXkFtZTcwNDcwODY3Mw@@._V1._SY140_.jpg",
+        "url": "http://flickeringmyth.blogspot.com",
+        "label": "Flickeringmyth"
+      },
+      "ns0000023": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMTcxOTg2OTIzNF5BMl5BanBnXkFtZTcwODYzODA3MQ@@._V1._SY140_.jpg",
+        "url": "http://www.digitalspy.co.uk/?imdb",
+        "label": "digitalspy"
+      },
+      "ns0000031": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BMTgzMjQ0NzU5NV5BMl5BanBnXkFtZTcwODU0MTU3MQ@@._V1_.jpg",
+        "url": "http://www.shockya.com/news/",
+        "label": "ShockYa"
+      },
+      "ns0000167": {
+        "logo": "http://ia.media-imdb.com/images/M/MV5BNTA3Nzc1OTgxMl5BMl5BanBnXkFtZTcwODY3ODAzMw@@._V1._SY140_.jpg",
+        "url": "http://www.comingsoon.net",
+        "label": "Comingsoon.net"
+      }
+    },
+    "markup": "flat",
+    "label": "The Matrix",
+    "limit": 20,
+    "items": [
+      {
+        "source": "ns0000031",
+        "head": "Keanu Reeves Interview on Henry's Crime",
+        "id": "ni6873147",
+        "datetime": "2011-01-14T04:20:00Z"
+      },
+      {
+        "source": "ns0000680",
+        "head": "'I would've broken Kubrick'",
+        "id": "ni6863546",
+        "datetime": "2011-01-14T00:01:00Z"
+      },
+      {
+        "source": "ns0001095",
+        "head": "First Look: Andrew Garfield as Spiderman",
+        "id": "ni6862807",
+        "datetime": "2011-01-13T20:45:00Z"
+      },
+      {
+        "source": "ns0000303",
+        "head": "Is Captain America's Cosmic Cube Actually Just a Lucite Photo Frame?",
+        "id": "ni6771960",
+        "datetime": "2011-01-10T14:30:00Z"
+      },
+      {
+        "source": "ns0000185",
+        "head": "Photo: Red Skull Holding Cosmic Cube in Captain America",
+        "id": "ni6748673",
+        "datetime": "2011-01-09T10:29:00Z"
+      },
+      {
+        "source": "ns0003561",
+        "head": "Visual Linguist: A Darren Aronofsky Profile (Part 2)",
+        "id": "ni6493342",
+        "datetime": "2011-01-07T09:37:00Z"
+      },
+      {
+        "source": "ns0000098",
+        "head": "Barbra Streisand Considering A Striptease Musical For Joel Silver",
+        "id": "ni6673996",
+        "datetime": "2011-01-06T09:06:00Z"
+      },
+      {
+        "source": "ns0000098",
+        "head": "Keanu Reeves Returns To Comedy In The First Trailer For Henry's Crime",
+        "id": "ni6655401",
+        "datetime": "2011-01-05T19:16:00Z"
+      },
+      {
+        "source": "ns0000111",
+        "head": "Edward Furlong and \"Kato Vision\" Featured in Latest Clips from The Green Hornet",
+        "id": "ni6652501",
+        "datetime": "2011-01-05T15:05:00Z"
+      },
+      {
+        "source": "ns0000167",
+        "head": "The Wachowksis and Tom Tykwer to Co-Direct  Cloud Atlas ?",
+        "id": "ni6655211",
+        "datetime": "2011-01-05T12:34:00Z"
+      },
+      {
+        "source": "ns0000262",
+        "head": "Top Ten Most Anticipated Films of 2011",
+        "id": "ni6644017",
+        "datetime": "2011-01-05T05:38:00Z"
+      },
+      {
+        "source": "ns0000023",
+        "head": "'Silent Witness', 'Suspicion' tie at 9pm",
+        "id": "ni6623977",
+        "datetime": "2011-01-04T11:29:00Z"
+      },
+      {
+        "source": "ns0000157",
+        "head": "Stuntman injured on set of The Hangover sequel",
+        "id": "ni6493519",
+        "datetime": "2010-12-29T10:28:00Z"
+      },
+      {
+        "source": "ns0000002",
+        "head": "Hangover Stuntman Receiving 'Advanced Care'",
+        "id": "ni6474258",
+        "datetime": "2010-12-28T16:06:00Z"
+      },
+      {
+        "source": "ns0000041",
+        "head": "Stuntman Injured on 'The Hangover Part II' Thailand Set",
+        "id": "ni6463323",
+        "datetime": "2010-12-28T00:44:00Z"
+      },
+      {
+        "source": "ns0000278",
+        "head": "'The Hangover Part II' stuntman injured in on-set accident",
+        "id": "ni6460896",
+        "datetime": "2010-12-27T23:32:00Z"
+      },
+      {
+        "source": "ns0000152",
+        "head": "Stuntman Scott McLean Injured on the Set of The Hangover Part II",
+        "id": "ni6460060",
+        "datetime": "2010-12-27T22:35:00Z"
+      },
+      {
+        "source": "ns0000310",
+        "head": "Stuntman Injured on the Set of The Hangover Part II",
+        "id": "ni6459881",
+        "datetime": "2010-12-27T22:25:00Z"
+      },
+      {
+        "source": "ns0000185",
+        "head": "The Hangover 2 Stuntman in a Coma",
+        "id": "ni6451441",
+        "datetime": "2010-12-27T12:43:00Z"
+      },
+      {
+        "source": "ns0012997",
+        "head": "Keanu Reeves confirms Bill and Ted 3 talks",
+        "id": "ni6354640",
+        "datetime": "2010-12-22T16:16:00Z"
+      }
+    ],
+    "@type": "mobile.news.list",
+    "start": 0
+  },
+  "type": "feature",
+  "title": "The Matrix",
+  "year": "1999"
+}
