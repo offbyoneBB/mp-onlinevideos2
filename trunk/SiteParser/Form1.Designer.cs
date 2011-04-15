@@ -120,6 +120,8 @@
             this.categoryInfoListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.CategoryViewContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -142,6 +144,7 @@
             this.videoListTabPage.SuspendLayout();
             this.VideoUrlTabPage.SuspendLayout();
             this.playButtonContextMenuStrip.SuspendLayout();
+            this.CategoryViewContextMenuStrip.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -1056,10 +1059,12 @@
             this.categoryInfoListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
+            this.categoryInfoListView.ContextMenuStrip = this.CategoryViewContextMenuStrip;
             this.categoryInfoListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.categoryInfoListView.FullRowSelect = true;
             this.categoryInfoListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.categoryInfoListView.Location = new System.Drawing.Point(0, 0);
+            this.categoryInfoListView.MultiSelect = false;
             this.categoryInfoListView.Name = "categoryInfoListView";
             this.categoryInfoListView.Size = new System.Drawing.Size(955, 129);
             this.categoryInfoListView.TabIndex = 25;
@@ -1074,6 +1079,20 @@
             // 
             this.columnHeader2.Text = "Value";
             this.columnHeader2.Width = 891;
+            // 
+            // CategoryViewContextMenuStrip
+            // 
+            this.CategoryViewContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyValueToolStripMenuItem});
+            this.CategoryViewContextMenuStrip.Name = "CategoryViewContextMenuStrip";
+            this.CategoryViewContextMenuStrip.Size = new System.Drawing.Size(153, 48);
+            // 
+            // copyValueToolStripMenuItem
+            // 
+            this.copyValueToolStripMenuItem.Name = "copyValueToolStripMenuItem";
+            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.copyValueToolStripMenuItem.Text = "Copy Value";
+            this.copyValueToolStripMenuItem.Click += new System.EventHandler(this.copyValueToolStripMenuItem_Click);
             // 
             // treeView1
             // 
@@ -1190,14 +1209,14 @@
             // categoryToolStripMenuItem
             // 
             this.categoryToolStripMenuItem.Name = "categoryToolStripMenuItem";
-            this.categoryToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.categoryToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.categoryToolStripMenuItem.Text = "Category";
             this.categoryToolStripMenuItem.Click += new System.EventHandler(this.categoryToolStripMenuItem_Click);
             // 
             // videoToolStripMenuItem
             // 
             this.videoToolStripMenuItem.Name = "videoToolStripMenuItem";
-            this.videoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.videoToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.videoToolStripMenuItem.Text = "Video";
             this.videoToolStripMenuItem.Click += new System.EventHandler(this.videoToolStripMenuItem_Click);
             // 
@@ -1229,6 +1248,7 @@
             this.VideoUrlTabPage.ResumeLayout(false);
             this.VideoUrlTabPage.PerformLayout();
             this.playButtonContextMenuStrip.ResumeLayout(false);
+            this.CategoryViewContextMenuStrip.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
@@ -1349,6 +1369,8 @@
         private System.Windows.Forms.ToolStripMenuItem debugToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem categoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem videoToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip CategoryViewContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem copyValueToolStripMenuItem;
     }
 }
 
