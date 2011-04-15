@@ -13,6 +13,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
         public string Image { get; set; }
 
+        public TimeSpan Duration { get; set; }
+
         public VideoDetails GetDetails()
         {
             VideoDetails details = IMDbAPI.GetVideo(this.session, this.ID);
@@ -31,6 +33,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             Dictionary<string, string> properties = new Dictionary<string, string>();
             properties.Add("Title", Title);
             properties.Add("Description", Description);
+            properties.Add("Duration", Duration.ToString());
             return properties;
         }
 

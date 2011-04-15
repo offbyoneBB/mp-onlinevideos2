@@ -127,11 +127,11 @@ namespace OnlineVideos.Sites.Pondman
             cat.Name = "Bottom 100 movies";
             Settings.Categories.Add(cat);
 
-            cat = new Category();
-            cat.Other = "7";
-            cat.Name = "Full-length Movies";
-            cat.HasSubCategories = true;
-            Settings.Categories.Add(cat);
+            //cat = new Category();
+            //cat.Other = "7";
+            //cat.Name = "Full-length Movies";
+            //cat.HasSubCategories = true;
+            //Settings.Categories.Add(cat);
 
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
@@ -279,7 +279,7 @@ namespace OnlineVideos.Sites.Pondman
                     
                     vid.ImageUrl = clip.Image;
                     vid.VideoUrl = clip.ID;
-
+                    vid.Length = clip.Duration.ToString();
                     clips.Add(vid);
                 }
             }

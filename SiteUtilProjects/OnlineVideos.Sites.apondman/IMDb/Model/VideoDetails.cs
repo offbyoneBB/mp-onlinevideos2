@@ -13,8 +13,6 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             Files = new Dictionary<VideoFormat, string>();
         }
 
-        public int Duration { get; set; }
-
         public Dictionary<VideoFormat, string> Files { get; set; }
 
         public override Dictionary<string, string> GetExtendedProperties()
