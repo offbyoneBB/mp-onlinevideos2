@@ -5,6 +5,7 @@
   <allowoverlay>yes</allowoverlay>
   <define>#header.label</define>
   <define>#header.image</define>
+  <define>#useSelectedFanart:Yes</define>
   <controls>
     
     <!-- *** WINDOW DEFAULTS *** -->    
@@ -17,6 +18,7 @@
       <width>1280</width>
       <height>720</height>
     </control>
+    <import>common.video.fanart.xml</import>
     <control>
       <type>image</type>
       <id>1</id>
