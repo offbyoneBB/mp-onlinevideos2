@@ -82,9 +82,10 @@ The State is one of the three: {{{Broken, Reported, Working}}}. In the default s
   * `#OnlineVideos.buffered` - float (2 digits + decimal point) showing percentage buffered (localized label property: `#OnlineVideos.Translation.Buffered.Label`) 
 = Details View =
 
+  * `#OnlineVideos.Details.Poster` - path to a poster format image
+
 ===iTunes Movie Trailers===
 detect by (`string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)`)
-  * `#OnlineVideos.Details.Poster` - path to a poster format image
   * `#OnlineVideos.Details.Synopsis` - (localized label property: {{{#OnlineVideos.Translation.PlotOutline.Label}}})
   * `#OnlineVideos.Details.Genres` - (localized label property: {{{#OnlineVideos.Translation.Genre.Label}}})
   * `#OnlineVideos.Details.ReleaseDate` - (localized label property: {{{#OnlineVideos.Translation.DateOfRelease.Label}}})
@@ -110,4 +111,5 @@ detect by (`string.equals(#OnlineVideos.selectedSiteUtil, IMDb)`)
   * `#OnlineVideos.Details.Year` - release year of the movie
   * `#OnlineVideos.Details.Rating` - Rating 1-10 by votes
   * `#OnlineVideos.Details.Votes` - total user votes on IMDb the rating i based on
+  * `#OnlineVideos.DetailsItem.Description` - Description of the video
   
