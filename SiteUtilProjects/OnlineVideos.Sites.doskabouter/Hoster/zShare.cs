@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OnlineVideos.Hoster.Base;
+using System.Text.RegularExpressions;
 using System.Net;
 using OnlineVideos.Sites;
 using System.Web;
@@ -44,6 +45,18 @@ namespace OnlineVideos.Hoster
                     dic["datetime"] + '/' + dic["filename"] + '/' + hash + '/' + dic["hnic"];
                 foreach (Cookie cook in ccol)
                     CookieHelper.SetIECookie(String.Format("http://{0}.zshare.net", dic["serverid"]), cook);
+
+                videoType = VideoType.flv;
+                return turl;
+            }
+
+            Match m = Regex.Match(data, @"jwplayer\(""player_div""\)\.setup\({\s*file:\s""(?<url>[^""]*)"",");
+            if (m.Success)
+            {
+                string turl = m.Groups["url"].Value;
+                Uri uri = new Uri(turl);
+                foreach (Cookie cook in ccol)
+                    CookieHelper.SetIECookie(@"http://" + uri.Host, cook);
 
                 videoType = VideoType.flv;
                 return turl;

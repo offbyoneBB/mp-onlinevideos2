@@ -535,6 +535,13 @@ namespace SiteParser
             Process.Start(@"http://code.google.com/p/mp-onlinevideos2/wiki/SiteParser");
         }
 
+        private void copyValueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (categoryInfoListView.SelectedItems.Count != 1) return;
+            ListViewItem.ListViewSubItemCollection item = categoryInfoListView.SelectedItems[0].SubItems;
+            Clipboard.SetText(item[1].Text);
+        }
+
         #region PlaybackOption
         private class PlaybackOption
         {
@@ -568,6 +575,7 @@ namespace SiteParser
                 new string[] { "Title", "VideoUrl", "ImageUrl", "Description", "Duration", "Airdate" });
         }
         #endregion
+
     }
 
     class MySiteUtil : GenericSiteUtil
