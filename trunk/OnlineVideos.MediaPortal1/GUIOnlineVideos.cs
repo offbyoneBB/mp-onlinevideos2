@@ -1402,6 +1402,8 @@ namespace OnlineVideos.MediaPortal1
                         // if only 1 result found and the current site has a details view for this video - open it right away
                         if (SelectedSite is IChoice && (result as List<VideoInfo>).Count == 1 && (result as List<VideoInfo>)[0].HasDetails)
                         {
+                            // actually select this item, so fanart can be shown in this and the coming screen! (fanart handler inspects the #selecteditem proeprty of teh facade)
+                            GUI_facadeView.SelectedListItemIndex = 1;
                             selectedVideo = (GUI_facadeView[1] as OnlineVideosGuiListItem).Item as VideoInfo;
                             DisplayDetails();
                         }
