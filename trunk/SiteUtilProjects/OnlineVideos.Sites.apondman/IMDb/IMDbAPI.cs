@@ -18,7 +18,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
         #region Regular Expression Patterns
 
-        static Regex videoTitleExpression = new Regex(@"^(?<filename>(.+?)_V1)(.+?)150_ZA(?<title>[^,]+),4(.+?)(?<ext>\.[^\.]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static Regex videoTitleExpression = new Regex(@"^(?<filename>(.+?)_V1)(.+?)150_ZA(?<title>[^,]+),4(.+?)1_ZA(?<length>[\d:]+),164(.+?)(?<ext>\.[^\.]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoFormatExpression = new Regex(@"case\s+'(?<format>[^']+)'\s+:\s+url = '(?<video>/video/[^']+)'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoFileExpression = new Regex(@"IMDbPlayer.playerKey = ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoRTMPExpression = new Regex(@"so.addVariable\(""file"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -188,6 +188,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                         {
                             title = m.Groups["title"].Value;
                             video.Image = m.Groups["filename"].Value + m.Groups["ext"].Value;
+                            string length = m.Groups["length"].Value;
+                            video.Duration = new TimeSpan(0, int.Parse(length.Split(':')[0]), int.Parse(length.Split(':')[1]));
                         }
                         else
                         {
@@ -350,6 +352,12 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             return GetTrailers(session, session.Settings.TrailersPopular);
         }
 
+        /// <summary>
+        /// Gets the full length movies in a specific category.
+        /// </summary>
+        /// <param name="session">session to use</param>
+        /// <param name="index">a single character in the range: # and A-Z</param>
+        /// <returns></returns>
         public static List<TitleReference> GetFullLengthMovies(Session session, string index)
         {
             List<TitleReference> titles = new List<TitleReference>();
