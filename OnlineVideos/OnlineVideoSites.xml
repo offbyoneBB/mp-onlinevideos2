@@ -437,8 +437,7 @@
         <Category xsi:type="RssLink" name="Gamestrailer">http://www.kino.de/showroom/trailer/games</Category>
       </Categories>
     </Site>
-    
-    <Site name="IMDb Movie Trailers" util="IMDbUtil" agecheck="false" enabled="true" lang="en">
+    <Site name="IMDb Movie Trailers" util="IMDb" agecheck="false" enabled="true" lang="en">
       <Description>View trailers and other movie related clips sourced by the most complete online movie database. Many trailers are available in high-quality HD</Description>
       <Categories />
     </Site>
@@ -1062,20 +1061,14 @@
     <Site name="NrkBrowser" util="NrkBrowser" agecheck="false" enabled="true" lang="no">
       <Description>NRK er Norges største tilbud på nett; nyheter, radio- og tv-programmer live, nett-tv og podcast.</Description>
     </Site>
-    <Site name="dr.dk TV" util="DrDk" agecheck="false" enabled="true" lang="da">
-      <Description>DR is Denmark's oldest and largest electronic media enterprise. It was founded in 1925 as a public service organisation.</Description>
-      <Categories>
-        <Category xsi:type="Group" name="Live TV">
-          <Channels>
-            <Channel name="DR1 Live" thumb="http://www.tvnyt.com/images/feed/logoer/dr1_logo_2005_200.jpg">rtmp://rtmplive.dr.dk/live/livedr01astream3</Channel>
-            <Channel name="DR2 Live" thumb="http://www.tvnyt.com/images/feed/logoer/dr2_logo_2005_200.jpg">rtmp://rtmplive.dr.dk/live/livedr02astream3</Channel>
-            <Channel name="DR Update Live" thumb="http://www.dr.dk/NR/rdonlyres/D622289C-9BD0-4B77-A6FB-EEA964F1D486/643194/drupdateolog.jpg">rtmp://rtmplive.dr.dk/live/livedr03astream3</Channel>
-            <Channel name="DR K">rtmp://rtmplive.dr.dk/live/livedr04astream3</Channel>
-            <Channel name="DR Ramasjang">rtmp://rtmplive.dr.dk/live/livedr05astream3</Channel>
-          </Channels>
-        </Category>
-      </Categories>
+    <Site name="DR TV" util="DRTV" agecheck="false" enabled="true" lang="da" lastUpdated="2011-04-01T22:55:18.6007234+02:00">
+      <Description>Se 5 af DRs kanaler live, hent aktuelle og arkiverede udsendelser i DR NU og udforsk Bonanza-arkivet, der indholder tv og radioklip fra hele DRS historie.</Description>
+      <Categories />
     </Site>
+    <Site name="TV2" util="TV2" agecheck="false" enabled="true" lang="da" lastUpdated="2011-04-01T22:55:30.0313772+02:00">
+      <Description>Se udsendelser og klip fra video.tv2.dk.</Description>
+      <Categories />
+    </Site>    
     <Site name="TVE" util="TVE" agecheck="false" enabled="true" lang="es">
       <Description>Las series y programas de TVE, cuando quieras en rtve.es</Description>
       <Configuration>
