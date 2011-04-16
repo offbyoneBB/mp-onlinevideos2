@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Online Videos translation file -->
+<!-- Estonian -->
+<!-- Note: English is the fallback for any strings not found in other languages -->
+<strings>  
+
+  <!-- A -->
+  <string Field="Airdate">Esmaesitus</string>
+  <string Field="AlreadyDownloading">Juba laen seda faili.</string>
+  <string Field="All">Kõik</string>
+  <string Field="Actions">Tegevused</string>
+  <string Field="Actors">Näitlejad</string>
+  <string Field="AddToMySites">Lisa minu saitidele</string>
+  <string Field="AddToFavourites">Lisa lemmikutele</string>
+  <string Field="AddingToFavorites">lisan lemmikutele</string>
+  <string Field="AutomaticUpdate">Automaatne uuendus</string>
+  <string Field="AutomaticUpdateDisabled">Automaatne uuendus väljalülitatud.</string>
+
+  <!-- B -->
+  <string Field="Broken">Rikutud</string>
+  <string Field="Buffered">Bufferdatud</string>
+
+  <!-- C -->
+  <string Field="Cancel">Tühista</string>
+  <string Field="Category">Kategooria</string>
+  <string Field="Categories">Kategooriad</string>
+  <string Field="Creator">Valmistaja</string>
+  <string Field="CheckingForPluginUpdate">kontrollin Lisa uuendusi</string>
+
+  <!-- D -->
+  <string Field="Date">Kuupäev</string>
+  <string Field="DateOfRelease">Väljalaskekuupäev</string>
+  <string Field="Directors">Rezisöörid</string>
+  <string Field="Download">Lae alla</string>
+  <string Field="Downloading">Allalaadimine</string>
+  <string Field="DownloadingDescription">Näitab praegu allalaaditavat nimekirja.</string>
+  <string Field="DownloadFailed">Allalaadimine ebaõnnestus: {0}</string>
+  <string Field="DownloadCancelled">Allalaadimine tühistatud</string>
+  <string Field="DownloadComplete">Allalaadimine lõpetatud</string>
+  <string Field="DownloadStarted">Allalaadimine algas</string>  
+  <string Field="DownloadedVideos">Allalaetud videod</string>
+  <string Field="Delete">Kustuta</string>
+  <string Field="DeleteAll">Kustuta kõik</string>
+  <string Field="Default">Vaikimisi</string>
+  <string Field="Done">Valmis</string>
+  <string Field="DeletingOldThumbs">Kustutan vanu pisipilte</string>
+
+  <!-- E -->
+  <string Field="Error">Viga</string>
+  <string Field="EnterPin">Sisesta Pin</string>
+
+  <!-- F -->
+  <string Field="Favourites">Lemmikud</string>
+  <string Field="Filter">Filter</string>
+  <string Field="FullUpdate">Täielik uuendus</string>
+
+  <!-- G -->
+  <string Field="Genre">Zanr</string>
+  <string Field="GettingVideoDetails">kogun video andmeid</string>
+  <string Field="GettingCategoryVideos">kogun video kategooriaid</string>
+  <string Field="GettingFavoriteVideos">kogun lemmik videosid</string>
+  <string Field="GettingSearchResults">kogun otsingu tulemusi</string>
+  <string Field="GettingRelatedVideos">kogun esitatud videosid</string>
+  <string Field="GettingFilteredVideos">kogun filtreeritud videosid</string>
+  <string Field="GettingNextPageVideos">kogun järgmise lehe videosid</string>
+  <string Field="GettingPreviousPageVideos">kogun eelmise lehe videosid</string>
+  <string Field="GettingPlaybackUrlsForVideo">kogun videole URL-i</string>
+  <string Field="GettingDynamicCategories">kogun dünaamilisi kategooriaid</string>
+  <string Field="GettingReports">kogun veebiteenuse raportit</string>
+  <string Field="GettingSiteXml">kogun saidi xml-i weebiteenuselt</string>
+  <string Field="GettingIcon">kogun saidi ikoone weebiteenuselt</string>
+  <string Field="GettingBanner">kogun saidi bannereid weebiteenuselt</string>
+  <string Field="GettingDll">kogun dll-i weebiteenuselt</string>
+  <string Field="Groups">Grupid</string>
+  <!-- H -->
+
+  <!-- I -->
+
+  <!-- L -->
+  <string Field="LatestVersionRequired">Viimane versioon ({0}) on vajalik!</string>
+  <string Field="Language">Keel</string>
+  <string Field="LayoutList">Välimus: Nimekiri</string>
+  <string Field="LayoutIcons">Välimus: Ikoonid</string>
+  <string Field="LayoutBigIcons">Välimus: Suured ikoonid</string>
+
+  <!-- M -->
+  <string Field="ManageSites">Halda saite</string>
+  <string Field="MaxResults">Max tulemus</string>
+
+  <!-- N -->
+  <string Field="Name">Nimi</string>
+  <string Field="NextPage">Järgmine leht</string>
+  <string Field="None">Tühi</string>
+  <string Field="NoVideoFound">Videot ei leidnud</string>
+  <string Field="NoReportsForSite">Selle saidi raportit ei ole.</string>
+  <string Field="NewDllDownloaded">Uus dll alla laetud!</string>
+  <string Field="NewSearch">Uus otsing</string>
+  <!-- O -->
+  <string Field="Others">Veel</string>
+  <!-- P -->
+  <string Field="PlayAll">Esita kõik</string>
+  <string Field="PlotOutline">Ei ole online</string>
+  <string Field="PreviousPage">Elmine leht</string>
+  <string Field="PerformAutomaticUpdate">Kinnitan automaatse uuenduse?</string>
+
+  <!-- R -->
+  <string Field="RemoveFromFavorites">Eemalda lemmikutest</string>
+  <string Field="RemovingFromFavorites">eemaldan lemmikutest</string>
+  <string Field="Refresh">Värskenda</string>
+  <string Field="RelatedVideos">Esitatud videod</string>
+  <string Field="Reported">Raporteeritud</string>
+  <string Field="Reports">Raportid</string>
+  <string Field="Runtime">Kestus</string>
+  <string Field="RemoveFromMySites">Eemalda minu saitidest</string>
+  <string Field="RestartMediaPortal">Restardi Minu Meedia!</string>
+  <string Field="RetrievingRemoteDlls">Võtan vastu võrgu dll-e ...</string>
+  <string Field="RetrievingRemoteSites">Võtan vastu võrgu saite ...</string>
+
+  <!-- S -->
+  <string Field="SearchHistory">Ajalugu</string>
+  <string Field="SearchResults">Otsingu tulemus</string>
+  <string Field="SelectSource">Vali allikas</string>
+  <string Field="Sites">Saidid</string>
+  <string Field="Size">Maht</string>  
+  <string Field="SortOptions">Sorteeri võimalused</string>
+  <string Field="Search">Otsi</string>
+  <string Field="SetDownloadFolderInConfig">Vali allalaadimiskaust Seadistustest!</string>
+  <string Field="State">Riik</string>
+  <string Field="SavingLocalSiteList">Salvestan oma saitide nimekirja ...</string>
+  <string Field="ShowReports">Näita valmistaja ja kasutaja raporteid</string>
+  <string Field="StartingPlayback">alustan esitamist</string>
+  <string Field="Subscriptions">Alakirjeldused</string>
+  
+  <!-- T -->
+  <string Field="Timeframe">Ajaliin</string>
+  <string Field="Timeout">Aeg läbi</string>
+  <string Field="Tags">Tags</string>
+
+  <!-- U -->
+  <string Field="Updated">Uuendatud</string>
+  <string Field="Updatable">Uuendatav</string>
+  <string Field="UpdateMySite">Uuenda minu saite</string>
+  <string Field="UpdateMySiteSkipCategories">Uuenda minu saite (ilma kategooriateta)</string>
+  <string Field="UpdateAllYourSites">Seeuuendab kõik Sinu praegused saidid.</string>
+  <string Field="UnableToPlayVideo">Ei saa esitada videot. Puudub URL.</string>
+  <string Field="UnableToDownloadVideo">Ei saa videot alla laadida. Vigane URL.</string>
+
+  <!-- V -->
+  <string Field="Videos">Videod</string>
+
+  <!-- W -->
+  <string Field="Working">Tegelen</string>
+
+  <!-- Y -->
+
+</strings>
