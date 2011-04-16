@@ -1078,13 +1078,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\dr.dk TV.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{61c44c78-7066-4b5e-94b8-bbeee64b2b31}-dr.dk TV.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\dr.dk TV.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\TVNZOnDemand.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{01fb2687-9b30-4f99-9bd2-b0f0448a3122}-TVNZOnDemand.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVNZOnDemand.png</DestinationFilename>
@@ -1095,13 +1088,6 @@
               <LocalFileName>..\SiteImages\Icons\watch-series.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{da52e33a-2820-422e-aa24-45aba3911041}-watch-series.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\watch-series.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\dr.dk TV.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{6a877edf-c7e9-4ef1-b6b9-8f64c056488f}-dr.dk TV.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\dr.dk TV.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1516,6 +1502,48 @@
               <ZipFileName>Installer{CopyFile}\{8e21e587-1921-4b43-a0e1-29a9e4056abb}-vimeo.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\vimeo.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\DR TV.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{49c75782-992b-40dd-a92d-9318c89b74f2}-DR TV.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\DR TV.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\IMDb Movie Trailers.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{1fd9c0dd-0870-4b7c-8e45-6895b199e9db}-IMDb Movie Trailers.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\IMDb Movie Trailers.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TV2.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{80ddf485-84f2-43ac-a64a-836af5abb141}-TV2.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV2.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\DR TV.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3a4ea284-543c-44fc-9311-fc83c659fb61}-DR TV.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\DR TV.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\IMDb Movie Trailers.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b2467485-df2e-4c82-b210-a655b9e11786}-IMDb Movie Trailers.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\IMDb Movie Trailers.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\TV2.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{915ab447-e8e5-4a73-b79f-3d569c4299c2}-TV2.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV2.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1569,6 +1597,13 @@
               <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f31bc3ab-b076-4064-9c0c-53f90a0b283d}-OnlineVideos.Sites.pilehave.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</DestinationFilename>
+            </FileItem>            
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -1732,6 +1767,13 @@
               <LocalFileName>..\Language\OnlineVideos\tr.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{55db6ca6-1b27-42cc-a2e9-676333c306ae}-tr.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\tr.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\et.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{957a0f37-36d6-4f26-b091-35c1e489cd38}-et.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\et.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2417,7 +2459,7 @@ Fixed: A direct search on sites with "search categories" (via startup parameters
 Fixed: threading issue when skipping buffering (was trying to start playback multiple times)</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2011-04-14T20:00:00</ReleaseDate>
+    <ReleaseDate>2011-04-16T20:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -3514,13 +3556,6 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\dr.dk TV.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{61c44c78-7066-4b5e-94b8-bbeee64b2b31}-dr.dk TV.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\dr.dk TV.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\TVNZOnDemand.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{01fb2687-9b30-4f99-9bd2-b0f0448a3122}-TVNZOnDemand.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVNZOnDemand.png</DestinationFilename>
@@ -3531,13 +3566,6 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
         <LocalFileName>..\SiteImages\Icons\watch-series.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{da52e33a-2820-422e-aa24-45aba3911041}-watch-series.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\watch-series.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\dr.dk TV.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{6a877edf-c7e9-4ef1-b6b9-8f64c056488f}-dr.dk TV.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\dr.dk TV.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3952,6 +3980,48 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
         <ZipFileName>Installer{CopyFile}\{8e21e587-1921-4b43-a0e1-29a9e4056abb}-vimeo.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\vimeo.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\DR TV.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{49c75782-992b-40dd-a92d-9318c89b74f2}-DR TV.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\DR TV.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\IMDb Movie Trailers.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{1fd9c0dd-0870-4b7c-8e45-6895b199e9db}-IMDb Movie Trailers.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\IMDb Movie Trailers.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TV2.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{80ddf485-84f2-43ac-a64a-836af5abb141}-TV2.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV2.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\DR TV.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3a4ea284-543c-44fc-9311-fc83c659fb61}-DR TV.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\DR TV.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\IMDb Movie Trailers.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b2467485-df2e-4c82-b210-a655b9e11786}-IMDb Movie Trailers.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\IMDb Movie Trailers.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\TV2.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{915ab447-e8e5-4a73-b79f-3d569c4299c2}-TV2.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV2.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -3987,6 +4057,13 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
         <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f31bc3ab-b076-4064-9c0c-53f90a0b283d}-OnlineVideos.Sites.pilehave.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</DestinationFilename>
+      </FileItem>      
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -4140,6 +4217,13 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
         <LocalFileName>..\Language\OnlineVideos\tr.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{55db6ca6-1b27-42cc-a2e9-676333c306ae}-tr.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\tr.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\et.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{957a0f37-36d6-4f26-b091-35c1e489cd38}-et.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\et.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4327,7 +4411,7 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{30ef0731-d4cb-4f1b-b47d-ecae5409e6f7}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{1a8667ad-d986-4a5b-bf84-b43fb75dce54}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
