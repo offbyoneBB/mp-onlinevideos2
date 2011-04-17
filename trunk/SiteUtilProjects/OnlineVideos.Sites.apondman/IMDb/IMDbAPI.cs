@@ -22,6 +22,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         static Regex videoFormatExpression = new Regex(@"case\s+'(?<format>[^']+)'\s+:\s+url = '(?<video>/video/[^']+)'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoFileExpression = new Regex(@"IMDbPlayer.playerKey = ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoRTMPExpression = new Regex(@"so.addVariable\(""file"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static Regex videoRTMPIdExpression = new Regex(@"so.addVariable\(""id"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex imdbIdExpression = new Regex(@"tt\d{7}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex trailerDataExpression = new Regex(@"<span class=.t-o-d-year.>\((?<year>\d{4})\)</span>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -294,7 +295,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             if (match.Success)
             {
                 string value = match.Groups["video"].Value;
-                return System.Web.HttpUtility.UrlDecode(value);
+
+                match = videoRTMPIdExpression.Match(data);
+                string file = match.Groups["video"].Value;
+                
+                return System.Web.HttpUtility.UrlDecode(value + "/" + file);
             }            
 
             return null;

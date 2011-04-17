@@ -212,9 +212,7 @@ namespace OnlineVideos.Sites.Pondman
             string videoUrl = string.Empty;
 
             VideoDetails clip = IMDbAPI.GetVideo(apiSession, video.VideoUrl);
-
             video.Other = clip;
-            video.Length = clip.Duration.ToString();
 
             Dictionary<string, string> files = new Dictionary<string, string>();
 
