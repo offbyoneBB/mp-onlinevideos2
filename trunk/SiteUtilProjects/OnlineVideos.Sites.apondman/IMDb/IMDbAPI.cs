@@ -167,11 +167,23 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
             if (root != null)
             {
-                HtmlNodeCollection videoCollection = root.SelectNodes("//img[@class='video']");
-                if (videoCollection != null)
+                HtmlNodeCollection nodes = root.SelectNodes("//div[@class='results-item']");
+
+                string movieTitle = root.SelectSingleNode("//h1/a").InnerText;
+
+                if (nodes != null)
                 {
-                    foreach (HtmlNode v in videoCollection)
+                    foreach (HtmlNode node in nodes)
                     {
+                        HtmlNode v = node.FirstChild.SelectSingleNode("a/img[@class='video']");
+
+                        string src = v.Attributes["src"].Value;
+                        Match m = videoTitleExpression.Match(src);
+                        if (!m.Success) 
+                        {
+                            continue;
+                        }
+
                         VideoReference video = new VideoReference();
                         video.session = session;
 
@@ -182,25 +194,34 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                             desc = desc.Substring(i + 4);
                         }
 
-                        string title = v.Attributes["src"].Value;
-                        
-                        Match m = videoTitleExpression.Match(title);
-                        if (m.Success)
+                        string vconst = v.Attributes["viconst"].Value;
+                        string title = node.FirstChild.SelectSingleNode("h2/a").InnerText;
+
+                        if (title.ToLower().Trim() == movieTitle.ToLower().Trim())
                         {
-                            title = m.Groups["title"].Value;
-                            video.Image = m.Groups["filename"].Value + m.Groups["ext"].Value;
-                            string length = m.Groups["length"].Value;
-                            video.Duration = new TimeSpan(0, int.Parse(length.Split(':')[0]), int.Parse(length.Split(':')[1]));
+                            // if the title is the same as the movie title we will use the video type as the title
+                            title = HttpUtility.UrlDecode(m.Groups["title"].Value);
                         }
                         else
                         {
-                            title = desc;
-                        }                       
-                        
+                            // clean up the video title
+                            i = title.IndexOf(" -- ");
+                            if (i >= 0)
+                            {
+                                title = title.Substring(i + 4);
+                            }
+
+                            title = title.Replace(movieTitle + ":", string.Empty);
+                            title = HttpUtility.HtmlDecode(title.Trim());
+                        }
+
                         video.ID = v.Attributes["viconst"].Value;
-                        video.Title = HttpUtility.UrlDecode(title);
+                        video.Title = title;
                         video.Description = HttpUtility.UrlDecode(desc);
-                        
+                        video.Image = m.Groups["filename"].Value + m.Groups["ext"].Value;
+
+                        string length = m.Groups["length"].Value;
+                        video.Duration = new TimeSpan(0, int.Parse(length.Split(':')[0]), int.Parse(length.Split(':')[1]));
 
                         videos.Add(video);
                     }
@@ -232,10 +253,12 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
             HtmlNode titleNode = root.SelectSingleNode("//title");
             string title = titleNode.InnerText;
-            details.Title = title.Substring(title.IndexOf(':') + 1).Trim();
+            title = title.Substring(title.IndexOf(':') + 1).Trim();
+
+            details.Title = HttpUtility.HtmlDecode(title);
 
             HtmlNode descNode = root.SelectSingleNode("//table[@id='video-details']/tr[1]/td[2]");
-            details.Description = descNode.InnerText;
+            details.Description = HttpUtility.HtmlDecode(descNode.InnerText);
 
             HtmlNode formats = root.SelectSingleNode("//div[@id='hd-ctrl']");
                 
