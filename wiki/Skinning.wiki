@@ -5,14 +5,17 @@
 !OnlineVideos requires 4 window skin files:
  * Id: *4755* ( _myonlinevideos.xml_ )<br/>The main OnlineVideos window where the user can browse sites and play videos.<br/>
  * Id: *4757* ( _myonlinevideosUpdater.xml_ )<br/>A secondary window that allows management and updating of sites.<br/>
- * Id: *4758* ( _myonlinevideosFullScreen.xml_ )<br/>A copy of the default videoFullScreen, with the TV progress bar added and the default progress bar hidden.<br/>
- * Id: *4759* ( _myonlinevideosOSD.xml_ )<br/>A copy of the default videoOSD, with the TV progress bar added and the default progress bar hidden. 
+ * Id: *4758* ( _myonlinevideosFullScreen.xml_ )<br/>A copy of the default videoFullScreen, with the TV progress bar used instead of the default progress bar.<br/>
+ * Id: *4759* ( _myonlinevideosOSD.xml_ )<br/>A copy of the default videoOSD, with the TV progress bar used instead of the default progress bar. 
 
-The Blue3Wide skinfiles that are installed with the plugin are always kept updated and should be used as a reference when creating skinfiles.
+and 1 optional dialog window:
+ * Id: *4760* ( _myonlinevideos.DialogMenu.xml_ )<br/>A copy of the original DialogMenu.xml with an additional label below the list with {{{#OnlineVideos.DialogSelectedItemDescription}}} and the `textvisible3` of the list set to no.
+
+The DefaultWide skinfiles that are installed with the plugin are always kept updated and should be used as a reference when creating skinfiles.
 
 The plugin comes with its own localization, so skinners are encouraged to use the provided properties for their labels.
 
-The skin for the window 4755 should set `allowoverlay` to yes, because external players (e.g. WindowsMediaPlayer) will be used in some clips.
+The skin for the window 4755 should set `allowoverlay` to yes, because external players (WindowsMediaPlayer, VLC Media Player) will be used for some clips.
 
 = Window 4755 required controls =
 || *Id* || *type* || *default localized label* || *description* ||
