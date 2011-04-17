@@ -309,17 +309,14 @@ namespace OnlineVideos.MediaPortal1.Player
             }
 
 #if !MP11
-            if (!string.IsNullOrEmpty(SubtitleFile))
+            ISubEngine engine = SubEngine.GetInstance(true);
+            if (!engine.LoadSubtitles(graphBuilder, string.IsNullOrEmpty(SubtitleFile) ? m_strCurrentFile : SubtitleFile))
             {
-                ISubEngine engine = SubEngine.GetInstance(true);
-                if (!engine.LoadSubtitles(graphBuilder, SubtitleFile))
-                {
-                    SubEngine.engine = new SubEngine.DummyEngine();
-                }
-                else
-                {
-                    engine.Enable = true;
-                }
+                SubEngine.engine = new SubEngine.DummyEngine();
+            }
+            else
+            {
+                engine.Enable = true;
             }
 
             IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
