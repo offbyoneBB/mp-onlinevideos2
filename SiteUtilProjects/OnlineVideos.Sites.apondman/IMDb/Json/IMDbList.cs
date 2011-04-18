@@ -8,13 +8,7 @@
     {
         [JsonProperty("label")]
         public string Label { get; set; }
-    }
-
-    public class IMDbChartList : IMDbList
-    {
-        [JsonProperty("list")]
-        public IMDbTitle[] Titles { get; set; }
-    }
+    }    
 
     public class IMDbReleaseList : IMDbList
     {
@@ -35,6 +29,18 @@
     {
         [JsonProperty("list")]
         public IMDbNameListItem[] Names { get; set; }
+    }
+
+    public class IMDbList<T> : IMDbList
+    {
+        [JsonProperty("list")]
+        public T[] Items { get; set; }
+    }
+
+    public class IMDbSingleList<T> : IMDbList
+    {
+        [JsonProperty("list")]
+        public T List { get; set; }
     }
 
 }

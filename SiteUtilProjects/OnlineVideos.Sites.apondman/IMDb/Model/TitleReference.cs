@@ -21,7 +21,7 @@
         public virtual List<NameReference> Principals { get; internal set; }
 
         public virtual DateTime ReleaseDate { get; internal set; }
-        
+
         public virtual TitleDetails GetDetails()
         {
             return IMDbAPI.GetTitle(this.session, this.ID);

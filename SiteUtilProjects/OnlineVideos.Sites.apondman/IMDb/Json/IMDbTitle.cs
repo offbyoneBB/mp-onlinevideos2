@@ -16,6 +16,12 @@
         [JsonProperty("year")]
         public int Year { get; set; }
 
+        [JsonProperty("num_votes")]
+        public int Votes { get; set; }
+
+        [JsonProperty("rating")]
+        public double Rating { get; set; }
+
         [JsonProperty("image")]
         public IMDbImage Image {
             get

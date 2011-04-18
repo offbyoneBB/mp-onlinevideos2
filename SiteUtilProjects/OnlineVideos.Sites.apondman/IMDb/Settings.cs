@@ -70,6 +70,18 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             }
         } private string titleDetails = "title/maindetails";
 
+        public string BoxOffice
+        {
+            get
+            {
+                return this.boxOffice;
+            }
+            set
+            {
+                this.boxOffice = value;
+            }
+        } private string boxOffice = "boxoffice";
+
         public string FeatureComingSoon
         {
             get
@@ -105,6 +117,18 @@ namespace OnlineVideos.Sites.Pondman.IMDb
                 this.chartBottom100 = value;
             }
         } private string chartBottom100 = "chart/bottom";
+
+         public string ChartMovieMeter
+        {
+            get
+            {
+                return this.chartMovieMeter;
+            }
+            set
+            {
+                this.chartMovieMeter = value;
+            }
+        } private string chartMovieMeter = "chart/moviemeter";        
 
         public string VideoGallery 
         {

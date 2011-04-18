@@ -21,8 +21,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         static Regex videoTitleExpression = new Regex(@"^(?<filename>(.+?)_V1)(.+?)150_ZA(?<title>[^,]+),4(.+?)1_ZA(?<length>[\d:]+),164(.+?)(?<ext>\.[^\.]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoFormatExpression = new Regex(@"case\s+'(?<format>[^']+)'\s+:\s+url = '(?<video>/video/[^']+)'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoFileExpression = new Regex(@"IMDbPlayer.playerKey = ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        // todo: create one expression for RTMP
         static Regex videoRTMPExpression = new Regex(@"so.addVariable\(""file"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoRTMPIdExpression = new Regex(@"so.addVariable\(""id"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        
         static Regex imdbIdExpression = new Regex(@"tt\d{7}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex trailerDataExpression = new Regex(@"<span class=.t-o-d-year.>\((?<year>\d{4})\)</span>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -330,6 +333,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
         #region Browsing
 
+        /// <summary>
+        /// Browse the coming soon category.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
         public static List<TitleReference> GetComingSoon(Session session)
         {
             string responseString = GetResponseFromEndpoint(session, session.Settings.FeatureComingSoon);
@@ -355,33 +363,110 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             return titles;
         }
 
+        /// <summary>
+        /// Browse the movie top 250.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <returns></returns>
         public static List<TitleReference> GetTop250(Session session)
         {
             return GetChart(session, session.Settings.ChartTop250);
         }
 
+        /// <summary>
+        /// Browse the movie bottom top 100.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <returns></returns>
         public static List<TitleReference> GetBottom100(Session session)
         {
             return GetChart(session, session.Settings.ChartBottom100);
         }
 
+        /// <summary>
+        /// Browse the US weekend box office results.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <returns></returns>
+        public static List<TitleReference> GetBoxOffice(Session session)
+        {
+            List<TitleReference> titles = new List<TitleReference>();
+
+            string data = GetResponseFromEndpoint(session, session.Settings.BoxOffice);
+
+            IMDbResponse<IMDbSingleList<IMDbList<IMDbBoxOfficeTitle>>> response = JsonConvert.DeserializeObject<IMDbResponse<IMDbSingleList<IMDbList<IMDbBoxOfficeTitle>>>>(data);
+
+            foreach (IMDbBoxOfficeTitle item in response.Data.List.Items)
+            {
+                TitleReference title = new TitleReference();
+                title.session = session;
+                title.FillFrom(item.Title);
+
+                titles.Add(title);
+            }
+
+
+            return titles;
+        }
+
+        /// <summary>
+        /// Browse the MOVIEmeter movies.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <returns></returns>
+        public static List<TitleReference> GetMovieMeter(Session session)
+        {
+            List<TitleReference> titles = new List<TitleReference>();
+
+            string data = GetResponseFromEndpoint(session, session.Settings.ChartMovieMeter);
+
+            IMDbRankedResponse<IMDbTitleListItem> response = JsonConvert.DeserializeObject<IMDbRankedResponse<IMDbTitleListItem>>(data);
+
+            foreach (IMDbRankedObject<IMDbTitleListItem> item in response.Data.Items)
+            {
+                TitleReference title = new TitleReference();
+                title.session = session;
+                title.FillFrom(item.Object);
+
+                titles.Add(title);
+            }
+
+
+            return titles;
+        }
+
+        /// <summary>
+        /// Browser the top HD movie trailers.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
         public static List<TitleReference> GetTrailersTopHD(Session session)
         {
             return GetTrailers(session, session.Settings.TrailersTopHD);
         }
 
+        /// <summary>
+        /// Browse recently added movie trailers and videos
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
         public static List<TitleReference> GetTrailersRecent(Session session)
         {
             return GetTrailers(session, session.Settings.TrailersRecent);
         }
 
+        /// <summary>
+        /// Browse popular movie trailers
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
         public static List<TitleReference> GetTrailersPopular(Session session)
         {
             return GetTrailers(session, session.Settings.TrailersPopular);
         }
 
         /// <summary>
-        /// Gets the full length movies in a specific category.
+        /// Browse the full length movies in a specific category.
         /// </summary>
         /// <param name="session">session to use</param>
         /// <param name="index">a single character in the range: # and A-Z</param>
@@ -415,7 +500,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         }
 
         /// <summary>
-        /// Gets the IMDb id from the input string.
+        /// Parses the IMDb id from the input string.
         /// </summary>
         /// <param name="input">a string</param>
         /// <returns>IMDb ID or null if not matched</returns>
@@ -470,11 +555,10 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         {
             List<TitleReference> titles = new List<TitleReference>();
 
-            string response = GetResponseFromEndpoint(session, chart);
-            JObject parsedResults = JObject.Parse(response);
-            IMDbChartList chartList = JsonConvert.DeserializeObject<IMDbChartList>(parsedResults["data"]["list"].ToString());
+            string data = GetResponseFromEndpoint(session, chart);
+            IMDbResponse<IMDbSingleList<IMDbList<IMDbTitle>>> response = JsonConvert.DeserializeObject<IMDbResponse<IMDbSingleList<IMDbList<IMDbTitle>>>>(data);
 
-            foreach (IMDbTitle item in chartList.Titles)
+            foreach (IMDbTitle item in response.Data.List.Items)
             {
                 TitleReference title = new TitleReference();
                 title.session = session;

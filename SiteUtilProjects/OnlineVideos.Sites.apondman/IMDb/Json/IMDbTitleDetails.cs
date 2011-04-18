@@ -24,17 +24,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Json {
         [JsonProperty("has")]
         public List<string> has { get; set; }
 
-        [JsonProperty("num_votes")]
-        public int Votes { get; set; }
-
         [JsonProperty("photos")]
         public List<IMDbPhoto> Photos { get; set; }
 
         [JsonProperty("plot")]
         public IMDbPlot Plot { get; set; }
-
-        [JsonProperty("rating")]
-        public double Rating { get; set; }
 
         [JsonProperty("release_date")] 
         public Dictionary<string, string> ReleaseDate { get; set; }
