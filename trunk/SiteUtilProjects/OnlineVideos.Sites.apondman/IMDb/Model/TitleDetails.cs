@@ -37,10 +37,6 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
         public virtual string Certificate { get; internal set; }
 
-        public virtual double Rating { get; internal set; }
-
-        public virtual int Votes { get; internal set; }
-
         internal virtual void FillFrom(IMDbTitleDetails dto)
         {
             FillFrom(dto as IMDbTitle);
@@ -60,10 +56,6 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             {
                 Certificate = dto.Certificate.Name;
             }
-            
-            
-            Rating = dto.Rating;
-            Votes = dto.Votes;
 
             if (dto.CastSummary != null)
             {
@@ -133,10 +125,9 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             p.Add("Actors", this.Cast.Select(x => x.Actor.Name).ToList().ToCommaSeperatedString());
             p.Add("Genres", this.Genres.ToCommaSeperatedString());
             p.Add("Certificate", this.Certificate);
-            p.Add("Rating", this.Rating.ToString());
+            
             string releaseDate = this.ReleaseDate != DateTime.MinValue ? this.ReleaseDate.ToShortDateString() : "Coming Soon";
             p.Add("ReleaseDate", releaseDate);
-            p.Add("Votes", this.Votes.ToString());
 
             return p;
         }

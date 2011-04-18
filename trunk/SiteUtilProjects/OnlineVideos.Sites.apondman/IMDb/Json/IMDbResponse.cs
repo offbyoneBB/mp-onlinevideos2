@@ -12,4 +12,20 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Json {
         [JsonProperty("exp")]
         public int Expires { get; set; }
     }
+
+    public class IMDbResponse<T>
+    {
+        [JsonProperty("data")]
+        public virtual T Data { get; set; }
+
+        [JsonProperty("exp")]
+        public virtual int Expires { get; set; }
+    }
+
+    public class IMDbRankedResponse<T> : IMDbResponse<IMDbList<IMDbRankedObject<T>>>
+    {
+
+    }
+
+
 }

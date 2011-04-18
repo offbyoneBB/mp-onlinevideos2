@@ -118,6 +118,16 @@ namespace OnlineVideos.Sites.Pondman
             Settings.Categories.Add(cat);
 
             cat = new Category();
+            cat.Other = "9";
+            cat.Name = "USA Weekend Box-Office";
+            Settings.Categories.Add(cat);  
+
+            cat = new Category();
+            cat.Other = "8";
+            cat.Name = "Weekly MOVIEmeter";
+            Settings.Categories.Add(cat);            
+
+            cat = new Category();
             cat.Other = "5";
             cat.Name = "Top 250 movies";
             Settings.Categories.Add(cat);
@@ -169,6 +179,12 @@ namespace OnlineVideos.Sites.Pondman
 
             switch (catid)
             {
+                case "9":
+                    titles = IMDbAPI.GetBoxOffice(apiSession);
+                    break;
+                case "8":
+                    titles = IMDbAPI.GetMovieMeter(apiSession);
+                    break;
                 case "6":
                     titles = IMDbAPI.GetBottom100(apiSession);
                     break;

@@ -15,6 +15,10 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
         public virtual int Year { get; internal set; }
 
+        public virtual double Rating { get; internal set; }
+
+        public virtual int Votes { get; internal set; }
+
         public virtual string Image { get; internal set; }
 
         public virtual List<VideoReference> GetVideos()
@@ -27,6 +31,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             ID = dto.TConst;
             Title = dto.Title;
             Year = dto.Year;
+            Rating = dto.Rating;
+            Votes = dto.Votes;
 
             if (dto.Image != null)
             {
@@ -49,12 +55,14 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
         public virtual Dictionary<string, string> GetExtendedProperties()
         {
-            Dictionary<string, string> properties = new Dictionary<string, string>();
+            Dictionary<string, string> p = new Dictionary<string, string>();
 
-            properties.Add("Title", this.Title);
-            properties.Add("Year", this.Year.ToString());
+            p.Add("Title", this.Title);
+            p.Add("Year", this.Year.ToString());
+            p.Add("Rating", this.Rating.ToString());
+            p.Add("Votes", this.Votes.ToString());
 
-            return properties;
+            return p;
         }
 
         #endregion
