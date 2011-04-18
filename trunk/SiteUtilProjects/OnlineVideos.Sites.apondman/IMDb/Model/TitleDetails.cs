@@ -44,7 +44,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             string dt;
             if (dto.ReleaseDate != null && dto.ReleaseDate.TryGetValue("normal", out dt))
             {
-                ReleaseDate = DateTime.Parse(dt);
+                DateTime value;
+                if (DateTime.TryParse(dt, out value))
+                {
+                    ReleaseDate = value;
+                }
             }
 
             if (dto.Plot != null)
