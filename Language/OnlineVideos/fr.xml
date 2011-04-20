@@ -26,6 +26,7 @@
   <string Field="Download">Télécharger</string>
   <string Field="Downloading">Téléchargement</string>
   <string Field="DownloadingDescription">Voir la liste des téléchargements en cours.</string>
+  <string Field="DownloadingSubtitle">Téléchargement des sous-titres</string>
   <string Field="DownloadFailed">Le téléchargement a échoué: {0}</string>
   <string Field="DownloadCancelled">Téléchargement annulé</string>
   <string Field="DownloadComplete">Téléchargement terminé</string>
@@ -57,6 +58,7 @@
   <string Field="GettingIcon">Récupération des icônes des sites depuis le webservice</string>
   <string Field="GettingBanner">Récupération des bannières des sites depuis le webservice</string>
   <string Field="GettingDll">Récupération des dll depuis le webservice</string>
+  <string Field="Groups">Groupes</string>
   <string Field="LatestVersionRequired">Dernière version ({0}) requise !</string>
   <string Field="Language">Par langage</string>
   <string Field="LayoutList">Disposition: Liste</string>
@@ -71,7 +73,9 @@
   <string Field="NoReportsForSite">Pas de rapport disponible pour ce site</string>
   <string Field="NewDllDownloaded">Nouvelle DLL téléchargé!</string>
   <string Field="NewSearch">Nouvelle recherche</string>
+  <string Field="Others">Autres</string>
   <string Field="PlayAll">Lecture de la totalité des vidéos</string>
+  <string Field="PlayWith">Lire avec ...</string>
   <string Field="PlotOutline">Aperçu</string>
   <string Field="PreviousPage">Page précédente</string>
   <string Field="PerformAutomaticUpdate">Effectuer la mise à jour automatique?</string>
@@ -80,6 +84,7 @@
   <string Field="Refresh">Rafraîchir</string>
   <string Field="RelatedVideos">Vidéos Similaires</string>
   <string Field="Reported">En maintenance</string>
+  <string Field="Reports">Rapports</string>
   <string Field="Runtime">Durée</string>
   <string Field="RemoveFromMySites">Retirer de mes sites</string>
   <string Field="RestartMediaPortal">Redémarrez MediaPortal!</string>
