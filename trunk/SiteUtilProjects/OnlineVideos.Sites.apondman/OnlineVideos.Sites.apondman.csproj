@@ -90,6 +90,7 @@
     <Compile Include="IMDb\Json\IMDbBoxOfficeTitle.cs" />
     <Compile Include="IMDb\Json\IMDbCash.cs" />
     <Compile Include="IMDb\Json\IMDbRankedObject.cs" />
+    <Compile Include="IMDb\Json\IMDbRuntime.cs" />
     <Compile Include="IMDb\Json\IMDbTrailer.cs" />
     <Compile Include="ITunes\Enumerations.cs" />
     <Compile Include="Extensions.cs" />

@@ -118,7 +118,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             }
         } private string chartBottom100 = "chart/bottom";
 
-         public string ChartMovieMeter
+        public string ChartMovieMeter
         {
             get
             {
@@ -128,7 +128,19 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             {
                 this.chartMovieMeter = value;
             }
-        } private string chartMovieMeter = "chart/moviemeter";        
+        } private string chartMovieMeter = "chart/moviemeter";
+
+        public string PopularTVSeries
+        {
+            get
+            {
+                return this.popularTVSeries;
+            }
+            set
+            {
+                this.popularTVSeries = value;
+            }
+        } private string popularTVSeries = "chart/tv";  
 
         public string VideoGallery 
         {

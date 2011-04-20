@@ -1,7 +1,10 @@
 ﻿namespace OnlineVideos.Sites.Pondman.IMDb.Model
 {
     using OnlineVideos.Sites.Pondman.Interfaces;
-    
+
+    /// <summary>
+    /// Base class for an IMDb object
+    /// </summary>
     public class Reference : IDataObject
     {
         /// <summary>

@@ -11,7 +11,7 @@ namespace OnlineVideos.Sites.Pondman.Cache
     /// </summary>
     public class DataObjectCache
     {
-        private Dictionary<Type, Dictionary<string, IDataObject>> cache;
+        protected Dictionary<Type, Dictionary<string, IDataObject>> cache;
 
         public DataObjectCache()
         {
@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites.Pondman.Cache
         /// <typeparam name="T">object type</typeparam>
         /// <param name="id">tcm id</param>
         /// <returns></returns>
-        public T Get<T>(string id) where T : class, IDataObject
+        public virtual T Get<T>(string id) where T : class, IDataObject
         {
             IDataObject obj;
 
@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites.Pondman.Cache
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public IList<T> GetAll<T>() where T : class, IDataObject
+        public virtual IList<T> GetAll<T>() where T : class, IDataObject
         {
             Dictionary<string, IDataObject> objCache = getDataObjectCache(typeof(T));
             return objCache.Values.Cast<T>().ToList();
@@ -53,7 +53,7 @@ namespace OnlineVideos.Sites.Pondman.Cache
         /// Inserts or updates a data object into the cache
         /// </summary>
         /// <param name="obj">object to add</param>
-        public void Add(IDataObject obj)
+        public virtual void Add(IDataObject obj)
         {
             Dictionary<string, IDataObject> objCache = getDataObjectCache(obj);
             if (objCache != null)
@@ -66,7 +66,7 @@ namespace OnlineVideos.Sites.Pondman.Cache
         /// Inserts or updates a data object collection into the cache
         /// </summary>
         /// <param name="list"></param>
-        public void Add(IList<IDataObject> list)
+        public virtual void Add(IList<IDataObject> list)
         {
             foreach (IDataObject obj in list)
             {
@@ -78,7 +78,7 @@ namespace OnlineVideos.Sites.Pondman.Cache
         /// Removes a data object from the cache
         /// </summary>
         /// <param name="obj"></param>
-        public void Remove(IDataObject obj)
+        public virtual void Remove(IDataObject obj)
         {
             Dictionary<string, IDataObject> objCache = getDataObjectCache(obj);
 
@@ -95,7 +95,7 @@ namespace OnlineVideos.Sites.Pondman.Cache
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        private Dictionary<string, IDataObject> getDataObjectCache(IDataObject obj)
+        protected Dictionary<string, IDataObject> getDataObjectCache(IDataObject obj)
         {
             // todo: thread safety
             if (obj == null || obj.PrimaryKey == null)
@@ -110,7 +110,7 @@ namespace OnlineVideos.Sites.Pondman.Cache
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        private Dictionary<string, IDataObject> getDataObjectCache(Type objType)
+        protected Dictionary<string, IDataObject> getDataObjectCache(Type objType)
         {
             // todo: thread safety
             Dictionary<string, IDataObject> objCache;

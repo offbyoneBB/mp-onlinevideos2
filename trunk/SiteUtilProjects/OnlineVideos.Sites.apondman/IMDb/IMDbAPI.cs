@@ -131,15 +131,12 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             Dictionary<string, string> d = new Dictionary<string, string>();
             d.Add("tconst", imdbID);
 
-            string responseString = GetResponseFromEndpoint(session, session.Settings.TitleDetails, d);
-
-            IMDbResponse response = JsonConvert.DeserializeObject<IMDbResponse>(responseString);
-            string jsonString = response.Data.ToString();
-            IMDbTitleDetails dto = JsonConvert.DeserializeObject<IMDbTitleDetails>(jsonString);
+            string data = GetResponseFromEndpoint(session, session.Settings.TitleDetails, d);
+            IMDbResponse<IMDbTitleDetails> response = JsonConvert.DeserializeObject<IMDbResponse<IMDbTitleDetails>>(data);
 
             TitleDetails details = new TitleDetails();
             details.session = session;
-            details.FillFrom(dto);    
+            details.FillFrom(response.Data);    
 
             return details;
         }
@@ -218,7 +215,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                             title = HttpUtility.HtmlDecode(title.Trim());
                         }
 
-                        video.ID = v.Attributes["viconst"].Value;
+                        video.ID = vconst;
                         video.Title = title;
                         video.Description = HttpUtility.UrlDecode(desc);
                         video.Image = m.Groups["filename"].Value + m.Groups["ext"].Value;
@@ -269,7 +266,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             foreach (Match m in matches)
             {
                 string format = m.Groups["format"].Value;
-                string video = session.Settings.BaseUri + m.Groups["video"].Value;
+                string video = m.Groups["video"].Value;
 
                 if (!video.Contains("?uff"))
                 {
@@ -310,7 +307,13 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// <returns></returns>
         public static string GetVideoFile(Session session, string url)
         {
-            string data = session.MakeRequest(url);
+            if (!url.StartsWith("/"))
+            {
+                // we only need to post-process the relative urls
+                return url;
+            }
+
+            string data = session.MakeRequest(session.Settings.BaseUri + url);
             Match match = videoFileExpression.Match(data);
             if (match.Success)
             {
@@ -376,11 +379,35 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// <summary>
         /// Browse the movie bottom top 100.
         /// </summary>
-        /// <param name="session">The session.</param>
+        /// <param name="session"></param>
         /// <returns></returns>
         public static List<TitleReference> GetBottom100(Session session)
         {
             return GetChart(session, session.Settings.ChartBottom100);
+        }
+
+        /// <summary>
+        /// Browse the popular tv series
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        public static List<TitleReference> GetPopularTV(Session session)
+        {
+            List<TitleReference> titles = new List<TitleReference>();
+
+            string data = GetResponseFromEndpoint(session, session.Settings.PopularTVSeries);
+            IMDbResponse<IMDbSingleList<IMDbTitleListItem[]>> response = JsonConvert.DeserializeObject<IMDbResponse<IMDbSingleList<IMDbTitleListItem[]>>>(data);
+
+            foreach (IMDbTitleListItem item in response.Data.List)
+            {
+                TitleReference title = new TitleReference();
+                title.session = session;
+                title.FillFrom(item);
+
+                titles.Add(title);
+            }
+
+            return titles;
         }
 
         /// <summary>
@@ -398,11 +425,14 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
             foreach (IMDbBoxOfficeTitle item in response.Data.List.Items)
             {
-                TitleReference title = new TitleReference();
-                title.session = session;
-                title.FillFrom(item.Title);
+                if (item.Title != null)
+                {
+                    TitleReference title = new TitleReference();
+                    title.session = session;
+                    title.FillFrom(item.Title);
 
-                titles.Add(title);
+                    titles.Add(title);
+                }
             }
 
 

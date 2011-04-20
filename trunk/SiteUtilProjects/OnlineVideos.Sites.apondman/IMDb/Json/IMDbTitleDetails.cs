@@ -33,8 +33,14 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Json {
         [JsonProperty("release_date")] 
         public Dictionary<string, string> ReleaseDate { get; set; }
 
+        [JsonProperty("production_status")]
+        public string ProductionStatus { get; set; }
+
+        [JsonProperty("seasons")] 
+        public List<string> Seasons { get; set; }
+
         [JsonProperty("runtime")]
-        public Dictionary<string, int> Runtime { get; set; }
+        public IMDbRuntime Runtime { get; set; }
 
         [JsonProperty("tagline")]
         public string Tagline { get; set; }
@@ -43,7 +49,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Json {
         public IMDbCertificate Certificate { get; set; }
 
         [JsonProperty("trailer")]
-        public Video Trailer { get; set;}
+        public IMDbVideo Trailer { get; set;}
 
     }
 }

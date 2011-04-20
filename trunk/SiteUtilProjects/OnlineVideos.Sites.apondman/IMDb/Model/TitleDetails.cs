@@ -8,6 +8,9 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
     using Newtonsoft.Json;
     using OnlineVideos.Sites.Pondman.IMDb.Json;
 
+    /// <summary>
+    /// IMDb Title
+    /// </summary>
     public class TitleDetails : TitleBase, IVideoDetails
     {
         public TitleDetails()
@@ -18,6 +21,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             this.Directors = new List<NameReference>();
             this.Genres = new List<string>();
             this.Photos = new List<string>();
+            this.Seasons = new List<string>();
             this.ReleaseDate = DateTime.MinValue;
         }
 
@@ -33,13 +37,58 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
         public virtual List<string> Photos { get; internal set; }
 
+        public virtual List<string> Seasons { get; internal set; }
+
+        public virtual VideoDetails Trailer { get; internal set; }
+
+        public virtual string ProductionStatus { get; internal set; }
+        
         public virtual string Plot { get; internal set; }
 
+        public virtual string Tagline { get; internal set; }
+
         public virtual string Certificate { get; internal set; }
+
+        public override List<VideoReference> GetVideos()
+        {
+            List<VideoReference> list = IMDbAPI.GetVideos(this.session, this.ID);
+            if (this.Trailer != null)
+            {
+                // replace the reference with a details version
+                int i = list.FindIndex(x => x.ID == this.Trailer.ID);
+                if (i > -1)
+                {
+                    list.RemoveAt(i);
+                }
+
+                // put the main trailer on top
+                list.Insert(0, this.Trailer);
+            }
+
+            return list;
+        }
+
+        #region Protected methods
+
+        protected virtual NameReference GetName(IMDbName dto)
+        {
+            NameReference name = new NameReference();
+            name.session = this.session;
+            name.FillFrom(dto);
+
+            return name;
+        }
+
+        #endregion
+
+        #region Internal methods
 
         internal virtual void FillFrom(IMDbTitleDetails dto)
         {
             FillFrom(dto as IMDbTitle);
+
+            this.ProductionStatus = dto.ProductionStatus;
+            this.Tagline = dto.Tagline;
 
             string dt;
             if (dto.ReleaseDate != null && dto.ReleaseDate.TryGetValue("normal", out dt))
@@ -47,18 +96,18 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
                 DateTime value;
                 if (DateTime.TryParse(dt, out value))
                 {
-                    ReleaseDate = value;
+                    this.ReleaseDate = value;
                 }
             }
 
             if (dto.Plot != null)
             {
-                Plot = dto.Plot.Outline;
+                this.Plot = dto.Plot.Outline;
             }
 
             if (dto.Certificate != null)
             {
-                Certificate = dto.Certificate.Name;
+                this.Certificate = dto.Certificate.Name;
             }
 
             if (dto.CastSummary != null)
@@ -69,7 +118,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
                     c.Name = role.Character;
                     c.Actor = GetName(role.Name);
 
-                    Cast.Add(c);
+                    this.Cast.Add(c);
                 }
             }
 
@@ -78,7 +127,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
                 foreach (IMDbStaff staff in dto.DirectorsSummary)
                 {
                     NameReference n = GetName(staff.Name);
-                    Directors.Add(n);
+                    this.Directors.Add(n);
                 }
             }
 
@@ -87,7 +136,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
                 foreach (IMDbStaff staff in dto.WritersSummary)
                 {
                     NameReference n = GetName(staff.Name);
-                    Writers.Add(n);
+                    this.Writers.Add(n);
                 }
             }
 
@@ -95,7 +144,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             {
                 foreach (IMDbPhoto photo in dto.Photos)
                 {
-                    Photos.Add(photo.Image.Url);
+                    this.Photos.Add(photo.Image.Url);
                 }
             }
 
@@ -103,19 +152,29 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             {
                 foreach (string genre in dto.Genres)
                 {
-                    Genres.Add(genre);
+                    this.Genres.Add(genre);
                 }
+            }
+
+            if (dto.Seasons != null)
+            {
+                foreach (string season in dto.Seasons)
+                {
+                    this.Seasons.Add(season);
+                }
+            }
+
+            if (dto.Trailer != null)
+            {
+                VideoDetails trailer = new VideoDetails();
+                trailer.session = this.session;
+                trailer.FillFrom(dto.Trailer);
+
+                this.Trailer = trailer;
             }
         }
 
-        protected virtual NameReference GetName(IMDbName dto)
-        {
-            NameReference name = new NameReference();
-            name.session = this.session;
-            name.FillFrom(dto);
-
-            return name;
-        }
+        #endregion
 
         #region IVideoDetails Members
 
@@ -129,6 +188,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             p.Add("Actors", this.Cast.Select(x => x.Actor.Name).ToList().ToCommaSeperatedString());
             p.Add("Genres", this.Genres.ToCommaSeperatedString());
             p.Add("Certificate", this.Certificate);
+            p.Add("Seasons", this.Seasons.ToCommaSeperatedString());
+            p.Add("Tagline", this.Tagline);
             
             string releaseDate = this.ReleaseDate != DateTime.MinValue ? this.ReleaseDate.ToShortDateString() : "Coming Soon";
             p.Add("ReleaseDate", releaseDate);

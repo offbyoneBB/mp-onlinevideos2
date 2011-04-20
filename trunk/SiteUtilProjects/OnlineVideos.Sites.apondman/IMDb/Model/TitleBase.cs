@@ -9,6 +9,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
     public class TitleBase : Reference, IVideoDetails
     {
+        #region Public properties
+
         public virtual TitleType Type { get; internal set; }
 
         public virtual string Title { get; internal set; }
@@ -21,10 +23,18 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
         public virtual string Image { get; internal set; }
 
+        #endregion
+
+        #region Public methods
+
         public virtual List<VideoReference> GetVideos()
         {
             return IMDbAPI.GetVideos(this.session, this.ID);
         }
+
+        #endregion
+
+        #region Internal methods
 
         internal virtual void FillFrom(IMDbTitle dto) {
             
@@ -44,12 +54,23 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
                 case "feature":
                     Type = TitleType.Movie;
                     break;
-                // todo: add other types
+                case "tv_series":
+                    Type = TitleType.TVSeries;
+                    break;
+                case "video_game":
+                    Type = TitleType.Game;
+                    break;
+                case "short":
+                    Type = TitleType.Short;
+                    break;
+                // todo: add more types
                 default:
                     Type = TitleType.Unknown;
                     break;
             }
         }
+
+        #endregion
 
         #region IVideoDetails Members
 
@@ -57,6 +78,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
         {
             Dictionary<string, string> p = new Dictionary<string, string>();
 
+            p.Add("Type", this.Type.ToString());
             p.Add("Title", this.Title);
             p.Add("Year", this.Year.ToString());
             p.Add("Rating", this.Rating.ToString());
