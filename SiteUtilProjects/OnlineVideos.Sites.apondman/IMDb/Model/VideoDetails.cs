@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OnlineVideos.Sites.Pondman.IMDb.Model
+﻿namespace OnlineVideos.Sites.Pondman.IMDb.Model
 {
+    using System.Collections.Generic;
+    using OnlineVideos.Sites.Pondman.IMDb.Json;
+        
     public class VideoDetails : VideoReference
     {
         public VideoDetails()
@@ -15,11 +13,38 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
         public Dictionary<VideoFormat, string> Files { get; set; }
 
-        public override Dictionary<string, string> GetExtendedProperties()
+        #region internal members
+
+        internal override void FillFrom(IMDbVideo dto)
         {
-            Dictionary<string, string> properties = base.GetExtendedProperties();
-            properties.Add("Duration", Duration.ToString());
-            return properties;
+            base.FillFrom(dto);
+            
+            if (dto.Encodings != null)
+            {
+                foreach (IMDbVideoFormat format in dto.Encodings.Values)
+                {
+                    if (format.Format.Contains("iPhone"))
+                    {
+                        continue;
+                    }
+
+                    VideoFormat f = VideoFormat.SD;
+                    switch (format.Format)
+                    {
+                        case "HD 480p":
+                            f = VideoFormat.HD480;
+                            break;
+                        case "HD 720p":
+                            f = VideoFormat.HD720;
+                            break;
+                    }
+
+                    Files[f] = format.URL;
+                }
+            }
         }
+
+        #endregion
+
     }
 }

@@ -7,8 +7,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Json
 {
     using Newtonsoft.Json;
 
-    public class Video
+    public class IMDbVideo
     {
+        [JsonProperty("id")]
+        public string ID { get; set; }
+        
         [JsonProperty("@type")]
         public string Type { get; set; }
         

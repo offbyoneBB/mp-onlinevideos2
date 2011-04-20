@@ -5,8 +5,9 @@
         Unknown,
         Movie,
         Game,
-        TvSeries,
-        TvEpisode
+        Short,
+        TVSeries,
+        TVEpisode
     }
 
     public enum ResultType
@@ -19,6 +20,9 @@
     public enum VideoFormat
     {
         SD,
+        Small,
+        Medium,
+        Large,
         HD480,
         HD720
     }

@@ -51,7 +51,7 @@ namespace OnlineVideos.Sites.Pondman {
             
             // extra
             string actors = movie.Actors.ToCommaSeperatedString();
-            video.Description = String.IsNullOrEmpty(movie.Synopsis) ? actors : movie.Synopsis;
+            video.Description = String.IsNullOrEmpty(movie.Plot) ? actors : movie.Plot;
             video.Length = movie.ReleaseDate != DateTime.MinValue ? movie.ReleaseDate.ToShortDateString() : "Coming Soon";
 
             return video;
@@ -189,7 +189,7 @@ namespace OnlineVideos.Sites.Pondman {
             }
 
             // complete movie metadata
-            video.Description = movie.Synopsis;
+            video.Description = movie.Plot;
             video.Length = movie.ReleaseDate != DateTime.MinValue ? movie.ReleaseDate.ToShortDateString() : "Coming Soon";
             video.ImageUrl = movie.Poster != null ? movie.Poster.Large : string.Empty;
             video.VideoUrl = movie.Uri;
@@ -200,7 +200,7 @@ namespace OnlineVideos.Sites.Pondman {
                 vid.Other = clip;
                 vid.Title = movie.Title + " - " + clip.Title;
                 vid.Title2 = clip.Title;
-                vid.Description = movie.Synopsis;
+                vid.Description = movie.Plot;
                 //vid.Length = clip.Duration.ToString();
                 vid.Length = clip.Published != DateTime.MinValue ? clip.Published.ToShortDateString() : "N/A";
                 vid.ImageUrl = movie.Poster != null ? movie.Poster.Uri : string.Empty;

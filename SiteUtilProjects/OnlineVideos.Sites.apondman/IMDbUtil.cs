@@ -97,48 +97,41 @@ namespace OnlineVideos.Sites.Pondman
         {
             Settings.Categories.Clear();
 
+            // todo: category translation?
+
             Category cat = new Category();
             cat.Other = "1";
-            cat.Name = "Most Viewed";
-            Settings.Categories.Add(cat);
-
-            cat = new Category();
-            cat.Other = "2";
-            cat.Name = "Recent";
-            Settings.Categories.Add(cat);
-
-            cat = new Category();
-            cat.Other = "3";
-            cat.Name = "Popular Movies";
-            Settings.Categories.Add(cat);
-
-            cat = new Category();
-            cat.Other = "4";
             cat.Name = "Coming Soon";
             Settings.Categories.Add(cat);
 
             cat = new Category();
-            cat.Other = "9";
-            cat.Name = "USA Weekend Box-Office";
-            Settings.Categories.Add(cat);  
+            cat.Other = "2";
+            cat.Name = "Most Viewed Trailers";
+            Settings.Categories.Add(cat);
 
             cat = new Category();
-            cat.Other = "8";
-            cat.Name = "Weekly MOVIEmeter";
-            Settings.Categories.Add(cat);            
+            cat.Other = "3";
+            cat.Name = "Recent Trailers";
+            Settings.Categories.Add(cat);
+
+            cat = new Category();
+            cat.Other = "4";
+            cat.Name = "Popular Movies";
+            Settings.Categories.Add(cat);
 
             cat = new Category();
             cat.Other = "5";
-            cat.Name = "Top 250 movies";
+            cat.Name = "Popular TV Series";
+            Settings.Categories.Add(cat);            
+
+            cat = new Category();
+            cat.Other = "100";
+            cat.Name = "Charts";
+            cat.HasSubCategories = true;
             Settings.Categories.Add(cat);
 
             cat = new Category();
-            cat.Other = "6";
-            cat.Name = "Bottom 100 movies";
-            Settings.Categories.Add(cat);
-
-            cat = new Category();
-            cat.Other = "7";
+            cat.Other = "200";
             cat.Name = "Full-length Movies";
             cat.HasSubCategories = true;
             Settings.Categories.Add(cat);
@@ -150,24 +143,39 @@ namespace OnlineVideos.Sites.Pondman
         public override int DiscoverSubCategories(Category parent)
         {
             parent.SubCategories = new List<Category>();
-
             string catid = parent.Other as string;
 
-            // Full Length Movies
-            if (catid == "7")
+            switch (catid)
             {
-                string index = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                foreach (char letter in index)
-                {
-                    Category cat = new Category();
-                    cat.ParentCategory = parent;
-                    cat.Other = catid + letter.ToString();
-                    cat.Name = letter.ToString();
-                    parent.SubCategories.Add(cat);
-                }
+                // Charts
+                case "100":
+                    // todo: subcategory translation?
+                    addSubCategory(parent, "101", "USA Weekend Box-Office");
+                    addSubCategory(parent, "102", "Weekly MOVIEmeter");
+                    addSubCategory(parent, "103", "Top 250 movies");
+                    addSubCategory(parent, "104", "Bottom 100 movies");
+                    break;
+                // Full Length Movies
+                case "200":
+                    string index = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                    foreach (char letter in index)
+                    {
+                        string n = letter.ToString();
+                        addSubCategory(parent, catid + n, n);
+                    }
+                    break;
             }
 
             return parent.SubCategories.Count;
+        }
+
+        private void addSubCategory(Category parent, string id, string name)
+        {
+            Category cat = new Category();
+            cat.Other = id;
+            cat.Name = name;
+            cat.ParentCategory = parent;
+            parent.SubCategories.Add(cat);
         }
 
         public override List<VideoInfo> getVideoList(Category category)
@@ -179,34 +187,37 @@ namespace OnlineVideos.Sites.Pondman
 
             switch (catid)
             {
-                case "9":
-                    titles = IMDbAPI.GetBoxOffice(apiSession);
-                    break;
-                case "8":
-                    titles = IMDbAPI.GetMovieMeter(apiSession);
-                    break;
-                case "6":
-                    titles = IMDbAPI.GetBottom100(apiSession);
-                    break;
-                case "5":
-                    titles = IMDbAPI.GetTop250(apiSession);
-                    break;
-                case "4":
+                case "1":
                     titles = IMDbAPI.GetComingSoon(apiSession);
                     break;
-                case "3":
-                    titles = IMDbAPI.GetTrailersPopular(apiSession);
-                    break;
                 case "2":
-                    titles = IMDbAPI.GetTrailersRecent(apiSession);
-                    break;
-                case "1":
                     titles = IMDbAPI.GetTrailersTopHD(apiSession);
                     break;
+                case "3":
+                    titles = IMDbAPI.GetTrailersRecent(apiSession);
+                    break;
+                case "4":
+                    titles = IMDbAPI.GetTrailersPopular(apiSession);
+                    break;
+                case "5":
+                    titles = IMDbAPI.GetPopularTV(apiSession);
+                    break;
+                case "101":
+                    titles = IMDbAPI.GetBoxOffice(apiSession);
+                    break;
+                case "102":
+                    titles = IMDbAPI.GetMovieMeter(apiSession);
+                    break;
+                case "103":
+                    titles = IMDbAPI.GetTop250(apiSession);
+                    break;
+                case "104":
+                    titles = IMDbAPI.GetBottom100(apiSession);
+                    break;                
                 default:
-                    if (catid.StartsWith("7"))
+                    if (catid.StartsWith("200"))
                     {
-                        titles = IMDbAPI.GetFullLengthMovies(apiSession, catid.Substring(1));
+                        titles = IMDbAPI.GetFullLengthMovies(apiSession, catid.Substring(3));
                     }
                     break;
             }
@@ -226,9 +237,13 @@ namespace OnlineVideos.Sites.Pondman
         public override string getUrl(VideoInfo video)
         {
             string videoUrl = string.Empty;
+            VideoDetails clip = video.Other as VideoDetails;
 
-            VideoDetails clip = IMDbAPI.GetVideo(apiSession, video.VideoUrl);
-            video.Other = clip;
+            if (clip == null)
+            {
+                clip = IMDbAPI.GetVideo(apiSession, video.VideoUrl);
+                video.Other = clip;
+            }
 
             Dictionary<string, string> files = new Dictionary<string, string>();
 

@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 
         public string Title { get; set; }
 
-        public string Synopsis { get; set; }
+        public string Plot { get; set; }
 
         public DateTime ReleaseDate { get; set; }
 
@@ -38,7 +38,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 
         public string Studio { get; set; }
 
-        public string Rating { get; set; }
+        public string Certificate { get; set; }
 
         public Poster Poster { get; set; }        
 
@@ -234,7 +234,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
             if (infoNodes.Count > 1)
             {
                 string synopsis = infoNodes[2].InnerText.Trim();
-                this.Synopsis = HttpUtility.HtmlDecode(synopsis);
+                this.Plot = HttpUtility.HtmlDecode(synopsis);
             }
 
             // Release Date
@@ -395,7 +395,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
             }
 
             movie.Studio = HttpUtility.HtmlDecode(movieItem.studio);
-            movie.Rating = movieItem.rating;
+            movie.Certificate = movieItem.rating;
 
             if (movieItem.poster != null && movie.Poster == null)
             {
@@ -444,7 +444,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 
                 movie.Title = HttpUtility.HtmlDecode(title);
                 movie.Studio = HttpUtility.HtmlDecode(studio);
-                movie.Rating = HttpUtility.HtmlDecode(rating);
+                movie.Certificate = HttpUtility.HtmlDecode(rating);
 
                 // Actors
                 string[] actors = actorsText.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
@@ -525,12 +525,15 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
             Dictionary<string, string> properties = new Dictionary<string, string>();
 
             properties.Add("Title", this.Title);
-            properties.Add("Synopsis", this.Synopsis);
+            properties.Add("Synopsis", this.Plot);  // todo: redundant remove later (renamed to Plot)
+            properties.Add("Plot", this.Plot);
             properties.Add("Directors", this.Directors.ToCommaSeperatedString());
             properties.Add("Actors", this.Actors.ToCommaSeperatedString());
             properties.Add("Genres", this.Genres.ToCommaSeperatedString());
             properties.Add("Studio", this.Studio);
-            properties.Add("Rating", this.Rating);
+            properties.Add("Rating", this.Certificate);      // todo: redundant remove later (renamed to Certificate)
+            properties.Add("Certificate", this.Certificate); 
+
             string releaseDate = this.ReleaseDate != DateTime.MinValue ? this.ReleaseDate.ToShortDateString() : "Coming Soon";
             properties.Add("ReleaseDate", releaseDate);
             properties.Add("Year", this.Year.ToString());
