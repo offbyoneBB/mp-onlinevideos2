@@ -116,5 +116,7 @@ detect by (`string.equals(#OnlineVideos.selectedSiteUtil, IMDb)`)
   * `#OnlineVideos.Details.Votes` - total user votes on IMDb the rating i based on
   * `#OnlineVideos.Details.Type` - type of title (Unknown, Movie, Game, Short, TVSeries, TVEpisode)
   * `#OnlineVideos.Details.Tagline` - Tagline 
+  * `#OnlineVideos.DetailsItem.Title` - titleof the video
   * `#OnlineVideos.DetailsItem.Description` - Description of the video
+  * `#OnlineVideos.DetailsItem.Duration` - Duration of the video
   
