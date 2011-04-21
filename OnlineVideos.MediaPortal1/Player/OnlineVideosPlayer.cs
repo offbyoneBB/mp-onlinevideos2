@@ -151,7 +151,11 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 string sourceFilterName = uri.Scheme == "http" ? PluginConfiguration.Instance.httpSourceFilterName : (uri.Scheme == "mms" || CurrentFile.ToLower().Contains(".asf")) ? "WM ASF Reader" : string.Empty;
                 int result = graphBuilder.FindFilterByName(sourceFilterName, out sourceFilter);
-                if (result != 0) return false;
+                if (result != 0)
+                {
+                    Log.Instance.Warn("BufferFile : FindFilterByName returned {0}", result);
+                    return false;
+                }
                 
                 // translate url if usage of rtmp proxy is not wanted
                 string urlToLoad = CurrentFile;
@@ -166,7 +170,11 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 result = ((IFileSourceFilter)sourceFilter).Load(urlToLoad, null);
 
-                if (result != 0) return false;
+                if (result != 0)
+                {
+                    Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned {0}", result);
+                    return false;
+                }
 
                 if (sourceFilter is IAMOpenProgress && !CurrentFile.Contains("live=true"))
                 {

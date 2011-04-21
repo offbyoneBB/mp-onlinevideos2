@@ -127,7 +127,7 @@ namespace OnlineVideos.MediaPortal1
         #endregion
         #region CurrentState
         State currentState = State.sites;
-        State CurrentState
+        public State CurrentState
         {
             get { return currentState; }
             set { currentState = value; GUIPropertyManager.SetProperty("#OnlineVideos.state", value.ToString()); }
@@ -2225,7 +2225,7 @@ namespace OnlineVideos.MediaPortal1
                 dlList.CurrentItem.Downloader = dlHelper;
                 dlList.CurrentItem.Start = DateTime.Now;
                 Exception exception = dlHelper.Download(dlList.CurrentItem);
-                if (exception != null) Log.Instance.Error("Error downloading {0}, Msg: ", dlList.CurrentItem.Url, exception.Message);
+                if (exception != null) Log.Instance.Warn("Error downloading {0}, Msg: ", dlList.CurrentItem.Url, exception.Message);
                 OnDownloadFileCompleted(dlList, exception);
             });
             downloadThread.IsBackground = true;

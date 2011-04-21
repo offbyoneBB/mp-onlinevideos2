@@ -143,7 +143,7 @@
       <height>240</height>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
-      <label>#OnlineVideos.Details.Synopsis</label>
+      <label>#OnlineVideos.Details.Plot</label>
       <textcolor>FFFFFFFF</textcolor>
     </control>    
   </controls>

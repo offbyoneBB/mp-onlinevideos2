@@ -142,22 +142,9 @@
       <width>440</width>
       <height>240</height>
       <colordiffuse>ffffffff</colordiffuse>
-      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
-      <label>#OnlineVideos.Details.Synopsis</label>
-      <textcolor>FFFFFFFF</textcolor>
-    </control>    
-    <control>
-      <type>textboxscrollup</type>
-      <description>Plot value</description>
-      <id>61</id>
-      <posX>260</posX>
-      <posY>285</posY>
-      <width>440</width>
-      <height>240</height>
-      <colordiffuse>ffffffff</colordiffuse>
-      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, IMDb)</visible>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
       <label>#OnlineVideos.Details.Plot</label>
       <textcolor>FFFFFFFF</textcolor>
-    </control>  
+    </control>
   </controls>
 </window>

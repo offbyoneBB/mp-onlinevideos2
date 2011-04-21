@@ -101,7 +101,7 @@
       <description>Realease date value</description>
       <id>57</id>
       <posX>120</posX>
-      <posY>535</posY>
+      <posY>530</posY>
       <label>#OnlineVideos.Details.ReleaseDate</label>
       <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
       <textcolor>ffffffff</textcolor>
@@ -121,13 +121,33 @@
       <description>genre value</description>
       <id>59</id>
       <posX>120</posX>
-      <posY>610</posY>
+      <posY>605</posY>
       <width>260</width>
       <label>#OnlineVideos.Details.Genres</label>
       <font>font12</font>
       <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
       <disabledcolor>ff808080</disabledcolor>
     </control>
+    <control>
+      <type>label</type>
+      <description>Certificate txt</description>
+      <posX>120</posX>
+      <posY>645</posY>
+      <label>173</label>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Certificate value</description>
+      <posX>120</posX>
+      <posY>675</posY>
+      <width>260</width>
+      <label>#OnlineVideos.Details.Certificate</label>
+      <font>font12</font>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <disabledcolor>ff808080</disabledcolor>
+    </control>    
     <control>
       <type>label</type>
       <description>Plot txt</description>
@@ -147,24 +167,10 @@
       <width>670</width>
       <height>250</height>
       <colordiffuse>ffffffff</colordiffuse>
-      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
-      <font>font12</font>
-      <label>#OnlineVideos.Details.Synopsis</label>
-      <textcolor>FFFFFFFF</textcolor>
-    </control>
-    <control>
-      <type>textboxscrollup</type>
-      <description>Plot value</description>
-      <id>61</id>
-      <posX>450</posX>
-      <posY>400</posY>
-      <width>670</width>
-      <height>250</height>
-      <colordiffuse>ffffffff</colordiffuse>
-      <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, IMDb)</visible>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
       <font>font12</font>
       <label>#OnlineVideos.Details.Plot</label>
       <textcolor>FFFFFFFF</textcolor>
-    </control>    
+    </control>   
   </controls>
 </window>
