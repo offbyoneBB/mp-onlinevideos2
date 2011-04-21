@@ -89,12 +89,12 @@ The State is one of the three: {{{Broken, Reported, Working}}}. In the default s
 
 ===iTunes Movie Trailers===
 detect by (`string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)`)
-  * `#OnlineVideos.Details.Synopsis` - (localized label property: {{{#OnlineVideos.Translation.PlotOutline.Label}}})
+  * `#OnlineVideos.Details.Plot` - (localized label property: {{{#OnlineVideos.Translation.PlotOutline.Label}}})
   * `#OnlineVideos.Details.Genres` - (localized label property: {{{#OnlineVideos.Translation.Genre.Label}}})
   * `#OnlineVideos.Details.ReleaseDate` - (localized label property: {{{#OnlineVideos.Translation.DateOfRelease.Label}}})
   * `#OnlineVideos.Details.Actors` - (localized label property: {{{#OnlineVideos.Translation.Actors.Label}}})
   * `#OnlineVideos.Details.Directors` - (localized label property: {{{#OnlineVideos.Translation.Directors.Label}}})
-  * `#OnlineVideos.Details.Rating` - movie rating (e.g. PG-13, R ...)
+  * `#OnlineVideos.Details.Certificate` - movie rating(e.g. PG-13, R ...)
   * `#OnlineVideos.Details.Title` - also set in `#header.label`
   * `#OnlineVideos.Details.Studio` - movie studio creating the moview
   * `#OnlineVideos.Details.Year` - release year of the movie
@@ -111,8 +111,10 @@ detect by (`string.equals(#OnlineVideos.selectedSiteUtil, IMDb)`)
   * `#OnlineVideos.Details.Writers` - (localized label property: {{{#OnlineVideos.Translation.Writers.Label}}})
   * `#OnlineVideos.Details.Certificate` - movie rating (e.g. PG-13, R ...)
   * `#OnlineVideos.Details.Title` - also set in `#header.label`
-  * `#OnlineVideos.Details.Year` - release year of the movie
+  * `#OnlineVideos.Details.Year` - release year of the title
   * `#OnlineVideos.Details.Rating` - Rating 1-10 by votes
   * `#OnlineVideos.Details.Votes` - total user votes on IMDb the rating i based on
+  * `#OnlineVideos.Details.Type` - type of title (Unknown, Movie, Game, Short, TVSeries, TVEpisode)
+  * `#OnlineVideos.Details.Tagline` - Tagline 
   * `#OnlineVideos.DetailsItem.Description` - Description of the video
   
