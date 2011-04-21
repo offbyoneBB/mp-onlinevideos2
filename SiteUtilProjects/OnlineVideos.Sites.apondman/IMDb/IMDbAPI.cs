@@ -187,7 +187,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                         VideoReference video = new VideoReference();
                         video.session = session;
 
-                        string desc = v.Attributes["title"].Value;
+                        string desc = HttpUtility.UrlDecode(v.Attributes["title"].Value);
                         int i = desc.IndexOf(" -- ");
                         if (i >= 0)
                         {
@@ -211,13 +211,12 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                                 title = title.Substring(i + 4);
                             }
 
-                            title = title.Replace(movieTitle + ":", string.Empty);
-                            title = HttpUtility.HtmlDecode(title.Trim());
-                        }
+                            title = title.Replace(movieTitle + ":", string.Empty).Trim();
+                         }
 
                         video.ID = vconst;
-                        video.Title = title;
-                        video.Description = HttpUtility.UrlDecode(desc);
+                        video.Title = HttpUtility.HtmlDecode(title);
+                        video.Description = HttpUtility.HtmlDecode(HttpUtility.UrlDecode(desc));
                         video.Image = m.Groups["filename"].Value + m.Groups["ext"].Value;
 
                         string length = m.Groups["length"].Value;
