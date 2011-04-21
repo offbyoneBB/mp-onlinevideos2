@@ -20,9 +20,6 @@
     public enum VideoFormat
     {
         SD,
-        Small,
-        Medium,
-        Large,
         HD480,
         HD720
     }
