@@ -558,8 +558,16 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
             IMDbTrailer[] trailerList = JsonConvert.DeserializeObject<IMDbTrailer[]>(parsedResults["videos"].ToString());
 
+            HashSet<string> duplicateFilter = new HashSet<string>();
             foreach (IMDbTrailer item in trailerList)
             {
+                if (duplicateFilter.Contains(item.TitleID))
+                {
+                    continue;
+                }
+
+                duplicateFilter.Add(item.TitleID);
+                
                 TitleReference title = new TitleReference();
                 title.session = session;
                 title.FillFrom(item);
