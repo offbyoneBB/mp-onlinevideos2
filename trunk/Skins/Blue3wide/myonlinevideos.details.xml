@@ -148,7 +148,7 @@
       <colordiffuse>ffffffff</colordiffuse>
       <visible>string.equals(#OnlineVideos.state, details) + string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers)</visible>
       <font>font12</font>
-      <label>#OnlineVideos.Details.Synopsis</label>
+      <label>#OnlineVideos.Details.Plot</label>
       <textcolor>FFFFFFFF</textcolor>
     </control>    
   </controls>
