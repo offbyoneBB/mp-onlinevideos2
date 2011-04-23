@@ -11,11 +11,13 @@ namespace OnlineVideos.Sites
     {
         public class FavoriteCategory : Category
         {
+            public SiteUtilBase FavSite { get; protected set; }
             public SiteUtilBase Site { get; protected set; }
 
-            public FavoriteCategory(RssLink favCat, SiteUtilBase util)
+            public FavoriteCategory(RssLink favCat, SiteUtilBase util, SiteUtilBase favUtil)
             {
                 this.Site = util;
+                FavSite = favUtil;
                 Other = favCat;
                 Name = favCat.Name;
                 Description = favCat.Description;
@@ -128,7 +130,7 @@ namespace OnlineVideos.Sites
                             cat.SubCategories.Add(new RssLink() { Name = Translation.All, Url = aSite.Name, ParentCategory = cat });
                             foreach (Category favCat in favCats)
                             {
-                                cat.SubCategories.Add(new FavoriteCategory(favCat as RssLink, util) { ParentCategory = cat });
+                                cat.SubCategories.Add(new FavoriteCategory(favCat as RssLink, util, this) { ParentCategory = cat });
                             }
                         }
                     }

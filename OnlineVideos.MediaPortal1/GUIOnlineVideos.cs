@@ -617,6 +617,13 @@ namespace OnlineVideos.MediaPortal1
                             // show details view
                             DisplayDetails();
                         }
+                        else if (SelectedSite is Sites.FavoriteUtil && selectedVideo.HasDetails &&
+                            (selectedCategory is Sites.FavoriteUtil.FavoriteCategory && (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site is IChoice))
+                        {
+                            SelectedSite = (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site;
+                            // show details view
+                            DisplayDetails();
+                        }
                         else
                         {
                             //play the video
@@ -1634,6 +1641,10 @@ namespace OnlineVideos.MediaPortal1
             }
             else if (CurrentState == State.details)
             {
+                if (selectedCategory is Sites.FavoriteUtil.FavoriteCategory && !(SelectedSite is Sites.FavoriteUtil))
+                {
+                    SelectedSite = (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).FavSite;
+                }
                 GUIControl.UnfocusControl(GetID, GUI_infoList.GetID);
                 GUI_infoList.Focus = false;
                 selectedClipIndex = 0;
