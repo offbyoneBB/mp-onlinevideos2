@@ -21,11 +21,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         static Regex videoTitleExpression = new Regex(@"^(?<filename>(.+?)_V1)(.+?)150_ZA(?<title>[^,]+),4(.+?)1_ZA(?<length>[\d:]+),164(.+?)(?<ext>\.[^\.]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoFormatExpression = new Regex(@"case\s+'(?<format>[^']+)'\s+:\s+url = '(?<video>/video/[^']+)'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoFileExpression = new Regex(@"IMDbPlayer.playerKey = ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static Regex videoPlayerExpression = new Regex(@"IMDbPlayer.playerType = ['""](?<player>[^'""]+)['""]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // todo: create one expression for RTMP
         static Regex videoRTMPExpression = new Regex(@"so.addVariable\(""file"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoRTMPIdExpression = new Regex(@"so.addVariable\(""id"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
         static Regex videoThunderExpression = new Regex(@"so.addVariable\(""releaseURL"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         
         static Regex imdbIdExpression = new Regex(@"tt\d{7}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -320,33 +320,45 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 return url;
             }
 
-            string data = session.MakeRequest(session.Settings.BaseUri + url);
+            string response = session.MakeRequest(session.Settings.BaseUri + url);
 
-            Match match = videoThunderExpression.Match(data);
+            Match match = videoPlayerExpression.Match(response);
             if (match.Success)
             {
-                string smilURL = match.Groups["video"].Value;
-                HtmlNode node = GetResponseFromSite(session, smilURL);
-                HtmlNode rtmp = node.SelectSingleNode("//ref/@src[contains(.,'rtmp:')]");
-                if (rtmp != null)
+                string player = match.Groups["player"].Value;
+                switch(player) 
                 {
-                    return rtmp.Attributes["src"].Value;
-                }
-            }
+                    case "thunder":
+                        match = videoThunderExpression.Match(response);
+                        if (match.Success)
+                        {
+                            string smilURL = match.Groups["video"].Value;
+                            HtmlNode node = GetResponseFromSite(session, smilURL);
+                            HtmlNode rtmp = node.SelectSingleNode("//ref/@src[contains(.,'rtmp:')]");
+                            if (rtmp != null)
+                            {
+                                return rtmp.Attributes["src"].Value;
+                            }
+                        }
+                        break;
 
-            match = videoFileExpression.Match(data);
+                    // todo add more player types
+                }
+            }            
+
+            match = videoFileExpression.Match(response);
             if (match.Success)
             {
                 return match.Groups["video"].Value;
             }
             
 
-            match = videoRTMPExpression.Match(data);
+            match = videoRTMPExpression.Match(response);
             if (match.Success)
             {
                 string value = match.Groups["video"].Value;
 
-                match = videoRTMPIdExpression.Match(data);
+                match = videoRTMPIdExpression.Match(response);
                 string file = match.Groups["video"].Value;
                 
                 return System.Web.HttpUtility.UrlDecode(value + "/" + file);
