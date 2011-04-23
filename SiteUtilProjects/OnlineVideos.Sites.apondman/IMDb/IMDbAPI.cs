@@ -25,6 +25,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         // todo: create one expression for RTMP
         static Regex videoRTMPExpression = new Regex(@"so.addVariable\(""file"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoRTMPIdExpression = new Regex(@"so.addVariable\(""id"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        static Regex videoThunderExpression = new Regex(@"so.addVariable\(""releaseURL"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         
         static Regex imdbIdExpression = new Regex(@"tt\d{7}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex trailerDataExpression = new Regex(@"<span class=.t-o-d-year.>\((?<year>\d{4})\)</span>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -242,7 +244,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             details.session = session;
             details.ID = imdbID;
 
-            string data = session.MakeRequest(string.Format(session.Settings.VideoInfo, imdbID));
+            string url = string.Format(session.Settings.VideoInfo, imdbID);
+            string data = session.MakeRequest(url);
             HtmlNode root = Utility.ToHtmlNode(data);
 
             if (root == null)
@@ -260,7 +263,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             details.Description = HttpUtility.HtmlDecode(descNode.InnerText);
 
             HtmlNode formats = root.SelectSingleNode("//div[@id='hd-ctrl']");
-                
+            
             MatchCollection matches = videoFormatExpression.Matches(data);
             foreach (Match m in matches)
             {
@@ -295,6 +298,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 }
             }
 
+            if (details.Files.Count == 0)
+            {
+                details.Files.Add(VideoFormat.SD, "/video/screenplay/" + imdbID + "/player");
+            }
+
             return details;
         }
 
@@ -313,11 +321,25 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             }
 
             string data = session.MakeRequest(session.Settings.BaseUri + url);
-            Match match = videoFileExpression.Match(data);
+
+            Match match = videoThunderExpression.Match(data);
+            if (match.Success)
+            {
+                string smilURL = match.Groups["video"].Value;
+                HtmlNode node = GetResponseFromSite(session, smilURL);
+                HtmlNode rtmp = node.SelectSingleNode("//ref/@src[contains(.,'rtmp:')]");
+                if (rtmp != null)
+                {
+                    return rtmp.Attributes["src"].Value;
+                }
+            }
+
+            match = videoFileExpression.Match(data);
             if (match.Success)
             {
                 return match.Groups["video"].Value;
             }
+            
 
             match = videoRTMPExpression.Match(data);
             if (match.Success)
