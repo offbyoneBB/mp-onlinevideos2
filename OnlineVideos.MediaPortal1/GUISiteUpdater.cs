@@ -902,6 +902,7 @@ namespace OnlineVideos.MediaPortal1
                     new System.Net.WebClient().DownloadFile("http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml", tempFile);
                     versionOnline = new Version(MpeCore.Classes.ExtensionCollection.Load(tempFile).GetUniqueList().Items[0].GeneralInfo.Version.ToString());
                     lastOnlineVersionRetrieved = DateTime.Now;
+                    File.Delete(tempFile);
                 }
                 catch(Exception ex)
                 {
