@@ -85,6 +85,7 @@
     <Compile Include="Hoster\Xtream.cs" />
     <Compile Include="Hoster\zShare.cs" />
     <Compile Include="TouTvUtil.cs" />
+    <Compile Include="TubePlusUtil.cs" />
     <Compile Include="TV3NZOnDemandUtil.cs" />
     <Compile Include="VimeoUtil.cs" />
     <Compile Include="Vimeo\AuthBase.cs" />
