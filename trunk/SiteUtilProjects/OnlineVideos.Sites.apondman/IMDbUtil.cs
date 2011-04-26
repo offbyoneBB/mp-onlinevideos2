@@ -35,11 +35,26 @@ namespace OnlineVideos.Sites.Pondman
             VideoInfo video = new VideoInfo();
             video.Other = title;
             video.Title = title.Title;
-            video.ImageUrl = title.Image;
+            video.ImageUrl = getResizedImage(title.Image);
             video.Description = title.Principals.Select(p => p.Name).ToList().ToCommaSeperatedString();
             video.VideoUrl = title.ID;
 
             return video;
+        }
+
+        /// <summary>
+        /// Gets the resized image.
+        /// </summary>
+        /// <param name="input">the image url</param>
+        /// <returns></returns>
+        private string getResizedImage(string input)
+        {
+            if (ResizeImageMaximumHeight > 0 && input != null)
+            {
+                return input.Replace("_.jpg", "._SY" + ResizeImageMaximumHeight + "_.jpg");
+            }
+
+            return input;
         }
 
         #region SiteUtilBase
@@ -69,7 +84,7 @@ namespace OnlineVideos.Sites.Pondman
                 video.Other = title;
                 video.Title = title.Title;
                 video.Description = title.Plot;
-                video.ImageUrl = title.Image;
+                video.ImageUrl = getResizedImage(title.Image);
                 video.VideoUrl = title.ID;
 
                 videos.Add(video);
@@ -292,7 +307,7 @@ namespace OnlineVideos.Sites.Pondman
             video.Other = title;
             video.Title = title.Title;
             video.Description = title.Plot;
-            video.ImageUrl = title.Image;
+            video.ImageUrl = getResizedImage(title.Image);
             
             List<VideoReference> videos = title.GetVideos();
 
