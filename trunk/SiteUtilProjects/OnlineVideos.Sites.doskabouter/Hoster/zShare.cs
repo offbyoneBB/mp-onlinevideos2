@@ -21,9 +21,10 @@ namespace OnlineVideos.Hoster
         {
             CookieContainer cc = new CookieContainer();
             string data = SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(url), cc);
-            if (!data.Contains(@"name=""flashvars"" value=""") && data.Contains(@"<iframe src="""))
+            Match m1 = Regex.Match(data, @"<iframe\ssrc=""(?<url>http://www.zshare.net[^""]*)""");
+            if (!data.Contains(@"name=""flashvars"" value=""") && m1.Success)
             {
-                string tmp = GetSubString(data, @"<iframe src=""", @"""");
+                string tmp = m1.Groups["url"].Value;
                 cc = new CookieContainer();
                 data = SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(tmp), cc);
             }
