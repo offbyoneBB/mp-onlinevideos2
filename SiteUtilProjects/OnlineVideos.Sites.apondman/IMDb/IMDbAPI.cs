@@ -337,7 +337,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                             HtmlNode rtmp = node.SelectSingleNode("//ref/@src[contains(.,'rtmp:')]");
                             if (rtmp != null)
                             {
-                                return rtmp.Attributes["src"].Value;
+                                return HttpUtility.UrlDecode(rtmp.Attributes["src"].Value);
                             }
                         }
                         break;

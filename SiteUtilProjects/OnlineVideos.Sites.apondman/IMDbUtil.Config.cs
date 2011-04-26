@@ -14,5 +14,8 @@ namespace OnlineVideos.Sites.Pondman
 
         [Category("OnlineVideosUserConfiguration"), Description("Defines the preferred quality for video playback.")]
         VideoFormat PreferredVideoQuality = VideoFormat.SD;
+
+        [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum height of images when resizing (for poster format). Use 0 to disable resizing and get the full image resolution.")]
+        int ResizeImageMaximumHeight = 600;
     }
 }
