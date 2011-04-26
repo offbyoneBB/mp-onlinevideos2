@@ -85,24 +85,30 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
 
-            string[] lsSiteIds = OnlineVideoSettings.Instance.FavDB.getSiteIDs();
+            List<KeyValuePair<string, uint>> lsSiteIds = OnlineVideoSettings.Instance.FavDB.getSiteIDs();            
 
-            if (lsSiteIds == null || lsSiteIds.Length == 0) return 0;
+            if (lsSiteIds == null || lsSiteIds.Count == 0) return 0;
 
-            RssLink all = null;
-            if (!cachedCategories.TryGetValue(Translation.All, out all))
+            uint sumOfAllVideos = (uint)lsSiteIds.Sum(s => s.Value);
+
+            if (sumOfAllVideos > 0)  // only add the "ALL" category if we have single favorite videos in addition to favorites categories
             {
-                all = new RssLink();
-                all.Name = Translation.All;
-                all.Url = string.Empty;
-                cachedCategories.Add(all.Name, all);
+                RssLink all = null;
+                if (!cachedCategories.TryGetValue(Translation.All, out all))
+                {
+                    all = new RssLink();
+                    all.Name = Translation.All;
+                    all.Url = string.Empty;
+                    cachedCategories.Add(all.Name, all);
+                }
+                all.EstimatedVideoCount = sumOfAllVideos;
+                Settings.Categories.Add(all);
             }
-            Settings.Categories.Add(all);
 
-            foreach (string lsSiteId in lsSiteIds)
+            foreach (var lsSiteId in lsSiteIds)
             {
                 SiteUtilBase util = null;
-                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(lsSiteId, out util))
+                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(lsSiteId.Key, out util))
                 {
                     SiteSettings aSite = util.Settings;
                     if (aSite.IsEnabled &&
@@ -127,7 +133,10 @@ namespace OnlineVideos.Sites
                             cat.HasSubCategories = true;
                             cat.SubCategoriesDiscovered = true;
                             cat.SubCategories = new List<Category>();
-                            cat.SubCategories.Add(new RssLink() { Name = Translation.All, Url = aSite.Name, ParentCategory = cat });
+                            if (lsSiteId.Value > 0) // only add the "ALL" category if we have single favorite videos in addition to favorites categories
+                            {
+                                cat.SubCategories.Add(new RssLink() { Name = Translation.All, Url = aSite.Name, ParentCategory = cat, EstimatedVideoCount = lsSiteId.Value });
+                            }
                             foreach (Category favCat in favCats)
                             {
                                 cat.SubCategories.Add(new FavoriteCategory(favCat as RssLink, util, this) { ParentCategory = cat });

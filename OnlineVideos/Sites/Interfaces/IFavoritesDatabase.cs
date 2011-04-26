@@ -5,7 +5,7 @@ namespace OnlineVideos
 {
     public interface IFavoritesDatabase
     {
-        string[] getSiteIDs();
+        List<KeyValuePair<string, uint>> getSiteIDs();
         bool addFavoriteVideo(VideoInfo foVideo, string titleFromUtil, string siteName);
         bool removeFavoriteVideo(VideoInfo foVideo);
         bool removeAllFavoriteVideos(string fsSiteId);
