@@ -46,15 +46,20 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        public string[] getSiteIDs()
+        public List<KeyValuePair<string,uint>> getSiteIDs()
         {
-            string lsSQL = "select distinct VDO_SITE_ID from favorite_videos UNION select distinct CAT_SITE_ID from Favorite_Categories";
+            string lsSQL = @"select distinct VDO_SITE_ID, max(NumVideos) as NumVideos from
+                            (
+                            select VDO_SITE_ID, count(*) as NumVideos from Favorite_Videos group by VDO_SITE_ID
+                            UNION
+                            select CAT_SITE_ID, 0 from Favorite_Categories
+                            )
+                            group by VDO_SITE_ID";
             SQLiteResultSet loResultSet = m_db.Execute(lsSQL);
-            string[] siteIdList = new string[loResultSet.Rows.Count];
+            List<KeyValuePair<string, uint>> siteIdList = new List<KeyValuePair<string,uint>>();
             for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
             {
-                siteIdList[iRow] = DatabaseUtility.Get(loResultSet, iRow, "VDO_SITE_ID");
-
+                siteIdList.Add(new KeyValuePair<string,uint>(DatabaseUtility.Get(loResultSet, iRow, "VDO_SITE_ID"), (uint)DatabaseUtility.GetAsInt(loResultSet, iRow, "NumVideos")));
             }
             return siteIdList;
         }
