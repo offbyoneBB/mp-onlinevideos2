@@ -24,10 +24,39 @@ namespace OnlineVideos.MediaPortal1
                 if (notifier != null) notifier.PropertyChanged += (s, e) => 
                 {
                     if (s is VideoInfo && e.PropertyName == "ThumbnailImage") SetImageToGui((s as VideoInfo).ThumbnailImage);
-                    if (s is Category && e.PropertyName == "ThumbnailImage") SetImageToGui((s as Category).ThumbnailImage);
+                    else if (s is Category && e.PropertyName == "ThumbnailImage") SetImageToGui((s as Category).ThumbnailImage);
                 };
             }
-        }        
+        }
+
+        public string Description
+        {
+            get
+            {
+                string desc = null;
+                if (Item != null)
+                {
+                    SitesGroup group = Item as SitesGroup;
+                    if (group != null) desc = group.Description;
+                    else
+                    {
+                        Sites.SiteUtilBase site = Item as Sites.SiteUtilBase;
+                        if (site != null) desc = site.Settings.Description;
+                        else
+                        {
+                            Category cat = Item as Category;
+                            if (cat != null) desc = cat.Description;
+                            else
+                            {
+                                VideoInfo vid = Item as VideoInfo;
+                                if (vid != null) desc = vid.Description;
+                            }
+                        }
+                    }
+                }
+                return desc ?? string.Empty;
+            }
+        }
 
         protected void SetImageToGui(string imageFilePath)
         {
