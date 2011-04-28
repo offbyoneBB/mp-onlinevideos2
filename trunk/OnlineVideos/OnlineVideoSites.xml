@@ -529,7 +529,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="CollegeHumor" util="GenericSite" agecheck="false" enabled="true" lang="en" lastUpdated="2011-01-15T04:30:50.7137515+01:00">
+    <Site name="CollegeHumor" util="GenericSite" agecheck="false" enabled="true" lang="en" lastUpdated="2011-04-28T23:48:13.0017632+02:00">
       <Description>Funny videos from CollegeHumor.com.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[(?<=Browse\sVideos.*)(?<!>Cast.*)<li><a\shref="(?<url>[^"]*)">(?<title>(?!(?:Vid|Sketch\sC))[^<]*)</a></li>]]></item>
@@ -538,7 +538,7 @@
         <item key="videoListRegExFormatString"><![CDATA[http://www.collegehumor.com/moogaloop/video/{0}]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\sclass="next"\shref="(?<url>[^"]*)">Next</a>]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"><span\sclass="previous">Previous</span></a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<file><!\[CDATA\[(?<m0>[^]]*)]]]]><![CDATA[></file>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<file><!\[CDATA\[(?<m0>[^]]*)\]\]></file>]]></item>
         <item key="baseUrl"><![CDATA[http://www.collegehumor.com/videos]]></item>
       </Configuration>
       <Categories />
