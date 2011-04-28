@@ -6,11 +6,10 @@ namespace RTMP_LIB
     {
         public HeaderType HeaderType;
         public PacketType PacketType;
-        public int m_nChannel;
-        public int m_nInfoField1; // first 3 bytes
-        public int m_nInfoField2; // last  4 bytes in a long header        
         public bool m_hasAbsTimestamp; // timestamp absolute or relative?
-        public uint m_nTimeStamp; // absolute timestamp 
+        public int m_nChannel;
+        public uint m_nTimeStamp; // timestamp 
+        public int m_nInfoField2; // last  4 bytes in a long header        
         public uint m_nBodySize;
         public uint m_nBytesRead;
         public byte[] m_body;
@@ -32,7 +31,7 @@ namespace RTMP_LIB
             HeaderType = 0;
             PacketType = 0;
             m_nChannel = 0;
-            m_nInfoField1 = 0;
+            m_nTimeStamp = 0;
             m_nInfoField2 = 0;
             m_nBodySize = 0;
             m_nBytesRead = 0;
@@ -49,18 +48,18 @@ namespace RTMP_LIB
 
         public void FreePacket()
         {
-            FreePacketHeader();
+            Free();
             Reset();
         }
 
-        public void FreePacketHeader()
+        public void Free()
         {
             m_body = null;
         }
 
         public void Dump()
         {
-            Logger.Log(string.Format("RTMP PACKET: packet type: 0x%02x. channel: 0x%02x. info 1: %d info 2: %d. Body size: %lu. body: 0x%02x", PacketType, m_nChannel, m_nInfoField1, m_nInfoField2, m_nBodySize, m_body != null ? m_body[0].ToString() : "0"));
+            Logger.Log(string.Format("RTMP PACKET: packet type: 0x%02x. channel: 0x%02x. info 1: %d info 2: %d. Body size: %lu. body: 0x%02x", PacketType, m_nChannel, m_nTimeStamp, m_nInfoField2, m_nBodySize, m_body != null ? m_body[0].ToString() : "0"));
         }
 
     }

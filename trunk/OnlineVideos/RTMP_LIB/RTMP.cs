@@ -402,7 +402,7 @@ namespace RTMP_LIB
             if (nSize < RTMP_LARGE_HEADER_SIZE)
                 packet = m_vecChannelsIn[channel]; // using values from the last message of this channel
             else
-                packet = new RTMPPacket() { HeaderType = (HeaderType)headerType, m_nChannel = channel }; // new packet
+                packet = new RTMPPacket() { HeaderType = (HeaderType)headerType, m_nChannel = channel, m_hasAbsTimestamp = true }; // new packet
 
             nSize--;
 
@@ -414,24 +414,37 @@ namespace RTMP_LIB
             }
 
             if (nSize >= 3)
-                packet.m_nInfoField1 = ReadInt24(header, 0);
-
-            if (nSize >= 6)
             {
-                packet.m_nBodySize = (uint)ReadInt24(header, 3);
-                //Logger.Log(string.Format("new packet body to read {0}", packet.m_nBodySize));
-                packet.m_nBytesRead = 0;
-                packet.FreePacketHeader(); // new packet body
-            }
+                packet.m_nTimeStamp = (uint)ReadInt24(header, 0);
 
-            if (nSize > 6)
-            {
-                if (Enum.IsDefined(typeof(PacketType), header[6])) packet.PacketType = (PacketType)header[6];
-                else Logger.Log(string.Format("Unknown packet type received: {0}", header[6]));
-            }
+                if (nSize >= 6)
+                {
+                    packet.m_nBodySize = (uint)ReadInt24(header, 3);
+                    //Logger.Log(string.Format("new packet body to read {0}", packet.m_nBodySize));
+                    packet.m_nBytesRead = 0;
+                    packet.Free(); // new packet body
 
-            if (nSize == 11)
-                packet.m_nInfoField2 = ReadInt32LE(header, 7);
+                    if (nSize > 6)
+                    {
+                        if (Enum.IsDefined(typeof(PacketType), header[6])) packet.PacketType = (PacketType)header[6];
+                        else Logger.Log(string.Format("Unknown packet type received: {0}", header[6]));
+
+                        if (nSize == 11)
+                            packet.m_nInfoField2 = ReadInt32LE(header, 7);
+                    }
+                }
+
+                if (packet.m_nTimeStamp == 0xffffff)
+                {
+                    byte[] extendedTimestampDate = new byte[4];
+                    if (ReadN(extendedTimestampDate,0, 4) != 4)
+                    {
+                        Logger.Log("failed to read extended timestamp");
+                        return false;
+                    }
+                    packet.m_nTimeStamp = (uint)ReadInt32(extendedTimestampDate, 0);
+                }
+            }
 
             if (packet.m_nBodySize >= 0 && packet.m_body == null && !packet.AllocPacket((int)packet.m_nBodySize))
             {
@@ -447,7 +460,7 @@ namespace RTMP_LIB
             int read = ReadN(packet.m_body, (int)packet.m_nBytesRead, (int)nChunk);
             if (read != nChunk)
             {
-                Logger.Log(string.Format("failed to read RTMP packet body. len: {0}", packet.m_nBodySize));
+                Logger.Log(string.Format("failed to read RTMP packet body. total:{0}/{1} chunk:{2}/{3}", packet.m_nBytesRead, packet.m_nBodySize, read, nChunk));
                 packet.m_body = null; // we dont want it deleted since its pointed to from the stored packets (m_vecChannelsIn)
                 return false;
             }
@@ -460,7 +473,6 @@ namespace RTMP_LIB
             if (packet.IsReady())
             {
                 //Logger.Log(string.Format("packet with {0} bytes read", packet.m_nBytesRead));
-                packet.m_nTimeStamp = (uint)packet.m_nInfoField1;
 
                 // make packet's timestamp absolute 
                 if (!packet.m_hasAbsTimestamp)
@@ -579,7 +591,7 @@ namespace RTMP_LIB
             Array.Copy(enc.ToArray(), packet.m_body, enc.Count);
             packet.m_nBodySize = (uint)enc.Count;
 
-            return SendRTMP(packet);
+            return SendPacket(packet);
         }
 
         bool SendPlay()
@@ -628,7 +640,7 @@ namespace RTMP_LIB
 
             Logger.Log(string.Format("Sending play: '{0}' from time: '{1}'", Link.playpath, m_channelTimestamp[m_mediaChannel]));
 
-            return SendRTMP(packet);
+            return SendPacket(packet);
         }
 
         bool SendPause(bool doPause)
@@ -651,7 +663,7 @@ namespace RTMP_LIB
 
             Logger.Log(string.Format("Sending pause: ({0}), Time = {1}", doPause.ToString(), m_channelTimestamp[m_mediaChannel]));
 
-            return SendRTMP(packet);
+            return SendPacket(packet);
         }
 
         public bool SendFlex(string name, double number)
@@ -673,7 +685,7 @@ namespace RTMP_LIB
 
             Logger.Log(string.Format("Sending flex: ({0},{1})", name, number.ToString()));
 
-            return SendRTMP(packet);
+            return SendPacket(packet);
         }
 
         public bool SendRequestData(string id, string request)
@@ -696,7 +708,7 @@ namespace RTMP_LIB
 
             Logger.Log(string.Format("Sending requestData: ({0},{1})", id, request));
 
-            return SendRTMP(packet);
+            return SendPacket(packet);
         }
 
         /// <summary>
@@ -757,7 +769,7 @@ namespace RTMP_LIB
                     EncodeInt32(buf, (int)nTime);
             }
             packet.m_body = buf.ToArray();
-            return SendRTMP(packet, false);
+            return SendPacket(packet, false);
         }
 
         bool SendCheckBW()
@@ -779,7 +791,7 @@ namespace RTMP_LIB
             packet.m_body = enc.ToArray();
 
             // triggers _onbwcheck and eventually results in _onbwdone
-            return SendRTMP(packet, false);
+            return SendPacket(packet, false);
         }
 
         bool SendCheckBWResult(double txn)
@@ -788,7 +800,7 @@ namespace RTMP_LIB
             packet.m_nChannel = 0x03;   // control channel (invoke)
             packet.HeaderType = HeaderType.Medium;
             packet.PacketType = PacketType.Invoke;
-            packet.m_nInfoField1 = 0x16 * m_nBWCheckCounter; // temp inc value. till we figure it out.
+            packet.m_nTimeStamp = (uint)(0x16 * m_nBWCheckCounter); // temp inc value. till we figure it out.
 
             packet.AllocPacket(256); // should be enough
             List<byte> enc = new List<byte>();
@@ -800,7 +812,7 @@ namespace RTMP_LIB
             packet.m_nBodySize = (uint)enc.Count;
             packet.m_body = enc.ToArray();
 
-            return SendRTMP(packet, false);
+            return SendPacket(packet, false);
         }
 
         bool SendBytesReceived()
@@ -820,7 +832,7 @@ namespace RTMP_LIB
 
             lastSentBytesRead = bytesReadTotal;
             Logger.Log(string.Format("Send bytes report. ({0} bytes)", bytesReadTotal));
-            return SendRTMP(packet, false);
+            return SendPacket(packet, false);
         }
 
         bool SendServerBW()
@@ -836,7 +848,7 @@ namespace RTMP_LIB
             List<byte> bytesToSend = new List<byte>();
             EncodeInt32(bytesToSend, m_nServerBW); // was hard coded : 0x001312d0
             packet.m_body = bytesToSend.ToArray();
-            return SendRTMP(packet, false);
+            return SendPacket(packet, false);
         }
 
         public bool SendCreateStream()
@@ -856,7 +868,7 @@ namespace RTMP_LIB
             packet.m_nBodySize = (uint)enc.Count;
             packet.m_body = enc.ToArray();
 
-            return SendRTMP(packet);
+            return SendPacket(packet);
         }
 
         bool SendDeleteStream()
@@ -877,7 +889,7 @@ namespace RTMP_LIB
             packet.m_body = enc.ToArray();
 
             /* no response expected */
-            return SendRTMP(packet, false);
+            return SendPacket(packet, false);
         }
 
         bool SendSecureTokenResponse(string resp)
@@ -897,7 +909,7 @@ namespace RTMP_LIB
             packet.m_nBodySize = (uint)enc.Count;
             packet.m_body = enc.ToArray();
 
-            return SendRTMP(packet, false);
+            return SendPacket(packet, false);
         }
 
         bool SendFCSubscribe(string subscribepath)
@@ -917,29 +929,37 @@ namespace RTMP_LIB
             packet.m_nBodySize = (uint)enc.Count;
             packet.m_body = enc.ToArray();
 
-            return SendRTMP(packet);
+            return SendPacket(packet);
         }
 
-        bool SendRTMP(RTMPPacket packet) { return SendRTMP(packet, true); }
-        bool SendRTMP(RTMPPacket packet, bool queue)
+        bool SendPacket(RTMPPacket packet, bool queue = true)
         {
+            uint last = 0;
+            uint t = 0;
+
             RTMPPacket prevPacket = m_vecChannelsOut[packet.m_nChannel];
-            if (packet.HeaderType != HeaderType.Large)
+            if (packet.HeaderType != HeaderType.Large && prevPacket != null)
             {
                 // compress a bit by using the prev packet's attributes
-                if (prevPacket != null && prevPacket.m_nBodySize == packet.m_nBodySize && packet.HeaderType == HeaderType.Medium)
+                if (prevPacket.m_nBodySize == packet.m_nBodySize &&
+                    prevPacket.PacketType == packet.PacketType && 
+                    packet.HeaderType == HeaderType.Medium)
                     packet.HeaderType = HeaderType.Small;
 
-                if (prevPacket != null && prevPacket.m_nInfoField2 == packet.m_nInfoField2 && packet.HeaderType == HeaderType.Small)
+                if (prevPacket.m_nTimeStamp == packet.m_nTimeStamp && 
+                    packet.HeaderType == HeaderType.Small)
                     packet.HeaderType = HeaderType.Minimum;
-            }
 
+                last = prevPacket.m_nTimeStamp;
+            }
+            
             uint nSize = packetSize[(byte)packet.HeaderType];
+            t = packet.m_nTimeStamp - last;
             List<byte> header = new List<byte>();//byte[RTMP_LARGE_HEADER_SIZE];
             byte c = (byte)(((byte)packet.HeaderType << 6) | packet.m_nChannel);
             header.Add(c);
             if (nSize > 1)
-                EncodeInt24(header, packet.m_nInfoField1);
+                EncodeInt24(header, (int)t);
 
             if (nSize > 4)
             {
@@ -988,7 +1008,7 @@ namespace RTMP_LIB
                 m_methodCalls.Enqueue(ReadString(packet.m_body, 1));
 
             m_vecChannelsOut[packet.m_nChannel] = packet;
-            m_vecChannelsOut[packet.m_nChannel].m_body = null;
+            //m_vecChannelsOut[packet.m_nChannel].m_body = null;
 
             return true;
         }
@@ -1550,8 +1570,10 @@ namespace RTMP_LIB
                 /* set version to at least 9.0.115.0 */
                 if (encrypted)
                 {
-                    clientsig[5] = 128;
-                    clientsig[7] = 3;
+                    /*clientsig[5] = 128;
+                    clientsig[7] = 3;*/
+                    clientsig[5] = 9;
+                    clientsig[7] = 0x7c;
                 }
                 else
                 {
