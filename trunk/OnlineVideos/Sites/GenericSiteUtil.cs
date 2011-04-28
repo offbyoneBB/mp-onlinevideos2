@@ -308,7 +308,6 @@ namespace OnlineVideos.Sites
             return playbackOptions;
         }
 
-
         public override string getUrl(VideoInfo video)
         {
             // Get playbackoptins back from favorite video if they were saved in Other object

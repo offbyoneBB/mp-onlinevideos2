@@ -8,7 +8,46 @@ namespace OnlineVideos.MediaPortal1
     /// </summary>
     public class OnlineVideosGuiListItem : GUIListItem
     {
+        #region Constructors
         public OnlineVideosGuiListItem(string strLabel) : base(strLabel) { }
+
+        public OnlineVideosGuiListItem(SitesGroup item) : base(item.Name)
+        {
+            Label2 = item.Sites.Count.ToString();
+            IsFolder = true;
+            Item = item;
+            if (!string.IsNullOrEmpty(item.Thumbnail))
+            {
+                ThumbnailImage = item.Thumbnail;
+                IconImage = item.Thumbnail;
+                IconImageBig = item.Thumbnail;
+            }
+            else
+            {
+                MediaPortal.Util.Utils.SetDefaultIcons(this);
+            }
+        }
+
+        public OnlineVideosGuiListItem(Sites.SiteUtilBase item) : base(item.Settings.Name) 
+        {
+            Label2 = item.Settings.Language;
+            IsFolder = true;
+            Item = item;
+            // use Icon with the same name as the Site
+            string image = GUIOnlineVideos.GetImageForSite(item.Settings.Name, item.Settings.UtilName, "Icon");
+            if (!string.IsNullOrEmpty(image))
+            {
+                ThumbnailImage = image;
+                IconImage = image;
+                IconImageBig = image;
+            }
+            else
+            {
+                Log.Instance.Debug("Icon for site {0} not found", item.Settings.Name);
+                MediaPortal.Util.Utils.SetDefaultIcons(this);
+            }
+        }
+        #endregion
 
         protected object _Item;
         /// <summary>
@@ -75,6 +114,6 @@ namespace OnlineVideos.MediaPortal1
                     GUIWindowManager.SendThreadMessage(new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GUIWindowManager.ActiveWindow, 0, listControlId, ItemId, 0, null));
                 }
             }
-        }
+        }        
     }
 }

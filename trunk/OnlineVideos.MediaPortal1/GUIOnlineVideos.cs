@@ -165,7 +165,7 @@ namespace OnlineVideos.MediaPortal1
         }
         #endregion
 
-        SitesGroup selectedSitesGroup;
+        OnlineVideosGuiListItem selectedSitesGroup;
         Category selectedCategory;
         VideoInfo selectedVideo;
 
@@ -185,6 +185,12 @@ namespace OnlineVideos.MediaPortal1
 
         SmsT9Filter currentFilter = new SmsT9Filter();
         LoadParameterInfo loadParamInfo;
+
+        bool GroupsEnabled
+        {
+            get { return (PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) || PluginConfiguration.Instance.autoGroupByLang; }
+        }
+
         #endregion
 
         #region filter variables
@@ -563,8 +569,14 @@ namespace OnlineVideos.MediaPortal1
                 currentFilter.Clear();
                 if (CurrentState == State.groups)
                 {
-                    selectedSitesGroup = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as SitesGroup;
-                    DisplaySites();
+                    selectedSitesGroup = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
+                    if (selectedSitesGroup.Item is SitesGroup)
+                        DisplaySites();
+                    else
+                    {
+                        SelectedSite = selectedSitesGroup.Item as Sites.SiteUtilBase;
+                        DisplayCategories(null, true);
+                    }
                 }
                 else if (CurrentState == State.sites)
                 {
@@ -744,6 +756,19 @@ namespace OnlineVideos.MediaPortal1
                 // reload settings that can be modified with the MPEI plugin
                 PluginConfiguration.Instance.ReLoadRuntimeSettings();
 
+                // if groups are now enabled/disabled we need to set the states accordingly
+                if (GroupsEnabled)
+                {
+                    // showing sites, but groups are enabled and no group is selected -> show groups
+                    if (CurrentState == State.sites && selectedSitesGroup == null) CurrentState = State.groups;
+                }
+                else
+                {
+                    // showing groups, but groups are disabled -> show sites
+                    if (CurrentState == State.groups) CurrentState = State.sites;
+                    selectedSitesGroup = null;                    
+                }
+
                 // reset the LoadParameterInfo
                 loadParamInfo = null;
 
@@ -852,7 +877,7 @@ namespace OnlineVideos.MediaPortal1
         private void DoFirstLoad_Step2()
         {
             OnlineVideoSettings.Instance.BuildSiteUtilsList();
-            if ((PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) || PluginConfiguration.Instance.autoGroupByLang) CurrentState = State.groups;
+            if (GroupsEnabled) CurrentState = State.groups;
             firstLoadDone = true;
 
             if (PluginConfiguration.Instance.ThumbsAge >= 0 && PluginConfiguration.Instance.lastFirstRun.AddHours(PluginConfiguration.Instance.updatePeriod) < DateTime.Now)
@@ -932,21 +957,11 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (sitesGroup.Sites != null && sitesGroup.Sites.Count > 0)
                 {
-                    OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem(sitesGroup.Name);
-                    loListItem.Label2 = sitesGroup.Sites.Count.ToString();
-                    loListItem.IsFolder = true;
-                    loListItem.Item = sitesGroup;
-                    MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
-                    if (!string.IsNullOrEmpty(sitesGroup.Thumbnail))
-                    {
-                        loListItem.ThumbnailImage = sitesGroup.Thumbnail;
-                        loListItem.IconImage = sitesGroup.Thumbnail;
-                        loListItem.IconImageBig = sitesGroup.Thumbnail;
-                    }
+                    OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem(sitesGroup);
                     loListItem.OnItemSelected += OnItemSelected;
                     loListItem.ItemId = GUI_facadeView.Count;
                     GUI_facadeView.Add(loListItem);
-                    if (selectedSitesGroup != null && selectedSitesGroup.Name == sitesGroup.Name) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
+                    if (selectedSitesGroup != null && selectedSitesGroup.Label == sitesGroup.Name) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
                 }
             }
 
@@ -959,17 +974,32 @@ namespace OnlineVideos.MediaPortal1
             foreach (string site in OnlineVideoSettings.Instance.SiteUtilsList.Keys) if (!groupedSites.Contains(site)) othersGroup.Sites.Add(site);
             if (othersGroup.Sites.Count > 0)
             {
-                OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(othersGroup.Name);
-                listItem.Label2 = othersGroup.Sites.Count.ToString();
-                listItem.IsFolder = true;
-                listItem.Item = othersGroup;
-                MediaPortal.Util.Utils.SetDefaultIcons(listItem);
+                OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(othersGroup);
                 listItem.OnItemSelected += OnItemSelected;
                 listItem.ItemId = GUI_facadeView.Count;
                 GUI_facadeView.Add(listItem);
-                if (selectedSitesGroup != null && selectedSitesGroup.Name == othersGroup.Name) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
+                if (selectedSitesGroup != null && selectedSitesGroup.Label == othersGroup.Name) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
             }
 
+            // add Favorites and Downloads Site as last two Groups (if they are available)
+            Sites.SiteUtilBase aSite;
+            if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Translation.Favourites, out aSite))
+            {
+                OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(aSite);
+                listItem.OnItemSelected += OnItemSelected;
+                listItem.ItemId = GUI_facadeView.Count;
+                GUI_facadeView.Add(listItem);
+                if (selectedSitesGroup != null && selectedSitesGroup.Label == listItem.Label) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
+            }
+            if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Translation.DownloadedVideos, out aSite))
+            {
+                OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(aSite);
+                listItem.OnItemSelected += OnItemSelected;
+                listItem.ItemId = GUI_facadeView.Count;
+                GUI_facadeView.Add(listItem);
+                if (selectedSitesGroup != null && selectedSitesGroup.Label == listItem.Label) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
+            }
+            
             CurrentState = State.groups;
             UpdateViewState();
         }
@@ -988,7 +1018,16 @@ namespace OnlineVideos.MediaPortal1
             GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, Translation.Language);
             GUI_btnOrderBy.SelectedItem = (int)PluginConfiguration.Instance.siteOrder;
 
-            string[] names = selectedSitesGroup == null ? OnlineVideoSettings.Instance.SiteUtilsList.Keys.ToArray() : selectedSitesGroup.Sites.ToArray();
+            // previous selected group was actually a site or currently selected site Fav or Downl and groups enabled -> skip this step
+            if (GroupsEnabled &&
+                ((selectedSitesGroup != null && selectedSitesGroup.Item is Sites.SiteUtilBase) ||
+                (selectedSite is Sites.FavoriteUtil || selectedSite is Sites.DownloadedVideoUtil)))
+            {
+                DisplayGroups();
+                return;
+            }
+
+            string[] names = selectedSitesGroup == null ? OnlineVideoSettings.Instance.SiteUtilsList.Keys.ToArray() : (selectedSitesGroup.Item as SitesGroup).Sites.ToArray();
 
             // get names in right order
             switch (PluginConfiguration.Instance.siteOrder)
@@ -1018,7 +1057,7 @@ namespace OnlineVideos.MediaPortal1
                     break;
             }
 
-            if ((PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) || PluginConfiguration.Instance.autoGroupByLang)
+            if (GroupsEnabled)
             {
                 // add the first item that will go to the groups menu
                 OnlineVideosGuiListItem loListItem;
@@ -1035,34 +1074,17 @@ namespace OnlineVideos.MediaPortal1
             foreach (string name in names)
             {
                 Sites.SiteUtilBase aSite;
-                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(name, out aSite) &&
+                if (currentFilter.Matches(name) &&
+                    OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(name, out aSite) &&
                     aSite.Settings.IsEnabled &&
+                    !(GroupsEnabled & (aSite is Sites.FavoriteUtil | aSite is Sites.DownloadedVideoUtil)) && // don't show Favorites and Downloads site if groups are enabled (because they are added as groups)
                     (!aSite.Settings.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
                 {
-                    OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem(aSite.Settings.Name);
-                    loListItem.Label2 = aSite.Settings.Language;
-                    loListItem.IsFolder = true;
-                    loListItem.Item = aSite;
+                    OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem(aSite);
                     loListItem.OnItemSelected += OnItemSelected;
-                    // use Icon with the same name as the Site
-                    string image = GetImageForSite(aSite.Settings.Name, aSite.Settings.UtilName, "Icon");
-                    if (!string.IsNullOrEmpty(image))
-                    {
-                        loListItem.ThumbnailImage = image;
-                        loListItem.IconImage = image;
-                        loListItem.IconImageBig = image;
-                    }
-                    else
-                    {
-                        Log.Instance.Debug("Icon for site {0} not found", aSite.Settings.Name);
-                        MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
-                    }
-                    if (currentFilter.Matches(name))
-                    {
-                        if (loListItem.Item == SelectedSite) selectedSiteIndex = GUI_facadeView.Count;
-                        loListItem.ItemId = GUI_facadeView.Count;
-                        GUI_facadeView.Add(loListItem);
-                    }
+                    if (loListItem.Item == SelectedSite) selectedSiteIndex = GUI_facadeView.Count;
+                    loListItem.ItemId = GUI_facadeView.Count;
+                    GUI_facadeView.Add(loListItem);
                 }
             }
             SelectedMaxResultIndex = -1;
@@ -1602,7 +1624,7 @@ namespace OnlineVideos.MediaPortal1
 
             if (CurrentState == State.sites)
             {
-                if ((PluginConfiguration.Instance.SitesGroups != null && PluginConfiguration.Instance.SitesGroups.Count > 0) || PluginConfiguration.Instance.autoGroupByLang)
+                if (GroupsEnabled)
                     DisplayGroups();
                 else
                     OnPreviousWindow();
