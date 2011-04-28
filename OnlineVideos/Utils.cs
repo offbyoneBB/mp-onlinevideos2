@@ -294,16 +294,8 @@ namespace OnlineVideos
 
         public static bool IsValidUri(string url)
         {
-            try
-            {
-                return Uri.IsWellFormedUriString(url, UriKind.Absolute) ||
-                    Uri.IsWellFormedUriString(Uri.EscapeUriString(url), UriKind.Absolute) ||
-                    System.IO.Path.IsPathRooted(url);
-            }
-            catch
-            {
-                return false;
-            }
+            Uri temp = null;
+            return Uri.TryCreate(url, UriKind.Absolute, out temp);
         }
 
         public static string GetNextFileName(string fullFileName)
