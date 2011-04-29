@@ -2459,7 +2459,7 @@ Fixed: A direct search on sites with "search categories" (via startup parameters
 Fixed: threading issue when skipping buffering (was trying to start playback multiple times)</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2011-04-16T20:00:00</ReleaseDate>
+    <ReleaseDate>2011-04-29T23:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
