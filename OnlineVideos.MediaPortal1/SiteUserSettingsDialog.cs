@@ -23,8 +23,8 @@ namespace OnlineVideos.MediaPortal1
                 do
                 {
                     int windowId = GUIDialogSiteUserSettings.GUIDIALOGMENU_ONLINEVIDEO; // try our special dialog first
-                    GUIDialogMenu dlgSiteOptions = (GUIDialogMenu)GUIWindowManager.GetWindow(windowId);
-                    if (dlgSiteOptions == null) // if not available use the default one
+                    GUIDialogMenu dlgSiteOptions = (GUIDialogMenu)GUIWindowManager.GetWindow(windowId) as GUIDialogSiteUserSettings;
+                    if (dlgSiteOptions == null || !((GUIDialogSiteUserSettings)dlgSiteOptions).IsAvailable) // if not available use the default one
                     {
                         windowId = (int)GUIWindow.Window.WINDOW_DIALOG_MENU; 
                         dlgSiteOptions = (GUIDialogMenu)GUIWindowManager.GetWindow(windowId);
@@ -152,10 +152,15 @@ namespace OnlineVideos.MediaPortal1
         public const int GUIDIALOGMENU_ONLINEVIDEO = 4760;
         public override int GetID { get { return GUIDIALOGMENU_ONLINEVIDEO; } set { } }
 
+        public bool IsAvailable { get; protected set; }
+
         public override bool Init()
         {
-            bool bResult = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.DialogMenu.xml");
-            return bResult;
+            IsAvailable = File.Exists(GUIGraphicsContext.Skin + @"\myonlinevideos.DialogMenu.xml");
+            // 1. MP doesn't actually load the skin yet when calling Load, because SupportsDelayedLoad is true by default
+            // 2. returning false from Init won't prevent the Window from being added to the list of Windows, because return value is never evaluated
+            // 3. use our IsAvailable Property to find out if the skin (File Exists check) is available
+            return Load(GUIGraphicsContext.Skin + @"\myonlinevideos.DialogMenu.xml");
         }
 
         public override bool OnMessage(GUIMessage message)
