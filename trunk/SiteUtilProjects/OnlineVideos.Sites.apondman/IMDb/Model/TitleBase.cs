@@ -70,6 +70,15 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             }
         }
 
+        internal virtual void FillFrom(IMDbTitleMobile dto)
+        {
+            this.ID = dto.URL.Replace("/title/", "").Replace("/", "").Trim();
+
+            IMDbAPI.UpdateTitleBase(this, dto.Title + " " + dto.Extra);
+
+            this.Image = IMDbAPI.ParseImageUrl(dto.Image.Url);
+        }
+
         #endregion
 
         #region IVideoDetails Members
