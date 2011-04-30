@@ -51,7 +51,7 @@ namespace OnlineVideos.Sites.Pondman
         {
             if (ResizeImageMaximumHeight > 0 && input != null)
             {
-                return input.Replace("_.jpg", "._SY" + ResizeImageMaximumHeight + "_.jpg");
+                return input.Replace("_.jpg", ".jpg").Replace(".jpg", "._SY" + ResizeImageMaximumHeight + "_.jpg");
             }
 
             return input;
@@ -113,12 +113,11 @@ namespace OnlineVideos.Sites.Pondman
             Settings.Categories.Clear();
 
             // todo: category translation?
-            // todo: re-enable categories (json api)
 
             Category cat = new Category();
             cat.Other = "1";
             cat.Name = "Coming Soon";
-            // Settings.Categories.Add(cat);
+            Settings.Categories.Add(cat);
 
             cat = new Category();
             cat.Other = "2";
@@ -144,7 +143,7 @@ namespace OnlineVideos.Sites.Pondman
             cat.Other = "100";
             cat.Name = "Charts";
             cat.HasSubCategories = true;
-            // Settings.Categories.Add(cat);
+            Settings.Categories.Add(cat);
 
             cat = new Category();
             cat.Other = "200";

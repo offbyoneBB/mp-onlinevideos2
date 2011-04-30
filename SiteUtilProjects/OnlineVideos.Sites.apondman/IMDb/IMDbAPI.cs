@@ -214,7 +214,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// <returns></returns>
         public static TitleDetails GetTitle(Session session, string imdbID) {
             
-            string uri = string.Format(session.Settings.TitleDetailsMobile, imdbID);
+            string uri = string.Format(session.Settings.BaseUriMobile, session.Settings.TitleDetailsMobile, "/" + imdbID + "/");
             
             HtmlNode root = GetResponseFromSite(session, uri);
 
@@ -600,7 +600,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// </summary>
         /// <param name="session"></param>
         /// <returns></returns>
-        public static List<TitleReference> GetComingSoon(Session session)
+        public static List<TitleReference> GetComingSoonDeprecated(Session session)
         {
             string responseString = GetResponseFromEndpoint(session, session.Settings.FeatureComingSoon);
             JObject parsedResults = JObject.Parse(responseString);
@@ -625,6 +625,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             return titles;
         }
 
+        public static List<TitleReference> GetComingSoon(Session session)
+        {
+            return GetList(session, session.Settings.ComingSoon);
+        }
+
         /// <summary>
         /// Browse the movie top 250.
         /// </summary>
@@ -632,7 +637,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// <returns></returns>
         public static List<TitleReference> GetTop250(Session session)
         {
-            return GetChart(session, session.Settings.ChartTop250);
+            return GetList(session, session.Settings.ChartTop250Mobile);
         }
 
         /// <summary>
@@ -642,7 +647,27 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// <returns></returns>
         public static List<TitleReference> GetBottom100(Session session)
         {
-            return GetChart(session, session.Settings.ChartBottom100);
+            return GetList(session, session.Settings.ChartBottom100Mobile);
+        }
+
+        /// <summary>
+        /// Browse the US weekend box office results.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <returns></returns>
+        public static List<TitleReference> GetBoxOffice(Session session)
+        {
+            return GetList(session, session.Settings.BoxOfficeMobile);
+        }
+
+        /// <summary>
+        /// Browse the MOVIEmeter movies.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <returns></returns>
+        public static List<TitleReference> GetMovieMeter(Session session)
+        {
+            return GetList(session, session.Settings.ChartMovieMeterMobile);
         }
 
         /// <summary>
@@ -674,7 +699,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static List<TitleReference> GetBoxOffice(Session session)
+        private static List<TitleReference> GetBoxOfficeDeprecated(Session session)
         {
             List<TitleReference> titles = new List<TitleReference>();
 
@@ -703,7 +728,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// </summary>
         /// <param name="session">The session.</param>
         /// <returns></returns>
-        public static List<TitleReference> GetMovieMeter(Session session)
+        private static List<TitleReference> GetMovieMeterDeprecated(Session session)
         {
             List<TitleReference> titles = new List<TitleReference>();
 
@@ -810,6 +835,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
         #region internal methods
         
+        // todo: rethink
         internal static bool UpdateTitleBase(TitleBase title, string input) 
         {
             Match match = imdbTitleExpression.Match(input);
@@ -838,7 +864,27 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             }
 
             return match.Success;
-        }        
+        }
+
+        /// <summary>
+        /// Parses the image URL to get the maximum resolution filename.
+        /// </summary>
+        /// <param name="url">the url of the image</param>
+        /// <returns></returns>
+        internal static string ParseImageUrl(string url) {
+            if (url == null)
+            {
+                return string.Empty;
+            }
+
+            Match match = imdbImageExpression.Match(url);
+            if (match.Success)
+            {
+                url = HttpUtility.UrlDecode(match.Groups["filename"].Value + match.Groups["ext"].Value);
+            }
+
+            return url;
+        }
 
         internal static List<TitleReference> GetTrailers(Session session, string uri)
         {
@@ -878,13 +924,43 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             return titles;
         }
 
+        internal static List<TitleReference> GetList(Session session, string list)
+        {
+            List<TitleReference> titles = new List<TitleReference>();
+
+            string data = GetResponseFromEndpoint(session, list);
+
+            IMDbMobileResponse<List<IMDbTitleMobile>> response = JsonConvert.DeserializeObject<IMDbMobileResponse<List<IMDbTitleMobile>>>(data);
+
+            DateTime releaseDateHeader = DateTime.MinValue;
+            foreach (IMDbTitleMobile item in response.Data)
+            {
+                if (item.URL == null)
+                {
+                    if (item.ReleaseDate > DateTime.MinValue)
+                    {
+                        releaseDateHeader = item.ReleaseDate;
+                    }
+                    continue;
+                }
+                TitleReference title = new TitleReference();
+                title.session = session;
+                title.FillFrom(item);
+                title.ReleaseDate = releaseDateHeader;
+
+                titles.Add(title);
+            }
+
+            return titles;
+        }
+
+        // todo: disabled
         internal static List<TitleReference> GetChart(Session session, string chart)
         {
             List<TitleReference> titles = new List<TitleReference>();
 
             string data = GetResponseFromEndpoint(session, chart);
             IMDbResponse<IMDbSingleList<IMDbList<IMDbTitle>>> response = JsonConvert.DeserializeObject<IMDbResponse<IMDbSingleList<IMDbList<IMDbTitle>>>>(data);
-
             foreach (IMDbTitle item in response.Data.List.Items)
             {
                 TitleReference title = new TitleReference();
@@ -893,7 +969,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
                 titles.Add(title);
             }
-
+            
             return titles;
         }
 
@@ -961,7 +1037,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             }
 
             // format the url
-            string url = string.Format(session.Settings.BaseApiUri, target, session.Settings.Locale, query);
+            //string url = string.Format(session.Settings.BaseApiUri, target, session.Settings.Locale, query);
+            string url = string.Format(session.Settings.BaseUriMobile, target, query);
  
             // make and return the request
             return session.MakeRequest(url);

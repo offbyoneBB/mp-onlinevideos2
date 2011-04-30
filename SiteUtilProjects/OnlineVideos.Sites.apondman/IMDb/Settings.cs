@@ -42,6 +42,18 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             }
         } private string baseUri = "http://www.imdb.com";
 
+        public string BaseUriMobile
+        {
+            get
+            {
+                return this.baseUriMobile;
+            }
+            set
+            {
+                this.baseUriMobile = value;
+            }
+        } private string baseUriMobile = "http://m.imdb.com/{0}{1}";
+
         /// <summary>
         /// Gets or sets the locale used for requests to IMDb.
         /// </summary>
@@ -69,18 +81,6 @@ namespace OnlineVideos.Sites.Pondman.IMDb
                 this.titleDetails = value;
             }
         } private string titleDetails = "title/maindetails";
-
-        public string TitleDetailsMobile
-        {
-            get
-            {
-                return this.titleDetailsMobile;
-            }
-            set
-            {
-                this.titleDetailsMobile = value;
-            }
-        } private string titleDetailsMobile = "http://m.imdb.com/title/{0}/";
 
         public string BoxOffice
         {
@@ -235,7 +235,79 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             {
                 this.searchMobile = value;
             }
-        } private string searchMobile = "http://m.imdb.com/find?{0}";
+        } private string searchMobile = "find";
+
+        public string TitleDetailsMobile
+        {
+            get
+            {
+                return this.titleDetailsMobile;
+            }
+            set
+            {
+                this.titleDetailsMobile = value;
+            }
+        } private string titleDetailsMobile = "title";
+
+        public string ChartTop250Mobile
+        {
+            get
+            {
+                return this.chartTop250Mobile;
+            }
+            set
+            {
+                this.chartTop250Mobile = value;
+            }
+        } private string chartTop250Mobile = "chart/top_json";
+
+        public string ChartBottom100Mobile
+        {
+            get
+            {
+                return this.chartBottom100Mobile;
+            }
+            set
+            {
+                this.chartBottom100Mobile = value;
+            }
+        } private string chartBottom100Mobile = "chart/bottom_json";
+
+        public string ChartMovieMeterMobile
+        {
+            get
+            {
+                return this.chartMovieMeterMobile;
+            }
+            set
+            {
+                this.chartMovieMeterMobile = value;
+            }
+        } private string chartMovieMeterMobile = "chart/moviemeter_json";
+
+        public string BoxOfficeMobile
+        {
+            get
+            {
+                return this.boxOfficeMobile;
+            }
+            set
+            {
+                this.boxOfficeMobile = value;
+            }
+        } private string boxOfficeMobile = "boxoffice_json";
+
+        public string ComingSoon
+        {
+            get
+            {
+                return this.comingSoon;
+            }
+            set
+            {
+                this.comingSoon = value;
+            }
+        } private string comingSoon = "nowplaying_json";
     }
     
 }
