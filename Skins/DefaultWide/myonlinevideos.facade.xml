@@ -42,18 +42,12 @@
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
           <onright>50</onright>
-          
           <textureMask>Picturethumbmask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>
           <frameFocus>OnlineVideos\Picturethumbmask.png</frameFocus>
           <showFrame>true</showFrame>
-          
-          <enableFocusZoom>yes</enableFocusZoom>                    
-          <zoomXPixels>20</zoomXPixels>
-          <zoomYPixels>20</zoomYPixels>          
-          <hideUnfocusTexture>no</hideUnfocusTexture>          
-          <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>no</renderUnfocusText>
+          <enableFocusZoom>no</enableFocusZoom>
+          <imageFolderFocus>OnlineVideos\thumbborder2.png</imageFolderFocus>
           <thumbZoom>no</thumbZoom>
           
           <!-- smallicons -->
@@ -61,10 +55,10 @@
           <itemHeight>117</itemHeight>
           <textureWidth>160</textureWidth>
           <textureHeight>117</textureHeight>
-          <thumbWidth>143</thumbWidth>
-          <thumbHeight>101</thumbHeight>
-          <thumbPosX>9</thumbPosX>
-          <thumbPosY>9</thumbPosY>
+          <thumbWidth>150</thumbWidth>
+          <thumbHeight>107</thumbHeight>
+          <thumbPosX>5</thumbPosX>
+          <thumbPosY>5</thumbPosY>
           
           <!-- largeicons -->
           <itemWidthBig>223</itemWidthBig>
@@ -74,7 +68,7 @@
           <thumbWidthBig>201</thumbWidthBig>
           <thumbHeightBig>136</thumbHeightBig>
           <thumbPosXBig>11</thumbPosXBig>
-          <thumbPosYBig>11</thumbPosYBig>
+          <thumbPosYBig>9</thumbPosYBig>
 
           <spinCanFocus>no</spinCanFocus>          
           <spinPosX>1180</spinPosX>
