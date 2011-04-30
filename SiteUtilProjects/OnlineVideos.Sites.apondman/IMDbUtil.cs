@@ -75,7 +75,7 @@ namespace OnlineVideos.Sites.Pondman
             List<VideoInfo> videos = new List<VideoInfo>();
 
             // check if we have an IMDb in the search query
-            string id = IMDbAPI.GetTitleConstFromInput(query);
+            string id = IMDbAPI.ParseTitleConst(query);
             if (id != null)
             {
                 // we found an IMDb id so we do a details request
@@ -137,7 +137,7 @@ namespace OnlineVideos.Sites.Pondman
             cat = new Category();
             cat.Other = "5";
             cat.Name = "Popular TV Series";
-            // Settings.Categories.Add(cat);            
+            Settings.Categories.Add(cat);            
 
             cat = new Category();
             cat.Other = "100";
@@ -165,10 +165,11 @@ namespace OnlineVideos.Sites.Pondman
                 // Charts
                 case "100":
                     // todo: subcategory translation?
-                    addSubCategory(parent, "101", "USA Weekend Box-Office");
-                    addSubCategory(parent, "102", "Weekly MOVIEmeter");
-                    addSubCategory(parent, "103", "Top 250 movies");
-                    addSubCategory(parent, "104", "Bottom 100 movies");
+                    addSubCategory(parent, "101", "US Box Office Results");
+                    addSubCategory(parent, "102", "MOVIEmeter");
+                    addSubCategory(parent, "103", "Top 250 Movies");
+                    addSubCategory(parent, "104", "Bottom 100 Films");
+                    addSubCategory(parent, "105", "Best Picture winners");
                     break;
                 // Full Length Movies
                 case "200":
@@ -228,7 +229,10 @@ namespace OnlineVideos.Sites.Pondman
                     break;
                 case "104":
                     titles = IMDbAPI.GetBottom100(apiSession);
-                    break;                
+                    break;
+                case "105":
+                    titles = IMDbAPI.GetBestPictureWinners(apiSession);
+                    break;
                 default:
                     if (catid.StartsWith("200"))
                     {

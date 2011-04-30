@@ -6,6 +6,7 @@ using System.Text;
 namespace OnlineVideos.Sites.Pondman.IMDb.Model
 {
     using OnlineVideos.Sites.Pondman.IMDb.Json;
+    using System.Web;
 
     public class TitleBase : Reference, IVideoDetails
     {
@@ -74,8 +75,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
         {
             this.ID = dto.URL.Replace("/title/", "").Replace("/", "").Trim();
 
-            IMDbAPI.UpdateTitleBase(this, dto.Title + " " + dto.Extra);
-
+            IMDbAPI.ParseDisplayStringToTitleBase(this, HttpUtility.HtmlDecode(dto.Title) + " " + dto.Extra);
             this.Image = IMDbAPI.ParseImageUrl(dto.Image.Url);
         }
 

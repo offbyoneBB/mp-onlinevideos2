@@ -285,6 +285,18 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             }
         } private string chartMovieMeterMobile = "chart/moviemeter_json";
 
+        public string PopularTVSeriesMobile
+        {
+            get
+            {
+                return this.popularTVSeriesMobile;
+            }
+            set
+            {
+                this.popularTVSeriesMobile = value;
+            }
+        } private string popularTVSeriesMobile = "chart/tv_json"; 
+
         public string BoxOfficeMobile
         {
             get
@@ -308,6 +320,20 @@ namespace OnlineVideos.Sites.Pondman.IMDb
                 this.comingSoon = value;
             }
         } private string comingSoon = "nowplaying_json";
+
+        public string BestPictureWinners
+        {
+            get
+            {
+                return this.bestPictureWinners;
+            }
+            set
+            {
+                this.bestPictureWinners = value;
+            }
+        } private string bestPictureWinners = "/feature/bestpicture_json";
+        
+        
     }
     
 }
