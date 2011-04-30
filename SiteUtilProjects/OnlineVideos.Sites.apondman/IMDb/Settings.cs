@@ -70,6 +70,18 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             }
         } private string titleDetails = "title/maindetails";
 
+        public string TitleDetailsMobile
+        {
+            get
+            {
+                return this.titleDetailsMobile;
+            }
+            set
+            {
+                this.titleDetailsMobile = value;
+            }
+        } private string titleDetailsMobile = "http://m.imdb.com/title/{0}/";
+
         public string BoxOffice
         {
             get
@@ -213,6 +225,17 @@ namespace OnlineVideos.Sites.Pondman.IMDb
             }
         } private string fullLengthMovies = "http://www.imdb.com/features/video/browse/?c={0}";
 
+        public string SearchMobile
+        {
+            get
+            {
+                return this.searchMobile;
+            }
+            set
+            {
+                this.searchMobile = value;
+            }
+        } private string searchMobile = "http://m.imdb.com/find?{0}";
     }
     
 }
