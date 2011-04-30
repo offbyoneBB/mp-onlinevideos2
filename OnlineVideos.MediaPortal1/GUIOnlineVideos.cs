@@ -971,7 +971,9 @@ namespace OnlineVideos.MediaPortal1
                 foreach (string site in sg.Sites)
                     if (!groupedSites.Contains(site)) groupedSites.Add(site);
             SitesGroup othersGroup = new SitesGroup() { Name = Translation.Others };
-            foreach (string site in OnlineVideoSettings.Instance.SiteUtilsList.Keys) if (!groupedSites.Contains(site)) othersGroup.Sites.Add(site);
+            foreach (string site in OnlineVideoSettings.Instance.SiteUtilsList.Keys) 
+                if (!groupedSites.Contains(site) && site != Translation.Favourites && site != Translation.DownloadedVideos) 
+                    othersGroup.Sites.Add(site);
             if (othersGroup.Sites.Count > 0)
             {
                 OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(othersGroup);
