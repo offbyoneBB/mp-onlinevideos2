@@ -7,6 +7,12 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Json {
 
     public class IMDbTitleDetails : IMDbTitle {
 
+        public IMDbTitleDetails()
+        {
+            this.Plot = new IMDbPlot();
+            this.ReleaseDate = new Dictionary<string, string>();
+        }
+
         [JsonProperty("cast_summary")]
         public List<IMDbRole> CastSummary { get; set; }
 

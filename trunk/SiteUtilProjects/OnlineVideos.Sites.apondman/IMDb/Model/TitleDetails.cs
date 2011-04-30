@@ -25,6 +25,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
             this.ReleaseDate = DateTime.MinValue;
         }
 
+        /// <summary>
+        /// internal variable to store the main trailer id (if no trailer object)
+        /// </summary>
+        internal string trailer;
+        
         public virtual DateTime ReleaseDate { get; internal set; }
 
         public virtual List<Character> Cast { get; internal set; }
@@ -63,6 +68,18 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
                 // put the main trailer on top
                 list.Insert(0, this.Trailer);
+            }
+            else if (this.trailer != null)
+            {
+                int i = list.FindIndex(x => x.ID == this.trailer);
+                if (i > -1)
+                {
+                    // move the video on top and rename the title
+                    VideoReference video = list[i];
+                    video.Title = "Main Trailer";
+                    list.RemoveAt(i);
+                    list.Insert(0, video);
+                }
             }
 
             return list;

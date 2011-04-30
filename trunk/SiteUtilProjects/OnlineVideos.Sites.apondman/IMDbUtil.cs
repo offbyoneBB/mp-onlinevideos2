@@ -113,11 +113,12 @@ namespace OnlineVideos.Sites.Pondman
             Settings.Categories.Clear();
 
             // todo: category translation?
+            // todo: re-enable categories (json api)
 
             Category cat = new Category();
             cat.Other = "1";
             cat.Name = "Coming Soon";
-            Settings.Categories.Add(cat);
+            // Settings.Categories.Add(cat);
 
             cat = new Category();
             cat.Other = "2";
@@ -137,13 +138,13 @@ namespace OnlineVideos.Sites.Pondman
             cat = new Category();
             cat.Other = "5";
             cat.Name = "Popular TV Series";
-            Settings.Categories.Add(cat);            
+            // Settings.Categories.Add(cat);            
 
             cat = new Category();
             cat.Other = "100";
             cat.Name = "Charts";
             cat.HasSubCategories = true;
-            Settings.Categories.Add(cat);
+            // Settings.Categories.Add(cat);
 
             cat = new Category();
             cat.Other = "200";
