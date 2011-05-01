@@ -83,7 +83,10 @@ namespace OnlineVideos.MediaPortal1
             ImageList allSitesImageList = new ImageList() { ColorDepth = ColorDepth.Depth32Bit, ImageSize = new Size(28,28) };
             foreach(string imagefile in System.IO.Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\", "*.png"))
             {
-                allSitesImageList.Images.Add(System.IO.Path.GetFileNameWithoutExtension(imagefile), Image.FromFile(imagefile));
+                using(System.IO.FileStream fs = new System.IO.FileStream(imagefile, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                {
+                    allSitesImageList.Images.Add(System.IO.Path.GetFileNameWithoutExtension(imagefile), Image.FromStream(fs));
+                }
             }
             listViewSitesInGroup.LargeImageList = allSitesImageList;
             listViewSitesNotInGroup.LargeImageList = allSitesImageList;
