@@ -143,9 +143,17 @@ namespace OnlineVideos
             // only save if there are sites - otherwise an error might have occured on LoadSites
             if (SiteSettingsList != null && SiteSettingsList.Count > 0 && !string.IsNullOrEmpty(ConfigDir))
             {
-                using (FileStream fso = new FileStream(Path.Combine(ConfigDir, SitesFileName), FileMode.Create))
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    Utils.SiteSettingsToXml(new SerializableSettings() { Sites = SiteSettingsList }, fso);
+                    Utils.SiteSettingsToXml(new SerializableSettings() { Sites = SiteSettingsList }, ms);
+                    if (ms.Length > 0)
+                    {
+                        ms.Position = 0;
+                        using (FileStream fso = new FileStream(Path.Combine(ConfigDir, SitesFileName), FileMode.Create))
+                        {
+                            ms.WriteTo(fso);
+                        }
+                    }
                 }
             }
         }
