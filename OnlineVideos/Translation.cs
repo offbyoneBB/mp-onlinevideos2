@@ -160,6 +160,7 @@ namespace OnlineVideos
 
         // W
         public static string Working = "Working";
+        public static string Writers = "Writers";
 
         // Y
 
