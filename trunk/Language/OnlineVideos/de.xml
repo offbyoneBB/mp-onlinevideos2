@@ -115,4 +115,5 @@
   <string Field="UnableToDownloadVideo">Video kann nicht heruntergeladen werden. Ungültige URL.</string>
   <string Field="Videos">Videos</string>
   <string Field="Working">Funktionierend</string>
+  <string Field="Writers">Autoren</string>
 </strings>
