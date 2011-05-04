@@ -68,6 +68,7 @@
   <string Field="MaxResults">Max. Ergebnisse</string>
   <string Field="Name">Name</string>
   <string Field="NextPage">Nächste Seite</string>
+  <string Field="NewVideos">Neue Videos</string>
   <string Field="None">None</string>
   <string Field="NoVideoFound">Keine Videos gefunden</string>
   <string Field="NoReportsForSite">Keine Meldungen für diese Site vorhanden.</string>
