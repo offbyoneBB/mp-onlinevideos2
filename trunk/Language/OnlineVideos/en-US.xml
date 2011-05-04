@@ -92,6 +92,7 @@
   <!-- N -->
   <string Field="Name">Name</string>
   <string Field="NextPage">Next page</string>
+  <string Field="NewVideos">New Videos</string>
   <string Field="None">None</string>
   <string Field="NoVideoFound">No video found</string>
   <string Field="NoReportsForSite">No reports for this site available.</string>

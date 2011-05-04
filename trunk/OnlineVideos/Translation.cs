@@ -97,6 +97,7 @@ namespace OnlineVideos
         // N
         public static string Name = "Name";
         public static string NextPage = "Next page";
+        public static string NewVideos = "New Videos";
         public static string None = "None";
         public static string NoVideoFound = "No video found";
         public static string NoReportsForSite = "No reports for this site available.";

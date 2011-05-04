@@ -231,6 +231,12 @@ namespace OnlineVideos.Sites
                 // users subscriptions    
                 Login();
 
+                RssLink newVidsLink = new RssLink();
+                newVidsLink.Name = Translation.NewVideos;
+                newVidsLink.Url = "http://gdata.youtube.com/feeds/api/users/default/newsubscriptionvideos";
+                parentCategory.SubCategories.Add(newVidsLink);
+                newVidsLink.ParentCategory = parentCategory;
+
                 YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateSubscriptionUri(accountname)), StartIndex = 1, NumberToRetrieve = 50 }; // max. 50 per query
                 bool hasNextPage = false;
                 do
