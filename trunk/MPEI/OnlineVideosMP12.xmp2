@@ -1536,6 +1536,20 @@
               <ZipFileName>Installer{CopyFile}\{915ab447-e8e5-4a73-b79f-3d569c4299c2}-TV2.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV2.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\tube+.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4c96b6cb-5ebc-496e-8ae7-7cb57f6aafcb}-tube+.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tube+.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\tube+.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6a02eef4-098e-4392-877c-ffad59ba3eb5}-tube+.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tube+.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1875,6 +1889,13 @@
               <ZipFileName>Installer{CopyFile}\{a66765ab-83c8-4f80-9b79-441edf928807}-myonlinevideos.details.xml</ZipFileName>
               <DestinationFilename>%Skin%\Default\myonlinevideos.details.xml</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Default\Media\OnlineVideos\thumbborder2.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ad1d4c52-7db9-4997-b892-a4c38210631e}-thumbborder2.png</ZipFileName>
+              <DestinationFilename>%Skin%\Default\Media\OnlineVideos\thumbborder2.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1983,6 +2004,13 @@
               <ZipFileName>Installer{CopyFile}\{87c2bd67-ffb8-429f-8e35-4b2009bba470}-myonlinevideos.xml</ZipFileName>
               <DestinationFilename>%Skin%\DefaultWide\myonlinevideos.xml</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\DefaultWide\Media\OnlineVideos\thumbborder2.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{44a46b30-6177-4e2b-9dab-67eab1de61fc}-thumbborder2.png</ZipFileName>
+              <DestinationFilename>%Skin%\DefaultWide\Media\OnlineVideos\thumbborder2.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2047,6 +2075,20 @@
               <LocalFileName>..\Skins\_MODS_\Default\MyVideoTrailerButton\myvideo.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{9086d3bd-0a62-4a73-bc25-d8ef78989fc1}-myvideo.xml</ZipFileName>
               <DestinationFilename>%Skin%\Default\myvideo.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\_MODS_\Default\MyVideoTrailerButton\myvideoTitle.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{fc22fbaa-d470-4b53-a8db-3388bb1dd4df}-myvideoTitle.xml</ZipFileName>
+              <DestinationFilename>%Skin%\Default\myvideoTitle.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\Skins\_MODS_\DefaultWide\MyVideoTrailerButton\myvideoTitle.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{dad9b74a-23b6-4a3e-883a-19f710ad1031}-myvideoTitle.xml</ZipFileName>
+              <DestinationFilename>%Skin%\DefaultWide\myvideoTitle.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -4074,6 +4116,20 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
         <ZipFileName>Installer{CopyFile}\{915ab447-e8e5-4a73-b79f-3d569c4299c2}-TV2.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV2.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\tube+.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4c96b6cb-5ebc-496e-8ae7-7cb57f6aafcb}-tube+.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tube+.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\tube+.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6a02eef4-098e-4392-877c-ffad59ba3eb5}-tube+.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tube+.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -4378,6 +4434,13 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Default\Media\OnlineVideos\thumbborder2.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ad1d4c52-7db9-4997-b892-a4c38210631e}-thumbborder2.png</ZipFileName>
+        <DestinationFilename>%Skin%\Default\Media\OnlineVideos\thumbborder2.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Skins\DefaultWide\myonlinevideosFullScreen.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{3afc9b06-da28-4365-a581-c2fc7871e584}-myonlinevideosFullScreen.xml</ZipFileName>
         <DestinationFilename>%Skin%\DefaultWide\myonlinevideosFullScreen.xml</DestinationFilename>
@@ -4473,6 +4536,13 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
         <ZipFileName>Installer{CopyFile}\{87c2bd67-ffb8-429f-8e35-4b2009bba470}-myonlinevideos.xml</ZipFileName>
         <DestinationFilename>%Skin%\DefaultWide\myonlinevideos.xml</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\DefaultWide\Media\OnlineVideos\thumbborder2.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{44a46b30-6177-4e2b-9dab-67eab1de61fc}-thumbborder2.png</ZipFileName>
+        <DestinationFilename>%Skin%\DefaultWide\Media\OnlineVideos\thumbborder2.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -4508,11 +4578,25 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
         <ZipFileName>Installer{CopyFile}\{9086d3bd-0a62-4a73-bc25-d8ef78989fc1}-myvideo.xml</ZipFileName>
         <DestinationFilename>%Skin%\Default\myvideo.xml</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\_MODS_\Default\MyVideoTrailerButton\myvideoTitle.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{fc22fbaa-d470-4b53-a8db-3388bb1dd4df}-myvideoTitle.xml</ZipFileName>
+        <DestinationFilename>%Skin%\Default\myvideoTitle.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\Skins\_MODS_\DefaultWide\MyVideoTrailerButton\myvideoTitle.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{dad9b74a-23b6-4a3e-883a-19f710ad1031}-myvideoTitle.xml</ZipFileName>
+        <DestinationFilename>%Skin%\DefaultWide\myvideoTitle.xml</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{628ac550-9de9-430e-a9c4-364a4e84d000}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{f188c762-e751-4d6d-807c-6651d983bd18}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
