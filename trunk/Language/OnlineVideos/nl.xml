@@ -68,6 +68,7 @@
   <string Field="MaxResults">Max. aantal resultaten</string>
   <string Field="Name">Naam</string>
   <string Field="NextPage">Volgende pagina</string>
+  <string Field="NewVideos">Nieuwe videos</string>
   <string Field="None">Niets</string>
   <string Field="NoVideoFound">Geen video gevonden</string>
   <string Field="NoReportsForSite">Geen rapportering van deze site beschikbaar</string>
@@ -115,4 +116,5 @@
   <string Field="UnableToDownloadVideo">Kan video niet downloaden: Ongeldige URL.</string>
   <string Field="Videos">Videos</string>
   <string Field="Working">Bezig</string>
+  <string Field="Writers">Auteurs</string>
 </strings>
