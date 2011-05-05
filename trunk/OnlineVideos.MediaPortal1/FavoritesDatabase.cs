@@ -161,7 +161,7 @@ namespace OnlineVideos.MediaPortal1
         public bool addFavoriteCategory(Category cat, string siteName)
         {
             //check if the category is already in the favorite list
-            if (m_db.Execute(string.Format("select CAT_ID from FAVORITE_Categories where CAT_Hierarchy='{0}' AND CAT_SITE_ID='{1}'", cat.RecursiveName("|"), siteName)).Rows.Count > 0)
+            if (m_db.Execute(string.Format("select CAT_ID from FAVORITE_Categories where CAT_Hierarchy='{0}' AND CAT_SITE_ID='{1}'", EscapeString(cat.RecursiveName("|")), siteName)).Rows.Count > 0)
             {
                 Log.Instance.Info("Favorite Category {0} already in database", cat.Name);
                 return true;
@@ -173,7 +173,7 @@ namespace OnlineVideos.MediaPortal1
             string lsSQL =
                 string.Format(
                     "insert into FAVORITE_Categories(CAT_Name,CAT_Desc,CAT_ThumbUrl,CAT_Hierarchy,CAT_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}')",
-                    DatabaseUtility.RemoveInvalidChars(cat.Name), cat.Description == null ? "" : DatabaseUtility.RemoveInvalidChars(cat.Description), cat.Thumb, cat.RecursiveName("|"), siteName);
+                    DatabaseUtility.RemoveInvalidChars(cat.Name), cat.Description == null ? "" : DatabaseUtility.RemoveInvalidChars(cat.Description), cat.Thumb, EscapeString(cat.RecursiveName("|")), siteName);
             m_db.Execute(lsSQL);
             if (m_db.ChangedRows() > 0)
             {
@@ -210,6 +210,11 @@ namespace OnlineVideos.MediaPortal1
             String lsSQL = string.Format("delete from Favorite_Categories where CAT_ID = '{0}'", (cat as RssLink).Url);
             m_db.Execute(lsSQL);
             return m_db.ChangedRows() > 0;
+        }
+
+        string EscapeString(string input)
+        {
+            return input.Replace("'", "''");
         }
     }
 }
