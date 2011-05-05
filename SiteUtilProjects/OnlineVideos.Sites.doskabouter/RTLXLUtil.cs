@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -9,10 +10,14 @@ using System.Net;
 using System.IO;
 using HybridDSP.Net.HTTP;
 
+
 namespace OnlineVideos.Sites
 {
     public class RTLXLUtil : SiteUtilBase
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Show DRM content")]
+        bool allowDRM = false;
+
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
@@ -97,15 +102,22 @@ namespace OnlineVideos.Sites
             {
                 XmlNode epNode;
                 VideoInfo vid = GetVideoFromNode(node, episodes, out epNode);
-                string cent = getNodeText(node, "tariff");
-                if (!String.IsNullOrEmpty(cent))
-                    vid.Description = "Betaalfilm: " + (Double.Parse(cent) / 100) + " " + vid.Description;
-                string[] genreIds = getNodeText(epNode, "genre").Split('|');
-                foreach (string genre in genreIds)
+                if (vid != null)
                 {
-                    Category parentCat = genres[genre];
-                    AddToVidList(vid, parentCat);
+                    string cent = getNodeText(node, "tariff");
+                    if (!String.IsNullOrEmpty(cent))
+                    {
+                        vid.Description = "Betaalfilm: " + (Double.Parse(cent) / 100) + " " + vid.Description;
+                    }
+
+                    string[] genreIds = getNodeText(epNode, "genre").Split('|');
+                    foreach (string genre in genreIds)
+                    {
+                        Category parentCat = genres[genre];
+                        AddToVidList(vid, parentCat);
+                    }
                 }
+
             }
 
             foreach (List<VideoInfo> vidList in videos.Values)
@@ -186,8 +198,19 @@ namespace OnlineVideos.Sites
             if (epNode != null && String.IsNullOrEmpty(video.Description))
                 video.Description = getNodeText(epNode, "synopsis");
 
-            if (getNodeText(node, "audience").Equals("DRM"))
+            string audienceText = getNodeText(node, "audience");
+
+            //audience: DRM | ALL | ALLEEN_NL
+            //blacklist: DRM + ALLEEN_NL, case insensitive
+            if (audienceText.Equals("DRM", StringComparison.CurrentCultureIgnoreCase)
+               || audienceText.Equals("ALLEEN_NL", StringComparison.CurrentCultureIgnoreCase))
+            {
+                if (!allowDRM)
+                {
+                    return null; //don't add DRM content
+                }
                 video.Description = "DRM " + video.Description;
+            }
 
             string dateCode = getNodeText(node, "broadcast_date_display");
             if (!String.IsNullOrEmpty(dateCode))
@@ -245,7 +268,16 @@ namespace OnlineVideos.Sites
                 int ctime = Int32.Parse(getNodeText(node, "broadcast_timestamp"));
                 DateTime dateTime = DateTime.FromFileTime(10000000 * (long)ctime + 116444736000000000);
                 DayOfWeek dow = dateTime.DayOfWeek;
+
+
                 string day = CultureInfo.CurrentUICulture.DateTimeFormat.DayNames[(int)dow];
+
+                if (DateTime.Today.DayOfWeek == dow)
+                {
+                    //today (same day) so add label.
+                    day += " (today)";
+                }
+
                 Category tab;
                 if (!days.ContainsKey(day))
                 {
