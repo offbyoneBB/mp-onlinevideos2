@@ -125,7 +125,7 @@ namespace OnlineVideos.Sites
                             {
                                 RssLink subCat = new RssLink()
                                 {
-                                    Name = addM.Groups["Title"].Value,
+                                    Name = HttpUtility.HtmlDecode(addM.Groups["Title"].Value),
                                     Url = addM.Groups["Url"].Value,
                                     Thumb = "http://www.ardmediathek.de" + addM.Groups["ImageUrl"].Value,
                                     ParentCategory = parentCategory
