@@ -34,6 +34,7 @@
   <string Field="Download">Nedlasting</string>
   <string Field="Downloading">Nedlaster</string>
   <string Field="DownloadingDescription">Vis listen med aktive nedlastinger.</string>
+  <string Field="DownloadingSubtitle">laster ned undertekst</string>
   <string Field="DownloadFailed">Nedlasting feilet: {0}</string>
   <string Field="DownloadCancelled">Nedlasting avbrutt</string>
   <string Field="DownloadComplete">Nedlasting ferdig</string>
@@ -71,6 +72,7 @@
   <string Field="GettingIcon">henter side ikoner fra webservice</string>
   <string Field="GettingBanner">henter side banner fra webservice</string>
   <string Field="GettingDll">henter dll fra webservice</string>
+  <string Field="Groups">Grupper</string>
 
   <!-- H -->
 
@@ -90,6 +92,7 @@
   <!-- N -->
   <string Field="Name">Navn</string>
   <string Field="NextPage">Neste side</string>
+  <string Field="NewVideos">Nye Videoer</string>
   <string Field="None">Ingen</string>
   <string Field="NoVideoFound">Ingen video funnet</string>
   <string Field="NoReportsForSite">Rapporter for denne side er utilgjengelig.</string>
@@ -97,9 +100,11 @@
   <string Field="NewSearch">Nytt søk</string>
 
   <!-- O -->
-
+  <string Field="Others">Andre</string>
+  
   <!-- P -->
   <string Field="PlayAll">Spill alle</string>
+  <string Field="PlayWith">Spill av med ...</string>
   <string Field="PlotOutline">Handling</string>
   <string Field="PreviousPage">Forrige side</string>
   <string Field="PerformAutomaticUpdate">Utfør automatiske oppdateringer?</string>
@@ -110,6 +115,7 @@
   <string Field="Refresh">Oppdater</string>
   <string Field="RelatedVideos">Relaterte videoer</string>
   <string Field="Reported">Rapporterte</string>
+  <string Field="Reports">Rapporter</string>
   <string Field="Runtime">Spilletid</string>
   <string Field="RemoveFromMySites">Fjern fra mine sider</string>
   <string Field="RestartMediaPortal">Omstart MediaPortal!</string>
@@ -150,6 +156,7 @@
 
   <!-- W -->
   <string Field="Working">Arbeider</string>
+  <string Field="Writers">Forfattere</string>
 
   <!-- Y -->
 
