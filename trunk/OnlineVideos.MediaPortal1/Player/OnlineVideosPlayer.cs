@@ -172,7 +172,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 if (result != 0)
                 {
-                    Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned {0}", result);
+                    Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned '{0}' ({1})", result, DirectShowLib.DsError.GetErrorText(result));
                     return false;
                 }
 
