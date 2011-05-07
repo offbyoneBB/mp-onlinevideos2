@@ -41,7 +41,7 @@ namespace OnlineVideos.MediaPortal1
         public DateTime lastFirstRun;
         public uint updatePeriod = 0;
 
-        // runtime (inside MediaPortal) changeable values
+        // runtime (while inside MediaPortal OnlineVideos) changeable values
         public Dictionary<string, List<string>> searchHistory;
         public SiteOrder siteOrder = SiteOrder.AsInFile;
 #if MP11
@@ -87,6 +87,7 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_AUTO_LANG_GROUPS = "autoGroupByLang";
         const string CFG_LAST_FIRSTRUN = "lastFirstRun";
         const string CFG_UPDATEPERIOD = "updatePeriod";
+        const string CFG_FAVORITES_FIRST = "favoritesFirst";
         #endregion
 
         #region Singleton
@@ -116,6 +117,7 @@ namespace OnlineVideos.MediaPortal1
                 playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
                 useRtmpProxy = settings.GetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
                 autoGroupByLang = settings.GetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
+                OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst = settings.GetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst);
             }
         }
 
@@ -237,6 +239,7 @@ namespace OnlineVideos.MediaPortal1
 
                     httpSourceFilterName = settings.GetValueAsString(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
                     autoGroupByLang = settings.GetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
+                    OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst = settings.GetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst);
                 }
                 LoadSitesGroups();
                 ovsconf.LoadSites();
@@ -302,6 +305,7 @@ namespace OnlineVideos.MediaPortal1
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORYTYPE, (int)searchHistoryType);
                         settings.SetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
                         settings.SetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
+                        settings.SetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, ovsconf.FavoritesFirst);
 
                         SaveSitesGroups();
                         ovsconf.SaveSites();

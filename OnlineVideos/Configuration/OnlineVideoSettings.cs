@@ -31,6 +31,7 @@ namespace OnlineVideos
         public BindingList<SiteSettings> SiteSettingsList { get; protected set; }
         public Dictionary<string, Sites.SiteUtilBase> SiteUtilsList { get; protected set; }
         public SortedList<string, bool> VideoExtensions { get; protected set; }
+        public bool FavoritesFirst = false;
 
         #region Singleton
         private static OnlineVideoSettings _Instance = null;
@@ -101,6 +102,13 @@ namespace OnlineVideos
         public void BuildSiteUtilsList()
         {
             SiteUtilsList.Clear();
+
+            if (FavoritesFirst)
+            {
+                AddFavoritesSite();
+                AddDownloadsSite();
+            }
+
             foreach (SiteSettings siteSettings in SiteSettingsList)
             {
                 // only need enabled sites
@@ -113,6 +121,15 @@ namespace OnlineVideos
 
             LoadScriptSites();
 
+            if (!FavoritesFirst)
+            {
+                AddFavoritesSite();
+                AddDownloadsSite();
+            }
+        }
+
+        void AddFavoritesSite()
+        {
             if (FavDB != null)
             {
                 //create a favorites site
@@ -124,9 +141,12 @@ namespace OnlineVideos
                 };
                 SiteUtilsList.Add(aSite.Name, SiteUtilFactory.CreateFromShortName(aSite.UtilName, aSite));
             }
+        }
 
+        void AddDownloadsSite()
+        {
             if (!String.IsNullOrEmpty(DownloadDir))
-            {                
+            {
                 //add a downloaded videos site
                 SiteSettings aSite = new SiteSettings()
                 {

@@ -79,6 +79,7 @@ namespace OnlineVideos.MediaPortal1
 
             /** Groups Tab **/
             chkAutoGroupByLang.Checked = PluginConfiguration.Instance.autoGroupByLang;
+            chkFavFirst.Checked = OnlineVideoSettings.Instance.FavoritesFirst;
             // load site image into a list for use with the listviews
             ImageList allSitesImageList = new ImageList() { ColorDepth = ColorDepth.Depth32Bit, ImageSize = new Size(28,28) };
             foreach(string imagefile in System.IO.Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\", "*.png"))
@@ -230,6 +231,7 @@ namespace OnlineVideos.MediaPortal1
                 PluginConfiguration.Instance.updatePeriod = uint.Parse(tbxUpdatePeriod.Text);
                 PluginConfiguration.Instance.httpSourceFilterName = tbxHttpSourceFilter.Text;
                 PluginConfiguration.Instance.autoGroupByLang = chkAutoGroupByLang.Checked;
+                OnlineVideoSettings.Instance.FavoritesFirst = chkFavFirst.Checked;
                 PluginConfiguration.Instance.Save(false);
             }
         }

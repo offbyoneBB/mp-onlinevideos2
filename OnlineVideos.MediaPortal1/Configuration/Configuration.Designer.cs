@@ -118,6 +118,9 @@ namespace OnlineVideos.MediaPortal1
             this.btnBrowseForDlFolder = new System.Windows.Forms.Button();
             this.mainTabControl = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.tbxUpdatePeriod = new System.Windows.Forms.TextBox();
+            this.label45 = new System.Windows.Forms.Label();
+            this.label44 = new System.Windows.Forms.Label();
             this.btnWiki = new System.Windows.Forms.Button();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -160,6 +163,7 @@ namespace OnlineVideos.MediaPortal1
             this.lblVersion = new System.Windows.Forms.Label();
             this.tabGroups = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.chkFavFirst = new System.Windows.Forms.CheckBox();
             this.chkAutoGroupByLang = new System.Windows.Forms.CheckBox();
             this.btnBrowseSitesGroupThumb = new System.Windows.Forms.Button();
             this.tbxSitesGroupDesc = new System.Windows.Forms.TextBox();
@@ -205,9 +209,6 @@ namespace OnlineVideos.MediaPortal1
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.label44 = new System.Windows.Forms.Label();
-            this.label45 = new System.Windows.Forms.Label();
-            this.tbxUpdatePeriod = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceRssLink)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceSiteSettings)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -267,8 +268,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // txtDownloadDir
             // 
-            this.txtDownloadDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDownloadDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDownloadDir.Location = new System.Drawing.Point(225, 35);
             this.txtDownloadDir.Name = "txtDownloadDir";
             this.txtDownloadDir.Size = new System.Drawing.Size(429, 20);
@@ -305,8 +306,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // txtRssUrl
             // 
-            this.txtRssUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRssUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtRssUrl.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceRssLink, "Url", true));
             this.txtRssUrl.Enabled = false;
             this.txtRssUrl.Location = new System.Drawing.Point(286, 50);
@@ -325,8 +326,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // txtRssName
             // 
-            this.txtRssName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRssName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtRssName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceRssLink, "Name", true));
             this.txtRssName.Enabled = false;
             this.txtRssName.Location = new System.Drawing.Point(286, 28);
@@ -370,8 +371,8 @@ namespace OnlineVideos.MediaPortal1
             // descriptionTextBox
             // 
             this.descriptionTextBox.AcceptsReturn = true;
-            this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.descriptionTextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSiteSettings, "Description", true));
             this.descriptionTextBox.Location = new System.Drawing.Point(290, 178);
             this.descriptionTextBox.Multiline = true;
@@ -390,8 +391,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 4;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
@@ -705,8 +706,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // txtFilters
             // 
-            this.txtFilters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFilters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilters.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtFilters.Location = new System.Drawing.Point(225, 50);
             this.txtFilters.Name = "txtFilters";
@@ -726,8 +727,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // txtThumbLoc
             // 
-            this.txtThumbLoc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtThumbLoc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtThumbLoc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtThumbLoc.Location = new System.Drawing.Point(225, 50);
             this.txtThumbLoc.Name = "txtThumbLoc";
@@ -870,8 +871,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // txtRssThumb
             // 
-            this.txtRssThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRssThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtRssThumb.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceRssLink, "Thumb", true));
             this.txtRssThumb.Enabled = false;
             this.txtRssThumb.Location = new System.Drawing.Point(286, 75);
@@ -990,8 +991,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxChannelThumb
             // 
-            this.tbxChannelThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxChannelThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxChannelThumb.Enabled = false;
             this.tbxChannelThumb.Location = new System.Drawing.Point(286, 50);
             this.tbxChannelThumb.Name = "tbxChannelThumb";
@@ -1018,8 +1019,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxStreamThumb
             // 
-            this.tbxStreamThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxStreamThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxStreamThumb.Enabled = false;
             this.tbxStreamThumb.Location = new System.Drawing.Point(286, 138);
             this.tbxStreamThumb.Name = "tbxStreamThumb";
@@ -1052,8 +1053,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxStreamUrl
             // 
-            this.tbxStreamUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxStreamUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxStreamUrl.Enabled = false;
             this.tbxStreamUrl.Location = new System.Drawing.Point(286, 114);
             this.tbxStreamUrl.Name = "tbxStreamUrl";
@@ -1071,8 +1072,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxStreamName
             // 
-            this.tbxStreamName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxStreamName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxStreamName.Enabled = false;
             this.tbxStreamName.Location = new System.Drawing.Point(286, 89);
             this.tbxStreamName.Name = "tbxStreamName";
@@ -1090,8 +1091,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxChannelName
             // 
-            this.tbxChannelName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxChannelName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxChannelName.Enabled = false;
             this.tbxChannelName.Location = new System.Drawing.Point(286, 25);
             this.tbxChannelName.Name = "tbxChannelName";
@@ -1107,8 +1108,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxPin
             // 
-            this.tbxPin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxPin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxPin.Enabled = false;
             this.tbxPin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbxPin.Location = new System.Drawing.Point(276, 22);
@@ -1120,8 +1121,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxScreenName
             // 
-            this.tbxScreenName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxScreenName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxScreenName.Location = new System.Drawing.Point(225, 9);
             this.tbxScreenName.Name = "tbxScreenName";
             this.tbxScreenName.Size = new System.Drawing.Size(460, 20);
@@ -1200,6 +1201,34 @@ namespace OnlineVideos.MediaPortal1
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
+            // tbxUpdatePeriod
+            // 
+            this.tbxUpdatePeriod.Location = new System.Drawing.Point(309, 58);
+            this.tbxUpdatePeriod.Name = "tbxUpdatePeriod";
+            this.tbxUpdatePeriod.Size = new System.Drawing.Size(40, 20);
+            this.tbxUpdatePeriod.TabIndex = 70;
+            this.toolTip1.SetToolTip(this.tbxUpdatePeriod, "Automatic update and thumbnail deletion on startup will only run after this many " +
+        "hours passed since the last run.");
+            this.tbxUpdatePeriod.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Location = new System.Drawing.Point(367, 61);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(33, 13);
+            this.label45.TabIndex = 69;
+            this.label45.Text = "hours";
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(246, 61);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(57, 13);
+            this.label44.TabIndex = 68;
+            this.label44.Text = "Only every";
+            // 
             // btnWiki
             // 
             this.btnWiki.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.help;
@@ -1223,8 +1252,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // groupBox5
             // 
-            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.BackColor = System.Drawing.Color.Transparent;
             this.groupBox5.Controls.Add(this.label5);
             this.groupBox5.Controls.Add(this.chkUseAgeConfirmation);
@@ -1262,8 +1291,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // groupBox4
             // 
-            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.Controls.Add(this.label34);
             this.groupBox4.Controls.Add(this.rbOff);
             this.groupBox4.Controls.Add(this.rbLastSearch);
@@ -1393,8 +1422,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // Thumbnails
             // 
-            this.Thumbnails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.Thumbnails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.Thumbnails.Controls.Add(this.label36);
             this.Thumbnails.Controls.Add(this.tbxThumbAge);
             this.Thumbnails.Controls.Add(this.label35);
@@ -1428,7 +1457,7 @@ namespace OnlineVideos.MediaPortal1
             this.tbxThumbAge.TabIndex = 17;
             this.tbxThumbAge.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.tbxThumbAge, "Thumbnails older than this will be deleted on first OnlineVideos start each time " +
-                    "MediaPortal runs. Set to 0 to delete all and -1 to keep all.");
+        "MediaPortal runs. Set to 0 to delete all and -1 to keep all.");
             this.tbxThumbAge.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidInteger);
             // 
             // label35
@@ -1472,13 +1501,13 @@ namespace OnlineVideos.MediaPortal1
             this.chkUseQuickSelect.Size = new System.Drawing.Size(15, 14);
             this.chkUseQuickSelect.TabIndex = 5;
             this.toolTip1.SetToolTip(this.chkUseQuickSelect, "Allows you to quickly select entries that start with the letter or number you pre" +
-                    "ssed in the list.");
+        "ssed in the list.");
             this.chkUseQuickSelect.UseVisualStyleBackColor = true;
             // 
             // groupBox3
             // 
-            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.groupBox3.Controls.Add(this.label32);
             this.groupBox3.Controls.Add(this.label31);
@@ -1533,7 +1562,7 @@ namespace OnlineVideos.MediaPortal1
             this.tbxWebCacheTimeout.TabIndex = 13;
             this.tbxWebCacheTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.tbxWebCacheTimeout, "WebRequests are cached internally. This number determines the minutes after which" +
-                    " the cached data becomes invalid. Set to 0 to disable.");
+        " the cached data becomes invalid. Set to 0 to disable.");
             this.tbxWebCacheTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
             // 
             // label15
@@ -1555,13 +1584,13 @@ namespace OnlineVideos.MediaPortal1
             this.tbxUtilTimeout.TabIndex = 14;
             this.tbxUtilTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.tbxUtilTimeout, "When the GUI request data from the web you can specifiy how many seconds to wait " +
-                    "before a timeout will occur.");
+        "before a timeout will occur.");
             this.tbxUtilTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.label30);
             this.groupBox2.Controls.Add(this.label29);
             this.groupBox2.Controls.Add(this.udPlayBuffer);
@@ -1631,13 +1660,12 @@ namespace OnlineVideos.MediaPortal1
             // 
             // label16
             // 
-            this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(393, 26);
+            this.label16.Location = new System.Drawing.Point(393, 17);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(115, 13);
+            this.label16.Size = new System.Drawing.Size(115, 28);
             this.label16.TabIndex = 43;
-            this.label16.Text = "Windows Media Player";
+            this.label16.Text = "Windows Media Player VLC Media Player";
             // 
             // label24
             // 
@@ -1680,7 +1708,7 @@ namespace OnlineVideos.MediaPortal1
             this.chkDoAutoUpdate.TabIndex = 4;
             this.chkDoAutoUpdate.ThreeState = true;
             this.toolTip1.SetToolTip(this.chkDoAutoUpdate, "If checked plugin will perform an autoupdate the first time it is started each Me" +
-                    "diaPortal Session. If indeterminated, plugin will ask.");
+        "diaPortal Session. If indeterminated, plugin will ask.");
             this.chkDoAutoUpdate.UseVisualStyleBackColor = true;
             // 
             // btnCancel
@@ -1727,6 +1755,7 @@ namespace OnlineVideos.MediaPortal1
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.chkFavFirst);
             this.splitContainer1.Panel1.Controls.Add(this.chkAutoGroupByLang);
             this.splitContainer1.Panel1.Controls.Add(this.btnBrowseSitesGroupThumb);
             this.splitContainer1.Panel1.Controls.Add(this.tbxSitesGroupDesc);
@@ -1744,10 +1773,20 @@ namespace OnlineVideos.MediaPortal1
             this.splitContainer1.SplitterDistance = 230;
             this.splitContainer1.TabIndex = 0;
             // 
+            // chkFavFirst
+            // 
+            this.chkFavFirst.AutoSize = true;
+            this.chkFavFirst.Location = new System.Drawing.Point(264, 194);
+            this.chkFavFirst.Name = "chkFavFirst";
+            this.chkFavFirst.Size = new System.Drawing.Size(277, 17);
+            this.chkFavFirst.TabIndex = 18;
+            this.chkFavFirst.Text = "Favorites and Downloads first instead of last in the list";
+            this.chkFavFirst.UseVisualStyleBackColor = true;
+            // 
             // chkAutoGroupByLang
             // 
             this.chkAutoGroupByLang.AutoSize = true;
-            this.chkAutoGroupByLang.Location = new System.Drawing.Point(264, 179);
+            this.chkAutoGroupByLang.Location = new System.Drawing.Point(264, 162);
             this.chkAutoGroupByLang.Name = "chkAutoGroupByLang";
             this.chkAutoGroupByLang.Size = new System.Drawing.Size(353, 17);
             this.chkAutoGroupByLang.TabIndex = 17;
@@ -1771,8 +1810,8 @@ namespace OnlineVideos.MediaPortal1
             // tbxSitesGroupDesc
             // 
             this.tbxSitesGroupDesc.AcceptsReturn = true;
-            this.tbxSitesGroupDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxSitesGroupDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxSitesGroupDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSitesGroup, "Description", true));
             this.tbxSitesGroupDesc.Location = new System.Drawing.Point(264, 77);
             this.tbxSitesGroupDesc.Multiline = true;
@@ -1795,8 +1834,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxSitesGroupThumb
             // 
-            this.tbxSitesGroupThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxSitesGroupThumb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxSitesGroupThumb.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSitesGroup, "Thumbnail", true));
             this.tbxSitesGroupThumb.Location = new System.Drawing.Point(264, 51);
             this.tbxSitesGroupThumb.Name = "tbxSitesGroupThumb";
@@ -1814,8 +1853,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxSitesGroupName
             // 
-            this.tbxSitesGroupName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxSitesGroupName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxSitesGroupName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceSitesGroup, "Name", true));
             this.tbxSitesGroupName.Location = new System.Drawing.Point(264, 22);
             this.tbxSitesGroupName.Name = "tbxSitesGroupName";
@@ -1874,7 +1913,7 @@ namespace OnlineVideos.MediaPortal1
             this.btnSitesGroupDown});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(24, 230);
+            this.toolStrip2.Size = new System.Drawing.Size(24, 205);
             this.toolStrip2.Stretch = true;
             this.toolStrip2.TabIndex = 0;
             // 
@@ -2027,8 +2066,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // groupBoxSourceFilter
             // 
-            this.groupBoxSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxSourceFilter.Controls.Add(this.chkUseRtmpProxy);
             this.groupBoxSourceFilter.Controls.Add(this.tbxHttpSourceFilter);
             this.groupBoxSourceFilter.Controls.Add(this.label37);
@@ -2051,8 +2090,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxHttpSourceFilter
             // 
-            this.tbxHttpSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxHttpSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxHttpSourceFilter.Location = new System.Drawing.Point(118, 13);
             this.tbxHttpSourceFilter.Name = "tbxHttpSourceFilter";
             this.tbxHttpSourceFilter.Size = new System.Drawing.Size(570, 20);
@@ -2069,8 +2108,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // groupBoxSplitter
             // 
-            this.groupBoxSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxSplitter.Controls.Add(this.tbxWMVSplitter);
             this.groupBoxSplitter.Controls.Add(this.tbxAVISplitter);
             this.groupBoxSplitter.Controls.Add(this.tbxMP4Splitter);
@@ -2094,8 +2133,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxWMVSplitter
             // 
-            this.tbxWMVSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxWMVSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxWMVSplitter.Location = new System.Drawing.Point(118, 84);
             this.tbxWMVSplitter.Margin = new System.Windows.Forms.Padding(2);
             this.tbxWMVSplitter.Name = "tbxWMVSplitter";
@@ -2105,8 +2144,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxAVISplitter
             // 
-            this.tbxAVISplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxAVISplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxAVISplitter.Location = new System.Drawing.Point(118, 62);
             this.tbxAVISplitter.Margin = new System.Windows.Forms.Padding(2);
             this.tbxAVISplitter.Name = "tbxAVISplitter";
@@ -2116,8 +2155,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxMP4Splitter
             // 
-            this.tbxMP4Splitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxMP4Splitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxMP4Splitter.Location = new System.Drawing.Point(118, 39);
             this.tbxMP4Splitter.Margin = new System.Windows.Forms.Padding(2);
             this.tbxMP4Splitter.Name = "tbxMP4Splitter";
@@ -2127,8 +2166,8 @@ namespace OnlineVideos.MediaPortal1
             // 
             // tbxFLVSplitter
             // 
-            this.tbxFLVSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbxFLVSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxFLVSplitter.Location = new System.Drawing.Point(118, 16);
             this.tbxFLVSplitter.Margin = new System.Windows.Forms.Padding(2);
             this.tbxFLVSplitter.Name = "tbxFLVSplitter";
@@ -2232,34 +2271,6 @@ namespace OnlineVideos.MediaPortal1
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // label44
-            // 
-            this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(246, 61);
-            this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(57, 13);
-            this.label44.TabIndex = 68;
-            this.label44.Text = "Only every";
-            // 
-            // label45
-            // 
-            this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(367, 61);
-            this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(33, 13);
-            this.label45.TabIndex = 69;
-            this.label45.Text = "hours";
-            // 
-            // tbxUpdatePeriod
-            // 
-            this.tbxUpdatePeriod.Location = new System.Drawing.Point(309, 58);
-            this.tbxUpdatePeriod.Name = "tbxUpdatePeriod";
-            this.tbxUpdatePeriod.Size = new System.Drawing.Size(40, 20);
-            this.tbxUpdatePeriod.TabIndex = 70;
-            this.toolTip1.SetToolTip(this.tbxUpdatePeriod, "Automatic update and thumbnail deletion on startup will only run after this many " +
-                    "hours passed since the last run.");
-            this.tbxUpdatePeriod.Validating += new System.ComponentModel.CancelEventHandler(this.CheckValidNumber);
             // 
             // Configuration
             // 
@@ -2539,5 +2550,6 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.TextBox tbxUpdatePeriod;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.CheckBox chkFavFirst;
 	}
 }

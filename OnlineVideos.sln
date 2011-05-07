@@ -4,6 +4,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{28BEFB3A-C1A1-427F-B156-83157F30EA3C}"
 	ProjectSection(SolutionItems) = preProject
 		Language\OnlineVideos\en-US.xml = Language\OnlineVideos\en-US.xml
+		MPEI\extension_settings.xml = MPEI\extension_settings.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SiteUtilProjects", "SiteUtilProjects", "{6B73364F-8850-4FD8-87DF-CA29321DF24E}"
