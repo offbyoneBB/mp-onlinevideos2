@@ -23,7 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -207,6 +207,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="SitesGroup.cs" />
     <Compile Include="SiteUserSettingsDialog.cs" />
     <Compile Include="SmsT9Filter.cs" />
@@ -223,6 +224,7 @@
     <None Include="Properties\DataSources\RssLink.datasource" />
     <None Include="Properties\DataSources\SiteSettings.datasource" />
     <None Include="Properties\DataSources\SitesGroup.datasource" />
+    <None Include="Properties\VersionInfo.cs.tmpl" />
     <None Include="Resources\Add.png" />
     <None Include="Resources\Delete.png" />
     <None Include="Resources\Down.png" />
@@ -287,6 +289,9 @@
     <None Include="Resources\help.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
