@@ -24,18 +24,6 @@ using MediaPortal.Common.Utils;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("09b42e26-4a7f-46a7-b0a9-adda8a5099b0")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("0.30.0.0")]
-[assembly: AssemblyFileVersion("0.30.0.0")]
-
 #if !MP11
 [assembly: CompatibleVersion("1.1.6.27644")]
 [assembly: UsesSubsystem("MP.SkinEngine")]

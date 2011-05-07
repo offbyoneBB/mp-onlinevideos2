@@ -50,11 +50,11 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -62,6 +62,7 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <StartAction>Program</StartAction>
@@ -332,6 +333,7 @@
     <Compile Include="Newtonsoft.Json\Utilities\ThreadSafeStore.cs" />
     <Compile Include="Newtonsoft.Json\Utilities\ValidationUtils.cs" />
     <Compile Include="OnlineVideosException.cs" />
+    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="ReverseProxy.cs" />
     <Compile Include="RssToolkit\Rss\Constants.cs" />
     <Compile Include="RssToolkit\Rss\DocumentType.cs" />
@@ -467,6 +469,7 @@
     <Compile Include="WebCache.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\VersionInfo.cs.tmpl" />
     <None Include="Web References\OnlineVideosWebservice\OnlineVideos.wsdl" />
     <EmbeddedResource Include="RssToolkit\Resources\Rss20.xsd" />
   </ItemGroup>
@@ -540,5 +543,8 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
   </PropertyGroup>
 </Project>
