@@ -953,6 +953,9 @@ namespace OnlineVideos.MediaPortal1
 
             SelectedSite = null;
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
+
+            if (OnlineVideoSettings.Instance.FavoritesFirst) AddFavoritesAndDownloadsSitesToFacade();
+
             foreach (SitesGroup sitesGroup in sitesGroups)
             {
                 if (sitesGroup.Sites != null && sitesGroup.Sites.Count > 0)
@@ -984,6 +987,14 @@ namespace OnlineVideos.MediaPortal1
             }
 
             // add Favorites and Downloads Site as last two Groups (if they are available)
+            if (!OnlineVideoSettings.Instance.FavoritesFirst) AddFavoritesAndDownloadsSitesToFacade();
+            
+            CurrentState = State.groups;
+            UpdateViewState();
+        }
+
+        private void AddFavoritesAndDownloadsSitesToFacade()
+        {
             Sites.SiteUtilBase aSite;
             if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Translation.Favourites, out aSite))
             {
@@ -1001,9 +1012,6 @@ namespace OnlineVideos.MediaPortal1
                 GUI_facadeView.Add(listItem);
                 if (selectedSitesGroup != null && selectedSitesGroup.Label == listItem.Label) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
             }
-            
-            CurrentState = State.groups;
-            UpdateViewState();
         }
 
         private void DisplaySites()
