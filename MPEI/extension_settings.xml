@@ -15,6 +15,6 @@
       <setting entryname="onlinevideos" type="int" name="utilTimeout" displayname="Timeout (seconds) for webrequests" defaultvalue="15" listvalues="" displaylistvalues=""/>
       <setting entryname="onlinevideos" type="int" name="wmpbuffer" displayname="Buffer (milliseconds) for Windows Media Player" defaultvalue="5000" listvalues="" displaylistvalues=""/>
       <setting entryname="onlinevideos" type="int" name="playbuffer" displayname="Percentage to buffer before starting playback" defaultvalue="2" listvalues="" displaylistvalues=""/>
-      <setting entryname="onlinevideos" name="favoritesFirst" displayname="Put Favorites and Downloads sites first in thelist instead of last" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/>
+      <setting entryname="onlinevideos" name="favoritesFirst" displayname="Put Favorites and Downloads sites first in the list instead of last" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/>
   </settings>
 </extension_settings>
