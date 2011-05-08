@@ -2044,33 +2044,43 @@ namespace RTMP_LIB
 
         int ReadN(byte[] buffer, int offset, int size)
         {
-            // wait until data is available
-            int i = receiveTimeoutMS / 100;
-            while (tcpSocket.Available < size && i > 0)
-            {
-                i--;
-                System.Threading.Thread.Sleep(100);
-            }
-            if (tcpSocket.Available < size) return 0;
-
+            // keep reading until wanted amount has been received or timeout after nothing has been received is elapsed
             byte[] data = new byte[size];
-            int read = tcpSocket.Receive(data);
-
-            // decrypt if needed
-            if (read > 0 && Link.rc4In != null)
+            int readThisRun = 0;
+            int i = receiveTimeoutMS / 100;
+            while (readThisRun < size)
             {
-                Link.rc4In.ProcessBytes(data, 0, size, buffer, offset);
+                int read = tcpSocket.Receive(data, readThisRun, size - readThisRun, SocketFlags.None);
+
+                // decrypt if needed
+                if (read > 0)
+                {
+                    if (Link.rc4In != null)
+                    {
+                        Link.rc4In.ProcessBytes(data, readThisRun, read, buffer, offset + readThisRun);
+                    }
+                    else
+                    {
+                        Array.Copy(data, readThisRun, buffer, offset + readThisRun, read);
+                    }
+
+                    readThisRun += read;
+
+                    bytesReadTotal += read;
+
+                    if (bytesReadTotal > lastSentBytesRead + (m_nClientBW / 2)) SendBytesReceived(); // report bytes read
+
+                    i = receiveTimeoutMS / 100; // we just got some data, reset the receive timeout
+                }
+                else
+                {
+                    i--;
+                    System.Threading.Thread.Sleep(100);
+                    if (i <= 0) return readThisRun;
+                }
             }
-            else
-            {
-                Array.Copy(data, 0, buffer, offset, size);
-            }
 
-            bytesReadTotal += read;
-
-            if (bytesReadTotal > lastSentBytesRead + (m_nClientBW / 2)) SendBytesReceived(); // report bytes read
-
-            return read;
+            return readThisRun;
         }
 
         void WriteN(byte[] buffer, int offset, int size)
