@@ -107,22 +107,22 @@ namespace RTMP_LIB
                 NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(new Uri(url).Query);
 
                 Link link = new Link();
-                if (!string.IsNullOrEmpty(paramsHash["rtmpurl"])) link = Link.FromRtmpUrl(new Uri(paramsHash["rtmpurl"]));
-                if (!string.IsNullOrEmpty(paramsHash["app"])) link.app = paramsHash["app"];
-                if (!string.IsNullOrEmpty(paramsHash["tcUrl"])) link.tcUrl = paramsHash["tcUrl"];
-                if (!string.IsNullOrEmpty(paramsHash["hostname"])) link.hostname = paramsHash["hostname"];
-                if (!string.IsNullOrEmpty(paramsHash["port"])) link.port = int.Parse(paramsHash["port"]);
-                if (!string.IsNullOrEmpty(paramsHash["playpath"])) link.playpath = paramsHash["playpath"];
-                if (!string.IsNullOrEmpty(paramsHash["subscribepath"])) link.subscribepath = paramsHash["subscribepath"];
-                if (!string.IsNullOrEmpty(paramsHash["pageurl"])) link.pageUrl = paramsHash["pageurl"];
-                if (!string.IsNullOrEmpty(paramsHash["swfurl"])) link.swfUrl = paramsHash["swfurl"];
-                if (!string.IsNullOrEmpty(paramsHash["swfsize"])) link.SWFSize = int.Parse(paramsHash["swfsize"]);
-                if (!string.IsNullOrEmpty(paramsHash["swfhash"])) link.SWFHash = Link.ArrayFromHexString(paramsHash["swfhash"]);
-                if (!string.IsNullOrEmpty(paramsHash["swfVfy"])) { link.swfUrl = paramsHash["swfVfy"]; link.swfVerify = true; }
-                if (!string.IsNullOrEmpty(paramsHash["live"])) bool.TryParse(paramsHash["live"], out link.bLiveStream);
-                if (!string.IsNullOrEmpty(paramsHash["auth"])) link.auth = paramsHash["auth"];
-                if (!string.IsNullOrEmpty(paramsHash["token"])) link.token = paramsHash["token"];
-                if (!string.IsNullOrEmpty(paramsHash["conn"])) link.extras = Link.ParseAMF(paramsHash["conn"]);
+                if (paramsHash["rtmpurl"] != null) link = Link.FromRtmpUrl(new Uri(paramsHash["rtmpurl"]));
+                if (paramsHash["app"] != null) link.app = paramsHash["app"];
+                if (paramsHash["tcUrl"] != null) link.tcUrl = paramsHash["tcUrl"];
+                if (paramsHash["hostname"] != null) link.hostname = paramsHash["hostname"];
+                if (paramsHash["port"] != null) link.port = int.Parse(paramsHash["port"]);
+                if (paramsHash["playpath"] != null) link.playpath = paramsHash["playpath"];
+                if (paramsHash["subscribepath"] != null) link.subscribepath = paramsHash["subscribepath"];
+                if (paramsHash["pageurl"] != null) link.pageUrl = paramsHash["pageurl"];
+                if (paramsHash["swfurl"] != null) link.swfUrl = paramsHash["swfurl"];
+                if (paramsHash["swfsize"] != null) link.SWFSize = int.Parse(paramsHash["swfsize"]);
+                if (paramsHash["swfhash"] != null) link.SWFHash = Link.ArrayFromHexString(paramsHash["swfhash"]);
+                if (paramsHash["swfVfy"] != null) { link.swfUrl = paramsHash["swfVfy"]; link.swfVerify = true; }
+                if (paramsHash["live"] != null) bool.TryParse(paramsHash["live"], out link.bLiveStream);
+                if (paramsHash["auth"] != null) link.auth = paramsHash["auth"];
+                if (paramsHash["token"] != null) link.token = paramsHash["token"];
+                if (paramsHash["conn"] != null) link.extras = Link.ParseAMF(paramsHash["conn"]);
                 if (link.tcUrl != null && link.tcUrl.ToLower().StartsWith("rtmpe")) link.protocol = Protocol.RTMPE;
 
                 if (link.swfVerify) link.GetSwf();
