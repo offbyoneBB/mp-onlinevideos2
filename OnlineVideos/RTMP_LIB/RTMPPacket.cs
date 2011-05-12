@@ -62,6 +62,11 @@ namespace RTMP_LIB
             Logger.Log(string.Format("RTMP PACKET: packet type: 0x%02x. channel: 0x%02x. info 1: %d info 2: %d. Body size: %lu. body: 0x%02x", PacketType, m_nChannel, m_nTimeStamp, m_nInfoField2, m_nBodySize, m_body != null ? m_body[0].ToString() : "0"));
         }
 
+        public RTMPPacket ShallowCopy()
+        {
+            return (RTMPPacket)this.MemberwiseClone();
+        }
+
     }
 }
 

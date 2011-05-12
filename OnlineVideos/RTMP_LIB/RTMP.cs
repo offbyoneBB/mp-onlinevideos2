@@ -468,7 +468,7 @@ namespace RTMP_LIB
             packet.m_nBytesRead += nChunk;
 
             // keep the packet as ref for other packets on this channel
-            m_vecChannelsIn[packet.m_nChannel] = packet;
+            m_vecChannelsIn[packet.m_nChannel] = packet.ShallowCopy();
 
             if (packet.IsReady())
             {
@@ -481,8 +481,8 @@ namespace RTMP_LIB
 
                 // reset the data from the stored packet. we keep the header since we may use it later if a new packet for this channel
                 // arrives and requests to re-use some info (small packet header)
-                //m_vecChannelsIn[packet.m_nChannel].m_body = null;
-                //m_vecChannelsIn[packet.m_nChannel].m_nBytesRead = 0;
+                m_vecChannelsIn[packet.m_nChannel].m_body = null;
+                m_vecChannelsIn[packet.m_nChannel].m_nBytesRead = 0;
                 m_vecChannelsIn[packet.m_nChannel].m_hasAbsTimestamp = false; // can only be false if we reuse header
             }
 

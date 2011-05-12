@@ -194,11 +194,27 @@ namespace RTMP_LIB
 
                 uint pos = 0;
 
+                /* grab first timestamp and see if it needs fixing */
+                nTimeStamp = (uint)RTMP.ReadInt24(packet.m_body, 4);
+                nTimeStamp |= (uint)(packet.m_body[7] << 24);
+                var delta = packet.m_nTimeStamp - nTimeStamp;
+
                 while (pos + 11 < packet.m_nBodySize)
                 {
                     uint dataSize = (uint)RTMP.ReadInt24(packet.m_body, (int)pos + 1); // size without header (11) and without prevTagSize (4)
                     nTimeStamp = (uint)RTMP.ReadInt24(packet.m_body, (int)pos + 4);
                     nTimeStamp |= (uint)(packet.m_body[pos + 7] << 24);
+
+                    if (delta != 0)
+                    {
+                        nTimeStamp += delta;
+                        List<byte> newTimeStampData = new List<byte>();
+                        RTMP.EncodeInt24(newTimeStampData, (int)nTimeStamp);
+                        data[(int)pos + 4] = newTimeStampData[0];
+                        data[(int)pos + 5] = newTimeStampData[1];
+                        data[(int)pos + 6] = newTimeStampData[2];
+                        data[(int)pos + 7] = (byte)(nTimeStamp >> 24);
+                    }
 
                     if (pos + 11 + dataSize + 4 > packet.m_nBodySize)
                     {
