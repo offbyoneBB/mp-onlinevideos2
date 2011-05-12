@@ -25,6 +25,11 @@ namespace OnlineVideos.MediaPortal1
             public string CodecFile;
             public string Version;
             public bool IsInstalled;
+
+            public override string ToString()
+            {
+                return string.Format("{0} | {1} | {2}", Name, Version, CodecFile);
+            }
         }
 
         public Codec FLV_Splitter = new Codec() { FileTypes = new string[] { ".flv" } };
@@ -92,7 +97,7 @@ namespace OnlineVideos.MediaPortal1
             CheckCodec(ref WM_ASFReader);
         }
 
-        void CheckCodec(ref Codec codec)
+        public static void CheckCodec(ref Codec codec)
         {
             try
             {

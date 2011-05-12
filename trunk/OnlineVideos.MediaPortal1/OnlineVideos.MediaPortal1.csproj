@@ -107,6 +107,7 @@
     <Compile Include="Configuration\ConfigurationAdvanced.Designer.cs">
       <DependentUpon>ConfigurationAdvanced.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\ConfigurationPlayer.cs" />
     <Compile Include="Configuration\ImExportXml.cs">
       <SubType>Form</SubType>
     </Compile>

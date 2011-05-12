@@ -17,6 +17,8 @@ namespace OnlineVideos.MediaPortal1
     /// </summary>
     public partial class Configuration : Form
     {
+        ConfigurationPlayer confPlayer;
+
         public Configuration()
         {
             //
@@ -30,7 +32,8 @@ namespace OnlineVideos.MediaPortal1
         public void Configuration_Load(object sender, EventArgs e)
         {
             /** fill "Codecs" tab **/
-            SetInfosFromCodecs();
+            confPlayer = new ConfigurationPlayer();
+            tbxHttpSourceFilter.Text = PluginConfiguration.Instance.httpSourceFilterName;
             chkUseRtmpProxy.Checked = PluginConfiguration.Instance.useRtmpProxy;
 
             /** fill "General" tab **/
@@ -198,6 +201,8 @@ namespace OnlineVideos.MediaPortal1
             {
                 dr = MessageBox.Show("If you want to save your changes press Yes.", "Save Changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             }
+
+            confPlayer.Stop();
 
             if (dr == DialogResult.OK || dr == DialogResult.Yes)
             {
@@ -389,32 +394,6 @@ namespace OnlineVideos.MediaPortal1
             {
                 txtThumbLoc.Text = folderBrowserDialog1.SelectedPath;
             }
-        }
-
-
-        void SetInfosFromCodecs()
-        {
-            CodecConfiguration cc = CodecConfiguration.Instance;
-
-            chkFLVSplitterInstalled.Checked = cc.FLV_Splitter.IsInstalled;
-            tbxFLVSplitter.Text = cc.FLV_Splitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.FLV_Splitter.Name, cc.FLV_Splitter.Version, cc.FLV_Splitter.CodecFile) : "";
-
-            chkMP4SplitterInstalled.Checked = cc.MPC_HC_MP4Splitter.IsInstalled;
-            tbxMP4Splitter.Text = cc.MPC_HC_MP4Splitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.MPC_HC_MP4Splitter.Name, cc.MPC_HC_MP4Splitter.Version, cc.MPC_HC_MP4Splitter.CodecFile) : "";
-
-            if (!chkMP4SplitterInstalled.Checked)
-            {
-                chkMP4SplitterInstalled.Checked = cc.HaaliMediaSplitter.IsInstalled;
-                tbxMP4Splitter.Text = cc.HaaliMediaSplitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.HaaliMediaSplitter.Name, cc.HaaliMediaSplitter.Version, cc.HaaliMediaSplitter.CodecFile) : "";
-            }
-
-            chkWMVSplitterInstalled.Checked = cc.WM_ASFReader.IsInstalled;
-            tbxWMVSplitter.Text = cc.WM_ASFReader.IsInstalled ? string.Format("{0} | {1} | {2}", cc.WM_ASFReader.Name, cc.WM_ASFReader.Version, cc.WM_ASFReader.CodecFile) : "";
-
-            chkAVISplitterInstalled.Checked = cc.AVI_Splitter.IsInstalled;
-            tbxAVISplitter.Text = cc.AVI_Splitter.IsInstalled ? string.Format("{0} | {1} | {2}", cc.AVI_Splitter.Name, cc.AVI_Splitter.Version, cc.AVI_Splitter.CodecFile) : "";
-
-            tbxHttpSourceFilter.Text = PluginConfiguration.Instance.httpSourceFilterName;
         }
 
         private void btnAddSite_Click(object sender, EventArgs e)
@@ -836,5 +815,94 @@ namespace OnlineVideos.MediaPortal1
             }
             
         }
+
+        #region Codecs Tab events
+
+        private void btnTestFlv_Click(object sender, EventArgs e)
+        {
+            confPlayer.Stop();
+            string info = "";
+            bool succes = confPlayer.Play("http://87.106.7.69/OnlineVideosWebService/TestVideos/Test.flv", videopanel, out info);
+            tbxFLVSplitter.Text = info;
+            if (succes) chkFLVSplitterInstalled.CheckState = CheckState.Checked; else chkFLVSplitterInstalled.CheckState = CheckState.Unchecked;
+        }
+
+        private void btnTestMp4_Click(object sender, EventArgs e)
+        {
+            confPlayer.Stop();
+            string info = "";
+            bool succes = confPlayer.Play("http://87.106.7.69/OnlineVideosWebService/TestVideos/Test.mp4", videopanel, out info);
+            tbxMP4Splitter.Text = info;
+            if (succes) chkMP4SplitterInstalled.CheckState = CheckState.Checked; else chkMP4SplitterInstalled.CheckState = CheckState.Unchecked;
+        }
+
+        private void btnTestAvi_Click(object sender, EventArgs e)
+        {
+            confPlayer.Stop();
+            string info = "";
+            bool succes = confPlayer.Play("http://87.106.7.69/OnlineVideosWebService/TestVideos/Test.avi", videopanel, out info);
+            tbxAVISplitter.Text = info;
+            if (succes) chkAVISplitterInstalled.CheckState = CheckState.Checked; else chkAVISplitterInstalled.CheckState = CheckState.Unchecked;
+        }
+
+        private void btnTestWmv_Click(object sender, EventArgs e)
+        {
+            confPlayer.Stop();
+            string info = "";
+            bool succes = confPlayer.Play("http://87.106.7.69/OnlineVideosWebService/TestVideos/Test.wmv", videopanel, out info);
+            tbxWMVSplitter.Text = info;
+            if (succes) chkWMVSplitterInstalled.CheckState = CheckState.Checked; else chkWMVSplitterInstalled.CheckState = CheckState.Unchecked;
+        }
+
+        private void btnTestMov_Click(object sender, EventArgs e)
+        {
+            confPlayer.Stop();
+            string info = "";
+            bool succes = confPlayer.Play("http://87.106.7.69/OnlineVideosWebService/TestVideos/Test.mov", videopanel, out info);
+            tbxMOVSplitter.Text = info;
+            if (succes) chkMOVSplitterInstalled.CheckState = CheckState.Checked; else chkMOVSplitterInstalled.CheckState = CheckState.Unchecked;
+        }
+        
+        
+        protected override void WndProc(ref Message m)
+        {
+            switch (m.Msg)
+            {
+                case ConfigurationPlayer.WMGraphNotify:
+                    {
+                        HandleGraphEvent();
+                        break;
+                    }
+            }
+            base.WndProc(ref m);
+        }
+
+        private void HandleGraphEvent()
+        {
+            int hr = 0;
+            DirectShowLib.EventCode evCode;
+            IntPtr evParam1, evParam2;
+
+            // Make sure that we don't access the media event interface
+            // after it has already been released.
+            if (confPlayer.mediaEvents == null)
+                return;
+
+            // Process all queued events
+            while (confPlayer.mediaEvents.GetEvent(out evCode, out evParam1, out evParam2, 0) == 0)
+            {
+                // Free memory associated with callback, since we're not using it
+                hr = confPlayer.mediaEvents.FreeEventParams(evCode, evParam1, evParam2);
+
+                // If this is the end of the clip, reset to beginning
+                if (evCode == DirectShowLib.EventCode.Complete)
+                {
+                    confPlayer.Stop();
+                    break;
+                }
+            }
+        }
+
+        #endregion
     }
 }
