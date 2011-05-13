@@ -343,7 +343,7 @@ namespace OnlineVideos.MediaPortal1
             foreach (string name in OnlineVideoSettings.Instance.SiteUtilsList.Keys)
             {
                 Sites.SiteUtilBase aSite;
-                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(name, out aSite))
+                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(name, out aSite) && !(aSite is Sites.FavoriteUtil) && !(aSite is Sites.DownloadedVideoUtil))
                 {
                     string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "--" : aSite.Settings.Language;
                     BindingList<string> listForLang = null;
