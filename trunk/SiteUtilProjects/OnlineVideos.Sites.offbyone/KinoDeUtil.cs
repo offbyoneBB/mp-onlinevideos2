@@ -24,6 +24,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> Search(string query)
         {
+            nextPageAvailable = false;
             string data = GetWebDataFromPost(searchUrl, string.Format(searchPostString, query), referer: "http://www.kino.de/showroom/", allowUnsafeHeader: allowUnsafeHeaders);
 
             List<VideoInfo> results = new List<VideoInfo>();
