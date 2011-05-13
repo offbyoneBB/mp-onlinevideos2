@@ -171,6 +171,7 @@
     <Compile Include="Google\GData\YouTube\youtubeservice.cs" />
     <Compile Include="Hoster\Youtube.cs" />
     <Compile Include="Hoster\LiveVideo.cs" />
+    <Compile Include="KinoDeUtil.cs" />
     <Compile Include="MetaCafeUtil.cs" />
     <Compile Include="MiroUtil.cs" />
     <Compile Include="MsnbcUtil.cs" />
