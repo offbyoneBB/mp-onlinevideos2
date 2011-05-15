@@ -19,6 +19,7 @@ namespace OnlineVideos
         /// <summary>optional property is used by the <see cref="ImageDownloader"/> to resize the thumbnail after downloading from <see cref="ImageUrl"/> to a given aspect ratio (width/height).</summary>
         public float? ImageForcedAspectRatio { get; set; }
         public string Length { get; set; }
+        public string Airdate { get; set; }
         public string StartTime { get; set; }
         public object Other { get; set; }
         public Dictionary<string, string> PlaybackOptions;
@@ -55,7 +56,7 @@ namespace OnlineVideos
 
         public override string ToString()
         {
-            return string.Format("Title:{0}\nDesc:{1}\nVidUrl:{2}\nImgUrl:{3}\nLength:{4}\n", Title, Description, VideoUrl, ImageUrl, Length);
+            return string.Format("Title:{0}\nDesc:{1}\nVidUrl:{2}\nImgUrl:{3}\nLength:{4}\nAirdate:{5}", Title, Description, VideoUrl, ImageUrl, Length, Airdate);
         }
 
         /// <summary>
@@ -177,17 +178,16 @@ namespace OnlineVideos
                 }
             }
 
-            // Append the length with the pubdate
+            // PubDate in localized form if possible
             if (!string.IsNullOrEmpty(rssItem.PubDate))
             {
-                if (!string.IsNullOrEmpty(video.Length)) video.Length += " | ";
                 try
                 {
-                    video.Length += rssItem.PubDateParsed.ToString("g", OnlineVideoSettings.Instance.Locale);
+                    video.Airdate = rssItem.PubDateParsed.ToString("g", OnlineVideoSettings.Instance.Locale);
                 }
                 catch
                 {
-                    video.Length += rssItem.PubDate;
+                    video.Airdate = rssItem.PubDate;
                 }
             }
 

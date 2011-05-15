@@ -326,7 +326,7 @@ namespace OnlineVideos.Sites
                     }
                 }
                 video.Length = entry.Media.Duration != null ? TimeSpan.FromSeconds(int.Parse(entry.Media.Duration.Seconds)).ToString() : "";
-                video.Length += (video.Length != "" ? " | " : "") + entry.Published.ToString("g");
+                video.Airdate = entry.Published.ToString("g", OnlineVideoSettings.Instance.Locale);
                 video.Title = entry.Title.Text;
                 video.VideoUrl = entry.Media.VideoId.Value;
                 loRssItems.Add(video);

@@ -344,6 +344,7 @@ namespace OnlineVideos.Sites
             VideoInfo videoInfo = new VideoInfo();
             videoInfo.Title = FormatTitle(vi);
             videoInfo.Length = vi.Video.Duration.ToString();
+            videoInfo.Airdate = vi.Video.CopyrightYear.ToString();
             videoInfo.VideoUrl = vi.Video.Id;
             videoInfo.ImageUrl = new Uri(vi.Image.Url).GetLeftPart(UriPartial.Path);
             List<string> albums = new List<string>();

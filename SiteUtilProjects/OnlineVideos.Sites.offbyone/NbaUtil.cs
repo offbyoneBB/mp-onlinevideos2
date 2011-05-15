@@ -86,7 +86,7 @@ namespace OnlineVideos.Sites
                 vi.Description = jo["metadata"]["media"].Value<string>("excerpt");
                 vi.ImageUrl = jo["metadata"]["media"]["thumbnail"].Value<string>("url");
                 vi.Length = jo["metadata"]["video"].Value<string>("length");
-                vi.Length += " | " + OnlineVideos.Utils.UNIXTimeToDateTime(jo.Value<long>("mediaDateUts")).ToString("g");
+                vi.Airdate = OnlineVideos.Utils.UNIXTimeToDateTime(jo.Value<long>("mediaDateUts")).ToString("g", OnlineVideoSettings.Instance.Locale);
 
                 videos.Add(vi);
             }            
