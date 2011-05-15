@@ -105,7 +105,7 @@
         <item key="baseUrl"><![CDATA[http://www.sat1.de/videocenter/]]></item>
         <item key="rtmpBase"><![CDATA[rtmp://pssimsat1fs.fplive.net:1935/pssimsat1ls/]]></item>
         <item key="regExPagingToken"><![CDATA[var\sparameter\s=\s"(?<token>[^"]+)";\s*var[^=]+=\snew\sPaging\('(?<tag>[^']+)',(?<pages>[^,]+),parameter\);]]></item>
-        <item key="regExDynamicCategory"><![CDATA[:url\((?<ImageUrl>[^\)]+)\)">[^>]+>[^>]+></a><br\s*/>\s*<[^<]+<[^<]+</h6><[^>]+>(?<Title>[^<]+)</h6><[^>]+></h6></div>\s*<h1><a\shref="(?<Url>[^"]+)"\s*target=""[^>]+>(?<SubTitle>[^<]+)</a></h1>\s*<p><[^>]+>(?<Date>[^<]+)</a></p>]]></item>
+        <item key="regExDynamicCategory"><![CDATA[:url\((?<ImageUrl>[^\)]+)\)">[^>]+>[^>]+></a><br\s*/>\s*<[^<]+<[^<]+</h6><[^>]+>(?<Title>[^<]+)</h6><[^>]+></h6></div>\s*<h1><a\shref="(?<Url>[^"]+)"\s.*?>(?<SubTitle>[^<]+)</a></h1>\s*<p><[^>]+>(?<Date>[^<]+)</a></p>]]></item>
       </Configuration>
       <Categories />
     </Site>
