@@ -271,7 +271,7 @@
     <Site name="ctTV" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Videoportal des heise ctTVs</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[<li><a\shref="(?<VideoUrl>[^"]+)"><img\s*src="(?<ImageUrl>[^"]+)"\swidth="([^"]+)?"\sheight="([^"]+)?"\salt="([^"]+)?"\stitle="([^"]+)?"\stitle="(?<Title>[^"]+)"\sclass="titelbild"]]></item>
+        <item key="videoListRegEx"><![CDATA[<li><a\shref="(?<VideoUrl>[^"]+)"[^>]*><img\s*src="(?<ImageUrl>[^"]+)".*?title="([^"]+)?"\stitle="(?<Title>[^"]+)"\sclass="titelbild"]]></item>
         <item key="playlistUrlRegEx"><![CDATA[var\sflashvars\s=\s{\s*sequenz:\s(?<url>\d+)]]></item>
         <item key="playlistUrlFormatString"><![CDATA[http://www.heise.de/fastbin/mmcms-frontend?sequenz={0}]]></item>
         <item key="fileUrlRegEx"><![CDATA[<stream>\s*<src>(?<m0>[^<]+)</src>]]></item>
