@@ -33,8 +33,16 @@ namespace OnlineVideos.MediaPortal1
             DirectShowUtil.ReleaseComObject(vmr9Renderer, 2000);
 
             // add the audio renderer
+#if !MP11
             IBaseFilter audioRenderer = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, MPSettings.Instance.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device"), false);
             DirectShowUtil.ReleaseComObject(audioRenderer, 2000);
+#else
+            using (Settings settings = new MPSettings())
+            {
+                IBaseFilter audioRenderer = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, settings.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device"), false);
+                DirectShowUtil.ReleaseComObject(audioRenderer, 2000);
+            }
+#endif
 
             // add the source filter
             string sourceFilterName = (uri.Scheme == "mms" || fileName.ToLower().Contains(".asf") || fileName.ToLower().Contains(".wmv")) ? "WM ASF Reader" : uri.Scheme == "http" ? PluginConfiguration.Instance.httpSourceFilterName : string.Empty;
