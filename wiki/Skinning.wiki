@@ -59,15 +59,17 @@ The State is one of the three: {{{Broken, Reported, Working}}}. In the default s
   * `#OnlineVideos.owner` - Creator of the current selected item (localized label property: {{{#OnlineVideos.Translation.Creator.Label}}})
 
  * OnlineVideos Window (4755) only
+  * `#OnlineVideos.selectedSite` - name of the Site currently selected (e.g. "!GameTrailers") that can be used for conditional visibility
+  * `#OnlineVideos.selectedSiteUtil` - name of the Util used by the currently selected Site (e.g. "!GenericSite") that can be used for conditional visibility
   * `#OnlineVideos.filter` - Current SMS T9 Filter
   * `#OnlineVideos.state` - Current View (values: groups, sites, categories, videos, details)
+  * `#OnlineVideos.length` - runtime of selected item if `#OnlineVideos.state` = videos, (localized label property: {{{#OnlineVideos.Translation.Runtime.Label}}})
+  * `#OnlineVideos.aired` - airdate of selected item if `#OnlineVideos.state` = videos, (localized label property: {{{#OnlineVideos.Translation.Airdate.Label}}})
   * `#selecteditem2`
    * groups view: number of sites in that group
    * sites view: language of the selected Site (localized label id for "Language": 248)
    * categories view: number of videos in that category (if known)
-   * videos view: runtime and airdate (if available) of the current selected item (localized label property: {{{#OnlineVideos.Translation.Runtime.Label}}})
-  * `#OnlineVideos.selectedSite` - name of the Site currently selected (e.g. "!GameTrailers") that can be used for conditional visibility
-  * `#OnlineVideos.selectedSiteUtil` - name of the Util used by the currently selected Site (e.g. "!GenericSite") that can be used for conditional visibility
+   * videos view: runtime or airdate (if available) of the current selected item
 
  * Facade (both Windows)
   * `#itemcount` - total number of items 
