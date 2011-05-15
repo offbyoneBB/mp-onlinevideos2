@@ -49,19 +49,22 @@ This screen is only available on sites that have multiple choices for a video (c
 
 ----
 = Configuration =
-The configuration form for the OnlineVideos plugin has three tabs. 
+The configuration form for the OnlineVideos plugin has four tabs. 
 ==General==
  * displayed name of the plugin in MediaPortal
  * pin used for protection of sites with adult content
  * folder where downloaded videos should be saved
  * folder where thumbnails are saved
  * timeout for cached data from the internet
+==Groups==
+ * classify your sites into groups that will be shown as top level view when entering OnlineVideos
+ * turn automatic grouping by language on/off
 ==Sites==
  * change the order of sites
- * delete, disable, create and import sites
+ * delete, create and import or publish/update sites
  * change the name and description of a site
  * edit settings that the util of that site exposes (e.g. quality for videos on YouTube)
- * add and delete categories, groups and streams (lower part)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png"/>
+ * add and delete categories and streams (lower part)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png"/>
  
 === Howto for adding live-streams: ===
  * Create a new site (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/Add.png"/> at sites) or select the site where you want to add the live streams to.
@@ -73,6 +76,6 @@ The configuration form for the OnlineVideos plugin has three tabs.
  * Save, Start Mediaportal and enjoy.
  
 ==Codecs== 
-This tab ist currently only an informational page, that can help fighting playback issues. Each codec should have a reference to a file. If you are missing some, you won't be able to play videos of that type.
+On the Codec tab, you can test your system for playback of different video types. If playback succeeds here, it will tell you what filter is used to split the file into audio and video and you should have no problems playing files of that type in MediaPortal.
 
 ----
