@@ -233,6 +233,8 @@ namespace OnlineVideos.MediaPortal1
         {
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", " "); GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.length", " "); GUIPropertyManager.SetProperty("#OnlineVideos.length", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.aired", " "); GUIPropertyManager.SetProperty("#OnlineVideos.aired", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", " "); GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
@@ -1587,7 +1589,7 @@ namespace OnlineVideos.MediaPortal1
 
                 OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(videoInfo.Title);
                 listItem.ItemId = GUI_facadeView.Count;
-                listItem.Label2 = VideoInfo.GetDuration(videoInfo.Length);
+                listItem.Label2 = !string.IsNullOrEmpty(videoInfo.Length) ? VideoInfo.GetDuration(videoInfo.Length) : videoInfo.Airdate;
                 listItem.Item = videoInfo;
                 listItem.IconImage = "defaultVideo.png";
                 listItem.IconImageBig = "defaultVideoBig.png";
@@ -1695,6 +1697,8 @@ namespace OnlineVideos.MediaPortal1
             else
             {
                 GUIPropertyManager.SetProperty("#OnlineVideos.desc", ovItem != null ? ovItem.Description : string.Empty);
+                GUIPropertyManager.SetProperty("#OnlineVideos.length", ovItem != null && ovItem.Item is VideoInfo ? VideoInfo.GetDuration((ovItem.Item as VideoInfo).Length) : string.Empty);
+                GUIPropertyManager.SetProperty("#OnlineVideos.aired", ovItem != null && ovItem.Item is VideoInfo ? (ovItem.Item as VideoInfo).Airdate : string.Empty);
             }
         }
 

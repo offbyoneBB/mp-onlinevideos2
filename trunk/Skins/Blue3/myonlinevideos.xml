@@ -155,7 +155,19 @@
       <font>font12</font>
       <label>#OnlineVideos.Translation.Runtime.Label:</label>
       <textcolor>ffa9d0f7</textcolor>
-      <visible>string.equals(#OnlineVideos.state, videos)+control.hastext(502)</visible>
+      <visible>string.equals(#OnlineVideos.state, videos)+control.hastext(504)</visible>
+    </control>    
+    <control>
+      <description>length of video</description>
+      <type>label</type>
+      <id>504</id>
+      <posX>250</posX>
+      <posY>435</posY>
+      <width>150</width>
+      <font>font12</font>
+      <label>#OnlineVideos.length</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>string.equals(#OnlineVideos.state, videos)</visible>
     </control>    
     <control>
       <description>Language Label</description>
@@ -194,16 +206,40 @@
       <visible>string.equals(#OnlineVideos.state, groups)+control.hastext(502)</visible>
     </control>    
     <control>
-      <description>language of site | number of sites in group | number of videos in category | length of video</description>
+      <description>language of site | number of sites in group | number of videos in category</description>
       <type>label</type>
       <id>502</id>
-      <posX>290</posX>
+      <posX>250</posX>
       <posY>435</posY>
-      <width>370</width>
+      <width>150</width>
       <font>font12</font>
       <label>#selecteditem2</label>
       <textcolor>ffa9d0f7</textcolor>
-      <visible>!string.equals(#OnlineVideos.state, details)</visible>
+      <visible>!string.equals(#OnlineVideos.state, details) + !string.equals(#OnlineVideos.state, videos)</visible>
+    </control>
+    <control>
+      <description>Airdate Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>350</posX>
+      <posY>435</posY>
+      <width>150</width>
+      <font>font12</font>
+      <label>#OnlineVideos.Translation.Airdate.Label:</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>string.equals(#OnlineVideos.state, videos)+control.hastext(503)</visible>
+    </control>    
+    <control>
+      <description>airdate of video</description>
+      <type>label</type>
+      <id>503</id>
+      <posX>450</posX>
+      <posY>435</posY>
+      <width>150</width>
+      <font>font12</font>
+      <label>#OnlineVideos.aired</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>string.equals(#OnlineVideos.state, videos)</visible>
     </control>
     <control>
       <description>Description</description>

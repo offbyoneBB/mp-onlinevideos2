@@ -250,7 +250,9 @@ namespace OnlineVideos.Sites
                 VideoInfo videoInfo = new VideoInfo();
                 videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                 videoInfo.VideoUrl = "http://www.ardmediathek.de" + m.Groups["Url"].Value;
-                videoInfo.Length = m.Groups["Duration"].Value;
+                string[] duration = m.Groups["Duration"].Value.Split('·');
+                videoInfo.Length = duration[1].Replace("min", "").Trim();
+                videoInfo.Airdate = duration[0].Trim();
                 videoInfo.ImageUrl = "http://www.ardmediathek.de" + m.Groups["ImageUrl"].Value;
                 listOfLinks.Add(videoInfo);
                 m = m.NextMatch();

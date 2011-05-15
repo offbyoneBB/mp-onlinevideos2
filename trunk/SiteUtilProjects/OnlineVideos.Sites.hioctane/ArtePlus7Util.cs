@@ -9,10 +9,11 @@ namespace OnlineVideos.Sites
     public class ArtePlus7Util : SiteUtilBase
     {
         protected string baseUrl = "http://videos.arte.tv";
-        protected string videoListRegEx = @"<a\s+href=""(?<VideoUrl>[^""]+)""><img(?:(?!src).)*src=""(?<ImageUrl>[^""]+)""\s*/></a>\s*
+        protected string videoListRegEx = @"<div\s+class=""duration_thumbnail"">(?<Duration>[^<]*)</div>\s*
+<a\s+href=""(?<VideoUrl>[^""]+)""><img(?:(?!src).)*src=""(?<ImageUrl>[^""]+)""\s*/></a>\s*
 (<div[^>]*>\s*<p\s+class=""teaserText"">(?<Description>[^<]+)</p>\s*</div>)?
 (?:(?!<h2>).)*<h2><a[^>]*>(?<Title>[^<]*)?</a></h2>\s*
-(?:(?!<p>).)*<p>(?<Duration>[^<]+)</p>";
+(?:(?!<p>).)*<p>(?<Airdate>[^<]+)</p>";
 
         protected Regex regEx_VideoList;
 
@@ -177,13 +178,14 @@ namespace OnlineVideos.Sites
             while (m.Success)
             {
                 VideoInfo videoInfo = new VideoInfo();
-                videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+                videoInfo.Title = m.Groups["Title"].Value;
                 videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                 if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
                 videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;                
                 if (!string.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
-                videoInfo.Length = Translation.Airdate + ": " + m.Groups["Duration"].Value;
-                videoInfo.Description = HttpUtility.HtmlDecode(m.Groups["Description"].Value);
+                videoInfo.Length = m.Groups["Duration"].Value;
+                videoInfo.Airdate = m.Groups["Airdate"].Value;
+                videoInfo.Description = m.Groups["Description"].Value;
                 videos.Add(videoInfo);
                 m = m.NextMatch();
             }

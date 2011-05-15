@@ -80,12 +80,13 @@ namespace OnlineVideos.MediaPortal1
             string thumb = string.IsNullOrEmpty(foVideo.ImageUrl) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.ImageUrl);
             string url = string.IsNullOrEmpty(foVideo.VideoUrl) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.VideoUrl);
             string length = string.IsNullOrEmpty(foVideo.Length) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Length);
+            string airdate = string.IsNullOrEmpty(foVideo.Airdate) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Airdate);
             string other = foVideo.Other == null ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Other.ToString());
 
             string lsSQL =
                 string.Format(
                     "insert into FAVORITE_VIDEOS(VDO_NM,VDO_URL,VDO_DESC,VDO_TAGS,VDO_LENGTH,VDO_OTHER_NFO,VDO_IMG_URL,VDO_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
-                    title, url, desc, "", length, other, thumb, siteName);
+                    title, url, desc, airdate, length, other, thumb, siteName);
             m_db.Execute(lsSQL);
             if (m_db.ChangedRows() > 0)
             {
@@ -139,6 +140,7 @@ namespace OnlineVideos.MediaPortal1
                 video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
                 video.ImageUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
                 video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
+                video.Airdate = DatabaseUtility.Get(loResultSet, iRow, "VDO_TAGS");
                 video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");
                 video.VideoUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_URL");
                 video.Other = DatabaseUtility.Get(loResultSet, iRow, "VDO_OTHER_NFO");

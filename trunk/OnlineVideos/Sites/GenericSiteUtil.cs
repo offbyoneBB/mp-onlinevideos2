@@ -534,11 +534,9 @@ namespace OnlineVideos.Sites
                         videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
                         if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.ImageUrl = string.Format(videoThumbFormatString, videoInfo.ImageUrl);
                         if (!string.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
-                        videoInfo.Length = Regex.Replace(m.Groups["Duration"].Value, "(<[^>]+>)", "");
+                        videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
+                        videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
                         videoInfo.Description = m.Groups["Description"].Value;
-                        string Airdate = m.Groups["Airdate"].Value;
-                        if (!String.IsNullOrEmpty(Airdate))
-                            videoInfo.Length = videoInfo.Length + '|' + Translation.Airdate + ": " + Airdate;
                         videoList.Add(videoInfo);
                         m = m.NextMatch();
                     }
@@ -561,14 +559,9 @@ namespace OnlineVideos.Sites
                             if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
                             if (!string.IsNullOrEmpty(videoThumbXml)) videoInfo.ImageUrl = videoItems[i].SelectSingleNode(videoThumbXml).InnerText;
                             if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.ImageUrl = string.Format(videoThumbFormatString, videoInfo.ImageUrl);
-                            if (!string.IsNullOrEmpty(videoDurationXml)) videoInfo.Length = Regex.Replace(videoItems[i].SelectSingleNode(videoDurationXml).InnerText, "(<[^>]+>)", "");
+                            if (!string.IsNullOrEmpty(videoDurationXml)) videoInfo.Length = Utils.PlainTextFromHtml(videoItems[i].SelectSingleNode(videoDurationXml).InnerText);
+                            if (!string.IsNullOrEmpty(videoAirDateXml)) videoInfo.Airdate = Utils.PlainTextFromHtml(videoItems[i].SelectSingleNode(videoAirDateXml).InnerText);
                             if (!string.IsNullOrEmpty(videoDescriptionXml)) videoInfo.Description = videoItems[i].SelectSingleNode(videoDescriptionXml).InnerText;
-                            if (!string.IsNullOrEmpty(videoAirDateXml))
-                            {
-                                string Airdate = videoItems[i].SelectSingleNode(videoAirDateXml).InnerText;
-                                if (!String.IsNullOrEmpty(Airdate))
-                                    videoInfo.Length = videoInfo.Length + '|' + Translation.Airdate + ": " + Airdate;
-                            }
                             videoList.Add(videoInfo);
                         }
                     }
