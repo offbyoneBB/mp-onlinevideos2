@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
@@ -13,50 +14,72 @@ namespace OnlineVideos
        
 		static SiteUtilFactory()
         {
-            List<Assembly> assemblies = new List<Assembly>();
-            Assembly onlineVideosMainDll = Assembly.GetExecutingAssembly();
-            assemblies.Add(onlineVideosMainDll);
-            onlineVideosMainDllName = onlineVideosMainDll.GetName().Name;            
-            if (Directory.Exists(OnlineVideoSettings.Instance.DllsDir))
+            // as we might be loaded as plugin using LoadFrom, we need to handle assembly resolve event to tell the Resolver that OnlineVideos.dll is already in the domain
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            try
             {
-                // loading assembly as raw bytes, so it can be overwritten while app is still running, but cannot be debugged (running Configuration also needs to be loaded normally)
-                bool loadAsRawBytes = AppDomain.CurrentDomain.FriendlyName != "Configuration.exe";
+                List<Assembly> assemblies = new List<Assembly>();
+                Assembly onlineVideosMainDll = Assembly.GetExecutingAssembly();
+                assemblies.Add(onlineVideosMainDll);
+                onlineVideosMainDllName = onlineVideosMainDll.GetName().Name;
+                if (Directory.Exists(OnlineVideoSettings.Instance.DllsDir))
+                {
+                    // loading assembly as raw bytes, so it can be overwritten while app is still running, but cannot be debugged (running Configuration also needs to be loaded normally)
+                    bool loadAsRawBytes = AppDomain.CurrentDomain.FriendlyName != "Configuration.exe";
 #if DEBUG
-                if (System.Diagnostics.Debugger.IsAttached) loadAsRawBytes = false;
+                    if (System.Diagnostics.Debugger.IsAttached) loadAsRawBytes = false;
 #endif
 
-                string[] dllFilesToCheck = Directory.GetFiles(OnlineVideoSettings.Instance.DllsDir, "OnlineVideos.Sites.*.dll");                
-                foreach (string aDll in dllFilesToCheck)
-                {
-                    if (loadAsRawBytes)
-                        assemblies.Add(AppDomain.CurrentDomain.Load(File.ReadAllBytes(aDll)));
-                    else
-                        assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(aDll)));                    
-                }
-            }
-            foreach (Assembly assembly in assemblies)
-            {
-                Log.Debug("Looking for SiteUtils in Assembly: {0}", assembly.GetName().Name);
-                Type[] typeArray = assembly.GetExportedTypes();
-                foreach (Type type in typeArray)
-                {
-                    if (type.BaseType != null && type.IsSubclassOf(typeof(SiteUtilBase)) && !type.IsAbstract)
+                    string[] dllFilesToCheck = Directory.GetFiles(OnlineVideoSettings.Instance.DllsDir, "OnlineVideos.Sites.*.dll");
+                    foreach (string aDll in dllFilesToCheck)
                     {
-                        string shortName = type.Name;
-                        if (shortName.EndsWith("Util")) shortName = shortName.Substring(0, shortName.Length - 4);
-
-                        if (utils.ContainsKey(shortName))
-                        {
-                            Log.Error(string.Format("Unable to add util {0} because its short name has already been added.", type.Name));
-                        }
+                        if (loadAsRawBytes)
+                            assemblies.Add(AppDomain.CurrentDomain.Load(File.ReadAllBytes(aDll)));
                         else
+                            assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(aDll)));
+                    }
+                }
+                foreach (Assembly assembly in assemblies)
+                {
+                    Log.Debug("Looking for SiteUtils in Assembly: {0}", assembly.GetName().Name);
+                    Type[] typeArray = assembly.GetExportedTypes();
+                    foreach (Type type in typeArray)
+                    {
+                        if (type.BaseType != null && type.IsSubclassOf(typeof(SiteUtilBase)) && !type.IsAbstract)
                         {
-                            utils.Add(shortName, type);
+                            string shortName = type.Name;
+                            if (shortName.EndsWith("Util")) shortName = shortName.Substring(0, shortName.Length - 4);
+
+                            if (utils.ContainsKey(shortName))
+                            {
+                                Log.Error(string.Format("Unable to add util {0} because its short name has already been added.", type.Name));
+                            }
+                            else
+                            {
+                                utils.Add(shortName, type);
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Warn(ex.ToString());
+            }
+            finally
+            {
+                // no need to handle any further resolve events
+                AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
+            }
 		}
+
+        static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            // this should only be called to resolve OnlineVideos.dll -> return it regardless of the version, only the name "OnlineVideos"
+            AssemblyName an = new AssemblyName(args.Name);
+            var asm = (sender as AppDomain).GetAssemblies().FirstOrDefault(a => a.GetName().Name == an.Name);
+            return asm;
+        }
 
         public static bool UtilExists(string shortName)
         {
