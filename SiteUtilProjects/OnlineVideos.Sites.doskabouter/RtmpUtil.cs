@@ -82,9 +82,9 @@ namespace OnlineVideos.Sites
 
         private void AddValue(string name, string configValue, string urlValue, StringBuilder sb)
         {
-            if (!String.IsNullOrEmpty(urlValue)) sb.Append("&" + name + "=" + HttpUtility.UrlEncode(urlValue));
+            if (urlValue != null) sb.Append("&" + name + "=" + HttpUtility.UrlEncode(urlValue));
             else
-                if (!String.IsNullOrEmpty(configValue)) sb.Append("&" + name + "=" + HttpUtility.UrlEncode(configValue));
+                if (configValue != null) sb.Append("&" + name + "=" + HttpUtility.UrlEncode(configValue));
         }
     }
 }
