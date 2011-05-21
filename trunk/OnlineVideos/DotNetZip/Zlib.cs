@@ -399,7 +399,7 @@ namespace Ionic.Zlib
     internal sealed class Adler
     {
         // largest prime smaller than 65536
-        private static readonly int BASE = 65521;
+        private static readonly uint BASE = 65521;
         // NMAX is the largest n such that 255n(n+1)/2 + (n+1)(BASE-1) <= 2^32-1
         private static readonly int NMAX = 5552;
 
@@ -408,8 +408,8 @@ namespace Ionic.Zlib
             if (buf == null)
                 return 1;
 
-            int s1 = (int) (adler & 0xffff);
-            int s2 = (int) ((adler >> 16) & 0xffff);
+            uint s1 = (uint)(adler & 0xffff);
+            uint s2 = (uint)((adler >> 16) & 0xffff);
 
             while (len > 0)
             {
