@@ -443,7 +443,12 @@ namespace Ionic.Zlib
                 throw new ZlibException("Cannot Read after Writing.");
 
             if (count == 0) return 0;
-            if (nomoreinput && _wantCompress) return 0;  // workitem 8557
+            // workitem 10562
+            // this quits too early if the input buffer has been consumed but 
+            // there's still output which hasn't been created yet (e.g. block
+            // data for tables / tree, or the trailing adler32 data). we
+            // need to wait for a Z_STREAM_END from Deflate instead.
+            //if (nomoreinput && _wantCompress) return 0;  // workitem 8557
             if (buffer == null) throw new ArgumentNullException("buffer");
             if (count < 0) throw new ArgumentOutOfRangeException("count");
             if (offset < buffer.GetLowerBound(0)) throw new ArgumentOutOfRangeException("offset");
@@ -473,6 +478,10 @@ namespace Ionic.Zlib
                         nomoreinput = true;
 
                 }
+                // workitem 10562
+                // if we've consumed all the input then we need to generate any
+                // remaining block data and checksums and put them in the pending array
+                if (nomoreinput) _flushMode = FlushType.Finish;
                 // we have data in InputBuffer; now compress or decompress as appropriate
                 rc = (_wantCompress)
                     ? _z.Deflate(_flushMode)
@@ -485,36 +494,47 @@ namespace Ionic.Zlib
                     throw new ZlibException(String.Format("{0}flating:  rc={1}  msg={2}", (_wantCompress ? "de" : "in"), rc, _z.Message));
 
                 if ((nomoreinput || rc == ZlibConstants.Z_STREAM_END) && (_z.AvailableBytesOut == count))
-                    break; // nothing more to read
+                {
+                    // workitem 10562
+                    // we've genuinely reached the end of the output stream now,
+                    // including any block data and adler32 which appears after
+                    // the compressed input data. we don't have any more bytes
+                    // to return so we can stop processing
+                    return 0; // nothing more to read
+                };
             }
             //while (_z.AvailableBytesOut == count && rc == ZlibConstants.Z_OK);
-            while (_z.AvailableBytesOut > 0 && !nomoreinput && rc == ZlibConstants.Z_OK);
+            //while (_z.AvailableBytesOut > 0 && !nomoreinput && rc == ZlibConstants.Z_OK);
+            while (_z.AvailableBytesOut > 0 && rc == ZlibConstants.Z_OK);
 
 
-            // workitem 8557
-            // is there more room in output? 
-            if (_z.AvailableBytesOut > 0)
-            {
-                if (rc == ZlibConstants.Z_OK && _z.AvailableBytesIn == 0)
-                {
-                    // deferred
-                }
-
-                // are we completely done reading?
-                if (nomoreinput)
-                {
-                    // and in compression?
-                    if (_wantCompress)
-                    {
-                        // no more input data available; therefore we flush to
-                        // try to complete the read
-                        rc = _z.Deflate(FlushType.Finish);
-
-                        if (rc != ZlibConstants.Z_OK && rc != ZlibConstants.Z_STREAM_END)
-                            throw new ZlibException(String.Format("Deflating:  rc={0}  msg={1}", rc, _z.Message));
-                    }
-                }
-            }
+            // workitem 10562
+            // the following is no longer required as we now call _z.Deflate
+            // in the main loop above instead
+            //// workitem 8557
+            //// is there more room in output? 
+            //if (_z.AvailableBytesOut > 0)
+            //{
+            //    if (rc == ZlibConstants.Z_OK && _z.AvailableBytesIn == 0)
+            //    {
+            //        // deferred
+            //    }
+            //
+            //    // are we completely done reading?
+            //    if (nomoreinput)
+            //    {
+            //        // and in compression?
+            //        if (_wantCompress)
+            //        {
+            //            // no more input data available; therefore we flush to
+            //            // try to complete the read
+            //            rc = _z.Deflate(FlushType.Finish);
+            //
+            //            if (rc != ZlibConstants.Z_OK && rc != ZlibConstants.Z_STREAM_END)
+            //                throw new ZlibException(String.Format("Deflating:  rc={0}  msg={1}", rc, _z.Message));
+            //        }
+            //    }
+            //}
 
 
             rc = (count - _z.AvailableBytesOut);
