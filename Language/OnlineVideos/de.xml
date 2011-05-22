@@ -77,6 +77,7 @@
   <string Field="Others">Sonstige</string>
   <string Field="PlayAll">Alle abspielen</string>
   <string Field="PlayWith">Abspielen mit ...</string>
+  <string Field="PleaseEnterDescription">Bitte kurze Beschreibung eingeben!</string>
   <string Field="PlotOutline">Handlung</string>
   <string Field="PreviousPage">Vorherige Seite</string>
   <string Field="PerformAutomaticUpdate">Automatische Aktualisierung ausführen?</string>
@@ -84,6 +85,7 @@
   <string Field="RemovingFromFavorites">beim Entfernen von den Favoriten</string>
   <string Field="Refresh">Ansicht aktualisieren</string>
   <string Field="RelatedVideos">Ähnliche Videos</string>
+  <string Field="ReportBroken">Als fehlerhaft melden</string>
   <string Field="Reported">Gemeldet</string>
   <string Field="Reports">Meldungen</string>
   <string Field="Runtime">Laufzeit</string>

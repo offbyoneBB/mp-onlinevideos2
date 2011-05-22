@@ -110,6 +110,7 @@ namespace OnlineVideos
         // P
         public static string PlayAll = "Play all";
         public static string PlayWith = "Play with ...";
+        public static string PleaseEnterDescription = "Please give a short description.";
         public static string PlotOutline = "Plot outline";
         public static string PreviousPage = "Previous page";
         public static string PerformAutomaticUpdate = "Perform automatic update?";
@@ -119,6 +120,7 @@ namespace OnlineVideos
         public static string RemovingFromFavorites = "removing from favorites";
         public static string Refresh = "Refresh";
         public static string RelatedVideos = "Related Videos";
+        public static string ReportBroken = "Report Broken";
         public static string Reported = "Reported";
         public static string Reports = "Reports";
         public static string Runtime = "Runtime";
