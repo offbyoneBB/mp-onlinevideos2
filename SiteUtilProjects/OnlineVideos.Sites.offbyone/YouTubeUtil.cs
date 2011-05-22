@@ -274,10 +274,12 @@ namespace OnlineVideos.Sites
 
             if (localize)
             {
-                if (query.BaseAddress.StartsWith(YouTubeQuery.StandardFeeds))
+                string myAddress = query.BaseAddress.Substring(query.BaseAddress.IndexOf("//")+2);
+                string ytAddress = YouTubeQuery.StandardFeeds.Substring(YouTubeQuery.StandardFeeds.IndexOf("//")+2);
+                if (myAddress.StartsWith(ytAddress))
                 {
                     // standartfeeds don't honor the LR parameter and have their own way of country specific query
-                    string postStandartFeedUriPart = query.BaseAddress.Substring(YouTubeQuery.StandardFeeds.Length);
+                    string postStandartFeedUriPart = myAddress.Substring(ytAddress.Length);
                     if (postStandartFeedUriPart.IndexOf("/") != 2)
                     {
                         // try to add a country from the StandartFeedCountry enumeration
