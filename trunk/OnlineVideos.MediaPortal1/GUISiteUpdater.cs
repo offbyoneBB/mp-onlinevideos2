@@ -42,6 +42,8 @@ namespace OnlineVideos.MediaPortal1
         Version versionDll = new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version;
         Version versionOnline = null;
         DateTime lastOnlineVersionRetrieved = DateTime.MinValue;
+        /// <summary>remember what site is selected while showing reports, so when going back we can select that site again</summary>
+        string selectedSite;
 
         public override int GetID
         {
@@ -136,17 +138,19 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.TVTag = site;
                     loListItem.Label2 = site.Language;
                     loListItem.Label3 = site.LastUpdated.ToString("g", OnlineVideoSettings.Instance.Locale);
-                    string image = GUIOnlineVideos.GetImageForSite(site.Name, "Icon");
+                    string image = GUIOnlineVideos.GetImageForSite(site.Name, "", "Icon");
                     if (!string.IsNullOrEmpty(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
                     loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
                     loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
                     loListItem.IsPlayed = GetLocalSite(site.Name) != -1;
                     GUI_infoList.Add(loListItem);
-                    if (selectedItem != null && selectedItem.Label == loListItem.Label) GUI_infoList.SelectedListItemIndex = GUI_infoList.Count -1;
+                    if ((selectedItem != null && selectedItem.Label == loListItem.Label) || selectedSite == loListItem.Label) GUI_infoList.SelectedListItemIndex = GUI_infoList.Count - 1;
                 }
             }
 
             if (GUI_infoList.Count > 0) GUIControl.SelectItemControl(GetID, GUI_infoList.GetID, GUI_infoList.SelectedListItemIndex);
+
+            selectedSite = null;
 
             //set object count and type labels
             GUIPropertyManager.SetProperty("#itemcount", GUI_infoList.Count.ToString());
@@ -266,14 +270,14 @@ namespace OnlineVideos.MediaPortal1
             {
                 dlgSel.Reset();
                 dlgSel.SetHeading(Translation.Actions);
-
+                
                 if (localSiteIndex == -1)
                 {
-                    dlgSel.Add(Translation.AddToMySites);
+                    if (site.State != OnlineVideosWebservice.SiteState.Broken) dlgSel.Add(Translation.AddToMySites);
                 }
                 else
                 {
-                    if ((site.LastUpdated - OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].LastUpdated).TotalMinutes > 2)
+                    if ((site.LastUpdated - OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].LastUpdated).TotalMinutes > 2 && site.State != OnlineVideosWebservice.SiteState.Broken)
                     {
                         dlgSel.Add(Translation.UpdateMySite);
                         dlgSel.Add(Translation.UpdateMySiteSkipCategories);                        
@@ -281,6 +285,7 @@ namespace OnlineVideos.MediaPortal1
                     dlgSel.Add(Translation.RemoveFromMySites);
                 }
                 dlgSel.Add(Translation.ShowReports);
+                if (site.State != OnlineVideosWebservice.SiteState.Broken) dlgSel.Add(Translation.ReportBroken);
             }
             dlgSel.DoModal(GUIWindowManager.ActiveWindow);
             if (dlgSel.SelectedId == -1) return; // ESC used, nothing selected
@@ -387,6 +392,7 @@ namespace OnlineVideos.MediaPortal1
                             }
                             else
                             {
+                                selectedSite = site.Name;
                                 GUIControl.ClearControl(GetID, GUI_infoList.GetID);
 
                                 Array.Sort(reports, new Comparison<OnlineVideosWebservice.Report>(delegate(OnlineVideosWebservice.Report a, OnlineVideosWebservice.Report b)
@@ -410,6 +416,48 @@ namespace OnlineVideos.MediaPortal1
                             }
                         }
                     }, Translation.GettingReports, true);
+            }
+            else if (dlgSel.SelectedLabelText == Translation.ReportBroken)
+            {
+                if (CheckOnlineVideosVersion())
+                {
+                    string userReason = "";
+                    if (GUIOnlineVideos.GetUserInputString(ref userReason, false))
+                    {
+                        if (userReason.Length < 15)
+                        {
+                            GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                            if (dlg != null)
+                            {
+                                dlg.Reset();
+                                dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+                                dlg.SetLine(1, Translation.PleaseEnterDescription);
+                                dlg.DoModal(GUIWindowManager.ActiveWindow);
+                            }
+                        }
+                        else
+                        {
+                            OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+                            string message = "";
+                            bool success = ws.SubmitReport(site.Name, userReason, OnlineVideosWebservice.ReportType.Broken, out message);
+                            GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                            if (dlg != null)
+                            {
+                                dlg.Reset();
+                                dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+                                dlg.SetLine(1, success ? Translation.Done : Translation.Error);
+                                dlg.SetLine(2, message);
+                                dlg.DoModal(GUIWindowManager.ActiveWindow);
+                            }
+                            if (success)
+                            {
+                                // reload onlinesites
+                                lastOverviewsRetrieved = DateTime.MinValue;
+                                RefreshDisplayedOnlineSites();
+                            }
+                        }
+                    }
+                }
             }
         }
 

@@ -105,6 +105,7 @@
   <!-- P -->
   <string Field="PlayAll">Play all</string>
   <string Field="PlayWith">Play with ...</string>
+  <string Field="PleaseEnterDescription">Please give a short description.</string>
   <string Field="PlotOutline">Plot outline</string>
   <string Field="PreviousPage">Previous page</string>
   <string Field="PerformAutomaticUpdate">Perform automatic update?</string>
@@ -114,6 +115,7 @@
   <string Field="RemovingFromFavorites">removing from favorites</string>
   <string Field="Refresh">Refresh</string>
   <string Field="RelatedVideos">Related Videos</string>
+  <string Field="ReportBroken">Report Broken</string>
   <string Field="Reported">Reported</string>
   <string Field="Reports">Reports</string>
   <string Field="Runtime">Runtime</string>
