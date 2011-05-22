@@ -1,22 +1,24 @@
 #summary Overall description of the OnlineVideos plugin for MediaPortal.
 = Table of Contents =
-<wiki:toc max_depth="2" />
+<wiki:toc max_depth="3" />
 ----
 = Introduction =
 This plugin integrates websites that host videos or stream live tv into <a href="http://www.team-mediaportal.com/">MediaPortal</a>.
 Examples are <a href="http://www.youtube.com/">YouTube</a> and <a href="http://www.wwitv.com/">wwitv</a>.
 
-The videos/streams can be discovered by reading RSS feeds or parsing HTML. Only direct links to video files or streams can be played back, because they will be rendered using [http://wikipedia.org/wiki/DirectShow directshow]. This allows usage of your favorite codecs to control audio and video quality (e.g. using ffdshow you can upscale low quality videos as well as upmix stereo sound and output to spdif).
+The videos/streams can be discovered by reading RSS feeds, parsing HTML, programming against provided APIs or directly adding urls of live streams. Only direct links to video files or streams (.flv, .mp4, ...) can be played back, because they will be rendered using <a href="http://wikipedia.org/wiki/DirectShow">directshow</a>. This allows usage of your favorite codecs to control audio and video quality (e.g. using ffdshow you can upscale low quality videos as well as upmix stereo sound and output to spdif) and gives the best integration with MediaPortal.
 
 ----
 = Features =
  * thumbnails for sites, categories and videos/streams
  * pin to protect adult sites
  * search (on sites that support search)
- * browse paged lists with next/previous page
+ * paging in videolists
  * download videos
- * bookmark favorites
+ * add videos and categories to a Favorites site
  * play all videos currently shown
+ * play with Windows Media Player, <a href="http://www.videolan.org/vlc/">VLC media player</a>
+ * integrated automatic updates of sites
 ----
 = User Interface =
 The main view of the plugin at first shows a list of all sites that can be viewed. By selecting a site you can dive into the categories for that site. If a category has subcategories (e.g. Miro), by selecting a category you will dive into the subcategories recursivly, otherwise a list of videos for that category is shown. Each of these 3 views  can be shown as a list, small thumbs or large thumbs.
@@ -29,17 +31,16 @@ Shows a list of categories with thumbs. If the number of videos in a category is
 Example for the video view with large icons. In the lower part, the title, a description and the runtime as well as the publication date (if known) of the selected clip are displayed.<br/>
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg"/>
 ==detail view== 
-This screen is only available on sites that have multiple choices for a video (currently only Apple Trailers)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg"/>
+This screen is only available on sites that have multiple choices for a video (e.g. iTunes Moview Trailers and IMDB)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg"/>
 ==side menu==
- * change facade layout: list, small icon, large icon
- * search (+category to search, if available) is available in category view
+ * change layout: list, small icon, large icon
+ * search (+category to search, if available)
  * max results, sort method, timeframe, refresh
- * next / previous page is available in video view
- * Favorites (displays your favorites from the current site, only YouTube currently)
  * Pin (enter the pin to enable adult content)
  * SiteManager (update, add or remove sites)
 <img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg"/>
 ==context menu (video view)==
+ * play with to chose Internal, WMP or VLC player
  * play all videos currently showing
  * add to favorites / delete from favorites (when displaying _Favorites_)
  * show related videos (only on _YouTube_)
@@ -49,24 +50,24 @@ This screen is only available on sites that have multiple choices for a video (c
 
 ----
 = Configuration =
-The configuration form for the OnlineVideos plugin has four tabs. 
+The configuration form for the OnlineVideos plugin has four tabs where you can configure all aspects of the plugin. After you have done your changes make sure you close the MediaPortal configuration tool pressing OK, to save all data stored only in memory.
 ==General==
- * displayed name of the plugin in MediaPortal
+ * displayed name of the plugin in MediaPortal classic home screen
  * pin used for protection of sites with adult content
  * folder where downloaded videos should be saved
  * folder where thumbnails are saved
  * timeout for cached data from the internet
+ * enable/disable extended search history
 ==Groups==
  * classify your sites into groups that will be shown as top level view when entering OnlineVideos
  * turn automatic grouping by language on/off
 ==Sites==
  * change the order of sites
  * delete, create and import or publish/update sites
- * change the name and description of a site
  * edit settings that the util of that site exposes (e.g. quality for videos on YouTube)
  * add and delete categories and streams (lower part)<br/><img width="320" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png"/>
  
-=== Howto for adding live-streams: ===
+===How to add live-streams===
  * Create a new site (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/Add.png"/> at sites) or select the site where you want to add the live streams to.
  * Select the "Channels" tab at the lower part.
  * Create a new group (<img width="16" src="http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/Resources/NewFolder.png"/>)
