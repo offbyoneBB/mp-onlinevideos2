@@ -30,6 +30,8 @@ namespace OnlineVideos.MediaPortal1
         protected GUISelectButtonControl GUI_btnFilterCreator = null;
         [SkinControlAttribute(507)]
         protected GUISelectButtonControl GUI_btnFilterLang = null;
+        [SkinControlAttribute(508)]
+        protected GUIButtonControl GUI_btnAutoUpdate = null;
 
         string defaultLabelBtnSort;
         string defaultLabelBtnFilterState;
@@ -255,6 +257,24 @@ namespace OnlineVideos.MediaPortal1
                     FullUpdate(dlgPrgrs);
                     GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
                 }) { Name = "OnlineVideosFullUpdate", IsBackground = true }.Start();
+            }
+            else if (control == GUI_btnAutoUpdate)
+            {
+                GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+                if (dlgPrgrs != null)
+                {
+                    dlgPrgrs.Reset();
+                    dlgPrgrs.DisplayProgressBar = true;
+                    dlgPrgrs.ShowWaitCursor = false;
+                    dlgPrgrs.DisableCancel(true);
+                    dlgPrgrs.SetHeading(string.Format("{0} - {1}", PluginConfiguration.Instance.BasicHomeScreenName, Translation.AutomaticUpdate));
+                    dlgPrgrs.StartModal(GUIWindowManager.ActiveWindow);
+                }
+                new System.Threading.Thread(delegate()
+                {
+                    AutoUpdate(true, dlgPrgrs);
+                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
+                }) { Name = "OnlineVideosAutoUpdate", IsBackground = true }.Start();
             }
 
             base.OnClicked(controlId, control, actionType);
