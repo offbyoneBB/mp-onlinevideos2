@@ -262,12 +262,19 @@ namespace OnlineVideos
             if (wasEmpty) return;            
             while (reader.NodeType != System.Xml.XmlNodeType.EndElement)
             {
-                string key = reader.GetAttribute("key");
-                reader.ReadStartElement("item");
-                string value = reader.ReadContentAsString();
-                reader.ReadEndElement();
-                this.Add(key, value);
-                reader.MoveToContent();
+                if (reader.IsEmptyElement)
+                {
+                    reader.Read();
+                }
+                else
+                {
+                    string key = reader.GetAttribute("key");
+                    reader.ReadStartElement("item");
+                    string value = reader.ReadContentAsString();
+                    reader.ReadEndElement();
+                    this.Add(key, value);
+                    reader.MoveToContent();
+                }
             }            
             reader.ReadEndElement();            
         } 
