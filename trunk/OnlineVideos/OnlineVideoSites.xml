@@ -516,6 +516,7 @@
       </Categories>
     </Site>
     <Site name="Sesamestreet" util="SesameStreet" agecheck="false" enabled="true" lang="en">
+      <Description>Sesamestreet videos</Description>
       <Categories />
     </Site>
     <Site name="ThatGuyWithTheGlasses" util="ThatGuyWithTheGlasses" agecheck="false" enabled="true" lang="en">
@@ -1049,9 +1050,8 @@
       <Categories />
     </Site>
     <Site name="EuroSport" util="EuroSport" agecheck="false" enabled="true" lang="en">
-      <Description>Eurosport live streams</Description>
-      <Configuration>
-      </Configuration>
+      <Description>Eurosport live streams and videos</Description>
+      <Configuration />
       <Categories />
     </Site>
     <Site name="Kabouter Wesley" util="GenericSite" agecheck="false" enabled="true" lang="nl">
@@ -1111,6 +1111,7 @@
       </Categories>
     </Site>
     <Site name="Movies4Men" util="Movies4Men" agecheck="false" enabled="true" lang="en">
+      <Description>Watch TV Online with View TV</Description>
       <Categories />
     </Site>
     <Site name="Nos" util="NOS" agecheck="false" enabled="true" lang="nl">
