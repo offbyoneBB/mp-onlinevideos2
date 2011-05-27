@@ -340,12 +340,11 @@
         <Category xsi:type="RssLink" name="MassageNerd">http://www.metacafe.com/channels/massagenerd/rss.xml</Category>
       </Categories>
     </Site>
-    <Site name="DailyMotion" util="GenericSite" agecheck="false" enabled="true" lang="en" lastUpdated="2011-02-17T11:28:06.4470061+01:00">
+    <Site name="DailyMotion" util="MetaCafe" agecheck="false" enabled="true" lang="en" lastUpdated="2011-02-17T11:28:06.4470061+01:00">
       <Description>Dailymotion is a video sharing service website, based in Paris (France).</Description>
       <Configuration>
         <item key="searchUrl"><![CDATA[http://www.dailymotion.com/rss/relevance/search/{0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[addVariable\("video",\s*"(?<m0>[^"]+)"\);]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}&txe=.flv]]></item>
+        <item key="fileUrlRegEx"><![CDATA[%22url%22%3A%22(?<m0>.*?)%22]]></item>
         <item key="nextPageRegEx"><![CDATA[<dm:link\s+rel="next"\s+href="(?<url>.*?)".*?/>]]></item>
       </Configuration>
       <Categories>
