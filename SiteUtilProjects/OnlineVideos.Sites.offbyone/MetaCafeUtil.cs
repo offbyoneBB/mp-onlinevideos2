@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string dataPage = GetWebData(video.VideoUrl);
-            Match matchYouTube = regEx_youtubeCheckRegEx.Match(dataPage);
+            Match matchYouTube = regEx_youtubeCheckRegEx != null ? regEx_youtubeCheckRegEx.Match(dataPage) : Match.Empty;
             if (matchYouTube.Success)
             {
                 video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(matchYouTube.Groups["yt"].Value);
