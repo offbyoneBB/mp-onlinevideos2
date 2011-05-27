@@ -53,7 +53,7 @@
   <string Field="GettingPreviousPageVideos">bij het opvragen van de vorige pagina</string>
   <string Field="GettingPlaybackUrlsForVideo">bij het opvragen van de afspeel-url's van de video</string>
   <string Field="GettingDynamicCategories">bij het opvragen van de dynamische categoriën</string>
-  <string Field="GettingReports">Ontvangen van rapportering van de webservice</string>
+  <string Field="GettingReports">Ontvangen van meldingen van de webservice</string>
   <string Field="GettingSiteXml">Ontvangen van de site-xml van de webservice</string>
   <string Field="GettingIcon">Ontvangen van het site-icoon van de webservice</string>
   <string Field="GettingBanner">Ontvangen van de site-banner van de webservice</string>
@@ -71,12 +71,13 @@
   <string Field="NewVideos">Nieuwe videos</string>
   <string Field="None">Niets</string>
   <string Field="NoVideoFound">Geen video gevonden</string>
-  <string Field="NoReportsForSite">Geen rapportering van deze site beschikbaar</string>
+  <string Field="NoReportsForSite">Geen meldingen van deze site beschikbaar</string>
   <string Field="NewDllDownloaded">Nieuwe dll gedownload!</string>
   <string Field="NewSearch">Nieuwe zoekopdracht</string>
   <string Field="Others">Overige</string>
   <string Field="PlayAll">Alles afspelen</string>
   <string Field="PlayWith">Afspelen met...</string>
+  <string Field="PleaseEnterDescription">Geef een korte beschrijving</string>
   <string Field="PlotOutline">Samenvatting</string>
   <string Field="PreviousPage">Vorige pagina</string>
   <string Field="PerformAutomaticUpdate">Automatische update uitvoeren?</string>
@@ -84,8 +85,9 @@
   <string Field="RemovingFromFavorites">bij het verwijderen uit de favorieten</string>
   <string Field="Refresh">Verversen</string>
   <string Field="RelatedVideos">Gerelateerde videos</string>
-  <string Field="Reported">Gerapporteerd</string>
-  <string Field="Reports">Rapporten</string>
+  <string Field="ReportBroken">Meld defect</string>
+  <string Field="Reported">Gemeld</string>
+  <string Field="Reports">Meldingen</string>
   <string Field="Runtime">Duur:</string>
   <string Field="RemoveFromMySites">Verwijderen uit mijn sites</string>
   <string Field="RestartMediaPortal">Herstart Mediaportal!</string>
@@ -101,7 +103,7 @@
   <string Field="SetDownloadFolderInConfig">Kies eerst een download-map in de instellingen!</string>
   <string Field="State">Status</string>
   <string Field="SavingLocalSiteList">Opslaan lokale site-lijst...</string>
-  <string Field="ShowReports">Toon ontwikkelaars en gebruikers rapporten</string>
+  <string Field="ShowReports">Toon ontwikkelaars en gebruikers meldingen</string>
   <string Field="StartingPlayback">bij het starten van de video</string>
   <string Field="Subscriptions">Abonnementen</string>
   <string Field="Timeframe">Periode</string>

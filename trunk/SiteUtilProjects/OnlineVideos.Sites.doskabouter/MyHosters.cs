@@ -254,7 +254,7 @@ namespace OnlineVideos.Hoster
                         tdoc.LoadXml(step2);
                         XmlNode final = tdoc.SelectSingleNode("/media_export_player/aflevering/streams/stream[@compressie_kwaliteit='bb' and @compressie_formaat='wmv']");
                         if (final != null)
-                            return final.InnerText;
+                            return final.InnerText.Trim();
 
                     }
                 }
