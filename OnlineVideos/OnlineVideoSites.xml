@@ -1269,7 +1269,7 @@
 (?:(?!<div\sclass="time">).)*<div\sclass="time">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<]]></item>
         <item key="nextPageRegEx"><![CDATA[title="Next\s*Page\s*"\s+href="(?<url>[^"]*page=\d{1,})">]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\stitle="Previous\spage"\shref="(?<url>[^"]*page=\d{1,})">Prev</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[so\.addParam\("flashvars","[^"]+hashlink=(?<m0>(?:(?!\%0A).)*)]]></item>
+        <item key="fileUrlRegEx"><![CDATA[so\.addParam\("flashvars","[^"]+hashlink=(?<m0>.*?)&]]></item>
         <item key="searchUrl"><![CDATA[http://www.redtube.com/?search={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.redtube.com]]></item>
         <item key="cookies"><![CDATA[pp=1]]></item>
