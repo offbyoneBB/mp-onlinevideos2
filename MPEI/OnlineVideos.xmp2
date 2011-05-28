@@ -1616,7 +1616,7 @@
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.29.0.0\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.30.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2439,27 +2439,22 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>29</Minor>
+      <Minor>30</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>compatible with MediaPortal 1.2 (including new default skin)
-Added: support VLC media player as external player
-Added: Categories can now be added to favorites
-Added: context menu allows play with: MediaPortal, Windows Media Player, VLC media player
-Added: contextMenu on a site to configure user settings inside MediaPortal (e.g. VideoQuality on YouTube)
-Added: subtitle support (for internal player)
-Added: Only prompt for update if last update older then x hours
-Fixed: SkipBuffering now also reacts to the Play button on remotes
-Fixed: AutoUpdate now also disables broken sites (previously only FullUpdate did)
-Fixed: removed black rectangle in upper left corner on first playback
-Fixed: PlayAll was not working
-Fixed: A direct search on sites with "search categories" (via startup parameters) failed
-Fixed: threading issue when skipping buffering (was trying to start playback multiple times)</VersionDescription>
+    <VersionDescription>rtmp: fixed live streams, connection problems, swf hash calulation error
+added Option to put Favorites and Downloads sites first
+reworked Codecs tab in Configuration to test playback
+added new GuiProperty: Airdate
+YouTube: fixed localized content no available, added "New Videos" in User's Subscribtions
+SiteManager: user can now report broken sites from within MediaPortal
+SiteManager: invoke AutomaticUpdate from button in hidden menu
+SiteManager: update all sites shown (filtered) from contextmenu</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2011-04-29T23:00:00</ReleaseDate>
+    <ReleaseDate>2011-05-29T23:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -4076,7 +4071,7 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.29.0.0\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Installer%\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.30.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
