@@ -263,16 +263,26 @@
         <textYOff>3</textYOff>
         <visible>!Control.HasFocus(50)</visible>
       </control>   
-       <control>
+      <control>
         <type>button</type>
         <description>full update button</description>
         <id>505</id>
         <onright>50</onright>
         <onup>504</onup>          
-        <ondown>50</ondown>
+        <ondown>508</ondown>
         <label>#OnlineVideos.Translation.FullUpdate.Label</label>
         <textYOff>3</textYOff>        
       </control>         
+      <control>
+        <type>button</type>
+        <description>automatic update button</description>
+        <id>508</id>
+        <onright>50</onright>
+        <onup>505</onup>          
+        <ondown>50</ondown>
+        <label>#OnlineVideos.Translation.AutomaticUpdate.Label</label>
+        <textYOff>3</textYOff>        
+      </control>      
     </control>    
     
   </controls>
