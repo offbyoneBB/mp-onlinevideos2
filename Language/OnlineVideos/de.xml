@@ -111,6 +111,8 @@
   <string Field="Tags">Schlagworte</string>
   <string Field="Updated">Aktualisiert</string>
   <string Field="Updatable">Aktualisierbar</string>
+  <string Field="UpdateAll">Alle aktualisieren/hinzufügen</string>
+  <string Field="UpdateAllSkipCategories">Alle aktualisieren/hinzufügen (Rubriken überspringen)</string>
   <string Field="UpdateMySite">Diese Site aktualisieren</string>
   <string Field="UpdateMySiteSkipCategories">Diese Site aktualisieren (Rubriken überspringen)</string>
   <string Field="UpdateAllYourSites">Es werden nur vorhandene Sites aktualisiert.</string>
