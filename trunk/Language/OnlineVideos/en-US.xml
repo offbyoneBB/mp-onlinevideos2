@@ -147,6 +147,8 @@
   <!-- U -->
   <string Field="Updated">Updated</string>
   <string Field="Updatable">Updatable</string>
+  <string Field="UpdateAll">Update/Add all</string>
+  <string Field="UpdateAllSkipCategories">Update/Add all (skip categories)</string>
   <string Field="UpdateMySite">Update my site</string>
   <string Field="UpdateMySiteSkipCategories">Update my site (skip categories)</string>
   <string Field="UpdateAllYourSites">This will update all your current sites.</string>

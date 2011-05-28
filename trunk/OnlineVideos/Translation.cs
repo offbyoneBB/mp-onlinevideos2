@@ -152,6 +152,8 @@ namespace OnlineVideos
         // U
         public static string Updated = "Updated";
         public static string Updatable = "Updatable";
+        public static string UpdateAll = "Update all";
+        public static string UpdateAllSkipCategories = "Update all (skip categories)";
         public static string UpdateMySite = "Update my site";
         public static string UpdateMySiteSkipCategories = "Update my site (skip categories)";
         public static string UpdateAllYourSites = "This will update all your current sites.";

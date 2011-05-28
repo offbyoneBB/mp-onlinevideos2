@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Diagnostics;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
@@ -39,7 +40,7 @@ namespace OnlineVideos.MediaPortal1
         string defaultLabelBtnFilterLang;
 
         OnlineVideosWebservice.Dll[] onlineDlls = null;
-        OnlineVideosWebservice.Site[] onlineSites = null;        
+        OnlineVideosWebservice.Site[] onlineSites = null;
         DateTime lastOverviewsRetrieved = DateTime.MinValue;
         Version versionDll = new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version;
         Version versionOnline = null;
@@ -254,7 +255,7 @@ namespace OnlineVideos.MediaPortal1
                 }
                 new System.Threading.Thread(delegate()
                 {
-                    FullUpdate(dlgPrgrs);
+                    FullUpdate(dlgPrgrs, onlineSites.ToList());
                     GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
                 }) { Name = "OnlineVideosFullUpdate", IsBackground = true }.Start();
             }
@@ -300,10 +301,17 @@ namespace OnlineVideos.MediaPortal1
                     if ((site.LastUpdated - OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].LastUpdated).TotalMinutes > 2 && site.State != OnlineVideosWebservice.SiteState.Broken)
                     {
                         dlgSel.Add(Translation.UpdateMySite);
-                        dlgSel.Add(Translation.UpdateMySiteSkipCategories);                        
+                        dlgSel.Add(Translation.UpdateMySiteSkipCategories);
                     }
                     dlgSel.Add(Translation.RemoveFromMySites);
                 }
+
+                if (GUI_infoList.Count > 1)
+                {
+                    dlgSel.Add(Translation.UpdateAll);
+                    dlgSel.Add(Translation.UpdateAllSkipCategories);
+                }
+
                 dlgSel.Add(Translation.ShowReports);
                 if (site.State != OnlineVideosWebservice.SiteState.Broken) dlgSel.Add(Translation.ReportBroken);
             }
@@ -376,6 +384,42 @@ namespace OnlineVideos.MediaPortal1
                         if (success && (bool)result) ShowRestartMessage();
                     },
                     Translation.GettingSiteXml, true);
+            }
+            else if (dlgSel.SelectedLabelText == Translation.UpdateAll)
+            {
+                GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+                if (dlgPrgrs != null)
+                {
+                    dlgPrgrs.Reset();
+                    dlgPrgrs.DisplayProgressBar = true;
+                    dlgPrgrs.ShowWaitCursor = false;
+                    dlgPrgrs.DisableCancel(true);
+                    dlgPrgrs.SetHeading(string.Format("{0} - {1}", PluginConfiguration.Instance.BasicHomeScreenName, Translation.FullUpdate));
+                    dlgPrgrs.StartModal(GUIWindowManager.ActiveWindow);
+                }
+                new System.Threading.Thread(delegate()
+                {
+                    FullUpdate(dlgPrgrs, GUI_infoList.ListItems.Select(g => g.TVTag as OnlineVideosWebservice.Site).ToList(), false);
+                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
+                }) { Name = "OnlineVideosAutoUpdate", IsBackground = true }.Start();
+            }
+            else if (dlgSel.SelectedLabelText == Translation.UpdateAllSkipCategories)
+            {
+                GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+                if (dlgPrgrs != null)
+                {
+                    dlgPrgrs.Reset();
+                    dlgPrgrs.DisplayProgressBar = true;
+                    dlgPrgrs.ShowWaitCursor = false;
+                    dlgPrgrs.DisableCancel(true);
+                    dlgPrgrs.SetHeading(string.Format("{0} - {1}", PluginConfiguration.Instance.BasicHomeScreenName, Translation.FullUpdate));
+                    dlgPrgrs.StartModal(GUIWindowManager.ActiveWindow);
+                }
+                new System.Threading.Thread(delegate()
+                {
+                    FullUpdate(dlgPrgrs, GUI_infoList.ListItems.Select(g => g.TVTag as OnlineVideosWebservice.Site).ToList(), true);
+                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
+                }) { Name = "OnlineVideosAutoUpdate", IsBackground = true }.Start();
             }
             else if (dlgSel.SelectedLabelText == Translation.RemoveFromMySites)
             {
@@ -517,14 +561,14 @@ namespace OnlineVideos.MediaPortal1
                                 return true;
                             }
                         }
-                        break;   
+                        break;
                     }
                 }
             }
             return false;       
         }
 
-        void FullUpdate(GUIDialogProgress dlgPrgrs)
+        void FullUpdate(GUIDialogProgress dlgPrgrs, List<OnlineVideosWebservice.Site> onlineSitesToRetrieve, bool skipCategories = false)
         {
             try
             {
@@ -534,17 +578,15 @@ namespace OnlineVideos.MediaPortal1
 
                 if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.RetrievingRemoteSites);
 
-                GetRemoteOverviews();
-
-                if (onlineSites == null) return;
+                if (onlineSitesToRetrieve == null || onlineSitesToRetrieve.Count == 0) return;
                 if (dlgPrgrs != null && !dlgPrgrs.ShouldRenderLayer()) return;
 
                 Dictionary<string, bool> requiredDlls = new Dictionary<string, bool>();
 
                 // update or add all sites, so the user has everything the server currently has
-                for (int i = 0; i < onlineSites.Length; i++)
+                for (int i = 0; i < onlineSitesToRetrieve.Count; i++)
                 {
-                    OnlineVideosWebservice.Site onlineSite = onlineSites[i];
+                    OnlineVideosWebservice.Site onlineSite = onlineSitesToRetrieve[i];
                     if (dlgPrgrs != null) dlgPrgrs.SetLine(1, onlineSite.Name);
                     if (!string.IsNullOrEmpty(onlineSite.RequiredDll)) requiredDlls[onlineSite.RequiredDll] = true;
                     int localSiteIndex = GetLocalSite(onlineSite.Name);
@@ -567,10 +609,12 @@ namespace OnlineVideos.MediaPortal1
                         {
                             // disable local site if broken
                             if (onlineSite.State == OnlineVideos.OnlineVideosWebservice.SiteState.Broken) updatedSite.IsEnabled = false;
+                            // keep Categories if flag was set
+                            if (skipCategories) updatedSite.Categories = OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex].Categories;
                             OnlineVideoSettings.Instance.SiteSettingsList[localSiteIndex] = updatedSite;
                         }
                     }
-                    if (dlgPrgrs != null) dlgPrgrs.Percentage = (80 * (i + 1) / onlineSites.Length);
+                    if (dlgPrgrs != null) dlgPrgrs.Percentage = (80 * (i + 1) / onlineSitesToRetrieve.Count);
                     if (dlgPrgrs != null && !dlgPrgrs.ShouldRenderLayer()) break;
                 }
 
