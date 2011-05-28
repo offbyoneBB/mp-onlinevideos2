@@ -12,12 +12,12 @@ namespace OnlineVideos.Sites
         string lastSort = "date";
 
         // keep a reference of all Categories ever created and reuse them, to get them selected when returning to the category view
-        Dictionary<string, Category> cachedCategories = new Dictionary<string, Category>();
+        Dictionary<string, RssLink> cachedCategories = new Dictionary<string, RssLink>();
 
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            Category cat = null;
+            RssLink cat = null;
             // add a category for all files
             if (!cachedCategories.TryGetValue(Translation.All, out cat))
             {
@@ -31,8 +31,12 @@ namespace OnlineVideos.Sites
                 // add a category for all downloads in progress
                 if (!cachedCategories.TryGetValue(Translation.Downloading, out cat))
                 {
-                    cat = new Category() { Name = Translation.Downloading, Description = Translation.DownloadingDescription };
+                    cat = new RssLink() { Name = Translation.Downloading, Description = Translation.DownloadingDescription, EstimatedVideoCount = (uint)currentDownloads.Count };
                     cachedCategories.Add(cat.Name, cat);
+                }
+                else
+                {
+                    cat.EstimatedVideoCount = (uint)currentDownloads.Count; // refresh the count
                 }
                 Settings.Categories.Add(cat);
             }
@@ -75,7 +79,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            return getVideoList(category is RssLink ? (category as RssLink).Url : null, "*", category.Name == Translation.All);
+            return getVideoList((category as RssLink).Url, "*", category.Name == Translation.All);
         }        
 
         List<VideoInfo> getVideoList(string path, string search, bool recursive)
