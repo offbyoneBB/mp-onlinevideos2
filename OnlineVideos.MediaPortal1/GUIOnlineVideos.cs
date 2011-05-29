@@ -2357,7 +2357,7 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#itemtype", Translation.Groups);
                     break;
                 case State.sites:
-                    GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
+                    GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName + (selectedSitesGroup != null ? ": " + selectedSitesGroup.Label : ""));
                     GUIPropertyManager.SetProperty("#header.image", GetImageForSite("OnlineVideos"));
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
