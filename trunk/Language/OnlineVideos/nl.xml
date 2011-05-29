@@ -111,6 +111,8 @@
   <string Field="Tags">Kenmerken</string>
   <string Field="Updated">Bijgewerkt</string>
   <string Field="Updatable">Bij te werken</string>
+  <string Field="UpdateAll">Alles bijwerken/toevoegen</string>
+  <string Field="UpdateAllSkipCategories">Alles behalve categorieen bijwerken/toevoegen</string>
   <string Field="UpdateMySite">Mijn site bijwerken</string>
   <string Field="UpdateMySiteSkipCategories">Mijn site bijwerken (categorieen overslaan)</string>
   <string Field="UpdateAllYourSites">Dit zal de huidige sites bijwerken</string>
