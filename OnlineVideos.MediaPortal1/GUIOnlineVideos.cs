@@ -717,9 +717,8 @@ namespace OnlineVideos.MediaPortal1
                     {
                         OnlineVideoSettings.Instance.AgeConfirmed = true;
                         GUIControl.UnfocusControl(GetID, GUI_btnEnterPin.GetID);
-                        HideAndDisable(GUI_btnEnterPin.GetID);
-                        DisplaySites();
-                        GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
+                        if (CurrentState == State.groups) DisplayGroups();
+                        else DisplaySites();
                     }
                 }
             }
@@ -2352,6 +2351,10 @@ namespace OnlineVideos.MediaPortal1
                     ShowAndEnable(GUI_facadeView.GetID);
                     HideFilterButtons();
                     HideSearchButtons();
+                    if (OnlineVideoSettings.Instance.UseAgeConfirmation && !OnlineVideoSettings.Instance.AgeConfirmed)
+                        ShowAndEnable(GUI_btnEnterPin.GetID);
+                    else
+                        HideAndDisable(GUI_btnEnterPin.GetID);
                     currentView = PluginConfiguration.Instance.currentGroupView;
                     SetFacadeViewMode();
                     GUIPropertyManager.SetProperty("#itemtype", Translation.Groups);
