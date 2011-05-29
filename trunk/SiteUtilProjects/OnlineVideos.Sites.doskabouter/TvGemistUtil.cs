@@ -10,7 +10,7 @@ namespace OnlineVideos.Sites
 {
     public class TvGemistUtil : SiteUtilBase
     {
-        private enum Source { Net5Gemist, SBSGemist, VeronicaGemist, UitzendingGemist };
+        private enum Source { Net5Gemist, VeronicaGemist, UitzendingGemist };
         private RssLink baseCategory;
 
         public override void Initialize(OnlineVideos.SiteSettings siteSettings)
@@ -46,16 +46,6 @@ namespace OnlineVideos.Sites
             cat.Other = new Specifics(Source.Net5Gemist, @"http://www.net5.nl");
             Settings.Categories.Add(cat);
 
-            //======================= SBS6 gemist ===================
-            cat = new RssLink();
-            cat.Name = "SBS6 Gemist";
-            cat.Thumb = OnlineVideoSettings.Instance.ThumbsDir == null ? null :
-                System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\sbsgemist.png");
-            cat.HasSubCategories = true;
-            cat.Url = @"http://www.sbs6.nl/web/show/id=73863/langid=43";
-            cat.Other = new Specifics(Source.SBSGemist, @"http://www.sbs6.nl");
-            Settings.Categories.Add(cat);
-
             //======================= Veronica gemist ===================
             cat = new RssLink();
             cat.Name = "Veronica Gemist";
@@ -76,7 +66,6 @@ namespace OnlineVideos.Sites
             {
                 case Source.UitzendingGemist: return UitzendingGemistDiscoverSubCategories((RssLink)parentCategory);
                 case Source.Net5Gemist: return Net5SbsVeronicaGemistDiscoverSubCategories((RssLink)parentCategory);
-                case Source.SBSGemist: return Net5SbsVeronicaGemistDiscoverSubCategories((RssLink)parentCategory);
                 case Source.VeronicaGemist: return Net5SbsVeronicaGemistDiscoverSubCategories((RssLink)parentCategory);
             }
             throw new NotImplementedException();
@@ -94,7 +83,6 @@ namespace OnlineVideos.Sites
                         return UitzendingGemistGetVideoList(baseCategory, specifics);
                     }
                 case Source.Net5Gemist: return Net5SbsVeronicaGemistGetVideoList(baseCategory);
-                case Source.SBSGemist: return Net5SbsVeronicaGemistGetVideoList(baseCategory);
                 case Source.VeronicaGemist: return Net5SbsVeronicaGemistGetVideoList(baseCategory);
             }
             throw new NotImplementedException();
@@ -113,7 +101,7 @@ namespace OnlineVideos.Sites
 
             if (Source.UitzendingGemist.Equals(video.Other))
                 return GenericSiteUtil.GetVideoUrl(video.VideoUrl);
-            if (Source.VeronicaGemist.Equals(video.Other) || Source.SBSGemist.Equals(video.Other) || Source.Net5Gemist.Equals(video.Other))
+            if (Source.VeronicaGemist.Equals(video.Other) || Source.Net5Gemist.Equals(video.Other))
             {
                 string webData = GetWebData(video.VideoUrl);
                 return GetSubString(webData, @"class=""wmv-player-holder"" href=""", @"""");
