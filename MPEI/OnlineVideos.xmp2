@@ -2444,11 +2444,12 @@ public class Script
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>rtmp: fixed live streams, connection problems, swf hash calulation error
+    <VersionDescription>rtmp: fixed live streams, connection problems, swf hash calulation
 added Option to put Favorites and Downloads sites first
 reworked Codecs tab in Configuration to test playback
 added new GuiProperty: Airdate
 YouTube: fixed localized content no available, added "New Videos" in User's Subscribtions
+Downloads: refresh current downloading progress info while showing
 SiteManager: user can now report broken sites from within MediaPortal
 SiteManager: invoke AutomaticUpdate from button in hidden menu
 SiteManager: update all sites shown (filtered) from contextmenu</VersionDescription>
