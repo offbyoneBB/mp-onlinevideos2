@@ -1127,6 +1127,19 @@
         <Category xsi:type="RssLink" name="Films">http://www.rtl.nl/system/xl/feed/films.xml</Category>
       </Categories>
     </Site>
+    <Site name="SBS6 Gemist" util="SBS6Gemist" agecheck="false" enabled="true" lang="nl" player="WMP">
+      <Description>Programma gemist bij SBS 6? Bekijk hier de uitzendingen terug van Peter R. de Vries, Wegmisbruikers, Hart van Nederland en meer! SBS 6 Programma gemist!</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="[^"]*"><span\sclass="title"><a\s*href="(?<url>[^"]*)"\sclass="navigation"\stitle="[^"]*">(?<title>[^<]*)</a></span></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[(<div\sclass="item[^>]*>\s*<div\sclass="thumb"><a\shref="(?<VideoUrl>[^"]*)"><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*></a></div>\s*<div\sclass="airtime"><span>(?<Airdate>[^<]*)</span></div>\s*<div\sclass="rubriek[^>]*><span>(?:<a[^>]*>[^<]*</a>)?</span></div>\s*<div\sclass="title"><span><a[^>]*>(?<Title>[^<]*)</a></span></div>\s*(?:<div\sclass="subtitle"><span><a[^>]*>[^<]*</a></span></div>\s*)?<div\sclass="text"><span><a[^>]*>(?<Description>[^<]*)</a></span>)|(<div\sclass="item[^>]*>\s*<div\sclass="thumb"><a\s*href="(?<VideoUrl>[^"]*)"\sclass="navigation"\stitle="Programma\sgemist"><img\ssrc="(?<ImageUrl>[^"]*)"\salt=""\sborder="0"\swidth="145"\sheight="80"/></a></div>\s*<div\sclass="title"><a[^>]*><span>(?<Title>[^<]*)</span></a></div>\s*<div\sclass="airtime"><a[^>]*><span>(?<Airdate>[^<]*)</span></a></div>\s*<div\sclass="text"><a[^>]*><span>(?<Description>[^<]*)</span></a></div>\s*<div\sclass="clearer"></div>\s*</div>)]]></item>
+        <item key="nextPageRegEx"><![CDATA[<span\sclass="next"><a\shref="(?<url>[^"]*)"\s*>(Volgende|Ouder)</a></span>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<a\sclass="wmv-player-holder"\shref="(?<m0>[^"]*)"></a>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.sbs6.nl/web/show/id=985609/langid=43/dbid=427/typeofpage=73941]]></item>
+        <item key="alternateUrlRegex"><![CDATA[<li\s[^>]*><a\shref="(?<url>[^"]*)"\stitle="[^>]*><span>Archief</span></a>\s*</li>]]></item>
+        <item key="forceUTF8Encoding"><![CDATA[true]]></item>
+      </Configuration>
+      <Categories />
+    </Site>
     <Site name="TV3NZ" util="TV3NZOnDemand" agecheck="false" enabled="true" lang="en" lastUpdated="2011-02-20T22:38:58.0985192+01:00">
       <Description>Television New Zealand: TV3, TV four</Description>
       <Configuration>
@@ -1138,8 +1151,8 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="TvGemist" util="TvGemist" agecheck="false" enabled="true" lang="nl" player="WMP">
-      <Description>Alle uitzendingen van Nederland 1,2,3, Net5, Sbs6 en Veronica</Description>
+    <Site name="Uitzending Gemist" util="UitzendingGemist" agecheck="false" enabled="true" lang="nl" player="WMP">
+      <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
       <Categories />
     </Site>
     <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" lang="nl" player="WMP">
