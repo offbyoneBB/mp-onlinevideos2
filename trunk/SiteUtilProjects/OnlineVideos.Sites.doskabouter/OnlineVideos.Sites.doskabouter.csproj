@@ -89,6 +89,7 @@
     <Compile Include="TouTvUtil.cs" />
     <Compile Include="TubePlusUtil.cs" />
     <Compile Include="TV3NZOnDemandUtil.cs" />
+    <Compile Include="UitzendingGemistUtil.cs" />
     <Compile Include="VimeoUtil.cs" />
     <Compile Include="Vimeo\AuthBase.cs" />
     <Compile Include="YleAreenaUtil.cs" />
@@ -108,7 +109,6 @@
     <Compile Include="TheEscapistUtil.cs" />
     <Compile Include="TurboNickUtil.cs" />
     <Compile Include="TVEUtil.cs" />
-    <Compile Include="TvGemistUtil.cs" />
     <Compile Include="TVNZOnDemandUtil.cs" />
     <Compile Include="TvTuttiUtil.cs" />
     <Compile Include="WatchSeriesUtil.cs" />

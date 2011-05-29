@@ -8,9 +8,8 @@ using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
-    public class TvGemistUtil : SiteUtilBase
+    public class UitzendingGemistUtil : SiteUtilBase
     {
-        private enum Source { Net5Gemist, VeronicaGemist, UitzendingGemist };
         private RssLink baseCategory;
 
         public override void Initialize(OnlineVideos.SiteSettings siteSettings)
@@ -36,78 +35,27 @@ namespace OnlineVideos.Sites
             cat.SubCategories[1].Other = new UitzendingGemistSpecifics(cc, @"<div id=""nav_dag"">", 0);
             cat.SubCategories[2].Other = new UitzendingGemistSpecifics(cc, @"<div id=""nav_net"">", 0);
 
-            //======================= NET5 gemist ===================
-            cat = new RssLink();
-            cat.Name = "Net5 Gemist";
-            cat.Thumb = OnlineVideoSettings.Instance.ThumbsDir == null ? null :
-                System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\net5gemist.png");
-            cat.HasSubCategories = true;
-            cat.Url = @"http://www.net5.nl/web/show/id=95681/langid=43";
-            cat.Other = new Specifics(Source.Net5Gemist, @"http://www.net5.nl");
-            Settings.Categories.Add(cat);
-
-            //======================= Veronica gemist ===================
-            cat = new RssLink();
-            cat.Name = "Veronica Gemist";
-            cat.Thumb = OnlineVideoSettings.Instance.ThumbsDir == null ? null :
-                System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\OnlineVideos\Icons\Tvgemist\veronicagemist.png");
-            cat.HasSubCategories = true;
-            cat.Url = @"http://www.veronicatv.nl/web/show/id=96520/langid=43";
-            cat.Other = new Specifics(Source.VeronicaGemist, @"http://www.veronicatv.nl");
-            Settings.Categories.Add(cat);
-
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            switch (((Specifics)parentCategory.Other).source)
-            {
-                case Source.UitzendingGemist: return UitzendingGemistDiscoverSubCategories((RssLink)parentCategory);
-                case Source.Net5Gemist: return Net5SbsVeronicaGemistDiscoverSubCategories((RssLink)parentCategory);
-                case Source.VeronicaGemist: return Net5SbsVeronicaGemistDiscoverSubCategories((RssLink)parentCategory);
-            }
-            throw new NotImplementedException();
+            return UitzendingGemistDiscoverSubCategories((RssLink)parentCategory);
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
             baseCategory = (RssLink)category;
-            switch (((Specifics)category.Other).source)
-            {
-                case Source.UitzendingGemist:
-                    {
-                        UitzendingGemistSpecifics specifics = (UitzendingGemistSpecifics)category.Other;
-                        specifics.pageNr = 0;
-                        return UitzendingGemistGetVideoList(baseCategory, specifics);
-                    }
-                case Source.Net5Gemist: return Net5SbsVeronicaGemistGetVideoList(baseCategory);
-                case Source.VeronicaGemist: return Net5SbsVeronicaGemistGetVideoList(baseCategory);
-            }
+            UitzendingGemistSpecifics specifics = (UitzendingGemistSpecifics)category.Other;
+            specifics.pageNr = 0;
+            return UitzendingGemistGetVideoList(baseCategory, specifics);
             throw new NotImplementedException();
         }
 
         public override string getUrl(VideoInfo video)
         {
-            string s = video.Other as string;
-            if (s != null)
-            {
-                if (Enum.IsDefined(typeof(Source), s))
-                    video.Other = Enum.Parse(typeof(Source), s, true);
-                else
-                    video.Other = null;
-            }
-
-            if (Source.UitzendingGemist.Equals(video.Other))
-                return GenericSiteUtil.GetVideoUrl(video.VideoUrl);
-            if (Source.VeronicaGemist.Equals(video.Other) || Source.Net5Gemist.Equals(video.Other))
-            {
-                string webData = GetWebData(video.VideoUrl);
-                return GetSubString(webData, @"class=""wmv-player-holder"" href=""", @"""");
-            }
-
-            return video.VideoUrl;
+            return GenericSiteUtil.GetVideoUrl(video.VideoUrl);
         }
 
         public override bool HasNextPage
@@ -147,7 +95,6 @@ namespace OnlineVideos.Sites
         }
 
 
-        #region UitzendingGemist
         private int UitzendingGemistDiscoverSubCategories(RssLink parentCategory)
         {
             UitzendingGemistSpecifics specifics = (UitzendingGemistSpecifics)parentCategory.Other;
@@ -256,7 +203,6 @@ namespace OnlineVideos.Sites
                     video.Title = HttpUtility.HtmlDecode(m.Groups["title"].Value);
                     string airdate = HttpUtility.HtmlDecode(m.Groups["airdate"].Value);
                     video.Description = HttpUtility.HtmlDecode(m.Groups["descr"].Value);
-                    video.Other = specifics.source;
 
                     if (!String.IsNullOrEmpty(video.VideoUrl))
                     {
@@ -300,79 +246,6 @@ namespace OnlineVideos.Sites
             }
         }
 
-        #endregion
-
-        #region Net5SbsVeronicaGemist
-        private int Net5SbsVeronicaGemistDiscoverSubCategories(RssLink parentCategory)
-        {
-            Specifics specifics = (Specifics)parentCategory.Other;
-            string data = GetWebData(parentCategory.Url);
-            parentCategory.SubCategories = new List<Category>();
-            Regex regex_SubCat = Specifics.getRegex(@"<li\sclass=""[^""]*""><span\sclass=""title""><a\s*href=""(?<url>[^""]*)""\sclass=""navigation""\stitle=""[^""]*"">(?<title>[^<]*)(?:<sup>[^<]*</sup>)?</a></span></li>");
-            Match m = regex_SubCat.Match(data);
-            while (m.Success)
-            {
-                RssLink cat = new RssLink();
-                cat.Url = specifics.baseUrl + m.Groups["url"].Value;
-                cat.Name = m.Groups["title"].Value.Trim();
-                cat.ParentCategory = parentCategory;
-                cat.Other = specifics;
-                parentCategory.SubCategories.Add(cat);
-                m = m.NextMatch();
-            }
-            parentCategory.SubCategoriesDiscovered = true;
-            return parentCategory.SubCategories.Count;
-        }
-
-        private List<VideoInfo> Net5SbsVeronicaGemistGetVideoList(RssLink category)
-        {
-            Specifics specifics = (Specifics)category.Other;
-            List<VideoInfo> videos = new List<VideoInfo>();
-            string url = category.Url;
-            if (specifics.source == Source.VeronicaGemist)
-                url = GetRedirectedUrl(url);
-
-            bool hasNextPage = false;
-            Regex regex_VideoList = Specifics.getRegex(@"<div\sclass=""item[^>]*>\s*<div\sclass=""thumb""><a\s*href=""(?<VideoUrl>[^""]*)""[^<]*<img\ssrc=""(?<ImageUrl>[^""]*)""[^<]*</a></div>\s*<div\sclass=""title""><a[^<]*<span>(?<Title>[^<]*)</span></a></div>\s*<div\sclass=""airtime""><a\s*href=""[^>]*><span>(?<Airdate>[^<]*)</span>");
-
-            int pageNr = 0;
-            do
-            {
-                pageNr++;
-                string webData;
-                webData = GetWebData(pageNr == 1 ? url : url + @"/page=" + pageNr.ToString());
-                hasNextPage = webData.Contains(@"class=""next""");
-                if (!string.IsNullOrEmpty(webData))
-                {
-                    Match m = regex_VideoList.Match(webData);
-                    while (m.Success)
-                    {
-                        VideoInfo video = new VideoInfo();
-                        video.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
-                        video.ImageUrl = m.Groups["ImageUrl"].Value;
-                        if (!String.IsNullOrEmpty(video.ImageUrl))
-                            video.ImageUrl = specifics.baseUrl + video.ImageUrl;
-                        video.VideoUrl = specifics.baseUrl + m.Groups["VideoUrl"].Value;
-                        string airdate = HttpUtility.HtmlDecode(m.Groups["Airdate"].Value);
-                        video.Other = specifics.source;
-
-                        if (!String.IsNullOrEmpty(video.VideoUrl))
-                        {
-                            video.Length = video.Length + '|' + Translation.Airdate + ": " + airdate;
-                            videos.Add(video);
-                        }
-                        m = m.NextMatch();
-                    }
-                }
-            }
-            while (hasNextPage);
-
-            return videos;
-        }
-
-        #endregion
-
-
         private void AddSubcats(string[] names, RssLink parentCat)
         {
             parentCat.SubCategories = new List<Category>();
@@ -393,13 +266,11 @@ namespace OnlineVideos.Sites
         #region Specifics
         private class Specifics
         {
-            public Specifics(Source source, string baseUrl)
+            public Specifics(string baseUrl)
             {
-                this.source = source;
                 this.baseUrl = baseUrl;
             }
 
-            public Source source;
             public string baseUrl;
 
             public static Regex getRegex(string s)
@@ -411,7 +282,7 @@ namespace OnlineVideos.Sites
         private class UitzendingGemistSpecifics : Specifics
         {
             public UitzendingGemistSpecifics(CookieContainer cc, string startParse, int depth)
-                : base(Source.UitzendingGemist, @"http://www.uitzendinggemist.nl")
+                : base(@"http://www.uitzendinggemist.nl")
             {
                 this.cc = cc;
                 this.startParse = startParse;
