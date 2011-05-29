@@ -11,7 +11,7 @@ namespace OnlineVideos
         public string ChosenPlaybackOption { get; set; }
     }
 
-    public class DownloadInfo
+    public class DownloadInfo : System.ComponentModel.INotifyPropertyChanged
     {
         public DownloadInfo()
         {
@@ -37,18 +37,36 @@ namespace OnlineVideos
                 KbTotal = (int)(TotalBytesToReceive / 1024);
             }
             KbDownloaded = (int)(currentBytes / 1024);
+            NotifyPropertyChanged("ProgressInfo");
         }
         public void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
         {
             PercentComplete = e.ProgressPercentage;
             KbTotal = (int)(e.TotalBytesToReceive / 1024);
             KbDownloaded = (int)(e.BytesReceived / 1024);
+            NotifyPropertyChanged("ProgressInfo");
         }
         public void DownloadProgressCallback(object sender, MMSStreamProgressChangedEventArgs e)
         {
             PercentComplete = e.ProgressPercentage;
             KbTotal = (int)(e.TotalBytesToReceive / 1024);
             KbDownloaded = (int)(e.BytesReceived / 1024);
+            NotifyPropertyChanged("ProgressInfo");
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        protected void NotifyPropertyChanged(string property)
+        {
+            if (PropertyChanged != null) PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(property));
+        }
+
+        public string ProgressInfo
+        {
+            get
+            {
+                return (PercentComplete != 0 || KbTotal != 0 || KbDownloaded != 0) ?
+                    string.Format("{0}{1} KB - {2} KB/sec", PercentComplete > 0 ? PercentComplete + "% / " : "", KbTotal > 0 ? KbTotal.ToString("n0") : KbDownloaded.ToString("n0"), (int)(KbDownloaded / (DateTime.Now - Start).TotalSeconds)) : "";
+            }
         }
     }
 }

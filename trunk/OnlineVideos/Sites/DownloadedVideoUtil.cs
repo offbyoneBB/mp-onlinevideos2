@@ -134,16 +134,21 @@ namespace OnlineVideos.Sites
                     {
                         if (PassesAgeCheck(di.LocalFile))
                         {
-                            string progressInfo = (di.PercentComplete != 0 || di.KbTotal != 0 || di.KbDownloaded != 0) ?
-                                string.Format("{0}% / {1} KB - {2} KB/sec", di.PercentComplete, di.KbTotal > 0 ? di.KbTotal.ToString("n0") : di.KbDownloaded.ToString("n0"), (int)(di.KbDownloaded / (DateTime.Now - di.Start).TotalSeconds)) : "";
-
                             VideoInfo loVideoInfo = new VideoInfo();
                             loVideoInfo.Title = di.Title;
                             loVideoInfo.ImageUrl = di.ThumbFile;
                             loVideoInfo.Airdate = di.Start.ToString("HH:mm:ss");
-                            loVideoInfo.Length = progressInfo;
-                            loVideoInfo.Description = string.Format("{0}\n{1}", di.Url, di.LocalFile, progressInfo);
+                            loVideoInfo.Length = di.ProgressInfo;
+                            loVideoInfo.Description = string.Format("{0}\n{1}", di.Url, di.LocalFile);
                             loVideoInfo.Other = di;
+                            loVideoInfo.PropertyChanged += (s, e) =>
+                            {
+                                if (e.PropertyName == "Other")
+                                {
+                                    (s as VideoInfo).Length = ((s as VideoInfo).Other as DownloadInfo).ProgressInfo;
+                                    (s as VideoInfo).NotifyPropertyChanged("Length");
+                                }
+                            };
                             loVideoInfoList.Add(loVideoInfo);
                         }
                     }
@@ -157,7 +162,7 @@ namespace OnlineVideos.Sites
             List<string> options = new List<string>();
             if (selectedItem != null)
             {
-                if (selectedCategory is RssLink)
+                if (selectedItem.Other as DownloadInfo == null)
                 {
                     options.Add(Translation.Delete);
                     options.Add(Translation.DeleteAll);

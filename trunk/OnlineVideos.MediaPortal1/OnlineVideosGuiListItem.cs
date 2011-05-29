@@ -47,6 +47,24 @@ namespace OnlineVideos.MediaPortal1
                 MediaPortal.Util.Utils.SetDefaultIcons(this);
             }
         }
+
+        public OnlineVideosGuiListItem(Category item) : base(item.Name)
+        {
+            Label2 = item is RssLink && (item as RssLink).EstimatedVideoCount > 0 ? (item as RssLink).EstimatedVideoCount.ToString() : 
+                item is Group && (item as Group).Channels.Count > 0 ? (item as Group).Channels.Count.ToString() : Label2;
+            IsFolder = true;
+            Item = item;
+            MediaPortal.Util.Utils.SetDefaultIcons(this);
+        }
+
+        public OnlineVideosGuiListItem(VideoInfo item, bool useTitle2 = false)
+        {
+            Label = useTitle2 ? item.Title2 : item.Title;
+            Label2 = !string.IsNullOrEmpty(item.Length) ? VideoInfo.GetDuration(item.Length) : item.Airdate;
+            Item = item;
+            IconImage = "defaultVideo.png";
+            IconImageBig = "defaultVideoBig.png";
+        }
         #endregion
 
         protected object _Item;
@@ -56,7 +74,7 @@ namespace OnlineVideos.MediaPortal1
         public object Item 
         {
             get { return _Item; }
-            set
+            internal set
             {
                 _Item = value;
                 System.ComponentModel.INotifyPropertyChanged notifier = value as System.ComponentModel.INotifyPropertyChanged;
@@ -64,7 +82,17 @@ namespace OnlineVideos.MediaPortal1
                 {
                     if (s is VideoInfo && e.PropertyName == "ThumbnailImage") SetImageToGui((s as VideoInfo).ThumbnailImage);
                     else if (s is Category && e.PropertyName == "ThumbnailImage") SetImageToGui((s as Category).ThumbnailImage);
+                    else if (s is VideoInfo && e.PropertyName == "Length") Label2 = (s as VideoInfo).Length;
                 };
+                // propagate a change in the Other object (if it supports PropertyChanged) to the VideoInfo object
+                if (value is VideoInfo)
+                {
+                    System.ComponentModel.INotifyPropertyChanged notifier2 = (value as VideoInfo).Other as System.ComponentModel.INotifyPropertyChanged;
+                    if (notifier2 != null) notifier2.PropertyChanged += (s, e) =>
+                    {
+                        (_Item as VideoInfo).NotifyPropertyChanged("Other");
+                    };
+                }
             }
         }
 
