@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MediaPortal.Configuration;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using Vlc.DotNet.Forms;
 using Vlc.DotNet.Core;
+using Vlc.DotNet.Core.Medias;
+using Vlc.DotNet.Core.Interops.Signatures.LibVlc.Media;
 using System.Drawing;
 using ExternalOSDLibrary;
+using System.IO;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
     public class VLCPlayer : IPlayer, OVSPLayer
     {
         VlcControl vlcCtrl;
-        FileMedia media;
+        PathMedia media;
         PlayState playState;
         OSDController osd;
         string url;
@@ -25,15 +29,26 @@ namespace OnlineVideos.MediaPortal1.Player
         {
             url = strFile;
 
+            VlcContext.StartupOptions.IgnoreConfig = true;
+            VlcContext.StartupOptions.LogOptions.LogInFile = true;
+            VlcContext.StartupOptions.LogOptions.Verbosity = VlcLogVerbosities.Debug;
+            VlcContext.StartupOptions.AddOption("--no-video-title-show");
+            VlcContext.StartupOptions.AddOption("--http-caching=" + OnlineVideos.MediaPortal1.PluginConfiguration.Instance.wmpbuffer);
+            VlcContext.StartupOptions.LogOptions.LogInFilePath = Path.Combine(Config.GetFolder(MediaPortal.Configuration.Config.Dir.Log), "vlc-onlinevideos.log");
+            if (IsInstalled)
+            {
+                VlcContext.LibVlcDllsPath = vlcPath;
+                VlcContext.LibVlcPluginsPath = Path.Combine(vlcPath, "plugins");
+            }
+
             vlcCtrl = new VlcControl();
             GUIGraphicsContext.form.Controls.Add(vlcCtrl);
             vlcCtrl.Enabled = false;
-            vlcCtrl.Manager = new VlcManager();
 
             vlcCtrl.PositionChanged += vlcCtrl_PositionChanged;
             vlcCtrl.EncounteredError += vlcCtrl_EncounteredError;
 
-            media = new FileMedia() { Path = strFile };
+            media = new PathMedia(strFile);
 
             vlcCtrl.Play(media);
 
@@ -46,9 +61,10 @@ namespace OnlineVideos.MediaPortal1.Player
 
         void vlcCtrl_EncounteredError(VlcControl sender, VlcEventArgs<EventArgs> e)
         {
+            string error = VlcContext.InteropManager.GetErrorMessage.Invoke();
             GUIWindowManager.SendThreadCallbackAndWait((p1, p2, o) =>
             {
-                Log.Instance.Warn("VLCPlayer Error: '{0}'", Vlc.DotNet.Core.Interop.LibVlcMethods.libvlc_errmsg());
+                Log.Instance.Warn("VLCPlayer Error: '{0}'", error);
                 if (!bufferingDone && Initializing) GUIWaitCursor.Hide(); // hide the wait cursor if still showing
                 MediaPortal.Dialogs.GUIDialogOK dlg_error = (MediaPortal.Dialogs.GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
                 if (dlg_error != null)
@@ -56,7 +72,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     dlg_error.Reset();
                     dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                     dlg_error.SetLine(1, Translation.Error);
-                    dlg_error.SetLine(2, Vlc.DotNet.Core.Interop.LibVlcMethods.libvlc_errmsg());
+                    dlg_error.SetLine(2, error);
                     dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                 }
                 PlaybackEnded();
@@ -73,9 +89,9 @@ namespace OnlineVideos.MediaPortal1.Player
         {
             if (media == null) return;
 
-            if (media.State == MediaStates.Ended || media.State == MediaStates.Stopped) 
+            if (media.State == States.Ended || media.State == States.Stopped) 
                 playState = PlayState.Ended;
-            if (Initializing && media.State == MediaStates.Playing) playState = PlayState.Playing;
+            if (Initializing && media.State == States.Playing) playState = PlayState.Playing;
 
             if (!bufferingDone && !Initializing)
             {
@@ -125,7 +141,7 @@ namespace OnlineVideos.MediaPortal1.Player
             if (media != null && playState == PlayState.Playing || playState == PlayState.Paused)
             {
                 vlcCtrl.Pause();
-            if (media.State == MediaStates.Paused)
+                if (media.State == States.Paused)
                 playState = PlayState.Paused;
             else 
                 playState = PlayState.Playing;
@@ -136,7 +152,7 @@ namespace OnlineVideos.MediaPortal1.Player
         {
             if (vlcCtrl != null)
             {
-                if (media.State != MediaStates.Stopped && media.State != MediaStates.Ended)
+                if (media.State != States.Stopped && media.State != States.Ended)
                     vlcCtrl.Stop();
                 PlaybackEnded();
             }
@@ -144,7 +160,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public override double Duration
         {
-            get { return media != null && media.Duration.HasValue ? media.Duration.Value / 1000 : 0.0; }
+            get { return media != null ? media.Duration.TotalSeconds : 0.0; }
         }
 
         public override double CurrentPosition
@@ -179,8 +195,8 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public override int Speed
         {
-            get { return (Convert.ToInt32(vlcCtrl.VideoRate)); }
-            set { vlcCtrl.VideoRate = value; }
+            get { return (Convert.ToInt32(vlcCtrl.Rate)); }
+            set { vlcCtrl.Rate = value; }
         }
 
         public override void SeekRelative(double dTime)
@@ -202,7 +218,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 if (vlcCtrl == null) return;
                 try
                 {
-                    vlcCtrl.VideoTime = (long)(dTime * 1000);
+                    vlcCtrl.Time = TimeSpan.FromSeconds(dTime);
                 }
                 catch (Exception ex) { Log.Instance.Error(ex); }
             }
@@ -265,5 +281,25 @@ namespace OnlineVideos.MediaPortal1.Player
         public string SubtitleFile { get; set; }
 
         #endregion
+
+
+        static string vlcPath = null;
+        public static bool IsInstalled
+        {
+            get
+            {
+                if (vlcPath == null)
+                {
+                    vlcPath = string.Empty;
+                    Microsoft.Win32.RegistryKey regkeyVlcInstallPathKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\VideoLAN\VLC");
+                    if (regkeyVlcInstallPathKey != null)
+                    {
+                        string sVlcPath = (string)regkeyVlcInstallPathKey.GetValue("InstallDir", "");
+                        if (Directory.Exists(sVlcPath)) vlcPath = sVlcPath;
+                    }
+                }
+                return !string.IsNullOrEmpty(vlcPath);
+            }
+        }
     }
 }
