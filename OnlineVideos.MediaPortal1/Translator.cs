@@ -173,7 +173,6 @@ namespace OnlineVideos.MediaPortal1
             return input;
         }
 
-
         public static void TranslateSkin()
         {
             Log.Instance.Info("Translating skin");
@@ -182,24 +181,6 @@ namespace OnlineVideos.MediaPortal1
                 SetProperty("#OnlineVideos.Translation." + name + ".Label", Translator.Strings[name]);
             }
         }
-
-        //public static string GetMediaType(MediaType mediaType)
-        //{
-        //  switch (mediaType)
-        //  {
-        //    case MyAlarm.MediaType.File:
-        //      return File;
-
-        //    case MyAlarm.MediaType.PlayList:
-        //      return Playlist;
-
-        //    case MyAlarm.MediaType.Message:
-        //      return Message;
-
-        //    default:
-        //      return String.Empty;
-        //  }
-        //}
 
         public static string GetDayName(DayOfWeek dayOfWeek)
         {

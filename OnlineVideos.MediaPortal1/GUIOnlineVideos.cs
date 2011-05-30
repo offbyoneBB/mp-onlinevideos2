@@ -367,7 +367,7 @@ namespace OnlineVideos.MediaPortal1
                         dialogOptions.Add(OnlineVideos.PlayerType.Internal.ToString());
                         dlgSel.Add("Windows Media Player");
                         dialogOptions.Add(OnlineVideos.PlayerType.WMP.ToString());
-                        if (Vlc.DotNet.Forms.VlcManager.IsInstalled)
+                        if (VLCPlayer.IsInstalled)
                         {
                             dlgSel.Add("VLC media player");
                             dialogOptions.Add(OnlineVideos.PlayerType.VLC.ToString());

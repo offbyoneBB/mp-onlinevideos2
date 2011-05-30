@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace Vlc.DotNet.Core.Helpers
+namespace Vlc.DotNet.Core
 {
     internal static class EventsHelper
     {
@@ -17,8 +17,6 @@ namespace Vlc.DotNet.Core.Helpers
                     singleInvoke.DynamicInvoke(new object[] {sender, arg});
                     continue;
                 }
-                //if (syncInvoke is Control && ((Control)syncInvoke).IsDisposed)
-                //    continue;
                 try
                 {
                     if (syncInvoke.InvokeRequired)

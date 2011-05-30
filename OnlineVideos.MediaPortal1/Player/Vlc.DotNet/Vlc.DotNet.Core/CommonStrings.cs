@@ -1,8 +1,30 @@
 ﻿namespace Vlc.DotNet.Core
 {
-    internal static class CommonStrings
+    ///<summary>
+    /// CommonString class
+    ///</summary>
+    public static class CommonStrings
     {
-        public const string PLUGINS_PATH_DEFAULT_VALUE = @"C:\Program Files (x86)\VideoLAN\VLC\plugins\";
-        public const string VLC_DOTNET_PROPERTIES_CATEGORY = "VideoLan DotNet";
+        /// <summary>
+        /// "C:\Program Files (x86)\VideoLAN\VLC\"
+        /// </summary>
+        public const string LIBVLC_DLLS_PATH_DEFAULT_VALUE_AMD64 = @"C:\Program Files (x86)\VideoLAN\VLC\";
+
+        /// <summary>
+        /// "C:\Program Files\VideoLAN\VLC\"
+        /// </summary>
+        public const string LIBVLC_DLLS_PATH_DEFAULT_VALUE_X86 = @"C:\Program Files\VideoLAN\VLC\";
+
+        /// <summary>
+        /// "C:\Program Files (x86)\VideoLAN\VLC\plugins\"
+        /// </summary>
+        public const string PLUGINS_PATH_DEFAULT_VALUE_AMD64 = @"C:\Program Files (x86)\VideoLAN\VLC\plugins\";
+
+        /// <summary>
+        /// "C:\Program Files\VideoLAN\VLC\plugins\"
+        /// </summary>
+        public const string PLUGINS_PATH_DEFAULT_VALUE_X86 = @"C:\Program Files\VideoLAN\VLC\plugins\";
+
+        internal const string VLC_DOTNET_PROPERTIES_CATEGORY = "VideoLan DotNet";
     }
 }
