@@ -377,7 +377,8 @@ namespace OnlineVideos.MediaPortal1
                         else
                         {
                             OnlineVideos.PlayerType forcedPlayer = (OnlineVideos.PlayerType)Enum.Parse(typeof(OnlineVideos.PlayerType), dialogOptions[dlgSel.SelectedId - 1]);
-                            selectedVideo = loSelectedVideo;
+                            if (CurrentState == State.videos) selectedVideo = loSelectedVideo;
+                            else selectedClipIndex = GUI_infoList.SelectedListItemIndex;
                             //play the video
                             currentPlaylist = null;
                             currentPlayingItem = null;
