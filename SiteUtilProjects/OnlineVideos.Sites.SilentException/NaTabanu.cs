@@ -28,6 +28,12 @@ namespace OnlineVideos.Sites
         //[Category("OnlineVideosConfiguration"), Description("RegEx to additionally fetch subcategories")]
         string subCategoryRegex = @"<li class=""level1""><a href=""([^""]*)"" class=""level1 topdaddy""><span><categoryName></span></a><ul>(?<subcategories>.*?)</ul>";
 
+        [Category("OnlineVideosConfiguration"), Description("URL to additionally fetch series")]
+        string seriesCategoryUrl = "http://www.natabanu.com/spisak-svih-online-serija.html";
+
+        [Category("OnlineVideosConfiguration"), Description("RegEx to additionally fetch series")]
+        string seriesCategoryRegex = @"<li><a\shref.*?>\s*?<img.*?>\s*?</a>\s*?<a\shref=""(?<url>[^""]*)""\sclass=""title"">(?<title>[^<]*)</a>\s*?</li>";
+
         [Category("OnlineVideosConfiguration"), Description("Alternative RegEx to get the playlist")]
         string altFileUrlRegex = @"<iframe title=""YouTube video player"".*?class=""youtube-player"".*?src=""(?<m0>[^""]*)""";
 
@@ -134,6 +140,8 @@ namespace OnlineVideos.Sites
             else
             {
                 int result = base.DiscoverSubCategories(parentCategory);
+                if (result == 0 && parentCategory.Name.Equals("Serije"))
+                  result = DiscoverDynamicSeries(parentCategory);
                 RssLink catAll = new RssLink();
                 catAll.Url = (parentCategory as RssLink).Url;
                 catAll.Name = "Sve";
@@ -143,6 +151,47 @@ namespace OnlineVideos.Sites
                 parentCategory.SubCategories.Insert(0, catAll);
                 return result;
             }
+        }
+
+        private int DiscoverDynamicSeries(Category parentCategory)
+        {
+            int result = 0;
+            string data = GetWebData(seriesCategoryUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+            if (!string.IsNullOrEmpty(data) && !string.IsNullOrEmpty(seriesCategoryRegex))
+            {
+                Regex regEx_seriesCategory = new Regex(seriesCategoryRegex);
+                Match m = regEx_seriesCategory.Match(data);
+                while (m.Success)
+                {
+                    string url = m.Groups["url"].Value;
+                    string title = m.Groups["title"].Value;
+                    if (!string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(title) && !HasSubCategory(parentCategory, url, title))
+                    {
+                        RssLink newCat = new RssLink();
+                        newCat.Url = url;
+                        newCat.Name = title;
+                        newCat.Thumb = "";
+                        newCat.Description = "";
+                        newCat.ParentCategory = parentCategory;
+                        parentCategory.SubCategories.Add(newCat);
+                        result++;
+                    }
+                    m = m.NextMatch();
+                }
+            }
+            return result;
+        }
+
+        private bool HasSubCategory(Category parentCategory, string url, string title)
+        {
+            foreach (Category cat in parentCategory.SubCategories)
+            {
+                if (cat is RssLink && (cat as RssLink).Url.Equals(url) && (cat as RssLink).Name.Equals(title))
+                {
+                    return true;    
+                }
+            }
+            return false;
         }
 
         public override string getUrl(VideoInfo video)
