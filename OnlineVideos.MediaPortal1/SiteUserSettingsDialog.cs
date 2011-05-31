@@ -34,7 +34,8 @@ namespace OnlineVideos.MediaPortal1
                     dlgSiteOptions.SetHeading(5);
                     foreach (var ovsUserCfg in actualProps)
                     {
-                        string value = ovsUserCfg.GetValue(selectedSite).ToString();
+                        object valueO = ovsUserCfg.GetValue(selectedSite);
+                        string value = valueO != null ? valueO.ToString() : string.Empty;
                         if (ovsUserCfg.Attributes.Contains(new System.ComponentModel.PasswordPropertyTextAttribute(true)))
                         {
                             value = new string('*', value.Length);
