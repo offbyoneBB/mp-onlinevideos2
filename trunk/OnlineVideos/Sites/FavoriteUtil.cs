@@ -179,21 +179,26 @@ namespace OnlineVideos.Sites
 
         public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice)
         {
+            bool result = false;
             if (choice == Translation.DeleteAll)
-                return OnlineVideoSettings.Instance.FavDB.removeAllFavoriteVideos(((RssLink)selectedCategory).Url);
+                result = OnlineVideoSettings.Instance.FavDB.removeAllFavoriteVideos(((RssLink)selectedCategory).Url);
             else
             {
                 if (selectedCategory is FavoriteCategory)
                 {
-                    bool result = OnlineVideoSettings.Instance.FavDB.removeFavoriteCategory(((FavoriteCategory)selectedCategory).Other as Category);
+                    result = OnlineVideoSettings.Instance.FavDB.removeFavoriteCategory(((FavoriteCategory)selectedCategory).Other as Category);
                     if (result) selectedCategory.ParentCategory.SubCategories.Remove(selectedCategory);
                     return result;
                 }
                 else
                 {
-                    return OnlineVideoSettings.Instance.FavDB.removeFavoriteVideo(selectedItem);
+                    result = OnlineVideoSettings.Instance.FavDB.removeFavoriteVideo(selectedItem);
                 }
             }
+            // we have to manually refresh the categories
+            if (result && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
+
+            return result;
         }
     }
 }
