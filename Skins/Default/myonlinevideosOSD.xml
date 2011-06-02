@@ -150,6 +150,17 @@
       <textcolor>ivory</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
+    <control>
+      <description>site Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>655</posX>
+      <posY>511</posY>
+      <height>60</height>
+      <width>60</width>
+      <texture>#Play.Current.OnlineVideos.SiteIcon</texture>
+      <visible>!control.hasfocus(1237)</visible>
+    </control>
     <import>common.osd.buttons.xml</import>    
   </controls>
 </window>
