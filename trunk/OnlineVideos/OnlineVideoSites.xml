@@ -994,6 +994,12 @@
         <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
       </Categories>
     </Site>
+    <Site name="ABC iView" util="ABCiView" agecheck="false" enabled="true" lang="en">
+      <Description>iview is catch-up and more from ABC TV</Description>
+      <Configuration>
+      </Configuration>
+      <Categories />
+    </Site>
     <Site name="Academic Earth" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Online degrees and video courses from leading universities.</Description>
       <Configuration>
