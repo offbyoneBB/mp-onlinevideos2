@@ -1008,18 +1008,7 @@ namespace OnlineVideos.MediaPortal1
         {
             if (DateTime.Now - lastOnlineVersionRetrieved > TimeSpan.FromDays(1)) // only check for a new available version once a day
             {
-                try
-                {
-                    string tempFile = System.IO.Path.GetTempFileName();
-                    new System.Net.WebClient().DownloadFile("http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml", tempFile);
-                    versionOnline = new Version(MpeCore.Classes.ExtensionCollection.Load(tempFile).GetUniqueList().Items[0].GeneralInfo.Version.ToString());
-                    lastOnlineVersionRetrieved = DateTime.Now;
-                    File.Delete(tempFile);
-                }
-                catch(Exception ex)
-                {
-                    Log.Instance.Info("Error retrieving {0} to check for latest version: {1}", "http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml", ex.Message);
-                }
+                versionOnline = VersionCheck();
             }
 
             if (versionOnline == null || versionOnline > versionDll)
@@ -1036,7 +1025,25 @@ namespace OnlineVideos.MediaPortal1
                 return false;
             }
 
+            lastOnlineVersionRetrieved = DateTime.Now;
             return true;
+        }
+
+        public static Version VersionCheck()
+        {
+            try
+            {
+                string tempFile = System.IO.Path.GetTempFileName();
+                new System.Net.WebClient().DownloadFile("http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml", tempFile);
+                Version version = new Version(MpeCore.Classes.ExtensionCollection.Load(tempFile).GetUniqueList().Items[0].GeneralInfo.Version.ToString());
+                File.Delete(tempFile);
+                return version;
+            }
+            catch (Exception ex)
+            {
+                Log.Instance.Info("Error retrieving {0} to check for latest version: {1}", "http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml", ex.Message);
+                return null;
+            }
         }
 
         void CopyDlls(string sourceDir, string targetDir)
