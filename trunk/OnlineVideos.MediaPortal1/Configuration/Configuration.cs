@@ -18,6 +18,7 @@ namespace OnlineVideos.MediaPortal1
     public partial class Configuration : Form
     {
         ConfigurationPlayer confPlayer;
+        Version versionOnline;
 
         public Configuration()
         {
@@ -601,6 +602,20 @@ namespace OnlineVideos.MediaPortal1
 
         private void btnReportSite_Click(object sender, EventArgs e)
         {
+            if (versionOnline == null)
+            {
+                versionOnline = GUISiteUpdater.VersionCheck();
+            }
+            if (versionOnline == null)
+            {
+                MessageBox.Show("Could not retrieve latest version info from the internet!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (versionOnline > new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version)
+            {
+                MessageBox.Show(string.Format(Translation.LatestVersionRequired, versionOnline), "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return;
+            }
             SiteSettings site = siteList.SelectedItem as SiteSettings;
             SubmitSiteReport ssrFrm = new SubmitSiteReport() { SiteName = site.Name };
             ssrFrm.ShowDialog();
