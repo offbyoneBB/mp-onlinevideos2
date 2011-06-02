@@ -2541,15 +2541,15 @@ public class Script
     <VersionDescription>rtmp: fixed live streams, connection problems, swf hash calulation
 added Option to put Favorites and Downloads sites first
 reworked Codecs tab in Configuration to test playback
-added new GuiProperty: Airdate
+added new info for videos: Airdate (GuiProperty: #OnlineVideos.aired)
 YouTube: fixed localized content no available, added "New Videos" in User's Subscribtions
 Downloads: refresh current downloading progress info while showing
 SiteManager: user can now report broken sites from within MediaPortal
 SiteManager: invoke AutomaticUpdate from button in hidden menu
 SiteManager: update all sites shown (filtered) from contextmenu</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.29.0.1.mpe1</OnlineLocation>
-    <ReleaseDate>2011-05-29T10:00:00</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
+    <ReleaseDate>2011-06-02T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
