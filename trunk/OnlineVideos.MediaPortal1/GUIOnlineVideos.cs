@@ -2020,7 +2020,7 @@ namespace OnlineVideos.MediaPortal1
                     }
                 }
                 currentPlayingItem = playItem;
-                SetGuiProperties_PlayingVideo(playItem.Video, playItem.Description);
+                SetGuiProperties_PlayingVideo(playItem);
             }
         }
 
@@ -2668,11 +2668,19 @@ namespace OnlineVideos.MediaPortal1
             return image;
         }
 
-        internal static void SetGuiProperties_PlayingVideo(VideoInfo video, string alternativeTitle)
+        internal static void SetGuiProperties_PlayingVideo(PlayListItem playItem)
         {
-            if (video == null) return;
-            new System.Threading.Thread(delegate()
+            // first reset our own properties
+            GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", string.Empty);
+
+            // start a thread that will set the properties in 2 seconds (otherwise MediaPortal core logic would overwrite them)
+            if (playItem == null || playItem.Video == null) return;
+            new System.Threading.Thread(delegate(object o)
             {
+                VideoInfo video = (o as PlayListItem).Video;
+                string alternativeTitle = (o as PlayListItem).Description;
+                Sites.SiteUtilBase site = (o as PlayListItem).Util;
+
                 System.Threading.Thread.Sleep(2000);
                 Log.Instance.Info("Setting Video Properties.");
 
@@ -2699,8 +2707,13 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title + (string.IsNullOrEmpty(quality) ? "" : quality));
                 if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
                 if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
-                if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Length);
-            }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start();
+                
+                if (!string.IsNullOrEmpty(video.Airdate)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Airdate);
+                else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", VideoInfo.GetDuration(video.Length));
+
+                if (site != null) GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", GetImageForSite(site.Settings.Name, site.Settings.UtilName, "Icon"));
+
+            }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start(playItem);
         }        
 
         /// <summary>

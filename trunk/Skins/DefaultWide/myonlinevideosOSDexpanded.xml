@@ -161,5 +161,16 @@
       <textcolor>ivory</textcolor>
       <visible>control.hasfocus(1237)</visible>
     </control>
+    <control>
+      <description>site Icon</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>955</posX>
+      <posY>325</posY>
+      <height>80</height>
+      <width>80</width>
+      <texture>#Play.Current.OnlineVideos.SiteIcon</texture>
+      <visible>control.hasfocus(1237)</visible>
+    </control>    
   </controls>
 </window>
