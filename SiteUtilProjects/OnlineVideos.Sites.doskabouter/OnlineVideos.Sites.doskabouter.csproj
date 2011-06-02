@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ABCiViewUtil.cs" />
     <Compile Include="CBCUtil.cs" />
     <Compile Include="EuroSportUtil.cs" />
     <Compile Include="Hoster\Archiv.cs" />
