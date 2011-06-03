@@ -42,29 +42,16 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="WDR" util="GenericSite" agecheck="false" enabled="true" lang="de">
+    <Site name="WDR" util="WDR" agecheck="false" enabled="true" lang="de" lastUpdated="2011-06-03T14:28:39.2174291+02:00">
       <Description>Podcasts des Westdeutschen Rundfunks (WDR).</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="Sendung mit der Maus" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_maus.jpg">http://podcast.wdr.de/maus.xml</Category>
-        <Category xsi:type="RssLink" name="Tiere suchen ein Zuhause" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_tieresucheneinzuhause.jpg">http://podcast.wdr.de/sztiere.xml</Category>
-        <Category xsi:type="RssLink" name="Hier und Heute" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_hierundheute.jpg">http://podcast.wdr.de/hierundheute.xml</Category>
-        <Category xsi:type="RssLink" name="Wissen macht Ah!" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_wissenmachtah.jpg">http://podcast.wdr.de/wissenmachtah.xml</Category>
-        <Category xsi:type="RssLink" name="neuneinhalb" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_neuneinhalb.jpg">http://podcast.wdr.de/neuneinhalb.xml</Category>
-        <Category xsi:type="RssLink" name="Angeklickt" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_angeklickt.jpg">http://podcast.wdr.de/angeklickt.xml</Category>
-        <Category xsi:type="RssLink" name="Käpt'n Blaubär" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_blaubaer.jpg">http://podcast.wdr.de/blaubaer.xml</Category>
-        <Category xsi:type="RssLink" name="Menschen hautnah" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_menschenhautnah.jpg">http://podcast.wdr.de/menschenhautnah.xml</Category>
-        <Category xsi:type="RssLink" name="Monitor" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_monitor.jpg">http://podcast.wdr.de/monitor.xml</Category>
-        <Category xsi:type="RssLink" name="Quarks &amp; Co" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_quarks.jpg">http://podcast.wdr.de/quarks.xml</Category>
-        <Category xsi:type="RssLink" name="Testmarkt" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_testmarkt.jpg">http://podcast.wdr.de/testmarkt.xml</Category>
-        <Category xsi:type="RssLink" name="die story" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_diestory.jpg">http://podcast.wdr.de/diestory.xml</Category>
-        <Category xsi:type="RssLink" name="Hart aber fair" thumb="http://www.wdr.de/themen/_config_/podcast/img/podcast_hartaberfair.jpg">http://podcast.wdr.de/hartaberfair.xml</Category>
-        <Category xsi:type="RssLink" name="Planet Wissen" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_planetwissen.jpg">http://podcast.wdr.de/planetwissen.xml</Category>
-        <Category xsi:type="RssLink" name="schön hier" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_schoenhier.jpg">http://podcast.wdr.de/schoenhier.xml</Category>
-        <Category xsi:type="RssLink" name="Kopfball" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_kopfball.jpg">http://podcast.wdr.de/kopfball.xml</Category>
-        <Category xsi:type="RssLink" name="frauTV" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_frautv.jpg">http://podcast.wdr.de/frautv.xml</Category>
-        <Category xsi:type="RssLink" name="echtzeit" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_echtzeit.jpg">http://podcast.wdr.de/echtzeit.xml</Category>
-        <Category xsi:type="RssLink" name="Servicezeit: kompakt" thumb="http://www.wdr.de/themen/_config_/podcast/img/vodcast_szkompakt.jpg">http://podcast.wdr.de/szkompakt.xml</Category>
-      </Categories>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<h2>(?<title>[^<]+?)\s-\szum\sMitnehmen</h2>.*?
+<img\s+src="(?<thumb>[^"]+)".*?/>.*?
+<img\s+src="/tv/home/codebase/img/icons/icon_(?<description>(audio|video)).gif".*?
+<input\svalue="(?<url>[^"]+)"]]></item>
+        <item key="baseUrl"><![CDATA[http://www.wdr.de/tv/home/videopodcast/vodcast.jsp]]></item>
+      </Configuration>
+      <Categories />
     </Site>
     <Site name="ZDF Mediathek" util="ZDFMediathek" agecheck="false" enabled="true" lang="de">
       <Description>Mediathek des Zweiten Deutschen Fernsehens.</Description>

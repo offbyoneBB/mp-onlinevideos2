@@ -215,6 +215,7 @@
     <Compile Include="SVTPlayUtil.cs" />
     <Compile Include="ViasatUtil.cs" />
     <Compile Include="VidiLifeUtil.cs" />
+    <Compile Include="WDRUtil.cs" />
     <Compile Include="YahooMusicVideosUtil.cs" />
     <Compile Include="Yahoo\Authentication\Authentication.cs" />
     <Compile Include="Yahoo\Authentication\AuthenticationException.cs" />
