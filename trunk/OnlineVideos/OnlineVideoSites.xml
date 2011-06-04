@@ -812,7 +812,7 @@
         <Category xsi:type="RssLink" name="Discovery Investigations" thumb="http://www.discovery.com/radio/gallery/ID.jpg">http://www.discovery.com/radio/xml/id_videopodcast.xml</Category>
       </Categories>
     </Site>
-    <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true" lang="en">
+    <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true" lang="en" lastUpdated="2011-06-04T13:57:55.7833505+02:00">
       <Description>Sample site showing how to include your own custom feeds and streams.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="MSDN">http://channel9.msdn.com/rss.aspx?ShowID=1</Category>
@@ -820,7 +820,8 @@
         <Category xsi:type="RssLink" name="Crave">http://feeds2.feedburner.com/cnet/crave</Category>
         <Category xsi:type="RssLink" name="CNet">http://feeds2.feedburner.com/allcnetvideopodcasts</Category>
         <Category xsi:type="RssLink" name="DL.TV">http://feeds2.feedburner.com/ziffdavis/dltvwmvvideo</Category>
-        <Category xsi:type="RssLink" name="MotoGP Race Report" thumb="http://up2.podbean.com/image-logos/17774_logo.jpg">http://www.motogp.com/xml/en/sindication/podcast_video.xml</Category>
+        <Category xsi:type="RssLink" name="MotoGP Race Report" thumb="http://assets.bikerzeit.at/eventfiles/thump_520_1292687982229_motogp_logo_2.jpg">http://www.motogp.com/xml/en/sindication/podcast_video.xml</Category>
+        <Category xsi:type="RssLink" name="Computer:club²" thumb="http://www.cczwei.de/images/tmpl_logo_top4.jpg">http://www.cczwei.de/rss_tvissues_all.php</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
             <Channel name="French Tv - Orange" thumb="http://www.broadbandtvnews.com/wp-content/uploads/2008/02/orange-logo.thumbnail.jpg">mms://livewm.orange.fr/live-multicanaux</Channel>
