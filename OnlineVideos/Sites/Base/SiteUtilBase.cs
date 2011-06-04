@@ -371,6 +371,20 @@ namespace OnlineVideos.Sites
             return url;
         }
 
+        /// <summary>
+        /// This method should be used whenever requesting data via http get. You can optionally provide some request settings.
+        /// It will automatically convert the retrieved data into the type you provided.
+        /// Retrieved data is added to a cache if HTTP Status was 200 and more than 500 bytes were retrieved. The cache timeout is user configurable (<see cref="OnlineVideoSettings.CacheTimeout"/>).
+        /// </summary>
+        /// <typeparam name="T">The type you want the returned data to be. Supported are <see cref="String"/>, <see cref="Newtonsoft.Json.Linq.JObject"/>, <see cref="RssToolkit.Rss.RssDocument"/>, <see cref="XmlDocument"/> and <see cref="HtmlAgilityPack.HtmlDocument"/>.</typeparam>
+        /// <param name="url">The url to requets data from.</param>
+        /// <param name="cc">A <see cref="CookieContainer"/> that will send cookies along with the request and afterwards contains all cookies of the response.</param>
+        /// <param name="referer">A referer that will be send with the request.</param>
+        /// <param name="proxy">If you want to use a proxy for the request, give a <see cref="IWebProxy"/>.</param>
+        /// <param name="forceUTF8">Some server are not returning a valid CharacterSet on the response, set to true to force reading the response content as UTF8.</param>
+        /// <param name="allowUnsafeHeader">Some server return headers that are treated as unsafe by .net. In order to retrieve that data set this to true.</param>
+        /// <param name="userAgent">You can provide a custom UserAgent for the request, otherwise the default one (<see cref="OnlineVideoSettings.UserAgent"/>) is used.</param>
+        /// <returns>The data returned by a <see cref="HttpWebResponse"/> converted to the specified type.</returns>
         public static T GetWebData<T>(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null)
         {
             string webData = GetWebData(url, cc, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent);
@@ -395,6 +409,12 @@ namespace OnlineVideos.Sites
                 xmlDoc.LoadXml(webData);
                 return (T)(object)xmlDoc;
             }
+            else if (typeof(T) == typeof(HtmlAgilityPack.HtmlDocument))
+            {
+                HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                htmlDoc.LoadHtml(webData);
+                return (T)(object)htmlDoc;
+            }
 
             return default(T);
         }
@@ -413,15 +433,24 @@ namespace OnlineVideos.Sites
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return "";
                 if (!String.IsNullOrEmpty(userAgent))
-                    request.UserAgent = userAgent;
+                    request.UserAgent = userAgent; // set specific UserAgent if given
                 else
-                    request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-                request.Accept = "*/*";
-                request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+                    request.UserAgent = OnlineVideoSettings.Instance.UserAgent; // set OnlineVideos default UserAgent
+                request.Accept = "*/*"; // we accept any content type
+                request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate"); // we accept compressed content
                 if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set referer if given
                 if (cc != null) request.CookieContainer = cc; // set cookies if given
-                if (proxy != null) request.Proxy = proxy;
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (proxy != null) request.Proxy = proxy; // send the request over a proxy if given
+                HttpWebResponse response;
+                try
+                {
+                    response = (HttpWebResponse)request.GetResponse();
+                }
+                catch (WebException webEx)
+                {
+                    Log.Debug(webEx.Message);
+                    response = (HttpWebResponse)webEx.Response; // if the server returns a 404 or similar .net will throw a WebException that has the response
+                }
                 Stream responseStream;
                 if (response.ContentEncoding.ToLower().Contains("gzip"))
                     responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
