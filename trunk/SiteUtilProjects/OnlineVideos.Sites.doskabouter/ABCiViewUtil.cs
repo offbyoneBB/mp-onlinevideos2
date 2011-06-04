@@ -115,13 +115,13 @@ namespace OnlineVideos.Sites
             string url;
             if (host.Equals("Akamai", StringComparison.InvariantCultureIgnoreCase))
                 url = String.Format("rtmpurl={0}&tcurl={1}",
-                    HttpUtility.UrlEncode(@"rtmp://cp53909.edgefcs.net////flash/playback/_definst_/" + video.VideoUrl),
-                    HttpUtility.UrlEncode(@"rtmp://cp53909.edgefcs.net/ondemand?auth=""" + auth + @"""")
+                    HttpUtility.UrlEncode(@"rtmp://cp53909.edgefcs.net///flash/playback/_definst_/" + vidUrl),
+                    HttpUtility.UrlEncode(@"rtmp://cp53909.edgefcs.net/ondemand?auth=" + auth)
                     );
             else
                 url = String.Format("rtmpurl={0}&playpath={1}",
-                    HttpUtility.UrlEncode(@"rtmp://203.18.195.10/ondemand?auth=""" + auth + @""""),
-                    HttpUtility.UrlEncode(video.VideoUrl)
+                    HttpUtility.UrlEncode(@"rtmp://203.18.195.10/ondemand?auth=" + auth),
+                    HttpUtility.UrlEncode(vidUrl)
                     );
 
             url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
