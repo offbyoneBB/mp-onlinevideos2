@@ -274,16 +274,17 @@
         <Category xsi:type="RssLink" name="Prüfstand">http://www.heise.de/ct-tv/pruefstand-4793.html</Category>
       </Categories>
     </Site>
-    <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en">
+    <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en" lastUpdated="2011-06-04T14:28:51.0164637+02:00">
       <Description>Miro combines and categorizes collections of video channels from thousands of sources.</Description>
       <Configuration>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
         <item key="baseUrl"><![CDATA[https://www.miroguide.com/api/list_categories]]></item>
         <item key="dynamicCategoriesRegEx"><![CDATA[\{'url'\:\su'(?<url>[^']+)',\s'name'\:\su'(?<title>[^']+)']]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass="searchResultContent">\s*
-                    <h4><a\shref="(?<mirourl>[^"]+)"[^>]*>(?<name>[^<]*)</a></h4>\s*
-                    <p>(?<desc>(?:(?!</p>).)*)</p>\s*</div>
-                    (?:(?!http\://subscribe\.getmiro\.com).)*(?<url>[^"]*)"]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\s+class="details">\s*
+<h4\s+class="video-type">\s*<a\s+href="(?<mirourl>[^"]+)".*?>(?<name>.*?)</a></h4>\s*
+<a\s+href="(?<url>http\://subscribe\.getmiro\.com/\?url1=[^"]+)".*?>.*?</a>\s*
+<p>(?<desc>.*?)</p>\s*
+</div>]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\s*>\s*<span><a\s*href="[^"]+">\s*(?<lastPage>\d+)\s*</a></span>\s*</li>\s*</ul>]]></item>
       </Configuration>
       <Categories />
