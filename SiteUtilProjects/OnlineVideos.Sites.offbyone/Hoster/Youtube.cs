@@ -66,7 +66,7 @@ namespace OnlineVideos.Hoster
             catch { }
 
             string[] FmtMap = null;
-            if (Items.Get("fmt_url_map") != "")
+            if (!string.IsNullOrEmpty(Items.Get("fmt_url_map")))
             {
                 FmtMap = Items["fmt_url_map"].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 Array.Sort(FmtMap, new Comparison<string>(delegate(string a, string b)
@@ -101,7 +101,7 @@ namespace OnlineVideos.Hoster
                     }
                 }
             }
-            else if (Items.Get("fmt_stream_map") != "")
+            else if (!string.IsNullOrEmpty(Items.Get("fmt_stream_map")))
             {
                 string swfUrl = Regex.Match(contents, "\"url\":\\s\"([^\"]+)\"").Groups[1].Value.Replace("\\/", "/");// "url": "http:\/\/s.ytimg.com\/yt\/swfbin\/watch_as3-vflOCLBVA.swf"
 
@@ -155,6 +155,11 @@ namespace OnlineVideos.Hoster
                                 System.Web.HttpUtility.UrlEncode(swfUrl)))); break;
                     }
                 }
+            }
+            else if (Items.Get("status")== "fail")
+            {
+                string reason = Items.Get("reason");
+                if (!string.IsNullOrEmpty(reason) && (PlaybackOptions == null || PlaybackOptions.Count == 0)) throw new OnlineVideosException(reason);
             }
 
             return PlaybackOptions;
