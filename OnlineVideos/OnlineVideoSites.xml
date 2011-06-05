@@ -1048,19 +1048,6 @@
       <Configuration />
       <Categories />
     </Site>
-    <Site name="Kabouter Wesley" util="GenericSite" agecheck="false" enabled="true" lang="nl">
-      <Description>Kabouter Wesley. Elke dinsdag een nieuw filmpje!</Description>
-      <Configuration>
-        <item key="videoListRegEx"><![CDATA[<li><a\shref='(?<VideoUrl>[^']*)'\stitle='[^']*'>(?<Title>[^<]*)</a></li>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<param\sname="movie"\svalue="(?<m0>[^"]*)">]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.kabouterwesley.be/]]></item>
-        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Videos">http://www.kabouterwesley.be/</Category>
-      </Categories>
-    </Site>
     <Site name="NrkBrowser" util="NrkBrowser" agecheck="false" enabled="true" lang="no">
       <Description>NRK er Norges største tilbud på nett; nyheter, radio- og tv-programmer live, nett-tv og podcast.</Description>
     </Site>
@@ -1102,6 +1089,25 @@
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Laatste videos">http://nl.hardware.info/tv/</Category>
+      </Categories>
+    </Site>
+    <Site name="LuckyTV" util="LuckyTV" agecheck="false" enabled="true" lang="nl" lastUpdated="2011-03-05T20:55:50.9260007+01:00">
+      <Description>LuckyTV. Uw dagelijkse mediarevolte na De Wereld Draait Door. Bekijk hier de laatste Lucky of bezoek het ontzagwekkende LuckyTV videoarchief:  honderden filmpjes uit DWDD, De Staat van Verwarring, Vara Laat, Jensen en meer. LuckyTV. Wir leben Fernsehen.</Description>
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[(<img\sclass="border\ssmall\sleft"\ssrc="(?<ImageUrl>[^"]*)"[^>]*></a>\s*<div\sclass="meta\ssmall">\s*<h3\sclass="title"><a\shref="(?<VideoUrl>[^"]*)"[^>]*>(?<Title>[^<]*)</a></h3>\s*<div\sclass="date">(?<Airdate>[^<]*)</div>)
+    |
+    (<a\shref="(?<VideoUrl>[^"]*)"[^>]*><img\salt="[^"]*"\sclass="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\swidth="192"\sheight="108"\s/></a>\s*<div\sclass="post-preview">\s*<h3\sclass="post-title"><a[^>]*>(?<Title>[^<]*)</a></h3>\s*<div\sclass="post-meta">\s*<span\sclass="post-categories"><a[^>]*>[^<]*</a></span>\s*<span\sclass="separator">&bull;</span>\s*<span\sclass="post-date">(?<Airdate>[^<]*)</span>\s*</div>\s*<div\sclass="post-text">\s*<p>(?<Description>[^<]*)</p>*)]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='emm-next'>Volgende\s>></a>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<a\shref="(?<m0>[^"]*)"\stitle="[^"]*"><img\ssrc="[^"]*"\swidth="[^"]*"\sheight="[^"]*"\salt="[^"]*"\s/></]]></item>
+        <item key="baseUrl"><![CDATA[http://www.luckymedia.nl/luckytv/]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Gezien in DWDD" thumb="" desc="">http://www.luckymedia.nl/luckytv/category/dwdd/</Category>
+        <Category xsi:type="RssLink" name="Het Beste van LuckTV" thumb="" desc="">http://www.luckymedia.nl/luckytv/tag/hoogtepunt/</Category>
+        <Category xsi:type="RssLink" name="Vara Laat" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/vara-laat.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/vara-laat/</Category>
+        <Category xsi:type="RssLink" name="De staat van verwarring" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/dsvv.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/dsvv/</Category>
+        <Category xsi:type="RssLink" name="Jensen" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/jensen.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/jensen/</Category>
+        <Category xsi:type="RssLink" name="Joezny" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/joezjny.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/joezjny/</Category>
       </Categories>
     </Site>
     <Site name="Movies4Men" util="Movies4Men" agecheck="false" enabled="true" lang="en">
