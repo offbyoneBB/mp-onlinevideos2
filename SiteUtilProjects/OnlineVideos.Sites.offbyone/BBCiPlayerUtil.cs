@@ -24,13 +24,23 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData(video.VideoUrl));
-            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
-            nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/emp/playlist");
-            string id = doc.SelectSingleNode("//ns1:item[@kind='programme']/@identifier", nsmRequest).Value;
+            XmlNamespaceManager nsmRequest;
+            string id;
 
-            System.Net.WebProxy proxyObj = null; //new System.Net.WebProxy("127.0.0.1", 8118);
+            System.Net.WebProxy proxyObj = null;// new System.Net.WebProxy("127.0.0.1", 8118);
             if (!string.IsNullOrEmpty(proxy)) proxyObj = new System.Net.WebProxy(proxy);
+
+            if (video.Other == "livestream")
+            {
+                id = video.VideoUrl;
+            }
+            else
+            {
+                doc.LoadXml(GetWebData(video.VideoUrl));
+                nsmRequest = new XmlNamespaceManager(doc.NameTable);
+                nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/emp/playlist");
+                id = doc.SelectSingleNode("//ns1:item[@kind='programme']/@identifier", nsmRequest).Value;
+            }
 
             doc = new XmlDocument();
             doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + id, null, null, proxyObj)); //uk only
@@ -59,7 +69,7 @@ namespace OnlineVideos.Sites
                         string identifier = connectionElem.Attributes["identifier"].Value;
                         string auth = connectionElem.Attributes["authString"].Value;
                         string application = connectionElem.GetAttribute("application");
-                        if (string.IsNullOrEmpty(application)) application = "ondemand";
+                        if (string.IsNullOrEmpty(application)) application = video.Other == "livestream" ? "live" : "ondemand";
                         string SWFPlayer = "http://www.bbc.co.uk/emp/10player.swf";
 
                         info = string.Format("{0}x{1} | {2} kbps | {3}", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"), connectionElem.Attributes["kind"].Value);
@@ -68,13 +78,14 @@ namespace OnlineVideos.Sites
                         if (connectionElem.Attributes["kind"].Value == "limelight")
                         {
                             resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfVfy={5}",
+                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfVfy={5}&live={6}",
                                 System.Web.HttpUtility.UrlEncode(server),
                                 "1935",
                                 System.Web.HttpUtility.UrlEncode(application + "?" + auth),
                                 System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth)),
                                 System.Web.HttpUtility.UrlEncode(identifier),
-                                System.Web.HttpUtility.UrlEncode(SWFPlayer)));
+                                System.Web.HttpUtility.UrlEncode(SWFPlayer),
+                                (video.Other == "livestream").ToString()));
                         }
                         else if (connectionElem.Attributes["kind"].Value == "level3")
                         {
@@ -82,22 +93,24 @@ namespace OnlineVideos.Sites
 
                             if (auth.StartsWith("token=")) auth = auth.Substring(6);
                             resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfVfy={5}&token={6}",
+                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfVfy={5}&token={6}&live={7}",
                                 System.Web.HttpUtility.UrlEncode(server),
                                 "1935",
                                 System.Web.HttpUtility.UrlEncode(application),
                                 System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}", server, application)),
                                 System.Web.HttpUtility.UrlEncode(identifier),
                                 System.Web.HttpUtility.UrlEncode(SWFPlayer),
-                                System.Web.HttpUtility.UrlEncode(auth)));
+                                System.Web.HttpUtility.UrlEncode(auth),
+                                (video.Other == "livestream").ToString()));
                         }
                         else if (connectionElem.Attributes["kind"].Value == "akamai")
                         {
                             resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&swfVfy={2}",
+                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&swfVfy={2}&live={3}",
                                 System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}?{2}", server, application, auth)),
                                 System.Web.HttpUtility.UrlEncode(identifier),
-                                System.Web.HttpUtility.UrlEncode(SWFPlayer)));
+                                System.Web.HttpUtility.UrlEncode(SWFPlayer),
+                                (video.Other == "livestream").ToString()));
                         }                                                
                     }
                     if (resultUrl != "") sortedPlaybackOptions.Add(info, resultUrl);
@@ -117,10 +130,27 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            if (autoGrouping)
-                return (category as RssLink).Other as List<VideoInfo>;
+            if (category is Group)
+            {
+                List<VideoInfo> list = new List<VideoInfo>();
+                foreach (Channel channel in ((Group)category).Channels)
+                {
+                    VideoInfo video = new VideoInfo();
+                    video.Title = channel.StreamName;
+                    video.VideoUrl = channel.Url;
+                    video.Other = "livestream";
+                    video.ImageUrl = channel.Thumb;
+                    list.Add(video);
+                }
+                return list;
+            }
             else
-                return getVideoListInternal((category as RssLink).Url);
+            {
+                if (autoGrouping)
+                    return (category as RssLink).Other as List<VideoInfo>;
+                else
+                    return getVideoListInternal((category as RssLink).Url);
+            }
         }
 
         DateTime lastRefresh = DateTime.MinValue;
@@ -132,8 +162,11 @@ namespace OnlineVideos.Sites
                 {
                     foreach (Category cat in Settings.Categories)
                     {
-                        cat.HasSubCategories = true;
-                        cat.SubCategoriesDiscovered = false;
+                        if (cat is RssLink)
+                        {
+                            cat.HasSubCategories = true;
+                            cat.SubCategoriesDiscovered = false;
+                        }
                     }
                     lastRefresh = DateTime.Now;
                 }
