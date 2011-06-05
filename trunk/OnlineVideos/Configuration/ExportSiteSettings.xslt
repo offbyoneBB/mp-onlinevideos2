@@ -27,6 +27,10 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="@*[local-name() = 'nil']" priority="2">
+    
+  </xsl:template>
+  
   <xsl:template match="@*[local-name() = 'type']" priority="2">
     <xsl:attribute name="xsi:type"><xsl:value-of select="."/></xsl:attribute>
   </xsl:template>  
