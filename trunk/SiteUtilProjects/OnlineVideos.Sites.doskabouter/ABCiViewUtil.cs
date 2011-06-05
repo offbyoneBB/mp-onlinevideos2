@@ -5,7 +5,6 @@ using System.Xml;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Web;
-using System.IO;
 
 namespace OnlineVideos.Sites
 {
@@ -107,11 +106,9 @@ namespace OnlineVideos.Sites
             string auth = doc.SelectSingleNode(@"a:iview/a:token", nsmRequest).InnerText;
             string host = doc.SelectSingleNode(@"a:iview/a:host", nsmRequest).InnerText;
 
-            string ext = Path.GetExtension(video.VideoUrl);
-            string vidUrl = Path.GetFileNameWithoutExtension(video.VideoUrl);
-            if (ext.Equals(".mp4", StringComparison.InvariantCultureIgnoreCase))
-                vidUrl = "mp4:" + vidUrl;
-
+            string vidUrl = video.VideoUrl;
+            if (vidUrl.EndsWith(".mp4", StringComparison.InvariantCultureIgnoreCase))
+                vidUrl = "mp4:" + vidUrl.Substring(0, vidUrl.Length - 4);
             string url;
             if (host.Equals("Akamai", StringComparison.InvariantCultureIgnoreCase))
                 url = String.Format("rtmpurl={0}&tcurl={1}",
