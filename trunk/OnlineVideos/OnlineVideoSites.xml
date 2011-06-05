@@ -188,14 +188,12 @@
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[category_id=("|')(?<url>[^("|')]+)("|')\s*category_name=("|')(?<title>[^("|')]+)("|')>]]></item>
         <item key="dynamicCategoryUrlFormatString"><![CDATA[http://film.bild.de/nav.aspx?s=list&c={0}]]></item>
-        <item key="videoListRegEx">
-          <![CDATA[<div\s+class="naw_movieBoxT1_box_inner">\s*
+        <item key="videoListRegEx"><![CDATA[<div\s+class="naw_movieBoxT1_box_inner">\s*
 <a\shref="javascript:onGoToDetailPage\((?<VideoUrl>[^,]+).*?background-image:\surl\s*\((?<ImageUrl>[^\)]+)\);">
 .*?
 <div\s+class="naw_tipBox_movieTitle">(?<Title>.*?)</div>
 .*?
-<div\s+class="naw_tipBox_description">(?<Description>.*?)</div>]]>
-        </item>
+<div\s+class="naw_tipBox_description">(?<Description>.*?)</div>]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\s+href="\#(?<url>[^"]+)"><div[^>]*>Weiter</div></a>]]></item>
         <item key="nextPageRegExUrlFormatString"><![CDATA[/nav.aspx?{0}]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://film.bild.de/nav.aspx?s=movie&m={0}&pl=m]]></item>
@@ -596,7 +594,7 @@
         <Category xsi:type="RssLink" name="Weather">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_weather.xml</Category>
       </Categories>
     </Site>
-    <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en" lastUpdated="2011-03-05T18:27:46.2170353+01:00">
+    <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en" lastUpdated="2011-06-06T00:31:02.0655048+02:00">
       <Description>The BBC iPlayer allows to catch up on the last 7 days of BBC TV (only available in the UK).</Description>
       <Configuration>
         <item key="thumbReplaceRegExPattern"><![CDATA[_\d{2,3}_\d{2,3}\.jpg]]></item>
@@ -632,6 +630,17 @@
         <Category xsi:type="RssLink" name="BBC Parliment" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/7/7c/BBC_Parliament.svg/200px-BBC_Parliament.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_parliament/list</Category>
         <Category xsi:type="RssLink" name="BBC News" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/BBC_News.svg/200px-BBC_News.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_news24/list</Category>
         <Category xsi:type="RssLink" name="BBC Alba" thumb="http://upload.wikimedia.org/wikipedia/en/thumb/a/a5/BBC_Alba.svg/200px-BBC_Alba.svg.png">http://feeds.bbc.co.uk/iplayer/bbc_alba/list</Category>
+        <Category xsi:type="Group" name="Live TV">
+          <Channels>
+            <Channel name="BBC One" thumb="http://www.gtsat.be/images/uk/bbc_one.png">bbc_one_live</Channel>
+            <Channel name="BBC Two" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/b/b9/Bbctwo-logo2007.svg/200px-Bbctwo-logo2007.svg.png">bbc_two_live</Channel>
+            <Channel name="BBC Three" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/f/f2/Logo_BBC_Three.svg/200px-Logo_BBC_Three.svg.png">bbc_three_live</Channel>
+            <Channel name="BBC Four" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/BBC_Four.svg/200px-BBC_Four.svg.png">bbc_four_live</Channel>
+            <Channel name="BBC News" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/BBC_News.svg/200px-BBC_News.svg.png">journalism_bbc_news_channel</Channel>
+            <Channel name="BBC Parliament" thumb="http://upload.wikimedia.org/wikipedia/de/thumb/7/7c/BBC_Parliament.svg/200px-BBC_Parliament.svg.png">bbc_parliament_live</Channel>
+            <Channel name="BBC ALBA" thumb="http://upload.wikimedia.org/wikipedia/en/thumb/a/a5/BBC_Alba.svg/200px-BBC_Alba.svg.png">bbc_alba_live</Channel>
+          </Channels>
+        </Category>
       </Categories>
     </Site>
     <Site name="NBA" util="Nba" agecheck="false" enabled="true" lang="en">
@@ -840,12 +849,10 @@
       <Description>Wir bringen dir die News aus der Musikszene, aus den Bereichen Games und Kino/Film, informieren dich über die neuesten Veröffentlichungen, sind für dich auf den wichtigsten Festivals, Events und Konzerten.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.bunch.tv]]></item>
-        <item key="videoListRegEx">
-          <![CDATA[<div\s+class="news_img\s+type-news">\s+<a\s+href="(?<VideoUrl>[^"]*)"><img\s+src="(?<ImageUrl>[^"]*)"[^/]*/>\s*</a>\s*</div>
+        <item key="videoListRegEx"><![CDATA[<div\s+class="news_img\s+type-news">\s+<a\s+href="(?<VideoUrl>[^"]*)"><img\s+src="(?<ImageUrl>[^"]*)"[^/]*/>\s*</a>\s*</div>
 .*?<div\s+class="news_title\s+type-news">\s*<a.*?>(?<Title>.*?)</a></div>
 .*?<div\s+class="news_date">\s*<span[^>]*>(?<Duration>[^<]*)</span>\s*</div>\s*
-<div\s+class="news_text">(?<Description>.*?)</div>]]>
-        </item>
+<div\s+class="news_text">(?<Description>.*?)</div>]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\s+class="pager-next"><a\s+href="(?<url>[^"]+)".*?>next.*?</a></li>]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://streaming04.exozet.com/bunchtv-streaming/{0}]]></item>
         <item key="forceUTF8Encoding"><![CDATA[true]]></item>
@@ -985,8 +992,7 @@
     </Site>
     <Site name="ABC iView" util="ABCiView" agecheck="false" enabled="true" lang="en">
       <Description>iview is catch-up and more from ABC TV</Description>
-      <Configuration>
-      </Configuration>
+      <Configuration />
       <Categories />
     </Site>
     <Site name="Academic Earth" util="GenericSite" agecheck="false" enabled="true" lang="en">
@@ -999,8 +1005,7 @@
         <item key="fileUrlRegEx"><![CDATA[<textarea\sid="clip-embed"\sreadonly="readonly"\sstyle="display:none;"><div><embed\ssrc="(?<m0>[^"]*)"]]></item>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
-      <Categories>
-      </Categories>
+      <Categories />
     </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
       <Description>Videos from cbc.ca</Description>
@@ -1073,7 +1078,7 @@
         <Category xsi:type="RssLink" name="la 2">http://www.rtve.es/alacarta/la2/recomendados/index.html</Category>
       </Categories>
     </Site>
-    <Site name="TVNZOnDemand" util="TVNZOnDemand" agecheck="false" enabled="true" player="Internal" lang="en">
+    <Site name="TVNZOnDemand" util="TVNZOnDemand" agecheck="false" enabled="true" lang="en" player="Internal">
       <Description>Television New Zealand: TV One, TV2, TVNZ 6, TVNZ 7</Description>
       <Configuration />
       <Categories />
@@ -1275,8 +1280,7 @@
     <Site name="RedTube" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>The home of free porn videos.</Description>
       <Configuration>
-        <item key="videoListRegEx">
-          <![CDATA[<div\sclass="video">\s*
+        <item key="videoListRegEx"><![CDATA[<div\sclass="video">\s*
 <a\shref="[^"]*/(?<VideoUrl>\d{1,})"\stitle="(?<Title>[^"]*)"[^>]*>\s*
 <img\s(?:(?!src).)*src="(?<ImageUrl>[^"]*)"
 (?:(?!<div\sclass="time">).)*<div\sclass="time">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<]]></item>
