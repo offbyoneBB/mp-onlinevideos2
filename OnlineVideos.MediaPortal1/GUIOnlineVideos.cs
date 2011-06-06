@@ -184,6 +184,7 @@ namespace OnlineVideos.MediaPortal1
         HashSet<string> extendedProperties = new HashSet<string>();
 
         SmsT9Filter currentFilter = new SmsT9Filter();
+        string videosVKfilter = string.Empty; // used for searching in large lists of videos
         LoadParameterInfo loadParamInfo;
 
         bool GroupsEnabled
@@ -269,24 +270,26 @@ namespace OnlineVideos.MediaPortal1
 
             if (CurrentState == State.sites && GetFocusControlId() == GUI_facadeView.GetID)
             {
-                OnlineVideosGuiListItem selectedItem = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
-                if (selectedItem == null || selectedItem.Item == null) return; // only context menu for items with an object backing them
-
-                if (selectedItem.Item is Sites.SiteUtilBase)
-                {
-                    selectedSite = SiteUserSettingsDialog.ShowDialog(selectedItem.Item as Sites.SiteUtilBase);
-                    selectedItem.Item = selectedSite;
-                }
-                return; // site's context menu was handled
-            }
-            else if (CurrentState == State.categories && GetFocusControlId() == GUI_facadeView.GetID)
-            {
+                // handle a site's context menu
                 OnlineVideosGuiListItem selectedItem = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
                 if (selectedItem == null || selectedItem.Item == null) return; // only context menu for items with an object backing them
                 
-                if (selectedItem.Item is Category)
+                Sites.SiteUtilBase aSite = selectedItem.Item as Sites.SiteUtilBase;
+                if (aSite != null)
                 {
-                    Category aCategory = selectedItem.Item as Category;
+                    selectedSite = SiteUserSettingsDialog.ShowDialog(aSite);
+                    selectedItem.Item = selectedSite;
+                }
+            }
+            else if (CurrentState == State.categories && GetFocusControlId() == GUI_facadeView.GetID)
+            {
+                // handle a category's context menu
+                OnlineVideosGuiListItem selectedItem = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
+                if (selectedItem == null || selectedItem.Item == null) return; // only context menu for items with an object backing them
+
+                Category aCategory = selectedItem.Item as Category;
+                if (aCategory != null)
+                {
                     GUIDialogMenu dlgCat = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                     if (dlgCat == null) return;
                     dlgCat.Reset();
@@ -315,105 +318,124 @@ namespace OnlineVideos.MediaPortal1
                         }
                     }
                 }
-                return; // category's context menu was handled
             }
+            else if ((CurrentState == State.videos && GetFocusControlId() == GUI_facadeView.GetID) ||
+                (CurrentState == State.details && GetFocusControlId() == GUI_infoList.GetID))
+            {
+                // handle a video's context menu
+                OnlineVideosGuiListItem selectedItem = CurrentState == State.videos ? 
+                    GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem : GUI_infoList.SelectedListItem as OnlineVideosGuiListItem;
+                if (selectedItem == null || selectedItem.Item == null) return; // only context menu for items with an object backing them
 
-            int liSelected = GUI_facadeView.SelectedListItemIndex - 1;
+                VideoInfo aVideo = selectedItem.Item as VideoInfo;
 
-            if (CurrentState == State.details && SelectedSite is IChoice) liSelected = GUI_infoList.SelectedListItemIndex - 1;
-
-            if (liSelected < 0 || CurrentState == State.groups || CurrentState == State.sites || CurrentState == State.categories || (SelectedSite is IChoice && CurrentState == State.videos && currentVideoList[liSelected].HasDetails))
-            {
-                return;
-            }
-            List<string> dialogOptions = new List<string>();
-            GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-            if (dlgSel == null) return;
-            dlgSel.Reset();
-            dlgSel.SetHeading(Translation.Actions);
-            dlgSel.Add(Translation.PlayWith);
-            dialogOptions.Add("PlayWith");
-            dlgSel.Add(Translation.PlayAll);
-            dialogOptions.Add("PlayAll");
-            if (!(SelectedSite is Sites.FavoriteUtil) && !(SelectedSite is Sites.DownloadedVideoUtil))
-            {
-                dlgSel.Add(Translation.AddToFavourites);
-                dialogOptions.Add("AddToFav");
-            }
-            if (SelectedSite is IRelated)
-            {
-                dlgSel.Add(Translation.RelatedVideos);
-                dialogOptions.Add("RelatedVideos");
-            }
-            if (!(SelectedSite is Sites.DownloadedVideoUtil))
-            {
-                dlgSel.Add(Translation.Download);
-                dialogOptions.Add("Download");
-            }
-            VideoInfo loSelectedVideo = CurrentState == State.videos ? currentVideoList[liSelected] : currentTrailerList[liSelected];
-            List<string> siteSpecificEntries = SelectedSite.GetContextMenuEntries(selectedCategory, loSelectedVideo);
-            if (siteSpecificEntries != null) foreach (string entry in siteSpecificEntries) { dlgSel.Add(entry); dialogOptions.Add(entry); }
-            dlgSel.DoModal(GUIWindowManager.ActiveWindow);
-            if (dlgSel.SelectedId == -1) return;
-            else
-            {
-                switch (dialogOptions[dlgSel.SelectedId - 1])
+                if (aVideo != null)
                 {
-                    case "PlayWith":
-                        dialogOptions.Clear();
-                        dlgSel.Reset();
-                        dlgSel.SetHeading(Translation.Actions);
-                        dlgSel.Add("MediaPortal");
-                        dialogOptions.Add(OnlineVideos.PlayerType.Internal.ToString());
-                        dlgSel.Add("Windows Media Player");
-                        dialogOptions.Add(OnlineVideos.PlayerType.WMP.ToString());
-                        if (VLCPlayer.IsInstalled)
+                    List<string> dialogOptions = new List<string>();
+                    GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+                    if (dlgSel == null) return;
+                    dlgSel.Reset();
+                    dlgSel.SetHeading(Translation.Actions);
+                    // these context menu entries should only show if the item will not go to the details view
+                    if (!(SelectedSite is IChoice && CurrentState == State.videos && aVideo.HasDetails))
+                    {
+                        dlgSel.Add(Translation.PlayWith);
+                        dialogOptions.Add("PlayWith");
+                        dlgSel.Add(Translation.PlayAll);
+                        dialogOptions.Add("PlayAll");
+                        if (!(SelectedSite is Sites.FavoriteUtil) && !(SelectedSite is Sites.DownloadedVideoUtil))
                         {
-                            dlgSel.Add("VLC media player");
-                            dialogOptions.Add(OnlineVideos.PlayerType.VLC.ToString());
+                            dlgSel.Add(Translation.AddToFavourites);
+                            dialogOptions.Add("AddToFav");
                         }
+                        if (SelectedSite is IRelated)
+                        {
+                            dlgSel.Add(Translation.RelatedVideos);
+                            dialogOptions.Add("RelatedVideos");
+                        }
+                        if (!(SelectedSite is Sites.DownloadedVideoUtil))
+                        {
+                            dlgSel.Add(Translation.Download);
+                            dialogOptions.Add("Download");
+                        }
+                        List<string> siteSpecificEntries = SelectedSite.GetContextMenuEntries(selectedCategory, aVideo);
+                        if (siteSpecificEntries != null) foreach (string entry in siteSpecificEntries) { dlgSel.Add(entry); dialogOptions.Add(entry); }
+                    }
+                    // always allow the VK filtering in videos view
+                    if (CurrentState == State.videos)
+                    {
+                        dlgSel.Add(Translation.Filter);
+                        dialogOptions.Add("Filter");
+                    }
+                    if (dialogOptions.Count > 0)
+                    {
                         dlgSel.DoModal(GUIWindowManager.ActiveWindow);
                         if (dlgSel.SelectedId == -1) return;
                         else
                         {
-                            OnlineVideos.PlayerType forcedPlayer = (OnlineVideos.PlayerType)Enum.Parse(typeof(OnlineVideos.PlayerType), dialogOptions[dlgSel.SelectedId - 1]);
-                            if (CurrentState == State.videos) selectedVideo = loSelectedVideo;
-                            else selectedClipIndex = GUI_infoList.SelectedListItemIndex;
-                            //play the video
-                            currentPlaylist = null;
-                            currentPlayingItem = null;
-                            Play_Step1(new PlayListItem(null, null)
+                            switch (dialogOptions[dlgSel.SelectedId - 1])
+                            {
+                                case "PlayWith":
+                                    dialogOptions.Clear();
+                                    dlgSel.Reset();
+                                    dlgSel.SetHeading(Translation.Actions);
+                                    dlgSel.Add("MediaPortal");
+                                    dialogOptions.Add(OnlineVideos.PlayerType.Internal.ToString());
+                                    dlgSel.Add("Windows Media Player");
+                                    dialogOptions.Add(OnlineVideos.PlayerType.WMP.ToString());
+                                    if (VLCPlayer.IsInstalled)
                                     {
-                                        Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
-                                        Video = loSelectedVideo,
-                                        Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite,
-                                        ForcedPlayer = forcedPlayer
-                                    }, true);
+                                        dlgSel.Add("VLC media player");
+                                        dialogOptions.Add(OnlineVideos.PlayerType.VLC.ToString());
+                                    }
+                                    dlgSel.DoModal(GUIWindowManager.ActiveWindow);
+                                    if (dlgSel.SelectedId == -1) return;
+                                    else
+                                    {
+                                        OnlineVideos.PlayerType forcedPlayer = (OnlineVideos.PlayerType)Enum.Parse(typeof(OnlineVideos.PlayerType), dialogOptions[dlgSel.SelectedId - 1]);
+                                        if (CurrentState == State.videos) selectedVideo = aVideo;
+                                        else selectedClipIndex = GUI_infoList.SelectedListItemIndex;
+                                        //play the video
+                                        currentPlaylist = null;
+                                        currentPlayingItem = null;
+                                        Play_Step1(new PlayListItem(null, null)
+                                                {
+                                                    Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
+                                                    Video = aVideo,
+                                                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite,
+                                                    ForcedPlayer = forcedPlayer
+                                                }, true);
+                                    }
+                                    break;
+                                case "PlayAll":
+                                    PlayAll();
+                                    break;
+                                case "AddToFav":
+                                    string suggestedTitle = SelectedSite.GetFileNameForDownload(aVideo, selectedCategory, null);
+                                    OnlineVideoSettings.Instance.FavDB.addFavoriteVideo(aVideo, suggestedTitle, SelectedSite.Settings.Name);
+                                    break;
+                                case "RelatedVideos":
+                                    DisplayVideos_Related(aVideo);
+                                    break;
+                                case "Download":
+                                    SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Util = selectedSite } });
+                                    break;
+                                case "Filter":
+                                    if (GetUserInputString(ref videosVKfilter, false)) SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
+                                    break;
+                                default:
+                                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                                    {
+                                        return SelectedSite.ExecuteContextMenuEntry(selectedCategory, aVideo, dialogOptions[dlgSel.SelectedId - 1]);
+                                    },
+                                    delegate(bool success, object result)
+                                    {
+                                        if (success && result != null && (bool)result) DisplayVideos_Category(selectedCategory, true);
+                                    }, ": " + dialogOptions[dlgSel.SelectedId - 1], true);
+                                    break;
+                            }
                         }
-                break;
-                    case "PlayAll":
-                        PlayAll();
-                        break;
-                    case "AddToFav":
-                        string suggestedTitle = SelectedSite.GetFileNameForDownload(loSelectedVideo, selectedCategory, null);
-                        OnlineVideoSettings.Instance.FavDB.addFavoriteVideo(loSelectedVideo, suggestedTitle, SelectedSite.Settings.Name);
-                        break;
-                    case "RelatedVideos":
-                        DisplayVideos_Related(loSelectedVideo);
-                        break;
-                    case "Download":
-                        SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = loSelectedVideo, Util = selectedSite } });
-                        break;
-                    default:
-                        Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
-                        {
-                            return SelectedSite.ExecuteContextMenuEntry(selectedCategory, loSelectedVideo, dialogOptions[dlgSel.SelectedId - 1]);
-                        },
-                        delegate(bool success, object result)
-                        {
-                            if (success && result != null && (bool)result) DisplayVideos_Category(selectedCategory, true);
-                        }, ": " + dialogOptions[dlgSel.SelectedId - 1], true);
-                        break;
+                    }
                 }
             }
         }
@@ -570,6 +592,7 @@ namespace OnlineVideos.MediaPortal1
             if (control == GUI_facadeView && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
                 currentFilter.Clear();
+                GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
                 if (CurrentState == State.groups)
                 {
                     selectedSitesGroup = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
@@ -1570,6 +1593,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 videoInfo.CleanDescriptionAndTitle();
                 if (!currentFilter.Matches(videoInfo.Title) || FilterOut(videoInfo.Title) || FilterOut(videoInfo.Description)) continue;
+                if (!string.IsNullOrEmpty(videosVKfilter) && !videoInfo.Title.ToLower().Contains(videosVKfilter.ToLower())) continue;
 
                 OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(videoInfo);
                 listItem.ItemId = GUI_facadeView.Count;
@@ -1603,8 +1627,12 @@ namespace OnlineVideos.MediaPortal1
 
             if (imageHash.Count > 0) ImageDownloader.GetImages<VideoInfo>(currentVideoList);
 
+            string filterstring = currentFilter.ToString();
+            if (!string.IsNullOrEmpty(filterstring) && !string.IsNullOrEmpty(videosVKfilter)) filterstring += " & ";
+            filterstring += videosVKfilter;
+            GUIPropertyManager.SetProperty("#OnlineVideos.filter", filterstring);
+
             currentVideosDisplayMode = mode;
-            GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             CurrentState = State.videos;
             UpdateViewState();
             return true;
@@ -1642,6 +1670,7 @@ namespace OnlineVideos.MediaPortal1
             }
             else if (CurrentState == State.videos)
             {
+                videosVKfilter = string.Empty;
                 // if plugin was called with loadParameter set to the current site with searchstring and return locked and currently displaying the searchresults or videos for the category from loadParam -> go to previous window 
                 if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Site == selectedSite.Settings.Name &&
                     (currentVideosDisplayMode == VideosMode.Search ||

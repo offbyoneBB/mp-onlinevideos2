@@ -39,12 +39,24 @@
       <textcolor>White</textcolor>
     </control>
     <control>
-      <description>Filter</description>
+      <description>Filter Label</description>
       <type>label</type>
       <id>1</id>      
       <posX>300</posX>
       <posY>62</posY>
-      <width>700</width>
+      <width>100</width>
+      <label>#OnlineVideos.Translation.Filter.Label:</label>
+      <font>font10</font>
+      <textcolor>ffa9d0f7</textcolor>      
+      <visible>control.hastext(505)</visible>
+    </control>    
+    <control>
+      <description>Filter</description>
+      <type>label</type>
+      <id>505</id>      
+      <posX>400</posX>
+      <posY>62</posY>
+      <width>600</width>
       <label>#OnlineVideos.filter</label>
       <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>      
@@ -400,12 +412,26 @@
           <id>13</id>
           <onright>50</onright>
           <onup>12</onup>
-          <ondown>2</ondown>
+          <ondown>14</ondown>
           <label>#OnlineVideos.Translation.ManageSites.Label</label>
           <font>font11</font>
           <height>37</height>
           <hyperlink>4757</hyperlink>
         </control>        
+        <control>
+          <type>button</type>
+          <description>Settings</description>
+          <id>14</id>
+          <onright>50</onright>
+          <onup>13</onup>
+          <ondown>2</ondown>
+          <label>5</label>
+          <font>font11</font>
+          <height>37</height>
+          <hyperlink>803</hyperlink>
+          <hyperlinkParameter>c:\ProgramData\Team MediaPortal\MediaPortal\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.29.0.1\extension_settings.xml</hyperlinkParameter>
+          <visible>plugin.isenabled(Extensions)</visible>
+        </control>
       </control>
     </control>    
   </controls>

@@ -39,12 +39,24 @@
       <textcolor>White</textcolor>
     </control>    
     <control>
-      <description>Filter</description>
+      <description>Filter Label</description>
       <type>label</type>
       <id>1</id>      
       <posX>220</posX>
       <posY>50</posY>
-      <width>700</width>
+      <width>80</width>
+      <label>#OnlineVideos.Translation.Filter.Label:</label>
+      <font>font10</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>control.hastext(505)</visible> 
+    </control>    
+    <control>
+      <description>Filter</description>
+      <type>label</type>
+      <id>505</id>      
+      <posX>300</posX>
+      <posY>50</posY>
+      <width>400</width>
       <label>#OnlineVideos.filter</label>
       <font>font10</font>
       <textcolor>ffa9d0f7</textcolor>      
