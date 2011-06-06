@@ -85,7 +85,7 @@ namespace OnlineVideos.Sites
                                 System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth)),
                                 System.Web.HttpUtility.UrlEncode(identifier),
                                 System.Web.HttpUtility.UrlEncode(SWFPlayer),
-                                (video.Other == "livestream").ToString()));
+                                (video.Other == "livestream").ToString().ToLower()));
                         }
                         else if (connectionElem.Attributes["kind"].Value == "level3")
                         {
@@ -101,7 +101,7 @@ namespace OnlineVideos.Sites
                                 System.Web.HttpUtility.UrlEncode(identifier),
                                 System.Web.HttpUtility.UrlEncode(SWFPlayer),
                                 System.Web.HttpUtility.UrlEncode(auth),
-                                (video.Other == "livestream").ToString()));
+                                (video.Other == "livestream").ToString().ToLower()));
                         }
                         else if (connectionElem.Attributes["kind"].Value == "akamai")
                         {
@@ -110,7 +110,7 @@ namespace OnlineVideos.Sites
                                 System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}?{2}", server, application, auth)),
                                 System.Web.HttpUtility.UrlEncode(identifier),
                                 System.Web.HttpUtility.UrlEncode(SWFPlayer),
-                                (video.Other == "livestream").ToString()));
+                                (video.Other == "livestream").ToString().ToLower()));
                         }                                                
                     }
                     if (resultUrl != "") sortedPlaybackOptions.Add(info, resultUrl);
