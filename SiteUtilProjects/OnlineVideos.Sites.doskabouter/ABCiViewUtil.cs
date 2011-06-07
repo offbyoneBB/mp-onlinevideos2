@@ -88,6 +88,8 @@ namespace OnlineVideos.Sites
                     video.Title = vid.Value<String>("b");
                     video.Description = vid.Value<string>("d");
                     video.VideoUrl = vid.Value<string>("n");
+                    if (video.VideoUrl == "livestream.flv")
+                        video.VideoUrl = vid.Value<string>("r");
                     video.Length = VideoInfo.GetDuration(vid.Value<String>("j"));
                     video.Airdate = vid.Value<String>("f");
                     video.ImageUrl = vid.Value<String>("s");
@@ -104,20 +106,36 @@ namespace OnlineVideos.Sites
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("a", "http://www.abc.net.au/iView/Services/iViewHandshaker");
             string auth = doc.SelectSingleNode(@"a:iview/a:token", nsmRequest).InnerText;
+
+            if (video.VideoUrl.StartsWith("rtmp://"))
+            {
+                string[] parts = video.VideoUrl.Split('/');
+                string fileName = parts[parts.Length - 1];
+                return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                     String.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&app={2}&swfVfy={3}&live=true",
+                     HttpUtility.UrlEncode(video.VideoUrl),
+                     HttpUtility.UrlEncode(fileName),
+                     HttpUtility.UrlEncode("live/" + fileName + "?auth=" + auth + "&aifp=v001"),
+                     HttpUtility.UrlEncode(@"http://www.abc.net.au/iview/images/iview.jpg")));
+            }
             string host = doc.SelectSingleNode(@"a:iview/a:host", nsmRequest).InnerText;
 
             string vidUrl = video.VideoUrl;
             if (vidUrl.EndsWith(".mp4", StringComparison.InvariantCultureIgnoreCase))
                 vidUrl = "mp4:" + vidUrl.Substring(0, vidUrl.Length - 4);
+
+            string authUrl = doc.SelectSingleNode(@"a:iview/a:server", nsmRequest).InnerText +
+                "?auth=" + auth;
+
             string url;
             if (host.Equals("Akamai", StringComparison.InvariantCultureIgnoreCase))
                 url = String.Format("rtmpurl={0}&tcurl={1}",
                     HttpUtility.UrlEncode(@"rtmp://cp53909.edgefcs.net///flash/playback/_definst_/" + vidUrl),
-                    HttpUtility.UrlEncode(@"rtmp://cp53909.edgefcs.net/ondemand?auth=" + auth)
+                    HttpUtility.UrlEncode(authUrl)
                     );
             else
                 url = String.Format("rtmpurl={0}&playpath={1}",
-                    HttpUtility.UrlEncode(@"rtmp://203.18.195.10/ondemand?auth=" + auth),
+                    HttpUtility.UrlEncode(authUrl),
                     HttpUtility.UrlEncode(vidUrl)
                     );
 

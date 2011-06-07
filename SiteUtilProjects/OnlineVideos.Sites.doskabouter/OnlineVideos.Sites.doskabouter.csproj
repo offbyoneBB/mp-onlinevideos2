@@ -91,6 +91,7 @@
     <Compile Include="TouTvUtil.cs" />
     <Compile Include="TubePlusUtil.cs" />
     <Compile Include="TV3NZOnDemandUtil.cs" />
+    <Compile Include="TVLinkscc.cs" />
     <Compile Include="UitzendingGemistUtil.cs" />
     <Compile Include="VimeoUtil.cs" />
     <Compile Include="Vimeo\AuthBase.cs" />

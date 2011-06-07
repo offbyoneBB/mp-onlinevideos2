@@ -1215,6 +1215,13 @@
         <Category xsi:type="RssLink" name="Movies" thumb="" desc="">http://tubeplus.me/browse/movies/Last/ALL/</Category>
       </Categories>
     </Site>
+    <Site name="TVLinks.cc" util="TVLinkscc" agecheck="false" enabled="true" lang="en" player="Internal">
+      <Description>TV Links: Free Movies links, Watch TV Shows links online, Anime, Documentaries</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://www.tvlinks.cc/]]></item>
+      </Configuration>
+      <Categories />
+    </Site>
     <Site name="Vimeo" util="Vimeo" agecheck="false" enabled="true" lang="en">
       <Description>Video sharing for you</Description>
       <Configuration />
