@@ -95,8 +95,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            string s = category.Other as string;
-            if (s != null) return GetTvSeasonVideos(s);
+            if (category.Other is string) return GetTvSeasonVideos(category);
             switch (category.Other as CatType?)
             {
                 case CatType.NewMovies:
@@ -157,8 +156,9 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        private List<VideoInfo> GetTvSeasonVideos(string s)
+        private List<VideoInfo> GetTvSeasonVideos(Category category)
         {
+            string s = category.Other as string;
             List<VideoInfo> result = new List<VideoInfo>();
             string[] vids = s.Split(new[] { "%=+=%" }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string vid in vids)
@@ -170,9 +170,27 @@ namespace OnlineVideos.Sites
                     video.Title = "Episode " + parts[2] + " " + parts[3];
                     video.VideoUrl = new Uri(new Uri(baseUrl), parts[0]).AbsoluteUri;
 
+                    try
+                    {
+                        video.Other = new TrackingInfo() 
+                        { 
+                            Episode = uint.Parse(parts[2]), 
+                            Season = uint.Parse(category.Name.ToLower().Replace("season", "").Trim()), 
+                            Title = category.ParentCategory.Name, 
+                            VideoKind = VideoKind.TvSeries 
+                        };
+                    }
+                    catch { }
+
                     result.Add(video);
                 }
             return result;
+        }
+
+        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+            if (video.Other is ITrackingInfo) return video.Other as ITrackingInfo;
+            else return base.GetTrackingInfo(video);
         }
 
         private static string GetSubString(string s, string start, string until)
