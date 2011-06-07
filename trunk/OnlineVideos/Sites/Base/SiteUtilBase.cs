@@ -187,6 +187,16 @@ namespace OnlineVideos.Sites
         }
 
         /// <summary>
+        /// This method will ask the Util to provide information for a <see cref="VideoInfo"/> that can be used to identify the video for http://trakt.tv/.
+        /// </summary>
+        /// <param name="video">The <see cref="VideoInfo"/> to get info for.</param>
+        /// <returns>A filled <see cref="ITrackingInfo"/> with the information required to identify the video uniquely</returns>
+        public virtual ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+            return new TrackingInfo() { VideoKind = VideoKind.Other, Title = video.Title };
+        }
+
+        /// <summary>
         /// This function will be called when the user selects a video for playback. It should return the absolute url to the video file.<br/>
         /// By default, the <see cref="VideoInfo.VideoUrl"/> fields value will be returned.
         /// </summary>

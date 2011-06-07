@@ -165,6 +165,9 @@ namespace OnlineVideos.MediaPortal1
         }
         #endregion
 
+        public delegate void TrackVideoPlaybackHandler(ITrackingInfo info);
+        public event TrackVideoPlaybackHandler TrackVideoPlayback;
+
         OnlineVideosGuiListItem selectedSitesGroup;
         Category selectedCategory;
         VideoInfo selectedVideo;
@@ -846,6 +849,7 @@ namespace OnlineVideos.MediaPortal1
             // replace g_player's ShowFullScreenWindowVideo
             g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowHandler;
             g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
+            g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
 
             // attach to global action event, to handle next and previous for playlist playback
             GUIWindowManager.OnNewAction += new OnActionHandler(this.GUIWindowManager_OnNewAction);
@@ -1763,6 +1767,7 @@ namespace OnlineVideos.MediaPortal1
                     else
                     {
                         // if last item -> clear the list
+                        TrackPlayback();
                         currentPlaylist = null;
                         currentPlayingItem = null;
                     }
@@ -1776,7 +1781,27 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
+                TrackPlayback();
                 currentPlayingItem = null;
+            }
+        }
+
+        void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
+        {
+            if (stoptime > 0 && (g_Player.Duration / stoptime) > 0.8) TrackPlayback();
+            currentPlayingItem = null;
+        }
+
+        void TrackPlayback()
+        {
+            if (TrackVideoPlayback != null && currentPlayingItem != null && currentPlayingItem.Util != null && currentPlayingItem.Video != null)
+            {
+                new System.Threading.Thread((item) => 
+                {
+                    var myItem = item as PlayListItem;
+                    ITrackingInfo info = myItem.Util.GetTrackingInfo(myItem.Video);
+                    if (info.VideoKind == VideoKind.TvSeries || info.VideoKind == VideoKind.Movie) TrackVideoPlayback(info);
+                }) { IsBackground = true, Name = "OnlineVideosTracking" }.Start(currentPlayingItem);
             }
         }
 
