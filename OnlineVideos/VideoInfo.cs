@@ -7,6 +7,8 @@ using RssToolkit.Rss;
 
 namespace OnlineVideos
 {
+    public enum VideoKind { Other, TvSeries, Movie, MovieTrailer, GameTrailer, MusicVideo, News }
+
     public class VideoInfo: System.ComponentModel.INotifyPropertyChanged
     {
         public string Title { get; set; }
