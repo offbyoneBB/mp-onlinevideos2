@@ -15,16 +15,10 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public const int WINDOW_FULLSCREEN_ONLINEVIDEO = 4758;
         public override int GetID { get { return WINDOW_FULLSCREEN_ONLINEVIDEO; } set { } }
-
-        public override bool Init()
+        
+        public override bool Load(string _skinFileName)
         {
-            bool bResult = Load(GUIGraphicsContext.Skin + @"\myonlinevideosFullScreen.xml");
-            using (Settings settings = new MPSettings())
-            {
-                typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekIsRelative", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { settings.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true) });
-                typeof(GUIVideoFullscreen).InvokeMember("_immediateSeekValue", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.SetField, null, this, new object[] { settings.GetValueAsInt("movieplayer", "immediateskipstepsize", 10) });
-            }
-            return bResult;
+            return base.Load(GUIGraphicsContext.Skin + @"\myonlinevideosFullScreen.xml");
         }
 
         public override void OnAction(Action action)
