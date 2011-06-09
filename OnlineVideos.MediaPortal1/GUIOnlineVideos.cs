@@ -165,7 +165,7 @@ namespace OnlineVideos.MediaPortal1
         }
         #endregion
 
-        public delegate void TrackVideoPlaybackHandler(ITrackingInfo info);
+        public delegate void TrackVideoPlaybackHandler(ITrackingInfo info, double percentPlayed);
         public event TrackVideoPlaybackHandler TrackVideoPlayback;
 
         OnlineVideosGuiListItem selectedSitesGroup;
@@ -1794,13 +1794,14 @@ namespace OnlineVideos.MediaPortal1
 
         void TrackPlayback()
         {
+            double percent = g_Player.CurrentPosition > 0 ? g_Player.Duration / g_Player.CurrentPosition : 0; // prevent div by 0 ex
             if (TrackVideoPlayback != null && currentPlayingItem != null && currentPlayingItem.Util != null && currentPlayingItem.Video != null)
             {
                 new System.Threading.Thread((item) => 
                 {
                     var myItem = item as PlayListItem;
                     ITrackingInfo info = myItem.Util.GetTrackingInfo(myItem.Video);
-                    if (info.VideoKind == VideoKind.TvSeries || info.VideoKind == VideoKind.Movie) TrackVideoPlayback(info);
+                    if (info.VideoKind == VideoKind.TvSeries || info.VideoKind == VideoKind.Movie) TrackVideoPlayback(info, percent);
                 }) { IsBackground = true, Name = "OnlineVideosTracking" }.Start(currentPlayingItem);
             }
         }
@@ -2722,7 +2723,7 @@ namespace OnlineVideos.MediaPortal1
             return image;
         }
 
-        internal static void SetGuiProperties_PlayingVideo(PlayListItem playItem)
+        internal void SetGuiProperties_PlayingVideo(PlayListItem playItem)
         {
             // first reset our own properties
             GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", string.Empty);
@@ -2768,6 +2769,8 @@ namespace OnlineVideos.MediaPortal1
                 if (site != null) GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", GetImageForSite(site.Settings.Name, site.Settings.UtilName, "Icon"));
 
             }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start(playItem);
+
+            TrackPlayback();
         }        
 
         /// <summary>
