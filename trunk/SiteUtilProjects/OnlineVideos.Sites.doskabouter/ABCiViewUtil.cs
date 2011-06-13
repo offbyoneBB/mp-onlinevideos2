@@ -120,24 +120,24 @@ namespace OnlineVideos.Sites
             }
             string host = doc.SelectSingleNode(@"a:iview/a:host", nsmRequest).InnerText;
 
-            string vidUrl = video.VideoUrl;
-            if (vidUrl.EndsWith(".mp4", StringComparison.InvariantCultureIgnoreCase))
-                vidUrl = "mp4:" + vidUrl.Substring(0, vidUrl.Length - 4);
-
-            string authUrl = doc.SelectSingleNode(@"a:iview/a:server", nsmRequest).InnerText +
-                "?auth=" + auth;
-
             string url;
             if (host.Equals("Akamai", StringComparison.InvariantCultureIgnoreCase))
                 url = String.Format("rtmpurl={0}&tcurl={1}",
-                    HttpUtility.UrlEncode(@"rtmp://cp53909.edgefcs.net///flash/playback/_definst_/" + vidUrl),
-                    HttpUtility.UrlEncode(authUrl)
+                    HttpUtility.UrlEncode(@"rtmp://cp53909.edgefcs.net///flash/playback/_definst_/" + video.VideoUrl),
+                    HttpUtility.UrlEncode(@"rtmp://cp53909.edgefcs.net/ondemand?auth=" + auth)
                     );
             else
+            {
+                string authUrl = doc.SelectSingleNode(@"a:iview/a:server", nsmRequest).InnerText +
+                    "?auth=" + auth;
+                string vidUrl = video.VideoUrl;
+                if (vidUrl.EndsWith(".mp4", StringComparison.InvariantCultureIgnoreCase))
+                    vidUrl = "mp4:" + vidUrl.Substring(0, vidUrl.Length - 4);
                 url = String.Format("rtmpurl={0}&playpath={1}",
                     HttpUtility.UrlEncode(authUrl),
                     HttpUtility.UrlEncode(vidUrl)
                     );
+            }
 
             url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                 string.Format("http://127.0.0.1/stream.flv?{0}&swfVfy={1}", url,
