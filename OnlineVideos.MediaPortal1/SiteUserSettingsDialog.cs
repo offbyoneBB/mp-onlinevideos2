@@ -31,7 +31,7 @@ namespace OnlineVideos.MediaPortal1
                     }
                     if (dlgSiteOptions == null) return selectedSite;
                     dlgSiteOptions.Reset();
-                    dlgSiteOptions.SetHeading(5);
+                    dlgSiteOptions.SetHeading(string.Format("{0}: {1}", selectedSite.Settings.Name, GUILocalizeStrings.Get(5)));
                     foreach (var ovsUserCfg in actualProps)
                     {
                         object valueO = ovsUserCfg.GetValue(selectedSite);
@@ -58,7 +58,7 @@ namespace OnlineVideos.MediaPortal1
                         {
                             GUIDialogMenu dlgTrueFalse = (GUIDialogMenu)GUIWindowManager.GetWindow(windowId);
                             dlgTrueFalse.Reset();
-                            dlgTrueFalse.SetHeading(prop.DisplayName);
+                            dlgTrueFalse.SetHeading(string.Format("{0}: {1}", selectedSite.Settings.Name, prop.DisplayName));
                             dlgTrueFalse.Add(true.ToString());
                             dlgTrueFalse.Add(false.ToString());
                             bool value = (bool)prop.GetValue(selectedSite);
@@ -78,7 +78,7 @@ namespace OnlineVideos.MediaPortal1
                         {
                             GUIDialogMenu dlgEnum = (GUIDialogMenu)GUIWindowManager.GetWindow(windowId);
                             dlgEnum.Reset();
-                            dlgEnum.SetHeading(prop.DisplayName);
+                            dlgEnum.SetHeading(string.Format("{0}: {1}", selectedSite.Settings.Name, prop.DisplayName));
                             string value = prop.GetValue(selectedSite).ToString();
                             int i = 0;
                             foreach (string e in Enum.GetNames(prop.PropertyType))
