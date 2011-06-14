@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ZemljaCrtica.cs" />
-    <Compile Include="NaTabanu.cs" />
+    <Compile Include="naTabanu.cs" />
     <Compile Include="NovaTV.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
