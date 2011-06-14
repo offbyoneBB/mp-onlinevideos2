@@ -1219,6 +1219,8 @@
       <Description>TV Links: Free Movies links, Watch TV Shows links online, Anime, Documentaries</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.tvlinks.cc/]]></item>
+        <item key="searchUrl"><![CDATA[http://www.tvlinks.cc/search.php]]></item>
+        <item key="searchPostString"><![CDATA[keyword={0}]]></item>
       </Configuration>
       <Categories />
     </Site>

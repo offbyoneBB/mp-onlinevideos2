@@ -111,7 +111,7 @@ namespace OnlineVideos
     [Serializable]
     [XmlInclude(typeof(RssLink))]
     [XmlInclude(typeof(Group))]
-    public class Category : IComparable<Category>, INotifyPropertyChanged
+    public class Category : IComparable<Category>, INotifyPropertyChanged, ISearchResultItem
     {
         protected string _Name;
         protected string _Thumb;

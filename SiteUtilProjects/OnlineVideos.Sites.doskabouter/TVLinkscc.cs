@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Linq;
+using System.Web;
 
 namespace OnlineVideos.Sites
 {
@@ -19,6 +21,10 @@ namespace OnlineVideos.Sites
 
 
         private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
+        private RegexOptions defaultDataRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.ExplicitCapture;
+
+        private string sRegexMovieDataAirdate = @"<div class=""tit"">{0}\s*?(?:&nbsp;)?\s*?\((?<Year>\d\d\d\d)\).*?</div>";
+
         Regex regexNewMovies;
         Regex regexHotMovies;
         Regex regexDefaultVideoList;
@@ -30,18 +36,29 @@ namespace OnlineVideos.Sites
         Regex regexNewTvShows;
         Regex regexBestTvShows;
 
+        Regex regexTvShowDataThumb;
+        Regex regexTvShowDataPlot;
+        Regex regexTvShowDataAirdate;
+        Regex regexMovieDataAirdate;
+
         public override void Initialize(SiteSettings siteSettings)
         {
-            regexNewMovies = new Regex(@"(?<!class=""title_h"".*)((<div[^>]*>\s*<div\sclass=""pic""><a\shref=""(?<VideoUrl>[^""]*)""[^>]*><img\ssrc=""(?<ImageUrl>[^""]*)""[^>]*></a></div>\s*<div\sclass=""show""><a[^>]*>(?<Title>[^<]*)</a>&nbsp;<font\scolor=""\#FF6600""><sup></sup></font></div>)|(<li><a\shref=""(?<VideoUrl>[^""]*)""[^>]*>(?<Title>[^&]*)&nbsp;\((?<Airdate>[^\)]*)\)</a>&nbsp;<font\scolor=""\#FF6600""><sup></sup></font></li>))", defaultRegexOptions);
-            regexHotMovies = new Regex(@"(?<=class=""title_h"".*)((<div[^>]*>\s*<div\sclass=""pic""><a\shref=""(?<VideoUrl>[^""]*)""[^>]*><img\ssrc=""(?<ImageUrl>[^""]*)""[^>]*></a></div>\s*<div\sclass=""show""><a[^>]*>(?<Title>[^<]*)</a>&nbsp;<font\scolor=""\#FF6600""><sup></sup></font></div>)|(<li><a\shref=""(?<VideoUrl>[^""]*)""[^>]*>(?<Title>[^&]*)&nbsp;\((?<Airdate>[^\)]*)\)</a>&nbsp;<font\scolor=""\#FF6600""><sup></sup></font></li>))", defaultRegexOptions);
+            regexNewMovies = new Regex(@"(?<!class=""title_h"".*)((<div[^>]*>\s*<div\sclass=""pic""><a\shref=""(?<VideoUrl>[^""]*)""[^>]*><img\ssrc=""(?<ImageUrl>[^""]*)""[^>]*></a></div>\s*<div\sclass=""show""><a[^>]*>(?<Title>[^<]*)</a>&nbsp;<font\scolor=""\#FF6600""><sup></sup></font></div>)|(<li><a\shref=""(?<VideoUrl>[^""]*)""[^>]*?title=""(?<Title>[^""]*)""[^>]*?>[^<]*?\((?<Airdate>[^\)]*)\)</a>(?:&nbsp;)?<font\scolor=""\#FF6600""><sup>.*?</sup></font></li>))", defaultRegexOptions);
+            regexHotMovies = new Regex(@"(?<=class=""title_h"".*)((<div[^>]*>\s*<div\sclass=""pic""><a\shref=""(?<VideoUrl>[^""]*)""[^>]*><img\ssrc=""(?<ImageUrl>[^""]*)""[^>]*></a></div>\s*<div\sclass=""show""><a[^>]*>(?<Title>[^<]*)</a>&nbsp;<font\scolor=""\#FF6600""><sup></sup></font></div>)|(<li><a\shref=""(?<VideoUrl>[^""]*)""[^>]*?title=""(?<Title>[^""]*)""[^>]*?>[^<]*?\((?<Airdate>[^\)]*)\)</a>(?:&nbsp;)?<font\scolor=""\#FF6600""><sup>.*?</sup></font></li>))", defaultRegexOptions);
             regexDefaultVideoList = new Regex(@"<li><a\shref=""(?<VideoUrl>[^""]*)""\stitle=""[^>]*>(?<Title>[^<]*)</a>\s(?<Airdate>[^<]*)</a>&nbsp;<font\scolor=""\#FF6600""><sup></sup></font></li>", defaultRegexOptions);
             regexMovieGenres = new Regex(@"<td\s[^>]*>(?:&nbsp;)?\s<a\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></td>", defaultRegexOptions);
             regexTvShowGenres = new Regex(@"<td\s[^>]*>(?:&nbsp;)?\s<a\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></td>", defaultRegexOptions);
             regexMoviesAlph = new Regex(@"<a\shref='(?<url>[^']*)'>(?<title>[^<]*)</a>", defaultRegexOptions);
             regexTvShowsAlph = new Regex(@"<a\shref='(?<url>[^']*)'>(?<title>[^<]*)</a>", defaultRegexOptions);
-            regexTvShowList = new Regex(@"<li><a\shref=""(?<url>[^""]*)""\stitle=""[^""]*"">(?<title>[^<]*)</a>\s*</a></li>", defaultRegexOptions);
+            regexTvShowList = new Regex(@"<li><a\shref=""(?<url>[^""]*)""\stitle=""[^""]*"">(?<title>[^<]*)</a>\s*(?:</a>)?</li>", defaultRegexOptions);
             regexNewTvShows = new Regex(@"(?<!class=""title_h"".*)((<div[^>]*>\s*<div\sclass=""pic""><a\shref=""(?<url>[^""]*)""\stitle=""[^""]*""><img\ssrc=""(?<thumb>[^""]*)""[^>]*></a></div>\s*<div\sclass=""show""><a[^>]*>(?<title>[^<]*)</a></div>\s*</div>\s*)|(<li><a\shref=""(?<url>[^""]*)""\stitle=""[^""]*"">(?<title>[^<]*)</a></li>))", defaultRegexOptions);
             regexBestTvShows = new Regex(@"(?<=class=""title_h"".*)((<div[^>]*>\s*<div\sclass=""pic""><a\shref=""(?<url>[^""]*)""\stitle=""[^""]*""><img\ssrc=""(?<thumb>[^""]*)""[^>]*></a></div>\s*<div\sclass=""show""><a[^>]*>(?<title>[^<]*)</a></div>\s*</div>\s*)|(<li><a\shref=""(?<url>[^""]*)""\stitle=""[^""]*"">(?<title>[^<]*)</a></li>))", defaultRegexOptions);
+
+            regexTvShowDataThumb = new Regex(@"<div\sclass=""left"">\s*?<img src=""(?<Thumb>[^""]*)""\s*?(width=""[^""]*"")?\s*?(height=""[^""]*"")?\s*?/>\s*?</div>", defaultDataRegexOptions);
+            regexTvShowDataPlot = new Regex(@"<div\sclass=""plot"">\s*([Pp]lot)?:?\s*(?<Plot>.*?)\s*?</div>", defaultDataRegexOptions);
+            regexTvShowDataAirdate = new Regex(@"<div>[Dd]ate:\s*?(?<Year>\d\d\d\d)\s*?</div>", defaultDataRegexOptions);
+            
+
             base.Initialize(siteSettings);
         }
 
@@ -96,6 +113,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getVideoList(Category category)
         {
             if (category.Other is string) return GetTvSeasonVideos(category);
+            else if (category.Other is List<VideoInfo>) return category.Other as List<VideoInfo>;
             switch (category.Other as CatType?)
             {
                 case CatType.NewMovies:
@@ -146,14 +164,52 @@ namespace OnlineVideos.Sites
 
         private int GetTvShowSubcats(Category parentCategory, CatType newCatType, Regex regEx)
         {
+            Regex regEx_dynamicSubCategories_Copy = regEx_dynamicSubCategories;
             regEx_dynamicSubCategories = regEx;
-            int res = base.DiscoverSubCategories(parentCategory);
-            foreach (Category cat in parentCategory.SubCategories)
+            try
             {
-                cat.HasSubCategories = true;
-                cat.Other = newCatType;
+                int res = 0;
+                if (parentCategory.Other is string)
+                {
+                    string data = parentCategory.Other as string;
+                    if (!string.IsNullOrEmpty(data))
+                    {
+                        parentCategory.SubCategories = new List<Category>();
+                        Match m = regEx_dynamicSubCategories.Match(data);
+                        while (m.Success)
+                        {
+                            RssLink cat = new RssLink();
+                            cat.Url = m.Groups["url"].Value;
+                            if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
+                            if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
+                            if (dynamicSubCategoryUrlDecoding) cat.Url = HttpUtility.HtmlDecode(cat.Url);
+                            cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
+                            cat.Thumb = m.Groups["thumb"].Value;
+                            if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
+                            cat.Description = m.Groups["description"].Value;
+                            cat.ParentCategory = parentCategory;
+                            parentCategory.SubCategories.Add(cat);
+                            m = m.NextMatch();
+                        }
+                        parentCategory.SubCategoriesDiscovered = true;
+                    }
+                    res = parentCategory.SubCategories == null ? 0 : parentCategory.SubCategories.Count;
+                }
+                else
+                {
+                    res = base.DiscoverSubCategories(parentCategory);
+                }
+                foreach (Category cat in parentCategory.SubCategories)
+                {
+                    cat.HasSubCategories = true;
+                    cat.Other = newCatType;
+                }
+                return res;
             }
-            return res;
+            finally
+            {
+                regEx_dynamicSubCategories = regEx_dynamicSubCategories_Copy;
+            }
         }
 
         private List<VideoInfo> GetTvSeasonVideos(Category category)
@@ -167,20 +223,36 @@ namespace OnlineVideos.Sites
                     string[] parts = vid.Split(new[] { "*|=*" }, StringSplitOptions.RemoveEmptyEntries);
                     VideoInfo video = new VideoInfo();
 
-                    video.Title = "Episode " + parts[2] + " " + parts[3];
+                    string sName = category.ParentCategory.Name;
+                    string sSeason = category.Name.ToLower().Replace("season", "").Trim();
+                    uint iSeason;
+                    if (!uint.TryParse(sSeason, out iSeason))
+                        iSeason = 0;
+                    uint iEpisode;
+                    if (!uint.TryParse(parts[2], out iEpisode))
+                        iEpisode = 0;
+
+                    video.Title = string.Format("{0}x{1:00} {2}", iSeason, iEpisode, parts[3]);
                     video.VideoUrl = new Uri(new Uri(baseUrl), parts[0]).AbsoluteUri;
 
-                    try
+                    video.ImageUrl = category.ParentCategory.Thumb;
+                    video.Description = category.ParentCategory.Description;
+                    //video.Airdate = //
+
+                    if (!string.IsNullOrEmpty(sName) && iEpisode > 0 && iSeason > 0)
                     {
-                        video.Other = new TrackingInfo() 
-                        { 
-                            Episode = uint.Parse(parts[2]), 
-                            Season = uint.Parse(category.Name.ToLower().Replace("season", "").Trim()), 
-                            Title = category.ParentCategory.Name, 
-                            VideoKind = VideoKind.TvSeries 
-                        };
+                        try
+                        {
+                            video.Other = new TrackingInfo()
+                            {
+                                Episode = iEpisode,
+                                Season = iSeason,
+                                Title = sName,
+                                VideoKind = VideoKind.TvSeries
+                            };
+                        }
+                        catch { }
                     }
-                    catch { }
 
                     result.Add(video);
                 }
@@ -209,6 +281,56 @@ namespace OnlineVideos.Sites
             string code;
             if (!video.VideoUrl.EndsWith(".htm", StringComparison.InvariantCultureIgnoreCase))
             {
+                //here we can set more video info - description, airdate, plot
+                if (string.IsNullOrEmpty(video.ThumbnailImage) || string.IsNullOrEmpty(video.Description) || string.IsNullOrEmpty(video.Airdate))
+                {
+                    string sData = GetWebData(video.VideoUrl);
+                    if (!string.IsNullOrEmpty(sData))
+                    {
+                        Match m;
+                        if (string.IsNullOrEmpty(video.ImageUrl))
+                        {
+                            m = regexTvShowDataThumb.Match(sData);
+                            if (m.Success)
+                            {
+                                video.ImageUrl = m.Groups["Thumb"].Value;
+                                video.ThumbnailImage = video.ImageUrl; //so it shows in OSD
+                            }
+                        }
+                        if (string.IsNullOrEmpty(video.Description))
+                        {
+                            m = regexTvShowDataPlot.Match(sData);
+                            if (m.Success)
+                                video.Description = m.Groups["Plot"].Value;
+                        }
+                        if (string.IsNullOrEmpty(video.Airdate))
+                        {
+                            regexMovieDataAirdate = new Regex(string.Format(sRegexMovieDataAirdate, video.Title), defaultDataRegexOptions);
+                            m = regexMovieDataAirdate.Match(sData);
+                            if (m.Success)
+                                video.Airdate = m.Groups["Year"].Value;
+                        }
+                    }
+                }
+
+                uint year;
+                if (!uint.TryParse(video.Airdate, out year))
+                    year = 0;
+
+                if (!string.IsNullOrEmpty(video.Title) && year > 1900)
+                {
+                    try
+                    {
+                        video.Other = new TrackingInfo()
+                        {
+                            Title = video.Title,
+                            Year = year,
+                            VideoKind = OnlineVideos.VideoKind.Movie
+                        };
+                    }
+                    catch { }
+                }
+
                 string webData = GetWebData(video.VideoUrl + "/play.htm");
                 code = GetSubString(webData, "code=", "|");
             }
@@ -254,6 +376,34 @@ namespace OnlineVideos.Sites
 
         private int GetTvSeasons(RssLink parentCategory)
         {
+            //if (string.IsNullOrEmpty(parentCategory.Thumb) || string.IsNullOrEmpty(parentCategory.Description))
+            //{
+                string sData = GetWebData(parentCategory.Url);
+                if (!string.IsNullOrEmpty(sData))
+                {
+                    Match m;
+                    if (string.IsNullOrEmpty(parentCategory.Thumb))
+                    {
+                        m = regexTvShowDataThumb.Match(sData);
+                        if (m.Success)
+                            parentCategory.Thumb = m.Groups["Thumb"].Value;
+                    }
+                    if (string.IsNullOrEmpty(parentCategory.Description))
+                    {
+                        m = regexTvShowDataPlot.Match(sData);
+                        if (m.Success)
+                            parentCategory.Description = m.Groups["Plot"].Value;
+                    }
+                    if (string.IsNullOrEmpty(parentCategory.Other as string))
+                    {
+                        m = regexTvShowDataAirdate.Match(sData);
+                        if (m.Success)
+                            parentCategory.Other = m.Groups["Year"].Value;
+                    }
+                }
+            //}
+
+
             string data = GetWebData(parentCategory.Url + "/url.js");
             string[] seasons = data.Split(new[] { "urlarray" }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string s in seasons)
@@ -267,6 +417,84 @@ namespace OnlineVideos.Sites
             }
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
+        }
+
+        public override bool CanSearch { get { return true; } }
+
+        public override Dictionary<string, string> GetSearchableCategories()
+        {
+            Dictionary<string, string> result = Settings.Categories.Select(a => a.Name).ToDictionary<string, string>(a => a);
+            return result;
+        }
+
+        public override List<ISearchResultItem> DoSearch(string query)
+        {
+            List<ISearchResultItem> result = new List<ISearchResultItem>();
+
+            string searchData = GetWebDataFromPost(searchUrl, string.Format(searchPostString, query), allowUnsafeHeader: allowUnsafeHeaders);
+            if (!string.IsNullOrEmpty(searchData))
+            {
+                RssLink catMovies = new RssLink();
+                catMovies.Name = "Movies";
+                catMovies.Url = @"";
+
+                List<VideoInfo> movies;
+                Regex regEx_VideoList_Copy = regEx_VideoList;
+                regEx_VideoList = regexNewMovies;
+                try
+                {
+                    movies = Parse(searchUrl, searchData);
+                    if (movies != null && movies.Count > 0)
+                    {
+                        catMovies.EstimatedVideoCount = movies.Count < 0 ? 0 : (uint)movies.Count;
+                        catMovies.Other = movies;
+                        result.Add(catMovies);
+                    }
+                }
+                finally
+                {
+                    regEx_VideoList = regEx_VideoList_Copy;
+                }
+
+                RssLink catTVShows = new RssLink();
+                catTVShows.Name = "TV Shows";
+                catTVShows.Url = @"";
+                catTVShows.HasSubCategories = true;
+                catTVShows.Other = searchData;
+
+                GetTvShowSubcats(catTVShows, CatType.TvSeasonList, regexTvShowList);
+
+                if (catTVShows.SubCategories != null && catTVShows.SubCategories.Count > 0)
+                {
+                    catTVShows.EstimatedVideoCount = catTVShows.SubCategories.Count < 0 ? 0 : (uint)catTVShows.SubCategories.Count;
+                    result.Add(catTVShows);
+                }
+            }
+ 
+            return result;
+        }
+
+        public override List<ISearchResultItem> DoSearch(string query, string category)
+        {
+            List<ISearchResultItem> result = DoSearch(query);
+            if (result != null && result.Count >0)
+            {
+                foreach (Category cat in result)
+                {
+                    if (cat.Name.Equals(category))
+                    {
+                        if (cat.Other is List<VideoInfo>) //movies
+                        {
+                            return (cat.Other as List<VideoInfo>).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                        }
+                        else //tvshows
+                        {
+                            return (cat.SubCategories).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                        }
+                    }
+                }
+            }
+            return new List<ISearchResultItem>();
         }
     }
 }

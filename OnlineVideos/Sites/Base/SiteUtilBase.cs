@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -146,6 +147,7 @@ namespace OnlineVideos.Sites
         /// Example: <see cref="MtvMusicVideosUtil"/><br/>
         /// default: always false
         /// </summary>
+        [Obsolete]
         public virtual bool HasPreviousPage { get; protected set; }
 
         /// <summary>
@@ -157,6 +159,7 @@ namespace OnlineVideos.Sites
         /// default: empty list
         /// </summary>
         /// <returns>a list of <see cref="VideoInfo"/> objects for the previous page of the last queried category.</returns>
+        [Obsolete]
         public virtual List<VideoInfo> getPreviousPageVideos()
         {
             return new List<VideoInfo>();
@@ -243,9 +246,21 @@ namespace OnlineVideos.Sites
         /// </summary>
         /// <param name="query">The user entered query.</param>
         /// <returns>the list of videos matching that search query.</returns>
+        [Obsolete]
         public virtual List<VideoInfo> Search(string query)
         {
             return new List<VideoInfo>();
+        }
+
+        /// <summary>
+        /// Should return a list of <see cref="VideoInfo"/> or <see cref="Category"/> for the given query.<br/>
+        /// All items in the list must be of the same type!
+        /// </summary>
+        /// <param name="query">The user entered query.</param>
+        /// <returns>the list of videos or categories matching that search query.</returns>
+        public virtual List<ISearchResultItem> DoSearch(string query)
+        {
+            return Search(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         /// <summary>
@@ -255,9 +270,23 @@ namespace OnlineVideos.Sites
         /// <param name="category">The category to search in.</param>
         /// <param name="query">The user entered query.</param>
         /// <returns>the list of videos matching that search query.</returns>
+        [Obsolete]
         public virtual List<VideoInfo> Search(string query, string category)
         {
             return Search(query);
+        }
+
+        /// <summary>
+        /// Should return a list of <see cref="VideoInfo"/> or <see cref="Category"/> for the given query limited to the given category.<br/>
+        /// All items in the list must be of the same type!
+        /// default: calls the Search overload without a category parameter
+        /// </summary>        
+        /// <param name="category">The category to search in.</param>
+        /// <param name="query">The user entered query.</param>
+        /// <returns>the list of videos or categories matching that search query.</returns>
+        public virtual List<ISearchResultItem> DoSearch(string query, string category)
+        {
+            return Search(query, category).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem); ;
         }
 
         /// <summary>
