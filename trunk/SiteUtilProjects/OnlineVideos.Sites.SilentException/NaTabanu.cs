@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Web;
-using OnlineVideos.Hoster.Base;
 using System.Text.RegularExpressions;
+using OnlineVideos.Hoster.Base;
 
 namespace OnlineVideos.Sites
 {
-    public class NaTabanu : GenericSiteUtil
+    public class SilentException_NaTabanu : GenericSiteUtil
     {
         [Category("OnlineVideosUserConfiguration"), Description("If true, highest quality MP4 playback option will be used, otherwise use highest quality FLV")]
         bool useMP4Playback = true;
