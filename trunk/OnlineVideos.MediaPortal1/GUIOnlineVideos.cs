@@ -733,7 +733,7 @@ namespace OnlineVideos.MediaPortal1
             }
             else if (control == GUI_btnSearch)
             {
-                DisplayVideos_Search();
+                Display_SearchResults();
             }
             else if (control == GUI_btnEnterPin)
             {
@@ -824,7 +824,7 @@ namespace OnlineVideos.MediaPortal1
                     if (SelectedSite != null && SelectedSite.CanSearch && !string.IsNullOrEmpty(loadParamInfo.Search))
                     {
                         lastSearchQuery = loadParamInfo.Search;
-                        DisplayVideos_Search(loadParamInfo.Search);
+                        Display_SearchResults(loadParamInfo.Search);
                         return;
                     }
                 }
@@ -1249,7 +1249,9 @@ namespace OnlineVideos.MediaPortal1
 #endif
             }
 
-            GUI_facadeView.SelectedListItemIndex = categoryIndexToSelect;
+            // only set selected index when not doing an automatic dive up (MediaPortal would set the old selected index asynchroneously)
+            if (!(categories.Count == 1 && diveDownOrUpIfSingle == false)) GUI_facadeView.SelectedListItemIndex = categoryIndexToSelect;
+
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", currentFilter.ToString());
             CurrentState = State.categories;
             selectedCategory = parentCategory;
@@ -1347,7 +1349,7 @@ namespace OnlineVideos.MediaPortal1
             Translation.GettingCategoryVideos, true);
         }
 
-        private void DisplayVideos_Search(string query = null)
+        private void Display_SearchResults(string query = null)
         {
             bool directSearch = !string.IsNullOrEmpty(query);
             if (!directSearch) query = PluginConfiguration.Instance.searchHistoryType == PluginConfiguration.SearchHistoryType.Simple ? lastSearchQuery : string.Empty;
@@ -1435,31 +1437,47 @@ namespace OnlineVideos.MediaPortal1
                         string category = moSupportedSearchCategoryList[GUI_btnSearchCategories.SelectedLabel];
                         Log.Instance.Info("Searching for {0} in category {1}", query, category);
                         lastSearchCategory = category;
-                        return SelectedSite.Search(query, category);
+                        return SelectedSite.DoSearch(query, category);
                     }
                     else
                     {
                         Log.Instance.Info("Searching for {0} in all categories ", query);
-                        return SelectedSite.Search(query);
+                        return SelectedSite.DoSearch(query);
                     }
                 },
                 delegate(bool success, object result)
                 {
+                    List<ISearchResultItem> resultList = (result as List<ISearchResultItem>);
                     // set videos to the facade -> if none were found and an empty facade is currently shown, go to previous menu
-                    if ((!success || !SetVideosToFacade(result as List<VideoInfo>, VideosMode.Search)) && GUI_facadeView.Count == 0)
+                    if ((!success || resultList == null || resultList.Count == 0) && GUI_facadeView.Count == 0)
                     {
-                        if (loadParamInfo != null && loadParamInfo.ShowVKonFailedSearch && GetUserInputString(ref query, false)) DisplayVideos_Search(query);
+                        if (loadParamInfo != null && loadParamInfo.ShowVKonFailedSearch && GetUserInputString(ref query, false)) Display_SearchResults(query);
                         else ShowPreviousMenu();
                     }
                     else
                     {
-                        // if only 1 result found and the current site has a details view for this video - open it right away
-                        if (SelectedSite is IChoice && (result as List<VideoInfo>).Count == 1 && (result as List<VideoInfo>)[0].HasDetails)
+                        if (resultList[0] is VideoInfo)
                         {
-                            // actually select this item, so fanart can be shown in this and the coming screen! (fanart handler inspects the #selecteditem proeprty of teh facade)
-                            GUI_facadeView.SelectedListItemIndex = 1;
-                            selectedVideo = (GUI_facadeView[1] as OnlineVideosGuiListItem).Item as VideoInfo;
-                            DisplayDetails();
+                            SetVideosToFacade(resultList.ConvertAll(i => i as VideoInfo), VideosMode.Search);
+                            // if only 1 result found and the current site has a details view for this video - open it right away
+                            if (SelectedSite is IChoice && resultList.Count == 1 && (resultList[0] as VideoInfo).HasDetails)
+                            {
+                                // actually select this item, so fanart can be shown in this and the coming screen! (fanart handler inspects the #selecteditem proeprty of teh facade)
+                                GUI_facadeView.SelectedListItemIndex = 1;
+                                selectedVideo = (GUI_facadeView[1] as OnlineVideosGuiListItem).Item as VideoInfo;
+                                DisplayDetails();
+                            }
+                        }
+                        else
+                        {
+                            Category searchCategory = new Category() 
+                            { 
+                                Name = Translation.SearchResults + " [" + lastSearchQuery + "]",
+                                HasSubCategories = true,
+                                SubCategoriesDiscovered = true,
+                            };
+                            searchCategory.SubCategories = resultList.ConvertAll(i => { (i as Category).ParentCategory = searchCategory; return i as Category; });
+                            SetCategoriesToFacade(searchCategory, searchCategory.SubCategories, true);
                         }
                     }
                 },

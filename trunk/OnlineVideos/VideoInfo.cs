@@ -9,7 +9,7 @@ namespace OnlineVideos
 {
     public enum VideoKind { Other, TvSeries, Movie, MovieTrailer, GameTrailer, MusicVideo, News }
 
-    public class VideoInfo: System.ComponentModel.INotifyPropertyChanged
+    public class VideoInfo : System.ComponentModel.INotifyPropertyChanged, ISearchResultItem
     {
         public string Title { get; set; }
         /// <summary>Used as label for the clips retrieved by <see cref="IChoice.getVideoChoices"/></summary>
