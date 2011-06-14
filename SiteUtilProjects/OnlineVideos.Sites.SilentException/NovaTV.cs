@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Runtime.Serialization;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
-using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace OnlineVideos.Sites
 {
-    public class NovaTV : GenericSiteUtil
+    public class SilentException_NovaTV : GenericSiteUtil
     {
         private string URL_regEx;
         private string URLFile_regEx;

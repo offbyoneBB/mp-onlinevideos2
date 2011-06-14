@@ -40,13 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ZemljaCrtica.cs" />
     <Compile Include="NaTabanu.cs" />
     <Compile Include="NovaTV.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="NaTabanu.txt" />
-    <Content Include="NovaTV.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
@@ -54,6 +51,18 @@
       <Name>OnlineVideos</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Sites Data\naTabanu %28Banner%29.png" />
+    <Content Include="Sites Data\naTabanu %28Icon%29.png" />
+    <Content Include="Sites Data\naTabanu.txt" />
+    <Content Include="Sites Data\NOVA TV Videoteka %28Banner%29.png" />
+    <Content Include="Sites Data\NOVA TV Videoteka %28Icon%29.png" />
+    <Content Include="Sites Data\NovaTV.txt" />
+    <Content Include="Sites Data\Zemlja crtića %28Banner%29.png" />
+    <Content Include="Sites Data\Zemlja crtića %28Icon%29.png" />
+    <Content Include="Sites Data\ZemljaCrtica.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

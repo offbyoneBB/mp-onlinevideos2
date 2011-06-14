@@ -1,10 +1,10 @@
-    <Site name="naTabanu" util="NaTabanu" agecheck="false" enabled="true" lang="hr">
-      <Description>naTabanu portal - "share" / razmena sardaja</Description>
+ï»¿    <Site name="naTabanu" util="SilentException_NaTabanu" agecheck="false" enabled="true" lang="hr">
+      <Description>naTabanu portal - "share" / razmena sardÅ¾aja</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="level1"><a\shref="(?<url>[^"]*)"\sclass="level1\stopdaddy"><span>(?<title>[^<]*)</span></a>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"><span>(?<title>[^<]*)</span></a></li>]]></item>
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass="contentpagetitle[^"]*">\s*(?<Title>[^<]*)</a>\s*</td>\s*</tr>.*?<table\sclass="contentpaneopen[^"]*">\s*<tr>\s*<td\svalign="top"\scolspan="2">\s*<p.*?><img\sclass="caption"\ssrc="(?<ImageUrl>[^"]*)".*?>(?<Description>[^<]*)</p>\s*</td>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\stitle="Sledeæa">Sledeæa</a>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\stitle="SledeÄ‡a">SledeÄ‡a</a>]]></item>
         <item key="playlistUrlRegEx"><![CDATA[file="?(?<url>[^"]*)"\s?/>]]></item>
         <item key="fileUrlRegEx"><![CDATA[<location>(?<m0>[^<]*)</location>]]></item>
         <item key="baseUrl"><![CDATA[http://natabanu.com]]></item>

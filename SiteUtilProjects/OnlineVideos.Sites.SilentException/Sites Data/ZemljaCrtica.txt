@@ -1,0 +1,15 @@
+﻿    <Site name="Zemlja crtića" util="SilentException_ZemljaCrtica" agecheck="false" enabled="true" lang="hr">
+      <Description>Besplatni crtani filmovi u Zemlji crtića</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[(?<=div\s*?id="ctl00_Panel1">\s*?<span>.*)(<a\s+href=(?:'|")(?<url>[^'"]*)(?:'|").*?>.*?<img\s+src\s*?=\s*?(?:'|")(?<thumb>[^'"]*)(?:'|").*?>.*?</a>)]]></item>
+        <!--<item key="dynamicCategoriesRegEx"><![CDATA[<div\s+id\s*?=\s*?"grad">\s*?<a\s+href\s*?=\s*?(?:'|")(?<url>[^'"]*)(?:'|").*?>\s*?(?<title>.*?)\s*?(?:\(\d*\))\s*?</a>]]></item>-->
+        <item key="videoListRegEx"><![CDATA[(?<=class\s*?=\s*?"productlist290">.*)(<li>\s*<a\s+href=(?:'|")(?<VideoUrl>[^'"]*)(?:'|").*?>.*?<div\s+class="poptekst">.*?<img.*?src\s*?=\s*?(?:'|")(?<ImageUrl>[^'"]*)(?:'|").*?>).*?<div\s+class\s*?=\s*?"nascrt">(?:\s+)?(?<Title>.*?)\s*?</div>.*?<div\s+class="popopis">.*?Datum:(?:\s+)?(?<Airdate>.*?)(?:\s+)?(?:<br\s*?/>|</div>)]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<span\s+id="ctl00_ContentPlaceHolder1_lbl_video">.*?<param\s+name="movie".*?value=(?:'|")(?<m0>[^'"]*)(?:'|").*?>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.zemlja-crtica.com]]></item>
+        <item key="forceUTF8Encoding"><![CDATA[true]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
+      </Configuration>
+      <Categories />
+    </Site>
+
+
