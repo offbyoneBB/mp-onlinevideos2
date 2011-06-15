@@ -230,9 +230,20 @@
             <hyperlink>4755</hyperlink>
             <hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#imdbnumber,''),#imdbnumber,#selecteditem))|return:Locked</hyperlinkParameter>
             <onup>9</onup>
-            <ondown>2</ondown>
+            <ondown>84623</ondown>
             <onright>50</onright>
             <visible>plugin.isenabled(OnlineVideos)+string.equals(#selectedindex)</visible>
+          </control>
+          <control>
+            <description>Subtitles (SubCentral)</description>
+            <type>button</type>
+            <id>84623</id>
+            <label>287</label>
+            <hyperlink>84623</hyperlink>
+            <onup>4755</onup>
+            <ondown>2</ondown>
+            <onright>50</onright>
+            <visible>plugin.isenabled(SubCentral)</visible>
           </control>
         </control>
       </control>
