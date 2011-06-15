@@ -52,7 +52,7 @@ namespace OnlineVideos.Sites
                 FileType = m.Groups["FileType"].Value;
                 if (string.IsNullOrEmpty(FileType))
                     FileType = "flv";
-                data = "http://vid" + FileServer + ".dnevnik.hr/" + FileUrl + "-" + FileServer + "." + FileType;
+                data = "http://vid" + FileServer + ".dnevnik.hr/" + FileUrl + "-2" + "." + FileType;
             }
             return data;
         }
