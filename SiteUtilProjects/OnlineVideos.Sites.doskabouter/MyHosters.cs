@@ -416,7 +416,9 @@ namespace OnlineVideos.Hoster
         public override string getVideoUrls(string url)
         {
             string webData = SiteUtilBase.GetWebData(url);
-            return GetSubString(webData, @"name=""src"" value=""", @"""");
+            string tmp = GetSubString(webData, @"$(""#playeriframe"").attr({src : """, @"""");
+            webData = SiteUtilBase.GetWebData(@"http://veehd.com" + tmp);
+            return HttpUtility.UrlDecode(GetSubString(webData, @"""url"":""", @""""));
         }
     }
 

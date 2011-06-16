@@ -177,6 +177,21 @@ namespace OnlineVideos.Sites
                     Match m2 = Regex.Match(video.VideoUrl, @"-(?<id>\d+).html");
 
                     if (m2.Success) video.VideoUrl = baseUrl + "/getlinks.php?q=" + m2.Groups["id"].Value;
+
+                    try
+                    {
+                        TrackingInfo tInfo = new TrackingInfo();
+                        int p = video.Title.IndexOf('.');
+                        if (p >= 0)
+                            tInfo.Episode = uint.Parse(video.Title.Substring(0, p));
+
+                        tInfo.Season = uint.Parse(GetSubString(category.Name.Trim(), " ", " ("));
+                        tInfo.Title = category.ParentCategory.Name;
+                        tInfo.VideoKind = VideoKind.TvSeries;
+                        video.Other = tInfo;
+                    }
+                    catch { }
+
                     videos.Add(video);
                     m = m.NextMatch();
                 }
@@ -261,6 +276,14 @@ namespace OnlineVideos.Sites
             if (lst.Count > 0)
                 tmp = lst[0].url;
             return tmp;
+        }
+
+        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+            if (video.Other is ITrackingInfo)
+                return video.Other as ITrackingInfo;
+
+            return base.GetTrackingInfo(video);
         }
 
 
