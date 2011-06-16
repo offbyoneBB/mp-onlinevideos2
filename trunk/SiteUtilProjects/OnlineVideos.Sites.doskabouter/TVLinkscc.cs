@@ -57,7 +57,7 @@ namespace OnlineVideos.Sites
             regexTvShowDataThumb = new Regex(@"<div\sclass=""left"">\s*?<img src=""(?<Thumb>[^""]*)""\s*?(width=""[^""]*"")?\s*?(height=""[^""]*"")?\s*?/>\s*?</div>", defaultDataRegexOptions);
             regexTvShowDataPlot = new Regex(@"<div\sclass=""plot"">\s*([Pp]lot)?:?\s*(?<Plot>.*?)\s*?</div>", defaultDataRegexOptions);
             regexTvShowDataAirdate = new Regex(@"<div>[Dd]ate:\s*?(?<Year>\d\d\d\d)\s*?</div>", defaultDataRegexOptions);
-            
+
 
             base.Initialize(siteSettings);
         }
@@ -164,52 +164,14 @@ namespace OnlineVideos.Sites
 
         private int GetTvShowSubcats(Category parentCategory, CatType newCatType, Regex regEx)
         {
-            Regex regEx_dynamicSubCategories_Copy = regEx_dynamicSubCategories;
             regEx_dynamicSubCategories = regEx;
-            try
+            int res = base.ParseSubCategories(parentCategory, parentCategory.Other as string);
+            foreach (Category cat in parentCategory.SubCategories)
             {
-                int res = 0;
-                if (parentCategory.Other is string)
-                {
-                    string data = parentCategory.Other as string;
-                    if (!string.IsNullOrEmpty(data))
-                    {
-                        parentCategory.SubCategories = new List<Category>();
-                        Match m = regEx_dynamicSubCategories.Match(data);
-                        while (m.Success)
-                        {
-                            RssLink cat = new RssLink();
-                            cat.Url = m.Groups["url"].Value;
-                            if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
-                            if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
-                            if (dynamicSubCategoryUrlDecoding) cat.Url = HttpUtility.HtmlDecode(cat.Url);
-                            cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
-                            cat.Thumb = m.Groups["thumb"].Value;
-                            if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
-                            cat.Description = m.Groups["description"].Value;
-                            cat.ParentCategory = parentCategory;
-                            parentCategory.SubCategories.Add(cat);
-                            m = m.NextMatch();
-                        }
-                        parentCategory.SubCategoriesDiscovered = true;
-                    }
-                    res = parentCategory.SubCategories == null ? 0 : parentCategory.SubCategories.Count;
-                }
-                else
-                {
-                    res = base.DiscoverSubCategories(parentCategory);
-                }
-                foreach (Category cat in parentCategory.SubCategories)
-                {
-                    cat.HasSubCategories = true;
-                    cat.Other = newCatType;
-                }
-                return res;
+                cat.HasSubCategories = true;
+                cat.Other = newCatType;
             }
-            finally
-            {
-                regEx_dynamicSubCategories = regEx_dynamicSubCategories_Copy;
-            }
+            return res;
         }
 
         private List<VideoInfo> GetTvSeasonVideos(Category category)
@@ -378,29 +340,29 @@ namespace OnlineVideos.Sites
         {
             //if (string.IsNullOrEmpty(parentCategory.Thumb) || string.IsNullOrEmpty(parentCategory.Description))
             //{
-                string sData = GetWebData(parentCategory.Url);
-                if (!string.IsNullOrEmpty(sData))
+            string sData = GetWebData(parentCategory.Url);
+            if (!string.IsNullOrEmpty(sData))
+            {
+                Match m;
+                if (string.IsNullOrEmpty(parentCategory.Thumb))
                 {
-                    Match m;
-                    if (string.IsNullOrEmpty(parentCategory.Thumb))
-                    {
-                        m = regexTvShowDataThumb.Match(sData);
-                        if (m.Success)
-                            parentCategory.Thumb = m.Groups["Thumb"].Value;
-                    }
-                    if (string.IsNullOrEmpty(parentCategory.Description))
-                    {
-                        m = regexTvShowDataPlot.Match(sData);
-                        if (m.Success)
-                            parentCategory.Description = m.Groups["Plot"].Value;
-                    }
-                    if (string.IsNullOrEmpty(parentCategory.Other as string))
-                    {
-                        m = regexTvShowDataAirdate.Match(sData);
-                        if (m.Success)
-                            parentCategory.Other = m.Groups["Year"].Value;
-                    }
+                    m = regexTvShowDataThumb.Match(sData);
+                    if (m.Success)
+                        parentCategory.Thumb = m.Groups["Thumb"].Value;
                 }
+                if (string.IsNullOrEmpty(parentCategory.Description))
+                {
+                    m = regexTvShowDataPlot.Match(sData);
+                    if (m.Success)
+                        parentCategory.Description = m.Groups["Plot"].Value;
+                }
+                if (string.IsNullOrEmpty(parentCategory.Other as string))
+                {
+                    m = regexTvShowDataAirdate.Match(sData);
+                    if (m.Success)
+                        parentCategory.Other = m.Groups["Year"].Value;
+                }
+            }
             //}
 
 
@@ -470,14 +432,14 @@ namespace OnlineVideos.Sites
                     result.Add(catTVShows);
                 }
             }
- 
+
             return result;
         }
 
         public override List<ISearchResultItem> DoSearch(string query, string category)
         {
             List<ISearchResultItem> result = DoSearch(query);
-            if (result != null && result.Count >0)
+            if (result != null && result.Count > 0)
             {
                 foreach (Category cat in result)
                 {

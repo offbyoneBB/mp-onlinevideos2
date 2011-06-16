@@ -92,7 +92,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'thumb' match retrieved from the videoThumbXml or 'ImageUrl' of the videoListRegEx.")]
         protected string videoThumbFormatString = "{0}";
         [Category("OnlineVideosConfiguration"), Description("Enables checking if the video's url or data from the url can be resolved via known hosters.")]
-        protected HosterResolving resolveHoster = HosterResolving.None;        
+        protected HosterResolving resolveHoster = HosterResolving.None;
         [Category("OnlineVideosConfiguration"), Description("Post data which is send for getting the fileUrl for playback.")]
         protected string fileUrlPostString = String.Empty;
         [Category("OnlineVideosConfiguration"), Description("Enables getting the redirected url instead of the given url for playback.")]
@@ -161,9 +161,15 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
+            return ParseSubCategories(parentCategory, null);
+        }
+
+        public int ParseSubCategories(Category parentCategory, string data)
+        {
             if (parentCategory is RssLink && regEx_dynamicSubCategories != null)
             {
-                string data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+                if (data == null)
+                    data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
                 if (!string.IsNullOrEmpty(data))
                 {
                     parentCategory.SubCategories = new List<Category>();
