@@ -405,7 +405,14 @@ namespace SiteParser
                 MessageBox.Show("PlaylistUrlResult is empty");
             else
             {
-                Dictionary<string, string> playList = generic.GetPlaybackOptions(playListUrlResultTextBox.Text);
+                Dictionary<string, string> playList;
+                if (!String.IsNullOrEmpty(generic.FileUrlRegEx))
+                    playList = generic.GetPlaybackOptions(playListUrlResultTextBox.Text);
+                else
+                {
+                    playList = new Dictionary<string, string>();
+                    playList.Add("url", playListUrlResultTextBox.Text);
+                }
                 ResultUrlComboBox.Items.Clear();
 
                 if (playList != null)
