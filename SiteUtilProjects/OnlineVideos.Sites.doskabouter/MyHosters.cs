@@ -59,7 +59,16 @@ namespace OnlineVideos.Hoster
         public override string getVideoUrls(string url)
         {
             string webData = SiteUtilBase.GetWebData(url);
-            return GetSubString(webData, @"""video"", """, @"""");
+            string resUrl = GetSubString(webData, @"""video"", """, @"""");
+            if (String.IsNullOrEmpty(resUrl))
+                resUrl = GetSubString(webData, @"""stream_url"":""", @"""");
+            if (String.IsNullOrEmpty(resUrl) && !url.Contains("embed"))
+            {
+                string newUrl=url.Replace(@".com/",@".com/embed/");
+                if (!newUrl.Equals(url)) //safety check to prevent infinite recursion
+                    resUrl = getVideoUrls(newUrl);
+            }
+            return resUrl.Replace(@"\/", @"/");
         }
     }
 
