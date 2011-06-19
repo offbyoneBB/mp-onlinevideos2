@@ -1048,7 +1048,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="EuroSport" util="EuroSport" agecheck="false" enabled="true" lang="en">
+    <Site name="EuroSport" util="EuroSport" agecheck="false" enabled="true" lang="en" player="WMP" >
       <Description>Eurosport live streams and videos</Description>
       <Configuration />
       <Categories />

@@ -39,8 +39,8 @@ namespace OnlineVideos.Sites
 
             CookieContainer cc = new CookieContainer();
 
-            string url = baseUrl + "_wsplayer_/CRMService.asmx/LoginWithService";
-            string postData = "u=" + emailAddress + "&p=" + password + "&r=0&s=ply";
+            string url = baseUrl + "_wsplayerxrm_/PlayerCrmApi.asmx/LoginWithUserCredentials";
+            string postData = "u=" + emailAddress + "&p=" + password + "&g=" + tld.ToUpper() + "&d=1&s=1";
 
             string cookies = @"ns_cookietest=true,ns_session=true";
             string[] myCookies = cookies.Split(',');
@@ -55,7 +55,9 @@ namespace OnlineVideos.Sites
                 cc.Add(c);
             }
 
-            GetWebDataFromPost(url, postData, cc);
+            string res = GetWebDataFromPost(url, postData, cc);
+            if (!res.Contains(@"<Success>1</Success>"))
+                Log.Error("login unsuccessfull");
 
             CookieCollection ccol = cc.GetCookies(new Uri(baseUrl));
             foreach (Cookie c in ccol)
@@ -187,7 +189,9 @@ namespace OnlineVideos.Sites
                 }
 
                 video.ImageUrl = String.Format(@"http://layout.eurosportplayer.{0}/i", tld) + prod.SelectSingleNode("a:vignetteurl", nsmRequest).InnerText;
-                video.Description = prod.SelectSingleNode("a:channellivesublabel", nsmRequest).InnerText;
+                XmlNode descr = prod.SelectSingleNode("a:channellivesublabel", nsmRequest);
+                if (descr != null)
+                    video.Description = descr.InnerText;
                 video.Other = nodeList;
 
                 videos.Add(video);
