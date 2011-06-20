@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <controls>
+  <controls>  
+    <control>
+      <description>Add to Trakt Movie/Show Watch List</description>
+      <type>button</type>
+      <id>97258</id>
+      <label>#Trakt.Translation.AddToWatchList.Label</label>
+      <onup>51</onup>
+      <ondown>51</ondown>
+      <onright>51</onright>
+      <onleft>51</onleft>
+      <posX>49</posX>
+      <posY>65</posY>
+      <height>23</height>
+      <width>195</width>
+      <font>font11</font>
+      <visible>string.equals(#OnlineVideos.state,details)+[string.equals(#OnlineVideos.selectedSiteUtil,IMDB)|string.equals(#OnlineVideos.selectedSiteUtil,ITMovieTrailers)]+plugin.isenabled(Trakt)</visible>
+    </control>
     <control>
       <type>image</type>
       <description>movie border</description>
@@ -34,7 +50,7 @@
       <height>220</height>
       <width>220</width>
       <onright>51</onright>
-      <onleft>51</onleft>
+      <onleft>97258</onleft>
       <onup>51</onup>
       <ondown>51</ondown>
       <visible>string.equals(#OnlineVideos.state, details)</visible>
@@ -84,7 +100,7 @@
     </control>
     <control>
       <type>label</type>
-      <description>Release date  txt</description>
+      <description>Release date txt</description>
       <id>56</id>
       <posX>50</posX>
       <posY>400</posY>
@@ -94,7 +110,7 @@
     </control>
     <control>
       <type>label</type>
-      <description>Release date  value</description>
+      <description>Release date value</description>
       <id>57</id>
       <posX>50</posX>
       <posY>425</posY>
@@ -123,6 +139,26 @@
       <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
       <disabledcolor>ff808080</disabledcolor>
     </control>
+    <control>
+      <type>label</type>
+      <description>Certificate txt</description>
+      <posX>50</posX>
+      <posY>520</posY>
+      <label>173</label>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <textcolor>ffb2d4f5</textcolor>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>Certificate value</description>
+      <posX>50</posX>
+      <posY>545</posY>
+      <width>195</width>
+      <label>#OnlineVideos.Details.Certificate</label>
+      <font>font12</font>
+      <visible>string.equals(#OnlineVideos.state, details) + [string.equals(#OnlineVideos.selectedSiteUtil, ITMovieTrailers) | string.equals(#OnlineVideos.selectedSiteUtil, IMDb)]</visible>
+      <disabledcolor>ff808080</disabledcolor>
+    </control>    
     <control>
       <type>label</type>
       <description>Plot txt</description>
