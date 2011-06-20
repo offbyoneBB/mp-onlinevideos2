@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
-  <controls>    
+  <controls>
+    <control>
+      <description>Add to Trakt Movie/Show Watch List</description>
+      <type>button</type>
+      <id>97258</id>
+      <label>#Trakt.Translation.AddToWatchList.Label</label>
+      <onup>51</onup>
+      <ondown>51</ondown>
+      <onright>51</onright>
+      <onleft>51</onleft>
+      <posX>118</posX>
+      <posY>78</posY>
+      <width>267</width>
+      <height>35</height>
+      <font>font11</font>
+      <visible>string.equals(#OnlineVideos.state,details)+[string.equals(#OnlineVideos.selectedSiteUtil,IMDB)|string.equals(#OnlineVideos.selectedSiteUtil,ITMovieTrailers)]+plugin.isenabled(Trakt)</visible>
+    </control>
     <control>
       <type>image</type>
       <description>movie border</description>
@@ -36,7 +52,7 @@
       <height>320</height>
       <width>400</width>
       <onright>51</onright>
-      <onleft>51</onleft>
+      <onleft>97258</onleft>
       <onup>51</onup>
       <ondown>51</ondown>
       <visible>string.equals(#OnlineVideos.state, details)</visible>
