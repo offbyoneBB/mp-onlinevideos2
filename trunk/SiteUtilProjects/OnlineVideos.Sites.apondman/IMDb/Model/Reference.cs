@@ -1,6 +1,7 @@
 ﻿namespace OnlineVideos.Sites.Pondman.IMDb.Model
 {
     using OnlineVideos.Sites.Pondman.Interfaces;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Base class for an IMDb object
@@ -30,6 +31,19 @@
             {
                 ID = value;
             }
+        }
+
+        #endregion
+
+        #region IVideoDetails Members
+
+        public virtual Dictionary<string, string> GetExtendedProperties()
+        {
+            Dictionary<string, string> p = new Dictionary<string, string>();
+
+            p.Add("IMDbId", this.ID.ToString());
+
+            return p;
         }
 
         #endregion

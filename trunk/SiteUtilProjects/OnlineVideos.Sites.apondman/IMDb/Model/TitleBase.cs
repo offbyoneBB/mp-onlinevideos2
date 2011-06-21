@@ -85,7 +85,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
         public virtual Dictionary<string, string> GetExtendedProperties()
         {
-            Dictionary<string, string> p = new Dictionary<string, string>();
+            Dictionary<string, string> p = base.GetExtendedProperties();
 
             p.Add("Type", this.Type.ToString());
             p.Add("Title", this.Title);
