@@ -1422,7 +1422,7 @@
     <Site name="Empflix" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>Full Free Porn movies.</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>http\://www\.empflix\.com/view\.php\?id\=\d+)"\s*title="(?<Title>[^"]+)"[^>]*>\s*
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>http\://www\.empflix\.com/videos/[^"]+)"\s*title="(?<Title>[^"]+)"[^>]*>\s*
 <img\ssrc="\s*(?<ImageUrl>http\://[^"]+)"[^>]*>\s*
 (?:(?!<p\sclass="length").)*\s*
 <p\sclass="length">(?<Duration>[^<]*)</p>]]></item>
