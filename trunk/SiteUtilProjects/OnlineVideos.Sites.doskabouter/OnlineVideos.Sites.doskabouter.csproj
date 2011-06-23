@@ -76,6 +76,7 @@
     <Compile Include="Hoster\MyStream.cs" />
     <Compile Include="Hoster\MyVideo.cs" />
     <Compile Include="Hoster\NovaMov.cs" />
+    <Compile Include="Hoster\PutLocker.cs" />
     <Compile Include="Hoster\Quickload.cs" />
     <Compile Include="Hoster\ShareHoster.cs" />
     <Compile Include="Hoster\Speedload.cs" />
