@@ -83,7 +83,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb.Model
 
         #region IVideoDetails Members
 
-        public virtual Dictionary<string, string> GetExtendedProperties()
+        public override Dictionary<string, string> GetExtendedProperties()
         {
             Dictionary<string, string> p = base.GetExtendedProperties();
 

@@ -11,7 +11,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
     using Newtonsoft.Json.Linq;
     using OnlineVideos.Sites.Pondman.IMDb.Json;
     using OnlineVideos.Sites.Pondman.IMDb.Model;
-    using System.Web;    
+    using System.Web;
+    using System.Globalization;    
 
     public static class IMDbAPI
     {
@@ -168,6 +169,24 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 string[] genres = node.InnerText.Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
                 title.Genres = genres.Select(s => HttpUtility.HtmlDecode(s)).ToList();
             }
+
+            // Rating
+            node = root.SelectSingleNode("//p[@class='votes']/strong");
+            if (node != null)
+            {
+                title.Rating = Convert.ToDouble(node.InnerText, CultureInfo.InvariantCulture.NumberFormat);
+
+                // Votes
+                string votes = node.NextSibling.InnerText;
+                if (votes.Contains("votes"))
+                {
+                    votes = Regex.Replace(votes, @".+?([\d\,]+) votes.+", "$1", RegexOptions.Singleline);
+                    title.Votes = Convert.ToInt32(votes.Replace(",",""));
+                }
+            }
+
+            
+
 
             // Certification
             node = root.SelectSingleNode("//div[h1='Rated']/p");
