@@ -260,7 +260,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 }
             }
 
-            HtmlNode trailerNode = root.SelectSingleNode("//span[@class='trailer']");
+            HtmlNode trailerNode = root.SelectSingleNode("//span[@data-trailer-id]");
             if (trailerNode != null) 
             {
                 string videoId = trailerNode.GetAttributeValue("data-trailer-id", string.Empty);
