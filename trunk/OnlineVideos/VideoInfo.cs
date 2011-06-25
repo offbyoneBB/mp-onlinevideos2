@@ -140,9 +140,9 @@ namespace OnlineVideos
             if (useLink) video.VideoUrl = rssItem.Link;
 
             //get the video and the length
-            if (rssItem.Enclosure != null && (rssItem.Enclosure.Type == null || !rssItem.Enclosure.Type.ToLower().StartsWith("image")) && (isPossibleVideo(rssItem.Enclosure.Url) || useLink))
+            if (rssItem.Enclosure != null && rssItem.Enclosure.Url != null && (rssItem.Enclosure.Type == null || !rssItem.Enclosure.Type.ToLower().StartsWith("image")) && (isPossibleVideo(rssItem.Enclosure.Url.Trim()) || useLink))
             {
-                video.VideoUrl = useLink ? rssItem.Link : rssItem.Enclosure.Url;
+                video.VideoUrl = useLink ? rssItem.Link : rssItem.Enclosure.Url.Trim();
 
                 if (string.IsNullOrEmpty(video.Length) && !string.IsNullOrEmpty(rssItem.Enclosure.Length))
                 {
@@ -164,7 +164,7 @@ namespace OnlineVideos
             {
                 foreach (RssItem.MediaContent content in rssItem.MediaContents)
                 {
-                    if (!useLink && isPossibleVideo(content.Url)) AddToPlaybackOption(video.PlaybackOptions, content);
+                    if (!useLink && content.Url != null && isPossibleVideo(content.Url.Trim())) AddToPlaybackOption(video.PlaybackOptions, content);
                     if (string.IsNullOrEmpty(video.Length)) video.Length = GetDuration(content.Duration);
                 }
             }
@@ -174,7 +174,7 @@ namespace OnlineVideos
                 {
                     foreach (RssItem.MediaContent content in grp.MediaContents)
                     {
-                        if (!useLink && isPossibleVideo(content.Url)) AddToPlaybackOption(video.PlaybackOptions, content);
+                        if (!useLink && content.Url != null && isPossibleVideo(content.Url.Trim())) AddToPlaybackOption(video.PlaybackOptions, content);
                         if (string.IsNullOrEmpty(video.Length)) video.Length = GetDuration(content.Duration);
                     }
                 }
@@ -219,7 +219,7 @@ namespace OnlineVideos
                 }
             }
 
-            if (!playbackOptions.ContainsValue(content.Url))
+            if (!playbackOptions.ContainsValue(content.Url.Trim()))
             {
                 string baseInfo = string.Format("{0}x{1} ({2}) | {3}:// | {4}",
                         content.Width,
@@ -235,7 +235,7 @@ namespace OnlineVideos
                 {
                     info = string.Format("{0} ({1})", baseInfo, i.ToString().PadLeft(2, ' '));
                 }
-                playbackOptions.Add(info, content.Url);
+                playbackOptions.Add(info, content.Url.Trim());
             }
         }
 
