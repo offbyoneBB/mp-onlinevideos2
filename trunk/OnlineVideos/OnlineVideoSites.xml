@@ -1064,18 +1064,25 @@
       <Description>Se udsendelser og klip fra video.tv2.dk.</Description>
       <Categories />
     </Site>    
-    <Site name="TVE" util="TVE" agecheck="false" enabled="true" lang="es">
+    <Site name="TVE" util="TVE" agecheck="false" enabled="true" lang="es" lastUpdated="2011-03-14T21:59:19.5569175+01:00">
       <Description>Las series y programas de TVE, cuando quieras en rtve.es</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.rtve.es]]></item>
-        <item key="videoListRegEx"><![CDATA[<li\sid="video-(?<videoid>[^"]*)"\sclass="videoThumbnail">\s*<div>\s*<a\shref='(?<VideoUrl>[^']*)'[^>]*>\s*<img\ssrc="(?<ImageUrl>[^"]*).*?<h3>[^>]*>(?<Title>[^<]*)<.*?</h3>\s*<p>\s*(?<Description>[^<]*)</p>.*?Emitido:\s*(?<Airdate>[^\n\t\r]*)[\n\t\r].*?Duraci&oacute;n:\s*(?<Duration>[^\s]*)\s*<]]></item>
-        <item key="nextPageRegEx"><![CDATA[<li\sclass="adelante">\s*<a\shref="(?<url>[^"]*)"]]></item>
-        <item key="prevPageRegEx"><![CDATA[<li\sclass="atras">\s*<a\shref="(?<url>[^"]*)"]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[(?<=selector.*)<li><a\shref="(?<url>[^"]*)"><span>(?<title>[^<]*)</span></a></li>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<span\sclass="titulo-tooltip"><a\shref="(?<url>[^"]*)"\stitle="Ver\sprograma\sseleccionado">(?<title>[^<]*)</a></span>\s*<span\sclass="fecha">(?<last>[^<]*)</span>\s*<span\sclass="detalle">(?<description>[^<]*)</span>\s*<span\sclass="miga">]]></item>
+        <item key="videoListRegEx"><![CDATA[(<span\sclass="col_tit"\sid="(?<id>[^"]*)"\sname="progname">\s*<a\shref="(?<VideoUrl>[^"]*)">(?:<em>Nuevo</em>&nbsp;)?(?<Title>[^<]*)</a>\s*</span>\s*<span\sclass="col_tip">Completo</span>\s*<span\sclass="col_dur">(?<Duration>[^<]*)</span>\s*<span\sclass="col_pop"><[^>]*><em><strong><span>[^<]*</span></strong></em></span></span>\s*<span\sclass="col_fec">(?<Airdate>[^<]*)</span>\s*<div[^>]*>\s*<span\sid="progToolTip"\sclass="tooltip\scurved">\s*<span\sclass="pointer"></span>\s*<span[^>]*></span>\s*<span\sclass="titulo-tooltip"><a[^>]*>[^<]*</a></span>\s*<span\sclass="fecha">[^<]*</span>\s*<span\sclass="detalle">(?<Description>[^<]*)</span>\s*<span\sclass="miga">\s*<ul>\s*<li>)
+        |
+        (<dt>[^<]*</dt>\s*<dd>\s*<a\srel="[^"]*"\stitle="[^"]*"\shref="(?<VideoUrl>[^"]*)"><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*><cite>(?<Title>[^<]*)</cite></a><em><span>(?<Description>[^<]*)</span></em>\s*</dd>)]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li\stitle='Ir\sa\sla\spágina\ssiguiente'\sclass="siguiente">\s*<a\sname="paginaIR"\shref="(?<url>[^"]*)"><span>Siguiente</span></a>]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[True]]></item>
+        <item key="baseUrl"><![CDATA[http://www.rtve.es/]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Todos">http://www.rtve.es/alacarta/todos/recomendados/index.html</Category>
-        <Category xsi:type="RssLink" name="la 1">http://www.rtve.es/alacarta/la1/recomendados/index.html</Category>
-        <Category xsi:type="RssLink" name="la 2">http://www.rtve.es/alacarta/la2/recomendados/index.html</Category>
+        <Category xsi:type="RssLink" name="Todas las cadenas">http://www.rtve.es/alacarta/programas/tve/todos/1/</Category>
+        <Category xsi:type="RssLink" name="La 1">http://www.rtve.es/alacarta/programas/la1/todos/1/</Category>
+        <Category xsi:type="RssLink" name="La 2">http://www.rtve.es/alacarta/programas/la2/todos/1/</Category>
+        <Category xsi:type="RssLink" name="Canal 24 horas">http://www.rtve.es/alacarta/programas/24-horas/todos/1/</Category>
+        <Category xsi:type="RssLink" name="Teledeporte">http://www.rtve.es/alacarta/programas/teledeporte/todos/1/</Category>
+        <Category xsi:type="RssLink" name="Clan TVE">http://www.rtve.es/alacarta/programas/clan/todos/1/</Category>
       </Categories>
     </Site>
     <Site name="TVNZOnDemand" util="TVNZOnDemand" agecheck="false" enabled="true" lang="en" player="Internal">
