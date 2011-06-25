@@ -9,102 +9,58 @@ namespace OnlineVideos.Sites
 {
     public class TVEUtil : GenericSiteUtil
     {
-        private string subCategoryRegex = @"<li[^>]*>\s*<a\shref=""(?<url>[^""]+)""[^>]*>(?<title>[^<]*)<|<span>(?<title>[^<]*)|<div>(?<title>[^<]*)";
-
         private Regex regEx_SubCategory;
+        private Regex regEx_SubSubCategory;
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-
-            regEx_SubCategory = new Regex(subCategoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
-        }
-
-        public override int DiscoverDynamicCategories()
-        {
-            foreach (Category cat in Settings.Categories)
-                cat.HasSubCategories = true;
-
-            return base.DiscoverDynamicCategories();
+            regEx_SubSubCategory = regEx_dynamicSubCategories;
+            regEx_SubCategory = regEx_dynamicCategories;
+            regEx_dynamicCategories = null;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            string url = ((RssLink)parentCategory).Url;
-            List<Category> categories = new List<Category>();
-            string webData = GetWebData(url);
+            if (parentCategory.ParentCategory == null)
+                regEx_dynamicSubCategories = regEx_SubCategory;
+            else
+                regEx_dynamicSubCategories = regEx_SubSubCategory;
 
-            if (!string.IsNullOrEmpty(webData))
-            {
-                if (parentCategory.Other != null)
-                    webData = GetSubString(webData, @"carta_herader", @"programas_carta");
-                else
-                    webData = GetSubString(webData, @"<div class=""menu_opciones"">", @"<ul class=""paginacion"">");
+            int res = base.DiscoverSubCategories(parentCategory);
 
-                Match m = regEx_SubCategory.Match(webData);
-                while (m.Success)
-                {
-                    RssLink cat = new RssLink();
-                    cat.Name = Utils.PlainTextFromHtml(m.Groups["title"].Value);
-                    cat.Url = m.Groups["url"].Value;
-                    if (String.IsNullOrEmpty(cat.Url))
-                        cat.Url = url;
-                    else
-                        cat.Url = baseUrl + cat.Url;
+            if (res != 0 && parentCategory.ParentCategory == null)
+                foreach (Category cat in parentCategory.SubCategories)
+                    cat.HasSubCategories = true;
 
-                    cat.HasSubCategories = (parentCategory.Other == null) && !cat.Url.Equals(url);
-                    //cat.Name != "Recomendados";
-                    cat.ParentCategory = parentCategory;
-                    cat.Other = 1;
-                    categories.Add(cat);
-                    m = m.NextMatch();
-                }
+            return res;
+        }
 
-                parentCategory.SubCategoriesDiscovered = true;
-            }
-            parentCategory.SubCategories = categories;
-            return parentCategory.SubCategories.Count;
+        private string hash(string s)
+        {
+            int l = s.Length;
+            if (l < 4)
+                return s;
+            return String.Format("{0}/{1}/{2}/{3}", s[l - 1], s[l - 2], s[l - 3], s[l - 4]);
         }
 
         public override string getUrl(VideoInfo video)
         {
-            // copy from http://code.google.com/p/xbmc-tvalacarta/source/browse/trunk/tvalacarta/tvalacarta/channels/rtve.py
-            string videoId = Path.ChangeExtension(Path.GetFileName(video.VideoUrl), String.Empty).TrimEnd('.');
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0, j = videoId.Length - 1; i < 4; i++, j--)
-            {
-                sb.Append(videoId[j]);
-                sb.Append('/');
-            }
-            sb.Append(videoId);
-            sb.Append(".xml");
-            string webData = GetWebData(baseUrl + @"/swf/data/es/videos/alacarta/" + sb.ToString());
-            string res = GetSubString(webData, @"<file>", @"</file>");
-            if (!String.IsNullOrEmpty(res))
-                return res;
+            //http://www.rtve.es/alacarta/videos/amar-en-tiempos-revueltos/amar-tiempos-revueltos-t6-capitulos-211-212/1137920/
+            string[] parts = video.VideoUrl.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            string url = String.Format(@"http://www.rtve.es/swf/data/es/videos/video/{0}/{1}.xml",
+                hash(parts[parts.Length - 1]), parts[parts.Length - 1]);
+            string webData = GetWebData(url);
+            string assetId = GetSubString(webData, @"assetDataId::", @"""");
 
-            webData = GetWebData(baseUrl + @"/swf/data/es/videos/video/" + sb.ToString());
-            res = GetSubString(webData, @"<file>", @"</file>");
-            if (!String.IsNullOrEmpty(res))
-                return res;
-            string assetID = GetSubString(webData, @"assetDataId::", @"""");
+            string url2 = String.Format(@"http://www.rtve.es/scd/CONTENTS/ASSET_DATA_VIDEO/{0}/ASSET_DATA_VIDEO-{1}.xml",
+                hash(assetId), assetId);
 
-            sb = new StringBuilder();
-            sb.Append(baseUrl);
-            sb.Append(@"/scd/CONTENTS/ASSET_DATA_VIDEO/");
-            for (int i = 0, j = assetID.Length - 1; i < 4; i++, j--)
-            {
-                sb.Append(assetID[j]);
-                sb.Append('/');
-            }
-            sb.Append(@"ASSET_DATA_VIDEO-");
-            sb.Append(assetID);
-            sb.Append(".xml");
-            webData = GetWebData(sb.ToString());
-            Match m = Regex.Match(webData, @"<key>ASD_FILE</key>\s*<value>(?<url>[^<]*)<");
+            webData = GetWebData(url2);
+            Match m = Regex.Match(webData, @"<key>ASD_FILE</key>\s*<value>/deliverty/demo/resources/(?<url>[^<]*)</value>");
             if (m.Success)
-                res = baseUrl + @"/resources/TE_NGVA" + m.Groups["url"].Value.Substring(@"/deliverty/demo/resources".Length);
-            return res;
+                return baseUrl + @"/resources/TE_NGVA/" + m.Groups["url"].Value;
+            return null;
         }
 
 
