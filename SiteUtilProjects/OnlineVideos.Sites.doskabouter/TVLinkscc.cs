@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
@@ -16,14 +18,21 @@ namespace OnlineVideos.Sites
         private enum CatType
         {
             NewMovies, HotMovies, MovieGenres, MoviesAlph,
-            NewTvshows, BestTvshows, TvshowGenres, TvshowsAlph, TvshowList, TvSeasonList
+            NewTvshows, BestTvshows, TvshowGenres, TvshowsAlph, TvshowList, TvSeasonList,
+            FreeNewMovies, FreeHotMovies, /*MovieGenres,*/ FreeMoviesAlph
         };
 
+        [Category("OnlineVideosUserConfiguration"), Description("Your login name")]
+        string username = string.Empty;
+        [Category("OnlineVideosUserConfiguration"), Description("Your login password"), PasswordPropertyText(true)]
+        string password = string.Empty;
 
         private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
         private RegexOptions defaultDataRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.ExplicitCapture;
 
         private string sRegexMovieDataAirdate = @"<div class=""tit"">{0}\s*?(?:&nbsp;)?\s*?\((?<Year>\d\d\d\d)\).*?</div>";
+
+        private CookieContainer siteCookies = null;
 
         Regex regexNewMovies;
         Regex regexHotMovies;
@@ -45,7 +54,7 @@ namespace OnlineVideos.Sites
         {
             regexNewMovies = new Regex(@"(?<!class=""title_h"".*)((<div[^>]*>\s*<div\sclass=""pic""><a\shref=""(?<VideoUrl>[^""]*)""[^>]*><img\ssrc=""(?<ImageUrl>[^""]*)""[^>]*></a></div>\s*<div\sclass=""show""><a[^>]*>(?<Title>[^<]*)</a>&nbsp;<font\scolor=""\#FF6600""><sup></sup></font></div>)|(<li><a\shref=""(?<VideoUrl>[^""]*)""[^>]*?title=""(?<Title>[^""]*)""[^>]*?>[^<]*?\((?<Airdate>[^\)]*)\)</a>(?:&nbsp;)?<font\scolor=""\#FF6600""><sup>.*?</sup></font></li>))", defaultRegexOptions);
             regexHotMovies = new Regex(@"(?<=class=""title_h"".*)((<div[^>]*>\s*<div\sclass=""pic""><a\shref=""(?<VideoUrl>[^""]*)""[^>]*><img\ssrc=""(?<ImageUrl>[^""]*)""[^>]*></a></div>\s*<div\sclass=""show""><a[^>]*>(?<Title>[^<]*)</a>&nbsp;<font\scolor=""\#FF6600""><sup></sup></font></div>)|(<li><a\shref=""(?<VideoUrl>[^""]*)""[^>]*?title=""(?<Title>[^""]*)""[^>]*?>[^<]*?\((?<Airdate>[^\)]*)\)</a>(?:&nbsp;)?<font\scolor=""\#FF6600""><sup>.*?</sup></font></li>))", defaultRegexOptions);
-            regexDefaultVideoList = new Regex(@"<li><a\shref=""(?<VideoUrl>[^""]*)""\stitle=""[^>]*>(?<Title>[^<]*)</a>\s(?<Airdate>[^<]*)</a>&nbsp;<font\scolor=""\#FF6600""><sup></sup></font></li>", defaultRegexOptions);
+            regexDefaultVideoList = new Regex(@"<li><a\shref=""(?<VideoUrl>[^""]*)""\stitle=""[^>]*>(?<Title>[^<]*)</a>\s*?\((?<Airdate>[^\)]*)\)\s*?</a>&nbsp;<font\scolor=""\#FF6600""><sup></sup></font></li>", defaultRegexOptions);
             regexMovieGenres = new Regex(@"<td\s[^>]*>(?:&nbsp;)?\s<a\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></td>", defaultRegexOptions);
             regexTvShowGenres = new Regex(@"<td\s[^>]*>(?:&nbsp;)?\s<a\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></td>", defaultRegexOptions);
             regexMoviesAlph = new Regex(@"<a\shref='(?<url>[^']*)'>(?<title>[^<]*)</a>", defaultRegexOptions);
@@ -64,31 +73,37 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
+            //movies
             RssLink cat = new RssLink();
             cat.Name = "Movies";
             cat.Url = @"http://www.tvlinks.cc/movie.htm";
             Settings.Categories.Add(cat);
-
             addSubcat("Newly added", cat, false).Other = CatType.NewMovies;
             addSubcat("Hot movies", cat, false).Other = CatType.HotMovies;
-
             addSubcat("Genres", cat, true).Other = CatType.MovieGenres;
             addSubcat("Alphabetical", cat, true).Other = CatType.MoviesAlph;
-
             cat.SubCategoriesDiscovered = true;
 
+            //tv shows
             cat = new RssLink();
             cat.Name = "TV Shows";
             cat.Url = @"http://www.tvlinks.cc/tv.htm";
             Settings.Categories.Add(cat);
-
             addSubcat("Newly added", cat, true).Other = CatType.NewTvshows;
             addSubcat("Best rated", cat, true).Other = CatType.BestTvshows;
-
             addSubcat("Genres", cat, true).Other = CatType.TvshowGenres;
-
             addSubcat("Alphabetical", cat, true).Other = CatType.TvshowsAlph;
+            cat.SubCategoriesDiscovered = true;
 
+            //free movies
+            cat = new RssLink();
+            cat.Name = "Free Movies";
+            cat.Url = @"http://www.tvlinks.cc/freemovies/freemovie.htm";
+            Settings.Categories.Add(cat);
+            addSubcat("Newly added", cat, false).Other = CatType.FreeNewMovies;
+            addSubcat("Hot movies", cat, false).Other = CatType.FreeHotMovies;
+            //addSubcat("Genres", cat, true).Other = CatType.MovieGenres;
+            addSubcat("Alphabetical", cat, true).Other = CatType.FreeMoviesAlph;
             cat.SubCategoriesDiscovered = true;
 
             Settings.DynamicCategoriesDiscovered = true;
@@ -114,16 +129,29 @@ namespace OnlineVideos.Sites
         {
             if (category.Other is string) return GetTvSeasonVideos(category);
             else if (category.Other is List<VideoInfo>) return category.Other as List<VideoInfo>;
+            bool replaceBadLinks = false;
             switch (category.Other as CatType?)
             {
                 case CatType.NewMovies:
                     regEx_VideoList = regexNewMovies; break;
+                case CatType.FreeNewMovies:
+                    regEx_VideoList = regexNewMovies; replaceBadLinks = true; break;
                 case CatType.HotMovies:
                     regEx_VideoList = regexHotMovies; break;
+                case CatType.FreeHotMovies:
+                    regEx_VideoList = regexHotMovies; replaceBadLinks = true; break;
                 default:
                     regEx_VideoList = regexDefaultVideoList; break;
             }
-            return base.getVideoList(category);
+            List<VideoInfo> result = base.getVideoList(category);
+            if (replaceBadLinks && result != null && result.Count > 0)
+            {
+                foreach (VideoInfo vid in result)
+                {
+                    vid.VideoUrl = Regex.Replace(vid.VideoUrl, "/freemovies", "", RegexOptions.IgnoreCase);
+                }
+            }
+            return result;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
@@ -140,6 +168,7 @@ namespace OnlineVideos.Sites
                     return GetTvShowSubcats(parentCategory, CatType.TvshowList, regexTvShowGenres);
 
                 case CatType.MoviesAlph:
+                case CatType.FreeMoviesAlph:
                     {
                         regEx_dynamicSubCategories = regexMoviesAlph;
                         return base.DiscoverSubCategories(parentCategory);
@@ -238,8 +267,41 @@ namespace OnlineVideos.Sites
             return s.Substring(p, q - p);
         }
 
+        private void SetCookies()
+        {
+            if (siteCookies != null)
+            {
+                bool bExpired = false;
+                foreach (Cookie cook in siteCookies.GetCookies(new Uri(baseUrl)))
+                {
+                    if (cook.Expired)
+                    {
+                        bExpired = true;
+                        break;
+                    }
+                }
+                if (bExpired || siteCookies.Count < 1)
+                    siteCookies = null;
+            }
+
+            if (siteCookies == null)
+            {
+                CookieContainer tempCookies = new CookieContainer();
+                GetWebDataFromPost("http://www.tvlinks.cc/checkin.php?action=login", string.Format("username={0}&password={1}&submit_button=Login", username, password), tempCookies);
+
+                siteCookies = new CookieContainer();
+
+                foreach (Cookie cook in tempCookies.GetCookies(new Uri(baseUrl)))
+                {
+                    siteCookies.Add(new Uri(baseUrl), cook);
+                }
+            }
+        }
+
         public override string getUrl(VideoInfo video)
         {
+            SetCookies();
+
             string code;
             if (!video.VideoUrl.EndsWith(".htm", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -299,7 +361,13 @@ namespace OnlineVideos.Sites
             else
                 code = Path.GetFileNameWithoutExtension(video.VideoUrl).Substring(4);
 
-            string part1 = GetWebData(@"http://www.tvlinks.cc/checkpts.php?code=" + code).Trim();
+            string part1 = GetWebData(@"http://www.tvlinks.cc/checkpts.php?code=" + code, siteCookies).Trim();
+            if (part1.Length < 5) //try to re-login
+            {
+                siteCookies = null;
+                SetCookies();
+                part1 = GetWebData(@"http://www.tvlinks.cc/checkpts.php?code=" + code, siteCookies).Trim();
+            }
 
             long ticks = DateTime.UtcNow.Ticks;
             long t3 = (ticks - 621355968000000000) / 10000;
@@ -385,7 +453,7 @@ namespace OnlineVideos.Sites
 
         public override Dictionary<string, string> GetSearchableCategories()
         {
-            Dictionary<string, string> result = Settings.Categories.Select(a => a.Name).ToDictionary<string, string>(a => a);
+            Dictionary<string, string> result = Settings.Categories.Select(a => a.Name).Where(a => a != "Free Movies").ToDictionary<string, string>(a => a);
             return result;
         }
 
