@@ -25,24 +25,35 @@ namespace OnlineVideos.Hoster.Base
         public abstract string getHosterUrl();
         public virtual VideoType getVideoType() { return videoType; }
 
-        protected static string FlashProvider(string url)
+        protected static string FlashProvider(string url, string webData = null)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = webData;
+            if (webData == null)
+                page = SiteUtilBase.GetWebData(url);
+
             if (!string.IsNullOrEmpty(page))
             {
                 Match n = Regex.Match(page, @"addVariable\(""file"",""(?<url>[^""]+)""\);");
                 if (n.Success) return n.Groups["url"].Value;
                 n = Regex.Match(page, @"flashvars.file=""(?<url>[^""]+)"";");
                 if (n.Success) return n.Groups["url"].Value;
+                n = Regex.Match(page, @"flashvars.{0,50}file=(?<url>[^\'""]+)(?:\'|"")");
+                if (n.Success) return n.Groups["url"].Value;
+                
             }
             return String.Empty;
         }
-        protected static string DivxProvider(string url)
+        protected static string DivxProvider(string url, string webData = null)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = webData;
+            if (webData == null)
+              page = SiteUtilBase.GetWebData(url);
+
             if (!string.IsNullOrEmpty(page))
             {
                 Match n = Regex.Match(page, @"var\surl\s=\s'(?<url>[^']+)';");
+                if (n.Success) return n.Groups["url"].Value;
+                n = Regex.Match(page, @"video/divx""\ssrc=""(?<url>[^""]+)""");
                 if (n.Success) return n.Groups["url"].Value;
             }
             return String.Empty;
@@ -105,5 +116,13 @@ namespace OnlineVideos.Hoster.Base
             return s.Substring(p, q - p);
         }
 
+        protected string getRegExData(string regex, string data, string group)
+        {
+            string result = string.Empty;
+            Match m = Regex.Match(data, regex);
+            if (m.Success)
+                result = m.Groups[group].Value;
+            return result == null ? string.Empty : result;
+        }
     }
 }

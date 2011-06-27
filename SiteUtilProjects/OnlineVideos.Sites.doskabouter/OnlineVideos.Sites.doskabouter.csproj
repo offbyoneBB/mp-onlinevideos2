@@ -82,6 +82,7 @@
     <Compile Include="Hoster\Speedload.cs" />
     <Compile Include="Hoster\Tubeload.cs" />
     <Compile Include="Hoster\Veoh.cs" />
+    <Compile Include="Hoster\VideoBB.cs" />
     <Compile Include="Hoster\VideoWeed.cs" />
     <Compile Include="Hoster\Vimeo.cs" />
     <Compile Include="Hoster\Xtream.cs" />

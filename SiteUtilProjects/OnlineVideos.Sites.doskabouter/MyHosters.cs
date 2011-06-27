@@ -465,28 +465,7 @@ namespace OnlineVideos.Hoster
             return GetSubString(unpacked, @"name=""src""value=""", @"""");
         }
     }
-
-    public class VideoBB : HosterBase
-    {
-        public override string getHosterUrl()
-        {
-            return "videobb.com";
-        }
-
-        public override string getVideoUrls(string url)
-        {
-            string webData = SiteUtilBase.GetWebData(url);
-            url = GetSubString(webData, @"""setting=", @"""");
-            byte[] tmp = Convert.FromBase64String(url);
-            url = Encoding.ASCII.GetString(tmp);
-
-            webData = SiteUtilBase.GetWebData(url);
-            url = GetSubString(webData, @"""token1"":""", @"""");
-            tmp = Convert.FromBase64String(url);
-            return Encoding.ASCII.GetString(tmp);
-        }
-    }
-
+    
     public class Vidxden : HosterBase
     {
         public override string getHosterUrl()
