@@ -10,6 +10,8 @@ namespace OnlineVideos.Hoster
 {
     public class MovShare : HosterBase
     {
+        private string HUMAN = "We need you to prove you're human";
+        
         public override string getHosterUrl()
         {
             return "Movshare.net";
@@ -17,22 +19,28 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
-            string page = SiteUtilBase.GetWebData(url.Substring(0, url.LastIndexOf("/")));
+            //string page = SiteUtilBase.GetWebData(url.Substring(0, url.LastIndexOf("/")));
+            string page = SiteUtilBase.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
-                //flv
-                Match n = Regex.Match(page, @"addVariable\(""file"",""(?<url>[^""]+)""\);");
-                if (n.Success)
+                if (page.IndexOf(HUMAN, StringComparison.CurrentCultureIgnoreCase) >= 0)
                 {
-                    videoType = VideoType.flv;
-                    return n.Groups["url"].Value;
+                    page = SiteUtilBase.GetWebDataFromPost(url, "ndl=1&submit.x=1&submit.y=1");
                 }
+
                 //divx
-                n = Regex.Match(page, @"video/divx""\ssrc=""(?<url>[^""]+)""");
-                if (n.Success)
+                string link = DivxProvider(url, page);
+                if (!string.IsNullOrEmpty(link))
                 {
                     videoType = VideoType.divx;
-                    return n.Groups["url"].Value;
+                    return link;
+                }
+                //flv
+                link = FlashProvider(url, page);
+                if (!string.IsNullOrEmpty(link))
+                {
+                    videoType = VideoType.flv;
+                    return link;
                 }
             }
             return String.Empty;
