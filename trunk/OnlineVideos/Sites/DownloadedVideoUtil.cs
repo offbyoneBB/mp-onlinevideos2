@@ -175,8 +175,9 @@ namespace OnlineVideos.Sites
             return options;
         }
 
-        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice)
+        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
         {
+            newVideos = null;
             if (choice == Translation.Delete)
             {
                 if (System.IO.File.Exists(selectedItem.ImageUrl)) System.IO.File.Delete(selectedItem.ImageUrl);

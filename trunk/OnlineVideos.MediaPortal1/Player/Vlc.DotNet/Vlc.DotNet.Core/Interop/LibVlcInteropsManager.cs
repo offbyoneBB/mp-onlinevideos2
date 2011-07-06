@@ -39,8 +39,6 @@ namespace Vlc.DotNet.Core.Interops
         public LibVlcFunction<GetChangeSet> GetChangeSet { get; private set; }
         public LibVlcFunction<FreeMemory> FreeMemory { get; private set; }
 
-        public LibVlcFunction<Vlc.DotNet.Core.Interops.Signatures.LibVlc.ErrorHandling.GetErrorMessage> GetErrorMessage { get; private set; }
-
         //public LibVlcFunction<GetModuleDescriptionList> GetModuleDescriptionList { get; private set; }
         //public LibVlcFunction<ReleaseModuleDescription> ReleaseModule { get; private set; }
 
@@ -51,6 +49,7 @@ namespace Vlc.DotNet.Core.Interops
         public LibVlcMediaList MediaListInterops { get; set; }
         public LibVlcAudio AudioInterops { get; private set; }
         public LibVlcVideo VideoInterops { get; private set; }
+        public LibVlcErrorHandling ErrorHandlingInterops { get; private set; } 
 
         #region IDisposable Members
 
@@ -128,8 +127,8 @@ namespace Vlc.DotNet.Core.Interops
 
             var reg = new Regex("^[0-9.]*");
             var match = reg.Match(GetVersion.Invoke());
-            var vlcVersion = new Version(match.Groups[0].Value); 
-            
+            var vlcVersion = new Version(match.Groups[0].Value);
+
             NewInstance = new LibVlcFunction<NewInstance>(myLibVlcDllHandle, vlcVersion);
             ReleaseInstance = new LibVlcFunction<ReleaseInstance>(myLibVlcDllHandle, vlcVersion);
             RetainInstance = new LibVlcFunction<RetainInstance>(myLibVlcDllHandle, vlcVersion);
@@ -143,8 +142,6 @@ namespace Vlc.DotNet.Core.Interops
             //GetModuleDescriptionList = new LibVlcFunction<GetModuleDescriptionList>(myLibVlcDllHandle, vlcVersion);
             //ReleaseModule = new LibVlcFunction<ReleaseModuleDescription>(myLibVlcDllHandle, vlcVersion);
 
-            GetErrorMessage = new LibVlcFunction<Signatures.LibVlc.ErrorHandling.GetErrorMessage>(myLibVlcDllHandle, vlcVersion);
-
             EventInterops = new LibVlcAsynchronousEvents(myLibVlcDllHandle, vlcVersion);
             MediaPlayerInterops = new LibVlcMediaPlayer(myLibVlcDllHandle, vlcVersion);
             MediaInterops = new LibVlcMedia(myLibVlcDllHandle, vlcVersion);
@@ -152,6 +149,7 @@ namespace Vlc.DotNet.Core.Interops
             AudioInterops = new LibVlcAudio(myLibVlcDllHandle, vlcVersion);
             VideoInterops = new LibVlcVideo(myLibVlcDllHandle, vlcVersion);
             LoggingInterops = new LibVlcLogging(myLibVlcDllHandle, vlcVersion);
+            ErrorHandlingInterops = new LibVlcErrorHandling(myLibVlcDllHandle, vlcVersion);
         }
     }
 }

@@ -175,6 +175,7 @@
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\HandleManager.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcAsynchronousEvents.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcAudio.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcErrorHandling.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcFunction.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcFunctionAttribute.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\Interop\LibVlcInteropsManager.cs" />
@@ -209,6 +210,7 @@
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcAudioOutputDevices.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcContext.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcDeinterlaceModes.cs" />
+    <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcErrorHandling.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcEventArgs.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcEventHandler%27.cs" />
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Core\VlcLogMessage.cs" />

@@ -8,7 +8,7 @@ namespace Vlc.DotNet.Core
     /// <summary>
     /// The vlc context
     /// </summary>
-    public sealed class VlcContext
+    public static class VlcContext
     {
         static VlcContext()
         {
@@ -34,6 +34,11 @@ namespace Vlc.DotNet.Core
 
         internal static LibVlcInteropsManager InteropManager { get; private set; }
         internal static VlcHandleManager HandleManager { get; private set; }
+
+        /// <summary>
+        /// Error handling of vlc 
+        /// </summary>
+        public static VlcErrorHandling ErrorHandling { get; private set; }
 
         /// <summary>
         /// Get / Set the libvlc.dll and libvlccore.dll path 
