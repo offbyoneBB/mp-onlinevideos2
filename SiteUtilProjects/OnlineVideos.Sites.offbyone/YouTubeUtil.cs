@@ -12,7 +12,7 @@ using System.Xml.XPath;
 
 namespace OnlineVideos.Sites
 {
-    public class YouTubeUtil : SiteUtilBase, IFilter, IRelated
+    public class YouTubeUtil : SiteUtilBase, IFilter
     {
         public enum VideoQuality { Low, High, HD };
 
@@ -106,18 +106,9 @@ namespace OnlineVideos.Sites
             service = new YouTubeService("OnlineVideos", DEVELOPER_KEY);
         }
 
-        #region Related
-
-        public List<VideoInfo> getRelatedVideos(VideoInfo video)
-        {
-            YouTubeQuery query = new YouTubeQuery() { Uri = new Uri((video.Other as YouTubeEntry).RelatedVideosUri.Content), NumberToRetrieve = pageSize };
-            return parseGData(query);
-        }
-
-        #endregion
-
         public override List<VideoInfo> getVideoList(Category category)
         {
+            currentVideosTitle = null;  // use default title for videos retrieved via this method (which is the Category Name)
             if (category is RssLink)
             {
                 string fsUrl = ((RssLink)category).Url;
@@ -426,13 +417,26 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        #region YouTube Favorites Handling
+        #region YouTube Favorites, Related Videos Handling
+
+        string currentVideosTitle = null;
+        public override string getCurrentVideosTitle()
+        {
+            return currentVideosTitle;
+        }
 
         public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
             List<string> result = new List<string>();
             if (selectedItem != null)
             {
+                result.Add(Translation.RelatedVideos);
+
+                YouTubeEntry ytEntry = selectedItem.Other as YouTubeEntry;
+                if (ytEntry != null && ytEntry.Uploader != null && !string.IsNullOrEmpty(ytEntry.Uploader.Value))
+                {
+                    result.Add("More uploads from " + ytEntry.Uploader.Value);
+                }
                 if (selectedCategory is RssLink)
                 {
                     result.Add(Translation.AddToFavourites + " (" + Settings.Name + ")");
@@ -445,8 +449,9 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice)
+        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
         {
+            newVideos = null;
             if (choice == Translation.AddToFavourites + " (" + Settings.Name + ")")
             {
                 addFavorite(selectedItem);
@@ -456,6 +461,20 @@ namespace OnlineVideos.Sites
             {
                 removeFavorite(selectedItem);
                 return true;
+            }
+            else if (choice == Translation.RelatedVideos)
+            {
+                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri((selectedItem.Other as YouTubeEntry).RelatedVideosUri.Content), NumberToRetrieve = pageSize };
+                newVideos = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                currentVideosTitle = Translation.RelatedVideos + " [" + selectedItem.Title + "]";
+                return false;
+            }
+            else if (choice.StartsWith("More uploads from "))
+            {
+                YouTubeEntry ytEntry = selectedItem.Other as YouTubeEntry;
+                YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateUserUri((selectedItem.Other as YouTubeEntry).Uploader.Value)) { NumberToRetrieve = pageSize };
+                newVideos = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                currentVideosTitle = "Uploaded Videos" + " [" + ytEntry.Uploader.Value + "]";
             }
             return false;
         }

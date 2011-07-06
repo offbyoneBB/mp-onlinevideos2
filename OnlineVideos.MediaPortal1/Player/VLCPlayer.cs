@@ -61,7 +61,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
         void vlcCtrl_EncounteredError(VlcControl sender, VlcEventArgs<EventArgs> e)
         {
-            string error = VlcContext.InteropManager.GetErrorMessage.Invoke();
+            string error = "";// VlcContext.ErrorHandling.GetErrorMessage();
             GUIWindowManager.SendThreadCallbackAndWait((p1, p2, o) =>
             {
                 Log.Instance.Warn("VLCPlayer Error: '{0}'", error);

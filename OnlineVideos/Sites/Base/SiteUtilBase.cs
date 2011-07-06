@@ -362,8 +362,9 @@ namespace OnlineVideos.Sites
         /// <param name="selectedItem"></param>
         /// <param name="choice"></param>
         /// <returns>true, if videos for the current category need to be retrieved again</returns>
-        public virtual bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice)
+        public virtual bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
         {
+            newVideos = null;
             return false;
         }
 

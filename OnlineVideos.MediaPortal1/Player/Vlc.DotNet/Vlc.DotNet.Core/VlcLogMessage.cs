@@ -1,9 +1,11 @@
 ﻿namespace Vlc.DotNet.Core
 {
+    /// <summary>
+    /// VlcLogMessage class
+    /// </summary>
     public sealed class VlcLogMessage
     {
         public VlcLogVerbosities Verbosity { get; private set; }
-
         public string Type { get; private set; }
         public string Name { get; private set; }
         public string Header { get; private set; }

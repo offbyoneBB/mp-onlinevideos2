@@ -18,7 +18,7 @@ namespace OnlineVideos.MediaPortal1
 
         public enum State { sites = 0, categories = 1, videos = 2, details = 3, groups = 4 }
 
-        public enum VideosMode { Category = 0, Search = 1, Related = 2 }
+        public enum VideosMode { Category = 0, Search = 1 }
 
         #region IShowPlugin Implementation
 
@@ -309,13 +309,21 @@ namespace OnlineVideos.MediaPortal1
                         }
                         else
                         {
+                            List<ISearchResultItem> itemsToShow = null;
                             Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                             {
-                                return SelectedSite.ExecuteContextMenuEntry(aCategory, null, dlgCat.SelectedLabelText);
+                                return SelectedSite.ExecuteContextMenuEntry(aCategory, null, dlgCat.SelectedLabelText, out itemsToShow);
                             },
                             delegate(bool success, object result)
                             {
-                                if (success && result != null && (bool)result) DisplayCategories(selectedCategory, null);
+                                if (itemsToShow != null && itemsToShow.Count > 0)
+                                {
+                                    SetSearchResultItemsToFacade(itemsToShow, VideosMode.Category);
+                                }
+                                else
+                                {
+                                    if (success && result != null && (bool)result) DisplayCategories(selectedCategory, null);
+                                }
                             },
                             ": " + dlgCat.SelectedLabelText, true);
                         }
@@ -350,11 +358,6 @@ namespace OnlineVideos.MediaPortal1
                         {
                             dlgSel.Add(Translation.AddToFavourites);
                             dialogOptions.Add("AddToFav");
-                        }
-                        if (SelectedSite is IRelated)
-                        {
-                            dlgSel.Add(Translation.RelatedVideos);
-                            dialogOptions.Add("RelatedVideos");
                         }
                         if (!(SelectedSite is Sites.DownloadedVideoUtil))
                         {
@@ -417,9 +420,6 @@ namespace OnlineVideos.MediaPortal1
                                     string suggestedTitle = SelectedSite.GetFileNameForDownload(aVideo, selectedCategory, null);
                                     OnlineVideoSettings.Instance.FavDB.addFavoriteVideo(aVideo, suggestedTitle, SelectedSite.Settings.Name);
                                     break;
-                                case "RelatedVideos":
-                                    DisplayVideos_Related(aVideo);
-                                    break;
                                 case "Download":
                                     SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Util = selectedSite } });
                                     break;
@@ -427,13 +427,21 @@ namespace OnlineVideos.MediaPortal1
                                     if (GetUserInputString(ref videosVKfilter, false)) SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
                                     break;
                                 default:
+                                    List<ISearchResultItem> itemsToShow = null;
                                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                                     {
-                                        return SelectedSite.ExecuteContextMenuEntry(selectedCategory, aVideo, dialogOptions[dlgSel.SelectedId - 1]);
+                                        return SelectedSite.ExecuteContextMenuEntry(selectedCategory, aVideo, dialogOptions[dlgSel.SelectedId - 1], out itemsToShow);
                                     },
                                     delegate(bool success, object result)
                                     {
-                                        if (success && result != null && (bool)result) DisplayVideos_Category(selectedCategory, true);
+                                        if (itemsToShow != null && itemsToShow.Count > 0)
+                                        {
+                                            SetSearchResultItemsToFacade(itemsToShow, VideosMode.Category);
+                                        }
+                                        else
+                                        {
+                                            if (success && result != null && (bool)result) DisplayVideos_Category(selectedCategory, true);
+                                        }
                                     }, ": " + dialogOptions[dlgSel.SelectedId - 1], true);
                                     break;
                             }
@@ -1456,48 +1464,37 @@ namespace OnlineVideos.MediaPortal1
                     }
                     else
                     {
-                        if (resultList[0] is VideoInfo)
-                        {
-                            SetVideosToFacade(resultList.ConvertAll(i => i as VideoInfo), VideosMode.Search);
-                            // if only 1 result found and the current site has a details view for this video - open it right away
-                            if (SelectedSite is IChoice && resultList.Count == 1 && (resultList[0] as VideoInfo).HasDetails)
-                            {
-                                // actually select this item, so fanart can be shown in this and the coming screen! (fanart handler inspects the #selecteditem proeprty of teh facade)
-                                GUI_facadeView.SelectedListItemIndex = 1;
-                                selectedVideo = (GUI_facadeView[1] as OnlineVideosGuiListItem).Item as VideoInfo;
-                                DisplayDetails();
-                            }
-                        }
-                        else
-                        {
-                            Category searchCategory = new Category() 
-                            { 
-                                Name = Translation.SearchResults + " [" + lastSearchQuery + "]",
-                                HasSubCategories = true,
-                                SubCategoriesDiscovered = true,
-                            };
-                            searchCategory.SubCategories = resultList.ConvertAll(i => { (i as Category).ParentCategory = searchCategory; return i as Category; });
-                            SetCategoriesToFacade(searchCategory, searchCategory.SubCategories, true);
-                        }
+                        SetSearchResultItemsToFacade(resultList, VideosMode.Search, Translation.SearchResults + " [" + lastSearchQuery + "]");
                     }
                 },
                 Translation.GettingSearchResults, true);
             }
         }
 
-        private void DisplayVideos_Related(VideoInfo video)
+        private void SetSearchResultItemsToFacade(List<ISearchResultItem> resultList, VideosMode mode = VideosMode.Search, string categoryName = "")
         {
-            if (video != null)
+            if (resultList[0] is VideoInfo)
             {
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                SetVideosToFacade(resultList.ConvertAll(i => i as VideoInfo), mode);
+                // if only 1 result found and the current site has a details view for this video - open it right away
+                if (SelectedSite is IChoice && resultList.Count == 1 && (resultList[0] as VideoInfo).HasDetails)
                 {
-                    return ((IRelated)SelectedSite).getRelatedVideos(video);
-                },
-                delegate(bool success, object result)
+                    // actually select this item, so fanart can be shown in this and the coming screen! (fanart handler inspects the #selecteditem proeprty of teh facade)
+                    GUI_facadeView.SelectedListItemIndex = 1;
+                    selectedVideo = (GUI_facadeView[1] as OnlineVideosGuiListItem).Item as VideoInfo;
+                    DisplayDetails();
+                }
+            }
+            else
+            {
+                Category searchCategory = new Category()
                 {
-                    if (success) SetVideosToFacade(result as List<VideoInfo>, VideosMode.Related);
-                },
-                Translation.GettingRelatedVideos, true);
+                    Name = categoryName,
+                    HasSubCategories = true,
+                    SubCategoriesDiscovered = true,
+                };
+                searchCategory.SubCategories = resultList.ConvertAll(i => { (i as Category).ParentCategory = searchCategory; return i as Category; });
+                SetCategoriesToFacade(searchCategory, searchCategory.SubCategories, true);
             }
         }
 
@@ -2464,7 +2461,6 @@ namespace OnlineVideos.MediaPortal1
                     switch (currentVideosDisplayMode)
                     {
                         case VideosMode.Search: GUIPropertyManager.SetProperty("#header.label", Translation.SearchResults + " [" + lastSearchQuery + "]"); break;
-                        case VideosMode.Related: GUIPropertyManager.SetProperty("#header.label", Translation.RelatedVideos); break;
                         default:
                             {
                                 string proposedLabel = SelectedSite.getCurrentVideosTitle();

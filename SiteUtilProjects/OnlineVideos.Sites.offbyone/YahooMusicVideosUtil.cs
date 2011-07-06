@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites
     /// <summary>
     /// API Documentation at : http://www.yahooapis.com/music/
     /// </summary>
-    public class YahooMusicVideosUtil : SiteUtilBase, IRelated
+    public class YahooMusicVideosUtil : SiteUtilBase
     {
         public enum Locale 
         { 
@@ -49,6 +49,8 @@ namespace OnlineVideos.Sites
 
         List<VideoInfo> GetVideoForCurrentCategory()        
         {
+            currentVideosTitle = null;
+
             string id = ((RssLink)currentCategory).Url;
 
             List<VideoInfo> videoList = new List<VideoInfo>();
@@ -330,11 +332,44 @@ namespace OnlineVideos.Sites
 
         #region Related
 
-        public List<VideoInfo> getRelatedVideos(VideoInfo video)
+        string currentVideosTitle = null;
+        public override string getCurrentVideosTitle()
         {
-            currentCategory = new RssLink() { Url = video.VideoUrl, Name = "similar" } ;
-            currentStart = 1;
-            return GetVideoForCurrentCategory();
+            return currentVideosTitle;
+        }
+
+        public override List<string> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        {
+            List<string> result = new List<string>();
+            if (selectedItem != null)
+            {
+                result.Add(Translation.RelatedVideos);
+            }
+            return result;
+        }
+
+        public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
+        {
+            newVideos = null;
+            if (choice == Translation.RelatedVideos)
+            {
+                RssLink rememberedCategory = currentCategory;
+
+                currentCategory = new RssLink() { Url = selectedItem.VideoUrl, Name = "similar" };
+                currentStart = 1;
+                newVideos = GetVideoForCurrentCategory().ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+
+                if (newVideos.Count == 0)
+                {
+                    currentCategory = rememberedCategory;
+                    throw new OnlineVideosException(Translation.NoVideoFound);
+                }
+                else
+                {
+                    currentVideosTitle = Translation.RelatedVideos + " [" + selectedItem.Title + "]";
+                }
+            }
+            return false;
         }
 
         #endregion
