@@ -18,6 +18,9 @@ namespace OnlineVideos.Hoster
 
         public override string getVideoUrls(string url)
         {
+            Match u = Regex.Match(url, @"http://www.vimeo.com/moogaloop.swf\?clip_id=(?<url>[^&]*)&");
+            if (u.Success)
+                url = @"http://www.vimeo.com/" + u.Groups["url"].Value;
             string page = SiteUtilBase.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
