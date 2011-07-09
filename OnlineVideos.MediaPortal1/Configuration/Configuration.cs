@@ -4,6 +4,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
@@ -28,6 +29,7 @@ namespace OnlineVideos.MediaPortal1
             InitializeComponent();
 
             propertyGridUserConfig.BrowsableAttributes = new AttributeCollection(new CategoryAttribute("OnlineVideosUserConfiguration"));
+            propertyGridHoster.BrowsableAttributes = new AttributeCollection(new CategoryAttribute("OnlineVideosUserConfiguration"));
         }
 
         public void Configuration_Load(object sender, EventArgs e)
@@ -80,6 +82,9 @@ namespace OnlineVideos.MediaPortal1
             // set bindings            
             bindingSourceSiteSettings.DataSource = OnlineVideoSettings.Instance.SiteSettingsList;
             bindingSourceSitesGroup.DataSource = PluginConfiguration.Instance.SitesGroups;
+
+            /** Hosters" tab **/
+            listBoxHosters.DataSource = Hoster.Base.HosterFactory.GetAllHosters().OrderBy(h => h.getHosterUrl()).ToList();
 
             /** Groups Tab **/
             chkAutoGroupByLang.Checked = PluginConfiguration.Instance.autoGroupByLang;
@@ -919,5 +924,11 @@ namespace OnlineVideos.MediaPortal1
         }
 
         #endregion
+
+        private void listBoxHosters_SelectedValueChanged(object sender, EventArgs e)
+        {
+            Hoster.Base.HosterBase hoster = (sender as ListBox).SelectedItem as Hoster.Base.HosterBase;
+            propertyGridHoster.SelectedObject = hoster;
+        }
     }
 }

@@ -187,6 +187,10 @@ namespace OnlineVideos.MediaPortal1
             this.listViewSitesInGroup = new System.Windows.Forms.ListView();
             this.label41 = new System.Windows.Forms.Label();
             this.tabSites = new System.Windows.Forms.TabPage();
+            this.tabHosters = new System.Windows.Forms.TabPage();
+            this.splitter1 = new System.Windows.Forms.Splitter();
+            this.propertyGridHoster = new System.Windows.Forms.PropertyGrid();
+            this.listBoxHosters = new System.Windows.Forms.ListBox();
             this.tabPageCodecs = new System.Windows.Forms.TabPage();
             this.groupBoxSourceFilter = new System.Windows.Forms.GroupBox();
             this.chkUseRtmpProxy = new System.Windows.Forms.CheckBox();
@@ -268,6 +272,7 @@ namespace OnlineVideos.MediaPortal1
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.tabSites.SuspendLayout();
+            this.tabHosters.SuspendLayout();
             this.tabPageCodecs.SuspendLayout();
             this.groupBoxSourceFilter.SuspendLayout();
             this.groupBoxSplitter.SuspendLayout();
@@ -587,7 +592,7 @@ namespace OnlineVideos.MediaPortal1
             this.btnSiteDown});
             this.toolStripSiteUpDown.Location = new System.Drawing.Point(0, 0);
             this.toolStripSiteUpDown.Name = "toolStripSiteUpDown";
-            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 211);
+            this.toolStripSiteUpDown.Size = new System.Drawing.Size(24, 186);
             this.toolStripSiteUpDown.Stretch = true;
             this.toolStripSiteUpDown.TabIndex = 0;
             // 
@@ -1164,6 +1169,7 @@ namespace OnlineVideos.MediaPortal1
             this.mainTabControl.Controls.Add(this.tabGeneral);
             this.mainTabControl.Controls.Add(this.tabGroups);
             this.mainTabControl.Controls.Add(this.tabSites);
+            this.mainTabControl.Controls.Add(this.tabHosters);
             this.mainTabControl.Controls.Add(this.tabPageCodecs);
             this.mainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainTabControl.Location = new System.Drawing.Point(0, 0);
@@ -2061,6 +2067,44 @@ namespace OnlineVideos.MediaPortal1
             this.tabSites.Text = "Sites";
             this.tabSites.UseVisualStyleBackColor = true;
             // 
+            // tabHosters
+            // 
+            this.tabHosters.Controls.Add(this.splitter1);
+            this.tabHosters.Controls.Add(this.propertyGridHoster);
+            this.tabHosters.Controls.Add(this.listBoxHosters);
+            this.tabHosters.Location = new System.Drawing.Point(4, 22);
+            this.tabHosters.Name = "tabHosters";
+            this.tabHosters.Size = new System.Drawing.Size(704, 518);
+            this.tabHosters.TabIndex = 4;
+            this.tabHosters.Text = "Hosters";
+            this.tabHosters.UseVisualStyleBackColor = true;
+            // 
+            // splitter1
+            // 
+            this.splitter1.Location = new System.Drawing.Point(120, 0);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(3, 518);
+            this.splitter1.TabIndex = 2;
+            this.splitter1.TabStop = false;
+            // 
+            // propertyGridHoster
+            // 
+            this.propertyGridHoster.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGridHoster.Location = new System.Drawing.Point(120, 0);
+            this.propertyGridHoster.Name = "propertyGridHoster";
+            this.propertyGridHoster.Size = new System.Drawing.Size(584, 518);
+            this.propertyGridHoster.TabIndex = 1;
+            // 
+            // listBoxHosters
+            // 
+            this.listBoxHosters.Dock = System.Windows.Forms.DockStyle.Left;
+            this.listBoxHosters.FormattingEnabled = true;
+            this.listBoxHosters.Location = new System.Drawing.Point(0, 0);
+            this.listBoxHosters.Name = "listBoxHosters";
+            this.listBoxHosters.Size = new System.Drawing.Size(120, 518);
+            this.listBoxHosters.TabIndex = 0;
+            this.listBoxHosters.SelectedValueChanged += new System.EventHandler(this.listBoxHosters_SelectedValueChanged);
+            // 
             // tabPageCodecs
             // 
             this.tabPageCodecs.Controls.Add(this.groupBoxSourceFilter);
@@ -2495,6 +2539,7 @@ namespace OnlineVideos.MediaPortal1
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.ResumeLayout(false);
             this.tabSites.ResumeLayout(false);
+            this.tabHosters.ResumeLayout(false);
             this.tabPageCodecs.ResumeLayout(false);
             this.groupBoxSourceFilter.ResumeLayout(false);
             this.groupBoxSourceFilter.PerformLayout();
@@ -2692,5 +2737,9 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.Button btnTestAvi;
         private System.Windows.Forms.Button btnTestWmv;
         private System.Windows.Forms.Button btnTestMp4;
+        private System.Windows.Forms.TabPage tabHosters;
+        private System.Windows.Forms.ListBox listBoxHosters;
+        private System.Windows.Forms.Splitter splitter1;
+        private System.Windows.Forms.PropertyGrid propertyGridHoster;
 	}
 }
