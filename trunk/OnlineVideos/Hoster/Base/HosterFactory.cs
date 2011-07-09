@@ -19,11 +19,12 @@ namespace OnlineVideos.Hoster.Base
             {
                 foreach (Type type in assembly.GetExportedTypes())
                 {
-                    if (type.BaseType != null && type.IsSubclassOf(typeof(HosterBase)) && type.Namespace.Contains("OnlineVideos.Hoster"))
+                    if (type.BaseType != null && type.IsSubclassOf(typeof(HosterBase)) && !type.IsAbstract)
                     {
                         if (!hostersByName.ContainsKey(type.Name.ToLower()))
                         {
                             HosterBase hb = (HosterBase)Activator.CreateInstance(type);
+                            hb.Initialize();
                             hostersByName.Add(type.Name.ToLower(), hb);
                             if (!hostersByDNS.ContainsKey(hb.getHosterUrl().ToLower())) hostersByDNS.Add(hb.getHosterUrl().ToLower(), hb);
                         }
