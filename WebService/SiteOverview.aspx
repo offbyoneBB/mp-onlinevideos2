@@ -9,11 +9,12 @@
 <body>
     <form id="form1" runat="server">
     <div>        
-        <asp:GridView ID="siteOverview" runat="server" AutoGenerateColumns="False" AllowSorting="true"
+        <asp:GridView ID="siteOverview" runat="server" AutoGenerateColumns="False" AllowSorting="True"
             CellPadding="3" 
-            onrowdatabound="siteOverview_RowDataBound" BackColor="White" 
+            onrowdatabound="siteOverview_RowDataBound" BackColor="#EEEEEE" 
             BorderColor="#CCCCCC" BorderStyle="None" BorderWidth="1px" 
-            onsorting="siteOverview_Sorting" EnableViewState="false">
+            onsorting="siteOverview_Sorting" EnableViewState="False" 
+            EnableModelValidation="True" Font-Names="Calibri">
             <RowStyle ForeColor="#000066" />
         <Columns>
             <asp:ImageField HeaderText="Logo" DataImageUrlField="Name" 
@@ -23,7 +24,8 @@
             </asp:ImageField>
             <asp:BoundField HeaderText="Site" DataField="Name" SortExpression="Name"
                 ItemStyle-HorizontalAlign="Center" >
-<ItemStyle HorizontalAlign="Center"></ItemStyle>
+            <ControlStyle Font-Bold="False" />
+<ItemStyle HorizontalAlign="Center" Font-Bold="True"></ItemStyle>
             </asp:BoundField>
             <asp:BoundField HeaderText="Creator" DataField="Owner_FK" SortExpression="Owner_FK"
                 ItemStyle-HorizontalAlign="Center" >

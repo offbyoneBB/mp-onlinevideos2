@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using OnlineVideos.WebService.Database;
+using System.Globalization;
 
 namespace OnlineVideos.WebService
 {
@@ -34,10 +35,11 @@ namespace OnlineVideos.WebService
                 string creator = e.Row.Cells[2].Text;
                 creator = creator.Substring(0, creator.IndexOf('@'));
                 e.Row.Cells[2].Text = creator;
+                e.Row.Cells[3].Text = LanguageName(e.Row.Cells[3].Text);
                 switch ((e.Row.DataItem as Site).State)
                 {
-                    case SiteState.Reported: e.Row.ForeColor = System.Drawing.Color.Yellow; break;
-                    case SiteState.Broken: e.Row.ForeColor = System.Drawing.Color.Red; break;                    
+                    case SiteState.Reported: e.Row.Cells[1].BackColor = System.Drawing.Color.FromArgb(255, 240, 79); break;
+                    case SiteState.Broken: e.Row.Cells[1].BackColor = System.Drawing.Color.Red; break;
                 }
             }
         }
@@ -60,6 +62,25 @@ namespace OnlineVideos.WebService
                     siteOverview.DataBind();
                 }
             }
+        }
+
+        protected string LanguageName(string aLang)
+        {
+            string name = aLang;
+            try
+            {
+                name = aLang != "--" ? System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag(aLang).DisplayName : "Global";
+            }
+            catch
+            {
+                var temp = System.Globalization.CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
+                    ci => ci.IetfLanguageTag == aLang || ci.ThreeLetterISOLanguageName == aLang || ci.TwoLetterISOLanguageName == aLang || ci.ThreeLetterWindowsLanguageName == aLang);
+                if (temp != null)
+                {
+                    name = temp.DisplayName;
+                }
+            }
+            return name;
         }
     }
 }
