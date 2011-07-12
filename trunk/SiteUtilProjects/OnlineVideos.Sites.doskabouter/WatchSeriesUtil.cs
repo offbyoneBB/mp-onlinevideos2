@@ -16,6 +16,8 @@ namespace OnlineVideos.Sites
         private enum Depth { MainMenu = 0, Alfabet = 1, Series = 2, Seasons = 3, BareList = 4 };
         public CookieContainer cc = null;
         private bool isWatchMovies = false;
+        private string nextVideoListPageUrl = null;
+        private Category currCategory = null;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -45,8 +47,8 @@ namespace OnlineVideos.Sites
             do
             {
                 RssLink cat = (RssLink)Settings.Categories[i];
-                if (cat.Url.Equals(baseUrl) ||
-                    (isWatchMovies && (cat.Name == "HOW TO WATCH" || cat.Name == "CONTACT"))
+                if (cat.Url.Equals(baseUrl) || cat.Name.ToUpperInvariant() == "HOW TO WATCH" ||
+                    cat.Name.ToUpperInvariant() == "CONTACT" || cat.Name.ToUpperInvariant() == "ABOUT US"
                    )
                     Settings.Categories.Remove(cat);
                 else
@@ -150,18 +152,45 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            string webData = ((RssLink)category).Url;
+            return getOnePageVideoList(category, ((RssLink)category).Url);
+        }
+
+        private List<VideoInfo> getOnePageVideoList(Category category, string url)
+        {
+            currCategory = category;
+            nextVideoListPageUrl = null;
+            string webData;
             if (category.Other.Equals(Depth.BareList))
             {
-                webData = GetWebData(webData, cc);
+                webData = GetWebData(url, cc);
                 if (isWatchMovies)
                     webData = GetSubString(webData, @"class=""listings""", @"class=""clear""");
                 else
+                {
                     webData = GetSubString(webData, @"class=""listbig""", @"class=""clear""");
+                    if (!isWatchMovies)
+                    {
+                        string[] parts = url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (parts.Length >= 2)
+                        {
+                            if (parts[parts.Length - 1] == "latest")
+                                nextVideoListPageUrl = url + "/1";
+                            else
+                            {
+                                int pageNr;
+                                if (parts[parts.Length - 2] == "latest" && int.TryParse(parts[parts.Length - 1], out pageNr))
+                                    if (pageNr + 1 <= 9)
+                                        nextVideoListPageUrl = url.Substring(0, url.Length - 1) + (pageNr + 1).ToString();
+                            }
+                        }
+                    }
+                }
             }
             else
                 if (isWatchMovies)
-                    webData = GetWebData(webData, cc);
+                    webData = GetWebData(url, cc);
+                else
+                    webData = url;
 
             List<VideoInfo> videos = new List<VideoInfo>();
             if (!string.IsNullOrEmpty(webData))
@@ -276,6 +305,19 @@ namespace OnlineVideos.Sites
             if (lst.Count > 0)
                 tmp = lst[0].url;
             return tmp;
+        }
+
+        public override bool HasNextPage
+        {
+            get
+            {
+                return nextVideoListPageUrl != null;
+            }
+        }
+
+        public override List<VideoInfo> getNextPageVideos()
+        {
+            return getOnePageVideoList(currCategory, nextVideoListPageUrl);
         }
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
