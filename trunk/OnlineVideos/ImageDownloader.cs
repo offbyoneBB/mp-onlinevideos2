@@ -8,21 +8,21 @@ using System.IO;
 namespace OnlineVideos
 {
     public static class ImageDownloader
-    {        
+    {
         public struct ResizeOptions
         {
-            public static ResizeOptions Default 
-            { 
-                get 
-                { 
-                    return new ResizeOptions() 
-                    { 
-                        MaxSize = 500, 
-                        Compositing = CompositingQuality.AssumeLinear, 
-                        Interpolation = InterpolationMode.High, 
-                        Smoothing = SmoothingMode.HighQuality 
-                    }; 
-                } 
+            public static ResizeOptions Default
+            {
+                get
+                {
+                    return new ResizeOptions()
+                    {
+                        MaxSize = 500,
+                        Compositing = CompositingQuality.AssumeLinear,
+                        Interpolation = InterpolationMode.High,
+                        Smoothing = SmoothingMode.HighQuality
+                    };
+                }
             }
             public int MaxSize;
             public CompositingQuality Compositing;
@@ -31,7 +31,7 @@ namespace OnlineVideos
         }
 
         public static bool StopDownload { get; set; }
-        
+
         public static void GetImages<T>(IList<T> itemsWithThumbs)
         {
             StopDownload = false;
@@ -44,7 +44,7 @@ namespace OnlineVideos
                 for (int j = groupSize * i; j < groupSize * i + (groupSize * (i + 1) > itemsWithThumbs.Count ? itemsWithThumbs.Count - groupSize * i : groupSize); j++)
                 {
                     a.Add(itemsWithThumbs[j]);
-                }                                
+                }
 
                 new System.Threading.Thread(delegate(object o)
                 {
@@ -62,15 +62,23 @@ namespace OnlineVideos
                         {
                             string imageLocation = string.Empty;
 
-                            if (System.IO.Path.IsPathRooted(aFinalUrl))
+                            try
                             {
-                                if (System.IO.File.Exists(aFinalUrl)) imageLocation = aFinalUrl;
+                                if (System.IO.Path.IsPathRooted(aFinalUrl))
+                                {
+                                    if (System.IO.File.Exists(aFinalUrl)) imageLocation = aFinalUrl;
+                                }
+                                else
+                                {
+                                    string thumbFile = Utils.GetThumbFile(aFinalUrl);
+                                    if (System.IO.File.Exists(thumbFile)) imageLocation = thumbFile;
+                                    else if (DownloadAndCheckImage(aFinalUrl, thumbFile, forcedAspect)) imageLocation = thumbFile;
+                                }
                             }
-                            else
+                            catch (Exception e)
                             {
-                                string thumbFile = Utils.GetThumbFile(aFinalUrl);
-                                if (System.IO.File.Exists(thumbFile)) imageLocation = thumbFile;
-                                else if (DownloadAndCheckImage(aFinalUrl, thumbFile, forcedAspect)) imageLocation = thumbFile;
+                                //Ispathrooted generates exception if invalid chars are present in url
+                                Log.Error("error checkurl {0} {1}", aFinalUrl, e.Message);
                             }
 
                             if (imageLocation != string.Empty)
@@ -87,7 +95,7 @@ namespace OnlineVideos
                                 }
                                 break;
                             }
-                        }   
+                        }
                     }
                 })
                 {
@@ -117,7 +125,7 @@ namespace OnlineVideos
                     responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
                 else
                     responseStream = response.GetResponseStream();
-                System.Drawing.Image image = System.Drawing.Image.FromStream(responseStream, true, true);                
+                System.Drawing.Image image = System.Drawing.Image.FromStream(responseStream, true, true);
                 // resample if needed
                 float imageAspectRatio = image.Width / (float)image.Height;
                 if (image.Width > OnlineVideoSettings.Instance.ThumbsResizeOptions.MaxSize || image.Height > OnlineVideoSettings.Instance.ThumbsResizeOptions.MaxSize
@@ -132,7 +140,7 @@ namespace OnlineVideos
                         iHeight = (int)Math.Floor((((float)iWidth) / imageAspectRatio));
                     else
                         iWidth = (int)Math.Floor((imageAspectRatio * ((float)iHeight)));
-                    
+
                     Bitmap tmp = new Bitmap(iWidth, iHeight, image.PixelFormat);
                     using (Graphics g = Graphics.FromImage(tmp))
                     {
@@ -158,7 +166,7 @@ namespace OnlineVideos
             catch (Exception ex)
             {
                 Log.Info("Invalid Image: {0} {1}", url, ex.Message);
-                return false; 
+                return false;
             }
         }
 
