@@ -334,6 +334,7 @@ namespace OnlineVideos.MediaPortal1
                 (CurrentState == State.details && GetFocusControlId() == GUI_infoList.GetID))
             {
                 // handle a video's context menu
+                int numItemsShown = (CurrentState == State.videos ? GUI_facadeView.Count : GUI_infoList.Count) - 1; // first item is always ".."
                 OnlineVideosGuiListItem selectedItem = CurrentState == State.videos ? 
                     GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem : GUI_infoList.SelectedListItem as OnlineVideosGuiListItem;
                 if (selectedItem == null || selectedItem.Item == null) return; // only context menu for items with an object backing them
@@ -350,25 +351,32 @@ namespace OnlineVideos.MediaPortal1
                     // these context menu entries should only show if the item will not go to the details view
                     if (!(SelectedSite is IChoice && CurrentState == State.videos && aVideo.HasDetails))
                     {
-                        dlgSel.Add(Translation.PlayWith);
-                        dialogOptions.Add("PlayWith");
-                        dlgSel.Add(Translation.PlayAll);
-                        dialogOptions.Add("PlayAll");
-                        if (!(SelectedSite is Sites.FavoriteUtil) && !(SelectedSite is Sites.DownloadedVideoUtil))
+                        if (!(SelectedSite is Sites.FavoriteUtil && aVideo.HasDetails &&
+                            (selectedCategory is Sites.FavoriteUtil.FavoriteCategory && (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site is IChoice)))
                         {
-                            dlgSel.Add(Translation.AddToFavourites);
-                            dialogOptions.Add("AddToFav");
+                            dlgSel.Add(Translation.PlayWith);
+                            dialogOptions.Add("PlayWith");
+                            if (numItemsShown > 1)
+                            {
+                                dlgSel.Add(Translation.PlayAll);
+                                dialogOptions.Add("PlayAll");
+                            }
+                            if (!(SelectedSite is Sites.FavoriteUtil) && !(SelectedSite is Sites.DownloadedVideoUtil))
+                            {
+                                dlgSel.Add(Translation.AddToFavourites);
+                                dialogOptions.Add("AddToFav");
+                            }
+                            if (!(SelectedSite is Sites.DownloadedVideoUtil))
+                            {
+                                dlgSel.Add(Translation.Download);
+                                dialogOptions.Add("Download");
+                            }
+                            List<string> siteSpecificEntries = SelectedSite.GetContextMenuEntries(selectedCategory, aVideo);
+                            if (siteSpecificEntries != null) foreach (string entry in siteSpecificEntries) { dlgSel.Add(entry); dialogOptions.Add(entry); }
                         }
-                        if (!(SelectedSite is Sites.DownloadedVideoUtil))
-                        {
-                            dlgSel.Add(Translation.Download);
-                            dialogOptions.Add("Download");
-                        }
-                        List<string> siteSpecificEntries = SelectedSite.GetContextMenuEntries(selectedCategory, aVideo);
-                        if (siteSpecificEntries != null) foreach (string entry in siteSpecificEntries) { dlgSel.Add(entry); dialogOptions.Add(entry); }
                     }
                     // always allow the VK filtering in videos view
-                    if (CurrentState == State.videos)
+                    if (CurrentState == State.videos && numItemsShown > 1)
                     {
                         dlgSel.Add(Translation.Filter);
                         dialogOptions.Add("Filter");
@@ -1301,7 +1309,7 @@ namespace OnlineVideos.MediaPortal1
 
         private void SetVideosToInfoList(List<VideoInfo> loVideoList)
         {
-            SetGuiProperties_ExtendedVideoInfo(null);
+            SetGuiProperties_ExtendedVideoInfo(null, false);
             currentTrailerList = loVideoList;
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
             GUIControl.ClearControl(GetID, GUI_infoList.GetID);
@@ -1720,10 +1728,11 @@ namespace OnlineVideos.MediaPortal1
             OnlineVideosGuiListItem ovItem = item as OnlineVideosGuiListItem;
             if (parent == GUI_infoList)
             {
-                SetGuiProperties_ExtendedVideoInfo(ovItem != null ? ovItem.Item as VideoInfo : null);
+                SetGuiProperties_ExtendedVideoInfo(ovItem != null ? ovItem.Item as VideoInfo : null, true);
             }
             else
             {
+                SetGuiProperties_ExtendedVideoInfo(ovItem != null ? ovItem.Item as VideoInfo : null, false);
                 GUIPropertyManager.SetProperty("#OnlineVideos.desc", ovItem != null ? ovItem.Description : string.Empty);
                 GUIPropertyManager.SetProperty("#OnlineVideos.length", ovItem != null && ovItem.Item is VideoInfo ? VideoInfo.GetDuration((ovItem.Item as VideoInfo).Length) : string.Empty);
                 GUIPropertyManager.SetProperty("#OnlineVideos.aired", ovItem != null && ovItem.Item is VideoInfo ? (ovItem.Item as VideoInfo).Airdate : string.Empty);
@@ -2792,13 +2801,13 @@ namespace OnlineVideos.MediaPortal1
         /// if the VideoInfo.Other object is using the IVideoDetails interface
         /// </summary>
         /// <param name="videoInfo">if this param is null, the <see cref="selectedVideo"/> will be used</param>
-        private void SetGuiProperties_ExtendedVideoInfo(VideoInfo videoInfo)
+        private void SetGuiProperties_ExtendedVideoInfo(VideoInfo videoInfo, bool DetailsItem)
         {
             string prefix = "#OnlineVideos.";
-            if (videoInfo == null)
+            if (!DetailsItem)
             {
                 ResetExtendedGuiProperties(prefix); // remove everything
-                videoInfo = selectedVideo; // set everything for the selected video in the next step
+                if (videoInfo == null) videoInfo = selectedVideo; // set everything for the selected video in the next step if given video is null
                 prefix = prefix + "Details.";
             }
             else
@@ -2807,7 +2816,6 @@ namespace OnlineVideos.MediaPortal1
                 ResetExtendedGuiProperties(prefix); // remove all entries for the last selected "DetailsItem" (will be set for the parameter in the next step)
             }
 
-            //
             if (videoInfo != null && videoInfo.Other is IVideoDetails)
             {
                 Dictionary<string, string> custom = ((IVideoDetails)videoInfo.Other).GetExtendedProperties();
