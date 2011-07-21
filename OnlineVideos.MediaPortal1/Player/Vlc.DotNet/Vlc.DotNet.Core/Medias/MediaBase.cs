@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Vlc.DotNet.Core.Interops.Signatures.LibVlc.AsynchronousEvents;
@@ -187,19 +186,19 @@ namespace Vlc.DotNet.Core.Medias
             switch (eventData.Type)
             {
                 case EventTypes.MediaDurationChanged:
-                    EventsHelper.RaiseEvent(MediaDurationChanged, this, new VlcEventArgs<long>(eventData.MediaDurationChanged.NewDuration));
+                    EventsHelper.RaiseEvent(DurationChanged, this, new VlcEventArgs<long>(eventData.MediaDurationChanged.NewDuration));
                     break;
                 case EventTypes.MediaFreed:
-                    EventsHelper.RaiseEvent(MediaFreed, this, new VlcEventArgs<EventArgs>(EventArgs.Empty));
+                    EventsHelper.RaiseEvent(Freed, this, new VlcEventArgs<EventArgs>(EventArgs.Empty));
                     break;
                 case EventTypes.MediaMetaChanged:
-                    EventsHelper.RaiseEvent(MediaMetaChanged, this, new VlcEventArgs<Metadatas>(eventData.MediaMetaChanged.MetaType));
+                    EventsHelper.RaiseEvent(MetaChanged, this, new VlcEventArgs<Metadatas>(eventData.MediaMetaChanged.MetaType));
                     break;
                 case EventTypes.MediaParsedChanged:
-                    EventsHelper.RaiseEvent(MediaParsedChanged, this, new VlcEventArgs<int>(eventData.MediaParsedChanged.NewStatus));
+                    EventsHelper.RaiseEvent(ParsedChanged, this, new VlcEventArgs<int>(eventData.MediaParsedChanged.NewStatus));
                     break;
                 case EventTypes.MediaStateChanged:
-                    EventsHelper.RaiseEvent(MediaStateChanged, this, new VlcEventArgs<States>(eventData.MediaStateChanged.NewState));
+                    EventsHelper.RaiseEvent(StateChanged, this, new VlcEventArgs<States>(eventData.MediaStateChanged.NewState));
                     break;
                 //TODO
                 //case EventTypes.MediaSubItemAdded:
@@ -210,19 +209,19 @@ namespace Vlc.DotNet.Core.Medias
         }
 
         [Category(CommonStrings.VLC_DOTNET_PROPERTIES_CATEGORY)]
-        public event VlcEventHandler<MediaBase, long> MediaDurationChanged;
+        public event VlcEventHandler<MediaBase, long> DurationChanged;
 
         [Category(CommonStrings.VLC_DOTNET_PROPERTIES_CATEGORY)]
-        public event VlcEventHandler<MediaBase, EventArgs> MediaFreed;
+        public event VlcEventHandler<MediaBase, EventArgs> Freed;
 
         [Category(CommonStrings.VLC_DOTNET_PROPERTIES_CATEGORY)]
-        public event VlcEventHandler<MediaBase, Metadatas> MediaMetaChanged;
+        public event VlcEventHandler<MediaBase, Metadatas> MetaChanged;
 
         [Category(CommonStrings.VLC_DOTNET_PROPERTIES_CATEGORY)]
-        public event VlcEventHandler<MediaBase, int> MediaParsedChanged;
+        public event VlcEventHandler<MediaBase, int> ParsedChanged;
 
         [Category(CommonStrings.VLC_DOTNET_PROPERTIES_CATEGORY)]
-        public event VlcEventHandler<MediaBase, States> MediaStateChanged;
+        public event VlcEventHandler<MediaBase, States> StateChanged;
 
         //[Category(CommonStrings.VLC_DOTNET_PROPERTIES_CATEGORY)]
         //public event VlcEventHandler<MediaBase, EventArgs> MediaSubItemAdded;
