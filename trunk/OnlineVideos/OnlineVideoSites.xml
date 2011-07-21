@@ -13,6 +13,8 @@
         <Category xsi:type="RssLink" name="Top Viewed:This Week">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=this_week</Category>
         <Category xsi:type="RssLink" name="Top Viewed:This Month">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=this_month</Category>
         <Category xsi:type="RssLink" name="HD Content">http://gdata.youtube.com/feeds/api/videos/-/HD</Category>
+        <Category xsi:type="RssLink" name="Free Movies: Most Popular">http://gdata.youtube.com/feeds/api/charts/movies/most_popular?paid-content=false</Category>
+        <Category xsi:type="RssLink" name="Free Movies: Most Recent">http://gdata.youtube.com/feeds/api/charts/movies/most_recent?paid-content=false</Category>
       </Categories>
     </Site>
     <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" lang="de">

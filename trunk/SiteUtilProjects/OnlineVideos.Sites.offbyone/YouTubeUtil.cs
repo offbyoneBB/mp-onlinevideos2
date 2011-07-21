@@ -14,6 +14,33 @@ namespace OnlineVideos.Sites
 {
     public class YouTubeUtil : SiteUtilBase, IFilter
     {
+        private class MyYouTubeEntry : IVideoDetails
+        {
+            public YouTubeEntry YouTubeEntry { get; private set; }
+
+            public MyYouTubeEntry(YouTubeEntry entry)
+            {
+                YouTubeEntry = entry;
+            }
+
+            public Dictionary<string, string> GetExtendedProperties()
+            {
+                Dictionary<string, string> properties = new Dictionary<string, string>();
+                properties.Add("Uploader", YouTubeEntry.Uploader.Value.ToString());
+                if (YouTubeEntry.Rating != null)
+                {
+                    properties.Add("Rating", YouTubeEntry.Rating.Average.ToString("F1", OnlineVideoSettings.Instance.Locale));
+                    properties.Add("NumRaters", YouTubeEntry.Rating.NumRaters.ToString());
+                }
+                if (YouTubeEntry.Statistics != null)
+                {
+                    if (!string.IsNullOrEmpty(YouTubeEntry.Statistics.FavoriteCount)) properties.Add("FavoriteCount", YouTubeEntry.Statistics.FavoriteCount);
+                    if (!string.IsNullOrEmpty(YouTubeEntry.Statistics.ViewCount)) properties.Add("ViewCount", YouTubeEntry.Statistics.ViewCount);
+                }
+                return properties;
+            }
+        }
+
         public enum VideoQuality { Low, High, HD };
 
         /// <summary>
@@ -305,7 +332,7 @@ namespace OnlineVideos.Sites
             foreach (YouTubeEntry entry in feed.Entries)
             {
                 VideoInfo video = new VideoInfo();
-                video.Other = entry;
+                video.Other = new MyYouTubeEntry(entry);
                 video.Description = entry.Media.Description != null ? entry.Media.Description.Value : "";
                 // get the largest thumbnail
                 int maxHeight = 0; 
@@ -432,16 +459,16 @@ namespace OnlineVideos.Sites
             {
                 result.Add(Translation.RelatedVideos);
 
-                YouTubeEntry ytEntry = selectedItem.Other as YouTubeEntry;
-                if (ytEntry != null && ytEntry.Uploader != null && !string.IsNullOrEmpty(ytEntry.Uploader.Value))
+                MyYouTubeEntry ytEntry = selectedItem.Other as MyYouTubeEntry;
+                if (ytEntry != null && ytEntry.YouTubeEntry != null && ytEntry.YouTubeEntry.Uploader != null && !string.IsNullOrEmpty(ytEntry.YouTubeEntry.Uploader.Value))
                 {
-                    result.Add("More uploads from " + ytEntry.Uploader.Value);
+                    result.Add("More uploads from " + ytEntry.YouTubeEntry.Uploader.Value);
                 }
                 if (selectedCategory is RssLink)
                 {
                     result.Add(Translation.AddToFavourites + " (" + Settings.Name + ")");
                 }
-                else
+                else if (selectedCategory is Category)
                 {
                     result.Add(Translation.RemoveFromFavorites + " (" + Settings.Name + ")");
                 }
@@ -464,15 +491,15 @@ namespace OnlineVideos.Sites
             }
             else if (choice == Translation.RelatedVideos)
             {
-                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri((selectedItem.Other as YouTubeEntry).RelatedVideosUri.Content), NumberToRetrieve = pageSize };
+                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri((selectedItem.Other as MyYouTubeEntry).YouTubeEntry.RelatedVideosUri.Content), NumberToRetrieve = pageSize };
                 newVideos = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
                 currentVideosTitle = Translation.RelatedVideos + " [" + selectedItem.Title + "]";
                 return false;
             }
             else if (choice.StartsWith("More uploads from "))
             {
-                YouTubeEntry ytEntry = selectedItem.Other as YouTubeEntry;
-                YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateUserUri((selectedItem.Other as YouTubeEntry).Uploader.Value)) { NumberToRetrieve = pageSize };
+                YouTubeEntry ytEntry = (selectedItem.Other as MyYouTubeEntry).YouTubeEntry;
+                YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateUserUri(ytEntry.Uploader.Value)) { NumberToRetrieve = pageSize };
                 newVideos = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
                 currentVideosTitle = "Uploaded Videos" + " [" + ytEntry.Uploader.Value + "]";
             }
@@ -491,7 +518,7 @@ namespace OnlineVideos.Sites
             if (CheckUsernameAndPassword())
             {
                 Login();
-                YouTubeEntry entry = (YouTubeEntry)video.Other;
+                YouTubeEntry entry = ((MyYouTubeEntry)video.Other).YouTubeEntry;
                 service.Insert(new Uri(YouTubeQuery.CreateFavoritesUri(accountname)), entry);                
             }
         }
@@ -501,7 +528,7 @@ namespace OnlineVideos.Sites
             if (CheckUsernameAndPassword())
             {
                 Login();
-                ((YouTubeEntry)video.Other).Delete();               
+                ((MyYouTubeEntry)video.Other).YouTubeEntry.Delete();
             }
         }
 

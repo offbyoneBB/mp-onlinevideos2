@@ -31,8 +31,15 @@ namespace OnlineVideos.Sites
             return util.getMultipleVideoUrls(video);
         }
 
+        string currentVideosTitle = null;
+        public override string getCurrentVideosTitle()
+        {
+            return currentVideosTitle;
+        }
+
         public override List<VideoInfo> getVideoList(Category category)
         {
+            currentVideosTitle = null;
             currentCategory = category;
             HasNextPage = false;
             if (category is RssLink)
@@ -168,6 +175,7 @@ namespace OnlineVideos.Sites
             if (selectedCategory is FavoriteCategory)
             {
                 if (selectedItem == null) result.Add(Translation.RemoveFromFavorites);
+                else result.AddRange((selectedCategory as FavoriteCategory).Site.GetContextMenuEntries(null, selectedItem));
             }
             else if (selectedItem != null)
             {
@@ -182,8 +190,12 @@ namespace OnlineVideos.Sites
             newVideos = null;
             bool result = false;
             if (choice == Translation.DeleteAll)
+            {
                 result = OnlineVideoSettings.Instance.FavDB.removeAllFavoriteVideos(((RssLink)selectedCategory).Url);
-            else
+                // we have to manually refresh the categories
+                if (result && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
+            }
+            else if (choice == Translation.RemoveFromFavorites)
             {
                 if (selectedCategory is FavoriteCategory)
                 {
@@ -195,10 +207,21 @@ namespace OnlineVideos.Sites
                 {
                     result = OnlineVideoSettings.Instance.FavDB.removeFavoriteVideo(selectedItem);
                 }
+                // we have to manually refresh the categories
+                if (result && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
             }
-            // we have to manually refresh the categories
-            if (result && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
-
+            else
+            {
+                if (selectedCategory is FavoriteCategory)
+                {
+                    result = (selectedCategory as FavoriteCategory).Site.ExecuteContextMenuEntry(null, selectedItem, choice, out newVideos);
+                    if (newVideos != null && newVideos.Count > 0)
+                    {
+                        HasNextPage = (selectedCategory as FavoriteCategory).Site.HasNextPage;
+                        currentVideosTitle = (selectedCategory as FavoriteCategory).Site.getCurrentVideosTitle();
+                    }
+                }
+            }
             return result;
         }
     }
