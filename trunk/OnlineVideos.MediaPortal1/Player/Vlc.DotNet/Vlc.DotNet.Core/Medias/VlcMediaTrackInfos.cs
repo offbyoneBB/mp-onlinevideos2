@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using Vlc.DotNet.Core.Interops.Signatures.LibVlc.Media;
 
 namespace Vlc.DotNet.Core.Medias
 {
+    ///<summary>
+    /// VlcMediaTrackInfos class
+    ///</summary>
     public sealed class VlcMediaTrackInfos : IEnumerable<MediaTrackInfo>, IDisposable
     {
         private MediaBase myMediaBase;
 
         /// <summary>
-        /// VlcOutputDevices constructor
+        /// VlcMediaTrackInfos constructor
         /// </summary>
         internal VlcMediaTrackInfos(MediaBase mediaBase)
         {

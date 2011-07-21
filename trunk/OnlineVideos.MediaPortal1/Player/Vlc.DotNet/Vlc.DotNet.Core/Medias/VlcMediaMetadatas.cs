@@ -4,6 +4,9 @@ using Vlc.DotNet.Core.Interops.Signatures.LibVlc.Media;
 
 namespace Vlc.DotNet.Core.Medias
 {
+    /// <summary>
+    /// VlcMediaMetadatas class
+    /// </summary>
     public sealed class VlcMediaMetadatas : IDisposable
     {
         private readonly MediaBase myHostMediaBase;
