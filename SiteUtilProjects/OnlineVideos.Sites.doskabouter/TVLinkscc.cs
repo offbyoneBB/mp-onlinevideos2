@@ -375,33 +375,13 @@ namespace OnlineVideos.Sites
             string token = part1.Substring(part1.LastIndexOf('/') + 1);
 
             string hash = "kekute**$%2009";
-            hash = GetMD5Hash(hash);
-            string s1 = GetMD5Hash(hash.Substring(0, 16));
-            string s2 = GetMD5Hash(hash.Substring(16, 16));
-            string s3 = GetMD5Hash(token);
-            string key = GetMD5Hash(time + s1 + s3 + s2).Substring(5, 27);
+            hash = Utils.GetMD5Hash(hash);
+            string s1 = Utils.GetMD5Hash(hash.Substring(0, 16));
+            string s2 = Utils.GetMD5Hash(hash.Substring(16, 16));
+            string s3 = Utils.GetMD5Hash(token);
+            string key = Utils.GetMD5Hash(time + s1 + s3 + s2).Substring(5, 27);
 
             return String.Format("{0}?start=0&key={1}&time={2}", part1, key, time);
-        }
-
-        private string GetMD5Hash(string input)
-        {
-            System.Security.Cryptography.MD5 md5Hasher;
-            byte[] data;
-            int count;
-            StringBuilder result;
-
-            md5Hasher = System.Security.Cryptography.MD5.Create();
-            data = md5Hasher.ComputeHash(Encoding.Default.GetBytes(input));
-
-            // Loop through each byte of the hashed data and format each one as a hexadecimal string.
-            result = new StringBuilder();
-            for (count = 0; count < data.Length; count++)
-            {
-                result.Append(data[count].ToString("x2", System.Globalization.CultureInfo.InvariantCulture));
-            }
-
-            return result.ToString();
         }
 
         private int GetTvSeasons(RssLink parentCategory)

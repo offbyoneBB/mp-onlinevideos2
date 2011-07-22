@@ -64,7 +64,7 @@ namespace OnlineVideos.Hoster
                 resUrl = GetSubString(webData, @"""stream_url"":""", @"""");
             if (String.IsNullOrEmpty(resUrl) && !url.Contains("embed"))
             {
-                string newUrl=url.Replace(@".com/",@".com/embed/");
+                string newUrl = url.Replace(@".com/", @".com/embed/");
                 if (!newUrl.Equals(url)) //safety check to prevent infinite recursion
                     resUrl = getVideoUrls(newUrl);
             }
@@ -239,9 +239,37 @@ namespace OnlineVideos.Hoster
             return "player.omroep.nl";
         }
 
+        public override Dictionary<string, string> getPlaybackOptions(string url)
+        {
+            if (!(url.ToLowerInvariant().Contains(@"ugslplayer.xap")))
+                return base.getPlaybackOptions(url);
+
+            int aflID = Convert.ToInt32(url.Split('&')[0].Split('=')[1]);
+            XmlDocument doc = new XmlDocument();
+            doc.Load(@"http://pi.omroep.nl/info/security/");
+            string data = doc.SelectSingleNode("session/key").InnerText;
+            byte[] tmp = Convert.FromBase64String(data);
+            string[] secparts = Encoding.ASCII.GetString(tmp).Split('|');
+
+            string prehash = aflID.ToString() + '|' + secparts[1];
+            string hash = Utils.GetMD5Hash(prehash).ToUpperInvariant();
+            string url2 = String.Format(@"http://pi.omroep.nl/info/stream/aflevering/{0}/{1}", aflID, hash);
+            doc.Load(url2);
+            Dictionary<string, string> PlaybackOptions = new Dictionary<string, string>();
+            foreach (XmlNode node in doc.SelectNodes("streams/stream"))
+            {
+                string quality = node.Attributes["compressie_kwaliteit"].Value;
+                string streamUrl = node.SelectSingleNode("streamurl").InnerText.Trim();
+                if (!String.IsNullOrEmpty(streamUrl))
+                    PlaybackOptions.Add(quality, streamUrl);
+            }
+            return PlaybackOptions;
+        }
+
         public override string getVideoUrls(string url)
         {
             int aflID = Convert.ToInt32(url.Split('&')[0].Split('=')[1]);
+
             CookieContainer cc = new CookieContainer();
             string step1 = SiteUtilBase.GetWebData(url, cc);
             CookieCollection ccol = cc.GetCookies(new Uri("http://tmp.player.omroep.nl/"));
@@ -465,7 +493,7 @@ namespace OnlineVideos.Hoster
             return GetSubString(unpacked, @"name=""src""value=""", @"""");
         }
     }
-    
+
     public class Vidxden : HosterBase
     {
         public override string getHosterUrl()
