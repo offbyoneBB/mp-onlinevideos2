@@ -105,13 +105,13 @@ namespace OnlineVideos.Sites
                     m = regEx_dynamicSubCategories.Match(webData);
                     break;
                 case Depth.Series:
-                    webData = GetSubString(webData, @"class=""lists""", @"class=""clear""");
-                    string[] tmp = { @"class=""lists""" };
+                    webData = GetSubString(webData, @"class=""lists"">", @"class=""clear""");
+                    string[] tmp = { @"class=""lists"">" };
                     string[] seasons = webData.Split(tmp, StringSplitOptions.RemoveEmptyEntries);
                     foreach (string s in seasons)
                     {
                         RssLink cat = new RssLink();
-                        cat.Name = HttpUtility.HtmlDecode(GetSubString(s, ">", "<"));
+                        cat.Name = HttpUtility.HtmlDecode(GetSubString(s, ">", "<")).Trim();
                         cat.Url = s;
                         cat.SubCategoriesDiscovered = true;
                         cat.HasSubCategories = false;
