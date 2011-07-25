@@ -41,7 +41,7 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video)
+        public override List<String> getMultipleVideoUrls(VideoInfo video)
         {
             List<string> result = new List<string>();
 
@@ -113,10 +113,9 @@ namespace OnlineVideos.Sites
                                         "http://media.mtvnservices.com/player/release/?v=4.3.0");
                             else
                             {
-                                if (url.StartsWith("rtmpe://")) url = url.Replace("rtmpe://", "rtmp://");
-                                resultUrl = string.Format("rtmpurl={0}&swfsize={1}&swfhash={2}",
+                                resultUrl = string.Format("rtmpurl={0}&swfurl={1}",
                                         System.Web.HttpUtility.UrlEncode(url),
-                                        "933967", "4506d4a6b8ad72c7946bf063a3599896e52ee46bb7d6f1a8d7e0f9d661284c30");
+                                        "http://media.mtvnservices.com/player/prime/mediaplayerprime.1.8.5.swf");
                             }
                             result.Add(ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                 "http://127.0.0.1/stream.flv?" + resultUrl));
