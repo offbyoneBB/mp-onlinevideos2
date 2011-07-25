@@ -149,42 +149,37 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override string getUrl(VideoInfo foVideo)
+        public override List<string> getMultipleVideoUrls(VideoInfo video)
         {
-            if (foVideo.PlaybackOptions == null || foVideo.PlaybackOptions.Count == 0)
+            List<string> result = new List<string>();
+
+            if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
             {
                 // don't retrieve playback options more than once
-                foVideo.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(foVideo.VideoUrl);
+                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(video.VideoUrl);
             }
 
-            if (foVideo.PlaybackOptions == null || foVideo.PlaybackOptions.Count == 0)
+            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
-                // no url to play available
-                return "";
+                if (video.PlaybackOptions.Count == 1 || videoQuality == VideoQuality.Low)
+                {
+                    //user wants low quality or only one playback option -> use first
+                    result.Add(video.PlaybackOptions.First().Value);
+                }
+                else if (videoQuality == VideoQuality.HD)
+                {
+                    // take highest available quality
+                    result.Add(video.PlaybackOptions.Last().Value);
+                }
+                else
+                {
+                    // choose a high quality from options (highest below the HD formats (37 22))
+                    var quality = video.PlaybackOptions.Last(q => !q.Key.Contains("(37)") && !q.Key.Contains("(22)"));
+                    result.Add(quality.Value);
+                }
             }
-            else if (foVideo.PlaybackOptions.Count == 1 || videoQuality == VideoQuality.Low)
-            {
-                //user wants low quality or only one playback option -> use first
-                string[] values = new string[foVideo.PlaybackOptions.Count];
-                foVideo.PlaybackOptions.Values.CopyTo(values, 0);
-                return values[0];
-            }
-            else if (videoQuality == VideoQuality.HD)
-            {
-                // take highest available quality
-                string[] values = new string[foVideo.PlaybackOptions.Count];
-                foVideo.PlaybackOptions.Values.CopyTo(values, 0);
-                return values[values.Length - 1];
-            }
-            else
-            {
-                // choose a high quality from options (highest below the HD formats (37 22)
-                string[] keys = new string[foVideo.PlaybackOptions.Count];
-                foVideo.PlaybackOptions.Keys.CopyTo(keys, 0);
-                int index = keys.Length - 1;
-                while (index > 0 && (!keys[index].EndsWith(".flv"))) index--;
-                return foVideo.PlaybackOptions[keys[index]];
-            }
+
+            return result;
         }
 
         public override int DiscoverDynamicCategories()
