@@ -41,6 +41,8 @@ namespace OnlineVideos.Sites
             return res;
         }
 
+        private enum SouthParkCountry { Unknown, World, Nl, De };
+
         public override List<String> getMultipleVideoUrls(VideoInfo video)
         {
             List<string> result = new List<string>();
@@ -54,8 +56,14 @@ namespace OnlineVideos.Sites
                     string playerUrl = m.Groups["url"].Value;
                     playerUrl = GetRedirectedUrl(playerUrl);
                     playerUrl = System.Web.HttpUtility.ParseQueryString(new Uri(playerUrl).Query)["uri"];
-                    bool isSouthparkWorld = video.VideoUrl.Contains("southparkstudios.com");
-                    if (isSouthparkWorld)
+                    SouthParkCountry spc = SouthParkCountry.Unknown;
+                    if (video.VideoUrl.Contains("southparkstudios.com"))
+                        spc = SouthParkCountry.World;
+                    else if (video.VideoUrl.Contains("southparkstudios.de"))
+                        spc = SouthParkCountry.De;
+                    else if (video.VideoUrl.Contains("southparkstudios.nl"))
+                        spc = SouthParkCountry.Nl;
+                    if (spc == SouthParkCountry.World)
                     {
                         playerUrl = System.Web.HttpUtility.UrlEncode(playerUrl);
                         playerUrl = new Uri(new Uri(baseUrl), @"/feeds/video-player/mrss/" + playerUrl).AbsoluteUri;
@@ -106,13 +114,15 @@ namespace OnlineVideos.Sites
                             }
                             if (url.Contains("intro")) continue;
 
-                            string swfUrl;
-                            if (isSouthparkWorld)
-                                swfUrl = @"http://media.mtvnservices.com/player/release/?v=4.3.0";
-                            else
-                                swfUrl = @"http://media.mtvnservices.com/player/prime/mediaplayerprime.1.8.5.swf";
+                            string swfUrl = String.Empty;
+                            switch (spc)
+                            {
+                                case SouthParkCountry.World:
+                                case SouthParkCountry.De: swfUrl = @"http://media.mtvnservices.com/player/prime/mediaplayerprime.1.8.5.swf"; break;
+                                //case SouthParkCountry.Nl: swfUrl = String.Empty; break;
+                            }
 
-                            string resultUrl = string.Format("rtmpurl={0}&swfurl={1}",
+                            string resultUrl = string.Format("rtmpurl={0}&swfVfy={1}",
                                     System.Web.HttpUtility.UrlEncode(url),
                                     System.Web.HttpUtility.UrlEncode(swfUrl));
 
