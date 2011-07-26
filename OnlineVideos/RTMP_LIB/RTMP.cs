@@ -2352,7 +2352,7 @@ namespace RTMP_LIB
 
             for (int i = 0; i < BF_ROUNDS + 2; i += 2)
             {
-                bf_enc(d,ref key);
+                bf_enc(d, ref key);
 
                 key.p[i] = d[0];
                 key.p[i + 1] = d[1];
@@ -2363,7 +2363,7 @@ namespace RTMP_LIB
                 for (j = 0; j < 256; j += 2)
                 {
 
-                    bf_enc(d,ref key);
+                    bf_enc(d, ref key);
 
                     key.s[i][j] = d[0];
                     key.s[i][j + 1] = d[1];
