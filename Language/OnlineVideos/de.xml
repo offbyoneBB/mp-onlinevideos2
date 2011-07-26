@@ -118,6 +118,7 @@
   <string Field="UpdateAllYourSites">Es werden nur vorhandene Sites aktualisiert.</string>
   <string Field="UnableToPlayVideo">Video kann nicht wiedergegeben werden. Keine URL.</string>
   <string Field="UnableToDownloadVideo">Video kann nicht heruntergeladen werden. Ungültige URL.</string>
+  <string Field="UploadsBy">Hochgeladene Videos von</string>
   <string Field="Videos">Videos</string>
   <string Field="Working">Funktionierend</string>
   <string Field="Writers">Autoren</string>

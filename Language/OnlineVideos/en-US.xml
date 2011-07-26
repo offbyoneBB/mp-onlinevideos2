@@ -154,6 +154,7 @@
   <string Field="UpdateAllYourSites">This will update all your current sites.</string>
   <string Field="UnableToPlayVideo">Unable to play the video. No URL.</string>
   <string Field="UnableToDownloadVideo">Unable to download the video. Invalid URL.</string>
+  <string Field="UploadsBy">uploads by</string>
 
   <!-- V -->
   <string Field="Videos">Videos</string>
