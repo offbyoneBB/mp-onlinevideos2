@@ -106,17 +106,16 @@ namespace OnlineVideos.Sites
                             }
                             if (url.Contains("intro")) continue;
 
-                            string resultUrl;
+                            string swfUrl;
                             if (isSouthparkWorld)
-                                resultUrl = string.Format("rtmpurl={0}&swfurl={1}",
-                                        System.Web.HttpUtility.UrlEncode(url),
-                                        "http://media.mtvnservices.com/player/release/?v=4.3.0");
+                                swfUrl = @"http://media.mtvnservices.com/player/release/?v=4.3.0";
                             else
-                            {
-                                resultUrl = string.Format("rtmpurl={0}&swfurl={1}",
-                                        System.Web.HttpUtility.UrlEncode(url),
-                                        "http://media.mtvnservices.com/player/prime/mediaplayerprime.1.8.5.swf");
-                            }
+                                swfUrl = @"http://media.mtvnservices.com/player/prime/mediaplayerprime.1.8.5.swf";
+
+                            string resultUrl = string.Format("rtmpurl={0}&swfurl={1}",
+                                    System.Web.HttpUtility.UrlEncode(url),
+                                    System.Web.HttpUtility.UrlEncode(swfUrl));
+
                             result.Add(ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                 "http://127.0.0.1/stream.flv?" + resultUrl));
                         }
