@@ -159,6 +159,7 @@ namespace OnlineVideos
         public static string UpdateAllYourSites = "This will update all your current sites.";
         public static string UnableToPlayVideo = "Unable to play the video. No URL.";
         public static string UnableToDownloadVideo = "Unable to download the video. Invalid URL.";
+        public static string UploadsBy = "uploads by";
 
         // V
         public static string Videos = "Videos";
