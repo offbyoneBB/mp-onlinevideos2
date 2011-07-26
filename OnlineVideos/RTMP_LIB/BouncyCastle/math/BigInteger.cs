@@ -4,9 +4,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
+using Org.BouncyCastle.Utilities;
+
 namespace Org.BouncyCastle.Math
 {
-#if !NETCF_1_0
+#if !(NETCF_1_0 || NETCF_2_0 || SILVERLIGHT)
 	[Serializable]
 #endif
 	public class BigInteger
@@ -1067,15 +1069,15 @@ namespace Org.BouncyCastle.Math
 
 					if (shift < 2)
 					{
-						c = ShiftRightOneInPlace(cStart, c);
+						ShiftRightOneInPlace(cStart, c);
 						--cBitLength;
-						iCount = ShiftRightOneInPlace(iCountStart, iCount);
+						ShiftRightOneInPlace(iCountStart, iCount);
 					}
 					else
 					{
-						c = ShiftRightInPlace(cStart, c, shift);
+						ShiftRightInPlace(cStart, c, shift);
 						cBitLength -= shift;
-						iCount = ShiftRightInPlace(iCountStart, iCount, shift);
+						ShiftRightInPlace(iCountStart, iCount, shift);
 					}
 
 					//cStart = c.Length - ((cBitLength + 31) / 32);
@@ -2101,9 +2103,7 @@ namespace Org.BouncyCastle.Math
 				return this.sign > 0 ? result : result.Negate();
 			}
 
-			int maxBitLength = this.BitLength + val.BitLength;
-			int resLength = (maxBitLength + BitsPerInt - 1) / BitsPerInt;
-
+			int resLength = (this.BitLength + val.BitLength) / BitsPerInt + 1;
 			int[] res = new int[resLength];
 
 			if (val == this)
@@ -2291,12 +2291,12 @@ namespace Org.BouncyCastle.Math
 
 					if (shift < 2)
 					{
-						c = ShiftRightOneInPlace(cStart, c);
+						ShiftRightOneInPlace(cStart, c);
 						--cBitLength;
 					}
 					else
 					{
-						c = ShiftRightInPlace(cStart, c, shift);
+						ShiftRightInPlace(cStart, c, shift);
 						cBitLength -= shift;
 					}
 
@@ -2463,7 +2463,7 @@ namespace Org.BouncyCastle.Math
 		/**
 		 * do a right shift - this does it in place.
 		 */
-		private static int[] ShiftRightInPlace(
+		private static void ShiftRightInPlace(
 			int		start,
 			int[]	mag,
 			int		n)
@@ -2501,14 +2501,12 @@ namespace Org.BouncyCastle.Math
 
 				mag[nInts] = (int)((uint)mag[nInts] >> nBits);
 			}
-
-			return mag;
 		}
 
 		/**
 		 * do a right shift by one - this does it in place.
 		 */
-		private static int[] ShiftRightOneInPlace(
+		private static void ShiftRightOneInPlace(
 			int		start,
 			int[]	mag)
 		{
@@ -2523,8 +2521,6 @@ namespace Org.BouncyCastle.Math
 			}
 
 			mag[start] = (int)((uint)mag[start] >> 1);
-
-			return mag;
 		}
 
         public BigInteger ShiftRight(
@@ -2541,7 +2537,7 @@ namespace Org.BouncyCastle.Math
 
 //			int[] res = (int[]) this.magnitude.Clone();
 //
-//			res = ShiftRightInPlace(0, res, n);
+//			ShiftRightInPlace(0, res, n);
 //
 //			return new BigInteger(this.sign, res, true);
 
@@ -2800,7 +2796,7 @@ namespace Org.BouncyCastle.Math
 			else
 			{
 				// This is algorithm 1a from chapter 4.4 in Seminumerical Algorithms, slow but it works
-				Stack S = new Stack();
+				IList S = Platform.CreateArrayList();
 				BigInteger bs = ValueOf(radix);
 
 				// The sign is handled separatly.
@@ -2817,21 +2813,21 @@ namespace Org.BouncyCastle.Math
 					b = u.Mod(bs);
 					if (b.sign == 0)
 					{
-						S.Push("0");
+						S.Add("0");
 					}
 					else
 					{
 						// see how to interact with different bases
-						S.Push(b.magnitude[0].ToString("d"));
+						S.Add(b.magnitude[0].ToString("d"));
 					}
 					u = u.Divide(bs);
 				}
 
 				// Then pop the stack
-				while (S.Count != 0)
-				{
-					sb.Append((string) S.Pop());
-				}
+                for (int i = S.Count - 1; i >= 0; --i)
+                {
+                    sb.Append((string)S[i]);
+                }
 			}
 
 			string s = sb.ToString();
