@@ -62,9 +62,10 @@ namespace OnlineVideos
                         {
                             string imageLocation = string.Empty;
 
-                            try
+                            Uri temp;
+                            if (Uri.TryCreate(aFinalUrl, UriKind.Absolute, out temp))
                             {
-                                if (System.IO.Path.IsPathRooted(aFinalUrl))
+                                if (temp.IsFile)
                                 {
                                     if (System.IO.File.Exists(aFinalUrl)) imageLocation = aFinalUrl;
                                 }
@@ -74,11 +75,6 @@ namespace OnlineVideos
                                     if (System.IO.File.Exists(thumbFile)) imageLocation = thumbFile;
                                     else if (DownloadAndCheckImage(aFinalUrl, thumbFile, forcedAspect)) imageLocation = thumbFile;
                                 }
-                            }
-                            catch (Exception e)
-                            {
-                                //Ispathrooted generates exception if invalid chars are present in url
-                                Log.Error("error checkurl {0} {1}", aFinalUrl, e.Message);
                             }
 
                             if (imageLocation != string.Empty)
