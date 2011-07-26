@@ -10,6 +10,11 @@ namespace Org.BouncyCastle.Security
     public class SecureRandom
 		: Random
     {
+		// Note: all objects of this class should be deriving their random data from
+		// a single generator appropriate to the digest being used.
+		private static readonly IRandomGenerator sha1Generator = new DigestRandomGenerator(new Sha1Digest());
+		private static readonly IRandomGenerator sha256Generator = new DigestRandomGenerator(new Sha256Digest());
+
 		private static readonly SecureRandom[] master = { null };
 		private static SecureRandom Master
 		{
@@ -17,7 +22,7 @@ namespace Org.BouncyCastle.Security
 			{
 				if (master[0] == null)
 				{
-					IRandomGenerator gen = new DigestRandomGenerator(new Sha256Digest());
+					IRandomGenerator gen = sha256Generator;
 					gen = new ReversedWindowGenerator(gen, 32);
 					SecureRandom sr = master[0] = new SecureRandom(gen);
 
@@ -36,20 +41,21 @@ namespace Org.BouncyCastle.Security
 			// TODO Compared to JDK, we don't auto-seed if the client forgets - problem?
 
 			// TODO Support all digests more generally, by stripping PRNG and calling DigestUtilities?
-			IDigest digest = null;
-			switch (algorithm.ToUpper(CultureInfo.InvariantCulture))
+			string drgName = algorithm.ToUpper(CultureInfo.InvariantCulture);
+
+			IRandomGenerator drg = null;
+			if (drgName == "SHA1PRNG")
 			{
-				case "SHA1PRNG":
-					digest = new Sha1Digest();
-					break;
-				case "SHA256PRNG":
-					digest = new Sha256Digest();
-					break;
+				drg = sha1Generator;
+			}
+			else if (drgName == "SHA256PRNG")
+			{
+				drg = sha256Generator;
 			}
 
-			if (digest != null)
+			if (drg != null)
 			{
-				return new SecureRandom(new DigestRandomGenerator(digest));
+				return new SecureRandom(drg);
 			}
 
 			throw new ArgumentException("Unrecognised PRNG algorithm: " + algorithm, "algorithm");
@@ -64,17 +70,15 @@ namespace Org.BouncyCastle.Security
 		protected IRandomGenerator generator;
 
 		public SecureRandom()
-			: base(0)
+			: this(sha1Generator)
         {
-			this.generator = new DigestRandomGenerator(new Sha1Digest());
 			SetSeed(GetSeed(8));
 		}
 
 		public SecureRandom(
 			byte[] inSeed)
-			: base(0)
+			: this(sha1Generator)
         {
-			this.generator = new DigestRandomGenerator(new Sha1Digest());
 			SetSeed(inSeed);
         }
 

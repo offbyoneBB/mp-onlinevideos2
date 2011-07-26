@@ -11,6 +11,32 @@ namespace Org.BouncyCastle.Utilities
         {
         }
 
+		public static bool AreEqual(
+			bool[]  a,
+			bool[]  b)
+		{
+			if (a == b)
+				return true;
+
+			if (a == null || b == null)
+				return false;
+
+            return HaveSameContents(a, b);
+		}
+
+        public static bool AreEqual(
+            char[] a,
+            char[] b)
+        {
+            if (a == b)
+                return true;
+
+            if (a == null || b == null)
+                return false;
+
+            return HaveSameContents(a, b);
+        }
+
         /// <summary>
         /// Are two arrays equal.
         /// </summary>
@@ -38,6 +64,29 @@ namespace Org.BouncyCastle.Utilities
 			return AreEqual(a, b);
 		}
 
+		/// <summary>
+		/// A constant time equals comparison - does not terminate early if
+		/// test will fail.
+		/// </summary>
+		/// <param name="a">first array</param>
+		/// <param name="b">second array</param>
+		/// <returns>true if arrays equal, false otherwise.</returns>
+		public static bool ConstantTimeAreEqual(
+			byte[]	a,
+			byte[]	b)
+		{
+			int i = a.Length;
+			if (i != b.Length)
+				return false;
+			int cmp = 0;
+			while (i != 0)
+			{
+				--i;
+				cmp |= (a[i] ^ b[i]);
+			}
+			return cmp == 0;
+		}
+
 		public static bool AreEqual(
 			int[]	a,
 			int[]	b)
@@ -51,19 +100,51 @@ namespace Org.BouncyCastle.Utilities
 			return HaveSameContents(a, b);
 		}
 
-		private static bool HaveSameContents(
+        private static bool HaveSameContents(
+            bool[] a,
+            bool[] b)
+        {
+            int i = a.Length;
+            if (i != b.Length)
+                return false;
+            while (i != 0)
+            {
+                --i;
+                if (a[i] != b[i])
+                    return false;
+            }
+            return true;
+        }
+
+        private static bool HaveSameContents(
+            char[] a,
+            char[] b)
+        {
+            int i = a.Length;
+            if (i != b.Length)
+                return false;
+            while (i != 0)
+            {
+                --i;
+                if (a[i] != b[i])
+                    return false;
+            }
+            return true;
+        }
+
+        private static bool HaveSameContents(
 			byte[]	a,
 			byte[]	b)
 		{
-			if (a.Length != b.Length)
+			int i = a.Length;
+			if (i != b.Length)
 				return false;
-
-			for (int i = 0; i < a.Length; i++)
+			while (i != 0)
 			{
+				--i;
 				if (a[i] != b[i])
 					return false;
 			}
-
 			return true;
 		}
 
@@ -71,19 +152,19 @@ namespace Org.BouncyCastle.Utilities
 			int[]	a,
 			int[]	b)
 		{
-			if (a.Length != b.Length)
+			int i = a.Length;
+			if (i != b.Length)
 				return false;
-
-			for (int i = 0; i < a.Length; i++)
+			while (i != 0)
 			{
+				--i;
 				if (a[i] != b[i])
 					return false;
 			}
-
 			return true;
 		}
 
-		public static string ToString(
+        public static string ToString(
 			object[] a)
 		{
 			StringBuilder sb = new StringBuilder('[');
