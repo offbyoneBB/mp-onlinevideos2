@@ -296,7 +296,21 @@ namespace OnlineVideos.Sites
                 for (int i = 0; i < matchFileUrl.Groups.Count; i++)
                 {
                     if (matchFileUrl.Groups["m" + i.ToString()].Success)
-                        groupValues.Add(HttpUtility.UrlDecode(matchFileUrl.Groups["m" + i.ToString()].Value));
+                    {
+                        // first UrlDecode
+                        string matchFileUrl_m_Value = HttpUtility.UrlDecode(matchFileUrl.Groups["m" + i.ToString()].Value);
+                        // then try to JSON deserialize
+                        if (matchFileUrl_m_Value.StartsWith("\"") && matchFileUrl_m_Value.EndsWith("\""))
+                        {
+                            try
+                            {
+                                string deJSONified = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(matchFileUrl_m_Value);
+                                if (!string.IsNullOrEmpty(deJSONified)) matchFileUrl_m_Value = deJSONified;
+                            }
+                            catch { }
+                        }
+                        groupValues.Add(matchFileUrl_m_Value);
+                    }
                     if (matchFileUrl.Groups["n" + i.ToString()].Success)
                         groupNameValues.Add(HttpUtility.HtmlDecode(matchFileUrl.Groups["n" + i.ToString()].Value));
                 }
