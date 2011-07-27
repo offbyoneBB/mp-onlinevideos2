@@ -332,7 +332,7 @@
       <Description>Dailymotion is a video sharing service website, based in Paris (France).</Description>
       <Configuration>
         <item key="searchUrl"><![CDATA[http://www.dailymotion.com/rss/relevance/search/{0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[%22url%22%3A%22(?<m0>.*?)%22]]></item>
+        <item key="fileUrlRegEx"><![CDATA[%22(?<n0>sd|hq)URL%22%3A(?<m0>%22.+?%22)]]></item>
         <item key="nextPageRegEx"><![CDATA[<dm:link\s+rel="next"\s+href="(?<url>.*?)".*?/>]]></item>
       </Configuration>
       <Categories>
