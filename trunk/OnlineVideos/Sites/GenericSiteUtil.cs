@@ -296,25 +296,21 @@ namespace OnlineVideos.Sites
                 for (int i = 0; i < matchFileUrl.Groups.Count; i++)
                 {
                     if (matchFileUrl.Groups["m" + i.ToString()].Success)
-                    {
-                        // first UrlDecode
-                        string matchFileUrl_m_Value = HttpUtility.UrlDecode(matchFileUrl.Groups["m" + i.ToString()].Value);
-                        // then try to JSON deserialize
-                        if (matchFileUrl_m_Value.StartsWith("\"") && matchFileUrl_m_Value.EndsWith("\""))
-                        {
-                            try
-                            {
-                                string deJSONified = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(matchFileUrl_m_Value);
-                                if (!string.IsNullOrEmpty(deJSONified)) matchFileUrl_m_Value = deJSONified;
-                            }
-                            catch { }
-                        }
-                        groupValues.Add(matchFileUrl_m_Value);
-                    }
+                        groupValues.Add(HttpUtility.UrlDecode(matchFileUrl.Groups["m" + i.ToString()].Value));
                     if (matchFileUrl.Groups["n" + i.ToString()].Success)
                         groupNameValues.Add(HttpUtility.HtmlDecode(matchFileUrl.Groups["n" + i.ToString()].Value));
                 }
                 string foundUrl = string.Format(fileUrlFormatString, groupValues.ToArray());
+                // try to JSON deserialize
+                if (foundUrl.StartsWith("\"") && foundUrl.EndsWith("\""))
+                {
+                    try
+                    {
+                        string deJSONified = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(foundUrl);
+                        if (!string.IsNullOrEmpty(deJSONified)) foundUrl = deJSONified;
+                    }
+                    catch { }
+                }
                 if (!playbackOptions.ContainsValue(foundUrl))
                 {
                     if (groupNameValues.Count == 0) groupNameValues.Add(playbackOptions.Count.ToString()); // if no groups to build a name, use numbering
