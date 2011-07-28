@@ -81,11 +81,9 @@ namespace OnlineVideos.Sites
                             string title = "FLV (" + m.Groups["bitrate"].Value + "K)";
                             string url = m.Groups["url"].Value.Replace("\\/", "/");
                             url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}&swfsize={2}&swfhash={3}",                                
+                                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}",
                                     System.Web.HttpUtility.UrlEncode(url),
-                                    "http://videoportal.sf.tv/flash/videoplayer.swf", //swfurl
-                                    "992927", //swfsize
-                                    "8810868d219610fd6abc652d69bdc24ab1f51fabf194b4c72c3df2479f82a003")); //swfhash
+                                    System.Web.HttpUtility.UrlEncode("http://videoportal.sf.tv/flash/videoplayer.swf")));
                             video.PlaybackOptions.Add(title, url);
                         }
                     }
