@@ -294,7 +294,7 @@
       <Configuration>
         <item key="youtubeCheckRegEx"><![CDATA[<link\srel="canonical"\shref="http://www.metacafe.com/watch/yt-(?<yt>[^/]+)/[^/]+/"\s*/>]]></item>
         <item key="searchUrl"><![CDATA[http://www.metacafe.com/tags/{0}/rss.xml]]></item>
-        <item key="fileUrlRegEx"><![CDATA[%22mediaURL%22%3A%22(?<m0>(?:(?!%22).)*)%22%2C%22key%22%3A%22(?<m1>(?:(?!%22).)*)%22]]></item>
+        <item key="fileUrlRegEx"><![CDATA[%22mediaURL%22%3A(?<m0>%22(?:(?!%22).)*)%22%2C%22key%22%3A%22(?<m1>(?:(?!%22).)*%22)]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}?__gda__={1}]]></item>
       </Configuration>
       <Categories>
