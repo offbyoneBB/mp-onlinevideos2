@@ -544,7 +544,7 @@
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\s*style="background-image:\surl\('(?<thumb>[^']+)'\);"\s*>\s*<a\shref="(?<url>[^"]+)">\s*(?<title>[^<]+)</a>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<li>\s*<a\s*href="(?<url>http://www.5min.com/Category[^"]+)">\s*(?<title>[^<]+)</a>\s*</li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sid="divImagePreviewLeaf"[^>]*>\s*
+        <item key="videoListRegEx"><![CDATA[<div\sid="[^"]*divImagePreviewLeaf"[^>]*>\s*
 <a\s*href="(?<VideoUrl>[^"]+)"[^>]*>\s*
 <img(?:(?!src).)+src="(?<ImageUrl>[^"]+)"[^>]+>\s*
 </a>\s*
