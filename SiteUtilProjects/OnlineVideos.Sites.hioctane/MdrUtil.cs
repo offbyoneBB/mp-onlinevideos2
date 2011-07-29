@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -8,129 +9,194 @@ namespace OnlineVideos.Sites
 {
     public class MdrUtil : SiteUtilBase
     {
-        string xmlRegex = @"<div\sclass=""noflashteaser"">\s*<h2><a\shref=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)</a></h2>\s*";
+        string showStartLetterPages = @"<li\s+class=""[^""]*item\w"">\s*<a\s+href=""(?<url>[^""]+)""[^>]*>\s*\w*\s*</a>\s*</li>";
+        string showsRegex = @"<div\sclass=""teaserImage"">\s*<a\shref=""(?<url>[^""]+)""[^>]*>\s*<img.+?src=""(?<img>[^""]+)""[^>]*>\s*</a>\s*</div>\s*<h3><a[^>]*>(?<title>[^<]+)</a>";
+        string videolistRegEx = @"<div\sclass=""teaserImage"">\s*
+<a\shref=""(?<url>[^""]+)""[^>]*>\s*
+(<img.+?src=""(?<img>[^""]+)""[^>]*>\s*)?
+</a>\s*</div>\s*
+<h3>\s*<a[^>]*>(?<title>[^<]+)</a>\s*</h3>\s*
+<p\s+class=""avAirTime"">\s*(?<airdate>.+?)</p>\s*
+<div[^>]*><.*?></div>\s*
+<a.*?dataURL:'(?<dataurl>[^']+)'";
 
         string playlistRegex = @"<REF\sHREF\s=\s""(?<url>[^""]+)""[^>]*>";
         string baseUrl = "http://www.mdr.de/mediathek/fernsehen/a-z";
 
-        Regex regEx_Xml;
-        Regex regEx_Playlist;
+        Regex regEx_Shows, regEx_Playlist, regEx_Videolist;
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
 
-            regEx_Xml = new Regex(xmlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
+            regEx_Shows = new Regex(showsRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             regEx_Playlist = new Regex(playlistRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
+            regEx_Videolist = new Regex(videolistRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
         }
 
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-
+            List<string> startLetterPages = new List<string>();
             string data = GetWebData(baseUrl);
-            string xmlUrl = String.Empty;
-
-            if (!string.IsNullOrEmpty(data))
+            Match m = Regex.Match(data, showStartLetterPages);
+            while (m.Success)
             {
-                Match m = regEx_Xml.Match(data);
-                if (m.Success)
-                {
-                    xmlUrl = m.Groups["url"].Value;
-                    xmlUrl = xmlUrl.Substring(xmlUrl.LastIndexOf("/"));
-                    xmlUrl = xmlUrl.Replace(".html", "-meta.xml");
-                    xmlUrl = "http://www.mdr.de/mediathek/" + xmlUrl;
-                }
+                startLetterPages.Add(m.Groups["url"].Value);
+                m = m.NextMatch();
             }
-            if(!string.IsNullOrEmpty(xmlUrl))
+            System.Threading.ManualResetEvent[] threadWaitHandles = new System.Threading.ManualResetEvent[startLetterPages.Count];
+            for (int i = 0; i < startLetterPages.Count; i++)
             {
-                data = String.Empty;
-                data = GetWebData(xmlUrl);
-
-                if (!string.IsNullOrEmpty(data))
-                {
-
-                    XmlDocument doc = new XmlDocument();
-                    doc.LoadXml(data);
-                    XmlElement root = doc.DocumentElement;
-                    XmlNodeList list;
-                    list = root.SelectNodes("./object/children/group/object/headline");
-                    foreach (XmlNode node in list)
+                threadWaitHandles[i] = new System.Threading.ManualResetEvent(false);
+                new System.Threading.Thread(delegate(object o)
                     {
-                        RssLink cat = new RssLink();
-                        cat.Name = HttpUtility.HtmlDecode(node.InnerText);
+                        int o_i = (int)o;
+                        string addDataPage = GetWebData(new Uri(new Uri(baseUrl), startLetterPages[o_i]).AbsoluteUri);
+                        Match addM = regEx_Shows.Match(addDataPage);
+                        if (o_i > 0) System.Threading.WaitHandle.WaitAny(new System.Threading.ManualResetEvent[] { threadWaitHandles[o_i - 1] });
+                        while (addM.Success)
+                        {
+                            RssLink show = new RssLink()
+                            {
+                                Name = HttpUtility.HtmlDecode(addM.Groups["title"].Value),
+                                Thumb = new Uri(new Uri(baseUrl), addM.Groups["img"].Value).AbsoluteUri,
+                                Url = new Uri(new Uri(baseUrl), addM.Groups["url"].Value).AbsoluteUri,
+                                HasSubCategories = true
+                            };
+                            Settings.Categories.Add(show);
 
-                        cat.Url = node.SelectSingleNode("../nimex").InnerText;
-                        cat.Url = cat.Url.Replace(".xml", "-meta.xml");
+                            addM = addM.NextMatch();
+                        }
 
-                        var imageNode = node.SelectSingleNode("../image/data");
-                        if (imageNode != null) cat.Thumb = imageNode.InnerText;
-
-                        cat.Description = node.SelectSingleNode("../description").InnerText;
-
-                        XmlNodeList videoItems;
-                        videoItems = node.SelectNodes("../children/object");
-                        cat.EstimatedVideoCount = (uint)videoItems.Count;
-                        if(cat.EstimatedVideoCount > 0)
-                            Settings.Categories.Add(cat);
-                    }
-                    Settings.DynamicCategoriesDiscovered = true;
-                    return Settings.Categories.Count;
-                }
+                        threadWaitHandles[o_i].Set();
+                    }) { IsBackground = true }.Start(i);
             }
-            return 0;
+            System.Threading.WaitHandle.WaitAll(threadWaitHandles);
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
         }
 
-        public override String getUrl(VideoInfo video)
+        public override int DiscoverSubCategories(Category parentCategory)
         {
-            string data = GetWebData(video.VideoUrl);
-                if (!string.IsNullOrEmpty(data))
+            parentCategory.SubCategories = new List<Category>();
+
+            string data = GetWebData((parentCategory as RssLink).Url);
+            if (!string.IsNullOrEmpty(data))
+            {
+                ParseSubCategories(parentCategory, data);
+
+                List<string> addPageUrls = new List<string>();
+                Match addPages = Regex.Match(data, @"<a\s+href=""(?<url>[^""]+)""\s+title=""Seite\s+\d+[^""]*"">");
+                while (addPages.Success)
                 {
-                    Match m = regEx_Playlist.Match(data);
-                    if (m.Success)
-                    {
-                        string videoUrl = m.Groups["url"].Value;
-                        return videoUrl;
-                    }
+                    addPageUrls.Add(new Uri(new Uri(baseUrl), addPages.Groups["url"].Value).AbsoluteUri);
+                    addPages = addPages.NextMatch();
                 }
-            return null;
+                addPageUrls = addPageUrls.Distinct().ToList();
+                if (addPageUrls.Count > 0) SubCategoriedForAdditionalPages(parentCategory as RssLink, addPageUrls);
+            }
+
+            return parentCategory.SubCategories.Count;
+        }
+
+        private void ParseSubCategories(Category parentCategory, string data)
+        {
+            Match m = regEx_Videolist.Match(data);
+            while (m.Success)
+            {
+                RssLink video = new RssLink()
+                {
+                    Name = string.Format("{0} ({1})", HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim()), Utils.PlainTextFromHtml(m.Groups["airdate"].Value).Replace("\n", " ")),
+                    Thumb = new Uri(new Uri(baseUrl), m.Groups["img"].Value).AbsoluteUri,
+                    Url = new Uri(new Uri(baseUrl), m.Groups["dataurl"].Value).AbsoluteUri,
+                    ParentCategory = parentCategory
+                };
+                parentCategory.SubCategories.Add(video);
+
+                m = m.NextMatch();
+            }
+        }
+
+        void SubCategoriedForAdditionalPages(RssLink parentCategory, List<string> urls)
+        {
+            System.Threading.ManualResetEvent[] threadWaitHandles = new System.Threading.ManualResetEvent[urls.Count];
+            for (int i = 0; i < urls.Count; i++)
+            {
+                threadWaitHandles[i] = new System.Threading.ManualResetEvent(false);
+                new System.Threading.Thread(delegate(object o)
+                    {
+                        int o_i = (int)o;
+                        string addDataPage = GetWebData(urls[o_i]);
+                        if (o_i > 0) System.Threading.WaitHandle.WaitAny(new System.Threading.ManualResetEvent[] { threadWaitHandles[o_i - 1] });
+                        ParseSubCategories(parentCategory, addDataPage);
+                        threadWaitHandles[o_i].Set();
+                    }) { IsBackground = true }.Start(i);
+            }
+            System.Threading.WaitHandle.WaitAll(threadWaitHandles);
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
 
-            string data = GetWebData((category as RssLink).Url);
+            string data = GetWebData((category as RssLink).Url, forceUTF8: true);
             if (!string.IsNullOrEmpty(data))
             {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(data);
-                XmlElement root = doc.DocumentElement;
-                XmlNodeList list;
-                list = root.SelectNodes("./object/children/object/headline");
-                foreach (XmlNode node in list)
+                XmlDocument xDoc = new XmlDocument();
+                xDoc.LoadXml(data);
+                foreach (XmlElement avDoc in xDoc.SelectNodes("//avDocument"))
                 {
-                    VideoInfo video = new VideoInfo();
-
-                    video.Title = HttpUtility.HtmlDecode(node.InnerText);
-                    video.Length = node.SelectSingleNode("../attributes/length").InnerText;
-                    video.ImageUrl = node.SelectSingleNode("../image/data").InnerText;
-                    video.Description = node.SelectSingleNode("../description").InnerText;
-                    video.Description += "\n" + Translation.Tags + ": " + node.SelectSingleNode("../keywords").InnerText;
-
-                    XmlNodeList videoSources;
-                    videoSources = node.SelectNodes("../attributes/av/mime_type");
-                    foreach (XmlNode videoNode in videoSources)
+                    VideoInfo video = new VideoInfo()
                     {
-                        if (videoNode.InnerText.Contains("video/x-ms-wmv"))
-                        {
-                            video.VideoUrl = videoNode.SelectSingleNode("../streaming_url").InnerText;
-                        }
+                        Title = avDoc.SelectSingleNode("title").InnerText,
+                        Airdate = avDoc.SelectSingleNode("webTime").InnerText,
+                        Description = avDoc.SelectSingleNode("teaserText").InnerText,
+                        ImageUrl = avDoc.SelectSingleNode("teaserimages/teaserimage/url").InnerText,
+                        Length = avDoc.SelectSingleNode("duration").InnerText,
+                        PlaybackOptions = new Dictionary<string,string>()
+                    };
+
+                    foreach (XmlElement asset in avDoc.SelectNodes("assets/asset[not(*[contains(name(),'rtsp')])]"))
+                    {
+                        string baseInfo = string.Format("{0}x{1} ({2}) | {3}:// | {4}",
+                        asset.SelectSingleNode("frameWidth").InnerText,
+                        asset.SelectSingleNode("frameHeight").InnerText,
+                        ((int.Parse(asset.SelectSingleNode("bitrateVideo").InnerText) + (asset.SelectSingleNode("bitrateAudio") != null ? int.Parse(asset.SelectSingleNode("bitrateAudio").InnerText) : 0)) / 1000).ToString() + " kbps",
+                        new Uri(asset.SelectSingleNode("*[contains(name(),'URL') or contains(name(), 'Url')]").InnerText).Scheme,
+                        asset.SelectSingleNode("mediaType").InnerText);
+
+                        string url = asset.SelectSingleNode("*[contains(name(),'URL') or contains(name(), 'Url')]").InnerText;
+                        if (url.StartsWith("rtmp")) url += "/" + asset.SelectSingleNode("flashMediaServerURL").InnerText;
+
+                        video.PlaybackOptions.Add(baseInfo, url);
                     }
+
+                    video.VideoUrl = video.PlaybackOptions.First().Value;
+
                     videos.Add(video);
                 }
             }
+            
             return videos;
         }
+
+        public override String getUrl(VideoInfo video)
+        {
+            // resolve any asx to WMV
+            foreach (var v in video.PlaybackOptions)
+            {
+                if (v.Value.EndsWith(".asx"))
+                {
+                    var resolved = ParseASX(v.Value);
+                    if (resolved != null && resolved.Count > 0) { video.PlaybackOptions[v.Key] = resolved[0]; break; }
+                }
+            }
+
+            video.VideoUrl = video.PlaybackOptions.First().Value;
+
+            return video.VideoUrl;
+        }
+
     }
 }
