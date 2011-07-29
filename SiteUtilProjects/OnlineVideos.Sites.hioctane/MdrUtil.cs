@@ -174,6 +174,10 @@ namespace OnlineVideos.Sites
 
                     video.VideoUrl = video.PlaybackOptions.First().Value;
 
+                    // set serialized version of PlaybackOptions to Other so it can be deserialized from a favorite
+                    if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
+                        video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(video.PlaybackOptions);
+
                     videos.Add(video);
                 }
             }
@@ -183,6 +187,11 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
+            // Get playbackoptins back from favorite video if they were saved in Other object
+            if (!string.IsNullOrEmpty(video.SiteName) && video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
+                video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
+
+
             // resolve any asx to WMV
             foreach (var v in video.PlaybackOptions)
             {
