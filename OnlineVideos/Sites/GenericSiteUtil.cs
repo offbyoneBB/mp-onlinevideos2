@@ -125,7 +125,8 @@ namespace OnlineVideos.Sites
                 if (Settings.Categories.Count > 0 && regEx_dynamicSubCategories != null)
                 {
                     for (int i = 0; i < Settings.Categories.Count; i++)
-                        Settings.Categories[i].HasSubCategories = true;
+                        if (!(Settings.Categories[i] is Group))
+                            Settings.Categories[i].HasSubCategories = true;
                 }
             }
             else
