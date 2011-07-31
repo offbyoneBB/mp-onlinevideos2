@@ -181,7 +181,7 @@ namespace OnlineVideos.MediaPortal1
 
         List<VideoInfo> currentVideoList = new List<VideoInfo>();
         List<VideoInfo> currentTrailerList = new List<VideoInfo>();
-        List<Player.PlayListItem> currentPlaylist = null;
+        Player.PlayList currentPlaylist = null;
         Player.PlayListItem currentPlayingItem = null;
 
         HashSet<string> extendedProperties = new HashSet<string>();
@@ -1239,7 +1239,7 @@ namespace OnlineVideos.MediaPortal1
             GUI_facadeView.Add(loListItem);
 
             int categoryIndexToSelect = (categories != null && categories.Count > 0) ? 1 : 0; // select the first category by default if there is one
-            int numCategoriesWithThumb = 0;
+            Dictionary<string, bool> imageHash = new Dictionary<string, bool>();
             suggestedView = null;
             currentFilter.StartMatching();
             if (categories != null)
@@ -1250,18 +1250,18 @@ namespace OnlineVideos.MediaPortal1
                     {
                         loListItem = new OnlineVideosGuiListItem(loCat);
                         loListItem.ItemId = GUI_facadeView.Count;
-                        if (!string.IsNullOrEmpty(loCat.Thumb)) numCategoriesWithThumb++;
+                        if (!string.IsNullOrEmpty(loCat.Thumb)) imageHash[loCat.Thumb] = true;
                         loListItem.OnItemSelected += OnItemSelected;
                         if (loCat == selectedCategory) categoryIndexToSelect = GUI_facadeView.Count; // select the category that was previously selected
                         GUI_facadeView.Add(loListItem);
                     }
                 }
 
-                if (numCategoriesWithThumb > 0) ImageDownloader.GetImages<Category>(categories);
+                if (imageHash.Count > 0) ImageDownloader.GetImages<Category>(categories);
 #if MP11
-                if (numCategoriesWithThumb <= categories.Count / 2) suggestedView = GUIFacadeControl.ViewMode.List;
+                if ((GUI_facadeView.Count > 1 && imageHash.Count == 0) || (GUI_facadeView.Count > 2 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.ViewMode.List;
 #else
-                if (numCategoriesWithThumb <= categories.Count / 2) suggestedView = GUIFacadeControl.Layout.List;
+                if ((GUI_facadeView.Count > 1 && imageHash.Count == 0) || (GUI_facadeView.Count > 2 && imageHash.Count == 1)) suggestedView = GUIFacadeControl.Layout.List;
 #endif
             }
 
@@ -1781,20 +1781,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (g_Player.Player.GetType().Assembly == typeof(GUIOnlineVideos).Assembly)
                 {
-                    int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
-                    if (currentPlaylist.Count > currentPlaylistIndex + 1)
-                    {
-                        // if playing a playlist item, move to the next            
-                        currentPlaylistIndex++;
-                        Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
-                    }
-                    else
-                    {
-                        // if last item -> clear the list
-                        TrackPlayback();
-                        currentPlaylist = null;
-                        currentPlayingItem = null;
-                    }
+                    PlayNextPlaylistItem();
                 }
                 else
                 {
@@ -1806,6 +1793,24 @@ namespace OnlineVideos.MediaPortal1
             else
             {
                 TrackPlayback();
+                currentPlayingItem = null;
+            }
+        }
+
+        void PlayNextPlaylistItem()
+        {
+            int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
+            if (currentPlaylist.Count > currentPlaylistIndex + 1)
+            {
+                // if playing a playlist item, move to the next            
+                currentPlaylistIndex++;
+                Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+            }
+            else
+            {
+                // if last item -> clear the list
+                TrackPlayback();
+                currentPlaylist = null;
                 currentPlayingItem = null;
             }
         }
@@ -1836,11 +1841,12 @@ namespace OnlineVideos.MediaPortal1
             {
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-                    return SelectedSite.getPlaylistItemUrl(playItem.Video, currentPlaylist[0].ChosenPlaybackOption);
+                    return SelectedSite.getPlaylistItemUrl(playItem.Video, currentPlaylist[0].ChosenPlaybackOption, currentPlaylist.IsPlayAll);
                 },
                 delegate(bool success, object result)
                 {
                     if (success) Play_Step2(playItem, new List<String>() { result as string }, goFullScreen);
+                    else if (currentPlaylist != null && currentPlaylist.Count > 1) PlayNextPlaylistItem();
                 }
                 , Translation.GettingPlaybackUrlsForVideo, true);
             }
@@ -1848,11 +1854,12 @@ namespace OnlineVideos.MediaPortal1
             {
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-                    return SelectedSite.getMultipleVideoUrls(playItem.Video);
+                    return SelectedSite.getMultipleVideoUrls(playItem.Video, currentPlaylist != null && currentPlaylist.Count > 1);
                 },
                 delegate(bool success, object result)
                 {
                     if (success) Play_Step2(playItem, result as List<String>, goFullScreen);
+                    else if (currentPlaylist != null && currentPlaylist.Count > 1) PlayNextPlaylistItem();
                 }
                 , Translation.GettingPlaybackUrlsForVideo, true);
             }
@@ -1879,14 +1886,14 @@ namespace OnlineVideos.MediaPortal1
             // create playlist entries if more than one url
             if (loUrlList.Count > 1)
             {
-                List<PlayListItem> playbackItems = new List<PlayListItem>();
+                Player.PlayList playbackItems = new Player.PlayList();
                 foreach (string url in loUrlList)
                 {
                     VideoInfo vi = playItem.Video.CloneForPlayList(url, url == loUrlList[0]);
                     string url_new = url;
                     if (url == loUrlList[0])
                     {
-                        url_new = SelectedSite.getPlaylistItemUrl(vi, string.Empty);
+                        url_new = SelectedSite.getPlaylistItemUrl(vi, string.Empty, currentPlaylist != null && currentPlaylist.IsPlayAll);
                     }
                     PlayListItem pli = new PlayListItem(string.Format("{0} - {1} / {2}", playItem.Video.Title, (playbackItems.Count + 1).ToString(), loUrlList.Count), url_new);
                     pli.Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream;
@@ -2105,7 +2112,7 @@ namespace OnlineVideos.MediaPortal1
 
         private void PlayAll()
         {
-            currentPlaylist = new List<Player.PlayListItem>();
+            currentPlaylist = new Player.PlayList() { IsPlayAll = true };
             currentPlayingItem = null;
             List<VideoInfo> loVideoList = (SelectedSite is IChoice && currentState == State.details) ? currentTrailerList : currentVideoList;
             foreach (VideoInfo video in loVideoList)

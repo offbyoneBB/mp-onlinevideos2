@@ -171,7 +171,7 @@ namespace OnlineVideos.Sites
         /// </summary>
         /// <param name="video">The <see cref="VideoInfo"/> object, for which to get a list of urls.</param>
         /// <returns></returns>
-        public virtual List<String> getMultipleVideoUrls(VideoInfo video)
+        public virtual List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<String> urls = new List<String>();
             urls.Add(getUrl(video));
@@ -184,7 +184,7 @@ namespace OnlineVideos.Sites
         /// <param name="clonedVideoInfo">A clone of the original <see cref="VideoInfo"/> object, given in <see cref="getMultipleVideoUrls"/>, with the VideoUrl set to one of the urls returned.</param>
         /// <param name="chosenPlaybackOption">the key from the <see cref="VideoInfo.PlaybackOptions"/> of the first video chosen by the user</param>
         /// <returns>the resolved url (by default just the clonedVideoInfo.VideoUrl that was given in <see cref="getMultipleVideoUrls"/></returns>
-        public virtual string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption)
+        public virtual string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
         {
             return clonedVideoInfo.VideoUrl;
         }

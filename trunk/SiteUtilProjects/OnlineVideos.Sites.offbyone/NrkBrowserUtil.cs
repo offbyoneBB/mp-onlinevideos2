@@ -253,9 +253,9 @@ namespace OnlineVideos.Sites
             }
 
             return VideosFromItems(items);
-        }    
-        
-        public override List<string> getMultipleVideoUrls(VideoInfo video)
+        }
+
+        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> urls = new List<string>();
             if (video.VideoUrl.StartsWith("mms://"))

@@ -149,7 +149,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video)
+        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> result = new List<string>();
 
@@ -170,12 +170,14 @@ namespace OnlineVideos.Sites
                 {
                     // take highest available quality
                     result.Add(video.PlaybackOptions.Last().Value);
+                    if (inPlaylist) video.PlaybackOptions = null;
                 }
                 else
                 {
                     // choose a high quality from options (highest below the HD formats (37 22))
                     var quality = video.PlaybackOptions.Last(q => !q.Key.Contains("(37)") && !q.Key.Contains("(22)"));
                     result.Add(quality.Value);
+                    if (inPlaylist) video.PlaybackOptions = null;
                 }
             }
 
@@ -457,7 +459,7 @@ namespace OnlineVideos.Sites
                 MyYouTubeEntry ytEntry = selectedItem.Other as MyYouTubeEntry;
                 if (ytEntry != null && ytEntry.YouTubeEntry != null && ytEntry.YouTubeEntry.Uploader != null && !string.IsNullOrEmpty(ytEntry.YouTubeEntry.Uploader.Value))
                 {
-                    result.Add("More uploads from " + ytEntry.YouTubeEntry.Uploader.Value);
+                    result.Add(Translation.UploadsBy + " [" + ytEntry.YouTubeEntry.Uploader.Value + "]");
                 }
                 if (selectedCategory is RssLink)
                 {
@@ -491,12 +493,12 @@ namespace OnlineVideos.Sites
                 currentVideosTitle = Translation.RelatedVideos + " [" + selectedItem.Title + "]";
                 return false;
             }
-            else if (choice.StartsWith("More uploads from "))
+            else if (choice.StartsWith(Translation.UploadsBy))
             {
                 YouTubeEntry ytEntry = (selectedItem.Other as MyYouTubeEntry).YouTubeEntry;
                 YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateUserUri(ytEntry.Uploader.Value)) { NumberToRetrieve = pageSize };
                 newVideos = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
-                currentVideosTitle = "Uploaded Videos" + " [" + ytEntry.Uploader.Value + "]";
+                currentVideosTitle = Translation.UploadsBy + " [" + ytEntry.Uploader.Value + "]";
             }
             return false;
         }

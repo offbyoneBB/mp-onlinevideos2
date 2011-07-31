@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites
 
         private enum SouthParkCountry { Unknown, World, Nl, De };
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video)
+        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> result = new List<string>();
 

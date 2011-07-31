@@ -117,7 +117,7 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video)
+        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> res = new List<string>();
             XmlDocument doc = new XmlDocument();

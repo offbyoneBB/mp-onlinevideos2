@@ -221,7 +221,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video)
+        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<String> urls = new List<String>();
             string resultUrl = getUrl(video);
@@ -285,7 +285,7 @@ namespace OnlineVideos.Sites
             return urls;
         }
 
-        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption)
+        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
         {
             Uri uri = new Uri(clonedVideoInfo.VideoUrl);
             //chosenPlaybackOption = "";
