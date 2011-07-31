@@ -7,7 +7,7 @@ namespace OnlineVideos.Sites
 {
     public class HardwareInfoUtil : GenericSiteUtil
     {
-        public override List<String> getMultipleVideoUrls(VideoInfo video)
+        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> newUrls = new List<String>();
             string s = base.getUrl(video);

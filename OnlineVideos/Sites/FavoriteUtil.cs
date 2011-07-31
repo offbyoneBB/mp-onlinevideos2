@@ -25,10 +25,10 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video)
+        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             SiteUtilBase util = OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName];
-            return util.getMultipleVideoUrls(video);
+            return util.getMultipleVideoUrls(video, inPlaylist);
         }
 
         string currentVideosTitle = null;

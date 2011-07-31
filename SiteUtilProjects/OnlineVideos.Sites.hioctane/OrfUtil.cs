@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites
 
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video)
+        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             string data = GetWebData(video.VideoUrl);
             string videoUrl = "";
