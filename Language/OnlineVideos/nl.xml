@@ -118,6 +118,7 @@
   <string Field="UpdateAllYourSites">Dit zal de huidige sites bijwerken</string>
   <string Field="UnableToPlayVideo">Kan video niet afspelen: Geen URL.</string>
   <string Field="UnableToDownloadVideo">Kan video niet downloaden: Ongeldige URL.</string>
+  <string Field="UploadsBy">Geüpload door</string>
   <string Field="Videos">Videos</string>
   <string Field="Working">Bezig</string>
   <string Field="Writers">Auteurs</string>
