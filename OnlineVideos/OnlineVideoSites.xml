@@ -1190,9 +1190,6 @@
         <Category xsi:type="RssLink" name="Religie">http://tvtutti.nl/religie-geloof/page-{0}/period-{1}/source-{2}/?type=episodes</Category>
       </Categories>
     </Site>
-    <Site name="TurboNick" util="TurboNick" agecheck="false" enabled="true" lang="nl">
-      <Categories />
-    </Site>
     <Site name="TouTV" util="TouTv" agecheck="false" enabled="true" lang="fr">
       <Description>Webtélé de divertissement axée sur la vidéo sur demande, offerte par Radio-Canada et une vingtaine de diffuseurs et de producteurs partenaires.</Description>
       <Configuration>
