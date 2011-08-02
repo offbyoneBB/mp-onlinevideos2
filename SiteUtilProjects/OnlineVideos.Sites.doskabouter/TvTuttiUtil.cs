@@ -84,32 +84,6 @@ namespace OnlineVideos.Sites
             return getPagedVideoList(bareCategory);
         }
 
-        /// <summary>
-        /// This will be called to find out if there is a previous page for the videos that have just been returned 
-        /// by a call to <see cref="getVideoList"/>. If returns true, the menu entry for "previous page" will be enabled, otherwise disabled.<br/>
-        /// Example: <see cref="MtvMusicVideosUtil"/><br/>
-        /// default: always false
-        /// </summary>
-        public override bool HasPreviousPage
-        {
-            get { return hasPages && pageNr > 1; }
-        }
-
-        /// <summary>
-        /// This function should return the videos of the previous page. No state is given, 
-        /// so the class implementation has to remember and set the current category and page itself.
-        /// It will only be called if <see cref="HasPreviousPage"/> returned true on the last call 
-        /// and after the user selected the menu entry for "previous page".<br/>
-        /// Example: <see cref="MtvMusicVideosUtil"/><br/>
-        /// default: empty list
-        /// </summary>
-        /// <returns>a list of <see cref="VideoInfo"/> objects for the previous page of the last queried category.</returns>
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            pageNr--;
-            return getPagedVideoList(bareCategory);
-        }
-
         public override List<VideoInfo> Search(string query, string category)
         {
             currentSource = category;

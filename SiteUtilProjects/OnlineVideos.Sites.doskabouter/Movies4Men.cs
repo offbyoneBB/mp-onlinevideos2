@@ -101,17 +101,6 @@ namespace OnlineVideos.Sites
             return getPagedVideoList(bareCategory);
         }
 
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            pageNr--;
-            return getPagedVideoList(bareCategory);
-        }
-
-        public override bool HasPreviousPage
-        {
-            get { return pageNr > 1; }
-        }
-
         public override bool HasNextPage
         {
             get { return hasNextPage; }

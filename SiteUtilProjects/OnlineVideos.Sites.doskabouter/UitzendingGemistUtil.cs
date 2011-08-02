@@ -69,31 +69,12 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override bool HasPreviousPage
-        {
-            get
-            {
-                if (baseCategory.Other is UitzendingGemistSpecifics)
-                    return ((UitzendingGemistSpecifics)baseCategory.Other).pageNr >= 1;
-                else
-                    return false;
-            }
-        }
-
         public override List<VideoInfo> getNextPageVideos()
         {
             UitzendingGemistSpecifics specifics = (UitzendingGemistSpecifics)baseCategory.Other;
             specifics.pageNr++;
             return UitzendingGemistGetVideoList(baseCategory, specifics);
         }
-
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            UitzendingGemistSpecifics specifics = (UitzendingGemistSpecifics)baseCategory.Other;
-            specifics.pageNr--;
-            return UitzendingGemistGetVideoList(baseCategory, specifics);
-        }
-
 
         private int UitzendingGemistDiscoverSubCategories(RssLink parentCategory)
         {
