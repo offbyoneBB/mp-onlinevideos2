@@ -198,12 +198,6 @@ namespace OnlineVideos.Sites
             return getPagedVideoList(firstPageUrl);
         }
 
-        public override List<VideoInfo> getPreviousPageVideos()
-        {
-            pageNr--;
-            return getPagedVideoList(firstPageUrl);
-        }
-
         private List<VideoInfo> getPagedVideoList(string url)
         {
             if (pageNr > 1)
@@ -229,11 +223,6 @@ namespace OnlineVideos.Sites
                 }
             }
             return videos;
-        }
-
-        public override bool HasPreviousPage
-        {
-            get { return pageNr > 1; }
         }
 
         public override bool HasNextPage
