@@ -986,34 +986,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Tvgemist\net5gemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{858c78ca-86d8-4c2d-930d-2e9d74e09858}-net5gemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\net5gemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Tvgemist\sbsgemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{2c56e58e-0dbf-4354-a51b-016f7b2ab154}-sbsgemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\sbsgemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Tvgemist\uitzendinggemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{2bab97aa-ca77-406f-bdcb-b07274417f5d}-uitzendinggemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\uitzendinggemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Tvgemist\veronicagemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{3dee47a1-d900-4d02-84b4-a4c73a6c63d4}-veronicagemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\veronicagemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\ctTV.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{e61a4ded-68da-4011-8eee-55a376e61b34}-ctTV.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctTV.png</DestinationFilename>
@@ -1234,20 +1206,6 @@
               <LocalFileName>..\SiteImages\Banners\watch-movies.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{8db14530-2dcf-46b6-8618-c41392ffd509}-watch-movies.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-movies.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Kabouter Wesley.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{eb59ea71-1519-44b2-a297-11fa19ea7fc0}-Kabouter Wesley.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Kabouter Wesley.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Kabouter Wesley.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{5363de9c-ee5a-4db5-9fcf-538e5e838263}-Kabouter Wesley.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Kabouter Wesley.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1550,6 +1508,76 @@
               <ZipFileName>Installer{CopyFile}\{6a02eef4-098e-4392-877c-ffad59ba3eb5}-tube+.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tube+.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\ABC iView.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d9ad18f2-a960-46e8-91ad-9597a63f8430}-ABC iView.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ABC iView.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\luckytv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4875a8c3-1eb7-481c-87be-e87cd9666e10}-luckytv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\luckytv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\SBS6 Gemist.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0da6344d-44a7-4eb2-b4f2-bfb02cfd9234}-SBS6 Gemist.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SBS6 Gemist.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TVLinks.cc.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{a22f0d74-dbbb-4e25-ab56-fbc7478e7504}-TVLinks.cc.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVLinks.cc.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Uitzending Gemist.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ea47145c-3a17-46d5-9e9a-bf32f3d8c11a}-Uitzending Gemist.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Uitzending Gemist.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\ABC iView.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2b536c94-769b-4fb8-b1e1-2073d148aaa9}-ABC iView.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ABC iView.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\luckytv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{04781930-2db8-4a18-923e-3c95d684d3b8}-luckytv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\luckytv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\SBS6 Gemist.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b660f84e-cd64-4b97-a933-86a727d30ea2}-SBS6 Gemist.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SBS6 Gemist.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\TVLinks.cc.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6200f679-aba5-4a0f-8252-3ffc613dc864}-TVLinks.cc.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVLinks.cc.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Uitzending Gemist.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0fc25c9f-5b52-4d35-b0fa-7d1d5d150b9f}-Uitzending Gemist.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Uitzending Gemist.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1622,7 +1650,7 @@
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.30.0.1\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.31.0.1\extension_settings.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2533,23 +2561,28 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>30</Minor>
+      <Minor>31</Minor>
       <Build>0</Build>
       <Revision>1</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>rtmp: fixed live streams, connection problems, swf hash calulation
-added Option to put Favorites and Downloads sites first
-reworked Codecs tab in Configuration to test playback
-added new info for videos: Airdate (GuiProperty: #OnlineVideos.aired)
-YouTube: fixed localized content no available, added "New Videos" in User's Subscribtions
-Downloads: refresh current downloading progress info while showing
-SiteManager: user can now report broken sites from within MediaPortal
-SiteManager: invoke AutomaticUpdate from button in hidden menu
-SiteManager: update all sites shown (filtered) from contextmenu</VersionDescription>
+    <VersionDescription>fixed: when all thumbs of displayed categories are the same switch to list layout
+fixed: for imageurls with invalid chars in it
+fixed: RSS feeds with items where the url ends with linebreaks caused Exception
+fixed: bug when saving sites xml with empty groups
+new feature: Playlist Playback without Playback Choices dialog (needs to be done per Site, implemented on YouTube)
+new feature: rtmp handshake type 9 now supported
+new feature: extended properties for a selected video in videos view (some added for YouTube)
+new feature: Hosters may be configured
+new feature: Youtube "Videos from this Uploader" in context menu
+new feature: context menu entries can now return a list of videos or categories that is shown
+new feature: support for trakt.tv (TVLinksccUtil, watch-series)
+new feature: Button in Default skins in Details View to call the trakt "Add to watchlist" feature for IMDB and iTunes sites
+new feature: searching can return a list of videos or a list of categories
+new feature: search/filter videos by entering a search string with the virtual keyboard (invoked from context menu)</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2011-06-02T11:00:00</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.31.0.1.mpe1</OnlineLocation>
+    <ReleaseDate>2011-08-02T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -3562,34 +3595,6 @@ SiteManager: update all sites shown (filtered) from contextmenu</VersionDescript
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Tvgemist\net5gemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{858c78ca-86d8-4c2d-930d-2e9d74e09858}-net5gemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\net5gemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Tvgemist\sbsgemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2c56e58e-0dbf-4354-a51b-016f7b2ab154}-sbsgemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\sbsgemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Tvgemist\uitzendinggemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2bab97aa-ca77-406f-bdcb-b07274417f5d}-uitzendinggemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\uitzendinggemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Tvgemist\veronicagemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{3dee47a1-d900-4d02-84b4-a4c73a6c63d4}-veronicagemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tvgemist\veronicagemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\ctTV.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e61a4ded-68da-4011-8eee-55a376e61b34}-ctTV.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctTV.png</DestinationFilename>
@@ -3810,20 +3815,6 @@ SiteManager: update all sites shown (filtered) from contextmenu</VersionDescript
         <LocalFileName>..\SiteImages\Banners\watch-movies.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{8db14530-2dcf-46b6-8618-c41392ffd509}-watch-movies.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-movies.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Kabouter Wesley.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{eb59ea71-1519-44b2-a297-11fa19ea7fc0}-Kabouter Wesley.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Kabouter Wesley.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Kabouter Wesley.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{5363de9c-ee5a-4db5-9fcf-538e5e838263}-Kabouter Wesley.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Kabouter Wesley.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4126,6 +4117,76 @@ SiteManager: update all sites shown (filtered) from contextmenu</VersionDescript
         <ZipFileName>Installer{CopyFile}\{6a02eef4-098e-4392-877c-ffad59ba3eb5}-tube+.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\tube+.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\ABC iView.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d9ad18f2-a960-46e8-91ad-9597a63f8430}-ABC iView.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ABC iView.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\luckytv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4875a8c3-1eb7-481c-87be-e87cd9666e10}-luckytv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\luckytv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\SBS6 Gemist.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0da6344d-44a7-4eb2-b4f2-bfb02cfd9234}-SBS6 Gemist.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SBS6 Gemist.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TVLinks.cc.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{a22f0d74-dbbb-4e25-ab56-fbc7478e7504}-TVLinks.cc.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVLinks.cc.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Uitzending Gemist.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ea47145c-3a17-46d5-9e9a-bf32f3d8c11a}-Uitzending Gemist.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Uitzending Gemist.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\ABC iView.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2b536c94-769b-4fb8-b1e1-2073d148aaa9}-ABC iView.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ABC iView.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\luckytv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{04781930-2db8-4a18-923e-3c95d684d3b8}-luckytv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\luckytv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\SBS6 Gemist.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b660f84e-cd64-4b97-a933-86a727d30ea2}-SBS6 Gemist.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SBS6 Gemist.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\TVLinks.cc.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6200f679-aba5-4a0f-8252-3ffc613dc864}-TVLinks.cc.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVLinks.cc.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Uitzending Gemist.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0fc25c9f-5b52-4d35-b0fa-7d1d5d150b9f}-Uitzending Gemist.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Uitzending Gemist.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -4180,7 +4241,7 @@ SiteManager: update all sites shown (filtered) from contextmenu</VersionDescript
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.30.0.1\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.31.0.1\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4592,7 +4653,7 @@ SiteManager: update all sites shown (filtered) from contextmenu</VersionDescript
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f188c762-e751-4d6d-807c-6651d983bd18}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{5c046df1-9e8b-4f95-aac0-973a92b1f906}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
