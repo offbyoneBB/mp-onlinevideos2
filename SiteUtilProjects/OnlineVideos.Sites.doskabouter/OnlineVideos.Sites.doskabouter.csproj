@@ -88,6 +88,7 @@
     <Compile Include="Hoster\Xtream.cs" />
     <Compile Include="Hoster\zShare.cs" />
     <Compile Include="LuckyTVUtil.cs" />
+    <Compile Include="NickelodeonNLUtil.cs" />
     <Compile Include="RtmpUtil.cs" />
     <Compile Include="SBS6GemistUtil.cs" />
     <Compile Include="TouTvUtil.cs" />
