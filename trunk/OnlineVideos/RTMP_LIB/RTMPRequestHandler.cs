@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Specialized;
 using System.IO;
 using System.Threading;
@@ -100,11 +101,14 @@ namespace RTMP_LIB
         public void HandleRequest(string url, HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
         {
             Thread.CurrentThread.Name = "RTMPProxy";
-            Logger.Log("Request");
             RTMP rtmp = null;
             try
             {
                 NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(new Uri(url).Query);
+
+                
+                Logger.Log("RTMP Request Parameters:");
+                foreach (var param in paramsHash.AllKeys) Logger.Log(string.Format("{0}={1}", param, paramsHash[param]));
 
                 Link link = new Link();
                 if (paramsHash["rtmpurl"] != null) link = Link.FromRtmpUrl(new Uri(paramsHash["rtmpurl"]));
