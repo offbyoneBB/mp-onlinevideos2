@@ -55,7 +55,7 @@ namespace OnlineVideos.Sites
                     SouthParkCountry spc = SouthParkCountry.Unknown;
                     if (video.VideoUrl.Contains("southparkstudios.com"))
                         spc = SouthParkCountry.World;
-                    else if (video.VideoUrl.Contains("southparkstudios.de"))
+                    else if (video.VideoUrl.ToLower().Contains(".de") || video.VideoUrl.ToLower().Contains("de."))
                         spc = SouthParkCountry.De;
                     else if (video.VideoUrl.Contains("southparkstudios.nl"))
                         spc = SouthParkCountry.Nl;

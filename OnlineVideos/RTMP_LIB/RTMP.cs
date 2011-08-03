@@ -1768,8 +1768,11 @@ namespace RTMP_LIB
 
         bool HandShake(bool FP9HandShake)
         {
-            int offalg = 0;
+            Random rand = new Random(0); // use the same seed everytime to have the same random number everytime (as rtmpdump)
 
+            int offalg = 0;
+            int dhposClient = 0;
+            int digestPosClient = 0;
             bool encrypted = Link.protocol == Protocol.RTMPE || Link.protocol == Protocol.RTMPTE;
 
             if (encrypted && !FP9HandShake)
@@ -1818,10 +1821,8 @@ namespace RTMP_LIB
             }
 
             // generate random data
-            Random rand = new Random();
-            for (int i = 9; i <= RTMP_SIG_SIZE; i++) clientsig[i] = (byte)rand.Next(0, 256);
+            for (int i = 9; i < RTMP_SIG_SIZE; i += 4) Array.Copy(BitConverter.GetBytes(rand.Next(ushort.MaxValue)), 0, clientsig, i, 4);
 
-            int dhposClient = 0;
             byte[] keyIn = null;
             byte[] keyOut = null;
 
@@ -1865,7 +1866,7 @@ namespace RTMP_LIB
             // set handshake digest
             if (FP9HandShake)
             {
-                int digestPosClient = (int)GetDigestOffset(offalg, clientsig, 1, RTMP_SIG_SIZE); // maybe reuse this value in verification
+                digestPosClient = (int)GetDigestOffset(offalg, clientsig, 1, RTMP_SIG_SIZE); // maybe reuse this value in verification
                 Logger.Log(string.Format("Client digest offset: {0}", digestPosClient));
 
                 CalculateDigest(digestPosClient, clientsig, 1, GenuineFPKey, 30, clientsig, 1 + digestPosClient);
@@ -1966,7 +1967,9 @@ namespace RTMP_LIB
                 }
 
                 clientResp = new byte[RTMP_SIG_SIZE];
-                for (int i = 0; i < RTMP_SIG_SIZE; i++) clientResp[i] = (byte)(rand.Next(0, 256));
+
+                // generate random data
+                for (int i = 0; i < RTMP_SIG_SIZE; i += 4) Array.Copy(BitConverter.GetBytes(rand.Next(ushort.MaxValue)), 0, clientResp, i, 4);
 
                 // calculate response now
                 byte[] signatureResp = new byte[SHA256_DIGEST_LENGTH];
@@ -2017,8 +2020,6 @@ namespace RTMP_LIB
                 }
 
                 // verify server response
-                int digestPosClient = (int)GetDigestOffset(offalg, clientsig, 1, RTMP_SIG_SIZE);
-
                 byte[] signature = new byte[SHA256_DIGEST_LENGTH];
                 byte[] digest = new byte[SHA256_DIGEST_LENGTH];
 
