@@ -276,7 +276,7 @@ namespace OnlineVideos.MediaPortal1
                 // handle a site's context menu
                 OnlineVideosGuiListItem selectedItem = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
                 if (selectedItem == null || selectedItem.Item == null) return; // only context menu for items with an object backing them
-                
+
                 Sites.SiteUtilBase aSite = selectedItem.Item as Sites.SiteUtilBase;
                 if (aSite != null)
                 {
@@ -335,7 +335,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 // handle a video's context menu
                 int numItemsShown = (CurrentState == State.videos ? GUI_facadeView.Count : GUI_infoList.Count) - 1; // first item is always ".."
-                OnlineVideosGuiListItem selectedItem = CurrentState == State.videos ? 
+                OnlineVideosGuiListItem selectedItem = CurrentState == State.videos ?
                     GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem : GUI_infoList.SelectedListItem as OnlineVideosGuiListItem;
                 if (selectedItem == null || selectedItem.Item == null) return; // only context menu for items with an object backing them
 
@@ -463,6 +463,18 @@ namespace OnlineVideos.MediaPortal1
         {
             switch (action.wID)
             {
+                case Action.ActionType.ACTION_RECORD:
+                    {
+                        if (CurrentState == State.videos)
+                        {
+                            OnlineVideosGuiListItem selectedItem = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
+
+                            VideoInfo aVideo = selectedItem.Item as VideoInfo;
+                            if (aVideo != null)
+                                SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Util = selectedSite } });
+                        }
+                        break;
+                    }
                 case Action.ActionType.ACTION_STOP:
                     if (BufferingPlayerFactory != null)
                     {
@@ -810,7 +822,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     // showing groups, but groups are disabled -> show sites
                     if (CurrentState == State.groups) CurrentState = State.sites;
-                    selectedSitesGroup = null;                    
+                    selectedSitesGroup = null;
                 }
 
                 // reset the LoadParameterInfo
@@ -860,7 +872,7 @@ namespace OnlineVideos.MediaPortal1
         private void DoFirstLoad_Step1()
         {
             // add a special reversed proxy handler for rtmp
-            ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); 
+            ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance);
 
             // replace g_player's ShowFullScreenWindowVideo
             g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowHandler;
@@ -947,11 +959,11 @@ namespace OnlineVideos.MediaPortal1
                             return dlgPrgrs.ShouldRenderLayer();
                         });
                     if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, Translation.Done); dlgPrgrs.Close(); }
-                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => 
+                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) =>
                     {
                         PluginConfiguration.Instance.lastFirstRun = DateTime.Now;
-                        DoPageLoad(); 
-                        return 0; 
+                        DoPageLoad();
+                        return 0;
                     }, 0, 0, null);
                 }) { Name = "OnlineVideosThumbnail", IsBackground = true }.Start();
                 return;
@@ -1019,8 +1031,8 @@ namespace OnlineVideos.MediaPortal1
                 foreach (string site in sg.Sites)
                     if (!groupedSites.Contains(site)) groupedSites.Add(site);
             SitesGroup othersGroup = new SitesGroup() { Name = Translation.Others };
-            foreach (string site in OnlineVideoSettings.Instance.SiteUtilsList.Keys) 
-                if (!groupedSites.Contains(site) && site != Translation.Favourites && site != Translation.DownloadedVideos) 
+            foreach (string site in OnlineVideoSettings.Instance.SiteUtilsList.Keys)
+                if (!groupedSites.Contains(site) && site != Translation.Favourites && site != Translation.DownloadedVideos)
                     othersGroup.Sites.Add(site);
             if (othersGroup.Sites.Count > 0)
             {
@@ -1033,7 +1045,7 @@ namespace OnlineVideos.MediaPortal1
 
             // add Favorites and Downloads Site as last two Groups (if they are available)
             if (!OnlineVideoSettings.Instance.FavoritesFirst) AddFavoritesAndDownloadsSitesToFacade();
-            
+
             CurrentState = State.groups;
             UpdateViewState();
         }
@@ -1826,7 +1838,7 @@ namespace OnlineVideos.MediaPortal1
             double percent = g_Player.CurrentPosition > 0 ? g_Player.Duration / g_Player.CurrentPosition : 0; // prevent div by 0 ex
             if (TrackVideoPlayback != null && currentPlayingItem != null && currentPlayingItem.Util != null && currentPlayingItem.Video != null)
             {
-                new System.Threading.Thread((item) => 
+                new System.Threading.Thread((item) =>
                 {
                     var myItem = item as PlayListItem;
                     ITrackingInfo info = myItem.Util.GetTrackingInfo(myItem.Video);
@@ -2118,7 +2130,7 @@ namespace OnlineVideos.MediaPortal1
             foreach (VideoInfo video in loVideoList)
             {
                 // when not in details view of a site with details view only include videos that don't have details
-                if (currentState != State.details && SelectedSite is IChoice && video.HasDetails) continue; 
+                if (currentState != State.details && SelectedSite is IChoice && video.HasDetails) continue;
                 currentPlaylist.Add(new Player.PlayListItem(video.Title, null)
                 {
                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
@@ -2277,9 +2289,9 @@ namespace OnlineVideos.MediaPortal1
             {
                 saveItems.CurrentItem.LocalFile = string.Format(@"{0}\{1} - {2}#{3}{4}",
                     System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
-                    System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile), 
-                    (saveItems.DownloadItems.IndexOf(saveItems.CurrentItem) + 1).ToString().PadLeft((saveItems.DownloadItems.Count).ToString().Length, '0'), 
-                    (saveItems.DownloadItems.Count).ToString(), 
+                    System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile),
+                    (saveItems.DownloadItems.IndexOf(saveItems.CurrentItem) + 1).ToString().PadLeft((saveItems.DownloadItems.Count).ToString().Length, '0'),
+                    (saveItems.DownloadItems.Count).ToString(),
                     System.IO.Path.GetExtension(saveItems.CurrentItem.LocalFile));
             }
 
@@ -2705,7 +2717,7 @@ namespace OnlineVideos.MediaPortal1
             // with just one option set, return that options url
             if (videoInfo.PlaybackOptions.Count == 1)
             {
-                defaultUrl= videoInfo.PlaybackOptions.First().Key;
+                defaultUrl = videoInfo.PlaybackOptions.First().Key;
             }
             else
             {
@@ -2792,7 +2804,7 @@ namespace OnlineVideos.MediaPortal1
                     GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title + (string.IsNullOrEmpty(quality) ? "" : quality));
                 if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
                 if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
-                
+
                 if (!string.IsNullOrEmpty(video.Airdate)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Airdate);
                 else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", VideoInfo.GetDuration(video.Length));
 
@@ -2801,7 +2813,7 @@ namespace OnlineVideos.MediaPortal1
             }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start(playItem);
 
             TrackPlayback();
-        }        
+        }
 
         /// <summary>
         /// Processes extended properties which might be available
