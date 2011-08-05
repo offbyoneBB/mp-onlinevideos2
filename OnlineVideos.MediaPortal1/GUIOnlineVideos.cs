@@ -883,6 +883,9 @@ namespace OnlineVideos.MediaPortal1
 
         private void DoFirstLoad_Step1()
         {
+            // The default connection limit is 2 in .net on most platforms! This means downloading two file will block all other WebRequests.
+            System.Net.ServicePointManager.DefaultConnectionLimit = 100;
+
             // add a special reversed proxy handler for rtmp
             ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance);
 
