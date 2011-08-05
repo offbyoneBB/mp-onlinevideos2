@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
@@ -11,7 +12,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for dynamic categories. Group names: 'url', 'title', 'thumb', 'desc'.")]
         string dynamicCategoriesRegEx = @"<img\sclass=""az_thumb""\ssrc=""(?<thumb>[^""]+)""\swidth=""\d*""\sheight=""\d*""\salt=""(?<alt>[^""]+)""\s/></a><a\sclass=""sendung_name""\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a><p\sclass=""az_description"">(?<desc>[^<]+)</p>";
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the dynamicCategoriesRegEx.")]
-        string dynamicCategoryUrlFormatString = "http://videoportal.sf.tv/rss/{0}";
+        string dynamicCategoryUrlFormatString = "http://videoportal.sf.tv/rss{0}";
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the video 'title' and 'url' from a category rss page.")]
         string videoItemRegex = @"a\shref=""/video\?id=(?<url>[^;]+);DCSext.zugang=videoportal_sendungsuebersicht"">(?<title>[^<]+)</a>";
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the video url of an item that was found in the rss.")]
@@ -46,7 +47,7 @@ namespace OnlineVideos.Sites
                 {
                     RssLink cat = new RssLink();
                     cat.Name = m.Groups["title"].Value;
-                    cat.Url = string.Format(dynamicCategoryUrlFormatString, m.Groups["url"].Value);
+                    cat.Url = m.Groups["url"].Value;
                     cat.Thumb = m.Groups["thumb"].Value.Replace("?width=80", "");
                     cat.Description = m.Groups["desc"].Value;
 
@@ -60,6 +61,8 @@ namespace OnlineVideos.Sites
         
         public override String getUrl(VideoInfo video)
         {
+            if (video.VideoUrl.StartsWith("http")) return video.VideoUrl;
+
             if (video.PlaybackOptions == null)
             {
                 string data = GetWebData(string.Format(videoUrlFormatString, video.VideoUrl));
@@ -92,9 +95,7 @@ namespace OnlineVideos.Sites
             }
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
-                var enumer = video.PlaybackOptions.GetEnumerator();
-                enumer.MoveNext();
-                return enumer.Current.Value;
+                return video.PlaybackOptions.First().Value;
             }
             return "";
         }
@@ -103,11 +104,31 @@ namespace OnlineVideos.Sites
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
 
-            foreach (RssItem rssItem in GetWebData<RssDocument>(((RssLink)category).Url).Channel.Items)
+            foreach (RssItem rssItem in GetWebData<RssDocument>(string.Format(dynamicCategoryUrlFormatString, ((RssLink)category).Url)).Channel.Items)
             {
                 Match m = regEx_VideoItem.Match(rssItem.Description);
                 if (m.Success) videoList.Add(new VideoInfo() { Title = rssItem.Title, VideoUrl = m.Groups["url"].Value });
             }
+
+            // try podcast if no vidoes found in rss
+            if (videoList.Count == 0)
+            {
+                try
+                {
+                    foreach (RssItem rssItem in GetWebData<RssDocument>("http://feeds.sf.tv/podcast/" + category.Name.ToLower().Replace(" ", "").Replace("-", "").Replace("ö","oe").Replace("ü","ue").Replace("ä","ae"), forceUTF8: true).Channel.Items)
+                    {
+                        VideoInfo video = VideoInfo.FromRssItem(rssItem, false, new Predicate<string>(isPossibleVideo));
+                        // only if a video url was set, add this Video to the list
+                        if (!string.IsNullOrEmpty(video.VideoUrl))
+                        {
+                            //video.VideoUrl = System.Web.HttpUtility.UrlDecode(video.VideoUrl);
+                            videoList.Add(video);
+                        }
+                    }
+                }
+                catch { }
+            }
+
             return videoList;
         }
     }
