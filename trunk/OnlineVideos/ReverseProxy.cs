@@ -37,7 +37,7 @@ namespace OnlineVideos {
             _serverPort = getFirstAvailablePort();
             _handlers = new List<IProxyHandler>();
             _server = new HTTPServer(new RequestHandlerFactory(), _serverPort);
-            _server.OnServerException += new HTTPServer.ServerCaughtException(delegate(Exception ex) { Log.Error(ex.Message); });
+            _server.OnServerException += new HTTPServer.ServerCaughtException(delegate(Exception ex) { Log.Warn(ex.ToString()); });
             _server.Start();
         }
 
