@@ -175,7 +175,7 @@ namespace OnlineVideos.Sites
                 else
                 {
                     // choose a high quality from options (highest below the HD formats (37 22))
-                    var quality = video.PlaybackOptions.Last(q => !q.Key.Contains("(37)") && !q.Key.Contains("(22)"));
+                    var quality = video.PlaybackOptions.Last(q => !q.Key.Contains("1920") && !q.Key.Contains("1280"));
                     result.Add(quality.Value);
                     if (inPlaylist) video.PlaybackOptions = null;
                 }
