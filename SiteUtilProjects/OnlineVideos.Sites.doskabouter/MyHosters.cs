@@ -26,9 +26,11 @@ namespace OnlineVideos.Hoster
             if (q < 0) q = s.Length;
             s = s.Substring(p + 5, q - p - 5);
             string rss = SiteUtilBase.GetWebData(s);
-            p = rss.IndexOf(@"enclosure url="""); p += 15;
-            q = rss.IndexOf('"', p);
-            return rss.Substring(p, q - p);
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(rss);
+            var urlAttribute = xmlDoc.SelectSingleNode("//enclosure/@url");
+            if (urlAttribute != null) return urlAttribute.Value;
+            else return "";
         }
     }
 
