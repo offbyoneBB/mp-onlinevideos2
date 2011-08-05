@@ -468,10 +468,22 @@ namespace OnlineVideos.MediaPortal1
                         if (CurrentState == State.videos)
                         {
                             OnlineVideosGuiListItem selectedItem = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
-
-                            VideoInfo aVideo = selectedItem.Item as VideoInfo;
-                            if (aVideo != null)
-                                SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Util = selectedSite } });
+                            if (selectedItem != null)
+                            {
+                                VideoInfo aVideo = selectedItem.Item as VideoInfo;
+                                if (aVideo != null && !(SelectedSite is IChoice && aVideo.HasDetails))
+                                    SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Util = selectedSite } });
+                            }
+                        }
+                        else if (CurrentState == State.details)
+                        {
+                            OnlineVideosGuiListItem selectedItem = GUI_infoList.SelectedListItem as OnlineVideosGuiListItem;
+                            if (selectedItem != null)
+                            {
+                                VideoInfo aVideo = selectedItem.Item as VideoInfo;
+                                if (aVideo != null)
+                                    SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Util = selectedSite } });
+                            }
                         }
                         break;
                     }
