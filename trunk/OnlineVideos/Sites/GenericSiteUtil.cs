@@ -152,6 +152,7 @@ namespace OnlineVideos.Sites
                         m = m.NextMatch();
                     }
                     // discovery finished, copy them to the actual list -> prevents double entries if error occurs in the middle of adding
+                    if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
                     foreach (Category cat in dynamicCategories) Settings.Categories.Add(cat);
                     Settings.DynamicCategoriesDiscovered = dynamicCategories.Count > 0; // only set to true if actually discovered (forces re-discovery until found)
                     return dynamicCategories.Count; // return the number of discovered categories
@@ -399,25 +400,47 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            if (resolveHoster == HosterResolving.FromUrl && (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0))
+            if (resolveHoster == HosterResolving.FromUrl)
             {
-                Uri uri = new Uri(resultUrl);
-                foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                    if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
+                {
+                    Uri uri = new Uri(resultUrl);
+                    foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
+                        if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                        {
+                            Dictionary<string, string> options = hosterUtil.getPlaybackOptions(resultUrl);
+                            if (options != null && options.Count > 0)
+                            {
+                                if (options.Count > 1) video.PlaybackOptions = options;
+                                resultUrl = options.Last().Value;
+                                break;
+                            }
+                            else
+                            {
+                                resultUrl = String.Empty;
+                                break;
+                            }
+                        }
+                }
+                else
+                {
+                    // resolve all PlaybackOptions
+                    List<string> valueList = video.PlaybackOptions.Values.ToList();
+                    video.PlaybackOptions.Clear();
+                    foreach (string value in valueList)
                     {
-                        Dictionary<string, string> options = hosterUtil.getPlaybackOptions(resultUrl);
-                        if (options != null && options.Count > 0)
-                        {
-                            if (options.Count > 1) video.PlaybackOptions = options;
-                            resultUrl = options.Last().Value;
-                            break;
-                        }
-                        else
-                        {
-                            resultUrl = String.Empty;
-                            break;
-                        }
+                        Uri uri = new Uri(value);
+                        foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
+                            if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                            {
+                                Dictionary<string, string> options = hosterUtil.getPlaybackOptions(value);
+                                if (options != null && options.Count > 0)
+                                    foreach (var option in options)
+                                        video.PlaybackOptions.Add(string.Format("{0} - {1}",video.PlaybackOptions.Count, option.Key), option.Value);
+                            }
                     }
+
+                }
             }
             else if (resolveHoster == HosterResolving.ByRequest)
             {
