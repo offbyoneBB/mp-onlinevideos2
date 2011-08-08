@@ -692,6 +692,8 @@ namespace OnlineVideos.MediaPortal1
 
                 if (!CheckOnlineVideosVersion()) return;
 
+                Log.Instance.Debug("Running AutoUpdate");
+
                 if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.RetrievingRemoteSites);
 
                 GetRemoteOverviews();
