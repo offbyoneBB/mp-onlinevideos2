@@ -1508,28 +1508,31 @@ namespace OnlineVideos.MediaPortal1
 
         private void SetSearchResultItemsToFacade(List<ISearchResultItem> resultList, VideosMode mode = VideosMode.Search, string categoryName = "")
         {
-            if (resultList[0] is VideoInfo)
+            if (resultList != null && resultList.Count > 0)
             {
-                SetVideosToFacade(resultList.ConvertAll(i => i as VideoInfo), mode);
-                // if only 1 result found and the current site has a details view for this video - open it right away
-                if (SelectedSite is IChoice && resultList.Count == 1 && (resultList[0] as VideoInfo).HasDetails)
+                if (resultList[0] is VideoInfo)
                 {
-                    // actually select this item, so fanart can be shown in this and the coming screen! (fanart handler inspects the #selecteditem proeprty of teh facade)
-                    GUI_facadeView.SelectedListItemIndex = 1;
-                    selectedVideo = (GUI_facadeView[1] as OnlineVideosGuiListItem).Item as VideoInfo;
-                    DisplayDetails();
+                    SetVideosToFacade(resultList.ConvertAll(i => i as VideoInfo), mode);
+                    // if only 1 result found and the current site has a details view for this video - open it right away
+                    if (SelectedSite is IChoice && resultList.Count == 1 && (resultList[0] as VideoInfo).HasDetails)
+                    {
+                        // actually select this item, so fanart can be shown in this and the coming screen! (fanart handler inspects the #selecteditem proeprty of teh facade)
+                        GUI_facadeView.SelectedListItemIndex = 1;
+                        selectedVideo = (GUI_facadeView[1] as OnlineVideosGuiListItem).Item as VideoInfo;
+                        DisplayDetails();
+                    }
                 }
-            }
-            else
-            {
-                Category searchCategory = new Category()
+                else
                 {
-                    Name = categoryName,
-                    HasSubCategories = true,
-                    SubCategoriesDiscovered = true,
-                };
-                searchCategory.SubCategories = resultList.ConvertAll(i => { (i as Category).ParentCategory = searchCategory; return i as Category; });
-                SetCategoriesToFacade(searchCategory, searchCategory.SubCategories, true);
+                    Category searchCategory = new Category()
+                    {
+                        Name = categoryName,
+                        HasSubCategories = true,
+                        SubCategoriesDiscovered = true,
+                    };
+                    searchCategory.SubCategories = resultList.ConvertAll(i => { (i as Category).ParentCategory = searchCategory; return i as Category; });
+                    SetCategoriesToFacade(searchCategory, searchCategory.SubCategories, true);
+                }
             }
         }
 
