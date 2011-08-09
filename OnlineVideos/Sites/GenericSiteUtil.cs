@@ -87,6 +87,8 @@ namespace OnlineVideos.Sites
         protected string videoAirDateXml;
         [Category("OnlineVideosConfiguration"), Description("Some webservers don't send a header that tells the content encoding. Use this bool to enforce UTF-8")]
         protected bool forceUTF8Encoding;
+        [Category("OnlineVideosConfiguration"), Description("Set an override encoding for all data retrieved from the webserver and send in searches.")]
+        protected string overrideEncoding;
         [Category("OnlineVideosConfiguration"), Description("Some webservers sent headers that are considered unsafe by the .Net Framework. Use this bool to allow them.")]
         protected bool allowUnsafeHeaders;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'thumb' match retrieved from the videoThumbXml or 'ImageUrl' of the videoListRegEx.")]
@@ -99,6 +101,7 @@ namespace OnlineVideos.Sites
         protected bool getRedirectedFileUrl = false;
 
         protected Regex regEx_dynamicCategories, regEx_dynamicSubCategories, regEx_VideoList, regEx_NextPage, regEx_PrevPage, regEx_VideoUrl, regEx_PlaylistUrl, regEx_FileUrl;
+        protected System.Text.Encoding encodingOverride;
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -114,6 +117,13 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(videoUrlRegEx)) regEx_VideoUrl = new Regex(videoUrlRegEx, defaultRegexOptions);
             if (!string.IsNullOrEmpty(playlistUrlRegEx)) regEx_PlaylistUrl = new Regex(playlistUrlRegEx, defaultRegexOptions);
             if (!string.IsNullOrEmpty(fileUrlRegEx)) regEx_FileUrl = new Regex(fileUrlRegEx, defaultRegexOptions);
+
+            if (!string.IsNullOrEmpty(overrideEncoding))
+            {
+                try { encodingOverride = System.Text.Encoding.GetEncoding(overrideEncoding); }
+                catch (Exception ex) { Log.Warn("{0} - could not create encoding {1} : {2}", siteSettings.Name, encodingOverride, ex.Message); }
+                
+            }
         }
 
         public override int DiscoverDynamicCategories()
@@ -131,7 +141,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                string data = GetWebData(baseUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+                string data = GetWebData(baseUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 if (!string.IsNullOrEmpty(data))
                 {
                     List<Category> dynamicCategories = new List<Category>(); // put all new discovered Categories in a separate list
@@ -171,7 +181,7 @@ namespace OnlineVideos.Sites
             if (parentCategory is RssLink && regEx_dynamicSubCategories != null)
             {
                 if (data == null)
-                    data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+                    data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 if (!string.IsNullOrEmpty(data))
                 {
                     parentCategory.SubCategories = new List<Category>();
@@ -270,7 +280,7 @@ namespace OnlineVideos.Sites
             // 3.a extra step to get a playlist file if needed
             if (regEx_PlaylistUrl != null)
             {
-                string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+                string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 Match matchPlaylistUrl = regEx_PlaylistUrl.Match(dataPage);
                 if (matchPlaylistUrl.Success)
                     return string.Format(playlistUrlFormatString, HttpUtility.UrlDecode(matchPlaylistUrl.Groups["url"].Value));
@@ -284,9 +294,9 @@ namespace OnlineVideos.Sites
         {
             string dataPage;
             if (String.IsNullOrEmpty(fileUrlPostString))
-                dataPage = GetWebData(playlistUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+                dataPage = GetWebData(playlistUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
             else
-                dataPage = GetWebDataFromPost(playlistUrl, fileUrlPostString, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+                dataPage = GetWebDataFromPost(playlistUrl, fileUrlPostString, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             Match matchFileUrl = regEx_FileUrl.Match(dataPage);
@@ -436,7 +446,7 @@ namespace OnlineVideos.Sites
                                 Dictionary<string, string> options = hosterUtil.getPlaybackOptions(value);
                                 if (options != null && options.Count > 0)
                                     foreach (var option in options)
-                                        video.PlaybackOptions.Add(string.Format("{0} - {1}",video.PlaybackOptions.Count, option.Key), option.Value);
+                                        video.PlaybackOptions.Add(string.Format("{0} - {1}",video.PlaybackOptions.Count + 1, option.Key), option.Value);
                             }
                     }
 
@@ -555,7 +565,7 @@ namespace OnlineVideos.Sites
         protected List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
-            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
             if (data.Length > 0)
             {
                 if (regEx_VideoList != null)
@@ -737,13 +747,16 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> Search(string query)
         {
+            // if an override Encoding was specified, we need to UrlEncode the search string with that encoding
+            if (encodingOverride != null) query = HttpUtility.UrlEncode(encodingOverride.GetBytes(query));
+
             if (string.IsNullOrEmpty(searchPostString))
             {
                 return Parse(string.Format(searchUrl, query), null);
             }
             else
             {
-                return Parse(searchUrl, GetWebDataFromPost(searchUrl, string.Format(searchPostString, query), allowUnsafeHeader: allowUnsafeHeaders));
+                return Parse(searchUrl, GetWebDataFromPost(searchUrl, string.Format(searchPostString, query), GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride));
             }
         }
 
