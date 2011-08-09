@@ -424,10 +424,11 @@ namespace OnlineVideos.Sites
         /// <param name="forceUTF8">Some server are not returning a valid CharacterSet on the response, set to true to force reading the response content as UTF8.</param>
         /// <param name="allowUnsafeHeader">Some server return headers that are treated as unsafe by .net. In order to retrieve that data set this to true.</param>
         /// <param name="userAgent">You can provide a custom UserAgent for the request, otherwise the default one (<see cref="OnlineVideoSettings.UserAgent"/>) is used.</param>
+        /// <param name="encoding">Set an <see cref="Encoding"/> for reading the response data.</param>
         /// <returns>The data returned by a <see cref="HttpWebResponse"/> converted to the specified type.</returns>
-        public static T GetWebData<T>(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null)
+        public static T GetWebData<T>(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
         {
-            string webData = GetWebData(url, cc, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent);
+            string webData = GetWebData(url, cc, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding);
             if (typeof(T) == typeof(string))
             {
                 return (T)(object)webData;
@@ -459,8 +460,9 @@ namespace OnlineVideos.Sites
             return default(T);
         }
 
-        public static string GetWebData(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null)
+        public static string GetWebData(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
         {
+            HttpWebResponse response = null;
             try
             {
                 Log.Debug("get webdata from {0}", url);
@@ -481,7 +483,6 @@ namespace OnlineVideos.Sites
                 if (!String.IsNullOrEmpty(referer)) request.Referer = referer; // set referer if given
                 if (cc != null) request.CookieContainer = cc; // set cookies if given
                 if (proxy != null) request.Proxy = proxy; // send the request over a proxy if given
-                HttpWebResponse response;
                 try
                 {
                     response = (HttpWebResponse)request.GetResponse();
@@ -498,9 +499,17 @@ namespace OnlineVideos.Sites
                     responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
                 else
                     responseStream = response.GetResponseStream();
-                Encoding encoding = Encoding.UTF8;
-                if (!forceUTF8 && !String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
-                using (StreamReader reader = new StreamReader(responseStream, encoding, true))
+
+                // UTF8 is the default encoding as fallback
+                Encoding responseEncoding = Encoding.UTF8;
+                // try to get the response encoding if one was specified and neither forceUTF8 nor encoding were set as parameters
+                if (!forceUTF8 && encoding == null && !String.IsNullOrEmpty(response.CharacterSet.Trim())) responseEncoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
+                // the caller did specify a forced encoding
+                if (encoding != null) responseEncoding = encoding;
+                // the caller wants to force UTF8
+                if (forceUTF8) responseEncoding = Encoding.UTF8;
+
+                using (StreamReader reader = new StreamReader(responseStream, responseEncoding, true))
                 {
                     string str = reader.ReadToEnd().Trim();
                     // add to cache if HTTP Status was 200 and we got more than 500 bytes (might just be an errorpage otherwise)
@@ -510,12 +519,13 @@ namespace OnlineVideos.Sites
             }
             finally
             {
+                if (response != null) ((IDisposable)response).Dispose();
                 // disable unsafe header parsing if it was enabled
                 if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(false);
             }
         }
 
-        public static string GetWebDataFromPost(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null)
+        public static string GetWebDataFromPost(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
         {
             try
             {
@@ -523,7 +533,7 @@ namespace OnlineVideos.Sites
 
                 // request the data
                 if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(true);
-                byte[] data = Encoding.UTF8.GetBytes(postData);
+                byte[] data = encoding != null ? encoding.GetBytes(postData) : Encoding.UTF8.GetBytes(postData);
 
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return "";
@@ -533,7 +543,6 @@ namespace OnlineVideos.Sites
                     request.UserAgent = userAgent;
                 else
                     request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-                request.Timeout = 15000;
                 request.ContentLength = data.Length;
                 request.ProtocolVersion = HttpVersion.Version10;
                 request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
@@ -554,12 +563,20 @@ namespace OnlineVideos.Sites
                     else
                         responseStream = response.GetResponseStream();
 
-                    Encoding encoding = Encoding.UTF8;
-                    if (!forceUTF8 && !String.IsNullOrEmpty(response.CharacterSet)) encoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
+                    // UTF8 is the default encoding as fallback
+                    Encoding responseEncoding = Encoding.UTF8;
+                    // try to get the response encoding if one was specified and neither forceUTF8 nor encoding were set as parameters
+                    if (!forceUTF8 && encoding == null && !String.IsNullOrEmpty(response.CharacterSet.Trim())) responseEncoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
+                    // the caller did specify a forced encoding
+                    if (encoding != null) responseEncoding = encoding;
+                    // the caller wants to force UTF8
+                    if (forceUTF8) responseEncoding = Encoding.UTF8;
 
-                    StreamReader reader = new StreamReader(responseStream, encoding, true);
-                    string str = reader.ReadToEnd();
-                    return str.Trim();
+                    using (StreamReader reader = new StreamReader(responseStream, responseEncoding, true))
+                    {
+                        string str = reader.ReadToEnd();
+                        return str.Trim();
+                    }
                 }
 
             }
