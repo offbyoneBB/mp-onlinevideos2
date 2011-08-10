@@ -205,7 +205,7 @@ namespace OnlineVideos.Sites
                     video.VideoUrl = m.Groups["VideoUrl"].Value.Replace("..", baseUrl);
                     Match m2 = Regex.Match(video.VideoUrl, @"-(?<id>\d+).html");
 
-                    if (m2.Success) video.VideoUrl = baseUrl + "/getlinks.php?q=" + m2.Groups["id"].Value;
+                    if (m2.Success) video.VideoUrl = baseUrl + "/getlinks.php?q=" + m2.Groups["id"].Value + "&domain=all";
 
                     try
                     {
