@@ -61,6 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ABCiViewUtil.cs" />
+    <Compile Include="AMF3.cs" />
+    <Compile Include="BrightCoveUtil.cs" />
     <Compile Include="CBCUtil.cs" />
     <Compile Include="EuroSportUtil.cs" />
     <Compile Include="Hoster\Archiv.cs" />

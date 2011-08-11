@@ -1281,6 +1281,20 @@
         <Category xsi:type="RssLink" name="Ohjelmat A-Ö">http://areena.yle.fi/ohjelmat</Category>
       </Categories>
     </Site>
+    <Site name="ZTélé" util="BrightCove" agecheck="false" enabled="true" lang="fr">
+      <Description>Ztélé est une chaîne de télévision spécialisée dans les nouvelles technologies, la science, le multimédia, les jeux vidéo et les séries de science-fiction. Le site présente également la grille horaire des émissions, des blogues technos, des capsules vidéo, des concours, des fonds d'écran et plus encore.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[(?<="><span\sclass="bleuwebtele">Émissions</span><br/>.*)<option\svalue="(?<url>[^"]*)">(?<title>[^<]*)</option>]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.ztele.com/webtele/recherche/?type=0&emission={0}&episode=0&tri=0]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*></a></div>\s*<div\sclass="video_texte">\s*<div\sclass="bleuwebtele\sbold">[^<]*</div>\s*<div\sclass="font14\sbold\spad5"><!--\sTITRE\+LIEN\sici\s--><a[^>]*>(?<Title>[^<]*)</a></div>\s*<div\sclass="pad5"><!--\sICONE\sici\s--><img[^>]*>&nbsp;&nbsp;(?<Duration>[^&]*)&nbsp;&nbsp;\|&nbsp;&nbsp;<!--\sDATE\sici\s-->(?<Airdate>[^<]*)<span>&nbsp;&nbsp;\|&nbsp;&nbsp;</span>&nbsp;<!--\sCOEURS\sici\s-->[^<]*<img[^>]*><span>&nbsp;&nbsp;\|&nbsp;&nbsp;</span><span[^>]*><a[^>]*><img[^>]*></a>\s*<div[^>]*>\s*<div\sclass="right"><a\shref="javascript:\shideAllBoxes\(\);"><img[^>]*></a></div>\s*<div\sclass="font14\sbold\spad5"><img[^>]*>[^<]*</div>\s*<div\sclass="font11">(?<Description>[^<]*)</div>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"><img\ssrc="/_img/btn_suiv\.gif"]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<object\sid="myExperience"\sclass="BrightcoveExperience">\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param\sname="playerID"\svalue="(?<experienceId>[^"]*)"\s/>\s*<param\sname="playerKey"\svalue="(?<playerKey>[^"]*)"\s/>\s*<param[^>]*>\s*<param[^>]*>\s*<param\sname="@videoPlayer"\svalue="ref:(?<contentRefId>[^"]*)"\s/>\s*</object>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.ztele.com/webtele/recherche/?type=0&emission=0&episode=0&tri=0]]></item>
+        <item key="hashValue"><![CDATA[042b01bed6e20532d32865e198a9f47c6ee4e279]]></item>
+        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAAnreg4lk~,iutjDgKpeknlx9PrvSDXvaNgtPFQB9Vx]]></item>
+      </Configuration>
+      <Categories />
+    </Site>
     <Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
       <Configuration>
