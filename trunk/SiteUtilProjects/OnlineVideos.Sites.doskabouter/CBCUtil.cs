@@ -24,10 +24,13 @@ namespace OnlineVideos.Sites
             if (m.Success)
                 feedPID = m.Groups["feedPID"].Value;
 
-            foreach (Category cat in getChildren("0"))
+            List<Category> lst = new List<Category>();
+            foreach (Category cat in getChildren("1221254309"))
+                lst.Add(cat);
+            lst.Sort();
+            foreach (Category cat in lst)
                 Settings.Categories.Add(cat);
             Settings.DynamicCategoriesDiscovered = true;
-
             return Settings.Categories.Count;
         }
 
