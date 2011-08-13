@@ -80,7 +80,7 @@ namespace OnlineVideos.Sites
                         video.Other = spc;
                         foreach (RssItem item in RssToolkit.Rss.RssDocument.Load(data).Channel.Items)
                         {
-                            if (item.Title.ToLowerInvariant().Contains("intro")) continue;
+                            if (item.Title.ToLowerInvariant().Contains("intro") || item.Title.ToLowerInvariant().Contains("vorspann")) continue;
                             if (video.PlaybackOptions == null)
                                 video.PlaybackOptions = getPlaybackOptions(item.MediaGroups[0].MediaContents[0].Url, spc);
                             result.Add(item.MediaGroups[0].MediaContents[0].Url);
