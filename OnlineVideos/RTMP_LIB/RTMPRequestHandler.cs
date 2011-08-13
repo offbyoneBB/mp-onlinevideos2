@@ -21,6 +21,8 @@ namespace RTMP_LIB
         private RTMPRequestHandler() { }
         #endregion
 
+        object sync = new object();
+
         bool invalidHeader = false;
 
         public bool DetectInvalidPackageHeader()
@@ -83,6 +85,8 @@ namespace RTMP_LIB
             }
             catch (Exception ex)
             {
+                Logger.Log(ex.ToString());
+
                 if (responseStream != null)
                 {
                     responseStream.Close();
@@ -94,53 +98,54 @@ namespace RTMP_LIB
                     response.StatusAndReason = HybridDSP.Net.HTTP.HTTPServerResponse.HTTPStatus.HTTP_INTERNAL_SERVER_ERROR;
                     response.Send().Close();
                 }
-                Logger.Log(ex.ToString());
             }
         }
 
         public void HandleRequest(string url, HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
         {
-            Thread.CurrentThread.Name = "RTMPProxy";
-            RTMP rtmp = null;
-            try
+            lock (sync)
             {
-                NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(new Uri(url).Query);
+                if (Thread.CurrentThread.Name != null) Thread.CurrentThread.Name = "RTMPProxy";
+                RTMP rtmp = null;
+                try
+                {
+                    NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(new Uri(url).Query);
 
-                
-                Logger.Log("RTMP Request Parameters:");
-                foreach (var param in paramsHash.AllKeys) Logger.Log(string.Format("{0}={1}", param, paramsHash[param]));
+                    Logger.Log("RTMP Request Parameters:");
+                    foreach (var param in paramsHash.AllKeys) Logger.Log(string.Format("{0}={1}", param, paramsHash[param]));
 
-                Link link = new Link();
-                if (paramsHash["rtmpurl"] != null) link = Link.FromRtmpUrl(new Uri(paramsHash["rtmpurl"]));
-                if (paramsHash["app"] != null) link.app = paramsHash["app"];
-                if (paramsHash["tcUrl"] != null) link.tcUrl = paramsHash["tcUrl"];
-                if (paramsHash["hostname"] != null) link.hostname = paramsHash["hostname"];
-                if (paramsHash["port"] != null) link.port = int.Parse(paramsHash["port"]);
-                if (paramsHash["playpath"] != null) link.playpath = paramsHash["playpath"];
-                if (paramsHash["subscribepath"] != null) link.subscribepath = paramsHash["subscribepath"];
-                if (paramsHash["pageurl"] != null) link.pageUrl = paramsHash["pageurl"];
-                if (paramsHash["swfurl"] != null) link.swfUrl = paramsHash["swfurl"];
-                if (paramsHash["swfsize"] != null) link.SWFSize = int.Parse(paramsHash["swfsize"]);
-                if (paramsHash["swfhash"] != null) link.SWFHash = Link.ArrayFromHexString(paramsHash["swfhash"]);
-                if (paramsHash["swfVfy"] != null) { link.swfUrl = paramsHash["swfVfy"]; link.swfVerify = true; }
-                if (paramsHash["live"] != null) bool.TryParse(paramsHash["live"], out link.bLiveStream);
-                if (paramsHash["auth"] != null) link.auth = paramsHash["auth"];
-                if (paramsHash["token"] != null) link.token = paramsHash["token"];
-                if (paramsHash["conn"] != null) link.extras = Link.ParseAMF(paramsHash["conn"]);
-                if (link.tcUrl != null && link.tcUrl.ToLower().StartsWith("rtmpe")) link.protocol = Protocol.RTMPE;
+                    Link link = new Link();
+                    if (paramsHash["rtmpurl"] != null) link = Link.FromRtmpUrl(new Uri(paramsHash["rtmpurl"]));
+                    if (paramsHash["app"] != null) link.app = paramsHash["app"];
+                    if (paramsHash["tcUrl"] != null) link.tcUrl = paramsHash["tcUrl"];
+                    if (paramsHash["hostname"] != null) link.hostname = paramsHash["hostname"];
+                    if (paramsHash["port"] != null) link.port = int.Parse(paramsHash["port"]);
+                    if (paramsHash["playpath"] != null) link.playpath = paramsHash["playpath"];
+                    if (paramsHash["subscribepath"] != null) link.subscribepath = paramsHash["subscribepath"];
+                    if (paramsHash["pageurl"] != null) link.pageUrl = paramsHash["pageurl"];
+                    if (paramsHash["swfurl"] != null) link.swfUrl = paramsHash["swfurl"];
+                    if (paramsHash["swfsize"] != null) link.SWFSize = int.Parse(paramsHash["swfsize"]);
+                    if (paramsHash["swfhash"] != null) link.SWFHash = Link.ArrayFromHexString(paramsHash["swfhash"]);
+                    if (paramsHash["swfVfy"] != null) { link.swfUrl = paramsHash["swfVfy"]; link.swfVerify = true; }
+                    if (paramsHash["live"] != null) bool.TryParse(paramsHash["live"], out link.bLiveStream);
+                    if (paramsHash["auth"] != null) link.auth = paramsHash["auth"];
+                    if (paramsHash["token"] != null) link.token = paramsHash["token"];
+                    if (paramsHash["conn"] != null) link.extras = Link.ParseAMF(paramsHash["conn"]);
+                    if (link.tcUrl != null && link.tcUrl.ToLower().StartsWith("rtmpe")) link.protocol = Protocol.RTMPE;
 
-                if (link.swfVerify) link.GetSwf();
+                    if (link.swfVerify) link.GetSwf();
 
-                rtmp = new RTMP() { Link = link };
+                    rtmp = new RTMP() { Link = link };
 
-                ConnectAndGetStream(rtmp, request, response, ref invalidHeader);
+                    ConnectAndGetStream(rtmp, request, response, ref invalidHeader);
+                }
+                finally
+                {
+                    if (rtmp != null) rtmp.Close();
+                }
+
+                Logger.Log("Request finished.");
             }
-            finally
-            {
-                if (rtmp != null) rtmp.Close();
-            }
-
-            Logger.Log("Request finished.");
         }
     }
 }
