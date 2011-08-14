@@ -1847,13 +1847,13 @@ namespace OnlineVideos.MediaPortal1
 
         void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
         {
-            if (stoptime > 0 && (g_Player.Duration / stoptime) > 0.8) TrackPlayback();
+            if (stoptime > 0 && g_Player.Duration > 0 && (stoptime / g_Player.Duration) > 0.8) TrackPlayback();
             currentPlayingItem = null;
         }
 
         void TrackPlayback()
         {
-            double percent = g_Player.CurrentPosition > 0 ? g_Player.Duration / g_Player.CurrentPosition : 0; // prevent div by 0 ex
+            double percent = g_Player.Duration > 0 ? g_Player.CurrentPosition / g_Player.Duration : 0;
             if (TrackVideoPlayback != null && currentPlayingItem != null && currentPlayingItem.Util != null && currentPlayingItem.Video != null)
             {
                 new System.Threading.Thread((item) =>
