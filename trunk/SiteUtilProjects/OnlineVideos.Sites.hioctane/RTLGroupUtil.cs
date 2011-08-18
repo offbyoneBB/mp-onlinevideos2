@@ -102,12 +102,12 @@ namespace OnlineVideos.Sites
                             if (playpath.Contains(".f4v"))
                                 combinedPlaypath = "mp4:" + playpath;
                             else combinedPlaypath = playpath.Replace(".flv","");
-
+                      /*
                             combinedPlaypath += "?ivw=" + ivw;
                             combinedPlaypath += "&client=videoplayer&type=content&user=2880224004&session=2289727260&angebot=rtlnow&starttime=00:00:00:00&timetype=" + timetype;
                             combinedPlaypath += "&fkcontent=" + fkcontent;
                             combinedPlaypath += "&season=" + season;
-
+                      */
                             /*string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                         string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&swfurl={4}&swfsize={5}&swfhash={6}&pageurl={7}&playpath={8}&conn={9}&conn={10}&conn={11}&conn={12}&conn={13}&conn={14}&conn={15}",
                                                 tcUrl, //rtmpUrl
@@ -130,16 +130,15 @@ namespace OnlineVideos.Sites
 
                             string resultUrl = string.Empty;
                             RTMPUrl rtmpLink = new RTMPUrl();
-                            rtmpLink.Add("rtmpurl", tcUrl);
+                            //rtmpLink.Add("rtmpurl", tcUrl);
                             rtmpLink.Add("hostname", host);
+                            rtmpLink.Add("port", "1935");
                             rtmpLink.Add("tcUrl", tcUrl);
-                            rtmpLink.Add("app", app);
-                            rtmpLink.Add("swfUrl", baseUrl + "/includes/rtlnow_videoplayer09_2.swf");
-                            rtmpLink.Add("swfsize", "827801");
-                            rtmpLink.Add("swfhash", "23a4f9781244d1b6db02ffda936634a858d7b746e79c42da7b5eb9217b336843");
-                            rtmpLink.Add("pageurl", video.VideoUrl);
+                            rtmpLink.Add("app", "rtlnow/_definst_"/*app*/);
+                            rtmpLink.Add("swfVfy", "http://rtl-now.rtl.de/includes/rtlnow_videoplayer09_2.swf" /*baseUrl + "/includes/rtlnow_videoplayer09_2.swf"*/);
+                            rtmpLink.Add("pageurl", "http://rtl-now.rtl.de/p/"/*video.VideoUrl*/);
                             rtmpLink.Add("playpath", combinedPlaypath);
-                            rtmpLink.Add("conn", "S:" + para2);
+                            /*rtmpLink.Add("conn", "S:" + para2);
                             rtmpLink.Add("conn", "Z:");
                             rtmpLink.Add("conn", "Z:");
                             //rtmpLink.Add("conn", "S:" + secret);
@@ -147,7 +146,7 @@ namespace OnlineVideos.Sites
                             rtmpLink.Add("conn", "S:");
                             rtmpLink.Add("conn", "S:");
                             rtmpLink.Add("conn", "S:" + para1);
-                            rtmpLink.Add("conn", "S:" + playpath.Substring(0, playpath.Length - 4));
+                            rtmpLink.Add("conn", "S:" + playpath.Substring(0, playpath.Length - 4));*/
                             return rtmpLink.getRTMPUrl();
                         //}
                     }
