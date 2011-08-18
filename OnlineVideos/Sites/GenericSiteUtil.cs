@@ -27,7 +27,7 @@ namespace OnlineVideos.Sites
         protected string dynamicSubCategoryUrlFormatString;
         [Category("OnlineVideosConfiguration"), Description("Boolean used for decoding url for ajax requests")]
         protected bool dynamicSubCategoryUrlDecoding = false;
-        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration', 'Description'.")]
+        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration', 'Description', 'Airdate'.")]
         protected string videoListRegEx;
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the 'url' match retrieved from the videoListRegEx.")]
         protected string videoListRegExFormatString;
