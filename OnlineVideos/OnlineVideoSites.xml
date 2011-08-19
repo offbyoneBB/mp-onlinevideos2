@@ -118,17 +118,15 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="RTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
+    <Site name="RTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de" lastUpdated="2011-08-20T00:19:03.6662613+02:00">
       <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx">
-          <![CDATA[<div[^>]*>\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*
+        <item key="dynamicCategoriesRegEx"><![CDATA[<div[^>]*>\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*
 <img(?:(?!src).)+src="(?<thumb>[^"]+)"[^>]*>\s*</a>\s*</div>\s*
 <div[^>]*>\s*
 <span[^>]*>\s*FREE\s+\|\s+Jetzt\s+ansehen\s*<br>\s*</span>\s*
 <h2>(?<title>[^<]+)</h2>\s*(?<description>[^<]*)</div>]]></item>
-        <item key="videoListRegEx">
-          <![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
+        <item key="videoListRegEx"><![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
 <div[^>]*>[^<]*</div>\s*
 (<div[^>]*>[^<]*</div>\s*)?
 <div\s+onclick=[^>]*>\s*(?<Airdate>[^<]*)</div>\s*
@@ -139,20 +137,24 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="Vox Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
+    <Site name="Vox Now" util="RTLGroup" agecheck="false" enabled="true" lang="de" lastUpdated="2011-08-20T00:19:11.6435838+02:00">
       <Description>Kostenlos verfügbare Sendungen des Vox.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[>FREE</a>\s*</div>\s*<div\sstyle=""\sclass="seriennavi_link">\s*<a\shref="(?<url>[^"]+)"\s*style="">(?<title>[^<]+)<]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<div[^>]*>\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*
+<img(?:(?!src).)+src="(?<thumb>[^"]+)"[^>]*>\s*</a>\s*</div>\s*
+<div[^>]*>\s*
+<span[^>]*>\s*FREE\s+\|\s+Jetzt\s+ansehen\s*<br>\s*</span>\s*
+<h2>(?<title>[^<]+)</h2>\s*(?<description>[^<]*)</div>]]></item>
         <item key="videoListRegEx"><![CDATA[>(?<Title>[^<]*)</a>[^']*'(?<VideoUrl>[^']*)'\)"\sclass="time">(?<Airdate>[^<]*)</div>(?:(?!minibutton).)*minibutton">kostenlos</a>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.voxnow.de]]></item>
+        <item key="baseUrl"><![CDATA[http://www.voxnow.de/sendung_a_z.php]]></item>
         <item key="app"><![CDATA[voxnow]]></item>
       </Configuration>
       <Categories />
     </Site>
-    <Site name="SuperRTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
+    <Site name="SuperRTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de" lastUpdated="2011-08-20T00:19:15.1788443+02:00">
       <Description>Kostenlos verfügbare Sendungen des Super RTL.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[>FREE[^<]+</a>\s*</div>\s*<div\sstyle=""\sclass="seriennavi_link">\s*<a\shref="(?<url>[^"]+)"\s*style="">(?<title>[^<]+)<]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[FREE</a>\s*</div>\s*<div\sstyle=""\sclass="seriennavi_link">\s*<a.*?href="(?<url>[^"]+)"[^>]*>(?<title>[^<]+)</a>]]></item>
         <item key="videoListRegEx"><![CDATA[>(?<Title>[^<]*)</a>[^']*'(?<VideoUrl>[^']*)'\)"\sclass="time">(?<Airdate>[^<]*)</div>(?:(?!minibutton).)*minibutton">kostenlos</a>]]></item>
         <item key="baseUrl"><![CDATA[http://www.superrtlnow.de]]></item>
         <item key="app"><![CDATA[superrtlnow]]></item>
