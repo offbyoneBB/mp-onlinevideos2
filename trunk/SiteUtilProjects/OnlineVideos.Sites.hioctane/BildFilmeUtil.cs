@@ -11,7 +11,7 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
-            string id = Regex.Match(data, @"xml\?s=(?<url>[^']+)'\);").Groups["url"].Value;
+            string id = Regex.Match(data, @"'\.xml\?s=(?<url>xml[^']+)'").Groups["url"].Value;
             string xmlUrl = "http://film.bild.de/movie.xml?s=" + id;
             data = GetWebData(xmlUrl);
             string url = Regex.Match(data, @"<enclosure\s*url=""(?<url>[^""]+)").Groups["url"].Value;
