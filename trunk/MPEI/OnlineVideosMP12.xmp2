@@ -1650,7 +1650,7 @@
               <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.31.0.1\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.32.0.1\extension_settings.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2547,7 +2547,7 @@ public class Script
           <Revision>0</Revision>
         </MaxVersion>
         <WarnOnly>false</WarnOnly>
-        <Message>This version of OnlineVideos requires MediaPortal version 1.2 beta or higher.</Message>
+        <Message>This version of OnlineVideos requires MediaPortal 1.2 beta!</Message>
         <Name>MediaPortal</Name>
       </DependencyItem>
     </Items>
@@ -2561,28 +2561,20 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>31</Minor>
+      <Minor>32</Minor>
       <Build>0</Build>
       <Revision>1</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>fixed: when all thumbs of displayed categories are the same switch to list layout
-fixed: for imageurls with invalid chars in it
-fixed: RSS feeds with items where the url ends with linebreaks caused Exception
-fixed: bug when saving sites xml with empty groups
-new feature: Playlist Playback without Playback Choices dialog (needs to be done per Site, implemented on YouTube)
-new feature: rtmp handshake type 9 now supported
-new feature: extended properties for a selected video in videos view (some added for YouTube)
-new feature: Hosters may be configured
-new feature: Youtube "Videos from this Uploader" in context menu
-new feature: context menu entries can now return a list of videos or categories that is shown
-new feature: support for trakt.tv (TVLinksccUtil, watch-series)
-new feature: Button in Default skins in Details View to call the trakt "Add to watchlist" feature for IMDB and iTunes sites
-new feature: searching can return a list of videos or a list of categories
-new feature: search/filter videos by entering a search string with the virtual keyboard (invoked from context menu)</VersionDescription>
+    <VersionDescription>added: Pressing RECORD in Videos/Details View will start download of selected item
+fixed: downloading 2 files blocks all other webrequests
+fixed: trakt PLayback tracking wrong precentage calculation
+fixed: RTMP issues
+fixed: Exception when no search results were found
+added: WebRequests with specific encoding (e.g. for cyrillic sites)</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.31.0.1.mpe1</OnlineLocation>
-    <ReleaseDate>2011-08-02T11:00:00</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.32.0.1.mpe1</OnlineLocation>
+    <ReleaseDate>2011-08-21T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -4241,7 +4233,7 @@ new feature: search/filter videos by entering a search string with the virtual k
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.31.0.1\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.32.0.1\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
