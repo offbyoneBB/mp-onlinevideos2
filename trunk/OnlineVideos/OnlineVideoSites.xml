@@ -192,7 +192,7 @@
         <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.myvideo.de{0}]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[src='(?<thumb>[^']+)'\s*alt=''\sclass='vThumb'/></a></div></div><div\sclass='lContent\spChContent'>\s*<div\sclass='pChHead'><a\shref='(?<url>[^']+)'\sclass[^>]+>(?<title>[^<]+)</a></div><div\s*class='pChText'>(?<description>[^<]+)</div>]]></item>
         <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.myvideo.de{0}]]></item>
-        <item key="videoListRegEx"><![CDATA[src='(?<ImageUrl>[^']+)'\s*alt=''\sclass='vThumb'[^>]+></a></div></div><div\sclass='lContent\s*pChContent'><div\sclass='pChHead'><a\s*href='(?<VideoUrl>[^']+)'\sclass[^>]+>(?<Title>[^<]+)</a></div><div\s*class='pChText'>(?<Description>[^<]+)</div><div\sclass='pChTime'><[^>]+><[^>]+>(?<Duration>[^<]+)</span>]]></item>
+        <item key="videoListRegEx"><![CDATA[(?<!id_series_newest_movies_init.*)<a\s+href='(?<VideoUrl>[^']+)'\s+title='(?<Title>[^']+)'><img(?:(?!src).)+src='(?<ImageUrl>[^']+)'[^>]*><span[^>]*>(?<Duration>[^<]+)</span></a>]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www.myvideo.de{0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.myvideo.de/Serien]]></item>
       </Configuration>
