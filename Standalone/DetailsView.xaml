@@ -7,6 +7,8 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontSize" Value="14"/>
             <EventSetter Event="MouseDoubleClick" Handler="HandleDoubleClick" />
             <EventSetter Event="KeyUp" Handler="HandleKeyUp" />
         </Style>
@@ -23,7 +25,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Image Grid.RowSpan="2" Source="{Binding Path=ImageUrl}" VerticalAlignment="Top" Margin="5 0 5 5"/>
-            <ListView Grid.Column="1" Background="Transparent" Name="listView" DisplayMemberPath="Title2" ItemContainerStyle="{StaticResource itemstyle}"/>
+            <ListView Grid.Column="1" Background="Transparent" Name="listViewTrailers" DisplayMemberPath="Title2" ItemContainerStyle="{StaticResource itemstyle}"/>
             <TextBlock Grid.Column="1" Grid.Row="1" Name="txtSynopsis" TextWrapping="Wrap"/>
         </Grid>
     </DockPanel>

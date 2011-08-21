@@ -1,19 +1,21 @@
 ﻿<Window x:Class="Standalone.PlaybackChoices"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Playback Choices" WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        FocusManager.FocusedElement="{Binding ElementName=lvChoices}"
+        Title="Playback Choices" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Loaded="OnLoaded"
         WindowStyle="ToolWindow" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
     
     <Window.Resources>
 
         <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="MinWidth" Value="100"/>
             <EventSetter Event="MouseDoubleClick" Handler="HandleDoubleClick" />
             <EventSetter Event="KeyUp" Handler="HandleKeyUp" />
         </Style>
         
     </Window.Resources>
     <Grid>
-        <ListView Background="#FFE3F4FC" Padding="10" Name="lvChoices" ItemContainerStyle="{StaticResource itemstyle}"/>
+        <ListView x:Name="lvChoices" Background="#FFE3F4FC" SelectionMode="Single" ItemContainerStyle="{StaticResource itemstyle}"/>
     </Grid>
 </Window>

@@ -174,8 +174,9 @@
     <Resource Include="OnlineVideos.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\NextPage.png" />
-    <Resource Include="Images\PreviousPage.png" />
+    <Content Include="Images\NextPage.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Images\Back.png" />
     <Content Include="LanguageFlags\--.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
