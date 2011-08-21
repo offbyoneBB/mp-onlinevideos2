@@ -3,16 +3,21 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ovs="clr-namespace:OnlineVideos;assembly=OnlineVideos"
     xmlns:local="clr-namespace:Standalone" x:Name="mainWindow"
-    Title="OnlineVideos" Height="620" Width="820" Loaded="Window_Loaded" FocusManager.FocusedElement="{Binding ElementName=listView1}" Icon="OnlineVideos.ico">
+    Title="OnlineVideos" Height="620" Width="820" Loaded="Window_Loaded" FocusManager.FocusedElement="{Binding ElementName=listViewMain}" Icon="OnlineVideos.ico">
     <Window.Resources>
 
         <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
-            <EventSetter Event="MouseDoubleClick" Handler="HandleDoubleClick" />
-            <EventSetter Event="KeyUp" Handler="HandleKeyUp" />
+            <EventSetter Event="MouseDoubleClick" Handler="HandleItemDoubleClick" />
+            <EventSetter Event="KeyUp" Handler="HandleItemKeyUp" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Style.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
             </Style.Resources>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="IsSelected" Value="True"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>        
 
         <local:OVSTemplateSelector x:Key="myTemplateSelector"/>
@@ -22,8 +27,6 @@
     
     <Window.CommandBindings>
         <CommandBinding Command="BrowseBack" CanExecute="Back_CanExecute" Executed="Back_Executed"/>
-        <CommandBinding Command="PreviousPage" CanExecute="PreviousPage_CanExecute" Executed="PreviousPage_Executed"/>
-        <CommandBinding Command="NextPage" CanExecute="NextPage_CanExecute" Executed="NextPage_Executed"/>
         <CommandBinding Command="MediaCommands.TogglePlayPause" CanExecute="PlayPause_CanExecute" Executed="PlayPause_Executed"/>
         <CommandBinding Command="MediaCommands.Stop" CanExecute="Stop_CanExecute" Executed="Stop_Executed"/>
     </Window.CommandBindings>
@@ -46,16 +49,10 @@
             <Button Height="24" VerticalAlignment="Center" Command="BrowseBack" ToolTip="Back" Margin="5 0 0 0">
                 <Image Source="Images/Back.png"/>
             </Button>
-            <Button Height="24" VerticalAlignment="Center" Command="PreviousPage" ToolTip="{Binding Source={x:Static ovs:Translation.PreviousPage}}">
-                <Image Source="Images/PreviousPage.png"/>
-            </Button>
-            <Button Height="24" VerticalAlignment="Center" Command="NextPage" ToolTip="{Binding Source={x:Static ovs:Translation.NextPage}}">
-                <Image Source="Images/NextPage.png"/>
-            </Button>
             <Image Margin="5 2 5 2" Height="32" Source="{Binding ElementName=mainWindow, Path=SelectedSite, Converter={StaticResource ThumbnailConverter}, ConverterParameter=Banners}"/>
             <TextBlock Text="{Binding ElementName=mainWindow, Path=SelectedCategory, Converter={StaticResource myCategoryPathConverter}}" FontSize="16" VerticalAlignment="Center"/>
         </WrapPanel>
-        <ListView Grid.Row="1" Name="listView1" SelectionChanged="listView1_SelectionChanged" 
+        <ListView Grid.Row="1" Name="listViewMain" SelectionChanged="listViewMain_SelectionChanged" SelectionMode="Single"
                   ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource itemstyle}" ItemTemplateSelector="{StaticResource myTemplateSelector}" Background="Transparent">            
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -118,11 +115,11 @@
                 <StackPanel>
                     <WrapPanel Margin="0 0 0 5">
                         <TextBlock Text="{Binding Source={x:Static ovs:Translation.Runtime}, StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtLength, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
-                        <TextBlock x:Name="txtLength" Text="{Binding ElementName=listView1, Path=SelectedItem.Length}"/>
+                        <TextBlock x:Name="txtLength" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Length}"/>
                     </WrapPanel>
                     <Grid>
-                        <TextBlock TextWrapping="Wrap" Text="{Binding ElementName=listView1, Path=SelectedItem.Value.Settings.Description}"/>
-                        <TextBlock TextWrapping="Wrap" Text="{Binding ElementName=listView1, Path=SelectedItem.Description}"/>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Value.Settings.Description}"/>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Description}"/>
                     </Grid>
                 </StackPanel>
             </Border>

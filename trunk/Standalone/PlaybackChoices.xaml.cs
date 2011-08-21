@@ -23,6 +23,12 @@ namespace Standalone
             InitializeComponent();
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var item = lvChoices.ItemContainerGenerator.ContainerFromIndex(lvChoices.SelectedIndex) as ListBoxItem;
+            if (item != null) { item.Focus(); }
+        }
+
         protected void HandleKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
