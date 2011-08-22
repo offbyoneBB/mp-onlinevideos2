@@ -71,6 +71,12 @@ namespace Standalone
                 .Start();
         }
 
+        protected void HandleItemMouseEnter(object sender, MouseEventArgs e)
+        {
+            listViewMain.SelectedItem = (sender as ListViewItem).DataContext;
+            (sender as ListViewItem).Focus();
+        }
+
         protected void HandleItemKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -195,7 +201,7 @@ namespace Standalone
                         }
                     );
                 }
-                else if (SelectedSite is IChoice && detailsView.Visibility == System.Windows.Visibility.Hidden)
+                else if (SelectedSite is IChoice && video.HasDetails && detailsView.Visibility == System.Windows.Visibility.Hidden)
                 {
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
                         delegate()
@@ -213,7 +219,7 @@ namespace Standalone
                                 {
                                     var extendedInfos = ((IVideoDetails)video.Other).GetExtendedProperties();
                                     detailsView.txtSynopsis.Text = extendedInfos["Synopsis"];
-                                    // todo : display all
+                                    // todo : display all extended infos in details view
                                 }
                                 detailsView.listViewTrailers.ItemsSource = resultInfo.ResultObject as List<VideoInfo>;
                                 if (detailsView.listViewTrailers.Items.Count > 0)
