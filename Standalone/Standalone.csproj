@@ -44,6 +44,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -59,12 +60,17 @@
     <ApplicationIcon>OnlineVideos.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DirectShowLib-2005, Version=2.0.0.0, Culture=neutral, PublicKeyToken=67e7b740cdfc2d3f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\DirectShowLib-2005.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -96,6 +102,29 @@
     </Compile>
     <Compile Include="TemplateSelector.cs" />
     <Compile Include="Converters.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\Controls\D3DRenderer.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\Controls\DvdPlayerElement.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\Controls\MediaDetectorElement.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\Controls\MediaElementBase.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\Controls\MediaSeekingElement.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\Controls\MediaUriElement.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\Controls\MultimediaUtil.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\Controls\ValueConverters.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\Controls\VideoCaptureElement.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\MediaPlayers\BaseClasses.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\MediaPlayers\DvdPlayer.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\MediaPlayers\MediaDetector.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\MediaPlayers\MediaSeekingPlayer.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\MediaPlayers\MediaUriPlayer.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\MediaPlayers\PropertyPageHelper.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\MediaPlayers\VideoCapturePlayer.cs" />
+    <Compile Include="WPFMediaKit\DirectShow\MediaPlayers\Vmr9Allocator.cs" />
+    <Compile Include="WPFMediaKit\DirectX\Direct3D.cs" />
+    <Compile Include="WPFMediaKit\Effects\DeeperColor.cs" />
+    <Compile Include="WPFMediaKit\MediaFoundation\EVRPresenter.cs" />
+    <Compile Include="WPFMediaKit\MediaFoundation\Interop.cs" />
+    <Compile Include="WPFMediaKit\Threading\WorkDispatcher.cs" />
+    <Compile Include="WPFMediaKit\Threading\WorkDispatcherObject.cs" />
     <Page Include="CircularProgressBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -122,6 +151,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="WPFMediaKit\Themes\generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WPFMediaKit\Themes\MediaDetectorGeneric.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -146,6 +183,8 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="WPFMediaKit\Effects\DeeperColor.fx" />
+    <Resource Include="WPFMediaKit\Effects\DeeperColor.ps" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -174,6 +213,13 @@
     <Resource Include="OnlineVideos.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DirectShowLib-2005.dll" />
+    <Content Include="EVRPresenter32.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EVRPresenter64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\NextPage.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

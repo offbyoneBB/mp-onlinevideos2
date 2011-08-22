@@ -2,6 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ovs="clr-namespace:OnlineVideos;assembly=OnlineVideos"
+    xmlns:DirectShowControls="clr-namespace:WPFMediaKit.DirectShow.Controls"
     xmlns:local="clr-namespace:Standalone" x:Name="mainWindow"
     Title="OnlineVideos" Height="620" Width="820" Loaded="Window_Loaded" FocusManager.FocusedElement="{Binding ElementName=listViewMain}" Icon="OnlineVideos.ico">
     <Window.Resources>
@@ -74,9 +75,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Border Name="mediaElemBorder" BorderThickness="2" BorderBrush="Black" CornerRadius="2"  Width="190" HorizontalAlignment="Left" Background="#AAAAAAAA">
-                    <MediaElement VerticalAlignment="Center" HorizontalAlignment="Left" Name="mediaElem" Stretch="Uniform" LoadedBehavior="Manual" UnloadedBehavior="Manual" MediaEnded="mediaElem_MediaEnded" MediaFailed="mediaElem_MediaFailed" MediaOpened="mediaElem_MediaOpened" BufferingStarted="mediaElem_BufferingStarted" BufferingEnded="mediaElem_BufferingEnded" MouseLeftButtonUp="mediaElem_MouseLeftButtonUp"/>
-                </Border>
+                <Border BorderThickness="2" BorderBrush="Black" CornerRadius="2"  Width="190" HorizontalAlignment="Left" Background="#AAAAAAAA"/>
                 <Grid Grid.Column="1" Margin="5 0 0 0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -124,6 +123,10 @@
                 </StackPanel>
             </Border>
         </Grid>
+        <Border Name="mediaPlayerBorder" Width="184" Height="104" VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.RowSpan="3" Margin="8" MouseLeftButtonUp="mediaPlayer_MouseLeftButtonUp">
+            <DirectShowControls:MediaUriElement x:Name="mediaPlayer" Stretch="Uniform" VideoRenderer="EnhancedVideoRenderer" Volume="1" LoadedBehavior="Play"
+                                                    MediaFailed="mediaPlayer_MediaFailed" MediaEnded="mediaPlayer_MediaEnded"/>
+        </Border>
         <local:CircularProgressBar Width="100" Height="100" x:Name="waitCursor" Grid.RowSpan="3" Visibility="Hidden"/>
     </Grid>
 </Window>
