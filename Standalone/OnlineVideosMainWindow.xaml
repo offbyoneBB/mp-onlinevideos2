@@ -10,15 +10,11 @@
         <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
             <EventSetter Event="MouseDoubleClick" Handler="HandleItemDoubleClick" />
             <EventSetter Event="KeyUp" Handler="HandleItemKeyUp" />
+            <EventSetter Event="MouseEnter" Handler="HandleItemMouseEnter" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Style.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
             </Style.Resources>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="IsSelected" Value="True"/>
-                </Trigger>
-            </Style.Triggers>
         </Style>        
 
         <local:OVSTemplateSelector x:Key="myTemplateSelector"/>
@@ -112,10 +108,20 @@
             </Grid>
             <Border Grid.Column="1" BorderThickness="1 0 0 0" BorderBrush="Black" Padding="5">
                 <StackPanel>
-                    <WrapPanel Margin="0 0 0 5">
-                        <TextBlock Text="{Binding Source={x:Static ovs:Translation.Runtime}, StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtLength, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
-                        <TextBlock x:Name="txtLength" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Length}"/>
-                    </WrapPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <WrapPanel Margin="0 0 0 5">
+                            <TextBlock Text="{Binding Source={x:Static ovs:Translation.Runtime}, StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtLength, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
+                            <TextBlock x:Name="txtLength" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Length}"/>
+                        </WrapPanel>
+                        <WrapPanel Grid.Column="1" Margin="0 0 0 5">
+                            <TextBlock Text="{Binding Source={x:Static ovs:Translation.Airdate}, StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtAired, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
+                            <TextBlock x:Name="txtAired" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Airdate}"/>
+                        </WrapPanel>
+                    </Grid>
                     <Grid>
                         <TextBlock TextWrapping="Wrap" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Value.Settings.Description}"/>
                         <TextBlock TextWrapping="Wrap" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Description}"/>
