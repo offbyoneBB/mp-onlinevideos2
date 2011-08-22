@@ -60,10 +60,13 @@ namespace Standalone
             listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
             SelectAndFocusFirstItem();
 
+            // add a special reversed proxy handler for rtmp
+            ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance);
+
             new DispatcherTimer(
                 TimeSpan.FromSeconds(1),
                 DispatcherPriority.Normal,
-                (o, ev) => txtPlayPos.Text = mediaElem != null && mediaElem.Source != null && mediaElem.HasVideo ? string.Format("{0} / {1}", new DateTime(mediaElem.Position.Ticks).ToString("HH:mm:ss"), mediaElem.NaturalDuration.HasTimeSpan ? new DateTime(mediaElem.NaturalDuration.TimeSpan.Ticks).ToString("HH:mm:ss") : "00:00:00") : "",
+                (o, ev) => txtPlayPos.Text = mediaPlayer != null && mediaPlayer.Source != null && mediaPlayer.HasVideo ? string.Format("{0} / {1}", new DateTime(mediaPlayer.MediaPosition).ToString("HH:mm:ss"), new DateTime(mediaPlayer.MediaDuration).ToString("HH:mm:ss")) : "",
                 Dispatcher)
                 .Start();
         }
@@ -272,8 +275,7 @@ namespace Standalone
                                                         string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
                                     }
                                     txtPlayTitle.Text = video.Title;
-                                    mediaElem.Source = new Uri(url);
-                                    mediaElem.Play();
+                                    mediaPlayer.Source = new Uri(url);
                                 }
                             }
                         }
@@ -393,19 +395,19 @@ namespace Standalone
 
         private void PlayPause_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = mediaElem != null && mediaElem.Source != null && mediaElem.HasVideo;
+            e.CanExecute = mediaPlayer != null && mediaPlayer.Source != null && mediaPlayer.HasVideo;
         }
 
         private void Stop_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = mediaElem != null && mediaElem.Source != null && mediaElem.HasVideo;
+            e.CanExecute = mediaPlayer != null && mediaPlayer.Source != null && mediaPlayer.HasVideo;
         }
 
         bool IsPaused;
         private void PlayPause_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (IsPaused) mediaElem.Play();
-            else mediaElem.Pause();
+            if (IsPaused) mediaPlayer.Play();
+            else mediaPlayer.Pause();
             IsPaused = !IsPaused;
         }
 
@@ -413,8 +415,8 @@ namespace Standalone
         {
             if (fullScreen) ToggleFullscreen();
             txtPlayTitle.Text = "";
-            mediaElem.Close();
-            mediaElem.Source = null;
+            mediaPlayer.Close();
+            mediaPlayer.Source = null;
             IsPaused = false;
         }
 
@@ -432,36 +434,10 @@ namespace Standalone
             }
         }
 
-        private void mediaElem_BufferingStarted(object sender, RoutedEventArgs e)
-        {
-            // todo : show MediaElement.DownloadedProgress + ProgressBar for CurrentPlayPosition + Seeking + OSD in fullscreen?
-            // todo : contextmenu, search, filter + all functionality from hidden menu in mepo
-        }
-
-        private void mediaElem_BufferingEnded(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void mediaElem_MediaOpened(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void mediaElem_MediaFailed(object sender, ExceptionRoutedEventArgs e)
-        {
-            MessageBox.Show(Translation.UnableToPlayVideo, Translation.Error, MessageBoxButton.OK);
-            Stop_Executed(sender, null);
-        }
-
-        private void mediaElem_MediaEnded(object sender, RoutedEventArgs e)
-        {
-            Stop_Executed(sender, null);
-        }
-
         bool fullScreen = false;        
-        private void mediaElem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void mediaPlayer_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (!mediaPlayer.HasVideo) return;
             if (!timeClick.Enabled)
             {
                 timeClick.Enabled = true;
@@ -478,21 +454,38 @@ namespace Standalone
         {
             if (!fullScreen)
             {
-                mediaElemBorder.Child = null;
-                this.Background = new SolidColorBrush(Colors.Black);
-                this.Content = mediaElem;
+                mediaPlayerBorder.Margin = new Thickness(0);
+                mediaPlayerBorder.VerticalAlignment = VerticalAlignment.Stretch;
+                mediaPlayerBorder.HorizontalAlignment = HorizontalAlignment.Stretch;
+                mediaPlayerBorder.Width = double.NaN;
+                mediaPlayerBorder.Height = double.NaN;
+                mediaPlayerBorder.Background = new SolidColorBrush(Colors.Black);
                 //this.WindowStyle = WindowStyle.None;
                 //this.WindowState = WindowState.Maximized;
             }
             else
             {
-                this.Content = LayoutRoot;
-                mediaElemBorder.Child = mediaElem;
-                this.Background = new SolidColorBrush(Colors.White);
+                mediaPlayerBorder.Margin = new Thickness(8);
+                mediaPlayerBorder.VerticalAlignment = VerticalAlignment.Bottom;
+                mediaPlayerBorder.HorizontalAlignment = HorizontalAlignment.Left;
+                mediaPlayerBorder.Width = 184;
+                mediaPlayerBorder.Height = 104;
+                mediaPlayerBorder.Background = null;
                 //this.WindowStyle = WindowStyle.SingleBorderWindow;
                 //this.WindowState = WindowState.Normal;
             }
             fullScreen = !fullScreen;
+        }
+
+        private void mediaPlayer_MediaFailed(object sender, WPFMediaKit.DirectShow.MediaPlayers.MediaFailedEventArgs e)
+        {
+            MessageBox.Show(Translation.UnableToPlayVideo + ": " +e.Message, Translation.Error, MessageBoxButton.OK);
+            Dispatcher.Invoke((Action)(() => { Stop_Executed(sender, null); }));
+        }
+
+        private void mediaPlayer_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            Stop_Executed(sender, null);
         }
 
     }
