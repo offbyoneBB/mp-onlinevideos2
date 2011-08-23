@@ -47,6 +47,23 @@
               <File Id="LF_hr" Source="$(var.Standalone.TargetDir)\LanguageFlags\hr.png" DiskId="1" Vital="yes"/>
               <File Id="LF_hu" Source="$(var.Standalone.TargetDir)\LanguageFlags\hu.png" DiskId="1" Vital="yes"/>
               <File Id="LF_it" Source="$(var.Standalone.TargetDir)\LanguageFlags\it.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_ja" Source="$(var.Standalone.TargetDir)\LanguageFlags\ja.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_ko" Source="$(var.Standalone.TargetDir)\LanguageFlags\ko.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_lv" Source="$(var.Standalone.TargetDir)\LanguageFlags\lv.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_nl" Source="$(var.Standalone.TargetDir)\LanguageFlags\nl.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_no" Source="$(var.Standalone.TargetDir)\LanguageFlags\no.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_pl" Source="$(var.Standalone.TargetDir)\LanguageFlags\pl.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_pt" Source="$(var.Standalone.TargetDir)\LanguageFlags\pt.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_ro" Source="$(var.Standalone.TargetDir)\LanguageFlags\ro.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_ru" Source="$(var.Standalone.TargetDir)\LanguageFlags\ru.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_sk" Source="$(var.Standalone.TargetDir)\LanguageFlags\sk.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_sr" Source="$(var.Standalone.TargetDir)\LanguageFlags\sr.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_sv" Source="$(var.Standalone.TargetDir)\LanguageFlags\sv.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_th" Source="$(var.Standalone.TargetDir)\LanguageFlags\th.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_tr" Source="$(var.Standalone.TargetDir)\LanguageFlags\tr.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_uk" Source="$(var.Standalone.TargetDir)\LanguageFlags\uk.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_uz" Source="$(var.Standalone.TargetDir)\LanguageFlags\uz.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_zh" Source="$(var.Standalone.TargetDir)\LanguageFlags\zh.png" DiskId="1" Vital="yes"/>
             </Component>
           </Directory>
 				</Directory>
