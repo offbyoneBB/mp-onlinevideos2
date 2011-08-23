@@ -34,18 +34,34 @@ namespace Standalone
             InitializeComponent();
         }
 
+        private string GetBaseDirectory()
+        {
+            try
+            {
+                // Attempt to create the Thumbs directory in the applications startup folder
+                // This will raise an exception if the path is read only or do not have write access. 
+                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Thumbs"));
+                return AppDomain.CurrentDomain.BaseDirectory;
+            }
+            catch (Exception)
+            {
+                return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "OnlineVideos\\");
+            }
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            string writeableBaseDir = GetBaseDirectory();
             Gui2UtilConnector.Instance.TaskFinishedCallback += () => Dispatcher.Invoke((Action)Gui2UtilConnector.Instance.ExecuteTaskResultHandler);
 
             OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("PROGRAMFILES(X86)") ?? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\");
-            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DllsDir)) OnlineVideoSettings.Instance.DllsDir = AppDomain.CurrentDomain.BaseDirectory;
+            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DllsDir)) OnlineVideoSettings.Instance.DllsDir = writeableBaseDir;
 
             OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\thumbs\OnlineVideos\");
-            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ThumbsDir)) OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Thumbs");
+            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ThumbsDir)) OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(writeableBaseDir, "Thumbs");
 
             OnlineVideoSettings.Instance.ConfigDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\");
-            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ConfigDir)) OnlineVideoSettings.Instance.ConfigDir = AppDomain.CurrentDomain.BaseDirectory;
+            if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ConfigDir)) OnlineVideoSettings.Instance.ConfigDir = writeableBaseDir;
 
             OnlineVideoSettings.Instance.LoadSites();
             OnlineVideoSettings.Instance.BuildSiteUtilsList();
