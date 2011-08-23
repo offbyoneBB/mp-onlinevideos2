@@ -64,6 +64,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\DirectShowLib-2005.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -97,6 +98,7 @@
       <DependentUpon>DetailsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui2UtilConnector.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="PlaybackChoices.xaml.cs">
       <DependentUpon>PlaybackChoices.xaml</DependentUpon>
     </Compile>
