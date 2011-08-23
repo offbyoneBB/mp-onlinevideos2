@@ -51,5 +51,10 @@ namespace Standalone
             Close();
             e.Handled = true;
         }
+
+		private void CloseCommandHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			this.Close();
+		}
     }
 }
