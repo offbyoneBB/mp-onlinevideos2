@@ -301,7 +301,7 @@ namespace Standalone
 
 										if (dlg.ShowDialog() == true)
 										{
-											url = video.PlaybackOptions[dlg.lvChoices.SelectedItem.ToString()];
+                                            url = video.GetPlaybackOptionUrl(dlg.lvChoices.SelectedItem.ToString());
 										}
 										else
 										{
