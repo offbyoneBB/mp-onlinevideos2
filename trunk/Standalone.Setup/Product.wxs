@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="OnlineVideos" Language="1033" Version="1.0.0.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
+		<Package InstallerVersion="200" Compressed="yes" />
+
+    <Property Id="ARPPRODUCTICON">$(var.Standalone.TargetFileName)</Property>
+    <Property Id="ARPURLINFOABOUT">http://code.google.com/p/mp-onlinevideos2/</Property>
+    <Property Id="ARPURLUPDATEINFO">http://code.google.com/p/mp-onlinevideos2/</Property>
+
+    <PropertyRef Id="NETFRAMEWORK35_SP_LEVEL"/>
+
+    <Condition Message="This application requires the .NET Framework 3.5 SP1.">
+      <![CDATA[Installed OR (NETFRAMEWORK35_SP_LEVEL and NOT NETFRAMEWORK35_SP_LEVEL = "#0")]]>
+    </Condition>
+
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLLOCATION" Name="OnlineVideos">
+					<Component Id="OnlineVideosStandalone" Guid="ec34fc0c-8073-4313-9b8a-3a00e95ba836">
+            <File KeyPath="yes" Id="MainExecutable" Source="$(var.Standalone.TargetPath)" DiskId="1" Vital="yes">
+              <Shortcut Advertise="yes" Id="DesktopShortcut" Directory="DesktopFolder" WorkingDirectory="INSTALLDIR" Name="OnlineVideos" Icon="$(var.Standalone.TargetFileName)">
+                <Icon Id="$(var.Standalone.TargetFileName)" SourceFile="$(var.Standalone.TargetPath)" />
+              </Shortcut>
+            </File>
+            <File Id="OnlineVideosCore" Source="$(var.OnlineVideos.TargetPath)" DiskId="1" Vital="yes"/>
+            <File Id="DirectShowLib" Source="$(var.Standalone.TargetDir)DirectShowLib-2005.dll" DiskId="1" Vital="yes"/>
+            <File Id="EVRPresenter32" Source="$(var.Standalone.TargetDir)EVRPresenter32.dll" DiskId="1" Vital="yes"/>
+          </Component>
+          <Directory Id="Images" Name="Images">
+            <Component Id="OnlineVideosStandaloneImages" Guid="5212c6f7-6f1c-4b97-ab7c-4929c69fc7b0">
+              <File Id="NextPage" Source="$(var.Standalone.TargetDir)\Images\NextPage.png" DiskId="1" Vital="yes"/>
+            </Component>
+          </Directory>
+          <Directory Id="LanguageFlags" Name="LanguageFlags">
+            <Component Id="OnlineVideosLanguageFlags" Guid="522a4c3a-2527-4b1e-8173-a79070ab1caf">
+              <File Id="LF_gl" Source="$(var.Standalone.TargetDir)\LanguageFlags\--.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_bg" Source="$(var.Standalone.TargetDir)\LanguageFlags\bg.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_cs" Source="$(var.Standalone.TargetDir)\LanguageFlags\cs.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_da" Source="$(var.Standalone.TargetDir)\LanguageFlags\da.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_de" Source="$(var.Standalone.TargetDir)\LanguageFlags\de.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_en" Source="$(var.Standalone.TargetDir)\LanguageFlags\en.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_es" Source="$(var.Standalone.TargetDir)\LanguageFlags\es.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_fi" Source="$(var.Standalone.TargetDir)\LanguageFlags\fi.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_fr" Source="$(var.Standalone.TargetDir)\LanguageFlags\fr.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_hr" Source="$(var.Standalone.TargetDir)\LanguageFlags\hr.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_hu" Source="$(var.Standalone.TargetDir)\LanguageFlags\hu.png" DiskId="1" Vital="yes"/>
+              <File Id="LF_it" Source="$(var.Standalone.TargetDir)\LanguageFlags\it.png" DiskId="1" Vital="yes"/>
+            </Component>
+          </Directory>
+				</Directory>
+			</Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop"/>      
+		</Directory>
+
+		<Feature Id="ProductFeature" Title="OnlineVideos Standalone" Level="1">
+			<ComponentRef Id="OnlineVideosStandalone" />
+      <ComponentRef Id="OnlineVideosStandaloneImages" />
+      <ComponentRef Id="OnlineVideosLanguageFlags" />
+			
+			<!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
+			<ComponentGroupRef Id="Product.Generated" />
+		</Feature>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
+    
+    <UI>
+      <UIRef Id="WixUI_InstallDir" />
+    </UI>
+
+    <CustomAction Id="StartAppOnExit" FileKey="MainExecutable" ExeCommand="" Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Start OnlineVideos Standalone" />
+    <UI>
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="StartAppOnExit">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+    </UI>
+    
+	</Product>
+</Wix>
