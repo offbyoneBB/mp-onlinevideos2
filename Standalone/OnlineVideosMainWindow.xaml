@@ -9,7 +9,7 @@
 
         <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
             <EventSetter Event="MouseDoubleClick" Handler="HandleItemDoubleClick" />
-            <EventSetter Event="KeyUp" Handler="HandleItemKeyUp" />
+            <EventSetter Event="KeyDown" Handler="HandleItemKeyDown" />
             <EventSetter Event="MouseEnter" Handler="HandleItemMouseEnter" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Style.Resources>
@@ -24,9 +24,19 @@
     
     <Window.CommandBindings>
         <CommandBinding Command="BrowseBack" CanExecute="Back_CanExecute" Executed="Back_Executed"/>
+        <CommandBinding Command="Search" CanExecute="Search_CanExecute" Executed="Search_Executed"/>
         <CommandBinding Command="MediaCommands.TogglePlayPause" CanExecute="PlayPause_CanExecute" Executed="PlayPause_Executed"/>
         <CommandBinding Command="MediaCommands.Stop" CanExecute="Stop_CanExecute" Executed="Stop_Executed"/>
+        <CommandBinding Command="NavigationCommands.Zoom" CanExecute="Stop_CanExecute" Executed="ToggleFullscreen"/>
     </Window.CommandBindings>
+    
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="BrowseBack"/>
+        <KeyBinding Key="C" Command="MediaCommands.TogglePlayPause"/>
+        <KeyBinding Key="B" Command="MediaCommands.Stop"/>
+        <KeyBinding Key="X" Command="NavigationCommands.Zoom"/>
+        <KeyBinding Key="F" Modifiers="CTRL" Command="Search"/>
+    </Window.InputBindings>
 
     <Grid Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -43,9 +53,13 @@
             </LinearGradientBrush>
         </Grid.Background>
         <WrapPanel>
-            <Button Height="24" VerticalAlignment="Center" Command="BrowseBack" ToolTip="Back" Margin="5 0 0 0">
+            <Button Height="30" VerticalAlignment="Center" Command="BrowseBack" ToolTip="Back" Margin="5 0 0 0">
                 <Image Source="Images/Back.png"/>
             </Button>
+            <Button Height="30" VerticalAlignment="Center" Command="Search" ToolTip="Search" Margin="5 0 0 0">
+                <Image Source="Images/Search.png"/>
+            </Button>
+            <Rectangle Width="1" Fill="Black" Stroke="Black" VerticalAlignment="Stretch" Margin="5 0 10 0"/>
             <Image Margin="5 2 5 2" Height="32" Source="{Binding ElementName=mainWindow, Path=SelectedSite, Converter={StaticResource ThumbnailConverter}, ConverterParameter=Banners}"/>
             <TextBlock Text="{Binding ElementName=mainWindow, Path=SelectedCategory, Converter={StaticResource myCategoryPathConverter}}" FontSize="16" VerticalAlignment="Center"/>
         </WrapPanel>
