@@ -62,6 +62,7 @@ namespace Standalone
             OnlineVideos.OnlineVideosWebservice.Dll[] onlineDlls = null;
             OnlineVideos.OnlineVideosWebservice.Site[] onlineSites = null;
             OnlineVideos.OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+            ws.Timeout = 30000;
             try { onlineSites = ws.GetSitesOverview(); }
             catch { OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn(OnlineVideos.Translation.RetrievingRemoteSites); return; }
             try { onlineDlls = ws.GetDllsOverview(); }
@@ -152,7 +153,7 @@ namespace Standalone
                         try
                         {
                             byte[] icon = ws.GetSiteIcon(siteName);
-                            if (icon != null && icon.Length > 0) File.WriteAllBytes(OnlineVideoSettings.Instance.ThumbsDir + @"Icons\" + siteName + ".png", icon);
+                            if (icon != null && icon.Length > 0) File.WriteAllBytes(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + siteName + ".png"), icon);
                         }
                         catch (Exception ex)
                         {
@@ -161,7 +162,7 @@ namespace Standalone
                         try
                         {
                             byte[] banner = ws.GetSiteBanner(siteName);
-                            if (banner != null && banner.Length > 0) File.WriteAllBytes(OnlineVideoSettings.Instance.ThumbsDir + @"Banners\" + siteName + ".png", banner);
+                            if (banner != null && banner.Length > 0) File.WriteAllBytes(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Banners\" + siteName + ".png"), banner);
 
                         }
                         catch (Exception ex)
