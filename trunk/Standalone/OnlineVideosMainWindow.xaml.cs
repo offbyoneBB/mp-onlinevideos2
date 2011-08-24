@@ -100,7 +100,7 @@ namespace Standalone
                     OnlineVideoSettings.Instance.BuildSiteUtilsList();
                     listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
                     SelectAndFocusFirstItem();
-                });
+                }, false);
         }
 
         protected void HandleItemMouseEnter(object sender, MouseEventArgs e)
