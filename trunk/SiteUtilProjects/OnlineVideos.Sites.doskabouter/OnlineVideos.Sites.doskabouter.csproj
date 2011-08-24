@@ -71,6 +71,7 @@
     <Compile Include="Hoster\DivxStage.cs" />
     <Compile Include="Hoster\Duckload.cs" />
     <Compile Include="Hoster\Freeload.cs" />
+    <Compile Include="Hoster\GorillaVid.cs" />
     <Compile Include="Hoster\Loaded.cs" />
     <Compile Include="Hoster\Loombo.cs" />
     <Compile Include="Hoster\MegaVideo.cs" />

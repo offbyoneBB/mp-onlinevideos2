@@ -27,6 +27,8 @@ namespace OnlineVideos.Hoster.Base
         public abstract string getHosterUrl();
         public virtual VideoType getVideoType() { return videoType; }
 
+        public static RegexOptions defaultRegexOptions = RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace;
+
         protected static string FlashProvider(string url, string webData = null)
         {
             string page = webData;
@@ -39,7 +41,7 @@ namespace OnlineVideos.Hoster.Base
                 if (n.Success) return n.Groups["url"].Value;
                 n = Regex.Match(page, @"flashvars.file=""(?<url>[^""]+)"";");
                 if (n.Success) return n.Groups["url"].Value;
-                n = Regex.Match(page, @"flashvars.{0,50}file=(?<url>[^\'""]+)(?:\'|"")");
+                n = Regex.Match(page, @"flashvars.{0,50}file\s*?(?:=|:)\s*?(?:\'|"")?(?<url>[^\'""]+)(?:\'|"")?", defaultRegexOptions);
                 if (n.Success) return n.Groups["url"].Value;
                 
             }
