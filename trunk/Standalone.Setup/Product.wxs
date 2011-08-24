@@ -27,6 +27,7 @@
             <File Id="OnlineVideosCore" Source="$(var.OnlineVideos.TargetPath)" DiskId="1" Vital="yes"/>
             <File Id="DirectShowLib" Source="$(var.Standalone.TargetDir)DirectShowLib-2005.dll" DiskId="1" Vital="yes"/>
             <File Id="EVRPresenter32" Source="$(var.Standalone.TargetDir)EVRPresenter32.dll" DiskId="1" Vital="yes"/>
+            <File Id="NLog" Source="$(var.Standalone.TargetDir)NLog.dll" DiskId="1" Vital="yes"/>
           </Component>
           <Directory Id="Images" Name="Images">
             <Component Id="OnlineVideosStandaloneImages" Guid="5212c6f7-6f1c-4b97-ab7c-4929c69fc7b0">
