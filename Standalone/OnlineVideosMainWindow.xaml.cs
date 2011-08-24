@@ -65,8 +65,6 @@ namespace Standalone
             OnlineVideoSettings.Instance.ConfigDir = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Team MediaPortal\MediaPortal\");
             if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.ConfigDir)) OnlineVideoSettings.Instance.ConfigDir = writeableBaseDir;
 
-            OnlineVideoSettings.Instance.LoadSites();
-            OnlineVideoSettings.Instance.BuildSiteUtilsList();
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asf")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asf", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asx")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asx", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".flv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".flv", false);
@@ -75,8 +73,6 @@ namespace Standalone
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mov")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mov", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mp4")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mp4", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".wmv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".wmv", false);
-            listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
-            SelectAndFocusFirstItem();
 
             // add a special reversed proxy handler for rtmp
             ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance);
@@ -87,6 +83,24 @@ namespace Standalone
                 (o, ev) => txtPlayPos.Text = mediaPlayer != null && mediaPlayer.Source != null && mediaPlayer.HasVideo ? string.Format("{0} / {1}", new DateTime(mediaPlayer.MediaPosition).ToString("HH:mm:ss"), new DateTime(mediaPlayer.MediaDuration).ToString("HH:mm:ss")) : "",
                 Dispatcher)
                 .Start();
+
+            OnlineVideoSettings.Instance.LoadSites();
+
+            waitCursor.Visibility = System.Windows.Visibility.Visible;
+            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
+                delegate()
+                {
+                    SiteManager.AutomaticUpdate();
+                    return null;
+                },
+                delegate(Gui2UtilConnector.ResultInfo resultInfo)
+                {
+                    waitCursor.Visibility = System.Windows.Visibility.Hidden;
+                    ReactToResult(resultInfo, Translation.AutomaticUpdate);
+                    OnlineVideoSettings.Instance.BuildSiteUtilsList();
+                    listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
+                    SelectAndFocusFirstItem();
+                });
         }
 
         protected void HandleItemMouseEnter(object sender, MouseEventArgs e)
