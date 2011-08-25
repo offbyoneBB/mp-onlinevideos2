@@ -118,7 +118,7 @@ namespace Standalone
             }
         }
 
-        protected void HandleItemDoubleClick(object sender, MouseButtonEventArgs e)
+        protected void HandleItemClicked(object sender, MouseButtonEventArgs e)
         {
             OnItemSelected(sender);
             e.Handled = true;
@@ -354,14 +354,14 @@ namespace Standalone
             {
                 if (result.TaskError != null)
                 {
-                    MessageBox.Show(string.Format("{0} {1}", Translation.Error, taskDescription), result.TaskError.Message, MessageBoxButton.OK);
+                    MessageBox.Show(this, string.Format("{0} {1}", Translation.Error, taskDescription), result.TaskError.Message, MessageBoxButton.OK);
                 }
                 else
                 {
                     if (!result.AbortedByUser)
                     {
                         string header = result.TaskSuccess.HasValue ? Translation.Error : Translation.Timeout;
-                        MessageBox.Show(taskDescription, header, MessageBoxButton.OK);
+                        MessageBox.Show(this, taskDescription, header, MessageBoxButton.OK);
                     }
                 }
                 return false;
@@ -597,7 +597,7 @@ namespace Standalone
 
         private void mediaPlayer_MediaFailed(object sender, WPFMediaKit.DirectShow.MediaPlayers.MediaFailedEventArgs e)
         {
-            MessageBox.Show(Translation.UnableToPlayVideo + ": " +e.Message, Translation.Error, MessageBoxButton.OK);
+            MessageBox.Show(this, Translation.UnableToPlayVideo + ": " +e.Message, Translation.Error, MessageBoxButton.OK);
             Dispatcher.Invoke((Action)(() => { Stop_Executed(sender, null); }));
         }
 
