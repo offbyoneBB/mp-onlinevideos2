@@ -18,11 +18,6 @@ namespace Standalone
     /// </summary>
     public partial class OnlineVideosMainWindow : Window, INotifyPropertyChanged
     {        
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        static extern uint GetDoubleClickTime();
-
-        System.Timers.Timer timeClick = new System.Timers.Timer((int)GetDoubleClickTime()) { AutoReset = false };
-
         public event PropertyChangedEventHandler PropertyChanged;
         SiteUtilBase _SelectedSite;
         public SiteUtilBase SelectedSite { get { return _SelectedSite; } set { _SelectedSite = value; PropertyChanged(this, new PropertyChangedEventArgs("SelectedSite")); } }
@@ -51,6 +46,9 @@ namespace Standalone
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // The default connection limit is 2 in .net on most platforms! This means downloading two file will block all other WebRequests.
+            System.Net.ServicePointManager.DefaultConnectionLimit = 100;
+
             string writeableBaseDir = GetBaseDirectory();
             Gui2UtilConnector.Instance.TaskFinishedCallback += () => Dispatcher.Invoke((Action)Gui2UtilConnector.Instance.ExecuteTaskResultHandler);
 
@@ -86,6 +84,7 @@ namespace Standalone
 
             OnlineVideoSettings.Instance.LoadSites();
 
+            Title = "OnlineVideos - Checking for Updates ...";
             waitCursor.Visibility = System.Windows.Visibility.Visible;
             Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
                 delegate()
@@ -95,6 +94,7 @@ namespace Standalone
                 },
                 delegate(Gui2UtilConnector.ResultInfo resultInfo)
                 {
+                    Title = "OnlineVideos";
                     waitCursor.Visibility = System.Windows.Visibility.Hidden;
                     ReactToResult(resultInfo, Translation.AutomaticUpdate);
                     OnlineVideoSettings.Instance.BuildSiteUtilsList();
@@ -556,16 +556,7 @@ namespace Standalone
         private void mediaPlayer_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (!mediaPlayer.HasVideo) return;
-            if (!timeClick.Enabled)
-            {
-                timeClick.Enabled = true;
-                return;
-            }
-
-            if (timeClick.Enabled)
-            {
-                ToggleFullscreen(null, null);
-            }
+            ToggleFullscreen(null, null);
         }
 
 		private void ToggleFullscreen(object sender, ExecutedRoutedEventArgs e)
@@ -578,8 +569,7 @@ namespace Standalone
                 mediaPlayerBorder.Width = double.NaN;
                 mediaPlayerBorder.Height = double.NaN;
                 mediaPlayerBorder.Background = new SolidColorBrush(Colors.Black);
-                //this.WindowStyle = WindowStyle.None;
-                //this.WindowState = WindowState.Maximized;
+                this.WindowStyle = WindowStyle.None;
             }
             else
             {
@@ -589,8 +579,7 @@ namespace Standalone
                 mediaPlayerBorder.Width = 184;
                 mediaPlayerBorder.Height = 104;
                 mediaPlayerBorder.Background = null;
-                //this.WindowStyle = WindowStyle.SingleBorderWindow;
-                //this.WindowState = WindowState.Normal;
+                this.WindowStyle = WindowStyle.SingleBorderWindow;
             }
             fullScreen = !fullScreen;
         }

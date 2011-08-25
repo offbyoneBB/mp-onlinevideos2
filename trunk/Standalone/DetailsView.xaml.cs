@@ -26,7 +26,7 @@ namespace Standalone
 
         public event Action<object> ItemSelected;
 
-        protected void HandleKeyUp(object sender, KeyEventArgs e)
+        protected void HandleKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -35,7 +35,7 @@ namespace Standalone
             }
         }
 
-        protected void HandleDoubleClick(object sender, MouseButtonEventArgs e)
+        protected void HandleItemClick(object sender, MouseButtonEventArgs e)
         {
             ItemSelected(sender);
             e.Handled = true;
