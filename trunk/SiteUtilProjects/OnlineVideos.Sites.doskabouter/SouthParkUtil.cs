@@ -11,7 +11,6 @@ namespace OnlineVideos.Sites
 {
     public class SouthParkUtil : GenericSiteUtil
     {
-
         Regex episodePlayerRegEx = new Regex(@"swfobject.embedSWF\(""(?<url>[^""]*)""", RegexOptions.Compiled);
 
         public override int DiscoverDynamicCategories()
@@ -27,11 +26,44 @@ namespace OnlineVideos.Sites
             List<VideoInfo> res = base.getVideoList(category);
             foreach (VideoInfo video in res)
             {
+                video.Other = new VideoInfoOtherHelper();
+
                 string[] tmp = video.Length.Split('|');
                 if (tmp.Length == 2)
                 {
                     video.Length = tmp[1];
                     video.Title = tmp[0] + ": " + video.Title;
+                }
+
+                //Do two way parsing for TrackingInfo
+                //1. using Length containing string like Episode: 1501 or German Episoden: 1501
+                //2. using VideoUrl containing common SXXEXX string
+                //I'm hoping this will suffice for other SouthPark site out there (DE, NL) as I only checked WORLD one
+
+                string name = string.Empty;
+                int season = -1;
+                int episode = -1;
+                int year = -1;
+
+                Match trackingInfoMatch = Regex.Match(video.Length, @"Episode(?:n)?:\s*?(?<season>\d\d)(?<episode>\d\d)", RegexOptions.IgnoreCase);
+                WatchSeriesUtil.FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
+                name = "South Park";
+
+                if (!WatchSeriesUtil.GotTrackingInfoData(name, season, episode, year))
+                {
+                  trackingInfoMatch = Regex.Match(video.VideoUrl, @"\/S(?<season>\d{1,3})E(?<episode>\d{1,3})-", RegexOptions.IgnoreCase);
+                  WatchSeriesUtil.FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
+                  name = "South Park";
+                }
+
+                if (WatchSeriesUtil.GotTrackingInfoData(name, season, episode, year))
+                {
+                  TrackingInfo tInfo = new TrackingInfo();
+                  tInfo.Title = name;
+                  tInfo.Season = (uint)season;
+                  tInfo.Episode = (uint)episode;
+                  tInfo.VideoKind = VideoKind.TvSeries;
+                  (video.Other as VideoInfoOtherHelper).TI = tInfo;
                 }
             }
             return res;
@@ -77,7 +109,7 @@ namespace OnlineVideos.Sites
                     {
                         data = data.Replace("&amp;", "&");
                         data = data.Replace("&", "&amp;");
-                        video.Other = spc;
+                        (video.Other as VideoInfoOtherHelper).SPCountry = spc;
                         foreach (RssItem item in RssToolkit.Rss.RssDocument.Load(data).Channel.Items)
                         {
                             if (item.Title.ToLowerInvariant().Contains("intro") || item.Title.ToLowerInvariant().Contains("vorspann")) continue;
@@ -130,7 +162,7 @@ namespace OnlineVideos.Sites
             if (String.IsNullOrEmpty(chosenPlaybackOption))
                 return clonedVideoInfo.VideoUrl;
 
-            Dictionary<string, string> options = getPlaybackOptions(clonedVideoInfo.VideoUrl, (SouthParkCountry)clonedVideoInfo.Other);
+            Dictionary<string, string> options = getPlaybackOptions(clonedVideoInfo.VideoUrl, (clonedVideoInfo.Other as VideoInfoOtherHelper).SPCountry);
             if (options.ContainsKey(chosenPlaybackOption))
             {
                 return options[chosenPlaybackOption];
@@ -139,5 +171,27 @@ namespace OnlineVideos.Sites
             enumerator.MoveNext();
             return enumerator.Current.Value;
         }
+
+        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+          return (video.Other as VideoInfoOtherHelper).TI == null ? base.GetTrackingInfo(video) : (video.Other as VideoInfoOtherHelper).TI;
+        }
+
+        private class VideoInfoOtherHelper
+        {
+            public SouthParkCountry SPCountry = SouthParkCountry.Unknown;
+            public TrackingInfo TI = null;
+
+            public VideoInfoOtherHelper()
+            {
+            }
+            
+            public VideoInfoOtherHelper(SouthParkCountry spCountry, TrackingInfo trackingInfo)
+            {
+                this.SPCountry = spCountry;
+                this.TI = trackingInfo;
+            }
+        }
+
     }
 }
