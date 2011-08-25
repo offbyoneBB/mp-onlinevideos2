@@ -298,9 +298,9 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            //should also be possible to get IMDb ID for TrackingInfo from video.VideoURL somewhere around here using regex:
-            //<a.*?href=(?:"|')\w+[^>'"]*?imdb.com/title/tt(?<imdb>\d+)[^>'"]*(?:"|').*?>\s*?imdb\s*?</a>
-
+            // few extra steps for watch-movies (to get all playback options)
+            WatchMoviesExtraGetURL(video);
+ 
             string tmp = base.getUrl(video);
             List<PlaybackElement> lst = new List<PlaybackElement>();
             if (video.PlaybackOptions == null) // just one
@@ -375,6 +375,68 @@ namespace OnlineVideos.Sites
             if (lst.Count > 0)
                 tmp = lst[0].url;
             return tmp;
+        }
+
+        private void WatchMoviesExtraGetURL(VideoInfo video)
+        {
+            if (isWatchMovies && !video.VideoUrl.Contains("getlinks.php"))
+            {
+                // try to get all video links for this movie
+                string webData = GetWebDataFromPost(video.VideoUrl, fileUrlPostString, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+                Match m = Regex.Match(webData, @"onclick\s*?=\s*?(?:""|')show_links(?:\w)?\((?<idfilm>\d+)\)", RegexOptions.IgnoreCase);
+                if (m != null && m.Success)
+                {
+                    string movieID = m.Groups["idfilm"].Value.Trim();
+                    if (!string.IsNullOrEmpty(movieID))
+                    {
+                        video.VideoUrl = string.Format("{0}/getlinks.php?idfilm={1}", baseUrl, movieID);
+                    }
+                }
+
+                m = Regex.Match(webData, @"<input(?<input>.*?id=(?:""|')idfilm(?:""|'))>", RegexOptions.IgnoreCase);
+                if (m != null && m.Success)
+                {
+                    m = Regex.Match(webData, @"value=(?:""|')(?<idfilm>\d+)(?:""|')", RegexOptions.IgnoreCase);
+                    if (m != null && m.Success)
+                    {
+                        string movieID = m.Groups["idfilm"].Value.Trim();
+                        if (!string.IsNullOrEmpty(movieID))
+                        {
+                          video.VideoUrl = string.Format("{0}/getlinks.php?idfilm={1}", baseUrl, movieID);
+                        }
+                    }
+                }
+
+                // at this point, it should also be possible to get IMDb ID for TrackingInfo from video.VideoURL using regex:
+                //<a.*?href=(?:"|')\w+[^>'"]*?imdb.com/title/tt(?<imdb>\d+)[^>'"]*(?:"|').*?>\s*?imdb\s*?</a>
+                m = Regex.Match(webData, @"<a.*?href=(?:""|')\w+[^>'""]*?imdb.com/title/tt(?<imdb>\d+)[^>'""]*(?:""|').*?>\s*?imdb\s*?</a>", RegexOptions.IgnoreCase);
+                if (m != null && m.Success)
+                {
+                    string imdbID = m.Groups["imdb"].Value.Trim();
+                    if (!string.IsNullOrEmpty(imdbID))
+                    {
+                        if (video.Other is TrackingInfo)
+                        {
+                            imdbID = imdbID.PadLeft(7, '0').Substring(0, 7);
+                            if (!imdbID.Equals("0000000"))
+                            {
+                                if (video.Other is TrackingInfo)
+                                {
+                                    (video.Other as TrackingInfo).ID_IMDB = String.Format("tt{0:0000000}", imdbID);
+                                }
+                                else
+                                {
+                                    TrackingInfo tInfo = new TrackingInfo();
+                                    tInfo.Title = video.Title;
+                                    tInfo.ID_IMDB = String.Format("tt{0:0000000}", imdbID);
+                                    tInfo.VideoKind = VideoKind.Movie;
+                                    video.Other = tInfo;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public override bool HasNextPage
