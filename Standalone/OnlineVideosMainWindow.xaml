@@ -8,7 +8,7 @@
     <Window.Resources>
 
         <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
-            <EventSetter Event="MouseDoubleClick" Handler="HandleItemDoubleClick" />
+            <EventSetter Event="MouseLeftButtonUp" Handler="HandleItemClicked" />
             <EventSetter Event="KeyDown" Handler="HandleItemKeyDown" />
             <EventSetter Event="MouseEnter" Handler="HandleItemMouseEnter" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />

@@ -29,7 +29,7 @@ namespace Standalone
             if (item != null) { item.Focus(); }
         }
 
-        protected void HandleKeyUp(object sender, KeyEventArgs e)
+        protected void HandleKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -45,11 +45,17 @@ namespace Standalone
             }
         }
 
-        protected void HandleDoubleClick(object sender, MouseButtonEventArgs e)
+        protected void HandleItemClicked(object sender, MouseButtonEventArgs e)
         {
             DialogResult = true;
             Close();
             e.Handled = true;
+        }
+
+        protected void HandleItemMouseEnter(object sender, MouseEventArgs e)
+        {
+            lvChoices.SelectedItem = (sender as ListViewItem).DataContext;
+            (sender as ListViewItem).Focus();
         }
 
 		private void CloseCommandHandler(object sender, ExecutedRoutedEventArgs e)

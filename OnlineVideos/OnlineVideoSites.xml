@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <OnlineVideoSites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Sites>
-    <Site name="YouTube" util="YouTube" agecheck="false" enabled="true" lang="en" lastUpdated="2011-03-07T09:12:04.2120471+01:00">
+    <Site name="YouTube" util="YouTube" agecheck="false" enabled="true" lang="en">
       <Description>Largest video sharing site on the web. Available in any country.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Top Rated">http://gdata.youtube.com/feeds/api/standardfeeds/top_rated</Category>
@@ -44,7 +44,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="WDR" util="WDR" agecheck="false" enabled="true" lang="de" lastUpdated="2011-06-03T14:28:39.2174291+02:00">
+    <Site name="WDR" util="WDR" agecheck="false" enabled="true" lang="de">
       <Description>Podcasts des Westdeutschen Rundfunks (WDR).</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<h2>(?<title>[^<]+?)\s-\szum\sMitnehmen</h2>.*?
@@ -59,7 +59,7 @@
       <Description>Mediathek des Zweiten Deutschen Fernsehens.</Description>
       <Categories />
     </Site>
-    <Site name="3sat" util="GenericSite" agecheck="false" enabled="true" lang="de" lastUpdated="2011-02-26T19:57:33.9610361+01:00">
+    <Site name="3sat" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Einziges öffentlich-rechtliches Gemeinschaftsprogramm des deutschen Sprachraums (ZDF – ORF – SRG – ARD).</Description>
       <Categories>
         <Category xsi:type="RssLink" name="Kulturzeit" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_kulturzeit.jpg">http://www.3sat.de/mediathek/rss/mediathek_Kulturzeit.xml</Category>
@@ -118,7 +118,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="RTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de" lastUpdated="2011-08-20T00:19:03.6662613+02:00">
+    <Site name="RTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des RTL Television.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<div[^>]*>\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*
@@ -137,7 +137,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="Vox Now" util="RTLGroup" agecheck="false" enabled="true" lang="de" lastUpdated="2011-08-20T00:19:11.6435838+02:00">
+    <Site name="Vox Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Vox.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<div[^>]*>\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*
@@ -151,7 +151,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="SuperRTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de" lastUpdated="2011-08-20T00:19:15.1788443+02:00">
+    <Site name="SuperRTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Super RTL.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[FREE</a>\s*</div>\s*<div\sstyle=""\sclass="seriennavi_link">\s*<a.*?href="(?<url>[^"]+)"[^>]*>(?<title>[^<]+)</a>]]></item>
@@ -198,7 +198,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="Bild.de Filme" util="BildFilme" agecheck="false" enabled="true" lang="de" lastUpdated="2011-02-17T18:15:18.8183176+01:00">
+    <Site name="Bild.de Filme" util="BildFilme" agecheck="false" enabled="true" lang="de">
       <Description>Ganze Filme des deutschen Bild.de Videoportals.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[category_id=("|')(?<url>[^("|')]+)("|')\s*category_name=("|')(?<title>[^("|')]+)("|')>]]></item>
@@ -216,7 +216,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="mySpass" util="GenericSite" agecheck="false" enabled="true" lang="de" lastUpdated="2010-04-01T16:16:58.640625+02:00">
+    <Site name="mySpass" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>kostenlose TVShows von MySpass.de ansehen</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[onclick='location.href="(?<url>[^"]+)"'>\s*<td\sclass="title">(?<title>[^<]+)<]]></item>
@@ -287,7 +287,7 @@
         <Category xsi:type="RssLink" name="Prüfstand">http://www.heise.de/ct-tv/pruefstand-4793.html</Category>
       </Categories>
     </Site>
-    <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en" lastUpdated="2011-06-04T14:28:51.0164637+02:00">
+    <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en">
       <Description>Miro combines and categorizes collections of video channels from thousands of sources.</Description>
       <Configuration>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
@@ -302,7 +302,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en" lastUpdated="2011-02-17T11:48:49.6784502+01:00">
+    <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en">
       <Description>Metacafe is an audience-driven video entertainment site that focuses on short-form original videos.</Description>
       <Configuration>
         <item key="youtubeCheckRegEx"><![CDATA[<link\srel="canonical"\shref="http://www.metacafe.com/watch/yt-(?<yt>[^/]+)/[^/]+/"\s*/>]]></item>
@@ -341,7 +341,7 @@
         <Category xsi:type="RssLink" name="MassageNerd">http://www.metacafe.com/channels/massagenerd/rss.xml</Category>
       </Categories>
     </Site>
-    <Site name="DailyMotion" util="MetaCafe" agecheck="false" enabled="true" lang="en" lastUpdated="2011-02-17T11:28:06.4470061+01:00">
+    <Site name="DailyMotion" util="MetaCafe" agecheck="false" enabled="true" lang="en">
       <Description>Dailymotion is a video sharing service website, based in Paris (France).</Description>
       <Configuration>
         <item key="searchUrl"><![CDATA[http://www.dailymotion.com/rss/relevance/search/{0}]]></item>
@@ -369,7 +369,7 @@
         <Category xsi:type="RssLink" name="Webcam">http://www.dailymotion.com/rss/cluster/webcam</Category>
       </Categories>
     </Site>
-    <Site name="Live Video" util="GenericSite" agecheck="false" enabled="true" lang="en" lastUpdated="2011-02-17T12:02:33.0892181+01:00">
+    <Site name="Live Video" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Broadcast yourself live, watch, connect and share videos with people all over the world.</Description>
       <Configuration>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
@@ -532,7 +532,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="CollegeHumor" util="GenericSite" agecheck="false" enabled="true" lang="en" lastUpdated="2011-04-28T23:48:13.0017632+02:00">
+    <Site name="CollegeHumor" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Funny videos from CollegeHumor.com.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[(?<=Browse\sVideos.*)(?<!>Cast.*)<li(?:\sclass="selected")?><a\shref="(?<url>[^"]*)">(?<title>(?!(?:Vid|Sketch\sC))[^<]*)</a></li>]]></item>
@@ -603,7 +603,7 @@
         <Category xsi:type="RssLink" name="Weather">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_weather.xml</Category>
       </Categories>
     </Site>
-    <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en" lastUpdated="2011-06-06T00:31:02.0655048+02:00">
+    <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en">
       <Description>The BBC iPlayer allows to catch up on the last 7 days of BBC TV (only available in the UK).</Description>
       <Configuration>
         <item key="thumbReplaceRegExPattern"><![CDATA[_\d{2,3}_\d{2,3}\.jpg]]></item>
@@ -831,7 +831,7 @@
         <Category xsi:type="RssLink" name="Discovery Investigations" thumb="http://www.discovery.com/radio/gallery/ID.jpg">http://www.discovery.com/radio/xml/id_videopodcast.xml</Category>
       </Categories>
     </Site>
-    <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true" lang="en" lastUpdated="2011-06-04T13:57:55.7833505+02:00">
+    <Site name="Vodcasts" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Sample site showing how to include your own custom feeds and streams.</Description>
       <Categories>
         <Category xsi:type="RssLink" name="MSDN">http://channel9.msdn.com/rss.aspx?ShowID=1</Category>
@@ -854,7 +854,7 @@
         </Category>
       </Categories>
     </Site>
-    <Site name="BUNCHTV" util="GenericSite" agecheck="false" enabled="true" lang="de" lastUpdated="2011-02-17T18:15:00.7852306+01:00">
+    <Site name="BUNCHTV" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Wir bringen dir die News aus der Musikszene, aus den Bereichen Games und Kino/Film, informieren dich über die neuesten Veröffentlichungen, sind für dich auf den wichtigsten Festivals, Events und Konzerten.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.bunch.tv]]></item>
@@ -909,7 +909,7 @@
         <Category xsi:type="RssLink" name="Soundtracks / Musicals">http://api.mtvnservices.com/1/genre/soundtracks_musicals/videos/?sort=date_descending</Category>
       </Categories>
     </Site>
-    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" lang="--" player="WMP" lastUpdated="2011-02-17T19:06:25.8986675+01:00">
+    <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" lang="--" player="WMP">
       <Description>Collection of live music streams.</Description>
       <Categories>
         <Category xsi:type="Group" name="RockTelevision" thumb="http://www.tv-port.net/wp-content/uploads/2009/05/rock-tv.jpg">
@@ -956,7 +956,7 @@
         <Category xsi:type="RssLink" name="PodSurf">http://www.podsurf.tv/podsurftv.xml</Category>
       </Categories>
     </Site>
-    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sv" lastUpdated="2011-02-27T13:34:03.395759+01:00">
+    <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sv">
       <Description>Se dina favoritprogram när du vill i SVT Play - fri television på nätet.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://svtplay.se/]]></item>
@@ -972,7 +972,7 @@
         <Category xsi:type="RssLink" name="Kategorier">http://svtplay.se/kategorier</Category>
       </Categories>
     </Site>
-    <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv" lastUpdated="2011-03-12T11:49:35.5095611+01:00">
+    <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
       <Description>Videos from Swedish TV3 TV4 TV6 TV8 and Sport channels.</Description>
       <Configuration>
         <item key="tv4DynamicCategoriesRegEx"><![CDATA[<li\sclass="[^"\s]*">\s*<a\shref="(?<url>/[^"]+)">(?<title>[^<]+)</a>\s*</li>]]></item>
@@ -1021,7 +1021,7 @@
       <Configuration />
       <Categories />
     </Site>
-    <Site name="OnsNetNuenen" util="OnsNetNuenen" agecheck="false" enabled="true" lang="nl" lastUpdated="2010-11-14T23:28:00.2524617+01:00">
+    <Site name="OnsNetNuenen" util="OnsNetNuenen" agecheck="false" enabled="true" lang="nl">
       <Description>Videos van en over Nuenen</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="[^\s]+\sSubMenuItem[^"]*"><a\shref="(?<url>[^"]*)"\s*><span>(?<title>[^<]*)</span></a></li>]]></item>
@@ -1039,7 +1039,7 @@
         <Category xsi:type="RssLink" name="Nieuwste video's">http://www.onsnet.tv/corp/index.php?ord=new&amp;page=48&amp;site=4&amp;ln=nl</Category>
       </Categories>
     </Site>
-    <Site name="EscapistMagazine" util="TheEscapist" agecheck="false" enabled="true" lang="en" lastUpdated="2010-08-10T23:19:13.7231593+02:00">
+    <Site name="EscapistMagazine" util="TheEscapist" agecheck="false" enabled="true" lang="en">
       <Description>The mouthpiece of the gaming generation, The Escapist aims to capture and celebrate the contemporary video gaming lifestyle and the diverse global video game culture by way of in-depth features, thought provoking articles and relevant columns authored by leading video game authorities, as well as cutting-edge video shorts, engaging forums and robust social media elements that incorporate the video gaming experience.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<a\shref='(?<url>/videos/[^']*)'\sid='[^>]*>(?<title>[^<]*)</a>]]></item>
@@ -1065,15 +1065,15 @@
     <Site name="NrkBrowser" util="NrkBrowser" agecheck="false" enabled="true" lang="no">
       <Description>NRK er Norges største tilbud på nett; nyheter, radio- og tv-programmer live, nett-tv og podcast.</Description>
     </Site>
-    <Site name="DR TV" util="DRTV" agecheck="false" enabled="true" lang="da" lastUpdated="2011-04-01T22:55:18.6007234+02:00">
+    <Site name="DR TV" util="DRTV" agecheck="false" enabled="true" lang="da">
       <Description>Se 5 af DRs kanaler live, hent aktuelle og arkiverede udsendelser i DR NU og udforsk Bonanza-arkivet, der indholder tv og radioklip fra hele DRS historie.</Description>
       <Categories />
     </Site>
-    <Site name="TV2" util="TV2" agecheck="false" enabled="true" lang="da" lastUpdated="2011-04-01T22:55:30.0313772+02:00">
+    <Site name="TV2" util="TV2" agecheck="false" enabled="true" lang="da">
       <Description>Se udsendelser og klip fra video.tv2.dk.</Description>
       <Categories />
     </Site>    
-    <Site name="TVE" util="TVE" agecheck="false" enabled="true" lang="es" lastUpdated="2011-03-14T21:59:19.5569175+01:00">
+    <Site name="TVE" util="TVE" agecheck="false" enabled="true" lang="es">
       <Description>Las series y programas de TVE, cuando quieras en rtve.es</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[(?<=selector.*)<li><a\shref="(?<url>[^"]*)"><span>(?<title>[^<]*)</span></a></li>]]></item>
@@ -1112,7 +1112,7 @@
         <Category xsi:type="RssLink" name="Laatste videos">http://nl.hardware.info/tv/</Category>
       </Categories>
     </Site>
-    <Site name="LuckyTV" util="LuckyTV" agecheck="false" enabled="true" lang="nl" lastUpdated="2011-03-05T20:55:50.9260007+01:00">
+    <Site name="LuckyTV" util="LuckyTV" agecheck="false" enabled="true" lang="nl">
       <Description>LuckyTV. Uw dagelijkse mediarevolte na De Wereld Draait Door. Bekijk hier de laatste Lucky of bezoek het ontzagwekkende LuckyTV videoarchief:  honderden filmpjes uit DWDD, De Staat van Verwarring, Vara Laat, Jensen en meer. LuckyTV. Wir leben Fernsehen.</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[(<img\sclass="border\ssmall\sleft"\ssrc="(?<ImageUrl>[^"]*)"[^>]*></a>\s*<div\sclass="meta\ssmall">\s*<h3\sclass="title"><a\shref="(?<VideoUrl>[^"]*)"[^>]*>(?<Title>[^<]*)</a></h3>\s*<div\sclass="date">(?<Airdate>[^<]*)</div>)
@@ -1184,7 +1184,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="TV3NZ" util="TV3NZOnDemand" agecheck="false" enabled="true" lang="en" lastUpdated="2011-02-20T22:38:58.0985192+01:00">
+    <Site name="TV3NZ" util="TV3NZOnDemand" agecheck="false" enabled="true" lang="en">
       <Description>Television New Zealand: TV3, TV four</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="item"\s*><a\shref="(?<url>[^"]*)"\s*(?:title="[^"]*")?\srel="nofollow">(?<title>[^<]*)</a></li>]]></item>
@@ -1370,7 +1370,7 @@
         <Category xsi:type="RssLink" name="Wildcrazy">http://www.redtube.com/redtube/wildcrazy</Category>
       </Categories>
     </Site>
-    <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en" lastUpdated="2011-03-07T19:27:17.6460869+01:00">
+    <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>xHamster - just porn, no bullshit.</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass='hRotator'>\s*<img\ssrc='(?<ImageUrl>[^']*)'\swidth='160'\sheight='120'\salt="(?<Title>[^"]*)"/>\s*<img[^>]*>\s*<u>.*?</u>\s*</a>\s*<div\sclass="moduleFeaturedDetails">Runtime:\s(?<Duration>[^<]*)<BR>[^<]*</div>]]></item>
