@@ -212,30 +212,49 @@ namespace OnlineVideos.Sites
                         string name = string.Empty;
                         int season = -1;
                         int episode = -1;
+                        int year = -1;
 
-                        // 1st way - Seas. X Ep. Y
-                        //Modern Family Seas. 1 Ep. 12
-                        Match trackingInfoMatch = Regex.Match(video.Title, @"(?<name>.+)\s+Seas\.\s*?(?<season>\d+)\s+Ep\.\s*?(?<episode>\d+)", RegexOptions.IgnoreCase);
-                        FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode);
-
-                        if ((string.IsNullOrEmpty(name) || season == -1 || episode == -1) && 
-                            category != null && category.ParentCategory != null &&
-                            !string.IsNullOrEmpty(category.Name) && !string.IsNullOrEmpty(category.ParentCategory.Name))
+                        if (isWatchMovies)
                         {
-                            // 2nd way - using parent category name, category name and video title 
-                            //Aaron Stone Season 1 (19 episodes) 1. Episode 21 1 Hero Rising (1)
-                            string parseString = string.Format("{0} {1} {2}", category.ParentCategory.Name, category.Name, video.Title);
-                            trackingInfoMatch = Regex.Match(parseString, @"(?<name>.+)\s+Season\s*?(?<season>\d+).*?Episode\s*?(?<episode>\d+)", RegexOptions.IgnoreCase);
-                            FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode);
+                            // movies - watch-movies
+                            //Fright Night (2011)
+                            Match trackingInfoMatch = Regex.Match(video.Title, @"^(?<name>.+)\s+\((?<year>\d{4})\)\s*$", RegexOptions.IgnoreCase);
+                            FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
+                        }
+                        else
+                        {
+                            // 1st way - Seas. X Ep. Y
+                            //Modern Family Seas. 1 Ep. 12
+                            Match trackingInfoMatch = Regex.Match(video.Title, @"(?<name>.+)\s+Seas\.\s*?(?<season>\d+)\s+Ep\.\s*?(?<episode>\d+)", RegexOptions.IgnoreCase);
+                            FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
+
+                            if (!GotTrackingInfoData(name, season, episode, year) && 
+                                category != null && category.ParentCategory != null &&
+                                !string.IsNullOrEmpty(category.Name) && !string.IsNullOrEmpty(category.ParentCategory.Name))
+                            {
+                                // 2nd way - using parent category name, category name and video title 
+                                //Aaron Stone Season 1 (19 episodes) 1. Episode 21 1 Hero Rising (1)
+                                string parseString = string.Format("{0} {1} {2}", category.ParentCategory.Name, category.Name, video.Title);
+                                trackingInfoMatch = Regex.Match(parseString, @"(?<name>.+)\s+Season\s*?(?<season>\d+).*?Episode\s*?(?<episode>\d+)", RegexOptions.IgnoreCase);
+                                FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
+                            }
                         }
 
-                        if (!string.IsNullOrEmpty(name) && season > -1 && episode > -1)
+                        if (GotTrackingInfoData(name, season, episode, year))
                         {
                             TrackingInfo tInfo = new TrackingInfo();
                             tInfo.Title = name;
-                            tInfo.Season = (uint)season;
-                            tInfo.Episode = (uint)episode;
-                            tInfo.VideoKind = VideoKind.TvSeries;
+                            if (isWatchMovies)
+                            {
+                                tInfo.Year = (uint)year;
+                                tInfo.VideoKind = VideoKind.Movie;
+                            }
+                            else
+                            {
+                                tInfo.Season = (uint)season;
+                                tInfo.Episode = (uint)episode;
+                                tInfo.VideoKind = VideoKind.TvSeries;
+                            }
                             video.Other = tInfo;
                         }
                     }
@@ -252,7 +271,12 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        private static void FillTrackingInfoData(Match trackingInfoMatch, ref string name, ref int season, ref int episode)
+        public static bool GotTrackingInfoData(string name, int season, int episode, int year)
+        {
+          return (!string.IsNullOrEmpty(name) && ((season > -1 && episode > -1) || (year > 1900)));
+        }
+
+        public static void FillTrackingInfoData(Match trackingInfoMatch, ref string name, ref int season, ref int episode, ref int year)
         {
             if (trackingInfoMatch != null && trackingInfoMatch.Success)
             {
@@ -265,11 +289,18 @@ namespace OnlineVideos.Sites
                 {
                     episode = -1;
                 }
+                if (!int.TryParse(trackingInfoMatch.Groups["year"].Value, out year))
+                {
+                    year = -1;
+                }
             }
         }
 
         public override string getUrl(VideoInfo video)
         {
+            //should also be possible to get IMDb ID for TrackingInfo from video.VideoURL somewhere around here using regex:
+            //<a.*?href=(?:"|')\w+[^>'"]*?imdb.com/title/tt(?<imdb>\d+)[^>'"]*(?:"|').*?>\s*?imdb\s*?</a>
+
             string tmp = base.getUrl(video);
             List<PlaybackElement> lst = new List<PlaybackElement>();
             if (video.PlaybackOptions == null) // just one
