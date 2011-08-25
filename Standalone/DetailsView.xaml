@@ -9,8 +9,8 @@
         <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
             <Setter Property="Padding" Value="10"/>
             <Setter Property="FontSize" Value="14"/>
-            <EventSetter Event="MouseDoubleClick" Handler="HandleDoubleClick" />
-            <EventSetter Event="KeyUp" Handler="HandleKeyUp" />
+            <EventSetter Event="MouseLeftButtonUp" Handler="HandleItemClick" />
+            <EventSetter Event="KeyDown" Handler="HandleKeyDown" />
         </Style>
     </UserControl.Resources>
     <DockPanel>
