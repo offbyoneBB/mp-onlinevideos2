@@ -216,10 +216,7 @@ namespace OnlineVideos.Sites
                         // 1st way - Seas. X Ep. Y
                         //Modern Family Seas. 1 Ep. 12
                         Match trackingInfoMatch = Regex.Match(video.Title, @"(?<name>.+)\s+Seas\.\s*?(?<season>\d+)\s+Ep\.\s*?(?<episode>\d+)", RegexOptions.IgnoreCase);
-                        if (trackingInfoMatch != null && trackingInfoMatch.Success)
-                        {
-                          GetTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode);
-                        }
+                        FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode);
 
                         if ((string.IsNullOrEmpty(name) || season == -1 || episode == -1) && 
                             category != null && category.ParentCategory != null &&
@@ -229,10 +226,7 @@ namespace OnlineVideos.Sites
                             //Aaron Stone Season 1 (19 episodes) 1. Episode 21 1 Hero Rising (1)
                             string parseString = string.Format("{0} {1} {2}", category.ParentCategory.Name, category.Name, video.Title);
                             trackingInfoMatch = Regex.Match(parseString, @"(?<name>.+)\s+Season\s*?(?<season>\d+).*?Episode\s*?(?<episode>\d+)", RegexOptions.IgnoreCase);
-                            if (trackingInfoMatch != null && trackingInfoMatch.Success)
-                            {
-                                GetTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode);
-                            }
+                            FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode);
                         }
 
                         if (!string.IsNullOrEmpty(name) && season > -1 && episode > -1)
@@ -258,17 +252,20 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        private static void GetTrackingInfoData(Match trackingInfoMatch, ref string name, ref int season, ref int episode)
+        private static void FillTrackingInfoData(Match trackingInfoMatch, ref string name, ref int season, ref int episode)
         {
-          name = trackingInfoMatch.Groups["name"].Value.Trim();
-          if (!int.TryParse(trackingInfoMatch.Groups["season"].Value, out season))
-          {
-            season = -1;
-          }
-          if (!int.TryParse(trackingInfoMatch.Groups["episode"].Value, out episode))
-          {
-            episode = -1;
-          }
+            if (trackingInfoMatch != null && trackingInfoMatch.Success)
+            {
+                name = trackingInfoMatch.Groups["name"].Value.Trim();
+                if (!int.TryParse(trackingInfoMatch.Groups["season"].Value, out season))
+                {
+                    season = -1;
+                }
+                if (!int.TryParse(trackingInfoMatch.Groups["episode"].Value, out episode))
+                {
+                    episode = -1;
+                }
+            }
         }
 
         public override string getUrl(VideoInfo video)
