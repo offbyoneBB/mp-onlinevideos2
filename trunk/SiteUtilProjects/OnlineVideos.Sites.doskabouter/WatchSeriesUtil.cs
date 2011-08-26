@@ -228,7 +228,7 @@ namespace OnlineVideos.Sites
                             Match trackingInfoMatch = Regex.Match(video.Title, @"(?<name>.+)\s+Seas\.\s*?(?<season>\d+)\s+Ep\.\s*?(?<episode>\d+)", RegexOptions.IgnoreCase);
                             FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
 
-                            if (!GotTrackingInfoData(name, season, episode, year) && 
+                            if (!GotTrackingInfoData(name, season, episode, year) &&
                                 category != null && category.ParentCategory != null &&
                                 !string.IsNullOrEmpty(category.Name) && !string.IsNullOrEmpty(category.ParentCategory.Name))
                             {
@@ -260,7 +260,7 @@ namespace OnlineVideos.Sites
                     }
                     catch (Exception e)
                     {
-                      Log.Warn("Error parsing TrackingInfo data: {0}", e.ToString());
+                        Log.Warn("Error parsing TrackingInfo data: {0}", e.ToString());
                     }
 
                     videos.Add(video);
@@ -273,7 +273,7 @@ namespace OnlineVideos.Sites
 
         public static bool GotTrackingInfoData(string name, int season, int episode, int year)
         {
-          return (!string.IsNullOrEmpty(name) && ((season > -1 && episode > -1) || (year > 1900)));
+            return (!string.IsNullOrEmpty(name) && ((season > -1 && episode > -1) || (year > 1900)));
         }
 
         public static void FillTrackingInfoData(Match trackingInfoMatch, ref string name, ref int season, ref int episode, ref int year)
@@ -298,9 +298,10 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            // few extra steps for watch-movies (to get all playback options)
-            WatchMoviesExtraGetURL(video);
- 
+            if (isWatchMovies)
+                // few extra steps for watch-movies (to get all playback options)
+                WatchMoviesExtraGetURL(video);
+
             string tmp = base.getUrl(video);
             List<PlaybackElement> lst = new List<PlaybackElement>();
             if (video.PlaybackOptions == null) // just one
@@ -379,7 +380,7 @@ namespace OnlineVideos.Sites
 
         private void WatchMoviesExtraGetURL(VideoInfo video)
         {
-            if (isWatchMovies && !video.VideoUrl.Contains("getlinks.php"))
+            if (!video.VideoUrl.Contains("getlinks.php"))
             {
                 // try to get all video links for this movie
                 string webData = GetWebDataFromPost(video.VideoUrl, fileUrlPostString, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
@@ -402,7 +403,7 @@ namespace OnlineVideos.Sites
                         string movieID = m.Groups["idfilm"].Value.Trim();
                         if (!string.IsNullOrEmpty(movieID))
                         {
-                          video.VideoUrl = string.Format("{0}/getlinks.php?idfilm={1}", baseUrl, movieID);
+                            video.VideoUrl = string.Format("{0}/getlinks.php?idfilm={1}", baseUrl, movieID);
                         }
                     }
                 }
