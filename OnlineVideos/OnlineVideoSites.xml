@@ -1161,6 +1161,24 @@
       <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
       <Categories />
     </Site>
+    <Site name="RTE.ie" util="RTEPlayer" agecheck="false" enabled="true" lang="en" lastUpdated="2011-08-26T21:43:12.0285895+02:00">
+      <Description>RTÉ news brings you the latest Irish news, world news, international news and up to the minute reports on breaking Irish news stories and news from around the world. Watch and listen to Irish news stories on our video and audio streams.</Description>
+      <Configuration>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<entry>\s*<id>[^<]*</id>\s*<title\stype="text">(?<title>[^<]*)</title>\s*<updated>[^<]*</updated>\s*<link\srel="alternate"\stype="text/html"\shref="(?<url>[^"]*)"\s/>\s*</entry>]]></item>
+        <item key="baseUrl"><![CDATA[http://dj.rte.ie/vodfeeds/feedgenerator/genrelist/]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Latest">http://dj.rte.ie/vodfeeds/feedgenerator/latest/?limit=24</Category>
+        <Category xsi:type="RssLink" name="Last Chance">http://dj.rte.ie/vodfeeds/feedgenerator/lastchance/?limit=24</Category>
+        <Category xsi:type="RssLink" name="Categories">http://dj.rte.ie/vodfeeds/feedgenerator/genrelist/</Category>
+        <Category xsi:type="RssLink" name="A to Z">http://dj.rte.ie/vodfeeds/feedgenerator/azlist/</Category>
+        <Category xsi:type="Group" name="Live" desc="Watch the latest news and weather updates with RTÉ News Now. Streamed 24-hours a day, seven days a week: Ireland's first online rolling news channel includes all the latest RTÉ news bulletins.">
+          <Channels>
+            <Channel name="Live">rtmpe://fmsod.rte.ie/live/newsnow</Channel>
+          </Channels>
+        </Category>
+      </Categories>
+    </Site>
     <Site name="RTL XL" util="RTLXL" agecheck="false" enabled="true" lang="nl" player="WMP">
       <Description>RTL XL</Description>
       <Configuration />
