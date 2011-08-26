@@ -17,12 +17,16 @@ namespace Standalone
     /// Interaktionslogik für OnlineVideosMainWindow.xaml
     /// </summary>
     public partial class OnlineVideosMainWindow : Window, INotifyPropertyChanged
-    {        
+    {     
         public event PropertyChangedEventHandler PropertyChanged;
         SiteUtilBase _SelectedSite;
         public SiteUtilBase SelectedSite { get { return _SelectedSite; } set { _SelectedSite = value; PropertyChanged(this, new PropertyChangedEventArgs("SelectedSite")); } }
         Category _SelectedCategory;
         public Category SelectedCategory { get { return _SelectedCategory; } set { _SelectedCategory = value; PropertyChanged(this, new PropertyChangedEventArgs("SelectedCategory")); } }
+		PlayList _CurrentPlayList;
+		public PlayList CurrentPlayList { get { return _CurrentPlayList; } set { _CurrentPlayList = value; PropertyChanged(this, new PropertyChangedEventArgs("CurrentPlayList")); } }
+		PlayListItem _CurrentPlayListItem;
+		public PlayListItem CurrentPlayListItem { get { return _CurrentPlayListItem; } set { _CurrentPlayListItem = value; PropertyChanged(this, new PropertyChangedEventArgs("CurrentPlayListItem")); } }
 
         public OnlineVideosMainWindow()
         {
@@ -286,56 +290,177 @@ namespace Standalone
 			}
 			else
 			{
-				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
-					delegate()
+				Play_Step1(new PlayListItem()
 					{
-						return SelectedSite.getMultipleVideoUrls(video);
+						Video = video,
+						Util = SelectedSite is OnlineVideos.Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName] : SelectedSite
+					}, false);
+			}
+		}
+
+		private void Play_Step1(PlayListItem playItem, bool goFullScreen)
+		{
+			if (!string.IsNullOrEmpty(playItem.FileName))
+			{
+				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+				{
+					return SelectedSite.getPlaylistItemUrl(playItem.Video, CurrentPlayList[0].ChosenPlaybackOption, CurrentPlayList.IsPlayAll);
+				},
+				delegate(Gui2UtilConnector.ResultInfo resultInfo)
+				{
+					waitCursor.Visibility = System.Windows.Visibility.Hidden;
+					if (ReactToResult(resultInfo, Translation.GettingPlaybackUrlsForVideo))
+						Play_Step2(playItem, new List<String>() { resultInfo.ResultObject as string }, goFullScreen);
+					else if (CurrentPlayList != null && CurrentPlayList.Count > 1) 
+						PlayNextPlaylistItem();
+				}
+				, true);
+			}
+			else
+			{
+				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+				{
+					return SelectedSite.getMultipleVideoUrls(playItem.Video, CurrentPlayList != null && CurrentPlayList.Count > 1);
+				},
+				delegate(Gui2UtilConnector.ResultInfo resultInfo)
+				{
+					waitCursor.Visibility = System.Windows.Visibility.Hidden;
+					if (ReactToResult(resultInfo, Translation.GettingPlaybackUrlsForVideo))
+						Play_Step2(playItem, resultInfo.ResultObject as List<String>, goFullScreen);
+					else if (CurrentPlayList != null && CurrentPlayList.Count > 1) 
+						PlayNextPlaylistItem();
+				}
+				, true);
+			}
+		}
+
+		private void Play_Step2(PlayListItem playItem, List<String> urlList, bool goFullScreen)
+		{
+			removeInvalidEntries(urlList);
+
+			// if no valid urls were returned show error msg
+			if (urlList == null || urlList.Count == 0) {
+				MessageBox.Show(this, Translation.Error, Translation.UnableToPlayVideo, MessageBoxButton.OK);
+				return;
+			}
+
+			// create playlist entries if more than one url
+			if (urlList.Count > 1)
+			{
+				PlayList playbackItems = new PlayList();
+				foreach (string url in urlList)
+				{
+					VideoInfo vi = playItem.Video.CloneForPlayList(url, url == urlList[0]);
+					string url_new = url;
+					if (url == urlList[0])
+					{
+						url_new = SelectedSite.getPlaylistItemUrl(vi, string.Empty, CurrentPlayList != null && CurrentPlayList.IsPlayAll);
+					}
+					playbackItems.Add(new PlayListItem()
+					{
+						FileName = url_new, Video = vi, Util = playItem.Util
+					});
+				}
+				if (CurrentPlayList == null)
+				{
+					CurrentPlayList = playbackItems;
+				}
+				else
+				{
+					int currentPlaylistIndex = CurrentPlayListItem != null ? CurrentPlayList.IndexOf(CurrentPlayListItem) : 0;
+					CurrentPlayList.InsertRange(currentPlaylistIndex, playbackItems);
+				}
+				// make the first item the current to be played now
+				playItem = playbackItems[0];
+				urlList = new List<string>(new string[] { playItem.FileName });
+			}
+
+			// play the first or only item
+			string urlToPlay = urlList[0];
+			if (playItem.Video.PlaybackOptions != null && playItem.Video.PlaybackOptions.Count > 0)
+			{
+				string choice = null;
+				if (playItem.Video.PlaybackOptions.Count > 1)
+				{
+					PlaybackChoices dlg = new PlaybackChoices();
+					dlg.Owner = this;
+					dlg.lvChoices.ItemsSource = playItem.Video.PlaybackOptions.Keys;
+					var preSelectedItem = playItem.Video.PlaybackOptions.FirstOrDefault(kvp => kvp.Value == urlToPlay);
+					if (!string.IsNullOrEmpty(preSelectedItem.Key)) dlg.lvChoices.SelectedValue = preSelectedItem.Key;
+					if (dlg.lvChoices.SelectedIndex < 0) dlg.lvChoices.SelectedIndex = 0;
+					if (dlg.ShowDialog() == true) choice = dlg.lvChoices.SelectedItem.ToString();
+				}
+				else
+				{
+					choice = playItem.Video.PlaybackOptions.Keys.First();
+				}
+
+				if (choice != null)
+				{
+					waitCursor.Visibility = System.Windows.Visibility.Visible;
+					Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+					{
+						return playItem.Video.GetPlaybackOptionUrl(choice);
 					},
 					delegate(Gui2UtilConnector.ResultInfo resultInfo)
 					{
 						waitCursor.Visibility = System.Windows.Visibility.Hidden;
 						if (ReactToResult(resultInfo, Translation.GettingPlaybackUrlsForVideo))
 						{
-							List<string> urls = resultInfo.ResultObject as List<string>;
-							if (urls != null && urls.Count > 0)
-							{
-								string url = urls[0];
-								if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
-								{
-									if (video.PlaybackOptions.Count == 1) url = video.PlaybackOptions.Values.First();
-									else
-									{
-										PlaybackChoices dlg = new PlaybackChoices();
-										dlg.Owner = this;
-										dlg.lvChoices.ItemsSource = video.PlaybackOptions.Keys;
-
-										var preSelectedItem = video.PlaybackOptions.FirstOrDefault(kvp => kvp.Value == url);
-										if (!string.IsNullOrEmpty(preSelectedItem.Key)) dlg.lvChoices.SelectedValue = preSelectedItem.Key;
-										if (dlg.lvChoices.SelectedIndex < 0) dlg.lvChoices.SelectedIndex = 0;
-
-										if (dlg.ShowDialog() == true)
-										{
-                                            url = video.GetPlaybackOptionUrl(dlg.lvChoices.SelectedItem.ToString());
-										}
-										else
-										{
-											return;
-										}
-									}
-								}
-								// translate rtmp urls to the local proxy
-								if (new Uri(url).Scheme.ToLower().StartsWith("rtmp"))
-								{
-									url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-													string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
-								}
-								txtPlayTitle.Text = video.Title;
-								mediaPlayer.Source = new Uri(url);
-							}
+							Play_Step3(playItem, resultInfo.ResultObject as string, goFullScreen);
 						}
-					}
-				);
+					}, true);
+				}
 			}
+			else
+			{
+				Play_Step3(playItem, urlToPlay, goFullScreen);
+			}
+		}
+
+		void Play_Step3(PlayListItem playItem, string urlToPlay, bool goFullScreen)
+		{
+			// check for valid url and cut off additional parameter
+			if (String.IsNullOrEmpty(urlToPlay) ||
+				!Utils.IsValidUri((urlToPlay.IndexOf("&&&&") > 0) ? urlToPlay.Substring(0, urlToPlay.IndexOf("&&&&")) : urlToPlay))
+			{
+				MessageBox.Show(this, Translation.Error, Translation.UnableToPlayVideo, MessageBoxButton.OK);
+				return;
+			}
+
+			// translate rtmp urls to the local proxy
+			if (new Uri(urlToPlay).Scheme.ToLower().StartsWith("rtmp"))
+			{
+				urlToPlay = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+								string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(urlToPlay)));
+			}
+
+			// Play
+			CurrentPlayListItem = null;
+			mediaPlayer.Source = new Uri(urlToPlay);
+			CurrentPlayListItem = playItem;
+		}
+
+		bool PlayNextPlaylistItem()
+		{
+			if (CurrentPlayList != null)
+			{
+				int currentPlaylistIndex = CurrentPlayListItem != null ? CurrentPlayList.IndexOf(CurrentPlayListItem) : 0;
+				if (CurrentPlayList.Count > currentPlaylistIndex + 1)
+				{
+					// if playing a playlist item, move to the next            
+					currentPlaylistIndex++;
+					Play_Step1(CurrentPlayList[currentPlaylistIndex], fullScreen);
+					return true;
+				}
+				else
+				{
+					// if last item -> clear the list
+					CurrentPlayList = null;
+					CurrentPlayListItem = null;
+				}
+			}
+			return false;
 		}
 
         private void SelectAndFocusFirstItem()
@@ -532,10 +657,11 @@ namespace Standalone
         private void Stop_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             if (fullScreen) ToggleFullscreen(sender, e);
-            txtPlayTitle.Text = "";
             mediaPlayer.Close();
             mediaPlayer.Source = null;
             IsPaused = false;
+			CurrentPlayList = null;
+			CurrentPlayListItem = null;
         }
 
         private void listViewMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -592,7 +718,28 @@ namespace Standalone
 
         private void mediaPlayer_MediaEnded(object sender, RoutedEventArgs e)
         {
-            Stop_Executed(sender, null);
+			if (!PlayNextPlaylistItem()) Stop_Executed(sender, null);
         }
+
+		private void removeInvalidEntries(List<string> loUrlList)
+		{
+			// remove all invalid entries from the list of playback urls
+			if (loUrlList != null)
+			{
+				int i = 0;
+				while (i < loUrlList.Count)
+				{
+					if (String.IsNullOrEmpty(loUrlList[i]) || !Utils.IsValidUri(loUrlList[i]))
+					{
+						OnlineVideoSettings.Instance.Logger.Debug("removed invalid url {0}", loUrlList[i]);
+						loUrlList.RemoveAt(i);
+					}
+					else
+					{
+						i++;
+					}
+				}
+			}
+		}
     }
 }
