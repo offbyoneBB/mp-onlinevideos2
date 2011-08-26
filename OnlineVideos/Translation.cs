@@ -37,6 +37,7 @@ namespace OnlineVideos
         public static string DateOfRelease = "Date of Release";
         public static string Directors = "Directors";
         public static string Download = "Download";
+        public static string DownloadUserdefined = "Download to User Directory";
         public static string Downloading = "Downloading";
         public static string DownloadingSubtitle = "DownloadingSubtitle";
         public static string DownloadingDescription = "Shows a list of downloads currently running.";

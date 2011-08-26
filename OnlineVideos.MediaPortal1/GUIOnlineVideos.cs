@@ -370,6 +370,15 @@ namespace OnlineVideos.MediaPortal1
                             {
                                 dlgSel.Add(Translation.Download);
                                 dialogOptions.Add("Download");
+
+                                if (loadParamInfo != null && !string.IsNullOrEmpty(loadParamInfo.DownloadDir) && System.IO.Directory.Exists(loadParamInfo.DownloadDir))
+                                {
+                                    if(string.IsNullOrEmpty(loadParamInfo.DownloadMenuEntry))
+                                        dlgSel.Add(Translation.DownloadUserdefined);
+                                    else
+                                        dlgSel.Add(loadParamInfo.DownloadMenuEntry);
+                                    dialogOptions.Add("UserdefinedDownload");
+                                }
                             }
                             List<string> siteSpecificEntries = SelectedSite.GetContextMenuEntries(selectedCategory, aVideo);
                             if (siteSpecificEntries != null) foreach (string entry in siteSpecificEntries) { dlgSel.Add(entry); dialogOptions.Add(entry); }
@@ -429,7 +438,10 @@ namespace OnlineVideos.MediaPortal1
                                     OnlineVideoSettings.Instance.FavDB.addFavoriteVideo(aVideo, suggestedTitle, SelectedSite.Settings.Name);
                                     break;
                                 case "Download":
-                                    SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Util = selectedSite } });
+                                    SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Category = selectedCategory, Util = selectedSite } });
+                                    break;
+                                case "UserdefinedDownload":
+									SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Category = selectedCategory, Util = selectedSite, OverrideFolder = loadParamInfo.DownloadDir, OverrideFileName = loadParamInfo.DownloadFilename } });
                                     break;
                                 case "Filter":
                                     if (GetUserInputString(ref videosVKfilter, false)) SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
@@ -472,7 +484,7 @@ namespace OnlineVideos.MediaPortal1
                             {
                                 VideoInfo aVideo = selectedItem.Item as VideoInfo;
                                 if (aVideo != null && !(SelectedSite is IChoice && aVideo.HasDetails))
-                                    SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Util = selectedSite } });
+									SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Category = selectedCategory, Util = selectedSite } });
                             }
                         }
                         else if (CurrentState == State.details)
@@ -482,7 +494,7 @@ namespace OnlineVideos.MediaPortal1
                             {
                                 VideoInfo aVideo = selectedItem.Item as VideoInfo;
                                 if (aVideo != null)
-                                    SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Util = selectedSite } });
+									SaveVideo_Step1(new DownloadList() { CurrentItem = new DownloadInfo() { VideoInfo = aVideo, Category = selectedCategory, Util = selectedSite } });
                             }
                         }
                         break;
@@ -2236,7 +2248,10 @@ namespace OnlineVideos.MediaPortal1
                         Title = string.Format("{0} - {1} / {2}", vi.Title, (saveItems.DownloadItems.Count + 1).ToString(), loUrlList.Count),
                         Url = url_new,
                         VideoInfo = vi,
-                        Util = saveItems.CurrentItem.Util
+						Category = saveItems.CurrentItem.Category,
+                        Util = saveItems.CurrentItem.Util,
+						OverrideFolder = saveItems.CurrentItem.OverrideFolder,
+						OverrideFileName = saveItems.CurrentItem.OverrideFileName
                     };
                     saveItems.DownloadItems.Add(pli);
                 }
@@ -2274,7 +2289,6 @@ namespace OnlineVideos.MediaPortal1
                 SaveVideo_Step3(saveItems, lsUrl);
             }
         }
-
         private void SaveVideo_Step3(DownloadList saveItems, string url)
         {
             // check for valid url and cut off additional parameter
@@ -2302,7 +2316,19 @@ namespace OnlineVideos.MediaPortal1
 
             saveItems.CurrentItem.Url = url;
             if (string.IsNullOrEmpty(saveItems.CurrentItem.Title)) saveItems.CurrentItem.Title = saveItems.CurrentItem.VideoInfo.Title;
-            saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, saveItems.CurrentItem.Util.Settings.Name), saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, selectedCategory, url));
+
+			if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFolder))
+			{
+				if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFileName))
+					saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.OverrideFileName);
+				else
+					saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
+			}
+			else
+			{
+				saveItems.CurrentItem.LocalFile = System.IO.Path.Combine(System.IO.Path.Combine(OnlineVideoSettings.Instance.DownloadDir, saveItems.CurrentItem.Util.Settings.Name), saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
+			}
+
             if (saveItems.DownloadItems != null && saveItems.DownloadItems.Count > 1)
             {
                 saveItems.CurrentItem.LocalFile = string.Format(@"{0}\{1} - {2}#{3}{4}",

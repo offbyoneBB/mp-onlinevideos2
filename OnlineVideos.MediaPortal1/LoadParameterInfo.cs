@@ -17,6 +17,9 @@ namespace OnlineVideos.MediaPortal1
         public string Search { get; protected set; }
         public bool ShowVKonFailedSearch { get { return _ShowVKonFailedSearch; } }
         public ReturnMode Return { get; protected set; }
+        public string DownloadDir { get; protected set; }
+        public string DownloadFilename { get; protected set; }
+        public string DownloadMenuEntry { get; protected set; }
 
         public LoadParameterInfo(string loadParam)
         {
@@ -31,6 +34,12 @@ namespace OnlineVideos.MediaPortal1
             if (!bool.TryParse(Regex.Match(loadParam, "VKonfail:([^|]*)").Groups[1].Value, out _ShowVKonFailedSearch)) _ShowVKonFailedSearch = true;
             try { Return = (ReturnMode)Enum.Parse(typeof(ReturnMode), Regex.Match(loadParam, "return:([^|]*)").Groups[1].Value); }
             catch { Return = ReturnMode.Root; }
+			if (Return == ReturnMode.Locked)
+			{
+				DownloadDir = Regex.Match(loadParam, "downloaddir:([^|]*)").Groups[1].Value;
+				DownloadFilename = Regex.Match(loadParam, "downloadfilename:([^|]*)").Groups[1].Value;
+				DownloadMenuEntry = Regex.Match(loadParam, "downloadmenuentry:([^|]*)").Groups[1].Value;
+			}
         }
 
         public static string FromGuiProperties()
@@ -61,6 +70,21 @@ namespace OnlineVideos.MediaPortal1
                 paramsFromGuiProps.Add("return:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Return"));
                 GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Return", string.Empty);
             }
+			if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Downloaddir")))
+			{
+				paramsFromGuiProps.Add("downloaddir:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Downloaddir"));
+				GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Downloaddir", string.Empty);
+			}
+			if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Downloadfilename")))
+			{
+				paramsFromGuiProps.Add("downloadfilename:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Downloadfilename"));
+				GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Downloadfilename", string.Empty);
+			}
+			if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Downloadmenuentry")))
+			{
+				paramsFromGuiProps.Add("downloadmenuentry:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Downloadmenuentry"));
+				GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Downloadmenuentry", string.Empty);
+			}
             if (paramsFromGuiProps.Count > 0) return string.Join("|", paramsFromGuiProps.ToArray());
             else return null;
         }

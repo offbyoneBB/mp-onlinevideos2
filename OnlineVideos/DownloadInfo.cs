@@ -27,7 +27,10 @@ namespace OnlineVideos
         public int KbTotal { get; private set; }
         public IDownloader Downloader { get; set; }
         public VideoInfo VideoInfo { get; set; }
-        public Sites.SiteUtilBase Util { get; set; }
+		public Category Category { get; set; }
+		public Sites.SiteUtilBase Util { get; set; }
+		public string OverrideFolder { get; set; }
+		public string OverrideFileName { get; set; }
 
         public void DownloadProgressCallback(long TotalBytesToReceive, long currentBytes)
         {
