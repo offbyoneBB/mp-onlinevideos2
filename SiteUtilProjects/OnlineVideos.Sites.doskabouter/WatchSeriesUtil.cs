@@ -303,6 +303,11 @@ namespace OnlineVideos.Sites
                 WatchMoviesExtraGetURL(video);
 
             string tmp = base.getUrl(video);
+            return SortPlaybackOptions(video, baseUrl, tmp);
+        }
+
+        public static string SortPlaybackOptions(VideoInfo video, string baseUrl, string tmp)
+        {
             List<PlaybackElement> lst = new List<PlaybackElement>();
             if (video.PlaybackOptions == null) // just one
                 lst.Add(new PlaybackElement("100%justone", tmp));
@@ -334,7 +339,6 @@ namespace OnlineVideos.Sites
                         lst.Add(element);
                     }
                 }
-
 
             Dictionary<string, int> counts = new Dictionary<string, int>();
             foreach (PlaybackElement el in lst)
@@ -375,6 +379,7 @@ namespace OnlineVideos.Sites
 
             if (lst.Count > 0)
                 tmp = lst[0].url;
+
             return tmp;
         }
 
@@ -510,20 +515,26 @@ namespace OnlineVideos.Sites
             return s.Substring(p, q - p);
         }
 
-        private int IntComparer(int i1, int i2)
+        private static int IntComparer(int i1, int i2)
         {
             if (i1 == i2) return 0;
             if (i1 > i2) return -1;
             return 1;
         }
 
-        private int PlaybackComparer(PlaybackElement e1, PlaybackElement e2)
+        private static int PlaybackComparer(PlaybackElement e1, PlaybackElement e2)
         {
             int res = IntComparer(e1.percentage, e2.percentage);
             if (res != 0)
                 return res;
             else
-                return String.Compare(e1.server, e2.server);
+            {
+                res = String.Compare(e1.status, e2.status);
+                if (res != 0)
+                    return res;
+                else
+                    return String.Compare(e1.server, e2.server);
+            }
         }
 
     }
@@ -548,7 +559,8 @@ namespace OnlineVideos.Sites
                 res += " (" + dupcnt.ToString() + ')';
             if (!String.IsNullOrEmpty(extra))
                 res += ' ' + extra;
-            res += ' ' + percentage.ToString() + '%';
+            if (percentage > 0)
+                res += ' ' + percentage.ToString() + '%';
             if (!String.IsNullOrEmpty(status))
                 res += " - " + status;
             return res;
@@ -556,10 +568,19 @@ namespace OnlineVideos.Sites
 
         public PlaybackElement(string aPlaybackName, string aUrl)
         {
-            string[] tmp = aPlaybackName.Split('%');
-            percentage = int.Parse(tmp[0]);
-            server = tmp[1].TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }).Trim();
-            int i = server.IndexOf(".");
+            string ser = aPlaybackName;
+            if (aPlaybackName.Contains("%"))
+            {
+                string[] tmp = aPlaybackName.Split('%');
+                percentage = int.Parse(tmp[0]);
+                ser = tmp[1];
+            }
+            else
+            {
+                percentage = -1;
+            }
+            server = ser.TrimEnd(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }).Trim();
+            int i = server.LastIndexOf(".");
             if (i >= 0)
                 server = server.Substring(0, i);
             url = aUrl;

@@ -37,24 +37,11 @@ namespace OnlineVideos.Hoster.Base
             if (!string.IsNullOrEmpty(page))
             {
                 Match n = Regex.Match(page, @"addVariable\(""file"",""(?<url>[^""]+)""\);");
-                if (n.Success) return n.Groups["url"].Value;
+                if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
                 n = Regex.Match(page, @"flashvars.file=""(?<url>[^""]+)"";");
                 if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
                 n = Regex.Match(page, @"flashvars.{0,50}file\s*?(?:=|:)\s*?(?:\'|"")?(?<url>[^\'""]+)(?:\'|"")?", defaultRegexOptions);
                 if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
-                n = Regex.Match(page, @"flashvars.file=""(?<file>[^""]+)"";\s*flashvars.filekey=""(?<key>[^""]+)"";\s*flashvars.advURL=""[^""]*"";\s*flashvars.autoplay=""[^""]*"";\s*flashvars.cid=""(?<id>[^""]*)""");
-                if (n.Success)
-                {
-                    string tmpUrl = String.Format(@"http://www.novamov.com/api/player.api.php?key={0}&user=undefined&codes={1}&file={2}&pass=undefined",
-                        HttpUtility.UrlEncode(n.Groups["key"].Value),
-                        n.Groups["id"].Value,
-                        n.Groups["file"].Value);
-                    page = SiteUtilBase.GetWebData(tmpUrl);
-                    n = Regex.Match(page, @"url=(?<url>[^%]+)%");
-                    if (n.Success)
-                        return n.Groups["url"].Value;
-                }
-
             }
             return String.Empty;
         }
@@ -122,6 +109,7 @@ namespace OnlineVideos.Hoster.Base
 
         protected static string GetSubString(string s, string start, string until)
         {
+            if (string.IsNullOrEmpty(s)) return string.Empty;
             int p = s.IndexOf(start);
             if (p == -1) return String.Empty;
             p += start.Length;
