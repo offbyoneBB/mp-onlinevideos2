@@ -1250,7 +1250,7 @@
       </Configuration>
       <Categories />
     </Site>
-    <Site name="Tube+" util="TubePlus" agecheck="false" enabled="true" lang="en" player="Internal">
+    <Site name="Tube+" util="TubePlus" agecheck="false" enabled="true" lang="en" player="Internal" lastUpdated="2011-05-06T22:31:05.1146124+02:00">
       <Description>A Revolutionary way to watch your videos</Description>
       <Configuration>
         <item key="aZSubCategoriesRegEx"><![CDATA[<li\stitle="[^m]*movies"><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
@@ -1260,8 +1260,7 @@
         <item key="showVideoListRegEx"><![CDATA[name="[^"]*"\sid="(?<id>[^"]*)"\sclass="seasons"\shref="*(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>]]></item>
         <item key="moviesVideoListRegEx"><![CDATA[<div\sclass="list_item[^"]*">\s*<div\sclass="left">\s*<a\starget="_blank"\stitle="[^"]*"\shref="(?<VideoUrl>[^"]*)"><img\sborder="0"\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"></a>\s*</div>\s*<div\sclass="right">\s*<div\sclass="frelease">(?<airdate>[^<]*)</div>\s*<a\sclass="plot"\starget="_blank"\sid="[^>]*>\s*<b>(?<Title>[^<]*)</b>\s*(?:<b\sclass="sbtitle"></b>)?\s*(?:(?<Description>[^<]*)<[^>]*>\s*)?</a>\s*<div>]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)">&gt;</a></li>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[(<li\sclass="online\sgoogle">\s*<a\sclass="glink"\shref="javascript:show\('[^']*','[^']*',\s'(?<n0>[^']*)'\)">(?<m0>[^<]*)</a>\s*<div\sclass="report">)|(<li\sclass="online">\s*<div\sclass="link">\s*<a\shref="javascript:show\('[^']*','[^']*',\s'(?<n0>[^']*)'\)">(?<n1>[^<]*)</a>\s*<a\sclass="none"\shref="(?<m0>[^"]*)">[^<]*</a>)]]></item>
-        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
+        <item key="fileUrlRegEx"><![CDATA[(<li\sid="[^"]*"\sclass="online\sgoogle">\s*<a\sclass="glink"\shref="javascript:show\('[^']*','[^']*',\s'(?<n0>[^']*)'\)[^>]*>(?<m0>[^<]*)</a>\s*<div\sclass="report">)|(<li\sid="[^"]*"\sclass="online">\s*(?:<div\sclass="divx">\s*)?<div\sclass="link">\s*<a[^>]*>[^<]*</a>\s*<a\sclass="none"\shref="(?<m0>[^"]*)">[^<]*</a>\s*</div>\s*<div\sclass="params">\s*<span>Submited:\s</span>[^<]*<span>Host:\s</span>(?<n0>[^\s]*)\s*</div>)]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="TV Shows" thumb="" desc="">http://tubeplus.me/browse/tv-shows/Last/ALL/</Category>

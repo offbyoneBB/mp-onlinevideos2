@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using OnlineVideos.Sites;
 using System.ComponentModel;
 using System.Reflection;
+using System.Web;
 
 namespace OnlineVideos.Hoster.Base
 {
@@ -40,10 +39,22 @@ namespace OnlineVideos.Hoster.Base
                 Match n = Regex.Match(page, @"addVariable\(""file"",""(?<url>[^""]+)""\);");
                 if (n.Success) return n.Groups["url"].Value;
                 n = Regex.Match(page, @"flashvars.file=""(?<url>[^""]+)"";");
-                if (n.Success) return n.Groups["url"].Value;
+                if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
                 n = Regex.Match(page, @"flashvars.{0,50}file\s*?(?:=|:)\s*?(?:\'|"")?(?<url>[^\'""]+)(?:\'|"")?", defaultRegexOptions);
-                if (n.Success) return n.Groups["url"].Value;
-                
+                if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
+                n = Regex.Match(page, @"flashvars.file=""(?<file>[^""]+)"";\s*flashvars.filekey=""(?<key>[^""]+)"";\s*flashvars.advURL=""[^""]*"";\s*flashvars.autoplay=""[^""]*"";\s*flashvars.cid=""(?<id>[^""]*)""");
+                if (n.Success)
+                {
+                    string tmpUrl = String.Format(@"http://www.novamov.com/api/player.api.php?key={0}&user=undefined&codes={1}&file={2}&pass=undefined",
+                        HttpUtility.UrlEncode(n.Groups["key"].Value),
+                        n.Groups["id"].Value,
+                        n.Groups["file"].Value);
+                    page = SiteUtilBase.GetWebData(tmpUrl);
+                    n = Regex.Match(page, @"url=(?<url>[^%]+)%");
+                    if (n.Success)
+                        return n.Groups["url"].Value;
+                }
+
             }
             return String.Empty;
         }
@@ -51,7 +62,7 @@ namespace OnlineVideos.Hoster.Base
         {
             string page = webData;
             if (webData == null)
-              page = SiteUtilBase.GetWebData(url);
+                page = SiteUtilBase.GetWebData(url);
 
             if (!string.IsNullOrEmpty(page))
             {
@@ -364,6 +375,6 @@ namespace OnlineVideos.Hoster.Base
         }
 
         #endregion
- 
+
     }
 }

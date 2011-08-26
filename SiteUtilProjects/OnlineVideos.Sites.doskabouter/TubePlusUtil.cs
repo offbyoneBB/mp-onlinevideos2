@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -95,8 +94,6 @@ namespace OnlineVideos.Sites
                         string[] airdates = m.Groups["airdates"].Value.Replace(",", "||").Split(new[] { @"||" }, StringSplitOptions.RemoveEmptyEntries);
 
                         List<VideoInfo> videoList = Parse(null, m.Groups["urls"].Value);
-                        foreach (VideoInfo vid in videoList)
-                            vid.Other = true;
 
                         for (int i = 0; i < videoList.Count && i + 1 < airdates.Length; i++)
                         {
@@ -135,15 +132,6 @@ namespace OnlineVideos.Sites
             }
             else
                 return (List<VideoInfo>)category.Other;
-        }
-
-        public override string getUrl(VideoInfo video)
-        {
-            if (true.Equals(video.Other))
-                fileUrlNameFormatString = "{0}";
-            else
-                fileUrlNameFormatString = "{1} {0}";
-            return base.getUrl(video);
         }
 
         public class TubePlusVideoInfo : VideoInfo
