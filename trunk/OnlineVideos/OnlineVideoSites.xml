@@ -1110,6 +1110,7 @@
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Laatste videos">http://nl.hardware.info/tv/</Category>
+        <Category xsi:type="RssLink" name="Losse Items">http://nl.hardware.info/tv/losse-items/</Category>
       </Categories>
     </Site>
     <Site name="LuckyTV" util="LuckyTV" agecheck="false" enabled="true" lang="nl">
