@@ -72,7 +72,7 @@ namespace OnlineVideos.Hoster
                 string[] FmtList = Items["fmt_list"].Split(',');
 
                 List<KeyValuePair<string[], string>> qualities = new List<KeyValuePair<string[], string>>();
-                for (int i = 0; i < FmtList.Length; i++) qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), Regex.Replace(HttpUtility.UrlDecode(FmtUrlMap[i].Replace("url=", "")), @"; codecs=""[^""]*""", "")));
+                for (int i = 0; i < FmtList.Length; i++) qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), FmtUrlMap[i]));
                 qualities.Sort(new Comparison<KeyValuePair<string[], string>>((a,b)=>
                 {
                     return Array.IndexOf(fmtOptionsQualitySorted, byte.Parse(b.Key[0])).CompareTo(Array.IndexOf(fmtOptionsQualitySorted, byte.Parse(a.Key[0])));
@@ -81,9 +81,16 @@ namespace OnlineVideos.Hoster
                 PlaybackOptions = new Dictionary<string, string>();
                 foreach (var quality in qualities)
                 {
-                    string type = HttpUtility.ParseQueryString(quality.Value).Get("type");
-                    if (!string.IsNullOrEmpty(type)) type = type.Substring(type.LastIndexOfAny(new char[] { '/', '-' }) + 1);
-                    PlaybackOptions.Add(string.Format("{0} | {1} ({2})", quality.Key[1], type, quality.Key[0]), quality.Value.Substring(0, quality.Value.IndexOf("&type")) + "&ext=." + type.Replace("webm", "mkv"));
+                    var urlOptions = HttpUtility.ParseQueryString(quality.Value);
+                    string type = urlOptions.Get("type");
+                    if (!string.IsNullOrEmpty(type))
+                    {
+                        type = Regex.Replace(type, @"; codecs=""[^""]*""", "");
+                        type = type.Substring(type.LastIndexOfAny(new char[] { '/', '-' }) + 1);
+                    }
+                    string finalUrl = urlOptions.Get("url");
+                    if (!string.IsNullOrEmpty(finalUrl)) 
+                        PlaybackOptions.Add(string.Format("{0} | {1} ({2})", quality.Key[1], type, quality.Key[0]), finalUrl + "&ext=." + type.Replace("webm", "mkv"));
                 }
             }
             else if (!string.IsNullOrEmpty(Items.Get("fmt_stream_map")))
