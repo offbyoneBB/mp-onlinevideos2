@@ -107,4 +107,26 @@ namespace Standalone
             throw new NotImplementedException();
         }
     }
+
+    [ValueConversion(typeof(PlayListItem), typeof(string))]
+    public class PlayListPositionConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string result = "";
+            PlayListItem pl = value as PlayListItem;
+            PlayList pList = (App.Current.MainWindow as OnlineVideosMainWindow).CurrentPlayList;
+            if (pList != null && pList.Count > 1)
+            {
+                int index = pList.IndexOf(pl);
+                if (index > -1) result = string.Format("{0} / {1}", index+1, pList.Count);
+            }
+            return result;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

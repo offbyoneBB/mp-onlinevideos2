@@ -19,6 +19,7 @@
 
         <local:OVSTemplateSelector x:Key="myTemplateSelector"/>
         <local:CategoryPathConverter x:Key="myCategoryPathConverter"/>
+        <local:PlayListPositionConverter x:Key="myPlayListPositionConverter"/>
 
     </Window.Resources>
     
@@ -92,7 +93,10 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Name="txtPlayPos" Margin="0 0 0 5"/>
+                    <Grid>
+                        <TextBlock Name="txtPlayPos" Margin="0 0 0 5"/>
+                        <TextBlock HorizontalAlignment="Right" Margin="0 0 0 5" Text="{Binding ElementName=mainWindow, Path=CurrentPlayListItem, Converter={StaticResource myPlayListPositionConverter}}"/>
+                    </Grid>
                     <TextBlock Grid.Row="1" TextWrapping="Wrap" Margin="0 0 0 5" Text="{Binding ElementName=mainWindow, Path=CurrentPlayListItem.Video.Title}"/>
                     <WrapPanel Grid.Row="2">
                         <Button Height="32" Width="45" Padding="2" Margin="0 0 5 0" Command="MediaCommands.TogglePlayPause" ToolTip="Play/Pause">                        
