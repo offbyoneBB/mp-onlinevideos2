@@ -103,6 +103,7 @@
     <Compile Include="PlaybackChoices.xaml.cs">
       <DependentUpon>PlaybackChoices.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PlayListItem.cs" />
     <Compile Include="SearchDialog.xaml.cs">
       <DependentUpon>SearchDialog.xaml</DependentUpon>
     </Compile>

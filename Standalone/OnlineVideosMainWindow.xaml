@@ -53,10 +53,10 @@
             </LinearGradientBrush>
         </Grid.Background>
         <WrapPanel>
-            <Button Height="30" VerticalAlignment="Center" Command="BrowseBack" ToolTip="Back" Margin="5 0 0 0">
+            <Button Height="32" VerticalAlignment="Center" Command="BrowseBack" ToolTip="Back" Margin="5 0 0 0">
                 <Image Source="Images/Back.png"/>
             </Button>
-            <Button Height="30" VerticalAlignment="Center" Command="Search" ToolTip="Search" Margin="5 0 0 0">
+            <Button Height="32" VerticalAlignment="Center" Command="Search" ToolTip="Search" Margin="5 0 0 0">
                 <Image Source="Images/Search.png"/>
             </Button>
             <Rectangle Width="1" Fill="Black" Stroke="Black" VerticalAlignment="Stretch" Margin="5 0 10 0"/>
@@ -93,10 +93,10 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock Name="txtPlayPos" Margin="0 0 0 5"/>
-                    <TextBlock Grid.Row="1" Name="txtPlayTitle" TextWrapping="Wrap" Margin="0 0 0 5"/>
+                    <TextBlock Grid.Row="1" TextWrapping="Wrap" Margin="0 0 0 5" Text="{Binding ElementName=mainWindow, Path=CurrentPlayListItem.Video.Title}"/>
                     <WrapPanel Grid.Row="2">
-                        <Button Height="22" Width="35" Padding="2" Margin="0 0 5 0" Command="MediaCommands.TogglePlayPause">                        
-                            <Viewbox Stretch="Uniform">
+                        <Button Height="32" Width="45" Padding="2" Margin="0 0 5 0" Command="MediaCommands.TogglePlayPause" ToolTip="Play/Pause">                        
+                            <Viewbox Stretch="Uniform" Margin="2">
                                 <Canvas Width="35" Height="22">
                                     <Polygon Fill="#AAAAAAAA" Stroke="Black" StrokeLineJoin="Round">
                                         <Polygon.Points>
@@ -110,8 +110,8 @@
                                 </Canvas>
                             </Viewbox>         
                         </Button>
-                        <Button Height="22" Width="35" Padding="2" Command="MediaCommands.Stop">
-                            <Viewbox Stretch="Uniform">
+                        <Button Height="32" Width="45" Padding="2" Command="MediaCommands.Stop" ToolTip="Stop">
+                            <Viewbox Stretch="Uniform" Margin="2">
                                 <Canvas Width="22" Height="22">
                                     <Rectangle Canvas.Left="1" Canvas.Top="1" Fill="#AAAAAAAA" Stroke="Black" StrokeLineJoin="Round" Width="20" Height="20"/>
                                 </Canvas>
