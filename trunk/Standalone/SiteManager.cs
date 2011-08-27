@@ -52,6 +52,28 @@ namespace Standalone
             }
         }
 
+        static OnlineVideos.OnlineVideosWebservice.Site[] onlineSites;
+        public static OnlineVideos.OnlineVideosWebservice.Site[] GetOnlineSites(OnlineVideos.OnlineVideosWebservice.OnlineVideosService ws = null)
+        {
+            if (ws != null)
+            {
+                try { onlineSites = ws.GetSitesOverview(); }
+                catch { OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn(OnlineVideos.Translation.RetrievingRemoteSites); }
+            }
+            return onlineSites;
+        }
+
+        static OnlineVideos.OnlineVideosWebservice.Dll[] onlineDlls;
+        public static OnlineVideos.OnlineVideosWebservice.Dll[] GetOnlineDlls(OnlineVideos.OnlineVideosWebservice.OnlineVideosService ws = null)
+        {
+            if (ws != null)
+            {
+                try { onlineDlls = ws.GetDllsOverview(); }
+                catch { OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn(OnlineVideos.Translation.RetrievingRemoteDlls); }
+            }
+            return onlineDlls;
+        }
+
         public static void AutomaticUpdate()
         {
             if (OnlineVersion == null || OnlineVersion > LocalVersion)
@@ -59,14 +81,11 @@ namespace Standalone
                 return; // no online version check retrieved (are we offline?), or newer version available (message?)
             }
 
-            OnlineVideos.OnlineVideosWebservice.Dll[] onlineDlls = null;
-            OnlineVideos.OnlineVideosWebservice.Site[] onlineSites = null;
-            OnlineVideos.OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
-            ws.Timeout = 30000;
-            try { onlineSites = ws.GetSitesOverview(); }
-            catch { OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn(OnlineVideos.Translation.RetrievingRemoteSites); return; }
-            try { onlineDlls = ws.GetDllsOverview(); }
-            catch { OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn(OnlineVideos.Translation.RetrievingRemoteDlls); return; }
+            OnlineVideos.OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService() { Timeout = 30000 };
+            GetOnlineSites(ws);
+            GetOnlineDlls(ws);
+
+            if (onlineSites == null || onlineDlls == null) return;
 
             bool saveRequired = false;
             Dictionary<string, bool> requiredDlls = new Dictionary<string, bool>();
@@ -112,37 +131,48 @@ namespace Standalone
                     OnlineVideos.OnlineVideosWebservice.Dll anOnlineDll = onlineDlls[i];
                     if (requiredDlls.ContainsKey(anOnlineDll.Name))
                     {
-                        string location = OnlineVideoSettings.Instance.DllsDir + anOnlineDll.Name + ".dll";
-                        bool download = true;
-                        if (System.IO.File.Exists(location))
-                        {
-                            byte[] data = null;
-                            data = System.IO.File.ReadAllBytes(location);
-                            System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-                            string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
-                            if (md5LocalDll == anOnlineDll.MD5) download = false;
-                        }
-                        if (download)
-                        {
-                            try
-                            {
-                                byte[] onlineDllData = ws.GetDll(anOnlineDll.Name);
-                                if (onlineDllData != null && onlineDllData.Length > 0) System.IO.File.WriteAllBytes(location, onlineDllData);
-                            }
-                            catch (Exception ex)
-                            {
-                                OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn("Error getting remote DLL {0}: {1}", anOnlineDll.Name, ex.ToString());
-                            }
-                        }
+                        DownloadDll(anOnlineDll, ws);
                     }
                 }
             }
         }
 
-        static SiteSettings GetRemoteSite(string siteName, OnlineVideos.OnlineVideosWebservice.OnlineVideosService ws)
+        public static bool? DownloadDll(OnlineVideos.OnlineVideosWebservice.Dll anOnlineDll, OnlineVideos.OnlineVideosWebservice.OnlineVideosService ws = null)
+        {
+            if (anOnlineDll == null) return null;
+            string location = OnlineVideoSettings.Instance.DllsDir + anOnlineDll.Name + ".dll";
+            bool download = true;
+            if (System.IO.File.Exists(location))
+            {
+                byte[] data = null;
+                data = System.IO.File.ReadAllBytes(location);
+                System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                string md5LocalDll = BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLower();
+                if (md5LocalDll == anOnlineDll.MD5) download = false;
+            }
+            if (download)
+            {
+                try
+                {
+                    if (ws == null) ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService() { Timeout = 30000 };
+                    byte[] onlineDllData = ws.GetDll(anOnlineDll.Name);
+                    if (onlineDllData != null && onlineDllData.Length > 0) System.IO.File.WriteAllBytes(location, onlineDllData);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn("Error getting remote DLL {0}: {1}", anOnlineDll.Name, ex.ToString());
+                    return false;
+                }
+            }
+            return null;
+        }
+
+        public static SiteSettings GetRemoteSite(string siteName, OnlineVideos.OnlineVideosWebservice.OnlineVideosService ws = null)
         {
             try
             {
+                if (ws == null) ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService() { Timeout = 30000 };
                 string siteXml = ws.GetSiteXml(siteName);
                 if (siteXml.Length > 0)
                 {

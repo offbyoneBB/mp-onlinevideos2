@@ -24,6 +24,7 @@
     </Window.Resources>
     
     <Window.CommandBindings>
+        <CommandBinding Command="NavigateJournal" CanExecute="SiteManager_CanExecute" Executed="SiteManager_Executed"/>
         <CommandBinding Command="BrowseBack" CanExecute="Back_CanExecute" Executed="Back_Executed"/>
         <CommandBinding Command="Search" CanExecute="Search_CanExecute" Executed="Search_Executed"/>
         <CommandBinding Command="MediaCommands.TogglePlayPause" CanExecute="PlayPause_CanExecute" Executed="PlayPause_Executed"/>
@@ -53,17 +54,28 @@
                 <GradientStop Offset="1" Color="#FFA6D9F4"/>
             </LinearGradientBrush>
         </Grid.Background>
-        <WrapPanel>
-            <Button Height="32" VerticalAlignment="Center" Command="BrowseBack" ToolTip="Back" Margin="5 0 0 0">
-                <Image Source="Images/Back.png"/>
-            </Button>
-            <Button Height="32" VerticalAlignment="Center" Command="Search" ToolTip="Search" Margin="5 0 0 0">
-                <Image Source="Images/Search.png"/>
-            </Button>
-            <Rectangle Width="1" Fill="Black" Stroke="Black" VerticalAlignment="Stretch" Margin="5 0 10 0"/>
-            <Image Margin="5 2 5 2" Height="32" Source="{Binding ElementName=mainWindow, Path=SelectedSite, Converter={StaticResource ThumbnailConverter}, ConverterParameter=Banners}"/>
-            <TextBlock Text="{Binding ElementName=mainWindow, Path=SelectedCategory, Converter={StaticResource myCategoryPathConverter}}" FontSize="16" VerticalAlignment="Center"/>
-        </WrapPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <WrapPanel VerticalAlignment="Center" Margin="5 0 5 0">
+                <Button Height="34" Command="BrowseBack" ToolTip="Back">
+                    <Image Source="Images/Back.png"/>
+                </Button>
+                <Button Height="34" Command="Search" ToolTip="Search" Margin="5 0 0 0">
+                    <Image Source="Images/Search.png"/>
+                </Button>
+            </WrapPanel>
+            <WrapPanel Grid.Column="1" VerticalAlignment="Center">
+                <Image Margin="5 2 5 2" Height="32" Source="{Binding ElementName=mainWindow, Path=SelectedSite, Converter={StaticResource ThumbnailConverter}, ConverterParameter=Banners}"/>
+                <TextBlock Text="{Binding ElementName=mainWindow, Path=SelectedCategory, Converter={StaticResource myCategoryPathConverter}}" FontSize="16" VerticalAlignment="Center"/>
+            </WrapPanel>
+            <ToggleButton Grid.Column="2" Height="34" VerticalAlignment="Center" HorizontalAlignment="Right" ToolTip="Add Sites from global list" Margin="5 0 5 0" Command="NavigateJournal">
+                <Image Source="Images/GlobalSites.png"/>
+            </ToggleButton>
+        </Grid>
         <ListView Grid.Row="1" Name="listViewMain" SelectionChanged="listViewMain_SelectionChanged" SelectionMode="Single"
                   ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource itemstyle}" ItemTemplateSelector="{StaticResource myTemplateSelector}" Background="Transparent">            
             <ListView.ItemsPanel>
@@ -76,6 +88,7 @@
             </ListView.ItemsPanel>
         </ListView>
         <local:DetailsView Grid.Row="1" x:Name="detailsView" Visibility="Hidden" ItemSelected="OnItemSelected"/>
+        <local:GlobalSites Grid.Row="1" x:Name="globalSitesView" Visibility="Hidden"/>
         <Grid Grid.Row="2" Height="120">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.5*"/>

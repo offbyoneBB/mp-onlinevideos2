@@ -98,6 +98,10 @@
     <Compile Include="DetailsView.xaml.cs">
       <DependentUpon>DetailsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSites.xaml.cs">
+      <DependentUpon>GlobalSites.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GridViewSort.cs" />
     <Compile Include="Gui2UtilConnector.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="PlaybackChoices.xaml.cs">
@@ -138,6 +142,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DetailsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GlobalSites.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -232,11 +240,14 @@
     <Content Include="EVRPresenter64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\GlobalSites.png" />
+    <Resource Include="Images\Add.png" />
     <Content Include="Images\NextPage.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Images\Back.png" />
     <Resource Include="Images\Search.png" />
+    <Resource Include="Images\Remove.png" />
     <Content Include="LanguageFlags\--.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
