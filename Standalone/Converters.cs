@@ -9,6 +9,8 @@ using OnlineVideos;
 using OnlineVideos.Sites;
 using System.Windows;
 using System.Net;
+using System.Globalization;
+using System.Windows.Controls;
 
 namespace Standalone
 {
@@ -122,6 +124,94 @@ namespace Standalone
                 if (index > -1) result = string.Format("{0} / {1}", index+1, pList.Count);
             }
             return result;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(string))]
+    public class LanguageCodeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string name = value as string;
+            try
+            {
+                name = name != "--" ? System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag(name).DisplayName : "Global";
+            }
+            catch
+            {
+                var temp = System.Globalization.CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
+                    ci => ci.IetfLanguageTag == name || ci.ThreeLetterISOLanguageName == name || ci.TwoLetterISOLanguageName == name || ci.ThreeLetterWindowsLanguageName == name);
+                if (temp != null)
+                {
+                    name = temp.DisplayName;
+                }
+            }
+            return name;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [ValueConversion(typeof(string), typeof(string))]
+    public class EmailToNameConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string email = value as string;
+            return email.Substring(0, email.IndexOf('@'));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [ValueConversion(typeof(OnlineVideos.OnlineVideosWebservice.SiteState), typeof(SolidColorBrush))]
+    public class SiteStateToBrushConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            switch ((OnlineVideos.OnlineVideosWebservice.SiteState)value)
+            {
+                case OnlineVideos.OnlineVideosWebservice.SiteState.Reported: return new SolidColorBrush(Color.FromArgb(255, 255, 240, 79));
+                case OnlineVideos.OnlineVideosWebservice.SiteState.Broken: return new SolidColorBrush(Colors.Red);
+                default: return new SolidColorBrush(Colors.Green);
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [ValueConversion(typeof(ListViewItem), typeof(Visibility))]
+    public class SiteVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            ListViewItem lvItem  = (value as ListViewItem);
+            OnlineVideos.OnlineVideosWebservice.Site onlineSite = lvItem.DataContext as OnlineVideos.OnlineVideosWebservice.Site;
+            SiteSettings ss = OnlineVideoSettings.Instance.SiteSettingsList.FirstOrDefault(i => i.Name == onlineSite.Name);
+            if ((parameter as string) == "Add")
+            {
+                if (ss != null) return Visibility.Hidden;
+                else return Visibility.Visible;
+            }
+            else
+            {
+                if (ss != null) return Visibility.Visible;
+                else return Visibility.Hidden;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

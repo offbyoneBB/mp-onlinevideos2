@@ -336,7 +336,7 @@ namespace Standalone
 
 		private void Play_Step2(PlayListItem playItem, List<String> urlList, bool goFullScreen)
 		{
-			removeInvalidEntries(urlList);
+			RemoveInvalidUrls(urlList);
 
 			// if no valid urls were returned show error msg
 			if (urlList == null || urlList.Count == 0) {
@@ -463,7 +463,7 @@ namespace Standalone
 			return false;
 		}
 
-        private void SelectAndFocusFirstItem()
+        public void SelectAndFocusFirstItem()
         {
             if (listViewMain.Items.Count > 0)
             {
@@ -496,7 +496,7 @@ namespace Standalone
 
 		private void Search_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = !Gui2UtilConnector.Instance.IsBusy && SelectedSite != null && !Gui2UtilConnector.Instance.IsBusy && SelectedSite.CanSearch;
+			e.CanExecute = !Gui2UtilConnector.Instance.IsBusy && SelectedSite != null && SelectedSite.CanSearch;
 		}
 
 		private void Search_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -553,7 +553,7 @@ namespace Standalone
 
         private void Back_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = !Gui2UtilConnector.Instance.IsBusy && SelectedSite != null && !Gui2UtilConnector.Instance.IsBusy;
+            e.CanExecute = !Gui2UtilConnector.Instance.IsBusy && SelectedSite != null;
         }
 
 		private void Back_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -721,7 +721,7 @@ namespace Standalone
 			if (!PlayNextPlaylistItem()) Stop_Executed(sender, null);
         }
 
-		private void removeInvalidEntries(List<string> loUrlList)
+		private void RemoveInvalidUrls(List<string> loUrlList)
 		{
 			// remove all invalid entries from the list of playback urls
 			if (loUrlList != null)
@@ -741,5 +741,26 @@ namespace Standalone
 				}
 			}
 		}
+
+        private void SiteManager_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !Gui2UtilConnector.Instance.IsBusy && SelectedSite == null;
+        }
+
+        private void SiteManager_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (listViewMain.Visibility == System.Windows.Visibility.Visible)
+            {
+                listViewMain.Visibility = System.Windows.Visibility.Hidden;
+                detailsView.Visibility = System.Windows.Visibility.Hidden;
+                globalSitesView.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                listViewMain.Visibility = System.Windows.Visibility.Visible;
+                detailsView.Visibility = System.Windows.Visibility.Hidden;
+                globalSitesView.Visibility = System.Windows.Visibility.Hidden;
+            }
+        }
     }
 }
