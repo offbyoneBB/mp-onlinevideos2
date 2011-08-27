@@ -32,6 +32,7 @@
   <string Field="DateOfRelease">Date of Release</string>
   <string Field="Directors">Directors</string>
   <string Field="Download">Download</string>
+  <string Field="DownloadUserdefined">Download to User Directory</string>
   <string Field="Downloading">Downloading</string>
   <string Field="DownloadingDescription">Shows a list of downloads currently running.</string>
   <string Field="DownloadingSubtitle">downloading subtitle</string>
