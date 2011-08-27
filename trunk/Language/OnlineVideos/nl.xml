@@ -24,6 +24,7 @@
   <string Field="DateOfRelease">Verschijningsdatum:</string>
   <string Field="Directors">Regisseurs</string>
   <string Field="Download">Download</string>
+  <string Field="DownloadUserdefined">Downloaden naar ingestelde directory</string>
   <string Field="Downloading">Downloaden</string>
   <string Field="DownloadingDescription">Toont lijst van huidige downloads</string>
   <string Field="DownloadingSubtitle">Ondertiteling downloaden</string>
