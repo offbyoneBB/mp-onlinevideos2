@@ -113,6 +113,7 @@ namespace OnlineVideos.Sites
                     parentCategory.SubCategories.Add(cat);
                     m = m.NextMatch();
                 }
+                parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
                 return parentCategory.SubCategories.Count;
             }
             return 0;
