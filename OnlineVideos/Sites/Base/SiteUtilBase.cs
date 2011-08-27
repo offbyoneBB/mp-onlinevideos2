@@ -286,7 +286,7 @@ namespace OnlineVideos.Sites
         /// <returns>the list of videos or categories matching that search query.</returns>
         public virtual List<ISearchResultItem> DoSearch(string query, string category)
         {
-            return Search(query, category).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem); ;
+            return Search(query, category).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         /// <summary>

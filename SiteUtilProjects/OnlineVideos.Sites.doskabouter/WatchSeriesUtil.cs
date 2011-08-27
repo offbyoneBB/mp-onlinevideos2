@@ -75,7 +75,11 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            string url = ((RssLink)parentCategory).Url;
+            return GetSubCategories(parentCategory, ((RssLink)parentCategory).Url);
+        }
+
+        private int GetSubCategories(Category parentCategory, string url)
+        {
             string webData;
             int p = url.IndexOf('#');
             if (p >= 0)
@@ -456,6 +460,51 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getNextPageVideos()
         {
             return getOnePageVideoList(currCategory, nextVideoListPageUrl);
+        }
+
+        public override bool CanSearch
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override List<ISearchResultItem> DoSearch(string query)
+        {
+            if (isWatchMovies)
+            {
+                Category cat = new Category();
+                cat.Other = Depth.BareList;
+                List<VideoInfo> vids = getOnePageVideoList(cat, baseUrl + "/search/" + query);
+                return vids.ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            }
+            //else: watch-series:
+            List<ISearchResultItem> cats = new List<ISearchResultItem>();
+
+            Regex r = new Regex(@"<tr><td\svalign=""top"">\s*<a\shref=""(?<url>[^""]*)""[^>]*>\s<img\ssrc=""(?<thumb>[^""]*)""[^>]*></a>\s*</td>\s*<td\svalign=""top"">\s*<a[^>]*><b>(?<title>[^<]*)</b></a>\s*<br\s/>\s*<b>Description:</b>\s*(?<description>[^<]*)<br\s/>",
+                RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+
+            string webData = GetWebData(baseUrl + "/search/" + query);
+            Match m = r.Match(webData);
+            while (m.Success)
+            {
+                RssLink cat = new RssLink();
+                cat.Url = m.Groups["url"].Value;
+                if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
+                if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
+                if (dynamicSubCategoryUrlDecoding) cat.Url = HttpUtility.HtmlDecode(cat.Url);
+                cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
+                cat.Thumb = m.Groups["thumb"].Value;
+                if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
+                cat.Description = m.Groups["description"].Value;
+                cat.Other = Depth.Series;
+                cat.HasSubCategories = true;
+                cats.Add(cat);
+                m = m.NextMatch();
+            }
+
+            return cats;
         }
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
