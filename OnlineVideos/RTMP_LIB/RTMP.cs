@@ -1912,7 +1912,7 @@ namespace RTMP_LIB
 					if (resp[i] != clientsig[i + 1])
 					{
 						Logger.Log("client signature does not match!");
-						return false;
+						//return false; - continue anyway
 					}
 			}
 
