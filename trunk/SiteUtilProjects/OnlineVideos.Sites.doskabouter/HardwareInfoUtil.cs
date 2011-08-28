@@ -51,7 +51,10 @@ namespace OnlineVideos.Sites
                 }
             }
             else
-                newUrls.Add(video.VideoUrl);
+            {
+                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(s);
+                newUrls.Add(s);
+            }
 
             return newUrls;
         }
