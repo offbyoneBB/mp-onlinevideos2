@@ -398,27 +398,88 @@
         <Category xsi:type="RssLink" name="Video Games">http://rss.livevideo.com/rss/rss.ashx?catid=15</Category>
       </Categories>
     </Site>
-    <Site name="GameTrailers" util="GenericSite" agecheck="false" enabled="true" lang="en">
+    <Site name="Gametrailers" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Watch trailers, reviews, interviews and ingame footage for games from all the major platforms.</Description>
       <Configuration>
-        <item key="fileUrlRegEx"><![CDATA[<src>(?<m0>[^<]+)</src>]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
-        <item key="videoUrlRegEx"><![CDATA[http://.+/(?<m0>\d{4,10})]]></item>
-        <item key="videoUrlFormatString"><![CDATA[http://www.gametrailers.com/neo/?page=xml.mediaplayer.Mediagen&movieId={0}]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="gamepage_content_row_thumb">.*?<img\ssrc="(?<ImageUrl>[^"]*)"\sclass="gamepage_content_row_image"\salt="">.*?<a\shref=".*?(?<VideoUrl>[0-9]*)"><img\sborder="0"\ssrc="http://gametrailers\.mtvnimages\.com/images/sitewide/HDupper\.gif">.*?gamepage_content_row_title">(?<Title>[^<]*)</a>.*?bold;">(?<Description>.*?)</div>\s*<div\s+class="MovieFileSize">\s*Posted\s*(?<Airdate>[^<]*)</div>]]></item>
+        <item key="videoListRegExFormatString"><![CDATA[http://mosii.gametrailers.com/getmediainfo4.php?hd=1&mid={0}]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="Page">Next\s&raquo;</a>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[umfilename=(?<m0>[^&]*)]]></item>
+        <item key="fileUrlFormatString"><![CDATA[http://trailers.gametrailers.com/gt_vault/{0}.mp4]]></item>
+        <item key="baseUrl"><![CDATA[http://www.gametrailers.com]]></item>
+        <item key="videoThumbFormatString"><![CDATA[{0}]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="All">http://www.gametrailers.com/rssgenerate.php?quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="PC">http://www.gametrailers.com/rssgenerate.php?favplats[pc]=pc&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="PS3">http://www.gametrailers.com/rssgenerate.php?favplats[ps3]=ps3&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="PS2">http://www.gametrailers.com/rssgenerate.php?favplats[ps2]=ps2&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="PSP">http://www.gametrailers.com/rssgenerate.php?favplats[psp]=psp&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="Xbox360">http://www.gametrailers.com/rssgenerate.php?favplats[xb360]=xb360&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="Xbox">http://www.gametrailers.com/rssgenerate.php?favplats[xbox]=xbox&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="Wii">http://www.gametrailers.com/rssgenerate.php?favplats[wii]=wii&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="GameCube">http://www.gametrailers.com/rssgenerate.php?favplats[gc]=gc&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="Game Boy Advance">http://www.gametrailers.com/rssgenerate.php?favplats[gba]=gba&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="Nintendo DS">http://www.gametrailers.com/rssgenerate.php?favplats[ds]=ds&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
-        <Category xsi:type="RssLink" name="Mobile">http://www.gametrailers.com/rssgenerate.php?favplats[mob]=mob&amp;quality[either]=on&amp;orderby=newest&amp;limit=100</Category>
+        <Category xsi:type="RssLink" name="PC">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Newest Media">http://pc.gametrailers.com/#Content</Category>
+            <Category xsi:type="RssLink" name="Trailers">http://pc.gametrailers.com/?show=Trailers#Content</Category>
+            <Category xsi:type="RssLink" name="Features">http://pc.gametrailers.com/?show=Features#Content</Category>
+            <Category xsi:type="RssLink" name="Previews">http://pc.gametrailers.com/?show=Previews#Content</Category>
+            <Category xsi:type="RssLink" name="Reviews">http://pc.gametrailers.com/?show=Reviews#Content</Category>
+            <Category xsi:type="RssLink" name="Interviews">http://pc.gametrailers.com/?show=Interviews#Content</Category>
+            <Category xsi:type="RssLink" name="Gameplay">http://pc.gametrailers.com/?show=Gameplay#Content</Category>
+          </SubCategories>http://pc.gametrailers.com/</Category>
+        <Category xsi:type="RssLink" name="PS3">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Newest Media">http://PS3.gametrailers.com/#Content</Category>
+            <Category xsi:type="RssLink" name="Trailers">http://PS3.gametrailers.com/?show=Trailers#Content</Category>
+            <Category xsi:type="RssLink" name="Features">http://PS3.gametrailers.com/?show=Features#Content</Category>
+            <Category xsi:type="RssLink" name="Previews">http://PS3.gametrailers.com/?show=Previews#Content</Category>
+            <Category xsi:type="RssLink" name="Reviews">http://PS3.gametrailers.com/?show=Reviews#Content</Category>
+            <Category xsi:type="RssLink" name="Interviews">http://PS3.gametrailers.com/?show=Interviews#Content</Category>
+            <Category xsi:type="RssLink" name="Gameplay">http://PS3.gametrailers.com/?show=Gameplay#Content</Category>
+          </SubCategories>http://PS3.gametrailers.com/</Category>
+        <Category xsi:type="RssLink" name="Xbox360">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Newest Media">http://xbox360.gametrailers.com/#Content</Category>
+            <Category xsi:type="RssLink" name="Trailers">http://xbox360.gametrailers.com/?show=Trailers#Content</Category>
+            <Category xsi:type="RssLink" name="Features">http://xbox360.gametrailers.com/?show=Features#Content</Category>
+            <Category xsi:type="RssLink" name="Previews">http://xbox360.gametrailers.com/?show=Previews#Content</Category>
+            <Category xsi:type="RssLink" name="Reviews">http://xbox360.gametrailers.com/?show=Reviews#Content</Category>
+            <Category xsi:type="RssLink" name="Interviews">http://xbox360.gametrailers.com/?show=Interviews#Content</Category>
+            <Category xsi:type="RssLink" name="Gameplay">http://xbox360.gametrailers.com/?show=Gameplay#Content</Category>
+          </SubCategories>http://xbox360.gametrailers.com/</Category>
+        <Category xsi:type="RssLink" name="Wii">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Newest Media">http://wii.gametrailers.com/#Content</Category>
+            <Category xsi:type="RssLink" name="Trailers">http://wii.gametrailers.com/?show=Trailers#Content</Category>
+            <Category xsi:type="RssLink" name="Features">http://wii.gametrailers.com/?show=Features#Content</Category>
+            <Category xsi:type="RssLink" name="Previews">http://wii.gametrailers.com/?show=Previews#Content</Category>
+            <Category xsi:type="RssLink" name="Reviews">http://wii.gametrailers.com/?show=Reviews#Content</Category>
+            <Category xsi:type="RssLink" name="Interviews">http://wii.gametrailers.com/?show=Interviews#Content</Category>
+            <Category xsi:type="RssLink" name="Gameplay">http://wii.gametrailers.com/?show=Gameplay#Content</Category>
+          </SubCategories>http://wii.gametrailers.com/</Category>
+        <Category xsi:type="RssLink" name="PSP">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Newest Media">http://psp.gametrailers.com/#Content</Category>
+            <Category xsi:type="RssLink" name="Trailers">http://psp.gametrailers.com/?show=Trailers#Content</Category>
+            <Category xsi:type="RssLink" name="Features">http://psp.gametrailers.com/?show=Features#Content</Category>
+            <Category xsi:type="RssLink" name="Previews">http://psp.gametrailers.com/?show=Previews#Content</Category>
+            <Category xsi:type="RssLink" name="Reviews">http://psp.gametrailers.com/?show=Reviews#Content</Category>
+            <Category xsi:type="RssLink" name="Interviews">http://psp.gametrailers.com/?show=Interviews#Content</Category>
+            <Category xsi:type="RssLink" name="Gameplay">http://psp.gametrailers.com/?show=Gameplay#Content</Category>
+          </SubCategories>http://psp.gametrailers.com/</Category>
+        <Category xsi:type="RssLink" name="3DS">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Newest Media">http://3ds.gametrailers.com/#Content</Category>
+            <Category xsi:type="RssLink" name="Trailers">http://3ds.gametrailers.com/?show=Trailers#Content</Category>
+            <Category xsi:type="RssLink" name="Features">http://3ds.gametrailers.com/?show=Features#Content</Category>
+            <Category xsi:type="RssLink" name="Previews">http://3ds.gametrailers.com/?show=Previews#Content</Category>
+            <Category xsi:type="RssLink" name="Reviews">http://3ds.gametrailers.com/?show=Reviews#Content</Category>
+            <Category xsi:type="RssLink" name="Interviews">http://3ds.gametrailers.com/?show=Interviews#Content</Category>
+            <Category xsi:type="RssLink" name="Gameplay">http://3ds.gametrailers.com/?show=Gameplay#Content</Category>
+          </SubCategories>http://3ds.gametrailers.com/</Category>
+        <Category xsi:type="RssLink" name="Mobile">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Newest Media">http://mobile.gametrailers.com/#Content</Category>
+            <Category xsi:type="RssLink" name="Trailers">http://mobile.gametrailers.com/?show=Trailers#Content</Category>
+            <Category xsi:type="RssLink" name="Features">http://mobile.gametrailers.com/?show=Features#Content</Category>
+            <Category xsi:type="RssLink" name="Previews">http://mobile.gametrailers.com/?show=Previews#Content</Category>
+            <Category xsi:type="RssLink" name="Reviews">http://mobile.gametrailers.com/?show=Reviews#Content</Category>
+            <Category xsi:type="RssLink" name="Interviews">http://mobile.gametrailers.com/?show=Interviews#Content</Category>
+            <Category xsi:type="RssLink" name="Gameplay">http://mobile.gametrailers.com/?show=Gameplay#Content</Category>
+          </SubCategories>http://mobile.gametrailers.com/</Category>
       </Categories>
     </Site>
     <Site name="kino.de" util="KinoDe" agecheck="false" enabled="true" lang="de">
