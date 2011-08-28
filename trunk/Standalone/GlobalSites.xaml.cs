@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using OnlineVideos;
+using System.Windows.Threading;
 
 namespace Standalone
 {
@@ -45,14 +46,31 @@ namespace Standalone
             if (Visibility == System.Windows.Visibility.Visible) lvSites.ItemsSource = SiteManager.GetOnlineSites();
         }
 
+        protected void HandleItemKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                // add or remove
+                OnlineVideos.OnlineVideosWebservice.Site onlineSite = (sender as ListViewItem).DataContext as OnlineVideos.OnlineVideosWebservice.Site;
+                SiteSettings localSite = OnlineVideoSettings.Instance.SiteSettingsList.FirstOrDefault(i => i.Name == onlineSite.Name);
+                if (localSite == null)
+                    AddSite(sender, new RoutedEventArgs());
+                else
+                    RemoveSite(sender, new RoutedEventArgs());
+
+                e.Handled = true;
+            }
+        }
+
         bool changes = false;
 
         private void AddSite(object sender, RoutedEventArgs e)
         {
-            OnlineVideos.OnlineVideosWebservice.Site site = (sender as Button).DataContext as OnlineVideos.OnlineVideosWebservice.Site;
+            OnlineVideos.OnlineVideosWebservice.Site site = (sender as FrameworkElement).DataContext as OnlineVideos.OnlineVideosWebservice.Site;
             SiteSettings newSite = SiteManager.GetRemoteSite(site.Name);
             if (newSite != null)
             {
+                int storedIndex = lvSites.SelectedIndex;
                 if (!string.IsNullOrEmpty(site.RequiredDll))
                 {
                     bool? errorForDll = SiteManager.DownloadDll(SiteManager.GetOnlineDlls().FirstOrDefault(dll => dll.Name == site.RequiredDll));
@@ -65,13 +83,15 @@ namespace Standalone
                 // refresh this list
                 lvSites.ItemsSource = null;
                 lvSites.ItemsSource = SiteManager.GetOnlineSites();
+                lvSites.SelectedIndex = storedIndex;
+                Dispatcher.BeginInvoke((Action)(() => { (lvSites.ItemContainerGenerator.ContainerFromIndex(lvSites.SelectedIndex) as ListViewItem).Focus(); }), DispatcherPriority.Input);
                 changes = true;
             }
         }
 
         private void RemoveSite(object sender, RoutedEventArgs e)
         {
-            OnlineVideos.OnlineVideosWebservice.Site site = (sender as Button).DataContext as OnlineVideos.OnlineVideosWebservice.Site;
+            OnlineVideos.OnlineVideosWebservice.Site site = (sender as FrameworkElement).DataContext as OnlineVideos.OnlineVideosWebservice.Site;
             int localSiteIndex = -1;
             for (int i = 0; i < OnlineVideoSettings.Instance.SiteSettingsList.Count; i++) 
                 if (OnlineVideoSettings.Instance.SiteSettingsList[i].Name == site.Name) 
@@ -81,12 +101,15 @@ namespace Standalone
                 }
             if (localSiteIndex != -1)
             {
+                int storedIndex = lvSites.SelectedIndex;
                 OnlineVideoSettings.Instance.SiteSettingsList.RemoveAt(localSiteIndex);
                 OnlineVideoSettings.Instance.SaveSites();
                 OnlineVideoSettings.Instance.BuildSiteUtilsList();
                 // refresh this list
                 lvSites.ItemsSource = null;
                 lvSites.ItemsSource = SiteManager.GetOnlineSites();
+                lvSites.SelectedIndex = storedIndex;
+                Dispatcher.BeginInvoke((Action)(() => { (lvSites.ItemContainerGenerator.ContainerFromIndex(lvSites.SelectedIndex) as ListViewItem).Focus(); }), DispatcherPriority.Input);
                 changes = true;
             }
         }

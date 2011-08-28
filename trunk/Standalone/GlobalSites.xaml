@@ -14,6 +14,11 @@
                 <local:SiteStateToBrushConverter x:Key="SiteStateToBrushConverter"/>
                 <local:SiteVisibilityConverter x:Key="SiteVisibilityConverter"/>
             </ListView.Resources>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <EventSetter Event="KeyDown" Handler="HandleItemKeyDown" />
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="+/-">
