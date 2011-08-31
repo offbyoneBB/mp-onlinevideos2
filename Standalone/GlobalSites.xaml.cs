@@ -33,17 +33,25 @@ namespace Standalone
             descriptor.AddValueChanged(this, new EventHandler(VisibilityChanged));           
         }
 
+        int rememberedIndex = -1;
         void VisibilityChanged(object sender, EventArgs e)
         {
-            if (changes)
+            if (Visibility == System.Windows.Visibility.Hidden)
             {
-                (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.ItemsSource = null;
-                (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
-                (App.Current.MainWindow as OnlineVideosMainWindow).SelectAndFocusFirstItem();
+                if (changes)
+                {
+                    (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.ItemsSource = null;
+                    (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
+                    changes = false;
+                }
+                (App.Current.MainWindow as OnlineVideosMainWindow).SelectAndFocusItem(rememberedIndex);
             }
-            changes = false;
-
-            if (Visibility == System.Windows.Visibility.Visible) lvSites.ItemsSource = SiteManager.GetOnlineSites();
+            else if (Visibility == System.Windows.Visibility.Visible)
+            {
+                rememberedIndex = (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.SelectedIndex;
+                lvSites.ItemsSource = SiteManager.GetOnlineSites();
+                (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.SelectedIndex = -1;
+            }
         }
 
         protected void HandleItemKeyDown(object sender, KeyEventArgs e)
