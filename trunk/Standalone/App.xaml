@@ -108,5 +108,39 @@
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+        <Style x:Key="PlayButton" TargetType="{x:Type Button}">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate DataType="Button">
+                        <Viewbox Stretch="Uniform" Margin="2">
+                            <Canvas Width="35" Height="22">
+                                <Polygon Fill="#AAAAAAAA" Stroke="Black" StrokeLineJoin="Round">
+                                    <Polygon.Points>
+                                        <Point X="0" Y="1"/>
+                                        <Point X="15" Y="11"/>
+                                        <Point X="0" Y="21"/>
+                                    </Polygon.Points>
+                                </Polygon>
+                                <Rectangle Canvas.Left="23" Canvas.Top="1" Width="4" Height="20" Fill="#AAAAAAAA" Stroke="Black" StrokeLineJoin="Round"/>
+                                <Rectangle Canvas.Left="30" Canvas.Top="1" Width="4" Height="20" Fill="#AAAAAAAA" Stroke="Black" StrokeLineJoin="Round"/>
+                            </Canvas>
+                        </Viewbox>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="StopButton" TargetType="{x:Type Button}">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate DataType="Button">
+                        <Viewbox Stretch="Uniform" Margin="2">
+                            <Canvas Width="22" Height="22">
+                                <Rectangle Canvas.Left="1" Canvas.Top="1" Fill="#AAAAAAAA" Stroke="Black" StrokeLineJoin="Round" Width="20" Height="20"/>
+                            </Canvas>
+                        </Viewbox>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>

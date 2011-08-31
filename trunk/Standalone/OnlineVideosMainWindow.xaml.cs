@@ -27,6 +27,8 @@ namespace Standalone
 		public PlayList CurrentPlayList { get { return _CurrentPlayList; } set { _CurrentPlayList = value; PropertyChanged(this, new PropertyChangedEventArgs("CurrentPlayList")); } }
 		PlayListItem _CurrentPlayListItem;
 		public PlayListItem CurrentPlayListItem { get { return _CurrentPlayListItem; } set { _CurrentPlayListItem = value; PropertyChanged(this, new PropertyChangedEventArgs("CurrentPlayListItem")); } }
+        bool _IsFullScreen = false;
+        public bool IsFullScreen { get { return _IsFullScreen; } set { _IsFullScreen = value; PropertyChanged(this, new PropertyChangedEventArgs("IsFullScreen")); } }
 
         public OnlineVideosMainWindow()
         {
@@ -103,7 +105,7 @@ namespace Standalone
                     ReactToResult(resultInfo, Translation.AutomaticUpdate);
                     OnlineVideoSettings.Instance.BuildSiteUtilsList();
                     listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
-                    SelectAndFocusFirstItem();
+                    SelectAndFocusItem();
                 }, false);
         }
 
@@ -167,7 +169,7 @@ namespace Standalone
 					{
 						SelectedSite = site;
 						listViewMain.ItemsSource = SelectedSite.Settings.Categories;
-						SelectAndFocusFirstItem();
+						SelectAndFocusItem();
 						ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
 					}
 				}
@@ -193,7 +195,7 @@ namespace Standalone
 						{
 							SelectedCategory = category;
 							listViewMain.ItemsSource = category.SubCategories;
-							SelectAndFocusFirstItem();
+							SelectAndFocusItem();
 							ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
 						}
 					}
@@ -216,7 +218,7 @@ namespace Standalone
 							result.ForEach(r => r.CleanDescriptionAndTitle());
 							if (SelectedSite.HasNextPage) result.Add(new VideoInfo() { Title = Translation.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
 							listViewMain.ItemsSource = result;
-							SelectAndFocusFirstItem();
+							SelectAndFocusItem();
 							ImageDownloader.GetImages<VideoInfo>((IList<VideoInfo>)listViewMain.ItemsSource);
 						}
 					}
@@ -450,7 +452,7 @@ namespace Standalone
 				{
 					// if playing a playlist item, move to the next            
 					currentPlaylistIndex++;
-					Play_Step1(CurrentPlayList[currentPlaylistIndex], fullScreen);
+					Play_Step1(CurrentPlayList[currentPlaylistIndex], IsFullScreen);
 					return true;
 				}
 				else
@@ -463,11 +465,11 @@ namespace Standalone
 			return false;
 		}
 
-        public void SelectAndFocusFirstItem()
+        public void SelectAndFocusItem(int index = 0)
         {
             if (listViewMain.Items.Count > 0)
             {
-                listViewMain.SelectedIndex = 0;
+                listViewMain.SelectedIndex = Math.Max(0, Math.Min(index, listViewMain.Items.Count-1));
                 (listViewMain.ItemContainerGenerator.ContainerFromIndex(listViewMain.SelectedIndex) as ListBoxItem).Focus();
             }
         }
@@ -529,7 +531,7 @@ namespace Standalone
 										converted.ForEach(r => ((VideoInfo)r).CleanDescriptionAndTitle());
 										if (SelectedSite.HasNextPage) converted.Add(new VideoInfo() { Title = Translation.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
 										listViewMain.ItemsSource = converted;
-										SelectAndFocusFirstItem();
+										SelectAndFocusItem();
 										ImageDownloader.GetImages<VideoInfo>((IList<VideoInfo>)listViewMain.ItemsSource);
 									}
 									else
@@ -540,7 +542,7 @@ namespace Standalone
 										};
 										SelectedCategory.SubCategories = result.ConvertAll(i => { (i as Category).ParentCategory = SelectedCategory; return i as Category; });
 										listViewMain.ItemsSource = SelectedCategory.SubCategories;
-										SelectAndFocusFirstItem();
+										SelectAndFocusItem();
 										ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
 									}
 								}
@@ -558,7 +560,7 @@ namespace Standalone
 
 		private void Back_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (fullScreen)
+			if (IsFullScreen)
 			{
 				ToggleFullscreen(sender, e);
 			}
@@ -656,7 +658,7 @@ namespace Standalone
 
         private void Stop_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (fullScreen) ToggleFullscreen(sender, e);
+            if (IsFullScreen) ToggleFullscreen(sender, e);
             mediaPlayer.Close();
             mediaPlayer.Source = null;
             IsPaused = false;
@@ -678,7 +680,6 @@ namespace Standalone
             }
         }
 
-        bool fullScreen = false;        
         private void mediaPlayer_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (!mediaPlayer.HasVideo) return;
@@ -687,7 +688,7 @@ namespace Standalone
 
 		private void ToggleFullscreen(object sender, ExecutedRoutedEventArgs e)
         {
-            if (!fullScreen)
+            if (!IsFullScreen)
             {
                 mediaPlayerBorder.Margin = new Thickness(0);
                 mediaPlayerBorder.VerticalAlignment = VerticalAlignment.Stretch;
@@ -706,8 +707,9 @@ namespace Standalone
                 mediaPlayerBorder.Height = 104;
                 mediaPlayerBorder.Background = null;
                 this.WindowStyle = WindowStyle.SingleBorderWindow;
+                OSD.Visibility = System.Windows.Visibility.Hidden;
             }
-            fullScreen = !fullScreen;
+            IsFullScreen = !IsFullScreen;
         }
 
         private void mediaPlayer_MediaFailed(object sender, WPFMediaKit.DirectShow.MediaPlayers.MediaFailedEventArgs e)
@@ -761,6 +763,16 @@ namespace Standalone
                 detailsView.Visibility = System.Windows.Visibility.Hidden;
                 globalSitesView.Visibility = System.Windows.Visibility.Hidden;
             }
+        }
+
+        private void OSDMouseEnter(object sender, MouseEventArgs e)
+        {
+            if (IsFullScreen) OSD.Visibility = System.Windows.Visibility.Visible;
+        }
+
+        private void OSDMouseLeave(object sender, MouseEventArgs e)
+        {
+            if (OSD.Visibility == System.Windows.Visibility.Visible) OSD.Visibility = System.Windows.Visibility.Hidden;
         }
     }
 }
