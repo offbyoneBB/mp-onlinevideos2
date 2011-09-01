@@ -20,6 +20,7 @@
         <local:OVSTemplateSelector x:Key="myTemplateSelector"/>
         <local:CategoryPathConverter x:Key="myCategoryPathConverter"/>
         <local:PlayListPositionConverter x:Key="myPlayListPositionConverter"/>
+        <local:LongToDateTimeConverter x:Key="myLongToDateTimeConverter"/>
 
     </Window.Resources>
     
@@ -30,6 +31,7 @@
         <CommandBinding Command="MediaCommands.TogglePlayPause" CanExecute="PlayPause_CanExecute" Executed="PlayPause_Executed"/>
         <CommandBinding Command="MediaCommands.Stop" CanExecute="Stop_CanExecute" Executed="Stop_Executed"/>
         <CommandBinding Command="NavigationCommands.Zoom" CanExecute="Stop_CanExecute" Executed="ToggleFullscreen"/>
+        <CommandBinding Command="Help" Executed="HelpExecuted"/>
     </Window.CommandBindings>
     
     <Window.InputBindings>
@@ -72,9 +74,14 @@
                 <Image Margin="5 2 5 2" Height="32" Source="{Binding ElementName=mainWindow, Path=SelectedSite, Converter={StaticResource ThumbnailConverter}, ConverterParameter=Banners}"/>
                 <TextBlock Text="{Binding ElementName=mainWindow, Path=SelectedCategory, Converter={StaticResource myCategoryPathConverter}}" FontSize="16" VerticalAlignment="Center"/>
             </WrapPanel>
-            <ToggleButton Grid.Column="2" Height="34" VerticalAlignment="Center" HorizontalAlignment="Right" ToolTip="Add Sites from global list" Margin="5 0 5 0" Command="NavigateJournal">
-                <Image Source="Images/GlobalSites.png"/>
-            </ToggleButton>
+            <WrapPanel Grid.Column="2">
+                <ToggleButton Height="34" VerticalAlignment="Center" ToolTip="Add Sites from global list" Margin="5 0 5 0" Command="NavigateJournal">
+                    <Image Source="Images/GlobalSites.png"/>
+                </ToggleButton>
+                <Button Height="34" Command="Help" ToolTip="Help" Margin="0 0 5 0">
+                    <Image Source="Images/Help.png"/>
+                </Button>
+            </WrapPanel>
         </Grid>
         <ListView Grid.Row="1" Name="listViewMain" SelectionChanged="listViewMain_SelectionChanged" SelectionMode="Single"
                   ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemContainerStyle="{StaticResource itemstyle}" ItemTemplateSelector="{StaticResource myTemplateSelector}" Background="Transparent">            
@@ -146,15 +153,24 @@
                     <RowDefinition Height="4*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
-                <DirectShowControls:MediaUriElement Grid.RowSpan="2" x:Name="mediaPlayer" Stretch="Uniform" VideoRenderer="EnhancedVideoRenderer" Volume="1" LoadedBehavior="Play"
+                <DirectShowControls:MediaUriElement Grid.RowSpan="2" x:Name="mediaPlayer" Stretch="Uniform" VideoRenderer="EnhancedVideoRenderer" Volume="1" LoadedBehavior="Play" Focusable="True"
                     MediaFailed="mediaPlayer_MediaFailed" MediaEnded="mediaPlayer_MediaEnded"/>
                 <Grid Grid.Row="1" MouseEnter="OSDMouseEnter" MouseLeave="OSDMouseLeave" Background="Transparent">
                     <Border x:Name="OSD" Background="#22000066" Visibility="Hidden">
                         <StackPanel VerticalAlignment="Bottom">
+                            <TextBlock TextWrapping="Wrap" Margin="10" Foreground="#88FFFFFF" FontSize="16" FontWeight="Bold" Text="{Binding ElementName=mainWindow, Path=CurrentPlayListItem.Video.Title}"/>
                             <Slider Maximum="{Binding ElementName=mediaPlayer,Path=MediaDuration}" Minimum="0" Value="{Binding ElementName=mediaPlayer,Path=MediaPosition}"></Slider>
-                            <WrapPanel HorizontalAlignment="Center" >
+                            <WrapPanel HorizontalAlignment="Center" Margin="0 0 0 10">
                                 <Button Height="32" Width="45" Padding="2" Margin="0 0 5 0" Command="MediaCommands.TogglePlayPause" ToolTip="Play/Pause" Style="{StaticResource PlayButton}"/>
                                 <Button Height="32" Width="45" Padding="2" Command="MediaCommands.Stop" ToolTip="Stop" Style="{StaticResource StopButton}"/>
+                                <TextBlock Foreground="#88FFFFFF" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Margin="10 0 0 0">
+                                    <TextBlock.Text>
+                                        <MultiBinding  StringFormat="{}{0} / {1}">
+                                            <Binding ElementName="mediaPlayer" Path="MediaPosition" Converter="{StaticResource myLongToDateTimeConverter}" ConverterParameter="HH:mm:ss"/>
+                                            <Binding ElementName="mediaPlayer" Path="MediaDuration" Converter="{StaticResource myLongToDateTimeConverter}" ConverterParameter="HH:mm:ss"/>
+                                          </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
                             </WrapPanel>
                         </StackPanel>
                     </Border>

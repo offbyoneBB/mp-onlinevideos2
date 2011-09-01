@@ -219,4 +219,18 @@ namespace Standalone
             throw new NotImplementedException();
         }
     }
+
+    [ValueConversion(typeof(long), typeof(DateTime))]
+    public class LongToDateTimeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return new DateTime((long)value).ToString((string)parameter);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
