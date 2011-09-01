@@ -651,8 +651,16 @@ namespace Standalone
         bool IsPaused;
         private void PlayPause_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (IsPaused) mediaPlayer.Play();
-            else mediaPlayer.Pause();
+            if (IsPaused)
+            {
+                mediaPlayer.Play();
+                if (!OSD.IsMouseOver) OSD.Visibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                mediaPlayer.Pause();
+                if (IsFullScreen) OSD.Visibility = System.Windows.Visibility.Visible;
+            }
             IsPaused = !IsPaused;
         }
 
@@ -686,6 +694,7 @@ namespace Standalone
             ToggleFullscreen(null, null);
         }
 
+        IInputElement focusedElementBeforeFullscreen = null;
 		private void ToggleFullscreen(object sender, ExecutedRoutedEventArgs e)
         {
             if (!IsFullScreen)
@@ -697,6 +706,9 @@ namespace Standalone
                 mediaPlayerBorder.Height = double.NaN;
                 mediaPlayerBorder.Background = new SolidColorBrush(Colors.Black);
                 this.WindowStyle = WindowStyle.None;
+                if (IsPaused) OSD.Visibility = System.Windows.Visibility.Visible;
+                focusedElementBeforeFullscreen = Keyboard.FocusedElement;
+                Keyboard.Focus(mediaPlayer); // set Keyboard focus to the mediaPlayer
             }
             else
             {
@@ -708,6 +720,7 @@ namespace Standalone
                 mediaPlayerBorder.Background = null;
                 this.WindowStyle = WindowStyle.SingleBorderWindow;
                 OSD.Visibility = System.Windows.Visibility.Hidden;
+                Keyboard.Focus(focusedElementBeforeFullscreen); // set Keyboard focus back
             }
             IsFullScreen = !IsFullScreen;
         }
@@ -772,7 +785,14 @@ namespace Standalone
 
         private void OSDMouseLeave(object sender, MouseEventArgs e)
         {
-            if (OSD.Visibility == System.Windows.Visibility.Visible) OSD.Visibility = System.Windows.Visibility.Hidden;
+            if (OSD.Visibility == System.Windows.Visibility.Visible && !IsPaused) OSD.Visibility = System.Windows.Visibility.Hidden;
+        }
+
+        private void HelpExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            Help dlg = new Help();
+            dlg.Owner = this;
+            dlg.ShowDialog();
         }
     }
 }

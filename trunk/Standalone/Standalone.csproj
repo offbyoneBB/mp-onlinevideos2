@@ -103,6 +103,9 @@
     </Compile>
     <Compile Include="GridViewSort.cs" />
     <Compile Include="Gui2UtilConnector.cs" />
+    <Compile Include="Help.xaml.cs">
+      <DependentUpon>Help.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Logger.cs" />
     <Compile Include="PlaybackChoices.xaml.cs">
       <DependentUpon>PlaybackChoices.xaml</DependentUpon>
@@ -146,6 +149,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="GlobalSites.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Help.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -242,6 +249,7 @@
     </Content>
     <Resource Include="Images\GlobalSites.png" />
     <Resource Include="Images\Add.png" />
+    <Resource Include="Images\Help.png" />
     <Content Include="Images\NextPage.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
