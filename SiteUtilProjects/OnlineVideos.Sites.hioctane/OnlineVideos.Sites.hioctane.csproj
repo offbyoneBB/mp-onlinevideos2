@@ -69,7 +69,6 @@
     <Compile Include="MyVideoFilmeUtil.cs" />
     <Compile Include="MyVideoSerienUtil.cs" />
     <Compile Include="NdrUtil.cs" />
-    <Compile Include="OrfUtil.cs" />
     <Compile Include="Pro7Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sat1Util.cs" />
