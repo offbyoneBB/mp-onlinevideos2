@@ -350,13 +350,59 @@ namespace OnlineVideos.AMF3
             OutShort(0); //??
 
             int lengthpos = output.Count;
-            OutShort(0xA00); //??
+            OutShort(0xA00); //array
             OutShort(0); //??
             OutShort(0x202); //??
             OutString(hash);
 
             output.Add(0x11); //switch to AMF3?
             OutParamValue(obj);
+            OutShort((short)(output.Count - lengthpos), lengthpos);
+
+            return output.ToArray();
+        }
+
+        public byte[] Serialize2(string target, object[] values)
+        {
+            output.Clear();
+
+            OutShort(3); //version
+            OutShort(0); //headercount
+            OutShort(1); //responsecount
+            OutString("com.brightcove.player.runtime.PlayerMediaFacade.findMediaById");
+            OutString("/1");
+            OutShort(0); //??
+
+            int lengthpos = output.Count;
+            OutShort(0xA00); //array
+            OutShort(0); //??
+            OutShort((short)(values.Length << 8 | 0x2)); //??
+            foreach (object obj in values)
+            {
+                if (obj is String)
+                    OutString((String)obj);
+                else if (obj is double)
+                {
+                    output.Add((byte)0x00);
+                    byte[] bytes;
+                    if (double.IsNaN((double)obj))
+                        bytes = new byte[8] { 0x7F, 0xFF, 0xFF, 0xFF, 0xE0, 0, 0, 0 };
+                    else
+                    {
+                        bytes = BitConverter.GetBytes((double)obj);
+                        Array.Reverse(bytes);
+                    }
+                    output.AddRange(bytes);
+                }
+                /*else if (obj is AMF3Array)
+                    OutParamValue((AMF3Array)obj);
+                else if (obj == null)
+                    output.Add((byte)AMF3Type.NullMarker);
+                else if (obj is int)
+                    OutParamValue((int)obj);*/
+                else
+                    throw new NotImplementedException();
+            }
             OutShort((short)(output.Count - lengthpos), lengthpos);
 
             return output.ToArray();

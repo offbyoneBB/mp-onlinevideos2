@@ -12,10 +12,18 @@ namespace OnlineVideos.Sites
 {
     public class BrightCoveUtil : GenericSiteUtil
     {
+        private enum RequestType { ViewerExperienceRequest, FindMediaById };
+
         [Category("OnlineVideosConfiguration"), Description("HashValue")]
         string hashValue = null;
         [Category("OnlineVideosConfiguration"), Description("Url for request")]
         string requestUrl = null;
+        [Category("OnlineVideosConfiguration"), Description("optional playerId")]
+        string playerId = null;
+        [Category("OnlineVideosConfiguration"), Description("4th value in array")]
+        string array4 = null;
+        [Category("OnlineVideosConfiguration"), Description("Request type")]
+        RequestType requestType = RequestType.ViewerExperienceRequest;
 
         public override string getUrl(VideoInfo video)
         {
@@ -25,6 +33,17 @@ namespace OnlineVideos.Sites
             if (!m.Success)
                 return String.Empty;
 
+            AMF3Array renditions;
+            if (requestType == RequestType.ViewerExperienceRequest)
+                renditions = GetResultsFromViewerExperienceRequest(m, video);
+            else
+                renditions = GetResultsFromFindByMediaId(m, video);
+
+            return FillPlaybackOpyions(video, renditions);
+        }
+
+        private AMF3Array GetResultsFromViewerExperienceRequest(Match m, VideoInfo video)
+        {
             AMF3Object contentOverride = new AMF3Object("com.brightcove.experience.ContentOverride");
             System.Text.RegularExpressions.Group g;
             if ((g = m.Groups["contentId"]).Success)
@@ -87,9 +106,27 @@ namespace OnlineVideos.Sites
             //Stream stream = new FileStream(@"E:\ztele.txt", FileMode.Open, FileAccess.Read);
             //AMF3Deserializer des = new AMF3Deserializer(stream);
             //AMF3Object response = des.Deserialize();
+            return response.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
+        }
+
+        private AMF3Array GetResultsFromFindByMediaId(Match m, VideoInfo video)
+        {
+            AMF3Serializer ser = new AMF3Serializer();
+            object[] values = new object[4];
+            values[0] = hashValue;
+            values[1] = Convert.ToDouble(playerId);
+            values[2] = Convert.ToDouble(m.Groups["mediaId"].Value);
+            values[3] = Convert.ToDouble(array4);
+            byte[] data = ser.Serialize2("com.brightcove.player.runtime.PlayerMediaFacade.findMediaById", values);
+            AMF3Object obj = BrightCoveUtil.GetResponse(requestUrl, data);
+            return obj.GetArray("renditions");
+        }
+
+        private string FillPlaybackOpyions(VideoInfo video, AMF3Array renditions)
+        {
+
 
             video.PlaybackOptions = new Dictionary<string, string>();
-            AMF3Array renditions = response.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
             for (int i = 0; i < renditions.Count; i++)
             {
                 AMF3Object rendition = renditions.GetObject(i);
@@ -100,11 +137,13 @@ namespace OnlineVideos.Sites
                 if (url.StartsWith("rtmp"))
                 {
                     //tested with ztele
-                    string auth = url.Split('?')[1];
+                    string auth = String.Empty;
+                    if (url.Contains('?'))
+                        auth = '?' + url.Split('?')[1];
                     string[] parts = url.Split('&');
 
-                    string rtmp = parts[0] + "?" + auth;
-                    string playpath = parts[1].Split('?')[0] + '?' + auth;
+                    string rtmp = parts[0] + auth;
+                    string playpath = parts[1].Split('?')[0] + auth;
 
                     url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                         string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}",
@@ -129,7 +168,7 @@ namespace OnlineVideos.Sites
                 }
         }
 
-        public static AMF3Object GetResponse(string url, byte[] postData)
+        private static AMF3Object GetResponse(string url, byte[] postData)
         {
             Log.Debug("get webdata from {0}", url);
 
