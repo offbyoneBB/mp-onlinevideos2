@@ -1223,6 +1223,24 @@
       <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
       <Categories />
     </Site>
+    <Site name="Red Bull TV" util="BrightCove" agecheck="false" enabled="true" lang="en">
+      <Description>Red Bull TV - Watch sports, music and entertainment TV online. Free.</Description>
+      <Configuration>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="no-border">\s*<span\sclass="featured-image">\s*<img\ssrc="(?<thumb>[^"]*)"\s/>\s*<span\sclass="show-information">\s*Watch\snow\s*</span>\s*</span>\s*<span\sclass="title">(?<title>[^<]*)</span>\s*<span>(?<description>[^&<]*)(?:&nbsp;)*</span>\s*<span\sclass="episode-count">[^<]*</span>\s*<span\sclass="latest-addition"><span>Updated:\s*[^<]*</span></span>\s*<span\sclass="clear"></span>]]></item>
+        <item key="videoListRegEx"><![CDATA[<tr(?:\sclass="active")?>\s*<td><a\shref="(?<VideoUrl>[^"]*)">[^<]*</a></td>\s*<td><a\shref="[^"]*">(?<Title>[^<]*)</a></td>\s*<td><a\shref="[^"]*">(?<Duration>[^<]*)</a></td>\s*<td><a\shref="[^"]*">\s*(?<Airdate>[^<]*)</a></td>\s*</tr>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[var\sepisode_video_id\s=\s'(?<mediaId>[^']*)';]]></item>
+        <item key="baseUrl"><![CDATA[http://www.redbull.tv/Redbulltv]]></item>
+        <item key="hashValue"><![CDATA[cf760beae3fbdde270b76f2109537e13144e6fbd]]></item>
+        <item key="playerId"><![CDATA[761157706001]]></item>
+        <item key="array4"><![CDATA[710858724001]]></item>
+        <item key="requestType"><![CDATA[FindMediaById]]></item>
+        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerId=761157706001]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Page 1">http://www.redbull.tv/cs/Satellite?_=1315253035003&amp;pagename=RBWebTV%2FRBTV_P%2FRBWTVShowContainer&amp;orderby=latest&amp;p=1242970775246&amp;start=1</Category>
+        <Category xsi:type="RssLink" name="Page 2">http://www.redbull.tv/cs/Satellite?_=1315253035003&amp;pagename=RBWebTV%2FRBTV_P%2FRBWTVShowContainer&amp;orderby=latest&amp;p=1242970775246&amp;start=9</Category>
+      </Categories>
+    </Site>
     <Site name="RTE.ie" util="RTEPlayer" agecheck="false" enabled="true" lang="en">
       <Description>RTÉ news brings you the latest Irish news, world news, international news and up to the minute reports on breaking Irish news stories and news from around the world. Watch and listen to Irish news stories on our video and audio streams.</Description>
       <Configuration>
