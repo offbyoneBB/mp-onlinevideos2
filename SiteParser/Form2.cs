@@ -41,6 +41,7 @@ namespace SiteParser
             insertComboBox.Items.Add(new RegexPart("optional", @"(?:@@@@)?"));
             insertComboBox.Items.Add(new RegexPart("match after", @"(?<=@@.*)"));
             insertComboBox.Items.Add(new RegexPart("match before", @"(?<!@@.*)"));
+            insertComboBox.Items.Add(new RegexPart("match not", @"(?!@@)"));
             insertComboBox.SelectedIndex = 0;
             fields = names;
             testData = webData;
