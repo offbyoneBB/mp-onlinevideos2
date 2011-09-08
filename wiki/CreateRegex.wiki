@@ -119,3 +119,6 @@ Then replace the selected text (@@) with "some text"
 This will make sure only matches before "some text" are returned
 Choose "match after", click insert.
 Then replace the selected text (@@) with "some text" 
+
+=== match not ===
+This will prevent a match with the given text. Usefull f.e. for ignoring unwanted entries such as "FAQ" or "Contact"
