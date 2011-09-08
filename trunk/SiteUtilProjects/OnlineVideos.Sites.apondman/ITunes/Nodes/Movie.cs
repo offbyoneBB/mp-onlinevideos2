@@ -231,7 +231,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 
             // Synopsis
             HtmlNodeCollection infoNodes = root.SelectNodes("//vboxview/textview/setfontstyle");
-            if (infoNodes.Count > 1)
+            if (infoNodes != null && infoNodes.Count > 1)
             {
                 string synopsis = infoNodes[2].InnerText.Trim();
                 this.Plot = HttpUtility.HtmlDecode(synopsis);
@@ -239,7 +239,7 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 
             // Release Date
             HtmlNodeCollection dateNodes = root.SelectNodes("//vboxview/textview/setfontstyle[contains(b, 'Theaters:')]");
-            if (dateNodes.Count == 1)
+            if (dateNodes != null && dateNodes.Count == 1)
             {
                 string date = dateNodes[0].InnerText;
                 date = date.Replace("In Theaters:", "");
@@ -255,15 +255,21 @@ namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 
             // Genres
             HtmlNodeCollection genreNodes = root.SelectNodes("//gotourl[contains(@url, '/moviesxml/g/')]");
-            this.Genres = genreNodes.ToStringList();
+            if (genreNodes != null)
+            {
+                this.Genres = genreNodes.ToStringList();
+            }
 
             // Cast
             HtmlNodeCollection castNodes = root.SelectNodes("//vboxview/textview[@styleset='basic10']/setfontstyle");
-            this.Actors = castNodes.ToStringList();
+            if (castNodes != null)
+            {
+                this.Actors = castNodes.ToStringList();
+            }
 
             // Find all the videos for this movie.
             HtmlNodeCollection videoNodes = root.SelectNodes("//gotourl[@target='main']");
-            if (videoNodes.Count > 0)
+            if (videoNodes != null && videoNodes.Count > 0)
             {
 
                 // clear videos
