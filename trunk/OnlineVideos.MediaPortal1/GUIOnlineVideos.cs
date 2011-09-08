@@ -235,6 +235,7 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool Init()
         {
+            //Utils.FixUriTrailingDots();
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", " "); GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.length", " "); GUIPropertyManager.SetProperty("#OnlineVideos.length", string.Empty);
