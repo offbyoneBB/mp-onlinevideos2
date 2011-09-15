@@ -235,7 +235,6 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool Init()
         {
-            //Utils.FixUriTrailingDots();
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", " "); GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.length", " "); GUIPropertyManager.SetProperty("#OnlineVideos.length", string.Empty);
@@ -898,6 +897,9 @@ namespace OnlineVideos.MediaPortal1
         {
             // The default connection limit is 2 in .net on most platforms! This means downloading two file will block all other WebRequests.
             System.Net.ServicePointManager.DefaultConnectionLimit = 100;
+
+			// The default .Net implementation for URI parsing removes trailing dots, which is not correct
+			Utils.FixUriTrailingDots();
 
             // add a special reversed proxy handler for rtmp
             ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance);

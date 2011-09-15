@@ -356,9 +356,12 @@ namespace OnlineVideos
             return result.ToString();
         }
 
-        //Workaround for .net issue documented here: https://connect.microsoft.com/VisualStudio/feedback/details/386695/system-uri-incorrectly-strips-trailing-dots#
-        //Method call is commented out because workaround sets static flag in the UriParser and will affect all System.Uri classes created after this, 
-        //APPLICATION wise (complete MediaPortal, not just OnlineVideos)
+		/// <summary>
+		/// Workaround for .net issue documented here: https://connect.microsoft.com/VisualStudio/feedback/details/386695/system-uri-incorrectly-strips-trailing-dots
+		/// </summary>
+		/// <remarks>
+		/// Workaround sets static flag in the UriParser and will affect all System.Uri classes created afterwards - APPLICATION wise (not just OnlineVideos)
+		/// </remarks>
         public static void FixUriTrailingDots()
         {
             MethodInfo getSyntax = typeof(UriParser).GetMethod("GetSyntax", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
