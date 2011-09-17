@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.SilentEx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.diebagger", "SiteUtilProjects\OnlineVideos.Sites.diebagger\OnlineVideos.Sites.diebagger.csproj", "{44C2F4D7-0A9F-48EE-B471-C9110E1D9E58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.titof", "SiteUtilProjects\OnlineVideos.Sites.titof\OnlineVideos.Sites.titof.csproj", "{E6000721-B061-4692-9BBB-652DD9E82B34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,12 @@ Global
 		{44C2F4D7-0A9F-48EE-B471-C9110E1D9E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44C2F4D7-0A9F-48EE-B471-C9110E1D9E58}.Release|Any CPU.Build.0 = Release|Any CPU
 		{44C2F4D7-0A9F-48EE-B471-C9110E1D9E58}.Release|x86.ActiveCfg = Release|Any CPU
+		{E6000721-B061-4692-9BBB-652DD9E82B34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6000721-B061-4692-9BBB-652DD9E82B34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6000721-B061-4692-9BBB-652DD9E82B34}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E6000721-B061-4692-9BBB-652DD9E82B34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6000721-B061-4692-9BBB-652DD9E82B34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6000721-B061-4692-9BBB-652DD9E82B34}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,5 +117,6 @@ Global
 		{3B158828-6940-4A5F-A6B6-23A7FD6CD524} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{D01E921D-961C-41E6-B8DD-B811F5BC5A76} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{44C2F4D7-0A9F-48EE-B471-C9110E1D9E58} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
+		{E6000721-B061-4692-9BBB-652DD9E82B34} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 	EndGlobalSection
 EndGlobal
