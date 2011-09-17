@@ -44,9 +44,15 @@
           <onright>50</onright>
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>no</renderUnfocusText>
-          <imageFolderFocus>OnlineVideos/thumbborder2.png</imageFolderFocus>
+          <textureMask>Picturethumbmask.png</textureMask>
           <frameNoFocus>Picture_cover.png</frameNoFocus>
           <frameFocus>OnlineVideos/Picture_cover_focused.png</frameFocus>          
+          <showFrame>true</showFrame>
+          <enableFocusZoom>no</enableFocusZoom>
+          <imageFolderFocus>OnlineVideos/thumbborder2.png</imageFolderFocus>
+          <thumbZoom>no</thumbZoom>
+          <zoomXPixels>35</zoomXPixels>
+          <zoomYPixels>35</zoomYPixels>
 
           <!-- smallicons -->
           <itemWidth>103</itemWidth>
@@ -71,12 +77,6 @@
           <spinCanFocus>no</spinCanFocus>
           <spinPosX>1180</spinPosX>
           <spinPoxY>680</spinPoxY>
-
-          <thumbZoom>no</thumbZoom>
-          <enableFocusZoom>no</enableFocusZoom>
-          <hideUnfocusTexture>no</hideUnfocusTexture>
-          <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>no</renderUnfocusText>
         </control>        
       </control>
     </control>

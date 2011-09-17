@@ -85,7 +85,6 @@
     </control>    
     
     <import>myonlinevideos.details.xml</import>
-    <import>myonlinevideos.facade.xml</import>
 
     <!-- *** Bottom part *** -->
 
@@ -289,6 +288,8 @@
       <visible>!string.equals(#selectedindex)+!string.equals(#OnlineVideos.state, details)</visible>
     </control>
     
+    <import>myonlinevideos.facade.xml</import>
+    
     <!-- *** HIDDEN MENU *** -->
     
     <control>
@@ -401,13 +402,32 @@
           <id>13</id>
           <onright>50</onright>
           <onup>12</onup>
-          <ondown>2</ondown>
           <label>#OnlineVideos.Translation.ManageSites.Label</label>          
           <height>28</height>
-          <textYOff>3</textYOff>
           <hyperlink>4757</hyperlink>
-          <visible>!Control.HasFocus(50)</visible>
-        </control>                     
+        </control>        
+        <control>
+          <description>MPEICONFIGURE:269bd257_7ce5_450a_b786_1c2834c81849</description>
+          <type>button</type>
+          <id>14</id>
+          <onright>50</onright>
+          <onup>13</onup>
+          <ondown>15</ondown>
+          <label>5</label>
+          <height>28</height>
+          <visible>string.equals(#mpei.269bd257_7ce5_450a_b786_1c2834c81849.isinstalled, true)</visible>
+        </control>
+        <control>
+          <description>MPEIUPDATE:269bd257_7ce5_450a_b786_1c2834c81849</description>
+          <type>button</type>
+          <id>15</id>
+          <onright>50</onright>
+          <onup>14</onup>
+          <ondown>2</ondown>
+          <height>28</height>
+          <label>#MPEI.Translation.UpdateAvailable.Label</label>
+          <visible>string.equals(#mpei.269bd257_7ce5_450a_b786_1c2834c81849.haveupdate, true)</visible>
+        </control>
       </control>
     </control>
   </controls>
