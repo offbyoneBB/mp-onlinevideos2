@@ -24,6 +24,7 @@
   <string Field="DateOfRelease">Erscheinungsdatum</string>
   <string Field="Directors">Regisseure</string>
   <string Field="Download">Herunterladen</string>
+  <string Field="DownloadUserdefined">Herunterladen (spezieller Ordner)</string>
   <string Field="Downloading">Ladend</string>
   <string Field="DownloadingDescription">Liste der aktuell herunterladenden Videos.</string>
   <string Field="DownloadingSubtitle">Untertitel herunterladen</string>
