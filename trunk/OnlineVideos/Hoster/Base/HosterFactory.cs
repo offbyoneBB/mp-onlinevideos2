@@ -42,7 +42,7 @@ namespace OnlineVideos.Hoster.Base
 
         public static List<HosterBase> GetAllHosters()
         {
-            return hostersByName.Values.ToList();
+            return hostersByName.Values.OrderByDescending(hb => hb.UserPriority).ToList();
         }
 
         public static bool ContainsName(string name)
