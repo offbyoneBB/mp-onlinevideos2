@@ -173,6 +173,10 @@ namespace OnlineVideos.Hoster.Base
             }
         }
 
+		[Category("OnlineVideosUserConfiguration"), Description("You can give every Hoster a Priority, to control where in the list they appear (the higher the earlier). -1 will hide this Hoster, 0 is the default.")]
+		protected int Priority = 0;
+		public int UserPriority { get { return Priority; } }
+
         #region ICustomTypeDescriptor Members
 
         object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd)
