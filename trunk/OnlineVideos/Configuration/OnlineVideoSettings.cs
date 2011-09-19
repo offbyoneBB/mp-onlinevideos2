@@ -27,6 +27,7 @@ namespace OnlineVideos
         public bool AgeConfirmed = false;
         public int CacheTimeout = 30; // minutes
         public int UtilTimeout = 15;  // seconds
+		public int DynamicCategoryTimeout = 300; // minutes
         public CultureInfo Locale;
         public BindingList<SiteSettings> SiteSettingsList { get; protected set; }
         public Dictionary<string, Sites.SiteUtilBase> SiteUtilsList { get; protected set; }

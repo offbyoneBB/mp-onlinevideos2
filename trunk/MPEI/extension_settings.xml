@@ -3,7 +3,7 @@
 		<setting entryname="plugins" name="OnlineVideos" displayname="Plugin Enabled" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
 	</disable_entry>
 	<settings section="Plugin">
-			<setting entryname="onlinevideos" name="basicHomeScreenName" displayname="Basic Home Name" defaultvalue="Online Videos" type="string" listvalues="" displaylistvalues=""/>
+			<setting entryname="onlinevideos" name="basicHomeScreenName" displayname="Basic Home Name" defaultvalue="Online Videos" type="string" description="This name will appear on the Basic Home screen menu that goes to OnlineVideos." listvalues="" displaylistvalues=""/>
 			<setting entryname="plugins" name="OnlineVideos" displayname="Plugin Enabled" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
 			<setting entryname="home" name="OnlineVideos" displayname="Listed in Home" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
 			<setting entryname="myplugins" name="OnlineVideos" displayname="Listed in My Plugins" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/>
@@ -12,6 +12,7 @@
       <setting entryname="onlinevideos" name="searchHistoryType" displayname="Search history" defaultvalue="1" type="int" listvalues="0|1|2" displaylistvalues="Off|Simple|Extended"/>
       <setting entryname="onlinevideos" name="thumbAge" displayname="Maximum age (days) for thumbnails" defaultvalue="100" type="int" listvalues="" displaylistvalues=""/>
       <setting entryname="onlinevideos" type="int" name="cacheTimeout" displayname="Time (minutes) to cache data from the web" defaultvalue="30" listvalues="" displaylistvalues=""/>
+      <setting entryname="onlinevideos" type="int" name="categoryDiscoveryTimeout" displayname="Time (minutes) after which categories are reloaded from the web" defaultvalue="300" listvalues="" displaylistvalues=""/>
       <setting entryname="onlinevideos" type="int" name="utilTimeout" displayname="Timeout (seconds) for webrequests" defaultvalue="15" listvalues="" displaylistvalues=""/>
       <setting entryname="onlinevideos" type="int" name="wmpbuffer" displayname="Buffer (milliseconds) for Windows Media Player" defaultvalue="5000" listvalues="" displaylistvalues=""/>
       <setting entryname="onlinevideos" type="int" name="playbuffer" displayname="Percentage to buffer before starting playback" defaultvalue="2" listvalues="" displaylistvalues=""/>

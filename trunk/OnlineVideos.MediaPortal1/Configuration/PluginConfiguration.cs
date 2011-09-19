@@ -74,6 +74,7 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_PIN_AGECONFIRMATION = "pinAgeConfirmation";
         const string CFG_CACHE_TIMEOUT = "cacheTimeout";
         const string CFG_UTIL_TIMEOUT = "utilTimeout";
+		const string CFG_CATEGORYDISCOVERED_TIMEOUT = "categoryDiscoveryTimeout";
         const string CFG_WMP_BUFFER = "wmpbuffer";
         const string CFG_PLAY_BUFFER = "playbuffer";
         const string CFG_EMAIL = "email";
@@ -113,6 +114,7 @@ namespace OnlineVideos.MediaPortal1
                 ThumbsAge = settings.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, ThumbsAge);
                 OnlineVideos.OnlineVideoSettings.Instance.CacheTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, OnlineVideos.OnlineVideoSettings.Instance.CacheTimeout);
                 OnlineVideos.OnlineVideoSettings.Instance.UtilTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, OnlineVideos.OnlineVideoSettings.Instance.UtilTimeout);
+				OnlineVideos.OnlineVideoSettings.Instance.DynamicCategoryTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYDISCOVERED_TIMEOUT, OnlineVideos.OnlineVideoSettings.Instance.DynamicCategoryTimeout);
                 wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                 playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
                 useRtmpProxy = settings.GetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
@@ -177,6 +179,7 @@ namespace OnlineVideos.MediaPortal1
                     ovsconf.CacheTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, ovsconf.CacheTimeout);                    
                     ovsconf.UseAgeConfirmation = settings.GetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, ovsconf.UseAgeConfirmation);
                     ovsconf.UtilTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, ovsconf.UtilTimeout);
+					ovsconf.DynamicCategoryTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYDISCOVERED_TIMEOUT, ovsconf.DynamicCategoryTimeout);
 
                     // set an almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
                     pinAgeConfirmation = settings.GetValueAsString(CFG_SECTION, CFG_PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
@@ -290,6 +293,7 @@ namespace OnlineVideos.MediaPortal1
                         settings.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
                         settings.SetValue(CFG_SECTION, CFG_CACHE_TIMEOUT, ovsconf.CacheTimeout);
                         settings.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, ovsconf.UtilTimeout);
+						settings.SetValue(CFG_SECTION, CFG_CATEGORYDISCOVERED_TIMEOUT, ovsconf.DynamicCategoryTimeout);
                         settings.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                         settings.SetValue(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
                         settings.SetValue(CFG_SECTION, CFG_UPDATEPERIOD, updatePeriod);
