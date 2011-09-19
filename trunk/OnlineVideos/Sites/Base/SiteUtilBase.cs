@@ -750,7 +750,7 @@ namespace OnlineVideos.Sites
 				{
 					var attr = _field.GetCustomAttributes(typeof(LocalizableDisplayNameAttribute), false);
 					if (attr.Length > 0)
-						return ((LocalizableDisplayNameAttribute)attr[0]).LocalizableDisplayName;
+						return ((LocalizableDisplayNameAttribute)attr[0]).LocalizedDisplayName;
 					else 
 						return base.DisplayName;
 				}
