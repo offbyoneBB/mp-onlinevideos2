@@ -53,6 +53,9 @@
       <Dependencies>
         <Items />
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -111,6 +114,7 @@ Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -164,6 +168,9 @@ Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
       <Dependencies>
         <Items />
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -222,6 +229,7 @@ Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -299,6 +307,9 @@ Added ExternalOSDLibrary for WMPVideoPlayer</VersionDescription>
       <Dependencies>
         <Items />
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -360,6 +371,7 @@ AutoUpdate on UAC enabled systems fixed</VersionDescription>
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -437,6 +449,9 @@ AutoUpdate on UAC enabled systems fixed</VersionDescription>
       <Dependencies>
         <Items />
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -498,6 +513,7 @@ AutoUpdate on UAC enabled systems fixed</VersionDescription>
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -583,6 +599,9 @@ AutoUpdate on UAC enabled systems fixed</VersionDescription>
       <Dependencies>
         <Items />
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -643,6 +662,7 @@ FLVSplitter inside MPEI package</VersionDescription>
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -728,6 +748,9 @@ FLVSplitter inside MPEI package</VersionDescription>
       <Dependencies>
         <Items />
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -786,6 +809,7 @@ FLVSplitter inside MPEI package</VersionDescription>
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -871,6 +895,9 @@ FLVSplitter inside MPEI package</VersionDescription>
       <Dependencies>
         <Items />
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -947,6 +974,7 @@ fixed forceUTF8Encoding not used for all webrequests in GenericSiteUtil</Version
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -1048,6 +1076,9 @@ fixed forceUTF8Encoding not used for all webrequests in GenericSiteUtil</Version
       <Dependencies>
         <Items />
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -1118,6 +1149,7 @@ Added a context menu option on Downloaded Videos and Favorites to delete all vid
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -1211,6 +1243,9 @@ Added a context menu option on Downloaded Videos and Favorites to delete all vid
       <Dependencies>
         <Items />
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -1276,6 +1311,7 @@ Intoduced a Hoster-concept, RSS feeds can now link to pages of known hosters, th
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -1361,6 +1397,9 @@ Intoduced a Hoster-concept, RSS feeds can now link to pages of known hosters, th
       <Dependencies>
         <Items />
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -1429,6 +1468,7 @@ Many other small bugfixes/enhancements</VersionDescription>
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -1514,6 +1554,9 @@ Many other small bugfixes/enhancements</VersionDescription>
       <Dependencies>
         <Items />
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -1583,6 +1626,7 @@ New Feature: Loading plugin with startparameters now also possible using GUIProp
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -1688,6 +1732,9 @@ New Feature: Loading plugin with startparameters now also possible using GUIProp
           </DependencyItem>
         </Items>
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -1758,6 +1805,7 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -1863,6 +1911,9 @@ Fixed: threading issue when skipping buffering (was trying to start playback mul
           </DependencyItem>
         </Items>
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -1929,6 +1980,7 @@ SiteManager: update all sites shown (filtered) from contextmenu</VersionDescript
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -2034,6 +2086,9 @@ SiteManager: update all sites shown (filtered) from contextmenu</VersionDescript
           </DependencyItem>
         </Items>
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -2105,6 +2160,7 @@ new feature: search/filter videos by entering a search string with the virtual k
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
     <PackageClass>
       <Version>2.0</Version>
@@ -2210,6 +2266,9 @@ new feature: search/filter videos by entering a search string with the virtual k
           </DependencyItem>
         </Items>
       </Dependencies>
+      <PluginDependencies>
+        <Items />
+      </PluginDependencies>
       <GeneralInfo>
         <Name>OnlineVideos</Name>
         <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
@@ -2273,6 +2332,192 @@ added: WebRequests with specific encoding (e.g. for cyrillic sites)</VersionDesc
       <ProjectSettings>
         <FolderGroups />
       </ProjectSettings>
+      <IsSkin>false</IsSkin>
+    </PackageClass>
+    <PackageClass>
+      <Version>2.0</Version>
+      <Groups>
+        <Items>
+          <GroupItem Name="Thumbs">
+            <DisplayName>Thumbs</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Thumbs</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Skins">
+            <DisplayName>Skins</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Skins</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Plugin">
+            <DisplayName>Plugin</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Plugin</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Language">
+            <DisplayName>Language</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Language</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Default">
+            <DisplayName>Default</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Default</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="DefaultWide">
+            <DisplayName>DefaultWide</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>DefaultWide</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="FLVSplitter">
+            <DisplayName>FLVSplitter</DisplayName>
+            <DefaulChecked>false</DefaulChecked>
+            <Description>FLVSplitter</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="GenericSiteTool">
+            <DisplayName>GenericSiteTool</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>GenericSiteTool</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="TrailerButton">
+            <DisplayName>TrailerButton</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>TrailerButton</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+        </Items>
+      </Groups>
+      <Sections>
+        <Items />
+      </Sections>
+      <Dependencies>
+        <Items>
+          <DependencyItem>
+            <Type>MediaPortal</Type>
+            <Id />
+            <MinVersion>
+              <Major>1</Major>
+              <Minor>1</Minor>
+              <Build>6</Build>
+              <Revision>27644</Revision>
+            </MinVersion>
+            <MaxVersion>
+              <Major>1</Major>
+              <Minor>1</Minor>
+              <Build>6</Build>
+              <Revision>27644</Revision>
+            </MaxVersion>
+            <WarnOnly>false</WarnOnly>
+            <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or Final!</Message>
+            <Name>MediaPortal</Name>
+          </DependencyItem>
+        </Items>
+      </Dependencies>
+      <PluginDependencies>
+        <Items>
+          <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
+            <CompatibleVersion>
+              <Items>
+                <CompatibleVersionItem>
+                  <MinRequiredVersion>1.1.6.27644</MinRequiredVersion>
+                  <DesignedForVersion>1.1.6.27644</DesignedForVersion>
+                </CompatibleVersionItem>
+              </Items>
+            </CompatibleVersion>
+            <SubSystemsUsed>
+              <Items>
+                <SubSystemItem Name="MP.Players.Video" />
+                <SubSystemItem Name="MP.Input" />
+                <SubSystemItem Name="MP.SkinEngine" />
+                <SubSystemItem Name="MP.Externals.SQLite" />
+                <SubSystemItem Name="MP.Config" />
+              </Items>
+            </SubSystemsUsed>
+          </PluginDependencyItem>
+        </Items>
+      </PluginDependencies>
+      <GeneralInfo>
+        <Name>OnlineVideos</Name>
+        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
+        <Author>offbyone</Author>
+        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
+        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
+        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
+        <Version>
+          <Major>0</Major>
+          <Minor>33</Minor>
+          <Build>0</Build>
+          <Revision>1</Revision>
+        </Version>
+        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
+        <VersionDescription>added: loadparameter arguments to set a download folder, filename, menu entry (currently used by MyFilms - thx Guzzi)
+added: timeout after which dynamic categories will be rediscovered
+fixed: rtmp unencrypted connections (continue even if signature does not match)
+updated: default skins for MP 1.2 Final</VersionDescription>
+        <DevelopmentStatus>Stable</DevelopmentStatus>
+        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.33.0.1.mpe1</OnlineLocation>
+        <ReleaseDate>2011-09-19T11:00:00</ReleaseDate>
+        <Tags>online,videos,youtube</Tags>
+        <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
+        <Params>
+          <Items>
+            <SectionParam Name="Online Icon">
+              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
+              <ValueType>String</ValueType>
+              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
+            </SectionParam>
+            <SectionParam Name="Configuration file">
+              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
+              <ValueType>Template</ValueType>
+              <Description>The file used to configure the extension.
+ If have .exe extension the will be executed
+ If have .dll extension used like MP plugin configuration</Description>
+            </SectionParam>
+            <SectionParam Name="Online Screenshots">
+              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
+              <ValueType>String</ValueType>
+              <Description>Online stored screenshot urls separated by ; </Description>
+            </SectionParam>
+            <SectionParam Name="Force to uninstall on update">
+              <Value>YES</Value>
+              <ValueType>Bool</ValueType>
+              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+      </GeneralInfo>
+      <UniqueFileList>
+        <Items />
+      </UniqueFileList>
+      <ProjectSettings>
+        <FolderGroups />
+      </ProjectSettings>
+      <IsSkin>false</IsSkin>
     </PackageClass>
   </Items>
 </ExtensionCollection>
