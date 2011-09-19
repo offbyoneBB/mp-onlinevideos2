@@ -1672,7 +1672,7 @@
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
               <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.33.0.1\extension_settings.xml</DestinationFilename>
-            </FileItem>            
+            </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -2667,11 +2667,12 @@ public class Script
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
     <VersionDescription>added: loadparameter arguments to set a download folder, filename, menu entry (currently used by MyFilms - thx Guzzi)
+added: timeout after which dynamic categories will be rediscovered
 fixed: rtmp unencrypted connections (continue even if signature does not match)
 updated: default skins for MP 1.2 Final</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.32.0.1.mpe1</OnlineLocation>
-    <ReleaseDate>2011-09-18T11:00:00</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.33.0.1.mpe1</OnlineLocation>
+    <ReleaseDate>2011-09-19T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -4335,9 +4336,30 @@ updated: default skins for MP 1.2 Final</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c795f3a7-881d-4376-b2a2-e8ac9eec9eaa}-OnlineVideos.MediaPortal1.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>extension_settings.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
+        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.33.0.1\extension_settings.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -4363,30 +4385,9 @@ updated: default skins for MP 1.2 Final</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
-        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{f31bc3ab-b076-4064-9c0c-53f90a0b283d}-OnlineVideos.Sites.pilehave.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c795f3a7-881d-4376-b2a2-e8ac9eec9eaa}-OnlineVideos.MediaPortal1.dll</ZipFileName>
-        <DestinationFilename>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>extension_settings.xml</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.33.0.1\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
