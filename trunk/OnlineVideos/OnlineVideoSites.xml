@@ -806,7 +806,7 @@
     <Site name="spiegel.de" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Videos des deutschen Newsportals spiegel.de</Description>
       <Configuration>
-        <item key="fileUrlRegEx"><![CDATA[videoid:\s*"(?<m0>[^"]*)",]]></item>
+        <item key="fileUrlRegEx"><![CDATA[http://www.spiegel.de/video/video-(?<m0>[^\.]+)\.html]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://video.spiegel.de/flash/{0}_996x560_H264_1400.mp4]]></item>
       </Configuration>
       <Categories>
