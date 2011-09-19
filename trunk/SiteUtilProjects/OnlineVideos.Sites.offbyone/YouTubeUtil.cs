@@ -94,7 +94,7 @@ namespace OnlineVideos.Sites
             [Description("Swedish")]sv
         }
 
-        [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum quality for the video to be played.")]
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("#VideoQuality"), Description("Defines the maximum quality for the video to be played.")]
         VideoQuality videoQuality = VideoQuality.High;
         [Category("OnlineVideosUserConfiguration"), Description("Your YouTube account name (not Email!). Used for favorites and subscriptions.")]
         string accountname = "";

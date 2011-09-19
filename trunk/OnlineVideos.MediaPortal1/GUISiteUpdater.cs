@@ -81,7 +81,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 foreach (string aFilterOption in Enum.GetNames(typeof(FilterStateOption)))
                 {
-                    GUIControl.AddItemLabelControl(GetID, GUI_btnFilterState.GetID, Translator.Strings[aFilterOption]);
+                    GUIControl.AddItemLabelControl(GetID, GUI_btnFilterState.GetID, Translation.Strings[aFilterOption]);
                 }
             }
             if (GUI_btnSort.SubItemCount == 0)
@@ -89,7 +89,7 @@ namespace OnlineVideos.MediaPortal1
                 foreach (string aSortOption in Enum.GetNames(typeof(SortOption)))
                 {
                     string[] singled = aSortOption.Split('_');
-                    for(int i = 0; i<singled.Length;i++) singled[i] = Translator.Strings[singled[i]];                    
+					for (int i = 0; i < singled.Length; i++) singled[i] = Translation.Strings[singled[i]];                    
                     GUIControl.AddItemLabelControl(GetID, GUI_btnSort.GetID, string.Join(", ", singled));
                 }
             }

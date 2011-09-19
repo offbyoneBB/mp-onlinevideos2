@@ -703,11 +703,11 @@ namespace OnlineVideos.Sites
             }
             foreach (FieldInfo field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
             {
-                FieldPropertyDescriptor fieldDesc =
-                    new FieldPropertyDescriptor(field);
-                if (!filtering ||
-                    fieldDesc.Attributes.Contains(attributes))
-                    props.Add(fieldDesc);
+                FieldPropertyDescriptor fieldDesc = new FieldPropertyDescriptor(field);
+				if (!filtering || fieldDesc.Attributes.Contains(attributes))
+				{
+					props.Add(fieldDesc);
+				}
             }
 
             // Store the computed properties
@@ -743,6 +743,18 @@ namespace OnlineVideos.Sites
             }
 
             public override int GetHashCode() { return _field.GetHashCode(); }
+
+			public override string DisplayName 
+			{
+				get
+				{
+					var attr = _field.GetCustomAttributes(typeof(LocalizableDisplayNameAttribute), false);
+					if (attr.Length > 0)
+						return ((LocalizableDisplayNameAttribute)attr[0]).LocalizableDisplayName;
+					else 
+						return base.DisplayName;
+				}
+			}
 
             public override bool IsReadOnly { get { return false; } }
 
