@@ -8,11 +8,28 @@ using System.Net;
 using System.IO;
 using System.Threading;
 using OnlineVideos.Hoster.Base;
+using System.ComponentModel;
 
 namespace OnlineVideos.Sites
 {
     public class WatchSeriesUtil : GenericSiteUtil
     {
+        /// <summary>
+        /// Defines the number of urls that are shown for each hoster. 
+        /// 
+        /// For example, if the limit is 5, only the top 5 entries will be shown
+        /// for each hoster (e.g. putlocker, megavideo,...).
+        /// </summary>
+        [Category("OnlineVideosUserConfiguration"), Description("Limit Number of Urls that are shown per hosters (0: show all).")]
+        int limitUrlsPerHoster = 5;
+
+        /// <summary>
+        /// If false, all video urls that have no hoster utility yet will be hidden. If true, all urls will
+        /// be shown (unknown hosters will get a "ns" suffix)
+        /// </summary>
+        [Category("OnlineVideosUserConfiguration"), Description("Show hosters for which no provider exists.")]
+        bool showUnknownHosters = false;
+
         private enum Depth { MainMenu = 0, Alfabet = 1, Series = 2, Seasons = 3, BareList = 4 };
         public CookieContainer cc = null;
         private bool isWatchMovies = false;
@@ -24,6 +41,7 @@ namespace OnlineVideos.Sites
             base.Initialize(siteSettings);
             isWatchMovies = baseUrl.StartsWith(@"http://watch-movies");
             //ReverseProxy.AddHandler(this);
+            
         }
 
         public void GetBaseCookie()
@@ -307,10 +325,19 @@ namespace OnlineVideos.Sites
                 WatchMoviesExtraGetURL(video);
 
             string tmp = base.getUrl(video);
-            return SortPlaybackOptions(video, baseUrl, tmp);
+            return SortPlaybackOptions(video, baseUrl, tmp, limitUrlsPerHoster, showUnknownHosters);
         }
 
-        public static string SortPlaybackOptions(VideoInfo video, string baseUrl, string tmp)
+        /// <summary>
+        /// Sorts and filters all video links (hosters) for a given video
+        /// </summary>
+        /// <param name="video">The video that is handled</param>
+        /// <param name="baseUrl">The base url of the video</param>
+        /// <param name="tmp"></param>
+        /// <param name="limit">How many playback options are at most shown per hoster (0=all)</param>
+        /// <param name="showUnknown">Also show playback options where no hoster is available yet</param>
+        /// <returns></returns>
+        public static string SortPlaybackOptions(VideoInfo video, string baseUrl, string tmp, int limit, bool showUnknown)
         {
             List<PlaybackElement> lst = new List<PlaybackElement>();
             if (video.PlaybackOptions == null) // just one
@@ -360,18 +387,25 @@ namespace OnlineVideos.Sites
             lst.Sort(PlaybackComparer);
 
             for (int i = lst.Count - 1; i >= 0; i--)
+            {
                 if (counts2.ContainsKey(lst[i].server))
                 {
                     lst[i].dupcnt = counts2[lst[i].server];
                     counts2[lst[i].server]--;
                 }
+            }
 
             video.PlaybackOptions = new Dictionary<string, string>();
+
             foreach (PlaybackElement el in lst)
             {
                 if (!Uri.IsWellFormedUriString(el.url, System.UriKind.Absolute))
                     el.url = new Uri(new Uri(baseUrl), el.url).AbsoluteUri;
-                video.PlaybackOptions.Add(el.GetName(), el.url);
+
+                if ((limit == 0 || el.dupcnt <= limit) && (showUnknown || !el.status.Equals("ns")))
+                {
+                    video.PlaybackOptions.Add(el.GetName(), el.url);
+                }
             }
 
             if (lst.Count == 1)
@@ -573,16 +607,38 @@ namespace OnlineVideos.Sites
 
         private static int PlaybackComparer(PlaybackElement e1, PlaybackElement e2)
         {
-            int res = IntComparer(e1.percentage, e2.percentage);
+            HosterBase h1 = HosterFactory.GetHoster(e1.server);
+            HosterBase h2 = HosterFactory.GetHoster(e2.server);
+            
+            //first stage is to compare priorities (the higher the user priority, the better)
+            int res = (h1 != null && h2 != null) ? IntComparer(h1.UserPriority, h2.UserPriority) : 0;
             if (res != 0)
+            {
                 return res;
+            }
             else
             {
-                res = String.Compare(e1.status, e2.status);
+                //no priorities found or equal priorites -> compare percentage
+                res = IntComparer(e1.percentage, e2.percentage);
+
                 if (res != 0)
+                {
                     return res;
+                }
                 else
-                    return String.Compare(e1.server, e2.server);
+                {
+                    //equal percentage -> see if status is different
+                    res = String.Compare(e1.status, e2.status);
+                    if (res != 0)
+                    {
+                        return res;
+                    }
+                    else
+                    {
+                        //everything else is same -> compare alphabetically
+                        return String.Compare(e1.server, e2.server);
+                    }
+                }
             }
         }
 
