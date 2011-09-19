@@ -121,6 +121,7 @@
   <string Field="UnableToDownloadVideo">Kan video niet downloaden: Ongeldige URL.</string>
   <string Field="UploadsBy">Geüpload door</string>
   <string Field="Videos">Videos</string>
+  <string Field="VideoQuality">Video kwaliteit</string>
   <string Field="Working">Bezig</string>
   <string Field="Writers">Auteurs</string>
 </strings>
