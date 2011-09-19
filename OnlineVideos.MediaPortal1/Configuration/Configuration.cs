@@ -50,6 +50,7 @@ namespace OnlineVideos.MediaPortal1
             tbxPin.Text = PluginConfiguration.Instance.pinAgeConfirmation;
             tbxWebCacheTimeout.Text = OnlineVideoSettings.Instance.CacheTimeout.ToString();
             tbxUtilTimeout.Text = OnlineVideoSettings.Instance.UtilTimeout.ToString();
+			tbxCategoriesTimeout.Text = OnlineVideoSettings.Instance.DynamicCategoryTimeout.ToString();
             tbxWMPBuffer.Text = PluginConfiguration.Instance.wmpbuffer.ToString();
             udPlayBuffer.SelectedItem = PluginConfiguration.Instance.playbuffer.ToString();
             chkUseQuickSelect.Checked = PluginConfiguration.Instance.useQuickSelect;
@@ -237,6 +238,8 @@ namespace OnlineVideos.MediaPortal1
                 catch { }
                 try { OnlineVideoSettings.Instance.UtilTimeout = int.Parse(tbxUtilTimeout.Text); }
                 catch { }
+				try { OnlineVideoSettings.Instance.DynamicCategoryTimeout = int.Parse(tbxCategoriesTimeout.Text); }
+				catch { }
                 if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) PluginConfiguration.Instance.updateOnStart = null;
                 else PluginConfiguration.Instance.updateOnStart = chkDoAutoUpdate.Checked;
                 PluginConfiguration.Instance.updatePeriod = uint.Parse(tbxUpdatePeriod.Text);
@@ -882,7 +885,6 @@ namespace OnlineVideos.MediaPortal1
             tbxMOVSplitter.Text = info;
             if (succes) chkMOVSplitterInstalled.CheckState = CheckState.Checked; else chkMOVSplitterInstalled.CheckState = CheckState.Unchecked;
         }
-        
         
         protected override void WndProc(ref Message m)
         {

@@ -76,9 +76,29 @@ namespace OnlineVideos
 
         [DataMember(EmitDefaultValue = false, Order = 9)]
         public BindingList<Category> Categories { get; set; }
-               
+
+		protected DateTime dynamicCategoriesDiscoveryTime = DateTime.MinValue;
+		protected bool dynamicCategoriesDiscovered;
+
         [XmlIgnore]
-        public bool DynamicCategoriesDiscovered { get; set; }
+        public bool DynamicCategoriesDiscovered 
+		{
+			get
+			{
+				if (dynamicCategoriesDiscovered && Categories != null && Categories.Count > 0 && (DateTime.Now - dynamicCategoriesDiscoveryTime).TotalMinutes > OnlineVideoSettings.Instance.DynamicCategoryTimeout)
+				{
+					dynamicCategoriesDiscovered = false;
+					int i = 0;
+					while (i < Categories.Count)
+					{
+						if (!Categories[i].IsDeserialized) Categories.RemoveAt(i);
+						else i++;
+					}
+				}
+				return dynamicCategoriesDiscovered;
+			}
+			set { dynamicCategoriesDiscovered = value; if (value) dynamicCategoriesDiscoveryTime = DateTime.Now; }
+		}
 
         [OnSerializing()]
         internal void OnSerializingMethod(StreamingContext context)
@@ -134,8 +154,28 @@ namespace OnlineVideos
         [XmlIgnore]
         public virtual bool HasSubCategories { get; set; }
 
-        [XmlIgnore]
-        public bool SubCategoriesDiscovered { get; set; }
+		protected DateTime subCategoriesDiscoveryTime = DateTime.MinValue;
+		protected bool subCategoriesDiscovered;
+
+		[XmlIgnore]
+        public bool SubCategoriesDiscovered
+		{
+			get
+			{
+				if (subCategoriesDiscovered && SubCategories != null && SubCategories.Count > 0 && (DateTime.Now - subCategoriesDiscoveryTime).TotalMinutes > OnlineVideoSettings.Instance.DynamicCategoryTimeout)
+				{
+					subCategoriesDiscovered = false;
+					int i = 0;
+					while (i < SubCategories.Count)
+					{
+						if (!SubCategories[i].IsDeserialized) SubCategories.RemoveAt(i);
+						else i++;
+					}
+				}
+				return subCategoriesDiscovered;
+			}
+			set { subCategoriesDiscovered = value; if (value) subCategoriesDiscoveryTime = DateTime.Now; }
+		}
 
         [DataMember(Name = "SubCategories", Order = 3, EmitDefaultValue = false)]
         public List<Category> SubCategories { get; set; }
