@@ -305,6 +305,18 @@ namespace OnlineVideos.Hoster.Base
 
             public override int GetHashCode() { return _field.GetHashCode(); }
 
+			public override string DisplayName
+			{
+				get
+				{
+					var attr = _field.GetCustomAttributes(typeof(LocalizableDisplayNameAttribute), false);
+					if (attr.Length > 0)
+						return ((LocalizableDisplayNameAttribute)attr[0]).LocalizableDisplayName;
+					else
+						return base.DisplayName;
+				}
+			}
+
             public override bool IsReadOnly { get { return false; } }
 
             public override void ResetValue(object component) { }

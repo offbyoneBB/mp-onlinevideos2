@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace OnlineVideos
 {
@@ -8,7 +10,29 @@ namespace OnlineVideos
     /// if that also fails it will use the hardcoded strings as a last resort.
     /// </summary>
     public static class Translation
-    {                
+    {
+		private static Dictionary<string, string> _translations;
+		/// <summary>
+		/// Gets the translated strings collection in the active language
+		/// </summary>
+		public static Dictionary<string, string> Strings
+		{
+			get
+			{
+				if (_translations == null)
+				{
+					_translations = new Dictionary<string, string>();
+					Type transType = typeof(Translation);
+					FieldInfo[] fields = transType.GetFields(BindingFlags.Public | BindingFlags.Static);
+					foreach (FieldInfo field in fields)
+					{
+						_translations.Add(field.Name, field.GetValue(transType).ToString());
+					}
+				}
+				return _translations;
+			}
+		}
+
         // A
         public static string AddingToFavorites = "adding to favorites";
         public static string Airdate = "Aired";
@@ -164,6 +188,7 @@ namespace OnlineVideos
 
         // V
         public static string Videos = "Videos";
+		public static string VideoQuality = "Video Quality";
 
         // W
         public static string Working = "Working";

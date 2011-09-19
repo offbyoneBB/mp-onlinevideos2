@@ -15,7 +15,6 @@ namespace OnlineVideos.MediaPortal1
     {
         #region Private variables
 
-        private static Dictionary<string, string> _translations;
         private static readonly string _path = string.Empty;
         private static readonly DateTimeFormatInfo _info;
 
@@ -66,27 +65,6 @@ namespace OnlineVideos.MediaPortal1
 
         // Gets the language actually used (after checking for localization file and fallback).
         public static string Lang { get; private set; }
-
-        /// <summary>
-        /// Gets the translated strings collection in the active language
-        /// </summary>
-        public static Dictionary<string, string> Strings
-        {
-            get
-            {
-                if (_translations == null)
-                {
-                    _translations = new Dictionary<string, string>();
-                    Type transType = typeof(Translation);
-                    FieldInfo[] fields = transType.GetFields(BindingFlags.Public | BindingFlags.Static);
-                    foreach (FieldInfo field in fields)
-                    {
-                        _translations.Add(field.Name, field.GetValue(transType).ToString());
-                    }
-                }
-                return _translations;
-            }
-        }
 
         #endregion        
 
@@ -146,10 +124,10 @@ namespace OnlineVideos.MediaPortal1
 
         public static string GetByName(string name)
         {
-            if (!Strings.ContainsKey(name))
+			if (!Translation.Strings.ContainsKey(name))
                 return name;
 
-            return Strings[name];
+			return Translation.Strings[name];
         }
 
         public static string GetByName(string name, params object[] args)
@@ -176,9 +154,9 @@ namespace OnlineVideos.MediaPortal1
         public static void TranslateSkin()
         {
             Log.Instance.Info("Translating skin");
-            foreach (string name in Strings.Keys)
+			foreach (string name in Translation.Strings.Keys)
             {
-                SetProperty("#OnlineVideos.Translation." + name + ".Label", Translator.Strings[name]);
+				SetProperty("#OnlineVideos.Translation." + name + ".Label", Translation.Strings[name]);
             }
         }
 

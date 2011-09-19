@@ -159,6 +159,7 @@
 
   <!-- V -->
   <string Field="Videos">Videos</string>
+  <string Field="VideoQuality">Video Quality</string>
 
   <!-- W -->
   <string Field="Working">Working</string>

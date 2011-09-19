@@ -183,6 +183,7 @@
     <Compile Include="HtmlAgilityPack\NameValuePairList.cs" />
     <Compile Include="HTTPDownloader.cs" />
     <Compile Include="ImageDownloader.cs" />
+    <Compile Include="LocalizableDisplayNameAttribute.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MMSDownloader.cs" />
     <Compile Include="Newtonsoft.Json\Bson\BsonBinaryType.cs" />
