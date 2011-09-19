@@ -138,7 +138,7 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             string tmp = base.getUrl(video);
-            return WatchSeriesUtil.SortPlaybackOptions(video, baseUrl, tmp);
+            return WatchSeriesUtil.SortPlaybackOptions(video, baseUrl, tmp, 0, true);
         }
 
         public class TubePlusVideoInfo : VideoInfo
