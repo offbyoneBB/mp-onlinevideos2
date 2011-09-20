@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FA12B047-F5EC-4045-8D26-47C7B17B3B16}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OnlineVideos.MediaPortal2</RootNamespace>
+    <AssemblyName>OnlineVideos.MediaPortal2</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DirectShowLib-2005">
+      <HintPath>..\..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\DirectShowLib-2005.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Media">
+      <HintPath>..\..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\Media\Media.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaPortal.Core">
+      <HintPath>..\..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MediaPortal.UI">
+      <HintPath>..\..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SkinEngine">
+      <HintPath>..\..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\SkinEngine\SkinEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="VideoPlayers">
+      <HintPath>..\..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration.cs" />
+    <Compile Include="ViewModels\CategoryViewModel.cs" />
+    <Compile Include="Guids.cs" />
+    <Compile Include="LogDelegator.cs" />
+    <Compile Include="OnlineVideosPlayer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="OnlineVideosWorkflowModel.cs" />
+    <Compile Include="RawUrlMediaProvider.cs" />
+    <Compile Include="RawUrlResourceAccessor.cs" />
+    <Compile Include="SearchAction.cs" />
+    <Compile Include="ViewModels\SiteViewModel.cs" />
+    <Compile Include="ValueConverter.cs" />
+    <Compile Include="ViewModels\VideoInfoViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Language\strings_en.xml" />
+    <Content Include="plugin.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\default\images\C33E39CC-910E-41C8-BFFD-9ECCD340B569.jpg" />
+    <Content Include="Skin\default\images\LanguageFlags\--.png" />
+    <Content Include="Skin\default\images\LanguageFlags\bg.png" />
+    <Content Include="Skin\default\images\LanguageFlags\cs.png" />
+    <Content Include="Skin\default\images\LanguageFlags\da.png" />
+    <Content Include="Skin\default\images\LanguageFlags\de.png" />
+    <Content Include="Skin\default\images\LanguageFlags\en.png" />
+    <Content Include="Skin\default\images\LanguageFlags\es.png" />
+    <Content Include="Skin\default\images\LanguageFlags\fi.png" />
+    <Content Include="Skin\default\images\LanguageFlags\fr.png" />
+    <Content Include="Skin\default\images\LanguageFlags\hr.png" />
+    <Content Include="Skin\default\images\LanguageFlags\hu.png" />
+    <Content Include="Skin\default\images\LanguageFlags\it.png" />
+    <Content Include="Skin\default\images\LanguageFlags\ja.png" />
+    <Content Include="Skin\default\images\LanguageFlags\ko.png" />
+    <Content Include="Skin\default\images\LanguageFlags\lv.png" />
+    <Content Include="Skin\default\images\LanguageFlags\nl.png" />
+    <Content Include="Skin\default\images\LanguageFlags\no.png" />
+    <Content Include="Skin\default\images\LanguageFlags\pl.png" />
+    <Content Include="Skin\default\images\LanguageFlags\pt.png" />
+    <Content Include="Skin\default\images\LanguageFlags\ro.png" />
+    <Content Include="Skin\default\images\LanguageFlags\ru.png" />
+    <Content Include="Skin\default\images\LanguageFlags\sk.png" />
+    <Content Include="Skin\default\images\LanguageFlags\sr.png" />
+    <Content Include="Skin\default\images\LanguageFlags\sv.png" />
+    <Content Include="Skin\default\images\LanguageFlags\th.png" />
+    <Content Include="Skin\default\images\LanguageFlags\tr.png" />
+    <Content Include="Skin\default\images\LanguageFlags\uk.png" />
+    <Content Include="Skin\default\images\LanguageFlags\uz.png" />
+    <Content Include="Skin\default\images\LanguageFlags\zh.png" />
+    <Content Include="Skin\default\images\NextPage.png" />
+    <Content Include="Skin\default\workflow\onlinevideos-actions.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\default\workflow\onlinevideos-states.xml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\sites.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\categories.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\videos.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OnlineVideos\OnlineVideos.csproj">
+      <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
+      <Name>OnlineVideos</Name>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\dialogSearch.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\dialogPlaybackOptions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\details.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y "$(ProjectDir)plugin.xml" "$(SolutionDir)..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos"
+mkdir "$(SolutionDir)..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language"
+robocopy "$(ProjectDir)Language" "$(SolutionDir)..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Language" /MIR /NP /XD .svn
+mkdir "$(SolutionDir)..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Skin"
+robocopy "$(ProjectDir)Skin" "$(SolutionDir)..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\Skin" /MIR /NP /XD .svn
+xcopy /Y "$(TargetDir)$(ProjectName).*" "$(SolutionDir)..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
+xcopy /Y "$(TargetDir)OnlineVideos.*" "$(SolutionDir)..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\"
+
+
+</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

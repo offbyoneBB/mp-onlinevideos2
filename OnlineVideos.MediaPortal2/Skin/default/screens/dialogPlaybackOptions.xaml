@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Source="screens\master_dialog_bare.xaml"
+    >
+    <Include.Resources>
+
+        <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+        
+        <!-- Header -->
+        <ResourceWrapper x:Key="Dialog_Header_Text" Resource="{Binding Source={StaticResource OnlineVideosModel},Path=SelectedVideo.Title}"/>
+
+        <!-- Contents -->
+        <ResourceWrapper x:Key="Contents_Element">
+            <StackPanel>
+                <ListView MinWidth="300" MaxHeight="300" Style="{ThemeResource MenuListViewStyle}" DataContext="{Binding Source={StaticResource OnlineVideosModel}}"
+            ItemsSource="{Binding Source={StaticResource OnlineVideosModel},Path=PlaybackOptions.Keys,Mode=OneTime}" SetFocus="true"
+            HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <ListView.Resources>
+                        <CommandList x:Key="Menu_Command">
+                            <Command Source="{StaticResource OnlineVideosModel}" Path="SelectedPlaybackOption">
+                                <Command.Parameters>
+                                    <LateBoundValue BindingValue="{Binding}"/>
+                                </Command.Parameters>
+                            </Command>
+                            <Command Source="{Service ScreenManager}" Path="CloseTopmostDialog"/>
+                        </CommandList>
+                    </ListView.Resources>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid x:Name="ItemControl" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                                <Label x:Name="ItemLabel" Content="{Binding}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    
+                </ListView>
+                <Grid HorizontalAlignment="Right">
+                    <Button Style="{ThemeResource DialogButtonStyle}" Content="[System.Cancel]" HorizontalAlignment="Right"
+                        Command="{Command Source={Service ScreenManager},Path=CloseTopmostDialog}"/>
+                </Grid>
+            </StackPanel>
+        </ResourceWrapper>
+
+    </Include.Resources>
+</Include>
