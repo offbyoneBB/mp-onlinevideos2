@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Source="screens\master_dialog_bare.xaml"
+    >
+    <Include.Resources>
+
+        <!-- Header -->
+        <ResourceWrapper x:Key="Dialog_Header_Text" Resource="Search"/>
+
+        <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+
+        <ResourceWrapper x:Key="Contents_Element">
+            <StackPanel Width="500" Height="200" DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
+                <TextBox Text="{Binding Path=SearchString, Mode=OneWayToSource}" SetFocus="true"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                />
+                <Grid HorizontalAlignment="Right">
+                    <Button Style="{ThemeResource DialogButtonStyle}" Content="[System.Ok]" HorizontalAlignment="Right" Margin="0,0,220,0">
+                        <Button.Command>
+                            <CommandList>
+                                <Command Source="{Service ScreenManager}" Path="CloseTopmostDialog"/>
+                                <Command Source="{Binding Source={StaticResource OnlineVideosModel}}" Path="StartSearch"/>
+                            </CommandList>
+                        </Button.Command>                    
+                    </Button>
+                    <Button Style="{ThemeResource DialogButtonStyle}" Content="[System.Cancel]" HorizontalAlignment="Right"
+                        Command="{Command Source={Service ScreenManager},Path=CloseTopmostDialog}"/>
+                </Grid>
+            </StackPanel>
+        </ResourceWrapper>
+
+    </Include.Resources>
+</Include>

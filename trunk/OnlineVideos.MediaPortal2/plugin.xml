@@ -1,0 +1,87 @@
+﻿<Plugin
+    DescriptorVersion="1.0"
+    Name="OnlineVideos"
+    PluginId="{269bd257-7ce5-450a-b786-1c2834c81849}"
+    AutoActivate="True"
+    Author="offbyone"
+    Copyright="GPL"
+    Description="OnlineVideos Plugin"
+    PluginVersion="1.0">
+  
+  <DependsOn>
+    <PluginReference PluginId="{D87D92F0-5E71-470a-A2A4-430F90A28BF3}"/> <!-- SkinEngine -->
+    <PluginReference PluginId="{A965AFE5-44F9-46e0-980E-40BBE17F25CA}"/> <!-- VideoPlayers -->
+    <PluginReference PluginId="{15FB35F7-8C85-4404-BC67-BFF28446158A}"/> <!-- Media -->
+    <PluginReference PluginId="{1AFF4467-64B0-4ca1-AF28-9AEDF3525BCE}"/> <!-- ConfigurationManager -->
+    <PluginReference PluginId="{B765A4B6-F455-4941-BDAE-2CE45208BFEB}"/> <!-- Configuration plugin -->
+  </DependsOn>
+  
+  <Runtime>
+    <Assembly FileName="OnlineVideos.MediaPortal2.dll"/>
+    <Assembly FileName="OnlineVideos.dll"/>
+  </Runtime>
+
+  <Register Location="/VideoPlayers/MimeTypeRegistrations">
+    <VideoPlayerMimeTypeMapping Id="ovs" ClassName="OnlineVideos.MediaPortal2.OnlineVideosPlayer" MimeType="video/online"/>
+  </Register>
+
+  <Register Location="/Media/MediaProviders">
+    <Instance Id="6DA68FCA-4701-47D7-A0B5-1AA982F0200C" ClassName="OnlineVideos.MediaPortal2.RawUrlMediaProvider"/>
+  </Register>
+
+  <Register Location="/Models">
+    <Model Id="C418243F-5BD3-4637-8871-DA6545387929" Name="OnlineVideosWorkflowModel" ClassName="OnlineVideos.MediaPortal2.OnlineVideosWorkflowModel"/>
+    <Model Id="C43F4CD9-418A-4DFB-A0BD-DF24704B5BD6" Name="OnlineVideosSearchWorkflowModel" ClassName="OnlineVideos.MediaPortal2.SearchAction"/>
+  </Register>
+
+  <!-- Registration of our skin directory -->
+  <Register Location="/Resources/Skin">
+    <!-- This registration is necessary to declare the skin directory. You can use an arbitrary directory name or
+         relative path; the path must be the relative to directory of the plugin.
+         The id of the plugin can be arbitrary but must be unique in the MP 2 system. It is not referenced directly
+         in any place. -->
+    <Resource Id="OnlineVideosSkin" Directory="Skin" Type="Skin"/>
+  </Register>
+
+  <!-- Registration of our language directory -->
+  <Register Location="/Resources/Language">
+    <!-- This registration is necessary to declare the language directory. Just like for the skin directory,
+         you can use an arbitrary directory name or relative path; the path must be the relative to the directory of the plugin.
+         The id of the plugin can be arbitrary but must be unique in the MP 2 system. It is not referenced directly
+         in any place. -->
+    <Resource Id="OnlineVideosLanguage" Directory="Language" Type="Language"/>
+  </Register>
+
+  <!-- Registration of our configuration section -->
+  <Register Location="/Configuration/Settings/Plugins">
+    <ConfigSection
+        Id="OnlineVideos"
+        Redundant="true"
+        Text="[OnlineVideos.MenuEntry]"/>
+  </Register>
+
+  <!-- Contents of '/Plugins/OnlineVideos' section -->
+  <Register Location="/Configuration/Settings/Plugins/OnlineVideos">
+    <ConfigSetting
+        Id="OnlineVideosUseAgeConfirmation"
+        Text="Use Age Confirmation"
+        HelpText="Require a pin for adult sites?"
+        ClassName="OnlineVideos.MediaPortal2.Configuration.UseAgeConfirmation"/>
+    <ConfigSetting
+        Id="OnlineVideosAgeConfirmationPin"
+        Text="Pin for Age Confirmation"
+        HelpText="What is the pin for adult sites?"
+        ClassName="OnlineVideos.MediaPortal2.Configuration.AgeConfirmationPin"/>
+    <ConfigSetting
+        Id="OnlineVideosUtilTimeout"
+        Text="Timeout for Webrequests (sec)"
+        HelpText="After how many seconds should a request for online data be aborted?"
+        ClassName="OnlineVideos.MediaPortal2.Configuration.UtilTimeout"/>
+    <ConfigSetting
+        Id="OnlineVideosCacheTimeout"
+        Text="Timeout for cached http data (min)"
+        HelpText="After how many minutes should http data be invalidated in the cache?"
+        ClassName="OnlineVideos.MediaPortal2.Configuration.CacheTimeout"/>
+  </Register>
+  
+</Plugin>
