@@ -94,17 +94,17 @@ namespace OnlineVideos.Sites
             [Description("Swedish")]sv
         }
 
-		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName="VideoQuality"), Description("Defines the maximum quality for the video to be played.")]
+		[Category("OnlineVideosUserConfiguration"), /*LocalizableDisplayName("Video Quality", TranslationFieldName="VideoQuality"), */Description("Defines the maximum quality for the video to be played.")]
         VideoQuality videoQuality = VideoQuality.High;
-		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Account Name"), Description("Your YouTube account name (not Email!). Used for favorites and subscriptions.")]
+		[Category("OnlineVideosUserConfiguration"), /*LocalizableDisplayName("Account Name"), */Description("Your YouTube account name (not Email!). Used for favorites and subscriptions.")]
         string accountname = "";
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Login"), Description("Your YouTube login (mostly an Email!). Used for favorites and subscriptions.")]
+        [Category("OnlineVideosUserConfiguration"), /*LocalizableDisplayName("Login"), */Description("Your YouTube login (mostly an Email!). Used for favorites and subscriptions.")]
         string login = "";
-		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Your YouTube password. Used for favorites and subscriptions."), PasswordPropertyText(true)]
+		[Category("OnlineVideosUserConfiguration"), /*LocalizableDisplayName("Password"), */Description("Your YouTube password. Used for favorites and subscriptions."), PasswordPropertyText(true)]
         string password = "";
-		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Videos per Page"), Description("Defines the default number of videos to display per page.")]
+		[Category("OnlineVideosUserConfiguration"), /*LocalizableDisplayName("Videos per Page"), */Description("Defines the default number of videos to display per page.")]
         int pageSize = 26;
-		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Localize"), Description("Try to retrieve data specific for your region.")]
+		[Category("OnlineVideosUserConfiguration"), /*LocalizableDisplayName("Localize"), */Description("Try to retrieve data specific for your region.")]
         bool localize = false;
 
         [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
