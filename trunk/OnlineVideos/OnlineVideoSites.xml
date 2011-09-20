@@ -949,27 +949,6 @@
       <Description>Music videos hosted by Yahoo. Many videos are IP restricted to certain countries.</Description>
       <Categories />
     </Site>
-    <Site name="MTVMusicVideos" util="MtvMusicVideos" agecheck="false" enabled="true" lang="en">
-      <Description>Music Videos provided by MTV.</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="World/Reggae">http://api.mtvnservices.com/1/genre/world_reggae/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Pop">http://api.mtvnservices.com/1/genre/pop/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Metal">http://api.mtvnservices.com/1/genre/metal/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Environmental">http://api.mtvnservices.com/1/genre/environmental/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Latin">http://api.mtvnservices.com/1/genre/latin/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="R&amp;B">http://api.mtvnservices.com/1/genre/randb/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Rock">http://api.mtvnservices.com/1/genre/rock/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Easy">http://api.mtvnservices.com/1/genre/easy_listening/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Jazz">http://api.mtvnservices.com/1/genre/jazz/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Country">http://api.mtvnservices.com/1/genre/country/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Hip-Hop">http://api.mtvnservices.com/1/genre/hip_hop/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Classical">http://api.mtvnservices.com/1/genre/classical/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Electronic / Dance">http://api.mtvnservices.com/1/genre/electronic_dance/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Blues / Folk">http://api.mtvnservices.com/1/genre/blues_folk/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Alternative">http://api.mtvnservices.com/1/genre/alternative/videos/?sort=date_descending</Category>
-        <Category xsi:type="RssLink" name="Soundtracks / Musicals">http://api.mtvnservices.com/1/genre/soundtracks_musicals/videos/?sort=date_descending</Category>
-      </Categories>
-    </Site>
     <Site name="MusicTelevision" util="GenericSite" agecheck="false" enabled="true" lang="--" player="WMP">
       <Description>Collection of live music streams.</Description>
       <Categories>
