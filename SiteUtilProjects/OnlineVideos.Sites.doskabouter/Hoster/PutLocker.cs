@@ -44,7 +44,7 @@ namespace OnlineVideos.Hoster
 
             if (string.IsNullOrEmpty(dlLink))
             {
-                dlLink = getRegExData(@"playlist: \'(?<link>/get_file\.php\?stream=[A-Z0-9]+)\'", data, "link");
+                dlLink = getRegExData(@"playlist: \'(?<link>/get_file\.php\?stream=[A-Za-z0-9]+)\'", data, "link");
                 if (!string.IsNullOrEmpty(dlLink))
                 {
                     string tempLink = new Uri(new Uri(string.Format("{0}{1}", "http://www.", getHosterUrl())), dlLink).AbsoluteUri;
