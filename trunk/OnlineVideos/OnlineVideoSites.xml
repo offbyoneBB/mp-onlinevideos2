@@ -1036,7 +1036,7 @@
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
       <Description>Videos from Swedish TV3 TV4 TV6 TV8 and Sport channels.</Description>
       <Configuration>
-        <item key="tv4DynamicCategoriesRegEx"><![CDATA[<li\sclass="[^"\s]*">\s*<a\shref="(?<url>/[^"]+)">(?<title>[^<]+)</a>\s*</li>]]></item>
+        <item key="tv4DynamicCategoriesRegEx"><![CDATA[<li\sclass="[^"\s]*">\s+<a\shref="(?<url>[^"]+)">(?<title>[^<]+)</a>\s*</li>]]></item>
         <item key="tv4VideolistRegEx"><![CDATA[<li\sclass="video-panel[^"]*">\s*<p[^>]*>\s*<a\shref="[^"]+=(?<url>\d+)">\s*<img\s+alt="(?<title>[^"]+)"\s+src="(?<thumb>[^"]+)".*?/>\s*</a>\s*</p>\s*(?:(?!<p\sclass="date").)*<p\sclass="date">(?<date>[^<]+)</p>]]></item>
       </Configuration>
       <Categories />
