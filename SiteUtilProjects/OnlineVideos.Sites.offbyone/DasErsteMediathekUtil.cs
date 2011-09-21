@@ -146,7 +146,61 @@ namespace OnlineVideos.Sites
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
         }
-        
+		/*
+		public override int DiscoverSubCategories(Category parentCategory)
+		{
+			string dataPage = GetWebData(((RssLink)parentCategory).Url);
+
+			List<string> additionalPageUrls = new List<string>();
+			Match mPage = regEx_extraSubCatPages.Match(dataPage);
+			while (mPage.Success)
+			{
+				additionalPageUrls.Add(mPage.Groups["Url"].Value);
+				mPage = mPage.NextMatch();
+			}
+			GetCats(parentCategory, dataPage);
+			if (additionalPageUrls.Count > 0)
+			{
+				parentCategory.SubCategories.Add(new NextPageCategory() { Other = additionalPageUrls, ParentCategory = parentCategory });
+			}
+			parentCategory.SubCategoriesDiscovered = true;
+			return parentCategory.SubCategories.Count;
+		}
+
+		public override int DiscoverNextPageCategories(NextPageCategory category)
+		{
+			int oldAmount = category.ParentCategory.SubCategories.Count;
+			List<string> additionalPageUrls = category.Other as List<string>;
+			if (additionalPageUrls.Count > 0)
+			{
+				category.ParentCategory.SubCategories.Remove(category);
+				GetCats(category.ParentCategory, GetWebData("http://www.ardmediathek.de" + additionalPageUrls[0]));
+				additionalPageUrls.RemoveAt(0);
+				if (additionalPageUrls.Count > 0) category.ParentCategory.SubCategories.Add(category);
+			}
+			return category.ParentCategory.SubCategories.Count - oldAmount;
+		}
+
+		void GetCats(Category parentCategory, string dataPage)
+		{
+			Match m = regEx_Subcategories.Match(dataPage);
+			while (m.Success)
+			{
+				RssLink subCat = new RssLink()
+				{
+					Name = HttpUtility.HtmlDecode(m.Groups["Title"].Value),
+					Url = m.Groups["Url"].Value,
+					Thumb = "http://www.ardmediathek.de" + m.Groups["ImageUrl"].Value,
+					ParentCategory = parentCategory
+				};
+				subCat.Url = subCat.Url.Substring(subCat.Url.IndexOf("?"));
+				subCat.Url = "http://www.ardmediathek.de/ard/servlet/ajax-cache/3516962/view=list/documentId=" + HttpUtility.ParseQueryString(subCat.Url)["documentId"] + "/index.html";
+
+				parentCategory.SubCategories.Add(subCat);
+				m = m.NextMatch();
+			}
+		}
+        */
         public override String getUrl(VideoInfo video)
         {
             if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)

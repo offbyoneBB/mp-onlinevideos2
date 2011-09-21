@@ -268,6 +268,17 @@ namespace OnlineVideos
         public BindingList<Channel> Channels { get; set; }        
     }
 
+	/// <summary>
+	/// Special class to indicate that a list of <see cref="Category"/> items has another page.
+	/// </summary>
+	public class NextPageCategory : RssLink
+	{
+		public NextPageCategory() 
+		{
+			Name = Translation.NextPage;
+		}
+	}
+
     [DataContract]
     [Serializable]
     public class Channel

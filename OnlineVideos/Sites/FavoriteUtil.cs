@@ -54,12 +54,26 @@ namespace OnlineVideos.Sites
                     if (cat != null)
                     {
                         if (!cat.SubCategoriesDiscovered) fc.Site.DiscoverSubCategories(cat);
-                        cat = cat.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                        Category foundCat = cat.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
+						// nextpage until found or no more
+						while (foundCat == null && cat.SubCategories.Last() is NextPageCategory)
+						{
+							fc.Site.DiscoverNextPageCategories(cat.SubCategories.Last() as NextPageCategory);
+							foundCat = cat.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
+						}
+						cat = foundCat;
                     }
                     else
                     {
                         if (!fc.Site.Settings.DynamicCategoriesDiscovered) fc.Site.DiscoverDynamicCategories();
-                        cat = fc.Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
+						Category foundCat = fc.Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
+						// nextpage until found or no more
+						while (foundCat == null && fc.Site.Settings.Categories.Last() is NextPageCategory)
+						{
+							fc.Site.DiscoverNextPageCategories(fc.Site.Settings.Categories.Last() as NextPageCategory);
+							foundCat = fc.Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
+						}
+						cat = foundCat;
                     }
                     if (cat == null) break;
                 }
