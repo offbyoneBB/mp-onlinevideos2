@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.diebagge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.titof", "SiteUtilProjects\OnlineVideos.Sites.titof\OnlineVideos.Sites.titof.csproj", "{E6000721-B061-4692-9BBB-652DD9E82B34}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.corporategadfly", "SiteUtilProjects\OnlineVideos.Sites.corporategadfly\OnlineVideos.Sites.corporategadfly.csproj", "{626487BA-7E28-4584-BC9F-46CEFB3FDE93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,12 @@ Global
 		{E6000721-B061-4692-9BBB-652DD9E82B34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6000721-B061-4692-9BBB-652DD9E82B34}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6000721-B061-4692-9BBB-652DD9E82B34}.Release|x86.ActiveCfg = Release|Any CPU
+		{626487BA-7E28-4584-BC9F-46CEFB3FDE93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{626487BA-7E28-4584-BC9F-46CEFB3FDE93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{626487BA-7E28-4584-BC9F-46CEFB3FDE93}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{626487BA-7E28-4584-BC9F-46CEFB3FDE93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{626487BA-7E28-4584-BC9F-46CEFB3FDE93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{626487BA-7E28-4584-BC9F-46CEFB3FDE93}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,5 +126,6 @@ Global
 		{D01E921D-961C-41E6-B8DD-B811F5BC5A76} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{44C2F4D7-0A9F-48EE-B471-C9110E1D9E58} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{E6000721-B061-4692-9BBB-652DD9E82B34} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
+		{626487BA-7E28-4584-BC9F-46CEFB3FDE93} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 	EndGlobalSection
 EndGlobal
