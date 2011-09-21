@@ -107,6 +107,17 @@ namespace OnlineVideos.Sites
             return 0;
         }
 
+		/// <summary>
+		/// Override this method in your derived Util when you need paging in a list of <see cref="Category"/>s.
+		/// It will be called when the last item in that list is a <see cref="NextPageCategory"/>.
+		/// </summary>
+		/// <param name="category">The category item that you used to store info about how to get the next page categories.</param>
+		/// <returns>The number of new categories discovered.</returns>
+		public virtual int DiscoverNextPageCategories(NextPageCategory category)
+		{
+			return 0;
+		}
+
         /// <summary>
         /// If a category has sub-categories this function will be called when the user selects a category in the GUI.
         /// This happens only when <see cref="Category.HasSubCategories"/> is true and <see cref="Category.SubCategoriesDiscovered"/> is false.

@@ -291,7 +291,7 @@ namespace OnlineVideos.MediaPortal1
                 if (selectedItem == null || selectedItem.Item == null) return; // only context menu for items with an object backing them
 
                 Category aCategory = selectedItem.Item as Category;
-                if (aCategory != null)
+                if (aCategory != null && !(aCategory is NextPageCategory))
                 {
                     GUIDialogMenu dlgCat = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
                     if (dlgCat == null) return;
@@ -680,7 +680,11 @@ namespace OnlineVideos.MediaPortal1
                     else
                     {
                         Category categoryToDisplay = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Category;
-                        if (categoryToDisplay.HasSubCategories)
+						if (categoryToDisplay is NextPageCategory)
+						{
+							DisplayCategories_NextPage(categoryToDisplay as NextPageCategory);
+						}
+						else if (categoryToDisplay.HasSubCategories)
                         {
                             DisplayCategories(categoryToDisplay, true);
                         }
@@ -1250,7 +1254,20 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        private void SetCategoriesToFacade(Category parentCategory, IList<Category> categories, bool? diveDownOrUpIfSingle)
+		private void DisplayCategories_NextPage(NextPageCategory cat)
+		{
+			Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+			{
+				return SelectedSite.DiscoverNextPageCategories(cat);
+			},
+			delegate(bool success, object result)
+			{
+				if (success) SetCategoriesToFacade(cat.ParentCategory, cat.ParentCategory == null ? SelectedSite.Settings.Categories as IList<Category> : cat.ParentCategory.SubCategories, false, true);
+			},
+			Translation.GettingNextPageVideos, true);
+		}
+
+        private void SetCategoriesToFacade(Category parentCategory, IList<Category> categories, bool? diveDownOrUpIfSingle, bool append = false)
         {
             if (loadParamInfo != null && loadParamInfo.Site == SelectedSite.Settings.Name && parentCategory == null && !string.IsNullOrEmpty(loadParamInfo.Category))
             {
@@ -1269,6 +1286,13 @@ namespace OnlineVideos.MediaPortal1
                 return;
             }
 
+			int categoryIndexToSelect = (categories != null && categories.Count > 0) ? 1 : 0; // select the first category by default if there is one
+			if (append)
+			{
+				currentFilter.Clear();
+				categoryIndexToSelect = GUI_facadeView.Count - 1;
+			}
+
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
 
             // add the first item that will go to the previous menu
@@ -1280,7 +1304,6 @@ namespace OnlineVideos.MediaPortal1
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
             GUI_facadeView.Add(loListItem);
 
-            int categoryIndexToSelect = (categories != null && categories.Count > 0) ? 1 : 0; // select the first category by default if there is one
             Dictionary<string, bool> imageHash = new Dictionary<string, bool>();
             suggestedView = null;
             currentFilter.StartMatching();
@@ -1292,6 +1315,12 @@ namespace OnlineVideos.MediaPortal1
                     {
                         loListItem = new OnlineVideosGuiListItem(loCat);
                         loListItem.ItemId = GUI_facadeView.Count;
+						if (loCat is NextPageCategory)
+						{
+							loListItem.IconImage = "OnlineVideos\\NextPage.png";
+							loListItem.IconImageBig = "OnlineVideos\\NextPage.png";
+							loListItem.ThumbnailImage = "OnlineVideos\\NextPage.png";
+						}
                         if (!string.IsNullOrEmpty(loCat.Thumb)) imageHash[loCat.Thumb] = true;
                         loListItem.OnItemSelected += OnItemSelected;
                         if (loCat == selectedCategory) categoryIndexToSelect = GUI_facadeView.Count; // select the category that was previously selected
