@@ -14,67 +14,326 @@ namespace OnlineVideos.Sites
 {
     public class OrfUtil : GenericSiteUtil
     {
+        [Category("OnlineVideosUserConfiguration"), Description("How should categories be shown. Site will show them as they are presented on tvthek.orf.at, flat will show a flat list.")]
+        CategoryShowTypes View = CategoryShowTypes.Site;
+
         private const String ORF_BASE = "http://tvthek.orf.at";
 
-        public enum MediaType { flv, wmv };
         public enum MediaQuality { medium, high };
+        public enum CategoryShowTypes { Site, Flat }
 
-        string videolistRegex = @"</a></div>\s*<h3\sclass=""title"">\s*<span>(?<title>[^<]+)</span>";
-        string videolistRegex2 = @"<li.*?><a\shref.*?>(?<day>[^<]+)</a>(?<items>.*?)</ul>";
-        string videolistRegex3 = @"<li><a\shref=""(?<url>[^""]+)""\stitle=""(?<alt>[^""]+)"">(?<title>[^<]+)</a>";
-        string videolistRegex4 = @"<li><a\shref=""(?<url>[^""]+)"">(?<title>[^<]+)</a>";
-        string playlistRegex = @"<div\sid=""btn_playlist""(\sstyle=""[^""]+"")?>\s*<a\shref=""(?<url>[^""]+)""\sid=""open_playlist""";
+        enum CategoryType { VOD, Live }
+
+        string categoryRegex = @"<option value=""(?<url>[^""]+)"">(?<title>[^<]+)</option>";
+        string mainCategoryRegex = @"<h4>(?<title>.*?)</h4>(?<subcategories>.*?)</ul";
+        string subCategoryRegex = @"<li>.*?<a href=""(?<url>.*?)"".*?>(?<title>.*?)</a>.*?</li>";
+
+        string videolistRegex = @"</a></div>[^<]*<h3 class=""title"">.*?<span>(?<title>[^<]+)</span>";
+        string videolistRegex2 = @"<li.*?><a href.*?>(?<day>[^<]+)</a>(?<items>.*?)</ul>";
+        string videolistRegex3 = @"<li><a href=""(?<url>[^""]+)"" title=""(?<alt>[^""]+)"">(?<title>[^<]+)</a>";
+        string videolistRegex4 = @"<li><a href=""(?<url>[^""]+)"">(?<title>[^<]+)</a>";
+        string playlistRegex = @"<div id=""btn_playlist""( style=""[^""]+"")?>.*?<a href=""(?<url>[^""]+)"" id=""open_playlist""";
+
+        string liveRegex = @"<hr />.*?<a href=""(?<url>.*?)"".*?src=""(?<channelimg>.*?)"".*?<h3 class=""title"">.*?<span>(?<title>.*?)</span>.*?<video.*?poster=""(?<img>.*?)""";
+        string liveRegexBeginTime = @"Der Livestream beginnt um (?<begintime>.*?). Bitte beachten";
+        string liveRegexFurther = @"<li class=""vod"">.*?<a href=""(?<url>/live.*?)"".*?title=""(?<showtitle>.*?)"">.*?<img src=""(?<img>.*?)"".*?<strong>(?<title>.*?)</strong>";
+        string liveRegexUpcoming = @"<li class=""vod"">.*?<div class=""live"">.*?<img src=""(?<img>.*?)"".*?title=""(?<title>.*?)"".*?<span class=""desc"">.*?:(?<date>.*?)</span>.*?</li>";
+        string liveUrlRegex = @"<param name=""URL"" value=""(?<url>.*?)"" />";
+
+        string videoAlternativeSourcesRegex = @"{\\""id\\"":(?<id>.*?),\\""title\\"":\\""(?<title>.*?)\\"",\\""sources\\"":{(?<source>.*?)}}}";
+        string videoAlternativeFormatsRegex = @"\\""(?<type>[0-9].*?)_(?<typestring>.*?)\\"":{\\""src\\"":\\""(?<src>.*?)\\"",\\""quality_string\\"":\\""(?<qualitystring>.*?)\\"",\\""quality_pattern\\"":\\""(?<qualitypattern>.*?)\\""}";
 
         Regex regEx_Videolist;
         Regex regEx_Videolist2;
         Regex regEx_Videolist3;
         Regex regEx_Videolist4;
         Regex regEx_Playlist;
+        Regex regEx_Categories;
+        Regex regEx_MainCategories;
+        Regex regEx_SubCategories;
+        Regex regEx_Live;
+        Regex regEx_LiveBeginTime;
+        Regex regEx_LiveFurther;
+        Regex regEx_LiveUpcoming;
+        Regex regEx_LiveUrl;
+        Regex regEx_VideoAlternativeSources;
+        Regex regEx_VideoAlternativeFormats;
+
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            regEx_Videolist = new Regex(videolistRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
-            regEx_Videolist2 = new Regex(videolistRegex2, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace);
-            regEx_Videolist3 = new Regex(videolistRegex3, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
-            regEx_Videolist4 = new Regex(videolistRegex4, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
-            regEx_Playlist = new Regex(playlistRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
+
+            regEx_Categories = new Regex(categoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regEx_MainCategories = new Regex(mainCategoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_SubCategories = new Regex(subCategoryRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+
+            regEx_LiveFurther = new Regex(liveRegexFurther, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_LiveUpcoming = new Regex(liveRegexUpcoming, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_Live = new Regex(liveRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_LiveBeginTime = new Regex(liveRegexBeginTime, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_LiveUrl = new Regex(liveUrlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+            regEx_Videolist = new Regex(videolistRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_Videolist2 = new Regex(videolistRegex2, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_Videolist3 = new Regex(videolistRegex3, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regEx_Videolist4 = new Regex(videolistRegex4, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
+            regEx_Playlist = new Regex(playlistRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_VideoAlternativeSources = new Regex(videoAlternativeSourcesRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_VideoAlternativeFormats = new Regex(videoAlternativeFormatsRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+
 
         }
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override int DiscoverDynamicCategories()
         {
-            string data = GetWebData(video.VideoUrl);
-            string videoUrl = "";
-            if (!string.IsNullOrEmpty(data))
+            Settings.Categories.Clear();
+            string data = GetWebData(ORF_BASE);
+
+            //Add the url for upcoming livestreams
+            RssLink catLive = new RssLink();
+            catLive.Name = "[Live-Streams]";
+            catLive.Url = ORF_BASE + "/live";
+            catLive.HasSubCategories = false;
+            catLive.Other = CategoryType.Live;
+            Settings.Categories.Add(catLive);
+
+            //Parse and add the url for archived videos
+            if (View == CategoryShowTypes.Site)
             {
-                Match m = regEx_Playlist.Match(data);
-                if (m.Success)
+                Match c = regEx_MainCategories.Match(data);
+                while (c.Success)
                 {
-                    videoUrl = m.Groups["url"].Value;
-                    videoUrl = ORF_BASE + videoUrl;
-                    return ParseASX(videoUrl);
+                    Category cat = new Category();
+                    cat.Name = c.Groups["title"].Value;
+                    cat.HasSubCategories = true;
+                    cat.Other = CategoryType.VOD;
+                    cat.SubCategories = new List<Category>();
+
+                    Match c2 = regEx_SubCategories.Match(c.Groups["subcategories"].Value);
+                    while (c2.Success)
+                    {
+                        String categoryUrl = ORF_BASE + c2.Groups["url"].Value;
+                        String categoryTitle = c2.Groups["title"].Value;
+
+                        RssLink sub = new RssLink();
+                        sub.Name = categoryTitle;
+                        sub.Url = categoryUrl;
+                        sub.HasSubCategories = false;
+                        sub.Other = CategoryType.VOD;
+
+                        cat.SubCategories.Add(sub);
+                        c2 = c2.NextMatch();
+                    }
+                    Settings.Categories.Add(cat);
+                    c = c.NextMatch();
+                }
+            }
+            else
+            {
+                Match c = regEx_Categories.Match(data);
+                while (c.Success)
+                {
+                    Match c2 = regEx_Categories.Match(c.Value);
+                    while (c2.Success)
+                    {
+                        String categoryUrl = c2.Groups["url"].Value;
+                        String categoryTitle = c2.Groups["title"].Value;
+
+                        RssLink cat = new RssLink();
+                        cat.Name = categoryTitle;
+                        cat.Url = categoryUrl;
+                        cat.HasSubCategories = false;
+                        cat.Other = CategoryType.VOD;
+
+                        Settings.Categories.Add(cat);
+
+                        c2 = c2.NextMatch();
+                    }
+
+                    c = c.NextMatch();
                 }
             }
 
+            Settings.DynamicCategoriesDiscovered = true;
+            return Settings.Categories.Count;
+        }
+
+        private bool useAlternative = false;
+        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        {
+            Log.Info("Get multiple urls: " + video.VideoUrl);
+            if ((CategoryType)video.Other == CategoryType.VOD)
+            {
+                string data = GetWebData(video.VideoUrl);
+                if (useAlternative)
+                {
+                    //these are the alternative video urls (for ios and android). Unfortunately, currently
+                    //OV can't play these formats (rtsp and m3u)
+                    List<String> returnList = new List<string>();
+                    Match m1 = regEx_VideoAlternativeSources.Match(data);
+                    while (m1.Success)
+                    {
+                        Match m2 = regEx_VideoAlternativeFormats.Match(m1.Groups["source"].Value);
+                        while (m2.Success)
+                        {
+                            String source = m2.Groups["src"].Value.Replace("\\/", "/");
+                            String quality = m2.Groups["qualitystring"].Value;
+                            String typeString = m2.Groups["typestring"].Value;
+
+                            if (typeString.Equals("apple_Q4A"))
+                            {
+                                returnList.Add(source);
+                                break;
+                            }
+
+                            m2 = m2.NextMatch();
+                        }
+                        m1 = m1.NextMatch();
+                    }
+
+                    return returnList;
+                }
+                else
+                {
+                    string videoUrl = "";
+                    if (!string.IsNullOrEmpty(data))
+                    {
+                        Match m = regEx_Playlist.Match(data);
+                        if (m.Success)
+                        {
+                            videoUrl = m.Groups["url"].Value;
+                            videoUrl = ORF_BASE + videoUrl;
+                            return ParseASX(videoUrl);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                return base.getMultipleVideoUrls(video, inPlaylist);
+            }
             return null;
+        }
+
+        public override string getUrl(VideoInfo video)
+        {
+            Log.Info("Get url: " + video.VideoUrl);
+            if ((CategoryType)video.Other == CategoryType.Live)
+            {
+                string data = GetWebData(video.VideoUrl);
+                if (!string.IsNullOrEmpty(data))
+                {
+                    Match m = regEx_LiveUrl.Match(data);
+                    if (m.Success)
+                    {
+                        String videoUrl = m.Groups["url"].Value;
+                        return videoUrl;
+                    }
+                }
+            }
+            return base.getUrl(video);
         }
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            List<VideoInfo> videos = new List<VideoInfo>();
+            CategoryType type = (CategoryType)category.Other;
 
+            if (type == CategoryType.VOD)
+            {
+                return GetVodVideoList(category);
+            }
+            else if (type == CategoryType.Live)
+            {
+                return GetLiveVideoList(category);
+            }
+            else
+            {
+                Log.Warn("Unknown category type");
+                return null;
+            }
+        }
+
+        private List<VideoInfo> GetLiveVideoList(Category category)
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            string data = GetWebData((category as RssLink).Url);
+            if (!string.IsNullOrEmpty(data))
+            {
+
+                Match m = regEx_Live.Match(data);
+                if (m.Success)
+                {
+                    VideoInfo video = new VideoInfo();
+                    video.Title = m.Groups["title"].Value;
+                    Match begin = regEx_LiveBeginTime.Match(data);
+                    if (begin.Success)
+                    {
+                        //the video that is shown on front should have the same format
+                        //as the videos shown in the "Weitere Livestreams" section
+                        //(e.g. "Live: Burgenland heute, 19:00 Uhr")
+                        video.Title = video.Title + ", " + begin.Groups["begintime"].Value;
+                    }
+                    video.Title = video.Title.Replace("&#160;", " ");
+
+                    video.ImageUrl = m.Groups["img"].Value;
+                    video.VideoUrl = ORF_BASE + m.Groups["url"].Value;
+                    video.Other = CategoryType.Live;
+
+                    videos.Add(video);
+                }
+
+                Match m2 = regEx_LiveFurther.Match(data);
+                while (m2.Success)
+                {
+                    VideoInfo video = new VideoInfo();
+                    video.Title = m2.Groups["title"].Value;
+                    video.Title = video.Title.Replace("&#160;", " ");
+
+                    video.Title2 = m2.Groups["showtitle"].Value;
+                    video.ImageUrl = m2.Groups["img"].Value;
+                    video.VideoUrl = ORF_BASE + m2.Groups["url"].Value;
+                    video.Other = CategoryType.Live;
+
+                    videos.Add(video);
+
+                    m2 = m2.NextMatch();
+                }
+
+                Match m3 = regEx_LiveUpcoming.Match(data);
+                while (m3.Success)
+                {
+                    VideoInfo video = new VideoInfo();
+                    String date = m3.Groups["date"].Value.Replace("&#160;", " ").Trim();
+                    video.Title = "Demnächst: " + m3.Groups["title"].Value + " (" + date + ")";
+                    video.Description = m3.Groups["title"].Value;
+                    video.ImageUrl = m3.Groups["img"].Value;
+                    //video.VideoUrl = ORF_BASE + m2.Groups["url"].Value;
+                    video.Other = CategoryType.Live;
+
+                    videos.Add(video);
+
+                    m3 = m3.NextMatch();
+                }
+            }
+            return videos;
+        }
+
+        private List<VideoInfo> GetVodVideoList(Category category)
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
             string data = GetWebData((category as RssLink).Url);
             if (!string.IsNullOrEmpty(data))
             {
                 Match m = regEx_Videolist.Match(data);
                 if (m.Success)
                 {
+                    Log.Debug("Add video 1");
                     VideoInfo video = new VideoInfo();
                     video.Title = m.Groups["title"].Value;
                     video.Title = video.Title.Replace("&amp;", "&");
                     video.VideoUrl = (category as RssLink).Url;
-
+                    video.Other = CategoryType.VOD;
                     videos.Add(video);
                 }
 
@@ -95,10 +354,12 @@ namespace OnlineVideos.Sites
                             Match n = regEx_Videolist3.Match(items);
                             while (n.Success)
                             {
+                                Log.Debug("Add video 2");
                                 VideoInfo video = new VideoInfo();
                                 video.Title = n.Groups["title"].Value;
                                 video.VideoUrl = n.Groups["url"].Value;
                                 video.VideoUrl = ORF_BASE + video.VideoUrl;
+                                video.Other = CategoryType.VOD;
                                 videos.Add(video);
 
                                 n = n.NextMatch();
@@ -113,10 +374,12 @@ namespace OnlineVideos.Sites
                                 }
                                 else
                                 {
+                                    Log.Debug("Add video 3");
                                     VideoInfo video = new VideoInfo();
                                     video.Title = prefix + " " + HttpUtility.HtmlDecode(o.Groups["title"].Value) + ", " + day;
                                     video.VideoUrl = o.Groups["url"].Value;
                                     video.VideoUrl = ORF_BASE + video.VideoUrl;
+                                    video.Other = CategoryType.VOD;
 
                                     //only add episode from the same show (e.g. ZiB 9, ZiB 13, ...)
                                     if (CompareEpisodes(videos[0].Title, video.Title))
