@@ -19,10 +19,12 @@ namespace OnlineVideos.Sites
 
         private const String ORF_BASE = "http://tvthek.orf.at";
 
-        public enum MediaQuality { medium, high };
+        public enum MediaQuality { Medium, High };
         public enum CategoryShowTypes { Site, Flat }
 
         enum CategoryType { VOD, Live }
+
+        private bool useAlternative = false;
 
         string categoryRegex = @"<option value=""(?<url>[^""]+)"">(?<title>[^<]+)</option>";
         string mainCategoryRegex = @"<h4>(?<title>.*?)</h4>(?<subcategories>.*?)</ul";
@@ -59,7 +61,6 @@ namespace OnlineVideos.Sites
         Regex regEx_VideoAlternativeSources;
         Regex regEx_VideoAlternativeFormats;
 
-
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
@@ -81,8 +82,6 @@ namespace OnlineVideos.Sites
             regEx_Playlist = new Regex(playlistRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_VideoAlternativeSources = new Regex(videoAlternativeSourcesRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_VideoAlternativeFormats = new Regex(videoAlternativeFormatsRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
-
-
         }
 
         public override int DiscoverDynamicCategories()
@@ -159,7 +158,6 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        private bool useAlternative = false;
         public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             Log.Info("Get multiple urls: " + video.VideoUrl);
@@ -168,8 +166,13 @@ namespace OnlineVideos.Sites
                 string data = GetWebData(video.VideoUrl);
                 if (useAlternative)
                 {
-                    //these are the alternative video urls (for ios and android). Unfortunately, currently
-                    //OV can't play these formats (rtsp and m3u)
+                    /*
+                     * Alternative video urls. The tvthek also streams for Android and iOS devices.
+                     * Unfortunately, currently OV can't play these formats (rtsp and m3u)
+                     * 
+                     * Android: rtsp stream (low/medium -> 3gp, high -> mp4)
+                     * iOS: http streaming (m3u)
+                     */
                     List<String> returnList = new List<string>();
                     Match m1 = regEx_VideoAlternativeSources.Match(data);
                     while (m1.Success)
@@ -196,6 +199,9 @@ namespace OnlineVideos.Sites
                 }
                 else
                 {
+                    /*
+                     * The default video urls (mms stream)
+                     */
                     string videoUrl = "";
                     if (!string.IsNullOrEmpty(data))
                     {
@@ -319,21 +325,37 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
+        /// <summary>
+        /// Returns the archive videos for the category. 
+        /// </summary>
+        /// <param name="category">Selected category</param>
+        /// <returns>List of videos</returns>
         private List<VideoInfo> GetVodVideoList(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
             string data = GetWebData((category as RssLink).Url);
             if (!string.IsNullOrEmpty(data))
             {
+
+                String thumb = null;
+
+                //gets the thumb of the current show. Disabled for now, as the image format is too wide
+                /*Match i = new Regex(@"<span>Weitere Folgen</span>.*?<img src=""(?<img>.*?)"".*?/>.*?<div class=""scrollbox"">", RegexOptions.Singleline).Match(data);
+                if (i.Success)
+                {
+                    thumb = i.Groups["img"].Value;
+                }*/
+
+                //the main video that is shown on the category site (the newest one available)
                 Match m = regEx_Videolist.Match(data);
                 if (m.Success)
                 {
-                    Log.Debug("Add video 1");
                     VideoInfo video = new VideoInfo();
                     video.Title = m.Groups["title"].Value;
                     video.Title = video.Title.Replace("&amp;", "&");
                     video.VideoUrl = (category as RssLink).Url;
                     video.Other = CategoryType.VOD;
+                    video.ImageUrl = thumb;
                     videos.Add(video);
                 }
 
@@ -354,12 +376,12 @@ namespace OnlineVideos.Sites
                             Match n = regEx_Videolist3.Match(items);
                             while (n.Success)
                             {
-                                Log.Debug("Add video 2");
                                 VideoInfo video = new VideoInfo();
                                 video.Title = n.Groups["title"].Value;
                                 video.VideoUrl = n.Groups["url"].Value;
                                 video.VideoUrl = ORF_BASE + video.VideoUrl;
                                 video.Other = CategoryType.VOD;
+                                video.ImageUrl = thumb;
                                 videos.Add(video);
 
                                 n = n.NextMatch();
@@ -374,11 +396,11 @@ namespace OnlineVideos.Sites
                                 }
                                 else
                                 {
-                                    Log.Debug("Add video 3");
                                     VideoInfo video = new VideoInfo();
                                     video.Title = prefix + " " + HttpUtility.HtmlDecode(o.Groups["title"].Value) + ", " + day;
                                     video.VideoUrl = o.Groups["url"].Value;
                                     video.VideoUrl = ORF_BASE + video.VideoUrl;
+                                    video.ImageUrl = thumb;
                                     video.Other = CategoryType.VOD;
 
                                     //only add episode from the same show (e.g. ZiB 9, ZiB 13, ...)
