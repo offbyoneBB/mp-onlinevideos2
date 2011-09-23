@@ -103,7 +103,7 @@ namespace OnlineVideos.Sites
                 Match c = regEx_MainCategories.Match(data);
                 while (c.Success)
                 {
-                    Category cat = new Category();
+                    RssLink cat = new RssLink();
                     cat.Name = c.Groups["title"].Value;
                     cat.HasSubCategories = true;
                     cat.Other = CategoryType.VOD;
@@ -120,6 +120,7 @@ namespace OnlineVideos.Sites
                         sub.Url = categoryUrl;
                         sub.HasSubCategories = false;
                         sub.Other = CategoryType.VOD;
+                        sub.ParentCategory = cat;
 
                         cat.SubCategories.Add(sub);
                         c2 = c2.NextMatch();
