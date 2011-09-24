@@ -8,14 +8,14 @@ namespace OnlineVideos.MediaPortal1
     internal class Gui2UtilConnector
     {
         # region Singleton
-        protected Gui2UtilConnector() 
+        protected Gui2UtilConnector()
         {
             timeoutTimer.Elapsed += TaskWatcherTimerElapsed;
-        }       
+        }
         protected static Gui2UtilConnector instance = null;
-        internal static Gui2UtilConnector Instance 
+        internal static Gui2UtilConnector Instance
         {
-            get 
+            get
             {
                 if (instance == null) instance = new Gui2UtilConnector();
                 return instance;
@@ -118,7 +118,7 @@ namespace OnlineVideos.MediaPortal1
                     _CurrentResultHandler = null;
                     GUIWaitCursor.Hide(); // hide the wait cursor
                     return false; // could not start the background task
-                }                
+                }
             }
             else
             {
@@ -129,10 +129,10 @@ namespace OnlineVideos.MediaPortal1
 
         void ExecuteTaskResultHandler()
         {
-            if (!IsBusy) return;                        
+            if (!IsBusy) return;
 
             // show an error message if task was not completed successfully
-            if (_CurrentTaskSuccess != true)   
+            if (_CurrentTaskSuccess != true)
             {
                 if (_CurrentError != null)
                 {
@@ -141,7 +141,10 @@ namespace OnlineVideos.MediaPortal1
                     {
                         dlg_error.Reset();
                         dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
-                        dlg_error.SetLine(1, string.Format("{0} {1}", Translation.Error, _CurrentTaskDescription));
+                        if (_CurrentError.ShowCurrentTaskDescription)
+                        {
+                            dlg_error.SetLine(1, string.Format("{0} {1}", Translation.Error, _CurrentTaskDescription));
+                        }
                         dlg_error.SetLine(2, _CurrentError.Message);
                         dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                     }
@@ -152,7 +155,7 @@ namespace OnlineVideos.MediaPortal1
                     if (dlg_error != null)
                     {
                         dlg_error.Reset();
-                        dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type:"Icon"));
+                        dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                         dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                         if (_CurrentTaskSuccess.HasValue)
                             dlg_error.SetText(string.Format("{0} {1}", Translation.Error, _CurrentTaskDescription));
@@ -182,6 +185,6 @@ namespace OnlineVideos.MediaPortal1
 
             // execute the result handler
             if (stored_Handler != null) stored_Handler.Invoke(stored_TaskSuccess, stored_ResultObject);
-        }         
+        }
     }
 }
