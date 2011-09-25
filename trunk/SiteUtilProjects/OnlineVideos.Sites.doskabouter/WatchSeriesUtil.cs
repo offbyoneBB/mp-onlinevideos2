@@ -41,7 +41,7 @@ namespace OnlineVideos.Sites
             base.Initialize(siteSettings);
             isWatchMovies = baseUrl.StartsWith(@"http://watch-movies");
             //ReverseProxy.AddHandler(this);
-            
+
         }
 
         public void GetBaseCookie()
@@ -74,7 +74,7 @@ namespace OnlineVideos.Sites
                     bool isMain;
                     if (isWatchMovies)
                         isMain = cat.Url.Contains(@"/year/") || cat.Url.Contains(@"/genres/") ||
-                            cat.Url.EndsWith("/A");
+                            cat.Url.Contains(@"/letter/");
                     else
                         isMain = cat.Url.EndsWith("/A");
                     if (isMain)
@@ -185,25 +185,20 @@ namespace OnlineVideos.Sites
             if (category.Other.Equals(Depth.BareList))
             {
                 webData = GetWebData(url, cc);
-                if (isWatchMovies)
-                    webData = GetSubString(webData, @"class=""listings""", @"class=""clear""");
-                else
+                if (!isWatchMovies)
                 {
                     webData = GetSubString(webData, @"class=""listbig""", @"class=""clear""");
-                    if (!isWatchMovies)
+                    string[] parts = url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 2)
                     {
-                        string[] parts = url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (parts.Length >= 2)
+                        if (parts[parts.Length - 1] == "latest")
+                            nextVideoListPageUrl = url + "/1";
+                        else
                         {
-                            if (parts[parts.Length - 1] == "latest")
-                                nextVideoListPageUrl = url + "/1";
-                            else
-                            {
-                                int pageNr;
-                                if (parts[parts.Length - 2] == "latest" && int.TryParse(parts[parts.Length - 1], out pageNr))
-                                    if (pageNr + 1 <= 9)
-                                        nextVideoListPageUrl = url.Substring(0, url.Length - 1) + (pageNr + 1).ToString();
-                            }
+                            int pageNr;
+                            if (parts[parts.Length - 2] == "latest" && int.TryParse(parts[parts.Length - 1], out pageNr))
+                                if (pageNr + 1 <= 9)
+                                    nextVideoListPageUrl = url.Substring(0, url.Length - 1) + (pageNr + 1).ToString();
                         }
                     }
                 }
@@ -213,6 +208,13 @@ namespace OnlineVideos.Sites
                     webData = GetWebData(url, cc);
                 else
                     webData = url;
+
+            if (isWatchMovies && regEx_NextPage != null)
+            {
+                Match mNext = regEx_NextPage.Match(webData);
+                if (mNext.Success)
+                    nextVideoListPageUrl = mNext.Groups["url"].Value;
+            }
 
             List<VideoInfo> videos = new List<VideoInfo>();
             if (!string.IsNullOrEmpty(webData))
@@ -402,7 +404,7 @@ namespace OnlineVideos.Sites
                 if (!Uri.IsWellFormedUriString(el.url, System.UriKind.Absolute))
                     el.url = new Uri(new Uri(baseUrl), el.url).AbsoluteUri;
 
-                if ((limit == 0 || el.dupcnt <= limit) && (showUnknown || !el.status.Equals("ns")))
+                if ((limit == 0 || el.dupcnt <= limit) && (showUnknown || el.status == null || !el.status.Equals("ns")))
                 {
                     video.PlaybackOptions.Add(el.GetName(), el.url);
                 }
@@ -425,31 +427,12 @@ namespace OnlineVideos.Sites
         {
             if (!video.VideoUrl.Contains("getlinks.php"))
             {
-                // try to get all video links for this movie
-                string webData = GetWebDataFromPost(video.VideoUrl, fileUrlPostString, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
-                Match m = Regex.Match(webData, @"onclick\s*?=\s*?(?:""|')show_links(?:\w)?\((?<idfilm>\d+)\)", RegexOptions.IgnoreCase);
-                if (m != null && m.Success)
-                {
-                    string movieID = m.Groups["idfilm"].Value.Trim();
-                    if (!string.IsNullOrEmpty(movieID))
-                    {
-                        video.VideoUrl = string.Format("{0}/getlinks.php?idfilm={1}", baseUrl, movieID);
-                    }
-                }
 
-                m = Regex.Match(webData, @"<input(?<input>.*?id=(?:""|')idfilm(?:""|'))>", RegexOptions.IgnoreCase);
-                if (m != null && m.Success)
-                {
-                    m = Regex.Match(webData, @"value=(?:""|')(?<idfilm>\d+)(?:""|')", RegexOptions.IgnoreCase);
-                    if (m != null && m.Success)
-                    {
-                        string movieID = m.Groups["idfilm"].Value.Trim();
-                        if (!string.IsNullOrEmpty(movieID))
-                        {
-                            video.VideoUrl = string.Format("{0}/getlinks.php?idfilm={1}", baseUrl, movieID);
-                        }
-                    }
-                }
+                // try to get all video links for this movie
+                string webData = GetWebDataFromPost(video.VideoUrl, fileUrlPostString, cc, forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+                Match m = Regex.Match(webData, @"<a\shref=""#""\sonclick=""show_links\([^,]*,'all'\);return\sfalse;""\sstyle=""text-decoration:underline"">");
+                if (false && m.Success)
+                    video.VideoUrl = String.Format("{0}/getlinks.php", baseUrl);
 
                 // at this point, it should also be possible to get IMDb ID for TrackingInfo from video.VideoURL using regex:
                 //<a.*?href=(?:"|')\w+[^>'"]*?imdb.com/title/tt(?<imdb>\d+)[^>'"]*(?:"|').*?>\s*?imdb\s*?</a>
@@ -609,7 +592,7 @@ namespace OnlineVideos.Sites
         {
             HosterBase h1 = HosterFactory.GetHoster(e1.server);
             HosterBase h2 = HosterFactory.GetHoster(e2.server);
-            
+
             //first stage is to compare priorities (the higher the user priority, the better)
             int res = (h1 != null && h2 != null) ? IntComparer(h1.UserPriority, h2.UserPriority) : 0;
             if (res != 0)
