@@ -430,9 +430,32 @@ namespace OnlineVideos.Sites
 
                 // try to get all video links for this movie
                 string webData = GetWebDataFromPost(video.VideoUrl, fileUrlPostString, cc, forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
-                Match m = Regex.Match(webData, @"<a\shref=""#""\sonclick=""show_links\([^,]*,'all'\);return\sfalse;""\sstyle=""text-decoration:underline"">");
-                if (false && m.Success)
-                    video.VideoUrl = String.Format("{0}/getlinks.php", baseUrl);
+                Match m = Regex.Match(webData, @"onclick\s*?=\s*?""show_links(?:\w)?\(\s*?(?<idfilm>\d+)(?:\s*?,\s*?'all'\s*?)\)", RegexOptions.IgnoreCase);
+
+                if (m != null && m.Success)
+                {
+                    string movieID = m.Groups["idfilm"].Value.Trim();
+                    if (!string.IsNullOrEmpty(movieID))
+                    {
+                        video.VideoUrl = string.Format("{0}/getlinks.php?idfilm={1}&domain=all", baseUrl, movieID);
+                    }
+                }
+                else
+                {
+                    m = Regex.Match(webData, @"<input(?<input>.*?id=(?:""|')idfilm(?:""|'))>", RegexOptions.IgnoreCase);
+                    if (m != null && m.Success)
+                    {
+                        m = Regex.Match(m.Groups["input"].Value, @"value=(?:""|')(?<idfilm>\d+)(?:""|')", RegexOptions.IgnoreCase);
+                        if (m != null && m.Success)
+                        {
+                            string movieID = m.Groups["idfilm"].Value.Trim();
+                            if (!string.IsNullOrEmpty(movieID))
+                            {
+                                video.VideoUrl = string.Format("{0}/getlinks.php?idfilm={1}&domain=all", baseUrl, movieID);
+                            }
+                        }
+                    }
+                }
 
                 // at this point, it should also be possible to get IMDb ID for TrackingInfo from video.VideoURL using regex:
                 //<a.*?href=(?:"|')\w+[^>'"]*?imdb.com/title/tt(?<imdb>\d+)[^>'"]*(?:"|').*?>\s*?imdb\s*?</a>
