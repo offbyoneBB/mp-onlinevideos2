@@ -401,13 +401,20 @@
     <Site name="GameTrailers" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Watch trailers, reviews, interviews and ingame footage for games from all the major platforms.</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="gamepage_content_row_thumb">.*?<img\ssrc="(?<ImageUrl>[^"]*)"\sclass="gamepage_content_row_image"\salt="">.*?<a\shref=".*?(?<VideoUrl>[0-9]*)"><img\sborder="0"\ssrc="http://gametrailers\.mtvnimages\.com/images/sitewide/HDupper\.gif">.*?gamepage_content_row_title">(?<Title>[^<]*)</a>.*?bold;">(?<Description>.*?)</div>\s*<div\s+class="MovieFileSize">\s*Posted\s*(?<Airdate>[^<]*)</div>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sclass="gamepage_content_row_thumb">\s*<a[^>]*>\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*
+<div\s+class="newestlist_movie_format_SD(HD)?">\s*
+(<a\s+href="[^"]+?(?<VideoUrl>[0-9]*)"><img\s+border="0"\s+src="[^"]+?(H|S)D[^"]+?.gif"></a>\s*)*
+</div>\s*</div>\s*
+.*?gamepage_content_row_title">(?<Title>[^<]*)</a>.*?</div>\s*
+(.*?<div\s+class="gamepage_content_row_date">(?<Airdate>[^<]+)</div>(?<Description>[^<]+)</div>)?
+(.*?bold;">(?<Description>.*?)</div>\s*<div\s+class="MovieFileSize">\s*Posted\s*(?<Airdate>[^<]*)</div>)?]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://mosii.gametrailers.com/getmediainfo4.php?hd=1&mid={0}]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="Page">Next\s&raquo;</a>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a[^>]*?\s+href="(?<url>[^"]*)"[^>]*?>Next\s&raquo;</a>]]></item>
         <item key="fileUrlRegEx"><![CDATA[umfilename=(?<m0>[^&]*)]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://trailers.gametrailers.com/gt_vault/{0}.mp4]]></item>
         <item key="baseUrl"><![CDATA[http://www.gametrailers.com]]></item>
         <item key="videoThumbFormatString"><![CDATA[{0}]]></item>
+        <item key="searchUrl"><![CDATA[http://www.gametrailers.com/search.php?s={0}&str_type=movies&ac=1&orderby=date_added&search_type=advanced]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="PC">
