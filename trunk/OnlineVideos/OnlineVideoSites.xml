@@ -585,7 +585,7 @@
       <Description>That guy with the glasses</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<tr\sclass="sectiontable.*?href="(?<VideoUrl>[^"]*)[^>]*>\s*(?<Title>[^<]*).*?<td\s*headers[^>]*>\s*(?<Description>[^<]*)]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<embed.*?src="(?<m0>[^"]*)"]]></item>
+        <item key="fileUrlRegEx"><![CDATA[(?:<embed.*?src="(?<m0>[^"#]*)")|(?:<iframe\ssrc="(?<m0>[^"]*)")]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
         <item key="baseUrl"><![CDATA[http://thatguywiththeglasses.com]]></item>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
