@@ -19,21 +19,22 @@
         <Columns>
             <asp:ImageField HeaderText="Logo" DataImageUrlField="Name" 
                 DataImageUrlFormatString="./Icons/{0}.png" ControlStyle-Width="48" 
-                ControlStyle-Height="48" >                
-<ControlStyle Height="48px" Width="48px"></ControlStyle>
+                ControlStyle-Height="48">
+                <ControlStyle Height="48px" Width="48px"></ControlStyle>
             </asp:ImageField>
-            <asp:BoundField HeaderText="Site" DataField="Name" SortExpression="Name"
-                ItemStyle-HorizontalAlign="Center" >
-            <ControlStyle Font-Bold="False" />
-<ItemStyle HorizontalAlign="Center" Font-Bold="True"></ItemStyle>
-            </asp:BoundField>
+            <asp:TemplateField HeaderText="Site" SortExpression="Name" ItemStyle-HorizontalAlign="Center" ItemStyle-Font-Bold="true">
+                <ItemTemplate>
+                    <asp:HyperLink ID="HyperLink1" runat="server" Text='<%# Eval("Name") %>' Visible='<%# (uint)Eval("ReportCount") > 0 %>' NavigateUrl='<%# "Reports.aspx?site=" + Eval("Name") %>' />
+                    <asp:Label ID="Label1" runat="server" Text='<%# Eval("Name") %>' Visible='<%# (uint)Eval("ReportCount") == 0 %>' />
+                </ItemTemplate>
+            </asp:TemplateField>
             <asp:BoundField HeaderText="Creator" DataField="Owner_FK" SortExpression="Owner_FK"
                 ItemStyle-HorizontalAlign="Center" >
-<ItemStyle HorizontalAlign="Center"></ItemStyle>
+                <ItemStyle HorizontalAlign="Center"></ItemStyle>
             </asp:BoundField>
             <asp:BoundField HeaderText="Language" DataField="Language" SortExpression="Language"
                 ItemStyle-HorizontalAlign="Center" >
-<ItemStyle HorizontalAlign="Center"></ItemStyle>
+                <ItemStyle HorizontalAlign="Center"></ItemStyle>
             </asp:BoundField>
             <asp:BoundField HeaderText="Update" DataField="LastUpdated" DataFormatString="{0:g}" SortExpression="LastUpdated" />
             <asp:BoundField HeaderText="Description" DataField="Description" />            
