@@ -18,10 +18,10 @@ namespace OnlineVideos.WebService
                 using (OnlineVideosDataContext dc = new OnlineVideosDataContext())
                 {
                     if (dc.DatabaseExists())
-                    {                        
-                        var sites = from a in dc.Site select new { Description = a.Description, Language = a.Language, IsAdult = a.IsAdult, LastUpdated = a.LastUpdated, Name = a.Name, State = a.State, Owner_FK = a.Owner_FK, RequiredDll = a.RequiredDll };
+                    {
+						var sites = from a in dc.Site select new { Description = a.Description, Language = a.Language, IsAdult = a.IsAdult, LastUpdated = a.LastUpdated, Name = a.Name, State = a.State, Owner_FK = a.Owner_FK, RequiredDll = a.RequiredDll, ReportCount = (uint)dc.Report.Count(r => r.Site_FK == a.Name) };
                         sites = sites.OrderByDescending(s => s.LastUpdated);
-                        siteOverview.DataSource = (List<Site>)sites.ToList().ToNonAnonymousList(typeof(Site));
+						siteOverview.DataSource = (List<Site>)sites.ToList().ToNonAnonymousList(typeof(Site));
                         siteOverview.DataBind();
                     }
                 }
@@ -41,6 +41,10 @@ namespace OnlineVideos.WebService
                     case SiteState.Reported: e.Row.Cells[1].BackColor = System.Drawing.Color.FromArgb(255, 240, 79); break;
                     case SiteState.Broken: e.Row.Cells[1].BackColor = System.Drawing.Color.Red; break;
                 }
+				if ((e.Row.DataItem as Site).ReportCount > 0)
+				{
+					//e.Row.Cells[1].te
+				}
             }
         }
 
@@ -83,4 +87,12 @@ namespace OnlineVideos.WebService
             return name;
         }
     }
+}
+
+namespace OnlineVideos.WebService.Database
+{
+	public partial class Site
+	{
+		public uint ReportCount { get; set; }
+	}
 }
