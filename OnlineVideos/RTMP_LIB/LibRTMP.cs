@@ -2,9 +2,9 @@
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace LibRTMP
+namespace RTMP_LIB
 {
-    public class RTMP
+	public class LibRTMP
     {
         public enum RTMPProtocol
         {

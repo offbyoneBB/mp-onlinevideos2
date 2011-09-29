@@ -3,22 +3,26 @@ using System.Linq;
 using System.Collections.Specialized;
 using System.IO;
 using System.Threading;
+using OnlineVideos;
 
 namespace RTMP_LIB
 {
-    public class RTMPRequestHandler : OnlineVideos.IRequestHandler
+    public class RTMPRequestHandler_OLD : OnlineVideos.IRequestHandler
     {
         #region Singleton
-        private static RTMPRequestHandler _Instance = null;
-        public static RTMPRequestHandler Instance
+		private static RTMPRequestHandler_OLD _Instance = null;
+		public static RTMPRequestHandler_OLD Instance
         {
             get
             {
-                if (_Instance == null) _Instance = new RTMPRequestHandler();
+				if (_Instance == null) _Instance = new RTMPRequestHandler_OLD();
                 return _Instance;
             }
         }
-        private RTMPRequestHandler() { }
+		private RTMPRequestHandler_OLD() 
+		{
+			ReverseProxy.AddHandler(this);
+		}
         #endregion
 
         object sync = new object();

@@ -188,7 +188,7 @@ namespace OnlineVideos.Sites
                 rtmp.SkipCreateStream = true;
                 rtmp.MethodHookHandler = UnknownMethodHandler;
 
-                RTMPRequestHandler.ConnectAndGetStream(rtmp, request, response, ref invalidHeader);
+                RTMPRequestHandler_OLD.ConnectAndGetStream(rtmp, request, response, ref invalidHeader);
             }
             finally
             {
