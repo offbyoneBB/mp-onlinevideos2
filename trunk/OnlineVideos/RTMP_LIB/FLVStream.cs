@@ -58,24 +58,7 @@ namespace RTMP_LIB
                             {
                                 if (outputStream == null) // first time writing data
                                 {
-                                    if (rtmp.CombinedTracksLength > 0)
-                                    {
-                                        EstimatedLength = rtmp.CombinedTracksLength + (rtmp.CombinedTracksLength / rtmp.InChunkSize) * 11;
-                                    }
-                                    else if (rtmp.CombinedBitrates > 0)
-                                    {
-                                        EstimatedLength = (long)(rtmp.CombinedBitrates * 1000 / 8 * (rtmp.Duration <= 0 ? 10800 : rtmp.Duration)); // set 3h if no duration in metadata
-                                    }
-                                    else
-                                    {
-                                        // nothing was in the metadata -> just use duration and a bitrate of 2000
-                                        EstimatedLength = (long)(2000 * 1000 / 8 * (rtmp.Duration <= 0 ? 10800 : rtmp.Duration)); // set 3h if no duration in metadata
-                                    }
-
-                                    EstimatedLength = (long)((double)EstimatedLength * 1.5d);
-
-                                    if (EstimatedLength > 0x7fffffff) EstimatedLength = 0x7fffffff; // honor 2GB size limit
-
+									EstimatedLength = rtmp.Metadata.EstimateBytes(rtmp.InChunkSize);
                                     outputStream = DataReady(); // get the stream
                                     httpChunkSize = 1024; // reduce chunksize
                                 }

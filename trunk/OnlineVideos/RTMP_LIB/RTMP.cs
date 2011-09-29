@@ -146,9 +146,9 @@ namespace RTMP_LIB
 		   0x2c, 0x5b, 0x3a, 0x85, 0x68, 0xb5, 0xaa, 0x6a, 0x44, 0xcd, 0x3f, 0xa7 }
 		};
 
-		static readonly uint[] packetSize = { 12, 8, 4, 1 };
+		public static readonly uint[] packetSize = { 12, 8, 4, 1 };
 
-		const int RTMP_DEFAULT_CHUNKSIZE = 128;
+		public const int RTMP_DEFAULT_CHUNKSIZE = 128;
 		const int SHA256_DIGEST_LENGTH = 32;
 		const int RTMP_LARGE_HEADER_SIZE = 12;
 		const int RTMP_SIG_SIZE = 1536;
@@ -177,20 +177,7 @@ namespace RTMP_LIB
 
 		public int Pausing { get; protected set; }
 
-		/// <summary>
-		/// Duration of stream in seconds returned by Metadata
-		/// </summary>
-		public double Duration { get; protected set; }
-
-		/// <summary>
-		/// Sum of bytes of all tracks in the stream (if Metadata was received and held that information)
-		/// </summary>
-		public long CombinedTracksLength { get; protected set; } // number of bytes
-
-		/// <summary>
-		/// sum of bitrates of all tracks in the stream (if Metadata was received and held that information)
-		/// </summary>
-		public long CombinedBitrates { get; protected set; }
+		public Metadata Metadata { get; protected set; }
 
 		#endregion
 
@@ -567,9 +554,7 @@ namespace RTMP_LIB
 			InChunkSize = RTMP_DEFAULT_CHUNKSIZE;
 			outChunkSize = RTMP_DEFAULT_CHUNKSIZE;
 			Playing = false;
-			Duration = 0;
-			CombinedTracksLength = 0;
-			CombinedBitrates = 0;
+			Metadata = new Metadata();
 
 			m_mediaChannel = 0;
 			m_stream_id = -1;
@@ -1344,65 +1329,7 @@ namespace RTMP_LIB
 
 		void HandleMetadata(byte[] buffer, int offset, int size)
 		{
-			AMFObject obj = new AMFObject();
-			int nRes = obj.Decode(buffer, offset, size, false);
-			if (nRes < 0)
-			{
-				//Log(LOGERROR, "%s, error decoding meta data packet", __FUNCTION__);
-				return;
-			}
-
-			if (!Playing) obj.Dump();
-			string metastring = obj.GetProperty(0).GetString();
-
-			if (metastring == "onMetaData")
-			{
-				if (Playing) obj.Dump(); // always dump metadata for further analyzing
-
-				List<AMFObjectProperty> props = new List<AMFObjectProperty>();
-				obj.FindMatchingProperty("duration", props, 1);
-				if (props.Count > 0)
-				{
-					Duration = props[0].GetNumber();
-					Logger.Log(string.Format("Set duration: {0}", Duration));
-				}
-				props.Clear();
-				obj.FindMatchingProperty("audiodatarate", props, 1);
-				if (props.Count > 0)
-				{
-					int audiodatarate = (int)props[0].GetNumber();
-					CombinedBitrates += audiodatarate;
-					Logger.Log(string.Format("audiodatarate: {0}", audiodatarate));
-				}
-				props.Clear();
-				obj.FindMatchingProperty("videodatarate", props, 1);
-				if (props.Count > 0)
-				{
-					int videodatarate = (int)props[0].GetNumber();
-					CombinedBitrates += videodatarate;
-					Logger.Log(string.Format("videodatarate: {0}", videodatarate));
-				}
-				if (CombinedTracksLength == 0)
-				{
-					props.Clear();
-					obj.FindMatchingProperty("filesize", props, int.MaxValue);
-					if (props.Count > 0)
-					{
-						CombinedTracksLength = (int)props[0].GetNumber();
-						Logger.Log(string.Format("Set CombinedTracksLength from filesize: {0}", CombinedTracksLength));
-					}
-				}
-				if (CombinedTracksLength == 0)
-				{
-					props.Clear();
-					obj.FindMatchingProperty("datasize", props, int.MaxValue);
-					if (props.Count > 0)
-					{
-						CombinedTracksLength = (int)props[0].GetNumber();
-						Logger.Log(string.Format("Set CombinedTracksLength from datasize: {0}", CombinedTracksLength));
-					}
-				}
-			}
+			Metadata.DecodeFromPacketBody(buffer, offset, size, Playing);
 		}
 
 		void HandleFlvTags(RTMPPacket packet)

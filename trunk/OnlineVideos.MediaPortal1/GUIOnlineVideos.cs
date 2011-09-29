@@ -905,9 +905,6 @@ namespace OnlineVideos.MediaPortal1
 			// The default .Net implementation for URI parsing removes trailing dots, which is not correct
 			Utils.FixUriTrailingDots();
 
-            // add a special reversed proxy handler for rtmp
-            ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance);
-
             // replace g_player's ShowFullScreenWindowVideo
             g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowHandler;
             g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
