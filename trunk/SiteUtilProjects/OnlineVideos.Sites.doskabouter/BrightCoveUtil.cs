@@ -12,18 +12,18 @@ namespace OnlineVideos.Sites
 {
     public class BrightCoveUtil : GenericSiteUtil
     {
-        private enum RequestType { ViewerExperienceRequest, FindMediaById };
+        protected enum RequestType { ViewerExperienceRequest, FindMediaById };
 
         [Category("OnlineVideosConfiguration"), Description("HashValue")]
-        string hashValue = null;
+        protected string hashValue = null;
         [Category("OnlineVideosConfiguration"), Description("Url for request")]
-        string requestUrl = null;
+        protected string requestUrl = null;
         [Category("OnlineVideosConfiguration"), Description("optional playerId")]
-        string playerId = null;
+        protected string playerId = null;
         [Category("OnlineVideosConfiguration"), Description("4th value in array")]
-        string array4 = null;
+        protected string array4 = null;
         [Category("OnlineVideosConfiguration"), Description("Request type")]
-        RequestType requestType = RequestType.ViewerExperienceRequest;
+        protected RequestType requestType = RequestType.ViewerExperienceRequest;
 
         public override string getUrl(VideoInfo video)
         {
