@@ -101,7 +101,7 @@ namespace OnlineVideos.Hoster
         }
     }
 
-    public class FrogMovz : Loombo
+    public class FrogMovz : HosterBase
     {
         public override string getHosterUrl()
         {

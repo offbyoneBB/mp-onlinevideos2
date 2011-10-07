@@ -66,6 +66,7 @@
     <Compile Include="CBCUtil.cs" />
     <Compile Include="EuroSportUtil.cs" />
     <Compile Include="Hoster\Archiv.cs" />
+    <Compile Include="Hoster\OvFile.cs" />
     <Compile Include="Hoster\SockShare.cs" />
     <Compile Include="Hoster\DataUp.cs" />
     <Compile Include="Hoster\DivxDen.cs" />
