@@ -1,0 +1,203 @@
+/*
+    Copyright (C) 2007-2010 Team MediaPortal
+    http://www.team-mediaportal.com
+
+    This file is part of MediaPortal 2
+
+    MediaPortal 2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    MediaPortal 2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "StdAfx.h"
+
+#include "Strings.h"
+
+#include <stdio.h>
+
+char *ConvertGuidToStringA(const GUID guid)
+{
+  char *result = NULL;
+  wchar_t *wideGuid = ConvertGuidToStringW(guid);
+  if (wideGuid != NULL)
+  {
+    size_t length = wcslen(wideGuid) + 1;
+
+    ALLOC_MEM_SET(result, char, length, 0);
+    result = ConvertToMultiByteW(wideGuid);
+  }
+  FREE_MEM(wideGuid);
+
+  return result;
+}
+
+wchar_t *ConvertGuidToStringW(const GUID guid)
+{
+  ALLOC_MEM_DEFINE_SET(wideGuid, OLECHAR, 256, 0);
+  if (wideGuid != NULL)
+  {
+    if (StringFromGUID2(guid, wideGuid, 256) == 0)
+    {
+      // error occured
+      FREE_MEM(wideGuid);
+    }
+  }
+
+  return wideGuid;
+}
+
+char *ConvertToMultiByteA(const char *string)
+{
+  char *result = NULL;
+
+  if (string != NULL)
+  {
+    size_t length = strlen(string) + 1;
+    result = ALLOC_MEM_SET(result, char, length, 0);
+    if (result != NULL)
+    {
+      strcpy_s(result, length, string);
+    }
+  }
+
+  return result;
+}
+
+char *ConvertToMultiByteW(const wchar_t *string)
+{
+  char *result = NULL;
+
+  if (string != NULL)
+  {
+    size_t length = 0;
+    if (wcstombs_s(&length, NULL, 0, string, wcslen(string)) == 0)
+    {
+      result = ALLOC_MEM_SET(result, char, length, 0);
+      if (result != NULL)
+      {
+        if (wcstombs_s(&length, result, length, string, wcslen(string)) != 0)
+        {
+          // error occurred but buffer is created
+          FREE_MEM(result);
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+wchar_t *ConvertToUnicodeA(const char *string)
+{
+  wchar_t *result = NULL;
+
+  if (string != NULL)
+  {
+    size_t length = 0;
+
+    if (mbstowcs_s(&length, NULL, 0, string, strlen(string)) == 0)
+    {
+      result = ALLOC_MEM_SET(result, wchar_t, length, 0);
+      if (result != NULL)
+      {
+        if (mbstowcs_s(&length, result, length, string, strlen(string)) != 0)
+        {
+          // error occurred but buffer is created
+          FREE_MEM(result);
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+wchar_t *ConvertToUnicodeW(const wchar_t *string)
+{
+  wchar_t *result = NULL;
+
+  if (string != NULL)
+  {
+    size_t length = wcslen(string) + 1;
+    result = ALLOC_MEM_SET(result, wchar_t, length, 0);
+    if (result != NULL)
+    {
+      wcscpy_s(result, length, string);
+    }
+  }
+
+  return result;
+}
+
+char *DuplicateA(const char *string)
+{
+  return ConvertToMultiByteA(string);
+}
+
+wchar_t *DuplicateW(const wchar_t *string)
+{
+  return ConvertToUnicodeW(string);
+}
+
+bool IsNullOrEmptyA(const char *string)
+{
+  bool result = true;
+  if (string != NULL)
+  {
+    result = (strlen(string) == 0);
+  }
+
+  return result;
+}
+
+bool IsNullOrEmptyW(const wchar_t *string)
+{
+  bool result = true;
+  if (string != NULL)
+  {
+    result = (wcslen(string) == 0);
+  }
+
+  return result;
+}
+
+char *FormatStringA(const char *format, ...)
+{
+  va_list ap;
+  va_start(ap, format);
+
+  int length = _vscprintf(format, ap) + 1;
+  ALLOC_MEM_DEFINE_SET(result, char, length, 0);
+  if (result != NULL)
+  {
+    vsprintf_s(result, length, format, ap);
+  }
+  va_end(ap);
+
+  return result;
+}
+
+wchar_t *FormatStringW(const wchar_t *format, ...)
+{
+  va_list ap;
+  va_start(ap, format);
+
+  int length = _vscwprintf(format, ap) + 1;
+  ALLOC_MEM_DEFINE_SET(result, wchar_t, length, 0);
+  if (result != NULL)
+  {
+    vswprintf_s(result, length, format, ap);
+  }
+  va_end(ap);
+
+  return result;
+}
