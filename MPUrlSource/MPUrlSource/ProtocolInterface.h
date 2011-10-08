@@ -40,10 +40,13 @@
 #define METHOD_RECEIVE_DATA_NAME                                        _T("ReceiveData()")
 #define METHOD_PUSH_DATA_NAME                                           _T("PushData()")
 #define METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME                         _T("ReceiveDataFromTimestamp()")
+#define METHOD_ABORT_STREAM_RECEIVE_NAME                                _T("AbortStreamReceive()")
+#define METHOD_QUERY_STREAM_PROGRESS_NAME                               _T("QueryStreamProgress()")
 
 // methods' common string formats
 #define METHOD_START_FORMAT                                             _T("%s: %s: Start")
 #define METHOD_END_FORMAT                                               _T("%s: %s: End")
+#define METHOD_END_HRESULT_FORMAT                                       _T("%s: %s: End, result: 0x%08X")
 #define METHOD_END_FAIL_FORMAT                                          _T("%s: %s: End, Fail")
 #define METHOD_END_FAIL_HRESULT_FORMAT                                  _T("%s: %s: End, Fail, result: 0x%08X")
 #define METHOD_MESSAGE_FORMAT                                           _T("%s: %s: %s")
@@ -110,6 +113,16 @@ struct IBaseProtocol
   // @param time : the requested start time (zero is start of stream)
   // @return : S_OK if successful, error code otherwise
   virtual HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME time) = 0;
+
+  // request protocol implementation to cancel the stream reading operation
+  // @return : S_OK if successful
+  virtual HRESULT AbortStreamReceive() = 0;
+
+  // retrieves the progress of the stream reading operation
+  // @param total : reference to a variable that receives the length of the entire stream, in bytes
+  // @param current : reference to a variable that receives the length of the downloaded portion of the stream, in bytes
+  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_UNEXPECTED if unexpected error
+  virtual HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current) = 0;
 };
 
 // defines interface for stream protocol implementation

@@ -72,6 +72,8 @@ public:
   unsigned int GetOpenConnectionMaximumAttempts(void);
   CStringCollection *GetStreamNames(void);
   HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME time);
+  HRESULT AbortStreamReceive();  
+  HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
 
 protected:
   CLogger logger;

@@ -51,7 +51,7 @@ struct ProtocolImplementation
 };
 
 // This class is exported from the MPUrlSource.ax
-class CMPUrlSourceFilter : public CAsyncSource, public IFileSourceFilter, public IOutputStream
+class CMPUrlSourceFilter : public CAsyncSource, public IFileSourceFilter, public IOutputStream, public IAMOpenProgress
 {
 private:
   // Constructor is private because you have to use CreateInstance
@@ -108,6 +108,10 @@ public:
   STDMETHODIMP GetCurFile(LPOLESTR* ppszFileName, AM_MEDIA_TYPE* pmt);
   static CUnknown * WINAPI CreateInstance(IUnknown *pUnk, HRESULT *phr);
 
+  // IAMOpenProgress interface
+  STDMETHODIMP QueryProgress(LONGLONG *pllTotal, LONGLONG *pllCurrent);
+  STDMETHODIMP AbortOperation(void);
+
   // CBaseFilter GetState() method
   STDMETHODIMP GetState(DWORD dwMSecs, FILTER_STATE *State);
 
@@ -161,6 +165,16 @@ public:
   // @param time : the requested start time (zero is start of stream)
   // @return : S_OK if successful, error code otherwise
   HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME time);
+
+  // request protocol implementation to cancel the stream reading operation
+  // @return : S_OK if successful
+  HRESULT AbortStreamReceive();
+
+  // retrieves the progress of the stream reading operation
+  // @param total : reference to a variable that receives the length of the entire stream, in bytes
+  // @param current : reference to a variable that receives the length of the downloaded portion of the stream, in bytes
+  // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_UNEXPECTED if unexpected error
+  HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
 };
 
 

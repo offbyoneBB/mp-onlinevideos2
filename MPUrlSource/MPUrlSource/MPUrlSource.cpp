@@ -137,6 +137,10 @@ STDMETHODIMP CMPUrlSourceFilter::NonDelegatingQueryInterface(REFIID riid, void**
   {
     return GetInterface((IFileSourceFilter *)this, ppv);
   }
+  else if (riid == _uuidof(IAMOpenProgress))
+  {
+    return GetInterface((IAMOpenProgress *)this, ppv);
+  }
   /*else if (riid == _uuidof(IMPIPTVConnectInfo))
   {
     return GetInterface((IMPIPTVConnectInfo *)this, ppv);
@@ -379,6 +383,16 @@ CUnknown * WINAPI CMPUrlSourceFilter::CreateInstance(IUnknown *pUnk, HRESULT *ph
   }
 
   return pNewFilter;
+}
+
+STDMETHODIMP CMPUrlSourceFilter::QueryProgress(LONGLONG *pllTotal, LONGLONG *pllCurrent)
+{
+  return this->QueryStreamProgress(pllTotal, pllCurrent);
+}
+
+STDMETHODIMP CMPUrlSourceFilter::AbortOperation(void)
+{
+  return this->AbortStreamReceive();
 }
 
 STDMETHODIMP CMPUrlSourceFilter::GetState(DWORD dwMSecs, FILTER_STATE *State)
@@ -772,6 +786,30 @@ HRESULT CMPUrlSourceFilter::ReceiveDataFromTimestamp(REFERENCE_TIME time)
   if (this->activeProtocol != NULL)
   {
     result = this->activeProtocol->ReceiveDataFromTimestamp(time);
+  }
+
+  return result;
+}
+
+HRESULT CMPUrlSourceFilter::AbortStreamReceive(void)
+{
+  HRESULT result = E_NOT_VALID_STATE;
+
+  if (this->activeProtocol != NULL)
+  {
+    result = this->activeProtocol->AbortStreamReceive();
+  }
+
+  return result;
+}
+
+HRESULT CMPUrlSourceFilter::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
+{
+  HRESULT result = E_NOT_VALID_STATE;
+
+  if (this->activeProtocol != NULL)
+  {
+    result = this->activeProtocol->QueryStreamProgress(total, current);
   }
 
   return result;
