@@ -64,10 +64,6 @@ public:
   // return the number of the pin with this IPin* or -1 if none
   int FindPinNumber(__in IPin *iPin);
 
-  //// get timeout (in ms) for receiving data
-  //// @return : timeout (in ms) for receiving data or UINT_MAX if error
-  //virtual unsigned int GetReceiveDataTimeout(void) = 0;
-
 protected:
   // the number of pins on this filter
   // updated by CAsyncSourceStream constructors and destructors
