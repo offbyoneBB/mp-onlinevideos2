@@ -1399,6 +1399,61 @@
       </Configuration>
       <Categories />
     </Site>
+    <Site name="CTV.ca" util="CTV" agecheck="false" enabled="true" lang="en">
+      <Description>CTV is Canada's largest private broadcaster, offering a wide range of leading news, sports, and entertainment programming.</Description>
+      <Configuration />
+      <Categories />
+    </Site>
+    <Site name="CTV News" util="CTVNews" agecheck="false" enabled="true" lang="en">
+      <Description>CTV News</Description>
+      <Configuration />
+      <Categories />
+    </Site>
+    <Site name="CTV Local News" util="CTVLocalNews" agecheck="false" enabled="true" lang="en">
+      <Description>CTV Local News</Description>
+      <Configuration />
+      <Categories />
+    </Site>
+    <Site name="Discovery Channel Canada" util="Discovery" agecheck="false" enabled="true" lang="en">
+      <Description>Canadian TV Channel dedicated to documentaries about popular science, technology, and history.</Description>
+      <Configuration />
+      <Categories />
+    </Site>
+    <Site name="The Comedy Network" util="ComedyNetwork" agecheck="false" enabled="true" lang="en">
+      <Description>Canada's first specialty comedy service, The Comedy Network airs comedy of all kinds, 24-hours-a-day. Launched in October 1997, The Comedy Network broadcasts, uncut and uncensored, an eclectic mix of scripted, stand-up, sketch, improv, and animated comedy - as well as topical comedy talk shows, game shows and classic situation comedies.</Description>
+      <Configuration />
+      <Categories />
+    </Site>
+    <Site name="Space" util="SpaceCast" agecheck="false" enabled="true" lang="en">
+      <Description>SPACE is Canada’s national science fiction, fantasy and horror channel. Look no further for your fix of the paranormal, edgy, scary, creepy and fun! SPACE is the station for all those who dare to challenge their imagination.</Description>
+      <Configuration />
+      <Categories />
+    </Site>
+    <Site name="Bravo!" util="Bravo" agecheck="false" enabled="true" lang="en">
+      <Description>This innovative channel covers all aspects and facets of the arts, including; music, ballet, literature, drama, visual arts, modern dance, opera, architecture, the art of talk, and much more.</Description>
+      <Configuration />
+      <Categories />
+    </Site>
+    <Site name="Bravo! FACT" util="BravoFact" agecheck="false" enabled="true" lang="en">
+      <Description>Bravo!FACT (Foundation to Assist Canadian Talent) has distributed tens of millions of dollars in grants for the production of thousands shorts across Canada..</Description>
+      <Configuration />
+      <Categories />
+    </Site>
+    <Site name="Fashion Television" util="Fashion" agecheck="false" enabled="true" lang="en">
+      <Description>FashionTelevisionChannel (FT) is Canada's first and only 24-hour English language fashion channel dedicated to the world of art, architecture, photography, and design.</Description>
+      <Configuration />
+      <Categories />
+    </Site>
+    <Site name="TSN" util="TSN" agecheck="false" enabled="true" lang="en">
+      <Description>TSN is Canada's leading English language sports TV channel.</Description>
+      <Configuration />
+      <Categories />
+    </Site>
+    <Site name="BNN" util="BNN" agecheck="false" enabled="true" lang="en">
+      <Description>Business News Network is Canada’s only all business and financial news channel.</Description>
+      <Configuration />
+      <Categories />
+    </Site>
     <Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
       <Configuration>
