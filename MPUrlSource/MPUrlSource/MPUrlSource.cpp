@@ -162,6 +162,8 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
   this->m_url = ConvertToUnicodeW(pszFileName);
 #endif
 
+  //this->m_url = Duplicate(_T("http://vid1.markiza.sk/a510/video/part/file/2/0032/2011_10_06_00_00_0_adela_show_1_1.mp4"));
+
   if (this->m_url == NULL)
   {
     result = E_FAIL;

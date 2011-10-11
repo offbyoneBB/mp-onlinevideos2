@@ -1238,6 +1238,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
   caller->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME);
 
   unsigned int maxCacheTime = caller->configuration->GetValueLong(CONFIGURATION_MAX_CACHE_TIME, true, MAX_CACHE_TIME_DEFAULT);
+  DWORD lastCheckTime = GetTickCount();
 
   while (!caller->asyncRequestProcessingShouldExit)
   {
@@ -1372,23 +1373,29 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
     }
 
     {
-      // lock access to media packets
-      CLockMutex mediaPacketLock(caller->mediaPacketMutex, INFINITE);
-
-      // after all remove media packets with last access time longer than maximum cache time
-      unsigned int i = 0;
-      DWORD currentTime = GetTickCount();
-
-      while (i < caller->mediaPacketCollection->Count())
+      if ((GetTickCount() - lastCheckTime) > 1000)
       {
-        CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(i);
-        if ((currentTime - mediaPacket->GetLastAccessTime()) >= maxCacheTime)
+        // check overdue packets once time per seconds
+        lastCheckTime = GetTickCount();
+
+        // lock access to media packets
+        CLockMutex mediaPacketLock(caller->mediaPacketMutex, INFINITE);
+
+        // after all remove media packets with last access time longer than maximum cache time
+        unsigned int i = 0;
+        DWORD currentTime = GetTickCount();
+
+        while (i < caller->mediaPacketCollection->Count())
         {
-          caller->mediaPacketCollection->Remove(i);
-        }
-        else
-        {
-          i++;
+          CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(i);
+          if ((currentTime - mediaPacket->GetLastAccessTime()) >= maxCacheTime)
+          {
+            caller->mediaPacketCollection->Remove(i);
+          }
+          else
+          {
+            i++;
+          }
         }
       }
     }

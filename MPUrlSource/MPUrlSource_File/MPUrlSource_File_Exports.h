@@ -29,6 +29,7 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // MPURLSOURCE_FILE_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
+
 #ifdef MPURLSOURCE_FILE_EXPORTS
 #define MPURLSOURCE_FILE_API __declspec(dllexport)
 #else
