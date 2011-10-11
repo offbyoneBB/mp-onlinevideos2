@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <!-- Online Videos translation file -->
 <!-- English (US) -->
 <!-- Note: English is the fallback for any strings not found in other languages -->
@@ -6,155 +6,165 @@
 
   <!-- A -->
   <string Field="Airdate">Aired</string>
-  <string Field="AlreadyDownloading">Already downloading this file.</string>
+  <string Field="AlreadyDownloading">Dosya zaten indiriliyor.</string>
   <string Field="All">Hepsi</string>
   <string Field="Actions">Actions</string>
   <string Field="Actors">Oyuncular</string>
   <string Field="AddToMySites">Sitelerime Ekle</string>
   <string Field="AddToFavourites">Favorilerime Ekle</string>
   <string Field="AddingToFavorites">Favorilere Ekleniyor</string>
-  <string Field="AutomaticUpdate">Automatik Güncelleme</string>
-  <string Field="AutomaticUpdateDisabled">Automatik Güncelleme Kapalý.</string>
+  <string Field="AutomaticUpdate">Automatik GÃ¼ncelleme</string>
+  <string Field="AutomaticUpdateDisabled">Automatik GÃ¼ncelleme KapalÄ±.</string>
 
   <!-- B -->
   <string Field="Broken">Bozuk</string>
-  <string Field="Buffered">Ýndiriliyor</string>
+  <string Field="Buffered">Ä°ndiriliyor</string>
 
   <!-- C -->
-  <string Field="Cancel">Vazgeç</string>
+  <string Field="Cancel">VazgeÃ§</string>
   <string Field="Category">Kategori</string>
   <string Field="Categories">Kategoriler</string>
   <string Field="Creator">Creator</string>
-  <string Field="CheckingForPluginUpdate">Güncelleme Kontrol Ediliyor</string>
+  <string Field="CheckingForPluginUpdate">GÃ¼ncelleme Kontrol Ediliyor</string>
 
   <!-- D -->
-  <string Field="Date">Tarih</string>
-  <string Field="DateOfRelease">Yükleme Tarihi</string>
-  <string Field="Directors">Yönetmenler</string>
-  <string Field="Download">Ýndir</string>
-  <string Field="Downloading">Ýndiriliyor</string>
-  <string Field="DownloadingDescription">Þu an indirilenleri görüntüle.</string>
-  <string Field="DownloadFailed">Ýndirme Baþarýsýz: {0}</string>
-  <string Field="DownloadCancelled">Ýndirme Ýptal Edildi</string>
-  <string Field="DownloadComplete">Ýndirme Tamamlandý</string>
-  <string Field="DownloadStarted">Ýndirme Baþladý</string>  
-  <string Field="DownloadedVideos">Ýndirilen Videolar</string>
+    <string Field="Date">Tarih</string>
+  <string Field="DateOfRelease">YÃ¼kleme Tarihi</string>
+  <string Field="Directors">YÃ¶netmenler</string>
+  <string Field="Download">Ä°ndir</string>
+  <string Field="DownloadUserdefined">KullanÄ±cÄ± tanÄ±mlÄ± klasÃ¶re kaydet</string>
+  <string Field="Downloading">Ä°ndiriliyor</string>
+  <string Field="DownloadingDescription">Åžu an indirilenleri gÃ¶rÃ¼ntÃ¼le.</string>
+  <string Field="DownloadingSubtitle">AltyazÄ± indiriliyor</string>
+  <string Field="DownloadFailed">Ä°ndirme BaÅŸarÄ±sÄ±z: {0}</string>
+  <string Field="DownloadCancelled">Ä°ndirme Ä°ptal Edildi</string>
+  <string Field="DownloadComplete">Ä°ndirme TamamlandÄ±</string>
+  <string Field="DownloadStarted">Ä°ndirme BaÅŸladÄ±</string>  
+  <string Field="DownloadedVideos">Ä°ndirilen Videolar</string>
   <string Field="Delete">Sil</string>
-  <string Field="DeleteAll">Tümünü Sil</string>
-  <string Field="Default">Öntanýmlý</string>
+  <string Field="DeleteAll">TÃ¼mÃ¼nÃ¼ Sil</string>
+  <string Field="Default">Ã–ntanÄ±mlÄ±</string>
   <string Field="Done">Bitti</string>
-  <string Field="DeletingOldThumbs">Eski küçük resimler siliniyor</string>
+  <string Field="DeletingOldThumbs">Eski kÃ¼Ã§Ã¼k resimler siliniyor</string>
 
   <!-- E -->
-  <string Field="Error">Hata</string>
-  <string Field="EnterPin">Hata Pin</string>
+  <string Field="Error">Error</string>
+  <string Field="EnterPin">Enter Pin</string>
 
   <!-- F -->
-  <string Field="Favourites">Favoriler</string>
-  <string Field="Filter">Filtre</string>
-  <string Field="FullUpdate">Tam Güncelleme</string>
+  <string Field="Favourites">Favorites</string>
+  <string Field="Filter">Filter</string>
+  <string Field="FullUpdate">Full Update</string>
 
   <!-- G -->
-  <string Field="Genre">Tür</string>
-  <string Field="GettingVideoDetails">video ayrýntýlarý alýnýyor</string>
-  <string Field="GettingCategoryVideos">kategori videolarý alýnýyor</string>
-  <string Field="GettingFavoriteVideos">favori videolar alýnýyor</string>
-  <string Field="GettingSearchResults">arama sonuçlarý alýnýyor</string>
-  <string Field="GettingRelatedVideos">benzer videolar alýnýyor</string>
-  <string Field="GettingFilteredVideos">filtrelenmiþ videolar alýnýyor</string>
-  <string Field="GettingNextPageVideos">sonraki sayfadaki videolar alýnýyor</string>
-  <string Field="GettingPreviousPageVideos">önceki sayfadaki videolar alýnýyor</string>
+  <string Field="Genre">Genre</string>
+  <string Field="GettingVideoDetails">getting video details</string>
+  <string Field="GettingCategoryVideos">getting category videos</string>
+  <string Field="GettingFavoriteVideos">getting favorite videos</string>
+  <string Field="GettingSearchResults">getting search results</string>
+  <string Field="GettingRelatedVideos">getting related videos</string>
+  <string Field="GettingFilteredVideos">getting filtered videos</string>
+  <string Field="GettingNextPageVideos">getting next page videos</string>
+  <string Field="GettingPreviousPageVideos">getting previous page videos</string>
   <string Field="GettingPlaybackUrlsForVideo">getting playback urls for video</string>
   <string Field="GettingDynamicCategories">getting dynamic categories</string>
-  <string Field="GettingReports">web sevisinden raporlar alýnýyor</string>
-  <string Field="GettingSiteXml">web servisinden xml dosyasý alýnýyor</string>
-  <string Field="GettingIcon">web servisinden ikonlar alýnýyor</string>
-  <string Field="GettingBanner">web servisinden banner ler alýnýyor</string>
-  <string Field="GettingDll">web servisinden dll ler alýnýyor</string>
-  <string Field="Groups">Gruplar</string>  
+  <string Field="GettingReports">getting reports from webservice</string>
+  <string Field="GettingSiteXml">getting site xml from webservice</string>
+  <string Field="GettingIcon">getting site icon from webservice</string>
+  <string Field="GettingBanner">getting site banner from webservice</string>
+  <string Field="GettingDll">getting dll from webservice</string>
+  <string Field="Groups">Groups</string>  
 
   <!-- H -->
 
   <!-- I -->
 
   <!-- L -->
-  <string Field="LatestVersionRequired">En son sürüm ({0}) gerekli!</string>
-  <string Field="Language">Dil</string>
-  <string Field="LayoutList">Görünüm: Liste</string>
-  <string Field="LayoutIcons">Görünüm: Küçük Resimler</string>
-  <string Field="LayoutBigIcons">Görünüm: Büyük Resimler</string>
+  <string Field="LatestVersionRequired">Latest version ({0}) required!</string>
+  <string Field="Language">Language</string>
+  <string Field="LayoutList">Layout: List</string>
+  <string Field="LayoutIcons">Layout: Icons</string>
+  <string Field="LayoutBigIcons">Layout: Big Icons</string>
 
   <!-- M -->
-  <string Field="ManageSites">Siteleri Yönet</string>
-  <string Field="MaxResults">Max Sonuç</string>
+  <string Field="ManageSites">Manage Sites</string>
+  <string Field="MaxResults">Max Results</string>
 
   <!-- N -->
-  <string Field="Name">Ýsim</string>
+  <string Field="Name">Ä°sim</string>
   <string Field="NextPage">Sonraki sayfa</string>
-  <string Field="None">Yok</string>
-  <string Field="NoVideoFound">Video Bulunamadý</string>
-  <string Field="NoReportsForSite">Bu site için rapor yok.</string>
+  <string Field="NewVideos">Yeni videolar</string>
+  <string Field="None">HiÃ§biri</string>
+  <string Field="NoVideoFound">Video BulunamadÄ±</string>
+  <string Field="NoReportsForSite">Bu site iÃ§in rapor yok.</string>
   <string Field="NewDllDownloaded">Yeni dll indirildi!</string>
   <string Field="NewSearch">Yeni Arama</string>
 
   <!-- O -->
-  <string Field="Others">Diðerleri</string>
+  <string Field="Others">Others</string>
 
   <!-- P -->
   <string Field="PlayAll">Hepsini Oynat</string>
+  <string Field="PlayWith">Åžununla oynat ...</string>
+  <string Field="PleaseEnterDescription">LÃ¼tfen kÄ±sa bir tanÄ±mlama giriniz.</string>
   <string Field="PlotOutline">Plot outline</string>
-  <string Field="PreviousPage">Önceki Sayfa</string>
-  <string Field="PerformAutomaticUpdate">Otomatik Güncelleþtirme Yapýlsýn Mý?</string>
+  <string Field="PreviousPage">Ã–nceki Sayfa</string>
+  <string Field="PerformAutomaticUpdate">Otomatik GÃ¼ncelleÅŸtirme YapÄ±lsÄ±n MÄ±?</string>
 
   <!-- R -->
-  <string Field="RemoveFromFavorites">Favorilerden çýkart</string>
-  <string Field="RemovingFromFavorites">favorilerden çýkartýlýyor</string>
-  <string Field="Refresh">Tazele</string>
+  <string Field="RemoveFromFavorites">Favorilerden Ã§Ä±kart</string>
+  <string Field="RemovingFromFavorites">favorilerden Ã§Ä±kartÄ±lÄ±yor</string>
+  <string Field="Refresh">Yenile</string>
   <string Field="RelatedVideos">Benzer Videolar</string>
-  <string Field="Reported">Raporlandý</string>
+  <string Field="ReportBroken">Bozuk link bildir</string>
+  <string Field="Reported">RaporlandÄ±</string>
   <string Field="Reports">Raporlar</string>
-  <string Field="Runtime">Süre</string>
-  <string Field="RemoveFromMySites">Sitelerimden Çýkart</string>
-  <string Field="RestartMediaPortal">MediaPortalý kapat-aç!</string>
-  <string Field="RetrievingRemoteDlls">Karþý taraftan ddl ler alýnýyor ...</string>
-  <string Field="RetrievingRemoteSites">Karþý taraftan siteler alýnýyor ...</string>
+  <string Field="Runtime">SÃ¼re</string>
+  <string Field="RemoveFromMySites">Sitelerimden Ã§Ä±kart</string>
+  <string Field="RestartMediaPortal">MediaPortalÄ± yeniden baÅŸlat!</string>
+  <string Field="RetrievingRemoteDlls">KarÅŸÄ± taraftan ddl ler alÄ±nÄ±yor ...</string>
+  <string Field="RetrievingRemoteSites">KarÅŸÄ± taraftan siteler alÄ±nÄ±yor ...</string>
 
   <!-- S -->
-  <string Field="SearchHistory">Arama geçmiþi</string>
-  <string Field="SearchResults">Arama sonuçlarý</string>
-  <string Field="SelectSource">Kaynak seç</string>
-  <string Field="Sites">Siteler</string>
-  <string Field="Size">Boyut</string>  
-  <string Field="SortOptions">Sýralama türü</string>
-  <string Field="Search">Ara</string>
-  <string Field="SetDownloadFolderInConfig">Lütfen ayarlar bölümünden indirme klasörü belirleyiniz!</string>
+  <string Field="SearchHistory">Search history</string>
+  <string Field="SearchResults">Search results</string>
+  <string Field="SelectSource">Select source</string>
+  <string Field="Sites">Sites</string>
+  <string Field="Size">Size</string>  
+  <string Field="SortOptions">Sort options</string>
+  <string Field="Search">Search</string>
+  <string Field="SetDownloadFolderInConfig">Please set a download folder in Configuration!</string>
   <string Field="State">State</string>
-  <string Field="SavingLocalSiteList">Yerel site listesi kaydediliyor ...</string>
+  <string Field="SavingLocalSiteList">Saving local site list ...</string>
   <string Field="ShowReports">Show creator's and user's reports</string>
-  <string Field="StartingPlayback">oynatmaya baþlýyor</string>
-  <string Field="Subscriptions">Üyelikler</string>
- 
+  <string Field="StartingPlayback">starting playback</string>
+  <string Field="Subscriptions">Subscriptions</string>
+  
   <!-- T -->
   <string Field="Timeframe">Timeframe</string>
   <string Field="Timeout">Timeout</string>
   <string Field="Tags">Tags</string>
 
   <!-- U -->
-  <string Field="Updated">Güncellendi</string>
-  <string Field="Updatable">Güncellenebilir</string>
-  <string Field="UpdateMySite">Sitelerimi güncelle</string>
-  <string Field="UpdateMySiteSkipCategories">Sitemi güncelle (kategorileri esgeç)</string>
-  <string Field="UpdateAllYourSites">Mevcut sitelerinizin tamamýný güncelleyecek.</string>
-  <string Field="UnableToPlayVideo">Bu video oynatýlamýyor. URL yok.</string>
-  <string Field="UnableToDownloadVideo"> Bu video oynatýlamýyor. Hatalý URL.</string>
+   <string Field="Updated">GÃ¼ncellendi</string>
+  <string Field="Updatable">GÃ¼ncellenebilir</string>
+  <string Field="UpdateAll">Update/Add all</string>
+  <string Field="UpdateAllSkipCategories">Update/Add all (skip categories)</string>
+  <string Field="UpdateMySite">Sitemi gÃ¼ncelle</string>
+  <string Field="UpdateMySiteSkipCategories">Sitemi gÃ¼ncelle (kategorileri esgeÃ§)</string>
+  <string Field="UpdateAllYourSites">Mevcut sitelerinizin tamamÄ±nÄ± gÃ¼ncelleyecek.</string>
+  <string Field="UnableToPlayVideo">Bu video oynatÄ±lamÄ±yor. URL yok.</string>
+  <string Field="UnableToDownloadVideo"> Bu video oynatÄ±lamÄ±yor. HatalÄ± URL.</string>
+  <string Field="UploadsBy">uploads by</string>
 
   <!-- V -->
   <string Field="Videos">Videolar</string>
+  <string Field="VideoQuality">Video Kalitesi</string>
 
   <!-- W -->
-  <string Field="Working">Çalýþýyor</string>
+  <string Field="Working">Ã‡alÄ±ÅŸÄ±yor</string>
+  <string Field="Writers">Yazarlar</string>
 
   <!-- Y -->
 
 </strings>
-
