@@ -161,7 +161,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 string urlToLoad = CurrentFile;
                 if (uri.Scheme == "http" && !PluginConfiguration.Instance.useRtmpProxy)
                 {
-                    string proxyIndicator = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, "rtmp://");
+                    string proxyIndicator = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, "rtmp://");
                     if (CurrentFile.StartsWith(proxyIndicator))
                     {
                         urlToLoad = Uri.UnescapeDataString("rtmp://" + CurrentFile.Replace(proxyIndicator, ""));

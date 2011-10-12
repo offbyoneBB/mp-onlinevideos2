@@ -151,7 +151,7 @@ namespace OnlineVideos.Sites
                         System.Web.HttpUtility.UrlEncode(swfUrl));
 
                 res.Add(bitrate + "K " + videoType,
-                    ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                    ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                     "http://127.0.0.1/stream.flv?" + resultUrl));
             }
             return res;

@@ -31,7 +31,7 @@ namespace OnlineVideos
 			get
 			{
 				string result = displayName;
-				if (!string.IsNullOrEmpty(TranslationFieldName)) Translation.Strings.TryGetValue(TranslationFieldName, out result);
+				if (!string.IsNullOrEmpty(TranslationFieldName)) result = Translation.Instance.GetByName(TranslationFieldName);
 				return result;
 			}
 		}

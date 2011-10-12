@@ -192,7 +192,7 @@ namespace OnlineVideos.Sites
                         if (String.IsNullOrEmpty(video.Title))
                             video.Title = "Aflevering van " + airdate;
                         if (!String.IsNullOrEmpty(airdate))
-                            video.Length = video.Length + '|' + Translation.Airdate + ": " + airdate;
+							video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + airdate;
                         videos.Add(video);
                     }
                     m = m.NextMatch();

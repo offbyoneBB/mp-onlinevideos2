@@ -212,8 +212,8 @@ namespace OnlineVideos.Sites
             // if a username was set add a category for the users a) favorites and b) subscriptions
             if (!string.IsNullOrEmpty(accountname))
             {
-                Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Favourites) });
-                Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Subscriptions), HasSubCategories = true });
+				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Favourites) });
+				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Subscriptions), HasSubCategories = true });
 				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, "Playlists"), HasSubCategories = true });
             }
 
@@ -280,7 +280,7 @@ namespace OnlineVideos.Sites
 				{
 					// users subscriptions
 					RssLink newVidsLink = new RssLink();
-					newVidsLink.Name = Translation.NewVideos;
+					newVidsLink.Name = Translation.Instance.NewVideos;
 					newVidsLink.Url = "http://gdata.youtube.com/feeds/api/users/default/newsubscriptionvideos";
 					parentCategory.SubCategories.Add(newVidsLink);
 					newVidsLink.ParentCategory = parentCategory;
@@ -488,20 +488,20 @@ namespace OnlineVideos.Sites
             List<string> result = new List<string>();
             if (selectedItem != null)
             {
-                result.Add(Translation.RelatedVideos);
+				result.Add(Translation.Instance.RelatedVideos);
 
                 MyYouTubeEntry ytEntry = selectedItem.Other as MyYouTubeEntry;
                 if (ytEntry != null && ytEntry.YouTubeEntry != null && ytEntry.YouTubeEntry.Uploader != null && !string.IsNullOrEmpty(ytEntry.YouTubeEntry.Uploader.Value))
                 {
-                    result.Add(Translation.UploadsBy + " [" + ytEntry.YouTubeEntry.Uploader.Value + "]");
+					result.Add(Translation.Instance.UploadsBy + " [" + ytEntry.YouTubeEntry.Uploader.Value + "]");
                 }
                 if (selectedCategory is RssLink)
                 {
-                    result.Add(Translation.AddToFavourites + " (" + Settings.Name + ")");
+					result.Add(Translation.Instance.AddToFavourites + " (" + Settings.Name + ")");
                 }
                 else if (selectedCategory is Category)
                 {
-                    result.Add(Translation.RemoveFromFavorites + " (" + Settings.Name + ")");
+					result.Add(Translation.Instance.RemoveFromFavorites + " (" + Settings.Name + ")");
                 }
             }
             return result;
@@ -510,29 +510,29 @@ namespace OnlineVideos.Sites
         public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
         {
             newVideos = null;
-            if (choice == Translation.AddToFavourites + " (" + Settings.Name + ")")
+			if (choice == Translation.Instance.AddToFavourites + " (" + Settings.Name + ")")
             {
                 addFavorite(selectedItem);
                 return false;
             }
-            else if (choice == Translation.RemoveFromFavorites + " (" + Settings.Name + ")")
+			else if (choice == Translation.Instance.RemoveFromFavorites + " (" + Settings.Name + ")")
             {
                 removeFavorite(selectedItem);
                 return true;
             }
-            else if (choice == Translation.RelatedVideos)
+			else if (choice == Translation.Instance.RelatedVideos)
             {
                 YouTubeQuery query = new YouTubeQuery() { Uri = new Uri((selectedItem.Other as MyYouTubeEntry).YouTubeEntry.RelatedVideosUri.Content), NumberToRetrieve = pageSize };
                 newVideos = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
-                currentVideosTitle = Translation.RelatedVideos + " [" + selectedItem.Title + "]";
+				currentVideosTitle = Translation.Instance.RelatedVideos + " [" + selectedItem.Title + "]";
                 return false;
             }
-            else if (choice.StartsWith(Translation.UploadsBy))
+			else if (choice.StartsWith(Translation.Instance.UploadsBy))
             {
                 YouTubeEntry ytEntry = (selectedItem.Other as MyYouTubeEntry).YouTubeEntry;
                 YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateUserUri(ytEntry.Uploader.Value)) { NumberToRetrieve = pageSize };
                 newVideos = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
-                currentVideosTitle = Translation.UploadsBy + " [" + ytEntry.Uploader.Value + "]";
+				currentVideosTitle = Translation.Instance.UploadsBy + " [" + ytEntry.Uploader.Value + "]";
             }
             return false;
         }

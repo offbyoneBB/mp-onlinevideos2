@@ -22,7 +22,7 @@ namespace OnlineVideos.Sites
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            ReverseProxy.AddHandler(this);
+            ReverseProxy.Instance.AddHandler(this);
         }
 
         public override int DiscoverDynamicCategories()
@@ -294,12 +294,12 @@ namespace OnlineVideos.Sites
                            
                             if (finalURL.StartsWith("http"))
                             {                                
-                                string uri = ReverseProxy.GetProxyUri(handler, finalURL);
+                                string uri = ReverseProxy.Instance.GetProxyUri(handler, finalURL);
                                 listUrls.Add(uri);
                             }
                             else
                             {
-                                listUrls.Add(ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                                listUrls.Add(ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                     string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}&swfhash={2}&swfsize={3}",
                                         finalURL,
                                         "http://www.wat.tv/images/v30/PlayerWat.swf", "655ac1d31d02b3d3c2b76168a33b641f643eeac1738030a10a634e5b25341c77", "349281"

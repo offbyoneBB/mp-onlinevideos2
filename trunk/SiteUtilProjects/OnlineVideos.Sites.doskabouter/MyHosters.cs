@@ -602,7 +602,7 @@ namespace OnlineVideos.Hoster
                                         System.Web.HttpUtility.UrlEncode(@"http://xtshare.com/player.swf"),
                                         System.Web.HttpUtility.UrlEncode(url),
                                         System.Web.HttpUtility.UrlEncode(streamer));
-            return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+            return ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                 "http://127.0.0.1/stream.flv?" + resultUrl);
         }
     }

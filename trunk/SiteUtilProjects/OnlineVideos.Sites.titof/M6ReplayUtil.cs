@@ -101,7 +101,7 @@ namespace OnlineVideos.Sites
 
                 foreach (XmlNode media in n.SelectNodes("fichemedia"))
                 {
-                    string resultUrl1 = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                    string resultUrl1 = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                     string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}&swfsize={2}&swfhash={3}",
                                         System.Web.HttpUtility.UrlEncode(serverURL1 + media.Attributes["video_url"].Value)
                                         , playerURL, 
@@ -109,7 +109,7 @@ namespace OnlineVideos.Sites
                                     ));
                     video.PlaybackOptions.Add(media.Attributes["langue"].Value + " : Serveur 1", resultUrl1);
 
-                    string resultUrl2 = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                    string resultUrl2 = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                     string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}&swfsize={2}&swfhash={3}",
                                         System.Web.HttpUtility.UrlEncode(serverURL2 + media.Attributes["video_url"].Value)
                                         , playerURL,
@@ -117,7 +117,7 @@ namespace OnlineVideos.Sites
                                     ));
                     video.PlaybackOptions.Add(media.Attributes["langue"].Value + " : Serveur 2", resultUrl2);
 
-                    string resultUrl3 = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                    string resultUrl3 = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                     string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl={1}&swfsize={2}&swfhash={3}",
                                         System.Web.HttpUtility.UrlEncode(serverURL3 + media.Attributes["video_url"].Value)
                                         , playerURL,

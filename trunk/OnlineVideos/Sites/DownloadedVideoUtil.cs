@@ -8,7 +8,6 @@ namespace OnlineVideos.Sites
 {
     public class DownloadedVideoUtil : SiteUtilBase, IFilter
     {
-        public Dictionary<string, DownloadInfo> currentDownloads = new Dictionary<string, DownloadInfo>();
         string lastSort = "date";
 
         // keep a reference of all Categories ever created and reuse them, to get them selected when returning to the category view
@@ -19,24 +18,24 @@ namespace OnlineVideos.Sites
             Settings.Categories.Clear();
             RssLink cat = null;
             // add a category for all files
-            if (!cachedCategories.TryGetValue(Translation.All, out cat))
+            if (!cachedCategories.TryGetValue(Translation.Instance.All, out cat))
             {
-                cat = new RssLink() { Name = Translation.All, Url = OnlineVideoSettings.Instance.DownloadDir };
+				cat = new RssLink() { Name = Translation.Instance.All, Url = OnlineVideoSettings.Instance.DownloadDir };
                 cachedCategories.Add(cat.Name, cat);
             }
             Settings.Categories.Add(cat);
 
-            if (currentDownloads.Count > 0)
+            if (DownloadManager.Instance.CurrentDownloads.Count > 0)
             {
                 // add a category for all downloads in progress
-                if (!cachedCategories.TryGetValue(Translation.Downloading, out cat))
+				if (!cachedCategories.TryGetValue(Translation.Instance.Downloading, out cat))
                 {
-                    cat = new RssLink() { Name = Translation.Downloading, Description = Translation.DownloadingDescription, EstimatedVideoCount = (uint)currentDownloads.Count };
+					cat = new RssLink() { Name = Translation.Instance.Downloading, Description = Translation.Instance.DownloadingDescription, EstimatedVideoCount = (uint)DownloadManager.Instance.CurrentDownloads.Count };
                     cachedCategories.Add(cat.Name, cat);
                 }
                 else
                 {
-                    cat.EstimatedVideoCount = (uint)currentDownloads.Count; // refresh the count
+					cat.EstimatedVideoCount = (uint)DownloadManager.Instance.CurrentDownloads.Count; // refresh the count
                 }
                 Settings.Categories.Add(cat);
             }
@@ -57,10 +56,10 @@ namespace OnlineVideos.Sites
                         if (aSite.IsEnabled &&
                            (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
                         {
-                            if (!cachedCategories.TryGetValue(aSite.Name + " - " + Translation.DownloadedVideos, out cat))
+							if (!cachedCategories.TryGetValue(aSite.Name + " - " + Translation.Instance.DownloadedVideos, out cat))
                             {
                                 cat = new RssLink();
-                                cat.Name = aSite.Name + " - " + Translation.DownloadedVideos;
+								cat.Name = aSite.Name + " - " + Translation.Instance.DownloadedVideos;
                                 cat.Description = aSite.Description;
                                 ((RssLink)cat).Url = aDir;
                                 cat.Thumb = Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + aSite.Name + ".png");
@@ -79,7 +78,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            return getVideoList((category as RssLink).Url, "*", category.Name == Translation.All);
+			return getVideoList((category as RssLink).Url, "*", category.Name == Translation.Instance.All);
         }        
 
         List<VideoInfo> getVideoList(string path, string search, bool recursive)
@@ -128,9 +127,9 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                lock (currentDownloads)
+				lock (DownloadManager.Instance.CurrentDownloads)
                 {
-                    foreach (DownloadInfo di in currentDownloads.Values)
+					foreach (DownloadInfo di in DownloadManager.Instance.CurrentDownloads.Values)
                     {
                         if (PassesAgeCheck(di.LocalFile))
                         {
@@ -164,12 +163,12 @@ namespace OnlineVideos.Sites
             {
                 if (selectedItem.Other as DownloadInfo == null)
                 {
-                    options.Add(Translation.Delete);
-                    options.Add(Translation.DeleteAll);
+					options.Add(Translation.Instance.Delete);
+					options.Add(Translation.Instance.DeleteAll);
                 }
                 else
                 {
-                    options.Add(Translation.Cancel);
+					options.Add(Translation.Instance.Cancel);
                 }
             }
             return options;
@@ -178,14 +177,14 @@ namespace OnlineVideos.Sites
         public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
         {
             newVideos = null;
-            if (choice == Translation.Delete)
+			if (choice == Translation.Instance.Delete)
             {
                 if (System.IO.File.Exists(selectedItem.ImageUrl)) System.IO.File.Delete(selectedItem.ImageUrl);
                 if (System.IO.File.Exists(selectedItem.VideoUrl)) System.IO.File.Delete(selectedItem.VideoUrl);
             }
-            else if (choice == Translation.DeleteAll)
+			else if (choice == Translation.Instance.DeleteAll)
             {
-                FileInfo[] files = new DirectoryInfo((selectedCategory as RssLink).Url).GetFiles("*", selectedCategory.Name == Translation.All ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+				FileInfo[] files = new DirectoryInfo((selectedCategory as RssLink).Url).GetFiles("*", selectedCategory.Name == Translation.Instance.All ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
                 foreach (FileInfo file in files)
                 {
                     if (isPossibleVideo(file.Name))
@@ -200,7 +199,7 @@ namespace OnlineVideos.Sites
                     }
                 }
             }
-            else if (choice == Translation.Cancel)
+			else if (choice == Translation.Instance.Cancel)
             {
                 ((IDownloader)(selectedItem.Other as DownloadInfo).Downloader).CancelAsync();
             }
@@ -248,9 +247,9 @@ namespace OnlineVideos.Sites
         public Dictionary<string, string> getOrderbyList()
         {
             Dictionary<string, string> options = new Dictionary<string, string>();
-            options.Add(Translation.Date, "date");
-            options.Add(Translation.Name, "name");
-            options.Add(Translation.Size, "size");
+			options.Add(Translation.Instance.Date, "date");
+			options.Add(Translation.Instance.Name, "name");
+			options.Add(Translation.Instance.Size, "size");
             return options;
         }
 

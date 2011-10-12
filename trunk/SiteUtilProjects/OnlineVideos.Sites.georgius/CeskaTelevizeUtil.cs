@@ -361,7 +361,7 @@ namespace OnlineVideos.Sites.georgius
                                         {
                                             String swfUrl = baseWebData.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
 
-                                            String rtmpProxy = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                                            String rtmpProxy = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                                 String.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&playpath={4}&swfurl={5}&pageurl={6}&live=true",
                                                     rtmpUrl, //rtmpUrl
                                                     host, //host

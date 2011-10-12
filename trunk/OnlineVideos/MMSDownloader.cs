@@ -33,8 +33,10 @@ using System.Runtime.Remoting.Messaging;
 
 namespace OnlineVideos
 {
-    public class MMSDownloadHelper : IDownloader
+	public class MMSDownloadHelper : MarshalByRefObject, IDownloader
     {
+		System.Threading.Thread downloadThread;
+
         public bool Cancelled { get; private set; }
 
         public void CancelAsync()
@@ -46,6 +48,7 @@ namespace OnlineVideos
         {
             try
             {
+				downloadThread = System.Threading.Thread.CurrentThread;
                 MMSDownloader mmsDL = new MMSDownloader();
                 mmsDL.FileInfoGot = downloadInfo.DownloadProgressCallback;
                 mmsDL.Start(downloadInfo.Url, null);
@@ -68,8 +71,22 @@ namespace OnlineVideos
             {
                 return ex;
             }
-        }        
-    }
+        }
+
+		public void Abort()
+		{
+			if (downloadThread != null) downloadThread.Abort();
+		}
+
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
+	}
+
     public class MMSStreamProgressChangedEventArgs
     {
         public MMSStreamProgressChangedEventArgs()
@@ -98,6 +115,7 @@ namespace OnlineVideos
             set { totalBytesToReceive = value; }
         }
     }
+
     public class MMSDownloader : Stream, IDisposable
     {
         //Thread downloadThread = null;
@@ -1385,6 +1403,5 @@ namespace OnlineVideos
             byte[] HB = { System.Convert.ToByte(0X1), System.Convert.ToByte(0X0), System.Convert.ToByte(0X0), System.Convert.ToByte(0X0), System.Convert.ToByte(0XFF), System.Convert.ToByte(0XFF), System.Convert.ToByte(0X1), System.Convert.ToByte(0X0) };
             sd.Send(HPacket(0X1B, HB, null, null));
         }
-
     }
 }

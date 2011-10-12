@@ -41,6 +41,7 @@
   <string Field="DownloadComplete">Download Complete</string>
   <string Field="DownloadStarted">Download Started</string>  
   <string Field="DownloadedVideos">Downloaded Videos</string>
+  <string Field="DownloadsWillBeAborted">Downloads will be aborted.</string>
   <string Field="Delete">Delete</string>
   <string Field="DeleteAll">Delete All</string>
   <string Field="Default">Default</string>
@@ -106,6 +107,7 @@
   <!-- P -->
   <string Field="PlayAll">Play all</string>
   <string Field="PlayWith">Play with ...</string>
+  <string Field="PlaybackWillBeStopped">Playback will be stopped.</string>
   <string Field="PleaseEnterDescription">Please give a short description.</string>
   <string Field="PlotOutline">Plot outline</string>
   <string Field="PreviousPage">Previous page</string>

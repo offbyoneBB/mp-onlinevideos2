@@ -62,7 +62,7 @@ namespace OnlineVideos.Sites
           {
             playpath = "flv:" + paths[1].Substring(0, paths[1].Length - 4);
           }
-          string vUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+          string vUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
           string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&port={1}&playpath={2}",
           System.Web.HttpUtility.UrlEncode("rtmp://" + q_l[1]),
           "1935",
@@ -86,7 +86,7 @@ namespace OnlineVideos.Sites
       {
         VideoInfo video = new VideoInfo();
         video.Title = channels[i];
-        video.VideoUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+        video.VideoUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
         string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&port={1}&live=true",
         System.Web.HttpUtility.UrlEncode("rtmp://rtmplive.dr.dk/live/livedr0" + (i + 1) + "astream3"),
         "1935"));
@@ -115,7 +115,7 @@ namespace OnlineVideos.Sites
             video.ImageUrl = baseUrlDrNu + "/videos/" + item.Value<string>("id") + "/images/400x225.jpg";
             string len = subContentData.Value<string>("duration");
             string air = subContentData.Value<string>("formattedBroadcastTime");
-            video.Length = len + '|' + Translation.Airdate + ": " + air;
+			video.Length = len + '|' + Translation.Instance.Airdate + ": " + air;
             res.Add(video);
           }
         }
@@ -138,7 +138,7 @@ namespace OnlineVideos.Sites
           video.ImageUrl = baseUrlDrNu + "/videos/" + item.Value<string>("id") + "/images/400x225.jpg";
           string len = item.Value<string>("duration");
           string air = item.Value<string>("formattedBroadcastTime");
-          video.Length = len + '|' + Translation.Airdate + ": " + air;
+		  video.Length = len + '|' + Translation.Instance.Airdate + ": " + air;
           res.Add(video);
         }
       }

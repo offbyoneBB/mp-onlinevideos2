@@ -9,7 +9,7 @@ namespace OnlineVideos
 {
     public enum VideoKind { Other, TvSeries, Movie, MovieTrailer, GameTrailer, MusicVideo, News }
 
-    public class VideoInfo : System.ComponentModel.INotifyPropertyChanged, ISearchResultItem
+    public class VideoInfo : MarshalByRefObject, System.ComponentModel.INotifyPropertyChanged, ISearchResultItem
     {
         public string Title { get; set; }
         /// <summary>Used as label for the clips retrieved by <see cref="IChoice.getVideoChoices"/></summary>
@@ -23,8 +23,24 @@ namespace OnlineVideos
         public string Length { get; set; }
         public string Airdate { get; set; }
         public string StartTime { get; set; }
-        public object Other { get; set; }
-        public Dictionary<string, string> PlaybackOptions;
+		object _Other;
+		public object Other 
+		{ 
+			get { return _Other; } 
+			set 
+			{
+				if (_Other != value)
+				{
+					_Other = value;
+					// propagate a change in the Other object (if it supports PropertyChanged)
+					System.ComponentModel.INotifyPropertyChanged notifier = _Other as System.ComponentModel.INotifyPropertyChanged;
+					if (notifier != null) notifier.PropertyChanged += (s, e) => NotifyPropertyChanged("Other");
+				}
+			}
+		}
+		public string GetOtherAsString() { return Other != null ? Other.ToString() : ""; }
+        
+		public Dictionary<string, string> PlaybackOptions;
 
         /// <summary>This property is only used by the <see cref="FavoriteUtil"/> to store the Name of the Site where this Video came from.</summary>
         public string SiteName { get; set; }
@@ -98,6 +114,12 @@ namespace OnlineVideos
                 return 0.0d;
             }
         }
+
+		public Dictionary<string, string> GetExtendedProperties()
+		{
+			IVideoDetails details = Other as IVideoDetails;
+			return details == null ? null : details.GetExtendedProperties();
+		}
 
         public static VideoInfo FromRssItem(RssItem rssItem, bool useLink, System.Predicate<string> isPossibleVideo)
         {
@@ -272,6 +294,14 @@ namespace OnlineVideos
             }
             newVideoInfo.VideoUrl = videoUrl;
             return newVideoInfo;
-        } 
+        }
+
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
     }
 }

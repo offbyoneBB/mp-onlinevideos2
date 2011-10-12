@@ -219,7 +219,7 @@ namespace OnlineVideos.Sites
                 string airdate = DateTime.FromFileTime(10000000 * (long)ctime + 116444736000000000).ToString();
                 if (String.IsNullOrEmpty(video.Title))
                     video.Title = "Aflevering van " + airdate;
-                video.Length = '|' + Translation.Airdate + ": " + airdate;
+				video.Length = '|' + Translation.Instance.Airdate + ": " + airdate;
             }
 
             video.ImageUrl = getNodeText(node, "thumbnail_uri");
@@ -292,7 +292,7 @@ namespace OnlineVideos.Sites
                     string airdate = dateTime.ToString();
                     if (String.IsNullOrEmpty(vid.Title))
                         vid.Title = "Aflevering van " + airdate;
-                    vid.Length = '|' + Translation.Airdate + ": " + airdate;
+					vid.Length = '|' + Translation.Instance.Airdate + ": " + airdate;
                     AddToVidList(vid, tab);
                 }
             }
@@ -357,7 +357,7 @@ namespace OnlineVideos.Sites
                 videoInfo.Title = title;
                 videoInfo.VideoUrl = item.SelectSingleNode("movie").InnerText;
                 videoInfo.ImageUrl = item.SelectSingleNode("thumbnail").InnerText;
-                videoInfo.Length = '|' + Translation.Airdate + ": " + aired.ToString();
+				videoInfo.Length = '|' + Translation.Instance.Airdate + ": " + aired.ToString();
                 videoInfo.Description = item.SelectSingleNode("episodetitel").InnerText;
 
                 if (serieNaam.Equals(title, StringComparison.InvariantCultureIgnoreCase))

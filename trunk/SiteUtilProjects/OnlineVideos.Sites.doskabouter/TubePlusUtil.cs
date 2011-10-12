@@ -102,7 +102,7 @@ namespace OnlineVideos.Sites
                             if (p < 0) p = 0;
                             airdate = airdate.Substring(p + 1);
                             if (!String.IsNullOrEmpty(airdate))
-                                videoList[i].Length = '|' + Translation.Airdate + ": " + airdate;
+								videoList[i].Length = '|' + Translation.Instance.Airdate + ": " + airdate;
                         }
                         cat.Other = videoList;
                     }

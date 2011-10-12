@@ -621,7 +621,7 @@ namespace OnlineVideos.MediaPortal1
             }
             if (versionOnline > new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version)
             {
-                MessageBox.Show(string.Format(Translation.LatestVersionRequired, versionOnline), "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				MessageBox.Show(string.Format(Translation.Instance.LatestVersionRequired, versionOnline), "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return;
             }
             SiteSettings site = siteList.SelectedItem as SiteSettings;

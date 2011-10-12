@@ -34,7 +34,7 @@ namespace OnlineVideos.Sites.Pondman {
             }
 
             // add a special reversed proxy handler
-            ReverseProxy.AddHandler(this);
+            ReverseProxy.Instance.AddHandler(this);
 
         }
    
@@ -249,7 +249,7 @@ namespace OnlineVideos.Sites.Pondman {
             Dictionary<string, string> files = new Dictionary<string, string>();
 
             foreach (KeyValuePair<VideoQuality, Uri> file in clip.Files) {
-                files[file.Key.ToTitleString()] = ReverseProxy.GetProxyUri(this, file.Value.AbsoluteUri);
+                files[file.Key.ToTitleString()] = ReverseProxy.Instance.GetProxyUri(this, file.Value.AbsoluteUri);
             }
 
             // no files

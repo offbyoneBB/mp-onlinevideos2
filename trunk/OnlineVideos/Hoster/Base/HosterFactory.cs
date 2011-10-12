@@ -7,52 +7,24 @@ namespace OnlineVideos.Hoster.Base
 {
     public static class HosterFactory
     {
-        static Dictionary<String, HosterBase> hostersByName = new Dictionary<String, HosterBase>();
-        static Dictionary<String, HosterBase> hostersByDNS = new Dictionary<String, HosterBase>();
-
-        static HosterFactory()
-        {
-            List<Assembly> assemblies = new List<Assembly>();
-            assemblies.AddRange(AppDomain.CurrentDomain.GetAssemblies().Where(a => a.FullName.Contains("OnlineVideos.Sites")));
-            assemblies.Add(Assembly.GetExecutingAssembly());
-            foreach (Assembly assembly in assemblies)
-            {
-                foreach (Type type in assembly.GetExportedTypes())
-                {
-                    if (type.BaseType != null && type.IsSubclassOf(typeof(HosterBase)) && !type.IsAbstract)
-                    {
-                        if (!hostersByName.ContainsKey(type.Name.ToLower()))
-                        {
-                            HosterBase hb = (HosterBase)Activator.CreateInstance(type);
-                            hb.Initialize();
-                            hostersByName.Add(type.Name.ToLower(), hb);
-                            if (!hostersByDNS.ContainsKey(hb.getHosterUrl().ToLower())) hostersByDNS.Add(hb.getHosterUrl().ToLower(), hb);
-                        }
-                    }
-                }
-            }
-        }
-
         public static HosterBase GetHoster(string name)
         {
-            HosterBase hb = null;
-            if (hostersByName.TryGetValue(name.ToLower(), out hb)) return hb;
-            return null;
+			return OnlineVideosAppDomain.PluginLoader.GetHoster(name);
         }
 
         public static List<HosterBase> GetAllHosters()
         {
-            return hostersByName.Values.OrderByDescending(hb => hb.UserPriority).ToList();
+			return OnlineVideosAppDomain.PluginLoader.GetAllHosters();
         }
 
         public static bool ContainsName(string name)
         {
-            return hostersByName.ContainsKey(name);
+			return OnlineVideosAppDomain.PluginLoader.ContainsHoster(name);
         }
 
         public static bool Contains(Uri uri)
         {
-            return hostersByDNS.ContainsKey(uri.Host.Replace("www.", ""));
+			return OnlineVideosAppDomain.PluginLoader.ContainsHosters(uri);
         }
     }
 }

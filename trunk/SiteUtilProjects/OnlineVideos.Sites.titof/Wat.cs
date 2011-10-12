@@ -11,7 +11,7 @@ namespace OnlineVideos.Sites
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            ReverseProxy.AddHandler(this);
+            ReverseProxy.Instance.AddHandler(this);
         }
         public override int DiscoverDynamicCategories()
         {

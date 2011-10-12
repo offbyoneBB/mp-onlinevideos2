@@ -67,6 +67,7 @@ namespace OnlineVideos.MediaPortal1
         }
         #endregion
 
+		protected PropertyChangedDelegator eventDelegator = null;
         protected object _Item;
         /// <summary>
         /// The <see cref="SiteUtilBase"/>, <see cref="Category"/>, <see cref="VideoInfo"/> or <see cref="SitesGroup"/> that belongs to this object.
@@ -77,25 +78,21 @@ namespace OnlineVideos.MediaPortal1
             internal set
             {
                 _Item = value;
-                System.ComponentModel.INotifyPropertyChanged notifier = value as System.ComponentModel.INotifyPropertyChanged;
-                if (notifier != null) notifier.PropertyChanged += (s, e) => 
-                {
-                    if (s is VideoInfo && e.PropertyName == "ThumbnailImage") SetImageToGui((s as VideoInfo).ThumbnailImage);
-                    else if (s is Category && e.PropertyName == "ThumbnailImage") SetImageToGui((s as Category).ThumbnailImage);
-                    else if (s is VideoInfo && e.PropertyName == "Length") Label2 = (s as VideoInfo).Length;
-                };
-                // propagate a change in the Other object (if it supports PropertyChanged) to the VideoInfo object
-                if (value is VideoInfo)
-                {
-                    System.ComponentModel.INotifyPropertyChanged notifier2 = (value as VideoInfo).Other as System.ComponentModel.INotifyPropertyChanged;
-                    if (notifier2 != null) notifier2.PropertyChanged += (s, e) =>
-                    {
-                        (_Item as VideoInfo).NotifyPropertyChanged("Other");
-                    };
-                }
+				System.ComponentModel.INotifyPropertyChanged notifier = value as System.ComponentModel.INotifyPropertyChanged;
+				if (notifier != null)
+				{
+					eventDelegator = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(PropertyChangedDelegator).Assembly.FullName, typeof(PropertyChangedDelegator).FullName) as PropertyChangedDelegator;
+					eventDelegator.InvokeTarget = new PropertyChangedExecutor() { InvokeHandler = (s, e) =>
+					{
+						if (s is VideoInfo && e.PropertyName == "ThumbnailImage") SetImageToGui((s as VideoInfo).ThumbnailImage);
+						else if (s is Category && e.PropertyName == "ThumbnailImage") SetImageToGui((s as Category).ThumbnailImage);
+						else if (s is VideoInfo && e.PropertyName == "Length") Label2 = (s as VideoInfo).Length;
+					} };
+					notifier.PropertyChanged += eventDelegator.EventDelegate;
+				}
             }
         }
-
+		
         public string Description
         {
             get
@@ -142,6 +139,6 @@ namespace OnlineVideos.MediaPortal1
                     GUIWindowManager.SendThreadMessage(new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GUIWindowManager.ActiveWindow, 0, listControlId, ItemId, 0, null));
                 }
             }
-        }        
+        }
     }
 }

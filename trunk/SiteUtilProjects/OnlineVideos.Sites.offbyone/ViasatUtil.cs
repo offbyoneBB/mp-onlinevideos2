@@ -312,7 +312,7 @@ namespace OnlineVideos.Sites
 
                         if (playstr.ToLower().StartsWith("rtmp"))
                         {
-                            playstr = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            playstr = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                 string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfurl{1}=&swfhash={2}&swfsize={3}",
                                 System.Web.HttpUtility.UrlEncode(playstr),
                                 System.Web.HttpUtility.UrlEncode("http://flvplayer.viastream.viasat.tv/flvplayer/play/swf/player100920.swf"),

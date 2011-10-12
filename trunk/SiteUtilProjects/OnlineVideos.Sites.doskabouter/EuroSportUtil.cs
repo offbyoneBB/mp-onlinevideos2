@@ -127,7 +127,7 @@ namespace OnlineVideos.Sites
                 VideoInfo video = new VideoInfo();
                 video.Title = node.SelectSingleNode("title").InnerText;
                 video.ImageUrl = node.SelectSingleNode("img").InnerText;
-                video.Length = '|' + Translation.Airdate + ": " + node.SelectSingleNode("date").InnerText;
+				video.Length = '|' + Translation.Instance.Airdate + ": " + node.SelectSingleNode("date").InnerText;
                 video.VideoUrl = baseUrl + node.SelectSingleNode("link").InnerText.TrimStart('/');
                 video.Other = category.Other;
                 result.Add(video);

@@ -9,6 +9,7 @@ namespace OnlineVideos
 {
     public static class ImageDownloader
     {
+		[Serializable]
         public struct ResizeOptions
         {
             public static ResizeOptions Default

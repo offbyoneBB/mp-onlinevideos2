@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            ReverseProxy.AddHandler(this);
+            ReverseProxy.Instance.AddHandler(this);
         }
 
         public override int DiscoverDynamicCategories()
@@ -161,7 +161,7 @@ namespace OnlineVideos.Sites
             }
             if (url != null && url.Length > 0)
             {
-                listUrls.Add(ReverseProxy.GetProxyUri(this, @"http://a69.g.akamai.net/n/69/32563/v1/mediaplayer.allocine.fr" + url + ".flv"));
+                listUrls.Add(ReverseProxy.Instance.GetProxyUri(this, @"http://a69.g.akamai.net/n/69/32563/v1/mediaplayer.allocine.fr" + url + ".flv"));
                 
             }
             return listUrls;

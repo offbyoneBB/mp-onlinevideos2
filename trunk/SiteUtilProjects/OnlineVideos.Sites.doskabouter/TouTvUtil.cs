@@ -29,7 +29,7 @@ namespace OnlineVideos.Sites
                 if (vidUrl.StartsWith("rtmp:"))
                 {
                     string[] pathParts = vidUrl.Split(new string[] { "<break>" }, StringSplitOptions.None);
-                    string url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                    string url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                         string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}",
                         HttpUtility.UrlEncode(pathParts[0]),
                         HttpUtility.UrlEncode(pathParts[1])));

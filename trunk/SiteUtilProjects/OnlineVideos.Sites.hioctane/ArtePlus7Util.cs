@@ -122,7 +122,7 @@ namespace OnlineVideos.Sites
                                         string tcUrl = "rtmp://" + host + ":1935" + "/" + app;
                                         string playPath = url.Substring(url.IndexOf(app) + app.Length + 1);
 
-                                        string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                                        string resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                             string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&swfurl={4}&swfsize={5}&swfhash={6}&pageurl={7}&playpath={8}",
                                                 url, //rtmpUrl
                                                 host, //host

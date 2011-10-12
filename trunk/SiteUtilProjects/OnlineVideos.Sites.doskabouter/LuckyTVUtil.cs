@@ -14,13 +14,13 @@ namespace OnlineVideos.Sites
         public override void Initialize(OnlineVideos.SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            ReverseProxy.AddHandler(this);
+            ReverseProxy.Instance.AddHandler(this);
         }
 
         public override string getUrl(VideoInfo video)
         {
             string url = base.getUrl(video);
-            return ReverseProxy.GetProxyUri(this, url);
+            return ReverseProxy.Instance.GetProxyUri(this, url);
         }
 
         public void UpdateRequest(HttpWebRequest request)

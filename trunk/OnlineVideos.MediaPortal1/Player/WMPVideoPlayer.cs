@@ -380,7 +380,7 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 dlg_error.Reset();
                 dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
-                dlg_error.SetLine(1, Translation.Error);
+				dlg_error.SetLine(1, Translation.Instance.Error);
                 dlg_error.SetLine(2, error.errorDescription);
                 dlg_error.DoModal(GUIWindowManager.ActiveWindow);
             }
