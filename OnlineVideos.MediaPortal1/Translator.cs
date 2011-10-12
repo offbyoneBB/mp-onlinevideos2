@@ -17,6 +17,7 @@ namespace OnlineVideos.MediaPortal1
 
         private static readonly string _path = string.Empty;
         private static readonly DateTimeFormatInfo _info;
+		private static Dictionary<string, string> TranslatedStrings = new Dictionary<string, string>();
 
         #endregion        
 
@@ -45,20 +46,6 @@ namespace OnlineVideos.MediaPortal1
             LoadTranslations();
         }
 
-        public static void SetProperty(string property, string value)
-        {
-            if (property == null)
-                return;
-
-            //// If the value is empty always add a space
-            //// otherwise the property will keep 
-            //// displaying it's previous value
-            if (String.IsNullOrEmpty(value))
-                value = " ";
-
-            GUIPropertyManager.SetProperty(property, value);
-        }
-
         #endregion
 
         #region Public Properties
@@ -71,7 +58,7 @@ namespace OnlineVideos.MediaPortal1
         private static int LoadTranslations()
         {
             XmlDocument doc = new XmlDocument();
-            Dictionary<string, string> TranslatedStrings = new Dictionary<string, string>();
+            
             string langPath = "";
             try
             {
@@ -108,55 +95,32 @@ namespace OnlineVideos.MediaPortal1
                     }
             }
 
-            Type TransType = typeof(Translation);
-            FieldInfo[] fieldInfos = TransType.GetFields(BindingFlags.Public | BindingFlags.Static);
-            foreach (FieldInfo fi in fieldInfos)
-            {
-                if (TranslatedStrings != null && TranslatedStrings.ContainsKey(fi.Name))
-                    TransType.InvokeMember(fi.Name, BindingFlags.SetField, null, TransType, new object[] { TranslatedStrings[fi.Name] });
-                else
-                    Log.Instance.Info("Translation not found for field: {0}.  Using hard-coded English default.", fi.Name);
-            }
+			SetTranslationsToSingleton();
             return TranslatedStrings.Count;
         }
 
+		internal static void SetTranslationsToSingleton()
+		{
+			Type TransType = typeof(Translation);
+			FieldInfo[] fieldInfos = TransType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+			foreach (FieldInfo fi in fieldInfos)
+			{
+				if (TranslatedStrings != null && TranslatedStrings.ContainsKey(fi.Name))
+					fi.SetValue(Translation.Instance, TranslatedStrings[fi.Name]);
+				//TransType.InvokeMember(fi.Name, BindingFlags.SetField, null, TransType, new object[] { TranslatedStrings[fi.Name] });
+				else
+					Log.Instance.Info("Translation not found for field: {0}.  Using hard-coded English default.", fi.Name);
+			}
+		}
+
         #region Public Methods
-
-        public static string GetByName(string name)
-        {
-			if (!Translation.Strings.ContainsKey(name))
-                return name;
-
-			return Translation.Strings[name];
-        }
-
-        public static string GetByName(string name, params object[] args)
-        {
-            return String.Format(GetByName(name), args);
-        }
-
-        /// <summary>
-        /// Takes an input string and replaces all ${named} variables with the proper translation if available
-        /// </summary>
-        /// <param name="input">a string containing ${named} variables that represent the translation keys</param>
-        /// <returns>translated input string</returns>
-        public static string ParseString(string input)
-        {
-            Regex replacements = new Regex(@"\$\{([^\}]+)\}");
-            MatchCollection matches = replacements.Matches(input);
-            foreach (Match match in matches)
-            {
-                input = input.Replace(match.Value, GetByName(match.Groups[1].Value));
-            }
-            return input;
-        }
 
         public static void TranslateSkin()
         {
             Log.Instance.Info("Translating skin");
-			foreach (string name in Translation.Strings.Keys)
+			foreach (var nameTrans in Translation.Instance.Strings)
             {
-				SetProperty("#OnlineVideos.Translation." + name + ".Label", Translation.Strings[name]);
+				GUIPropertyManager.SetProperty("#OnlineVideos.Translation." + nameTrans.Key + ".Label", nameTrans.Value);
             }
         }
 
@@ -164,6 +128,7 @@ namespace OnlineVideos.MediaPortal1
         {
             return _info.GetDayName(dayOfWeek);
         }
+
         public static string GetShortestDayName(DayOfWeek dayOfWeek)
         {
             return _info.GetShortestDayName(dayOfWeek);

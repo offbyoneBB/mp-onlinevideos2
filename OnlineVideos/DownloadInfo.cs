@@ -1,9 +1,69 @@
 ﻿using System;
 using System.Net;
+using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace OnlineVideos
 {
+	public class DownloadManager : CrossDomanSingletonBase<DownloadManager>
+	{
+		internal Dictionary<string, DownloadInfo> CurrentDownloads { get; private set; }
+
+		private DownloadManager()
+		{
+			CurrentDownloads = new Dictionary<string, DownloadInfo>();
+		}
+
+		public void Add(string url, DownloadInfo downloadInfo)
+		{
+			lock (CurrentDownloads)
+			{
+				CurrentDownloads.Add(url, downloadInfo);
+			}
+		}
+
+		public void Remove(string url)
+		{
+			lock (CurrentDownloads)
+			{
+				CurrentDownloads.Remove(url);
+			}
+		}
+
+		public bool Contains(string url)
+		{
+			lock (CurrentDownloads)
+			{
+				return CurrentDownloads.ContainsKey(url);
+			}
+		}
+
+		public int Count 
+		{
+			get 
+			{
+				lock (CurrentDownloads)
+				{
+					return CurrentDownloads.Count;
+				}
+			}
+		}
+
+		public void StopAll()
+		{
+			lock (CurrentDownloads)
+			{
+				while (CurrentDownloads.Count > 0)
+				{
+					var dl = CurrentDownloads.First();
+					dl.Value.Downloader.Abort();
+					CurrentDownloads.Remove(dl.Key);
+				}
+			}
+		}
+	}
+
     public class DownloadList
     {
         public DownloadInfo CurrentItem { get; set; }
@@ -11,12 +71,30 @@ namespace OnlineVideos
         public string ChosenPlaybackOption { get; set; }
     }
 
-    public class DownloadInfo : System.ComponentModel.INotifyPropertyChanged
+	public class DownloadInfo : MarshalByRefObject, System.ComponentModel.INotifyPropertyChanged
     {
-        public DownloadInfo()
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
+
+		public static DownloadInfo Create(VideoInfo video, Category category, Sites.SiteUtilBase site)
+		{
+			DownloadInfo di = (DownloadInfo)OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(DownloadInfo).Assembly.FullName, typeof(DownloadInfo).FullName, false, System.Reflection.BindingFlags.CreateInstance | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, null, null, null, null);
+			di.VideoInfo = video;
+			di.Category = category;
+			di.Util = site;
+			return di;
+		}
+
+        protected DownloadInfo()
         {
             Start = DateTime.Now;
         }
+
         public string Url { get; set; }
         public string Title { get; set; }
         public string ThumbFile { get; set; }

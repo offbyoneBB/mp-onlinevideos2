@@ -14,8 +14,16 @@ namespace OnlineVideos.Sites
     /// <summary>
     /// The abstract base class for all utilities.
     /// </summary>
-    public abstract class SiteUtilBase : ICustomTypeDescriptor
+	public abstract class SiteUtilBase : MarshalByRefObject, ICustomTypeDescriptor
     {
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
+
         /// <summary>
         /// The <see cref="SiteSettings"/> as configured in the xml will be set after an instance of this class was created 
         /// by the default implementation of the <see cref="Initialize"/> method.
@@ -734,7 +742,72 @@ namespace OnlineVideos.Sites
             return props;
         }
 
-        private class FieldPropertyDescriptor : PropertyDescriptor
+		public List<FieldPropertyDescriptorByRef> GetUserConfigurationProperties()
+		{
+			List<FieldPropertyDescriptorByRef> result = new List<FieldPropertyDescriptorByRef>();
+			CategoryAttribute attr = new CategoryAttribute("OnlineVideosUserConfiguration");
+			var props = ((ICustomTypeDescriptor)this).GetProperties(new Attribute[] { attr });
+			foreach (PropertyDescriptor prop in props) if (prop.Attributes.Contains(attr) && prop is FieldPropertyDescriptor) result.Add(new FieldPropertyDescriptorByRef() { FieldPropertyDescriptor = prop as FieldPropertyDescriptor });
+			return result;
+		}
+
+		public string GetConfigValueAsString(FieldPropertyDescriptorByRef config)
+		{
+			object result = config.FieldPropertyDescriptor.GetValue(this);
+			return result == null ? string.Empty: result.ToString();
+		}
+
+		public void SetConfigValueFromString(FieldPropertyDescriptorByRef config, string value) 
+		{
+			object valueConverted = null;
+			if (config.FieldPropertyDescriptor.PropertyType.IsEnum) valueConverted = Enum.Parse(config.FieldPropertyDescriptor.PropertyType, value);
+			else valueConverted = Convert.ChangeType(value, config.FieldPropertyDescriptor.PropertyType);
+			config.FieldPropertyDescriptor.SetValue(this, valueConverted);
+		}
+
+		public class FieldPropertyDescriptorByRef : MarshalByRefObject
+		{
+			internal FieldPropertyDescriptor FieldPropertyDescriptor { get; set; }
+			
+			public string DisplayName
+			{
+				get
+				{
+					var attr = FieldPropertyDescriptor.Attributes[typeof(LocalizableDisplayNameAttribute)];
+					if (attr != null && ((LocalizableDisplayNameAttribute)attr).LocalizedDisplayName != null) return ((LocalizableDisplayNameAttribute)attr).LocalizedDisplayName;
+					else return FieldPropertyDescriptor.DisplayName;
+				}
+			}
+
+			public string Description
+			{
+				get
+				{
+
+					var descAttr = FieldPropertyDescriptor.Attributes[typeof(DescriptionAttribute)];
+					return descAttr != null ? ((DescriptionAttribute)descAttr).Description : string.Empty;
+				}
+			}
+
+			public bool IsPassword
+			{
+				get
+				{
+					return FieldPropertyDescriptor.Attributes.Contains(new System.ComponentModel.PasswordPropertyTextAttribute(true));
+				}
+			}
+
+			public bool IsBool { get { return FieldPropertyDescriptor.PropertyType.Equals(typeof(bool)); } }
+
+			public bool IsEnum { get { return FieldPropertyDescriptor.PropertyType.IsEnum; } }
+
+			public string[] GetEnumValues()
+			{
+				return Enum.GetNames(FieldPropertyDescriptor.PropertyType);
+			}
+		}
+
+        public class FieldPropertyDescriptor : PropertyDescriptor
         {
             private FieldInfo _field;
 

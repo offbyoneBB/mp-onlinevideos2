@@ -207,7 +207,7 @@ namespace OnlineVideos.Sites
         public override String getUrl(VideoInfo video)
         {
             RTMP_LIB.Link link = YahooRTMPLinkCatcher(video.VideoUrl);
-            string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, 
+            string resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, 
                 string.Format("http://127.0.0.1/stream.flv?app={0}&tcUrl={1}&hostname={2}&port={3}&playpath={4}",
                     System.Web.HttpUtility.UrlEncode(link.app),
                     System.Web.HttpUtility.UrlEncode(link.tcUrl),
@@ -343,7 +343,7 @@ namespace OnlineVideos.Sites
             List<string> result = new List<string>();
             if (selectedItem != null)
             {
-                result.Add(Translation.RelatedVideos);
+				result.Add(Translation.Instance.RelatedVideos);
             }
             return result;
         }
@@ -351,7 +351,7 @@ namespace OnlineVideos.Sites
         public override bool ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, string choice, out List<ISearchResultItem> newVideos)
         {
             newVideos = null;
-            if (choice == Translation.RelatedVideos)
+			if (choice == Translation.Instance.RelatedVideos)
             {
                 RssLink rememberedCategory = currentCategory;
 
@@ -362,11 +362,11 @@ namespace OnlineVideos.Sites
                 if (newVideos.Count == 0)
                 {
                     currentCategory = rememberedCategory;
-                    throw new OnlineVideosException(Translation.NoVideoFound);
+					throw new OnlineVideosException(Translation.Instance.NoVideoFound);
                 }
                 else
                 {
-                    currentVideosTitle = Translation.RelatedVideos + " [" + selectedItem.Title + "]";
+					currentVideosTitle = Translation.Instance.RelatedVideos + " [" + selectedItem.Title + "]";
                 }
             }
             return false;

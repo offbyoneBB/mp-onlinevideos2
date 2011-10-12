@@ -153,7 +153,7 @@ namespace OnlineVideos.Sites
                 if (parentCategory.SubCategories.Count == 0)
                 {
                     // if no folder found, create a Category for "All"
-                    parentCategory.SubCategories.Add(new RssLink() { Name = Translation.All, Other = parentCategory.Other, ParentCategory = parentCategory });
+					parentCategory.SubCategories.Add(new RssLink() { Name = Translation.Instance.All, Other = parentCategory.Other, ParentCategory = parentCategory });
                 }
             }
 

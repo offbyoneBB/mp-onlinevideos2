@@ -11,12 +11,12 @@ namespace OnlineVideos
     /// Singleton class holding all Settings that are used througout the OnlineVideos system.
     /// Make sure all fields are initialized before using any OnlineVideos functionality.
     /// </summary>
-    public class OnlineVideoSettings
+	public class OnlineVideoSettings : CrossDomanSingletonBase<OnlineVideoSettings>
     {
         public IUserStore UserStore;
         public IFavoritesDatabase FavDB;
         public ILog Logger;
-        public ImageDownloader.ResizeOptions ThumbsResizeOptions;
+		public ImageDownloader.ResizeOptions ThumbsResizeOptions { get; set; }
         public string ConfigDir;
         public string ThumbsDir;        
         public string DownloadDir;
@@ -34,27 +34,62 @@ namespace OnlineVideos
         public SortedList<string, bool> VideoExtensions { get; protected set; }
         public bool FavoritesFirst = false;
 
-        #region Singleton
-        private static OnlineVideoSettings _Instance = null;
-        public static OnlineVideoSettings Instance
-        {
-            get
-            {
-                if (_Instance == null) _Instance = new OnlineVideoSettings();
-                return _Instance;
-            }
-        }
-        #endregion
+		private OnlineVideoSettings()
+		{
+			// set some defaults
+			Locale = CultureInfo.CurrentUICulture;
+			SiteSettingsList = new BindingList<SiteSettings>();
+			SiteUtilsList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
+			VideoExtensions = new SortedList<string, bool>();
+			ThumbsResizeOptions = ImageDownloader.ResizeOptions.Default;
+		}
 
-        private OnlineVideoSettings()
-        {
-            // set some defaults
-            Locale = CultureInfo.CurrentUICulture;
-            SiteSettingsList = new BindingList<SiteSettings>();
-            SiteUtilsList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
-            VideoExtensions = new SortedList<string, bool>();
-            ThumbsResizeOptions = ImageDownloader.ResizeOptions.Default;
-        }
+		public static void Reload()
+		{
+			// remember settings
+			IUserStore __UserStore = Instance.UserStore;
+			IFavoritesDatabase __FavDB = Instance.FavDB;
+			ILog __Logger = Instance.Logger;
+			ImageDownloader.ResizeOptions __ThumbsResizeOptions = Instance.ThumbsResizeOptions;
+			string __ConfigDir = Instance.ConfigDir;
+			string __ThumbsDir = Instance.ThumbsDir;
+			string __DownloadDir = Instance.DownloadDir;
+			string __DllsDir = Instance.DllsDir;
+			string __UserAgent = Instance.UserAgent;
+			string __SitesFileName = Instance.SitesFileName;
+			bool __UseAgeConfirmation = Instance.UseAgeConfirmation;
+			bool __AgeConfirmed = Instance.AgeConfirmed;
+			int __CacheTimeout = Instance.CacheTimeout;
+			int __UtilTimeout = Instance.UtilTimeout;
+			int __DynamicCategoryTimeout = Instance.DynamicCategoryTimeout;
+			CultureInfo __Locale = Instance.Locale;
+			SortedList<string, bool> __VideoExtensions = Instance.VideoExtensions;
+			bool __FavoritesFirst = Instance.FavoritesFirst;
+			// reload domain and create new instance
+			OnlineVideosAppDomain.Reload();
+			var newInstance = Instance;
+			// set remembered settings
+			newInstance.UserStore = __UserStore;
+			newInstance.FavDB = __FavDB;
+			newInstance.Logger = __Logger;
+			newInstance.ThumbsResizeOptions = __ThumbsResizeOptions;
+			newInstance.ConfigDir = __ConfigDir;
+			newInstance.ThumbsDir = __ThumbsDir;
+			newInstance.DownloadDir = __DownloadDir;
+			newInstance.DllsDir = __DllsDir;
+			newInstance.UserAgent = __UserAgent;
+			newInstance.SitesFileName = __SitesFileName;
+			newInstance.UseAgeConfirmation = __UseAgeConfirmation;
+			newInstance.AgeConfirmed = __AgeConfirmed;
+			newInstance.CacheTimeout = __CacheTimeout;
+			newInstance.UtilTimeout = __UtilTimeout;
+			newInstance.DynamicCategoryTimeout = __DynamicCategoryTimeout;
+			newInstance.Locale = __Locale;
+			newInstance.VideoExtensions = __VideoExtensions;
+			newInstance.FavoritesFirst = __FavoritesFirst;
+			// load Sites Xml and Build Utils list
+			newInstance.LoadSites();
+		}
 
         public void LoadSites()
         {
@@ -136,7 +171,7 @@ namespace OnlineVideos
                 //create a favorites site
                 SiteSettings aSite = new SiteSettings()
                 {
-                    Name = Translation.Favourites,
+					Name = Translation.Instance.Favourites,
                     UtilName = "Favorite",
                     IsEnabled = true
                 };
@@ -151,7 +186,7 @@ namespace OnlineVideos
                 //add a downloaded videos site
                 SiteSettings aSite = new SiteSettings()
                 {
-                    Name = Translation.DownloadedVideos,
+					Name = Translation.Instance.DownloadedVideos,
                     UtilName = "DownloadedVideo",
                     IsEnabled = true
                 };
@@ -178,5 +213,42 @@ namespace OnlineVideos
                 }
             }
         }
+
+		public void AddSupportedVideoExtensions(IList<string> extensions)
+		{
+			foreach (string anExt in extensions)
+			{
+				if (!VideoExtensions.ContainsKey(anExt.ToLower().Trim())) VideoExtensions.Add(anExt.ToLower().Trim(), true);
+			}
+		}
+
+		public void AddSite(SiteSettings settings)
+		{
+			SiteSettingsList.Add(settings);
+		}
+
+		public void RemoveSiteAt(int index)
+		{
+			SiteSettingsList.RemoveAt(index);
+		}
+
+		public int GetSiteByName(string name, out SiteSettings site)
+		{
+			site = null;
+			for (int i = 0; i < SiteSettingsList.Count; i++)
+			{
+				if (SiteSettingsList[i].Name == name)
+				{
+					site = SiteSettingsList[i];
+					return i;
+				}
+			}
+			return -1;
+		}
+
+		public void SetSiteAt(int index, SiteSettings settings)
+		{
+			SiteSettingsList[index] = settings;
+		}
     }
 }

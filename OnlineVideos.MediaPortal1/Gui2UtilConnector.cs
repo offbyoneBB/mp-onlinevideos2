@@ -143,7 +143,7 @@ namespace OnlineVideos.MediaPortal1
                         dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                         if (_CurrentError.ShowCurrentTaskDescription)
                         {
-                            dlg_error.SetLine(1, string.Format("{0} {1}", Translation.Error, _CurrentTaskDescription));
+							dlg_error.SetLine(1, string.Format("{0} {1}", Translation.Instance.Error, _CurrentTaskDescription));
                         }
                         dlg_error.SetLine(2, _CurrentError.Message);
                         dlg_error.DoModal(GUIWindowManager.ActiveWindow);
@@ -158,9 +158,9 @@ namespace OnlineVideos.MediaPortal1
                         dlg_error.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
                         dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
                         if (_CurrentTaskSuccess.HasValue)
-                            dlg_error.SetText(string.Format("{0} {1}", Translation.Error, _CurrentTaskDescription));
+							dlg_error.SetText(string.Format("{0} {1}", Translation.Instance.Error, _CurrentTaskDescription));
                         else
-                            dlg_error.SetText(string.Format("{0} {1}", Translation.Timeout, _CurrentTaskDescription));
+							dlg_error.SetText(string.Format("{0} {1}", Translation.Instance.Timeout, _CurrentTaskDescription));
                         if (!abortedByUser) dlg_error.DoModal(GUIWindowManager.ActiveWindow);
                     }
                 }

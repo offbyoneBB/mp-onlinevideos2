@@ -234,7 +234,7 @@ namespace OnlineVideos.Sites
                         }
                         else
                         {
-                            resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                 string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}",
                                     HttpUtility.UrlEncode(uri.Host),
                                     "1935",

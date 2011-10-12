@@ -27,7 +27,7 @@ namespace OnlineVideos
 
     [DataContract(Name="Site")]
     [Serializable]
-    public class SiteSettings
+	public class SiteSettings : MarshalByRefObject
     {
         public SiteSettings()
         {
@@ -76,6 +76,7 @@ namespace OnlineVideos
 
         [DataMember(EmitDefaultValue = false, Order = 9)]
         public BindingList<Category> Categories { get; set; }
+		public bool ShouldSerializeCategories() { return Categories != null && Categories.Count > 0; }
 
 		protected DateTime dynamicCategoriesDiscoveryTime = DateTime.MinValue;
 		protected bool dynamicCategoriesDiscovered;
@@ -103,6 +104,7 @@ namespace OnlineVideos
         [OnSerializing()]
         internal void OnSerializingMethod(StreamingContext context)
         {
+			if (context.State == StreamingContextStates.CrossAppDomain) return;
             // remove all Categories that are dynamically discovered before serializing to xml
             if (Categories != null)
             {
@@ -123,6 +125,14 @@ namespace OnlineVideos
         }
         
         public override string ToString() { return Name; }
+
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
     }
 
     [DataContract]
@@ -131,7 +141,7 @@ namespace OnlineVideos
     [Serializable]
     [XmlInclude(typeof(RssLink))]
     [XmlInclude(typeof(Group))]
-    public class Category : IComparable<Category>, INotifyPropertyChanged, ISearchResultItem
+	public class Category : MarshalByRefObject, IComparable<Category>, INotifyPropertyChanged, ISearchResultItem
     {
         protected string _Name;
         protected string _Thumb;
@@ -179,10 +189,12 @@ namespace OnlineVideos
 
         [DataMember(Name = "SubCategories", Order = 3, EmitDefaultValue = false)]
         public List<Category> SubCategories { get; set; }
+		public bool ShouldSerializeSubCategories() { return SubCategories != null && SubCategories.Count > 0; }
 
         [OnSerializing()]
         internal void OnSerializingMethod(StreamingContext context)
         {
+			if (context.State == StreamingContextStates.CrossAppDomain) return;
             // remove all SubCategories that are dynamically discovered before serializing to xml
             if (SubCategories != null)
             {
@@ -199,8 +211,9 @@ namespace OnlineVideos
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {
+			if (context.State == StreamingContextStates.CrossAppDomain) return;
             IsDeserialized = true;
-            if (SubCategories != null)
+            if (SubCategories != null && SubCategories.Count > 0)
             {
                 foreach (Category c in SubCategories) c.ParentCategory = this;
                 HasSubCategories = true;
@@ -238,12 +251,21 @@ namespace OnlineVideos
         #endregion
 
         #region INotifyPropertyChanged Member
+		[field: NonSerialized]
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null) PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
         #endregion
+
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
     }
 
     [DataContract]
@@ -275,13 +297,13 @@ namespace OnlineVideos
 	{
 		public NextPageCategory() 
 		{
-			Name = Translation.NextPage;
+			Name = Translation.Instance.NextPage;
 		}
 	}
 
     [DataContract]
     [Serializable]
-    public class Channel
+    public class Channel : MarshalByRefObject
     {
         [DataMember(Name="name", Order=0)]
         [XmlAttribute("name")]
@@ -301,6 +323,10 @@ namespace OnlineVideos
     [Serializable]
     public class StringHash: Dictionary<string, string>, IXmlSerializable
     {
+		public StringHash() : base() { }
+
+		protected StringHash(SerializationInfo info, StreamingContext context) : base(info, context) { }
+
         public System.Xml.Schema.XmlSchema GetSchema()
         {
             return null;

@@ -6,7 +6,7 @@ using MediaPortal.Profile;
 
 namespace OnlineVideos.MediaPortal1
 {
-    public class UserStore : IUserStore
+    public class UserStore : MarshalByRefObject, IUserStore
     {
         public string GetValue(string key)
         {
@@ -25,5 +25,13 @@ namespace OnlineVideos.MediaPortal1
                 settings.SetValue(PluginConfiguration.CFG_SECTION, key, value);
             }
         }
-    }
+
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
+	}
 }

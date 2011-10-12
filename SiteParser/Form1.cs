@@ -664,7 +664,7 @@ namespace SiteParser
         {
             public NextPageVideoCategory()
             {
-                Name = Translation.NextPage;
+                Name = Translation.Instance.NextPage;
             }
         }
 

@@ -77,7 +77,7 @@ namespace OnlineVideos.Sites
             AddValue("conn", conn, paramsHash["conn"], sb);
 
 
-            return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, sb.ToString());
+            return ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, sb.ToString());
         }
 
         private void AddValue(string name, string configValue, string urlValue, StringBuilder sb)

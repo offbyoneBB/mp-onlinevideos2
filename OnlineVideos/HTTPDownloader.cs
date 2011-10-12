@@ -10,11 +10,14 @@ namespace OnlineVideos
     {
         bool Cancelled { get; }
         void CancelAsync();
+		void Abort();
         Exception Download(DownloadInfo downloadInfo);
     }
 
-    public class HTTPDownloader : IDownloader
+	public class HTTPDownloader : MarshalByRefObject, IDownloader
     {
+		System.Threading.Thread downloadThread;
+
         public bool Cancelled { get; private set; }
 
         public void CancelAsync()
@@ -27,6 +30,7 @@ namespace OnlineVideos
             HttpWebResponse response = null;
             try
             {
+				downloadThread = System.Threading.Thread.CurrentThread;
                 using (FileStream fs = new FileStream(downloadInfo.LocalFile, FileMode.Create, FileAccess.Write))
                 {
                     HttpWebRequest request = (HttpWebRequest)System.Net.WebRequest.Create(downloadInfo.Url);
@@ -73,5 +77,18 @@ namespace OnlineVideos
                 if (response != null) response.Close();
             }
         }
+
+		public void Abort()
+		{
+			if (downloadThread != null) downloadThread.Abort();
+		}
+
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
     }
 }

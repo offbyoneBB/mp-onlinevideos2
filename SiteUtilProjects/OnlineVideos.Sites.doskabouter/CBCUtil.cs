@@ -74,7 +74,7 @@ namespace OnlineVideos.Sites
                         long air = item.Value<long>("airdate");
                         string Airdate = new DateTime((air * 10000) + 621355968000000000, DateTimeKind.Utc).ToString();
                         if (!String.IsNullOrEmpty(Airdate))
-                            video.Length = video.Length + '|' + Translation.Airdate + ": " + Airdate;
+							video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + Airdate;
 
                         JArray assets = item["assets"] as JArray;
                         if (assets != null && assets.First != null)
@@ -143,7 +143,7 @@ namespace OnlineVideos.Sites
             string auth = nn["auth"];
             string[] pathParts = rtmpUrl.Split(new string[] { "<break>" }, StringSplitOptions.None);
 
-            string url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+            string url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                 string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&auth={2}",
                 HttpUtility.UrlEncode(pathParts[0]),
                 HttpUtility.UrlEncode(pathParts[1].Replace(".flv", String.Empty)),

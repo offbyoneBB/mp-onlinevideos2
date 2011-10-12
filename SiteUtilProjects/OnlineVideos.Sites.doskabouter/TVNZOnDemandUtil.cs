@@ -109,7 +109,7 @@ namespace OnlineVideos.Sites
                         if (epinfo.Length > 2)
                             video.Length = epinfo[2].Trim();
                         if (epinfo.Length > 1)
-                            video.Length = video.Length + '|' + Translation.Airdate + ": " + epinfo[1].Trim();
+							video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + epinfo[1].Trim();
                     }
                     res.Add(video);
                 }
@@ -148,7 +148,7 @@ namespace OnlineVideos.Sites
                 if (url.StartsWith("rtmp"))
                 {
                     string plpath = url.Replace("rtmp:", "");
-                    url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                    url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                     string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&swfurl={2}&swfsize={3}&swfhash={4}&conn={5}",
                     "rtmpe://fms-streaming.tvnz.co.nz/tvnz.co.nz/",
                     plpath,

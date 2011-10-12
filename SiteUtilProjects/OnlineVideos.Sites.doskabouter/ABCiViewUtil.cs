@@ -111,7 +111,7 @@ namespace OnlineVideos.Sites
             {
                 string[] parts = video.VideoUrl.Split('/');
                 string fileName = parts[parts.Length - 1];
-                return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                return ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                      String.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&app={2}&swfVfy={3}&live=true",
                      HttpUtility.UrlEncode(video.VideoUrl),
                      HttpUtility.UrlEncode(fileName),
@@ -139,7 +139,7 @@ namespace OnlineVideos.Sites
                     );
             }
 
-            url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+            url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                 string.Format("http://127.0.0.1/stream.flv?{0}&swfVfy={1}", url,
                                HttpUtility.UrlEncode(@"http://www.abc.net.au/iview/images/iview.jpg")));
             return url;

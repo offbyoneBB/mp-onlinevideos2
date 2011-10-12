@@ -17,6 +17,7 @@ namespace OnlineVideos
         string ID_TVDB { get; set; }
     }
 
+	[Serializable]
     public class TrackingInfo : ITrackingInfo
     {
         public VideoKind VideoKind { get; set; }

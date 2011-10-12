@@ -9,23 +9,12 @@ using OnlineVideos;
 
 namespace RTMP_LIB
 {
-    public class RTMPRequestHandler : IRequestHandler
+	public class RTMPRequestHandler : CrossDomanSingletonBase<RTMPRequestHandler>, IRequestHandler
     {
-        #region Singleton
-        private static RTMPRequestHandler _Instance = null;
-        public static RTMPRequestHandler Instance
-        {
-            get
-            {
-                if (_Instance == null) _Instance = new RTMPRequestHandler();
-                return _Instance;
-            }
-        }
         private RTMPRequestHandler()
         {
-            ReverseProxy.AddHandler(this);
+            ReverseProxy.Instance.AddHandler(this);
         }
-        #endregion
 
         #region IRequestHandler
         bool invalidHeader = false;

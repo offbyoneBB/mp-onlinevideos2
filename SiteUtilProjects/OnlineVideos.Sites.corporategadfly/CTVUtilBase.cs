@@ -210,7 +210,7 @@ namespace OnlineVideos.Sites
                             HttpUtility.UrlEncode(Swf));
 
                         Log.Debug(@"RTMP URL (after): {0}", url);
-                        result = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, url);
+                        result = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, url);
                     }
                     else
                     {
@@ -228,7 +228,7 @@ namespace OnlineVideos.Sites
                                 HttpUtility.UrlEncode(Swf));
 
                             Log.Debug(@"RTMP URL Secondary Option (after): {0}", url);
-                            result = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, url);
+                            result = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, url);
                         }
                         else
                         {

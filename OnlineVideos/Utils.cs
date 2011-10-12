@@ -34,6 +34,15 @@ namespace OnlineVideos
 
         public static void SiteSettingsToXml(SerializableSettings sites, Stream stream)
         {
+			var ctx = new System.Runtime.Serialization.StreamingContext();
+			foreach (var site in sites.Sites)
+			{
+				site.OnSerializingMethod(ctx);
+				CallOnSerializingRecursive(site.Categories, ctx);
+			}
+			var ser = new System.Xml.Serialization.XmlSerializer(typeof(SerializableSettings));
+			ser.Serialize(XmlWriter.Create(stream, new XmlWriterSettings() { Encoding = Encoding.UTF8, Indent = true }), sites);
+			/*
             MemoryStream xmlMem = new MemoryStream();
             System.Runtime.Serialization.DataContractSerializer dcs = new System.Runtime.Serialization.DataContractSerializer(typeof(SerializableSettings));
             dcs.WriteObject(xmlMem, sites);
@@ -46,7 +55,7 @@ namespace OnlineVideos
             xsltTransform.Load(XmlReader.Create(xslt));
             
             xsltTransform.Transform(xmlDoc, null, stream);
-            stream.Flush();
+            stream.Flush();*/
         }
 
         public static IList<SiteSettings> SiteSettingsFromXml(string siteXml)
@@ -57,27 +66,62 @@ namespace OnlineVideos
 " + siteXml + @"
 </Sites>
 </OnlineVideoSites>";
-            return SiteSettingsFromXml(new System.IO.StringReader(siteXml));
+			return OnlineVideosAppDomain.PluginLoader.CreateSiteSettingsFromXml(siteXml);
         }
 
+		private static void CallOnDeserializedRecursive(IList<Category> cats, System.Runtime.Serialization.StreamingContext ctx)
+		{
+			if (cats != null)
+			{
+				foreach (var cat in cats)
+				{
+					cat.OnDeserializedMethod(ctx);
+					CallOnDeserializedRecursive(cat.SubCategories, ctx);
+				}
+			}
+		}
+		private static void CallOnSerializingRecursive(IList<Category> cats, System.Runtime.Serialization.StreamingContext ctx)
+		{
+			if (cats != null)
+			{
+				foreach (var cat in cats)
+				{
+					cat.OnSerializingMethod(ctx);
+					CallOnSerializingRecursive(cat.SubCategories, ctx);
+				}
+			}
+		}
         public static IList<SiteSettings> SiteSettingsFromXml(TextReader reader)
         {
-            XmlDocument sitesXmlDoc = new XmlDocument();
-            sitesXmlDoc.Load(reader);
+			var ser = new System.Xml.Serialization.XmlSerializer(typeof(SerializableSettings));
+			SerializableSettings s = ser.Deserialize(reader) as SerializableSettings;
+			if (s != null)
+			{
+				var ctx = new System.Runtime.Serialization.StreamingContext();
+				foreach (var site in s.Sites) CallOnDeserializedRecursive(site.Categories, ctx);
+				return s.Sites;
+			}
+			else
+			{
+				return null;
+			}
+			/*
+			XmlDocument sitesXmlDoc = new XmlDocument();
+			sitesXmlDoc.Load(reader);
 
-            Stream xslt = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.Configuration.ImportSiteSettings.xslt");
-            System.Xml.Xsl.XslCompiledTransform xsltTransform = new System.Xml.Xsl.XslCompiledTransform();
-            xsltTransform.Load(XmlReader.Create(xslt));
-            MemoryStream ms = new MemoryStream();
-            xsltTransform.Transform(sitesXmlDoc, null, ms);
-            ms.Flush();
-            ms.Position = 0;
+			Stream xslt = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("OnlineVideos.Configuration.ImportSiteSettings.xslt");
+			System.Xml.Xsl.XslCompiledTransform xsltTransform = new System.Xml.Xsl.XslCompiledTransform();
+			xsltTransform.Load(XmlReader.Create(xslt));
+			MemoryStream ms = new MemoryStream();
+			xsltTransform.Transform(sitesXmlDoc, null, ms);
+			ms.Flush();
+			ms.Position = 0;
 
             System.Runtime.Serialization.DataContractSerializer dcs2 = new System.Runtime.Serialization.DataContractSerializer(typeof(SerializableSettings));
             XmlReader xr = XmlReader.Create(ms);
             xr.MoveToContent();
             SerializableSettings s = dcs2.ReadObject(xr) as SerializableSettings;
-            return s != null ? s.Sites : null;
+			return s != null ? s.Sites : null;*/
         }
 
         public static string PlainTextFromHtml(string input)

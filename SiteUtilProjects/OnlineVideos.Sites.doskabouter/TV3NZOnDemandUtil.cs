@@ -22,7 +22,7 @@ namespace OnlineVideos.Sites
             string[] bitRates = { "330K", "700K" };
             foreach (string bitRate in bitRates)
             {
-                string url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                string url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                 string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}",
                 HttpUtility.UrlEncode(res + bitRate),
                 HttpUtility.UrlEncode(@"http://static.mediaworks.co.nz/video/3.9/videoPlayer3.9.swf")));

@@ -25,15 +25,15 @@ namespace OnlineVideos {
     /// <summary>
     /// Generic Reverse Proxy Server
     /// </summary>
-    public static class ReverseProxy {
-
+	public class ReverseProxy : CrossDomanSingletonBase<ReverseProxy>
+	{
         const int ProxyPortRangeStart = 30006;
 
-        static HTTPServer _server = null;
-        static int _serverPort = 0;
-        static List<IProxyHandler> _handlers;
+        HTTPServer _server = null;
+        int _serverPort = 0;
+        List<IProxyHandler> _handlers;
 
-        static ReverseProxy() {
+        private ReverseProxy() {
             _serverPort = getFirstAvailablePort();
             _handlers = new List<IProxyHandler>();
             _server = new HTTPServer(new RequestHandlerFactory(), _serverPort);
@@ -41,7 +41,7 @@ namespace OnlineVideos {
             _server.Start();
         }
 
-        public static void StopListening() {
+        public void StopListening() {
             _server.Stop();
         }
 
@@ -49,7 +49,7 @@ namespace OnlineVideos {
         /// Add a new request handler
         /// </summary>
         /// <param name="handler"></param>
-        public static void AddHandler(IProxyHandler handler) {
+        public void AddHandler(IProxyHandler handler) {
             if (!_handlers.Contains(handler)) {
                 _handlers.Add(handler);
             }
@@ -61,7 +61,7 @@ namespace OnlineVideos {
         /// <param name="handler"></param>
         /// <param name="uri"></param>
         /// <returns></returns>
-        public static string GetProxyUri(IProxyHandler handler, string uri) {
+        public string GetProxyUri(IProxyHandler handler, string uri) {
             int index = _handlers.IndexOf(handler);
             return string.Format("http://127.0.0.1:{0}/{1}/{2}", _serverPort, index, uri.Substring(7));
         }
@@ -83,7 +83,7 @@ namespace OnlineVideos {
             }
 
             public void HandleRequest(HTTPServerRequest request, HTTPServerResponse response) {
-                if (_handlers.Count == 0)
+                if (ReverseProxy.Instance._handlers.Count == 0)
                     return;
 
                 // Create the actual url from the request
@@ -96,10 +96,10 @@ namespace OnlineVideos {
                 // dont continue if the handler index is invalid
                 if (!int.TryParse(parsedHandlerIndex, out handlerIndex)) {
                     return;
-                } else if (handlerIndex >= _handlers.Count)
+                } else if (handlerIndex >= ReverseProxy.Instance._handlers.Count)
                     return;
 
-                handler = _handlers[handlerIndex];
+				handler = ReverseProxy.Instance._handlers[handlerIndex];
 
                 // if the handler implements IRequestHandler it will take over 
                 // the complete request so execute and return

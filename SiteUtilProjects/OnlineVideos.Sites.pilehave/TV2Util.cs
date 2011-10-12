@@ -53,7 +53,7 @@ namespace OnlineVideos.Sites
           video.ImageUrl = item.Value<string>("img");
           string len = item.Value<string>("duration");
           string air = item.Value<string>("date");
-          video.Length = len + '|' + Translation.Airdate + ": " + air;
+		  video.Length = len + '|' + Translation.Instance.Airdate + ": " + air;
           res.Add(video);
         }
       }

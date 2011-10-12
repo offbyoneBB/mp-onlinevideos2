@@ -86,7 +86,7 @@ namespace OnlineVideos.Sites
                         System.Web.HttpUtility.UrlEncode(s),
                         System.Web.HttpUtility.UrlEncode(@"http://www.rte.ie/player/assets/player_403.swf"));
 
-                result.Add(ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, url));
+                result.Add(ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, url));
 
                 result.Add(s);
             }

@@ -154,7 +154,7 @@ namespace OnlineVideos.Sites.georgius
                 String playPath = "ocko";
                 String swfUrl = "http://g.idnes.cz/swf/flv/player.swf?v=20110601";
 
-                String resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                String resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                 string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&tcUrl={1}&app={2}&playpath={3}&swfurl={4}&pageurl={5}&live=true",
                                     rtmpUrl, //rtmpUrl
                                     tcUrl, //tcUrl

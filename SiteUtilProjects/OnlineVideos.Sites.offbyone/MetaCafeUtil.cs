@@ -60,7 +60,7 @@ namespace OnlineVideos.Sites
                         src = src.Replace("ondemand/?", "ondemand/?ovpfv=1.1&?");
                         src = src.Substring(0, src.IndexOf("<break>"));
                         
-                        return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                        return ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                                     string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&pageurl={1}&swfurl={2}&playpath={3}", 
                                     System.Web.HttpUtility.UrlEncode(src), 
                                     System.Web.HttpUtility.UrlEncode(video.VideoUrl),

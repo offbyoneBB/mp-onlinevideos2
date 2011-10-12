@@ -315,7 +315,7 @@ namespace OnlineVideos.Sites
                     VideoInfo video = new VideoInfo();
                     video.Title = m.Groups["title1"].Value + m.Groups["title2"].Value;
                     video.VideoUrl = baseUrl + m.Groups["url"].Value;
-                    video.Length = '|' + Translation.Airdate + ": " + m.Groups["airdate"].Value;
+					video.Length = '|' + Translation.Instance.Airdate + ": " + m.Groups["airdate"].Value;
                     videos.Add(video);
                     m = m.NextMatch();
                 }

@@ -58,7 +58,7 @@ namespace OnlineVideos.Sites.georgius
         public VideaCeskyCzUtil()
             : base()
         {
-            ReverseProxy.AddHandler(this);
+            ReverseProxy.Instance.AddHandler(this);
         }
 
         #endregion

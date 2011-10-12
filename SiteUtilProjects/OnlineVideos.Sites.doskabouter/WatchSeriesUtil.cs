@@ -40,7 +40,7 @@ namespace OnlineVideos.Sites
         {
             base.Initialize(siteSettings);
             isWatchMovies = baseUrl.StartsWith(@"http://watch-movies");
-            //ReverseProxy.AddHandler(this);
+            //ReverseProxy.Instance.AddHandler(this);
 
         }
 

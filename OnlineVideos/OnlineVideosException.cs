@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace OnlineVideos
 {
@@ -6,8 +7,13 @@ namespace OnlineVideos
     /// Exception that can be used by Utils to show explicit error messages to the user when methods executed in background fail.
     /// The <see cref="Message"/> of this <see cref="Exception"/> will be presented to the user.
     /// </summary>
+	[Serializable]
     public class OnlineVideosException : Exception
     {
+		public OnlineVideosException() : base() { }
+		
+		protected OnlineVideosException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+
         public OnlineVideosException(string message) : base(message) 
         {
             ShowCurrentTaskDescription = true;

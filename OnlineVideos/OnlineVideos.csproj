@@ -105,6 +105,10 @@
     <Compile Include="Configuration\OnlineVideoSettings.cs" />
     <Compile Include="Configuration\SiteSettings.cs" />
     <Compile Include="CookieHelper.cs" />
+    <Compile Include="CrossDomain\OnlineVideosAppDomain.cs" />
+    <Compile Include="CrossDomain\PluginLoader.cs" />
+    <Compile Include="CrossDomain\CrossDomanSingletonBase.cs" />
+    <Compile Include="CrossDomain\PropertyChangedMarshaled.cs" />
     <Compile Include="DotNetZip\ComHelper.cs" />
     <Compile Include="DotNetZip\Crc32.cs" />
     <Compile Include="DotNetZip\Deflate.cs" />

@@ -115,10 +115,10 @@ namespace OnlineVideos.Sites
             if (sumOfAllVideos > 0)  // only add the "ALL" category if we have single favorite videos in addition to favorites categories
             {
                 RssLink all = null;
-                if (!cachedCategories.TryGetValue(Translation.All, out all))
+				if (!cachedCategories.TryGetValue(Translation.Instance.All, out all))
                 {
                     all = new RssLink();
-                    all.Name = Translation.All;
+					all.Name = Translation.Instance.All;
                     all.Url = string.Empty;
                     cachedCategories.Add(all.Name, all);
                 }
@@ -136,10 +136,10 @@ namespace OnlineVideos.Sites
                        (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
                     {
                         RssLink cat = null;
-                        if (!cachedCategories.TryGetValue(aSite.Name + " - " + Translation.Favourites, out cat))
+						if (!cachedCategories.TryGetValue(aSite.Name + " - " + Translation.Instance.Favourites, out cat))
                         {
                             cat = new RssLink();
-                            cat.Name = aSite.Name + " - " + Translation.Favourites;
+							cat.Name = aSite.Name + " - " + Translation.Instance.Favourites;
                             cat.Description = aSite.Description;
                             cat.Url = aSite.Name;
                             cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + aSite.Name + ".png");
@@ -156,7 +156,7 @@ namespace OnlineVideos.Sites
                             cat.SubCategories = new List<Category>();
                             if (lsSiteId.Value > 0) // only add the "ALL" category if we have single favorite videos in addition to favorites categories
                             {
-                                cat.SubCategories.Add(new RssLink() { Name = Translation.All, Url = aSite.Name, ParentCategory = cat, EstimatedVideoCount = lsSiteId.Value });
+								cat.SubCategories.Add(new RssLink() { Name = Translation.Instance.All, Url = aSite.Name, ParentCategory = cat, EstimatedVideoCount = lsSiteId.Value });
                             }
                             foreach (Category favCat in favCats)
                             {
@@ -188,13 +188,13 @@ namespace OnlineVideos.Sites
             List<string> result = new List<string>();
             if (selectedCategory is FavoriteCategory)
             {
-                if (selectedItem == null) result.Add(Translation.RemoveFromFavorites);
+				if (selectedItem == null) result.Add(Translation.Instance.RemoveFromFavorites);
                 else result.AddRange((selectedCategory as FavoriteCategory).Site.GetContextMenuEntries(null, selectedItem));
             }
             else if (selectedItem != null)
             {
-                result.Add(Translation.RemoveFromFavorites);
-                result.Add(Translation.DeleteAll);
+				result.Add(Translation.Instance.RemoveFromFavorites);
+				result.Add(Translation.Instance.DeleteAll);
             }
             return result;
         }
@@ -203,13 +203,13 @@ namespace OnlineVideos.Sites
         {
             newVideos = null;
             bool result = false;
-            if (choice == Translation.DeleteAll)
+			if (choice == Translation.Instance.DeleteAll)
             {
                 result = OnlineVideoSettings.Instance.FavDB.removeAllFavoriteVideos(((RssLink)selectedCategory).Url);
                 // we have to manually refresh the categories
                 if (result && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
             }
-            else if (choice == Translation.RemoveFromFavorites)
+			else if (choice == Translation.Instance.RemoveFromFavorites)
             {
                 if (selectedCategory is FavoriteCategory)
                 {

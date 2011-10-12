@@ -36,7 +36,7 @@ namespace OnlineVideos.Sites
             int indexQ = url.IndexOf("?token=");
             string token = url.Substring(indexQ + "?token=".Length);
             url = url.Substring(0, indexQ);
-            string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+            string resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                 string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&token={2}",
                     System.Web.HttpUtility.UrlEncode(url),
                     System.Web.HttpUtility.UrlEncode(playpath),

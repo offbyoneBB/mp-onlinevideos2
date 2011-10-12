@@ -6,7 +6,7 @@ using MediaPortal.Database;
 
 namespace OnlineVideos.MediaPortal1
 {
-    public class FavoritesDatabase : IFavoritesDatabase
+    public class FavoritesDatabase : MarshalByRefObject, IFavoritesDatabase
     {
         private SQLiteClient m_db;
 
@@ -81,7 +81,7 @@ namespace OnlineVideos.MediaPortal1
             string url = string.IsNullOrEmpty(foVideo.VideoUrl) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.VideoUrl);
             string length = string.IsNullOrEmpty(foVideo.Length) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Length);
             string airdate = string.IsNullOrEmpty(foVideo.Airdate) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Airdate);
-            string other = foVideo.Other == null ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Other.ToString());
+            string other = DatabaseUtility.RemoveInvalidChars(foVideo.GetOtherAsString());
 
             string lsSQL =
                 string.Format(
@@ -136,7 +136,7 @@ namespace OnlineVideos.MediaPortal1
 
             for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
             {
-                VideoInfo video = new VideoInfo();
+				VideoInfo video = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(VideoInfo).Assembly.FullName, typeof(VideoInfo).FullName) as VideoInfo;
                 video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
                 video.ImageUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
                 video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
@@ -218,5 +218,13 @@ namespace OnlineVideos.MediaPortal1
         {
             return input.Replace("'", "''");
         }
+
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
     }
 }

@@ -40,7 +40,7 @@ namespace OnlineVideos.Sites
         public string getRTMPUrl()
         {
           if (entries.Count > 0)
-            return ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, generateUrl());
+            return ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, generateUrl());
           else return string.Empty;
         }
       }

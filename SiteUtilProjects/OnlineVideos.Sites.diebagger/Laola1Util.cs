@@ -102,7 +102,7 @@ namespace OnlineVideos.Sites
             regEx_GetLiveHdSources = new Regex(regexLiveHdSources, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
 
             // add a special reversed proxy handler
-            ReverseProxy.AddHandler(this);
+            ReverseProxy.Instance.AddHandler(this);
         }
 
         /// <summary>
@@ -409,7 +409,7 @@ namespace OnlineVideos.Sites
                     //path='rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp+' swfUrl=http://www.laola1.tv/swf/player.v11.3.swf swfVfy=true live=true')
                     //swfVfy=true live=true
                     String rtmpUrl = String.Format("rtmp://{0}:1935/{1}?_fcs_vhost={2}/{3}?auth={4}&p=1&e={5}&u=&t=livevideo&l=&a=&aifp={6}", ip, servertype, url, stream, auth, playkey1, aifp);
-                    String playpath = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                    String playpath = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                             string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}&live={2}",
                             System.Web.HttpUtility.UrlEncode(rtmpUrl),
                             System.Web.HttpUtility.UrlEncode("true"),
@@ -466,7 +466,7 @@ namespace OnlineVideos.Sites
 
             /*String rtmpUrl = String.Format("rtmp://{0}:1935/{1}?_fcs_vhost={2}/{3}?auth={4}&p=1&e={5}&u=&t=livevideo&l=&a=&aifp={6}", ip, servertype, url, stream, auth, playkey1, aifp);
             //Log.Info("RTMP Url: " + rtmpUrl);
-            String playpath = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+            String playpath = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                     string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}&live={2}",
                     System.Web.HttpUtility.UrlEncode(rtmpUrl),
                     System.Web.HttpUtility.UrlEncode("true"),
@@ -478,7 +478,7 @@ namespace OnlineVideos.Sites
                     System.Web.HttpUtility.UrlEncode("true")
                     );*/
 
-            //String playpath = ReverseProxy.GetProxyUri(this, httpUrl);
+            //String playpath = ReverseProxy.Instance.GetProxyUri(this, httpUrl);
             return httpUrl;
         }
 

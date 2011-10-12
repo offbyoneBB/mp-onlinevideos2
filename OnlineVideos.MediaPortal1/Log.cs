@@ -6,8 +6,16 @@ namespace OnlineVideos.MediaPortal1
     /// <summary>
     /// This static class simply delegates Log calls to the MediaPortal Logging facility and prefixes the Output with [OnlineVideos].
     /// </summary>
-    public class Log : ILog
+    public class Log : MarshalByRefObject, ILog
     {
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
+
         #region Singleton
         private static Log _Instance = null;
         public static Log Instance

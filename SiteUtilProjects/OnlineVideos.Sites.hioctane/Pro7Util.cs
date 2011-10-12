@@ -86,7 +86,7 @@ namespace OnlineVideos.Sites
                     url = url.Replace("\\/", "/");
                 url = url.Replace("rtmpte", "rtmpe");
                 url = url.Replace(".net", ".net:1935");
-                url = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                     string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}",
                         System.Web.HttpUtility.UrlEncode(url),
                         "http://www.prosieben.de/static/videoplayer/swf/HybridPlayer.swf"));

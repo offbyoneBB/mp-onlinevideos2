@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites
             atozVideolistRegex = new Regex(atozVideolist, defaultRegexOptions);
             frontpagevideolistRegex = regEx_VideoList;
 
-            ReverseProxy.AddHandler(this);
+            ReverseProxy.Instance.AddHandler(this);
         }
 
         public override int DiscoverDynamicCategories()
@@ -121,7 +121,7 @@ namespace OnlineVideos.Sites
 
             clipId = video.VideoUrl.Substring(i + 1);
             //"1619954";
-            return ReverseProxy.GetProxyUri(this,
+            return ReverseProxy.Instance.GetProxyUri(this,
                 string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}",
                 HttpUtility.UrlEncode("rtmp://" + flashurl + "/AreenaServer/video.mp4")));
         }

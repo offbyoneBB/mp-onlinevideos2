@@ -101,7 +101,7 @@ namespace OnlineVideos.MediaPortal1
                 return _Instance;
             }
         }
-        private PluginConfiguration() { Load(); }
+		private PluginConfiguration() { Load(); }
         #endregion
 
         public void ReLoadRuntimeSettings()
@@ -227,22 +227,15 @@ namespace OnlineVideos.MediaPortal1
                     string[] mediaportal_user_configured_video_extensions;
                     string strTmp = settings.GetValueAsString("movies", "extensions", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts");
                     mediaportal_user_configured_video_extensions = strTmp.Split(',');
-                    foreach (string anExt in mediaportal_user_configured_video_extensions)
-                    {
-                        if (!ovsconf.VideoExtensions.ContainsKey(anExt.ToLower().Trim())) ovsconf.VideoExtensions.Add(anExt.ToLower().Trim(), true);
-                    }
-
-                    if (!ovsconf.VideoExtensions.ContainsKey(".asf")) ovsconf.VideoExtensions.Add(".asf", false);
-                    if (!ovsconf.VideoExtensions.ContainsKey(".asx")) ovsconf.VideoExtensions.Add(".asx", false);
-                    if (!ovsconf.VideoExtensions.ContainsKey(".flv")) ovsconf.VideoExtensions.Add(".flv", false);
-                    if (!ovsconf.VideoExtensions.ContainsKey(".m4v")) ovsconf.VideoExtensions.Add(".m4v", false);
-                    if (!ovsconf.VideoExtensions.ContainsKey(".mov")) ovsconf.VideoExtensions.Add(".mov", false);
-                    if (!ovsconf.VideoExtensions.ContainsKey(".mp4")) ovsconf.VideoExtensions.Add(".mp4", false);
-                    if (!ovsconf.VideoExtensions.ContainsKey(".wmv")) ovsconf.VideoExtensions.Add(".wmv", false);
+					var listOfExtensions = mediaportal_user_configured_video_extensions.ToList();
+					listOfExtensions.AddRange(new string[] { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mp4", ".wmv" });
+					listOfExtensions = listOfExtensions.Distinct().ToList();
+					listOfExtensions.Sort();
+					ovsconf.AddSupportedVideoExtensions(listOfExtensions);
 
                     httpSourceFilterName = settings.GetValueAsString(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
                     autoGroupByLang = settings.GetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
-                    OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst = settings.GetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst);
+					ovsconf.FavoritesFirst = settings.GetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, ovsconf.FavoritesFirst);
                 }
                 LoadSitesGroups();
                 ovsconf.LoadSites();
@@ -344,10 +337,11 @@ namespace OnlineVideos.MediaPortal1
         public BindingList<SitesGroup> GetAutomaticSitesGroups()
         {
             Dictionary<string, BindingList<string>> sitenames = new Dictionary<string, BindingList<string>>();
-            foreach (string name in OnlineVideoSettings.Instance.SiteUtilsList.Keys)
+			var siteutils = OnlineVideoSettings.Instance.SiteUtilsList;
+			foreach (string name in siteutils.Keys)
             {
                 Sites.SiteUtilBase aSite;
-                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(name, out aSite) && !(aSite is Sites.FavoriteUtil) && !(aSite is Sites.DownloadedVideoUtil))
+				if (siteutils.TryGetValue(name, out aSite) && !(aSite is Sites.FavoriteUtil) && !(aSite is Sites.DownloadedVideoUtil))
                 {
                     string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "--" : aSite.Settings.Language;
                     BindingList<string> listForLang = null;

@@ -77,7 +77,7 @@ namespace OnlineVideos.Sites
 
                         if (connectionElem.Attributes["kind"].Value == "limelight")
                         {
-                            resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                             string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfVfy={5}&live={6}",
                                 System.Web.HttpUtility.UrlEncode(server),
                                 "1935",
@@ -92,7 +92,7 @@ namespace OnlineVideos.Sites
                             application += "?" + auth;
 
                             if (auth.StartsWith("token=")) auth = auth.Substring(6);
-                            resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                             string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfVfy={5}&token={6}&live={7}",
                                 System.Web.HttpUtility.UrlEncode(server),
                                 "1935",
@@ -105,7 +105,7 @@ namespace OnlineVideos.Sites
                         }
                         else if (connectionElem.Attributes["kind"].Value == "akamai")
                         {
-                            resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
                             string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&swfVfy={2}&live={3}",
                                 System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}?{2}", server, application, auth)),
                                 System.Web.HttpUtility.UrlEncode(identifier),

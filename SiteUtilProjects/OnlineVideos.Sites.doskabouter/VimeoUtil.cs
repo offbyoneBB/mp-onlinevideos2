@@ -201,7 +201,7 @@ namespace OnlineVideos.Sites
                 video.Length = TimeSpan.FromSeconds(Int32.Parse(videoNode.SelectSingleNode("duration").InnerText)).ToString();
                 string Airdate = videoNode.SelectSingleNode("upload_date").InnerText;
                 if (!String.IsNullOrEmpty(Airdate))
-                    video.Length = video.Length + '|' + Translation.Airdate + ": " + Airdate;
+					video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + Airdate;
 
                 result.Add(video);
             }
