@@ -119,7 +119,9 @@ namespace OnlineVideos.Sites
         const string CLIENT_ID = "ytapi-GregZ-OnlineVideos-s2skvsf5-0";
         const string DEVELOPER_KEY = "AI39si5x-6x0Nybb_MvpC3vpiF8xBjpGgfq-HTbyxWP26hdlnZ3bTYyERHys8wyYsbx3zc5f9bGYj0_qfybCp-wyBF-9R5-5kA";        
         const string USER_PLAYLISTS_FEED = "http://gdata.youtube.com/feeds/api/users/[\\w]+/playlists";
-        const string PLAYLIST_FEED = "http://gdata.youtube.com/feeds/api/playlists/{0}";                
+        const string PLAYLIST_FEED = "http://gdata.youtube.com/feeds/api/playlists/{0}";
+		const string USER_NEWSUBSCRIPTIONS_FEED = "http://gdata.youtube.com/feeds/api/users/default/newsubscriptionvideos";
+		const string USER_RECOMMENDATIONS_FEED = "https://gdata.youtube.com/feeds/api/users/default/recommendations";
         
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -145,7 +147,10 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                return getFavorites();
+				if (category.Name.EndsWith(Translation.Instance.Favourites))
+					return getFavorites();
+				else
+					return getRecommendations();
             }
         }
 
@@ -213,8 +218,9 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(accountname))
             {
 				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Favourites) });
+				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Recommendations) });
 				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Subscriptions), HasSubCategories = true });
-				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, "Playlists"), HasSubCategories = true });
+				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Playlists), HasSubCategories = true });
             }
 
             Settings.DynamicCategoriesDiscovered = true;
@@ -244,10 +250,9 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                
                 Login();
 
-				if (parentCategory.Name.EndsWith("Playlists"))
+				if (parentCategory.Name.EndsWith(Translation.Instance.Playlists))
 				{
 					// users playlists
 					YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreatePlaylistsUri(accountname)), StartIndex = 1, NumberToRetrieve = 50 }; // max. 50 per query
@@ -281,7 +286,7 @@ namespace OnlineVideos.Sites
 					// users subscriptions
 					RssLink newVidsLink = new RssLink();
 					newVidsLink.Name = Translation.Instance.NewVideos;
-					newVidsLink.Url = "http://gdata.youtube.com/feeds/api/users/default/newsubscriptionvideos";
+					newVidsLink.Url = USER_NEWSUBSCRIPTIONS_FEED;
 					parentCategory.SubCategories.Add(newVidsLink);
 					newVidsLink.ParentCategory = parentCategory;
 
@@ -543,6 +548,13 @@ namespace OnlineVideos.Sites
             YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateFavoritesUri(accountname)), NumberToRetrieve = pageSize };
             return parseGData(query);
         }
+
+		protected List<VideoInfo> getRecommendations()
+		{
+			Login();
+			YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(USER_RECOMMENDATIONS_FEED), NumberToRetrieve = pageSize };
+			return parseGData(query);
+		}
 
         protected void addFavorite(VideoInfo video)
         {

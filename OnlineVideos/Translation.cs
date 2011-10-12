@@ -167,6 +167,7 @@ namespace OnlineVideos
         // P
         public string PlayAll = "Play all";
         public string PlayWith = "Play with ...";
+		public string Playlists = "Playlists";
 		public string PlaybackWillBeStopped = "Playback will be stopped.";
         public string PleaseEnterDescription = "Please give a short description.";
         public string PlotOutline = "Plot outline";
@@ -174,6 +175,7 @@ namespace OnlineVideos
         public string PerformAutomaticUpdate = "Perform automatic update?";
 
         // R
+		public string Recommendations = "Recommendations";
         public string RemoveFromFavorites = "Remove from favorites";
         public string RemovingFromFavorites = "removing from favorites";
         public string Refresh = "Refresh";
