@@ -283,7 +283,7 @@ namespace OnlineVideos
 
         public VideoInfo CloneForPlayList(string videoUrl, bool withPlaybackOptions)
         {
-            VideoInfo newVideoInfo = this.MemberwiseClone() as VideoInfo;
+            VideoInfo newVideoInfo = MemberwiseClone(false) as VideoInfo;
             if (withPlaybackOptions)
             {
                 if (PlaybackOptions != null) newVideoInfo.PlaybackOptions = new Dictionary<string, string>(PlaybackOptions);
