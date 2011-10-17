@@ -33,6 +33,7 @@
   <string Field="DownloadComplete">Download gereed</string>
   <string Field="DownloadStarted">Download begonnen</string>
   <string Field="DownloadedVideos">Gedownloade videos</string>
+  <string Field="DownloadsWillBeAborted">De downloads worden geannuleerd</string>
   <string Field="Delete">Verwijderen</string>
   <string Field="DeleteAll">Alles verwijderen</string>
   <string Field="Default">Standaard</string>
@@ -78,10 +79,13 @@
   <string Field="Others">Overige</string>
   <string Field="PlayAll">Alles afspelen</string>
   <string Field="PlayWith">Afspelen met...</string>
+  <string Field="Playlists">Afspeellijst</string>
+  <string Field="PlaybackWillBeStopped">Afspelen wordt gestopt</string>
   <string Field="PleaseEnterDescription">Geef een korte beschrijving</string>
   <string Field="PlotOutline">Samenvatting</string>
   <string Field="PreviousPage">Vorige pagina</string>
   <string Field="PerformAutomaticUpdate">Automatische update uitvoeren?</string>
+  <string Field="Recommendations">Aanbevelingen</string>
   <string Field="RemoveFromFavorites">Verwijderen uit favorieten</string>
   <string Field="RemovingFromFavorites">bij het verwijderen uit de favorieten</string>
   <string Field="Refresh">Verversen</string>
