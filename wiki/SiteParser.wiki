@@ -172,8 +172,7 @@ They are explained in detail [http://code.google.com/p/mp-onlinevideos2/wiki/Cre
 There is also a video where a demonstration is given of the SiteParser.
 It's located [http://mp-onlinevideos2.googlecode.com/files/SiteParser.wmv here]
 
-
-= RtmpUtil =
+= Rtmp Util =
 
 Occasionally, you have a final url which starts with "rtmp://" or "rtmpe://".
 
