@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Collections;
 using System.Xml;
+using System.Security.Cryptography;
 
 namespace OnlineVideos.Sites.georgius
 {
@@ -43,16 +44,6 @@ namespace OnlineVideos.Sites.georgius
 
         private static String variableBlockRegex = @"<script language=""JavaScript1.1"" type=""text/javascript"">(?<variableBlock>[^<]+)</script>";
         private static String variableRegex = @"var[\s]+(?<variableName>[^\s]+)[\s]+=[\s]+(""|')?(?<variableValue>[^'"";]+)(""|')?;";
-        private static String serversUrlFormat = @"http://tn.nova.cz/bin/player/config.php?site_id={0}&";
-        private static String videosUrlFormat = @"http://tn.nova.cz/bin/player/serve.php" +
-                 @"?site_id={0}" +
-                 @"&media_id={1}" +
-                 @"&userad_id={4}" +
-                 @"&section_id={2}" + 
-                 @"&noad_count=0" +
-                 @"&fv=WIN 10,0,45,2" +
-                 @"&session_id={3}" +
-                 @"&ad_file=noad";
 
         #endregion
 
@@ -183,7 +174,7 @@ namespace OnlineVideos.Sites.georgius
                             break;
                         }
                     }
-                    
+
 
                     Match showEpisodeNextPageBlockStart = Regex.Match(baseWebData, NovaUtil.showEpisodeNextPageBlockStartRegex);
                     if (showEpisodeNextPageBlockStart.Success)
@@ -295,7 +286,6 @@ namespace OnlineVideos.Sites.georgius
                 {
                     String variableBlock = variableBlockMatch.Groups["variableBlock"].Value;
 
-
                     MatchCollection matches = Regex.Matches(variableBlock, NovaUtil.variableRegex);
                     Hashtable variables = new Hashtable(matches.Count);
                     foreach (Match match in matches)
@@ -303,64 +293,45 @@ namespace OnlineVideos.Sites.georgius
                         variables.Add(match.Groups["variableName"].Value, match.Groups["variableValue"].Value);
                     }
 
-                    String serversBaseWebData = SiteUtilBase.GetWebData(String.Format(NovaUtil.serversUrlFormat, variables["site_id"]), null, null, null, true);
-                    String videosBaseWebData = SiteUtilBase.GetWebData(
-                        String.Format(
-                            NovaUtil.videosUrlFormat,
-                            variables["site_id"],
-                            variables["media_id"],
-                            variables["section_id"],
-                            variables["session_id"],
-                            variables["userad_id"]),
-                        null, null, null, true);
-
-                    XmlDocument servers = new XmlDocument();
-                    servers.LoadXml(serversBaseWebData);
-
-                    XmlDocument videos = new XmlDocument();
-                    videos.LoadXml(videosBaseWebData);
-                    
-                    XmlNode item = videos.SelectSingleNode("//item[@src and @txt and @server]");
-                    if (item == null)
+                    String time = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    String signature = String.Format("nova-vod|{0}|{1}|tajne.heslo", variables["media_id"], time);
+                    String encodedHash = String.Empty;
+                    using (MD5 md5 = MD5.Create())
                     {
-                        item = videos.SelectSingleNode("//item[@src and @txt]");
+                        Byte[] md5hash = md5.ComputeHash(Encoding.Default.GetBytes(signature));
+                        encodedHash = Convert.ToBase64String(md5hash);
                     }
 
-                    if (item != null)
+                    String videoPlaylistUrl = String.Format("http://master-ng.nacevi.cz/cdn.server/PlayerLink.ashx?t={1}&c=nova-vod|{0}&h=0&d=1&s={2}&tm=nova", variables["media_id"], time, encodedHash);
+                    String videoPlaylistWebData = SiteUtilBase.GetWebData(videoPlaylistUrl);
+
+                    XmlDocument videoPlaylist = new XmlDocument();
+                    videoPlaylist.LoadXml(videoPlaylistWebData);
+
+                    String videoBaseUrl = videoPlaylist.SelectSingleNode("//baseUrl").InnerText;
+
+                    foreach (XmlNode node in videoPlaylist.SelectNodes("//media"))
                     {
-                        XmlNode flvServerNode = null;
-                        if (item.Attributes["server"] == null)
-                        {
-                            flvServerNode = servers.SelectSingleNode("//flvserver[@id = \"flvserver\" and @type = \"stream\"]");
-                        }
-                        else
-                        {
-                            flvServerNode = servers.SelectSingleNode(String.Format("//flvserver[@url and @id = \"{0}\"]", item.Attributes["server"].Value));
-                        }
+                        String quality = node.SelectSingleNode("quality").InnerText;
+                        String url = node.SelectSingleNode("url").InnerText;
 
-                        if ((flvServerNode != null) && (item != null))
-                        {
-                            String flvServer = flvServerNode.Attributes["url"].Value;
-                            String flvStream = "mp4:" + item.Attributes["src"].Value;
-                            String flvName = String.IsNullOrEmpty(item.Attributes["txt"].Value) ? (String)variables["media_id"] : item.Attributes["txt"].Value;
-                            String movieUrl = String.Format("{0}/{1}", flvServer, flvStream);
+                        String movieUrl = String.Format("{0}/{1}", videoBaseUrl, url);
 
-                            string host = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf(":", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
-                            string app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
-                            string tcUrl = "rtmp://" + host + ":80/" + app;
-                            string playPath = movieUrl.Substring(movieUrl.IndexOf(app) + app.Length + 1);
+                        String host = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf(":", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
+                        String app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
+                        String tcUrl = videoBaseUrl;
+                        String playPath = url;
 
-                            string resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&playpath={4}",
-                                    movieUrl, //rtmpUrl
-                                    host, //host
-                                    tcUrl, //tcUrl
-                                    app, //app
-                                    playPath //playpath
-                                    ));
+                        string resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&playpath={4}",
+                                movieUrl, //rtmpUrl
+                                host, //host
+                                tcUrl, //tcUrl
+                                app, //app
+                                playPath //playpath
+                                ));
 
-                            video.PlaybackOptions.Add(flvName, resultUrl);
-                        }
+                        video.PlaybackOptions.Add((quality == "flv") ? "Low quality" : "High quality", resultUrl);
                     }
                 }
             }
