@@ -42,6 +42,10 @@
 #define CONFIGURATION_HTTP_RECEIVE_DATA_TIMEOUT             _T("HttpReceiveDataTimeout")
 #define CONFIGURATION_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS _T("HttpOpenConnectionMaximumAttempts")
 
+#define METHOD_CREATE_CURL_WORKER_NAME                      _T("CreateCurlWorker()")
+#define METHOD_DESTROY_CURL_WORKER_NAME                     _T("DestroyCurlWorker()")
+#define METHOD_CURL_WORKER_NAME                             _T("CurlWorker()")
+
 // returns protocol class instance
 PIProtocol CreateProtocolInstance(void);
 
@@ -130,11 +134,25 @@ protected:
   static size_t CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata);
 
   // reference to variable that signalize if protocol is requested to exit
-  bool *shouldExit;
+  bool shouldExit;
   // internal variable for requests to interrupt transfers
   bool internalExitRequest;
   // specifies if whole stream is downloaded
   bool wholeStreamDownloaded;
+
+  // libcurl worker thread
+  HANDLE hCurlWorkerThread;
+  DWORD dwCurlWorkerThreadId;
+  CURLcode curlWorkerErrorCode;
+  static DWORD WINAPI CurlWorker(LPVOID lpParam);
+
+  // creates libcurl worker
+  // @return : S_OK if successful
+  HRESULT CreateCurlWorker(void);
+
+  // destroys libcurl worker
+  // @return : S_OK if successful
+  HRESULT DestroyCurlWorker(void);
 };
 
 #endif

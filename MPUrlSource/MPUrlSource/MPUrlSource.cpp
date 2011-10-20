@@ -683,9 +683,9 @@ DWORD WINAPI CMPUrlSourceFilter::ReceiveDataWorker(LPVOID lpParam)
   caller->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME);
 
   unsigned int attempts = 0;
-  bool stopReceiveingData = false;
+  bool stopReceivingData = false;
 
-  while ((!caller->receiveDataWorkerShouldExit) && (!stopReceiveingData))
+  while ((!caller->receiveDataWorkerShouldExit) && (!stopReceivingData))
   {
     Sleep(1);
 
@@ -713,7 +713,7 @@ DWORD WINAPI CMPUrlSourceFilter::ReceiveDataWorker(LPVOID lpParam)
           case STATUS_ERROR_NO_RETRY:
             caller->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, _T("cannot open connection"));
             caller->status = STATUS_NO_DATA_ERROR;
-            stopReceiveingData = true;
+            stopReceivingData = true;
             break;
           default:
             // increase attempts
@@ -725,7 +725,7 @@ DWORD WINAPI CMPUrlSourceFilter::ReceiveDataWorker(LPVOID lpParam)
         {
           caller->logger.Log(LOGGER_ERROR, _T("%s: %s: maximum attempts of opening connection reached, attempts: %u, maximum attempts: %u"), MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, attempts, maximumAttempts);
           caller->status = STATUS_NO_DATA_ERROR;
-          stopReceiveingData = true;
+          stopReceivingData = true;
         }
       }
     }
