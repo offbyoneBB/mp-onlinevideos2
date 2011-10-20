@@ -1236,12 +1236,12 @@ HRESULT CAsyncSourceStream::CreateAsyncRequestProcessWorker(void)
   this->asyncRequestProcessingShouldExit = false;
 
   this->hAsyncRequestProcessingThread = CreateThread( 
-    NULL,                                   // default security attributes
-    0,                                      // use default stack size  
-    &CAsyncSourceStream::AsyncRequestProcessWorker, // thread function name
-    this,                                   // argument to thread function 
-    0,                                      // use default creation flags 
-    &dwAsyncRequestProcessingThreadId);          // returns the thread identifier
+    NULL,                                                 // default security attributes
+    0,                                                    // use default stack size  
+    &CAsyncSourceStream::AsyncRequestProcessWorker,       // thread function name
+    this,                                                 // argument to thread function 
+    0,                                                    // use default creation flags 
+    &dwAsyncRequestProcessingThreadId);                   // returns the thread identifier
 
   if (this->hAsyncRequestProcessingThread == NULL)
   {

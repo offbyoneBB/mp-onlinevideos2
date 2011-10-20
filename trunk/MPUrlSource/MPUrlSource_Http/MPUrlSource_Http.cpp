@@ -65,6 +65,8 @@ CMPUrlSource_Http::CMPUrlSource_Http()
   this->curl = NULL;
   this->internalExitRequest = false;
   this->wholeStreamDownloaded = false;
+  this->hCurlWorkerThread = NULL;
+  this->dwCurlWorkerThreadId = 0;
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -351,8 +353,50 @@ int CMPUrlSource_Http::OpenConnection(void)
       FREE_MEM(range);
     }
 
+    if (result == STATUS_OK)
+    {
+      // all parameters set
+      // create curl worker
+
+      result = (this->CreateCurlWorker() == S_OK) ? STATUS_OK : STATUS_ERROR;
+    }
+
+    if (result == STATUS_OK)
+    {
+      // wait for HTTP status code
+
+      long responseCode = 0;
+      while (responseCode == 0)
+      {
+        errorCode = curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode);
+        if (errorCode == CURLE_OK)
+        {
+          if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
+          {
+            // response code 200 - 299 = OK
+            // response code 300 - 399 = redirect (OK)
+            this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: HTTP status code: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+            result = STATUS_ERROR;
+          }
+        }
+        else
+        {
+          this->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("error while requesting HTTP status code"), errorCode);
+          result = STATUS_ERROR;
+        }
+      }
+
+      // wait some time
+      Sleep(1);
+    }
+    
     delete parameters;
-  }  
+  }
+
+  if (result == STATUS_ERROR)
+  {
+    this->CloseConnection();
+  }
 
   this->logger.Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
   return result;
@@ -370,6 +414,8 @@ void CMPUrlSource_Http::CloseConnection(void)
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
 
+  this->DestroyCurlWorker();
+
   if (this->curl != NULL)
   {
     curl_easy_cleanup(this->curl);
@@ -382,7 +428,7 @@ void CMPUrlSource_Http::CloseConnection(void)
 void CMPUrlSource_Http::ReceiveData(bool *shouldExit)
 {
   this->logger.Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-  this->shouldExit = shouldExit;
+  this->shouldExit = *shouldExit;
 
   if (this->internalExitRequest)
   {
@@ -401,28 +447,27 @@ void CMPUrlSource_Http::ReceiveData(bool *shouldExit)
   {
     if (!this->wholeStreamDownloaded)
     {
-      // on next line will be stopped processing of code - until something happens
-      CURLcode errorCode = curl_easy_perform(this->curl);
-
-      if (errorCode == CURLE_OK)
+      if (WaitForSingleObject(this->hCurlWorkerThread, 0) == WAIT_OBJECT_0)
       {
-        // whole stream donwloaded
-        this->wholeStreamDownloaded = true;
+        // CurlWorker exited, we're not receiving data
+
         // connection is no longer needed
         this->CloseConnection();
-        // notify filter the we reached end of stream
-        this->streamTime = this->streamLength;
-        this->filter->EndOfStreamReached(OUTPUT_PIN_NAME);
-      }
-      else if ((errorCode != CURLE_OK) && (errorCode != CURLE_WRITE_ERROR))
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("error while receiving data"), errorCode);
+
+        if (this->curlWorkerErrorCode == CURLE_OK)
+        {
+          // whole stream downloaded
+          this->wholeStreamDownloaded = true;
+          // notify filter the we reached end of stream
+          this->streamTime = this->streamLength;
+          this->filter->EndOfStreamReached(OUTPUT_PIN_NAME);
+        }
       }
     }
   }
   else
   {
-    this->logger.Log(LOGGER_WARNING,  METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("connection closed, opening new one"));
+    this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("connection closed, opening new one"));
     // re-open connection if previous is lost
     if (this->OpenConnection() != STATUS_OK)
     {
@@ -572,7 +617,7 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
   CLockMutex lock(caller->lockMutex, INFINITE);
   unsigned int bytesRead = size * nmemb;
 
-  if (!((*caller->shouldExit) || (caller->internalExitRequest)))
+  if (!((caller->shouldExit) || (caller->internalExitRequest)))
   {
     long responseCode = 0;
     CURLcode errorCode = curl_easy_getinfo(caller->curl, CURLINFO_RESPONSE_CODE, &responseCode);
@@ -626,5 +671,74 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
   }
 
   // if returned 0 (or lower value than bytesRead) it cause transfer interruption
-  return ((*caller->shouldExit) || (caller->internalExitRequest)) ? 0 : (bytesRead);
+  return ((caller->shouldExit) || (caller->internalExitRequest)) ? 0 : (bytesRead);
+}
+
+HRESULT CMPUrlSource_Http::CreateCurlWorker(void)
+{
+  HRESULT result = S_OK;
+  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CREATE_CURL_WORKER_NAME);
+
+  // clear curl error code
+  this->curlWorkerErrorCode = CURLE_OK;
+
+  this->hCurlWorkerThread = CreateThread( 
+    NULL,                                   // default security attributes
+    0,                                      // use default stack size  
+    &CMPUrlSource_Http::CurlWorker,         // thread function name
+    this,                                   // argument to thread function 
+    0,                                      // use default creation flags 
+    &dwCurlWorkerThreadId);                 // returns the thread identifier
+
+  if (this->hCurlWorkerThread == NULL)
+  {
+    // thread not created
+    result = HRESULT_FROM_WIN32(GetLastError());
+    this->logger.Log(LOGGER_ERROR, _T("%s: %s: CreateThread() error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_CREATE_CURL_WORKER_NAME, result);
+  }
+
+  this->logger.Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CREATE_CURL_WORKER_NAME, result);
+  return result;
+}
+
+HRESULT CMPUrlSource_Http::DestroyCurlWorker(void)
+{
+  HRESULT result = S_OK;
+  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTROY_CURL_WORKER_NAME);
+
+  this->internalExitRequest = true;
+
+  // wait for the receive data worker thread to exit      
+  if (this->hCurlWorkerThread != NULL)
+  {
+    if (WaitForSingleObject(this->hCurlWorkerThread, 1000) == WAIT_TIMEOUT)
+    {
+      // thread didn't exit, kill it now
+      this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTROY_CURL_WORKER_NAME, _T("thread didn't exit, terminating thread"));
+      TerminateThread(this->hCurlWorkerThread, 0);
+    }
+  }
+
+  this->hCurlWorkerThread = NULL;
+  this->internalExitRequest = false;
+
+  this->logger.Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTROY_CURL_WORKER_NAME, result);
+  return result;
+}
+
+DWORD WINAPI CMPUrlSource_Http::CurlWorker(LPVOID lpParam)
+{
+  CMPUrlSource_Http *caller = (CMPUrlSource_Http *)lpParam;
+  caller->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CURL_WORKER_NAME);
+
+  // on next line will be stopped processing of code - until something happens
+  caller->curlWorkerErrorCode = curl_easy_perform(caller->curl);
+
+  if ((caller->curlWorkerErrorCode != CURLE_OK) && (caller->curlWorkerErrorCode != CURLE_WRITE_ERROR))
+  {
+    caller->ReportCurlErrorMessage(LOGGER_ERROR, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CURL_WORKER_NAME, _T("error while receiving data"), caller->curlWorkerErrorCode);
+  }
+
+  caller->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CURL_WORKER_NAME);
+  return S_OK;
 }
