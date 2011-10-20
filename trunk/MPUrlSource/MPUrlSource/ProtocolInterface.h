@@ -42,6 +42,7 @@
 #define METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME                         _T("ReceiveDataFromTimestamp()")
 #define METHOD_ABORT_STREAM_RECEIVE_NAME                                _T("AbortStreamReceive()")
 #define METHOD_QUERY_STREAM_PROGRESS_NAME                               _T("QueryStreamProgress()")
+#define METHOD_END_OF_STREAM_REACHED_NAME                               _T("EndOfStreamReached()")
 
 // methods' common string formats
 #define METHOD_START_FORMAT                                             _T("%s: %s: Start")
@@ -76,6 +77,11 @@ struct IOutputStream
   // @param mediaPacket : reference to media packet to push to output pin
   // @return : STATUS_OK if successful
   virtual int PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket) = 0;
+
+  // notifies output stream that end of stream was reached
+  // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
+  // @return : STATUS_OK if successful
+  virtual int EndOfStreamReached(const TCHAR *outputPinName) = 0;
 };
 
 // defines interface for base protocol implementation
@@ -109,10 +115,11 @@ struct IBaseProtocol
   // @return : reference to CStringCollection or NULL if error
   virtual CStringCollection *GetStreamNames(void) = 0;
 
-  // request protocol implementation to receive data from specified time
-  // @param time : the requested start time (zero is start of stream)
+  // request protocol implementation to receive data from specified time to specified time
+  // @param startTime : the requested start time (zero is start of stream)
+  // @param endTime : the requested end time, if endTime is lower or equal to startTime than endTime is not specified
   // @return : S_OK if successful, error code otherwise
-  virtual HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME time) = 0;
+  virtual HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime) = 0;
 
   // request protocol implementation to cancel the stream reading operation
   // @return : S_OK if successful
@@ -123,6 +130,17 @@ struct IBaseProtocol
   // @param current : reference to a variable that receives the length of the downloaded portion of the stream, in bytes
   // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_UNEXPECTED if unexpected error
   virtual HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current) = 0;
+  
+  // retrieves available lenght of stream
+  // @param available : reference to variable that receives the available length of stream, in bytes
+  // @return : S_OK if successful, E_NOTIMPL if method is not implemented, other error codes if error
+  virtual HRESULT QueryStreamAvailableLength(LONGLONG *available) = 0;
+
+  // queries protocol implementation if ranges are supported
+  // ranges are supported only when method returns S_OK and *rangesSupported is true
+  // @param rangesSupported : reference to variable that receives if ranges are supported
+  // @return : S_OK if successful, E_PENDING if protocol checking ranges support and result is not known yet, other error codes if error
+  virtual HRESULT QueryRangesSupported(bool *rangesSupported) = 0;
 };
 
 // defines interface for stream protocol implementation

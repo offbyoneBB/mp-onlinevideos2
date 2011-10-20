@@ -25,6 +25,7 @@
 #include "LockMutex.h"
 
 #include <stdio.h>
+#include <ShlObj.h>
 
 #define MODULE_NAME                                               _T("AsyncSourceStream")
 
@@ -72,6 +73,9 @@ CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCTSTR pObjectName, __inout HRE
     this->configuration->Append(configuration);
   }
 
+  this->storeFilePath = NULL;
+  this->connectedToAnotherPin = false;
+
   this->CreateAsyncRequestProcessWorker();
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
@@ -102,6 +106,9 @@ CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCSTR pObjectName, __inout HRES
     this->configuration->Append(configuration);
   }
 
+  this->storeFilePath = NULL;
+  this->connectedToAnotherPin = false;
+
   this->CreateAsyncRequestProcessWorker();
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
@@ -130,7 +137,12 @@ CAsyncSourceStream::~CAsyncSourceStream(void)
     CloseHandle(this->mediaPacketMutex);
     this->mediaPacketMutex = NULL;
   }
+  if (this->storeFilePath != NULL)
+  {
+    DeleteFile(this->storeFilePath);
+  }
 
+  FREE_MEM(this->storeFilePath);
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
 }
 
@@ -251,6 +263,7 @@ HRESULT CAsyncSourceStream::BreakConnect()
 
   this->queriedForAsyncReader = false;
   HRESULT result = this->CBasePin::BreakConnect();
+  this->connectedToAnotherPin = false;
 
   this->logger.Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_BREAK_CONNECT_NAME, result);
   return result;
@@ -261,6 +274,8 @@ STDMETHODIMP CAsyncSourceStream::Connect(IPin * receivePin, const AM_MEDIA_TYPE 
   this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONNECT_NAME);
 
   HRESULT result = this->CBasePin::Connect(receivePin, mediaType);
+
+  this->connectedToAnotherPin = (result == S_OK);
 
   this->logger.Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CONNECT_NAME, result);
   return result;
@@ -498,12 +513,60 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
 
         if (SUCCEEDED(result))
         {
+          bool rangesSupported = false;
+          bool rangesPending = false;
+          result = this->filter->QueryRangesSupported(&rangesSupported);
+
+          // if ranges are not supported than we must wait for data
+
+          switch (result)
+          {
+          case S_OK:
+            rangesPending = false;
+            break;
+          case E_PENDING:
+            rangesSupported = false;
+            rangesPending = true;
+            break;
+          default:
+            rangesSupported = false;
+            rangesPending = false;
+            break;
+          }
+
           result = VFW_E_TIMEOUT;
           this->logger.Log(LOGGER_DATA, _T("%s: %s: requesting data from position: %llu, length: %lu"), MODULE_NAME, METHOD_SYNC_READ_NAME, position, length);
 
           // wait until request is completed or cancelled
-          while (((GetTickCount() - ticks) <= timeout) && (!this->asyncRequestProcessingShouldExit))
+          while (!this->asyncRequestProcessingShouldExit)
           {
+            if (rangesPending)            
+            {
+              // protocol implementation doesn't know yet if ranges are supported
+              HRESULT pendingResult = this->filter->QueryRangesSupported(&rangesSupported);
+              switch (pendingResult)
+              {
+              case S_OK:
+                rangesPending = false;
+                break;
+              case E_PENDING:
+                rangesSupported = false;
+                rangesPending = true;
+                break;
+              default:
+                rangesSupported = false;
+                rangesPending = false;
+                break;
+              }
+            }
+
+            if ((rangesSupported) && ((GetTickCount() - ticks) > timeout))
+            {
+              // if ranges are supported and timeout occured then stop waiting for data and exit with VFW_E_TIMEOUT error
+              result = VFW_E_TIMEOUT;
+              break;
+            }
+
             CAsyncRequest *request = NULL;
 
             {
@@ -515,6 +578,16 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
 
               if (request != NULL)
               {
+
+                if ((!this->estimate) && (request->GetStart() >= this->totalLength))
+                {
+                  // something bad occured
+                  // graph requests data that are beyond stream (data doesn't exists)
+                  this->logger.Log(LOGGER_WARNING, _T("%s: %s: graph requests data beyond stream, stream total length: %llu, request start: %llu"), MODULE_NAME, METHOD_SYNC_READ_NAME, this->totalLength, request->GetStart());
+                  // complete result with error code
+                  request->Complete(E_FAIL);
+                }
+
                 if (request->GetState() == CAsyncRequest::Completed)
                 {
                   // request is completed
@@ -551,11 +624,16 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
             this->logger.Log(LOGGER_WARNING, _T("%s: %s: request '%u' cannot be removed"), METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, requestId);
           }
         }
+
+        if (FAILED(result))
+        {
+          this->logger.Log(LOGGER_WARNING, _T("%s: %s: requesting data from position: %llu, length: %lu, request id: %u, result: 0x%08X"), MODULE_NAME, METHOD_SYNC_READ_NAME, position, length, requestId, result);
+        }
       }
     }
   }
 
-  this->logger.Log(LOGGER_DATA, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, result);
+  this->logger.Log(SUCCEEDED(result) ? LOGGER_DATA : LOGGER_WARNING, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, result);
   return result;
 }
 
@@ -570,15 +648,32 @@ STDMETHODIMP CAsyncSourceStream::Length(LONGLONG *total, LONGLONG *available)
 
   if (result == S_OK)
   {
-    *total = this->totalLength;
-    *available = this->totalLength;
-    //*available = 0;
+    *total = this->totalLength;    
+    *available = (this->connectedToAnotherPin) ? this->totalLength : 0;
     unsigned int mediaPacketCount = this->mediaPacketCollection->Count();
-    /*for (unsigned int i = 0; i < mediaPacketCount; i++)
+    
+    result = (this->connectedToAnotherPin) ? S_OK : this->filter->QueryStreamAvailableLength(available);
+    if (result != S_OK)
     {
-      CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(i);
-      *available += mediaPacket->GetBuffer()->GetBufferOccupiedSpace();
-    }*/
+      this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: cannot query available stream length, result: 0x%08X"), MODULE_NAME, METHOD_LENGTH_NAME, result);
+      *available = 0;
+      for (unsigned int i = 0; i < mediaPacketCount; i++)
+      {
+        CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(i);
+        REFERENCE_TIME mediaPacketStart = 0;
+        REFERENCE_TIME mediaPacketEnd = 0;
+
+        if (mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd) == S_OK)
+        {
+          if ((mediaPacketEnd + 1) > (*available))
+          {
+            *available = mediaPacketEnd + 1;
+          }
+        }
+      }
+
+      result = S_OK;
+    }
 
     result = (this->estimate) ? VFW_S_ESTIMATED : S_OK;
     this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: total length: %llu, available length: %llu, estimate: %u, media packets: %u"), MODULE_NAME, METHOD_LENGTH_NAME, this->totalLength, *available, (this->estimate) ? 1 : 0, mediaPacketCount);
@@ -976,6 +1071,16 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
                 CMediaPacket *secondPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
 
                 result = ((firstPart != NULL) && (secondPart != NULL)) ? STATUS_OK : STATUS_ERROR;
+
+                if (result == STATUS_OK)
+                {
+                  // delete first media packet because it is processed
+                  if (!unprocessedMediaPackets->Remove(0))
+                  {
+                    // some error occured
+                    result = STATUS_ERROR;
+                  }
+                }
                 
                 if (result == STATUS_OK)
                 {
@@ -983,9 +1088,11 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
                   // now add both packets to unprocessed media collection
 
                   result = (unprocessedMediaPackets->Add(firstPart)) ? STATUS_OK : STATUS_ERROR;
+
                   if (result == STATUS_OK)
                   {
                     result = (unprocessedMediaPackets->Add(secondPart)) ? STATUS_OK : STATUS_ERROR;
+
                     if (result == STATUS_ERROR)
                     {
                       // second part wasn't added to media collection
@@ -1030,16 +1137,28 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
                 CMediaPacket *secondPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
 
                 result = ((firstPart != NULL) && (secondPart != NULL)) ? STATUS_OK : STATUS_ERROR;
-                
+
+                if (result == STATUS_OK)
+                {
+                  // delete first media packet because it is processed
+                  if (!unprocessedMediaPackets->Remove(0))
+                  {
+                    // some error occured
+                    result = STATUS_ERROR;
+                  }
+                }
+
                 if (result == STATUS_OK)
                 {
                   // both media packets are created correctly
                   // now add both packets to unprocessed media collection
 
                   result = (unprocessedMediaPackets->Add(firstPart)) ? STATUS_OK : STATUS_ERROR;
+
                   if (result == STATUS_OK)
                   {
                     result = (unprocessedMediaPackets->Add(secondPart)) ? STATUS_OK : STATUS_ERROR;
+
                     if (result == STATUS_ERROR)
                     {
                       // second part wasn't added to media collection
@@ -1068,17 +1187,20 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
                   }
                 }
               }
+              else
+              {
+                // just delete processed media packet
+                if (result == STATUS_OK)
+                {
+                  // delete first media packet because it is processed
+                  if (!unprocessedMediaPackets->Remove(0))
+                  {
+                    // some error occured
+                    result = STATUS_ERROR;
+                  }
+                }
+              }
             }
-          }
-        }
-
-        if (result == STATUS_OK)
-        {
-          // in any case delete first media packet because it is processed
-          if (!unprocessedMediaPackets->Remove(0))
-          {
-            // some error occured
-            result = STATUS_ERROR;
           }
         }
       }
@@ -1275,8 +1397,6 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
 
                 // get media packet
                 CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(packetIndex);
-                // set last access time
-                mediaPacket->SetLastAccessTime(GetTickCount());
                 // check packet values against async request values
                 result = caller->CheckValues(request, mediaPacket, &mediaPacketDataStart, &mediaPacketDataLength, startTime);
 
@@ -1290,7 +1410,58 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                   // copy data from media packet to request buffer
                   caller->logger.Log(LOGGER_DATA, _T("%s: %s: copy data from media packet '%u' to async request '%u', start: %u, data length: %u, request buffer position: %u, request buffer length: %lu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, packetIndex, request->GetRequestId(), mediaPacketDataStart, mediaPacketDataLength, foundDataLength, request->GetBufferLength());
                   char *requestBuffer = (char *)request->GetBuffer() + foundDataLength;
-                  mediaPacket->GetBuffer()->CopyFromBuffer(requestBuffer, mediaPacketDataLength, 0, mediaPacketDataStart);
+                  if (mediaPacket->IsStoredToFile())
+                  {
+                    // if media packet is stored to file
+                    // than is need to read 'mediaPacketDataLength' bytes
+                    // from 'mediaPacket->GetStoreFilePosition()' + 'mediaPacketDataStart' position of file
+
+                    LARGE_INTEGER size;
+                    size.QuadPart = 0;
+
+                    // open or create file
+                    HANDLE hTempFile = CreateFile(caller->storeFilePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+                    if (hTempFile != INVALID_HANDLE_VALUE)
+                    {
+                      bool error = false;
+
+                      LONG distanceToMoveLow = (LONG)(mediaPacket->GetStoreFilePosition() + mediaPacketDataStart);
+                      LONG distanceToMoveHigh = (LONG)((mediaPacket->GetStoreFilePosition() + mediaPacketDataStart) >> 32);
+                      LONG distanceToMoveHighResult = distanceToMoveHigh;
+                      DWORD result = SetFilePointer(hTempFile, distanceToMoveLow, &distanceToMoveHighResult, FILE_BEGIN);
+                      if (result == INVALID_SET_FILE_POINTER)
+                      {
+                        DWORD lastError = GetLastError();
+                        if (lastError != NO_ERROR)
+                        {
+                          caller->logger.Log(LOGGER_ERROR, _T("%s: %s: error occured while setting position: %lu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, lastError);
+                          error = true;
+                        }
+                      }
+
+                      if (!error)
+                      {
+                        DWORD read = 0;
+                        if (ReadFile(hTempFile, requestBuffer, mediaPacketDataLength, &read, NULL) == 0)
+                        {
+                          caller->logger.Log(LOGGER_ERROR, _T("%s: %s: error occured reading file: %lu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, GetLastError());
+                        }
+                        else if (read != mediaPacketDataLength)
+                        {
+                          caller->logger.Log(LOGGER_WARNING, _T("%s: %s: readed data length not same as requested, requested: %u, readed: %u"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, mediaPacketDataLength, read);
+                        }
+                      }
+
+                      CloseHandle(hTempFile);
+                      hTempFile = INVALID_HANDLE_VALUE;
+                    }
+                  }
+                  else
+                  {
+                    // media packet is stored in memory
+                    mediaPacket->GetBuffer()->CopyFromBuffer(requestBuffer, mediaPacketDataLength, 0, mediaPacketDataStart);
+                  }
 
                   // update length of data
                   foundDataLength += mediaPacketDataLength;
@@ -1321,10 +1492,20 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                 if (foundDataLength < (unsigned int)request->GetBufferLength())
                 {
                   // found data length is lower than requested, return S_FALSE
-                  caller->logger.Log(LOGGER_DATA, _T("%s: %s: request '%u' complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_FALSE);
-                  request->SetBufferLength(foundDataLength);
-                  // filters doesn't understand S_FALSE return code, so return S_OK
-                  request->Complete(S_OK);
+
+                  if ((!caller->estimate) && (caller->totalLength > (request->GetStart() + request->GetBufferLength())))
+                  {
+                    // we are receiving data, wait for all requested data
+                  }
+                  else
+                  {
+                    // we are not receiving more data
+                    // finish request
+                    caller->logger.Log(LOGGER_DATA, _T("%s: %s: request '%u' complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_FALSE);
+                    request->SetBufferLength(foundDataLength);
+                    // filters doesn't understand S_FALSE return code, so return S_OK
+                    request->Complete(S_OK);
+                  }
                 }
                 else if (foundDataLength == request->GetBufferLength())
                 {
@@ -1353,19 +1534,30 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
 
           if ((packetIndex == UINT_MAX) && (request->GetState() == CAsyncRequest::Waiting))
           {
-            // not found start packet and request wasn't requested from filter yet
-            // request filter to receive data from request start
-            result = caller->filter->ReceiveDataFromTimestamp(request->GetStart());
+            bool rangesSupported = false;
+            // check if ranges are supported
+            if (caller->filter->QueryRangesSupported(&rangesSupported) == S_OK)
+            {
+              if (rangesSupported)
+              {
+                if (SUCCEEDED(result))
+                {
+                  // not found start packet and request wasn't requested from filter yet
+                  // request filter to receive data from request start
+                  result = caller->filter->ReceiveDataFromTimestamp(request->GetStart(), request->GetStart());
+                }
 
-            if (SUCCEEDED(result))
-            {
-              request->Request();
-            }
-            else
-            {
-              // if error occured while requesting filter for data
-              caller->logger.Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while requesting data, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
-              request->Complete(result);
+                if (SUCCEEDED(result))
+                {
+                  request->Request();
+                }
+                else
+                {
+                  // if error occured while requesting filter for data
+                  caller->logger.Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while requesting data, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
+                  request->Complete(result);
+                }
+              }
             }
           }
         }
@@ -1375,26 +1567,110 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
     {
       if ((GetTickCount() - lastCheckTime) > 1000)
       {
-        // check overdue packets once time per seconds
         lastCheckTime = GetTickCount();
 
         // lock access to media packets
         CLockMutex mediaPacketLock(caller->mediaPacketMutex, INFINITE);
 
-        // after all remove media packets with last access time longer than maximum cache time
-        unsigned int i = 0;
-        DWORD currentTime = GetTickCount();
-
-        while (i < caller->mediaPacketCollection->Count())
+        if (caller->mediaPacketCollection->Count() > 0)
         {
-          CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(i);
-          if ((currentTime - mediaPacket->GetLastAccessTime()) >= maxCacheTime)
+          // store all media packets (which are not stored) to file
+          if (caller->storeFilePath == NULL)
           {
-            caller->mediaPacketCollection->Remove(i);
+            TCHAR *guid = ConvertGuidToString(caller->GetInstanceId());
+            ALLOC_MEM_DEFINE_SET(folder, TCHAR, MAX_PATH, 0);
+            if ((guid != NULL) && (folder != NULL))
+            {
+              // get common application data folder
+              if (SHGetSpecialFolderPath(NULL, folder, CSIDL_LOCAL_APPDATA, FALSE))
+              {
+                TCHAR *storeFolder = FormatString(_T("%s\\MPUrlSource\\"), folder);
+                wchar_t *unicodeStoreFolder = ConvertToUnicode(storeFolder);
+                if ((storeFolder != NULL) && (unicodeStoreFolder != NULL))
+                {
+                  int error = SHCreateDirectory(NULL, unicodeStoreFolder);
+                  if ((error == ERROR_SUCCESS) || (error == ERROR_FILE_EXISTS) || (error == ERROR_ALREADY_EXISTS))
+                  {
+                    // correct, directory exists
+                    caller->storeFilePath = FormatString(_T("%smpurlsource_%s.temp"), storeFolder, guid);
+                  }
+                }
+                FREE_MEM(storeFolder);
+                FREE_MEM(unicodeStoreFolder);
+              }
+            }
+            FREE_MEM(guid);
+            FREE_MEM(folder);
           }
-          else
+
+          if (caller->storeFilePath != NULL)
           {
-            i++;
+            LARGE_INTEGER size;
+            size.QuadPart = 0;
+
+            // open or create file
+            HANDLE hTempFile = CreateFile(caller->storeFilePath, FILE_APPEND_DATA, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+            if (hTempFile != INVALID_HANDLE_VALUE)
+            {
+              if (!GetFileSizeEx(hTempFile, &size))
+              {
+                caller->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("error while getting size"));
+                // error occured while getting file size
+                size.QuadPart = -1;
+              }
+
+              if (size.QuadPart >= 0)
+              {
+                unsigned int i = 0;
+                while (i < caller->mediaPacketCollection->Count())
+                {
+                  bool error = false;
+                  CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(i);
+
+                  if (!mediaPacket->IsStoredToFile())
+                  {
+                    // if media packet is not stored to file
+                    // store it to file
+                    REFERENCE_TIME mediaPacketStartTime = 0;
+                    REFERENCE_TIME mediaPacketEndTime = 0;
+                    if (mediaPacket->GetTime(&mediaPacketStartTime, &mediaPacketEndTime) == S_OK)
+                    {
+                      unsigned int length = (unsigned int)(mediaPacketEndTime + 1 - mediaPacketStartTime);
+
+                      ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
+                      if (mediaPacket->GetBuffer()->CopyFromBuffer(buffer, length, 0, 0) == length)
+                      {
+                        DWORD written = 0;
+                        if (WriteFile(hTempFile, buffer, length, &written, NULL))
+                        {
+                          if (length == written)
+                          {
+                            // mark as stored
+                            mediaPacket->SetStoredToFile(size.QuadPart);
+                            size.QuadPart += length;
+                          }
+                        }
+                        else
+                        {
+                          caller->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("not written"));
+                        }
+                      }
+                      FREE_MEM(buffer);
+                    }
+                  }
+
+                  i++;
+                }
+              }
+
+              CloseHandle(hTempFile);
+              hTempFile = INVALID_HANDLE_VALUE;
+            }
+            else
+            {
+              caller->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("invalid file handle"));
+            }
           }
         }
       }
@@ -1405,4 +1681,61 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
 
   caller->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME);
   return S_OK;
+}
+
+int CAsyncSourceStream::EndOfStreamReached(const TCHAR *outputPinName)
+{
+  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
+  CLockMutex mediaPacketLock(this->mediaPacketMutex, INFINITE);
+
+  if (this->mediaPacketCollection->Count() > 0)
+  {
+    this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: media packet count: %u"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, this->mediaPacketCollection->Count());
+    REFERENCE_TIME startTime = 0;
+    REFERENCE_TIME endTime = 0;
+    unsigned int mediaPacketIndex = this->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(startTime);
+
+    // because collection is sorted
+    // then simle going through all media packets will reveal if there is some empty place
+    while (mediaPacketIndex != UINT_MAX)
+    {
+      CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(mediaPacketIndex);
+      REFERENCE_TIME mediaPacketStart = 0;
+      REFERENCE_TIME mediaPacketEnd = 0;
+      if (mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd) == S_OK)
+      {
+        if (startTime == mediaPacketStart)
+        {
+          // next start time is next to end of current media packet
+          startTime = mediaPacketEnd + 1;
+          mediaPacketIndex++;
+
+          if (mediaPacketIndex >= this->mediaPacketCollection->Count())
+          {
+            // stop checking, all media packets checked
+            mediaPacketIndex = UINT_MAX;
+          }
+        }
+        else
+        {
+          endTime = mediaPacketStart - 1;
+          mediaPacketIndex = UINT_MAX;
+        }
+      }
+      else
+      {
+        mediaPacketIndex = UINT_MAX;
+      }
+    }
+
+    if (startTime < this->totalLength)
+    {
+      // found part which is not downloaded
+      this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: requesting stream part from: %llu, to: %llu"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startTime, endTime);
+      this->filter->ReceiveDataFromTimestamp(startTime, endTime);
+    }
+  }
+
+  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
+  return STATUS_OK;
 }

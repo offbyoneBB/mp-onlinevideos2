@@ -37,17 +37,28 @@ public:
   // @return : index of media packet or UINT_MAX if not exists
   unsigned int GetMediaPacketIndexBetweenTimes(REFERENCE_TIME time);
 
-  // gets index of media packet where time is between start time and end time searching from specified packet index
-  // @param startIndex : the index of packet where to start searching
-  // @param time : the time between start time and end time
-  // @return : index of media packet or UINT_MAX if not exists
-  unsigned int GetMediaPacketIndexBetweenTimes(unsigned int startIndex, REFERENCE_TIME time);
+  //// gets index of media packet where time is between start time and end time searching from specified packet index
+  //// @param startIndex : the index of packet where to start searching
+  //// @param time : the time between start time and end time
+  //// @return : index of media packet or UINT_MAX if not exists
+  //unsigned int GetMediaPacketIndexBetweenTimes(unsigned int startIndex, REFERENCE_TIME time);
 
   // gets index of media packet which overlap time range between start and end time
   // @param startTime : start of time range
   // @param endTime : end of time range
   // @return : index of media packet or UINT_MAX if not exists
   unsigned int GetMediaPacketIndexOverlappingTimes(REFERENCE_TIME startTime, REFERENCE_TIME endTime);
+
+  // get item index of item with specified start time
+  // @param key : the key of item to find
+  // @param context : reference to user defined context
+  // @return : the index of item or UINT_MAX if not found
+  unsigned int GetItemIndex(REFERENCE_TIME key, void *context);
+
+  // add item to collection
+  // @param item : the reference to item to add
+  // @return : true if successful, false otherwise
+  bool Add(CMediaPacket *item);
 
 protected:
   // compare two item keys
@@ -71,6 +82,18 @@ protected:
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
   CMediaPacket *Clone(CMediaPacket *item);
+
+  // returns indexes where item have to be placed
+  // startIndex == UINT_MAX && endIndex == 0 => item have to be placed on beginning
+  // startIndex == Count() - 1 && endIndex == UINT_MAX => item have to be placed on end
+  // startIndex == endIndex => item with same key exists in collection (index of item is startIndex)
+  // item have to be placed between startIndex and endIndex
+  // @param key : the item key to compare
+  // @param context : the reference to user defined context
+  // @param startIndex : reference to variable which holds start index where item have to be placed
+  // @param endIndex : reference to variable which holds end index where item have to be placed
+  // @return : true if successful, false otherwise
+  bool GetItemInsertPosition(REFERENCE_TIME key, void *context, unsigned int *startIndex, unsigned int *endIndex);
 };
 
 #endif

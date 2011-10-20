@@ -33,7 +33,7 @@ CMediaPacket::CMediaPacket(void)
   /*this->mediaStart = 0;
   this->mediaEnd = 0;
   this->mediaType = NULL;*/
-  this->lastAccessTime = GetTickCount();
+  this->storeFilePosition = -1;
 }
 
 CMediaPacket::~CMediaPacket(void)
@@ -59,17 +59,23 @@ CMediaPacket *CMediaPacket::Clone(void)
   clone->start = this->start;
   clone->end = this->end;
   clone->flags = this->flags;
-  clone->lastAccessTime = this->lastAccessTime;
+  clone->storeFilePosition = this->storeFilePosition;
 
   // because in clone is created linear buffer we need to delete clone buffer
   delete clone->buffer;
-  clone->buffer = this->buffer->Clone();
 
-  if (clone->buffer == NULL)
+  if (!this->IsStoredToFile())
   {
-    // error occured while cloning current instance
-    delete clone;
-    clone = NULL;
+    // media packet is not stored in file
+    // we need to copy buffer in that case
+    clone->buffer = this->buffer->Clone();
+
+    if (clone->buffer == NULL)
+    {
+      // error occured while cloning current instance
+      delete clone;
+      clone = NULL;
+    }
   }
 
   return clone;
@@ -79,7 +85,7 @@ CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(REFERENCE_TIME timeSt
 {
   CMediaPacket *mediaPacket = new CMediaPacket();
   char *buffer = NULL;
-  bool success = ((timeStart >= this->start) && (timeEnd >= timeStart));
+  bool success = ((timeStart >= this->start) && (timeEnd >= timeStart) && (this->GetBuffer() != NULL));
 
   if (success)
   {
@@ -90,7 +96,6 @@ CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(REFERENCE_TIME timeSt
     success = (mediaPacket->SetTime(&timeStart, &timeEnd) == S_OK);
     if (success)
     {
-      mediaPacket->SetLastAccessTime(this->GetLastAccessTime());
       success = (mediaPacket->GetBuffer()->InitializeBuffer(length));
     }
 
@@ -368,12 +373,33 @@ HRESULT CMediaPacket::SetTime(REFERENCE_TIME *timeStart, REFERENCE_TIME *timeEnd
 //  return result;
 //}
 
-DWORD CMediaPacket::GetLastAccessTime(void)
+bool CMediaPacket::IsStoredToFile(void)
 {
-  return this->lastAccessTime;
+  return (this->storeFilePosition != (-1));
 }
 
- void CMediaPacket::SetLastAccessTime(DWORD accessTime)
- {
-   this->lastAccessTime = accessTime;
- }
+void CMediaPacket::SetStoredToFile(LONGLONG position)
+{
+  this->storeFilePosition = position;
+  if (this->storeFilePosition != (-1))
+  {
+    if (this->buffer != NULL)
+    {
+      delete this->buffer;
+    }
+    this->buffer = NULL;
+  }
+  else
+  {
+    if (this->buffer == NULL)
+    {
+      this->buffer = new LinearBuffer();
+      this->buffer->DeleteBuffer();
+    }
+  }
+}
+
+LONGLONG CMediaPacket::GetStoreFilePosition(void)
+{
+  return this->storeFilePosition;
+}

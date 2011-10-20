@@ -155,14 +155,18 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
 {
   HRESULT result = S_OK;
   this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
-
-#ifdef _MBCS
-  this->m_url = ConvertToMultiByteW(pszFileName);
-#else
-  this->m_url = ConvertToUnicodeW(pszFileName);
-#endif
+//
+//#ifdef _MBCS
+//  this->m_url = ConvertToMultiByteW(pszFileName);
+//#else
+//  this->m_url = ConvertToUnicodeW(pszFileName);
+//#endif
 
   //this->m_url = Duplicate(_T("http://vid1.markiza.sk/a510/video/part/file/2/0032/2011_10_06_00_00_0_adela_show_1_1.mp4"));
+
+  //this->m_url = Duplicate(_T("http://localhost/test.flv"));
+
+  this->m_url = Duplicate(_T("http://www.sme.sk/pokus.html"));
 
   if (this->m_url == NULL)
   {
@@ -438,6 +442,8 @@ void CMPUrlSourceFilter::LoadPlugins()
       _tcscat_s(strDllSearch, _MAX_PATH, _T("mpurlsource_*.dll"));
 
       logger.Log(LOGGER_VERBOSE, _T("%s: %s: search path: %s"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, strDllPath);
+      // add plugins directory to search path
+      SetDllDirectory(strDllPath);
 
       h = FindFirstFile(strDllSearch, &info);
       if (h != INVALID_HANDLE_VALUE) 
@@ -601,6 +607,26 @@ int CMPUrlSourceFilter::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
     // if result if not STATUS_OK than release media packet
     // because receiver is responsible of deleting media packet
     delete mediaPacket;
+  }
+
+  this->logger.Log(LOGGER_DATA, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
+  return result;
+}
+
+int CMPUrlSourceFilter::EndOfStreamReached(const TCHAR *outputPinName)
+{
+  this->logger.Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
+
+  CAsyncSourceStream *stream = this->sourceStreamCollection->GetStream((TCHAR *)outputPinName, false);
+  int result = (stream != NULL) ? STATUS_OK : STATUS_ERROR;
+
+  if (result == STATUS_OK)
+  {
+    result = stream->EndOfStreamReached(outputPinName);
+  }
+  else
+  {
+    this->logger.Log(LOGGER_WARNING, _T("%s: %s: unknown stream: %s"), MODULE_NAME, METHOD_PUSH_DATA_NAME, outputPinName);
   }
 
   this->logger.Log(LOGGER_DATA, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
@@ -781,13 +807,13 @@ CStringCollection *CMPUrlSourceFilter::GetStreamNames(void)
   return result;
 }
 
-HRESULT CMPUrlSourceFilter::ReceiveDataFromTimestamp(REFERENCE_TIME time)
+HRESULT CMPUrlSourceFilter::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime)
 {
   HRESULT result = E_NOT_VALID_STATE;
 
   if (this->activeProtocol != NULL)
   {
-    result = this->activeProtocol->ReceiveDataFromTimestamp(time);
+    result = this->activeProtocol->ReceiveDataFromTimestamp(startTime, endTime);
   }
 
   return result;
@@ -812,6 +838,30 @@ HRESULT CMPUrlSourceFilter::QueryStreamProgress(LONGLONG *total, LONGLONG *curre
   if (this->activeProtocol != NULL)
   {
     result = this->activeProtocol->QueryStreamProgress(total, current);
+  }
+
+  return result;
+}
+
+HRESULT CMPUrlSourceFilter::QueryStreamAvailableLength(LONGLONG *available)
+{
+  HRESULT result = E_NOTIMPL;
+
+  if (this->activeProtocol != NULL)
+  {
+    result = this->activeProtocol->QueryStreamAvailableLength(available);
+  }
+
+  return result;
+}
+
+HRESULT CMPUrlSourceFilter::QueryRangesSupported(bool *rangesSupported)
+{
+  HRESULT result = E_NOTIMPL;
+
+  if (this->activeProtocol != NULL)
+  {
+    result = this->activeProtocol->QueryRangesSupported(rangesSupported);
   }
 
   return result;

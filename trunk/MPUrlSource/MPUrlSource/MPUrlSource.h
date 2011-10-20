@@ -131,6 +131,11 @@ public:
   // @return : STATUS_OK if successful
   int PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket);
 
+  // notifies output stream that end of stream was reached
+  // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
+  // @return : STATUS_OK if successful
+  int EndOfStreamReached(const TCHAR *outputPinName);
+
   // IBaseProtocol interface
 
   // return reference to null-terminated string which represents protocol name
@@ -162,9 +167,10 @@ public:
   CStringCollection *GetStreamNames(void);
 
   // request protocol implementation to receive data from specified time
-  // @param time : the requested start time (zero is start of stream)
+  // @param startTime : the requested start time (zero is start of stream)
+  // @param endTime : the requested end time, if endTime is lower or equal to startTime than endTime is not specified
   // @return : S_OK if successful, error code otherwise
-  HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME time);
+  HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime);
 
   // request protocol implementation to cancel the stream reading operation
   // @return : S_OK if successful
@@ -175,6 +181,17 @@ public:
   // @param current : reference to a variable that receives the length of the downloaded portion of the stream, in bytes
   // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_UNEXPECTED if unexpected error
   HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
+
+  // retrieves available lenght of stream
+  // @param available : reference to variable that receives the available length of stream, in bytes
+  // @return : S_OK if successful, E_NOTIMPL if method is not implemented, other error codes if error
+  HRESULT QueryStreamAvailableLength(LONGLONG *available);
+
+  // queries protocol implementation if ranges are supported
+  // ranges are supported only when method returns S_OK and *rangesSupported is true
+  // @param rangesSupported : reference to variable that receives if ranges are supported
+  // @return : S_OK if successful, E_PENDING if protocol checking ranges support and result is not known yet, other error codes if error
+  HRESULT QueryRangesSupported(bool *rangesSupported);
 };
 
 

@@ -37,7 +37,7 @@ public:
   virtual ~CMediaPacket();
 
   // gets linear buffer
-  // @return : linear buffer  
+  // @return : linear buffer or NULL if error or media packet is stored to file
   LinearBuffer *GetBuffer();
 
   // gets the stream time at which this packet should start and finish
@@ -61,7 +61,7 @@ public:
   // deeply clone current instance of media packet with specified time range to new media packet
   // @param timeStart : time start of new media packet
   // @param timeEnd : time end of new media packet
-  // @return : new media packet or NULL if error
+  // @return : new media packet or NULL if error or media packet is stored to file
   CMediaPacket *CreateMediaPacketBasedOnPacket(REFERENCE_TIME timeStart, REFERENCE_TIME timeEnd);
 
   //// determines if the beginning of this packet is a synchronization point
@@ -110,13 +110,19 @@ public:
   //// @return : S_OK if successful, E_OUTOFMEMORY if not enough memory
   //HRESULT SetMediaType(AM_MEDIA_TYPE *mediaType);
 
-  // gets last access time (in ticks) to media packet
-  // @return : last access time in ticks
-  DWORD GetLastAccessTime(void);
+  // tests if media packet is stored to file
+  // @return : true if media packet is stored to file, false otherwise
+  bool IsStoredToFile(void);
 
-  // sets last access time (in ticks)
-  // @param accessTime : the access time (in ticks) to set
-  void SetLastAccessTime(DWORD accessTime);
+  // sets position within store file
+  // if media packet is stored than linear buffer is deleted
+  // if store file path is cleared (NULL) than linear buffer is created
+  // @param position : the position of start of media packet within store file or (-1) if media packet is in memory
+  void SetStoredToFile(LONGLONG position);
+
+  // gets position of start of media packet within store file
+  // @return : file position or -1 if error
+  LONGLONG GetStoreFilePosition(void);
 
 protected:
   // internal linear buffer for media data
@@ -152,8 +158,8 @@ protected:
   // type specific flags are packed into the top word
   DWORD flags;
 
-  // holds when was last access to media packet data
-  DWORD lastAccessTime;
+  // posittion in store file
+  LONGLONG storeFilePosition;
 };
 
 #endif

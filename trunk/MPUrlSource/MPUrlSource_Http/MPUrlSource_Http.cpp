@@ -59,6 +59,7 @@ CMPUrlSource_Http::CMPUrlSource_Http()
   this->streamLength = 0;
   this->setLenght = false;
   this->streamTime = 0;
+  this->endStreamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->url = NULL;
   this->curl = NULL;
@@ -110,6 +111,7 @@ int CMPUrlSource_Http::ClearSession(void)
   this->streamLength = 0;
   this->setLenght = false;
   this->streamTime = 0;
+  this->endStreamTime = 0;
   FREE_MEM(this->url);
   this->wholeStreamDownloaded = false;
 
@@ -269,6 +271,10 @@ int CMPUrlSource_Http::OpenConnection(void)
 {
   int result = (this->url != NULL) ? STATUS_OK : STATUS_ERROR;
   this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
+
+  // lock access to stream
+  CLockMutex lock(this->lockMutex, INFINITE);
+
   this->wholeStreamDownloaded = false;
 
   if (result == STATUS_OK)
@@ -332,7 +338,8 @@ int CMPUrlSource_Http::OpenConnection(void)
 
     if (errorCode == CURLE_OK)
     {
-      TCHAR *range = FormatString(_T("%llu-"), this->streamTime);
+      TCHAR *range = FormatString((this->endStreamTime <= this->streamTime) ? _T("%llu-") : _T("%llu-%llu"), this->streamTime, this->endStreamTime);
+      this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: requesting range: %s"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, range);
       char *curlRange = ConvertToMultiByte(range);
       errorCode = curl_easy_setopt(this->curl, CURLOPT_RANGE, curlRange);
       if (errorCode != CURLE_OK)
@@ -359,6 +366,9 @@ bool CMPUrlSource_Http::IsConnected(void)
 void CMPUrlSource_Http::CloseConnection(void)
 {
   this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
+
+  // lock access to stream
+  CLockMutex lock(this->lockMutex, INFINITE);
 
   if (this->curl != NULL)
   {
@@ -393,12 +403,16 @@ void CMPUrlSource_Http::ReceiveData(bool *shouldExit)
     {
       // on next line will be stopped processing of code - until something happens
       CURLcode errorCode = curl_easy_perform(this->curl);
+
       if (errorCode == CURLE_OK)
       {
         // whole stream donwloaded
         this->wholeStreamDownloaded = true;
         // connection is no longer needed
         this->CloseConnection();
+        // notify filter the we reached end of stream
+        this->streamTime = this->streamLength;
+        this->filter->EndOfStreamReached(OUTPUT_PIN_NAME);
       }
       else if ((errorCode != CURLE_OK) && (errorCode != CURLE_WRITE_ERROR))
       {
@@ -443,32 +457,41 @@ CStringCollection *CMPUrlSource_Http::GetStreamNames(void)
   return streamNames;
 }
 
-HRESULT CMPUrlSource_Http::ReceiveDataFromTimestamp(REFERENCE_TIME time)
+HRESULT CMPUrlSource_Http::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime)
 {
   this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME);
-  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: requested time: %llu"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, time);
+  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: from time: %llu, to time: %llu"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, startTime, endTime);
 
-  HRESULT result = (this->internalExitRequest) ? S_OK : E_NOT_VALID_STATE;
+  HRESULT result = E_FAIL;
 
-  if ((this->IsConnected()) && (!this->internalExitRequest))
+  // lock access to stream
+  CLockMutex lock(this->lockMutex, INFINITE);
+
+  if (startTime >= this->streamLength)
   {
-    {
-      // lock access to file
-      CLockMutex lock(this->lockMutex, INFINITE);
+    result = E_INVALIDARG;
+  }
+  else if (this->internalExitRequest)
+  {
+    // there is pending request exit request
+    // set stream time to new value
+    this->streamTime = startTime;
+    this->endStreamTime = endTime;
 
-      if (((time - this->streamTime) < 0) || ((time - this->streamTime) > 1048576))
-      {
-        // difference between requests are bigger
-        // only way how to "request" curl to interrupt transfer is set shouldExit to true
-        this->internalExitRequest = true;
+    // connection should be reopened automatically
+    result = S_OK;
+  }
+  else
+  {
+    // only way how to "request" curl to interrupt transfer is set internalExitRequest to true
+    this->internalExitRequest = true;
 
-        // set stream time to new value
-        this->streamTime = time;
-      }
+    // set stream time to new value
+    this->streamTime = startTime;
+    this->endStreamTime = endTime;
 
-      // connection should be reopened automatically
-      result = S_OK;
-    }
+    // connection should be reopened automatically
+    result = S_OK;
   }
 
   this->logger.Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, result);
@@ -485,7 +508,7 @@ HRESULT CMPUrlSource_Http::AbortStreamReceive()
 
 HRESULT CMPUrlSource_Http::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME);
+  this->logger.Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME);
 
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, total);
@@ -494,10 +517,28 @@ HRESULT CMPUrlSource_Http::QueryStreamProgress(LONGLONG *total, LONGLONG *curren
   if (result == S_OK)
   {
     *total = this->streamLength;
-    *current = this->streamLength;
+    *current = this->streamTime;
   }
 
-  this->logger.Log(LOGGER_VERBOSE, (SUCCEEDED(result)) ? METHOD_END_HRESULT_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME, result);
+  this->logger.Log(LOGGER_DATA, (SUCCEEDED(result)) ? METHOD_END_HRESULT_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME, result);
+  return result;
+}
+
+HRESULT CMPUrlSource_Http::QueryStreamAvailableLength(LONGLONG *available)
+{
+  return E_NOTIMPL;
+}
+
+HRESULT CMPUrlSource_Http::QueryRangesSupported(bool *rangesSupported)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, rangesSupported);
+
+  if (result == S_OK)
+  {
+    *rangesSupported = true;
+  }
+
   return result;
 }
 
@@ -511,10 +552,7 @@ TCHAR *CMPUrlSource_Http::GetCurlErrorMessage(CURLcode errorCode)
   result = ConvertToUnicodeA(error);
 #endif
 
-  if (error != NULL)
-  {
-    curl_free((void *)error);
-  }
+  // there is no need to free error message
 
   return result;
 }
@@ -536,36 +574,57 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
 
   if (!((*caller->shouldExit) || (caller->internalExitRequest)))
   {
-    double streamSize = 0;
-    CURLcode errorCode = curl_easy_getinfo(caller->curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
-    if ((errorCode == CURLE_OK) && (streamSize > 0) && (!caller->setLenght))
+    long responseCode = 0;
+    CURLcode errorCode = curl_easy_getinfo(caller->curl, CURLINFO_RESPONSE_CODE, &responseCode);
+    if (errorCode == CURLE_OK)
     {
-      LONGLONG total = LONGLONG(streamSize);
-      caller->streamLength = total;
-      caller->logger.Log(LOGGER_VERBOSE, _T("%s: %s: setting total length: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
-      caller->filter->SetTotalLength(OUTPUT_PIN_NAME, total, false);
-      caller->setLenght = true;
+      if ((responseCode < 200) && (responseCode >= 400))
+      {
+        // response code 200 - 299 = OK
+        // response code 300 - 399 = redirect (OK)
+        caller->logger.Log(LOGGER_VERBOSE, _T("%s: %s: error response code: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+        // return error
+        bytesRead = 0;
+      }
     }
 
-    if (bytesRead != 0)
+    if ((responseCode >= 200) && (responseCode < 400))
     {
-      // create media packet
-      // set values of media packet
-      CMediaPacket *mediaPacket = new CMediaPacket();
-      mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
-      mediaPacket->GetBuffer()->AddToBuffer(buffer, bytesRead);
-
-      REFERENCE_TIME timeEnd = caller->streamTime + bytesRead - 1;
-      HRESULT result = mediaPacket->SetTime(&caller->streamTime, &timeEnd);
-      if (result != S_OK)
+      if (!caller->setLenght)
       {
-        caller->logger.Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+        double streamSize = 0;
+        CURLcode errorCode = curl_easy_getinfo(caller->curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
+        if ((errorCode == CURLE_OK) && (streamSize > 0))
+        {
+          LONGLONG total = LONGLONG(streamSize);
+          caller->streamLength = total;
+          caller->logger.Log(LOGGER_VERBOSE, _T("%s: %s: setting total length: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
+          caller->filter->SetTotalLength(OUTPUT_PIN_NAME, total, false);
+          caller->setLenght = true;
+        }
       }
 
-      caller->streamTime += bytesRead;
-      caller->filter->PushMediaPacket(OUTPUT_PIN_NAME, mediaPacket);
+      if (bytesRead != 0)
+      {
+        // create media packet
+        // set values of media packet
+        CMediaPacket *mediaPacket = new CMediaPacket();
+        mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
+        mediaPacket->GetBuffer()->AddToBuffer(buffer, bytesRead);
+
+        REFERENCE_TIME timeEnd = caller->streamTime + bytesRead - 1;
+        HRESULT result = mediaPacket->SetTime(&caller->streamTime, &timeEnd);
+        if (result != S_OK)
+        {
+          caller->logger.Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+        }
+
+        caller->streamTime += bytesRead;
+        caller->filter->PushMediaPacket(OUTPUT_PIN_NAME, mediaPacket);
+      }
     }
   }
 
+  // if returned 0 (or lower value than bytesRead) it cause transfer interruption
   return ((*caller->shouldExit) || (caller->internalExitRequest)) ? 0 : (bytesRead);
 }

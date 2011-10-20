@@ -60,6 +60,11 @@ public:
   // @param estimate : specifies if length is estimate
   // @return : STATUS_OK if successful
   int SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate);
+
+  // notifies output stream that end of stream was reached
+  // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
+  // @return : STATUS_OK if successful
+  int EndOfStreamReached(const TCHAR *outputPinName);
 protected:
   // logger for logging purposes
   CLogger logger;
@@ -89,6 +94,11 @@ protected:
 
   LONGLONG totalLength;
   bool estimate;
+  // file path for storing received data to file
+  TCHAR *storeFilePath;
+
+  // specifies if pin is successfully connected to another pin
+  bool connectedToAnotherPin;
 
   // configuration provided by filter
   CParameterCollection *configuration;
@@ -190,7 +200,7 @@ protected:
   // @return : VFW_E_NO_ACCEPTABLE_TYPES if an acceptable media type could not be find
   // @return : VFW_E_NOT_STOPPED if the filter is active and the pin does not support dynamic reconnection
   // @return : VFW_E_TYPE_NOT_ACCEPTED if the specified media type is not acceptable
-  STDMETHODIMP Connect(IPin * receivePin, const AM_MEDIA_TYPE *mediaType);
+  STDMETHODIMP Connect(IPin * receivePin, const AM_MEDIA_TYPE *mediaType);  
 
 private:
   // request ID for async requests

@@ -41,7 +41,7 @@ public:
   // add item to collection
   // @param item : the reference to item to add
   // @return : true if successful, false otherwise
-  bool Add(TItem *item);
+  virtual bool Add(TItem *item);
 
   // append collection of items
   // @param collection : the reference to collection to add
@@ -83,12 +83,15 @@ public:
   bool Remove(TItemKey key, void *context);
 
   // get item index of item with specified key
-  // @param key : the key of item to remove
+  // @param key : the key of item to find
   // @param context : reference to user defined context
   // @return : the index of item or UINT_MAX if not found
-  unsigned int GetItemIndex(TItemKey key, void *context);
+  virtual unsigned int GetItemIndex(TItemKey key, void *context);
 
 protected:
+  // pointer to array of pointers to items
+  TItem **items;
+
   // count of items in collection
   unsigned int itemCount;
 
@@ -130,9 +133,12 @@ protected:
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
   virtual TItem *Clone(TItem *item) = 0;
-private:
-  // pointer to array of pointers to items
-  TItem **items;
+
+  // ensures that in internal buffer is enough space
+  // if in internal buffer is not enough space, method tries to allocate enough space
+  // @param requestedCount : the requested count of items
+  // @return : true if in internal buffer is enough space, false otherwise
+  bool EnsureEnoughSpace(unsigned int requestedCount);
 };
 
 // implementation
@@ -180,18 +186,12 @@ template <class TItem, class TItemKey> void CCollection<TItem, TItemKey>::Clear(
   this->itemCount = 0;
 }
 
-template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Add(TItem *item)
+template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::EnsureEnoughSpace(unsigned int requestedCount)
 {
-  if (item == NULL)
-  {
-    return false;
-  }
-
-  if (this->itemCount >= this->itemMaximumCount)
+  if (requestedCount >= this->itemMaximumCount)
   {
     // there is need to enlarge array of items
-    // double number of allowed items
-    this->itemMaximumCount *= 2;
+    this->itemMaximumCount = requestedCount;
 
     TItem **itemArray = REALLOC_MEM(this->items, TItem *, this->itemMaximumCount);
 
@@ -201,6 +201,21 @@ template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Add(TI
     }
 
     this->items = itemArray;
+  }
+
+  return true;
+}
+
+template <class TItem, class TItemKey> bool CCollection<TItem, TItemKey>::Add(TItem *item)
+{
+  if (item == NULL)
+  {
+    return false;
+  }
+
+  if (!this->EnsureEnoughSpace(this->Count() + 1))
+  {
+    return false;
   }
 
   *(this->items + this->itemCount++) = item;
@@ -273,12 +288,15 @@ template <class TItem, class TItemKey> unsigned int CCollection<TItem, TItemKey>
   for(unsigned int i = 0; i < this->itemCount; i++)
   {
     TItem *item = *(this->items + i);
+    TItemKey itemKey = this->GetKey(item);
 
-    if (this->CompareItemKeys(key, this->GetKey(item), context) == 0)
+    if (this->CompareItemKeys(key, itemKey, context) == 0)
     {
       result = i;
       break;
     }
+
+    this->FreeKey(itemKey);
   }
 
   return result;
