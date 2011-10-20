@@ -43,7 +43,7 @@ namespace OnlineVideos.Hoster
             webData = SiteUtilBase.GetWebData(setting, cc);
             if (string.IsNullOrEmpty(webData)) return string.Empty;
 
-            string dlLink = getRegExData(@"""res"":\[.*?\{""d"":(?:true|false),""\w+"":""\w+"",""u"":""(?<url>[^""]+)""\}\]", webData, "url");
+            string dlLink = getRegExData(@"""res"":\[.*?\{""d"":(?:true|false),""\w+"":""\w+"",""u"":""(?<url>[^""]+)""[^\}]*\}\]", webData, "url");
             if (string.IsNullOrEmpty(dlLink)) return string.Empty;
             temp = Convert.FromBase64String(dlLink);
             dlLink = Encoding.ASCII.GetString(temp);
