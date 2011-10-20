@@ -29,17 +29,14 @@
 // we should get data in two seconds
 #define FILE_RECEIVE_DATA_TIMEOUT_DEFAULT                   2000
 #define FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
-#define FILE_MAXIMUM_PACKETS_TO_LOAD_DEFAULT                1024
 
 #define DEFAULT_BUFFER_SIZE                                 32 * 1024
 #define OUTPUT_PIN_NAME                                     _T("Output File")
-
 
 #define CONFIGURATION_SECTION_FILE                          _T("FILE")
 
 #define CONFIGURATION_FILE_RECEIVE_DATA_TIMEOUT             _T("FileReceiveDataTimeout")
 #define CONFIGURATION_FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS _T("FileOpenConnectionMaximumAttempts")
-#define CONFIGURATION_FILE_MAXIMUM_PACKETS_TO_LOAD          _T("FileMaximumPacketsToLoad")
 
 // returns protocol class instance
 PIProtocol CreateProtocolInstance(void);
@@ -71,9 +68,11 @@ public:
   GUID GetInstanceId(void);
   unsigned int GetOpenConnectionMaximumAttempts(void);
   CStringCollection *GetStreamNames(void);
-  HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME time);
+  HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime);
   HRESULT AbortStreamReceive();  
   HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
+  HRESULT QueryStreamAvailableLength(LONGLONG *available);
+  HRESULT QueryRangesSupported(bool *rangesSupported);
 
 protected:
   CLogger logger;
@@ -97,12 +96,6 @@ protected:
   // holds open connection maximum attempts
   unsigned int openConnetionMaximumAttempts;
 
-  // holds maximum packets to load from file (to preserve memory)
-  unsigned int maximumPacketsToLoad;
-
-  //// specifies that we are on start of file
-  //bool onStartOfFile;
-
   // the lenght of file
   LONGLONG fileLength;
 
@@ -115,8 +108,8 @@ protected:
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
 
-  // holds count of loaded packets from file
-  unsigned int loadedPackets;
+  // specifies if whole stream is downloaded
+  bool wholeStreamDownloaded;
 };
 
 #endif

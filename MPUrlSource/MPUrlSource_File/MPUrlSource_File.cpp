@@ -56,14 +56,12 @@ CMPUrlSource_File::CMPUrlSource_File()
   this->loadParameters = new CParameterCollection();
   this->receiveDataTimeout = 0;
   this->openConnetionMaximumAttempts = FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
-  this->maximumPacketsToLoad = FILE_MAXIMUM_PACKETS_TO_LOAD_DEFAULT;
   this->filter = NULL;
-  //this->onStartOfFile = true;
   this->fileLength = 0;
   this->setLenght = false;
   this->streamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
-  this->loadedPackets = 0;
+  this->wholeStreamDownloaded = false;
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -99,11 +97,10 @@ int CMPUrlSource_File::ClearSession(void)
   }
 
   this->loadParameters->Clear();
-  //this->onStartOfFile = true;
   this->fileLength = 0;
   this->setLenght = false;
   this->streamTime = 0;
-  this->loadedPackets = 0;
+  this->wholeStreamDownloaded = false;
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return STATUS_OK;
@@ -131,7 +128,6 @@ int CMPUrlSource_File::Initialize(IOutputStream *filter, CParameterCollection *c
 
   this->receiveDataTimeout = this->configurationParameters->GetValueLong(CONFIGURATION_FILE_RECEIVE_DATA_TIMEOUT, true, FILE_RECEIVE_DATA_TIMEOUT_DEFAULT);
   this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(CONFIGURATION_FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
-  this->maximumPacketsToLoad = this->configurationParameters->GetValueLong(CONFIGURATION_FILE_MAXIMUM_PACKETS_TO_LOAD, true, FILE_MAXIMUM_PACKETS_TO_LOAD_DEFAULT);
 
   return STATUS_OK;
 }
@@ -289,6 +285,8 @@ int CMPUrlSource_File::OpenConnection(void)
   int result = (this->filePath != NULL) ? STATUS_OK : STATUS_ERROR;
   this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
 
+  this->wholeStreamDownloaded = false;
+
   if ((result == STATUS_OK) && (this->fileStream == NULL))
   {
     if (_tfopen_s(&this->fileStream, this->filePath, _T("rb")) != 0)
@@ -327,7 +325,7 @@ int CMPUrlSource_File::OpenConnection(void)
 
 bool CMPUrlSource_File::IsConnected(void)
 {
-  return (this->fileStream != NULL);
+  return ((this->fileStream != NULL) || (this->wholeStreamDownloaded));
 }
 
 void CMPUrlSource_File::CloseConnection(void)
@@ -354,40 +352,47 @@ void CMPUrlSource_File::ReceiveData(bool *shouldExit)
     // lock access to file
     CLockMutex lock(this->lockMutex, INFINITE);
 
-    if (!this->setLenght)
+    if (!this->wholeStreamDownloaded)
     {
-      this->filter->SetTotalLength(OUTPUT_PIN_NAME, this->fileLength, false);
-      this->setLenght = true;
-    }
-
-    if ((!feof(this->fileStream)) && (this->loadedPackets < this->maximumPacketsToLoad))
-    {
-      unsigned int bytesToRead = DEFAULT_BUFFER_SIZE; // 32 kB
-
-      ALLOC_MEM_DEFINE_SET(receiveBuffer, char, bytesToRead, 0);    
-      unsigned int bytesRead = fread_s(receiveBuffer, bytesToRead, sizeof(char), bytesToRead, this->fileStream);
-      if (bytesRead != 0)
+      if (!this->setLenght)
       {
-        // create media packet
-        // set values of media packet
-        CMediaPacket *mediaPacket = new CMediaPacket();
-        mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
-        mediaPacket->GetBuffer()->AddToBuffer(receiveBuffer, bytesRead);
-        //mediaPacket->SetDiscontinuity(this->onStartOfFile);
-
-        REFERENCE_TIME timeEnd = this->streamTime + bytesRead - 1;
-        HRESULT result = mediaPacket->SetTime(&this->streamTime, &timeEnd);
-        if (result != S_OK)
-        {
-          this->logger.Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
-        }
-
-        this->streamTime += bytesRead;
-        //this->onStartOfFile = false;
-        this->filter->PushMediaPacket(OUTPUT_PIN_NAME, mediaPacket);
-        this->loadedPackets++;
+        this->filter->SetTotalLength(OUTPUT_PIN_NAME, this->fileLength, false);
+        this->setLenght = true;
       }
-      FREE_MEM(receiveBuffer);
+
+      if (!feof(this->fileStream))
+      {
+        unsigned int bytesToRead = DEFAULT_BUFFER_SIZE; // 32 kB
+
+        ALLOC_MEM_DEFINE_SET(receiveBuffer, char, bytesToRead, 0);    
+        unsigned int bytesRead = fread_s(receiveBuffer, bytesToRead, sizeof(char), bytesToRead, this->fileStream);
+        if (bytesRead != 0)
+        {
+          // create media packet
+          // set values of media packet
+          CMediaPacket *mediaPacket = new CMediaPacket();
+          mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
+          mediaPacket->GetBuffer()->AddToBuffer(receiveBuffer, bytesRead);
+
+          REFERENCE_TIME timeEnd = this->streamTime + bytesRead - 1;
+          HRESULT result = mediaPacket->SetTime(&this->streamTime, &timeEnd);
+          if (result != S_OK)
+          {
+            this->logger.Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+          }
+
+          this->streamTime += bytesRead;
+          this->filter->PushMediaPacket(OUTPUT_PIN_NAME, mediaPacket);
+        }
+        FREE_MEM(receiveBuffer);
+      }
+      else
+      {
+        this->wholeStreamDownloaded = true;
+
+        // notify filter the we reached end of stream
+        this->filter->EndOfStreamReached(OUTPUT_PIN_NAME);
+      }
     }
   }
   else
@@ -427,10 +432,10 @@ CStringCollection *CMPUrlSource_File::GetStreamNames(void)
   return streamNames;
 }
 
-HRESULT CMPUrlSource_File::ReceiveDataFromTimestamp(REFERENCE_TIME time)
+HRESULT CMPUrlSource_File::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime)
 {
   this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME);
-  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: requested time: %llu"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, time);
+  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: from time: %llu, to time: %llu"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, startTime, endTime);
 
   HRESULT result = E_NOT_VALID_STATE;
 
@@ -440,12 +445,11 @@ HRESULT CMPUrlSource_File::ReceiveDataFromTimestamp(REFERENCE_TIME time)
       // lock access to file
       CLockMutex lock(this->lockMutex, INFINITE);
 
-      result = (fseek(this->fileStream, (long)time, SEEK_SET) == 0) ? S_OK : E_FAIL;
+      result = (fseek(this->fileStream, (long)startTime, SEEK_SET) == 0) ? S_OK : E_FAIL;
       if (SUCCEEDED(result))
       {
-        this->streamTime = time;
-        this->loadedPackets = 0;
-        //this->onStartOfFile = true;
+        this->wholeStreamDownloaded = false;
+        this->streamTime = startTime;
       }
     }
   }
@@ -477,5 +481,31 @@ HRESULT CMPUrlSource_File::QueryStreamProgress(LONGLONG *total, LONGLONG *curren
   }
 
   this->logger.Log(LOGGER_VERBOSE, (SUCCEEDED(result)) ? METHOD_END_HRESULT_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME, result);
+  return result;
+}
+
+HRESULT CMPUrlSource_File::QueryStreamAvailableLength(LONGLONG *available)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, available);
+
+  if (result == S_OK)
+  {
+    *available = this->fileLength;
+  }
+
+  return result;
+}
+
+HRESULT CMPUrlSource_File::QueryRangesSupported(bool *rangesSupported)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, rangesSupported);
+
+  if (result == S_OK)
+  {
+    *rangesSupported = true;
+  }
+
   return result;
 }

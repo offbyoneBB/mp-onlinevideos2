@@ -56,18 +56,6 @@ MPURLSOURCE_API TCHAR *GetMediaPortalFilePath(const TCHAR *filePath);
 // @return : the collection of configuration parameters
 MPURLSOURCE_API CParameterCollection *GetConfiguration(const TCHAR *section);
 
-//// common implementation of FillBuffer() method
-//// @param logger : logger for logging purposes
-//// @param protocolName : name of protocol calling FillBufferStandard()
-//// @param functionName : name of function calling FillBufferStandard()
-//// @param lockMutex : mutex to lock access to buffer
-//// @param buffer : linear buffer
-//// @param pSamp :
-//// @param pData :
-//// @param cbData :
-//// @return: count of bytes written to media sample
-//MPURLSOURCE_API unsigned int FillBufferStandard(CLogger *logger, const TCHAR *protocolName, const TCHAR *functionName, HANDLE lockMutex, LinearBuffer *buffer, IMediaSample *pSamp, char *pData, long cbData);
-
 #define CHECK_CONDITION(result, condition, case_true, case_false)                 if (result == 0) { result = (condition) ? case_true : case_false; }
 
 #define CHECK_CONDITION_HRESULT(result, condition, case_true, case_false)         if (SUCCEEDED(result)) { result = (condition) ? case_true : case_false; }

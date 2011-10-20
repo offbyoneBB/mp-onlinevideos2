@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AxInterop.WMPLib">
@@ -274,6 +275,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration\Configuration.resx">
       <DependentUpon>Configuration.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration\ConfigurationAdvanced.resx">
       <DependentUpon>ConfigurationAdvanced.cs</DependentUpon>

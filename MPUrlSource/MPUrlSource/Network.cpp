@@ -721,7 +721,7 @@ int UnsubscribeFromMulticastGroup(CLogger *logger, const TCHAR *protocolName, SO
     if (networkInterfaceParameter != NULL)
     {
       ULONG interfaceId = GetInterfaceId(logger, protocolName, networkInterfaceParameter->GetValue(), local->sa_family);
-      result = (interfaceId == 0) ? 0 : (-1);
+      result = (interfaceId != 0) ? 0 : (-1);
 
       if (result == 0)
       {

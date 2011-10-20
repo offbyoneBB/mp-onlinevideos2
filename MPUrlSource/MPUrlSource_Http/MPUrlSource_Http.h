@@ -72,9 +72,11 @@ public:
   GUID GetInstanceId(void);
   unsigned int GetOpenConnectionMaximumAttempts(void);
   CStringCollection *GetStreamNames(void);
-  HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME time);
+  HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime);
   HRESULT AbortStreamReceive();  
   HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
+  HRESULT QueryStreamAvailableLength(LONGLONG *available);
+  HRESULT QueryRangesSupported(bool *rangesSupported);
 
 protected:
   CLogger logger;
@@ -99,8 +101,9 @@ protected:
   // holds if length of stream was set
   bool setLenght;
 
-  // stream time and last stream time
+  // stream time and end stream time
   REFERENCE_TIME streamTime;
+  REFERENCE_TIME endStreamTime;
 
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
