@@ -438,11 +438,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                             break;
                     }
 
-                    details.Files.Add(f, video);
+                    details.Files[f] = video;
                 }
                 else
                 {
-                    details.Files.Add(f, video);
+                    details.Files[f] = video;
                     break;
                 }
             }
