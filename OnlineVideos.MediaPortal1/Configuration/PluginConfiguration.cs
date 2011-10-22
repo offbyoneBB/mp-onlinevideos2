@@ -39,7 +39,7 @@ namespace OnlineVideos.MediaPortal1
         public bool autoGroupByLang = true;
         public bool useRtmpProxy = true;
         public DateTime lastFirstRun;
-        public uint updatePeriod = 0;
+        public uint updatePeriod = 4;
 		public bool LatestVideosRandomize = true;
 		public uint LatestVideosMaxItems = 3;
 		public uint LatestVideosOnlineDataRefresh = 30; // minutes
