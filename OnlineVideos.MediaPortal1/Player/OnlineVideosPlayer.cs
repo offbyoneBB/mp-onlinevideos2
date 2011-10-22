@@ -245,7 +245,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 {
                     if (!PlaybackReady)
                     {
-                        Log.Instance.Info("Buffering was aborted.");
+						Log.Instance.Info("Buffering was aborted.");
                         if (sourceFilter is IAMOpenProgress) ((IAMOpenProgress)sourceFilter).AbortOperation();
                     }
                     DirectShowUtil.ReleaseComObject(sourceFilter, 2000);
@@ -268,7 +268,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 if (Vmr9 == null || !Vmr9.IsVMR9Connected)
                 {
-                    Log.Instance.Error("OnlineVideosPlayer: Failed to render file -> vmr9");
+                    Log.Instance.Error("OnlineVideosPlayer: Failed to render file -> No video rendere connected");
                     mediaCtrl = null;
                     Cleanup();
                     return false;
@@ -306,7 +306,7 @@ namespace OnlineVideos.MediaPortal1.Player
             m_ar = GUIGraphicsContext.ARType;
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
             _updateNeeded = true;
-            Log.Instance.Info("OnlineVideosPlayer:Play {0}", strFile);
+            Log.Instance.Info("OnlineVideosPlayer: Play '{0}'", strFile);
 
             m_bStarted = false;
             if (!GetInterfaces())
@@ -379,7 +379,7 @@ namespace OnlineVideos.MediaPortal1.Player
             }
             catch (Exception error)
             {
-                Log.Instance.Error("VideoPlayer: Unable to play with reason - {0}", error.Message);
+				Log.Instance.Error("OnlineVideosPlayer: Unable to play with reason: {0}", error.Message);
             }
             if (hr < 0)
             {
@@ -401,7 +401,7 @@ namespace OnlineVideos.MediaPortal1.Player
             _updateNeeded = true;
             SetVideoWindow();
             mediaPos.get_Duration(out m_dDuration);
-            Log.Instance.Info("OnlineVideosPlayer:Duration:{0}", m_dDuration);
+            Log.Instance.Info("OnlineVideosPlayer: Duration {0} sec", m_dDuration.ToString("F"));
             AnalyseStreams();
 #if !MP11
             SelectSubtitles();
@@ -414,7 +414,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public override void Stop()
         {
-            Log.Instance.Info("OnlineVideosPlayer:ended {0}", m_strCurrentFile);
+            Log.Instance.Info("OnlineVideosPlayer: Stop");
             m_strCurrentFile = "";
             CloseInterfaces();
             m_state = PlayState.Init;

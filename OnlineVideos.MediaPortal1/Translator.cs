@@ -36,7 +36,7 @@ namespace OnlineVideos.MediaPortal1
                 _info = DateTimeFormatInfo.GetInstance(CultureInfo.CurrentUICulture);
             }
 
-            Log.Instance.Info("Using language " + Lang);
+            Log.Instance.Info("Using language '{0}'", Lang);
 
             _path = Config.GetSubFolder(Config.Dir.Language, "OnlineVideos");
 
@@ -71,10 +71,10 @@ namespace OnlineVideos.MediaPortal1
                     return 0; // otherwise we are in an endless loop!
 
                 if (e.GetType() == typeof(FileNotFoundException))
-                    Log.Instance.Warn("Cannot find translation file {0}.  Falling back to English (US)", langPath);
+                    Log.Instance.Warn("Cannot find translation file '{0}'.  Falling back to English (US)", langPath);
                 else
                 {
-                    Log.Instance.Error("Error in translation xml file: {0}. Falling back to English (US)", Lang);
+                    Log.Instance.Error("Error in translation xml file: '{0}'. Falling back to English (US)", Lang);
                     Log.Instance.Error(e);
                 }
 
@@ -109,7 +109,7 @@ namespace OnlineVideos.MediaPortal1
 					fi.SetValue(Translation.Instance, TranslatedStrings[fi.Name]);
 				//TransType.InvokeMember(fi.Name, BindingFlags.SetField, null, TransType, new object[] { TranslatedStrings[fi.Name] });
 				else
-					Log.Instance.Info("Translation not found for field: {0}.  Using hard-coded English default.", fi.Name);
+					Log.Instance.Info("Translation not found for field: '{0}'. Using hard-coded English default.", fi.Name);
 			}
 		}
 
@@ -117,7 +117,7 @@ namespace OnlineVideos.MediaPortal1
 
         public static void TranslateSkin()
         {
-            Log.Instance.Info("Translating skin");
+            Log.Instance.Debug("Translating skin");
 			foreach (var nameTrans in Translation.Instance.Strings)
             {
 				GUIPropertyManager.SetProperty("#OnlineVideos.Translation." + nameTrans.Key + ".Label", nameTrans.Value);

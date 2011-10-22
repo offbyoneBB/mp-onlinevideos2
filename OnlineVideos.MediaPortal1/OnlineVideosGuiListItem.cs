@@ -43,7 +43,7 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-                Log.Instance.Debug("Icon for site {0} not found", item.Settings.Name);
+                Log.Instance.Debug("Icon for site '{0}' not found", item.Settings.Name);
                 MediaPortal.Util.Utils.SetDefaultIcons(this);
             }
         }

@@ -17,5 +17,8 @@
       <setting entryname="onlinevideos" type="int" name="wmpbuffer" displayname="Buffer (milliseconds) for Windows Media Player" defaultvalue="5000" listvalues="" displaylistvalues=""/>
       <setting entryname="onlinevideos" type="int" name="playbuffer" displayname="Percentage to buffer before starting playback" defaultvalue="2" listvalues="" displaylistvalues=""/>
       <setting entryname="onlinevideos" name="favoritesFirst" displayname="Put Favorites and Downloads sites first in the list instead of last" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/>
+      <setting entryname="onlinevideos" name="latestVideosRandomize" displayname="Randomize all latest videos before displaying" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/>
+      <setting entryname="onlinevideos" type="int" name="latestVideosOnlineDataRefresh" displayname="Refresh latest videos data from web every x minutes" defaultvalue="30"/>
+      <setting entryname="onlinevideos" type="int" name="latestVideosGuiDataRefresh" displayname="Refresh displayed latest videos every x seconds" defaultvalue="30"/>
   </settings>
 </extension_settings>

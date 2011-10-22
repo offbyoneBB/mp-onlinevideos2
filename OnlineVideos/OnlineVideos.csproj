@@ -548,6 +548,7 @@
     <Compile Include="Sites\Interfaces\IChoice.cs" />
     <Compile Include="Sites\Interfaces\IFavoritesDatabase.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
+    <Compile Include="Sites\Base\LatestVideosSiteUtilBase.cs" />
     <Compile Include="Sites\Interfaces\ITrackingInfo.cs" />
     <Compile Include="Sites\Interfaces\IUserStore.cs" />
     <Compile Include="Sites\Interfaces\IVideoDetails.cs" />

@@ -31,7 +31,7 @@ namespace OnlineVideos
             try
             {
 				downloadThread = System.Threading.Thread.CurrentThread;
-                using (FileStream fs = new FileStream(downloadInfo.LocalFile, FileMode.Create, FileAccess.Write))
+                using (FileStream fs = new FileStream(downloadInfo.LocalFile, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     HttpWebRequest request = (HttpWebRequest)System.Net.WebRequest.Create(downloadInfo.Url);
                     request.Timeout = 15000;

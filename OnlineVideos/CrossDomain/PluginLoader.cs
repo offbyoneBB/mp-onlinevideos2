@@ -46,7 +46,7 @@ namespace OnlineVideos
 				}
 				foreach (Assembly assembly in assemblies)
 				{
-					Log.Debug("Looking for SiteUtils in Assembly: {0} ({1}) from {2}", assembly.GetName().Name, assembly.GetName().Version.ToString(), Directory.GetLastWriteTime(new Uri(assembly.CodeBase).LocalPath).ToString("yyyy-MM-dd HH:mm:ss"));
+					Log.Debug("Looking for SiteUtils in Assembly: {0} (Version: {1}, LastWriteTime: {2})", assembly.GetName().Name, assembly.GetName().Version.ToString(), Directory.GetLastWriteTime(new Uri(assembly.CodeBase).LocalPath).ToString("yyyy-MM-dd HH:mm:ss"));
 					Type[] typeArray = assembly.GetExportedTypes();
 					foreach (Type type in typeArray)
 					{
@@ -57,7 +57,7 @@ namespace OnlineVideos
 
 							if (utils.ContainsKey(shortName))
 							{
-								Log.Error(string.Format("Unable to add util {0} because its short name has already been added.", type.Name));
+								Log.Error(string.Format("Unable to add SiteUtil '{0}' because its short name has already been added.", type.Name));
 							}
 							else
 							{
@@ -79,7 +79,7 @@ namespace OnlineVideos
 			}
 			catch (Exception ex)
 			{
-				Log.Warn(ex.ToString());
+				Log.Error(ex.ToString());
 			}
 		}
 
@@ -102,13 +102,13 @@ namespace OnlineVideos
 				}
 				catch (Exception ex)
 				{
-					Log.Warn("SiteUtil with name: {0} not compatible with this build of OnlineVideos: {1}", name, ex.Message);
+					Log.Warn("SiteUtil '{0}' not compatible with this build of OnlineVideos: {1}", name, ex.Message);
 					return null;
 				}
 			}
 			else
 			{
-				Log.Error(string.Format("SiteUtil with name: {0} not found!", name));
+				Log.Warn(string.Format("SiteUtil with name: {0} not found!", name));
 				return null;
 			}
 		}

@@ -52,7 +52,7 @@ namespace OnlineVideos
                 MMSDownloader mmsDL = new MMSDownloader();
                 mmsDL.FileInfoGot = downloadInfo.DownloadProgressCallback;
                 mmsDL.Start(downloadInfo.Url, null);
-                using (System.IO.FileStream fs = new System.IO.FileStream(downloadInfo.LocalFile, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+				using (System.IO.FileStream fs = new System.IO.FileStream(downloadInfo.LocalFile, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     int buffSize = 16384;
                     byte[] buffer = new byte[buffSize];

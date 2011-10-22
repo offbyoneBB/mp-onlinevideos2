@@ -66,6 +66,11 @@ namespace OnlineVideos.MediaPortal1
             else chkDoAutoUpdate.CheckState = CheckState.Indeterminate;
             tbxUpdatePeriod.Text = PluginConfiguration.Instance.updatePeriod.ToString();
 
+			chkLatestVideosRandomize.Checked = PluginConfiguration.Instance.LatestVideosRandomize;
+			tbxLatestVideosAmount.Text = PluginConfiguration.Instance.LatestVideosMaxItems.ToString();
+			tbxLatestVideosOnlineRefresh.Text = PluginConfiguration.Instance.LatestVideosOnlineDataRefresh.ToString();
+			tbxLatestVideosGuiRefresh.Text = PluginConfiguration.Instance.LatestVideosGuiDataRefresh.ToString();
+
             /** fill "Sites" tab **/
             // utils combobox
             foreach (string site in SiteUtilFactory.GetAllNames()) cbSiteUtil.Items.Add(site);
@@ -246,6 +251,13 @@ namespace OnlineVideos.MediaPortal1
                 PluginConfiguration.Instance.httpSourceFilterName = tbxHttpSourceFilter.Text;
                 PluginConfiguration.Instance.autoGroupByLang = chkAutoGroupByLang.Checked;
                 OnlineVideoSettings.Instance.FavoritesFirst = chkFavFirst.Checked;
+				PluginConfiguration.Instance.LatestVideosRandomize = chkLatestVideosRandomize.Checked;
+				try { PluginConfiguration.Instance.LatestVideosMaxItems = uint.Parse(tbxLatestVideosAmount.Text); }
+                catch { }
+				try { PluginConfiguration.Instance.LatestVideosOnlineDataRefresh =  uint.Parse(tbxLatestVideosOnlineRefresh.Text); }
+                catch { }
+				try { PluginConfiguration.Instance.LatestVideosGuiDataRefresh = uint.Parse(tbxLatestVideosGuiRefresh.Text); }
+				catch { }
                 PluginConfiguration.Instance.Save(false);
             }
         }
