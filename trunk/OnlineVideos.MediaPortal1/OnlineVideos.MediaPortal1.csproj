@@ -65,6 +65,11 @@
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\MpeCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="log4net">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\log4net.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -139,6 +144,10 @@
     <Compile Include="Gui2UtilConnector.cs" />
     <Compile Include="GUIOnlineVideos.cs" />
     <Compile Include="GUISiteUpdater.cs" />
+    <Compile Include="Initialization.cs">
+      <DependentUpon>GUIOnlineVideos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LatestVideosManager.cs" />
     <Compile Include="LoadParameterInfo.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="OnlineVideosGuiListItem.cs" />
@@ -320,6 +329,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Latest.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

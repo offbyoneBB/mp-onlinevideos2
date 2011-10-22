@@ -113,7 +113,6 @@ namespace OnlineVideos.MediaPortal1
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 					if (newDllsDownloaded)
 					{
-						newDllsDownloaded = false;
 						ReloadDownloadedDlls();
 					}
 					break;
@@ -293,7 +292,7 @@ namespace OnlineVideos.MediaPortal1
                 }
                 new System.Threading.Thread(delegate()
                 {
-                    AutoUpdate(true, dlgPrgrs);
+                    AutoUpdate(dlgPrgrs);
                     GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
                 }) { Name = "OnlineVideosAutoUpdate", IsBackground = true }.Start();
             }
@@ -716,13 +715,18 @@ namespace OnlineVideos.MediaPortal1
             }            
         }
 
-        public void AutoUpdate(bool dllsLoaded, GUIDialogProgress dlgPrgrs)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dlgPrgrs"></param>
+		/// <returns>true when new dlls were downloaded during the update, false means no new dlls or the update did not run</returns>
+        public bool AutoUpdate(GUIDialogProgress dlgPrgrs)
         {
             try
             {
 				if (dlgPrgrs != null) dlgPrgrs.SetLine(1, Translation.Instance.CheckingForPluginUpdate);
 
-                if (!CheckOnlineVideosVersion()) return;
+                if (!CheckOnlineVideosVersion()) return false;
 
                 Log.Instance.Debug("Running AutoUpdate");
 
@@ -730,8 +734,8 @@ namespace OnlineVideos.MediaPortal1
 
                 GetRemoteOverviews();
 
-                if (onlineSites == null) return;
-                if (dlgPrgrs != null && !dlgPrgrs.ShouldRenderLayer()) return;
+                if (onlineSites == null) return false;
+                if (dlgPrgrs != null && !dlgPrgrs.ShouldRenderLayer()) return false;
                 
                 if (dlgPrgrs != null) dlgPrgrs.Percentage = 10;
                 bool saveRequired = false;
@@ -774,7 +778,7 @@ namespace OnlineVideos.MediaPortal1
                     }
                 }
 
-                if (dlgPrgrs != null && !dlgPrgrs.ShouldRenderLayer()) return;
+                if (dlgPrgrs != null && !dlgPrgrs.ShouldRenderLayer()) return false;
 
                 if (requiredDlls.Count > 0)
                 {
@@ -833,10 +837,13 @@ namespace OnlineVideos.MediaPortal1
             {
 				if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, Translation.Instance.Done); dlgPrgrs.Close(); }
             }
+			return newDllsDownloaded;
         }
 
-		void ReloadDownloadedDlls()
+		internal void ReloadDownloadedDlls()
 		{
+			Log.Instance.Info("Reloading SiteUtil Dlls at runtime.");
+			newDllsDownloaded = false;
 			bool stopPlayback = (MediaPortal.Player.g_Player.Player != null && MediaPortal.Player.g_Player.Player.GetType().Assembly == typeof(GUISiteUpdater).Assembly);
 			bool stopDownload = DownloadManager.Instance.Count > 0;
 			if (stopDownload || stopPlayback)
@@ -857,15 +864,21 @@ namespace OnlineVideos.MediaPortal1
 			if (stopPlayback) MediaPortal.Player.g_Player.Stop();
 			// stop downloads
 			DownloadManager.Instance.StopAll();
-			// reset the GuiOnlineVideos instance
+			// reset the GuiOnlineVideos instance and stop the LatestVideos Thread
 			GUIOnlineVideos ovGuiInstance = (GUIOnlineVideos)GUIWindowManager.GetWindow(GUIOnlineVideos.WindowId);
-			if (ovGuiInstance != null) ovGuiInstance.ResetToFirstView();
+			if (ovGuiInstance != null)
+			{
+				ovGuiInstance.ResetToFirstView();
+				ovGuiInstance.LatestVideosManager.Stop();
+			}
 			// now reload the appdomain
 			OnlineVideoSettings.Reload();
 			Translator.SetTranslationsToSingleton();
 			OnlineVideoSettings.Instance.BuildSiteUtilsList();
 			GC.Collect();
 			GC.WaitForFullGCComplete();
+			// restart the LatestVideos thread
+			ovGuiInstance.LatestVideosManager.Start();
 		}
 
         bool SitePassesFilter(OnlineVideosWebservice.Site site)

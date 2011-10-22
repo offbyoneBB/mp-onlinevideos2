@@ -33,6 +33,11 @@ namespace OnlineVideos
 
         public static bool StopDownload { get; set; }
 
+		/// <summary>
+		/// Downloads thumbs in background and sets the path of the downloaded files on the items.
+		/// </summary>
+		/// <typeparam name="T">supported are <see cref="Category"/> and <see cref="VideoInfo"/></typeparam>
+		/// <param name="itemsWithThumbs"></param>
         public static void GetImages<T>(IList<T> itemsWithThumbs)
         {
             StopDownload = false;
@@ -49,51 +54,7 @@ namespace OnlineVideos
 
                 new System.Threading.Thread(delegate(object o)
                 {
-                    List<T> myItems = (List<T>)o;
-                    foreach (T item in myItems)
-                    {
-                        if (StopDownload) break;
-
-                        string thumb = item is Category ? (item as Category).Thumb : (item as VideoInfo).ImageUrl;
-                        float? forcedAspect = item is VideoInfo ? (item as VideoInfo).ImageForcedAspectRatio : null;
-                        if (string.IsNullOrEmpty(thumb)) continue;
-                        string[] urls = thumb.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-
-                        foreach (string aFinalUrl in urls)
-                        {
-                            string imageLocation = string.Empty;
-
-                            Uri temp;
-                            if (Uri.TryCreate(aFinalUrl, UriKind.Absolute, out temp))
-                            {
-                                if (temp.IsFile)
-                                {
-                                    if (System.IO.File.Exists(aFinalUrl)) imageLocation = aFinalUrl;
-                                }
-                                else
-                                {
-                                    string thumbFile = Utils.GetThumbFile(aFinalUrl);
-                                    if (System.IO.File.Exists(thumbFile)) imageLocation = thumbFile;
-                                    else if (DownloadAndCheckImage(aFinalUrl, thumbFile, forcedAspect)) imageLocation = thumbFile;
-                                }
-                            }
-
-                            if (imageLocation != string.Empty)
-                            {
-                                if (item is Category)
-                                {
-                                    (item as Category).ThumbnailImage = imageLocation;
-                                    (item as Category).NotifyPropertyChanged("ThumbnailImage");
-                                }
-                                else
-                                {
-                                    (item as VideoInfo).ThumbnailImage = imageLocation;
-                                    (item as VideoInfo).NotifyPropertyChanged("ThumbnailImage");
-                                }
-                                break;
-                            }
-                        }
-                    }
+					DownloadImages<T>((List<T>)o);
                 })
                 {
                     IsBackground = true,
@@ -101,6 +62,59 @@ namespace OnlineVideos
                 }.Start(a);
             }
         }
+
+		/// <summary>
+		/// Downloads thumbs in the same thread and sets the path of the downloaded files on the items.
+		/// </summary>
+		/// <typeparam name="T">supported are <see cref="Category"/> and <see cref="VideoInfo"/></typeparam>
+		/// <param name="myItems"></param>
+		public static void DownloadImages<T>(List<T> myItems)
+		{
+			foreach (T item in myItems)
+			{
+				if (StopDownload) break;
+
+				string thumb = item is Category ? (item as Category).Thumb : (item as VideoInfo).ImageUrl;
+				float? forcedAspect = item is VideoInfo ? (item as VideoInfo).ImageForcedAspectRatio : null;
+				if (string.IsNullOrEmpty(thumb)) continue;
+				string[] urls = thumb.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+
+				foreach (string aFinalUrl in urls)
+				{
+					string imageLocation = string.Empty;
+
+					Uri temp;
+					if (Uri.TryCreate(aFinalUrl, UriKind.Absolute, out temp))
+					{
+						if (temp.IsFile)
+						{
+							if (System.IO.File.Exists(aFinalUrl)) imageLocation = aFinalUrl;
+						}
+						else
+						{
+							string thumbFile = Utils.GetThumbFile(aFinalUrl);
+							if (System.IO.File.Exists(thumbFile)) imageLocation = thumbFile;
+							else if (DownloadAndCheckImage(aFinalUrl, thumbFile, forcedAspect)) imageLocation = thumbFile;
+						}
+					}
+
+					if (imageLocation != string.Empty)
+					{
+						if (item is Category)
+						{
+							(item as Category).ThumbnailImage = imageLocation;
+							(item as Category).NotifyPropertyChanged("ThumbnailImage");
+						}
+						else
+						{
+							(item as VideoInfo).ThumbnailImage = imageLocation;
+							(item as VideoInfo).NotifyPropertyChanged("ThumbnailImage");
+						}
+						break;
+					}
+				}
+			}
+		}
 
         public static bool DownloadAndCheckImage(string url, string file, float? forcedAspectRatio = null)
         {

@@ -31,6 +31,7 @@ namespace OnlineVideos
         public CultureInfo Locale;
         public BindingList<SiteSettings> SiteSettingsList { get; protected set; }
         public Dictionary<string, Sites.SiteUtilBase> SiteUtilsList { get; protected set; }
+		public List<Sites.LatestVideosSiteUtilBase> LatestVideosSiteUtilsList { get; protected set; }
         public SortedList<string, bool> VideoExtensions { get; protected set; }
         public bool FavoritesFirst = false;
 
@@ -40,6 +41,7 @@ namespace OnlineVideos
 			Locale = CultureInfo.CurrentUICulture;
 			SiteSettingsList = new BindingList<SiteSettings>();
 			SiteUtilsList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
+			LatestVideosSiteUtilsList = new List<LatestVideosSiteUtilBase>();
 			VideoExtensions = new SortedList<string, bool>();
 			ThumbsResizeOptions = ImageDownloader.ResizeOptions.Default;
 		}
@@ -116,17 +118,18 @@ namespace OnlineVideos
             {
                 SiteSettingsList = (BindingList<SiteSettings>)Utils.SiteSettingsFromXml(new StreamReader(sitesStream));
             }
+			Log.Info("Loaded {0} sites from {1}", SiteSettingsList.Count, SitesFileName);
         }
 
         void LoadScriptSites()
         {
-            Log.Info("Loading script files");
+            Log.Debug("Loading script files");
             if (!string.IsNullOrEmpty(ConfigDir) && Directory.Exists(Path.Combine(ConfigDir, "scripts\\OnlineVideos")))
             {
                 FileInfo[] fileInfos = new DirectoryInfo(Path.Combine(ConfigDir, "scripts\\OnlineVideos")).GetFiles("*.xml");
                 foreach (var fileInfo in fileInfos)
                 {
-                    Log.Info("Script loaded for {0}", fileInfo.FullName);
+					Log.Debug("Script loaded for {0}", fileInfo.FullName);
                     ScriptUtil scriptUtil = new ScriptUtil();
                     scriptUtil.ScriptFile = fileInfo.FullName;
                     scriptUtil.Initialize(new SiteSettings());
@@ -138,6 +141,7 @@ namespace OnlineVideos
         public void BuildSiteUtilsList()
         {
             SiteUtilsList.Clear();
+			LatestVideosSiteUtilsList.Clear();
 
             if (FavoritesFirst)
             {
@@ -152,6 +156,7 @@ namespace OnlineVideos
                 {
                     Sites.SiteUtilBase siteutil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
                     if (siteutil != null && !SiteUtilsList.ContainsKey(siteSettings.Name)) SiteUtilsList.Add(siteSettings.Name, siteutil);
+					if (siteutil is LatestVideosSiteUtilBase) LatestVideosSiteUtilsList.Add(siteutil as LatestVideosSiteUtilBase);
                 }
             }
 
@@ -162,6 +167,8 @@ namespace OnlineVideos
                 AddFavoritesSite();
                 AddDownloadsSite();
             }
+
+			Log.Info("Created {0} SiteUtils", SiteUtilsList.Count);
         }
 
         void AddFavoritesSite()

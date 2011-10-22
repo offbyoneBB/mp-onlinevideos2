@@ -40,6 +40,10 @@ namespace OnlineVideos.MediaPortal1
         public bool useRtmpProxy = true;
         public DateTime lastFirstRun;
         public uint updatePeriod = 0;
+		public bool LatestVideosRandomize = true;
+		public uint LatestVideosMaxItems = 3;
+		public uint LatestVideosOnlineDataRefresh = 30; // minutes
+		public uint LatestVideosGuiDataRefresh = 30; // seconds
 
         // runtime (while inside MediaPortal OnlineVideos) changeable values
         public Dictionary<string, List<string>> searchHistory;
@@ -89,6 +93,10 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_LAST_FIRSTRUN = "lastFirstRun";
         const string CFG_UPDATEPERIOD = "updatePeriod";
         const string CFG_FAVORITES_FIRST = "favoritesFirst";
+		const string CFG_LATESTVIDEOS_RANDOMIZE = "latestVideosRandomize";
+		const string CFG_LATESTVIDEOS_MAXITEMS = "latestVideosMaxItems";
+		const string CFG_LATESTVIDEOS_ONLINEDATA_REFRESH = "latestVideosOnlineDataRefresh";
+		const string CFG_LATESTVIDEOS_GUIDATA_REFRESH = "latestVideosGuiDataRefresh";
         #endregion
 
         #region Singleton
@@ -120,6 +128,9 @@ namespace OnlineVideos.MediaPortal1
                 useRtmpProxy = settings.GetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
                 autoGroupByLang = settings.GetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
                 OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst = settings.GetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst);
+				LatestVideosRandomize = settings.GetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);
+				LatestVideosOnlineDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, (int)LatestVideosOnlineDataRefresh);
+				LatestVideosGuiDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, (int)LatestVideosGuiDataRefresh);
             }
         }
 
@@ -236,6 +247,11 @@ namespace OnlineVideos.MediaPortal1
                     httpSourceFilterName = settings.GetValueAsString(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
                     autoGroupByLang = settings.GetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
 					ovsconf.FavoritesFirst = settings.GetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, ovsconf.FavoritesFirst);
+
+					LatestVideosRandomize = settings.GetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);
+					LatestVideosMaxItems = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_MAXITEMS, (int)LatestVideosMaxItems);
+					LatestVideosOnlineDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, (int)LatestVideosOnlineDataRefresh);
+					LatestVideosGuiDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, (int)LatestVideosGuiDataRefresh);
                 }
                 LoadSitesGroups();
                 ovsconf.LoadSites();
@@ -303,7 +319,10 @@ namespace OnlineVideos.MediaPortal1
                         settings.SetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
                         settings.SetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
                         settings.SetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, ovsconf.FavoritesFirst);
-
+						settings.SetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);
+						settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_MAXITEMS, LatestVideosMaxItems);
+						settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, LatestVideosOnlineDataRefresh);
+						settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, LatestVideosGuiDataRefresh);
                         SaveSitesGroups();
                         ovsconf.SaveSites();
                     }

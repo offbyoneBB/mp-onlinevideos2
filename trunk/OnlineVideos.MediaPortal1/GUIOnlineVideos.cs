@@ -12,7 +12,7 @@ using Action = MediaPortal.GUI.Library.Action;
 namespace OnlineVideos.MediaPortal1
 {
     [PluginIcons("OnlineVideos.MediaPortal1.OnlineVideos.png", "OnlineVideos.MediaPortal1.OnlineVideosDisabled.png")]
-    public class GUIOnlineVideos : GUIWindow, ISetupForm, IShowPlugin
+    public partial class GUIOnlineVideos : GUIWindow, ISetupForm, IShowPlugin
     {
         public const int WindowId = 4755;
 
@@ -173,7 +173,6 @@ namespace OnlineVideos.MediaPortal1
         VideoInfo selectedVideo;
 
         bool preventDialogOnLoad = false;
-        bool firstLoadDone = false;
 
         int selectedClipIndex = 0;  // used to remember the position of the last selected Trailer
 
@@ -238,6 +237,7 @@ namespace OnlineVideos.MediaPortal1
 			OnlineVideosAppDomain.UseSeperateDomain = true;
 
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
+
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", " "); GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.length", " "); GUIPropertyManager.SetProperty("#OnlineVideos.length", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.aired", " "); GUIPropertyManager.SetProperty("#OnlineVideos.aired", string.Empty);
@@ -252,6 +252,9 @@ namespace OnlineVideos.MediaPortal1
                 int lastActiveModule = settings.GetValueAsInt("general", "lastactivemodule", -1);
                 preventDialogOnLoad = (lastActiveModuleSetting && (lastActiveModule == GetID));
             }
+
+			StartBackgroundInitialization();
+
             return result;
         }
 
@@ -263,10 +266,26 @@ namespace OnlineVideos.MediaPortal1
 
         protected override void OnPageLoad()
         {
+			GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
+
             base.OnPageLoad(); // let animations run
 
-            if (!firstLoadDone) DoFirstLoad_Step1();
-            else DoPageLoad();
+			if (initializationBackgroundWorker.IsBusy)
+			{
+				GUIWaitCursor.Init(); GUIWaitCursor.Show();
+				initializationBackgroundWorker.RunWorkerCompleted += (o, e) =>
+				{
+					initializationBackgroundWorker = null;
+					GUIWaitCursor.Hide();
+					if (!firstLoadDone) DoFirstLoad();
+					else DoSubsequentLoad();
+				};
+			}
+			else
+			{
+				if (!firstLoadDone) DoFirstLoad();
+				else DoSubsequentLoad();
+			}
         }
 
         protected override void OnShowContextMenu()
@@ -837,178 +856,6 @@ namespace OnlineVideos.MediaPortal1
 
         #region new methods
 
-        private void DoPageLoad()
-        {
-            // called everytime the plugin is shown, after some other window was shown (also after fullscreen playback)
-            if (PreviousWindowId != 4758)
-            {
-                // reload settings that can be modified with the MPEI plugin
-                PluginConfiguration.Instance.ReLoadRuntimeSettings();
-
-                // if groups are now enabled/disabled we need to set the states accordingly
-                if (GroupsEnabled)
-                {
-                    // showing sites, but groups are enabled and no group is selected -> show groups
-                    if (CurrentState == State.sites && selectedSitesGroup == null) CurrentState = State.groups;
-                }
-                else
-                {
-                    // showing groups, but groups are disabled -> show sites
-                    if (CurrentState == State.groups) CurrentState = State.sites;
-                    selectedSitesGroup = null;
-                }
-
-                // reset the LoadParameterInfo
-                loadParamInfo = null;
-
-                string loadParam = null;
-                // check if running version of mediaportal supports loading with parameter and handle _loadParameter
-                System.Reflection.FieldInfo fi = typeof(GUIWindow).GetField("_loadParameter", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                if (fi != null)
-                {
-                    loadParam = (string)fi.GetValue(this);
-                }
-                // check for LoadParameters by GUIproperties if nothing was set by the _loadParameter
-                if (string.IsNullOrEmpty(loadParam)) loadParam = LoadParameterInfo.FromGuiProperties();
-
-                if (!string.IsNullOrEmpty(loadParam))
-                {
-                    loadParamInfo = new LoadParameterInfo(loadParam);
-
-                    // set all state variables to reflect the state we were called with
-                    if (!string.IsNullOrEmpty(loadParamInfo.Site) && OnlineVideoSettings.Instance.SiteUtilsList.ContainsKey(loadParamInfo.Site))
-                    {
-                        SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[loadParamInfo.Site];
-                        CurrentState = State.categories;
-                        selectedCategory = null;
-                    }
-                    if (SelectedSite != null && SelectedSite.CanSearch && !string.IsNullOrEmpty(loadParamInfo.Search))
-                    {
-                        lastSearchQuery = loadParamInfo.Search;
-                        Display_SearchResults(loadParamInfo.Search);
-                        return;
-                    }
-                }
-            }
-
-            Log.Instance.Debug("DoPageLoad. CurrentState:" + CurrentState);
-            switch (CurrentState)
-            {
-                case State.groups: DisplayGroups(); break;
-                case State.sites: DisplaySites(); break;
-                case State.categories: DisplayCategories(selectedCategory); break;
-                case State.videos: SetVideosToFacade(currentVideoList, currentVideosDisplayMode); break;
-                default: SetVideosToInfoList(currentTrailerList); break;
-            }
-        }
-
-        private void DoFirstLoad_Step1()
-        {
-            // The default connection limit is 2 in .net on most platforms! This means downloading two file will block all other WebRequests.
-            System.Net.ServicePointManager.DefaultConnectionLimit = 100;
-
-			// The default .Net implementation for URI parsing removes trailing dots, which is not correct
-			Utils.FixUriTrailingDots();
-
-            // replace g_player's ShowFullScreenWindowVideo
-            g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowHandler;
-            g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
-            g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
-
-            // attach to global action event, to handle next and previous for playlist playback
-            GUIWindowManager.OnNewAction += new OnActionHandler(this.GUIWindowManager_OnNewAction);
-
-            GUIPropertyManager.SetProperty("#header.label", PluginConfiguration.Instance.BasicHomeScreenName);
-            Translator.TranslateSkin();
-
-            if (PluginConfiguration.Instance.updateOnStart != false && PluginConfiguration.Instance.lastFirstRun.AddHours(PluginConfiguration.Instance.updatePeriod) < DateTime.Now)
-            {
-                bool? doUpdate = PluginConfiguration.Instance.updateOnStart;
-                if (!PluginConfiguration.Instance.updateOnStart.HasValue && !preventDialogOnLoad)
-                {
-                    GUIDialogYesNo dlg = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                    if (dlg != null)
-                    {
-                        dlg.Reset();
-                        dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
-						dlg.SetLine(1, Translation.Instance.PerformAutomaticUpdate);
-						dlg.SetLine(2, Translation.Instance.UpdateAllYourSites);
-                        dlg.DoModal(GUIWindowManager.ActiveWindow);
-                        doUpdate = dlg.IsConfirmed;
-                    }
-                }
-                if (doUpdate == true)
-                {
-                    GUISiteUpdater guiUpdater = (GUISiteUpdater)GUIWindowManager.GetWindow(GUISiteUpdater.WindowId);
-                    if (guiUpdater != null)
-                    {
-                        GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-                        if (dlgPrgrs != null)
-                        {
-                            dlgPrgrs.Reset();
-                            dlgPrgrs.DisplayProgressBar = true;
-                            dlgPrgrs.ShowWaitCursor = false;
-                            dlgPrgrs.DisableCancel(true);
-							dlgPrgrs.SetHeading(string.Format("{0} - {1}", PluginConfiguration.Instance.BasicHomeScreenName, Translation.Instance.AutomaticUpdate));
-                            dlgPrgrs.StartModal(GUIWindowManager.ActiveWindow);
-
-                            new System.Threading.Thread(delegate()
-                            {
-                                guiUpdater.AutoUpdate(false, dlgPrgrs);
-                                GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { DoFirstLoad_Step2(); return 0; }, 0, 0, null);
-                            }
-                            ) { Name = "OnlineVideosAutoUpdate", IsBackground = true }.Start();
-                            return;
-                        }
-                    }
-                }
-            }
-
-            DoFirstLoad_Step2();
-        }
-
-        private void DoFirstLoad_Step2()
-        {
-            OnlineVideoSettings.Instance.BuildSiteUtilsList();
-            if (GroupsEnabled) CurrentState = State.groups;
-            firstLoadDone = true;
-
-            if (PluginConfiguration.Instance.ThumbsAge >= 0 && PluginConfiguration.Instance.lastFirstRun.AddHours(PluginConfiguration.Instance.updatePeriod) < DateTime.Now)
-            {
-                GUIDialogProgress dlgPrgrs = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-                if (dlgPrgrs != null)
-                {
-                    dlgPrgrs.Reset();
-                    dlgPrgrs.DisplayProgressBar = true;
-                    dlgPrgrs.ShowWaitCursor = false;
-                    dlgPrgrs.DisableCancel(false);
-                    dlgPrgrs.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
-                    dlgPrgrs.StartModal(GUIWindowManager.ActiveWindow);
-					dlgPrgrs.SetLine(1, Translation.Instance.DeletingOldThumbs);
-                    dlgPrgrs.Percentage = 0;
-                }
-                new System.Threading.Thread(delegate()
-                {
-                    ImageDownloader.DeleteOldThumbs(PluginConfiguration.Instance.ThumbsAge, r =>
-                        {
-                            dlgPrgrs.Percentage = r;
-                            return dlgPrgrs.ShouldRenderLayer();
-                        });
-					if (dlgPrgrs != null) { dlgPrgrs.Percentage = 100; dlgPrgrs.SetLine(1, Translation.Instance.Done); dlgPrgrs.Close(); }
-                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) =>
-                    {
-                        PluginConfiguration.Instance.lastFirstRun = DateTime.Now;
-                        DoPageLoad();
-                        return 0;
-                    }, 0, 0, null);
-                }) { Name = "OnlineVideosThumbnail", IsBackground = true }.Start();
-                return;
-            }
-
-            PluginConfiguration.Instance.lastFirstRun = DateTime.Now;
-            DoPageLoad();
-        }
-
         /// <summary>
         /// This function replaces g_player.ShowFullScreenWindowVideo
         /// </summary>
@@ -1210,9 +1057,9 @@ namespace OnlineVideos.MediaPortal1
                 {
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                     {
-                        Log.Instance.Info("Looking for dynamic categories for {0}", SelectedSite.Settings.Name);
+                        Log.Instance.Info("Looking for dynamic categories for '{0}'", SelectedSite.Settings.Name);
                         int foundCategories = SelectedSite.DiscoverDynamicCategories();
-                        Log.Instance.Info("Found {0} dynamic categories for {1}", foundCategories, SelectedSite.Settings.Name);
+                        Log.Instance.Info("Found {0} dynamic categories for '{1}'", foundCategories, SelectedSite.Settings.Name);
                         return SelectedSite.Settings.Categories;
                     },
                     delegate(bool success, object result)
@@ -1235,9 +1082,9 @@ namespace OnlineVideos.MediaPortal1
                 {
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                     {
-                        Log.Instance.Info("Looking for sub categories in '{1}' on site {1}", parentCategory.Name, SelectedSite.Settings.Name);
+                        Log.Instance.Info("Looking for subcategories in '{0}' on site '{1}'", parentCategory.Name, SelectedSite.Settings.Name);
                         int foundCategories = SelectedSite.DiscoverSubCategories(parentCategory);
-                        Log.Instance.Info("Found {0} sub categories in '{1}' on site {2}", foundCategories, parentCategory.Name, SelectedSite.Settings.Name);
+                        Log.Instance.Info("Found {0} subcategories in '{1}' on site '{2}'", foundCategories, parentCategory.Name, SelectedSite.Settings.Name);
                         return parentCategory.SubCategories;
                     },
                     delegate(bool success, object result)
@@ -2867,43 +2714,49 @@ namespace OnlineVideos.MediaPortal1
             if (playItem == null || playItem.Video == null) return;
             new System.Threading.Thread(delegate(object o)
             {
-                VideoInfo video = (o as PlayListItem).Video;
-                string alternativeTitle = (o as PlayListItem).Description;
-                Sites.SiteUtilBase site = (o as PlayListItem).Util;
+				try
+				{
+					VideoInfo video = (o as PlayListItem).Video;
+					string alternativeTitle = (o as PlayListItem).Description;
+					Sites.SiteUtilBase site = (o as PlayListItem).Util;
 
-                System.Threading.Thread.Sleep(2000);
-                Log.Instance.Info("Setting Video Properties.");
+					System.Threading.Thread.Sleep(2000);
+					Log.Instance.Info("Setting Video Properties.");
 
-                string quality = "";
-                if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
-                {
-                    var enumer = video.PlaybackOptions.GetEnumerator();
-                    while (enumer.MoveNext())
-                    {
-                        string compareTo = enumer.Current.Value.ToLower().StartsWith("rtmp") ?
-                            ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(enumer.Current.Value)))
-                            : enumer.Current.Value;
-                        if (compareTo == g_Player.CurrentFile)
-                        {
-                            quality = " (" + enumer.Current.Key + ")";
-                            break;
-                        }
-                    }
-                }
+					string quality = "";
+					if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
+					{
+						var enumer = video.PlaybackOptions.GetEnumerator();
+						while (enumer.MoveNext())
+						{
+							string compareTo = enumer.Current.Value.ToLower().StartsWith("rtmp") ?
+								ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(enumer.Current.Value)))
+								: enumer.Current.Value;
+							if (compareTo == g_Player.CurrentFile)
+							{
+								quality = " (" + enumer.Current.Key + ")";
+								break;
+							}
+						}
+					}
 
-                if (!string.IsNullOrEmpty(alternativeTitle))
-                    GUIPropertyManager.SetProperty("#Play.Current.Title", alternativeTitle);
-                else if (!string.IsNullOrEmpty(video.Title))
-                    GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title + (string.IsNullOrEmpty(quality) ? "" : quality));
-                if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
-                if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
+					if (!string.IsNullOrEmpty(alternativeTitle))
+						GUIPropertyManager.SetProperty("#Play.Current.Title", alternativeTitle);
+					else if (!string.IsNullOrEmpty(video.Title))
+						GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title + (string.IsNullOrEmpty(quality) ? "" : quality));
+					if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
+					if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
 
-                if (!string.IsNullOrEmpty(video.Airdate)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Airdate);
-                else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", VideoInfo.GetDuration(video.Length));
+					if (!string.IsNullOrEmpty(video.Airdate)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Airdate);
+					else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", VideoInfo.GetDuration(video.Length));
 
-                if (site != null) GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", GetImageForSite(site.Settings.Name, site.Settings.UtilName, "Icon"));
-
-            }) { IsBackground = true, Name = "OnlineVideosInfosSetter" }.Start(playItem);
+					if (site != null) GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", GetImageForSite(site.Settings.Name, site.Settings.UtilName, "Icon"));
+				}
+				catch (Exception ex)
+				{
+					Log.Instance.Warn("Error setting playing video properties: {0}", ex.ToString());
+				}
+            }) { IsBackground = true, Name = "OVPlaying" }.Start(playItem);
 
             TrackPlayback();
         }

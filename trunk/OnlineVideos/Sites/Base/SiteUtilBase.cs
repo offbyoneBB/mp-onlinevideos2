@@ -484,9 +484,9 @@ namespace OnlineVideos.Sites
             HttpWebResponse response = null;
             try
             {
-                Log.Debug("get webdata from {0}", url);
                 // try cache first
                 string cachedData = WebCache.Instance[url];
+				Log.Debug("GetWebData{1}: '{0}'", url, cachedData != null ? " (cached)" : "");
                 if (cachedData != null) return cachedData;
 
                 // request the data
@@ -548,7 +548,7 @@ namespace OnlineVideos.Sites
         {
             try
             {
-                Log.Debug("get webdata from {0}", url);
+				Log.Debug("GetWebDataFromPost: '{0}'", url);
 
                 // request the data
                 if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(true);
@@ -597,7 +597,6 @@ namespace OnlineVideos.Sites
                         return str.Trim();
                     }
                 }
-
             }
             finally
             {
@@ -817,8 +816,6 @@ namespace OnlineVideos.Sites
             {
                 _field = field;
             }
-
-            public FieldInfo Field { get { return _field; } }
 
             public override bool Equals(object obj)
             {
