@@ -1634,6 +1634,83 @@
               <ZipFileName>Installer{CopyFile}\{a6ea62d8-1cc9-4b86-9b81-ffd5c4cfd9ec}-ZT_l_.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ZTélé.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\bnn.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{81d34909-05bd-498c-af7d-1c94f731935c}-bnn.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\bnn.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\bravo! fact.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{0a8d403a-824c-47f8-9796-aedb9404dbcc}-bravo! fact.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\bravo! fact.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\bravo!.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d55dc137-7bea-4897-83ed-e000fe3a2672}-bravo!.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\bravo!.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\ctv local news.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{09e9aa5b-b80d-43b5-a0a0-8e59a7e29063}-ctv local news.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctv local news.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\ctv news.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d73cb483-b827-4f34-9531-c4226027b254}-ctv news.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctv news.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\ctv.ca.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{79ffdf25-e123-4013-b104-e8ea0fdc9a85}-ctv.ca.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctv.ca.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\discovery channel canada.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{bd1e455a-bf0c-4937-ad77-97b7d1721b44}-discovery channel canada.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\discovery channel canada.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\fashion television.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d8535c9f-1597-422d-a54d-bc1a91a6f378}-fashion television.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\fashion television.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\space.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{33a194c2-7a28-4e3a-9f62-cdc383c589f3}-space.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\space.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\the comedy network.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2e4ec446-63dd-4c34-b77a-87d059b02e95}-the comedy network.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\the comedy network.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\tsn.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{179ac2b2-e4da-4240-a684-5969bc2e8cdc}-tsn.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tsn.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1671,7 +1748,7 @@
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.33.0.1\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.0.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -1679,6 +1756,20 @@
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4c8dc52e-55c1-48cc-9a34-589f7be39c5c}-OnlineVideos.Sites.corporategadfly.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b9177163-1ed3-4b3c-a9be-81e77ce05b63}-OnlineVideos.Sites.diebagger.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -1711,13 +1802,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{b9177163-1ed3-4b3c-a9be-81e77ce05b63}-OnlineVideos.Sites.diebagger.dll</ZipFileName>
-              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-              <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{88fba3b4-4209-4db5-9142-8329f8b13d25}-OnlineVideos.Sites.SilentException.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</DestinationFilename>
@@ -1725,9 +1809,30 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b42016e5-6331-4f95-985a-d79ae30e9b60}-OnlineVideos.Sites.SK_CZ.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>librtmp.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{3c245704-2f63-4ad7-a613-0040ad29ed65}-librtmp.dll</ZipFileName>
+              <DestinationFilename>%Base%\librtmp.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>LogStub.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6f0065a2-afa5-4772-83cc-e97b57120d87}-LogStub.dll</ZipFileName>
+              <DestinationFilename>%Base%\LogStub.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -1885,6 +1990,13 @@
               <LocalFileName>..\Language\OnlineVideos\et.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{957a0f37-36d6-4f26-b091-35c1e489cd38}-et.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\et.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\lt-LT.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c737d67b-1843-4a98-ab44-968906a8e697}-lt-LT.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\lt-LT.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2642,11 +2754,11 @@ public class Script
         </CompatibleVersion>
         <SubSystemsUsed>
           <Items>
-            <SubSystemItem Name="MP.Players.Video" />
-            <SubSystemItem Name="MP.Input" />
-            <SubSystemItem Name="MP.SkinEngine" />
             <SubSystemItem Name="MP.Externals.SQLite" />
+            <SubSystemItem Name="MP.Input" />
+            <SubSystemItem Name="MP.Players.Video" />
             <SubSystemItem Name="MP.Config" />
+            <SubSystemItem Name="MP.SkinEngine" />
           </Items>
         </SubSystemsUsed>
       </PluginDependencyItem>
@@ -2660,10 +2772,10 @@ public class Script
     <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
-      <Major>0</Major>
-      <Minor>33</Minor>
+      <Major>1</Major>
+      <Minor>0</Minor>
       <Build>0</Build>
-      <Revision>1</Revision>
+      <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
     <VersionDescription>added: loadparameter arguments to set a download folder, filename, menu entry (currently used by MyFilms - thx Guzzi)
@@ -2671,8 +2783,8 @@ added: timeout after which dynamic categories will be rediscovered
 fixed: rtmp unencrypted connections (continue even if signature does not match)
 updated: default skins for MP 1.2 Final</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos0.33.0.1.mpe1</OnlineLocation>
-    <ReleaseDate>2011-09-19T11:00:00</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.0.0.0.mpe1</OnlineLocation>
+    <ReleaseDate>2011-10-22T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -4333,6 +4445,83 @@ updated: default skins for MP 1.2 Final</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{a6ea62d8-1cc9-4b86-9b81-ffd5c4cfd9ec}-ZT_l_.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ZTélé.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\bnn.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{81d34909-05bd-498c-af7d-1c94f731935c}-bnn.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\bnn.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\bravo! fact.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{0a8d403a-824c-47f8-9796-aedb9404dbcc}-bravo! fact.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\bravo! fact.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\bravo!.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d55dc137-7bea-4897-83ed-e000fe3a2672}-bravo!.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\bravo!.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\ctv local news.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{09e9aa5b-b80d-43b5-a0a0-8e59a7e29063}-ctv local news.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctv local news.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\ctv news.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d73cb483-b827-4f34-9531-c4226027b254}-ctv news.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctv news.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\ctv.ca.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{79ffdf25-e123-4013-b104-e8ea0fdc9a85}-ctv.ca.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ctv.ca.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\discovery channel canada.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bd1e455a-bf0c-4937-ad77-97b7d1721b44}-discovery channel canada.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\discovery channel canada.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\fashion television.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d8535c9f-1597-422d-a54d-bc1a91a6f378}-fashion television.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\fashion television.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\space.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{33a194c2-7a28-4e3a-9f62-cdc383c589f3}-space.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\space.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\the comedy network.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2e4ec446-63dd-4c34-b77a-87d059b02e95}-the comedy network.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\the comedy network.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\tsn.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{179ac2b2-e4da-4240-a684-5969bc2e8cdc}-tsn.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tsn.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -4352,7 +4541,7 @@ updated: default skins for MP 1.2 Final</VersionDescription>
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\0.33.0.1\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.0.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -4360,6 +4549,20 @@ updated: default skins for MP 1.2 Final</VersionDescription>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4c8dc52e-55c1-48cc-9a34-589f7be39c5c}-OnlineVideos.Sites.corporategadfly.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b9177163-1ed3-4b3c-a9be-81e77ce05b63}-OnlineVideos.Sites.diebagger.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -4392,13 +4595,6 @@ updated: default skins for MP 1.2 Final</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{b9177163-1ed3-4b3c-a9be-81e77ce05b63}-OnlineVideos.Sites.diebagger.dll</ZipFileName>
-        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{88fba3b4-4209-4db5-9142-8329f8b13d25}-OnlineVideos.Sites.SilentException.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</DestinationFilename>
@@ -4406,9 +4602,30 @@ updated: default skins for MP 1.2 Final</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b42016e5-6331-4f95-985a-d79ae30e9b60}-OnlineVideos.Sites.SK_CZ.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>librtmp.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{3c245704-2f63-4ad7-a613-0040ad29ed65}-librtmp.dll</ZipFileName>
+        <DestinationFilename>%Base%\librtmp.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>LogStub.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6f0065a2-afa5-4772-83cc-e97b57120d87}-LogStub.dll</ZipFileName>
+        <DestinationFilename>%Base%\LogStub.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4556,6 +4773,13 @@ updated: default skins for MP 1.2 Final</VersionDescription>
         <LocalFileName>..\Language\OnlineVideos\et.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{957a0f37-36d6-4f26-b091-35c1e489cd38}-et.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\et.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\lt-LT.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c737d67b-1843-4a98-ab44-968906a8e697}-lt-LT.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\lt-LT.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
