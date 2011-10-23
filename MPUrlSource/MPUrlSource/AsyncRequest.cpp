@@ -89,6 +89,11 @@ void CAsyncRequest::Request(void)
   this->requestState = CAsyncRequest::Requested;
 }
 
+void CAsyncRequest::BufferingData(void)
+{
+  this->requestState = CAsyncRequest::Buffering;
+}
+
 CAsyncRequest::AsyncState CAsyncRequest::GetState(void)
 {
   return this->requestState;

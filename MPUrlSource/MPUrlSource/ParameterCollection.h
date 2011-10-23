@@ -24,17 +24,21 @@
 #define __PARAMETERCOLLECTION_DEFINED
 
 #define MAX_LOG_SIZE_DEFAULT                                        10485760
-#define LOG_VERBOSITY_DEFAULT                                       LOGGER_INFO
+#define LOG_VERBOSITY_DEFAULT                                       LOGGER_VERBOSE
 // maximum count of plugins
 #define MAX_PLUGINS_DEFAULT                                         256
-#define MAX_CACHE_TIME_DEFAULT                                      5 * 60 * 1000
+// default buffering percentage is 2%
+#define BUFFERING_PERCENTAGE_DEFAULT                                2
+// maximum buffering size
+#define MAX_BUFFERING_SIZE                                          5 * 1024 * 1024
 
 #define CONFIGURATION_SECTION_MPURLSOURCEFILTER                     _T("MPUrlSource")
 
 #define CONFIGURATION_MAX_LOG_SIZE                                  _T("MaxLogSize")
 #define CONFIGURATION_LOG_VERBOSITY                                 _T("LogVerbosity")
 #define CONFIGURATION_MAX_PLUGINS                                   _T("MaxPlugins")
-#define CONFIGURATION_MAX_CACHE_TIME                                _T("MaxCacheTime")
+#define CONFIGURATION_BUFFERING_PERCENTAGE                          _T("BufferingPercentage")
+#define CONFIGURATION_MAX_BUFFERING_SIZE                            _T("MaxBufferingSize")
 
 #define INTERFACE_PARAMETER_NAME                                    _T("interface")
 
