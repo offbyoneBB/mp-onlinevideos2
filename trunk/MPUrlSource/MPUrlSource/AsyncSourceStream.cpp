@@ -488,10 +488,10 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
   this->logger.Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME);
 
   HRESULT result = S_OK;
-  CHECK_CONDITION(result, length != 0, S_OK, E_INVALIDARG);
+  CHECK_CONDITION(result, length >= 0, S_OK, E_INVALIDARG);
   CHECK_POINTER_DEFAULT_HRESULT(result, buffer);
 
-  if (SUCCEEDED(result))
+  if ((SUCCEEDED(result)) && (length > 0))
   {
     //if (this->IsAligned(position) && this->IsAligned(length) && IsAligned((LONG_PTR)buffer))
     //{
@@ -513,6 +513,7 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
 
         if (SUCCEEDED(result))
         {
+          bool buffering = false;
           bool rangesSupported = false;
           bool rangesPending = false;
           result = this->filter->QueryRangesSupported(&rangesSupported);
@@ -560,21 +561,12 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
               }
             }
 
-            if ((rangesSupported) && ((GetTickCount() - ticks) > timeout))
-            {
-              // if ranges are supported and timeout occured then stop waiting for data and exit with VFW_E_TIMEOUT error
-              result = VFW_E_TIMEOUT;
-              break;
-            }
-
             CAsyncRequest *request = NULL;
 
             {
               // lock access to collection
               CLockMutex lock(this->requestMutex, INFINITE);
               request = this->requestsCollection->GetRequest(requestId);
-
-              this->logger.Log(LOGGER_DATA, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, _T("checking request"));
 
               if (request != NULL)
               {
@@ -600,6 +592,38 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
                   // request is cancelled
                   result = E_ABORT;
                   break;
+                }
+                else if (request->GetState() == CAsyncRequest::Buffering)
+                {
+                  // data for request are buffered from stream
+                  // just wait for completition
+
+                  if (!buffering)
+                  {
+                    // first case when request is in buffering state
+                    // remember actual ticks
+                    ticks = GetTickCount();
+                    buffering = true;
+                  }
+                  else
+                  {
+                    // check for timeout
+                    // if timeout occure than it is not error because request is completed
+                    if ((GetTickCount() - ticks) > timeout)
+                    {
+                      request->Complete(S_OK);
+                    }
+                  }
+                }
+                else
+                {
+                  // common case
+                  if ((rangesSupported) && ((GetTickCount() - ticks) > timeout))
+                  {
+                    // if ranges are supported and timeout occured then stop waiting for data and exit with VFW_E_TIMEOUT error
+                    result = VFW_E_TIMEOUT;
+                    break;
+                  }
                 }
               }
               else
@@ -633,7 +657,7 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
     }
   }
 
-  this->logger.Log(SUCCEEDED(result) ? LOGGER_DATA : LOGGER_WARNING, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, result);
+  this->logger.Log(LOGGER_DATA, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, result);
   return result;
 }
 
@@ -648,14 +672,55 @@ STDMETHODIMP CAsyncSourceStream::Length(LONGLONG *total, LONGLONG *available)
 
   if (result == S_OK)
   {
-    *total = this->totalLength;    
+    *total = this->totalLength;
+    //*available = this->totalLength;
     *available = (this->connectedToAnotherPin) ? this->totalLength : 0;
+    //*available = 0;
     unsigned int mediaPacketCount = this->mediaPacketCollection->Count();
+
+    //bool rangesSupported = false;
+    //if (this->filter->QueryRangesSupported(&rangesSupported) != S_OK)
+    //{
+    //  // ranges are not supported or is not sure if are supported
+    //  rangesSupported = false;
+    //}
+
+    //if (rangesSupported)
+    //{
+    //  // ranges are surely supported
+    //  *available = this->totalLength;
+    //}
+    //else
+    //{
+    //  // ranges are not supported or is not sure if are supported
+
+    //  *available = 0;
+    //  for (unsigned int i = 0; i < mediaPacketCount; i++)
+    //  {
+    //    CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(i);
+    //    REFERENCE_TIME mediaPacketStart = 0;
+    //    REFERENCE_TIME mediaPacketEnd = 0;
+
+    //    if (mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd) == S_OK)
+    //    {
+    //      if ((mediaPacketEnd + 1) > (*available))
+    //      {
+    //        *available = mediaPacketEnd + 1;
+    //      }
+    //    }
+    //  }
+
+    //  result = S_OK;
+    //}
     
     result = (this->connectedToAnotherPin) ? S_OK : this->filter->QueryStreamAvailableLength(available);
     if (result != S_OK)
+    //if (result == S_OK)
     {
-      this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: cannot query available stream length, result: 0x%08X"), MODULE_NAME, METHOD_LENGTH_NAME, result);
+      if (result != E_NOTIMPL)
+      {
+        this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: cannot query available stream length, result: 0x%08X"), MODULE_NAME, METHOD_LENGTH_NAME, result);
+      }
       *available = 0;
       for (unsigned int i = 0; i < mediaPacketCount; i++)
       {
@@ -1359,7 +1424,8 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
   CAsyncSourceStream *caller = (CAsyncSourceStream *)lpParam;
   caller->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME);
 
-  unsigned int maxCacheTime = caller->configuration->GetValueLong(CONFIGURATION_MAX_CACHE_TIME, true, MAX_CACHE_TIME_DEFAULT);
+  unsigned int bufferingPercentage = caller->configuration->GetValueLong(CONFIGURATION_BUFFERING_PERCENTAGE, true, BUFFERING_PERCENTAGE_DEFAULT);
+  unsigned int maxBufferingSize = caller->configuration->GetValueLong(CONFIGURATION_MAX_BUFFERING_SIZE, true, MAX_BUFFERING_SIZE);
   DWORD lastCheckTime = GetTickCount();
 
   while (!caller->asyncRequestProcessingShouldExit)
@@ -1512,7 +1578,17 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                   // found data length is equal than requested, return S_OK
                   caller->logger.Log(LOGGER_DATA, _T("%s: %s: request '%u' complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_OK);
                   request->SetBufferLength(foundDataLength);
-                  request->Complete(S_OK);
+
+                  if (request->GetState() == CAsyncRequest::Requested)
+                  {
+                    // set that request is buffering data for another request
+                    // it means that request is completed but we are waiting for more data to buffer
+                    request->BufferingData();
+                  }
+                  else
+                  {
+                    request->Complete(S_OK);
+                  }
                 }
                 else
                 {
@@ -1557,6 +1633,39 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                   caller->logger.Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while requesting data, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
                   request->Complete(result);
                 }
+              }
+            }
+          }
+        }
+
+        if (request->GetState() == CAsyncRequest::Buffering)
+        {
+          // request is buffering data for another request
+          LONGLONG total = 0;
+          LONGLONG current = 0;
+          if (caller->filter->QueryStreamProgress(&total, &current) == S_OK)
+          {
+            // values are not estimated and no error occured
+            if (current < request->GetStart())
+            {
+              // we are receiving data from somewhere else
+              // don't wait for data
+              request->Complete(S_OK);
+            }
+            else if (current == total)
+            {
+              // we are at the end of stream
+              // don't wait for data
+              request->Complete(S_OK);
+            }
+            else
+            {
+              LONGLONG bufferingSize = total * bufferingPercentage / 100; // two percent
+              if ((current - request->GetStart()) >= min(maxBufferingSize, bufferingSize))
+              {
+                // we buffered some data
+                // complete request
+                request->Complete(S_OK);
               }
             }
           }

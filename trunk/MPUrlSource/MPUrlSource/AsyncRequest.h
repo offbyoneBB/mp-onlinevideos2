@@ -41,6 +41,7 @@ public:
     Created,
     Waiting,
     Requested,
+    Buffering,
     Completed,
     Cancelled
   };
@@ -95,6 +96,9 @@ public:
 
   // mark request as requested from filter
   void Request(void);
+
+  // mark request as buffering data for another request
+  void BufferingData(void);
 
   // gets current state of async request
   // @return : one of AsyncState values
