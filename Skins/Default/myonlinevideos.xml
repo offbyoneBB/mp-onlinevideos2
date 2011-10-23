@@ -19,6 +19,29 @@
       <height>576</height>
     </control>
     <import>common.video.fanart.xml</import>
+    <control Style="NoShadow">
+      <description>number of current downloads</description>
+      <type>button</type>
+      <id>47016</id>
+      <posX>8</posX>
+      <posY>8</posY>
+      <width>32</width>
+      <height>32</height>
+      <textureFocus>OnlineVideos\disk.png</textureFocus>
+      <textureNoFocus>OnlineVideos\disk.png</textureNoFocus>
+      <label>#OnlineVideos.currentDownloads</label>
+      <font>font11</font>
+      <textXOff>-10</textXOff>
+      <textalign>center</textalign>
+      <textcolor>FF000000</textcolor>
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <onleft>50</onleft>
+      <onright>50</onright>
+      <onup>17</onup>
+      <ondown>2</ondown>
+      <visible>!string.equals(#OnlineVideos.currentDownloads, 0)</visible>
+      <animation effect="zoom" start="100,100" end="120,120" time="500" condition="true" pulse="true">conditional</animation>
+    </control>    
     <control>
       <type>image</type>
       <id>1</id>
@@ -330,8 +353,9 @@
           <id>2</id>
           <label>#OnlineVideos.Translation.LayoutList.Label</label>  
           <height>28</height>
-          <onright>50</onright>
-          <onup>17</onup>          
+          <onup>47016</onup>
+          <ondown>10</ondown>
+          <onright>50</onright>     
         </control>
         <control>
           <type>button</type>
@@ -339,6 +363,7 @@
           <id>10</id>
           <onright>50</onright>
           <onup>2</onup>
+          <ondown>9</ondown>
           <label>#OnlineVideos.Translation.Search.Label</label>
           <height>28</height>
         </control>
@@ -348,6 +373,7 @@
           <id>9</id>
           <onright>50</onright>
           <onup>10</onup>
+          <ondown>5</ondown>
           <label>#OnlineVideos.Translation.Category.Label</label>
           <height>28</height>
         </control>               
@@ -357,6 +383,7 @@
           <id>5</id>
           <onright>50</onright>
           <onup>9</onup>
+          <ondown>6</ondown>
           <label>#OnlineVideos.Translation.MaxResults.Label</label>
           <height>28</height>
         </control>
@@ -366,6 +393,7 @@
           <id>6</id>
           <onright>50</onright>
           <onup>5</onup>
+          <ondown>7</ondown>
           <label>#OnlineVideos.Translation.SortOptions.Label</label>
           <height>28</height>
         </control>
@@ -375,6 +403,7 @@
           <id>7</id>
           <onright>50</onright>
           <onup>6</onup>
+          <ondown>8</ondown>
           <label>#OnlineVideos.Translation.Timeframe.Label</label>
           <height>28</height>
         </control>
@@ -384,6 +413,7 @@
           <id>8</id>
           <onright>50</onright>
           <onup>7</onup>
+          <ondown>12</ondown>
           <label>#OnlineVideos.Translation.Refresh.Label</label>
           <height>28</height>
         </control>
@@ -392,7 +422,8 @@
           <description>Do Age Check</description>
           <id>12</id>
           <onright>50</onright>
-          <onup>8</onup>          
+          <onup>8</onup>
+          <ondown>13</ondown>
           <label>#OnlineVideos.Translation.EnterPin.Label</label>
           <height>28</height>
         </control>        
@@ -402,6 +433,7 @@
           <id>13</id>
           <onright>50</onright>
           <onup>12</onup>
+          <ondown>14</ondown>
           <label>#OnlineVideos.Translation.ManageSites.Label</label>          
           <height>28</height>
           <hyperlink>4757</hyperlink>

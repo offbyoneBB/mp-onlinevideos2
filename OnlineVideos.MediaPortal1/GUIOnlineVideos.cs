@@ -112,6 +112,8 @@ namespace OnlineVideos.MediaPortal1
         protected GUIFacadeControl GUI_facadeView = null;
         [SkinControlAttribute(51)]
         protected GUIListControl GUI_infoList = null;
+        [SkinControlAttribute(47016)]
+        protected GUIButtonControl GUI_btnCurrentDownloads = null;
         #endregion
 
         #region state variables
@@ -244,6 +246,7 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#OnlineVideos.filter", " "); GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSite", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
+            GUIPropertyManager.SetProperty("#OnlineVideos.currentDownloads", "0");
             CurrentState = State.sites;
             // get last active module settings  
             using (MediaPortal.Profile.Settings settings = new MediaPortal.Profile.MPSettings())
@@ -275,7 +278,6 @@ namespace OnlineVideos.MediaPortal1
 				GUIWaitCursor.Init(); GUIWaitCursor.Show();
 				initializationBackgroundWorker.RunWorkerCompleted += (o, e) =>
 				{
-					initializationBackgroundWorker = null;
 					GUIWaitCursor.Hide();
 					if (!firstLoadDone) DoFirstLoad();
 					else DoSubsequentLoad();
@@ -827,6 +829,38 @@ namespace OnlineVideos.MediaPortal1
                         if (CurrentState == State.groups) DisplayGroups();
                         else DisplaySites();
                     }
+                }
+            }
+            else if (control == GUI_btnCurrentDownloads)
+            {
+                // go to current downloads
+                Sites.SiteUtilBase aSite = null;
+                if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Translation.Instance.DownloadedVideos, out aSite))
+                {
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    {
+                        if (!aSite.Settings.DynamicCategoriesDiscovered)
+                        {
+                            Log.Instance.Info("Looking for dynamic categories for '{0}'", aSite.Settings.Name);
+                            int foundCategories = aSite.DiscoverDynamicCategories();
+                            Log.Instance.Info("Found {0} dynamic categories for '{1}'", foundCategories, aSite.Settings.Name);
+                        }
+                        return aSite.Settings.Categories;
+                    },
+                    delegate(bool success, object result)
+                    {
+                        if (success)
+                        {
+                            Category aCategory = aSite.Settings.Categories.FirstOrDefault(c => c.Name == Translation.Instance.Downloading);
+                            if (aCategory != null)
+                            {
+                                SelectedSite = aSite;
+                                selectedCategory = aCategory;
+                                DisplayVideos_Category(aCategory, true);
+                            }
+                        }
+                    },
+                    Translation.Instance.GettingDynamicCategories, true);
                 }
             }
             base.OnClicked(controlId, control, actionType);
@@ -2250,6 +2284,8 @@ namespace OnlineVideos.MediaPortal1
 
 			DownloadManager.Instance.Add(url, saveItems.CurrentItem);
 
+            GUIPropertyManager.SetProperty("#OnlineVideos.currentDownloads", DownloadManager.Instance.Count.ToString());
+
             System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
             {
 				DownloadList dlList = o as DownloadList;
@@ -2276,7 +2312,7 @@ namespace OnlineVideos.MediaPortal1
 				}
             });
             downloadThread.IsBackground = true;
-            downloadThread.Name = "OnlineVideosDownload";
+            downloadThread.Name = "OVDownload";
             downloadThread.Start(saveItems);
 
             GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
@@ -2293,6 +2329,8 @@ namespace OnlineVideos.MediaPortal1
         private void OnDownloadFileCompleted(DownloadList saveItems, Exception error)
         {
             DownloadManager.Instance.Remove(saveItems.CurrentItem.Url);
+
+            GUIPropertyManager.SetProperty("#OnlineVideos.currentDownloads", DownloadManager.Instance.Count.ToString());
 
             if (error != null && !saveItems.CurrentItem.Downloader.Cancelled)
             {
