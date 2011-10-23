@@ -12,6 +12,7 @@ namespace OnlineVideos.Sites
     {
         public override int DiscoverDynamicCategories()
         {
+            List<Category> dynamicCategories = new List<Category>();
             XmlDocument doc = new XmlDocument();
             doc.Load(@"http://www.abc.net.au/iview/xml/categories.xml");
             foreach (XmlNode node in doc.SelectNodes(@"//categories/category"))
@@ -20,8 +21,10 @@ namespace OnlineVideos.Sites
                 cat.Name = node.SelectSingleNode("name").InnerText;
                 cat.HasSubCategories = true;
                 AddSubcats(cat, node);
-                Settings.Categories.Add(cat);
+                dynamicCategories.Add(cat);
             }
+            dynamicCategories.Sort();
+            foreach (Category cat in dynamicCategories) Settings.Categories.Add(cat);
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
@@ -73,6 +76,8 @@ namespace OnlineVideos.Sites
                     }
                 }
             }
+            parentCategory.SubCategories.Sort();
+
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
         }
