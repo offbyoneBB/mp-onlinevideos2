@@ -18,7 +18,30 @@
       <width>1280</width>
       <height>720</height>
     </control>
-    <import>common.video.fanart.xml</import>
+    <import>common.video.fanart.xml</import>   
+    <control Style="NoShadow">
+      <description>number of current downloads</description>
+      <type>button</type>
+      <id>47016</id>
+      <posX>8</posX>
+      <posY>8</posY>
+      <width>40</width>
+      <height>40</height>
+      <textureFocus>OnlineVideos\disk.png</textureFocus>
+      <textureNoFocus>OnlineVideos\disk.png</textureNoFocus>
+      <label>#OnlineVideos.currentDownloads</label>
+      <font>font11</font>
+      <textXOff>-10</textXOff>
+      <textalign>center</textalign>
+      <textcolor>FF000000</textcolor>
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <onleft>50</onleft>
+      <onright>50</onright>
+      <onup>17</onup>
+      <ondown>2</ondown>
+      <visible>!string.equals(#OnlineVideos.currentDownloads, 0)</visible>
+      <animation effect="zoom" start="100,100" end="120,120" time="500" condition="true" pulse="true">conditional</animation>
+    </control>    
     <control>
       <type>image</type>
       <id>1</id>
@@ -329,9 +352,10 @@
           <description>View-As</description>
           <type>button</type>
           <id>2</id>
-          <label>#OnlineVideos.Translation.LayoutList.Label</label>          
+          <label>#OnlineVideos.Translation.LayoutList.Label</label>
           <onright>50</onright>
-          <onup>17</onup>
+          <onup>47016</onup>
+          <ondown>10</ondown>
           <font>font11</font>
           <height>37</height>
         </control>
@@ -339,9 +363,10 @@
           <type>button</type>
           <description>Search</description>
           <id>10</id>
+          <label>#OnlineVideos.Translation.Search.Label</label>
           <onright>50</onright>
           <onup>2</onup>
-          <label>#OnlineVideos.Translation.Search.Label</label>
+          <ondown>9</ondown>
           <font>font11</font>
           <height>37</height>
         </control>
@@ -349,9 +374,10 @@
           <description>select category</description>
           <type>selectbutton</type>
           <id>9</id>
+          <label>#OnlineVideos.Translation.Category.Label</label>
           <onright>50</onright>
           <onup>10</onup>
-          <label>#OnlineVideos.Translation.Category.Label</label>
+          <ondown>5</ondown>
           <font>font11</font>
           <height>37</height>
         </control>        
@@ -359,9 +385,10 @@
           <type>selectbutton</type>
           <description>Max Results</description>
           <id>5</id>
+          <label>#OnlineVideos.Translation.MaxResults.Label</label>
           <onright>50</onright>
           <onup>9</onup>
-          <label>#OnlineVideos.Translation.MaxResults.Label</label>
+          <ondown>6</ondown>
           <font>font11</font>
           <height>37</height>
         </control>
@@ -369,9 +396,10 @@
           <type>selectbutton</type>
           <description>Order By</description>
           <id>6</id>
+          <label>#OnlineVideos.Translation.SortOptions.Label</label>
           <onright>50</onright>
           <onup>5</onup>
-          <label>#OnlineVideos.Translation.SortOptions.Label</label>
+          <ondown>7</ondown>
           <font>font11</font>
           <height>37</height>
         </control>
@@ -379,9 +407,10 @@
           <type>selectbutton</type>
           <description>TimeFrame button</description>
           <id>7</id>
+          <label>#OnlineVideos.Translation.Timeframe.Label</label>
           <onright>50</onright>
           <onup>6</onup>
-          <label>#OnlineVideos.Translation.Timeframe.Label</label>
+          <ondown>8</ondown>
           <font>font11</font>
           <height>37</height>
         </control>
@@ -389,10 +418,10 @@
           <type>button</type>
           <description>Update button</description>
           <id>8</id>
+          <label>#OnlineVideos.Translation.Refresh.Label</label>
           <onright>50</onright>
           <onup>7</onup>
           <ondown>12</ondown>
-          <label>#OnlineVideos.Translation.Refresh.Label</label>
           <font>font11</font>
           <height>37</height>
         </control>
@@ -400,10 +429,10 @@
           <type>button</type>
           <description>Do Age Check</description>
           <id>12</id>
+          <label>#OnlineVideos.Translation.EnterPin.Label</label>
           <onright>50</onright>
           <onup>8</onup>
           <ondown>13</ondown>
-          <label>#OnlineVideos.Translation.EnterPin.Label</label>
           <font>font11</font>
           <height>37</height>
         </control>        
@@ -411,10 +440,10 @@
           <type>button</type>
           <description>Update Sites</description>
           <id>13</id>
+          <label>#OnlineVideos.Translation.ManageSites.Label</label>
           <onright>50</onright>
           <onup>12</onup>
           <ondown>14</ondown>
-          <label>#OnlineVideos.Translation.ManageSites.Label</label>
           <font>font11</font>
           <height>37</height>
           <hyperlink>4757</hyperlink>
