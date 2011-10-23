@@ -29,7 +29,7 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
 || 12 || button || {{{#OnlineVideos.Translation.EnterPin.Label}}} || Enter Pin for adult sites ||
 || 50 || facadeview || {{{label1}}} - title, {{{label2}}} - language or length or number of childs ||  main facade (required modes: list, large and small icons) ||
 || 51 || listcontrol || - || additional list used instead of facade in details view ||
-
+||47016 || button || {{{#OnlineVideos.currentDownloads}}} || optional button that will go directly to the current downloads screen ||
 
 The icon shown for each site in the facade can be overridden by the skin if a png in {{{[CurrentSkinFolder]\Media\OnlineVideos\Icons\}}} is found. <br/>The same goes for the site's banner ({{{[CurrentSkinFolder]\Media\OnlineVideos\Banners\}}}).<br/>
 A new icon is needed for an item in the facade for retrieving the next page videos: ({{{[CurrentSkinFolder]\Media\OnlineVideos\NextPage.png}}}).
@@ -54,6 +54,7 @@ The State is one of the three: {{{Broken, Reported, Working}}}. In the default s
   * `#header.label` - changes according to the name of the current site/category, ...
   * `#header.image` - banner style image (3:1 AR) that changes according to the current site the user is browsing
   * `#OnlineVideos.Translation.ManageSites.Label` - can be used for the button that calls the site manager window
+  * `#OnlineVideos.currentDownloads` - number of downloads currently running in the background
 
  * Site Manager Window (4757) only
   * `#OnlineVideos.owner` - Creator of the current selected item (localized label property: {{{#OnlineVideos.Translation.Creator.Label}}})
