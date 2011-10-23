@@ -555,6 +555,20 @@ namespace OnlineVideos.Sites
             return base.GetTrackingInfo(video);
         }
 
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            if (string.IsNullOrEmpty(url)) // called for adding to favorites
+                return video.Title;
+            else // called for downloading
+            {
+                string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] { '/' }));
+                if (extension == string.Empty) extension = System.IO.Path.GetExtension(url);
+                if (extension == ".f4v" || extension == ".fid" || extension == String.Empty) extension = ".flv";
+                string safeName = Utils.GetSaveFilename(video.Title);
+                return safeName + extension;
+            }
+        }
+
 
         public class SeriesVideoInfo : VideoInfo
         {
