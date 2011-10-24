@@ -109,7 +109,7 @@ namespace OnlineVideos.MediaPortal1
 					fi.SetValue(Translation.Instance, TranslatedStrings[fi.Name]);
 				//TransType.InvokeMember(fi.Name, BindingFlags.SetField, null, TransType, new object[] { TranslatedStrings[fi.Name] });
 				else
-					Log.Instance.Info("Translation not found for field: '{0}'. Using hard-coded English default.", fi.Name);
+					Log.Instance.Debug("Translation not found for field: '{0}'. Using hard-coded English default.", fi.Name);
 			}
 		}
 

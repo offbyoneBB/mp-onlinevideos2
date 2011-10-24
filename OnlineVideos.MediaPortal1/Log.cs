@@ -50,7 +50,7 @@ namespace OnlineVideos.MediaPortal1
 
 			Hierarchy hierarchy = (Hierarchy)LogManager.CreateRepository("OnlineVideos");
 			PatternLayout patternLayout = new PatternLayout();
-			patternLayout.ConversionPattern = "[%date] [%-12thread] [%-5level] %message%newline";
+			patternLayout.ConversionPattern = "[%date{MM-dd HH:mm:ss,fff}] [%-12thread] [%-5level] %message%newline";
 			patternLayout.ActivateOptions();
 
 			RollingFileAppender roller = new RollingFileAppender();
