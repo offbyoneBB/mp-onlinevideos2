@@ -431,11 +431,12 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions.Keys.CopyTo(keys, 0);
                 foreach (string key in keys)
                 {
-                    // resolve asx
+                    // try to resolve asx to mms streams
                     if (video.PlaybackOptions[key].EndsWith(".asx"))
                     {
-                        string mmsUrl = SiteUtilBase.ParseASX(video.PlaybackOptions[key])[0];
-                        if (!video.PlaybackOptions.ContainsValue(mmsUrl))
+						string mmsUrl = null;
+						try { mmsUrl = SiteUtilBase.ParseASX(video.PlaybackOptions[key])[0]; } catch { }
+                        if (!string.IsNullOrEmpty(mmsUrl) && !video.PlaybackOptions.ContainsValue(mmsUrl))
                         {
                             Uri uri = new Uri(mmsUrl);
                             if (uri.Scheme == "mms")

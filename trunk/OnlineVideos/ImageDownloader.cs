@@ -58,7 +58,7 @@ namespace OnlineVideos
                 })
                 {
                     IsBackground = true,
-                    Name = "OnlineVideosImageDownloader" + i.ToString()
+                    Name = "OVThumbs" + i.ToString()
                 }.Start(a);
             }
         }

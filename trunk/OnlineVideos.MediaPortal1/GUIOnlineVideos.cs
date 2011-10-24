@@ -2297,7 +2297,7 @@ namespace OnlineVideos.MediaPortal1
 					dlList.CurrentItem.Downloader = dlHelper;
 					dlList.CurrentItem.Start = DateTime.Now;
 					Exception exception = dlHelper.Download(dlList.CurrentItem);
-					if (exception != null) Log.Instance.Warn("Error downloading {0}, Msg: ", dlList.CurrentItem.Url, exception.Message);
+					if (exception != null) Log.Instance.Warn("Error downloading '{0}', Msg: {1}", dlList.CurrentItem.Url, exception.Message);
 					OnDownloadFileCompleted(dlList, exception);
 				}
 				catch (System.Threading.ThreadAbortException)
@@ -2307,7 +2307,7 @@ namespace OnlineVideos.MediaPortal1
 				}
 				catch (Exception ex)
 				{
-					Log.Instance.Warn("Error downloading {0}, Msg: ", dlList.CurrentItem.Url, ex.Message);
+					Log.Instance.Warn("Error downloading '{0}', Msg: {1}", dlList.CurrentItem.Url, ex.Message);
 					OnDownloadFileCompleted(dlList, ex);
 				}
             });
