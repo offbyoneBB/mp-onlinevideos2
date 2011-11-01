@@ -484,27 +484,29 @@ HRESULT CMPUrlSource_File::QueryStreamProgress(LONGLONG *total, LONGLONG *curren
   return result;
 }
 
-HRESULT CMPUrlSource_File::QueryStreamAvailableLength(LONGLONG *available)
+HRESULT CMPUrlSource_File::QueryStreamAvailableLength(CStreamAvailableLength *availableLength)
 {
   HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, available);
+  CHECK_POINTER_DEFAULT_HRESULT(result, availableLength);
 
   if (result == S_OK)
   {
-    *available = this->fileLength;
+    availableLength->SetQueryResult(S_OK);
+    availableLength->SetAvailableLength(this->fileLength);
   }
 
   return result;
 }
 
-HRESULT CMPUrlSource_File::QueryRangesSupported(bool *rangesSupported)
+HRESULT CMPUrlSource_File::QueryRangesSupported(CRangesSupported *rangesSupported)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, rangesSupported);
 
   if (result == S_OK)
   {
-    *rangesSupported = true;
+    rangesSupported->SetQueryResult(S_OK);
+    rangesSupported->SetRangesSupported(true);
   }
 
   return result;

@@ -84,6 +84,12 @@
     <ClInclude Include="LockMutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RangesSupported.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamAvailableLength.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -144,6 +150,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LockMutex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RangesSupported.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamAvailableLength.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

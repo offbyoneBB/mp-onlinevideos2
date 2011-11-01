@@ -837,19 +837,19 @@ HRESULT CMPUrlSourceFilter::QueryStreamProgress(LONGLONG *total, LONGLONG *curre
   return result;
 }
 
-HRESULT CMPUrlSourceFilter::QueryStreamAvailableLength(LONGLONG *available)
+HRESULT CMPUrlSourceFilter::QueryStreamAvailableLength(CStreamAvailableLength *availableLength)
 {
   HRESULT result = E_NOTIMPL;
 
   if (this->activeProtocol != NULL)
   {
-    result = this->activeProtocol->QueryStreamAvailableLength(available);
+    result = this->activeProtocol->QueryStreamAvailableLength(availableLength);
   }
 
   return result;
 }
 
-HRESULT CMPUrlSourceFilter::QueryRangesSupported(bool *rangesSupported)
+HRESULT CMPUrlSourceFilter::QueryRangesSupported(CRangesSupported *rangesSupported)
 {
   HRESULT result = E_NOTIMPL;
 

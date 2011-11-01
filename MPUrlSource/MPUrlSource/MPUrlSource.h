@@ -183,15 +183,14 @@ public:
   HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
 
   // retrieves available lenght of stream
-  // @param available : reference to variable that receives the available length of stream, in bytes
-  // @return : S_OK if successful, E_NOTIMPL if method is not implemented, other error codes if error
-  HRESULT QueryStreamAvailableLength(LONGLONG *available);
+  // @param available : reference to instance of class that receives the available length of stream, in bytes
+  // @return : S_OK if successful, other error codes if error
+  HRESULT QueryStreamAvailableLength(CStreamAvailableLength *availableLength);
 
   // queries protocol implementation if ranges are supported
-  // ranges are supported only when method returns S_OK and *rangesSupported is true
-  // @param rangesSupported : reference to variable that receives if ranges are supported
-  // @return : S_OK if successful, E_PENDING if protocol checking ranges support and result is not known yet, other error codes if error
-  HRESULT QueryRangesSupported(bool *rangesSupported);
+  // @param rangesSupported : reference to instance of class that receives if ranges are supported
+  // @return : S_OK if successful
+  HRESULT QueryRangesSupported(CRangesSupported *rangesSupported);
 };
 
 

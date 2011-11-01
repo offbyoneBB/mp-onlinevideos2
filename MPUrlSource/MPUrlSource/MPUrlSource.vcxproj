@@ -105,7 +105,9 @@
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="ParameterCollection.h" />
     <ClInclude Include="ProtocolInterface.h" />
+    <ClInclude Include="RangesSupported.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StreamAvailableLength.h" />
     <ClInclude Include="StringCollection.h" />
     <ClInclude Include="Strings.h" />
     <ClInclude Include="targetver.h" />
@@ -135,10 +137,12 @@
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Parameter.cpp" />
     <ClCompile Include="ParameterCollection.cpp" />
+    <ClCompile Include="RangesSupported.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StreamAvailableLength.cpp" />
     <ClCompile Include="StringCollection.cpp" />
     <ClCompile Include="Strings.cpp" />
     <ClCompile Include="Utilities.cpp" />

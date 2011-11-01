@@ -26,6 +26,8 @@
 #include "StringCollection.h"
 #include "ParameterCollection.h"
 #include "MediaPacket.h"
+#include "RangesSupported.h"
+#include "StreamAvailableLength.h"
 
 // logging constants
 
@@ -132,15 +134,14 @@ struct IBaseProtocol
   virtual HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current) = 0;
   
   // retrieves available lenght of stream
-  // @param available : reference to variable that receives the available length of stream, in bytes
-  // @return : S_OK if successful, E_NOTIMPL if method is not implemented, other error codes if error
-  virtual HRESULT QueryStreamAvailableLength(LONGLONG *available) = 0;
+  // @param available : reference to instance of class that receives the available length of stream, in bytes
+  // @return : S_OK if successful, other error codes if error
+  virtual HRESULT QueryStreamAvailableLength(CStreamAvailableLength *availableLength) = 0;
 
   // queries protocol implementation if ranges are supported
-  // ranges are supported only when method returns S_OK and *rangesSupported is true
-  // @param rangesSupported : reference to variable that receives if ranges are supported
-  // @return : S_OK if successful, E_PENDING if protocol checking ranges support and result is not known yet, other error codes if error
-  virtual HRESULT QueryRangesSupported(bool *rangesSupported) = 0;
+  // @param rangesSupported : reference to instance of class that receives if ranges are supported
+  // @return : S_OK if successful
+  virtual HRESULT QueryRangesSupported(CRangesSupported *rangesSupported) = 0;
 };
 
 // defines interface for stream protocol implementation
