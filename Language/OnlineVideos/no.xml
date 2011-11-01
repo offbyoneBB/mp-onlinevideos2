@@ -31,8 +31,9 @@
   <string Field="Date">Dato</string>
   <string Field="DateOfRelease">Utgivelse dato</string>
   <string Field="Directors">Regissører</string>
-  <string Field="Download">Nedlasting</string>
-  <string Field="Downloading">Nedlaster</string>
+  <string Field="Download">Last ned</string>
+  <string Field="DownloadUserdefined">Last ned til brukerdefinert mappe</string>
+  <string Field="Downloading">Laster ned</string>
   <string Field="DownloadingDescription">Vis listen med aktive nedlastinger.</string>
   <string Field="DownloadingSubtitle">laster ned undertekst</string>
   <string Field="DownloadFailed">Nedlasting feilet: {0}</string>
@@ -40,6 +41,7 @@
   <string Field="DownloadComplete">Nedlasting ferdig</string>
   <string Field="DownloadStarted">Nedlasting startet</string>
   <string Field="DownloadedVideos">Nedlastede videoer</string>
+  <string Field="DownloadsWillBeAborted">Nedlastinger vil bli avbrutt.</string>
   <string Field="Delete">Slett</string>
   <string Field="DeleteAll">Slett alle</string>
   <string Field="Default">Standard</string>
@@ -105,15 +107,20 @@
   <!-- P -->
   <string Field="PlayAll">Spill alle</string>
   <string Field="PlayWith">Spill av med ...</string>
+  <string Field="Playlists">Spillelister</string>
+  <string Field="PlaybackWillBeStopped">Avspilling vil bli stoppet.</string>
+  <string Field="PleaseEnterDescription">Gi en kort beskrivelse.</string>
   <string Field="PlotOutline">Handling</string>
   <string Field="PreviousPage">Forrige side</string>
   <string Field="PerformAutomaticUpdate">Utfør automatiske oppdateringer?</string>
 
   <!-- R -->
+  <string Field="Recommendations">Anbefalinger</string>
   <string Field="RemoveFromFavorites">Fjern fra favoritter</string>
   <string Field="RemovingFromFavorites">fjerner fra favoritter</string>
   <string Field="Refresh">Oppdater</string>
   <string Field="RelatedVideos">Relaterte videoer</string>
+  <string Field="ReportBroken">Rapporter ødelagte</string>
   <string Field="Reported">Rapporterte</string>
   <string Field="Reports">Rapporter</string>
   <string Field="Runtime">Spilletid</string>
@@ -145,14 +152,18 @@
   <!-- U -->
   <string Field="Updated">Oppdatert</string>
   <string Field="Updatable">Oppdaterbar</string>
+  <string Field="UpdateAll">Oppdater/Legg til alt</string>
+  <string Field="UpdateAllSkipCategories">Oppdater/Legg til alt (hopp over kategorier)</string>
   <string Field="UpdateMySite">Oppdater min side</string>
   <string Field="UpdateMySiteSkipCategories">Oppdater min side(hopp over kategorier)</string>
   <string Field="UpdateAllYourSites">Dette vil oppdatere alle dine sider.</string>
   <string Field="UnableToPlayVideo">Kan ikke spille av video. Ingen URL.</string>
   <string Field="UnableToDownloadVideo">Kan ikke laste ned. Ugyldig URL.</string>
+  <string Field="UploadsBy">opplastet av</string>
 
   <!-- V -->
   <string Field="Videos">Videoer</string>
+  <string Field="VideoQuality">Videokvalitet</string>
 
   <!-- W -->
   <string Field="Working">Arbeider</string>
