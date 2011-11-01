@@ -514,26 +514,12 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
         if (SUCCEEDED(result))
         {
           bool buffering = false;
-          bool rangesSupported = false;
-          bool rangesPending = false;
-          result = this->filter->QueryRangesSupported(&rangesSupported);
+
+          CRangesSupported *rangesSupported = new CRangesSupported();
+          rangesSupported->SetFilterConnectedToAnotherPin(this->connectedToAnotherPin);
+          result = this->filter->QueryRangesSupported(rangesSupported);
 
           // if ranges are not supported than we must wait for data
-
-          switch (result)
-          {
-          case S_OK:
-            rangesPending = false;
-            break;
-          case E_PENDING:
-            rangesSupported = false;
-            rangesPending = true;
-            break;
-          default:
-            rangesSupported = false;
-            rangesPending = false;
-            break;
-          }
 
           result = VFW_E_TIMEOUT;
           this->logger.Log(LOGGER_DATA, _T("%s: %s: requesting data from position: %llu, length: %lu"), MODULE_NAME, METHOD_SYNC_READ_NAME, position, length);
@@ -541,24 +527,10 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
           // wait until request is completed or cancelled
           while (!this->asyncRequestProcessingShouldExit)
           {
-            if (rangesPending)            
+            if (rangesSupported->IsQueryPending())            
             {
               // protocol implementation doesn't know yet if ranges are supported
-              HRESULT pendingResult = this->filter->QueryRangesSupported(&rangesSupported);
-              switch (pendingResult)
-              {
-              case S_OK:
-                rangesPending = false;
-                break;
-              case E_PENDING:
-                rangesSupported = false;
-                rangesPending = true;
-                break;
-              default:
-                rangesSupported = false;
-                rangesPending = false;
-                break;
-              }
+              this->filter->QueryRangesSupported(rangesSupported);
             }
 
             CAsyncRequest *request = NULL;
@@ -618,7 +590,7 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
                 else
                 {
                   // common case
-                  if ((rangesSupported) && ((GetTickCount() - ticks) > timeout))
+                  if ((rangesSupported->AreRangesSupported()) && ((GetTickCount() - ticks) > timeout))
                   {
                     // if ranges are supported and timeout occured then stop waiting for data and exit with VFW_E_TIMEOUT error
                     result = VFW_E_TIMEOUT;
@@ -638,6 +610,9 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
             // sleep some time
             Sleep(10);
           }
+
+          // remove ranges supported from memory, it's no longer needed
+          delete rangesSupported;
         }
 
         {
@@ -673,54 +648,28 @@ STDMETHODIMP CAsyncSourceStream::Length(LONGLONG *total, LONGLONG *available)
   if (result == S_OK)
   {
     *total = this->totalLength;
-    //*available = this->totalLength;
-    *available = (this->connectedToAnotherPin) ? this->totalLength : 0;
-    //*available = 0;
+    *available = this->totalLength;
     unsigned int mediaPacketCount = this->mediaPacketCollection->Count();
 
-    //bool rangesSupported = false;
-    //if (this->filter->QueryRangesSupported(&rangesSupported) != S_OK)
-    //{
-    //  // ranges are not supported or is not sure if are supported
-    //  rangesSupported = false;
-    //}
-
-    //if (rangesSupported)
-    //{
-    //  // ranges are surely supported
-    //  *available = this->totalLength;
-    //}
-    //else
-    //{
-    //  // ranges are not supported or is not sure if are supported
-
-    //  *available = 0;
-    //  for (unsigned int i = 0; i < mediaPacketCount; i++)
-    //  {
-    //    CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(i);
-    //    REFERENCE_TIME mediaPacketStart = 0;
-    //    REFERENCE_TIME mediaPacketEnd = 0;
-
-    //    if (mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd) == S_OK)
-    //    {
-    //      if ((mediaPacketEnd + 1) > (*available))
-    //      {
-    //        *available = mediaPacketEnd + 1;
-    //      }
-    //    }
-    //  }
-
-    //  result = S_OK;
-    //}
-    
-    result = (this->connectedToAnotherPin) ? S_OK : this->filter->QueryStreamAvailableLength(available);
-    if (result != S_OK)
-    //if (result == S_OK)
+    CStreamAvailableLength *availableLength = new CStreamAvailableLength();
+    availableLength->SetFilterConnectedToAnotherPin(this->connectedToAnotherPin);
+    result = this->filter->QueryStreamAvailableLength(availableLength);
+    if (result == S_OK)
     {
-      if (result != E_NOTIMPL)
-      {
-        this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: cannot query available stream length, result: 0x%08X"), MODULE_NAME, METHOD_LENGTH_NAME, result);
-      }
+      result = availableLength->GetQueryResult();
+    }
+
+    if (result == S_OK)
+    {
+      *available = availableLength->GetAvailableLength();
+    }
+    
+    if (result != S_OK)
+    {
+      // error occured while requesting stream available length
+      this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: cannot query available stream length, result: 0x%08X"), MODULE_NAME, METHOD_LENGTH_NAME, result);
+
+      // return default value = last media packet end
       *available = 0;
       for (unsigned int i = 0; i < mediaPacketCount; i++)
       {
@@ -1610,11 +1559,16 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
 
           if ((packetIndex == UINT_MAX) && (request->GetState() == CAsyncRequest::Waiting))
           {
-            bool rangesSupported = false;
+            // there isn't any packet containg some data for request
             // check if ranges are supported
-            if (caller->filter->QueryRangesSupported(&rangesSupported) == S_OK)
+
+            CRangesSupported *rangesSupported = new CRangesSupported();
+            rangesSupported->SetFilterConnectedToAnotherPin(caller->connectedToAnotherPin);
+            // check if ranges are supported
+            HRESULT rangesSupportedResult = caller->filter->QueryRangesSupported(rangesSupported);
+            if (rangesSupportedResult == S_OK)
             {
-              if (rangesSupported)
+              if (rangesSupported->AreRangesSupported())
               {
                 if (SUCCEEDED(result))
                 {
@@ -1634,7 +1588,14 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                   request->Complete(result);
                 }
               }
+              else if (rangesSupported->IsQueryError())
+              {
+                // error occured while quering if ranges are supported
+                caller->logger.Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while quering if ranges are supported, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), rangesSupported->GetQueryResult());
+                request->Complete(rangesSupported->GetQueryResult());
+              }
             }
+            
           }
         }
 

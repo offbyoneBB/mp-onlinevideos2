@@ -569,19 +569,29 @@ HRESULT CMPUrlSource_Http::QueryStreamProgress(LONGLONG *total, LONGLONG *curren
   return result;
 }
 
-HRESULT CMPUrlSource_Http::QueryStreamAvailableLength(LONGLONG *available)
+HRESULT CMPUrlSource_Http::QueryStreamAvailableLength(CStreamAvailableLength *availableLength)
 {
-  return E_NOTIMPL;
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, availableLength);
+
+  if (result == S_OK)
+  {
+    availableLength->SetQueryResult(S_OK);
+    availableLength->SetAvailableLength(availableLength->IsFilterConnectedToAnotherPin() ? this->streamLength : this->streamTime);
+  }
+
+  return result;
 }
 
-HRESULT CMPUrlSource_Http::QueryRangesSupported(bool *rangesSupported)
+HRESULT CMPUrlSource_Http::QueryRangesSupported(CRangesSupported *rangesSupported)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, rangesSupported);
 
   if (result == S_OK)
   {
-    *rangesSupported = true;
+    rangesSupported->SetQueryResult(S_OK);
+    rangesSupported->SetRangesSupported(rangesSupported->IsFilterConnectedToAnotherPin());
   }
 
   return result;

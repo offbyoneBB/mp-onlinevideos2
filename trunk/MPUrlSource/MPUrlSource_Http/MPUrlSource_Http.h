@@ -79,8 +79,8 @@ public:
   HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime);
   HRESULT AbortStreamReceive();  
   HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
-  HRESULT QueryStreamAvailableLength(LONGLONG *available);
-  HRESULT QueryRangesSupported(bool *rangesSupported);
+  HRESULT QueryStreamAvailableLength(CStreamAvailableLength *availableLength);
+  HRESULT QueryRangesSupported(CRangesSupported *rangesSupported);
 
 protected:
   CLogger logger;
