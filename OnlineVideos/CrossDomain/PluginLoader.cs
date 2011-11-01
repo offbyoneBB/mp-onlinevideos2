@@ -102,7 +102,7 @@ namespace OnlineVideos
 				}
 				catch (Exception ex)
 				{
-					Log.Warn("SiteUtil '{0}' not compatible with this build of OnlineVideos: {1}", name, ex.Message);
+					Log.Warn("SiteUtil '{0}' is faulty or not compatible with this build of OnlineVideos: {1}", name, ex.Message);
 					return null;
 				}
 			}
