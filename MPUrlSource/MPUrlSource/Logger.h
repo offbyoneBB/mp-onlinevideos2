@@ -35,6 +35,31 @@
 #define MPURLSOURCEFILTER_LOG_FILE          _T("log\\MPUrlSource.log")
 #define MPURLSOURCEFILTER_LOG_FILE_BAK      _T("log\\MPUrlSource.bak")
 
+// logging constants
+
+// methods' names
+#define METHOD_CONSTRUCTOR_NAME                                         _T("ctor()")
+#define METHOD_DESTRUCTOR_NAME                                          _T("dtor()")
+#define METHOD_CLEAR_SESSION_NAME                                       _T("ClearSession()")
+#define METHOD_INITIALIZE_NAME                                          _T("Initialize()")
+#define METHOD_PARSE_URL_NAME                                           _T("ParseUrl()")
+#define METHOD_OPEN_CONNECTION_NAME                                     _T("OpenConnection()")
+#define METHOD_CLOSE_CONNECTION_NAME                                    _T("CloseConnection()")
+#define METHOD_RECEIVE_DATA_NAME                                        _T("ReceiveData()")
+#define METHOD_PUSH_DATA_NAME                                           _T("PushData()")
+#define METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME                         _T("ReceiveDataFromTimestamp()")
+#define METHOD_ABORT_STREAM_RECEIVE_NAME                                _T("AbortStreamReceive()")
+#define METHOD_QUERY_STREAM_PROGRESS_NAME                               _T("QueryStreamProgress()")
+#define METHOD_END_OF_STREAM_REACHED_NAME                               _T("EndOfStreamReached()")
+
+// methods' common string formats
+#define METHOD_START_FORMAT                                             _T("%s: %s: Start")
+#define METHOD_END_FORMAT                                               _T("%s: %s: End")
+#define METHOD_END_HRESULT_FORMAT                                       _T("%s: %s: End, result: 0x%08X")
+#define METHOD_END_FAIL_FORMAT                                          _T("%s: %s: End, Fail")
+#define METHOD_END_FAIL_HRESULT_FORMAT                                  _T("%s: %s: End, Fail, result: 0x%08X")
+#define METHOD_MESSAGE_FORMAT                                           _T("%s: %s: %s")
+
 class MPURLSOURCE_API CLogger
 {
 public:
