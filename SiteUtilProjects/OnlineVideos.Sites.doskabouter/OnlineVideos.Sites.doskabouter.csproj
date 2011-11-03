@@ -110,7 +110,6 @@
     <Compile Include="CinemassacreUtil.cs" />
     <Compile Include="HardwareInfoUtil.cs" />
     <Compile Include="MyHosters.cs" />
-    <Compile Include="Movies4Men.cs" />
     <Compile Include="NOSUtil.cs" />
     <Compile Include="OnsNetNuenenUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -123,7 +122,6 @@
     <Compile Include="TVNZOnDemandUtil.cs" />
     <Compile Include="TvTuttiUtil.cs" />
     <Compile Include="WatchSeriesUtil.cs" />
-    <Compile Include="Wetenschap24Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
