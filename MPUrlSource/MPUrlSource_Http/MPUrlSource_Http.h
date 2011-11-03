@@ -38,7 +38,7 @@
 #define HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
 
 //#define DEFAULT_BUFFER_SIZE                                 32 * 1024
-#define OUTPUT_PIN_NAME                                     _T("Output File")
+#define OUTPUT_PIN_NAME                                     _T("Output")
 
 #define CONFIGURATION_SECTION_HTTP                          _T("HTTP")
 
