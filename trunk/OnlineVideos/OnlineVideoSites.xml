@@ -1188,10 +1188,6 @@
         <Category xsi:type="RssLink" name="Joezny" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/joezjny.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/joezjny/</Category>
       </Categories>
     </Site>
-    <Site name="Movies4Men" util="Movies4Men" agecheck="false" enabled="true" lang="en">
-      <Description>Watch TV Online with View TV</Description>
-      <Categories />
-    </Site>
     <Site name="Nickelodeon.nl" util="NickelodeonNL" agecheck="false" enabled="true" lang="nl">
       <Description>Nickelodeon.nl is de leukste website voor kinderen met veel online videos van Spongebob, Dora, Big Time Rush en Pinguins van Madagascar.</Description>
       <Configuration>
@@ -1356,9 +1352,6 @@
     <Site name="Vimeo" util="Vimeo" agecheck="false" enabled="true" lang="en">
       <Description>Video sharing for you</Description>
       <Configuration />
-      <Categories />
-    </Site>
-    <Site name="Wetenschap24" util="Wetenschap24" agecheck="false" enabled="true" lang="nl" player="WMP">
       <Categories />
     </Site>
     <Site name="Yle Areena" util="YleAreena" agecheck="false" enabled="true" lang="fi">
