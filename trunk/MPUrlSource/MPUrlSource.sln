@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcurl", "libcurl\libcurl.vcxproj", "{B25D4555-F218-410A-A37E-176A17996325}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libssh2", "libssh2\libssh2.vcxproj", "{BE26DC02-05AE-4B2E-ACEF-E3BF39BF31BC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSource", "MPUrlSource\MPUrlSource.vcxproj", "{F48DCF06-2C1B-435E-A389-12231DFA5C8D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSource_File", "MPUrlSource_File\MPUrlSource_File.vcxproj", "{4215E997-3CF4-45DA-87D5-7FD5CBDC3078}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSource_Http", "MPUrlSource_Http\MPUrlSource_Http.vcxproj", "{87E58044-FF74-4E9D-B592-83619028C485}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B25D4555-F218-410A-A37E-176A17996325}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B25D4555-F218-410A-A37E-176A17996325}.Debug|Win32.Build.0 = Debug|Win32
+		{B25D4555-F218-410A-A37E-176A17996325}.Release|Win32.ActiveCfg = Release|Win32
+		{B25D4555-F218-410A-A37E-176A17996325}.Release|Win32.Build.0 = Release|Win32
+		{BE26DC02-05AE-4B2E-ACEF-E3BF39BF31BC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BE26DC02-05AE-4B2E-ACEF-E3BF39BF31BC}.Debug|Win32.Build.0 = Debug|Win32
+		{BE26DC02-05AE-4B2E-ACEF-E3BF39BF31BC}.Release|Win32.ActiveCfg = Release|Win32
+		{BE26DC02-05AE-4B2E-ACEF-E3BF39BF31BC}.Release|Win32.Build.0 = Release|Win32
+		{F48DCF06-2C1B-435E-A389-12231DFA5C8D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F48DCF06-2C1B-435E-A389-12231DFA5C8D}.Debug|Win32.Build.0 = Debug|Win32
+		{F48DCF06-2C1B-435E-A389-12231DFA5C8D}.Release|Win32.ActiveCfg = Release|Win32
+		{F48DCF06-2C1B-435E-A389-12231DFA5C8D}.Release|Win32.Build.0 = Release|Win32
+		{4215E997-3CF4-45DA-87D5-7FD5CBDC3078}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4215E997-3CF4-45DA-87D5-7FD5CBDC3078}.Debug|Win32.Build.0 = Debug|Win32
+		{4215E997-3CF4-45DA-87D5-7FD5CBDC3078}.Release|Win32.ActiveCfg = Release|Win32
+		{4215E997-3CF4-45DA-87D5-7FD5CBDC3078}.Release|Win32.Build.0 = Release|Win32
+		{87E58044-FF74-4E9D-B592-83619028C485}.Debug|Win32.ActiveCfg = Debug|Win32
+		{87E58044-FF74-4E9D-B592-83619028C485}.Debug|Win32.Build.0 = Debug|Win32
+		{87E58044-FF74-4E9D-B592-83619028C485}.Release|Win32.ActiveCfg = Release|Win32
+		{87E58044-FF74-4E9D-B592-83619028C485}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
