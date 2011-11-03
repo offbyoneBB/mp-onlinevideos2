@@ -75,6 +75,29 @@ namespace OnlineVideos.MediaPortal1.Player
         protected bool skipBuffering = false;
         public void SkipBuffering() { skipBuffering = true; }
 
+        string getSourceFilterName()
+        {
+            string sourceFilterName;
+            Uri uri = new Uri(CurrentFile);
+            switch (uri.Scheme)
+            {
+                case "http":
+                    sourceFilterName = PluginConfiguration.Instance.httpSourceFilterName;
+                    break;
+                case "sop":
+                    sourceFilterName = "SopCast ASF Splitter";
+                    break;
+                case "mms":
+                    sourceFilterName = "WM ASF Reader";
+                    break;
+                default:
+                    sourceFilterName = CurrentFile.ToLower().Contains(".asf") ? "WM ASF Reader" : string.Empty;
+                    break;
+            }
+
+            return sourceFilterName;
+        }
+
         /// <summary>
         /// If the url to be played can be buffered before starting playback, this function
         /// starts building a graph by adding the preferred video and audio render to it.
@@ -83,8 +106,8 @@ namespace OnlineVideos.MediaPortal1.Player
         /// <returns>true, if the url can be buffered (a graph was started), false if it can't be and null if an error occured building the graph</returns>
         public bool? PrepareGraph()
         {
-            Uri uri = new Uri(CurrentFile);
-            string sourceFilterName = uri.Scheme == "http" ? PluginConfiguration.Instance.httpSourceFilterName : (uri.Scheme == "mms" || CurrentFile.ToLower().Contains(".asf")) ? "WM ASF Reader" : string.Empty;
+            string sourceFilterName = getSourceFilterName();
+
             if (!string.IsNullOrEmpty(sourceFilterName))
             {
                 graphBuilder = (IGraphBuilder)new FilterGraph();
@@ -149,7 +172,8 @@ namespace OnlineVideos.MediaPortal1.Player
             IBaseFilter sourceFilter = null;
             try
             {
-                string sourceFilterName = uri.Scheme == "http" ? PluginConfiguration.Instance.httpSourceFilterName : (uri.Scheme == "mms" || CurrentFile.ToLower().Contains(".asf")) ? "WM ASF Reader" : string.Empty;
+                string sourceFilterName = getSourceFilterName();
+
                 int result = graphBuilder.FindFilterByName(sourceFilterName, out sourceFilter);
                 if (result != 0)
                 {
