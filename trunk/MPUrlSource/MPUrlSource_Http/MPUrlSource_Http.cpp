@@ -31,7 +31,7 @@
 // protocol implementation name
 #define PROTOCOL_IMPLEMENTATION_NAME                                    _T("CMPUrlSource_Http")
 
-#define METHOD_CURL_ERROR_MESSAGE                                       _T("%s: %s: %s: %s")
+#define METHOD_COMPARE_RANGES_BUFFERS_NAME                              _T("CompareRangesBuffers()")
 
 PIProtocol CreateProtocolInstance(void)
 {
@@ -62,11 +62,15 @@ CMPUrlSource_Http::CMPUrlSource_Http()
   this->endStreamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->url = NULL;
-  this->curl = NULL;
   this->internalExitRequest = false;
   this->wholeStreamDownloaded = false;
-  this->hCurlWorkerThread = NULL;
-  this->dwCurlWorkerThreadId = 0;
+  this->rangesSupported = RANGES_STATE_UNKNOWN;
+  this->receivedDataFromStart = NULL;
+  this->receivedDataFromRange = NULL;
+  this->mainCurlInstance = NULL;
+  this->rangesDetectionCurlInstance = NULL;
+  this->filledReceivedDataFromStart = false;
+  this->filledReceivedDataFromRange = false;
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -80,10 +84,16 @@ CMPUrlSource_Http::~CMPUrlSource_Http()
     this->CloseConnection();
   }
 
-  if (this->curl != NULL)
+  if (this->mainCurlInstance != NULL)
   {
-    curl_easy_cleanup(this->curl);
-    this->curl = NULL;
+    delete this->mainCurlInstance;
+    this->mainCurlInstance = NULL;
+  }
+
+  if (this->rangesDetectionCurlInstance != NULL)
+  {
+    delete this->rangesDetectionCurlInstance;
+    this->rangesDetectionCurlInstance = NULL;
   }
   
   delete this->configurationParameters;
@@ -116,6 +126,22 @@ int CMPUrlSource_Http::ClearSession(void)
   this->endStreamTime = 0;
   FREE_MEM(this->url);
   this->wholeStreamDownloaded = false;
+  this->rangesSupported = RANGES_STATE_UNKNOWN;
+  this->filledReceivedDataFromStart = false;
+  this->filledReceivedDataFromRange = false;
+
+  if (this->receivedDataFromStart != NULL)
+  {
+    delete this->receivedDataFromStart;
+    this->receivedDataFromStart = NULL;
+  }
+
+  if (this->receivedDataFromRange != NULL)
+  {
+    delete this->receivedDataFromRange;
+    this->receivedDataFromRange = NULL;
+  }
+
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return STATUS_OK;
@@ -281,8 +307,39 @@ int CMPUrlSource_Http::OpenConnection(void)
 
   if (result == STATUS_OK)
   {
-    this->curl = curl_easy_init();
-    result = (this->curl != NULL) ? STATUS_OK : STATUS_ERROR;
+    this->mainCurlInstance = new CCurlInstance(&this->logger, this->url, PROTOCOL_IMPLEMENTATION_NAME);
+    result = (this->mainCurlInstance != NULL) ? STATUS_OK : STATUS_ERROR;
+  }
+
+  if (result == STATUS_OK)
+  {
+    if (this->rangesSupported == RANGES_STATE_UNKNOWN)
+    {
+      // we don't know if ranges are supported
+      this->receivedDataFromStart = new LinearBuffer();
+      this->receivedDataFromRange = new LinearBuffer();
+
+      result = (this->receivedDataFromStart == NULL) ? STATUS_ERROR : result;
+      result = (this->receivedDataFromRange == NULL) ? STATUS_ERROR : result;
+
+      if (result == STATUS_OK)
+      {
+        result = (this->receivedDataFromStart->InitializeBuffer(RANGES_SUPPORTED_BUFFER_SIZE)) ? result : STATUS_ERROR;
+        result = (this->receivedDataFromRange->InitializeBuffer(RANGES_SUPPORTED_BUFFER_SIZE)) ? result : STATUS_ERROR;
+      }
+
+      if (result == STATUS_OK)
+      {
+        this->rangesDetectionCurlInstance = new CCurlInstance(&this->logger, this->url, PROTOCOL_IMPLEMENTATION_NAME);
+        result = (this->rangesDetectionCurlInstance != NULL) ? STATUS_OK : STATUS_ERROR;
+      }
+
+      if (result == STATUS_OK)
+      {
+        // set ranges supported state to pending request (this will store data)
+        this->rangesSupported = RANGES_STATE_PENDING_REQUEST;
+      }
+    }
   }
 
   if (result == STATUS_OK)
@@ -291,74 +348,18 @@ int CMPUrlSource_Http::OpenConnection(void)
     parameters->Append(this->configurationParameters);
     parameters->Append(this->loadParameters);
 
-    CURLcode errorCode = CURLE_OK;
-    errorCode = curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(this->receiveDataTimeout / 2000));
-    if (errorCode != CURLE_OK)
-    {
-      this->ReportCurlErrorMessage(LOGGER_ERROR, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error while setting connection timeout"), errorCode);
-      result = STATUS_ERROR;
-    }
-
-    errorCode = curl_easy_setopt(this->curl, CURLOPT_FOLLOWLOCATION, 1L);
-    if (errorCode != CURLE_OK)
-    {
-      this->ReportCurlErrorMessage(LOGGER_ERROR, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error while setting follow location"), errorCode);
-      result = STATUS_ERROR;
-    } 
-
-    if (errorCode == CURLE_OK)
-    {
-      char *curlUrl = ConvertToMultiByte(this->url);
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_URL, curlUrl);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error while setting url"), errorCode);
-        result = STATUS_ERROR;
-      }
-      FREE_MEM(curlUrl);
-    }
-
-    if (errorCode == CURLE_OK)
-    {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_WRITEFUNCTION, CMPUrlSource_Http::CurlReceiveData);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error while setting write callback"), errorCode);
-        result = STATUS_ERROR;
-      }
-    }
-
-    if (errorCode == CURLE_OK)
-    {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_WRITEDATA, this);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error while setting write callback data"), errorCode);
-        result = STATUS_ERROR;
-      }
-    }
-
-    if (errorCode == CURLE_OK)
-    {
-      TCHAR *range = FormatString((this->endStreamTime <= this->streamTime) ? _T("%llu-") : _T("%llu-%llu"), this->streamTime, this->endStreamTime);
-      this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: requesting range: %s"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, range);
-      char *curlRange = ConvertToMultiByte(range);
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_RANGE, curlRange);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, _T("error while setting range"), errorCode);
-        result = STATUS_ERROR;
-      }
-      FREE_MEM(curlRange);
-      FREE_MEM(range);
-    }
+    this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+    this->mainCurlInstance->SetWriteCallback(CMPUrlSource_Http::CurlReceiveData, this);
+    this->mainCurlInstance->SetStartStreamTime(this->streamTime);
+    this->mainCurlInstance->SetEndStreamTime(this->endStreamTime);
+    result = (this->mainCurlInstance->Initialize()) ? STATUS_OK : STATUS_ERROR;
 
     if (result == STATUS_OK)
     {
       // all parameters set
-      // create curl worker
+      // start receiving data
 
-      result = (this->CreateCurlWorker() == S_OK) ? STATUS_OK : STATUS_ERROR;
+      result = (this->mainCurlInstance->StartReceivingData()) ? STATUS_OK : STATUS_ERROR;
     }
 
     if (result == STATUS_OK)
@@ -368,7 +369,7 @@ int CMPUrlSource_Http::OpenConnection(void)
       long responseCode = 0;
       while (responseCode == 0)
       {
-        errorCode = curl_easy_getinfo(this->curl, CURLINFO_RESPONSE_CODE, &responseCode);
+        CURLcode errorCode = this->mainCurlInstance->GetResponseCode(&responseCode);
         if (errorCode == CURLE_OK)
         {
           if ((responseCode != 0) && ((responseCode < 200) || (responseCode >= 400)))
@@ -381,13 +382,13 @@ int CMPUrlSource_Http::OpenConnection(void)
         }
         else
         {
-          this->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("error while requesting HTTP status code"), errorCode);
+          this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("error while requesting HTTP status code"), errorCode);
           result = STATUS_ERROR;
         }
-      }
 
-      // wait some time
-      Sleep(1);
+        // wait some time
+        Sleep(1);
+      }
     }
     
     delete parameters;
@@ -404,7 +405,7 @@ int CMPUrlSource_Http::OpenConnection(void)
 
 bool CMPUrlSource_Http::IsConnected(void)
 {
-  return ((this->curl != NULL) || (this->wholeStreamDownloaded));
+  return ((this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded));
 }
 
 void CMPUrlSource_Http::CloseConnection(void)
@@ -414,12 +415,52 @@ void CMPUrlSource_Http::CloseConnection(void)
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  this->DestroyCurlWorker();
-
-  if (this->curl != NULL)
+  if (this->mainCurlInstance != NULL)
   {
-    curl_easy_cleanup(this->curl);
-    this->curl = NULL;
+    delete this->mainCurlInstance;
+    this->mainCurlInstance = NULL;
+  }
+
+  if (this->rangesDetectionCurlInstance != NULL)
+  {
+    delete this->rangesDetectionCurlInstance;
+    this->rangesDetectionCurlInstance = NULL;
+  }
+
+  if (this->receivedDataFromStart != NULL)
+  {
+    delete this->receivedDataFromStart;
+    this->receivedDataFromStart = NULL;
+  }
+
+  if (this->receivedDataFromRange != NULL)
+  {
+    delete this->receivedDataFromRange;
+    this->receivedDataFromRange = NULL;
+  }
+
+  this->filledReceivedDataFromStart = false;
+  this->filledReceivedDataFromRange = false;
+
+  // reset ranges supported state only if ranges are not sure
+  switch (this->rangesSupported)
+  {
+  case RANGES_STATE_UNKNOWN:
+    break;
+  case RANGES_STATE_NOT_SUPPORTED:
+    // do not reset ranges state
+    // CloseConnection() is called when processing ranges request
+    break;
+  case RANGES_STATE_PENDING_REQUEST:
+    this->rangesSupported = RANGES_STATE_UNKNOWN;
+    break;
+  case RANGES_STATE_SUPPORTED:
+    // do not reset ranges state
+    // CloseConnection() is called when processing ranges request
+    break;
+  default:
+    this->rangesSupported = RANGES_STATE_UNKNOWN;
+    break;
   }
 
   this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
@@ -447,14 +488,11 @@ void CMPUrlSource_Http::ReceiveData(bool *shouldExit)
   {
     if (!this->wholeStreamDownloaded)
     {
-      if (WaitForSingleObject(this->hCurlWorkerThread, 0) == WAIT_OBJECT_0)
+      if (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA)
       {
-        // CurlWorker exited, we're not receiving data
+        // all data received, we're not receiving data
 
-        // connection is no longer needed
-        this->CloseConnection();
-
-        if (this->curlWorkerErrorCode == CURLE_OK)
+        if (this->mainCurlInstance->GetErrorCode() == CURLE_OK)
         {
           // whole stream downloaded
           this->wholeStreamDownloaded = true;
@@ -462,6 +500,9 @@ void CMPUrlSource_Http::ReceiveData(bool *shouldExit)
           this->streamTime = this->streamLength;
           this->filter->EndOfStreamReached(OUTPUT_PIN_NAME);
         }
+
+        // connection is no longer needed
+        this->CloseConnection();
       }
     }
   }
@@ -577,7 +618,7 @@ HRESULT CMPUrlSource_Http::QueryStreamAvailableLength(CStreamAvailableLength *av
   if (result == S_OK)
   {
     availableLength->SetQueryResult(S_OK);
-    availableLength->SetAvailableLength(availableLength->IsFilterConnectedToAnotherPin() ? this->streamLength : this->streamTime);
+    availableLength->SetAvailableLength((availableLength->IsFilterConnectedToAnotherPin() && (this->rangesSupported == RANGES_STATE_SUPPORTED)) ? this->streamLength : this->streamTime);
   }
 
   return result;
@@ -590,35 +631,39 @@ HRESULT CMPUrlSource_Http::QueryRangesSupported(CRangesSupported *rangesSupporte
 
   if (result == S_OK)
   {
-    rangesSupported->SetQueryResult(S_OK);
-    rangesSupported->SetRangesSupported(rangesSupported->IsFilterConnectedToAnotherPin());
+    if (rangesSupported->IsFilterConnectedToAnotherPin())
+    {
+      rangesSupported->SetQueryResult(S_OK);
+      switch (this->rangesSupported)
+      {
+      case RANGES_STATE_UNKNOWN:
+        rangesSupported->SetRangesSupported(false);
+        break;
+      case RANGES_STATE_NOT_SUPPORTED:
+        rangesSupported->SetRangesSupported(false);
+        break;
+      case RANGES_STATE_PENDING_REQUEST:
+        rangesSupported->SetQueryResult(E_PENDING);
+        rangesSupported->SetRangesSupported(false);
+        break;
+      case RANGES_STATE_SUPPORTED:
+        rangesSupported->SetRangesSupported(true);
+        break;
+      default:
+        rangesSupported->SetRangesSupported(false);
+        break;
+      }
+    }
+    else
+    {
+      // we are not connected to another pin, assume that ranges are not supported (it makes connection to another filter more faster)
+      // in the case on web streams we can assume that we don't need data from end of stream
+      rangesSupported->SetQueryResult(S_OK);
+      rangesSupported->SetRangesSupported(false);
+    }
   }
 
   return result;
-}
-
-TCHAR *CMPUrlSource_Http::GetCurlErrorMessage(CURLcode errorCode)
-{
-  const char *error = curl_easy_strerror(errorCode);
-  TCHAR *result = NULL;
-#ifdef _MBCS
-  result = ConvertToMultiByteA(error);
-#else
-  result = ConvertToUnicodeA(error);
-#endif
-
-  // there is no need to free error message
-
-  return result;
-}
-
-void CMPUrlSource_Http::ReportCurlErrorMessage(unsigned int logLevel, const TCHAR *protocolName, const TCHAR *functionName, const TCHAR *message, CURLcode errorCode)
-{
-  TCHAR *curlError = this->GetCurlErrorMessage(errorCode);
-
-  this->logger.Log(logLevel, METHOD_CURL_ERROR_MESSAGE, protocolName, functionName, (message == NULL) ? _T("libcurl error") : message, curlError);
-
-  FREE_MEM(curlError);
 }
 
 size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata)
@@ -630,7 +675,7 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
   if (!((caller->shouldExit) || (caller->internalExitRequest)))
   {
     long responseCode = 0;
-    CURLcode errorCode = curl_easy_getinfo(caller->curl, CURLINFO_RESPONSE_CODE, &responseCode);
+    CURLcode errorCode = caller->mainCurlInstance->GetResponseCode(&responseCode);
     if (errorCode == CURLE_OK)
     {
       if ((responseCode < 200) && (responseCode >= 400))
@@ -648,7 +693,7 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
       if (!caller->setLenght)
       {
         double streamSize = 0;
-        CURLcode errorCode = curl_easy_getinfo(caller->curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
+        CURLcode errorCode = curl_easy_getinfo(caller->mainCurlInstance->GetCurlHandle(), CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
         if ((errorCode == CURLE_OK) && (streamSize > 0))
         {
           LONGLONG total = LONGLONG(streamSize);
@@ -661,6 +706,36 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
 
       if (bytesRead != 0)
       {
+        if (caller->rangesDetectionCurlInstance != NULL)
+        {
+          if (caller->rangesDetectionCurlInstance->GetCurlState() == CURL_STATE_CREATED)
+          {
+            // ranges detection wasn't initialized and started
+            caller->rangesDetectionCurlInstance->SetReceivedDataTimeout(caller->receiveDataTimeout);
+            caller->rangesDetectionCurlInstance->SetWriteCallback(CMPUrlSource_Http::CurlRangesDetectionReceiveData, caller);
+            caller->rangesDetectionCurlInstance->SetStartStreamTime(caller->streamLength / 2);
+            caller->rangesDetectionCurlInstance->SetEndStreamTime(caller->streamLength / 2);
+            if (caller->rangesDetectionCurlInstance->Initialize())
+            {
+              caller->rangesDetectionCurlInstance->StartReceivingData();
+            }
+          }
+        }
+
+        if (caller->rangesSupported == RANGES_STATE_PENDING_REQUEST)
+        {
+          // there is pending request if ranges are supported or not          
+
+          if ((!caller->filledReceivedDataFromStart) && (caller->receivedDataFromStart->AddToBuffer(buffer, min(bytesRead, caller->receivedDataFromStart->GetBufferFreeSpace())) != bytesRead))
+          {
+            caller->filledReceivedDataFromStart = true;
+            // data wasn't added to buffer
+            // compare buffers and set ranges supported state
+
+            caller->CompareRangesBuffers();
+          }
+        }
+
         // create media packet
         // set values of media packet
         CMediaPacket *mediaPacket = new CMediaPacket();
@@ -684,71 +759,117 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
   return ((caller->shouldExit) || (caller->internalExitRequest)) ? 0 : (bytesRead);
 }
 
-HRESULT CMPUrlSource_Http::CreateCurlWorker(void)
+size_t CMPUrlSource_Http::CurlRangesDetectionReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata)
 {
-  HRESULT result = S_OK;
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CREATE_CURL_WORKER_NAME);
+  CMPUrlSource_Http *caller = (CMPUrlSource_Http *)userdata;
+  CLockMutex lock(caller->lockMutex, INFINITE);
+  unsigned int bytesRead = size * nmemb;
 
-  // clear curl error code
-  this->curlWorkerErrorCode = CURLE_OK;
-
-  this->hCurlWorkerThread = CreateThread( 
-    NULL,                                   // default security attributes
-    0,                                      // use default stack size  
-    &CMPUrlSource_Http::CurlWorker,         // thread function name
-    this,                                   // argument to thread function 
-    0,                                      // use default creation flags 
-    &dwCurlWorkerThreadId);                 // returns the thread identifier
-
-  if (this->hCurlWorkerThread == NULL)
+  if (!((caller->shouldExit) || (caller->internalExitRequest)))
   {
-    // thread not created
-    result = HRESULT_FROM_WIN32(GetLastError());
-    this->logger.Log(LOGGER_ERROR, _T("%s: %s: CreateThread() error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_CREATE_CURL_WORKER_NAME, result);
-  }
-
-  this->logger.Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CREATE_CURL_WORKER_NAME, result);
-  return result;
-}
-
-HRESULT CMPUrlSource_Http::DestroyCurlWorker(void)
-{
-  HRESULT result = S_OK;
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTROY_CURL_WORKER_NAME);
-
-  this->internalExitRequest = true;
-
-  // wait for the receive data worker thread to exit      
-  if (this->hCurlWorkerThread != NULL)
-  {
-    if (WaitForSingleObject(this->hCurlWorkerThread, 1000) == WAIT_TIMEOUT)
+    long responseCode = 0;
+    CURLcode errorCode = caller->rangesDetectionCurlInstance->GetResponseCode(&responseCode);
+    if (errorCode == CURLE_OK)
     {
-      // thread didn't exit, kill it now
-      this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTROY_CURL_WORKER_NAME, _T("thread didn't exit, terminating thread"));
-      TerminateThread(this->hCurlWorkerThread, 0);
+      if ((responseCode < 200) && (responseCode >= 400))
+      {
+        // response code 200 - 299 = OK
+        // response code 300 - 399 = redirect (OK)
+        caller->logger.Log(LOGGER_VERBOSE, _T("%s: %s: ranges detection error response code: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+        // return error
+        bytesRead = 0;
+      }
+    }
+
+    if ((responseCode >= 200) && (responseCode < 400))
+    {
+      if (bytesRead != 0)
+      {
+        if (caller->rangesSupported == RANGES_STATE_PENDING_REQUEST)
+        {
+          // there is pending request if ranges are supported or not
+
+          if ((!caller->filledReceivedDataFromRange) && (caller->receivedDataFromRange->AddToBuffer(buffer, min(bytesRead, caller->receivedDataFromRange->GetBufferFreeSpace())) != bytesRead))
+          {
+            caller->filledReceivedDataFromRange = true;
+            // data wasn't added to buffer
+            // compare buffers and set ranges supported state
+
+            caller->CompareRangesBuffers();
+          }
+        }
+
+        if ((caller->rangesSupported == RANGES_STATE_NOT_SUPPORTED) || (caller->rangesSupported == RANGES_STATE_SUPPORTED))
+        {
+          // stop receiving data from ranges detection
+          bytesRead = 0;
+        }
+      }
     }
   }
 
-  this->hCurlWorkerThread = NULL;
-  this->internalExitRequest = false;
-
-  this->logger.Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTROY_CURL_WORKER_NAME, result);
-  return result;
+  // if returned 0 (or lower value than bytesRead) it cause transfer interruption
+  return ((caller->shouldExit) || (caller->internalExitRequest)) ? 0 : (bytesRead);
 }
 
-DWORD WINAPI CMPUrlSource_Http::CurlWorker(LPVOID lpParam)
+void CMPUrlSource_Http::CompareRangesBuffers()
 {
-  CMPUrlSource_Http *caller = (CMPUrlSource_Http *)lpParam;
-  caller->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CURL_WORKER_NAME);
+  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME);
 
-  // on next line will be stopped processing of code - until something happens
-  caller->curlWorkerErrorCode = curl_easy_perform(caller->curl);
-
-  if ((caller->curlWorkerErrorCode != CURLE_OK) && (caller->curlWorkerErrorCode != CURLE_WRITE_ERROR))
+  if (this->rangesSupported == RANGES_STATE_PENDING_REQUEST)
   {
-    caller->ReportCurlErrorMessage(LOGGER_ERROR, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CURL_WORKER_NAME, _T("error while receiving data"), caller->curlWorkerErrorCode);
+    // there is pending request if ranges are supported or not
+
+    this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: received data from start: %u, received data from ranges: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, this->receivedDataFromStart->GetBufferOccupiedSpace(), this->receivedDataFromRange->GetBufferOccupiedSpace());
+
+    unsigned int size = min(this->receivedDataFromStart->GetBufferOccupiedSpace(), this->receivedDataFromRange->GetBufferOccupiedSpace());
+
+    if (size == this->receivedDataFromStart->GetBufferSize())
+    {
+      ALLOC_MEM_DEFINE_SET(bufferFromStart, char, size, 0);
+      ALLOC_MEM_DEFINE_SET(bufferFromRange, char, size, 0);
+
+      if ((bufferFromStart != NULL) && (bufferFromRange != NULL))
+      {
+        if (this->receivedDataFromStart->CopyFromBuffer(bufferFromStart, size, 0, 0) == size)
+        {
+          if (this->receivedDataFromRange->CopyFromBuffer(bufferFromRange, size, 0, 0) == size)
+          {
+            if (memcmp(bufferFromStart, bufferFromRange, size) != 0)
+            {
+              // buffers are not same => ranges are supported
+              this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("ranges are supported"));
+              this->rangesSupported = RANGES_STATE_SUPPORTED;
+            }
+            else
+            {
+              this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("range buffers are same, ranges are not supported"));
+              this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
+            }
+          }
+          else
+          {
+            this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("cannot copy data for comparing buffers, ranges are not supported"));
+            this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
+          }
+        }
+        else
+        {
+          this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("cannot copy data for comparing buffers, ranges are not supported"));
+          this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
+        }
+      }
+      else
+      {
+        this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("cannot allocate enough memory for comparing buffers, ranges are not supported"));
+        this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
+      }
+
+      FREE_MEM(bufferFromStart);
+      FREE_MEM(bufferFromRange);
+    }
   }
 
-  caller->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CURL_WORKER_NAME);
-  return S_OK;
+  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME);
 }
+

@@ -18,6 +18,8 @@
     along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#pragma once
+
 #ifndef __MPURLSOURCE_HTTP_DEFINED
 #define __MPURLSOURCE_HTTP_DEFINED
 
@@ -25,6 +27,7 @@
 #include "Logger.h"
 #include "ProtocolInterface.h"
 #include "LinearBuffer.h"
+#include "CurlInstance.h"
 
 #include <curl/curl.h>
 
@@ -42,9 +45,13 @@
 #define CONFIGURATION_HTTP_RECEIVE_DATA_TIMEOUT             _T("HttpReceiveDataTimeout")
 #define CONFIGURATION_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS _T("HttpOpenConnectionMaximumAttempts")
 
-#define METHOD_CREATE_CURL_WORKER_NAME                      _T("CreateCurlWorker()")
-#define METHOD_DESTROY_CURL_WORKER_NAME                     _T("DestroyCurlWorker()")
-#define METHOD_CURL_WORKER_NAME                             _T("CurlWorker()")
+// size of buffers used for comparison if ranges are supported or not
+#define RANGES_SUPPORTED_BUFFER_SIZE                        256 * 1024
+
+#define RANGES_STATE_UNKNOWN                                0
+#define RANGES_STATE_NOT_SUPPORTED                          1
+#define RANGES_STATE_PENDING_REQUEST                        2
+#define RANGES_STATE_SUPPORTED                              3
 
 // returns protocol class instance
 PIProtocol CreateProtocolInstance(void);
@@ -85,6 +92,17 @@ public:
 protected:
   CLogger logger;
 
+  // holds received data from start
+  LinearBuffer *receivedDataFromStart;
+  // holds received data from specified reange
+  LinearBuffer *receivedDataFromRange;
+  // holds supported ranges status
+  int rangesSupported;
+  // holds if received data from start buffer was filled
+  bool filledReceivedDataFromStart;
+  // holds if received data from range buffer was filled
+  bool filledReceivedDataFromRange;
+
   // source filter that created this instance
   IOutputStream *filter;
 
@@ -115,23 +133,14 @@ protected:
   // the stream url
   TCHAR *url;
 
-  CURL *curl;
-
-  // gets human readable error message
-  // @param errorCode : the error code returned by libcurl
-  // @return : human readable error message or NULL if error
-  TCHAR *GetCurlErrorMessage(CURLcode errorCode);
-
-  // report libcurl error into log file
-  // @param logLevel : the verbosity level of logged message
-  // @param protocolName : name of protocol calling ReportCurlErrorMessage()
-  // @param functionName : name of function calling ReportCurlErrorMessage()
-  // @param message : optional message to log (can be NULL)
-  // @param errorCode : the error code returned by libcurl
-  void ReportCurlErrorMessage(unsigned int logLevel, const TCHAR *protocolName, const TCHAR *functionName, const TCHAR *message, CURLcode errorCode);
+  // main instance of CURL
+  CCurlInstance *mainCurlInstance;
+  // CURL instance for ranges detection
+  CCurlInstance *rangesDetectionCurlInstance;
 
   // callback function for receiving data from libcurl
   static size_t CurlReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata);
+  static size_t CurlRangesDetectionReceiveData(char *buffer, size_t size, size_t nmemb, void *userdata);
 
   // reference to variable that signalize if protocol is requested to exit
   bool shouldExit;
@@ -140,19 +149,8 @@ protected:
   // specifies if whole stream is downloaded
   bool wholeStreamDownloaded;
 
-  // libcurl worker thread
-  HANDLE hCurlWorkerThread;
-  DWORD dwCurlWorkerThreadId;
-  CURLcode curlWorkerErrorCode;
-  static DWORD WINAPI CurlWorker(LPVOID lpParam);
-
-  // creates libcurl worker
-  // @return : S_OK if successful
-  HRESULT CreateCurlWorker(void);
-
-  // destroys libcurl worker
-  // @return : S_OK if successful
-  HRESULT DestroyCurlWorker(void);
+  // compares ranges buffers and set ranges supported state
+  void CompareRangesBuffers(void);
 };
 
 #endif
