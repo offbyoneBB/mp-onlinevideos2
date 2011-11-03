@@ -616,7 +616,7 @@ namespace OnlineVideos.Sites
             return url;
         }
 
-        protected List<VideoInfo> Parse(string url, string data)
+        protected virtual List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
             if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);

@@ -398,16 +398,19 @@
         <Category xsi:type="RssLink" name="Video Games">http://rss.livevideo.com/rss/rss.ashx?catid=15</Category>
       </Categories>
     </Site>
-    <Site name="GameTrailers" util="GenericSite" agecheck="false" enabled="true" lang="en">
+    <Site name="GameTrailers" util="GameTrailers" agecheck="false" enabled="true" lang="en">
       <Description>Watch trailers, reviews, interviews and ingame footage for games from all the major platforms.</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="gamepage_content_row_thumb">\s*<a[^>]*>\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*
+        <item key="videoListRegEx"><![CDATA[<div\sclass="(gamepage_content_row|newestlist)_thumb">\s*<a[^>]*>\s*<img.*?src="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*
 <div\s+class="newestlist_movie_format_SD(HD)?">\s*
-(<a\s+href="[^"]+?(?<VideoUrl>[0-9]*)"><img\s+border="0"\s+src="[^"]+?(H|S)D[^"]+?.gif"></a>\s*)*
+(<a\s+href="[^"]+?(?<VideoUrl>[0-9]*)">\s*<img\s+border="0"\s+src="[^"]+?(?<PostTitle>HD|SD)[^"]+?.gif"></a>\s*)*
 </div>\s*</div>\s*
-.*?gamepage_content_row_title">(?<Title>[^<]*)</a>.*?</div>\s*
+.*?(gamepage_content_row|newestlist)_title">\s*(?<Title>[^<]*)</.*?</div>\s*
 (.*?<div\s+class="gamepage_content_row_date">(?<Airdate>[^<]+)</div>(?<Description>[^<]+)</div>)?
-(.*?bold;">(?<Description>.*?)</div>\s*<div\s+class="MovieFileSize">\s*Posted\s*(?<Airdate>[^<]*)</div>)?]]></item>
+(.*?<div\sclass="newestlist_text">(?<Description>.*?)</div>)?
+(.*?<div\s+style="font-size:10px;min-height:25px[^"]+">(?<Description>.*?)</div>)?
+(.*?<div\s+class="(MovieFileSize|newestlist_time)">\s*.*?Posted\s*(?<Airdate>[^<]*)</div>)?
+]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://mosii.gametrailers.com/getmediainfo4.php?hd=1&mid={0}]]></item>
         <item key="nextPageRegEx"><![CDATA[<a[^>]*?\s+href="(?<url>[^"]*)"[^>]*?>Next\s&raquo;</a>]]></item>
         <item key="fileUrlRegEx"><![CDATA[umfilename=(?<m0>[^&]*)]]></item>
@@ -417,6 +420,12 @@
         <item key="searchUrl"><![CDATA[http://www.gametrailers.com/search.php?s={0}&str_type=movies&ac=1&orderby=date_added&search_type=advanced]]></item>
       </Configuration>
       <Categories>
+        <Category xsi:type="RssLink" name="All">
+          <SubCategories>
+            <Category xsi:type="RssLink" name="Newest Media">http://www.gametrailers.com/index_ajaxfuncs.php?do=get_movie_page&amp;type=newest&amp;page=1&amp;loading=0</Category>
+            <Category xsi:type="RssLink" name="Featured Media">http://www.gametrailers.com/index_ajaxfuncs.php?do=get_movie_page&amp;type=featured&amp;page=1&amp;loading=0</Category>
+            <Category xsi:type="RssLink" name="Popular Now">http://www.gametrailers.com/index_ajaxfuncs.php?do=get_movie_page&amp;type=popular&amp;page=1&amp;loading=0</Category>
+          </SubCategories>http://gametrailers.com/</Category>
         <Category xsi:type="RssLink" name="PC">
           <SubCategories>
             <Category xsi:type="RssLink" name="Newest Media">http://pc.gametrailers.com/#Content</Category>
@@ -1510,63 +1519,19 @@
         <Category xsi:type="RssLink" name="Wildcrazy">http://www.redtube.com/redtube/wildcrazy</Category>
       </Categories>
     </Site>
-    <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
+    <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en" lastUpdated="2011-03-07T18:27:17.6460869+00:00">
       <Description>xHamster - just porn, no bullshit.</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass='hRotator'>\s*<img\ssrc='(?<ImageUrl>[^']*)'\swidth='160'\sheight='120'\salt="(?<Title>[^"]*)"/>\s*<img[^>]*>\s*<u>.*?</u>\s*</a>\s*<div\sclass="moduleFeaturedDetails">Runtime:\s(?<Duration>[^<]*)<BR>[^<]*</div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<SPAN\sclass=navNext><A\sHREF="(?<url>.+)">Next</A></SPAN>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref='(?<url>[^']*)'>(?<title>[^<]*)</a></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass='hRotator'\s>\s*<img\ssrc='(?<ImageUrl>[^']*)'\s(?:(?!alt).)*alt="(?<Title>[^"]*)"/>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='last'>Next</a>]]></item>
         <item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
-        <item key="fileUrlRegEx"><![CDATA['srv':\s'(?<m0>[^']+)',\s*
-(?:'[^']+':\s'[^']+',\s*)?
-'file':\s'(?<m1>[^']+)']]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}/flv2/{1}]]></item>
+        <item key="fileUrlRegEx"><![CDATA['file':\s'(?<m0>[^']*)',\s*'image']]></item>
+        <item key="fileUrlFormatString"><![CDATA[http://xhamster.com/flv2/{0}]]></item>
         <item key="searchUrl"><![CDATA[http://www.xhamster.com/search.php?q={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
       </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="New">http://www.xhamster.com/</Category>
-        <Category xsi:type="RssLink" name="Amateur">http://www.xhamster.com/channels/new-amateur-1.html</Category>
-        <Category xsi:type="RssLink" name="Anal">http://www.xhamster.com/channels/new-anal-1.html</Category>
-        <Category xsi:type="RssLink" name="Asian">http://www.xhamster.com/channels/new-asian-1.html</Category>
-        <Category xsi:type="RssLink" name="Babes">http://www.xhamster.com/channels/new-babes-1.html</Category>
-        <Category xsi:type="RssLink" name="BBW">http://www.xhamster.com/channels/new-bbw-1.html</Category>
-        <Category xsi:type="RssLink" name="BDSM">http://www.xhamster.com/channels/new-bdsm-1.html</Category>
-        <Category xsi:type="RssLink" name="Beach">http://www.xhamster.com/channels/new-beach-1.html</Category>
-        <Category xsi:type="RssLink" name="Ebony">http://www.xhamster.com/channels/new-ebony-1.html</Category>
-        <Category xsi:type="RssLink" name="Blondes">http://www.xhamster.com/channels/new-blondes-1.html</Category>
-        <Category xsi:type="RssLink" name="Blowjobs">http://www.xhamster.com/channels/new-blowjobs-1.html</Category>
-        <Category xsi:type="RssLink" name="Brunettes">http://www.xhamster.com/channels/new-brunettes-1.html</Category>
-        <Category xsi:type="RssLink" name="Busty">http://www.xhamster.com/channels/new-busty-1.html</Category>
-        <Category xsi:type="RssLink" name="Cartoons">http://www.xhamster.com/channels/new-cartoons-1.html</Category>
-        <Category xsi:type="RssLink" name="Celebrities">http://www.xhamster.com/channels/new-celebs-1.html</Category>
-        <Category xsi:type="RssLink" name="Close-ups">http://www.xhamster.com/channels/new-close_ups-1.html</Category>
-        <Category xsi:type="RssLink" name="Cumshots">http://www.xhamster.com/channels/new-cumshots-1.html</Category>
-        <Category xsi:type="RssLink" name="Facials">http://www.xhamster.com/channels/new-facials-1.html</Category>
-        <Category xsi:type="RssLink" name="Flashing">http://www.xhamster.com/channels/new-flashing-1.html</Category>
-        <Category xsi:type="RssLink" name="Funny">http://www.xhamster.com/channels/new-funny-1.html</Category>
-        <Category xsi:type="RssLink" name="Fingering">http://www.xhamster.com/channels/new-fingering-1.html</Category>
-        <Category xsi:type="RssLink" name="Group Sex">http://www.xhamster.com/channels/new-group-1.html</Category>
-        <Category xsi:type="RssLink" name="Hairy">http://www.xhamster.com/channels/new-hairy-1.html</Category>
-        <Category xsi:type="RssLink" name="Handjobs">http://www.xhamster.com/channels/new-handjobs-1.html</Category>
-        <Category xsi:type="RssLink" name="Hardcore">http://www.xhamster.com/channels/new-hardcore-1.html</Category>
-        <Category xsi:type="RssLink" name="Hidden Cams">http://www.xhamster.com/channels/new-hidden-1.html</Category>
-        <Category xsi:type="RssLink" name="Lesbians">http://www.xhamster.com/channels/new-lesbians-1.html</Category>
-        <Category xsi:type="RssLink" name="Men">http://www.xhamster.com/channels/new-men-1.html</Category>
-        <Category xsi:type="RssLink" name="Masturbation">http://www.xhamster.com/channels/new-masturbation-1.html</Category>
-        <Category xsi:type="RssLink" name="Matures">http://www.xhamster.com/channels/new-matures-1.html</Category>
-        <Category xsi:type="RssLink" name="Nipples">http://www.xhamster.com/channels/new-nipples-1.html</Category>
-        <Category xsi:type="RssLink" name="Pornstars">http://www.xhamster.com/channels/new-pornstars-1.html</Category>
-        <Category xsi:type="RssLink" name="Public">http://www.xhamster.com/channels/new-public-1.html</Category>
-        <Category xsi:type="RssLink" name="Sex Toys">http://www.xhamster.com/channels/new-toys-1.html</Category>
-        <Category xsi:type="RssLink" name="Shemales">http://www.xhamster.com/channels/new-shemales-1.html</Category>
-        <Category xsi:type="RssLink" name="Showers">http://www.xhamster.com/channels/new-showers-1.html</Category>
-        <Category xsi:type="RssLink" name="Stockings">http://www.xhamster.com/channels/new-stockings-1.html</Category>
-        <Category xsi:type="RssLink" name="Teens">http://www.xhamster.com/channels/new-teens-1.html</Category>
-        <Category xsi:type="RssLink" name="Tits">http://www.xhamster.com/channels/new-tits-1.html</Category>
-        <Category xsi:type="RssLink" name="Upskirts">http://www.xhamster.com/channels/new-upskirts-1.html</Category>
-        <Category xsi:type="RssLink" name="Vintage">http://www.xhamster.com/channels/new-vintage-1.html</Category>
-        <Category xsi:type="RssLink" name="Webcams">http://www.xhamster.com/channels/new-webcams-1.html</Category>
-      </Categories>
+      <Categories />
     </Site>
     <Site name="Tube8" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>A Huge selection of hardcore videos is what makes Tube8 the best porn tube site. The site contains 100% user-uploaded free porn.</Description>
@@ -1608,17 +1573,14 @@
         <Category xsi:type="RssLink" name="Teen">http://www.tube8.com/cat/teen/3.html</Category>
       </Categories>
     </Site>
-    <Site name="Empflix" util="GenericSite" agecheck="true" enabled="true" lang="en">
+   <Site name="Empflix" util="GenericSite" agecheck="true" enabled="true" lang="en" lastUpdated="2010-06-29T21:56:45.5484453+01:00">
       <Description>Full Free Porn movies.</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>http\://www\.empflix\.com/videos/[^"]+)"\s*title="(?<Title>[^"]+)"[^>]*>\s*
-<img\ssrc="\s*(?<ImageUrl>http\://[^"]+)"[^>]*>\s*
-(?:(?!<p\sclass="length").)*\s*
-<p\sclass="length">(?<Duration>[^<]*)</p>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\sonclick="killVideoThumbs\(\)\;"\shref="(?<url>.*)">next\s&gt;&gt;</a>]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[flashvars.config\s+=\s+escape\("(?<url>[^"]+)"]]></item>
-        <item key="playlistUrlFormatString"><![CDATA[{0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<videoLink>(?<m0>.+?)</videoLink>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\sid="remove(?:(?!href).)*href="(?<VideoUrl>[^"]*)"\s*title="(?<Title>[^"]*)">(?:(?!data).)*data-src="(?<ImageUrl>[^"]*)"\s(?:(?!/>).)*/>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\sclass="navLink"\sonclick="killVideoThumbs\(\);"\shref="(?<url>[^"]*)">next\s&gt;&gt;</a>]]></item>
+        <item key="prevPageRegEx"><![CDATA[<a\sonclick="killVideoThumbs\(\)\;"\shref="(?<url>.*)">&lt;&lt;\sprev</a>]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[flashvars\.config\s=\sescape\("(?<url>[^&]*)&]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<videoLink>(?<m0>[^<]*)</videoLink>]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}&filetype=.flv]]></item>
         <item key="searchUrl"><![CDATA[http://www.empflix.com/search.php?what={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.empflix.com]]></item>
