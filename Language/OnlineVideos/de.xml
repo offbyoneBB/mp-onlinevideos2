@@ -33,6 +33,7 @@
   <string Field="DownloadComplete">Herunterladen beendet</string>
   <string Field="DownloadStarted">Herunterladen begonnen</string>
   <string Field="DownloadedVideos">Heruntergeladene Videos</string>
+  <string Field="DownloadsWillBeAborted">Downloads werden abgebrochen.</string>
   <string Field="Delete">Löschen</string>
   <string Field="DeleteAll">Alle Löschen</string>
   <string Field="Default">Standard</string>
@@ -78,10 +79,13 @@
   <string Field="Others">Sonstige</string>
   <string Field="PlayAll">Alle abspielen</string>
   <string Field="PlayWith">Abspielen mit ...</string>
+  <string Field="Playlists">Playlists</string>
+  <string Field="PlaybackWillBeStopped">Abspielen wird gestoppt.</string>
   <string Field="PleaseEnterDescription">Bitte kurze Beschreibung eingeben!</string>
   <string Field="PlotOutline">Handlung</string>
   <string Field="PreviousPage">Vorherige Seite</string>
   <string Field="PerformAutomaticUpdate">Automatische Aktualisierung ausführen?</string>
+  <string Field="Recommendations">Empfehlungen</string>
   <string Field="RemoveFromFavorites">Von den Favoriten entfernen</string>
   <string Field="RemovingFromFavorites">beim Entfernen von den Favoriten</string>
   <string Field="Refresh">Ansicht aktualisieren</string>
