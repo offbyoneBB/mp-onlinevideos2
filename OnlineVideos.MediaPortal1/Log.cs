@@ -72,27 +72,30 @@ namespace OnlineVideos.MediaPortal1
         
         public void Debug(string format, params object[] arg)
         {
-            logger.Debug(string.Format(format, arg));
+            if (arg == null || arg.Length == 0) logger.Debug(format);
+            else logger.Debug(string.Format(format, arg));
         }
 
         public void Info(string format, params object[] arg)
         {
-			logger.Info(string.Format(format, arg));
+            if (arg == null || arg.Length == 0) logger.Info(format);
+			else logger.Info(string.Format(format, arg));
         }
 
         public void Warn(string format, params object[] arg)
         {
-			logger.Warn(string.Format(format, arg));
+            if (arg == null || arg.Length == 0) logger.Warn(format);
+			else logger.Warn(string.Format(format, arg));
         }
 
 		public void Error(Exception ex)
 		{
-			MePo.Log.Error(ex.ToString());
+			MePo.Log.Error("[OnlineVideos] " + ex.ToString());
 		}
 
 		public void Error(string format, params object[] arg)
 		{
-			MePo.Log.Error(string.Format(format, arg));
+            MePo.Log.Error("[OnlineVideos] " + string.Format(format, arg));
 		}
     }
 }
