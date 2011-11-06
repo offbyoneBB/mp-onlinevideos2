@@ -36,6 +36,7 @@ namespace OnlineVideos.MediaPortal1
         public SearchHistoryType searchHistoryType = SearchHistoryType.Simple;
         public int searchHistoryNum = 9;
         public BindingList<SitesGroup> SitesGroups = new BindingList<SitesGroup>();
+        public BindingList<SitesGroup> CachedAutomaticSitesGroups = new BindingList<SitesGroup>();
         public bool autoGroupByLang = true;
         public bool useRtmpProxy = true;
         public DateTime lastFirstRun;
@@ -353,50 +354,52 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        public BindingList<SitesGroup> GetAutomaticSitesGroups()
+        public void BuildAutomaticSitesGroups()
         {
-            Dictionary<string, BindingList<string>> sitenames = new Dictionary<string, BindingList<string>>();
-			var siteutils = OnlineVideoSettings.Instance.SiteUtilsList;
-			foreach (string name in siteutils.Keys)
+            if ((SitesGroups == null || SitesGroups.Count == 0) && autoGroupByLang)
             {
-                Sites.SiteUtilBase aSite;
-				if (siteutils.TryGetValue(name, out aSite) && !(aSite is Sites.FavoriteUtil) && !(aSite is Sites.DownloadedVideoUtil))
+                Dictionary<string, BindingList<string>> sitenames = new Dictionary<string, BindingList<string>>();
+                var siteutils = OnlineVideoSettings.Instance.SiteUtilsList;
+                foreach (string name in siteutils.Keys)
                 {
-                    string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "--" : aSite.Settings.Language;
-                    BindingList<string> listForLang = null;
-                    if (!sitenames.TryGetValue(key, out listForLang)) { listForLang = new BindingList<string>(); sitenames.Add(key, listForLang); }
-                    listForLang.Add(aSite.Settings.Name);
-                }
-            }
-            BindingList<SitesGroup> result = new BindingList<SitesGroup>();
-            foreach (string aLang in sitenames.Keys.ToList().OrderBy(l => l))
-            {
-                string name = aLang;
-                try
-                {
-                    name = aLang != "--" ? System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag(aLang).DisplayName : "Global";
-                }
-                catch
-                {
-                    var temp = System.Globalization.CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
-                        ci => ci.IetfLanguageTag == aLang || ci.ThreeLetterISOLanguageName == aLang || ci.TwoLetterISOLanguageName == aLang || ci.ThreeLetterWindowsLanguageName == aLang);
-                    if (temp != null)
+                    Sites.SiteUtilBase aSite;
+                    if (siteutils.TryGetValue(name, out aSite) && !(aSite is Sites.FavoriteUtil) && !(aSite is Sites.DownloadedVideoUtil))
                     {
-                        name = temp.DisplayName;
-                    }
-                    else
-                    {
-                        Log.Instance.Warn("Unable to find CultureInfo for language identifier: '{0}'", name);
+                        string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "--" : aSite.Settings.Language;
+                        BindingList<string> listForLang = null;
+                        if (!sitenames.TryGetValue(key, out listForLang)) { listForLang = new BindingList<string>(); sitenames.Add(key, listForLang); }
+                        listForLang.Add(aSite.Settings.Name);
                     }
                 }
-                result.Add(new SitesGroup()
+                CachedAutomaticSitesGroups = new BindingList<SitesGroup>();
+                foreach (string aLang in sitenames.Keys.ToList().OrderBy(l => l))
                 {
-                    Name = name,
-                    Sites = sitenames[aLang],
-                    Thumbnail = string.Format(@"{0}\OnlineVideos\Langs\{1}.png", Config.GetFolder(Config.Dir.Thumbs), aLang)
-                });
+                    string name = aLang;
+                    try
+                    {
+                        name = aLang != "--" ? System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag(aLang).DisplayName : "Global";
+                    }
+                    catch
+                    {
+                        var temp = System.Globalization.CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
+                            ci => ci.IetfLanguageTag == aLang || ci.ThreeLetterISOLanguageName == aLang || ci.TwoLetterISOLanguageName == aLang || ci.ThreeLetterWindowsLanguageName == aLang);
+                        if (temp != null)
+                        {
+                            name = temp.DisplayName;
+                        }
+                        else
+                        {
+                            Log.Instance.Warn("Unable to find CultureInfo for language identifier: '{0}'", name);
+                        }
+                    }
+                    CachedAutomaticSitesGroups.Add(new SitesGroup()
+                    {
+                        Name = name,
+                        Sites = sitenames[aLang],
+                        Thumbnail = string.Format(@"{0}\OnlineVideos\Langs\{1}.png", Config.GetFolder(Config.Dir.Thumbs), aLang)
+                    });
+                }
             }
-            return result;
         }
 
         void SaveSitesGroups()

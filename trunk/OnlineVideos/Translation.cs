@@ -84,6 +84,7 @@ namespace OnlineVideos
         public string Cancel = "Cancel";
         public string Category = "Category";
         public string Categories = "Categories";
+        public string Concurrent = "concurrent";
         public string Creator = "Creator";
         public string CheckingForPluginUpdate = "checking for updated plugin version";
 
@@ -173,6 +174,9 @@ namespace OnlineVideos
         public string PlotOutline = "Plot outline";
         public string PreviousPage = "Previous page";
         public string PerformAutomaticUpdate = "Perform automatic update?";
+
+        //Q
+        public string Queued = "queued";
 
         // R
 		public string Recommendations = "Recommendations";

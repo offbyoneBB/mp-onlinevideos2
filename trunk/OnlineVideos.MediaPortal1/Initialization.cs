@@ -58,6 +58,7 @@ namespace OnlineVideos.MediaPortal1
 
 				// instantiates and initializes all siteutils
 				OnlineVideoSettings.Instance.BuildSiteUtilsList();
+                PluginConfiguration.Instance.BuildAutomaticSitesGroups();
 
 				LatestVideosManager = new LatestVideosManager();
 				LatestVideosManager.Start();
