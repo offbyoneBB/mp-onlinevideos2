@@ -391,8 +391,10 @@ namespace OnlineVideos.MediaPortal1
                             }
                             if (!(SelectedSite is Sites.DownloadedVideoUtil))
                             {
-								dlgSel.Add(Translation.Instance.Download);
-                                dialogOptions.Add("Download");
+								dlgSel.Add(string.Format("{0} ({1})",Translation.Instance.Download, Translation.Instance.Concurrent));
+                                dialogOptions.Add("DownloadConcurrent");
+                                dlgSel.Add(string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Queued));
+                                dialogOptions.Add("DownloadQueued");
 
                                 if (loadParamInfo != null && !string.IsNullOrEmpty(loadParamInfo.DownloadDir) && System.IO.Directory.Exists(loadParamInfo.DownloadDir))
                                 {
@@ -460,8 +462,11 @@ namespace OnlineVideos.MediaPortal1
                                     string suggestedTitle = SelectedSite.GetFileNameForDownload(aVideo, selectedCategory, null);
                                     OnlineVideoSettings.Instance.FavDB.addFavoriteVideo(aVideo, suggestedTitle, SelectedSite.Settings.Name);
                                     break;
-                                case "Download":
+                                case "DownloadConcurrent":
 									SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) });
+                                    break;
+                                case "DownloadQueued":
+                                    SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) }, true);
                                     break;
                                 case "UserdefinedDownload":
 									var dlInfo = DownloadInfo.Create(aVideo, selectedCategory, selectedSite);
@@ -841,9 +846,9 @@ namespace OnlineVideos.MediaPortal1
                     {
                         if (!aSite.Settings.DynamicCategoriesDiscovered)
                         {
-                            Log.Instance.Info("Looking for dynamic categories for '{0}'", aSite.Settings.Name);
+                            Log.Instance.Info("Looking for dynamic categories on Site '{0}'", aSite.Settings.Name);
                             int foundCategories = aSite.DiscoverDynamicCategories();
-                            Log.Instance.Info("Found {0} dynamic categories for '{1}'", foundCategories, aSite.Settings.Name);
+                            Log.Instance.Info("Found {0} dynamic categories on Site '{1}'", foundCategories, aSite.Settings.Name);
                         }
                         return aSite.Settings.Categories;
                     },
@@ -923,13 +928,15 @@ namespace OnlineVideos.MediaPortal1
         private void DisplayGroups()
         {
             var sitesGroups = PluginConfiguration.Instance.SitesGroups;
-            if ((sitesGroups == null || sitesGroups.Count == 0) && PluginConfiguration.Instance.autoGroupByLang) sitesGroups = PluginConfiguration.Instance.GetAutomaticSitesGroups();
+            if ((sitesGroups == null || sitesGroups.Count == 0) && PluginConfiguration.Instance.autoGroupByLang) sitesGroups = PluginConfiguration.Instance.CachedAutomaticSitesGroups;
 
             SelectedSite = null;
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
 
+            // add Favorites and Downloads Site as first two Groups (if they are available and user configured them to be first)
             if (OnlineVideoSettings.Instance.FavoritesFirst) AddFavoritesAndDownloadsSitesToFacade();
 
+            HashSet<string> groupedSites = new HashSet<string>();
             foreach (SitesGroup sitesGroup in sitesGroups)
             {
                 if (sitesGroup.Sites != null && sitesGroup.Sites.Count > 0)
@@ -940,13 +947,11 @@ namespace OnlineVideos.MediaPortal1
                     GUI_facadeView.Add(loListItem);
                     if (selectedSitesGroup != null && selectedSitesGroup.Label == sitesGroup.Name) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
                 }
+
+                foreach (string site in sitesGroup.Sites) groupedSites.Add(site);
             }
 
             // add the item for all ungrouped sites if there are any
-            HashSet<string> groupedSites = new HashSet<string>();
-            foreach (SitesGroup sg in sitesGroups)
-                foreach (string site in sg.Sites)
-                    if (!groupedSites.Contains(site)) groupedSites.Add(site);
 			SitesGroup othersGroup = new SitesGroup() { Name = Translation.Instance.Others };
             foreach (string site in OnlineVideoSettings.Instance.SiteUtilsList.Keys)
 				if (!groupedSites.Contains(site) && site != Translation.Instance.Favourites && site != Translation.Instance.DownloadedVideos)
@@ -2096,7 +2101,12 @@ namespace OnlineVideos.MediaPortal1
             if (currentPlaylist.Count > 0) Play_Step1(currentPlaylist[0], true);
         }
 
-        private void SaveVideo_Step1(DownloadList saveItems)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="saveItems"></param>
+        /// <param name="enque">null : download the next item in a DownloadList that is already in the Manager</param>
+        private void SaveVideo_Step1(DownloadList saveItems, bool? enque = false)
         {
             if (string.IsNullOrEmpty(OnlineVideoSettings.Instance.DownloadDir))
             {
@@ -2112,6 +2122,28 @@ namespace OnlineVideos.MediaPortal1
                 return;
             }
 
+            if (enque != null) // when the DownloadManager already contains the current DownloadInfo of the given list - show already downloading message
+            {
+                if (DownloadManager.Instance.Contains(saveItems.CurrentItem))
+                {
+                    GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                    if (dlg != null)
+                    {
+                        dlg.Reset();
+                        dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+                        dlg.SetHeading(Translation.Instance.Error);
+                        dlg.SetText(Translation.Instance.AlreadyDownloading);
+                        dlg.DoModal(GUIWindowManager.ActiveWindow);
+                    }
+                    return;
+                }
+                // check if there is already a download running from this site - yes? -> enque | no -> start now
+                if (enque == true && DownloadManager.Instance.Contains(saveItems.CurrentItem.Util.Settings.Name)) 
+                {
+                    DownloadManager.Instance.Add(saveItems.CurrentItem.Util.Settings.Name, saveItems);
+                    return;
+                }
+            }
             if (!string.IsNullOrEmpty(saveItems.CurrentItem.Url))
             {
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
@@ -2120,7 +2152,7 @@ namespace OnlineVideos.MediaPortal1
                 },
                 delegate(bool success, object result)
                 {
-                    if (success) SaveVideo_Step2(saveItems, new List<string>() { result as string });
+                    if (success) SaveVideo_Step2(saveItems, new List<string>() { result as string }, enque);
                 },
 				Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
@@ -2132,13 +2164,13 @@ namespace OnlineVideos.MediaPortal1
                 },
                 delegate(bool success, object result)
                 {
-                    if (success) SaveVideo_Step2(saveItems, result as List<String>);
+                    if (success) SaveVideo_Step2(saveItems, result as List<String>, enque);
                 },
 				Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
         }
 
-        private void SaveVideo_Step2(DownloadList saveItems, List<String> loUrlList)
+        private void SaveVideo_Step2(DownloadList saveItems, List<String> loUrlList, bool? enque)
         {
             removeInvalidEntries(loUrlList);
 
@@ -2156,6 +2188,7 @@ namespace OnlineVideos.MediaPortal1
                 }
                 return;
             }
+
             // create download list if more than one url
             if (loUrlList.Count > 1)
             {
@@ -2175,7 +2208,7 @@ namespace OnlineVideos.MediaPortal1
 					pli.OverrideFileName = saveItems.CurrentItem.OverrideFileName;
                     saveItems.DownloadItems.Add(pli);
                 }
-                // make the first item the current to be played now
+                // make the first item the current to be saved now
                 saveItems.CurrentItem = saveItems.DownloadItems[0];
                 loUrlList = new List<string>(new string[] { saveItems.CurrentItem.Url });
             }
@@ -2188,7 +2221,7 @@ namespace OnlineVideos.MediaPortal1
                 saveItems.ChosenPlaybackOption = lsUrl;
                 if (saveItems.CurrentItem.VideoInfo.GetType().FullName == typeof(VideoInfo).FullName)
                 {
-                    SaveVideo_Step3(saveItems, saveItems.CurrentItem.VideoInfo.GetPlaybackOptionUrl(lsUrl));
+                    SaveVideo_Step3(saveItems, saveItems.CurrentItem.VideoInfo.GetPlaybackOptionUrl(lsUrl), enque);
                 }
                 else
                 {
@@ -2199,17 +2232,18 @@ namespace OnlineVideos.MediaPortal1
                     },
                     delegate(bool success, object result)
                     {
-                        if (success) SaveVideo_Step3(saveItems, result as string);
+                        if (success) SaveVideo_Step3(saveItems, result as string, enque);
                     }
 					, Translation.Instance.GettingPlaybackUrlsForVideo, true);
                 }
             }
             else
             {
-                SaveVideo_Step3(saveItems, lsUrl);
+                SaveVideo_Step3(saveItems, lsUrl, enque);
             }
         }
-        private void SaveVideo_Step3(DownloadList saveItems, string url)
+
+        private void SaveVideo_Step3(DownloadList saveItems, string url, bool? enque)
         {
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(url) ||
@@ -2262,27 +2296,16 @@ namespace OnlineVideos.MediaPortal1
             saveItems.CurrentItem.LocalFile = Utils.GetNextFileName(saveItems.CurrentItem.LocalFile);
             saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.ImageUrl : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
 
-			if (DownloadManager.Instance.Contains(url))
-            {
-                GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                if (dlg != null)
-                {
-                    dlg.Reset();
-                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-					dlg.SetHeading(Translation.Instance.Error);
-					dlg.SetText(Translation.Instance.AlreadyDownloading);
-                    dlg.DoModal(GUIWindowManager.ActiveWindow);
-                }
-                return;
-            }
-
             // make sure the target dir exists
             if (!(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile))))
             {
                 System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile));
             }
 
-			DownloadManager.Instance.Add(url, saveItems.CurrentItem);
+            if (enque == true)
+                DownloadManager.Instance.Add(saveItems.CurrentItem.Util.Settings.Name, saveItems);
+            else if (enque == false)
+                DownloadManager.Instance.Add(null, saveItems);
 
             GUIPropertyManager.SetProperty("#OnlineVideos.currentDownloads", DownloadManager.Instance.Count.ToString());
 
@@ -2296,6 +2319,7 @@ namespace OnlineVideos.MediaPortal1
 					else dlHelper = new HTTPDownloader();
 					dlList.CurrentItem.Downloader = dlHelper;
 					dlList.CurrentItem.Start = DateTime.Now;
+                    Log.Instance.Info("Starting download of '{0}' to '{1}' from Site '{2}'", dlList.CurrentItem.Url, dlList.CurrentItem.LocalFile, dlList.CurrentItem.Util.Settings.Name);
 					Exception exception = dlHelper.Download(dlList.CurrentItem);
 					if (exception != null) Log.Instance.Warn("Error downloading '{0}', Msg: {1}", dlList.CurrentItem.Url, exception.Message);
 					OnDownloadFileCompleted(dlList, exception);
@@ -2328,10 +2352,6 @@ namespace OnlineVideos.MediaPortal1
 
         private void OnDownloadFileCompleted(DownloadList saveItems, Exception error)
         {
-            DownloadManager.Instance.Remove(saveItems.CurrentItem.Url);
-
-            GUIPropertyManager.SetProperty("#OnlineVideos.currentDownloads", DownloadManager.Instance.Count.ToString());
-
             if (error != null && !saveItems.CurrentItem.Downloader.Cancelled)
             {
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
@@ -2371,6 +2391,8 @@ namespace OnlineVideos.MediaPortal1
                     catch { }
                 }
 
+                Log.Instance.Info("{3} download of '{0}' - {1} KB in {2}", saveItems.CurrentItem.LocalFile, fileSize, (DateTime.Now - saveItems.CurrentItem.Start).ToString(), saveItems.CurrentItem.Downloader.Cancelled ? "Cancelled" : "Finished");
+
                 GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (loDlgNotify != null)
                 {
@@ -2386,15 +2408,35 @@ namespace OnlineVideos.MediaPortal1
             }
 
             // download the next if list not empty and not last in list and not cancelled by the user
+            string site = null;
             if (saveItems.DownloadItems != null && saveItems.DownloadItems.Count > 1 && !saveItems.CurrentItem.Downloader.Cancelled)
             {
                 int currentDlIndex = saveItems.DownloadItems.IndexOf(saveItems.CurrentItem);
                 if (currentDlIndex >= 0 && currentDlIndex + 1 < saveItems.DownloadItems.Count)
                 {
                     saveItems.CurrentItem = saveItems.DownloadItems[currentDlIndex + 1];
-                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { SaveVideo_Step1(saveItems); return 0; }, 0, 0, null);
+                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { SaveVideo_Step1(saveItems, null); return 0; }, 0, 0, null);
+                }
+                else
+                {
+                    site = DownloadManager.Instance.Remove(saveItems);
                 }
             }
+            else
+            {
+                site = DownloadManager.Instance.Remove(saveItems);
+            }
+
+            if (!string.IsNullOrEmpty(site))
+            {
+                var continuationList = DownloadManager.Instance.GetNext(site);
+                if (continuationList != null)
+                {
+                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { SaveVideo_Step1(continuationList, null); return 0; }, 0, 0, null);
+                }
+            }
+
+            GUIPropertyManager.SetProperty("#OnlineVideos.currentDownloads", DownloadManager.Instance.Count.ToString());
         }
 
         private bool FilterOut(String fsStr)

@@ -26,6 +26,7 @@
   <string Field="Categories">Categories</string>
   <string Field="Creator">Creator</string>
   <string Field="CheckingForPluginUpdate">checking for updated plugin version</string>
+  <string Field="Concurrent">concurrent</string>
 
   <!-- D -->
   <string Field="Date">Date</string>
@@ -114,6 +115,9 @@
   <string Field="PreviousPage">Previous page</string>
   <string Field="PerformAutomaticUpdate">Perform automatic update?</string>
 
+  <!-- Q -->
+  <string Field="Queued">queued</string>
+  
   <!-- R -->
   <string Field="Recommendations">Recommendations</string>
   <string Field="RemoveFromFavorites">Remove from favorites</string>

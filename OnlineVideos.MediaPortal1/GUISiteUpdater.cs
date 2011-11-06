@@ -111,7 +111,8 @@ namespace OnlineVideos.MediaPortal1
 			switch (message.Message)
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-					if (newDllsDownloaded)
+                    PluginConfiguration.Instance.BuildAutomaticSitesGroups();
+                    if (newDllsDownloaded)
 					{
 						ReloadDownloadedDlls();
 					}

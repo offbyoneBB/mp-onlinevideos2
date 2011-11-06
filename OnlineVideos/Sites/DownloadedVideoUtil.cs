@@ -25,17 +25,17 @@ namespace OnlineVideos.Sites
             }
             Settings.Categories.Add(cat);
 
-            if (DownloadManager.Instance.CurrentDownloads.Count > 0)
+            if (DownloadManager.Instance.Count > 0)
             {
                 // add a category for all downloads in progress
 				if (!cachedCategories.TryGetValue(Translation.Instance.Downloading, out cat))
                 {
-					cat = new RssLink() { Name = Translation.Instance.Downloading, Description = Translation.Instance.DownloadingDescription, EstimatedVideoCount = (uint)DownloadManager.Instance.CurrentDownloads.Count };
+					cat = new RssLink() { Name = Translation.Instance.Downloading, Description = Translation.Instance.DownloadingDescription, EstimatedVideoCount = (uint)DownloadManager.Instance.Count };
                     cachedCategories.Add(cat.Name, cat);
                 }
                 else
                 {
-					cat.EstimatedVideoCount = (uint)DownloadManager.Instance.CurrentDownloads.Count; // refresh the count
+					cat.EstimatedVideoCount = (uint)DownloadManager.Instance.Count; // refresh the count
                 }
                 Settings.Categories.Add(cat);
             }
@@ -127,29 +127,26 @@ namespace OnlineVideos.Sites
             }
             else
             {
-				lock (DownloadManager.Instance.CurrentDownloads)
+                foreach (DownloadInfo di in DownloadManager.Instance.GetAll())
                 {
-					foreach (DownloadInfo di in DownloadManager.Instance.CurrentDownloads.Values)
+                    if (PassesAgeCheck(di.LocalFile))
                     {
-                        if (PassesAgeCheck(di.LocalFile))
+                        VideoInfo loVideoInfo = new VideoInfo();
+                        loVideoInfo.Title = di.Title;
+                        loVideoInfo.ImageUrl = di.ThumbFile;
+                        loVideoInfo.Airdate = di.Start.ToString("HH:mm:ss");
+                        loVideoInfo.Length = di.ProgressInfo;
+                        loVideoInfo.Description = string.Format("{0}\n{1}", di.Url, di.LocalFile);
+                        loVideoInfo.Other = di;
+                        loVideoInfo.PropertyChanged += (s, e) =>
                         {
-                            VideoInfo loVideoInfo = new VideoInfo();
-                            loVideoInfo.Title = di.Title;
-                            loVideoInfo.ImageUrl = di.ThumbFile;
-                            loVideoInfo.Airdate = di.Start.ToString("HH:mm:ss");
-                            loVideoInfo.Length = di.ProgressInfo;
-                            loVideoInfo.Description = string.Format("{0}\n{1}", di.Url, di.LocalFile);
-                            loVideoInfo.Other = di;
-                            loVideoInfo.PropertyChanged += (s, e) =>
+                            if (e.PropertyName == "Other")
                             {
-                                if (e.PropertyName == "Other")
-                                {
-                                    (s as VideoInfo).Length = ((s as VideoInfo).Other as DownloadInfo).ProgressInfo;
-                                    (s as VideoInfo).NotifyPropertyChanged("Length");
-                                }
-                            };
-                            loVideoInfoList.Add(loVideoInfo);
-                        }
+                                (s as VideoInfo).Length = ((s as VideoInfo).Other as DownloadInfo).ProgressInfo;
+                                (s as VideoInfo).NotifyPropertyChanged("Length");
+                            }
+                        };
+                        loVideoInfoList.Add(loVideoInfo);
                     }
                 }
             }

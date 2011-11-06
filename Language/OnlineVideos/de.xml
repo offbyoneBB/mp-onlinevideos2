@@ -20,6 +20,7 @@
   <string Field="Categories">Rubriken</string>
   <string Field="Creator">Ersteller</string>
   <string Field="CheckingForPluginUpdate">beim Überprüfen auf aktuelle Version des Plugins</string>
+  <string Field="Concurrent">Gleichzeitig</string>
   <string Field="Date">Datum</string>
   <string Field="DateOfRelease">Erscheinungsdatum</string>
   <string Field="Directors">Regisseure</string>
@@ -85,6 +86,7 @@
   <string Field="PlotOutline">Handlung</string>
   <string Field="PreviousPage">Vorherige Seite</string>
   <string Field="PerformAutomaticUpdate">Automatische Aktualisierung ausführen?</string>
+  <string Field="Queued">Nacheinander</string>
   <string Field="Recommendations">Empfehlungen</string>
   <string Field="RemoveFromFavorites">Von den Favoriten entfernen</string>
   <string Field="RemovingFromFavorites">beim Entfernen von den Favoriten</string>
