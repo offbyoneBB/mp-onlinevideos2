@@ -26,20 +26,23 @@
   <string Field="Categories">Kategórie</string>
   <string Field="Creator">Autor</string>
   <string Field="CheckingForPluginUpdate">kontrolujem nové verzie modulov</string>
+  <string Field="Concurrent">naraz</string>
 
   <!-- D -->
   <string Field="Date">Dátum</string>
   <string Field="DateOfRelease">Dátum vydania</string>
   <string Field="Directors">Režiséri</string>
   <string Field="Download">Stiahnuť</string>
+  <string Field="DownloadUserdefined">Stiahnuť do užívateľovho adresára</string>
   <string Field="Downloading">Sťahujem</string>
   <string Field="DownloadingDescription">Zobrazí zoznam momentálne sťahovaných videí.</string>
-  <string Field="DownloadingSubtitle">downloading subtitle</string>
+  <string Field="DownloadingSubtitle">sťahujem titulky</string>
   <string Field="DownloadFailed">Sťahovanie neúspešné: {0}</string>
   <string Field="DownloadCancelled">Sťahovanie zrušené</string>
   <string Field="DownloadComplete">Sťahovanie skončené</string>
   <string Field="DownloadStarted">Sťahovanie začaté</string>  
   <string Field="DownloadedVideos">Stiahnuté videá</string>
+  <string Field="DownloadsWillBeAborted">Sťahovanie bude zrušené.</string>
   <string Field="Delete">Vymazať</string>
   <string Field="DeleteAll">Vymazať všetko</string>
   <string Field="Default">Predvolené</string>
@@ -92,6 +95,7 @@
   <!-- N -->
   <string Field="Name">Meno</string>
   <string Field="NextPage">Ďalšia strana</string>
+  <string Field="NewVideos">Nové videá</string>
   <string Field="None">Nič</string>
   <string Field="NoVideoFound">Žiadne video nebolo nájdené</string>
   <string Field="NoReportsForSite">Žiadne recenzie pre túto stránku nie sú k dispozícii.</string>
@@ -104,17 +108,25 @@
   <!-- P -->
   <string Field="PlayAll">Prehrať všetko</string>
   <string Field="PlayWith">Prehrať s ...</string>
+  <string Field="Playlists">Zoznamy na prehratie</string>
+  <string Field="PlaybackWillBeStopped">Prehrávanie bude zastavené.</string>
+  <string Field="PleaseEnterDescription">Prosím zadajte krátky popis.</string>
   <string Field="PlotOutline">Obsah</string>
   <string Field="PreviousPage">Predchádzajúca strana</string>
   <string Field="PerformAutomaticUpdate">Uskutočniť automatickú aktualizáciu?</string>
 
+  <!-- Q -->
+  <string Field="Queued">zaradené</string>
+
   <!-- R -->
+  <string Field="Recommendations">Odporúčania</string>
   <string Field="RemoveFromFavorites">Odstrániť z obľúbených</string>
   <string Field="RemovingFromFavorites">odstraňujem z obľúbených</string>
   <string Field="Refresh">Obnoviť</string>
   <string Field="RelatedVideos">Príbuzné videá</string>
+  <string Field="ReportBroken">Oznámiť pokazené</string>
   <string Field="Reported">Recenzované</string>
-  <string Field="Reports">Reports</string>
+  <string Field="Reports">Reporty</string>
   <string Field="Runtime">Dĺžka</string>
   <string Field="RemoveFromMySites">Odstrániť z mojich stránok</string>
   <string Field="RestartMediaPortal">Reštaruj MediaPortal!</string>
@@ -135,7 +147,8 @@
   <string Field="ShowReports">Zobraz autorské a užívateľské recenzie</string>
   <string Field="StartingPlayback">spúšťam prehrávanie</string>
   <string Field="Subscriptions">odoberania</string>
-  
+  <string Field="Success">Úspech</string>
+
   <!-- T -->
   <string Field="Timeframe">Časové obdobie</string>
   <string Field="Timeout">Timeout</string>
@@ -144,17 +157,22 @@
   <!-- U -->
   <string Field="Updated">Aktualizované</string>
   <string Field="Updatable">Aktualizovateľné</string>
+  <string Field="UpdateAll">Aktualizovať/Pridať všetky</string>
+  <string Field="UpdateAllSkipCategories">Aktualizovať/Pridať všetky (preskočiť kategórie)</string>
   <string Field="UpdateMySite">Aktualizovať stránku</string>
   <string Field="UpdateMySiteSkipCategories">Aktualizovať stránku (preskočiť kategórie)</string>
   <string Field="UpdateAllYourSites">Toto aktualizuje všetky tvoje stránky.</string>
   <string Field="UnableToPlayVideo">Nie je možné prehrať video. Žiadna adresa URL.</string>
   <string Field="UnableToDownloadVideo">Nie je možné stiahnuť video. Nesprávna adresa URL.</string>
+  <string Field="UploadsBy">nahrané</string>
 
   <!-- V -->
   <string Field="Videos">Videá</string>
+  <string Field="VideoQuality">Kvalita videa</string>
 
   <!-- W -->
   <string Field="Working">Fungujúce</string>
+  <string Field="Writers">Scenáristi</string>    
 
   <!-- Y -->
 
