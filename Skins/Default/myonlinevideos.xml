@@ -335,7 +335,7 @@
         <height>356</height>        
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
-        <visible>!Control.HasFocus(50)</visible>
+        <visible>!Control.HasFocus(50) + !Control.HasFocus(51)</visible>
         <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="150" end="-300,0" reversible="false">hidden</animation>
       </control>
@@ -347,7 +347,7 @@
         <posX>40</posX>
         <posY>80</posY>
         <layout>StackLayout</layout>
-        <visible>!Control.HasFocus(50)</visible>
+        <visible>!Control.HasFocus(50) + !Control.HasFocus(51)</visible>
         <control>
           <description>View-As</description>
           <type>button</type>
