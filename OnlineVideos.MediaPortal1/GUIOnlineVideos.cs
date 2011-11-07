@@ -2770,14 +2770,14 @@ namespace OnlineVideos.MediaPortal1
             if (!System.IO.File.Exists(image))
             {
                 // use png with the same name as the Site
-                image = string.Format(@"{0}\OnlineVideos\{1}s\{2}.png", Config.GetFolder(Config.Dir.Thumbs), type, siteName);
+                image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, siteName);
                 if (!System.IO.File.Exists(image))
                 {
                     image = string.Empty;
                     // if that does not exist, try image with the same name as the Util
                     if (!string.IsNullOrEmpty(utilName))
                     {
-                        image = string.Format(@"{0}\OnlineVideos\{1}s\{2}.png", Config.GetFolder(Config.Dir.Thumbs), type, utilName);
+                        image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, utilName);
                         if (!System.IO.File.Exists(image)) image = string.Empty;
                     }
                 }

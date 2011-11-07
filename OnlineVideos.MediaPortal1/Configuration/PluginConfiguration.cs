@@ -396,7 +396,7 @@ namespace OnlineVideos.MediaPortal1
                     {
                         Name = name,
                         Sites = sitenames[aLang],
-                        Thumbnail = string.Format(@"{0}\OnlineVideos\Langs\{1}.png", Config.GetFolder(Config.Dir.Thumbs), aLang)
+                        Thumbnail = string.Format(@"{0}Langs\{1}.png", OnlineVideoSettings.Instance.ThumbsDir, aLang)
                     });
                 }
             }
