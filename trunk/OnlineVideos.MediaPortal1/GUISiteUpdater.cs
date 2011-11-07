@@ -1010,7 +1010,7 @@ namespace OnlineVideos.MediaPortal1
                         try
                         {
                             byte[] icon = ws.GetSiteIcon(siteName);
-                            if (icon != null && icon.Length > 0) File.WriteAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Icons\" + siteName + ".png", icon);
+                            if (icon != null && icon.Length > 0) File.WriteAllBytes(OnlineVideoSettings.Instance.ThumbsDir + @"Icons\" + siteName + ".png", icon);
                         }
                         catch (Exception ex)
                         {
@@ -1019,8 +1019,7 @@ namespace OnlineVideos.MediaPortal1
                         try
                         {
                             byte[] banner = ws.GetSiteBanner(siteName);
-                            if (banner != null && banner.Length > 0) File.WriteAllBytes(Config.GetFolder(Config.Dir.Thumbs) + @"\OnlineVideos\Banners\" + siteName + ".png", banner);
-
+                            if (banner != null && banner.Length > 0) File.WriteAllBytes(OnlineVideoSettings.Instance.ThumbsDir + @"Banners\" + siteName + ".png", banner);
                         }
                         catch (Exception ex)
                         {
