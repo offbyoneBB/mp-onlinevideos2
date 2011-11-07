@@ -207,6 +207,7 @@ namespace OnlineVideos
         public string StartingPlayback = "starting playback";
         public string Subscriptions = "Subscriptions";
         public string SearchHistory = "Search history";
+        public string Success = "Success";
 
         // T
         public string Timeframe = "Timeframe";

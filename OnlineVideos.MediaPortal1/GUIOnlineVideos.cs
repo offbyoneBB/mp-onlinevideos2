@@ -460,7 +460,16 @@ namespace OnlineVideos.MediaPortal1
                                     break;
                                 case "AddToFav":
                                     string suggestedTitle = SelectedSite.GetFileNameForDownload(aVideo, selectedCategory, null);
-                                    OnlineVideoSettings.Instance.FavDB.addFavoriteVideo(aVideo, suggestedTitle, SelectedSite.Settings.Name);
+                                    bool successAddingToFavs = OnlineVideoSettings.Instance.FavDB.addFavoriteVideo(aVideo, suggestedTitle, SelectedSite.Settings.Name);
+                                    GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                                    if (dlg != null)
+                                    {
+                                        dlg.Reset();
+                                        dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+                                        dlg.SetHeading(successAddingToFavs ? Translation.Instance.Success : Translation.Instance.Error);
+                                        dlg.SetText(Translation.Instance.AddingToFavorites);
+                                        dlg.DoModal(GUIWindowManager.ActiveWindow);
+                                    }
                                     break;
                                 case "DownloadConcurrent":
 									SaveVideo_Step1(new DownloadList() { CurrentItem = DownloadInfo.Create(aVideo, selectedCategory, selectedSite) });
@@ -2747,7 +2756,7 @@ namespace OnlineVideos.MediaPortal1
                 if (dlgSel != null)
                 {
                     dlgSel.Reset();
-					dlgSel.SetHeading(Translation.Instance.SelectSource);
+					dlgSel.SetHeading(string.Format("{0} - {1}", videoInfo.Title, Translation.Instance.SelectSource));
                     int option = 0;
                     foreach (string key in videoInfo.PlaybackOptions.Keys)
                     {

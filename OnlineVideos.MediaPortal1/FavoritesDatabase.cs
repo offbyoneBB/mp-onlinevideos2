@@ -66,15 +66,6 @@ namespace OnlineVideos.MediaPortal1
 
         public bool addFavoriteVideo(VideoInfo foVideo, string titleFromUtil, string siteName)
         {
-            //check if the video is already in the favorite list
-            //lsSQL = string.Format("select SONG_ID from FAVORITE_VIDEOS where SONG_ID='{0}' AND COUNTRY='{1}' and FAVORITE_ID=''", foVideo.songId, foVideo.countryId, lsFavID);
-            //loResultSet = m_db.Execute(lsSQL);
-            //if (loResultSet.Rows.Count > 0)
-            //{
-            //    return false;
-            //}
-            Log.Instance.Info("inserting favorite on site {4} with title: {0}, desc: {1}, image: {2}, url: {3}", foVideo.Title, foVideo.Description, foVideo.ImageUrl, foVideo.VideoUrl, siteName);
-
             string title = string.IsNullOrEmpty(titleFromUtil) ? "" : DatabaseUtility.RemoveInvalidChars(titleFromUtil);
             string desc = string.IsNullOrEmpty(foVideo.Description) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Description);
             string thumb = string.IsNullOrEmpty(foVideo.ImageUrl) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.ImageUrl);
@@ -83,19 +74,29 @@ namespace OnlineVideos.MediaPortal1
             string airdate = string.IsNullOrEmpty(foVideo.Airdate) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Airdate);
             string other = DatabaseUtility.RemoveInvalidChars(foVideo.GetOtherAsString());
 
-            string lsSQL =
+            Log.Instance.Info("inserting favorite on site '{4}' with title: '{0}', desc: '{1}', thumb: '{2}', url: '{3}'", title, desc, thumb, url, siteName);
+
+            //check if the video is already in the favorite list
+            string lsSQL = string.Format("select VDO_ID from FAVORITE_VIDEOS where VDO_SITE_ID='{0}' AND VDO_URL='{1}' and VDO_OTHER_NFO='{2}'", siteName, url, other);
+            if (m_db.Execute(lsSQL).Rows.Count > 0)
+            {
+                Log.Instance.Info("Favorite Video '{0}' already in database", title);
+                return false;
+            }
+
+            lsSQL =
                 string.Format(
                     "insert into FAVORITE_VIDEOS(VDO_NM,VDO_URL,VDO_DESC,VDO_TAGS,VDO_LENGTH,VDO_OTHER_NFO,VDO_IMG_URL,VDO_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
                     title, url, desc, airdate, length, other, thumb, siteName);
             m_db.Execute(lsSQL);
             if (m_db.ChangedRows() > 0)
             {
-                Log.Instance.Info("Favorite {0} inserted successfully into database", foVideo.Title);
+                Log.Instance.Info("Favorite '{0}' inserted successfully into database", foVideo.Title);
                 return true;
             }
             else
             {
-                Log.Instance.Warn("Favorite {0} failed to insert into database", foVideo.Title);
+                Log.Instance.Warn("Favorite '{0}' failed to insert into database", foVideo.Title);
                 return false;
             }
         }
@@ -143,10 +144,10 @@ namespace OnlineVideos.MediaPortal1
                 video.Airdate = DatabaseUtility.Get(loResultSet, iRow, "VDO_TAGS");
                 video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");
                 video.VideoUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_URL");
-                video.Other = DatabaseUtility.Get(loResultSet, iRow, "VDO_OTHER_NFO");
+                video.SetOtherFromString(DatabaseUtility.Get(loResultSet, iRow, "VDO_OTHER_NFO"));
                 video.Id = DatabaseUtility.GetAsInt(loResultSet, iRow, "VDO_ID");
                 video.SiteName = DatabaseUtility.Get(loResultSet, iRow, "VDO_SITE_ID");
-                Log.Instance.Debug("Pulled {0} out of the database", video.Title);
+                Log.Instance.Debug("Pulled '{0}' out of the database", video.Title);
 
                 if (OnlineVideoSettings.Instance.SiteUtilsList.ContainsKey(video.SiteName))
                 {
@@ -162,8 +163,10 @@ namespace OnlineVideos.MediaPortal1
 
         public bool addFavoriteCategory(Category cat, string siteName)
         {
+            string categoryHierarchyName = EscapeString(cat.RecursiveName("|"));
+
             //check if the category is already in the favorite list
-            if (m_db.Execute(string.Format("select CAT_ID from FAVORITE_Categories where CAT_Hierarchy='{0}' AND CAT_SITE_ID='{1}'", EscapeString(cat.RecursiveName("|")), siteName)).Rows.Count > 0)
+            if (m_db.Execute(string.Format("select CAT_ID from FAVORITE_Categories where CAT_Hierarchy='{0}' AND CAT_SITE_ID='{1}'", categoryHierarchyName, siteName)).Rows.Count > 0)
             {
                 Log.Instance.Info("Favorite Category {0} already in database", cat.Name);
                 return true;
@@ -175,7 +178,7 @@ namespace OnlineVideos.MediaPortal1
             string lsSQL =
                 string.Format(
                     "insert into FAVORITE_Categories(CAT_Name,CAT_Desc,CAT_ThumbUrl,CAT_Hierarchy,CAT_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}')",
-                    DatabaseUtility.RemoveInvalidChars(cat.Name), cat.Description == null ? "" : DatabaseUtility.RemoveInvalidChars(cat.Description), cat.Thumb, EscapeString(cat.RecursiveName("|")), siteName);
+                    DatabaseUtility.RemoveInvalidChars(cat.Name), cat.Description == null ? "" : DatabaseUtility.RemoveInvalidChars(cat.Description), cat.Thumb, categoryHierarchyName, siteName);
             m_db.Execute(lsSQL);
             if (m_db.ChangedRows() > 0)
             {

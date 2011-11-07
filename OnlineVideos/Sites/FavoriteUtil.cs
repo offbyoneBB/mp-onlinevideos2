@@ -145,6 +145,7 @@ namespace OnlineVideos.Sites
                             cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + aSite.Name + ".png");
                             cachedCategories.Add(cat.Name, cat);
                         }
+                        cat.EstimatedVideoCount = lsSiteId.Value;
                         Settings.Categories.Add(cat);
 
                         // create subcategories if any

@@ -22,7 +22,7 @@ namespace OnlineVideos.Sites
         public enum MediaQuality { Medium, High };
         public enum CategoryShowTypes { Site, Flat }
 
-        enum CategoryType { VOD, Live }
+        public enum CategoryType { VOD, Live }
 
         private bool useAlternative = false;
 
