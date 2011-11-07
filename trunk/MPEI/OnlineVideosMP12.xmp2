@@ -160,13 +160,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Movies4Men.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d869e770-ab0a-4def-b57d-9110ef1a7555}-Movies4Men.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Movies4Men.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\MSNBC.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{9b2df7e4-6a71-4a1e-92e7-8f52f84a13f0}-MSNBC.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MSNBC.png</DestinationFilename>
@@ -391,13 +384,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\wetenschap24.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{f6aa99ec-5dfb-43cb-bcd7-d2795a0c1992}-wetenschap24.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\wetenschap24.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\wwitv.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{653f88d7-e35d-4400-a514-437a9083bfd9}-wwitv.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\wwitv.png</DestinationFilename>
@@ -583,13 +569,6 @@
               <LocalFileName>..\SiteImages\Banners\Miro.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{7b229fe6-a8fb-4274-a12d-880b259fc310}-Miro.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Miro.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Movies4Men.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{b15c312f-a95e-4d20-8639-69579d789901}-Movies4Men.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Movies4Men.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -821,13 +800,6 @@
               <LocalFileName>..\SiteImages\Banners\WDR.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724c51a7-ed7f-44f7-abb9-938767867547}-WDR.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\WDR.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\wetenschap24.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9f8b0e09-4c54-4dbc-af43-6eb56afca1a3}-wetenschap24.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\wetenschap24.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1711,6 +1683,13 @@
               <ZipFileName>Installer{CopyFile}\{179ac2b2-e4da-4240-a684-5969bc2e8cdc}-tsn.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tsn.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Langs\el.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{935c1766-6106-4d7b-a7e7-90bb29792af5}-el.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Langs\el.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2113,6 +2092,13 @@
               <ZipFileName>Installer{CopyFile}\{ad1d4c52-7db9-4997-b892-a4c38210631e}-thumbborder2.png</ZipFileName>
               <DestinationFilename>%Skin%\Default\Media\OnlineVideos\thumbborder2.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\Default\Media\OnlineVideos\disk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f001cd84-2ae8-49a2-8e17-24782c8a5d9d}-disk.png</ZipFileName>
+              <DestinationFilename>%Skin%\Default\Media\OnlineVideos\disk.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2228,22 +2214,12 @@
               <ZipFileName>Installer{CopyFile}\{44a46b30-6177-4e2b-9dab-67eab1de61fc}-thumbborder2.png</ZipFileName>
               <DestinationFilename>%Skin%\DefaultWide\Media\OnlineVideos\thumbborder2.png</DestinationFilename>
             </FileItem>
-          </Items>
-        </Files>
-      </GroupItem>
-      <GroupItem Name="FLVSplitter">
-        <ParentGroup />
-        <DisplayName>FLV Splitter</DisplayName>
-        <DefaulChecked>false</DefaulChecked>
-        <Description>Directshow filter that allows seeking on FLV files.</Description>
-        <Files>
-          <Items>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>FLVSplitter.ax</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{24aa2ae9-effd-4774-919c-25d70ce7ea3f}-FLVSplitter.ax</ZipFileName>
-              <DestinationFilename>%Base%\FLVSplitter.ax</DestinationFilename>
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Skins\DefaultWide\Media\OnlineVideos\disk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{98c71aad-43da-486b-b7d6-b831d579d7e2}-disk.png</ZipFileName>
+              <DestinationFilename>%Skin%\DefaultWide\Media\OnlineVideos\disk.png</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2308,6 +2284,53 @@
               <DestinationFilename>%Skin%\DefaultWide\myvideoTitle.xml</DestinationFilename>
             </FileItem>
           </Items>
+        </Files>
+      </GroupItem>
+      <GroupItem Name="MPUrlSource">
+        <ParentGroup>Plugin</ParentGroup>
+        <DisplayName>Source Filter</DisplayName>
+        <DefaulChecked>true</DefaulChecked>
+        <Description>The MediaPortal Url Source Directshow filter enables seeking on HTTP servers with ranges support.</Description>
+        <Files>
+          <Items>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSource\MPUrlSource\bin\Release\MPUrlSource.ax</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{6afa8985-d008-46bb-b091-138612d931e5}-MPUrlSource.ax</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSource.ax</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSource\libcurl\bin\Release\libcurl.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e48db2d7-1f4a-4439-92c9-cb412eabe49e}-libcurl.dll</ZipFileName>
+              <DestinationFilename>%Base%\libcurl.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSource\MPUrlSource_File\bin\Release\MPUrlSource_File.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{a19ead6b-31bd-4c08-a615-79c7323bf418}-MPUrlSource_File.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSource_File.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSource\MPUrlSource_Http\bin\Release\MPUrlSource_Http.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{00a35bc9-3d5e-4dc9-95f8-12c846e26e08}-MPUrlSource_Http.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSource_Http.dll</DestinationFilename>
+            </FileItem>
+          </Items>
+        </Files>
+      </GroupItem>
+      <GroupItem Name="LAVFilters">
+        <ParentGroup>Plugin</ParentGroup>
+        <DisplayName>LAV Filters</DisplayName>
+        <DefaulChecked>true</DefaulChecked>
+        <Description>LAV Filters are a set of open-source DirectShow filters, aimed to play all modern media.</Description>
+        <Files>
+          <Items />
         </Files>
       </GroupItem>
     </Items>
@@ -2378,14 +2401,15 @@ Click Next to continue or Cancel to exit Setup.</Value>
         </Actions>
         <IncludedGroups>
           <string>Plugin</string>
+          <string>MPUrlSource</string>
           <string>Thumbs</string>
           <string>Language</string>
-          <string>FLVSplitter</string>
           <string>Skins</string>
           <string>Default</string>
           <string>DefaultWide</string>
           <string>GenericSiteTool</string>
           <string>TrailerButton</string>
+          <string>LAVFilters</string>
         </IncludedGroups>
         <PanelName>Tree View Selector</PanelName>
         <WizardButtonsEnum>BackNextCancel</WizardButtonsEnum>
@@ -2513,7 +2537,7 @@ public class Script
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
-            <ActionItem Name="Script" ActionType="Script" ConditionGroup="FLVSplitter">
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="MPUrlSource">
               <Params>
                 <Items>
                   <SectionParam Name="Script">
@@ -2531,7 +2555,7 @@ public class Script
 ProcessStartInfo psi = new ProcessStartInfo();
         psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
 psi.FileName = "cmd.exe";
-        psi.Arguments = "/c regsvr32 /s \"" + MpeInstaller.TransformInRealPath(@"%Base%\FLVSplitter.ax") + "\"";        psi.Verb = "runas";
+        psi.Arguments = "/c regsvr32 /s \"" + MpeInstaller.TransformInRealPath(@"%Base%\MPUrlSource.ax") + "\"";        psi.Verb = "runas";
         psi.CreateNoWindow = true;
         psi.WindowStyle = ProcessWindowStyle.Hidden;
         psi.ErrorDialog = false;
@@ -2571,7 +2595,7 @@ public class Script
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
-            <ActionItem Name="Script" ActionType="Script" ConditionGroup="FLVSplitter">
+            <ActionItem Name="Script" ActionType="Script" ConditionGroup="MPUrlSource">
               <Params>
                 <Items>
                   <SectionParam Name="Script">
@@ -2606,7 +2630,7 @@ public class Script
         ProcessStartInfo psi = new ProcessStartInfo();
         psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
         psi.FileName = "cmd.exe";
-        psi.Arguments = "/c regsvr32 /s /u \"" + MpeInstaller.TransformInRealPath(@"%Base%\FLVSplitter.ax") + "\"";
+        psi.Arguments = "/c regsvr32 /s /u \"" + MpeInstaller.TransformInRealPath(@"%Base%\MPUrlSource.ax") + "\"";
         psi.Verb = "runas";
         psi.CreateNoWindow = true;
         psi.WindowStyle = ProcessWindowStyle.Hidden;
@@ -2646,7 +2670,10 @@ public class Script
     {
        using (MediaPortal.Profile.Settings xmlwriter = new MPSettings())
        {
-           xmlwriter.SetValue("plugins", "Online Videos", "yes");
+           xmlwriter.SetValue("plugins", "OnlineVideos", "yes");
+           xmlwriter.SetValue("pluginsdlls", "OnlineVideos.MediaPortal1.dll", "yes");
+           xmlwriter.SetValue("pluginswindows", "OnlineVideos.MediaPortal1.GUIOnlineVideos", "yes");
+           xmlwriter.SetValue("onlinevideos", "httpsourcefilter", "MediaPortal Url Source Filter");
        }
        MediaPortal.Profile.Settings.SaveCache();
         return;
@@ -2671,6 +2698,23 @@ public class Script
 </Value>
                     <ValueType>Script</ValueType>
                     <Description />
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
+            </ActionItem>
+            <ActionItem Name="Extension Installer" ActionType="Extension Installer" ConditionGroup="LAVFilters">
+              <Params>
+                <Items>
+                  <SectionParam Name="Extension package">
+                    <Value>LAV\LAVFilters0.38.0.0.mpe1</Value>
+                    <ValueType>File</ValueType>
+                    <Description>Location of the extension package</Description>
+                  </SectionParam>
+                  <SectionParam Name="Silent Install">
+                    <Value>YES</Value>
+                    <ValueType>Bool</ValueType>
+                    <Description>Silent install, No wizard screen will be displayed </Description>
                   </SectionParam>
                 </Items>
               </Params>
@@ -2754,10 +2798,10 @@ public class Script
         </CompatibleVersion>
         <SubSystemsUsed>
           <Items>
-            <SubSystemItem Name="MP.Externals.SQLite" />
             <SubSystemItem Name="MP.Input" />
-            <SubSystemItem Name="MP.Players.Video" />
+            <SubSystemItem Name="MP.Externals.SQLite" />
             <SubSystemItem Name="MP.Config" />
+            <SubSystemItem Name="MP.Players.Video" />
             <SubSystemItem Name="MP.SkinEngine" />
           </Items>
         </SubSystemsUsed>
@@ -2778,13 +2822,15 @@ public class Script
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>added: loadparameter arguments to set a download folder, filename, menu entry (currently used by MyFilms - thx Guzzi)
-added: timeout after which dynamic categories will be rediscovered
-fixed: rtmp unencrypted connections (continue even if signature does not match)
-updated: default skins for MP 1.2 Final</VersionDescription>
+    <VersionDescription>added: support for "next page" while viewing catgeories
+added: rtmp streams now handled by the native librtmp
+added: custom source filter that supports HTTP ranges
+added: updated siteutil dlls will be reloaded while MediaPortal is running
+added: latest online videos can be shown e.g. on Basic Home screen
+added: downloads can be enqueued or concurrent</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.0.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2011-10-22T11:00:00</ReleaseDate>
+    <ReleaseDate>2011-11-07T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -2967,13 +3013,6 @@ updated: default skins for MP 1.2 Final</VersionDescription>
         <LocalFileName>..\SiteImages\Icons\Miro.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{fe93e551-d255-44c4-a37b-a6d7173c22aa}-Miro.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Miro.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Movies4Men.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d869e770-ab0a-4def-b57d-9110ef1a7555}-Movies4Men.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Movies4Men.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3202,13 +3241,6 @@ updated: default skins for MP 1.2 Final</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\wetenschap24.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f6aa99ec-5dfb-43cb-bcd7-d2795a0c1992}-wetenschap24.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\wetenschap24.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\wwitv.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{653f88d7-e35d-4400-a514-437a9083bfd9}-wwitv.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\wwitv.png</DestinationFilename>
@@ -3394,13 +3426,6 @@ updated: default skins for MP 1.2 Final</VersionDescription>
         <LocalFileName>..\SiteImages\Banners\Miro.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{7b229fe6-a8fb-4274-a12d-880b259fc310}-Miro.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Miro.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Movies4Men.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{b15c312f-a95e-4d20-8639-69579d789901}-Movies4Men.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Movies4Men.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3632,13 +3657,6 @@ updated: default skins for MP 1.2 Final</VersionDescription>
         <LocalFileName>..\SiteImages\Banners\WDR.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724c51a7-ed7f-44f7-abb9-938767867547}-WDR.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\WDR.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\wetenschap24.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9f8b0e09-4c54-4dbc-af43-6eb56afca1a3}-wetenschap24.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\wetenschap24.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4522,6 +4540,13 @@ updated: default skins for MP 1.2 Final</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{179ac2b2-e4da-4240-a684-5969bc2e8cdc}-tsn.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tsn.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Langs\el.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{935c1766-6106-4d7b-a7e7-90bb29792af5}-el.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Langs\el.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -4889,6 +4914,13 @@ updated: default skins for MP 1.2 Final</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\Default\Media\OnlineVideos\disk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f001cd84-2ae8-49a2-8e17-24782c8a5d9d}-disk.png</ZipFileName>
+        <DestinationFilename>%Skin%\Default\Media\OnlineVideos\disk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\Skins\DefaultWide\myonlinevideosFullScreen.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{3afc9b06-da28-4365-a581-c2fc7871e584}-myonlinevideosFullScreen.xml</ZipFileName>
         <DestinationFilename>%Skin%\DefaultWide\myonlinevideosFullScreen.xml</DestinationFilename>
@@ -4991,12 +5023,12 @@ updated: default skins for MP 1.2 Final</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{44a46b30-6177-4e2b-9dab-67eab1de61fc}-thumbborder2.png</ZipFileName>
         <DestinationFilename>%Skin%\DefaultWide\Media\OnlineVideos\thumbborder2.png</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>FLVSplitter.ax</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{24aa2ae9-effd-4774-919c-25d70ce7ea3f}-FLVSplitter.ax</ZipFileName>
-        <DestinationFilename>%Base%\FLVSplitter.ax</DestinationFilename>
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Skins\DefaultWide\Media\OnlineVideos\disk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{98c71aad-43da-486b-b7d6-b831d579d7e2}-disk.png</ZipFileName>
+        <DestinationFilename>%Skin%\DefaultWide\Media\OnlineVideos\disk.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -5040,11 +5072,46 @@ updated: default skins for MP 1.2 Final</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{dad9b74a-23b6-4a3e-883a-19f710ad1031}-myvideoTitle.xml</ZipFileName>
         <DestinationFilename>%Skin%\DefaultWide\myvideoTitle.xml</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSource\MPUrlSource\bin\Release\MPUrlSource.ax</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{6afa8985-d008-46bb-b091-138612d931e5}-MPUrlSource.ax</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSource.ax</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSource\libcurl\bin\Release\libcurl.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e48db2d7-1f4a-4439-92c9-cb412eabe49e}-libcurl.dll</ZipFileName>
+        <DestinationFilename>%Base%\libcurl.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSource\MPUrlSource_File\bin\Release\MPUrlSource_File.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{a19ead6b-31bd-4c08-a615-79c7323bf418}-MPUrlSource_File.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSource_File.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSource\MPUrlSource_Http\bin\Release\MPUrlSource_Http.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{00a35bc9-3d5e-4dc9-95f8-12c846e26e08}-MPUrlSource_Http.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSource_Http.dll</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{5c046df1-9e8b-4f95-aac0-973a92b1f906}-OnlineVideos.png</ZipFileName>
+        <DestinationFilename />
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>LAV\LAVFilters0.38.0.0.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{98ede70b-70ad-4707-a459-500668ca0335}-LAVFilters0.38.0.0.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
