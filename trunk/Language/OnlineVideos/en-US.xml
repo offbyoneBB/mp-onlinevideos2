@@ -147,7 +147,8 @@
   <string Field="ShowReports">Show creator's and user's reports</string>
   <string Field="StartingPlayback">starting playback</string>
   <string Field="Subscriptions">Subscriptions</string>
-  
+  <string Field="Success">Success</string>
+
   <!-- T -->
   <string Field="Timeframe">Timeframe</string>
   <string Field="Timeout">Timeout</string>

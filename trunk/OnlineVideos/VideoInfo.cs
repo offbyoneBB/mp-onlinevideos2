@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using OnlineVideos.Sites;
 using RssToolkit.Rss;
+using System.Text;
 
 namespace OnlineVideos
 {
@@ -24,6 +25,7 @@ namespace OnlineVideos
         public string Airdate { get; set; }
         public string StartTime { get; set; }
 		object _Other;
+        /// <summary>If you have additional data that you need to identify your Video object you can store it here. In order to make it work with Favorites, mark custom classes as [Serializable] and make them public.</summary>
 		public object Other 
 		{ 
 			get { return _Other; } 
@@ -38,7 +40,54 @@ namespace OnlineVideos
 				}
 			}
 		}
-		public string GetOtherAsString() { return Other != null ? Other.ToString() : ""; }
+		public string GetOtherAsString() 
+        {
+            if (Other == null) return "";
+            else if (Other is string) return (string)Other;
+            else if (Other.GetType().IsSerializable) 
+            {
+                try
+                {
+                    string serialized = null;
+                    StringBuilder sb = new StringBuilder();
+                    new System.Xml.Serialization.XmlSerializer(Other.GetType()).Serialize(new System.IO.StringWriter(sb), Other);
+                    serialized = string.Format("Serialized://{0}|{1}", Regex.Replace(Other.GetType().AssemblyQualifiedName, @",\sVersion=[^,]+", ""), sb.ToString());
+                    return serialized;
+                }
+                catch (Exception ex)
+                {
+                    Log.Warn("Error serializing Other object for Favorites: {0}", ex.Message);
+                }
+            }
+            return Other.ToString();
+        }
+        public void SetOtherFromString(string other)
+        {
+            if (!string.IsNullOrEmpty(other))
+            {
+                if (other.StartsWith("Serialized://"))
+                {
+                    try
+                    {
+                        int index1 = "Serialized://".Length;
+                        int index2 = other.IndexOf("|", index1, StringComparison.InvariantCulture);
+                        string type = other.Substring(index1, index2 - index1);
+                        string data = other.Substring(index2 + 1);
+                        Type resolvedType = Type.GetType(type);
+                        if (resolvedType != null)
+                        {
+                            Other = new System.Xml.Serialization.XmlSerializer(resolvedType).Deserialize(new System.IO.StringReader(data));
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warn("Error deserializing Other object from Favorites: {0}", ex.Message);
+                    }
+                }    
+            }
+            Other = other;
+        }
         
 		public Dictionary<string, string> PlaybackOptions;
 
