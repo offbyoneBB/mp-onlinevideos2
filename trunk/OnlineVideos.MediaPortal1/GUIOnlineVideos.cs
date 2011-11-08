@@ -2547,11 +2547,13 @@ namespace OnlineVideos.MediaPortal1
             {
                 GUI_infoList.Focus = true;
                 GUIControl.FocusControl(GetID, GUI_infoList.GetID);
+				GUI_btnViewAs.Focus = false; // explicitly remove focus from this button (prevents flashing of the hidden menu)
             }
             else
             {
                 GUI_facadeView.Focus = true;
                 GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
+				GUI_btnViewAs.Focus = false; // explicitly remove focus from this button (prevents flashing of the hidden menu)
             }
         }
 
