@@ -20,6 +20,7 @@
   <string Field="Categories">Categoriën</string>
   <string Field="Creator">Maker</string>
   <string Field="CheckingForPluginUpdate">Testen op geupdate plugin versie</string>
+  <string Field="Concurrent">Tegelijkertijd</string>
   <string Field="Date">Datum</string>
   <string Field="DateOfRelease">Verschijningsdatum:</string>
   <string Field="Directors">Regisseurs</string>
@@ -85,6 +86,7 @@
   <string Field="PlotOutline">Samenvatting</string>
   <string Field="PreviousPage">Vorige pagina</string>
   <string Field="PerformAutomaticUpdate">Automatische update uitvoeren?</string>
+  <string Field="Queued">in de wachtrij</string>
   <string Field="Recommendations">Aanbevelingen</string>
   <string Field="RemoveFromFavorites">Verwijderen uit favorieten</string>
   <string Field="RemovingFromFavorites">bij het verwijderen uit de favorieten</string>
@@ -111,6 +113,7 @@
   <string Field="ShowReports">Toon ontwikkelaars en gebruikers meldingen</string>
   <string Field="StartingPlayback">bij het starten van de video</string>
   <string Field="Subscriptions">Abonnementen</string>
+  <string Field="Success">Gelukt</string>
   <string Field="Timeframe">Periode</string>
   <string Field="Timeout">Time-out</string>
   <string Field="Tags">Kenmerken</string>

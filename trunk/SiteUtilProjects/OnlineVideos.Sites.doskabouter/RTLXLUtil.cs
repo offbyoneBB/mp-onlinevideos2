@@ -219,7 +219,7 @@ namespace OnlineVideos.Sites
                 string airdate = DateTime.FromFileTime(10000000 * (long)ctime + 116444736000000000).ToString();
                 if (String.IsNullOrEmpty(video.Title))
                     video.Title = "Aflevering van " + airdate;
-				video.Length = '|' + Translation.Instance.Airdate + ": " + airdate;
+                video.Length = '|' + Translation.Instance.Airdate + ": " + airdate;
             }
 
             video.ImageUrl = getNodeText(node, "thumbnail_uri");
@@ -292,7 +292,7 @@ namespace OnlineVideos.Sites
                     string airdate = dateTime.ToString();
                     if (String.IsNullOrEmpty(vid.Title))
                         vid.Title = "Aflevering van " + airdate;
-					vid.Length = '|' + Translation.Instance.Airdate + ": " + airdate;
+                    vid.Length = '|' + Translation.Instance.Airdate + ": " + airdate;
                     AddToVidList(vid, tab);
                 }
             }
@@ -328,6 +328,7 @@ namespace OnlineVideos.Sites
             HttpWebRequest request = WebRequest.Create(((RssLink)parentCategory).Url) as HttpWebRequest;
             request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
             request.Accept = "* /*";
+            request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate"); // we accept compressed content
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
             StringBuilder sb = new StringBuilder();
@@ -357,14 +358,8 @@ namespace OnlineVideos.Sites
                 videoInfo.Title = title;
                 videoInfo.VideoUrl = item.SelectSingleNode("movie").InnerText;
                 videoInfo.ImageUrl = item.SelectSingleNode("thumbnail").InnerText;
-				videoInfo.Length = '|' + Translation.Instance.Airdate + ": " + aired.ToString();
+                videoInfo.Length = '|' + Translation.Instance.Airdate + ": " + aired.ToString();
                 videoInfo.Description = item.SelectSingleNode("episodetitel").InnerText;
-
-                if (serieNaam.Equals(title, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    videoInfo.Title = videoInfo.Description;
-                    videoInfo.Description = String.Empty;
-                }
 
                 string airDate = aired.ToShortDateString();
                 AddVideo(parentCategory, "Datum\t" + airDate, videoInfo);
@@ -404,9 +399,9 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             string url = ((RssLink)parentCategory).Url;
-            if (url.StartsWith("http://iptv.rtl.nl/"))
+            if (!url.StartsWith("http://www.rtl.nl/"))
             {
-                if (OnlineVideoSettings.Instance.CacheTimeout > 0 &&
+                if (parentCategory.SubCategories.Count > 0 && OnlineVideoSettings.Instance.CacheTimeout > 0 &&
                     (DateTime.Now - lastChecked).TotalMinutes < OnlineVideoSettings.Instance.CacheTimeout)
                     return parentCategory.SubCategories.Count;
 
