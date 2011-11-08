@@ -401,7 +401,8 @@ namespace OnlineVideos.Sites
             string url = ((RssLink)parentCategory).Url;
             if (!url.StartsWith("http://www.rtl.nl/"))
             {
-                if (parentCategory.SubCategories.Count > 0 && OnlineVideoSettings.Instance.CacheTimeout > 0 &&
+                if (parentCategory.SubCategories != null && parentCategory.SubCategories.Count > 0 &&
+                    OnlineVideoSettings.Instance.CacheTimeout > 0 &&
                     (DateTime.Now - lastChecked).TotalMinutes < OnlineVideoSettings.Instance.CacheTimeout)
                     return parentCategory.SubCategories.Count;
 
