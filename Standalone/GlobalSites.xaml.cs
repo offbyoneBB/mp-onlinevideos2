@@ -82,8 +82,8 @@ namespace Standalone
                 if (!string.IsNullOrEmpty(site.RequiredDll))
                 {
                     bool? errorForDll = SiteManager.DownloadDll(SiteManager.GetOnlineDlls().FirstOrDefault(dll => dll.Name == site.RequiredDll));
-                    if (errorForDll == true) MessageBox.Show(App.Current.MainWindow, Translation.NewDllDownloaded, Translation.RestartMediaPortal, MessageBoxButton.OK);
-                    if (errorForDll == false) { MessageBox.Show(App.Current.MainWindow, Translation.Error, Translation.GettingDll, MessageBoxButton.OK); return; }
+                    if (errorForDll == true) MessageBox.Show(App.Current.MainWindow, Translation.Instance.NewDllDownloaded, Translation.Instance.RestartMediaPortal, MessageBoxButton.OK);
+                    if (errorForDll == false) { MessageBox.Show(App.Current.MainWindow, Translation.Instance.Error, Translation.Instance.GettingDll, MessageBoxButton.OK); return; }
                 }
                 OnlineVideoSettings.Instance.SiteSettingsList.Add(newSite);
                 OnlineVideoSettings.Instance.SaveSites();
