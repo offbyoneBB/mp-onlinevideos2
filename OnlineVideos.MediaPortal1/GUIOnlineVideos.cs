@@ -2543,18 +2543,9 @@ namespace OnlineVideos.MediaPortal1
                     HideAndDisable(GUI_btnEnterPin.GetID);
                     break;
             }
-            if (CurrentState == State.details)
-            {
-                GUI_infoList.Focus = true;
-                GUIControl.FocusControl(GetID, GUI_infoList.GetID);
-				GUI_btnViewAs.Focus = false; // explicitly remove focus from this button (prevents flashing of the hidden menu)
-            }
-            else
-            {
-                GUI_facadeView.Focus = true;
-                GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
-				GUI_btnViewAs.Focus = false; // explicitly remove focus from this button (prevents flashing of the hidden menu)
-            }
+			GUIWindowManager.Process(); // required for the next statement to work correctly, so the skinengine has correct state for visibility and focus
+            if (CurrentState == State.details) GUIControl.FocusControl(GetID, GUI_infoList.GetID);
+            else GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
         }
 
         private void ShowOrderButtons()
