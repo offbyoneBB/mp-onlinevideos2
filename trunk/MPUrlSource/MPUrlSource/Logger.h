@@ -23,6 +23,8 @@
 #ifndef __LOGGER_DEFINED
 #define __LOGGER_DEFINED
 
+#include "ParameterCollection.h"
+
 #include <tchar.h>
 
 #define LOGGER_NONE                 0
@@ -60,10 +62,12 @@
 #define METHOD_END_FAIL_HRESULT_FORMAT                                  _T("%s: %s: End, Fail, result: 0x%08X")
 #define METHOD_MESSAGE_FORMAT                                           _T("%s: %s: %s")
 
+class CParameterCollection;
+
 class MPURLSOURCE_API CLogger
 {
 public:
-  CLogger();
+  CLogger(CParameterCollection *configuration);
   ~CLogger(void);
 
   // log message to log file

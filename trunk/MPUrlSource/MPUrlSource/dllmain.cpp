@@ -83,7 +83,7 @@ extern "C" BOOL WINAPI DllEntryPoint(HINSTANCE, ULONG, LPVOID);
 
 STDAPI DllRegisterServer()
 {
-  CLogger logger;
+  CLogger logger(NULL);
   logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DLL_REGISTER_SERVER_NAME);
 
   return AMovieDllRegisterServer2(TRUE);
@@ -91,7 +91,7 @@ STDAPI DllRegisterServer()
 
 STDAPI DllUnregisterServer()
 {
-  CLogger logger;
+  CLogger logger(NULL);
   logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DLL_UNREGISTER_SERVER_NAME);
 
   return AMovieDllRegisterServer2(FALSE);
@@ -102,7 +102,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
   LPVOID lpReserved
   )
 {
-  CLogger logger;
+  CLogger logger(NULL);
   logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DLL_MAIN_NAME);
 
   switch (ul_reason_for_call)

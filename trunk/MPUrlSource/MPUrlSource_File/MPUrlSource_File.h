@@ -27,19 +27,19 @@
 #include "LinearBuffer.h"
 
 // we should get data in two seconds
-#define FILE_RECEIVE_DATA_TIMEOUT_DEFAULT                   2000
-#define FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
+#define FILE_RECEIVE_DATA_TIMEOUT_DEFAULT                         2000
+#define FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT             3
 
-#define DEFAULT_BUFFER_SIZE                                 32 * 1024
-#define OUTPUT_PIN_NAME                                     _T("Output File")
+#define DEFAULT_BUFFER_SIZE                                       32 * 1024
+#define OUTPUT_PIN_NAME                                           _T("Output")
 
-#define CONFIGURATION_SECTION_FILE                          _T("FILE")
+#define PROTOCOL_NAME                                             _T("FILE")
 
-#define CONFIGURATION_FILE_RECEIVE_DATA_TIMEOUT             _T("FileReceiveDataTimeout")
-#define CONFIGURATION_FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS _T("FileOpenConnectionMaximumAttempts")
+#define PARAMETER_NAME_FILE_RECEIVE_DATA_TIMEOUT                  _T("FileReceiveDataTimeout")
+#define PARAMETER_NAME_FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS      _T("FileOpenConnectionMaximumAttempts")
 
 // returns protocol class instance
-PIProtocol CreateProtocolInstance(void);
+PIProtocol CreateProtocolInstance(CParameterCollection *configuration);
 
 // destroys protocol class instance
 void DestroyProtocolInstance(PIProtocol pProtocol);
@@ -50,7 +50,7 @@ class MPURLSOURCE_FILE_API CMPUrlSource_File : public IProtocol
 public:
   // constructor
   // create instance of CMPUrlSource_File class
-  CMPUrlSource_File(void);
+  CMPUrlSource_File(CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSource_File(void);
@@ -75,7 +75,7 @@ public:
   HRESULT QueryRangesSupported(CRangesSupported *rangesSupported);
 
 protected:
-  CLogger logger;
+  CLogger *logger;
 
   // source filter that created this instance
   IOutputStream *filter;
@@ -85,10 +85,8 @@ protected:
   // holds file
   FILE *fileStream;
 
-  // holds various parameters supplied by TvService
+  // holds various parameters supplied by caller
   CParameterCollection *configurationParameters;
-  // holds various parameters supplied by TvService when loading file
-  CParameterCollection *loadParameters;
 
   // holds receive data timeout
   unsigned int receiveDataTimeout;

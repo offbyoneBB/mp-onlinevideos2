@@ -53,7 +53,14 @@
 CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCTSTR pObjectName, __inout HRESULT *phr, __inout CAsyncSource *ps, __in_opt LPCWSTR pPinName, CParameterCollection *configuration)
   : CBasePin(pObjectName, ps, ps->GetStateLock(), phr, pPinName, PINDIR_OUTPUT)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->configuration = new CParameterCollection();
+  if (configuration != NULL)
+  {
+    this->configuration->Append(configuration);
+  }
+
+  this->logger = new CLogger(this->configuration);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 
   this->filter = ps;
   this->requestsCollection = new CAsyncRequestCollection();
@@ -67,18 +74,13 @@ CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCTSTR pObjectName, __inout HRE
   this->requestId = 0;
   this->requestMutex = CreateMutex(NULL, FALSE, NULL);
   this->mediaPacketMutex = CreateMutex(NULL, FALSE, NULL);
-  this->configuration = new CParameterCollection();
-  if (configuration != NULL)
-  {
-    this->configuration->Append(configuration);
-  }
-
+  
   this->storeFilePath = NULL;
   this->connectedToAnotherPin = false;
 
   this->CreateAsyncRequestProcessWorker();
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 }
 
 
@@ -86,7 +88,13 @@ CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCTSTR pObjectName, __inout HRE
 CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCSTR pObjectName, __inout HRESULT *phr, __inout CAsyncSource *ps, __in_opt LPCWSTR pPinName, CParameterCollection *configuration)
   : CBasePin(pObjectName, ps, ps->GetStateLock(), phr, pPinName, PINDIR_OUTPUT)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->configuration = new CParameterCollection();
+  if (configuration != NULL)
+  {
+    this->configuration->Append(configuration);
+  }
+  this->logger = new CLogger(this->configuration);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 
   this->filter = ps;
   this->requestsCollection = new CAsyncRequestCollection();
@@ -100,24 +108,19 @@ CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCSTR pObjectName, __inout HRES
   this->requestId = 0;
   this->requestMutex = CreateMutex(NULL, FALSE, NULL);
   this->mediaPacketMutex = CreateMutex(NULL, FALSE, NULL);
-  this->configuration = new CParameterCollection();
-  if (configuration != NULL)
-  {
-    this->configuration->Append(configuration);
-  }
 
   this->storeFilePath = NULL;
   this->connectedToAnotherPin = false;
 
   this->CreateAsyncRequestProcessWorker();
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 }
 #endif
 
 CAsyncSourceStream::~CAsyncSourceStream(void)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
 
   this->DestroyAsyncRequestProcessWorker();
 
@@ -143,7 +146,10 @@ CAsyncSourceStream::~CAsyncSourceStream(void)
   }
 
   FREE_MEM(this->storeFilePath);
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
+
+  delete this->logger;
+  this->logger = NULL;
 }
 
 STDMETHODIMP CAsyncSourceStream::NonDelegatingQueryInterface(REFIID riid, void** ppv)
@@ -165,18 +171,18 @@ STDMETHODIMP CAsyncSourceStream::NonDelegatingQueryInterface(REFIID riid, void**
 
 HRESULT CAsyncSourceStream::GetMediaType(int position, CMediaType *mediaType)
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME);
   HRESULT result = S_OK;
 
   if (position < 0)
   {
-    this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: bad position request: %i"), MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME, position);
+    this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: bad position request: %i"), MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME, position);
     result = E_INVALIDARG;
   }
 
   if ((result == S_OK) && (position > 0))
   {
-    this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: bad position request: %i"), MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME, position);
+    this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: bad position request: %i"), MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME, position);
     result = VFW_S_NO_MORE_ITEMS;
   }
 
@@ -184,7 +190,7 @@ HRESULT CAsyncSourceStream::GetMediaType(int position, CMediaType *mediaType)
   {    
     if (mediaType == NULL)
     {
-      this->logger.Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME, _T("bad pointer to media type"));
+      this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME, _T("bad pointer to media type"));
       result = E_POINTER;
     }
 
@@ -197,19 +203,19 @@ HRESULT CAsyncSourceStream::GetMediaType(int position, CMediaType *mediaType)
     }
   }
 
-  this->logger.Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_GET_MEDIA_TYPE_NAME, result);
   return result;
 }
 
 HRESULT CAsyncSourceStream::CheckMediaType(const CMediaType* mediaType)
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_CHECK_MEDIA_TYPE_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_CHECK_MEDIA_TYPE_NAME);
   HRESULT result = S_FALSE;
 
   TCHAR *majorType = (mediaType != NULL) ? ConvertGuidToString(mediaType->majortype) : NULL;
   TCHAR *subType = (mediaType != NULL) ? ConvertGuidToString(mediaType->subtype) : NULL;
 
-  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: major type: '%s', subtype: '%s'"), MODULE_NAME, METHOD_CHECK_MEDIA_TYPE_NAME, majorType, subType);
+  this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: major type: '%s', subtype: '%s'"), MODULE_NAME, METHOD_CHECK_MEDIA_TYPE_NAME, majorType, subType);
 
   FREE_MEM(majorType);
   FREE_MEM(subType);
@@ -220,24 +226,24 @@ HRESULT CAsyncSourceStream::CheckMediaType(const CMediaType* mediaType)
     result = S_OK;
   }
 
-  this->logger.Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CHECK_MEDIA_TYPE_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CHECK_MEDIA_TYPE_NAME, result);
   return result;
 }
 
 HRESULT CAsyncSourceStream::CheckConnect(IPin *pin)
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_CHECK_CONNECT_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_CHECK_CONNECT_NAME);
 
   this->queriedForAsyncReader = false;
   HRESULT result = this->CBasePin::CheckConnect(pin);
 
-  this->logger.Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CHECK_CONNECT_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CHECK_CONNECT_NAME, result);
   return result;
 }
 
 HRESULT CAsyncSourceStream::CompleteConnect(IPin *receivePin)
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_COMPLETE_CONNECT_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_COMPLETE_CONNECT_NAME);
 
   HRESULT result = S_OK;
   if (this->queriedForAsyncReader)
@@ -253,31 +259,31 @@ HRESULT CAsyncSourceStream::CompleteConnect(IPin *receivePin)
 #endif
   }
 
-  this->logger.Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_COMPLETE_CONNECT_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_COMPLETE_CONNECT_NAME, result);
   return result;
 }
 
 HRESULT CAsyncSourceStream::BreakConnect()
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_BREAK_CONNECT_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_BREAK_CONNECT_NAME);
 
   this->queriedForAsyncReader = false;
   HRESULT result = this->CBasePin::BreakConnect();
   this->connectedToAnotherPin = false;
 
-  this->logger.Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_BREAK_CONNECT_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_BREAK_CONNECT_NAME, result);
   return result;
 }
 
 STDMETHODIMP CAsyncSourceStream::Connect(IPin * receivePin, const AM_MEDIA_TYPE *mediaType)
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONNECT_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONNECT_NAME);
 
   HRESULT result = this->CBasePin::Connect(receivePin, mediaType);
 
   this->connectedToAnotherPin = (result == S_OK);
 
-  this->logger.Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CONNECT_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CONNECT_NAME, result);
   return result;
 }
 
@@ -285,7 +291,7 @@ STDMETHODIMP CAsyncSourceStream::Connect(IPin * receivePin, const AM_MEDIA_TYPE 
 
 STDMETHODIMP CAsyncSourceStream::RequestAllocator(IMemAllocator *preferred, ALLOCATOR_PROPERTIES *props, IMemAllocator **actual)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_REQUEST_ALLOCATOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_REQUEST_ALLOCATOR_NAME);
 
   CAutoLock lock(this->m_pLock);
 
@@ -351,13 +357,13 @@ STDMETHODIMP CAsyncSourceStream::RequestAllocator(IMemAllocator *preferred, ALLO
     }
   }
 
-  this->logger.Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_REQUEST_ALLOCATOR_NAME, result);
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_REQUEST_ALLOCATOR_NAME, result);
   return result;
 }
 
 STDMETHODIMP CAsyncSourceStream::Request(IMediaSample *sample, DWORD_PTR user)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_REQUEST_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_REQUEST_NAME);
 
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, sample);
@@ -403,13 +409,13 @@ STDMETHODIMP CAsyncSourceStream::Request(IMediaSample *sample, DWORD_PTR user)
     }
   }
 
-  this->logger.Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_REQUEST_NAME, result);
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_REQUEST_NAME, result);
   return result;
 }
 
 STDMETHODIMP CAsyncSourceStream::WaitForNext(DWORD timeout, IMediaSample **sample, DWORD_PTR *user)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_WAIT_FOR_NEXT_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_WAIT_FOR_NEXT_NAME);
 
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, sample);
@@ -468,24 +474,24 @@ STDMETHODIMP CAsyncSourceStream::WaitForNext(DWORD timeout, IMediaSample **sampl
     }
   }
 
-  this->logger.Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_WAIT_FOR_NEXT_NAME, result);
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_WAIT_FOR_NEXT_NAME, result);
   return result;
 }
 
 STDMETHODIMP CAsyncSourceStream::SyncReadAligned(IMediaSample *sample)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SYNC_READ_ALIGNED_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SYNC_READ_ALIGNED_NAME);
   //CLockMutex lock(this->lockMutex, INFINITE);
 
   HRESULT result = E_NOTIMPL;
 
-  this->logger.Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SYNC_READ_ALIGNED_NAME, result);
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SYNC_READ_ALIGNED_NAME, result);
   return result;
 }
 
 STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *buffer)
 {
-  this->logger.Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME);
+  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME);
 
   HRESULT result = S_OK;
   CHECK_CONDITION(result, length >= 0, S_OK, E_INVALIDARG);
@@ -522,7 +528,7 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
           // if ranges are not supported than we must wait for data
 
           result = VFW_E_TIMEOUT;
-          this->logger.Log(LOGGER_DATA, _T("%s: %s: requesting data from position: %llu, length: %lu"), MODULE_NAME, METHOD_SYNC_READ_NAME, position, length);
+          this->logger->Log(LOGGER_DATA, _T("%s: %s: requesting data from position: %llu, length: %lu"), MODULE_NAME, METHOD_SYNC_READ_NAME, position, length);
 
           // wait until request is completed or cancelled
           while (!this->asyncRequestProcessingShouldExit)
@@ -547,7 +553,7 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
                 {
                   // something bad occured
                   // graph requests data that are beyond stream (data doesn't exists)
-                  this->logger.Log(LOGGER_WARNING, _T("%s: %s: graph requests data beyond stream, stream total length: %llu, request start: %llu"), MODULE_NAME, METHOD_SYNC_READ_NAME, this->totalLength, request->GetStart());
+                  this->logger->Log(LOGGER_WARNING, _T("%s: %s: graph requests data beyond stream, stream total length: %llu, request start: %llu"), MODULE_NAME, METHOD_SYNC_READ_NAME, this->totalLength, request->GetStart());
                   // complete result with error code
                   request->Complete(E_FAIL);
                 }
@@ -556,7 +562,7 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
                 {
                   // request is completed
                   result = request->GetErrorCode();
-                  this->logger.Log(LOGGER_DATA, _T("%s: %s: returned data length: %lu, result: 0x%08X"), MODULE_NAME, METHOD_SYNC_READ_NAME, request->GetBufferLength(), result);
+                  this->logger->Log(LOGGER_DATA, _T("%s: %s: returned data length: %lu, result: 0x%08X"), MODULE_NAME, METHOD_SYNC_READ_NAME, request->GetBufferLength(), result);
                   break;
                 }
                 else if (request->GetState() == CAsyncRequest::Cancelled)
@@ -602,7 +608,7 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
               {
                 // request should not disappear before is processed
                 result = E_FAIL;
-                this->logger.Log(LOGGER_WARNING, _T("%s: %s: request '%u' disappeared before processed"), MODULE_NAME, METHOD_SYNC_READ_NAME, request->GetRequestId());
+                this->logger->Log(LOGGER_WARNING, _T("%s: %s: request '%u' disappeared before processed"), MODULE_NAME, METHOD_SYNC_READ_NAME, request->GetRequestId());
                 break;
               }
             }
@@ -620,25 +626,25 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
           CLockMutex lock(this->requestMutex, INFINITE);                
           if (!this->requestsCollection->Remove(this->requestsCollection->GetRequestIndex(requestId)))
           {
-            this->logger.Log(LOGGER_WARNING, _T("%s: %s: request '%u' cannot be removed"), METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, requestId);
+            this->logger->Log(LOGGER_WARNING, _T("%s: %s: request '%u' cannot be removed"), METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, requestId);
           }
         }
 
         if (FAILED(result))
         {
-          this->logger.Log(LOGGER_WARNING, _T("%s: %s: requesting data from position: %llu, length: %lu, request id: %u, result: 0x%08X"), MODULE_NAME, METHOD_SYNC_READ_NAME, position, length, requestId, result);
+          this->logger->Log(LOGGER_WARNING, _T("%s: %s: requesting data from position: %llu, length: %lu, request id: %u, result: 0x%08X"), MODULE_NAME, METHOD_SYNC_READ_NAME, position, length, requestId, result);
         }
       }
     }
   }
 
-  this->logger.Log(LOGGER_DATA, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, result);
+  this->logger->Log(LOGGER_DATA, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME, result);
   return result;
 }
 
 STDMETHODIMP CAsyncSourceStream::Length(LONGLONG *total, LONGLONG *available)
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME);
   CLockMutex lock(this->mediaPacketMutex, INFINITE);
 
   HRESULT result = S_OK;
@@ -667,7 +673,7 @@ STDMETHODIMP CAsyncSourceStream::Length(LONGLONG *total, LONGLONG *available)
     if (result != S_OK)
     {
       // error occured while requesting stream available length
-      this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: cannot query available stream length, result: 0x%08X"), MODULE_NAME, METHOD_LENGTH_NAME, result);
+      this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: cannot query available stream length, result: 0x%08X"), MODULE_NAME, METHOD_LENGTH_NAME, result);
 
       // return default value = last media packet end
       *available = 0;
@@ -690,10 +696,10 @@ STDMETHODIMP CAsyncSourceStream::Length(LONGLONG *total, LONGLONG *available)
     }
 
     result = (this->estimate) ? VFW_S_ESTIMATED : S_OK;
-    this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: total length: %llu, available length: %llu, estimate: %u, media packets: %u"), MODULE_NAME, METHOD_LENGTH_NAME, this->totalLength, *available, (this->estimate) ? 1 : 0, mediaPacketCount);
+    this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: total length: %llu, available length: %llu, estimate: %u, media packets: %u"), MODULE_NAME, METHOD_LENGTH_NAME, this->totalLength, *available, (this->estimate) ? 1 : 0, mediaPacketCount);
   }
 
-  this->logger.Log(LOGGER_VERBOSE, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME, result);
   return result;
 }
 
@@ -701,7 +707,7 @@ STDMETHODIMP CAsyncSourceStream::Length(LONGLONG *total, LONGLONG *available)
 
 HRESULT CAsyncSourceStream::InitAllocator(IMemAllocator **allocator)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_INIT_ALLOCATOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_INIT_ALLOCATOR_NAME);
 
   HRESULT result = (allocator != NULL) ? S_OK : E_POINTER;
   CMemAllocator *pMemObject = NULL;
@@ -730,7 +736,7 @@ HRESULT CAsyncSourceStream::InitAllocator(IMemAllocator **allocator)
     }
   }
 
-  this->logger.Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_INIT_ALLOCATOR_NAME, result);
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_INIT_ALLOCATOR_NAME, result);
   return result;
 }
 
@@ -981,7 +987,7 @@ HRESULT CAsyncSourceStream::EnqueueAsyncRequest(CAsyncRequest *request)
 
 STDMETHODIMP CAsyncSourceStream::BeginFlush(void)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_BEGIN_FLUSH_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_BEGIN_FLUSH_NAME);
   CLockMutex requestLock(this->requestMutex, INFINITE);
   CLockMutex mediaPacketLock(this->mediaPacketMutex, INFINITE);
 
@@ -1001,13 +1007,13 @@ STDMETHODIMP CAsyncSourceStream::BeginFlush(void)
 
   HRESULT result = S_OK;
 
-  this->logger.Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_BEGIN_FLUSH_NAME, result);
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_BEGIN_FLUSH_NAME, result);
   return result;
 }
 
 STDMETHODIMP CAsyncSourceStream::EndFlush(void)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_FLUSH_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_FLUSH_NAME);
   CLockMutex requestLock(this->requestMutex, INFINITE);
   CLockMutex mediaPacketLock(this->mediaPacketMutex, INFINITE);
 
@@ -1016,13 +1022,13 @@ STDMETHODIMP CAsyncSourceStream::EndFlush(void)
 
   HRESULT result = S_OK;
 
-  this->logger.Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_END_FLUSH_NAME, result);
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_END_FLUSH_NAME, result);
   return result;
 }
 
 GUID CAsyncSourceStream::GetInstanceId(void)
 {
-  return this->logger.loggerInstance;
+  return this->logger->loggerInstance;
 }
 
 int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket)
@@ -1245,7 +1251,7 @@ int CAsyncSourceStream::SetTotalLength(const TCHAR *outputPinName, LONGLONG tota
 HRESULT CAsyncSourceStream::CreateAsyncRequestProcessWorker(void)
 {
   HRESULT result = S_OK;
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME);
 
   this->asyncRequestProcessingShouldExit = false;
 
@@ -1261,25 +1267,25 @@ HRESULT CAsyncSourceStream::CreateAsyncRequestProcessWorker(void)
   {
     // thread not created
     result = HRESULT_FROM_WIN32(GetLastError());
-    this->logger.Log(LOGGER_ERROR, _T("%s: %s: CreateThread() error: 0x%08X"), MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME, result);
+    this->logger->Log(LOGGER_ERROR, _T("%s: %s: CreateThread() error: 0x%08X"), MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME, result);
   }
 
   if (result == S_OK)
   {
     if (!SetThreadPriority(this->hAsyncRequestProcessingThread, THREAD_PRIORITY_TIME_CRITICAL))
     {
-      this->logger.Log(LOGGER_WARNING, _T("%s: %s: cannot set thread priority for receive data thread, error: %u"), MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME, GetLastError());
+      this->logger->Log(LOGGER_WARNING, _T("%s: %s: cannot set thread priority for receive data thread, error: %u"), MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME, GetLastError());
     }
   }
 
-  this->logger.Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME, result);
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME, result);
   return result;
 }
 
 HRESULT CAsyncSourceStream::DestroyAsyncRequestProcessWorker(void)
 {
   HRESULT result = S_OK;
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTROY_ASYNC_REQUEST_PROCESS_WORKER_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTROY_ASYNC_REQUEST_PROCESS_WORKER_NAME);
 
   this->asyncRequestProcessingShouldExit = true;
 
@@ -1289,7 +1295,7 @@ HRESULT CAsyncSourceStream::DestroyAsyncRequestProcessWorker(void)
     if (WaitForSingleObject(this->hAsyncRequestProcessingThread, 1000) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
-      this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("thread didn't exit, terminating thread"));
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("thread didn't exit, terminating thread"));
       TerminateThread(this->hAsyncRequestProcessingThread, 0);
     }
   }
@@ -1297,7 +1303,7 @@ HRESULT CAsyncSourceStream::DestroyAsyncRequestProcessWorker(void)
   this->hAsyncRequestProcessingThread = NULL;
   this->asyncRequestProcessingShouldExit = false;
 
-  this->logger.Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DESTROY_ASYNC_REQUEST_PROCESS_WORKER_NAME, result);
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DESTROY_ASYNC_REQUEST_PROCESS_WORKER_NAME, result);
   return result;
 }
 
@@ -1323,8 +1329,8 @@ HRESULT CAsyncSourceStream::CheckValues(CAsyncRequest *request, CMediaPacket *me
       REFERENCE_TIME mediaPacketEnd = 0;
       result = mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd);
 
-      this->logger.Log(LOGGER_DATA, _T("%s: %s: async request start: %llu, end: %llu, start time: %llu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, requestStart, requestEnd, startTime);
-      this->logger.Log(LOGGER_DATA, _T("%s: %s: media packet start: %llu, end: %llu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, mediaPacketStart, mediaPacketEnd);
+      this->logger->Log(LOGGER_DATA, _T("%s: %s: async request start: %llu, end: %llu, start time: %llu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, requestStart, requestEnd, startTime);
+      this->logger->Log(LOGGER_DATA, _T("%s: %s: media packet start: %llu, end: %llu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, mediaPacketStart, mediaPacketEnd);
 
       if (result == S_OK)
       {
@@ -1371,11 +1377,14 @@ HRESULT CAsyncSourceStream::CheckValues(CAsyncRequest *request, CMediaPacket *me
 DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
 {
   CAsyncSourceStream *caller = (CAsyncSourceStream *)lpParam;
-  caller->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME);
+  caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME);
 
-  unsigned int bufferingPercentage = caller->configuration->GetValueLong(CONFIGURATION_BUFFERING_PERCENTAGE, true, BUFFERING_PERCENTAGE_DEFAULT);
-  unsigned int maxBufferingSize = caller->configuration->GetValueLong(CONFIGURATION_MAX_BUFFERING_SIZE, true, MAX_BUFFERING_SIZE);
+  unsigned int bufferingPercentage = caller->configuration->GetValueLong(PARAMETER_NAME_BUFFERING_PERCENTAGE, true, BUFFERING_PERCENTAGE_DEFAULT);
+  unsigned int maxBufferingSize = caller->configuration->GetValueLong(PARAMETER_NAME_MAX_BUFFERING_SIZE, true, MAX_BUFFERING_SIZE);
   DWORD lastCheckTime = GetTickCount();
+
+  bufferingPercentage = ((bufferingPercentage < 0) || (bufferingPercentage > 100)) ? BUFFERING_PERCENTAGE_DEFAULT : bufferingPercentage;
+  maxBufferingSize = (maxBufferingSize < 0) ? MAX_BUFFERING_SIZE : maxBufferingSize;
 
   while (!caller->asyncRequestProcessingShouldExit)
   {
@@ -1423,7 +1432,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                   mediaPacket->GetTime(&timeStart, &timeEnd);
 
                   // copy data from media packet to request buffer
-                  caller->logger.Log(LOGGER_DATA, _T("%s: %s: copy data from media packet '%u' to async request '%u', start: %u, data length: %u, request buffer position: %u, request buffer length: %lu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, packetIndex, request->GetRequestId(), mediaPacketDataStart, mediaPacketDataLength, foundDataLength, request->GetBufferLength());
+                  caller->logger->Log(LOGGER_DATA, _T("%s: %s: copy data from media packet '%u' to async request '%u', start: %u, data length: %u, request buffer position: %u, request buffer length: %lu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, packetIndex, request->GetRequestId(), mediaPacketDataStart, mediaPacketDataLength, foundDataLength, request->GetBufferLength());
                   char *requestBuffer = (char *)request->GetBuffer() + foundDataLength;
                   if (mediaPacket->IsStoredToFile())
                   {
@@ -1450,7 +1459,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                         DWORD lastError = GetLastError();
                         if (lastError != NO_ERROR)
                         {
-                          caller->logger.Log(LOGGER_ERROR, _T("%s: %s: error occured while setting position: %lu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, lastError);
+                          caller->logger->Log(LOGGER_ERROR, _T("%s: %s: error occured while setting position: %lu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, lastError);
                           error = true;
                         }
                       }
@@ -1460,11 +1469,11 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                         DWORD read = 0;
                         if (ReadFile(hTempFile, requestBuffer, mediaPacketDataLength, &read, NULL) == 0)
                         {
-                          caller->logger.Log(LOGGER_ERROR, _T("%s: %s: error occured reading file: %lu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, GetLastError());
+                          caller->logger->Log(LOGGER_ERROR, _T("%s: %s: error occured reading file: %lu"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, GetLastError());
                         }
                         else if (read != mediaPacketDataLength)
                         {
-                          caller->logger.Log(LOGGER_WARNING, _T("%s: %s: readed data length not same as requested, requested: %u, readed: %u"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, mediaPacketDataLength, read);
+                          caller->logger->Log(LOGGER_WARNING, _T("%s: %s: readed data length not same as requested, requested: %u, readed: %u"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, mediaPacketDataLength, read);
                         }
                       }
 
@@ -1486,7 +1495,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                     // find another media packet after end of this media packet
                     startTime = timeEnd + 1;
                     packetIndex = caller->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(startTime);
-                    caller->logger.Log(LOGGER_DATA, _T("%s: %s: next media packet '%u'"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, packetIndex);
+                    caller->logger->Log(LOGGER_DATA, _T("%s: %s: next media packet '%u'"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, packetIndex);
                   }
                   else
                   {
@@ -1516,7 +1525,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                   {
                     // we are not receiving more data
                     // finish request
-                    caller->logger.Log(LOGGER_DATA, _T("%s: %s: request '%u' complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_FALSE);
+                    caller->logger->Log(LOGGER_DATA, _T("%s: %s: request '%u' complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_FALSE);
                     request->SetBufferLength(foundDataLength);
                     // filters doesn't understand S_FALSE return code, so return S_OK
                     request->Complete(S_OK);
@@ -1525,7 +1534,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                 else if (foundDataLength == request->GetBufferLength())
                 {
                   // found data length is equal than requested, return S_OK
-                  caller->logger.Log(LOGGER_DATA, _T("%s: %s: request '%u' complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_OK);
+                  caller->logger->Log(LOGGER_DATA, _T("%s: %s: request '%u' complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_OK);
                   request->SetBufferLength(foundDataLength);
 
                   if (request->GetState() == CAsyncRequest::Requested)
@@ -1541,7 +1550,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                 }
                 else
                 {
-                  caller->logger.Log(LOGGER_ERROR, _T("%s: %s: request '%u' found data length '%u' bigger than requested '%lu'"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), foundDataLength, request->GetBufferLength());
+                  caller->logger->Log(LOGGER_ERROR, _T("%s: %s: request '%u' found data length '%u' bigger than requested '%lu'"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), foundDataLength, request->GetBufferLength());
                   request->Complete(E_OUTOFMEMORY);
                 }
               }
@@ -1550,7 +1559,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                 // some error occured
                 // complete async request with error
                 // set request is completed with result
-                caller->logger.Log(LOGGER_WARNING, _T("%s: %s: request '%u' complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
+                caller->logger->Log(LOGGER_WARNING, _T("%s: %s: request '%u' complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
                 request->SetBufferLength(foundDataLength);
                 request->Complete(result);
               }
@@ -1584,14 +1593,14 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                 else
                 {
                   // if error occured while requesting filter for data
-                  caller->logger.Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while requesting data, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
+                  caller->logger->Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while requesting data, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
                   request->Complete(result);
                 }
               }
               else if (rangesSupported->IsQueryError())
               {
                 // error occured while quering if ranges are supported
-                caller->logger.Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while quering if ranges are supported, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), rangesSupported->GetQueryResult());
+                caller->logger->Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while quering if ranges are supported, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), rangesSupported->GetQueryResult());
                 request->Complete(rangesSupported->GetQueryResult());
               }
             }
@@ -1685,7 +1694,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
             {
               if (!GetFileSizeEx(hTempFile, &size))
               {
-                caller->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("error while getting size"));
+                caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("error while getting size"));
                 // error occured while getting file size
                 size.QuadPart = -1;
               }
@@ -1723,7 +1732,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                         }
                         else
                         {
-                          caller->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("not written"));
+                          caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("not written"));
                         }
                       }
                       FREE_MEM(buffer);
@@ -1739,7 +1748,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
             }
             else
             {
-              caller->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("invalid file handle"));
+              caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("invalid file handle"));
             }
           }
         }
@@ -1749,18 +1758,18 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
     Sleep(1);
   }
 
-  caller->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME);
+  caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME);
   return S_OK;
 }
 
 int CAsyncSourceStream::EndOfStreamReached(const TCHAR *outputPinName)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
   CLockMutex mediaPacketLock(this->mediaPacketMutex, INFINITE);
 
   if (this->mediaPacketCollection->Count() > 0)
   {
-    this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: media packet count: %u"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, this->mediaPacketCollection->Count());
+    this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: media packet count: %u"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, this->mediaPacketCollection->Count());
     REFERENCE_TIME startTime = 0;
     REFERENCE_TIME endTime = 0;
     unsigned int mediaPacketIndex = this->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(startTime);
@@ -1801,11 +1810,11 @@ int CAsyncSourceStream::EndOfStreamReached(const TCHAR *outputPinName)
     if (startTime < this->totalLength)
     {
       // found part which is not downloaded
-      this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: requesting stream part from: %llu, to: %llu"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startTime, endTime);
+      this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: requesting stream part from: %llu, to: %llu"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startTime, endTime);
       this->filter->ReceiveDataFromTimestamp(startTime, endTime);
     }
   }
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
   return STATUS_OK;
 }

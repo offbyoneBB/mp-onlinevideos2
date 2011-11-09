@@ -28,6 +28,13 @@
 
 #include <curl/curl.h>
 
+#define HTTP_VERSION_NONE                                   0
+#define HTTP_VERSION_FORCE_HTTP10                           1
+#define HTTP_VERSION_FORCE_HTTP11                           2
+
+#define HTTP_VERSION_DEFAULT                                HTTP_VERSION_NONE
+#define HTTP_IGNORE_CONTENT_LENGTH_DEFAULT                  false
+
 #define METHOD_CREATE_CURL_WORKER_NAME                      _T("CreateCurlWorker()")
 #define METHOD_DESTROY_CURL_WORKER_NAME                     _T("DestroyCurlWorker()")
 #define METHOD_CURL_WORKER_NAME                             _T("CurlWorker()")
@@ -117,6 +124,26 @@ public:
   // @return : one of CURL_STATE values
   unsigned int GetCurlState(void);
 
+  // sets referer
+  // @param referer : the referer to set
+  void SetReferer(const TCHAR *referer);
+
+  // sets user agent
+  // @param user agent : the user agent to set
+  void SetUserAgent(const TCHAR *userAgent);
+
+  // sets cookie
+  // @param cookie : the cookie to set
+  void SetCookie(const TCHAR *cookie);
+
+  // sets HTTP version
+  // @param version : the HTTP version to set
+  void SetHttpVersion(int version);
+
+  // sets ignore content length
+  // @param ignoreContentLength : the ignore content length to set
+  void SetIgnoreContentLength(bool ignoreContentLength);
+
 private:
   CURL *curl;
   CLogger *logger;
@@ -136,6 +163,21 @@ private:
 
   // the protocol implementation name (for logging purposes)
   TCHAR *protocolName;
+
+  // referer header in HTTP request
+  TCHAR *referer;
+
+  // user agent header in HTTP request
+  TCHAR *userAgent;
+
+  // cookie header in HTTP request
+  TCHAR *cookie;
+
+  // the HTTP protocol version
+  int version;
+
+  // specifies if CURL have to ignore content length
+  bool ignoreContentLength;
 
   // creates libcurl worker
   // @return : S_OK if successful

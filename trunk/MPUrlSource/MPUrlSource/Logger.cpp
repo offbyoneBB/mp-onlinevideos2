@@ -25,7 +25,7 @@
 
 #include <stdio.h>
 
-CLogger::CLogger()
+CLogger::CLogger(CParameterCollection *configuration)
 {
   // create mutex can return NULL
   this->mutex = CreateMutex(NULL, false, _T("Global\\MPUrlSourceFilter"));
@@ -35,14 +35,17 @@ CLogger::CLogger()
   }
 
   this->maxLogSize = MAX_LOG_SIZE_DEFAULT;
+  this->allowedLogVerbosity = LOG_VERBOSITY_DEFAULT;
 
   // set maximum log size
-  CParameterCollection *parameters = GetConfiguration(CONFIGURATION_SECTION_MPURLSOURCEFILTER);
-  if (parameters != NULL)
+  if (configuration != NULL)
   {
-    this->maxLogSize = parameters->GetValueLong(CONFIGURATION_MAX_LOG_SIZE, true, MAX_LOG_SIZE_DEFAULT);
-    this->allowedLogVerbosity = parameters->GetValueLong(CONFIGURATION_LOG_VERBOSITY, true, LOG_VERBOSITY_DEFAULT);
-    delete parameters;
+    this->maxLogSize = configuration->GetValueLong(PARAMETER_NAME_MAX_LOG_SIZE, true, MAX_LOG_SIZE_DEFAULT);
+    this->allowedLogVerbosity = configuration->GetValueLong(PARAMETER_NAME_LOG_VERBOSITY, true, LOG_VERBOSITY_DEFAULT);
+
+    // check value
+    this->maxLogSize = (this->maxLogSize <= 0) ? MAX_LOG_SIZE_DEFAULT : this->maxLogSize;
+    this->allowedLogVerbosity = (this->allowedLogVerbosity < 0) ? LOG_VERBOSITY_DEFAULT : this->allowedLogVerbosity;
   }
 }
 

@@ -36,6 +36,11 @@ CCurlInstance::CCurlInstance(CLogger *logger, TCHAR *url, TCHAR *protocolName)
   this->writeCallback = NULL;
   this->writeData = NULL;
   this->state = CURL_STATE_CREATED;
+  this->referer = NULL;
+  this->cookie = NULL;
+  this->userAgent = NULL;
+  this->version = HTTP_VERSION_DEFAULT;
+  this->ignoreContentLength = HTTP_IGNORE_CONTENT_LENGTH_DEFAULT;
 }
 
 
@@ -51,6 +56,9 @@ CCurlInstance::~CCurlInstance(void)
 
   FREE_MEM(this->url);
   FREE_MEM(this->protocolName);
+  FREE_MEM(this->referer);
+  FREE_MEM(this->cookie);
+  FREE_MEM(this->userAgent);
 }
 
 CURL *CCurlInstance::GetCurlHandle(void)
@@ -118,6 +126,92 @@ bool CCurlInstance::Initialize(void)
       if (errorCode != CURLE_OK)
       {
         this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_OPEN_CONNECTION_NAME, _T("error while setting write callback data"), errorCode);
+        result = false;
+      }
+    }
+
+    if (errorCode == CURLE_OK)
+    {
+      if (!IsNullOrEmpty(this->referer))
+      {
+        char *curlReferer = ConvertToMultiByte(this->referer);
+        errorCode = curl_easy_setopt(this->curl, CURLOPT_REFERER, curlReferer);
+        if (errorCode != CURLE_OK)
+        {
+          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_OPEN_CONNECTION_NAME, _T("error while setting referer"), errorCode);
+          result = false;
+        }
+        FREE_MEM(curlReferer);
+      }
+    }
+
+    if (errorCode == CURLE_OK)
+    {
+      if (!IsNullOrEmpty(this->cookie))
+      {
+        char *curlCookie = ConvertToMultiByte(this->cookie);
+        errorCode = curl_easy_setopt(this->curl, CURLOPT_COOKIE, curlCookie);
+        if (errorCode != CURLE_OK)
+        {
+          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_OPEN_CONNECTION_NAME, _T("error while setting cookie"), errorCode);
+          result = false;
+        }
+        FREE_MEM(curlCookie);
+      }
+    }
+
+    if (errorCode == CURLE_OK)
+    {
+      if (!IsNullOrEmpty(this->userAgent))
+      {
+        char *curlUserAgent = ConvertToMultiByte(this->userAgent);
+        errorCode = curl_easy_setopt(this->curl, CURLOPT_USERAGENT, curlUserAgent);
+        if (errorCode != CURLE_OK)
+        {
+          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_OPEN_CONNECTION_NAME, _T("error while setting user agent"), errorCode);
+          result = false;
+        }
+        FREE_MEM(curlUserAgent);
+      }
+    }
+
+    if (errorCode == CURLE_OK)
+    {
+      switch (this->version)
+      {
+      case HTTP_VERSION_NONE:
+        {
+          long version = CURL_HTTP_VERSION_NONE;
+          errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version);
+        }
+        break;
+      case HTTP_VERSION_FORCE_HTTP10:
+        {
+          long version = CURL_HTTP_VERSION_1_0;
+          errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version);
+        }
+        break;
+      case HTTP_VERSION_FORCE_HTTP11:
+        {
+          long version = CURL_HTTP_VERSION_1_1;
+          errorCode = curl_easy_setopt(this->curl, CURLOPT_HTTP_VERSION , version);
+        }
+        break;
+      }
+
+      if (errorCode != CURLE_OK)
+      {
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_OPEN_CONNECTION_NAME, _T("error while setting HTTP version"), errorCode);
+        result = false;
+      }
+    }
+
+    if (errorCode == CURLE_OK)
+    {
+      errorCode = curl_easy_setopt(this->curl, CURLOPT_IGNORE_CONTENT_LENGTH, this->ignoreContentLength ? 1L : 0L);
+      if (errorCode != CURLE_OK)
+      {
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_OPEN_CONNECTION_NAME, _T("error while setting ignore content length"), errorCode);
         result = false;
       }
     }
@@ -289,4 +383,41 @@ CURLcode CCurlInstance::GetResponseCode(long *responseCode)
 unsigned int CCurlInstance::GetCurlState(void)
 {
   return this->state;
+}
+
+void CCurlInstance::SetReferer(const TCHAR *referer)
+{
+  FREE_MEM(this->referer);
+  this->referer = Duplicate(referer);
+}
+
+void CCurlInstance::SetUserAgent(const TCHAR *userAgent)
+{
+  FREE_MEM(this->userAgent);
+  this->userAgent = Duplicate(userAgent);
+}
+
+void CCurlInstance::SetCookie(const TCHAR *cookie)
+{
+  FREE_MEM(this->cookie);
+  this->cookie = Duplicate(cookie);
+}
+
+void CCurlInstance::SetHttpVersion(int version)
+{
+  switch (version)
+  {
+  case HTTP_VERSION_NONE:
+  case HTTP_VERSION_FORCE_HTTP10:
+  case HTTP_VERSION_FORCE_HTTP11:
+    this->version = version;
+    break;
+  default:
+    break;
+  }
+}
+
+void CCurlInstance::SetIgnoreContentLength(bool ignoreContentLength)
+{
+  this->ignoreContentLength = ignoreContentLength;
 }
