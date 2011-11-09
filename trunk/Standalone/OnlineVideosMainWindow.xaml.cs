@@ -79,7 +79,7 @@ namespace Standalone
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".wmv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".wmv", false);
 
             // add a special reversed proxy handler for rtmp
-            ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance);
+            ReverseProxy.Instance.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance);
 
             new DispatcherTimer(
                 TimeSpan.FromSeconds(1),
@@ -102,7 +102,7 @@ namespace Standalone
                 {
                     Title = "OnlineVideos";
                     waitCursor.Visibility = System.Windows.Visibility.Hidden;
-                    ReactToResult(resultInfo, Translation.AutomaticUpdate);
+                    ReactToResult(resultInfo, Translation.Instance.AutomaticUpdate);
                     OnlineVideoSettings.Instance.BuildSiteUtilsList();
                     listViewMain.ItemsSource = OnlineVideoSettings.Instance.SiteUtilsList;
                     SelectAndFocusItem();
@@ -165,7 +165,7 @@ namespace Standalone
 				delegate(Gui2UtilConnector.ResultInfo resultInfo)
 				{
 					waitCursor.Visibility = System.Windows.Visibility.Hidden;
-					if (ReactToResult(resultInfo, Translation.GettingDynamicCategories))
+					if (ReactToResult(resultInfo, Translation.Instance.GettingDynamicCategories))
 					{
 						SelectedSite = site;
 						listViewMain.ItemsSource = SelectedSite.Settings.Categories;
@@ -191,7 +191,7 @@ namespace Standalone
 					delegate(Gui2UtilConnector.ResultInfo resultInfo)
 					{
 						waitCursor.Visibility = System.Windows.Visibility.Hidden;
-						if (ReactToResult(resultInfo, Translation.GettingDynamicCategories))
+						if (ReactToResult(resultInfo, Translation.Instance.GettingDynamicCategories))
 						{
 							SelectedCategory = category;
 							listViewMain.ItemsSource = category.SubCategories;
@@ -211,12 +211,12 @@ namespace Standalone
 					delegate(Gui2UtilConnector.ResultInfo resultInfo)
 					{
 						waitCursor.Visibility = System.Windows.Visibility.Hidden;
-						if (ReactToResult(resultInfo, Translation.GettingCategoryVideos))
+						if (ReactToResult(resultInfo, Translation.Instance.GettingCategoryVideos))
 						{
 							SelectedCategory = category;
 							List<VideoInfo> result = resultInfo.ResultObject as List<VideoInfo>;
 							result.ForEach(r => r.CleanDescriptionAndTitle());
-							if (SelectedSite.HasNextPage) result.Add(new VideoInfo() { Title = Translation.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
+							if (SelectedSite.HasNextPage) result.Add(new VideoInfo() { Title = Translation.Instance.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
 							listViewMain.ItemsSource = result;
 							SelectAndFocusItem();
 							ImageDownloader.GetImages<VideoInfo>((IList<VideoInfo>)listViewMain.ItemsSource);
@@ -230,7 +230,7 @@ namespace Standalone
 		{
 			waitCursor.Visibility = System.Windows.Visibility.Visible;
 
-			if (video.Title == Translation.NextPage)
+			if (video.Title == Translation.Instance.NextPage)
 			{
 				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
 					delegate()
@@ -240,11 +240,11 @@ namespace Standalone
 					delegate(Gui2UtilConnector.ResultInfo resultInfo)
 					{
 						waitCursor.Visibility = System.Windows.Visibility.Hidden;
-						if (ReactToResult(resultInfo, Translation.GettingNextPageVideos))
+						if (ReactToResult(resultInfo, Translation.Instance.GettingNextPageVideos))
 						{
 							List<VideoInfo> result = resultInfo.ResultObject as List<VideoInfo>;
 							result.ForEach(r => r.CleanDescriptionAndTitle());
-							if (SelectedSite.HasNextPage) result.Add(new VideoInfo() { Title = Translation.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
+							if (SelectedSite.HasNextPage) result.Add(new VideoInfo() { Title = Translation.Instance.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
 							List<VideoInfo> currentSource = listViewMain.ItemsSource as List<VideoInfo>;
 							int indexToSelect = currentSource.Count - 1;
 							currentSource.RemoveAt(indexToSelect);
@@ -266,7 +266,7 @@ namespace Standalone
 					delegate(Gui2UtilConnector.ResultInfo resultInfo)
 					{
 						waitCursor.Visibility = System.Windows.Visibility.Hidden;
-						if (ReactToResult(resultInfo, Translation.GettingVideoDetails))
+						if (ReactToResult(resultInfo, Translation.Instance.GettingVideoDetails))
 						{
 							listViewMain.Visibility = System.Windows.Visibility.Hidden;
 							detailsView.DataContext = video;
@@ -311,7 +311,7 @@ namespace Standalone
 				delegate(Gui2UtilConnector.ResultInfo resultInfo)
 				{
 					waitCursor.Visibility = System.Windows.Visibility.Hidden;
-					if (ReactToResult(resultInfo, Translation.GettingPlaybackUrlsForVideo))
+					if (ReactToResult(resultInfo, Translation.Instance.GettingPlaybackUrlsForVideo))
 						Play_Step2(playItem, new List<String>() { resultInfo.ResultObject as string }, goFullScreen);
 					else if (CurrentPlayList != null && CurrentPlayList.Count > 1) 
 						PlayNextPlaylistItem();
@@ -327,7 +327,7 @@ namespace Standalone
 				delegate(Gui2UtilConnector.ResultInfo resultInfo)
 				{
 					waitCursor.Visibility = System.Windows.Visibility.Hidden;
-					if (ReactToResult(resultInfo, Translation.GettingPlaybackUrlsForVideo))
+					if (ReactToResult(resultInfo, Translation.Instance.GettingPlaybackUrlsForVideo))
 						Play_Step2(playItem, resultInfo.ResultObject as List<String>, goFullScreen);
 					else if (CurrentPlayList != null && CurrentPlayList.Count > 1) 
 						PlayNextPlaylistItem();
@@ -342,7 +342,7 @@ namespace Standalone
 
 			// if no valid urls were returned show error msg
 			if (urlList == null || urlList.Count == 0) {
-				MessageBox.Show(this, Translation.Error, Translation.UnableToPlayVideo, MessageBoxButton.OK);
+				MessageBox.Show(this, Translation.Instance.Error, Translation.Instance.UnableToPlayVideo, MessageBoxButton.OK);
 				return;
 			}
 
@@ -407,7 +407,7 @@ namespace Standalone
 					delegate(Gui2UtilConnector.ResultInfo resultInfo)
 					{
 						waitCursor.Visibility = System.Windows.Visibility.Hidden;
-						if (ReactToResult(resultInfo, Translation.GettingPlaybackUrlsForVideo))
+						if (ReactToResult(resultInfo, Translation.Instance.GettingPlaybackUrlsForVideo))
 						{
 							Play_Step3(playItem, resultInfo.ResultObject as string, goFullScreen);
 						}
@@ -426,14 +426,14 @@ namespace Standalone
 			if (String.IsNullOrEmpty(urlToPlay) ||
 				!Utils.IsValidUri((urlToPlay.IndexOf("&&&&") > 0) ? urlToPlay.Substring(0, urlToPlay.IndexOf("&&&&")) : urlToPlay))
 			{
-				MessageBox.Show(this, Translation.Error, Translation.UnableToPlayVideo, MessageBoxButton.OK);
+				MessageBox.Show(this, Translation.Instance.Error, Translation.Instance.UnableToPlayVideo, MessageBoxButton.OK);
 				return;
 			}
 
 			// translate rtmp urls to the local proxy
 			if (new Uri(urlToPlay).Scheme.ToLower().StartsWith("rtmp"))
 			{
-				urlToPlay = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
+				urlToPlay = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
 								string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(urlToPlay)));
 			}
 
@@ -481,13 +481,13 @@ namespace Standalone
             {
                 if (result.TaskError != null)
                 {
-                    MessageBox.Show(this, string.Format("{0} {1}", Translation.Error, taskDescription), result.TaskError.Message, MessageBoxButton.OK);
+                    MessageBox.Show(this, string.Format("{0} {1}", Translation.Instance.Error, taskDescription), result.TaskError.Message, MessageBoxButton.OK);
                 }
                 else
                 {
                     if (!result.AbortedByUser)
                     {
-                        string header = result.TaskSuccess.HasValue ? Translation.Error : Translation.Timeout;
+                        string header = result.TaskSuccess.HasValue ? Translation.Instance.Error : Translation.Instance.Timeout;
                         MessageBox.Show(this, taskDescription, header, MessageBoxButton.OK);
                     }
                 }
@@ -519,17 +519,17 @@ namespace Standalone
 						delegate(Gui2UtilConnector.ResultInfo resultInfo)
 						{
 							waitCursor.Visibility = System.Windows.Visibility.Hidden;
-							if (ReactToResult(resultInfo, Translation.GettingCategoryVideos))
+							if (ReactToResult(resultInfo, Translation.Instance.GettingCategoryVideos))
 							{
 								List<ISearchResultItem> result = resultInfo.ResultObject as List<ISearchResultItem>;
 								if (result.Count > 0)
 								{
 									if (result[0] is VideoInfo)
 									{
-										SelectedCategory = new Category() { Name = Translation.SearchResults + " [" + search + "]" };
+										SelectedCategory = new Category() { Name = Translation.Instance.SearchResults + " [" + search + "]" };
 										List<VideoInfo> converted = result.ConvertAll(i => i as VideoInfo);
 										converted.ForEach(r => ((VideoInfo)r).CleanDescriptionAndTitle());
-										if (SelectedSite.HasNextPage) converted.Add(new VideoInfo() { Title = Translation.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
+										if (SelectedSite.HasNextPage) converted.Add(new VideoInfo() { Title = Translation.Instance.NextPage, ImageUrl = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png") });
 										listViewMain.ItemsSource = converted;
 										SelectAndFocusItem();
 										ImageDownloader.GetImages<VideoInfo>((IList<VideoInfo>)listViewMain.ItemsSource);
@@ -538,7 +538,7 @@ namespace Standalone
 									{
 										SelectedCategory = new Category()
 										{
-											Name = Translation.SearchResults + " [" + search + "]", HasSubCategories = true, SubCategoriesDiscovered = true,
+											Name = Translation.Instance.SearchResults + " [" + search + "]", HasSubCategories = true, SubCategoriesDiscovered = true,
 										};
 										SelectedCategory.SubCategories = result.ConvertAll(i => { (i as Category).ParentCategory = SelectedCategory; return i as Category; });
 										listViewMain.ItemsSource = SelectedCategory.SubCategories;
@@ -596,7 +596,7 @@ namespace Standalone
 								delegate(Gui2UtilConnector.ResultInfo resultInfo)
 								{
 									waitCursor.Visibility = System.Windows.Visibility.Hidden;
-									if (ReactToResult(resultInfo, Translation.GettingDynamicCategories))
+									if (ReactToResult(resultInfo, Translation.Instance.GettingDynamicCategories))
 									{
 										listViewMain.ItemsSource = SelectedSite.Settings.Categories;
 
@@ -620,7 +620,7 @@ namespace Standalone
 								delegate(Gui2UtilConnector.ResultInfo resultInfo)
 								{
 									waitCursor.Visibility = System.Windows.Visibility.Hidden;
-									if (ReactToResult(resultInfo, Translation.GettingDynamicCategories))
+									if (ReactToResult(resultInfo, Translation.Instance.GettingDynamicCategories))
 									{
 										listViewMain.ItemsSource = SelectedCategory.ParentCategory.SubCategories;
 
@@ -727,7 +727,7 @@ namespace Standalone
 
         private void mediaPlayer_MediaFailed(object sender, WPFMediaKit.DirectShow.MediaPlayers.MediaFailedEventArgs e)
         {
-            MessageBox.Show(this, Translation.UnableToPlayVideo + ": " +e.Message, Translation.Error, MessageBoxButton.OK);
+            MessageBox.Show(this, Translation.Instance.UnableToPlayVideo + ": " +e.Message, Translation.Instance.Error, MessageBoxButton.OK);
             Dispatcher.Invoke((Action)(() => { Stop_Executed(sender, null); }));
         }
 

@@ -58,7 +58,7 @@ namespace Standalone
             if (ws != null)
             {
                 try { onlineSites = ws.GetSitesOverview(); }
-                catch { OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn(OnlineVideos.Translation.RetrievingRemoteSites); }
+                catch { OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn(OnlineVideos.Translation.Instance.RetrievingRemoteSites); }
             }
             return onlineSites;
         }
@@ -69,7 +69,7 @@ namespace Standalone
             if (ws != null)
             {
                 try { onlineDlls = ws.GetDllsOverview(); }
-                catch { OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn(OnlineVideos.Translation.RetrievingRemoteDlls); }
+                catch { OnlineVideos.OnlineVideoSettings.Instance.Logger.Warn(OnlineVideos.Translation.Instance.RetrievingRemoteDlls); }
             }
             return onlineDlls;
         }
