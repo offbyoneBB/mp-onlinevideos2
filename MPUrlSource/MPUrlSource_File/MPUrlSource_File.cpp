@@ -31,9 +31,9 @@
 // protocol implementation name
 #define PROTOCOL_IMPLEMENTATION_NAME                                    _T("CMPUrlSource_File")
 
-PIProtocol CreateProtocolInstance(void)
+PIProtocol CreateProtocolInstance(CParameterCollection *configuration)
 {
-  return new CMPUrlSource_File();
+  return new CMPUrlSource_File(configuration);
 }
 
 void DestroyProtocolInstance(PIProtocol pProtocol)
@@ -45,15 +45,20 @@ void DestroyProtocolInstance(PIProtocol pProtocol)
   }
 }
 
-CMPUrlSource_File::CMPUrlSource_File()
+CMPUrlSource_File::CMPUrlSource_File(CParameterCollection *configuration)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->configurationParameters = new CParameterCollection();
+  if (configuration != NULL)
+  {
+    this->configurationParameters->Append(configuration);
+  }
+
+  this->logger = new CLogger(this->configurationParameters);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 
   this->filePath = NULL;
   this->fileStream = NULL;
 
-  this->configurationParameters = new CParameterCollection();
-  this->loadParameters = new CParameterCollection();
   this->receiveDataTimeout = 0;
   this->openConnetionMaximumAttempts = FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->filter = NULL;
@@ -63,12 +68,12 @@ CMPUrlSource_File::CMPUrlSource_File()
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->wholeStreamDownloaded = false;
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
 
 CMPUrlSource_File::~CMPUrlSource_File()
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
 
   if (this->IsConnected())
   {
@@ -76,7 +81,6 @@ CMPUrlSource_File::~CMPUrlSource_File()
   }
 
   delete this->configurationParameters;
-  delete this->loadParameters;
 
   if (this->lockMutex != NULL)
   {
@@ -84,25 +88,27 @@ CMPUrlSource_File::~CMPUrlSource_File()
     this->lockMutex = NULL;
   }
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
+
+  delete this->logger;
+  this->logger = NULL;
 }
 
 int CMPUrlSource_File::ClearSession(void)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 
   if (this->IsConnected())
   {
     this->CloseConnection();
   }
 
-  this->loadParameters->Clear();
   this->fileLength = 0;
   this->setLenght = false;
   this->streamTime = 0;
   this->wholeStreamDownloaded = false;
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return STATUS_OK;
 }
 
@@ -124,32 +130,38 @@ int CMPUrlSource_File::Initialize(IOutputStream *filter, CParameterCollection *c
   {
     this->configurationParameters->Append(configuration);
   }
-  this->configurationParameters->LogCollection(&this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
+  this->configurationParameters->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
 
-  this->receiveDataTimeout = this->configurationParameters->GetValueLong(CONFIGURATION_FILE_RECEIVE_DATA_TIMEOUT, true, FILE_RECEIVE_DATA_TIMEOUT_DEFAULT);
-  this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(CONFIGURATION_FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
+  this->receiveDataTimeout = this->configurationParameters->GetValueLong(PARAMETER_NAME_FILE_RECEIVE_DATA_TIMEOUT, true, FILE_RECEIVE_DATA_TIMEOUT_DEFAULT);
+  this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(PARAMETER_NAME_FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
+
+  this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? FILE_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
+  this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
   return STATUS_OK;
 }
 
 TCHAR *CMPUrlSource_File::GetProtocolName(void)
 {
-  return Duplicate(CONFIGURATION_SECTION_FILE);
+  return Duplicate(PROTOCOL_NAME);
 }
 
 int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *parameters)
 {
   int result = STATUS_OK;
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
 
   this->ClearSession();
-  this->loadParameters->Append((CParameterCollection *)parameters);
-  this->loadParameters->LogCollection(&this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
+  if (parameters != NULL)
+  {
+    this->configurationParameters->Clear();
+    this->Initialize(this->filter, (CParameterCollection *)parameters);
+  }
 
   ALLOC_MEM_DEFINE_SET(urlComponents, URL_COMPONENTS, 1, 0);
   if (urlComponents == NULL)
   {
-    this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'url components'"));
+    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'url components'"));
     result = STATUS_ERROR;
   }
 
@@ -158,11 +170,11 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
     ZeroURL(urlComponents);
     urlComponents->dwStructSize = sizeof(URL_COMPONENTS);
 
-    this->logger.Log(LOGGER_INFO, _T("%s: %s: url: %s"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, url);
+    this->logger->Log(LOGGER_INFO, _T("%s: %s: url: %s"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, url);
 
     if (!InternetCrackUrl(url, 0, 0, urlComponents))
     {
-      this->logger.Log(LOGGER_ERROR, _T("%s: %s: InternetCrackUrl() error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, GetLastError());
+      this->logger->Log(LOGGER_ERROR, _T("%s: %s: InternetCrackUrl() error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, GetLastError());
       result = STATUS_ERROR;
     }
   }
@@ -173,7 +185,7 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
     ALLOC_MEM_DEFINE_SET(protocol, TCHAR, length, 0);
     if (protocol == NULL) 
     {
-      this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'protocol'"));
+      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'protocol'"));
       result = STATUS_ERROR;
     }
 
@@ -184,7 +196,7 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
       if (_tcsncicmp(urlComponents->lpszScheme, _T("FILE"), urlComponents->dwSchemeLength) != 0)
       {
         // not supported protocol
-        this->logger.Log(LOGGER_INFO, _T("%s: %s: unsupported protocol '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, protocol);
+        this->logger->Log(LOGGER_INFO, _T("%s: %s: unsupported protocol '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, protocol);
         result = STATUS_ERROR;
       }
     }
@@ -197,7 +209,7 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
       wchar_t *parseUrl = ConvertToUnicode(url);
       if (parseUrl == NULL)
       {
-        this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot convert url to wide character url"));
+        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot convert url to wide character url"));
         result = STATUS_ERROR;
       }
 
@@ -207,7 +219,7 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
         ALLOC_MEM_DEFINE_SET(parsedFilePath, wchar_t, urlLength, 0);
         if (parsedFilePath == NULL)
         {
-          this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for parsed file path"));
+          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for parsed file path"));
           result = STATUS_ERROR;
         }
 
@@ -222,7 +234,7 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
             parsedFilePath = ALLOC_MEM_SET(parsedFilePath, wchar_t, stored, 0);
             if (parsedFilePath == NULL)
             {
-              this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for parsed file path"));
+              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for parsed file path"));
               result = STATUS_ERROR;
             }
 
@@ -232,7 +244,7 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
               error = CoInternetParseUrl(parseUrl, PARSE_PATH_FROM_URL, 0, parsedFilePath, stored, &stored, 0);
               if (error != S_OK)
               {
-                this->logger.Log(LOGGER_ERROR, _T("%s: %s: error occured while parsing file url, error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, error);
+                this->logger->Log(LOGGER_ERROR, _T("%s: %s: error occured while parsing file url, error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, error);
                 result = STATUS_ERROR;
               }
             }
@@ -240,7 +252,7 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
           else if (error != S_OK)
           {
             // error occured
-            this->logger.Log(LOGGER_ERROR, _T("%s: %s: error occured while parsing file url, error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, error);
+            this->logger->Log(LOGGER_ERROR, _T("%s: %s: error occured while parsing file url, error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, error);
             result = STATUS_ERROR;
           }
         }
@@ -257,14 +269,14 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
 #endif
           if (this->filePath == NULL)
           {
-            this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot convert from Unicode file path to file path"));
+            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot convert from Unicode file path to file path"));
             result = STATUS_ERROR;
           }
         }
 
         if (result == STATUS_OK)
         {
-          this->logger.Log(LOGGER_INFO, _T("%s: %s: file path: %s"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, this->filePath);
+          this->logger->Log(LOGGER_INFO, _T("%s: %s: file path: %s"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, this->filePath);
         }
         FREE_MEM(parsedFilePath);
       }
@@ -275,7 +287,7 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
 
   FREE_MEM(urlComponents);
   
-  this->logger.Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
+  this->logger->Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
 
   return result;
 }
@@ -283,7 +295,7 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
 int CMPUrlSource_File::OpenConnection(void)
 {
   int result = (this->filePath != NULL) ? STATUS_OK : STATUS_ERROR;
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
 
   this->wholeStreamDownloaded = false;
 
@@ -291,7 +303,7 @@ int CMPUrlSource_File::OpenConnection(void)
   {
     if (_tfopen_s(&this->fileStream, this->filePath, _T("rb")) != 0)
     {
-      this->logger.Log(LOGGER_ERROR, _T("%s: %s: error occured while opening file, error: %i"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, errno);
+      this->logger->Log(LOGGER_ERROR, _T("%s: %s: error occured while opening file, error: %i"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, errno);
       result = STATUS_ERROR;
     }
 
@@ -319,7 +331,7 @@ int CMPUrlSource_File::OpenConnection(void)
     }
   }
 
-  this->logger.Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
+  this->logger->Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
   return result;
 }
 
@@ -330,7 +342,7 @@ bool CMPUrlSource_File::IsConnected(void)
 
 void CMPUrlSource_File::CloseConnection(void)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
 
   if (this->fileStream != NULL)
   {
@@ -340,12 +352,12 @@ void CMPUrlSource_File::CloseConnection(void)
 
   FREE_MEM(this->filePath);
   
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
 }
 
 void CMPUrlSource_File::ReceiveData(bool *shouldExit)
 {
-  this->logger.Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
 
   if (this->IsConnected())
   {
@@ -378,7 +390,7 @@ void CMPUrlSource_File::ReceiveData(bool *shouldExit)
           HRESULT result = mediaPacket->SetTime(&this->streamTime, &timeEnd);
           if (result != S_OK)
           {
-            this->logger.Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+            this->logger->Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
           }
 
           this->streamTime += bytesRead;
@@ -397,7 +409,7 @@ void CMPUrlSource_File::ReceiveData(bool *shouldExit)
   }
   else
   {
-    this->logger.Log(LOGGER_WARNING,  METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("file not opened, opening file"));
+    this->logger->Log(LOGGER_WARNING,  METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("file not opened, opening file"));
     // re-open connection if previous is lost
     if (this->OpenConnection() != STATUS_OK)
     {
@@ -405,7 +417,7 @@ void CMPUrlSource_File::ReceiveData(bool *shouldExit)
     }
   }
 
-  this->logger.Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+  this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
 }
 
 unsigned int CMPUrlSource_File::GetReceiveDataTimeout(void)
@@ -415,7 +427,7 @@ unsigned int CMPUrlSource_File::GetReceiveDataTimeout(void)
 
 GUID CMPUrlSource_File::GetInstanceId(void)
 {
-  return this->logger.loggerInstance;
+  return this->logger->loggerInstance;
 }
 
 unsigned int CMPUrlSource_File::GetOpenConnectionMaximumAttempts(void)
@@ -434,8 +446,8 @@ CStringCollection *CMPUrlSource_File::GetStreamNames(void)
 
 HRESULT CMPUrlSource_File::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime)
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME);
-  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: from time: %llu, to time: %llu"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, startTime, endTime);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME);
+  this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: from time: %llu, to time: %llu"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, startTime, endTime);
 
   HRESULT result = E_NOT_VALID_STATE;
 
@@ -454,21 +466,21 @@ HRESULT CMPUrlSource_File::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, RE
     }
   }
 
-  this->logger.Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, result);
   return result;
 }
 
 HRESULT CMPUrlSource_File::AbortStreamReceive()
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
-  this->logger.Log(LOGGER_VERBOSE, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
 
   return S_OK;
 }
 
 HRESULT CMPUrlSource_File::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME);
 
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, total);
@@ -480,7 +492,7 @@ HRESULT CMPUrlSource_File::QueryStreamProgress(LONGLONG *total, LONGLONG *curren
     *current = this->fileLength;
   }
 
-  this->logger.Log(LOGGER_VERBOSE, (SUCCEEDED(result)) ? METHOD_END_HRESULT_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, (SUCCEEDED(result)) ? METHOD_END_HRESULT_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME, result);
   return result;
 }
 

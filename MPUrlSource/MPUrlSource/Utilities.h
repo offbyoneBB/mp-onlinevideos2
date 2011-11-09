@@ -51,11 +51,6 @@ MPURLSOURCE_API TCHAR *GetTvServerFilePath(const TCHAR *filePath);
 // @return : reference to null terminated string with path of file or NULL if error occured
 MPURLSOURCE_API TCHAR *GetMediaPortalFilePath(const TCHAR *filePath);
 
-// get parameters from configuration file
-// @param section : the section name from configuration file
-// @return : the collection of configuration parameters
-MPURLSOURCE_API CParameterCollection *GetConfiguration(const TCHAR *section);
-
 #define CHECK_CONDITION(result, condition, case_true, case_false)                 if (result == 0) { result = (condition) ? case_true : case_false; }
 
 #define CHECK_CONDITION_HRESULT(result, condition, case_true, case_false)         if (SUCCEEDED(result)) { result = (condition) ? case_true : case_false; }

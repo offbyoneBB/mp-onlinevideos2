@@ -31,7 +31,7 @@ class CAsyncSourceStream;
 
 #define MODULE_NAME                                               _T("MPUrlSource")
 
-#define METHOD_SET_CONNECT_INFO_NAME                              _T("SetConnectInfo()")
+#define METHOD_PARSE_PARAMETERS_NAME                              _T("ParseParameters()")
 #define METHOD_LOAD_PLUGINS_NAME                                  _T("LoadPlugins()")
 #define METHOD_LOAD_NAME                                          _T("Load()")
 #define METHOD_RECEIVE_DATA_WORKER_NAME                           _T("ReceiveDataWorker()")
@@ -43,11 +43,12 @@ class CAsyncSourceStream;
 CMPUrlSourceFilter::CMPUrlSourceFilter(IUnknown *pUnk, HRESULT *phr)
   : CAsyncSource(NAME(_T("MediaPortal Url Source Filter")), pUnk, CLSID_MPUrlSourceFilter)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->configuration = new CParameterCollection();
+
+  this->logger = new CLogger(this->configuration);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
   
   this->receiveDataWorkerShouldExit = false;
-  this->parameters = new CParameterCollection();
-  this->configuration = GetConfiguration(CONFIGURATION_SECTION_MPURLSOURCEFILTER);
   this->activeProtocol = NULL;
   this->protocolImplementationsCount = 0;
   this->protocolImplementations = NULL;
@@ -59,7 +60,7 @@ CMPUrlSourceFilter::CMPUrlSourceFilter(IUnknown *pUnk, HRESULT *phr)
 
   if (this->mainModuleHandle == NULL)
   {
-    this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, _T("main module handle not found"));
+    this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME, _T("main module handle not found"));
   }
 
   // load plugins from directory
@@ -70,12 +71,12 @@ CMPUrlSourceFilter::CMPUrlSourceFilter(IUnknown *pUnk, HRESULT *phr)
     *phr = S_OK;
   }
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 }
 
 CMPUrlSourceFilter::~CMPUrlSourceFilter()
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
 
   this->DestroyReceiveDataWorker();
 
@@ -99,7 +100,7 @@ CMPUrlSourceFilter::~CMPUrlSourceFilter()
   {
     for(unsigned int i = 0; i < this->protocolImplementationsCount; i++)
     {
-      this->logger.Log(LOGGER_INFO, _T("%s: %s: destroying protocol: %s"), MODULE_NAME, METHOD_DESTRUCTOR_NAME, protocolImplementations[i].protocol);
+      this->logger->Log(LOGGER_INFO, _T("%s: %s: destroying protocol: %s"), MODULE_NAME, METHOD_DESTRUCTOR_NAME, protocolImplementations[i].protocol);
 
       if (protocolImplementations[i].pImplementation != NULL)
       {
@@ -122,11 +123,13 @@ CMPUrlSourceFilter::~CMPUrlSourceFilter()
   }
   FREE_MEM(this->protocolImplementations);
 
-  delete this->parameters;
   delete this->configuration;
   FREE_MEM(this->m_url);
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
+
+  delete this->logger;
+  this->logger = NULL;
 }
 
 STDMETHODIMP CMPUrlSourceFilter::NonDelegatingQueryInterface(REFIID riid, void** ppv)
@@ -154,7 +157,26 @@ STDMETHODIMP CMPUrlSourceFilter::NonDelegatingQueryInterface(REFIID riid, void**
 STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE* pmt) 
 {
   HRESULT result = S_OK;
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
+
+  // stop receiving data
+  this->DestroyReceiveDataWorker();
+
+  // remove all source streams
+  this->sourceStreamCollection->Clear();
+
+  // reset all protocol implementations
+  if (this->protocolImplementations != NULL)
+  {
+    for(unsigned int i = 0; i < this->protocolImplementationsCount; i++)
+    {
+      this->logger->Log(LOGGER_INFO, _T("%s: %s: reseting protocol: %s"), MODULE_NAME, METHOD_LOAD_NAME, protocolImplementations[i].protocol);
+      if (protocolImplementations[i].pImplementation != NULL)
+      {
+        protocolImplementations[i].pImplementation->ClearSession();
+      }
+    }
+  }
 
 #ifdef _MBCS
   this->m_url = ConvertToMultiByteW(pszFileName);
@@ -167,29 +189,39 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
     result = E_FAIL;
   }
 
-  //// temporary section for specifying network interface
-  //if (this->SetConnectInfo(pszFileName))
-  //{
-  //  return E_FAIL;
-  //}
+  if (result == S_OK)
+  {
+    CParameterCollection *suppliedParameters = this->ParseParameters(this->m_url);
+    if (suppliedParameters != NULL)
+    {
+      // we have set some parameters
+      // get url parameter
+      PCParameter urlParameter = suppliedParameters->GetParameter(PARAMETER_NAME_URL, true);
+      if (urlParameter != NULL)
+      {
+        // free current url
+        FREE_MEM(this->m_url);
+        // make duplicate of parameter url
+        this->m_url = Duplicate(urlParameter->GetValue());
+      }
 
-  //if (this->m_parameters != NULL)
-  //{
-  //  // we have set some parameters
-  //  // get url parameter
-  //  PCParameter urlParameter = this->m_parameters->GetParameter(URL_PARAMETER_NAME, true);
-  //  if (urlParameter != NULL)
-  //  {
-  //    // free current url
-  //    FREE_MEM(this->m_url);
-  //    // make duplicate of parameter url
-  //    this->m_url = Duplicate(urlParameter->GetValue());
-  //  }
-  //}
+      this->configuration->Clear();
+      this->configuration->Append(suppliedParameters);
+
+      delete suppliedParameters;
+      suppliedParameters = NULL;
+    }
+  }
+
+  if (this->m_url == NULL)
+  {
+    result = E_FAIL;
+  }
 
   if (result == S_OK)
   {
-    if(!this->Load(this->m_url, this->parameters))
+    // we don't have specific parameters, just send current configuration
+    if(!this->Load(this->m_url, this->configuration))
     {
       result = E_FAIL;
     }
@@ -245,12 +277,12 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
       // get receive data timeout for active protocol
       timeout = this->activeProtocol->GetReceiveDataTimeout();
       TCHAR *protocolName = this->activeProtocol->GetProtocolName();
-      this->logger.Log(LOGGER_INFO, _T("%s: %s: active protocol '%s' timeout: %d (ms)"), MODULE_NAME, METHOD_LOAD_NAME, protocolName, timeout);
+      this->logger->Log(LOGGER_INFO, _T("%s: %s: active protocol '%s' timeout: %d (ms)"), MODULE_NAME, METHOD_LOAD_NAME, protocolName, timeout);
       FREE_MEM(protocolName);
     }
     else
     {
-      this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, _T("no active protocol"));
+      this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, _T("no active protocol"));
       result = E_FAIL;
     }
 
@@ -268,24 +300,24 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
         result = E_FAIL;
         break;
       case STATUS_NO_DATA_ERROR:
-        result = E_FAIL;
+        result = -1;
         break;
       case STATUS_RECEIVING_DATA:
         result = S_OK;
         break;
       default:
-        result = E_FAIL;
+        result = E_UNEXPECTED;
         break;
       }
 
       if (result != S_OK)
       {
-        this->DestroyReceiveDataWorker();        
+        this->DestroyReceiveDataWorker();
       }
     }
   }
 
-  this->logger.Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, result);
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, result);
 
   return result;
 }
@@ -293,7 +325,7 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
 HRESULT CMPUrlSourceFilter::CreateReceiveDataWorker(void)
 {
   HRESULT result = S_OK;
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME);
 
   this->hReceiveDataWorkerThread = CreateThread( 
     NULL,                                   // default security attributes
@@ -307,29 +339,29 @@ HRESULT CMPUrlSourceFilter::CreateReceiveDataWorker(void)
   {
     // thread not created
     result = HRESULT_FROM_WIN32(GetLastError());
-    this->logger.Log(LOGGER_ERROR, _T("%s: %s: CreateThread() error: 0x%08X"), MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
+    this->logger->Log(LOGGER_ERROR, _T("%s: %s: CreateThread() error: 0x%08X"), MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
   }
 
   if (result == S_OK)
   {
     if (!SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL))
     {
-      this->logger.Log(LOGGER_WARNING, _T("%s: %s: cannot set thread priority for main thread, error: %u"), MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, GetLastError());
+      this->logger->Log(LOGGER_WARNING, _T("%s: %s: cannot set thread priority for main thread, error: %u"), MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, GetLastError());
     }
     if (!SetThreadPriority(this->hReceiveDataWorkerThread, THREAD_PRIORITY_TIME_CRITICAL))
     {
-      this->logger.Log(LOGGER_WARNING, _T("%s: %s: cannot set thread priority for receive data thread, error: %u"), MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, GetLastError());
+      this->logger->Log(LOGGER_WARNING, _T("%s: %s: cannot set thread priority for receive data thread, error: %u"), MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, GetLastError());
     }
   }
 
-  this->logger.Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
   return result;
 }
 
 HRESULT CMPUrlSourceFilter::DestroyReceiveDataWorker(void)
 {
   HRESULT result = S_OK;
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME);
 
   this->receiveDataWorkerShouldExit = true;
 
@@ -339,14 +371,15 @@ HRESULT CMPUrlSourceFilter::DestroyReceiveDataWorker(void)
     if (WaitForSingleObject(this->hReceiveDataWorkerThread, 1000) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
-      this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME, _T("thread didn't exit, terminating thread"));
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME, _T("thread didn't exit, terminating thread"));
       TerminateThread(this->hReceiveDataWorkerThread, 0);
     }
   }
 
   this->hReceiveDataWorkerThread = NULL;
+  this->receiveDataWorkerShouldExit = false;
 
-  this->logger.Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME, result);
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME, result);
   return result;
 }
 
@@ -413,9 +446,10 @@ STDMETHODIMP CMPUrlSourceFilter::GetState(DWORD dwMSecs, FILTER_STATE *State)
 
 void CMPUrlSourceFilter::LoadPlugins()
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME);
 
-  unsigned int maxPlugins = this->configuration->GetValueLong(CONFIGURATION_MAX_PLUGINS, true, MAX_PLUGINS_DEFAULT);
+  unsigned int maxPlugins = this->configuration->GetValueLong(PARAMETER_NAME_MAX_PLUGINS, true, MAX_PLUGINS_DEFAULT);
+  maxPlugins = (maxPlugins < 0) ? MAX_PLUGINS_DEFAULT : maxPlugins;
 
   if (maxPlugins > 0)
   {
@@ -435,7 +469,7 @@ void CMPUrlSourceFilter::LoadPlugins()
       _tcscpy_s(strDllSearch, _MAX_PATH, strDllPath);
       _tcscat_s(strDllSearch, _MAX_PATH, _T("mpurlsource_*.dll"));
 
-      logger.Log(LOGGER_VERBOSE, _T("%s: %s: search path: %s"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, strDllPath);
+      this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: search path: %s"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, strDllPath);
       // add plugins directory to search path
       SetDllDirectory(strDllPath);
 
@@ -451,11 +485,11 @@ void CMPUrlSourceFilter::LoadPlugins()
           _tcscat_s(strDllName, _MAX_PATH, info.cFileName);
 
           // load library
-          logger.Log(LOGGER_INFO, _T("%s: %s: loading library: %s"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, strDllName);
+          this->logger->Log(LOGGER_INFO, _T("%s: %s: loading library: %s"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, strDllName);
           HINSTANCE hLibrary = LoadLibrary(strDllName);        
           if (hLibrary == NULL)
           {
-            logger.Log(LOGGER_ERROR, _T("%s: %s: library '%s' not loaded"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, strDllName);
+            this->logger->Log(LOGGER_ERROR, _T("%s: %s: library '%s' not loaded"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, strDllName);
             result = FALSE;
           }
 
@@ -472,22 +506,22 @@ void CMPUrlSourceFilter::LoadPlugins()
 
             if (createProtocolInstance == NULL)
             {
-              logger.Log(LOGGER_ERROR, _T("%s: %s: cannot find CreateProtocolInstance() function, error: %d"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, GetLastError());
+              this->logger->Log(LOGGER_ERROR, _T("%s: %s: cannot find CreateProtocolInstance() function, error: %d"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, GetLastError());
               result = FALSE;
             }
             if (destroyProtocolInstance == NULL)
             {
-              logger.Log(LOGGER_ERROR, _T("%s: %s: cannot find DestroyProtocolInstance() function, error: %d"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, GetLastError());
+              this->logger->Log(LOGGER_ERROR, _T("%s: %s: cannot find DestroyProtocolInstance() function, error: %d"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, GetLastError());
               result = FALSE;
             }
 
             if (result)
             {
               // create protocol instance
-              pIProtocol = (PIProtocol)createProtocolInstance();
+              pIProtocol = (PIProtocol)createProtocolInstance(this->configuration);
               if (pIProtocol == NULL)
               {
-                logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, _T("cannot create protocol implementation instance"));
+                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, _T("cannot create protocol implementation instance"));
                 result = FALSE;
               }
 
@@ -503,7 +537,7 @@ void CMPUrlSourceFilter::LoadPlugins()
                 if (protocolImplementations[this->protocolImplementationsCount].protocol == NULL)
                 {
                   // error occured while getting protocol name
-                  logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, _T("cannot get protocol name"));
+                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, _T("cannot get protocol name"));
                   protocolImplementations[this->protocolImplementationsCount].destroyProtocolInstance(protocolImplementations[this->protocolImplementationsCount].pImplementation);
 
                   protocolImplementations[this->protocolImplementationsCount].hLibrary = NULL;
@@ -519,30 +553,22 @@ void CMPUrlSourceFilter::LoadPlugins()
               if (result)
               {
                 // initialize protocol implementation
-                CParameterCollection *parameters = new CParameterCollection();
-                // add global configuration parameters
-                parameters->Append(this->configuration);
-                // add protocol specific parameters
-                CParameterCollection *protocolSpecific = GetConfiguration(protocolImplementations[this->protocolImplementationsCount].protocol);
-                parameters->Append(protocolSpecific);
-
-                delete protocolSpecific;
+                // we don't have protocol specific parameters
+                // all parameters are supplied with calling IFileSourceFilter.Load() method
 
                 // initialize protocol
-                int initialized = protocolImplementations[this->protocolImplementationsCount].pImplementation->Initialize(this, parameters);
-                // delete collection of parameters
-                delete parameters;
+                int initialized = protocolImplementations[this->protocolImplementationsCount].pImplementation->Initialize(this, this->configuration);
 
                 if (initialized == STATUS_OK)
                 {
                   TCHAR *guid = ConvertGuidToString(protocolImplementations[this->protocolImplementationsCount].pImplementation->GetInstanceId());
-                  logger.Log(LOGGER_INFO, _T("%s: %s: protocol '%s' successfully instanced, id: %s"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, protocolImplementations[this->protocolImplementationsCount].protocol, guid);
+                  this->logger->Log(LOGGER_INFO, _T("%s: %s: protocol '%s' successfully instanced, id: %s"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, protocolImplementations[this->protocolImplementationsCount].protocol, guid);
                   FREE_MEM(guid);
                   this->protocolImplementationsCount++;
                 }
                 else
                 {
-                  logger.Log(LOGGER_INFO, _T("%s: %s: protocol '%s' not initialized"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, protocolImplementations[this->protocolImplementationsCount].protocol);
+                  this->logger->Log(LOGGER_INFO, _T("%s: %s: protocol '%s' not initialized"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, protocolImplementations[this->protocolImplementationsCount].protocol);
                   protocolImplementations[this->protocolImplementationsCount].destroyProtocolInstance(protocolImplementations[this->protocolImplementationsCount].pImplementation);
                 }
               }
@@ -565,23 +591,23 @@ void CMPUrlSourceFilter::LoadPlugins()
         FindClose(h);
       } 
 
-      logger.Log(LOGGER_INFO, _T("%s: %s: found protocols: %u"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, this->protocolImplementationsCount);
+      this->logger->Log(LOGGER_INFO, _T("%s: %s: found protocols: %u"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, this->protocolImplementationsCount);
 
       FREE_MEM(strDllPath);
       FREE_MEM(strDllSearch);
     }
     else
     {
-      logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, _T("cannot allocate memory for protocol implementations"));
+      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, _T("cannot allocate memory for protocol implementations"));
     }
   }
 
-  logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME);
 }
 
 int CMPUrlSourceFilter::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket)
 {
-  this->logger.Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
+  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
   this->status = STATUS_RECEIVING_DATA;
 
   CAsyncSourceStream *stream = this->sourceStreamCollection->GetStream((TCHAR *)outputPinName, false);
@@ -593,7 +619,7 @@ int CMPUrlSourceFilter::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
   }
   else
   {
-    this->logger.Log(LOGGER_WARNING, _T("%s: %s: unknown stream: %s"), MODULE_NAME, METHOD_PUSH_DATA_NAME, outputPinName);
+    this->logger->Log(LOGGER_WARNING, _T("%s: %s: unknown stream: %s"), MODULE_NAME, METHOD_PUSH_DATA_NAME, outputPinName);
   }
 
   if ((result != STATUS_OK) && (mediaPacket != NULL))
@@ -603,13 +629,13 @@ int CMPUrlSourceFilter::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
     delete mediaPacket;
   }
 
-  this->logger.Log(LOGGER_DATA, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
+  this->logger->Log(LOGGER_DATA, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
   return result;
 }
 
 int CMPUrlSourceFilter::EndOfStreamReached(const TCHAR *outputPinName)
 {
-  this->logger.Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
+  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
 
   CAsyncSourceStream *stream = this->sourceStreamCollection->GetStream((TCHAR *)outputPinName, false);
   int result = (stream != NULL) ? STATUS_OK : STATUS_ERROR;
@@ -620,16 +646,16 @@ int CMPUrlSourceFilter::EndOfStreamReached(const TCHAR *outputPinName)
   }
   else
   {
-    this->logger.Log(LOGGER_WARNING, _T("%s: %s: unknown stream: %s"), MODULE_NAME, METHOD_PUSH_DATA_NAME, outputPinName);
+    this->logger->Log(LOGGER_WARNING, _T("%s: %s: unknown stream: %s"), MODULE_NAME, METHOD_PUSH_DATA_NAME, outputPinName);
   }
 
-  this->logger.Log(LOGGER_DATA, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
+  this->logger->Log(LOGGER_DATA, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
   return result;
 }
 
 int CMPUrlSourceFilter::SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SET_TOTAL_LENGTH_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SET_TOTAL_LENGTH_NAME);
 
   CAsyncSourceStream *stream = this->sourceStreamCollection->GetStream((TCHAR *)outputPinName, false);
   int result = (stream != NULL) ? STATUS_OK : STATUS_ERROR;
@@ -640,10 +666,10 @@ int CMPUrlSourceFilter::SetTotalLength(const TCHAR *outputPinName, LONGLONG tota
   }
   else
   {
-    this->logger.Log(LOGGER_WARNING, _T("%s: %s: unknown stream: %s"), MODULE_NAME, METHOD_SET_TOTAL_LENGTH_NAME, outputPinName);
+    this->logger->Log(LOGGER_WARNING, _T("%s: %s: unknown stream: %s"), MODULE_NAME, METHOD_SET_TOTAL_LENGTH_NAME, outputPinName);
   }
 
-  this->logger.Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_SET_TOTAL_LENGTH_NAME);
+  this->logger->Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_SET_TOTAL_LENGTH_NAME);
   return result;
 }
 
@@ -674,7 +700,7 @@ bool CMPUrlSourceFilter::Load(const TCHAR *url, const CParameterCollection *para
 DWORD WINAPI CMPUrlSourceFilter::ReceiveDataWorker(LPVOID lpParam)
 {
   CMPUrlSourceFilter *caller = (CMPUrlSourceFilter *)lpParam;
-  caller->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME);
+  caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME);
 
   unsigned int attempts = 0;
   bool stopReceivingData = false;
@@ -705,7 +731,7 @@ DWORD WINAPI CMPUrlSourceFilter::ReceiveDataWorker(LPVOID lpParam)
             attempts = 0;
             break;
           case STATUS_ERROR_NO_RETRY:
-            caller->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, _T("cannot open connection"));
+            caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, _T("cannot open connection"));
             caller->status = STATUS_NO_DATA_ERROR;
             stopReceivingData = true;
             break;
@@ -717,7 +743,7 @@ DWORD WINAPI CMPUrlSourceFilter::ReceiveDataWorker(LPVOID lpParam)
         }
         else
         {
-          caller->logger.Log(LOGGER_ERROR, _T("%s: %s: maximum attempts of opening connection reached, attempts: %u, maximum attempts: %u"), MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, attempts, maximumAttempts);
+          caller->logger->Log(LOGGER_ERROR, _T("%s: %s: maximum attempts of opening connection reached, attempts: %u, maximum attempts: %u"), MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, attempts, maximumAttempts);
           caller->status = STATUS_NO_DATA_ERROR;
           stopReceivingData = true;
         }
@@ -725,7 +751,7 @@ DWORD WINAPI CMPUrlSourceFilter::ReceiveDataWorker(LPVOID lpParam)
     }
   }
 
-  caller->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME);
+  caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME);
   return S_OK;
 }
 
@@ -861,257 +887,250 @@ HRESULT CMPUrlSourceFilter::QueryRangesSupported(CRangesSupported *rangesSupport
   return result;
 }
 
-//// split parameters string by separator
-//// @param parameters : null-terminated string containing parameters
-//// @param separator : null-terminated separator string
-//// @param length : length of first token (without separator)
-//// @param restOfParameters : reference to rest of parameter string without first token and separator, if NULL then there is no rest of parameters and whole parameters string was processed
-//// @param separatorMustBeFound : specifies if separator must be found
-//// @return : true if successful, false otherwise
-//bool SplitBySeparator(const TCHAR *parameters, const TCHAR *separator, unsigned int *length, TCHAR **restOfParameters, bool separatorMustBeFound)
-//{
-//  bool result = false;
-//
-//  if ((parameters != NULL) && (separator != NULL) && (length != NULL) && (restOfParameters))
-//  {
-//    unsigned int parameterLength = _tcslen(parameters);
-//
-//    TCHAR *tempSeparator = NULL;
-//    TCHAR *tempParameters = (TCHAR *)parameters;
-//    while(true)
-//    {
-//      tempSeparator = (TCHAR *)_tcsstr(tempParameters, separator);
-//      if (tempSeparator == NULL)
-//      {
-//        // possible separator not found
-//        *length = _tcslen(parameters);
-//        *restOfParameters = NULL;
-//        result = !separatorMustBeFound;
-//        break;
-//      }
-//      else
-//      {
-//        // possible separator found - if after first separator is second separator, it's not separator (double separator represents separator character)
-//        // check next character if is it separator character - if yes, continue in cycle, if not than separator found
-//
-//        if (_tcslen(tempSeparator) > 1)
-//        {
-//          // we are not on the last character
-//          // check next character if is it separator character
-//          tempParameters = tempSeparator + _tcslen(separator);
-//          if (_tcsncmp(tempParameters, separator, _tcslen(separator)) != 0)
-//          {
-//            // next character is not separator character
-//            // we found separator
-//            break;
-//          }
-//          else
-//          {
-//            // next character is separator character, skip
-//            tempParameters += _tcslen(separator);
-//          }
-//        }
-//        else
-//        {
-//          // we found separator
-//          break;
-//        }
-//      }
-//    }
-//
-//    if (tempSeparator != NULL)
-//    {
-//      // we found separator
-//      // everything before separator is token, everything after separator is rest
-//      *length = parameterLength - _tcslen(tempSeparator);
-//      *restOfParameters = tempSeparator + _tcslen(separator);
-//      result = true;
-//    }
-//  }
-//
-//  return result;
-//}
-//
-//// replaces double separator character with one separator character
-//// returns size of memory block to fit result value, 0 if error
-//// [in] lpszValue - value with double separator character
-//// [in] lpszSeparator - separator string
-//// [out] lpszReplacedValue - pointer to buffer where result will be stored, if NULL result is ignored
-//// [in] replacedValueLength - size of lpszReplacedValue
-//
-//// replace double separator character with one separator character
-//// @param value : value with double separator character
-//// @param separator : separator string
-//// @param replacedValue : reference to buffer where result will be stored, if NULL result is ignored
-//// @param replacedValueLength : the length of replaced value buffer
-//// @return : size of memory block to fit result value, UINT_MAX if error
-//unsigned int ReplaceDoubleSeparator(const TCHAR *value, const TCHAR *separator, TCHAR *replacedValue, unsigned int replacedValueLength)
-//{
-//  unsigned int requiredLength = UINT_MAX;
-//  // first count of replaced value length
-//
-//  if ((value != NULL) && (separator != NULL))
-//  {
-//    requiredLength = 0;
-//
-//    TCHAR *tempSeparator = NULL;
-//    TCHAR *tempValue = (TCHAR *)value;
-//    while(true)
-//    {
-//      unsigned int valueLength = _tcslen(tempValue);
-//      tempSeparator = (TCHAR *)_tcsstr(tempValue, separator);
-//
-//      if (tempSeparator != NULL)
-//      {
-//        // possible separator found - if after first separator is second separator, it's not separator (double separator represents separator character)
-//        // check next character if is it separator character - if yes, skip, if not than separator found
-//
-//        requiredLength += valueLength - _tcslen(tempSeparator);
-//        if (replacedValue != NULL)
-//        {
-//          _tcsncat_s(replacedValue, replacedValueLength, tempValue, valueLength - _tcslen(tempSeparator));
-//        }
-//
-//        if (_tcslen(tempSeparator) > 1)
-//        {
-//          // we are not on the last character
-//          // check next character if is it separator character
-//          tempValue = tempSeparator + _tcslen(separator);
-//          if (_tcsncmp(tempValue, separator, _tcslen(separator)) == 0)
-//          {
-//            // next character is separator character, skip
-//            tempValue += _tcslen(separator);
-//            requiredLength++;
-//            if (replacedValue != NULL)
-//            {
-//              _tcsncat_s(replacedValue, replacedValueLength, separator, _tcslen(separator));
-//            }
-//          }
-//        }
-//      }
-//      else
-//      {
-//        requiredLength += valueLength;
-//        if (replacedValue != NULL)
-//        {
-//          _tcsncat_s(replacedValue, replacedValueLength, tempValue, valueLength);
-//        }
-//        break;
-//      }
-//    }
-//  }
-//
-//  return requiredLength;
-//}
-//
-//STDMETHODIMP CAsyncFilter::SetConnectInfo(LPCOLESTR pszConnectInfo)
-//{
-//  HRESULT result = S_OK;
-//
-//  logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SET_CONNECT_INFO_NAME);
-//#ifdef _MBCS
-//  TCHAR *sParameters = ConvertToMultiByteW(pszConnectInfo);
-//#else
-//  TCHAR *sParameters = ConvertToUnicodeW(pszConnectInfo);
-//#endif
-//
-//  result = (sParameters == NULL) ? E_FAIL : S_OK;
-//
-//  if (result == S_OK)
-//  {
-//    logger.Log(LOGGER_INFO, _T("%s: %s: additional data: %s"), MODULE_NAME, METHOD_SET_CONNECT_INFO_NAME, sParameters);
-//
-//    // now we have unified string
-//    // let's parse
-//
-//    this->m_parameters->Clear();
-//
-//    bool splitted = false;
-//    unsigned int tokenLength = 0;
-//    TCHAR *rest = NULL;
-//    do
-//    {
-//      splitted = SplitBySeparator(sParameters, _T("|"), &tokenLength, &rest, false);
-//      if (splitted)
-//      {
-//        // token length is without terminating null character
-//        tokenLength++;
-//        ALLOC_MEM_DEFINE_SET(token, TCHAR, tokenLength, 0);
-//        if (token == NULL)
-//        {
-//          logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SET_CONNECT_INFO_NAME, _T("not enough memory for token"));
-//          result = E_OUTOFMEMORY;
-//        }
-//
-//        if (result == S_OK)
-//        {
-//          // copy token from parameters string
-//          _tcsncpy_s(token, tokenLength, sParameters, tokenLength - 1);
-//          sParameters = rest;
-//
-//          unsigned int nameLength = 0;
-//          TCHAR *value = NULL;
-//          bool splittedNameAndValue = SplitBySeparator(token, _T("="), &nameLength, &value, true);
-//
-//          if ((splittedNameAndValue) && (nameLength != 0))
-//          {
-//            // if correctly splitted parameter name and value
-//            nameLength++;
-//            ALLOC_MEM_DEFINE_SET(name, TCHAR, nameLength, 0);
-//            if (name == NULL)
-//            {
-//              logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SET_CONNECT_INFO_NAME, _T("not enough memory for parameter name"));
-//              result = E_OUTOFMEMORY;
-//            }
-//
-//            if (result == S_OK)
-//            {
-//              // copy name from token
-//              _tcsncpy_s(name, nameLength, token, nameLength - 1);
-//
-//              // get length of value with replaced double separator
-//              unsigned int replacedLength = ReplaceDoubleSeparator(value, _T("|"), NULL, 0) + 1;
-//
-//              ALLOC_MEM_DEFINE_SET(replacedValue, TCHAR, replacedLength, 0);
-//              if (replacedValue == NULL)
-//              {
-//                logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_SET_CONNECT_INFO_NAME, _T("not enough memory for replaced value"));
-//                result = E_OUTOFMEMORY;
-//              }
-//
-//              if (result == S_OK)
-//              {
-//                ReplaceDoubleSeparator(value, _T("|"), replacedValue, replacedLength);
-//
-//                CParameter *parameter = new CParameter(name, replacedValue);
-//                this->m_parameters->Add(parameter);
-//              }
-//
-//              FREE_MEM(replacedValue);
-//            }
-//
-//            FREE_MEM(name);
-//          }
-//        }
-//
-//        FREE_MEM(token);
-//      }
-//    } while ((splitted) && (rest != NULL) && (result == S_OK));
-//
-//    if (result == S_OK)
-//    {
-//      logger.Log(LOGGER_INFO, _T("%s: %s: count of parameters: %u"), MODULE_NAME, METHOD_SET_CONNECT_INFO_NAME, this->m_parameters->Count());
-//      for(unsigned int i = 0; i < this->m_parameters->Count(); i++)
-//      {
-//        PCParameter parameter = this->m_parameters->GetParameter(i);
-//        logger.Log(LOGGER_INFO, _T("%s: %s: parameter name: %s, value: %s"), MODULE_NAME, METHOD_SET_CONNECT_INFO_NAME, parameter->GetName(), parameter->GetValue());
-//      }
-//    }
-//  }
-//
-//  FREE_MEM(sParameters);
-//
-//  logger.Log(LOGGER_INFO, (result == S_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_SET_CONNECT_INFO_NAME);
-//  
-//  return S_OK;
-//}
+// split parameters string by separator
+// @param parameters : null-terminated string containing parameters
+// @param separator : null-terminated separator string
+// @param length : length of first token (without separator)
+// @param restOfParameters : reference to rest of parameter string without first token and separator, if NULL then there is no rest of parameters and whole parameters string was processed
+// @param separatorMustBeFound : specifies if separator must be found
+// @return : true if successful, false otherwise
+bool SplitBySeparator(const TCHAR *parameters, const TCHAR *separator, unsigned int *length, TCHAR **restOfParameters, bool separatorMustBeFound)
+{
+  bool result = false;
+
+  if ((parameters != NULL) && (separator != NULL) && (length != NULL) && (restOfParameters))
+  {
+    unsigned int parameterLength = _tcslen(parameters);
+
+    TCHAR *tempSeparator = NULL;
+    TCHAR *tempParameters = (TCHAR *)parameters;
+    while(true)
+    {
+      tempSeparator = (TCHAR *)_tcsstr(tempParameters, separator);
+      if (tempSeparator == NULL)
+      {
+        // possible separator not found
+        *length = _tcslen(parameters);
+        *restOfParameters = NULL;
+        result = !separatorMustBeFound;
+        break;
+      }
+      else
+      {
+        // possible separator found - if after first separator is second separator, it's not separator (double separator represents separator character)
+        // check next character if is it separator character - if yes, continue in cycle, if not than separator found
+
+        if (_tcslen(tempSeparator) > 1)
+        {
+          // we are not on the last character
+          // check next character if is it separator character
+          tempParameters = tempSeparator + _tcslen(separator);
+          if (_tcsncmp(tempParameters, separator, _tcslen(separator)) != 0)
+          {
+            // next character is not separator character
+            // we found separator
+            break;
+          }
+          else
+          {
+            // next character is separator character, skip
+            tempParameters += _tcslen(separator);
+          }
+        }
+        else
+        {
+          // we found separator
+          break;
+        }
+      }
+    }
+
+    if (tempSeparator != NULL)
+    {
+      // we found separator
+      // everything before separator is token, everything after separator is rest
+      *length = parameterLength - _tcslen(tempSeparator);
+      *restOfParameters = tempSeparator + _tcslen(separator);
+      result = true;
+    }
+  }
+
+  return result;
+}
+
+// replace double separator character with one separator character
+// @param value : value with double separator character
+// @param separator : separator string
+// @param replacedValue : reference to buffer where result will be stored, if NULL result is ignored
+// @param replacedValueLength : the length of replaced value buffer
+// @return : size of memory block to fit result value, UINT_MAX if error
+unsigned int ReplaceDoubleSeparator(const TCHAR *value, const TCHAR *separator, TCHAR *replacedValue, unsigned int replacedValueLength)
+{
+  unsigned int requiredLength = UINT_MAX;
+  // first count of replaced value length
+
+  if ((value != NULL) && (separator != NULL))
+  {
+    requiredLength = 0;
+
+    TCHAR *tempSeparator = NULL;
+    TCHAR *tempValue = (TCHAR *)value;
+    while(true)
+    {
+      unsigned int valueLength = _tcslen(tempValue);
+      tempSeparator = (TCHAR *)_tcsstr(tempValue, separator);
+
+      if (tempSeparator != NULL)
+      {
+        // possible separator found - if after first separator is second separator, it's not separator (double separator represents separator character)
+        // check next character if is it separator character - if yes, skip, if not than separator found
+
+        requiredLength += valueLength - _tcslen(tempSeparator);
+        if (replacedValue != NULL)
+        {
+          _tcsncat_s(replacedValue, replacedValueLength, tempValue, valueLength - _tcslen(tempSeparator));
+        }
+
+        if (_tcslen(tempSeparator) > 1)
+        {
+          // we are not on the last character
+          // check next character if is it separator character
+          tempValue = tempSeparator + _tcslen(separator);
+          if (_tcsncmp(tempValue, separator, _tcslen(separator)) == 0)
+          {
+            // next character is separator character, skip
+            tempValue += _tcslen(separator);
+            requiredLength++;
+            if (replacedValue != NULL)
+            {
+              _tcsncat_s(replacedValue, replacedValueLength, separator, _tcslen(separator));
+            }
+          }
+        }
+      }
+      else
+      {
+        requiredLength += valueLength;
+        if (replacedValue != NULL)
+        {
+          _tcsncat_s(replacedValue, replacedValueLength, tempValue, valueLength);
+        }
+        break;
+      }
+    }
+  }
+
+  return requiredLength;
+}
+
+CParameterCollection *CMPUrlSourceFilter::ParseParameters(const TCHAR *parameters)
+{
+  HRESULT result = S_OK;
+  CParameterCollection *parsedParameters = new CParameterCollection();
+
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME);
+
+  result = ((parameters == NULL) || (parsedParameters == NULL)) ? E_FAIL : S_OK;
+
+  if (result == S_OK)
+  {
+    this->logger->Log(LOGGER_INFO, _T("%s: %s: parameters: %s"), MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, parameters);
+
+    // now we have unified string
+    // let's parse
+
+    parsedParameters->Clear();
+
+    bool splitted = false;
+    unsigned int tokenLength = 0;
+    TCHAR *rest = NULL;
+    do
+    {
+      splitted = SplitBySeparator(parameters, _T("&"), &tokenLength, &rest, false);
+      if (splitted)
+      {
+        // token length is without terminating null character
+        tokenLength++;
+        ALLOC_MEM_DEFINE_SET(token, TCHAR, tokenLength, 0);
+        if (token == NULL)
+        {
+          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for token"));
+          result = E_OUTOFMEMORY;
+        }
+
+        if (result == S_OK)
+        {
+          // copy token from parameters string
+          _tcsncpy_s(token, tokenLength, parameters, tokenLength - 1);
+          parameters = rest;
+
+          unsigned int nameLength = 0;
+          TCHAR *value = NULL;
+          bool splittedNameAndValue = SplitBySeparator(token, _T("="), &nameLength, &value, true);
+
+          if ((splittedNameAndValue) && (nameLength != 0))
+          {
+            // if correctly splitted parameter name and value
+            nameLength++;
+            ALLOC_MEM_DEFINE_SET(name, TCHAR, nameLength, 0);
+            if (name == NULL)
+            {
+              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for parameter name"));
+              result = E_OUTOFMEMORY;
+            }
+
+            if (result == S_OK)
+            {
+              // copy name from token
+              _tcsncpy_s(name, nameLength, token, nameLength - 1);
+
+              // get length of value with replaced double separator
+              unsigned int replacedLength = ReplaceDoubleSeparator(value, _T("&"), NULL, 0) + 1;
+
+              ALLOC_MEM_DEFINE_SET(replacedValue, TCHAR, replacedLength, 0);
+              if (replacedValue == NULL)
+              {
+                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for replaced value"));
+                result = E_OUTOFMEMORY;
+              }
+
+              if (result == S_OK)
+              {
+                ReplaceDoubleSeparator(value, _T("&"), replacedValue, replacedLength);
+
+                CParameter *parameter = new CParameter(name, replacedValue);
+                parsedParameters->Add(parameter);
+              }
+
+              FREE_MEM(replacedValue);
+            }
+
+            FREE_MEM(name);
+          }
+        }
+
+        FREE_MEM(token);
+      }
+    } while ((splitted) && (rest != NULL) && (result == S_OK));
+
+    if (result == S_OK)
+    {
+      this->logger->Log(LOGGER_INFO, _T("%s: %s: count of parameters: %u"), MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, parsedParameters->Count());
+      for(unsigned int i = 0; i < parsedParameters->Count(); i++)
+      {
+        PCParameter parameter = parsedParameters->GetParameter(i);
+        this->logger->Log(LOGGER_INFO, _T("%s: %s: parameter name: %s, value: %s"), MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, parameter->GetName(), parameter->GetValue());
+      }
+    }
+  }
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, result);
+
+  if ((FAILED(result)) && (parsedParameters != NULL))
+  {
+    delete parsedParameters;
+    parsedParameters = NULL;
+  }
+  
+  return parsedParameters;
+}

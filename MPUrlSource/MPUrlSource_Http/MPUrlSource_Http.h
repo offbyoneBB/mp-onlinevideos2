@@ -37,13 +37,9 @@
 #define HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT                   20000
 #define HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT       3
 
-//#define DEFAULT_BUFFER_SIZE                                 32 * 1024
 #define OUTPUT_PIN_NAME                                     _T("Output")
 
-#define CONFIGURATION_SECTION_HTTP                          _T("HTTP")
-
-#define CONFIGURATION_HTTP_RECEIVE_DATA_TIMEOUT             _T("HttpReceiveDataTimeout")
-#define CONFIGURATION_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS _T("HttpOpenConnectionMaximumAttempts")
+#define PROTOCOL_NAME                                       _T("HTTP")
 
 // size of buffers used for comparison if ranges are supported or not
 #define RANGES_SUPPORTED_BUFFER_SIZE                        256 * 1024
@@ -53,8 +49,16 @@
 #define RANGES_STATE_PENDING_REQUEST                        2
 #define RANGES_STATE_SUPPORTED                              3
 
+#define PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT                  _T("HttpReceiveDataTimeout")
+#define PARAMETER_NAME_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS      _T("HttpOpenConnectionMaximumAttempts")
+#define PARAMETER_NAME_HTTP_REFERER                               _T("HttpReferer")
+#define PARAMETER_NAME_HTTP_USER_AGENT                            _T("HttpUserAgent")
+#define PARAMETER_NAME_HTTP_COOKIE                                _T("HttpCookie")
+#define PARAMETER_NAME_HTTP_VERSION                               _T("HttpVersion")
+#define PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH                 _T("HttpIgnoreContentLength")
+
 // returns protocol class instance
-PIProtocol CreateProtocolInstance(void);
+PIProtocol CreateProtocolInstance(CParameterCollection *configuration);
 
 // destroys protocol class instance
 void DestroyProtocolInstance(PIProtocol pProtocol);
@@ -65,7 +69,7 @@ class MPURLSOURCE_HTTP_API CMPUrlSource_Http : public IProtocol
 public:
   // constructor
   // create instance of CMPUrlSource_Http class
-  CMPUrlSource_Http(void);
+  CMPUrlSource_Http(CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSource_Http(void);
@@ -90,7 +94,7 @@ public:
   HRESULT QueryRangesSupported(CRangesSupported *rangesSupported);
 
 protected:
-  CLogger logger;
+  CLogger *logger;
 
   // holds received data from start
   LinearBuffer *receivedDataFromStart;
@@ -106,10 +110,8 @@ protected:
   // source filter that created this instance
   IOutputStream *filter;
 
-  // holds various parameters supplied by TvService
+  // holds various parameters supplied by caller
   CParameterCollection *configurationParameters;
-  // holds various parameters supplied by TvService when loading file
-  CParameterCollection *loadParameters;
 
   // holds receive data timeout
   unsigned int receiveDataTimeout;

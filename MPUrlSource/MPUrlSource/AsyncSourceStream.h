@@ -67,7 +67,7 @@ public:
   int EndOfStreamReached(const TCHAR *outputPinName);
 protected:
   // logger for logging purposes
-  CLogger logger;
+  CLogger *logger;
 
   // the parent of this stream
   CAsyncSource *filter;

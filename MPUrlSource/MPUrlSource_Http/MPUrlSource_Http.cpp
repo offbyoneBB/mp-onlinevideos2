@@ -33,9 +33,9 @@
 
 #define METHOD_COMPARE_RANGES_BUFFERS_NAME                              _T("CompareRangesBuffers()")
 
-PIProtocol CreateProtocolInstance(void)
+PIProtocol CreateProtocolInstance(CParameterCollection *configuration)
 {
-  return new CMPUrlSource_Http();
+  return new CMPUrlSource_Http(configuration);
 }
 
 void DestroyProtocolInstance(PIProtocol pProtocol)
@@ -47,13 +47,18 @@ void DestroyProtocolInstance(PIProtocol pProtocol)
   }
 }
 
-CMPUrlSource_Http::CMPUrlSource_Http()
+CMPUrlSource_Http::CMPUrlSource_Http(CParameterCollection *configuration)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
-
   this->configurationParameters = new CParameterCollection();
-  this->loadParameters = new CParameterCollection();
-  this->receiveDataTimeout = 0;
+  if (configuration != NULL)
+  {
+    this->configurationParameters->Append(configuration);
+  }
+
+  this->logger = new CLogger(this->configurationParameters);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  
+  this->receiveDataTimeout = HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT;
   this->openConnetionMaximumAttempts = HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->filter = NULL;
   this->streamLength = 0;
@@ -72,12 +77,12 @@ CMPUrlSource_Http::CMPUrlSource_Http()
   this->filledReceivedDataFromStart = false;
   this->filledReceivedDataFromRange = false;
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
 
 CMPUrlSource_Http::~CMPUrlSource_Http()
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
 
   if (this->IsConnected())
   {
@@ -97,7 +102,6 @@ CMPUrlSource_Http::~CMPUrlSource_Http()
   }
   
   delete this->configurationParameters;
-  delete this->loadParameters;
   FREE_MEM(this->url);
 
   if (this->lockMutex != NULL)
@@ -106,12 +110,15 @@ CMPUrlSource_Http::~CMPUrlSource_Http()
     this->lockMutex = NULL;
   }
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_DESTRUCTOR_NAME);
+
+  delete this->logger;
+  this->logger = NULL;
 }
 
 int CMPUrlSource_Http::ClearSession(void)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 
   if (this->IsConnected())
   {
@@ -119,7 +126,6 @@ int CMPUrlSource_Http::ClearSession(void)
   }
  
   this->internalExitRequest = false;
-  this->loadParameters->Clear();
   this->streamLength = 0;
   this->setLenght = false;
   this->streamTime = 0;
@@ -129,6 +135,8 @@ int CMPUrlSource_Http::ClearSession(void)
   this->rangesSupported = RANGES_STATE_UNKNOWN;
   this->filledReceivedDataFromStart = false;
   this->filledReceivedDataFromRange = false;
+  this->receiveDataTimeout = HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT;
+  this->openConnetionMaximumAttempts = HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
 
   if (this->receivedDataFromStart != NULL)
   {
@@ -142,8 +150,7 @@ int CMPUrlSource_Http::ClearSession(void)
     this->receivedDataFromRange = NULL;
   }
 
-
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return STATUS_OK;
 }
 
@@ -160,84 +167,43 @@ int CMPUrlSource_Http::Initialize(IOutputStream *filter, CParameterCollection *c
     return STATUS_ERROR;
   }
 
-  this->configurationParameters->Clear();
   if (configuration != NULL)
   {
+    this->configurationParameters->Clear();
     this->configurationParameters->Append(configuration);
   }
-  this->configurationParameters->LogCollection(&this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
+  this->configurationParameters->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
 
-  this->receiveDataTimeout = this->configurationParameters->GetValueLong(CONFIGURATION_HTTP_RECEIVE_DATA_TIMEOUT, true, HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT);
-  this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(CONFIGURATION_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
+  this->receiveDataTimeout = this->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT);
+  this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
 
-  // ---
-
-  //this->configurationParameters->Clear();
-  //if (configuration != NULL)
-  //{
-  //  this->configurationParameters->Append(configuration);
-  //}
-  //this->configurationParameters->LogCollection(&this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-
-  //long iptvBufferSize = this->configurationParameters->GetValueLong(CONFIGURATION_IPTV_BUFFER_SIZE, true, IPTV_BUFFER_SIZE_DEFAULT);
-  //long defaultMultiplier = this->configurationParameters->GetValueLong(CONFIGURATION_HTTP_INTERNAL_BUFFER_MULTIPLIER, true, HTTP_INTERNAL_BUFFER_MULTIPLIER_DEFAULT);
-  //long maxMultiplier = this->configurationParameters->GetValueLong(CONFIGURATION_HTTP_INTERNAL_BUFFER_MAX_MULTIPLIER, true, HTTP_INTERNAL_BUFFER_MAX_MULTIPLIER_DEFAULT);
-  //this->defaultBufferSize = defaultMultiplier * iptvBufferSize;
-  //this->maxBufferSize = maxMultiplier * iptvBufferSize;
-  //this->receiveDataTimeout = this->configurationParameters->GetValueLong(CONFIGURATION_HTTP_RECEIVE_DATA_TIMEOUT, true, HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT);
-  //this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(CONFIGURATION_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
-
-  //this->lockMutex = lockMutex;
-  //if (this->lockMutex == NULL)
-  //{
-  //  return STATUS_ERROR;
-  //}
-
-  //if (this->defaultBufferSize > 0)
-  //{
-  //  this->receiveBuffer = ALLOC_MEM(char, this->defaultBufferSize);
-  //  if (this->receiveBuffer == NULL)
-  //  {
-  //    this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("cannot initialize internal buffer"));
-  //    this->logger.Log(LOGGER_INFO, METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  //    return STATUS_ERROR;
-  //  }
-  //  this->logger.Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("internal buffer initialized"));
-
-  //  // initialize internal buffer
-  //  this->buffer.InitializeBuffer(this->defaultBufferSize);
-  //  this->logger.Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("internal linear buffer initialized"));
-  //}
-  //else
-  //{
-  //  this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME, _T("not valid size of IPTV buffer"));
-  //  this->logger.Log(LOGGER_INFO, METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
-  //  return STATUS_ERROR;
-  //}
-
-  // ---
+  this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
+  this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
   return STATUS_OK;
 }
 
 TCHAR *CMPUrlSource_Http::GetProtocolName(void)
 {
-  return Duplicate(CONFIGURATION_SECTION_HTTP);
+  return Duplicate(PROTOCOL_NAME);
 }
 
 int CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *parameters)
 {
   int result = STATUS_OK;
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
 
   this->ClearSession();
-  this->loadParameters->Append((CParameterCollection *)parameters);
-  this->loadParameters->LogCollection(&this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
+  if (parameters != NULL)
+  {
+    this->configurationParameters->Clear();
+    this->Initialize(this->filter, (CParameterCollection *)parameters);
+  }
 
   ALLOC_MEM_DEFINE_SET(urlComponents, URL_COMPONENTS, 1, 0);
   if (urlComponents == NULL)
   {
-    this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'url components'"));
+    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'url components'"));
     result = STATUS_ERROR;
   }
 
@@ -246,11 +212,11 @@ int CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *pa
     ZeroURL(urlComponents);
     urlComponents->dwStructSize = sizeof(URL_COMPONENTS);
 
-    this->logger.Log(LOGGER_INFO, _T("%s: %s: url: %s"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, url);
+    this->logger->Log(LOGGER_INFO, _T("%s: %s: url: %s"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, url);
 
     if (!InternetCrackUrl(url, 0, 0, urlComponents))
     {
-      this->logger.Log(LOGGER_ERROR, _T("%s: %s: InternetCrackUrl() error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, GetLastError());
+      this->logger->Log(LOGGER_ERROR, _T("%s: %s: InternetCrackUrl() error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, GetLastError());
       result = STATUS_ERROR;
     }
   }
@@ -261,7 +227,7 @@ int CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *pa
     ALLOC_MEM_DEFINE_SET(protocol, TCHAR, length, 0);
     if (protocol == NULL) 
     {
-      this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'protocol'"));
+      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'protocol'"));
       result = STATUS_ERROR;
     }
 
@@ -272,7 +238,7 @@ int CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *pa
       if (_tcsncicmp(urlComponents->lpszScheme, _T("HTTP"), urlComponents->dwSchemeLength) != 0)
       {
         // not supported protocol
-        this->logger.Log(LOGGER_INFO, _T("%s: %s: unsupported protocol '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, protocol);
+        this->logger->Log(LOGGER_INFO, _T("%s: %s: unsupported protocol '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, protocol);
         result = STATUS_ERROR;
       }
     }
@@ -283,7 +249,7 @@ int CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *pa
       this->url = Duplicate(url);
       if (this->url == NULL)
       {
-        this->logger.Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'url'"));
+        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'url'"));
         result = STATUS_ERROR;
       }
     }
@@ -291,14 +257,14 @@ int CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *pa
 
   FREE_MEM(urlComponents);
 
-  this->logger.Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
+  this->logger->Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
   return result;
 }
 
 int CMPUrlSource_Http::OpenConnection(void)
 {
   int result = (this->url != NULL) ? STATUS_OK : STATUS_ERROR;
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
 
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
@@ -307,7 +273,7 @@ int CMPUrlSource_Http::OpenConnection(void)
 
   if (result == STATUS_OK)
   {
-    this->mainCurlInstance = new CCurlInstance(&this->logger, this->url, PROTOCOL_IMPLEMENTATION_NAME);
+    this->mainCurlInstance = new CCurlInstance(this->logger, this->url, PROTOCOL_IMPLEMENTATION_NAME);
     result = (this->mainCurlInstance != NULL) ? STATUS_OK : STATUS_ERROR;
   }
 
@@ -330,7 +296,7 @@ int CMPUrlSource_Http::OpenConnection(void)
 
       if (result == STATUS_OK)
       {
-        this->rangesDetectionCurlInstance = new CCurlInstance(&this->logger, this->url, PROTOCOL_IMPLEMENTATION_NAME);
+        this->rangesDetectionCurlInstance = new CCurlInstance(this->logger, this->url, PROTOCOL_IMPLEMENTATION_NAME);
         result = (this->rangesDetectionCurlInstance != NULL) ? STATUS_OK : STATUS_ERROR;
       }
 
@@ -344,14 +310,16 @@ int CMPUrlSource_Http::OpenConnection(void)
 
   if (result == STATUS_OK)
   {
-    CParameterCollection *parameters = new CParameterCollection();
-    parameters->Append(this->configurationParameters);
-    parameters->Append(this->loadParameters);
-
     this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
     this->mainCurlInstance->SetWriteCallback(CMPUrlSource_Http::CurlReceiveData, this);
     this->mainCurlInstance->SetStartStreamTime(this->streamTime);
     this->mainCurlInstance->SetEndStreamTime(this->endStreamTime);
+    this->mainCurlInstance->SetReferer(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL));
+    this->mainCurlInstance->SetUserAgent(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
+    this->mainCurlInstance->SetCookie(this->configurationParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL));
+    this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
+    this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
     result = (this->mainCurlInstance->Initialize()) ? STATUS_OK : STATUS_ERROR;
 
     if (result == STATUS_OK)
@@ -376,7 +344,7 @@ int CMPUrlSource_Http::OpenConnection(void)
           {
             // response code 200 - 299 = OK
             // response code 300 - 399 = redirect (OK)
-            this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: HTTP status code: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+            this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: HTTP status code: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
             result = STATUS_ERROR;
           }
         }
@@ -390,8 +358,6 @@ int CMPUrlSource_Http::OpenConnection(void)
         Sleep(1);
       }
     }
-    
-    delete parameters;
   }
 
   if (result == STATUS_ERROR)
@@ -399,7 +365,7 @@ int CMPUrlSource_Http::OpenConnection(void)
     this->CloseConnection();
   }
 
-  this->logger.Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
+  this->logger->Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
   return result;
 }
 
@@ -410,7 +376,7 @@ bool CMPUrlSource_Http::IsConnected(void)
 
 void CMPUrlSource_Http::CloseConnection(void)
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
 
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
@@ -463,12 +429,12 @@ void CMPUrlSource_Http::CloseConnection(void)
     break;
   }
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLOSE_CONNECTION_NAME);
 }
 
 void CMPUrlSource_Http::ReceiveData(bool *shouldExit)
 {
-  this->logger.Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   this->shouldExit = *shouldExit;
 
   if (this->internalExitRequest)
@@ -508,7 +474,7 @@ void CMPUrlSource_Http::ReceiveData(bool *shouldExit)
   }
   else
   {
-    this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("connection closed, opening new one"));
+    this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("connection closed, opening new one"));
     // re-open connection if previous is lost
     if (this->OpenConnection() != STATUS_OK)
     {
@@ -516,7 +482,7 @@ void CMPUrlSource_Http::ReceiveData(bool *shouldExit)
     }
   }
 
-  this->logger.Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+  this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
 }
 
 unsigned int CMPUrlSource_Http::GetReceiveDataTimeout(void)
@@ -526,7 +492,7 @@ unsigned int CMPUrlSource_Http::GetReceiveDataTimeout(void)
 
 GUID CMPUrlSource_Http::GetInstanceId(void)
 {
-  return this->logger.loggerInstance;
+  return this->logger->loggerInstance;
 }
 
 unsigned int CMPUrlSource_Http::GetOpenConnectionMaximumAttempts(void)
@@ -545,8 +511,8 @@ CStringCollection *CMPUrlSource_Http::GetStreamNames(void)
 
 HRESULT CMPUrlSource_Http::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime)
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME);
-  this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: from time: %llu, to time: %llu"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, startTime, endTime);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME);
+  this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: from time: %llu, to time: %llu"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, startTime, endTime);
 
   HRESULT result = E_FAIL;
 
@@ -580,21 +546,21 @@ HRESULT CMPUrlSource_Http::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, RE
     result = S_OK;
   }
 
-  this->logger.Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, result);
   return result;
 }
 
 HRESULT CMPUrlSource_Http::AbortStreamReceive()
 {
-  this->logger.Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
-  this->logger.Log(LOGGER_VERBOSE, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
 
   return S_OK;
 }
 
 HRESULT CMPUrlSource_Http::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
 {
-  this->logger.Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME);
+  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME);
 
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, total);
@@ -606,7 +572,7 @@ HRESULT CMPUrlSource_Http::QueryStreamProgress(LONGLONG *total, LONGLONG *curren
     *current = this->streamTime;
   }
 
-  this->logger.Log(LOGGER_DATA, (SUCCEEDED(result)) ? METHOD_END_HRESULT_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME, result);
+  this->logger->Log(LOGGER_DATA, (SUCCEEDED(result)) ? METHOD_END_HRESULT_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME, result);
   return result;
 }
 
@@ -682,7 +648,7 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
       {
         // response code 200 - 299 = OK
         // response code 300 - 399 = redirect (OK)
-        caller->logger.Log(LOGGER_VERBOSE, _T("%s: %s: error response code: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+        caller->logger->Log(LOGGER_VERBOSE, _T("%s: %s: error response code: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
         // return error
         bytesRead = 0;
       }
@@ -698,7 +664,7 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
         {
           LONGLONG total = LONGLONG(streamSize);
           caller->streamLength = total;
-          caller->logger.Log(LOGGER_VERBOSE, _T("%s: %s: setting total length: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
+          caller->logger->Log(LOGGER_VERBOSE, _T("%s: %s: setting total length: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, total);
           caller->filter->SetTotalLength(OUTPUT_PIN_NAME, total, false);
           caller->setLenght = true;
         }
@@ -715,6 +681,12 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
             caller->rangesDetectionCurlInstance->SetWriteCallback(CMPUrlSource_Http::CurlRangesDetectionReceiveData, caller);
             caller->rangesDetectionCurlInstance->SetStartStreamTime(caller->streamLength / 2);
             caller->rangesDetectionCurlInstance->SetEndStreamTime(caller->streamLength / 2);
+            caller->rangesDetectionCurlInstance->SetReferer(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL));
+            caller->rangesDetectionCurlInstance->SetUserAgent(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL));
+            caller->rangesDetectionCurlInstance->SetCookie(caller->configurationParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL));
+            caller->rangesDetectionCurlInstance->SetHttpVersion(caller->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
+            caller->rangesDetectionCurlInstance->SetIgnoreContentLength((caller->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
+
             if (caller->rangesDetectionCurlInstance->Initialize())
             {
               caller->rangesDetectionCurlInstance->StartReceivingData();
@@ -746,7 +718,7 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
         HRESULT result = mediaPacket->SetTime(&caller->streamTime, &timeEnd);
         if (result != S_OK)
         {
-          caller->logger.Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+          caller->logger->Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
         }
 
         caller->streamTime += bytesRead;
@@ -775,7 +747,7 @@ size_t CMPUrlSource_Http::CurlRangesDetectionReceiveData(char *buffer, size_t si
       {
         // response code 200 - 299 = OK
         // response code 300 - 399 = redirect (OK)
-        caller->logger.Log(LOGGER_VERBOSE, _T("%s: %s: ranges detection error response code: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
+        caller->logger->Log(LOGGER_VERBOSE, _T("%s: %s: ranges detection error response code: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
         // return error
         bytesRead = 0;
       }
@@ -814,13 +786,13 @@ size_t CMPUrlSource_Http::CurlRangesDetectionReceiveData(char *buffer, size_t si
 
 void CMPUrlSource_Http::CompareRangesBuffers()
 {
-  this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME);
 
   if (this->rangesSupported == RANGES_STATE_PENDING_REQUEST)
   {
     // there is pending request if ranges are supported or not
 
-    this->logger.Log(LOGGER_VERBOSE, _T("%s: %s: received data from start: %u, received data from ranges: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, this->receivedDataFromStart->GetBufferOccupiedSpace(), this->receivedDataFromRange->GetBufferOccupiedSpace());
+    this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: received data from start: %u, received data from ranges: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, this->receivedDataFromStart->GetBufferOccupiedSpace(), this->receivedDataFromRange->GetBufferOccupiedSpace());
 
     unsigned int size = min(this->receivedDataFromStart->GetBufferOccupiedSpace(), this->receivedDataFromRange->GetBufferOccupiedSpace());
 
@@ -838,30 +810,30 @@ void CMPUrlSource_Http::CompareRangesBuffers()
             if (memcmp(bufferFromStart, bufferFromRange, size) != 0)
             {
               // buffers are not same => ranges are supported
-              this->logger.Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("ranges are supported"));
+              this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("ranges are supported"));
               this->rangesSupported = RANGES_STATE_SUPPORTED;
             }
             else
             {
-              this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("range buffers are same, ranges are not supported"));
+              this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("range buffers are same, ranges are not supported"));
               this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
             }
           }
           else
           {
-            this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("cannot copy data for comparing buffers, ranges are not supported"));
+            this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("cannot copy data for comparing buffers, ranges are not supported"));
             this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
           }
         }
         else
         {
-          this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("cannot copy data for comparing buffers, ranges are not supported"));
+          this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("cannot copy data for comparing buffers, ranges are not supported"));
           this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
         }
       }
       else
       {
-        this->logger.Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("cannot allocate enough memory for comparing buffers, ranges are not supported"));
+        this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME, _T("cannot allocate enough memory for comparing buffers, ranges are not supported"));
         this->rangesSupported = RANGES_STATE_NOT_SUPPORTED;
       }
 
@@ -870,6 +842,6 @@ void CMPUrlSource_Http::CompareRangesBuffers()
     }
   }
 
-  this->logger.Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME);
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME);
 }
 

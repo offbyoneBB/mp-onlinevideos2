@@ -317,7 +317,7 @@ int JoinMulticastGroupIPv4(CLogger *logger, const TCHAR *protocolName, SOCKET m_
   {
     // we have set some parameters
     // get interface parameter
-    PCParameter networkInterfaceParameter = parameters->GetParameter(INTERFACE_PARAMETER_NAME, true);
+    PCParameter networkInterfaceParameter = parameters->GetParameter(PARAMETER_NAME_INTERFACE, true);
     if (networkInterfaceParameter != NULL)
     {
       TCHAR *networkInterfaceAddress = GetInterfaceAddress(logger, protocolName, networkInterfaceParameter->GetValue(), local->sin_family);
@@ -393,7 +393,7 @@ int JoinMulticastGroupIPv6(CLogger *logger, const TCHAR *protocolName, SOCKET m_
   {
     // we have set some parameters
     // get interface parameter
-    PCParameter networkInterfaceParameter = parameters->GetParameter(INTERFACE_PARAMETER_NAME, true);
+    PCParameter networkInterfaceParameter = parameters->GetParameter(PARAMETER_NAME_INTERFACE, true);
     if (networkInterfaceParameter != NULL)
     {
       ULONG interfaceId = GetInterfaceId(logger, protocolName, networkInterfaceParameter->GetValue(), local->sin6_family);
@@ -427,7 +427,7 @@ int SubscribeToMulticastGroup(CLogger *logger, const TCHAR *protocolName, SOCKET
   {
     // we have set some parameters
     // get interface parameter
-    PCParameter networkInterfaceParameter = parameters->GetParameter(INTERFACE_PARAMETER_NAME, true);
+    PCParameter networkInterfaceParameter = parameters->GetParameter(PARAMETER_NAME_INTERFACE, true);
     if (networkInterfaceParameter != NULL)
     {
       ULONG interfaceId = GetInterfaceId(logger, protocolName, networkInterfaceParameter->GetValue(), local->sa_family);
@@ -598,7 +598,7 @@ int LeaveMulticastGroupIPv4(CLogger *logger, const TCHAR *protocolName, SOCKET m
   {
     // we have set some parameters
     // get interface parameter
-    PCParameter networkInterfaceParameter = parameters->GetParameter(INTERFACE_PARAMETER_NAME, true);
+    PCParameter networkInterfaceParameter = parameters->GetParameter(PARAMETER_NAME_INTERFACE, true);
     if (networkInterfaceParameter != NULL)
     {
       TCHAR *networkInterfaceAddress = GetInterfaceAddress(logger, protocolName, networkInterfaceParameter->GetValue(), local->sin_family);
@@ -679,7 +679,7 @@ int LeaveMulticastGroupIPv6(CLogger *logger, const TCHAR *protocolName, SOCKET m
   {
     // we have set some parameters
     // get interface parameter
-    PCParameter networkInterfaceParameter = parameters->GetParameter(INTERFACE_PARAMETER_NAME, true);
+    PCParameter networkInterfaceParameter = parameters->GetParameter(PARAMETER_NAME_INTERFACE, true);
     if (networkInterfaceParameter != NULL)
     {
       ULONG interfaceId = GetInterfaceId(logger, protocolName, networkInterfaceParameter->GetValue(), local->sin6_family);
@@ -717,7 +717,7 @@ int UnsubscribeFromMulticastGroup(CLogger *logger, const TCHAR *protocolName, SO
   {
     // we have set some parameters
     // get interface parameter
-    PCParameter networkInterfaceParameter = parameters->GetParameter(INTERFACE_PARAMETER_NAME, true);
+    PCParameter networkInterfaceParameter = parameters->GetParameter(PARAMETER_NAME_INTERFACE, true);
     if (networkInterfaceParameter != NULL)
     {
       ULONG interfaceId = GetInterfaceId(logger, protocolName, networkInterfaceParameter->GetValue(), local->sa_family);

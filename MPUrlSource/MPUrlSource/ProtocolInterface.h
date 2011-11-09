@@ -126,7 +126,7 @@ struct IProtocol : public IBaseProtocol
 public:
   // initialize protocol implementation with configuration parameters
   // @param filter : the url source filter initializing protocol
-  // @param : the reference to configuration parameters
+  // @param : the reference to additional configuration parameters (can be same parameters which were passed while creating instance), can be NULL
   // @return : STATUS_OK if successfull
   virtual int Initialize(IOutputStream *filter, CParameterCollection *configuration) = 0;
 
@@ -137,7 +137,7 @@ public:
   // parse given url to internal variables for specified protocol
   // errors should be logged to log file
   // @param url : the url to parse
-  // @param parameters : the reference to collection of parameters
+  // @param parameters : the reference to collection of configuration parameters (can be same parameters which were passed while creating instance and initializing), can be NULL
   // @return : STATUS_OK if successfull
   virtual int ParseUrl(const TCHAR *url, const CParameterCollection *parameters) = 0;
 
@@ -160,7 +160,7 @@ typedef IProtocol* PIProtocol;
 extern "C"
 {
   PIProtocol CreateProtocolInstance(CParameterCollection *configuration);
-  typedef PIProtocol (*CREATEPROTOCOLINSTANCE)(void);
+  typedef PIProtocol (*CREATEPROTOCOLINSTANCE)(CParameterCollection *configuration);
 
   void DestroyProtocolInstance(PIProtocol pProtocol);
   typedef void (*DESTROYPROTOCOLINSTANCE)(PIProtocol);

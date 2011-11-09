@@ -32,23 +32,19 @@
 // maximum buffering size
 #define MAX_BUFFERING_SIZE                                          5 * 1024 * 1024
 
-#define CONFIGURATION_SECTION_MPURLSOURCEFILTER                     _T("MPUrlSource")
-
-#define CONFIGURATION_MAX_LOG_SIZE                                  _T("MaxLogSize")
-#define CONFIGURATION_LOG_VERBOSITY                                 _T("LogVerbosity")
-#define CONFIGURATION_MAX_PLUGINS                                   _T("MaxPlugins")
-#define CONFIGURATION_BUFFERING_PERCENTAGE                          _T("BufferingPercentage")
-#define CONFIGURATION_MAX_BUFFERING_SIZE                            _T("MaxBufferingSize")
-
-#define INTERFACE_PARAMETER_NAME                                    _T("interface")
-
-// this is temporary parameter for url
-// will be removed if normal way of specifying network interface be implemented
-//#define URL_PARAMETER_NAME                                          _T("url")
+#define PARAMETER_NAME_INTERFACE                                    _T("Interface")
+#define PARAMETER_NAME_URL                                          _T("Url")
+#define PARAMETER_NAME_MAX_LOG_SIZE                                 _T("MaxLogSize")
+#define PARAMETER_NAME_LOG_VERBOSITY                                _T("LogVerbosity")
+#define PARAMETER_NAME_MAX_PLUGINS                                  _T("MaxPlugins")
+#define PARAMETER_NAME_BUFFERING_PERCENTAGE                         _T("BufferingPercentage")
+#define PARAMETER_NAME_MAX_BUFFERING_SIZE                           _T("MaxBufferingSize")
 
 #include "Parameter.h"
 #include "Logger.h"
 #include "Collection.h"
+
+class CLogger;
 
 class MPURLSOURCE_API CParameterCollection : public CCollection<CParameter, TCHAR *>
 {

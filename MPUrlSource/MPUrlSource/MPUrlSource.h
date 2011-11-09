@@ -59,9 +59,8 @@ private:
   ~CMPUrlSourceFilter();
 
   TCHAR* m_url;
-  CParameterCollection *parameters;
   CParameterCollection *configuration;
-  CLogger logger;
+  CLogger *logger;
 
   // handle to MPUrlSource.ax
   HMODULE mainModuleHandle;
@@ -100,6 +99,11 @@ public:
   // @param parameters : the parameters used for connection
   // @return : true if url is loaded, false otherwise
   bool Load(const TCHAR *url, const CParameterCollection *parameters);
+
+  // parses parameters from specified string
+  // @param parameters : null-terminated string with specified parameters
+  // @return : reference to variable holding collection of parameters or NULL if error
+  CParameterCollection *ParseParameters(const TCHAR *parameters);
 
   // IFileSourceFilter
   DECLARE_IUNKNOWN
