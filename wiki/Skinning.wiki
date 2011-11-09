@@ -131,4 +131,16 @@ detect by (`string.equals(#OnlineVideos.selectedSiteUtil, IMDb)`)
   * `#OnlineVideos.DetailsItem.Title` - titleof the video
   * `#OnlineVideos.DetailsItem.Description` - Description of the video
   * `#OnlineVideos.DetailsItem.Duration` - Duration of the video
-  
+
+= Latest videos =
+Latest OnlineVideos GuiProperties are available throughout MediaPortal at any time - they are set by a background thread.
+The videos will rotate after a user configurable amount of time.
+The user can configure how many videos he wants, but the default is 3 (replace 1 with any number to get the properties of that video).
+
+ * `#OnlineVideos.LatestVideo1.Site` - name of the site the video originates from (e.g. _YouTube_)
+ * `#OnlineVideos.LatestVideo1.SiteIcon` - thumbnail of the site the video originates from
+ * `#OnlineVideos.LatestVideo1.Title` - title of the video
+ * `#OnlineVideos.LatestVideo1.Aired` - date when the video was published
+ * `#OnlineVideos.LatestVideo1.Duration` - duration of the clip
+ * `#OnlineVideos.LatestVideo1.Thumb` - thumbnail of the video
+ * `#OnlineVideos.LatestVideo1.Description` - short description of the video
