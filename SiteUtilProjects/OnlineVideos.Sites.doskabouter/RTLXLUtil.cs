@@ -325,28 +325,8 @@ namespace OnlineVideos.Sites
         {
             lastChecked = DateTime.Now;
             XmlDocument doc = new XmlDocument();
-            HttpWebRequest request = WebRequest.Create(((RssLink)parentCategory).Url) as HttpWebRequest;
-            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-            request.Accept = "* /*";
-            request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate"); // we accept compressed content
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-            StringBuilder sb = new StringBuilder();
-            using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-            {
-                try
-                {
-                    while (!sr.EndOfStream)
-                    {
-                        sb.Append((char)sr.Read());
-                    }
-                }
-                catch (System.IO.IOException)
-                { }
-            }
-
-            doc.LoadXml(sb.ToString());
-
+            string t = GetWebData(((RssLink)parentCategory).Url);
+            doc.LoadXml(t);
             foreach (XmlNode item in doc.SelectNodes("//items/item"))
             {
                 string title = item.SelectSingleNode("title").InnerText;
@@ -357,9 +337,14 @@ namespace OnlineVideos.Sites
                 videoInfo.Other = true; // url is direct link to mp4, so no geturl needed
                 videoInfo.Title = title;
                 videoInfo.VideoUrl = item.SelectSingleNode("movie").InnerText;
+                if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute))
+                    videoInfo.VideoUrl = @"http://iptv.rtl.nl/nettv/" + videoInfo.VideoUrl;
+
                 videoInfo.ImageUrl = item.SelectSingleNode("thumbnail").InnerText;
+                if (!Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute))
+                    videoInfo.ImageUrl = @"http://iptv.rtl.nl/nettv/" + videoInfo.ImageUrl;
                 videoInfo.Length = '|' + Translation.Instance.Airdate + ": " + aired.ToString();
-                videoInfo.Description = item.SelectSingleNode("episodetitel").InnerText;
+                videoInfo.Description = item.SelectSingleNode("samenvattinglang").InnerText;
 
                 string airDate = aired.ToShortDateString();
                 AddVideo(parentCategory, "Datum\t" + airDate, videoInfo);

@@ -1208,7 +1208,7 @@
         <Category xsi:type="RssLink" name="Home">http://www.rtl.nl/system/xl/config/home.xml</Category>
         <Category xsi:type="RssLink" name="A - Z">http://www.rtl.nl/system/xl/feed/a-z.xml</Category>
         <Category xsi:type="RssLink" name="Gemist">http://www.rtl.nl/service/gemist/dataset_xml.xml</Category>
-        <Category xsi:type="RssLink" name="Gemist2">http://217.118.160.152/xl/VideoItem/IpadXML</Category>
+        <Category xsi:type="RssLink" name="Gemist2">http://iptv.rtl.nl/nettv/feed.xml</Category>
         <Category xsi:type="RssLink" name="Films">http://www.rtl.nl/system/xl/feed/films.xml</Category>
         <Category xsi:type="RssLink" name="RTL Z">http://www.rtl.nl/system/s4m/xldata/abstract/210334.xml</Category>
       </Categories>
