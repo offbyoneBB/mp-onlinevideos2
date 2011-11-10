@@ -43,6 +43,7 @@ class CAsyncSourceStream;
 #define METHOD_SET_TOTAL_LENGTH_NAME                              _T("SetTotalLength()")
 
 #define PARAMETER_SEPARATOR                                       _T("&")
+#define PARAMETER_IDENTIFIER                                      _T("|")
 #define PARAMETER_ASSIGN                                          _T("=")
 
 CMPUrlSourceFilter::CMPUrlSourceFilter(IUnknown *pUnk, HRESULT *phr)
@@ -969,107 +970,116 @@ CParameterCollection *CMPUrlSourceFilter::ParseParameters(const TCHAR *parameter
       bool splitted = false;
       unsigned int tokenLength = 0;
       TCHAR *rest = NULL;
-      do
+
+      splitted = SplitBySeparator(parameters, PARAMETER_IDENTIFIER, &tokenLength, &rest, false);
+      if (splitted)
       {
-        splitted = SplitBySeparator(parameters, PARAMETER_SEPARATOR, &tokenLength, &rest, false);
-        if (splitted)
+        // identifier for parameters for MediaPortal Source Filter is found
+        parameters = rest;
+        splitted = false;
+
+        do
         {
-          // token length is without terminating null character
-          tokenLength++;
-          ALLOC_MEM_DEFINE_SET(token, TCHAR, tokenLength, 0);
-          if (token == NULL)
+          splitted = SplitBySeparator(parameters, PARAMETER_SEPARATOR, &tokenLength, &rest, false);
+          if (splitted)
           {
-            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for token"));
-            result = E_OUTOFMEMORY;
-          }
-
-          if (result == S_OK)
-          {
-            // copy token from parameters string
-            _tcsncpy_s(token, tokenLength, parameters, tokenLength - 1);
-            parameters = rest;
-
-            unsigned int nameLength = 0;
-            TCHAR *value = NULL;
-            bool splittedNameAndValue = SplitBySeparator(token, PARAMETER_ASSIGN, &nameLength, &value, true);
-
-            if ((splittedNameAndValue) && (nameLength != 0))
+            // token length is without terminating null character
+            tokenLength++;
+            ALLOC_MEM_DEFINE_SET(token, TCHAR, tokenLength, 0);
+            if (token == NULL)
             {
-              // if correctly splitted parameter name and value
-              nameLength++;
-              ALLOC_MEM_DEFINE_SET(name, TCHAR, nameLength, 0);
-              if (name == NULL)
+              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for token"));
+              result = E_OUTOFMEMORY;
+            }
+
+            if (result == S_OK)
+            {
+              // copy token from parameters string
+              _tcsncpy_s(token, tokenLength, parameters, tokenLength - 1);
+              parameters = rest;
+
+              unsigned int nameLength = 0;
+              TCHAR *value = NULL;
+              bool splittedNameAndValue = SplitBySeparator(token, PARAMETER_ASSIGN, &nameLength, &value, true);
+
+              if ((splittedNameAndValue) && (nameLength != 0))
               {
-                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for parameter name"));
-                result = E_OUTOFMEMORY;
-              }
-
-              if (result == S_OK)
-              {
-                // copy name from token
-                _tcsncpy_s(name, nameLength, token, nameLength - 1);
-
-                // the value is in url encoding (percent encoding)
-                // so it doesn't have doubled separator
-
-                // CURL library cannot handle wchar_t characters
-                // convert to mutli-byte character set
-
-                char *curlValue = ConvertToMultiByte(value);
-                if (curlValue == NULL)
+                // if correctly splitted parameter name and value
+                nameLength++;
+                ALLOC_MEM_DEFINE_SET(name, TCHAR, nameLength, 0);
+                if (name == NULL)
                 {
-                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for value for CURL library"));
+                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for parameter name"));
                   result = E_OUTOFMEMORY;
                 }
 
                 if (result == S_OK)
                 {
-                  char *unescapedCurlValue = curl_easy_unescape(curl, curlValue, 0, NULL);
+                  // copy name from token
+                  _tcsncpy_s(name, nameLength, token, nameLength - 1);
 
-                  if (unescapedCurlValue == NULL)
+                  // the value is in url encoding (percent encoding)
+                  // so it doesn't have doubled separator
+
+                  // CURL library cannot handle wchar_t characters
+                  // convert to mutli-byte character set
+
+                  char *curlValue = ConvertToMultiByte(value);
+                  if (curlValue == NULL)
                   {
-                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("error occured while getting unescaped value from CURL library"));
-                    result = E_FAIL;
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for value for CURL library"));
+                    result = E_OUTOFMEMORY;
                   }
 
                   if (result == S_OK)
                   {
-#ifdef _MBCS
-                    TCHAR *unescapedValue = ConvertToMultiByte(unescapedCurlValue);
-#else
-                    TCHAR *unescapedValue = ConvertToUnicode(unescapedCurlValue);
-#endif
-                    if (unescapedValue == NULL)
+                    char *unescapedCurlValue = curl_easy_unescape(curl, curlValue, 0, NULL);
+
+                    if (unescapedCurlValue == NULL)
                     {
-                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for unescaped value"));
-                      result = E_OUTOFMEMORY;
+                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("error occured while getting unescaped value from CURL library"));
+                      result = E_FAIL;
                     }
 
                     if (result == S_OK)
                     {
-                      // we got successfully unescaped parameter value
-                      CParameter *parameter = new CParameter(name, unescapedValue);
-                      parsedParameters->Add(parameter);
+#ifdef _MBCS
+                      TCHAR *unescapedValue = ConvertToMultiByte(unescapedCurlValue);
+#else
+                      TCHAR *unescapedValue = ConvertToUnicode(unescapedCurlValue);
+#endif
+                      if (unescapedValue == NULL)
+                      {
+                        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for unescaped value"));
+                        result = E_OUTOFMEMORY;
+                      }
+
+                      if (result == S_OK)
+                      {
+                        // we got successfully unescaped parameter value
+                        CParameter *parameter = new CParameter(name, unescapedValue);
+                        parsedParameters->Add(parameter);
+                      }
+
+                      // free unescaped value
+                      FREE_MEM(unescapedValue);
+
+                      // free CURL return value
+                      curl_free(unescapedCurlValue);
                     }
-
-                    // free unescaped value
-                    FREE_MEM(unescapedValue);
-
-                    // free CURL return value
-                    curl_free(unescapedCurlValue);
                   }
+
+                  FREE_MEM(curlValue);
                 }
 
-                FREE_MEM(curlValue);
+                FREE_MEM(name);
               }
-
-              FREE_MEM(name);
             }
-          }
 
-          FREE_MEM(token);
-        }
-      } while ((splitted) && (rest != NULL) && (result == S_OK));
+            FREE_MEM(token);
+          }
+        } while ((splitted) && (rest != NULL) && (result == S_OK));
+      }
     }
 
     if (curl != NULL)
