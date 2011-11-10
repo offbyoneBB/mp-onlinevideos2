@@ -758,13 +758,13 @@
       </Categories>
     </Site>
     <Site name="NASA" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <Description>A collection of live streams and vodcasts from the National Aeronautics and Space Administration.</Description>
+      <Description>TV and Podcast from NASA</Description>
       <Categories>
-        <Category xsi:type="Group" name="NASA Live TV">
+        <Category xsi:type="Group" name="NASA Live TV" thumb="http://www.castfvg.it/zzz/nasa/nasa_tv_01.jpg">
           <Channels>
-            <Channel name="NASA TV">http://playlist.yahoo.com/makeplaylist.dll?id=1369080&amp;segment=149773</Channel>
-            <Channel name="NASA Digital Media">http://www.nasa.gov/145590main_Digital_Media.asx</Channel>
-            <Channel name="NASA Edu">http://www.nasa.gov/145588main_Digital_Edu.asx</Channel>
+            <Channel name="NASA TV" thumb="http://bombus.altervista.org/online_videos/NASATV.jpg">http://playlist.yahoo.com/makeplaylist.dll?id=1369080&amp;segment=149773</Channel>
+            <Channel name="NASA Digital Media" thumb="http://www.crabtreecompany.com/img/small/digital-nasa-small-1.jpg">http://www.nasa.gov/145590main_Digital_Media.asx</Channel>
+            <Channel name="NASA Edu" thumb="http://www.savetheplanetarium.org/starphotos/whirlpool.jpg">http://www.nasa.gov/145588main_Digital_Edu.asx</Channel>
           </Channels>
         </Category>
         <Category xsi:type="RssLink" name="Hidden Universe HD: NASA's Spitzer Space Telescope" thumb="http://www.spitzer.caltech.edu/Media/happenings/20070516/hd.jpg">http://www.nasa.gov/rss/NASAcast_vodcast.rss</Category>
@@ -773,16 +773,19 @@
         <Category xsi:type="RssLink" name="50th Anniversary Moments" thumb="http://www.nasa.gov/images/content/243003main_moments_it.jpg">http://www.nasa.gov/rss/moments_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="NASA Mission Update" thumb="http://www.nasa.gov/images/content/378393main_update_spitzer_100.jpg">http://www.nasa.gov/rss/mission_update_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="NASA 360" thumb="http://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Nasa360logo.jpg/250px-Nasa360logo.jpg">http://www.nasa.gov/rss/nasa360_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="NASA Edge" thumb="http://oea.larc.nasa.gov/NE-bug-144x135.jpg">http://www.nasa.gov/rss/NASAEdge_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="NASA Edge" thumb="http://bombus.altervista.org/online_videos/nasaedge.jpg">http://www.nasa.gov/rss/NASAEdge_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="Last Mission to Hubble" thumb="http://www.spacetelescope.org/updates/screen/update0708.jpg">http://www.nasa.gov/rss/hubble_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="Shuttle &amp; Station" thumb="http://a1.phobos.apple.com/eu/r10/Podcasts/75/a8/51/fdr.nwtxsguf.170x170-75.jpg">http://www.nasa.gov/rss/shuttle_station_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="Solar System" thumb="http://up6.podbean.com/image-logos/18692_logo.jpg">http://www.nasa.gov/rss/solar_system_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="Universe" thumb="http://up6.podbean.com/image-logos/18695_logo.jpg">http://www.nasa.gov/rss/universe_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Shuttle &amp; Station" thumb="http://img24.imageshack.us/img24/2846/18693logo.jpg">http://www.nasa.gov/rss/shuttle_station_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Solar System" thumb="http://bombus.altervista.org/online_videos/NASAsolarSystem.jpg">http://www.nasa.gov/rss/solar_system_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="Universe" thumb="http://bombus.altervista.org/online_videos/NASACast-Universe-Video-logo.jpg">http://www.nasa.gov/rss/universe_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="Earth" thumb="http://www.nasa.gov/images/content/176375main_e_itunes.jpg">http://www.nasa.gov/rss/Earth_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="What's Up?" thumb="http://up6.podbean.com/image-logos/19917_logo.jpg">http://www.nasa.gov/rss/whatsup_vodcast.rss</Category>
+        <Category xsi:type="RssLink" name="What's Up?" thumb="http://bombus.altervista.org/online_videos/NASAWhatsUP.jpg">http://www.nasa.gov/rss/whatsup_vodcast.rss</Category>
         <Category xsi:type="RssLink" name="Exploration" thumb="http://www.nasa.gov/images/content/176376main_exp_itunes.jpg">http://www.nasa.gov/rss/exploration_vodcast.rss</Category>
-        <Category xsi:type="RssLink" name="Jet Propulsion Laboratory HD" thumb="http://up6.podbean.com/image-logos/18643_logo.jpg">http://www.jpl.nasa.gov/multimedia/rss/podfeed-hd.xml</Category>
+        <Category xsi:type="RssLink" name="Jet Propulsion Laboratory HD" thumb="http://bombus.altervista.org/online_videos/NASAjpl.jpg">http://www.jpl.nasa.gov/multimedia/rss/podfeed-hd.xml</Category>
+        <Category xsi:type="RssLink" name="Science at NASA" thumb="http://science.nasa.gov/images/HomeXtra/itunes.jpg">http://science.nasa.gov/podcast.xml</Category>
         <Category xsi:type="RssLink" name="NASA Chandra X-ray Observatory Podcasts" thumb="http://chandra.harvard.edu/resources/podcasts/graphics/SDimage_300.jpg">http://chandra.harvard.edu/resources/podcasts/podcasts.xml</Category>
+        <Category xsi:type="RssLink" name="SDO: Solar Dynamics Observatory - Stepping Stones to SDO" thumb="http://www.friulinelweb.it/sole/sdo.jpg">http://sdo.gsfc.nasa.gov/xml/SDOcast.php</Category>
+        <Category xsi:type="RssLink" name="GLASTcast HD: The Extreme Universe" thumb="http://svs.gsfc.nasa.gov/vis/iTunes/f003_GLASTcast_HD_200x200.jpg">http://svs.gsfc.nasa.gov/vis/iTunes/f0003_index.html</Category>
         <Category xsi:type="RssLink" name="NASA Goddard Shorts HD" thumb="http://svs.gsfc.nasa.gov/vis/iTunes/GoddardShortsHD_logo.jpg">http://svs.gsfc.nasa.gov/vis/iTunes/f0004.xml</Category>
       </Categories>
     </Site>
@@ -950,32 +953,37 @@
       </Categories>
     </Site>
     <Site name="Snowboard Surf and Skate" util="GenericSite" agecheck="false" enabled="true">
+      <Description>Videos about the Board World.</Description>
       <Categories>
-        <Category xsi:type="Group" name="Board Live TV">
+        <Category xsi:type="Group" name="Board Live TV" thumb="http://www.live-tnt.com/channels/boardriders-tv.jpg">
           <Channels>
             <Channel name="Boardriders Tv LIVE" thumb="http://blog.quiksilver-women.com/wp-content/uploads/imgCats/logo.jpg">http://www.impek.tv/brtv/live.asx</Channel>
           </Channels>
         </Category>
-        <Category xsi:type="RssLink" name="shralp.com snowboard (m4v)" thumb="http://up2.podbean.com/image-logos/17778_logo.jpg">http://shralp.com/rss/shralp_itunes.xml</Category>
-        <Category xsi:type="RssLink" name="shralp.com surf (m4v)" thumb="http://up2.podbean.com/image-logos/17825_logo.jpg">http://shralp.com/rss/shralpsurf_itunes.xml</Category>
-        <Category xsi:type="RssLink" name="FUEL TV: SnowBoard" thumb="http://up2.podbean.com/image-logos/30897_logo.jpg">http://podcasts.fuel.tv/xml/snow_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="shralp.com snowboard (m4v)" thumb="http://shralp.com/pics/shralp240.jpg">http://shralp.com/rss/shralp_itunes.xml</Category>
+        <Category xsi:type="RssLink" name="Method TV" thumb="http://static.blogo.it/outdoorblog/Method.jpg">http://methodtv.blip.tv/rss/itunes</Category>
+        <Category xsi:type="RssLink" name="TTR World Tour" thumb="http://business.transworld.net/files/2008/03/31/swatch-ttr-logo.jpg">http://ttrworldtour.blip.tv/rss/itunes/</Category>
+        <Category xsi:type="RssLink" name="TGRtv HD" thumb="http://t3.gstatic.com/images?q=tbn:NaWf7vu3-tuqJM:http://up2.podbean.com/image-logos/21172_logo.jpg">http://www.tetongravity.com/podcasts/tgrtvhd.aspx</Category>
+        <Category xsi:type="RssLink" name="Skateboard Mag PodCast" thumb="http://www.skateparkoftampa.com/spot/productimages/1291mfgr.jpg">http://theskateboardmag.com/feeds/watch/</Category>
+        <Category xsi:type="RssLink" name="DVS Skate" thumb="https://boardmartredding.com/xcart/images/M/dvs_logo2.jpg">http://www.skate-more.com/podcasts/skatemore.xml</Category>
+        <Category xsi:type="RssLink" name="DC" thumb="https://www.supercrossking.com/store/images/brands/medium/dc_shoes.jpg">http://feeds.feedburner.com/Dc-Skate</Category>
+        <Category xsi:type="RssLink" name="Vans Skate" thumb="http://4.bp.blogspot.com/_0DxhVKvsbsw/SbCnk5X-F7I/AAAAAAAAAKU/2nVxiuYxOjQ/s320/Vans_logo1.jpg">http://skate.vans.com/skate_podcast.xml</Category>
+        <Category xsi:type="RssLink" name="Strange Notes - Skateboarding" thumb="http://www.mirpod.com/IMG/arton8421.png">http://www.strangenotes.com/podcast/feed.php</Category>
+        <Category xsi:type="RssLink" name="64mm" thumb="http://bombus.altervista.org/online_videos/skate64mm.jpg">http://feeds.feedburner.com/64mmVlog</Category>
+        <Category xsi:type="RssLink" name="Thrasher Podcast" thumb="http://i174.photobucket.com/albums/w108/gallagherbucket/ThrasherSkateGoat.jpg">http://thrashermagazine.com/video/kegkiller.xml</Category>
+        <Category xsi:type="RssLink" name="shralp.com surf (m4v)" thumb="http://shralp.com/pics/shralpsurf240.jpg">http://shralp.com/rss/shralpsurf_itunes.xml</Category>
+        <Category xsi:type="RssLink" name="PodSurf" thumb="http://images.mefeedia.com/feeds/7410/feed_150.png">http://www.podsurf.tv/podsurftv.xml</Category>
+        <Category xsi:type="RssLink" name="Revolt Surf Video" thumb="http://www.revolt.it/WEB/Revolt-podcast-logo-purple.jpg">http://www.revolt.it/WEB/podcast.xml</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: SnowBoard" thumb="http://bombus.altervista.org/online_videos/FuelTVsnow.jpg">http://podcasts.fuel.tv/xml/snow_itunes.rss</Category>
         <Category xsi:type="RssLink" name="FUEL TV: Skate" thumb="http://podcasts.fuel.tv/content/artwork/PC_SkateB600.jpg">http://podcasts.fuel.tv/xml/skate_itunes.rss</Category>
         <Category xsi:type="RssLink" name="FUEL TV: Surf" thumb="http://podcasts.fuel.tv/content/artwork/PC_SurfB600.jpg">http://podcasts.fuel.tv/xml/surf2_itunes.rss</Category>
         <Category xsi:type="RssLink" name="FUEL TV: BMX" thumb="http://podcasts.fuel.tv/content/artwork/PC_BMXB600.jpg">http://podcasts.fuel.tv/xml/bmx3_itunes.rss</Category>
         <Category xsi:type="RssLink" name="FUEL TV: FMX" thumb="http://podcasts.fuel.tv/content/artwork/PC_FMXB600.jpg">http://podcasts.fuel.tv/xml/fmx_itunes.rss</Category>
         <Category xsi:type="RssLink" name="FUEL TV: Wake" thumb="http://podcasts.fuel.tv/content/artwork/PC_WakeB600.jpg">http://podcasts.fuel.tv/xml/wake9_itunes.rss</Category>
-        <Category xsi:type="RssLink" name="FUEL TV: Best Of" thumb="http://msxb-d3.vo.llnw.net/CONTENT/IMAGES//f3/710c040f-2707-4b26-904a-342a0af80df3.jpg">http://podcasts.fuel.tv/xml/mix_itunes.rss</Category>
-        <Category xsi:type="RssLink" name="FUEL TV: HD">http://podcasts.fuel.tv/xml/hd_itunes.rss</Category>
-        <Category xsi:type="RssLink" name="FUEL TV: FirstHand">http://podcasts.fuel.tv/xml/firsthand_itunes.rss</Category>
-        <Category xsi:type="RssLink" name="Skateboard Mag PodCast" thumb="http://www.skateparkoftampa.com/spot/productimages/1291mfgr.jpg">http://theskateboardmag.com/feeds/watch/</Category>
-        <Category xsi:type="RssLink" name="BOARDRIDERS TV" thumb="http://blog.quiksilver-women.com/wp-content/uploads/imgCats/logo.jpg">http://www.boardriderstv.com/podcast/index.php</Category>
-        <Category xsi:type="RssLink" name="DVS Skate" thumb="https://boardmartredding.com/xcart/images/M/dvs_logo2.jpg">http://www.skate-more.com/podcasts/skatemore.xml</Category>
-        <Category xsi:type="RssLink" name="DC" thumb="http://up2.podbean.com/image-logos/17759_logo.jpg">http://feeds.feedburner.com/Dc-Skate</Category>
-        <Category xsi:type="RssLink" name="Vans Skate" thumb="http://4.bp.blogspot.com/_0DxhVKvsbsw/SbCnk5X-F7I/AAAAAAAAAKU/2nVxiuYxOjQ/s320/Vans_logo1.jpg">http://skate.vans.com/skate_podcast.xml</Category>
-        <Category xsi:type="RssLink" name="Method TV" thumb="http://static.blogo.it/outdoorblog/Method.jpg">http://methodtv.blip.tv/rss/itunes</Category>
-        <Category xsi:type="RssLink" name="Strange Notes - Skateboarding">http://www.strangenotes.com/podcast/feed.php</Category>
-        <Category xsi:type="RssLink" name="64mm">http://feeds.feedburner.com/64mmVlog</Category>
-        <Category xsi:type="RssLink" name="PodSurf">http://www.podsurf.tv/podsurftv.xml</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: Best Of" thumb="http://podcasts.fuel.tv/content/artwork/PC_FTVB300.jpg">http://podcasts.fuel.tv/xml/mix_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: HD" thumb="http://podcasts.fuel.tv/content/artwork/HDMooseButton.jpg">http://podcasts.fuel.tv/xml/hd_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="FUEL TV: FirstHand" thumb="http://img40.imageshack.us/img40/699/itunescoverfhs1600.jpg">http://podcasts.fuel.tv/xml/firsthand_itunes.rss</Category>
+        <Category xsi:type="RssLink" name="BOARDRIDERS TV" thumb="http://img40.imageshack.us/img40/5083/quiksilvernew.jpg">http://www.boardriderstv.com/podcast/index.php</Category>
       </Categories>
     </Site>
     <Site name="SVTPlay" util="SVTPlay" agecheck="false" enabled="true" lang="sv">
