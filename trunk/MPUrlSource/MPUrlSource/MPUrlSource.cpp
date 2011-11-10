@@ -40,6 +40,9 @@ class CAsyncSourceStream;
 #define METHOD_PUSH_DATA_NAME                                     _T("PushData()")
 #define METHOD_SET_TOTAL_LENGTH_NAME                              _T("SetTotalLength()")
 
+#define PARAMETER_SEPARATOR                                       _T("&&")
+#define PARAMETER_ASSIGN                                          _T("=")
+
 CMPUrlSourceFilter::CMPUrlSourceFilter(IUnknown *pUnk, HRESULT *phr)
   : CAsyncSource(NAME(_T("MediaPortal Url Source Filter")), pUnk, CLSID_MPUrlSourceFilter)
 {
@@ -1046,7 +1049,7 @@ CParameterCollection *CMPUrlSourceFilter::ParseParameters(const TCHAR *parameter
     TCHAR *rest = NULL;
     do
     {
-      splitted = SplitBySeparator(parameters, _T("&"), &tokenLength, &rest, false);
+      splitted = SplitBySeparator(parameters, PARAMETER_SEPARATOR, &tokenLength, &rest, false);
       if (splitted)
       {
         // token length is without terminating null character
@@ -1066,7 +1069,7 @@ CParameterCollection *CMPUrlSourceFilter::ParseParameters(const TCHAR *parameter
 
           unsigned int nameLength = 0;
           TCHAR *value = NULL;
-          bool splittedNameAndValue = SplitBySeparator(token, _T("="), &nameLength, &value, true);
+          bool splittedNameAndValue = SplitBySeparator(token, PARAMETER_ASSIGN, &nameLength, &value, true);
 
           if ((splittedNameAndValue) && (nameLength != 0))
           {
@@ -1096,7 +1099,7 @@ CParameterCollection *CMPUrlSourceFilter::ParseParameters(const TCHAR *parameter
 
               if (result == S_OK)
               {
-                ReplaceDoubleSeparator(value, _T("&"), replacedValue, replacedLength);
+                ReplaceDoubleSeparator(value, PARAMETER_SEPARATOR, replacedValue, replacedLength);
 
                 CParameter *parameter = new CParameter(name, replacedValue);
                 parsedParameters->Add(parameter);
