@@ -25,6 +25,8 @@
 #include "MPUrlSource.h"
 #include "Utilities.h"
 
+#include <curl/curl.h>
+
 #include <Shlwapi.h>
 
 class CAsyncSourceStream;
@@ -40,7 +42,7 @@ class CAsyncSourceStream;
 #define METHOD_PUSH_DATA_NAME                                     _T("PushData()")
 #define METHOD_SET_TOTAL_LENGTH_NAME                              _T("SetTotalLength()")
 
-#define PARAMETER_SEPARATOR                                       _T("&&")
+#define PARAMETER_SEPARATOR                                       _T("&")
 #define PARAMETER_ASSIGN                                          _T("=")
 
 CMPUrlSourceFilter::CMPUrlSourceFilter(IUnknown *pUnk, HRESULT *phr)
@@ -907,44 +909,23 @@ bool SplitBySeparator(const TCHAR *parameters, const TCHAR *separator, unsigned 
 
     TCHAR *tempSeparator = NULL;
     TCHAR *tempParameters = (TCHAR *)parameters;
-    while(true)
-    {
-      tempSeparator = (TCHAR *)_tcsstr(tempParameters, separator);
-      if (tempSeparator == NULL)
-      {
-        // possible separator not found
-        *length = _tcslen(parameters);
-        *restOfParameters = NULL;
-        result = !separatorMustBeFound;
-        break;
-      }
-      else
-      {
-        // possible separator found - if after first separator is second separator, it's not separator (double separator represents separator character)
-        // check next character if is it separator character - if yes, continue in cycle, if not than separator found
 
-        if (_tcslen(tempSeparator) > 1)
-        {
-          // we are not on the last character
-          // check next character if is it separator character
-          tempParameters = tempSeparator + _tcslen(separator);
-          if (_tcsncmp(tempParameters, separator, _tcslen(separator)) != 0)
-          {
-            // next character is not separator character
-            // we found separator
-            break;
-          }
-          else
-          {
-            // next character is separator character, skip
-            tempParameters += _tcslen(separator);
-          }
-        }
-        else
-        {
-          // we found separator
-          break;
-        }
+    tempSeparator = (TCHAR *)_tcsstr(tempParameters, separator);
+    if (tempSeparator == NULL)
+    {
+      // separator not found
+      *length = _tcslen(parameters);
+      *restOfParameters = NULL;
+      result = !separatorMustBeFound;
+    }
+    else
+    {
+      // separator found
+      if (_tcslen(tempSeparator) > 1)
+      {
+        // we are not on the last character of separator
+        // move to end of separator
+        tempParameters = tempSeparator + _tcslen(separator);
       }
     }
 
@@ -959,71 +940,6 @@ bool SplitBySeparator(const TCHAR *parameters, const TCHAR *separator, unsigned 
   }
 
   return result;
-}
-
-// replace double separator character with one separator character
-// @param value : value with double separator character
-// @param separator : separator string
-// @param replacedValue : reference to buffer where result will be stored, if NULL result is ignored
-// @param replacedValueLength : the length of replaced value buffer
-// @return : size of memory block to fit result value, UINT_MAX if error
-unsigned int ReplaceDoubleSeparator(const TCHAR *value, const TCHAR *separator, TCHAR *replacedValue, unsigned int replacedValueLength)
-{
-  unsigned int requiredLength = UINT_MAX;
-  // first count of replaced value length
-
-  if ((value != NULL) && (separator != NULL))
-  {
-    requiredLength = 0;
-
-    TCHAR *tempSeparator = NULL;
-    TCHAR *tempValue = (TCHAR *)value;
-    while(true)
-    {
-      unsigned int valueLength = _tcslen(tempValue);
-      tempSeparator = (TCHAR *)_tcsstr(tempValue, separator);
-
-      if (tempSeparator != NULL)
-      {
-        // possible separator found - if after first separator is second separator, it's not separator (double separator represents separator character)
-        // check next character if is it separator character - if yes, skip, if not than separator found
-
-        requiredLength += valueLength - _tcslen(tempSeparator);
-        if (replacedValue != NULL)
-        {
-          _tcsncat_s(replacedValue, replacedValueLength, tempValue, valueLength - _tcslen(tempSeparator));
-        }
-
-        if (_tcslen(tempSeparator) > 1)
-        {
-          // we are not on the last character
-          // check next character if is it separator character
-          tempValue = tempSeparator + _tcslen(separator);
-          if (_tcsncmp(tempValue, separator, _tcslen(separator)) == 0)
-          {
-            // next character is separator character, skip
-            tempValue += _tcslen(separator);
-            requiredLength++;
-            if (replacedValue != NULL)
-            {
-              _tcsncat_s(replacedValue, replacedValueLength, separator, _tcslen(separator));
-            }
-          }
-        }
-      }
-      else
-      {
-        requiredLength += valueLength;
-        if (replacedValue != NULL)
-        {
-          _tcsncat_s(replacedValue, replacedValueLength, tempValue, valueLength);
-        }
-        break;
-      }
-    }
-  }
-
-  return requiredLength;
 }
 
 CParameterCollection *CMPUrlSourceFilter::ParseParameters(const TCHAR *parameters)
@@ -1044,77 +960,123 @@ CParameterCollection *CMPUrlSourceFilter::ParseParameters(const TCHAR *parameter
 
     parsedParameters->Clear();
 
-    bool splitted = false;
-    unsigned int tokenLength = 0;
-    TCHAR *rest = NULL;
-    do
+    // initialize CURL library
+    CURL *curl = curl_easy_init();
+    result = (curl != NULL) ? S_OK : E_FAIL;
+
+    if (result == S_OK)
     {
-      splitted = SplitBySeparator(parameters, PARAMETER_SEPARATOR, &tokenLength, &rest, false);
-      if (splitted)
+      bool splitted = false;
+      unsigned int tokenLength = 0;
+      TCHAR *rest = NULL;
+      do
       {
-        // token length is without terminating null character
-        tokenLength++;
-        ALLOC_MEM_DEFINE_SET(token, TCHAR, tokenLength, 0);
-        if (token == NULL)
+        splitted = SplitBySeparator(parameters, PARAMETER_SEPARATOR, &tokenLength, &rest, false);
+        if (splitted)
         {
-          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for token"));
-          result = E_OUTOFMEMORY;
-        }
-
-        if (result == S_OK)
-        {
-          // copy token from parameters string
-          _tcsncpy_s(token, tokenLength, parameters, tokenLength - 1);
-          parameters = rest;
-
-          unsigned int nameLength = 0;
-          TCHAR *value = NULL;
-          bool splittedNameAndValue = SplitBySeparator(token, PARAMETER_ASSIGN, &nameLength, &value, true);
-
-          if ((splittedNameAndValue) && (nameLength != 0))
+          // token length is without terminating null character
+          tokenLength++;
+          ALLOC_MEM_DEFINE_SET(token, TCHAR, tokenLength, 0);
+          if (token == NULL)
           {
-            // if correctly splitted parameter name and value
-            nameLength++;
-            ALLOC_MEM_DEFINE_SET(name, TCHAR, nameLength, 0);
-            if (name == NULL)
+            this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for token"));
+            result = E_OUTOFMEMORY;
+          }
+
+          if (result == S_OK)
+          {
+            // copy token from parameters string
+            _tcsncpy_s(token, tokenLength, parameters, tokenLength - 1);
+            parameters = rest;
+
+            unsigned int nameLength = 0;
+            TCHAR *value = NULL;
+            bool splittedNameAndValue = SplitBySeparator(token, PARAMETER_ASSIGN, &nameLength, &value, true);
+
+            if ((splittedNameAndValue) && (nameLength != 0))
             {
-              this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for parameter name"));
-              result = E_OUTOFMEMORY;
-            }
-
-            if (result == S_OK)
-            {
-              // copy name from token
-              _tcsncpy_s(name, nameLength, token, nameLength - 1);
-
-              // get length of value with replaced double separator
-              unsigned int replacedLength = ReplaceDoubleSeparator(value, _T("&"), NULL, 0) + 1;
-
-              ALLOC_MEM_DEFINE_SET(replacedValue, TCHAR, replacedLength, 0);
-              if (replacedValue == NULL)
+              // if correctly splitted parameter name and value
+              nameLength++;
+              ALLOC_MEM_DEFINE_SET(name, TCHAR, nameLength, 0);
+              if (name == NULL)
               {
-                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for replaced value"));
+                this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for parameter name"));
                 result = E_OUTOFMEMORY;
               }
 
               if (result == S_OK)
               {
-                ReplaceDoubleSeparator(value, PARAMETER_SEPARATOR, replacedValue, replacedLength);
+                // copy name from token
+                _tcsncpy_s(name, nameLength, token, nameLength - 1);
 
-                CParameter *parameter = new CParameter(name, replacedValue);
-                parsedParameters->Add(parameter);
+                // the value is in url encoding (percent encoding)
+                // so it doesn't have doubled separator
+
+                // CURL library cannot handle wchar_t characters
+                // convert to mutli-byte character set
+
+                char *curlValue = ConvertToMultiByte(value);
+                if (curlValue == NULL)
+                {
+                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for value for CURL library"));
+                  result = E_OUTOFMEMORY;
+                }
+
+                if (result == S_OK)
+                {
+                  char *unescapedCurlValue = curl_easy_unescape(curl, curlValue, 0, NULL);
+
+                  if (unescapedCurlValue == NULL)
+                  {
+                    this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("error occured while getting unescaped value from CURL library"));
+                    result = E_FAIL;
+                  }
+
+                  if (result == S_OK)
+                  {
+#ifdef _MBCS
+                    TCHAR *unescapedValue = ConvertToMultiByte(unescapedCurlValue);
+#else
+                    TCHAR *unescapedValue = ConvertToUnicode(unescapedCurlValue);
+#endif
+                    if (unescapedValue == NULL)
+                    {
+                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for unescaped value"));
+                      result = E_OUTOFMEMORY;
+                    }
+
+                    if (result == S_OK)
+                    {
+                      // we got successfully unescaped parameter value
+                      CParameter *parameter = new CParameter(name, unescapedValue);
+                      parsedParameters->Add(parameter);
+                    }
+
+                    // free unescaped value
+                    FREE_MEM(unescapedValue);
+
+                    // free CURL return value
+                    curl_free(unescapedCurlValue);
+                  }
+                }
+
+                FREE_MEM(curlValue);
               }
 
-              FREE_MEM(replacedValue);
+              FREE_MEM(name);
             }
-
-            FREE_MEM(name);
           }
-        }
 
-        FREE_MEM(token);
-      }
-    } while ((splitted) && (rest != NULL) && (result == S_OK));
+          FREE_MEM(token);
+        }
+      } while ((splitted) && (rest != NULL) && (result == S_OK));
+    }
+
+    if (curl != NULL)
+    {
+      curl_easy_cleanup(curl);
+      curl = NULL;
+    }
 
     if (result == S_OK)
     {
