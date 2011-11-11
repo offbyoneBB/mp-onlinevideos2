@@ -8,6 +8,7 @@ namespace OnlineVideos.MPUrlSourceFilter
 {
     /// <summary>
     /// Represent base class for HTTP urls for MediaPortal Url Source Filter.
+	/// All parameter values will be UrlEncoded, so make sure you set them UrlDecoded!
     /// </summary>
     public class HttpUrl : SimpleUrl
     {
@@ -47,7 +48,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         public HttpUrl(Uri uri)
             : base(uri)
         {
-            if (this.Uri.Scheme != "HTTP")
+            if (this.Uri.Scheme != "http")
             {
                 throw new ArgumentException("The protocol is not supported.", "uri");
             }

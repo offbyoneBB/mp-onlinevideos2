@@ -33,7 +33,9 @@ namespace OnlineVideos.Hoster
                     if (n.Success)
                     {
                         videoType = VideoType.divx;
-                        return n.Groups["url"].Value + "&&&&" + "Referer: " + url + "\\n";
+						var resultUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(n.Groups["url"].Value);
+						resultUrl.Referer = url;
+						return resultUrl.ToString();
                     }
                 }
             }

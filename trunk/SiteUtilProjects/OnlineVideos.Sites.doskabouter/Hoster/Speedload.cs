@@ -28,7 +28,9 @@ namespace OnlineVideos.Hoster
                     string link = SiteUtilBase.GetRedirectedUrl(referer,url);
                     if (referer.CompareTo(link) != 0)
                     {
-                        return link + "&&&&" + "Referer: " + referer + "\\n";
+						var resultUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(link);
+						resultUrl.Referer = referer;
+						return resultUrl.ToString();
                     }
                 }
             }
