@@ -1728,7 +1728,8 @@ namespace OnlineVideos.MediaPortal1
                 int i = 0;
                 while (i < loUrlList.Count)
                 {
-                    if (String.IsNullOrEmpty(loUrlList[i]) || !Utils.IsValidUri(loUrlList[i]))
+                    if (string.IsNullOrEmpty(loUrlList[i]) || 
+						!Utils.IsValidUri((loUrlList[i].IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? loUrlList[i].Substring(0, loUrlList[i].IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : loUrlList[i]))
                     {
                         Log.Instance.Debug("removed invalid url: '{0}'", loUrlList[i]);
                         loUrlList.RemoveAt(i);
@@ -1931,7 +1932,7 @@ namespace OnlineVideos.MediaPortal1
         {
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(lsUrl) ||
-                !Utils.IsValidUri((lsUrl.IndexOf("&&&&") > 0) ? lsUrl.Substring(0, lsUrl.IndexOf("&&&&")) : lsUrl))
+				!Utils.IsValidUri((lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? lsUrl.Substring(0, lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : lsUrl))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
@@ -2256,7 +2257,7 @@ namespace OnlineVideos.MediaPortal1
         {
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(url) ||
-                !Utils.IsValidUri((url.IndexOf("&&&&") > 0) ? url.Substring(0, url.IndexOf("&&&&")) : url))
+				!Utils.IsValidUri((url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : url))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)

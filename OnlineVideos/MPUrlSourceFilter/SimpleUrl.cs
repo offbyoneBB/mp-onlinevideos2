@@ -234,7 +234,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <summary>
         /// Special separator used to identify where starts parameters for MediaPortal Url Source Filter.
         /// </summary>
-        public static String ParameterSeparator = "|";
+        public static String ParameterSeparator = "####";
 
         // common parameters for MediaPortal Url Source Filter
 

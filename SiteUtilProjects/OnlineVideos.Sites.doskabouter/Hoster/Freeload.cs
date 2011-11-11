@@ -24,7 +24,9 @@ namespace OnlineVideos.Hoster
                 Match n = Regex.Match(page, @"type=""video/divx""\ssrc=""(?<url>[^""]+)""");
                 if (n.Success)
                 {
-                    return n.Groups["url"].Value + "&&&&" + "Referer: " + url + "\\n";
+					var resultUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(n.Groups["url"].Value);
+					resultUrl.Referer = url;
+					return resultUrl.ToString();
                 }
             }
             return String.Empty;

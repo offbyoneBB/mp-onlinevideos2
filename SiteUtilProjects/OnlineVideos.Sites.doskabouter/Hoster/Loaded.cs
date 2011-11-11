@@ -34,8 +34,12 @@ namespace OnlineVideos.Hoster
                 string hostname = Regex.Match(second, @"name=""hostname""\svalue=""(?<value>[^""]+)""").Groups["value"].Value;
                 string filename = Regex.Match(second, @"name=""filename""\svalue=""(?<value>[^""]+)""").Groups["value"].Value;
 
-                if (!string.IsNullOrEmpty(hash) && !string.IsNullOrEmpty(hostname) && !string.IsNullOrEmpty(filename))
-                    return "http://" + hostname + "/get/" + hash + "/" + filename + "&&&&" + "Referer: " + url + "\\n"; ;
+				if (!string.IsNullOrEmpty(hash) && !string.IsNullOrEmpty(hostname) && !string.IsNullOrEmpty(filename))
+				{
+					var resultUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl("http://" + hostname + "/get/" + hash + "/" + filename);
+					resultUrl.Referer = url;
+					return resultUrl.ToString();
+				}
             }
             return String.Empty;
         }

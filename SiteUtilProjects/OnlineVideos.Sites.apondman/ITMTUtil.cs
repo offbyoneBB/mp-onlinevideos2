@@ -12,7 +12,7 @@ namespace OnlineVideos.Sites.Pondman {
     /// <summary>
     /// iTunes Movie Trailers
     /// </summary>
-    public partial class ITMovieTrailersUtil : BaseUtil, IChoice, ISimpleRequestHandler
+    public partial class ITMovieTrailersUtil : BaseUtil, IChoice
     {
 
         #region iTunes Movie Trailers
@@ -32,10 +32,6 @@ namespace OnlineVideos.Sites.Pondman {
                 apiSession = API.GetSession();
                 apiSession.MakeRequest = doWebRequest;
             }
-
-            // add a special reversed proxy handler
-            ReverseProxy.Instance.AddHandler(this);
-
         }
    
         /// <summary>
@@ -87,15 +83,7 @@ namespace OnlineVideos.Sites.Pondman {
             return videos;
         }
 
-        #endregion
-
-        #region ISimpleRequestHandler Members
-
-        public void UpdateRequest(HttpWebRequest request) {
-            request.UserAgent = QuickTimeUserAgent;
-        }
-
-        #endregion
+        #endregion        
 
         #region SiteUtilBase
 
@@ -249,7 +237,9 @@ namespace OnlineVideos.Sites.Pondman {
             Dictionary<string, string> files = new Dictionary<string, string>();
 
             foreach (KeyValuePair<VideoQuality, Uri> file in clip.Files) {
-                files[file.Key.ToTitleString()] = ReverseProxy.Instance.GetProxyUri(this, file.Value.AbsoluteUri);
+				var uri = new OnlineVideos.MPUrlSourceFilter.HttpUrl(file.Value);
+				uri.UserAgent = QuickTimeUserAgent;
+				files[file.Key.ToTitleString()] = uri.ToString();
             }
 
             // no files

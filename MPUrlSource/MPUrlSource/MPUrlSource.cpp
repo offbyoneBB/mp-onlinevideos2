@@ -43,7 +43,7 @@ class CAsyncSourceStream;
 #define METHOD_SET_TOTAL_LENGTH_NAME                              _T("SetTotalLength()")
 
 #define PARAMETER_SEPARATOR                                       _T("&")
-#define PARAMETER_IDENTIFIER                                      _T("|")
+#define PARAMETER_IDENTIFIER                                      _T("####")
 #define PARAMETER_ASSIGN                                          _T("=")
 
 CMPUrlSourceFilter::CMPUrlSourceFilter(IUnknown *pUnk, HRESULT *phr)
