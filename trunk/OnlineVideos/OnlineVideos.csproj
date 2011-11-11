@@ -191,6 +191,11 @@
     <Compile Include="LocalizableDisplayNameAttribute.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MMSDownloader.cs" />
+    <Compile Include="MPUrlSourceFilter\HttpUrl.cs" />
+    <Compile Include="MPUrlSourceFilter\LogVerbosity.cs" />
+    <Compile Include="MPUrlSourceFilter\Parameter.cs" />
+    <Compile Include="MPUrlSourceFilter\ParameterCollection.cs" />
+    <Compile Include="MPUrlSourceFilter\SimpleUrl.cs" />
     <Compile Include="Newtonsoft.Json\Bson\BsonBinaryType.cs" />
     <Compile Include="Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
     <Compile Include="Newtonsoft.Json\Bson\BsonObjectId.cs" />
