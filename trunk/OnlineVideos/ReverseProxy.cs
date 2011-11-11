@@ -35,6 +35,7 @@ namespace OnlineVideos {
 
         private ReverseProxy() {
             _serverPort = getFirstAvailablePort();
+			Log.Info("Starting ReverseProxy on Port {0}", _serverPort);
             _handlers = new List<IProxyHandler>();
             _server = new HTTPServer(new RequestHandlerFactory(), _serverPort);
             _server.OnServerException += new HTTPServer.ServerCaughtException(delegate(Exception ex) { Log.Warn(ex.ToString()); });

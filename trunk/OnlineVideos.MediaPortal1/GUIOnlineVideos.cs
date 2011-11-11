@@ -2804,7 +2804,6 @@ namespace OnlineVideos.MediaPortal1
 					Sites.SiteUtilBase site = (o as PlayListItem).Util;
 
 					System.Threading.Thread.Sleep(2000);
-					Log.Instance.Info("Setting Video Properties.");
 
 					string quality = "";
 					if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
@@ -2823,13 +2822,17 @@ namespace OnlineVideos.MediaPortal1
 						}
 					}
 
+					string titleToShow = "";
 					if (!string.IsNullOrEmpty(alternativeTitle))
-						GUIPropertyManager.SetProperty("#Play.Current.Title", alternativeTitle);
+						titleToShow = alternativeTitle;
 					else if (!string.IsNullOrEmpty(video.Title))
-						GUIPropertyManager.SetProperty("#Play.Current.Title", video.Title + (string.IsNullOrEmpty(quality) ? "" : quality));
+						titleToShow = video.Title + (string.IsNullOrEmpty(quality) ? "" : quality);
+
+					Log.Instance.Info("Setting Video Properties for '{0}'", titleToShow);
+
+					if (!string.IsNullOrEmpty(titleToShow)) GUIPropertyManager.SetProperty("#Play.Current.Title", titleToShow);
 					if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
 					if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
-
 					if (!string.IsNullOrEmpty(video.Airdate)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Airdate);
 					else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", VideoInfo.GetDuration(video.Length));
 
