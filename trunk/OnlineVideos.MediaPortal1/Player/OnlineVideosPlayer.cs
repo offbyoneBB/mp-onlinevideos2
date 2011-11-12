@@ -250,10 +250,11 @@ namespace OnlineVideos.MediaPortal1.Player
                 else
                 {
                     DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                    PercentageBuffered = 100.0f; // no progress reporing possible
+                    PercentageBuffered = 100.0f; // no progress reporting possible
                     GUIPropertyManager.SetProperty("#TV.Record.percent3", PercentageBuffered.ToString());
                     PlaybackReady = true;
                 }
+				if (Log.Instance.LogLevel < log4net.Core.Level.Debug) LogOutputPinsConnectionRecursive(sourceFilter);
             }
             catch (ThreadAbortException)
             {
@@ -457,5 +458,47 @@ namespace OnlineVideos.MediaPortal1.Player
         public string SubtitleFile { get; set; }
 
         #endregion
+
+		public static void LogOutputPinsConnectionRecursive(IBaseFilter filter, string previous = "")
+		{
+			bool log = true;
+			IEnumPins pinEnum = null;
+			if (filter.EnumPins(out pinEnum) == 0)
+			{
+				FilterInfo sourceFilterInfo;
+				filter.QueryFilterInfo(out sourceFilterInfo);
+				int fetched = 0;
+				IPin[] pins = new IPin[1];
+				while (pinEnum.Next(1, pins, out fetched) == 0 && fetched > 0)
+				{
+					IPin pin = pins[0];
+					PinDirection pinDirection;
+					if (pin.QueryDirection(out pinDirection) == 0 && pinDirection == PinDirection.Output)
+					{
+						log = false;
+						IPin connectedPin;
+						if (pin.ConnectedTo(out connectedPin) == 0 && connectedPin != null)
+						{
+							PinInfo connectedPinInfo;
+							connectedPin.QueryPinInfo(out connectedPinInfo);
+							FilterInfo connectedFilterInfo;
+							connectedPinInfo.filter.QueryFilterInfo(out connectedFilterInfo);
+							if (previous == "") previous = sourceFilterInfo.achName;
+							DirectShowUtil.ReleaseComObject(connectedPin, 2000);
+							IBaseFilter connectedFilter;
+							if (connectedFilterInfo.pGraph.FindFilterByName(connectedFilterInfo.achName, out connectedFilter) == 0 && connectedFilter != null)
+							{
+								LogOutputPinsConnectionRecursive(connectedFilter, previous + string.Format(" --> {0}", connectedFilterInfo.achName));
+								DirectShowUtil.ReleaseComObject(connectedFilter);
+							}
+						}
+						DirectShowUtil.ReleaseComObject(pin, 2000);
+					}
+				}
+			}
+			DirectShowUtil.ReleaseComObject(pinEnum, 2000);
+
+			if (log) Log.Instance.Debug(previous);
+		}
     }
 }
