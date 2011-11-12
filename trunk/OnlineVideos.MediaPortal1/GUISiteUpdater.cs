@@ -111,6 +111,7 @@ namespace OnlineVideos.MediaPortal1
 			switch (message.Message)
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
+					GUIOnlineVideos.cachedImageForSite.Clear();
                     PluginConfiguration.Instance.BuildAutomaticSitesGroups();
                     if (newDllsDownloaded)
 					{
@@ -277,7 +278,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     FullUpdate(dlgPrgrs, onlineSites.ToList());
                     GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
-                }) { Name = "OnlineVideosFullUpdate", IsBackground = true }.Start();
+                }) { Name = "OVFullUpdate", IsBackground = true }.Start();
             }
             else if (control == GUI_btnAutoUpdate)
             {

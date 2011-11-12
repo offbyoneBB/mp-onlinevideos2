@@ -512,6 +512,7 @@ namespace OnlineVideos.Sites
                     response = (HttpWebResponse)webEx.Response; // if the server returns a 404 or similar .net will throw a WebException that has the response
                 }
                 Stream responseStream;
+				if (response == null) return "";
                 if (response.ContentEncoding.ToLower().Contains("gzip"))
                     responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
                 else if (response.ContentEncoding.ToLower().Contains("deflate"))

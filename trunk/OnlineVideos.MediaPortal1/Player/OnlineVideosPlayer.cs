@@ -196,7 +196,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 if (result != 0)
                 {
-                    Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned '{0}' ({1})", result, DirectShowLib.DsError.GetErrorText(result));
+                    Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned '{0}' ({1})", result.ToString("X"), DirectShowLib.DsError.GetErrorText(result).Trim());
                     return false;
                 }
 
@@ -292,7 +292,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 if (Vmr9 == null || !Vmr9.IsVMR9Connected)
                 {
-                    Log.Instance.Error("OnlineVideosPlayer: Failed to render file -> No video rendere connected");
+                    Log.Instance.Warn("OnlineVideosPlayer: Failed to render file -> No video renderer connected");
                     mediaCtrl = null;
                     Cleanup();
                     return false;

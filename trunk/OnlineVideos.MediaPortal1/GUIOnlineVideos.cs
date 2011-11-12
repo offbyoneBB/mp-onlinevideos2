@@ -1105,9 +1105,9 @@ namespace OnlineVideos.MediaPortal1
                 {
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                     {
-                        Log.Instance.Info("Looking for dynamic categories for '{0}'", SelectedSite.Settings.Name);
+                        Log.Instance.Info("Looking for dynamic categories for site '{0}'", SelectedSite.Settings.Name);
                         int foundCategories = SelectedSite.DiscoverDynamicCategories();
-                        Log.Instance.Info("Found {0} dynamic categories for '{1}'", foundCategories, SelectedSite.Settings.Name);
+                        Log.Instance.Info("Found {0} dynamic categories for site '{1}'", foundCategories, SelectedSite.Settings.Name);
                         return SelectedSite.Settings.Categories;
                     },
                     delegate(bool success, object result)
@@ -1966,7 +1966,7 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-                Log.Instance.Info("Preparing graph for playback of {0}", lsUrl);
+                Log.Instance.Info("Preparing graph for playback of '{0}'", lsUrl);
                 bool? prepareResult = ((OnlineVideosPlayer)factory.PreparedPlayer).PrepareGraph();
                 switch (prepareResult)
                 {
@@ -2766,25 +2766,32 @@ namespace OnlineVideos.MediaPortal1
             return true;
         }
 
+		internal static Dictionary<string, string> cachedImageForSite = new Dictionary<string, string>();
         internal static string GetImageForSite(string siteName, string utilName = "", string type = "Banner")
-        {
-            // use png with the same name as the Site - first check subfolder of current skin (allows skinners to use custom icons)
-            string image = string.Format(@"{0}\Media\OnlineVideos\{1}s\{2}.png", GUIGraphicsContext.Skin, type, siteName);
-            if (!System.IO.File.Exists(image))
-            {
-                // use png with the same name as the Site
-                image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, siteName);
-                if (!System.IO.File.Exists(image))
-                {
-                    image = string.Empty;
-                    // if that does not exist, try image with the same name as the Util
-                    if (!string.IsNullOrEmpty(utilName))
-                    {
-                        image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, utilName);
-                        if (!System.IO.File.Exists(image)) image = string.Empty;
-                    }
-                }
-            }
+		{
+			string image = null;
+			if (!cachedImageForSite.TryGetValue(string.Format("{0}{1}", siteName, type), out image))
+			{
+				// use png with the same name as the Site - first check subfolder of current skin (allows skinners to use custom icons)
+				image = string.Format(@"{0}\Media\OnlineVideos\{1}s\{2}.png", GUIGraphicsContext.Skin, type, siteName);
+				if (!System.IO.File.Exists(image))
+				{
+					// use png with the same name as the Site
+					image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, siteName);
+					if (!System.IO.File.Exists(image))
+					{
+						image = string.Empty;
+						// if that does not exist, try image with the same name as the Util
+						if (!string.IsNullOrEmpty(utilName))
+						{
+							image = string.Format(@"{0}{1}s\{2}.png", OnlineVideoSettings.Instance.ThumbsDir, type, utilName);
+							if (!System.IO.File.Exists(image)) image = string.Empty;
+						}
+					}
+				}
+				if (string.IsNullOrEmpty(image)) Log.Instance.Debug("{0} for site '{1}' not found!", type, siteName);
+				cachedImageForSite[string.Format("{0}{1}", siteName, type)] = image;
+			}
             return image;
         }
 

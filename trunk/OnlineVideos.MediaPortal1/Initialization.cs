@@ -51,6 +51,7 @@ namespace OnlineVideos.MediaPortal1
 					if (guiUpdater != null)
 					{
 						guiUpdater.AutoUpdate(null);
+						GUIOnlineVideos.cachedImageForSite.Clear();
 					}
 					ImageDownloader.DeleteOldThumbs(PluginConfiguration.Instance.ThumbsAge, r => { return true; });
 					PluginConfiguration.Instance.lastFirstRun = DateTime.Now;
@@ -129,6 +130,7 @@ namespace OnlineVideos.MediaPortal1
 							{
 								guiUpdater.ReloadDownloadedDlls();
 							}
+							GUIOnlineVideos.cachedImageForSite.Clear();
 						}
 						if (PluginConfiguration.Instance.ThumbsAge >= 0)
 						{

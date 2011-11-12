@@ -265,7 +265,7 @@ namespace Vattenmelon.Nrk.Parser
         }
         public IList<Item> GetClips(Program program)
         {
-            Log.Info("{0}: GetClips(Program): {1}", NrkParserConstants.LIBRARY_NAME, program);
+            Log.Info("{0}: GetClips(Program): {1}", NrkParserConstants.LIBRARY_NAME, program.ToString());
             return GetClips(Int32.Parse(program.ID));
         }
 
@@ -296,7 +296,7 @@ namespace Vattenmelon.Nrk.Parser
 
         public string GetClipUrlAndPutStartTime(Clip clip)
         {
-            Log.Debug("{0}: GetClipUrlAndPutStartTime(Clip): {1}", NrkParserConstants.LIBRARY_NAME, clip);
+            Log.Debug("{0}: GetClipUrlAndPutStartTime(Clip): {1}", NrkParserConstants.LIBRARY_NAME, clip.ToString());
 
             if (clip.Type == Clip.KlippType.KLIPP)
             {
@@ -338,7 +338,7 @@ namespace Vattenmelon.Nrk.Parser
 
         private string GetClipUrlForDirekte(Clip clip)
         {
-            Log.Debug(NrkParserConstants.LIBRARY_NAME + ": Clip type is: " + clip.Type);
+            Log.Debug(NrkParserConstants.LIBRARY_NAME + ": Clip type is: " + clip.Type.ToString());
             string data = FetchUrl(DIREKTE_URL + clip.ID);
             Regex query;
             query = new Regex("<param name=\"FileName\" value=\"(.*?)\" />", RegexOptions.IgnoreCase);

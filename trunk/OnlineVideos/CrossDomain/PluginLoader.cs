@@ -57,7 +57,7 @@ namespace OnlineVideos
 
 							if (utils.ContainsKey(shortName))
 							{
-								Log.Error(string.Format("Unable to add SiteUtil '{0}' because its short name has already been added.", type.Name));
+								Log.Warn(string.Format("Unable to add SiteUtil '{0}' because its short name has already been added.", type.Name));
 							}
 							else
 							{
