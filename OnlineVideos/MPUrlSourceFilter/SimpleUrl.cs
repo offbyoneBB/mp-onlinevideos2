@@ -210,12 +210,26 @@ namespace OnlineVideos.MPUrlSourceFilter
             ParameterCollection parameters = new ParameterCollection();
 
             parameters.Add(new Parameter(SimpleUrl.ParameterUrl, this.Uri.ToString()));
-            parameters.Add(new Parameter(SimpleUrl.ParameterLogVerbosity, ((int)this.Verbosity).ToString()));
-            parameters.Add(new Parameter(SimpleUrl.ParameterMaximumBufferingSize, this.MaximumBufferingSize.ToString()));
-            parameters.Add(new Parameter(SimpleUrl.ParameterMaximumLogSize, this.MaximumLogSize.ToString()));
-            parameters.Add(new Parameter(SimpleUrl.ParameterMaximumPlugins, this.MaximumPlugins.ToString()));
-            parameters.Add(new Parameter(SimpleUrl.ParameterBufferingPercentage, this.BufferingPercentage.ToString()));
-
+			if (this.Verbosity != DefaultVerbosity)
+			{
+				parameters.Add(new Parameter(SimpleUrl.ParameterLogVerbosity, ((int)this.Verbosity).ToString()));
+			}
+			if (this.MaximumBufferingSize != DefaultMaximumBufferingSize)
+			{
+				parameters.Add(new Parameter(SimpleUrl.ParameterMaximumBufferingSize, this.MaximumBufferingSize.ToString()));
+			}
+			if (this.MaximumLogSize != DefaultMaximumLogSize)
+			{
+				parameters.Add(new Parameter(SimpleUrl.ParameterMaximumLogSize, this.MaximumLogSize.ToString()));
+			}
+			if (this.MaximumPlugins != DefaultMaximumPlugins)
+			{
+				parameters.Add(new Parameter(SimpleUrl.ParameterMaximumPlugins, this.MaximumPlugins.ToString()));
+			}
+			if (this.BufferingPercentage != DefaultBufferingPercentage)
+			{
+				parameters.Add(new Parameter(SimpleUrl.ParameterBufferingPercentage, this.BufferingPercentage.ToString()));
+			}
             if (!String.IsNullOrEmpty(this.NetworkInterface))
             {
                 parameters.Add(new Parameter(SimpleUrl.ParameterNetworkInterface, this.NetworkInterface));

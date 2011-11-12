@@ -200,9 +200,18 @@ namespace OnlineVideos.MPUrlSourceFilter
         {
             ParameterCollection parameters = new ParameterCollection();
 
-            parameters.Add(new Parameter(HttpUrl.ParameterIgnoreContentLength, this.IgnoreContentLength ? "1" : "0"));
-            parameters.Add(new Parameter(HttpUrl.ParameterOpenConnectionMaximumAttempts, this.OpenConnectionMaximumAttempts.ToString()));
-            parameters.Add(new Parameter(HttpUrl.ParameterReceiveDataTimeout, this.ReceiveDataTimeout.ToString()));
+			if (this.IgnoreContentLength != DefaultIgnoreContentLength)
+			{
+				parameters.Add(new Parameter(HttpUrl.ParameterIgnoreContentLength, this.IgnoreContentLength ? "1" : "0"));
+			}
+			if (this.OpenConnectionMaximumAttempts != DefaultOpenConnectionMaximumAttempts)
+			{
+				parameters.Add(new Parameter(HttpUrl.ParameterOpenConnectionMaximumAttempts, this.OpenConnectionMaximumAttempts.ToString()));
+			}
+			if (this.ReceiveDataTimeout != DefaultReceiveDataTimeout)
+			{
+				parameters.Add(new Parameter(HttpUrl.ParameterReceiveDataTimeout, this.ReceiveDataTimeout.ToString()));
+			}
             if (!String.IsNullOrEmpty(this.Referer))
             {
                 parameters.Add(new Parameter(HttpUrl.ParameterReferer, this.Referer.ToString()));

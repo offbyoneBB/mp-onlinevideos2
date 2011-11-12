@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 
@@ -46,7 +47,8 @@ namespace OnlineVideos.Sites
                 if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Path.GetFileName(aDir), out util))
                 {
                     DirectoryInfo dirInfo = new DirectoryInfo(aDir);
-                    if (dirInfo.GetFiles().Length == 0)
+					FileInfo[] files = dirInfo.GetFiles();
+					if (files.Length == 0)
                     {
                         try { Directory.Delete(aDir); } catch {} // try to delete empty directories
                     }
@@ -65,6 +67,7 @@ namespace OnlineVideos.Sites
                                 cat.Thumb = Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + aSite.Name + ".png");
                                 cachedCategories.Add(cat.Name, cat);
                             }
+							cat.EstimatedVideoCount = (uint)files.Count(f => isPossibleVideo(f.Name));
                             Settings.Categories.Add(cat);
                         }
                     }

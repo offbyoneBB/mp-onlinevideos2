@@ -176,7 +176,7 @@ namespace OnlineVideos
             }
             catch (Exception ex)
             {
-                Log.Info("Invalid Image: {0} {1}", url, ex.Message);
+                Log.Info("Invalid Image: '{0}' {1}", url, ex.Message);
                 return false;
             }
         }
