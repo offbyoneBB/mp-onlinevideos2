@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Online Videos translation file -->
+<!-- Chinese (Simplified) -->
+<!-- Note: English is the fallback for any strings not found in other languages -->
+<strings>  
+
+  <!-- A -->
+  <string Field="Airdate">已发布的</string>
+  <string Field="AlreadyDownloading">已经下载此文件。</string>
+  <string Field="All">所有</string>
+  <string Field="Actions">行为</string>
+  <string Field="Actors">演员</string>
+  <string Field="AddToMySites">添加到我的站点</string>
+  <string Field="AddToFavourites">添加到收藏夹</string>
+  <string Field="AddingToFavorites">添加到收藏夹中</string>
+  <string Field="AutomaticUpdate">自动更新</string>
+  <string Field="AutomaticUpdateDisabled">自动更新已禁用。
+</string>
+
+  <!-- B -->
+  <string Field="Broken">中断</string>
+  <string Field="Buffered">已缓冲的</string>
+
+  <!-- C -->
+  <string Field="Cancel">取消</string>
+  <string Field="Category">目录</string>
+  <string Field="Categories">目录</string>
+  <string Field="Creator">创建者</string>
+  <string Field="CheckingForPluginUpdate">检查已更新的插件版本</string>
+
+  <!-- D -->
+  <string Field="Date">日期</string>
+  <string Field="DateOfRelease">发布日期</string>
+  <string Field="Directors">导演</string>
+  <string Field="Download">下载</string>
+  <string Field="DownloadUserdefined">下载到用户目录</string>
+  <string Field="Downloading">下载中</string>
+  <string Field="DownloadingDescription">显示当前正在运行的下载列表</string>
+  <string Field="DownloadingSubtitle">下载字幕中</string>
+  <string Field="DownloadFailed">下载失败： {0}</string>
+  <string Field="DownloadCancelled">下载已取消</string>
+  <string Field="DownloadComplete">下载完成</string>
+  <string Field="DownloadStarted">下载已开始</string>  
+  <string Field="DownloadedVideos">已下载的视频</string>
+  <string Field="Delete">删除</string>
+  <string Field="DeleteAll">删除所有</string>
+  <string Field="Default">默认</string>
+  <string Field="Done">完成</string>
+  <string Field="DeletingOldThumbs">删除旧的缩略图中</string>
+
+  <!-- E -->
+  <string Field="Error">错误</string>
+  <string Field="EnterPin">输入 Pin</string>
+
+  <!-- F -->
+  <string Field="Favourites">收藏夹</string>
+  <string Field="Filter">过滤器</string>
+  <string Field="FullUpdate">全部更新</string>
+
+  <!-- G -->
+  <string Field="Genre">流派</string>
+  <string Field="GettingVideoDetails">获取视频详情中</string>
+  <string Field="GettingCategoryVideos">获取目录视频中</string>
+  <string Field="GettingFavoriteVideos">获取收藏夹视频中</string>
+  <string Field="GettingSearchResults">获取搜索结果中</string>
+  <string Field="GettingRelatedVideos">获取相关的视频中</string>
+  <string Field="GettingFilteredVideos">获取过滤后的视频中</string>
+  <string Field="GettingNextPageVideos">获取下页视频中</string>
+  <string Field="GettingPreviousPageVideos">获取前页视频中</string>
+  <string Field="GettingPlaybackUrlsForVideo">获取视频播放 urls 路径中</string>
+  <string Field="GettingDynamicCategories">获取动态目录中</string>
+  <string Field="GettingReports">获取网页服务反馈中</string>
+  <string Field="GettingSiteXml">从网页服务获取站点 xml 中</string>
+  <string Field="GettingIcon">从网页服务获取站点图标中</string>
+  <string Field="GettingBanner">从网页服务获取站点 banner 中</string>
+  <string Field="GettingDll">从网页服务获取 dll 中</string>
+  <string Field="Groups">分组</string>  
+
+  <!-- H -->
+
+  <!-- I -->
+
+  <!-- L -->
+  <string Field="LatestVersionRequired">最新版本 ({0}) 需要的！</string>
+  <string Field="Language">语言</string>
+  <string Field="LayoutList">布局：列表</string>
+  <string Field="LayoutIcons">布局：图标</string>
+  <string Field="LayoutBigIcons">布局：大图标</string>
+
+  <!-- M -->
+  <string Field="ManageSites">管理站点</string>
+  <string Field="MaxResults">最大结果</string>
+
+  <!-- N -->
+  <string Field="Name">名称</string>
+  <string Field="NextPage">下页</string>
+  <string Field="NewVideos">新视频</string>
+  <string Field="None">无</string>
+  <string Field="NoVideoFound">没有找到视频</string>
+  <string Field="NoReportsForSite">没有此站点可用的反馈。</string>
+  <string Field="NewDllDownloaded">新 dll 已下载！</string>
+  <string Field="NewSearch">新搜索</string>
+
+  <!-- O -->
+  <string Field="Others">其它的</string>
+
+  <!-- P -->
+  <string Field="PlayAll">其它的</string>
+  <string Field="PlayWith">播放使用......</string>
+  <string Field="PleaseEnterDescription">请给以一个简单说明。</string>
+  <string Field="PlotOutline">剧情简介</string>
+  <string Field="PreviousPage">前页</string>
+  <string Field="PerformAutomaticUpdate">执行自动更新吗？</string>
+
+  <!-- R -->
+  <string Field="RemoveFromFavorites">从收藏夹中移除</string>
+  <string Field="RemovingFromFavorites">从收藏夹移除中</string>
+  <string Field="Refresh">刷新</string>
+  <string Field="RelatedVideos">相关视频</string>
+  <string Field="ReportBroken">反馈中断</string>
+  <string Field="Reported">已反馈的</string>
+  <string Field="Reports">反馈</string>
+  <string Field="Runtime">运行时间</string>
+  <string Field="RemoveFromMySites">从我的站点移除</string>
+  <string Field="RestartMediaPortal">重启 MediaPortal！</string>
+  <string Field="RetrievingRemoteDlls">重获远程 dll.....</string>
+  <string Field="RetrievingRemoteSites">重获远程站点......</string>
+
+  <!-- S -->
+  <string Field="SearchHistory">搜索历史</string>
+  <string Field="SearchResults">搜索结果</string>
+  <string Field="SelectSource">选择源</string>
+  <string Field="Sites">站点</string>
+  <string Field="Size">大小</string>  
+  <string Field="SortOptions">排序选项</string>
+  <string Field="Search">搜索</string>
+  <string Field="SetDownloadFolderInConfig">请在配置中设置一个下载文件！</string>
+  <string Field="State">状态</string>
+  <string Field="SavingLocalSiteList">保存本地站点列表中......</string>
+  <string Field="ShowReports">显示创建者和用户反馈</string>
+  <string Field="StartingPlayback">开始播放</string>
+  <string Field="Subscriptions">订阅</string>
+  
+  <!-- T -->
+  <string Field="Timeframe">时间帧</string>
+  <string Field="Timeout">超时</string>
+  <string Field="Tags">标签</string>
+
+  <!-- U -->
+  <string Field="Updated">已更新的</string>
+  <string Field="Updatable">可更新的</string>
+  <string Field="UpdateAll">更新/添加 所有</string>
+  <string Field="UpdateAllSkipCategories">更新/添加 所有（省略目录）</string>
+  <string Field="UpdateMySite">更新我的站点</string>
+  <string Field="UpdateMySiteSkipCategories">更新我的站点（省略目录）</string>
+  <string Field="UpdateAllYourSites">这将更新你所有当前站点。</string>
+  <string Field="UnableToPlayVideo">不能播放视频。没有 URL。</string>
+  <string Field="UnableToDownloadVideo">不能下载视频。非法的 URL。</string>
+  <string Field="UploadsBy">上传者</string>
+
+  <!-- V -->
+  <string Field="Videos">视频</string>
+
+  <!-- W -->
+  <string Field="Working">工作中</string>
+  <string Field="Writers">编剧</string>
+
+  <!-- Y -->
+
+</strings>
