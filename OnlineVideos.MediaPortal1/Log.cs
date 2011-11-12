@@ -32,11 +32,13 @@ namespace OnlineVideos.MediaPortal1
         }
 		#endregion
 
+		log4net.Core.Level minLevel = log4net.Core.Level.All;
+		public log4net.Core.Level LogLevel { get { return minLevel; } }
+
 		log4net.ILog logger;
 
 		private Log() 
 		{
-			log4net.Core.Level minLevel = log4net.Core.Level.All;
 			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
 			{
 				var MPminLevel = (MediaPortal.Services.Level)Enum.Parse(typeof(MediaPortal.Services.Level), xmlreader.GetValueAsString("general", "loglevel", "2"));
