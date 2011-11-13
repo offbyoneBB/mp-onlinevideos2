@@ -13,7 +13,7 @@ namespace Standalone
         {
             Type type = item.GetType();
             if (type.IsGenericType) type = type.GetGenericArguments().Last();
-            while (type.BaseType != typeof(object)) type = type.BaseType;
+            while (type.BaseType != typeof(object) && type.BaseType != typeof(MarshalByRefObject)) type = type.BaseType;
             return Application.Current.Resources[type.Name] as DataTemplate;            
         }
     }
