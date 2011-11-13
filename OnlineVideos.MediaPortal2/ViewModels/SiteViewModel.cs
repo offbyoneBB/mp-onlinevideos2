@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MediaPortal.Core.General;
+using MediaPortal.Common.General;
 
 namespace OnlineVideos.MediaPortal2
 {

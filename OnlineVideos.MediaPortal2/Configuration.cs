@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MediaPortal.Core.Settings;
-using MediaPortal.Core.Configuration.ConfigurationClasses;
+using MediaPortal.Common.Settings;
+using MediaPortal.Common.Configuration.ConfigurationClasses;
 
 namespace OnlineVideos.MediaPortal2.Configuration
 {

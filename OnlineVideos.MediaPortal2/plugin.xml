@@ -24,8 +24,8 @@
   <Register Location="/VideoPlayers/MimeTypeRegistrations">
     <VideoPlayerMimeTypeMapping Id="ovs" ClassName="OnlineVideos.MediaPortal2.OnlineVideosPlayer" MimeType="video/online"/>
   </Register>
-
-  <Register Location="/Media/MediaProviders">
+  
+  <Register Location="/Media/ResourceProviders">
     <Instance Id="6DA68FCA-4701-47D7-A0B5-1AA982F0200C" ClassName="OnlineVideos.MediaPortal2.RawUrlMediaProvider"/>
   </Register>
 

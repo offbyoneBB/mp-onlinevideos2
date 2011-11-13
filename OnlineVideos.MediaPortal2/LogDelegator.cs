@@ -1,6 +1,6 @@
-﻿using MediaPortal.Core.Logging;
-using MediaPortal.Core;
-using System;
+﻿using System;
+using MediaPortal.Common.Logging;
+using MediaPortal.Common;
 
 namespace OnlineVideos.MediaPortal2
 {
