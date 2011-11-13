@@ -132,11 +132,11 @@
                             <ColumnDefinition Width="0.5*"/>
                         </Grid.ColumnDefinitions>
                         <WrapPanel Margin="0 0 0 5">
-                            <TextBlock Text="{Binding Source={x:Static ovs:Translation.Runtime}, StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtLength, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
+                            <TextBlock Text="{Binding Source={x:Static ovs:Translation.Instance}, Path=Runtime, StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtLength, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
                             <TextBlock x:Name="txtLength" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Length}"/>
                         </WrapPanel>
                         <WrapPanel Grid.Column="1" Margin="0 0 0 5">
-                            <TextBlock Text="{Binding Source={x:Static ovs:Translation.Airdate}, StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtAired, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
+                            <TextBlock Text="{Binding Source={x:Static ovs:Translation.Instance}, Path=Airdate, StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtAired, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
                             <TextBlock x:Name="txtAired" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Airdate}"/>
                         </WrapPanel>
                     </Grid>
