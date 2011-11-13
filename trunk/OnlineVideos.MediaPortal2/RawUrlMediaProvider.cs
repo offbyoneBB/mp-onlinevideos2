@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MediaPortal.Core.MediaManagement.ResourceAccess;
-using MediaPortal.Core.MediaManagement;
+using MediaPortal.Common.ResourceAccess;
+using MediaPortal.Common.MediaManagement;
 
 namespace OnlineVideos.MediaPortal2
 {
-    public class RawUrlMediaProvider : IBaseMediaProvider
+	public class RawUrlMediaProvider : IBaseResourceProvider
     {
         #region Public constants
 
@@ -25,7 +25,7 @@ namespace OnlineVideos.MediaPortal2
 
         #region Protected fields
 
-        protected MediaProviderMetadata _metadata;
+		protected ResourceProviderMetadata _metadata;
 
         #endregion
 
@@ -33,7 +33,7 @@ namespace OnlineVideos.MediaPortal2
 
         public RawUrlMediaProvider()
         {
-            _metadata = new MediaProviderMetadata(RAW_URL_MEDIA_PROVIDER_ID, "OnlineVideos Url mediaprovider");
+			_metadata = new ResourceProviderMetadata(RAW_URL_MEDIA_PROVIDER_ID, "OnlineVideos Url mediaprovider", true);
         }
 
         #endregion
@@ -52,7 +52,7 @@ namespace OnlineVideos.MediaPortal2
             if (IsResource(pathStr))
                 return new ResourcePath(new ProviderPathSegment[]
                 {
-                    new ProviderPathSegment(_metadata.MediaProviderId, pathStr, true), 
+                    new ProviderPathSegment(_metadata.ResourceProviderId, pathStr, true), 
                 });
             else
                 return null;
@@ -73,9 +73,9 @@ namespace OnlineVideos.MediaPortal2
 
         #endregion
 
-        #region IMediaProvider Member
+		#region IResourceProvider Member
 
-        public MediaPortal.Core.MediaManagement.MediaProviderMetadata Metadata
+		public ResourceProviderMetadata Metadata
         {
             get { return _metadata; }
         }

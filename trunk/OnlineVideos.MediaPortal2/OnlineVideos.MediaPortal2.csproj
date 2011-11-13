@@ -40,9 +40,8 @@
     <Reference Include="Media">
       <HintPath>..\..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\Media\Media.dll</HintPath>
     </Reference>
-    <Reference Include="MediaPortal.Core">
-      <HintPath>..\..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.Core.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="MediaPortal.Common">
+      <HintPath>..\..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.Common.dll</HintPath>
     </Reference>
     <Reference Include="MediaPortal.UI">
       <HintPath>..\..\..\MediaPortal2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.UI.dll</HintPath>

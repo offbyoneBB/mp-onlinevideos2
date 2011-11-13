@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MediaPortal.Core.MediaManagement.ResourceAccess;
+using MediaPortal.Common.ResourceAccess;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -57,7 +57,7 @@ namespace OnlineVideos.MediaPortal2
             return null;
         }
 
-        public IMediaProvider ParentProvider
+        public IResourceProvider ParentProvider
         {
             get { return provider; }
         }
@@ -76,6 +76,19 @@ namespace OnlineVideos.MediaPortal2
         {
             get { return rawUrl; }
         }
+
+		public ResourcePath CanonicalLocalResourcePath
+		{
+			get
+			{
+				return ResourcePath.BuildBaseProviderPath(RawUrlMediaProvider.RAW_URL_MEDIA_PROVIDER_ID, RawUrlMediaProvider.ToProviderResourcePath(rawUrl).Serialize());
+			}
+		}
+
+		public IResourceAccessor Clone()
+		{
+			return new RawUrlResourceAccessor(provider, rawUrl);
+		}
 
         public long Size
         {
@@ -116,7 +129,7 @@ namespace OnlineVideos.MediaPortal2
             return null;
         }
 
-        public IResourceAccessor GetResource(string path)
+		public IFileSystemResourceAccessor GetResource(string path)
         {
             return null;
         }

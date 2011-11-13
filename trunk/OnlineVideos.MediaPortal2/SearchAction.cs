@@ -1,6 +1,6 @@
 ﻿using System;
-using MediaPortal.Core;
-using MediaPortal.Core.Localization;
+using MediaPortal.Common;
+using MediaPortal.Common.Localization;
 using MediaPortal.UI.Presentation.Workflow;
 
 namespace OnlineVideos.MediaPortal2
@@ -16,7 +16,7 @@ namespace OnlineVideos.MediaPortal2
 
         #region IWorkflowContributor Member
 
-        public MediaPortal.Core.Localization.IResourceString DisplayTitle
+        public IResourceString DisplayTitle
         {
             get { return _displayTitle; }
         }

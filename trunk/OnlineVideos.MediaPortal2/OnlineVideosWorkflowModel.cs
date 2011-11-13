@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MediaPortal.Core;
-using MediaPortal.Core.General;
-using MediaPortal.Core.MediaManagement;
-using MediaPortal.Core.MediaManagement.DefaultItemAspects;
-using MediaPortal.Core.SystemResolver;
-using MediaPortal.Core.Threading;
+using MediaPortal.Common;
+using MediaPortal.Common.General;
+using MediaPortal.Common.MediaManagement;
+using MediaPortal.Common.MediaManagement.DefaultItemAspects;
+using MediaPortal.Common.SystemResolver;
+using MediaPortal.Common.Settings;
+using MediaPortal.Common.Threading;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
 using OnlineVideos.Sites;
-using MediaPortal.Core.Settings;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -52,7 +52,7 @@ namespace OnlineVideos.MediaPortal2
             OnlineVideoSettings.Instance.SiteUtilsList.Values.ToList().ForEach(s => SitesList.Add(new SiteViewModel(s) { HasFocus = SitesList.Count == 0 }));
 
             // add a special reversed proxy handler for rtmp
-            ReverseProxy.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); 
+            ReverseProxy.Instance.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); 
         }
 
         protected AbstractProperty _searchStringProperty = new WProperty(typeof(string), string.Empty);
@@ -207,7 +207,7 @@ namespace OnlineVideos.MediaPortal2
                             int selectNr = VideosList.Count;
                             foreach (VideoInfoViewModel video in VideosList) video.HasFocus = false;
                             nextPageVideos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoInfoViewModel(r) { HasFocus = VideosList.Count == selectNr }); });
-                            if (SelectedSite.HasNextPage) VideosList.Add(new VideoInfoViewModel(Translation.NextPage, "NextPage.png"));
+                            if (SelectedSite.HasNextPage) VideosList.Add(new VideoInfoViewModel(Translation.Instance.NextPage, "NextPage.png"));
                             VideosList.FireChange();
                             ImageDownloader.GetImages<VideoInfo>(nextPageVideos);
                         });
@@ -341,7 +341,7 @@ namespace OnlineVideos.MediaPortal2
                         {
                             Category searchCategory = new Category()
                             {
-                                Name = Translation.SearchResults + " [" + SearchString + "]",
+                                Name = Translation.Instance.SearchResults + " [" + SearchString + "]",
                                 HasSubCategories = true,
                                 SubCategoriesDiscovered = true,
                             };
@@ -405,7 +405,7 @@ namespace OnlineVideos.MediaPortal2
             VideosList = new ItemsList();
             videos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoInfoViewModel(r) { HasFocus = VideosList.Count == 0 }); });
 
-            if (SelectedSite.HasNextPage) VideosList.Add(new VideoInfoViewModel(Translation.NextPage, "NextPage.png"));
+            if (SelectedSite.HasNextPage) VideosList.Add(new VideoInfoViewModel(Translation.Instance.NextPage, "NextPage.png"));
 
             ImageDownloader.GetImages<VideoInfo>(videos);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
