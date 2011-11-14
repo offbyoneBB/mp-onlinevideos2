@@ -581,27 +581,16 @@ namespace OnlineVideos.Sites
 
                 parent.GetBaseCookie();
                 string webData = GetWebData(newUrl, parent.cc);
-                string savUrl = url;
 
-                string vidId = GetSubString(webData, @"FlashVars=""input=", @"""");
-                if (String.IsNullOrEmpty(vidId) && newUrl.IndexOf("deschide.php") >= 0)
+                if (parent.isWatchMovies)
                 {
-                    string docId = GetSubString(webData, "docid=", "&"); // for documentaries
-                    if (!String.IsNullOrEmpty(docId))
-                        url = @"http://video.google.com/videofeed?fgvns=1&fai=1&docid=" + docId + "&hl=undefined";
-                    else
-                    {
-                        docId = GetSubString(webData, @"videoFile: '", @"'"); // for shows
-                        if (!String.IsNullOrEmpty(docId))
-                            return docId;
-                    }
+                    string vidId = GetSubString(webData, @"FlashVars=""input=", @"""");
+                    url = GetRedirectedUrl(parent.baseUrl + @"/open_link.php?input=" + vidId);
                 }
                 else
                 {
-                    if (newUrl.StartsWith(@"http://watch-movies"))
-                        url = GetRedirectedUrl(parent.baseUrl + @"/open_link.php?input=" + vidId);
-                    else
-                        url = GetRedirectedUrl(parent.baseUrl + @"/open_link.php?vari=" + vidId);
+                    url = Regex.Match(webData, @"<a\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay").Groups["url"].Value;
+                    url = GetRedirectedUrl(url);
                 }
                 return GetVideoUrl(url);
             }
