@@ -116,6 +116,9 @@ namespace OnlineVideos.MediaPortal1
 						newDataSaved = false;
 						OnlineVideoSettings.Instance.BuildSiteUtilsList();
 						PluginConfiguration.Instance.BuildAutomaticSitesGroups();
+						// reset the GuiOnlineVideos instance
+						GUIOnlineVideos ovGuiInstance = (GUIOnlineVideos)GUIWindowManager.GetWindow(GUIOnlineVideos.WindowId);
+						if (ovGuiInstance != null) ovGuiInstance.ResetToFirstView();
 					}
 					break;
 			}
