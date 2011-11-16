@@ -624,7 +624,7 @@ namespace OnlineVideos.MediaPortal1
         {
             if (versionOnline == null)
             {
-                versionOnline = GUISiteUpdater.VersionCheck();
+                versionOnline = OnlineVideos.Sites.Updater.VersionOnline;
             }
             if (versionOnline == null)
             {

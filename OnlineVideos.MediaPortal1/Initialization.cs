@@ -47,12 +47,7 @@ namespace OnlineVideos.MediaPortal1
 				if (PluginConfiguration.Instance.updateOnStart == true &&
 					PluginConfiguration.Instance.lastFirstRun.AddHours(PluginConfiguration.Instance.updatePeriod) > DateTime.Now)
 				{
-					GUISiteUpdater guiUpdater = (GUISiteUpdater)GUIWindowManager.GetWindow(GUISiteUpdater.WindowId);
-					if (guiUpdater != null)
-					{
-						guiUpdater.AutoUpdate(null);
-						GUIOnlineVideos.cachedImageForSite.Clear();
-					}
+					OnlineVideos.Sites.Updater.UpdateSites();
 					ImageDownloader.DeleteOldThumbs(PluginConfiguration.Instance.ThumbsAge, r => { return true; });
 					PluginConfiguration.Instance.lastFirstRun = DateTime.Now;
 				}
@@ -126,11 +121,24 @@ namespace OnlineVideos.MediaPortal1
 						if (doUpdate == true && guiUpdater != null)
 						{
 							if (dlgPrgrs != null) dlgPrgrs.SetHeading(string.Format("{0} - {1}", PluginConfiguration.Instance.BasicHomeScreenName, Translation.Instance.AutomaticUpdate));
-							if (guiUpdater.AutoUpdate(dlgPrgrs))
+							bool? updateResult = OnlineVideos.Sites.Updater.UpdateSites((m, p) =>
+								{
+									if (dlgPrgrs != null)
+									{
+										if (!string.IsNullOrEmpty(m)) dlgPrgrs.SetLine(1, m);
+										if (p != null) dlgPrgrs.SetPercentage(p.Value);
+										return dlgPrgrs.ShouldRenderLayer();
+									}
+									else return true;
+								}
+								);
+							if (updateResult == true && OnlineVideoSettings.Instance.SiteUtilsList.Count > 0) guiUpdater.ReloadDownloadedDlls();
+							else if (updateResult == null || OnlineVideoSettings.Instance.SiteUtilsList.Count > 0) OnlineVideoSettings.Instance.BuildSiteUtilsList();
+							if (updateResult != false)
 							{
-								guiUpdater.ReloadDownloadedDlls();
+								PluginConfiguration.Instance.BuildAutomaticSitesGroups();
+								GUIOnlineVideos.cachedImageForSite.Clear();
 							}
-							GUIOnlineVideos.cachedImageForSite.Clear();
 						}
 						if (PluginConfiguration.Instance.ThumbsAge >= 0)
 						{

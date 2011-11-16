@@ -49,7 +49,7 @@ namespace Standalone
             else if (Visibility == System.Windows.Visibility.Visible)
             {
                 rememberedIndex = (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.SelectedIndex;
-                lvSites.ItemsSource = SiteManager.GetOnlineSites();
+                lvSites.ItemsSource = OnlineVideos.Sites.Updater.OnlineSites;
                 (App.Current.MainWindow as OnlineVideosMainWindow).listViewMain.SelectedIndex = -1;
             }
         }
@@ -75,26 +75,16 @@ namespace Standalone
         private void AddSite(object sender, RoutedEventArgs e)
         {
             OnlineVideos.OnlineVideosWebservice.Site site = (sender as FrameworkElement).DataContext as OnlineVideos.OnlineVideosWebservice.Site;
-            SiteSettings newSite = SiteManager.GetRemoteSite(site.Name);
-            if (newSite != null)
-            {
-                int storedIndex = lvSites.SelectedIndex;
-                if (!string.IsNullOrEmpty(site.RequiredDll))
-                {
-                    bool? errorForDll = SiteManager.DownloadDll(SiteManager.GetOnlineDlls().FirstOrDefault(dll => dll.Name == site.RequiredDll));
-                    if (errorForDll == true) MessageBox.Show(App.Current.MainWindow, Translation.Instance.NewDllDownloaded, Translation.Instance.RestartMediaPortal, MessageBoxButton.OK);
-                    if (errorForDll == false) { MessageBox.Show(App.Current.MainWindow, Translation.Instance.Error, Translation.Instance.GettingDll, MessageBoxButton.OK); return; }
-                }
-                OnlineVideoSettings.Instance.SiteSettingsList.Add(newSite);
-                OnlineVideoSettings.Instance.SaveSites();
-                OnlineVideoSettings.Instance.BuildSiteUtilsList();
-                // refresh this list
-                lvSites.ItemsSource = null;
-                lvSites.ItemsSource = SiteManager.GetOnlineSites();
-                lvSites.SelectedIndex = storedIndex;
-                Dispatcher.BeginInvoke((Action)(() => { (lvSites.ItemContainerGenerator.ContainerFromIndex(lvSites.SelectedIndex) as ListViewItem).Focus(); }), DispatcherPriority.Input);
-                changes = true;
-            }
+			bool? result = OnlineVideos.Sites.Updater.UpdateSites(null, new List<OnlineVideos.OnlineVideosWebservice.Site> { site }, false, false);
+			if (result != false)
+			{
+				OnlineVideoSettings.Instance.BuildSiteUtilsList();
+				// refresh this list
+				lvSites.ItemsSource = null;
+				lvSites.ItemsSource = OnlineVideos.Sites.Updater.OnlineSites;
+				Dispatcher.BeginInvoke((Action)(() => { (lvSites.ItemContainerGenerator.ContainerFromItem(site) as ListViewItem).Focus(); }), DispatcherPriority.Input);
+				changes = true;
+			}
         }
 
         private void RemoveSite(object sender, RoutedEventArgs e)
@@ -109,15 +99,13 @@ namespace Standalone
                 }
             if (localSiteIndex != -1)
             {
-                int storedIndex = lvSites.SelectedIndex;
                 OnlineVideoSettings.Instance.SiteSettingsList.RemoveAt(localSiteIndex);
                 OnlineVideoSettings.Instance.SaveSites();
                 OnlineVideoSettings.Instance.BuildSiteUtilsList();
                 // refresh this list
                 lvSites.ItemsSource = null;
-                lvSites.ItemsSource = SiteManager.GetOnlineSites();
-                lvSites.SelectedIndex = storedIndex;
-                Dispatcher.BeginInvoke((Action)(() => { (lvSites.ItemContainerGenerator.ContainerFromIndex(lvSites.SelectedIndex) as ListViewItem).Focus(); }), DispatcherPriority.Input);
+				lvSites.ItemsSource = OnlineVideos.Sites.Updater.OnlineSites;
+                Dispatcher.BeginInvoke((Action)(() =>  { (lvSites.ItemContainerGenerator.ContainerFromItem(site) as ListViewItem).Focus(); }), DispatcherPriority.Input);
                 changes = true;
             }
         }

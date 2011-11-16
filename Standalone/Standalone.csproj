@@ -114,7 +114,6 @@
     <Compile Include="SearchDialog.xaml.cs">
       <DependentUpon>SearchDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SiteManager.cs" />
     <Compile Include="TemplateSelector.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="WPFMediaKit\DirectShow\Controls\D3DRenderer.cs" />
