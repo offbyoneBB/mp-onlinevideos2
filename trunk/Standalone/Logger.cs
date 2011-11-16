@@ -6,8 +6,16 @@ using OnlineVideos;
 
 namespace Standalone
 {
-    public class Logger : ILog
+	public class Logger : MarshalByRefObject, ILog
     {
+		#region MarshalByRefObject overrides
+		public override object InitializeLifetimeService()
+		{
+			// In order to have the lease across appdomains live forever, we return null.
+			return null;
+		}
+		#endregion
+
         NLog.Logger logger;
 
         public Logger(string dir)
