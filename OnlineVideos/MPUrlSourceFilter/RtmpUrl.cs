@@ -33,6 +33,12 @@ namespace OnlineVideos.MPUrlSourceFilter
         {
         }
 
+		public RtmpUrl(string tcUrl, string hostname, int port)
+			: this(new Uri((!string.IsNullOrEmpty(tcUrl) ? new Uri(tcUrl).Scheme : "rtmp") + "://" + hostname + (port > 0 ? ":" + port : "")))
+		{
+			this.TcUrl = tcUrl;
+		}
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="RtmpUrl"/> class.
         /// </summary>

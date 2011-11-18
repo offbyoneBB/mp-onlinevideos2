@@ -79,21 +79,23 @@ namespace OnlineVideos.MediaPortal1.Player
         {
             string sourceFilterName;
             Uri uri = new Uri(CurrentFile);
-            switch (uri.Scheme)
-            {
-                case "http":
-                    sourceFilterName = PluginConfiguration.Instance.httpSourceFilterName;
-                    break;
-                case "sop":
-                    sourceFilterName = "SopCast ASF Splitter";
-                    break;
-                case "mms":
-                    sourceFilterName = "WM ASF Reader";
-                    break;
-                default:
-                    sourceFilterName = CurrentFile.ToLower().Contains(".asf") ? "WM ASF Reader" : string.Empty;
-                    break;
-            }
+			string protocol = uri.Scheme.Substring(0, Math.Min(uri.Scheme.Length, 4));
+			switch (uri.Scheme)
+			{
+				case "http":
+				case "rtmp":
+					sourceFilterName = PluginConfiguration.Instance.httpSourceFilterName;
+					break;
+				case "sop":
+					sourceFilterName = "SopCast ASF Splitter";
+					break;
+				case "mms":
+					sourceFilterName = "WM ASF Reader";
+					break;
+				default:
+					sourceFilterName = CurrentFile.ToLower().Contains(".asf") ? "WM ASF Reader" : string.Empty;
+					break;
+			}
 
             return sourceFilterName;
         }

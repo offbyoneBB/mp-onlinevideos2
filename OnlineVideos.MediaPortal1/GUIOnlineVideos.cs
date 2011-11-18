@@ -1951,13 +1951,6 @@ namespace OnlineVideos.MediaPortal1
 
             currentPlayingItem = null;
 
-            // translate rtmp urls to the local proxy
-            if (new Uri(lsUrl).Scheme.ToLower().StartsWith("rtmp"))
-            {
-                lsUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(lsUrl)));
-            }
-
             OnlineVideos.MediaPortal1.Player.PlayerFactory factory = new OnlineVideos.MediaPortal1.Player.PlayerFactory(playItem.ForcedPlayer != null ? playItem.ForcedPlayer.Value : playItem.Util.Settings.Player, lsUrl);
             if (factory.PreparedPlayerType != PlayerType.Internal)
             {
