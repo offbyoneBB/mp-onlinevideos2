@@ -59,13 +59,7 @@ namespace OnlineVideos.Sites
                         if (playpath.ToLower().EndsWith(".mp4")) playpath = "mp4:" + playpath;
                         src = src.Replace("ondemand/?", "ondemand/?ovpfv=1.1&?");
                         src = src.Substring(0, src.IndexOf("<break>"));
-                        
-                        return ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&pageurl={1}&swfurl={2}&playpath={3}", 
-                                    System.Web.HttpUtility.UrlEncode(src), 
-                                    System.Web.HttpUtility.UrlEncode(video.VideoUrl),
-                                    System.Web.HttpUtility.UrlEncode("http://www.cbs.com/thunder/chromeless/metacafe.swf"),
-                                    System.Web.HttpUtility.UrlEncode(playpath)));
+						return new MPUrlSourceFilter.RtmpUrl(src) { PageUrl = video.VideoUrl, SwfUrl = "http://www.cbs.com/thunder/chromeless/metacafe.swf", PlayPath = playpath }.ToString();
                     }
                     else return "";
                 }
