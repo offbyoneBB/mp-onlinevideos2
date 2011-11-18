@@ -206,15 +206,8 @@ namespace OnlineVideos.Sites
 
         public override String getUrl(VideoInfo video)
         {
-            RTMP_LIB.Link link = YahooRTMPLinkCatcher(video.VideoUrl);
-            string resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, 
-                string.Format("http://127.0.0.1/stream.flv?app={0}&tcUrl={1}&hostname={2}&port={3}&playpath={4}",
-                    System.Web.HttpUtility.UrlEncode(link.app),
-                    System.Web.HttpUtility.UrlEncode(link.tcUrl),
-                    System.Web.HttpUtility.UrlEncode(link.hostname),
-                    link.port,
-                    System.Web.HttpUtility.UrlEncode(link.playpath)));
-            return resultUrl;
+			RTMP_LIB.Link link = YahooRTMPLinkCatcher(video.VideoUrl);
+			return new MPUrlSourceFilter.RtmpUrl(link.tcUrl, link.hostname, link.port) { App = link.app, PlayPath = link.playpath } .ToString();
         }
         
         RTMP_LIB.Link YahooRTMPLinkCatcher(string videoId)
