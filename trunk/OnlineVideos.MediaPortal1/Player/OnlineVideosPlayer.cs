@@ -80,7 +80,7 @@ namespace OnlineVideos.MediaPortal1.Player
             string sourceFilterName;
             Uri uri = new Uri(CurrentFile);
 			string protocol = uri.Scheme.Substring(0, Math.Min(uri.Scheme.Length, 4));
-			switch (uri.Scheme)
+			switch (protocol)
 			{
 				case "http":
 				case "rtmp":
