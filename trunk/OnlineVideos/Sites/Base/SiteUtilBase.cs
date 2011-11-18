@@ -523,7 +523,7 @@ namespace OnlineVideos.Sites
                 // UTF8 is the default encoding as fallback
                 Encoding responseEncoding = Encoding.UTF8;
                 // try to get the response encoding if one was specified and neither forceUTF8 nor encoding were set as parameters
-                if (!forceUTF8 && encoding == null && !String.IsNullOrEmpty(response.CharacterSet.Trim())) responseEncoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
+                if (!forceUTF8 && encoding == null && response.CharacterSet != null && !String.IsNullOrEmpty(response.CharacterSet.Trim())) responseEncoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
                 // the caller did specify a forced encoding
                 if (encoding != null) responseEncoding = encoding;
                 // the caller wants to force UTF8
