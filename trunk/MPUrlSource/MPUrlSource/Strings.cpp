@@ -201,3 +201,133 @@ wchar_t *FormatStringW(const wchar_t *format, ...)
 
   return result;
 }
+
+char *ReplaceStringA(const char *string, const char *searchString, const char *replaceString)
+{
+  if ((string == NULL) || (searchString == NULL) || (replaceString == NULL))
+  {
+    return NULL;
+  }
+
+  unsigned int resultLength = 0;
+  char *resultString = NULL;
+
+  unsigned int stringLength = strlen(string);
+  unsigned int searchStringLength = strlen(searchString);
+  unsigned int replaceStringLength = strlen(replaceString);
+
+  for (unsigned int i = 0; i < stringLength; i++)
+  {
+    if (strncmp(string + i, searchString, searchStringLength) == 0)
+    {
+      // we found search string in string
+      // increase result length by lenght of replace string
+      resultLength += replaceStringLength;
+
+      // skip remaining characters of search string
+      i += searchStringLength - 1;
+    }
+    else
+    {
+      // we not found search string
+      // current character goes to result
+      // increase result length
+      resultLength++;
+    }
+  }
+
+  // we got result length
+  // increase it by one (null character)
+  resultLength++;
+  // allocate memory and start copying and replacing
+  resultString = ALLOC_MEM_SET(resultString, char, resultLength, 0);
+  if (resultString != NULL)
+  {
+    unsigned int j = 0;
+    for (unsigned int i = 0; i < stringLength; i++)
+    {
+      if (strncmp(string + i, searchString, searchStringLength) == 0)
+      {
+        // we found search string in string
+        memcpy(resultString + j, replaceString, replaceStringLength * sizeof(char));
+        j += replaceStringLength;
+
+        // skip remaining characters of search string
+        i += searchStringLength - 1;
+      }
+      else
+      {
+        // we not found search string
+        // just copy character to output
+        resultString[j++] = string[i];
+      }
+    }
+  }
+
+  return resultString;
+}
+
+wchar_t *ReplaceStringW(const wchar_t *string, const wchar_t *searchString, const wchar_t *replaceString)
+{
+  if ((string == NULL) || (searchString == NULL) || (replaceString == NULL))
+  {
+    return NULL;
+  }
+
+  unsigned int resultLength = 0;
+  wchar_t *resultString = NULL;
+
+  unsigned int stringLength = wcslen(string);
+  unsigned int searchStringLength = wcslen(searchString);
+  unsigned int replaceStringLength = wcslen(replaceString);
+
+  for (unsigned int i = 0; i < stringLength; i++)
+  {
+    if (wcsncmp(string + i, searchString, searchStringLength) == 0)
+    {
+      // we found search string in string
+      // increase result length by lenght of replace string
+      resultLength += replaceStringLength;
+
+      // skip remaining characters of search string
+      i += searchStringLength - 1;
+    }
+    else
+    {
+      // we not found search string
+      // current character goes to result
+      // increase result length
+      resultLength++;
+    }
+  }
+
+  // we got result length
+  // increase it by one (null character)
+  resultLength++;
+  // allocate memory and start copying and replacing
+  resultString = ALLOC_MEM_SET(resultString, wchar_t, resultLength, 0);
+  if (resultString != NULL)
+  {
+    unsigned int j = 0;
+    for (unsigned int i = 0; i < stringLength; i++)
+    {
+      if (wcsncmp(string + i, searchString, searchStringLength) == 0)
+      {
+        // we found search string in string
+        memcpy(resultString + j, replaceString, replaceStringLength * sizeof(wchar_t));
+        j += replaceStringLength;
+
+        // skip remaining characters of search string
+        i += searchStringLength - 1;
+      }
+      else
+      {
+        // we not found search string
+        // just copy character to output
+        resultString[j++] = string[i];
+      }
+    }
+  }
+
+  return resultString;
+}

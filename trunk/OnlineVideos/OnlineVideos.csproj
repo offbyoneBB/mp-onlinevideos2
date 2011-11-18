@@ -195,6 +195,15 @@
     <Compile Include="MPUrlSourceFilter\LogVerbosity.cs" />
     <Compile Include="MPUrlSourceFilter\Parameter.cs" />
     <Compile Include="MPUrlSourceFilter\ParameterCollection.cs" />
+    <Compile Include="MPUrlSourceFilter\RtmpArbitraryData.cs" />
+    <Compile Include="MPUrlSourceFilter\RtmpArbitraryDataCollection.cs" />
+    <Compile Include="MPUrlSourceFilter\RtmpArbitraryDataType.cs" />
+    <Compile Include="MPUrlSourceFilter\RtmpBooleanArbitraryData.cs" />
+    <Compile Include="MPUrlSourceFilter\RtmpNullArbitraryData.cs" />
+    <Compile Include="MPUrlSourceFilter\RtmpNumberArbitraryData.cs" />
+    <Compile Include="MPUrlSourceFilter\RtmpObjectArbitraryData.cs" />
+    <Compile Include="MPUrlSourceFilter\RtmpProtocol.cs" />
+    <Compile Include="MPUrlSourceFilter\RtmpStringArbitraryData.cs" />
     <Compile Include="MPUrlSourceFilter\RtmpUrl.cs" />
     <Compile Include="MPUrlSourceFilter\SimpleUrl.cs" />
     <Compile Include="Newtonsoft.Json\Bson\BsonBinaryType.cs" />

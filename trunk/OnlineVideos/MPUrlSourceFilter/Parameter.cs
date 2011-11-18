@@ -25,12 +25,12 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <param name="name">The name of parameter.</param>
         /// <param name="value">The value of parameter.</param>
         /// <exception cref="ArgumentNullException">
-        /// <para>The <see cref="Name"/> is <see langword="null"/>.</para>
+        /// <para>The <see cref="name"/> is <see langword="null"/>.</para>
         /// <para>- or -</para>
-        /// <para>The <see cref="Value"/> is <see langword="null"/>.</para>
+        /// <para>The <see cref="value"/> is <see langword="null"/>.</para>
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// <para>The <see cref="Name"/> is empty string ("").</para>
+        /// <para>The <see cref="name"/> is empty string ("").</para>
         /// </exception>
         public Parameter(String name, String value)
         {
@@ -119,7 +119,7 @@ namespace OnlineVideos.MPUrlSourceFilter
                 throw new ArgumentException("Argument contains invalid characters.", "parameterSeparator");
             }
 
-            return String.Format("{0}{1}{2}", this.Name, Parameter.ParameterAssign, System.Web.HttpUtility.UrlEncode(this.Value));
+            return String.Format("{0}{1}{2}", this.Name, Parameter.ParameterAssign, System.Web.HttpUtility.UrlPathEncode(this.Value));
         }
 
         #endregion

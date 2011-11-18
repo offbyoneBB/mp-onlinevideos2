@@ -4,11 +4,15 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcurl", "libcurl\libcurl.vcxproj", "{B25D4555-F218-410A-A37E-176A17996325}"
 	ProjectSection(ProjectDependencies) = postProject
 		{BE26DC02-05AE-4B2E-ACEF-E3BF39BF31BC} = {BE26DC02-05AE-4B2E-ACEF-E3BF39BF31BC}
+		{BDA0CC2F-E51F-4CD0-AE70-D6073C120026} = {BDA0CC2F-E51F-4CD0-AE70-D6073C120026}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libssh2", "libssh2\libssh2.vcxproj", "{BE26DC02-05AE-4B2E-ACEF-E3BF39BF31BC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSource", "MPUrlSource\MPUrlSource.vcxproj", "{F48DCF06-2C1B-435E-A389-12231DFA5C8D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B25D4555-F218-410A-A37E-176A17996325} = {B25D4555-F218-410A-A37E-176A17996325}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSource_File", "MPUrlSource_File\MPUrlSource_File.vcxproj", "{4215E997-3CF4-45DA-87D5-7FD5CBDC3078}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -17,7 +21,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSource_File", "MPUrlSo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSource_Http", "MPUrlSource_Http\MPUrlSource_Http.vcxproj", "{87E58044-FF74-4E9D-B592-83619028C485}"
 	ProjectSection(ProjectDependencies) = postProject
-		{BE26DC02-05AE-4B2E-ACEF-E3BF39BF31BC} = {BE26DC02-05AE-4B2E-ACEF-E3BF39BF31BC}
+		{F48DCF06-2C1B-435E-A389-12231DFA5C8D} = {F48DCF06-2C1B-435E-A389-12231DFA5C8D}
+		{B25D4555-F218-410A-A37E-176A17996325} = {B25D4555-F218-410A-A37E-176A17996325}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "librtmp", "librtmp\librtmp.vcxproj", "{BDA0CC2F-E51F-4CD0-AE70-D6073C120026}"
+	ProjectSection(ProjectDependencies) = postProject
+		{689B8880-334C-4BEB-8CBA-D512E2F24545} = {689B8880-334C-4BEB-8CBA-D512E2F24545}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "zlib\zlib.vcxproj", "{689B8880-334C-4BEB-8CBA-D512E2F24545}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPUrlSource_Rtmp", "MPUrlSource_Rtmp\MPUrlSource_Rtmp.vcxproj", "{A96533F6-8B52-45A2-864C-FB2239CFEAD5}"
+	ProjectSection(ProjectDependencies) = postProject
 		{F48DCF06-2C1B-435E-A389-12231DFA5C8D} = {F48DCF06-2C1B-435E-A389-12231DFA5C8D}
 		{B25D4555-F218-410A-A37E-176A17996325} = {B25D4555-F218-410A-A37E-176A17996325}
 	EndProjectSection
@@ -48,6 +64,18 @@ Global
 		{87E58044-FF74-4E9D-B592-83619028C485}.Debug|Win32.Build.0 = Debug|Win32
 		{87E58044-FF74-4E9D-B592-83619028C485}.Release|Win32.ActiveCfg = Release|Win32
 		{87E58044-FF74-4E9D-B592-83619028C485}.Release|Win32.Build.0 = Release|Win32
+		{BDA0CC2F-E51F-4CD0-AE70-D6073C120026}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BDA0CC2F-E51F-4CD0-AE70-D6073C120026}.Debug|Win32.Build.0 = Debug|Win32
+		{BDA0CC2F-E51F-4CD0-AE70-D6073C120026}.Release|Win32.ActiveCfg = Release|Win32
+		{BDA0CC2F-E51F-4CD0-AE70-D6073C120026}.Release|Win32.Build.0 = Release|Win32
+		{689B8880-334C-4BEB-8CBA-D512E2F24545}.Debug|Win32.ActiveCfg = Debug|Win32
+		{689B8880-334C-4BEB-8CBA-D512E2F24545}.Debug|Win32.Build.0 = Debug|Win32
+		{689B8880-334C-4BEB-8CBA-D512E2F24545}.Release|Win32.ActiveCfg = Release|Win32
+		{689B8880-334C-4BEB-8CBA-D512E2F24545}.Release|Win32.Build.0 = Release|Win32
+		{A96533F6-8B52-45A2-864C-FB2239CFEAD5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A96533F6-8B52-45A2-864C-FB2239CFEAD5}.Debug|Win32.Build.0 = Debug|Win32
+		{A96533F6-8B52-45A2-864C-FB2239CFEAD5}.Release|Win32.ActiveCfg = Release|Win32
+		{A96533F6-8B52-45A2-864C-FB2239CFEAD5}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

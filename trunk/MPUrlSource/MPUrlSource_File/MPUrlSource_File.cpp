@@ -193,7 +193,17 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
     {
       _tcsncat_s(protocol, length, urlComponents->lpszScheme, urlComponents->dwSchemeLength);
 
-      if (_tcsncicmp(urlComponents->lpszScheme, _T("FILE"), urlComponents->dwSchemeLength) != 0)
+      bool supportedProtocol = false;
+      for (int i = 0; i < TOTAL_SUPPORTED_PROTOCOLS; i++)
+      {
+        if (_tcsncicmp(urlComponents->lpszScheme, SUPPORTED_PROTOCOLS[i], urlComponents->dwSchemeLength) == 0)
+        {
+          supportedProtocol = true;
+          break;
+        }
+      }
+
+      if (!supportedProtocol)
       {
         // not supported protocol
         this->logger->Log(LOGGER_INFO, _T("%s: %s: unsupported protocol '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, protocol);
@@ -393,8 +403,8 @@ void CMPUrlSource_File::ReceiveData(bool *shouldExit)
             this->logger->Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
           }
 
-          this->streamTime += bytesRead;
           this->filter->PushMediaPacket(OUTPUT_PIN_NAME, mediaPacket);
+          this->streamTime += bytesRead;
         }
         FREE_MEM(receiveBuffer);
       }
@@ -480,7 +490,7 @@ HRESULT CMPUrlSource_File::AbortStreamReceive()
 
 HRESULT CMPUrlSource_File::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
 {
-  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME);
+  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME);
 
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, total);
@@ -489,10 +499,10 @@ HRESULT CMPUrlSource_File::QueryStreamProgress(LONGLONG *total, LONGLONG *curren
   if (result == S_OK)
   {
     *total = this->fileLength;
-    *current = this->fileLength;
+    *current = this->streamTime;
   }
 
-  this->logger->Log(LOGGER_VERBOSE, (SUCCEEDED(result)) ? METHOD_END_HRESULT_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME, result);
+  this->logger->Log(LOGGER_DATA, (SUCCEEDED(result)) ? METHOD_END_HRESULT_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME, result);
   return result;
 }
 

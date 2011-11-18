@@ -30,6 +30,7 @@
 #include "transfer.h"
 #include <curl/curl.h>
 #include <librtmp/rtmp.h>
+#include <librtmp/log.h>
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -179,9 +180,16 @@ static CURLcode rtmp_setup(struct connectdata *conn)
   RTMP *r = RTMP_Alloc();
 
   if(!r)
-    return CURLE_OUT_OF_MEMORY;
+    return CURLE_OUT_OF_MEMORY;  
 
   RTMP_Init(r);
+
+  if (conn->data->set.frtmp_log_func != NULL)
+  {
+    RTMP_LogSetCallback(r, conn->data->set.frtmp_log_func);
+  }
+  r->m_logUserData = conn->data->set.curl_rtmp_log_user_data;
+
   RTMP_SetBufferMS(r, DEF_BUFTIME);
   if(!RTMP_SetupURL(r, conn->data->change.url)) {
     RTMP_Free(r);
@@ -193,8 +201,9 @@ static CURLcode rtmp_setup(struct connectdata *conn)
 
 static CURLcode rtmp_connect(struct connectdata *conn, bool *done)
 {
+  int on = 1;
   RTMP *r = conn->proto.generic;
-  SET_RCVTIMEO(tv,10);
+  SET_RCVTIMEO(tv, 10);
 
   r->m_sb.sb_socket = conn->sock[FIRSTSOCKET];
 
@@ -210,8 +219,24 @@ static CURLcode rtmp_connect(struct connectdata *conn, bool *done)
     r->Link.lFlags |= RTMP_LF_BUFX;
 
   curlx_nonblock(r->m_sb.sb_socket, FALSE);
-  setsockopt(r->m_sb.sb_socket, SOL_SOCKET, SO_RCVTIMEO,
-             (char *)&tv, sizeof(tv));
+
+  if (conn->data->set.connecttimeout != 0)
+  {
+    // connect timeout set
+    tv = (int)conn->data->set.connecttimeout;
+  }
+
+  RTMP_Log(r, RTMP_LOGDEBUG, "socket timeout: %d (ms)", tv);
+
+  if (setsockopt(r->m_sb.sb_socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv)) == SOCKET_ERROR)
+  {
+    RTMP_Log(r, RTMP_LOGWARNING, "error while setting timeout on socket: %d", WSAGetLastError());
+  }
+
+  if (setsockopt(r->m_sb.sb_socket, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on)) == SOCKET_ERROR)
+  {
+    RTMP_Log(r, RTMP_LOGWARNING, "error while setting TCP no delay on socket: %d", WSAGetLastError());
+  }
 
   if(!RTMP_Connect1(r, NULL))
     return CURLE_FAILED_INIT;
@@ -274,14 +299,26 @@ static ssize_t rtmp_recv(struct connectdata *conn, int sockindex, char *buf,
   (void)sockindex; /* unused */
 
   nread = RTMP_Read(r, buf, len);
+
+  if (conn->data->set.rtmp_total_duration == 0)
+  {
+    // RTMP stream duration not set
+    conn->data->set.rtmp_total_duration = RTMP_GetDuration(r);
+  }
+
+  conn->data->set.rtmp_current_time = r->m_mediaStamp / 1000;
+
   if(nread < 0) {
     if(r->m_read.status == RTMP_READ_COMPLETE ||
         r->m_read.status == RTMP_READ_EOF) {
+
       conn->data->req.size = conn->data->req.bytecount;
       nread = 0;
     }
     else
+    {
       *err = CURLE_RECV_ERROR;
+    }
   }
   return nread;
 }

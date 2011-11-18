@@ -2503,6 +2503,20 @@ CURLcode Curl_setopt(struct SessionHandle *data, CURLoption option,
       data->set.ssl.authtype = CURL_TLSAUTH_NONE;
     break;
 #endif
+#ifdef USE_LIBRTMP
+  case CURLOPT_RTMP_LOG_CALLBACK:
+    /*
+     * Set RTMP protocol log callback
+     */
+    data->set.frtmp_log_func = va_arg(param, curl_rtmp_log_callback);
+    break;
+  case CURLOPT_RTMP_LOG_USERDATA:
+    /*
+    * Set RTMP protocol log callback user data
+    */
+    data->set.curl_rtmp_log_user_data = va_arg(param, void *);
+    break;
+#endif
   default:
     /* unknown tag and its companion, just ignore: */
     result = CURLE_UNKNOWN_OPTION;

@@ -133,4 +133,14 @@ MPURLSOURCE_API wchar_t *FormatStringW(const wchar_t *format, ...);
 #define FormatString FormatStringW
 #endif
 
+MPURLSOURCE_API char *ReplaceStringA(const char *string, const char *searchString, const char *replaceString);
+
+MPURLSOURCE_API wchar_t *ReplaceStringW(const wchar_t *string, const wchar_t *searchString, const wchar_t *replaceString);
+
+#ifdef _MBCS
+#define ReplaceString ReplaceStringA
+#else
+#define ReplaceString ReplaceStringW
+#endif
+
 #endif

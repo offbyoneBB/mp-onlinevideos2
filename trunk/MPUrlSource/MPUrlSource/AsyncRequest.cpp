@@ -94,6 +94,11 @@ void CAsyncRequest::BufferingData(void)
   this->requestState = CAsyncRequest::Buffering;
 }
 
+void CAsyncRequest::WaitAndIgnoreTimeout(void)
+{
+  this->requestState = CAsyncRequest::WaitingIgnoreTimeout;
+}
+
 CAsyncRequest::AsyncState CAsyncRequest::GetState(void)
 {
   return this->requestState;
