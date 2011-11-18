@@ -40,6 +40,7 @@ public:
   {
     Created,
     Waiting,
+    WaitingIgnoreTimeout,
     Requested,
     Buffering,
     Completed,
@@ -99,6 +100,9 @@ public:
 
   // mark request as buffering data for another request
   void BufferingData(void);
+
+  // mark request as waiting for data and ignore timeout
+  void WaitAndIgnoreTimeout();
 
   // gets current state of async request
   // @return : one of AsyncState values

@@ -122,6 +122,20 @@ long CParameterCollection::GetValueLong(TCHAR *name, bool invariant, long defaul
   return valueLong;
 }
 
+long CParameterCollection::GetValueUnsignedInt(TCHAR *name, bool invariant, unsigned int defaultValue)
+{
+  TCHAR *value = this->GetValue(name, invariant, _T(""));
+  TCHAR *end = NULL;
+  long valueLong = _tcstol(value, &end, 10);
+  if ((valueLong == 0) && (value == end))
+  {
+    // error while converting
+    valueLong = defaultValue;
+  }
+
+  return (unsigned int)valueLong;
+}
+
 bool CParameterCollection::GetValueBool(TCHAR *name, bool invariant, bool defaultValue)
 {
   switch (this->GetValueLong(name, invariant, -1))

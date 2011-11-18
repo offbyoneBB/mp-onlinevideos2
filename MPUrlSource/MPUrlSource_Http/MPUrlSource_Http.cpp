@@ -235,7 +235,17 @@ int CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *pa
     {
       _tcsncat_s(protocol, length, urlComponents->lpszScheme, urlComponents->dwSchemeLength);
 
-      if (_tcsncicmp(urlComponents->lpszScheme, _T("HTTP"), urlComponents->dwSchemeLength) != 0)
+      bool supportedProtocol = false;
+      for (int i = 0; i < TOTAL_SUPPORTED_PROTOCOLS; i++)
+      {
+        if (_tcsncicmp(urlComponents->lpszScheme, SUPPORTED_PROTOCOLS[i], urlComponents->dwSchemeLength) == 0)
+        {
+          supportedProtocol = true;
+          break;
+        }
+      }
+
+      if (!supportedProtocol)
       {
         // not supported protocol
         this->logger->Log(LOGGER_INFO, _T("%s: %s: unsupported protocol '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, protocol);
@@ -721,8 +731,8 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
           caller->logger->Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
         }
 
-        caller->streamTime += bytesRead;
         caller->filter->PushMediaPacket(OUTPUT_PIN_NAME, mediaPacket);
+        caller->streamTime += bytesRead;
       }
     }
   }

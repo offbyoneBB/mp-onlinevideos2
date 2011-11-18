@@ -196,6 +196,11 @@ typedef size_t (*curl_write_callback)(char *buffer,
                                       size_t nitems,
                                       void *outstream);
 
+#ifdef USE_LIBRTMP
+
+typedef void (*curl_rtmp_log_callback) (struct RTMP *r, int level, const char *fmt, va_list);
+
+#endif
 
 
 /* enumeration of file types */
@@ -1486,6 +1491,12 @@ typedef enum {
   /* allow GSSAPI credential delegation */
   CINIT(GSSAPI_DELEGATION, LONG, 210),
 
+  /* callback log function for RTMP protocol */
+  CINIT(RTMP_LOG_CALLBACK, FUNCTIONPOINT, 211),
+
+  /* user data (reference) for RTMP log function */
+  CINIT(RTMP_LOG_USERDATA, OBJECTPOINT, 212),
+
   CURLOPT_LASTENTRY /* the last unused */
 } CURLoption;
 
@@ -1946,7 +1957,10 @@ typedef enum {
   CURLINFO_LOCAL_PORT       = CURLINFO_LONG   + 42,
   /* Fill in new entries below here! */
 
-  CURLINFO_LASTONE          = 42
+  CURLINFO_RTMP_TOTAL_DURATION    = CURLINFO_DOUBLE + 43,
+  CURLINFO_RTMP_CURRENT_TIME      = CURLINFO_DOUBLE + 44,
+
+  CURLINFO_LASTONE          = 45
 } CURLINFO;
 
 /* CURLINFO_RESPONSE_CODE is the new name for the option previously known as

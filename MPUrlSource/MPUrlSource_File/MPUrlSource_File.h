@@ -35,6 +35,9 @@
 
 #define PROTOCOL_NAME                                             _T("FILE")
 
+#define TOTAL_SUPPORTED_PROTOCOLS                                 1
+TCHAR *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { _T("FILE") };
+
 #define PARAMETER_NAME_FILE_RECEIVE_DATA_TIMEOUT                  _T("FileReceiveDataTimeout")
 #define PARAMETER_NAME_FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS      _T("FileOpenConnectionMaximumAttempts")
 

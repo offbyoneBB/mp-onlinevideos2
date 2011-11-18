@@ -272,6 +272,15 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
     *param_longp = data->state.rtsp_CSeq_recv;
     break;
 
+#ifdef USE_LIBRTMP
+  case CURLINFO_RTMP_TOTAL_DURATION:
+    *param_doublep = data->set.rtmp_total_duration;
+    break;
+  case CURLINFO_RTMP_CURRENT_TIME:
+    *param_doublep = data->set.rtmp_current_time;
+    break;
+#endif
+
   default:
     return CURLE_BAD_FUNCTION_ARGUMENT;
   }

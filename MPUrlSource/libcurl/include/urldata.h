@@ -1528,6 +1528,13 @@ struct UserDefined {
 
   long gssapi_delegation; /* GSSAPI credential delegation, see the
                              documentation of CURLOPT_GSSAPI_DELEGATION */
+
+#ifdef USE_LIBRTMP
+  curl_rtmp_log_callback frtmp_log_func;   /* function that write RTMP protocol log data  */
+  void *curl_rtmp_log_user_data; /* user data for RTMP log callback */
+  double rtmp_total_duration;   /* total duration of stream */
+  double rtmp_current_time;   /* current stream time */
+#endif
 };
 
 struct Names {

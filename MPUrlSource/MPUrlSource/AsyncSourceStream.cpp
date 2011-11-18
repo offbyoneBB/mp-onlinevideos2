@@ -69,7 +69,7 @@ CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCTSTR pObjectName, __inout HRE
   this->flushing = false;
   this->mediaPacketCollection = new CMediaPacketCollection();
   this->totalLength = 0;
-  this->estimate = false;
+  this->estimate = true;
   this->asyncRequestProcessingShouldExit = false;
   this->requestId = 0;
   this->requestMutex = CreateMutex(NULL, FALSE, NULL);
@@ -592,6 +592,10 @@ STDMETHODIMP CAsyncSourceStream::SyncRead(LONGLONG position, LONG length, BYTE *
                       request->Complete(S_OK);
                     }
                   }
+                }
+                else if (request->GetState() == CAsyncRequest::WaitingIgnoreTimeout)
+                {
+                  // we are waiting for data and we have to ignore timeout
                 }
                 else
                 {
@@ -1397,12 +1401,14 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
       {
         CAsyncRequest *request = caller->requestsCollection->GetItem(i);
 
-        if ((request->GetState() == CAsyncRequest::Waiting) || (request->GetState() == CAsyncRequest::Requested))
+        if ((request->GetState() == CAsyncRequest::Waiting) || (request->GetState() == CAsyncRequest::WaitingIgnoreTimeout) || (request->GetState() == CAsyncRequest::Requested))
         {
           // process only waiting requests
           // variable to store found data length
           unsigned int foundDataLength = 0;
           HRESULT result = S_OK;
+          // current stream position is get only when media packet for request is not found
+          LONGLONG currentStreamPosition = -1;
 
           // first try to find starting media packet (packet which have first data)
           unsigned int packetIndex = UINT_MAX;
@@ -1564,47 +1570,85 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                 request->Complete(result);
               }
             }
+
+            if ((packetIndex == UINT_MAX) && (request->GetState() == CAsyncRequest::Waiting))
+            {
+              // get current stream position
+              LONGLONG total = 0;
+              HRESULT queryStreamProgressResult = caller->filter->QueryStreamProgress(&total, &currentStreamPosition);
+              if (FAILED(queryStreamProgressResult))
+              {
+                caller->logger->Log(LOGGER_WARNING, _T("%s: %s: failed to get current stream position: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, queryStreamProgressResult);
+                currentStreamPosition = -1;
+              }
+            }
           }
 
           if ((packetIndex == UINT_MAX) && (request->GetState() == CAsyncRequest::Waiting))
           {
-            // there isn't any packet containg some data for request
-            // check if ranges are supported
-
-            CRangesSupported *rangesSupported = new CRangesSupported();
-            rangesSupported->SetFilterConnectedToAnotherPin(caller->connectedToAnotherPin);
-            // check if ranges are supported
-            HRESULT rangesSupportedResult = caller->filter->QueryRangesSupported(rangesSupported);
-            if (rangesSupportedResult == S_OK)
+            // first check current stream position and request start
+            // if request start is just next to current stream position then only wait for data and do not issue ranges request
+            if (currentStreamPosition != (-1))
             {
-              if (rangesSupported->AreRangesSupported())
+              // current stream position has valid value
+              if (request->GetStart() > currentStreamPosition)
               {
-                if (SUCCEEDED(result))
-                {
-                  // not found start packet and request wasn't requested from filter yet
-                  // request filter to receive data from request start
-                  result = caller->filter->ReceiveDataFromTimestamp(request->GetStart(), request->GetStart());
-                }
-
-                if (SUCCEEDED(result))
-                {
-                  request->Request();
-                }
-                else
-                {
-                  // if error occured while requesting filter for data
-                  caller->logger->Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while requesting data, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
-                  request->Complete(result);
-                }
+                // if request start is after current stream position than we have to issue ranges request (if supported)
+                caller->logger->Log(LOGGER_VERBOSE, _T("%s: %s: request '%u', start '%llu' (size '%lu') after current stream position '%llu'"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition);
               }
-              else if (rangesSupported->IsQueryError())
+              else if ((request->GetStart() <= currentStreamPosition) && ((request->GetStart() + request->GetBufferLength()) > currentStreamPosition))
               {
-                // error occured while quering if ranges are supported
-                caller->logger->Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while quering if ranges are supported, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), rangesSupported->GetQueryResult());
-                request->Complete(rangesSupported->GetQueryResult());
+                // current stream position is within current request
+                // we are receiving data, do nothing, just wait for all data
+                request->WaitAndIgnoreTimeout();
+                caller->logger->Log(LOGGER_DATA, _T("%s: %s: request '%u', start '%llu' (size '%lu') waiting for data and ignoring timeout, current stream position '%llu'"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition);
+              }
+              else
+              {
+                // if request start is before current stream position than we have to issue ranges request
+                caller->logger->Log(LOGGER_VERBOSE, _T("%s: %s: request '%u', start '%llu' (size '%lu') before current stream position '%llu'"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition);
               }
             }
-            
+
+            if (request->GetState() == CAsyncRequest::Waiting)
+            {
+              // there isn't any packet containg some data for request
+              // check if ranges are supported
+
+              CRangesSupported *rangesSupported = new CRangesSupported();
+              rangesSupported->SetFilterConnectedToAnotherPin(caller->connectedToAnotherPin);
+              // check if ranges are supported
+              HRESULT rangesSupportedResult = caller->filter->QueryRangesSupported(rangesSupported);
+              if (rangesSupportedResult == S_OK)
+              {
+                if (rangesSupported->AreRangesSupported())
+                {
+                  if (SUCCEEDED(result))
+                  {
+                    // not found start packet and request wasn't requested from filter yet
+                    // request filter to receive data from request start
+                    result = caller->filter->ReceiveDataFromTimestamp(request->GetStart(), request->GetStart());
+                  }
+
+                  if (SUCCEEDED(result))
+                  {
+                    request->Request();
+                  }
+                  else
+                  {
+                    // if error occured while requesting filter for data
+                    caller->logger->Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while requesting data, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
+                    request->Complete(result);
+                  }
+                }
+                else if (rangesSupported->IsQueryError())
+                {
+                  // error occured while quering if ranges are supported
+                  caller->logger->Log(LOGGER_WARNING, _T("%s: %s: request '%u' error while quering if ranges are supported, complete status: 0x%08X"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), rangesSupported->GetQueryResult());
+                  request->Complete(rangesSupported->GetQueryResult());
+                }
+              }
+            }
           }
         }
 
@@ -1807,7 +1851,7 @@ int CAsyncSourceStream::EndOfStreamReached(const TCHAR *outputPinName)
       }
     }
 
-    if (startTime < this->totalLength)
+    if (((!estimate) && (startTime < this->totalLength)) || (estimate))
     {
       // found part which is not downloaded
       this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: requesting stream part from: %llu, to: %llu"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startTime, endTime);

@@ -103,8 +103,8 @@ public:
   // @param startStreamTime : the start stream time to set
   void SetStartStreamTime(REFERENCE_TIME startStreamTime);
 
-  // gets start stream time
-  // @return : start stream time
+  // gets end stream time
+  // @return : end stream time
   REFERENCE_TIME GetEndStreamTime(void);
 
   // sets end stream time

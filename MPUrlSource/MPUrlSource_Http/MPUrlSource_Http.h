@@ -41,6 +41,9 @@
 
 #define PROTOCOL_NAME                                       _T("HTTP")
 
+#define TOTAL_SUPPORTED_PROTOCOLS                           1
+TCHAR *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { _T("HTTP") };
+
 // size of buffers used for comparison if ranges are supported or not
 #define RANGES_SUPPORTED_BUFFER_SIZE                        256 * 1024
 

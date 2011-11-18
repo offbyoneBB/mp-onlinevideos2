@@ -271,15 +271,15 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;BUILDING_LIBCURL;USE_LIBSSH2;CURL_DISABLE_LDAP;HAVE_LIBSSH2;HAVE_LIBSSH2_H;LIBSSH2_WIN32;LIBSSH2_LIBRARY;USE_SSLEAY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\include;..\OpenSSL\include\openssl;..\OpenSSL\include;..\libssh2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;BUILDING_LIBCURL;USE_LIBSSH2;CURL_DISABLE_LDAP;HAVE_LIBSSH2;HAVE_LIBSSH2_H;LIBSSH2_WIN32;LIBSSH2_LIBRARY;USE_SSLEAY;USE_LIBRTMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\include;..\OpenSSL\include\openssl;..\OpenSSL\include;..\libssh2\include;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking>false</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\OpenSSL\bin\Release;..\libssh2\bin\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ws2_32.lib;wldap32.lib;libssh2.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\OpenSSL\bin\Release;..\libssh2\bin\Debug;..\librtmp\bin\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;wldap32.lib;libssh2.lib;libeay32.lib;ssleay32.lib;librtmp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>
       </ImportLibrary>
     </Link>
@@ -296,8 +296,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;BUILDING_LIBCURL;USE_LIBSSH2;HAVE_LIBSSH2;HAVE_LIBSSH2_H;LIBSSH2_WIN32;LIBSSH2_LIBRARY;USE_SSLEAY;CURL_DISABLE_LDAP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\include;..\OpenSSL\include\openssl;..\OpenSSL\include;..\libssh2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;BUILDING_LIBCURL;USE_LIBSSH2;HAVE_LIBSSH2;HAVE_LIBSSH2_H;LIBSSH2_WIN32;LIBSSH2_LIBRARY;USE_SSLEAY;CURL_DISABLE_LDAP;USE_LIBRTMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\include;..\OpenSSL\include\openssl;..\OpenSSL\include;..\libssh2\include;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
     </ClCompile>
     <Link>
@@ -307,8 +307,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>
       </ImportLibrary>
-      <AdditionalDependencies>ws2_32.lib;wldap32.lib;libssh2.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\OpenSSL\bin\Release;..\libssh2\bin\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;wldap32.lib;libssh2.lib;libeay32.lib;ssleay32.lib;librtmp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\OpenSSL\bin\Release;..\libssh2\bin\Release;..\librtmp\bin\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <PreventDllBinding>
       </PreventDllBinding>
     </Link>

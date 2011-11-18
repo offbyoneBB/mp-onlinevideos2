@@ -83,6 +83,13 @@ public:
   // @return : the value of parameter or default value if not found
   long GetValueLong(TCHAR *name, bool invariant, long defaultValue);
 
+  // get the unsigned integer value of parameter with specified name
+  // @param name : the name of parameter to find
+  // @param invariant : specifies if parameter name shoud be find with invariant casing
+  // @param defaultValue : the default value to return
+  // @return : the value of parameter or default value if not found
+  long GetValueUnsignedInt(TCHAR *name, bool invariant, unsigned int defaultValue);
+
   // get the boolean value of parameter with specified name
   // @param name : the name of parameter to find
   // @param invariant : specifies if parameter name shoud be find with invariant casing

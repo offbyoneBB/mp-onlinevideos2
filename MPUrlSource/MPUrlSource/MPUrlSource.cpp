@@ -1044,9 +1044,9 @@ CParameterCollection *CMPUrlSourceFilter::ParseParameters(const TCHAR *parameter
                     if (result == S_OK)
                     {
 #ifdef _MBCS
-                      TCHAR *unescapedValue = ConvertToMultiByte(unescapedCurlValue);
+                      TCHAR *unescapedValue = ConvertToMultiByteA(unescapedCurlValue);
 #else
-                      TCHAR *unescapedValue = ConvertToUnicode(unescapedCurlValue);
+                      TCHAR *unescapedValue = ConvertToUnicodeA(unescapedCurlValue);
 #endif
                       if (unescapedValue == NULL)
                       {
@@ -1091,11 +1091,7 @@ CParameterCollection *CMPUrlSourceFilter::ParseParameters(const TCHAR *parameter
     if (result == S_OK)
     {
       this->logger->Log(LOGGER_INFO, _T("%s: %s: count of parameters: %u"), MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, parsedParameters->Count());
-      for(unsigned int i = 0; i < parsedParameters->Count(); i++)
-      {
-        PCParameter parameter = parsedParameters->GetParameter(i);
-        this->logger->Log(LOGGER_INFO, _T("%s: %s: parameter name: %s, value: %s"), MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, parameter->GetName(), parameter->GetValue());
-      }
+      parsedParameters->LogCollection(this->logger, LOGGER_INFO, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME);
     }
   }
 
