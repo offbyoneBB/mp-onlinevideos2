@@ -362,6 +362,14 @@ int CMPUrlSource_Http::OpenConnection(void)
         {
           this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("error while requesting HTTP status code"), errorCode);
           result = STATUS_ERROR;
+          break;
+        }
+
+        if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
+        {
+          // we received data too fast
+          result = STATUS_ERROR;
+          break;
         }
 
         // wait some time
@@ -473,8 +481,10 @@ void CMPUrlSource_Http::ReceiveData(bool *shouldExit)
           // whole stream downloaded
           this->wholeStreamDownloaded = true;
           // notify filter the we reached end of stream
+          // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+          REFERENCE_TIME streamTime = this->streamTime;
           this->streamTime = this->streamLength;
-          this->filter->EndOfStreamReached(OUTPUT_PIN_NAME);
+          this->filter->EndOfStreamReached(OUTPUT_PIN_NAME, max(0, streamTime - 1));
         }
 
         // connection is no longer needed
@@ -731,7 +741,10 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
           caller->logger->Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
         }
 
-        caller->filter->PushMediaPacket(OUTPUT_PIN_NAME, mediaPacket);
+        if (caller->filter->PushMediaPacket(OUTPUT_PIN_NAME, mediaPacket) == STATUS_ERROR)
+        {
+          caller->logger->Log(LOGGER_WARNING, _T("%s: %s: error occured while adding media packet"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+        }
         caller->streamTime += bytesRead;
       }
     }

@@ -48,7 +48,7 @@
 #define METHOD_OPEN_CONNECTION_NAME                                     _T("OpenConnection()")
 #define METHOD_CLOSE_CONNECTION_NAME                                    _T("CloseConnection()")
 #define METHOD_RECEIVE_DATA_NAME                                        _T("ReceiveData()")
-#define METHOD_PUSH_DATA_NAME                                           _T("PushData()")
+#define METHOD_PUSH_MEDIA_PACKET_NAME                                   _T("PushMediaPacket()")
 #define METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME                         _T("ReceiveDataFromTimestamp()")
 #define METHOD_ABORT_STREAM_RECEIVE_NAME                                _T("AbortStreamReceive()")
 #define METHOD_QUERY_STREAM_PROGRESS_NAME                               _T("QueryStreamProgress()")

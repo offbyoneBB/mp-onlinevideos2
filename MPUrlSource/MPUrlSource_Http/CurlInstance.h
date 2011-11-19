@@ -38,6 +38,7 @@
 #define METHOD_CREATE_CURL_WORKER_NAME                      _T("CreateCurlWorker()")
 #define METHOD_DESTROY_CURL_WORKER_NAME                     _T("DestroyCurlWorker()")
 #define METHOD_CURL_WORKER_NAME                             _T("CurlWorker()")
+#define METHOD_CURL_DEBUG_CALLBACK                          _T("CurlDebugCallback()")
 
 #define METHOD_CURL_ERROR_MESSAGE                           _T("%s: %s: %s: %s")
 
@@ -198,6 +199,14 @@ private:
 
   // holds internal state
   unsigned int state;
+
+  // debug callback of libcurl
+  // @param handle : the handle / transfer this concerns
+  // @param type : what kind of data
+  // @param data : points to the data
+  // @param size : size of the data pointed to
+  // @param userptr : user defined pointer
+  static int CurlDebugCallback(CURL *handle, curl_infotype type, char *data, size_t size, void *userptr);
 };
 
 #endif

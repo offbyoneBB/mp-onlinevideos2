@@ -60,6 +60,18 @@ public:
   // @return : true if successful, false otherwise
   bool Add(CMediaPacket *item);
 
+  // returns indexes where item have to be placed
+  // startIndex == UINT_MAX && endIndex == 0 => item have to be placed on beginning
+  // startIndex == Count() - 1 && endIndex == UINT_MAX => item have to be placed on end
+  // startIndex == endIndex => item with same key exists in collection (index of item is startIndex)
+  // item have to be placed between startIndex and endIndex
+  // @param key : the item key to compare
+  // @param context : the reference to user defined context
+  // @param startIndex : reference to variable which holds start index where item have to be placed
+  // @param endIndex : reference to variable which holds end index where item have to be placed
+  // @return : true if successful, false otherwise
+  bool GetItemInsertPosition(REFERENCE_TIME key, void *context, unsigned int *startIndex, unsigned int *endIndex);
+
 protected:
   // compare two item keys
   // @param firstKey : the first item key to compare
@@ -81,19 +93,7 @@ protected:
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CMediaPacket *Clone(CMediaPacket *item);
-
-  // returns indexes where item have to be placed
-  // startIndex == UINT_MAX && endIndex == 0 => item have to be placed on beginning
-  // startIndex == Count() - 1 && endIndex == UINT_MAX => item have to be placed on end
-  // startIndex == endIndex => item with same key exists in collection (index of item is startIndex)
-  // item have to be placed between startIndex and endIndex
-  // @param key : the item key to compare
-  // @param context : the reference to user defined context
-  // @param startIndex : reference to variable which holds start index where item have to be placed
-  // @param endIndex : reference to variable which holds end index where item have to be placed
-  // @return : true if successful, false otherwise
-  bool GetItemInsertPosition(REFERENCE_TIME key, void *context, unsigned int *startIndex, unsigned int *endIndex);
+  CMediaPacket *Clone(CMediaPacket *item);  
 };
 
 #endif

@@ -27,6 +27,7 @@
 #include "AsyncSource.h"
 #include "AsyncSourceStream.h"
 #include "AsyncSourceStreamCollection.h"
+#include "Download.h"
 
 #include <initguid.h>
 #include <cguid.h>
@@ -51,14 +52,15 @@ struct ProtocolImplementation
 };
 
 // This class is exported from the MPUrlSource.ax
-class CMPUrlSourceFilter : public CAsyncSource, public IFileSourceFilter, public IOutputStream, public IAMOpenProgress
+class CMPUrlSourceFilter : public CAsyncSource, public IFileSourceFilter, public IOutputStream, public IDownload
 {
 private:
   // Constructor is private because you have to use CreateInstance
   CMPUrlSourceFilter(IUnknown *pUnk, HRESULT *phr);
   ~CMPUrlSourceFilter();
 
-  TCHAR* m_url;
+  TCHAR* url;
+  TCHAR* downloadFileName;
   CParameterCollection *configuration;
   CLogger *logger;
 
@@ -119,6 +121,9 @@ public:
   // CBaseFilter GetState() method
   STDMETHODIMP GetState(DWORD dwMSecs, FILTER_STATE *State);
 
+  // IDownload interface
+  STDMETHODIMP Download(LPCOLESTR uri, LPCOLESTR fileName);
+
   // IOutputStream interface
 
   // sets total length of stream to output pin
@@ -137,8 +142,9 @@ public:
 
   // notifies output stream that end of stream was reached
   // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
+  // @param streamPosition : the last valid stream position
   // @return : STATUS_OK if successful
-  int EndOfStreamReached(const TCHAR *outputPinName);
+  int EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition);
 
   // IBaseProtocol interface
 

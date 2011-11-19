@@ -75,7 +75,8 @@ CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCTSTR pObjectName, __inout HRE
   this->requestMutex = CreateMutex(NULL, FALSE, NULL);
   this->mediaPacketMutex = CreateMutex(NULL, FALSE, NULL);
   
-  this->storeFilePath = NULL;
+  this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
+  this->downloadingFile = (this->storeFilePath != NULL);
   this->connectedToAnotherPin = false;
 
   this->CreateAsyncRequestProcessWorker();
@@ -103,13 +104,14 @@ CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCSTR pObjectName, __inout HRES
   this->flushing = false;
   this->mediaPacketCollection = new CMediaPacketCollection();
   this->totalLength = 0;
-  this->estimate = false;
+  this->estimate = true;
   this->asyncRequestProcessingShouldExit = false;
   this->requestId = 0;
   this->requestMutex = CreateMutex(NULL, FALSE, NULL);
   this->mediaPacketMutex = CreateMutex(NULL, FALSE, NULL);
 
-  this->storeFilePath = NULL;
+  this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
+  this->downloadingFile = (this->storeFilePath != NULL);
   this->connectedToAnotherPin = false;
 
   this->CreateAsyncRequestProcessWorker();
@@ -140,7 +142,7 @@ CAsyncSourceStream::~CAsyncSourceStream(void)
     CloseHandle(this->mediaPacketMutex);
     this->mediaPacketMutex = NULL;
   }
-  if (this->storeFilePath != NULL)
+  if ((!this->downloadingFile) && (this->storeFilePath != NULL))
   {
     DeleteFile(this->storeFilePath);
   }
@@ -1045,6 +1047,11 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
     CMediaPacketCollection *unprocessedMediaPackets = new CMediaPacketCollection();
     if (unprocessedMediaPackets->Add(mediaPacket->Clone()))
     {
+      REFERENCE_TIME start = 0;
+      REFERENCE_TIME stop = 0;
+      HRESULT getTimeResult = mediaPacket->GetTime(&start, &stop);
+      this->logger->Log(LOGGER_DATA, _T("%s: %s media packet start: %016llu, length: %08u, result: 0x%08X"), MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, start, mediaPacket->GetBuffer()->GetBufferOccupiedSpace(), getTimeResult);
+
       result = STATUS_OK;
       while ((unprocessedMediaPackets->Count() != 0) && (result == STATUS_OK))
       {
@@ -1527,7 +1534,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                   {
                     // we are receiving data, wait for all requested data
                   }
-                  else
+                  else if (!caller->estimate)
                   {
                     // we are not receiving more data
                     // finish request
@@ -1626,8 +1633,106 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                   if (SUCCEEDED(result))
                   {
                     // not found start packet and request wasn't requested from filter yet
-                    // request filter to receive data from request start
-                    result = caller->filter->ReceiveDataFromTimestamp(request->GetStart(), request->GetStart());
+                    // first found start and end of request
+
+                    LONGLONG requestStart = request->GetStart();
+                    LONGLONG requestEnd = requestStart;
+
+                    unsigned int startIndex = 0;
+                    unsigned int endIndex = 0;
+                    {
+                      // lock access to media packets
+                      CLockMutex mediaPacketLock(caller->mediaPacketMutex, INFINITE);
+
+                      if (caller->mediaPacketCollection->GetItemInsertPosition(request->GetStart(), NULL, &startIndex, &endIndex))
+                      {
+                        // start and end index found successfully
+                        if (startIndex == endIndex)
+                        {
+                          REFERENCE_TIME endPacketStartTime = 0;
+                          REFERENCE_TIME endPacketStopTime = 0;
+                          unsigned int mediaPacketIndex = caller->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(endPacketStartTime);
+
+                          // media packet exists in collection
+                          while (mediaPacketIndex != UINT_MAX)
+                          {
+                            CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(mediaPacketIndex);
+                            REFERENCE_TIME mediaPacketStart = 0;
+                            REFERENCE_TIME mediaPacketEnd = 0;
+                            if (mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd) == S_OK)
+                            {
+                              if (endPacketStartTime == mediaPacketStart)
+                              {
+                                // next start time is next to end of current media packet
+                                endPacketStartTime = mediaPacketEnd + 1;
+                                mediaPacketIndex++;
+
+                                if (mediaPacketIndex >= caller->mediaPacketCollection->Count())
+                                {
+                                  // stop checking, all media packets checked
+                                  mediaPacketIndex = UINT_MAX;
+                                }
+                              }
+                              else
+                              {
+                                endPacketStopTime = mediaPacketStart - 1;
+                                mediaPacketIndex = UINT_MAX;
+                              }
+                            }
+                            else
+                            {
+                              mediaPacketIndex = UINT_MAX;
+                            }
+                          }
+
+                          requestEnd = endPacketStopTime;
+                        }
+                        else if ((startIndex == (caller->mediaPacketCollection->Count() - 1)) && (endIndex == UINT_MAX))
+                        {
+                          // media packet belongs to end
+                          // do nothing, default request is from specific point until end of stream
+                        }
+                        else if ((startIndex == UINT_MAX) && (endIndex == 0))
+                        {
+                          // media packet belongs to start
+                          CMediaPacket *endMediaPacket = caller->mediaPacketCollection->GetItem(endIndex);
+                          if (endMediaPacket != NULL)
+                          {
+                            REFERENCE_TIME endPacketStartTime = 0;
+                            REFERENCE_TIME endPacketStopTime = 0;
+                            if (endMediaPacket->GetTime(&endPacketStartTime, &endPacketStopTime) == S_OK)
+                            {
+                              // requests data from requestStart until end packet start time
+                              requestEnd = endPacketStartTime - 1;
+                            }
+                          }
+                        }
+                        else
+                        {
+                          // media packet belongs between packets startIndex and endIndex
+                          CMediaPacket *endMediaPacket = caller->mediaPacketCollection->GetItem(endIndex);
+                          if (endMediaPacket != NULL)
+                          {
+                            REFERENCE_TIME endPacketStartTime = 0;
+                            REFERENCE_TIME endPacketStopTime = 0;
+                            if (endMediaPacket->GetTime(&endPacketStartTime, &endPacketStopTime) == S_OK)
+                            {
+                              // requests data from requestStart until end packet start time
+                              requestEnd = endPacketStartTime - 1;
+                            }
+                          }
+                        }
+                      }
+                    }
+
+                    if (requestEnd < requestStart)
+                    {
+                      caller->logger->Log(LOGGER_WARNING, _T("%s: %s: request '%u' has start '%llu' after end '%llu', modifying to equal"), MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), requestStart, requestEnd);
+                      requestEnd = requestStart;
+                    }
+
+                    // request filter to receive data from request start to end
+                    result = caller->filter->ReceiveDataFromTimestamp(requestStart, requestEnd);
                   }
 
                   if (SUCCEEDED(result))
@@ -1657,9 +1762,9 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
           // request is buffering data for another request
           LONGLONG total = 0;
           LONGLONG current = 0;
-          if (caller->filter->QueryStreamProgress(&total, &current) == S_OK)
+          if (SUCCEEDED(caller->filter->QueryStreamProgress(&total, &current)))
           {
-            // values are not estimated and no error occured
+            // values can be estimated, but no error occured
             if (current < request->GetStart())
             {
               // we are receiving data from somewhere else
@@ -1806,48 +1911,86 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
   return S_OK;
 }
 
-int CAsyncSourceStream::EndOfStreamReached(const TCHAR *outputPinName)
+int CAsyncSourceStream::EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
   CLockMutex mediaPacketLock(this->mediaPacketMutex, INFINITE);
 
   if (this->mediaPacketCollection->Count() > 0)
   {
-    this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: media packet count: %u"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, this->mediaPacketCollection->Count());
+    this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: media packet count: %u, stream position: %llu"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, this->mediaPacketCollection->Count(), streamPosition);
+
+    // check media packets from supplied last valid stream position
     REFERENCE_TIME startTime = 0;
     REFERENCE_TIME endTime = 0;
-    unsigned int mediaPacketIndex = this->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(startTime);
+    unsigned int mediaPacketIndex = this->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(streamPosition);
 
-    // because collection is sorted
-    // then simle going through all media packets will reveal if there is some empty place
-    while (mediaPacketIndex != UINT_MAX)
+    if (mediaPacketIndex != UINT_MAX)
     {
       CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(mediaPacketIndex);
       REFERENCE_TIME mediaPacketStart = 0;
       REFERENCE_TIME mediaPacketEnd = 0;
       if (mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd) == S_OK)
       {
-        if (startTime == mediaPacketStart)
-        {
-          // next start time is next to end of current media packet
-          startTime = mediaPacketEnd + 1;
-          mediaPacketIndex++;
+        startTime = mediaPacketStart;
+        endTime = mediaPacketStart;
+        this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: for stream position '%llu' found media packet, start: %llu, end: %llu"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, streamPosition, mediaPacketStart, mediaPacketEnd);
+      }
+    }
 
-          if (mediaPacketIndex >= this->mediaPacketCollection->Count())
+    for (int i = 0; i < 2; i++)
+    {
+      // because collection is sorted
+      // then simle going through all media packets will reveal if there is some empty place
+      while (mediaPacketIndex != UINT_MAX)
+      {
+        CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(mediaPacketIndex);
+        REFERENCE_TIME mediaPacketStart = 0;
+        REFERENCE_TIME mediaPacketEnd = 0;
+        if (mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd) == S_OK)
+        {
+          if (startTime == mediaPacketStart)
           {
-            // stop checking, all media packets checked
+            // next start time is next to end of current media packet
+            startTime = mediaPacketEnd + 1;
+            mediaPacketIndex++;
+
+            if (mediaPacketIndex >= this->mediaPacketCollection->Count())
+            {
+              // stop checking, all media packets checked
+              endTime = startTime;
+              this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: all media packets checked, start: %llu, end: %llu"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startTime, endTime);
+              mediaPacketIndex = UINT_MAX;
+            }
+          }
+          else
+          {
+            // we found gap between media packets
+            // set end time and stop checking media packets
+            endTime = mediaPacketStart - 1;
+            this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: found gap between media packets, start: %llu, end: %llu"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startTime, endTime);
             mediaPacketIndex = UINT_MAX;
           }
         }
         else
         {
-          endTime = mediaPacketStart - 1;
           mediaPacketIndex = UINT_MAX;
         }
       }
+
+      if ((!estimate) && (startTime >= this->totalLength) && (i == 0))
+      {
+        // we are after end of stream
+        // check media packets from start if we don't have gap
+        startTime = 0;
+        endTime = 0;
+        mediaPacketIndex = this->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(startTime);
+        this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, _T("searching for gap in media packets from beginning"));
+      }
       else
       {
-        mediaPacketIndex = UINT_MAX;
+        // we found some gap
+        break;
       }
     }
 

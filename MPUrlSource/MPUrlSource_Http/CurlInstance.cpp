@@ -132,6 +132,36 @@ bool CCurlInstance::Initialize(void)
 
     if (errorCode == CURLE_OK)
     {
+      errorCode = curl_easy_setopt(this->curl, CURLOPT_DEBUGFUNCTION, CCurlInstance::CurlDebugCallback);
+      if (errorCode != CURLE_OK)
+      {
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_OPEN_CONNECTION_NAME, _T("error while setting debug callback"), errorCode);
+        result = false;
+      }
+    }
+
+    if (errorCode == CURLE_OK)
+    {
+      errorCode = curl_easy_setopt(this->curl, CURLOPT_DEBUGDATA, this);
+      if (errorCode != CURLE_OK)
+      {
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_OPEN_CONNECTION_NAME, _T("error while setting debug callback data"), errorCode);
+        result = false;
+      }
+    }
+
+    if (errorCode == CURLE_OK)
+    {
+      errorCode = curl_easy_setopt(this->curl, CURLOPT_VERBOSE, 1L);
+      if (errorCode != CURLE_OK)
+      {
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_OPEN_CONNECTION_NAME, _T("error while setting verbose level"), errorCode);
+        result = false;
+      }
+    }
+
+    if (errorCode == CURLE_OK)
+    {
       if (!IsNullOrEmpty(this->referer))
       {
         char *curlReferer = ConvertToMultiByte(this->referer);
@@ -420,4 +450,42 @@ void CCurlInstance::SetHttpVersion(int version)
 void CCurlInstance::SetIgnoreContentLength(bool ignoreContentLength)
 {
   this->ignoreContentLength = ignoreContentLength;
+}
+
+int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *data, size_t size, void *userptr)
+{
+  CCurlInstance *caller = (CCurlInstance *)userptr;
+
+  // warning: data ARE NOT terminated with null character !!
+  if (size > 0)
+  {
+    size_t length = size + 1;
+    ALLOC_MEM_DEFINE_SET(tempData, char, length, 0);
+    if (tempData != NULL)
+    {
+      memcpy(tempData, data, size);
+
+      // now convert data to used character set
+#ifdef _MBCS
+      TCHAR *curlData = ConvertToMultiByteA(tempData);
+#else
+      TCHAR *curlData = ConvertToUnicodeA(tempData);
+#endif
+      if (curlData != NULL)
+      {
+        // we have converted and null terminated data
+
+        if (type == CURLINFO_HEADER_IN)
+        {
+          // we are just interested in headers comming in from peer
+          caller->logger->Log(LOGGER_VERBOSE, _T("%s: %s: received HTTP header: '%s'"), caller->protocolName, METHOD_CURL_DEBUG_CALLBACK, curlData);
+        }
+      }
+
+      FREE_MEM(curlData);
+    }
+    FREE_MEM(tempData);
+  }
+
+  return 0;
 }

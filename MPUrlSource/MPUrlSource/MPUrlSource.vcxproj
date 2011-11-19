@@ -93,6 +93,7 @@
     <ClInclude Include="AsyncSourceStream.h" />
     <ClInclude Include="AsyncSourceStreamCollection.h" />
     <ClInclude Include="Collection.h" />
+    <ClInclude Include="Download.h" />
     <ClInclude Include="LinearBuffer.h" />
     <ClInclude Include="LockMutex.h" />
     <ClInclude Include="Logger.h" />
