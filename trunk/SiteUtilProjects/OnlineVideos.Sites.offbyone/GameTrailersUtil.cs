@@ -62,8 +62,8 @@ namespace OnlineVideos.Sites
                         {
                             string anUrl = m.Groups["VideoUrl"].Captures[i].Value;
                             if (!string.IsNullOrEmpty(videoListRegExFormatString)) anUrl = string.Format(videoListRegExFormatString, anUrl);
-                            if (!Uri.IsWellFormedUriString(anUrl, System.UriKind.Absolute)) anUrl = new Uri(new Uri(baseUrl), anUrl).AbsoluteUri;
-                            if (videoListUrlDecoding) anUrl = HttpUtility.HtmlDecode(anUrl);
+							anUrl = ApplyUrlDecoding(anUrl, videoListUrlDecoding);
+							if (!Uri.IsWellFormedUriString(anUrl, System.UriKind.Absolute)) anUrl = new Uri(new Uri(baseUrl), anUrl).AbsoluteUri;
                             videoUrls.Add(m.Groups["PostTitle"].Captures.Count - 1 >= i ? m.Groups["PostTitle"].Captures[i].Value : (i + 1).ToString(), anUrl);
                         }
                         if (videoUrls.Count > 1) { videoInfo.PlaybackOptions = videoUrls; videoInfo.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(videoUrls); }
@@ -139,7 +139,7 @@ namespace OnlineVideos.Sites
                             nextPageAvailable = true;
                             nextPageUrl = mNext.Groups["url"].Value;
                             if (!string.IsNullOrEmpty(nextPageRegExUrlFormatString)) nextPageUrl = string.Format(nextPageRegExUrlFormatString, nextPageUrl);
-                            if (nextPageRegExUrlDecoding) nextPageUrl = HttpUtility.HtmlDecode(nextPageUrl);
+							nextPageUrl = ApplyUrlDecoding(nextPageUrl, nextPageRegExUrlDecoding);
                             if (nextPageUrl.StartsWith("?")) nextPageUrl = "search.php" + nextPageUrl;
                             if (!Uri.IsWellFormedUriString(nextPageUrl, System.UriKind.Absolute))
                             {

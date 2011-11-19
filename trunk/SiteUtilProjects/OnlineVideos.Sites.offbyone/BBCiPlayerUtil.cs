@@ -77,40 +77,36 @@ namespace OnlineVideos.Sites
 
                         if (connectionElem.Attributes["kind"].Value == "limelight")
                         {
-                            resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfVfy={5}&live={6}",
-                                System.Web.HttpUtility.UrlEncode(server),
-                                "1935",
-                                System.Web.HttpUtility.UrlEncode(application + "?" + auth),
-                                System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth)),
-                                System.Web.HttpUtility.UrlEncode(identifier),
-                                System.Web.HttpUtility.UrlEncode(SWFPlayer),
-                                (video.Other == "livestream").ToString().ToLower()));
+							resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth), server, 1935) 
+							{ 
+								App = application + "?" + auth,
+								PlayPath = identifier,
+								SwfUrl = SWFPlayer,
+								SwfVerify = true,
+								Live = video.Other == "livestream"
+							}.ToString();
                         }
                         else if (connectionElem.Attributes["kind"].Value == "level3")
                         {
-                            application += "?" + auth;
-
-                            if (auth.StartsWith("token=")) auth = auth.Substring(6);
-                            resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?hostname={0}&port={1}&app={2}&tcUrl={3}&playpath={4}&swfVfy={5}&token={6}&live={7}",
-                                System.Web.HttpUtility.UrlEncode(server),
-                                "1935",
-                                System.Web.HttpUtility.UrlEncode(application),
-                                System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}", server, application)),
-                                System.Web.HttpUtility.UrlEncode(identifier),
-                                System.Web.HttpUtility.UrlEncode(SWFPlayer),
-                                System.Web.HttpUtility.UrlEncode(auth),
-                                (video.Other == "livestream").ToString().ToLower()));
+							resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth), server, 1935) 
+							{
+								App = application + "?" + auth,
+								PlayPath = identifier,
+								SwfUrl = SWFPlayer,
+								SwfVerify = true,
+								Token = auth,
+								Live = video.Other == "livestream"
+							}.ToString();
                         }
                         else if (connectionElem.Attributes["kind"].Value == "akamai")
                         {
-                            resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&swfVfy={2}&live={3}",
-                                System.Web.HttpUtility.UrlEncode(string.Format("rtmp://{0}:1935/{1}?{2}", server, application, auth)),
-                                System.Web.HttpUtility.UrlEncode(identifier),
-                                System.Web.HttpUtility.UrlEncode(SWFPlayer),
-                                (video.Other == "livestream").ToString().ToLower()));
+							resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}?{2}", server, application, auth)) 
+							{
+								PlayPath = identifier,
+								SwfUrl = SWFPlayer,
+								SwfVerify = true,
+								Live = video.Other == "livestream"
+							}.ToString();
                         }                                                
                     }
                     if (resultUrl != "") sortedPlaybackOptions.Add(info, resultUrl);
