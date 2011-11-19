@@ -601,10 +601,11 @@ namespace Standalone
 									if (ReactToResult(resultInfo, Translation.Instance.GettingDynamicCategories))
 									{
 										listViewMain.ItemsSource = SelectedSite.Settings.Categories;
-
 										listViewMain.SelectedValue = SelectedSite.Settings.Categories.FirstOrDefault(o => o.Name == SelectedCategory.Name);
-										(listViewMain.ItemContainerGenerator.ContainerFromIndex(listViewMain.SelectedIndex) as ListBoxItem).Focus();
-
+										if (listViewMain.SelectedIndex >= 0)
+										{
+											(listViewMain.ItemContainerGenerator.ContainerFromIndex(listViewMain.SelectedIndex) as ListBoxItem).Focus();
+										}
 										ImageDownloader.GetImages<Category>((IList<Category>)listViewMain.ItemsSource);
 									}
 									SelectedCategory = null;
