@@ -58,7 +58,8 @@ CMPUrlSourceFilter::CMPUrlSourceFilter(IUnknown *pUnk, HRESULT *phr)
   this->activeProtocol = NULL;
   this->protocolImplementationsCount = 0;
   this->protocolImplementations = NULL;
-  this->m_url = NULL;
+  this->url = NULL;
+  this->downloadFileName = NULL;
   this->hReceiveDataWorkerThread = NULL;
   this->status = STATUS_NONE;
   this->sourceStreamCollection = new CAsyncSourceStreamCollection();
@@ -130,7 +131,8 @@ CMPUrlSourceFilter::~CMPUrlSourceFilter()
   FREE_MEM(this->protocolImplementations);
 
   delete this->configuration;
-  FREE_MEM(this->m_url);
+  FREE_MEM(this->url);
+  FREE_MEM(this->downloadFileName);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
 
@@ -150,14 +152,24 @@ STDMETHODIMP CMPUrlSourceFilter::NonDelegatingQueryInterface(REFIID riid, void**
   {
     return GetInterface((IAMOpenProgress *)this, ppv);
   }
-  /*else if (riid == _uuidof(IMPIPTVConnectInfo))
+  else if (riid == _uuidof(IDownload))
   {
-    return GetInterface((IMPIPTVConnectInfo *)this, ppv);
-  }*/
+    return GetInterface((IDownload *)this, ppv);
+  }
   else
   {
     return __super::NonDelegatingQueryInterface(riid, ppv);
   }
+}
+
+STDMETHODIMP CMPUrlSourceFilter::Download(LPCOLESTR uri, LPCOLESTR fileName)
+{
+  HRESULT result = S_OK;
+
+  CHECK_POINTER_DEFAULT_HRESULT(result, uri);
+  CHECK_POINTER_DEFAULT_HRESULT(result, fileName);
+
+  return result;
 }
 
 STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE* pmt) 
@@ -185,19 +197,19 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
   }
 
 #ifdef _MBCS
-  this->m_url = ConvertToMultiByteW(pszFileName);
+  this->url = ConvertToMultiByteW(pszFileName);
 #else
-  this->m_url = ConvertToUnicodeW(pszFileName);
+  this->url = ConvertToUnicodeW(pszFileName);
 #endif
 
-  if (this->m_url == NULL)
+  if (this->url == NULL)
   {
     result = E_FAIL;
   }
 
   if (result == S_OK)
   {
-    CParameterCollection *suppliedParameters = this->ParseParameters(this->m_url);
+    CParameterCollection *suppliedParameters = this->ParseParameters(this->url);
     if (suppliedParameters != NULL)
     {
       // we have set some parameters
@@ -206,9 +218,9 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
       if (urlParameter != NULL)
       {
         // free current url
-        FREE_MEM(this->m_url);
+        FREE_MEM(this->url);
         // make duplicate of parameter url
-        this->m_url = Duplicate(urlParameter->GetValue());
+        this->url = Duplicate(urlParameter->GetValue());
       }
 
       this->configuration->Clear();
@@ -219,7 +231,7 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
     }
   }
 
-  if (this->m_url == NULL)
+  if (this->url == NULL)
   {
     result = E_FAIL;
   }
@@ -227,7 +239,7 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
   if (result == S_OK)
   {
     // we don't have specific parameters, just send current configuration
-    if(!this->Load(this->m_url, this->configuration))
+    if(!this->Load(this->url, this->configuration))
     {
       result = E_FAIL;
     }
@@ -396,7 +408,7 @@ STDMETHODIMP CMPUrlSourceFilter::GetCurFile(LPOLESTR* ppszFileName, AM_MEDIA_TYP
     return E_POINTER;
   }
 
-  *ppszFileName = ConvertToUnicode(this->m_url);
+  *ppszFileName = ConvertToUnicode(this->url);
   if ((*ppszFileName) == NULL)
   {
     return E_FAIL;
@@ -639,7 +651,7 @@ int CMPUrlSourceFilter::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
   return result;
 }
 
-int CMPUrlSourceFilter::EndOfStreamReached(const TCHAR *outputPinName)
+int CMPUrlSourceFilter::EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
 
@@ -648,7 +660,7 @@ int CMPUrlSourceFilter::EndOfStreamReached(const TCHAR *outputPinName)
 
   if (result == STATUS_OK)
   {
-    result = stream->EndOfStreamReached(outputPinName);
+    result = stream->EndOfStreamReached(outputPinName, streamPosition);
   }
   else
   {

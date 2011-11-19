@@ -63,8 +63,10 @@ public:
 
   // notifies output stream that end of stream was reached
   // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
+  // @param streamPosition : the last valid stream position
   // @return : STATUS_OK if successful
-  int EndOfStreamReached(const TCHAR *outputPinName);
+  int EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition);
+
 protected:
   // logger for logging purposes
   CLogger *logger;
@@ -94,8 +96,12 @@ protected:
 
   LONGLONG totalLength;
   bool estimate;
+
   // file path for storing received data to file
   TCHAR *storeFilePath;
+  // specifies if we are downloading file
+  // in that case we don't delete file on end
+  bool downloadingFile;
 
   // specifies if pin is successfully connected to another pin
   bool connectedToAnotherPin;

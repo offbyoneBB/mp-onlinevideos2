@@ -57,8 +57,9 @@ struct IOutputStream
 
   // notifies output stream that end of stream was reached
   // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
+  // @param streamPosition : the last valid stream position
   // @return : STATUS_OK if successful
-  virtual int EndOfStreamReached(const TCHAR *outputPinName) = 0;
+  virtual int EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition) = 0;
 };
 
 // defines interface for base protocol implementation

@@ -413,7 +413,10 @@ void CMPUrlSource_File::ReceiveData(bool *shouldExit)
         this->wholeStreamDownloaded = true;
 
         // notify filter the we reached end of stream
-        this->filter->EndOfStreamReached(OUTPUT_PIN_NAME);
+        // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+        REFERENCE_TIME streamTime = this->streamTime;
+        this->streamTime = this->fileLength;
+        this->filter->EndOfStreamReached(OUTPUT_PIN_NAME, max(0, streamTime - 1));
       }
     }
   }

@@ -367,7 +367,10 @@ void CMPUrlSource_Rtmp::ReceiveData(bool *shouldExit)
           }
 
           // notify filter the we reached end of stream
-          this->filter->EndOfStreamReached(OUTPUT_PIN_NAME);
+          // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
+          REFERENCE_TIME streamTime = this->streamTime;
+          this->streamTime = this->streamLength;
+          this->filter->EndOfStreamReached(OUTPUT_PIN_NAME, max(0, streamTime - 1));
         }
 
         // connection is no longer needed

@@ -39,6 +39,7 @@
 #define PARAMETER_NAME_MAX_PLUGINS                                  _T("MaxPlugins")
 #define PARAMETER_NAME_BUFFERING_PERCENTAGE                         _T("BufferingPercentage")
 #define PARAMETER_NAME_MAX_BUFFERING_SIZE                           _T("MaxBufferingSize")
+#define PARAMETER_NAME_DOWNLOAD_FILE_NAME                           _T("DownloadFileName")
 
 #include "Parameter.h"
 #include "Logger.h"
