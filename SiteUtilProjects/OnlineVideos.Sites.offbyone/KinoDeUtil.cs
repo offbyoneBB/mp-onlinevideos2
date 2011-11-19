@@ -39,8 +39,8 @@ namespace OnlineVideos.Sites
                     // get, format and if needed absolutify the video url
                     videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                     if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
-                    if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
-                    if (videoListUrlDecoding) videoInfo.VideoUrl = HttpUtility.HtmlDecode(videoInfo.VideoUrl);
+                    videoInfo.VideoUrl = ApplyUrlDecoding(videoInfo.VideoUrl, videoListUrlDecoding);
+					if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
 
                     results.Add(videoInfo);
 

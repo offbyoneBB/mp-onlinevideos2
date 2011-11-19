@@ -100,11 +100,7 @@ namespace OnlineVideos.Hoster
                         if (!string.IsNullOrEmpty(rtmpUrl) && !string.IsNullOrEmpty(rtmpPlayPath))
                         {
                             PlaybackOptions.Add(string.Format("{0} | {1} ({2})", quality.Key[1], type, quality.Key[0]), 
-                                ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&swfVfy={2}",
-                                        System.Web.HttpUtility.UrlEncode(rtmpUrl),
-                                        System.Web.HttpUtility.UrlEncode(rtmpPlayPath),
-                                        System.Web.HttpUtility.UrlEncode(swfUrl))));
+								new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = rtmpPlayPath, SwfUrl = swfUrl, SwfVerify = true}.ToString());
                         }
                     }
                 }
