@@ -232,17 +232,14 @@
         <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.myspass.de{0}]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[ajax.php',\s'(?<url>getEpisodeListFromSeason[^']+)',[^>]+>(?<title>[^<]+)</a></li>]]></item>
         <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/php/ajax.php?action={0}]]></item>
-        <item key="dynamicSubCategoryUrlDecoding"><![CDATA[true]]></item>
+        <item key="dynamicSubCategoryUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]+)">(?<Title>[^<]+)</a>\s*<[^>]+>\s*<[^>]+>\s*<div\sclass="tooltipTop">\s*<div\sclass="spacer10"></div>\s*<div\sclass="toolTipLeft"><img\ssrc="(?<ImageUrl>[^"]+)"\salt="[^<]+</div>\s*<div\sclass="toolTipRight"><h5>[^<]+</h5>(?<Description>[^<]+)</div>\s*[^']+'[^']+'[^']+'[^']+'[^']+'[^']+'[^']+'[^']+'"><a\shref="[^"]+">(?<Duration>[^<]+)</a></td>]]></item>
         <item key="playlistUrlRegEx"><![CDATA[load_vote_stars\('video',\s(?<url>[^,]+),]]></item>
         <item key="playlistUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/apps/video/getvideometadataxml.php?id={0}]]></item>
         <item key="fileUrlRegEx"><![CDATA[<url_flv><!\[CDATA\[(?<m0>[^\]]+)\]\]></url_flv>]]></item>
         <item key="nextPageRegEx"><![CDATA[ajax.php',\s'(?<url>[^']+)'[^>]+><img\ssrc="/myspass/media/images/buttons/pageination/pageination_arr_right_simple_active.gif"\salt="Seite\svor"\s/>]]></item>
         <item key="nextPageRegExUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/php/ajax.php?action={0}]]></item>
-        <item key="nextPageRegExUrlDecoding"><![CDATA[true]]></item>
-        <item key="prevPageRegEx"><![CDATA[ajax.php',\s'(?<url>[^']+)'[^>]+><img\ssrc="/myspass/media/images/buttons/pageination/pageination_arr_left_simple_active.gif"\salt="Seite\szur]]></item>
-        <item key="prevPageRegExUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/php/ajax.php?action={0}]]></item>
-        <item key="prevPageRegExUrlDecoding"><![CDATA[true]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="baseUrl"><![CDATA[http://www.myspass.de/myspass/shows/tvshows]]></item>
         <item key="allowUnsafeHeaders"><![CDATA[true]]></item>
       </Configuration>
@@ -292,17 +289,20 @@
         <Category xsi:type="RssLink" name="Prüfstand">http://www.heise.de/ct-tv/pruefstand-4793.html</Category>
       </Categories>
     </Site>
-    <Site name="Miro" util="Miro" agecheck="false" enabled="true" lang="en">
+    <Site name="Miro" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Miro combines and categorizes collections of video channels from thousands of sources.</Description>
       <Configuration>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
         <item key="baseUrl"><![CDATA[https://www.miroguide.com/api/list_categories]]></item>
         <item key="dynamicCategoriesRegEx"><![CDATA[\{'url'\:\su'(?<url>[^']+)',\s'name'\:\su'(?<title>[^']+)']]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\s+class="details">\s*
-<h4\s+class="video-type">\s*<a\s+href="(?<mirourl>[^"]+)".*?>(?<name>.*?)</a></h4>\s*
-<a\s+href="(?<url>http\://subscribe\.getmiro\.com/\?url1=[^"]+)".*?>.*?</a>\s*
-<p>(?<desc>.*?)</p>\s*
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<img\s+src="(?<thumb>http://s3.miroguide.com/static/media/thumbnails[^"]+)"\s+/>
+(?:(?!<div\s+class="details">).)+<div\s+class="details">\s*
+<h4\s+class="video-type">\s*<a\s+href="(?<mirourl>[^"]+)".*?>(?<title>.*?)</a></h4>\s*
+<a\s+href="http\://subscribe\.getmiro\.com/\?url1=(?<url>[^"]+)&amp;trackback1=[^"]+".*?>.*?</a>\s*
+<p>(?<description>.*?)</p>\s*
 </div>]]></item>
+        <item key="dynamicSubCategoryUrlDecoding"><![CDATA[UrlDecode]]></item>
+        <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<ul\s+class="paginator">.*?<li\s+class="selected"\s*>.*?</li>\s*<li\s*>\s*<span><a\s+href="(?<url>[^"]+)">]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\s*>\s*<span><a\s*href="[^"]+">\s*(?<lastPage>\d+)\s*</a></span>\s*</li>\s*</ul>]]></item>
       </Configuration>
     </Site>
@@ -1075,7 +1075,7 @@
       <Description>Videos van en over Nuenen</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="[^\s]+\sSubMenuItem[^"]*"><a\shref="(?<url>[^"]*)"\s*><span>(?<title>[^<]*)</span></a></li>]]></item>
-        <item key="dynamicCategoryUrlDecoding"><![CDATA[True]]></item>
+        <item key="dynamicCategoryUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<=videoalbumsubject.*)<option\s*value="(?<url>[^"]*)">(?<title>[^<]*)</option>]]></item>
         <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.onsnet.tv/corp/index.php?itemid={0}&page=52&site=4&ln=nl]]></item>
         <item key="videoListRegEx"><![CDATA[(<div\sclass="SearchVideoThumb"><a\shref="index\.php\?(?:(?!visid).)*visid=(?<VideoUrl>[^&]+)&[^<]+<img\ssrc="(?<ImageUrl>[^"]+)"[^>]*>[^>]*>(?<Title>[^<]*)<)|(onclick="playItemInPlayer\('video',\s(?<VideoUrl>[^,]*),'[^>]*><img\s(?:width="75"\s)?src="(?<ImageUrl>[^"]*)"\s(?:width="70"\sheight="50"\s)?title="(?<Description>[^"]*)"[^>]*>(?<Title>[^<]*)<)]]></item>
@@ -1127,7 +1127,7 @@
         |
         (<dt>[^<]*</dt>\s*<dd>\s*<a\srel="[^"]*"\stitle="[^"]*"\shref="(?<VideoUrl>[^"]*)"><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*><cite>(?<Title>[^<]*)</cite></a><em><span>(?<Description>[^<]*)</span></em>\s*</dd>)]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\stitle='Ir\sa\sla\spágina\ssiguiente'\sclass="siguiente">\s*<a\sname="paginaIR"\shref="(?<url>[^"]*)"><span>Siguiente</span></a>]]></item>
-        <item key="nextPageRegExUrlDecoding"><![CDATA[True]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="baseUrl"><![CDATA[http://www.rtve.es/]]></item>
       </Configuration>
       <Categories>
@@ -1147,7 +1147,7 @@
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)">\s*<img\sclass="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</a>\s*(?:<[^>]*>\s*</div>\s*<[^>]*>\s*)?<h2><a[^>]*>(?<Title>[^<]*)</a></h2>\s*<span\sclass="lessImportant">(?<Airdate>[^<]*)</span>(?<Description>[^<]*)<]]></item>
         <item key="nextPageRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)">Volgende</a></li>]]></item>
-        <item key="nextPageRegExUrlDecoding"><![CDATA[True]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="fileUrlRegEx"><![CDATA[<embed\ssrc="(?<m0>[^"]*)"]]></item>
         <item key="baseUrl"><![CDATA[http://nl.hardware.info/tv/]]></item>
       </Configuration>

@@ -96,8 +96,8 @@ namespace OnlineVideos.Sites
                                 RssLink cat = new RssLink();
                                 cat.Url = m2.Groups["url"].Value;
                                 if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
+								cat.Url = ApplyUrlDecoding(cat.Url, dynamicSubCategoryUrlDecoding);
                                 if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
-                                if (dynamicSubCategoryUrlDecoding) cat.Url = System.Web.HttpUtility.HtmlDecode(cat.Url);
                                 cat.Name = System.Web.HttpUtility.HtmlDecode(m2.Groups["title"].Value.Trim());
                                 cat.Thumb = m2.Groups["thumb"].Value;
                                 if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;

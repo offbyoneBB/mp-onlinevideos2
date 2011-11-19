@@ -174,7 +174,6 @@
     <Compile Include="Hoster\LiveVideo.cs" />
     <Compile Include="KinoDeUtil.cs" />
     <Compile Include="MetaCafeUtil.cs" />
-    <Compile Include="MiroUtil.cs" />
     <Compile Include="MsnbcUtil.cs" />
     <Compile Include="MtvMusicVideosUtil.cs" />
     <Compile Include="MyVideoUtil.cs" />
