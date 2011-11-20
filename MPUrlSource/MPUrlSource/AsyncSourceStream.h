@@ -51,21 +51,21 @@ public:
   // media packet will be destroyed after processing
   // @param outputPinName : the name of output pin (ignored)
   // @param mediaPacket : reference to media packet to push to output pin
-  // @return : STATUS_OK if successful
-  int PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket);
+  // @return : S_OK if successful
+  HRESULT PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket);
 
   // sets total length of stream to output pin
   // @param outputPinName : the name of output pin (ignored)
   // @param total : total length of stream in bytes
   // @param estimate : specifies if length is estimate
-  // @return : STATUS_OK if successful
-  int SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate);
+  // @return : S_OK if successful
+  HRESULT SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate);
 
   // notifies output stream that end of stream was reached
   // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
   // @param streamPosition : the last valid stream position
-  // @return : STATUS_OK if successful
-  int EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition);
+  // @return : S_OK if successful
+  HRESULT EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition);
 
 protected:
   // logger for logging purposes

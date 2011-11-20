@@ -25,13 +25,14 @@
 
 #include "AsyncSourceStream.h"
 #include "ProtocolInterface.h"
+#include "Download.h"
 
 #include <streams.h>
 
 // the class that will handle each pin
 class CAsyncSourceStream;
 
-class CAsyncSource : public CBaseFilter, public IBaseProtocol
+class CAsyncSource : public CBaseFilter, public IBaseProtocol, public IDownloadCallback
 {
 public:
   // initialise the pin count for the filter

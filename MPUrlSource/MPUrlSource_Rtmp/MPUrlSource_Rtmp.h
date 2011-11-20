@@ -40,6 +40,8 @@
 #define TOTAL_SUPPORTED_PROTOCOLS                                 6
 TCHAR *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { _T("RTMP"), _T("RTMPT"), _T("RTMPE"), _T("RTMPTE"), _T("RTMPS"), _T("RTMPTS") };
 
+#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                        1 * 1024 * 1024
+
 /* CONNECTION PARAMETERS */
 
 // These options define the content of the RTMP Connect request packet.
@@ -154,10 +156,10 @@ public:
 
   /* IProtocol interface */
   TCHAR *GetProtocolName(void);
-  int Initialize(IOutputStream *filter, CParameterCollection *configuration);
-  int ClearSession(void);
-  int ParseUrl(const TCHAR *url, const CParameterCollection *parameters);
-  int OpenConnection(void);
+  HRESULT Initialize(IOutputStream *filter, CParameterCollection *configuration);
+  HRESULT ClearSession(void);
+  HRESULT ParseUrl(const TCHAR *url, const CParameterCollection *parameters);
+  HRESULT OpenConnection(void);
   bool IsConnected(void);
   void CloseConnection(void);
   void ReceiveData(bool *shouldExit);

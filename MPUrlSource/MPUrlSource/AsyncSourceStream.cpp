@@ -1037,12 +1037,14 @@ GUID CAsyncSourceStream::GetInstanceId(void)
   return this->logger->loggerInstance;
 }
 
-int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket)
+HRESULT CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket)
 {
   CLockMutex lock(this->mediaPacketMutex, INFINITE);
-  int result = STATUS_ERROR;
+  HRESULT result = S_OK;
 
-  if (mediaPacket != NULL)
+  CHECK_POINTER_DEFAULT_HRESULT(result, mediaPacket);
+
+  if (result == S_OK)
   {
     CMediaPacketCollection *unprocessedMediaPackets = new CMediaPacketCollection();
     if (unprocessedMediaPackets->Add(mediaPacket->Clone()))
@@ -1052,8 +1054,8 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
       HRESULT getTimeResult = mediaPacket->GetTime(&start, &stop);
       this->logger->Log(LOGGER_DATA, _T("%s: %s media packet start: %016llu, length: %08u, result: 0x%08X"), MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, start, mediaPacket->GetBuffer()->GetBufferOccupiedSpace(), getTimeResult);
 
-      result = STATUS_OK;
-      while ((unprocessedMediaPackets->Count() != 0) && (result == STATUS_OK))
+      result = S_OK;
+      while ((unprocessedMediaPackets->Count() != 0) && (result == S_OK))
       {
         // there is still some unprocessed media packets
         // get first media packet
@@ -1061,9 +1063,9 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
 
         REFERENCE_TIME unprocessedMediaPacketStart = 0;
         REFERENCE_TIME unprocessedMediaPacketEnd = 0;
-        result = (unprocessedMediaPacket->GetTime(&unprocessedMediaPacketStart, &unprocessedMediaPacketEnd) == S_OK) ? STATUS_OK : STATUS_ERROR;
+        result = unprocessedMediaPacket->GetTime(&unprocessedMediaPacketStart, &unprocessedMediaPacketEnd);
 
-        if (result == STATUS_OK)
+        if (result == S_OK)
         {
           // try to find overlapping media packet
           CMediaPacket *overlappingPacket = this->mediaPacketCollection->GetItem(this->mediaPacketCollection->GetMediaPacketIndexOverlappingTimes(unprocessedMediaPacketStart, unprocessedMediaPacketEnd));
@@ -1071,7 +1073,7 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
           {
             // there isn't overlapping media packet
             // whole packet can be added to collection
-            result = (this->mediaPacketCollection->Add(unprocessedMediaPacket->Clone())) ? STATUS_OK : STATUS_ERROR;
+            result = (this->mediaPacketCollection->Add(unprocessedMediaPacket->Clone())) ? S_OK : E_FAIL;
           }
           else
           {
@@ -1081,9 +1083,9 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
 
             REFERENCE_TIME overlappingMediaPacketStart = 0;
             REFERENCE_TIME overlappingMediaPacketEnd = 0;
-            result = (overlappingPacket->GetTime(&overlappingMediaPacketStart, &overlappingMediaPacketEnd) == S_OK) ? STATUS_OK : STATUS_ERROR;
+            result = overlappingPacket->GetTime(&overlappingMediaPacketStart, &overlappingMediaPacketEnd);
             
-            if (result == STATUS_OK)
+            if (result == S_OK)
             {
               // we get both media packets start and end
               if (unprocessedMediaPacketStart < overlappingMediaPacketStart)
@@ -1101,30 +1103,30 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
                 end = unprocessedMediaPacketEnd;
                 CMediaPacket *secondPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
 
-                result = ((firstPart != NULL) && (secondPart != NULL)) ? STATUS_OK : STATUS_ERROR;
+                result = ((firstPart != NULL) && (secondPart != NULL)) ? S_OK : E_POINTER;
 
-                if (result == STATUS_OK)
+                if (result == S_OK)
                 {
                   // delete first media packet because it is processed
                   if (!unprocessedMediaPackets->Remove(0))
                   {
                     // some error occured
-                    result = STATUS_ERROR;
+                    result = E_FAIL;
                   }
                 }
                 
-                if (result == STATUS_OK)
+                if (result == S_OK)
                 {
                   // both media packets are created correctly
                   // now add both packets to unprocessed media collection
 
-                  result = (unprocessedMediaPackets->Add(firstPart)) ? STATUS_OK : STATUS_ERROR;
+                  result = (unprocessedMediaPackets->Add(firstPart)) ? S_OK : E_FAIL;
 
-                  if (result == STATUS_OK)
+                  if (result == S_OK)
                   {
-                    result = (unprocessedMediaPackets->Add(secondPart)) ? STATUS_OK : STATUS_ERROR;
+                    result = (unprocessedMediaPackets->Add(secondPart)) ? S_OK : E_FAIL;
 
-                    if (result == STATUS_ERROR)
+                    if (FAILED(result))
                     {
                       // second part wasn't added to media collection
                       delete secondPart;
@@ -1167,30 +1169,30 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
                 end = unprocessedMediaPacketEnd;
                 CMediaPacket *secondPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
 
-                result = ((firstPart != NULL) && (secondPart != NULL)) ? STATUS_OK : STATUS_ERROR;
+                result = ((firstPart != NULL) && (secondPart != NULL)) ? S_OK : E_POINTER;
 
-                if (result == STATUS_OK)
+                if (result == S_OK)
                 {
                   // delete first media packet because it is processed
                   if (!unprocessedMediaPackets->Remove(0))
                   {
                     // some error occured
-                    result = STATUS_ERROR;
+                    result = E_FAIL;
                   }
                 }
 
-                if (result == STATUS_OK)
+                if (result == S_OK)
                 {
                   // both media packets are created correctly
                   // now add both packets to unprocessed media collection
 
-                  result = (unprocessedMediaPackets->Add(firstPart)) ? STATUS_OK : STATUS_ERROR;
+                  result = (unprocessedMediaPackets->Add(firstPart)) ? S_OK : E_FAIL;
 
-                  if (result == STATUS_OK)
+                  if (result == S_OK)
                   {
-                    result = (unprocessedMediaPackets->Add(secondPart)) ? STATUS_OK : STATUS_ERROR;
+                    result = (unprocessedMediaPackets->Add(secondPart)) ? S_OK : E_FAIL;
 
-                    if (result == STATUS_ERROR)
+                    if (FAILED(result))
                     {
                       // second part wasn't added to media collection
                       delete secondPart;
@@ -1221,13 +1223,13 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
               else
               {
                 // just delete processed media packet
-                if (result == STATUS_OK)
+                if (result == S_OK)
                 {
                   // delete first media packet because it is processed
                   if (!unprocessedMediaPackets->Remove(0))
                   {
                     // some error occured
-                    result = STATUS_ERROR;
+                    result = E_FAIL;
                   }
                 }
               }
@@ -1249,7 +1251,7 @@ int CAsyncSourceStream::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
   return result;
 }
 
-int CAsyncSourceStream::SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate)
+HRESULT CAsyncSourceStream::SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate)
 {
   CLockMutex lock(this->mediaPacketMutex, INFINITE);
 
@@ -1911,7 +1913,7 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
   return S_OK;
 }
 
-int CAsyncSourceStream::EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition)
+HRESULT CAsyncSourceStream::EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
   CLockMutex mediaPacketLock(this->mediaPacketMutex, INFINITE);
@@ -2000,8 +2002,17 @@ int CAsyncSourceStream::EndOfStreamReached(const TCHAR *outputPinName, LONGLONG 
       this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: requesting stream part from: %llu, to: %llu"), MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startTime, endTime);
       this->filter->ReceiveDataFromTimestamp(startTime, endTime);
     }
+    else
+    {
+      // all data received
+      // if downloading file, call download callback method
+      if (this->downloadingFile)
+      {
+        this->filter->OnDownloadCallback(S_OK);
+      }
+    }
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
-  return STATUS_OK;
+  return S_OK;
 }

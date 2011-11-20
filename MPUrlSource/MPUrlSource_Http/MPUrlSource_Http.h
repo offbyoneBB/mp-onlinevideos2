@@ -44,6 +44,8 @@
 #define TOTAL_SUPPORTED_PROTOCOLS                           1
 TCHAR *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { _T("HTTP") };
 
+#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                  1 * 1024 * 1024
+
 // size of buffers used for comparison if ranges are supported or not
 #define RANGES_SUPPORTED_BUFFER_SIZE                        256 * 1024
 
@@ -79,10 +81,10 @@ public:
 
   /* IProtocol interface */
   TCHAR *GetProtocolName(void);
-  int Initialize(IOutputStream *filter, CParameterCollection *configuration);
-  int ClearSession(void);
-  int ParseUrl(const TCHAR *url, const CParameterCollection *parameters);
-  int OpenConnection(void);
+  HRESULT Initialize(IOutputStream *filter, CParameterCollection *configuration);
+  HRESULT ClearSession(void);
+  HRESULT ParseUrl(const TCHAR *url, const CParameterCollection *parameters);
+  HRESULT OpenConnection(void);
   bool IsConnected(void);
   void CloseConnection(void);
   void ReceiveData(bool *shouldExit);

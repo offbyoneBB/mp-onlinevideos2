@@ -60,10 +60,10 @@ public:
 
   /* IProtocol interface */
   TCHAR *GetProtocolName(void);
-  int Initialize(IOutputStream *filter, CParameterCollection *configuration);
-  int ClearSession(void);
-  int ParseUrl(const TCHAR *url, const CParameterCollection *parameters);
-  int OpenConnection(void);
+  HRESULT Initialize(IOutputStream *filter, CParameterCollection *configuration);
+  HRESULT ClearSession(void);
+  HRESULT ParseUrl(const TCHAR *url, const CParameterCollection *parameters);
+  HRESULT OpenConnection(void);
   bool IsConnected(void);
   void CloseConnection(void);
   void ReceiveData(bool *shouldExit);
