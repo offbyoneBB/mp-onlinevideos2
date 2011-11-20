@@ -7,7 +7,7 @@ using System.Web;
 
 namespace OnlineVideos.Sites
 {
-    public class MSNMoviesUtil : GenericSiteUtil
+	/*public class MSNMoviesUtil : GenericSiteUtil
     {
         [Category("OnlineVideosConfiguration"), Description("XML Path used to parse the videoLicensor for videoList.")]
         protected string videoLicensorXml;
@@ -79,5 +79,5 @@ namespace OnlineVideos.Sites
             return resultUrl;
 
         }
-    }
+    }*/
 }
