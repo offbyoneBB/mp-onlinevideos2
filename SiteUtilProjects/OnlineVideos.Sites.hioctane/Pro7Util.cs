@@ -11,14 +11,13 @@ namespace OnlineVideos.Sites
     public class Pro7Util : SiteUtilBase
     {
         [Category("OnlineVideosConfiguration"), Description("Url used for category generation.")]
-        string baseUrl;
+        protected string baseUrl;
         [Category("OnlineVideosConfiguration"), Description("Url used to parse the pagingtoken for dynamic category generation")]
-        string regExPagingToken;
+		protected string regExPagingToken;
         [Category("OnlineVideosConfiguration"), Description("Url used to parse Category Content from Page")]
-        string regExDynamicCategory;
+		protected string regExDynamicCategory;
         [Category("OnlineVideosConfiguration"), Description("Url to rtmp Server")]
-        string rtmpBase;
-
+		protected string rtmpBase;
 
         private Dictionary<string, List<VideoInfo>> data = new Dictionary<string, List<VideoInfo>>();
 
@@ -86,10 +85,7 @@ namespace OnlineVideos.Sites
                     url = url.Replace("\\/", "/");
                 url = url.Replace("rtmpte", "rtmpe");
                 url = url.Replace(".net", ".net:1935");
-                url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}",
-                        System.Web.HttpUtility.UrlEncode(url),
-                        "http://www.prosieben.de/static/videoplayer/swf/HybridPlayer.swf"));
+				url = new MPUrlSourceFilter.RtmpUrl(url) { SwfUrl = "http://www.prosieben.de/static/videoplayer/swf/HybridPlayer.swf", SwfVerify = true }.ToString();
             }
             else
             {

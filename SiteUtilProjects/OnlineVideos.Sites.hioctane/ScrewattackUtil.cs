@@ -10,7 +10,7 @@ namespace OnlineVideos.Sites
     public class ScrewattackUtil : GenericSiteUtil
     {
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videoUrl. Group names: 'vid', 'pid'.")]
-        string urlRegEx;
+        protected string urlRegEx;
 
         Regex regEx_Url;
 

@@ -122,18 +122,15 @@ namespace OnlineVideos.Sites
                                         string tcUrl = "rtmp://" + host + ":1935" + "/" + app;
                                         string playPath = url.Substring(url.IndexOf(app) + app.Length + 1);
 
-                                        string resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&swfurl={4}&swfsize={5}&swfhash={6}&pageurl={7}&playpath={8}",
-                                                url, //rtmpUrl
-                                                host, //host
-                                                tcUrl, //tcUrl
-                                                app, //app
-                                                "http://artestras.vo.llnwd.net/o35/geo/arte7/player/ALL/artep7_hd_16_9_v2.swf", //swfurl
-                                                "105878",
-                                                "061e498c18ca7ce1244caaa0311f35cddc6cf69b4ff810ab88caf7b546a6795e",
-                                                video.VideoUrl, //pageUrl
-                                                playPath //playpath
-                                                ));
+                                        string resultUrl = new MPUrlSourceFilter.RtmpUrl(url)
+										{
+											TcUrl = tcUrl,
+											App = app,
+											SwfUrl = "http://artestras.vo.llnwd.net/o35/geo/arte7/player/ALL/artep7_hd_16_9_v2.swf",
+											SwfVerify = true,
+											PageUrl = video.VideoUrl,
+											PlayPath = playPath
+										}.ToString();
 
                                         if(video.PlaybackOptions.ContainsKey(title)) title += " - 2";
                                         video.PlaybackOptions.Add(title, resultUrl);
@@ -209,7 +206,7 @@ namespace OnlineVideos.Sites
             if (currentPage >= currentCategoryMaxPages) currentPage = currentCategoryMaxPages;
             return GetPagedVideoList();
         }
-
+		/*
         public override bool HasPreviousPage
         {
             get { return currentCategory != null && currentPage > 1; }
@@ -221,7 +218,7 @@ namespace OnlineVideos.Sites
             if (currentPage < 1) currentPage = 1;
             return GetPagedVideoList();
         }
-
+		*/
         #endregion        
     }
 }

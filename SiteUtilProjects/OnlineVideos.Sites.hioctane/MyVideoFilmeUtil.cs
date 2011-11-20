@@ -10,7 +10,7 @@ using System.Web;
 
 namespace OnlineVideos.Sites
 {
-    public class MyVideoFilmeUtil : GenericSiteUtil
+    /*public class MyVideoFilmeUtil : GenericSiteUtil
     {
 
         public override String getUrl(VideoInfo video)
@@ -39,5 +39,5 @@ namespace OnlineVideos.Sites
             return resultUrl;
 
         }
-    }
+    }*/
 }
