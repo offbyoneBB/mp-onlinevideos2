@@ -29,14 +29,6 @@
 #include "RangesSupported.h"
 #include "StreamAvailableLength.h"
 
-// return values of protocol methods
-// no error
-#define STATUS_OK                                       0
-// error
-#define STATUS_ERROR                                    -1
-// error, do not retry call method
-#define STATUS_ERROR_NO_RETRY                           -2
-
 // defines interface for stream
 struct IOutputStream
 {
@@ -45,21 +37,21 @@ struct IOutputStream
   // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
   // @param total : total length of stream in bytes
   // @param estimate : specifies if length is estimate
-  // @return : STATUS_OK if successful
-  virtual int SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate) = 0;
+  // @return : S_OK if successful
+  virtual HRESULT SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate) = 0;
 
   // pushes media packet to output pin
   // caller is responsible for deleting output pin name, media packet will be destroyed after processing
   // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
   // @param mediaPacket : reference to media packet to push to output pin
-  // @return : STATUS_OK if successful
-  virtual int PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket) = 0;
+  // @return : S_OK if successful
+  virtual HRESULT PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket) = 0;
 
   // notifies output stream that end of stream was reached
   // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
   // @param streamPosition : the last valid stream position
-  // @return : STATUS_OK if successful
-  virtual int EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition) = 0;
+  // @return : S_OK if successful
+  virtual HRESULT EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition) = 0;
 };
 
 // defines interface for base protocol implementation
@@ -128,24 +120,24 @@ public:
   // initialize protocol implementation with configuration parameters
   // @param filter : the url source filter initializing protocol
   // @param : the reference to additional configuration parameters (can be same parameters which were passed while creating instance), can be NULL
-  // @return : STATUS_OK if successfull
-  virtual int Initialize(IOutputStream *filter, CParameterCollection *configuration) = 0;
+  // @return : S_OK if successfull
+  virtual HRESULT Initialize(IOutputStream *filter, CParameterCollection *configuration) = 0;
 
   // clear current session before running ParseUrl() method
-  // @return : STATUS_OK if successfull
-  virtual int ClearSession(void) = 0;
+  // @return : S_OK if successfull
+  virtual HRESULT ClearSession(void) = 0;
 
   // parse given url to internal variables for specified protocol
   // errors should be logged to log file
   // @param url : the url to parse
   // @param parameters : the reference to collection of configuration parameters (can be same parameters which were passed while creating instance and initializing), can be NULL
-  // @return : STATUS_OK if successfull
-  virtual int ParseUrl(const TCHAR *url, const CParameterCollection *parameters) = 0;
+  // @return : S_OK if successfull
+  virtual HRESULT ParseUrl(const TCHAR *url, const CParameterCollection *parameters) = 0;
 
   // open connection
   // errors should be logged to log file
-  // @return : STATUS_OK if successfull
-  virtual int OpenConnection(void) = 0;
+  // @return : S_OK if successfull
+  virtual HRESULT OpenConnection(void) = 0;
 
   // close connection
   // errors should be logged to log file

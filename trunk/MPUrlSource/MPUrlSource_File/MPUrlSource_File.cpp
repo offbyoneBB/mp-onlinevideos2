@@ -94,7 +94,7 @@ CMPUrlSource_File::~CMPUrlSource_File()
   this->logger = NULL;
 }
 
-int CMPUrlSource_File::ClearSession(void)
+HRESULT CMPUrlSource_File::ClearSession(void)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 
@@ -109,20 +109,20 @@ int CMPUrlSource_File::ClearSession(void)
   this->wholeStreamDownloaded = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
-  return STATUS_OK;
+  return S_OK;
 }
 
-int CMPUrlSource_File::Initialize(IOutputStream *filter, CParameterCollection *configuration)
+HRESULT CMPUrlSource_File::Initialize(IOutputStream *filter, CParameterCollection *configuration)
 {
   this->filter = filter;
   if (this->filter == NULL)
   {
-    return STATUS_ERROR;
+    return E_POINTER;
   }
 
   if (this->lockMutex == NULL)
   {
-    return STATUS_ERROR;
+    return E_FAIL;
   }
 
   this->configurationParameters->Clear();
@@ -138,7 +138,7 @@ int CMPUrlSource_File::Initialize(IOutputStream *filter, CParameterCollection *c
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? FILE_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
   this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
-  return STATUS_OK;
+  return S_OK;
 }
 
 TCHAR *CMPUrlSource_File::GetProtocolName(void)
@@ -146,9 +146,9 @@ TCHAR *CMPUrlSource_File::GetProtocolName(void)
   return Duplicate(PROTOCOL_NAME);
 }
 
-int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *parameters)
+HRESULT CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *parameters)
 {
-  int result = STATUS_OK;
+  HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
 
   this->ClearSession();
@@ -162,10 +162,10 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
   if (urlComponents == NULL)
   {
     this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'url components'"));
-    result = STATUS_ERROR;
+    result = E_OUTOFMEMORY;
   }
 
-  if (result == STATUS_OK)
+  if (result == S_OK)
   {
     ZeroURL(urlComponents);
     urlComponents->dwStructSize = sizeof(URL_COMPONENTS);
@@ -175,21 +175,21 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
     if (!InternetCrackUrl(url, 0, 0, urlComponents))
     {
       this->logger->Log(LOGGER_ERROR, _T("%s: %s: InternetCrackUrl() error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, GetLastError());
-      result = STATUS_ERROR;
+      result = E_FAIL;
     }
   }
 
-  if (result == STATUS_OK)
+  if (result == S_OK)
   {
     int length = urlComponents->dwSchemeLength + 1;
     ALLOC_MEM_DEFINE_SET(protocol, TCHAR, length, 0);
     if (protocol == NULL) 
     {
       this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'protocol'"));
-      result = STATUS_ERROR;
+      result = E_OUTOFMEMORY;
     }
 
-    if (result == STATUS_OK)
+    if (result == S_OK)
     {
       _tcsncat_s(protocol, length, urlComponents->lpszScheme, urlComponents->dwSchemeLength);
 
@@ -207,11 +207,11 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
       {
         // not supported protocol
         this->logger->Log(LOGGER_INFO, _T("%s: %s: unsupported protocol '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, protocol);
-        result = STATUS_ERROR;
+        result = E_FAIL;
       }
     }
 
-    if (result == STATUS_OK)
+    if (result == S_OK)
     {
       // convert url to Unicode (if needed), because CoInternetParseUrl() works in Unicode
 
@@ -220,20 +220,20 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
       if (parseUrl == NULL)
       {
         this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot convert url to wide character url"));
-        result = STATUS_ERROR;
+        result = E_OUTOFMEMORY;
       }
 
-      if (result == STATUS_OK)
+      if (result == S_OK)
       {
         // parsed file path should be shorter than wide character url
         ALLOC_MEM_DEFINE_SET(parsedFilePath, wchar_t, urlLength, 0);
         if (parsedFilePath == NULL)
         {
           this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for parsed file path"));
-          result = STATUS_ERROR;
+          result = E_OUTOFMEMORY;
         }
 
-        if (result == STATUS_OK)
+        if (result == S_OK)
         {
           DWORD stored = 0;
           HRESULT error = CoInternetParseUrl(parseUrl, PARSE_PATH_FROM_URL, 0, parsedFilePath, urlLength, &stored, 0);
@@ -245,17 +245,17 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
             if (parsedFilePath == NULL)
             {
               this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for parsed file path"));
-              result = STATUS_ERROR;
+              result = E_OUTOFMEMORY;
             }
 
-            if (result == STATUS_OK)
+            if (result == S_OK)
             {
               stored = 0;
               error = CoInternetParseUrl(parseUrl, PARSE_PATH_FROM_URL, 0, parsedFilePath, stored, &stored, 0);
               if (error != S_OK)
               {
                 this->logger->Log(LOGGER_ERROR, _T("%s: %s: error occured while parsing file url, error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, error);
-                result = STATUS_ERROR;
+                result = error;
               }
             }
           }
@@ -263,11 +263,11 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
           {
             // error occured
             this->logger->Log(LOGGER_ERROR, _T("%s: %s: error occured while parsing file url, error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, error);
-            result = STATUS_ERROR;
+            result = error;
           }
         }
 
-        if (result == STATUS_OK)
+        if (result == S_OK)
         {
           // if we are here, then file url was successfully parsed
           // now store parsed url into this->filePath
@@ -280,11 +280,11 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
           if (this->filePath == NULL)
           {
             this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot convert from Unicode file path to file path"));
-            result = STATUS_ERROR;
+            result = E_OUTOFMEMORY;
           }
         }
 
-        if (result == STATUS_OK)
+        if (result == S_OK)
         {
           this->logger->Log(LOGGER_INFO, _T("%s: %s: file path: %s"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, this->filePath);
         }
@@ -297,27 +297,29 @@ int CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection *pa
 
   FREE_MEM(urlComponents);
   
-  this->logger->Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
 
   return result;
 }
 
-int CMPUrlSource_File::OpenConnection(void)
+HRESULT CMPUrlSource_File::OpenConnection(void)
 {
-  int result = (this->filePath != NULL) ? STATUS_OK : STATUS_ERROR;
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->filePath);
+
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
 
   this->wholeStreamDownloaded = false;
 
-  if ((result == STATUS_OK) && (this->fileStream == NULL))
+  if ((result == S_OK) && (this->fileStream == NULL))
   {
     if (_tfopen_s(&this->fileStream, this->filePath, _T("rb")) != 0)
     {
       this->logger->Log(LOGGER_ERROR, _T("%s: %s: error occured while opening file, error: %i"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME, errno);
-      result = STATUS_ERROR;
+      result = E_FAIL;
     }
 
-    if (result == STATUS_OK)
+    if (result == S_OK)
     {
       LARGE_INTEGER size;
       size.QuadPart = 0;
@@ -341,7 +343,7 @@ int CMPUrlSource_File::OpenConnection(void)
     }
   }
 
-  this->logger->Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
   return result;
 }
 
@@ -424,7 +426,7 @@ void CMPUrlSource_File::ReceiveData(bool *shouldExit)
   {
     this->logger->Log(LOGGER_WARNING,  METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("file not opened, opening file"));
     // re-open connection if previous is lost
-    if (this->OpenConnection() != STATUS_OK)
+    if (this->OpenConnection() != S_OK)
     {
       this->CloseConnection();
     }

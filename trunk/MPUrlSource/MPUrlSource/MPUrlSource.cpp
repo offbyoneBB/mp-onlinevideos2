@@ -41,6 +41,9 @@ class CAsyncSourceStream;
 #define METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME                   _T("DestroyReceiveDataWorker()")
 #define METHOD_PUSH_DATA_NAME                                     _T("PushData()")
 #define METHOD_SET_TOTAL_LENGTH_NAME                              _T("SetTotalLength()")
+#define METHOD_DOWNLOAD_NAME                                      _T("Download()")
+#define METHOD_DOWNLOAD_ASYNC_NAME                                _T("DownloadAsync()")
+#define METHOD_DOWNLOAD_CALLBACK_NAME                             _T("OnDownloadCallback()")
 
 #define PARAMETER_SEPARATOR                                       _T("&")
 #define PARAMETER_IDENTIFIER                                      _T("####")
@@ -60,6 +63,9 @@ CMPUrlSourceFilter::CMPUrlSourceFilter(IUnknown *pUnk, HRESULT *phr)
   this->protocolImplementations = NULL;
   this->url = NULL;
   this->downloadFileName = NULL;
+  this->downloadFinished = false;
+  this->downloadResult = S_OK;
+  this->downloadCallback = NULL;
   this->hReceiveDataWorkerThread = NULL;
   this->status = STATUS_NONE;
   this->sourceStreamCollection = new CAsyncSourceStreamCollection();
@@ -162,13 +168,128 @@ STDMETHODIMP CMPUrlSourceFilter::NonDelegatingQueryInterface(REFIID riid, void**
   }
 }
 
+void STDMETHODCALLTYPE CMPUrlSourceFilter::OnDownloadCallback(HRESULT downloadResult)
+{
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_CALLBACK_NAME);
+
+  this->downloadResult = downloadResult;
+  this->downloadFinished = true;
+
+  if ((this->downloadCallback != NULL) && (this->downloadCallback != this))
+  {
+    // if download callback is set and it is not current instance (avoid recursion)
+    this->downloadCallback->OnDownloadCallback(downloadResult);
+  }
+
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_CALLBACK_NAME);
+}
+
 STDMETHODIMP CMPUrlSourceFilter::Download(LPCOLESTR uri, LPCOLESTR fileName)
 {
   HRESULT result = S_OK;
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_NAME);
+
+  result = this->DownloadAsync(uri, fileName, this);
+
+  if (result == S_OK)
+  {
+    // downloading process is successfully started
+    // just wait for callback and return to caller
+    while (!this->downloadFinished)
+    {
+      // just sleep
+      Sleep(100);
+    }
+
+    result = this->downloadResult;
+  }
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_NAME, result);
+  return result;
+}
+
+STDMETHODIMP CMPUrlSourceFilter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDownloadCallback *downloadCallback)
+{
+  HRESULT result = S_OK;
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_ASYNC_NAME);
 
   CHECK_POINTER_DEFAULT_HRESULT(result, uri);
   CHECK_POINTER_DEFAULT_HRESULT(result, fileName);
+  CHECK_POINTER_DEFAULT_HRESULT(result, downloadCallback);
 
+  if (result == S_OK)
+  {
+    // stop receiving data
+    this->DestroyReceiveDataWorker();
+
+    // remove all source streams
+    this->sourceStreamCollection->Clear();
+
+    // reset all protocol implementations
+    if (this->protocolImplementations != NULL)
+    {
+      for(unsigned int i = 0; i < this->protocolImplementationsCount; i++)
+      {
+        this->logger->Log(LOGGER_INFO, _T("%s: %s: reseting protocol: %s"), MODULE_NAME, METHOD_DOWNLOAD_ASYNC_NAME, protocolImplementations[i].protocol);
+        if (protocolImplementations[i].pImplementation != NULL)
+        {
+          protocolImplementations[i].pImplementation->ClearSession();
+        }
+      }
+    }
+
+    this->downloadResult = S_OK;
+    this->downloadFinished = false;
+    this->downloadCallback = downloadCallback;
+  }
+
+  if (result == S_OK)
+  {
+#ifdef _MBCS
+    this->url = ConvertToMultiByteW(uri);
+    this->downloadFileName = ConvertToMultiByteW(fileName);
+#else
+    this->url = ConvertToUnicodeW(uri);
+    this->downloadFileName = ConvertToUnicodeW(fileName);
+#endif
+
+    result = ((this->url == NULL) || (this->downloadFileName == NULL)) ? E_OUTOFMEMORY : S_OK;
+  }
+
+  if (result == S_OK)
+  {
+    CParameterCollection *suppliedParameters = this->ParseParameters(this->url);
+    if (suppliedParameters != NULL)
+    {
+      // we have set some parameters
+      // set them as configuration parameters
+      this->configuration->Clear();
+      this->configuration->Append(suppliedParameters);
+      if (!this->configuration->Contains(PARAMETER_NAME_URL, true))
+      {
+        this->configuration->Add(new CParameter(PARAMETER_NAME_URL, this->url));
+      }
+      this->configuration->Add(new CParameter(PARAMETER_NAME_DOWNLOAD_FILE_NAME, this->downloadFileName));
+
+      delete suppliedParameters;
+      suppliedParameters = NULL;
+    }
+    else
+    {
+      // parameters are not supplied, just set current url and download file name as only parameters in configuration
+      this->configuration->Clear();
+      this->configuration->Add(new CParameter(PARAMETER_NAME_URL, this->url));
+      this->configuration->Add(new CParameter(PARAMETER_NAME_DOWNLOAD_FILE_NAME, this->downloadFileName));
+    }
+  }
+
+  if (result == S_OK)
+  {
+    // loads protocol based on current configuration parameters
+    result = this->Load();
+  }
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_ASYNC_NAME, result);
   return result;
 }
 
@@ -204,7 +325,7 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
 
   if (this->url == NULL)
   {
-    result = E_FAIL;
+    result = E_OUTOFMEMORY;
   }
 
   if (result == S_OK)
@@ -213,33 +334,54 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
     if (suppliedParameters != NULL)
     {
       // we have set some parameters
-      // get url parameter
-      PCParameter urlParameter = suppliedParameters->GetParameter(PARAMETER_NAME_URL, true);
-      if (urlParameter != NULL)
-      {
-        // free current url
-        FREE_MEM(this->url);
-        // make duplicate of parameter url
-        this->url = Duplicate(urlParameter->GetValue());
-      }
-
+      // set them as configuration parameters
       this->configuration->Clear();
       this->configuration->Append(suppliedParameters);
+      if (!this->configuration->Contains(PARAMETER_NAME_URL, true))
+      {
+        this->configuration->Add(new CParameter(PARAMETER_NAME_URL, this->url));
+      }
 
       delete suppliedParameters;
       suppliedParameters = NULL;
     }
+    else
+    {
+      // parameters are not supplied, just set current url as only one parameter in configuration
+      this->configuration->Clear();
+      this->configuration->Add(new CParameter(PARAMETER_NAME_URL, this->url));
+    }
   }
 
-  if (this->url == NULL)
+  if (result == S_OK)
+  {
+    // loads protocol based on current configuration parameters
+    result = this->Load();
+  }
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, result);
+  return result;
+}
+
+STDMETHODIMP CMPUrlSourceFilter::Load()
+{
+  HRESULT result = S_OK;
+
+  if (this->configuration == NULL)
   {
     result = E_FAIL;
   }
 
   if (result == S_OK)
   {
-    // we don't have specific parameters, just send current configuration
-    if(!this->Load(this->url, this->configuration))
+    FREE_MEM(this->url);
+    this->url = Duplicate(this->configuration->GetValue(PARAMETER_NAME_URL, true, NULL));
+    result = (this->url == NULL) ? E_OUTOFMEMORY : S_OK;
+  }
+
+  if (result == S_OK)
+  {
+    if(!this->LoadProtocolImplementation(this->url, this->configuration))
     {
       result = E_FAIL;
     }
@@ -334,8 +476,6 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
       }
     }
   }
-
-  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, result);
 
   return result;
 }
@@ -575,9 +715,9 @@ void CMPUrlSourceFilter::LoadPlugins()
                 // all parameters are supplied with calling IFileSourceFilter.Load() method
 
                 // initialize protocol
-                int initialized = protocolImplementations[this->protocolImplementationsCount].pImplementation->Initialize(this, this->configuration);
+                HRESULT initialized = protocolImplementations[this->protocolImplementationsCount].pImplementation->Initialize(this, this->configuration);
 
-                if (initialized == STATUS_OK)
+                if (SUCCEEDED(initialized))
                 {
                   TCHAR *guid = ConvertGuidToString(protocolImplementations[this->protocolImplementationsCount].pImplementation->GetInstanceId());
                   this->logger->Log(LOGGER_INFO, _T("%s: %s: protocol '%s' successfully instanced, id: %s"), MODULE_NAME, METHOD_LOAD_PLUGINS_NAME, protocolImplementations[this->protocolImplementationsCount].protocol, guid);
@@ -623,15 +763,15 @@ void CMPUrlSourceFilter::LoadPlugins()
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_LOAD_PLUGINS_NAME);
 }
 
-int CMPUrlSourceFilter::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket)
+HRESULT CMPUrlSourceFilter::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
   this->status = STATUS_RECEIVING_DATA;
 
   CAsyncSourceStream *stream = this->sourceStreamCollection->GetStream((TCHAR *)outputPinName, false);
-  int result = (stream != NULL) ? STATUS_OK : STATUS_ERROR;
+  HRESULT result = (stream != NULL) ? S_OK : E_POINTER;
 
-  if (result == STATUS_OK)
+  if (result == S_OK)
   {
     result = stream->PushMediaPacket(outputPinName, mediaPacket);
   }
@@ -640,25 +780,25 @@ int CMPUrlSourceFilter::PushMediaPacket(const TCHAR *outputPinName, CMediaPacket
     this->logger->Log(LOGGER_WARNING, _T("%s: %s: unknown stream: %s"), MODULE_NAME, METHOD_PUSH_DATA_NAME, outputPinName);
   }
 
-  if ((result != STATUS_OK) && (mediaPacket != NULL))
+  if ((result != S_OK) && (mediaPacket != NULL))
   {
     // if result if not STATUS_OK than release media packet
     // because receiver is responsible of deleting media packet
     delete mediaPacket;
   }
 
-  this->logger->Log(LOGGER_DATA, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
+  this->logger->Log(LOGGER_DATA, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
   return result;
 }
 
-int CMPUrlSourceFilter::EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition)
+HRESULT CMPUrlSourceFilter::EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
 
   CAsyncSourceStream *stream = this->sourceStreamCollection->GetStream((TCHAR *)outputPinName, false);
-  int result = (stream != NULL) ? STATUS_OK : STATUS_ERROR;
+  HRESULT result = (stream != NULL) ? S_OK : E_POINTER;
 
-  if (result == STATUS_OK)
+  if (result == S_OK)
   {
     result = stream->EndOfStreamReached(outputPinName, streamPosition);
   }
@@ -667,18 +807,16 @@ int CMPUrlSourceFilter::EndOfStreamReached(const TCHAR *outputPinName, LONGLONG 
     this->logger->Log(LOGGER_WARNING, _T("%s: %s: unknown stream: %s"), MODULE_NAME, METHOD_PUSH_DATA_NAME, outputPinName);
   }
 
-  this->logger->Log(LOGGER_DATA, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
+  this->logger->Log(LOGGER_DATA, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_PUSH_DATA_NAME);
   return result;
 }
 
-int CMPUrlSourceFilter::SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate)
+HRESULT CMPUrlSourceFilter::SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate)
 {
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SET_TOTAL_LENGTH_NAME);
-
   CAsyncSourceStream *stream = this->sourceStreamCollection->GetStream((TCHAR *)outputPinName, false);
-  int result = (stream != NULL) ? STATUS_OK : STATUS_ERROR;
+  HRESULT result = (stream != NULL) ? S_OK : E_POINTER;
 
-  if (result == STATUS_OK)
+  if (result == S_OK)
   {
     result = stream->SetTotalLength(outputPinName, total, estimate);
   }
@@ -687,11 +825,10 @@ int CMPUrlSourceFilter::SetTotalLength(const TCHAR *outputPinName, LONGLONG tota
     this->logger->Log(LOGGER_WARNING, _T("%s: %s: unknown stream: %s"), MODULE_NAME, METHOD_SET_TOTAL_LENGTH_NAME, outputPinName);
   }
 
-  this->logger->Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, MODULE_NAME, METHOD_SET_TOTAL_LENGTH_NAME);
   return result;
 }
 
-bool CMPUrlSourceFilter::Load(const TCHAR *url, const CParameterCollection *parameters)
+bool CMPUrlSourceFilter::LoadProtocolImplementation(const TCHAR *url, const CParameterCollection *parameters)
 {
   // for each protocol run ParseUrl() method
   // those which return STATUS_OK supports protocol
@@ -701,7 +838,7 @@ bool CMPUrlSourceFilter::Load(const TCHAR *url, const CParameterCollection *para
   {
     if (protocolImplementations[i].pImplementation != NULL)
     {
-      protocolImplementations[i].supported = (protocolImplementations[i].pImplementation->ParseUrl(url, parameters) == STATUS_OK);
+      protocolImplementations[i].supported = (protocolImplementations[i].pImplementation->ParseUrl(url, parameters) == S_OK);
       if ((protocolImplementations[i].supported) && (!retval))
       {
         // active protocol wasn't set yet
@@ -723,6 +860,7 @@ DWORD WINAPI CMPUrlSourceFilter::ReceiveDataWorker(LPVOID lpParam)
   unsigned int attempts = 0;
   bool stopReceivingData = false;
 
+  HRESULT result = S_OK;
   while ((!caller->receiveDataWorkerShouldExit) && (!stopReceivingData))
   {
     Sleep(1);
@@ -741,29 +879,34 @@ DWORD WINAPI CMPUrlSourceFilter::ReceiveDataWorker(LPVOID lpParam)
       {
         if (attempts < maximumAttempts)
         {
-          int result = caller->activeProtocol->OpenConnection();
-          switch (result)
+          result = caller->activeProtocol->OpenConnection();
+          if (SUCCEEDED(result))
           {
-          case STATUS_OK:
             // set attempts to zero
             attempts = 0;
-            break;
-          case STATUS_ERROR_NO_RETRY:
+          }
+          else
+          {
+            // increase attempts
+            attempts++;
+          }
+          /*else
+          {
             caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, _T("cannot open connection"));
             caller->status = STATUS_NO_DATA_ERROR;
             stopReceivingData = true;
-            break;
-          default:
-            // increase attempts
-            attempts++;
-            break;
-          }
+          }*/
         }
         else
         {
           caller->logger->Log(LOGGER_ERROR, _T("%s: %s: maximum attempts of opening connection reached, attempts: %u, maximum attempts: %u"), MODULE_NAME, METHOD_RECEIVE_DATA_WORKER_NAME, attempts, maximumAttempts);
           caller->status = STATUS_NO_DATA_ERROR;
           stopReceivingData = true;
+
+          if (caller->downloadFileName != NULL)
+          {
+            caller->OnDownloadCallback(result);
+          }
         }
       }
     }

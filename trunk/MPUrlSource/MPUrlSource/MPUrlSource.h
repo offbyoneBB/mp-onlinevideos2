@@ -61,6 +61,11 @@ private:
 
   TCHAR* url;
   TCHAR* downloadFileName;
+
+  bool downloadFinished;
+  HRESULT downloadResult;
+  IDownloadCallback *downloadCallback;
+
   CParameterCollection *configuration;
   CLogger *logger;
 
@@ -96,16 +101,20 @@ private:
   CAsyncSourceStreamCollection *sourceStreamCollection;
 
 public:
-  // loads specified url
+  // loads protocol implementation based on specified url and configuration parameters
   // @param url : the url to load
   // @param parameters : the parameters used for connection
   // @return : true if url is loaded, false otherwise
-  bool Load(const TCHAR *url, const CParameterCollection *parameters);
+  bool LoadProtocolImplementation(const TCHAR *url, const CParameterCollection *parameters);
 
   // parses parameters from specified string
   // @param parameters : null-terminated string with specified parameters
   // @return : reference to variable holding collection of parameters or NULL if error
   CParameterCollection *ParseParameters(const TCHAR *parameters);
+
+  // initializes filter and loads protocol implementation based on configuration
+  // @result : S_OK if successful
+  STDMETHODIMP Load();
 
   // IFileSourceFilter
   DECLARE_IUNKNOWN
@@ -123,6 +132,10 @@ public:
 
   // IDownload interface
   STDMETHODIMP Download(LPCOLESTR uri, LPCOLESTR fileName);
+  STDMETHODIMP DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDownloadCallback *downloadCallback);
+
+  // IDownloadCallback interface
+  void STDMETHODCALLTYPE OnDownloadCallback(HRESULT downloadResult);
 
   // IOutputStream interface
 
@@ -131,20 +144,20 @@ public:
   // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
   // @param total : total length of stream in bytes
   // @param estimate : specifies if length is estimate
-  // @return : STATUS_OK if successful
-  int SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate);
+  // @return : S_OK if successful
+  HRESULT SetTotalLength(const TCHAR *outputPinName, LONGLONG total, bool estimate);
 
   // pushes media packet to output pin
   // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
   // @param mediaPacket : reference to media packet to push to output pin
-  // @return : STATUS_OK if successful
-  int PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket);
+  // @return : S_OK if successful
+  HRESULT PushMediaPacket(const TCHAR *outputPinName, CMediaPacket *mediaPacket);
 
   // notifies output stream that end of stream was reached
   // @param outputPinName : the name of output pin (the output pin name must be value from values returned from GetStreamNames() method of IProtocol interface
   // @param streamPosition : the last valid stream position
-  // @return : STATUS_OK if successful
-  int EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition);
+  // @return : S_OK if successful
+  HRESULT EndOfStreamReached(const TCHAR *outputPinName, LONGLONG streamPosition);
 
   // IBaseProtocol interface
 

@@ -116,7 +116,7 @@ CMPUrlSource_Http::~CMPUrlSource_Http()
   this->logger = NULL;
 }
 
-int CMPUrlSource_Http::ClearSession(void)
+HRESULT CMPUrlSource_Http::ClearSession(void)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
 
@@ -151,20 +151,20 @@ int CMPUrlSource_Http::ClearSession(void)
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
-  return STATUS_OK;
+  return S_OK;
 }
 
-int CMPUrlSource_Http::Initialize(IOutputStream *filter, CParameterCollection *configuration)
+HRESULT CMPUrlSource_Http::Initialize(IOutputStream *filter, CParameterCollection *configuration)
 {
   this->filter = filter;
   if (this->filter == NULL)
   {
-    return STATUS_ERROR;
+    return E_POINTER;
   }
 
   if (this->lockMutex == NULL)
   {
-    return STATUS_ERROR;
+    return E_FAIL;
   }
 
   if (configuration != NULL)
@@ -180,7 +180,7 @@ int CMPUrlSource_Http::Initialize(IOutputStream *filter, CParameterCollection *c
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
   this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
-  return STATUS_OK;
+  return S_OK;
 }
 
 TCHAR *CMPUrlSource_Http::GetProtocolName(void)
@@ -188,9 +188,9 @@ TCHAR *CMPUrlSource_Http::GetProtocolName(void)
   return Duplicate(PROTOCOL_NAME);
 }
 
-int CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *parameters)
+HRESULT CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *parameters)
 {
-  int result = STATUS_OK;
+  HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
 
   this->ClearSession();
@@ -204,10 +204,10 @@ int CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *pa
   if (urlComponents == NULL)
   {
     this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'url components'"));
-    result = STATUS_ERROR;
+    result = E_OUTOFMEMORY;
   }
 
-  if (result == STATUS_OK)
+  if (result == S_OK)
   {
     ZeroURL(urlComponents);
     urlComponents->dwStructSize = sizeof(URL_COMPONENTS);
@@ -217,21 +217,21 @@ int CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *pa
     if (!InternetCrackUrl(url, 0, 0, urlComponents))
     {
       this->logger->Log(LOGGER_ERROR, _T("%s: %s: InternetCrackUrl() error: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, GetLastError());
-      result = STATUS_ERROR;
+      result = E_FAIL;
     }
   }
 
-  if (result == STATUS_OK)
+  if (result == S_OK)
   {
     int length = urlComponents->dwSchemeLength + 1;
     ALLOC_MEM_DEFINE_SET(protocol, TCHAR, length, 0);
     if (protocol == NULL) 
     {
       this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'protocol'"));
-      result = STATUS_ERROR;
+      result = E_OUTOFMEMORY;
     }
 
-    if (result == STATUS_OK)
+    if (result == S_OK)
     {
       _tcsncat_s(protocol, length, urlComponents->lpszScheme, urlComponents->dwSchemeLength);
 
@@ -249,31 +249,32 @@ int CMPUrlSource_Http::ParseUrl(const TCHAR *url, const CParameterCollection *pa
       {
         // not supported protocol
         this->logger->Log(LOGGER_INFO, _T("%s: %s: unsupported protocol '%s'"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, protocol);
-        result = STATUS_ERROR;
+        result = E_FAIL;
       }
     }
     FREE_MEM(protocol);
 
-    if (result == STATUS_OK)
+    if (result == S_OK)
     {
       this->url = Duplicate(url);
       if (this->url == NULL)
       {
         this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot allocate memory for 'url'"));
-        result = STATUS_ERROR;
+        result = E_OUTOFMEMORY;
       }
     }
   }
 
   FREE_MEM(urlComponents);
 
-  this->logger->Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME);
   return result;
 }
 
-int CMPUrlSource_Http::OpenConnection(void)
+HRESULT CMPUrlSource_Http::OpenConnection(void)
 {
-  int result = (this->url != NULL) ? STATUS_OK : STATUS_ERROR;
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->url);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
 
   // lock access to stream
@@ -281,13 +282,13 @@ int CMPUrlSource_Http::OpenConnection(void)
 
   this->wholeStreamDownloaded = false;
 
-  if (result == STATUS_OK)
+  if (result == S_OK)
   {
     this->mainCurlInstance = new CCurlInstance(this->logger, this->url, PROTOCOL_IMPLEMENTATION_NAME);
-    result = (this->mainCurlInstance != NULL) ? STATUS_OK : STATUS_ERROR;
+    result = (this->mainCurlInstance != NULL) ? S_OK : E_POINTER;
   }
 
-  if (result == STATUS_OK)
+  if (result == S_OK)
   {
     if (this->rangesSupported == RANGES_STATE_UNKNOWN)
     {
@@ -295,22 +296,22 @@ int CMPUrlSource_Http::OpenConnection(void)
       this->receivedDataFromStart = new LinearBuffer();
       this->receivedDataFromRange = new LinearBuffer();
 
-      result = (this->receivedDataFromStart == NULL) ? STATUS_ERROR : result;
-      result = (this->receivedDataFromRange == NULL) ? STATUS_ERROR : result;
+      result = (this->receivedDataFromStart == NULL) ? E_POINTER : result;
+      result = (this->receivedDataFromRange == NULL) ? E_POINTER : result;
 
-      if (result == STATUS_OK)
+      if (result == S_OK)
       {
-        result = (this->receivedDataFromStart->InitializeBuffer(RANGES_SUPPORTED_BUFFER_SIZE)) ? result : STATUS_ERROR;
-        result = (this->receivedDataFromRange->InitializeBuffer(RANGES_SUPPORTED_BUFFER_SIZE)) ? result : STATUS_ERROR;
+        result = (this->receivedDataFromStart->InitializeBuffer(RANGES_SUPPORTED_BUFFER_SIZE)) ? result : E_FAIL;
+        result = (this->receivedDataFromRange->InitializeBuffer(RANGES_SUPPORTED_BUFFER_SIZE)) ? result : E_FAIL;
       }
 
-      if (result == STATUS_OK)
+      if (result == S_OK)
       {
         this->rangesDetectionCurlInstance = new CCurlInstance(this->logger, this->url, PROTOCOL_IMPLEMENTATION_NAME);
-        result = (this->rangesDetectionCurlInstance != NULL) ? STATUS_OK : STATUS_ERROR;
+        result = (this->rangesDetectionCurlInstance != NULL) ? S_OK : E_POINTER;
       }
 
-      if (result == STATUS_OK)
+      if (result == S_OK)
       {
         // set ranges supported state to pending request (this will store data)
         this->rangesSupported = RANGES_STATE_PENDING_REQUEST;
@@ -318,7 +319,7 @@ int CMPUrlSource_Http::OpenConnection(void)
     }
   }
 
-  if (result == STATUS_OK)
+  if (result == S_OK)
   {
     this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
     this->mainCurlInstance->SetWriteCallback(CMPUrlSource_Http::CurlReceiveData, this);
@@ -330,17 +331,17 @@ int CMPUrlSource_Http::OpenConnection(void)
     this->mainCurlInstance->SetHttpVersion(this->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_VERSION, true, HTTP_VERSION_DEFAULT));
     this->mainCurlInstance->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
 
-    result = (this->mainCurlInstance->Initialize()) ? STATUS_OK : STATUS_ERROR;
+    result = (this->mainCurlInstance->Initialize()) ? S_OK : E_FAIL;
 
-    if (result == STATUS_OK)
+    if (result == S_OK)
     {
       // all parameters set
       // start receiving data
 
-      result = (this->mainCurlInstance->StartReceivingData()) ? STATUS_OK : STATUS_ERROR;
+      result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
     }
 
-    if (result == STATUS_OK)
+    if (result == S_OK)
     {
       // wait for HTTP status code
 
@@ -355,20 +356,20 @@ int CMPUrlSource_Http::OpenConnection(void)
             // response code 200 - 299 = OK
             // response code 300 - 399 = redirect (OK)
             this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: HTTP status code: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, responseCode);
-            result = STATUS_ERROR;
+            result = E_FAIL;
           }
         }
         else
         {
           this->mainCurlInstance->ReportCurlErrorMessage(LOGGER_WARNING, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("error while requesting HTTP status code"), errorCode);
-          result = STATUS_ERROR;
+          result = E_FAIL;
           break;
         }
 
         if ((responseCode == 0) && (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA))
         {
           // we received data too fast
-          result = STATUS_ERROR;
+          result = E_FAIL;
           break;
         }
 
@@ -378,12 +379,12 @@ int CMPUrlSource_Http::OpenConnection(void)
     }
   }
 
-  if (result == STATUS_ERROR)
+  if (FAILED(result))
   {
     this->CloseConnection();
   }
 
-  this->logger->Log(LOGGER_INFO, (result == STATUS_OK) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_OPEN_CONNECTION_NAME);
   return result;
 }
 
@@ -480,6 +481,15 @@ void CMPUrlSource_Http::ReceiveData(bool *shouldExit)
         {
           // whole stream downloaded
           this->wholeStreamDownloaded = true;
+
+          if (!this->setLenght)
+          {
+            this->streamLength = this->streamTime;
+            this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: setting total length: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+            this->filter->SetTotalLength(OUTPUT_PIN_NAME, this->streamLength, false);
+            this->setLenght = true;
+          }
+
           // notify filter the we reached end of stream
           // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
           REFERENCE_TIME streamTime = this->streamTime;
@@ -496,7 +506,7 @@ void CMPUrlSource_Http::ReceiveData(bool *shouldExit)
   {
     this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, _T("connection closed, opening new one"));
     // re-open connection if previous is lost
-    if (this->OpenConnection() != STATUS_OK)
+    if (this->OpenConnection() != S_OK)
     {
       this->CloseConnection();
     }
@@ -688,6 +698,25 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
           caller->filter->SetTotalLength(OUTPUT_PIN_NAME, total, false);
           caller->setLenght = true;
         }
+        else
+        {
+          if (caller->streamLength == 0)
+          {
+            // stream length not set
+            // just make guess
+            unsigned int bufferingPercentage = caller->configurationParameters->GetValueLong(PARAMETER_NAME_BUFFERING_PERCENTAGE, true, BUFFERING_PERCENTAGE_DEFAULT);
+            caller->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER * 100 / bufferingPercentage);
+            caller->logger->Log(LOGGER_VERBOSE, _T("%s: %s: setting total length: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
+            caller->filter->SetTotalLength(OUTPUT_PIN_NAME, caller->streamLength, false);
+          }
+          else if ((caller->streamTime > (caller->streamLength * 3 / 4)))
+          {
+            // it is time to adjust stream length, we are approaching to end but still we don't know total length
+            caller->streamLength = caller->streamTime * 2;
+            caller->logger->Log(LOGGER_VERBOSE, _T("%s: %s: setting total length: %u"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
+            caller->filter->SetTotalLength(OUTPUT_PIN_NAME, caller->streamLength, false);
+          }
+        }
       }
 
       if (bytesRead != 0)
@@ -741,7 +770,7 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
           caller->logger->Log(LOGGER_WARNING, _T("%s: %s: stream time not set, error: 0x%08X"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
         }
 
-        if (caller->filter->PushMediaPacket(OUTPUT_PIN_NAME, mediaPacket) == STATUS_ERROR)
+        if (FAILED(caller->filter->PushMediaPacket(OUTPUT_PIN_NAME, mediaPacket)))
         {
           caller->logger->Log(LOGGER_WARNING, _T("%s: %s: error occured while adding media packet"), PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
         }
