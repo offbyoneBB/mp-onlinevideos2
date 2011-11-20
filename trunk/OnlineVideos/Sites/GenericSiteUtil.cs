@@ -284,11 +284,10 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = CreateVideoInfo();
                     video.Title = channel.StreamName;
-                    // translate rtmp live stream urls
+                    // rtmp live stream urls need to set the live flag
                     if (channel.Url.ToLower().StartsWith("rtmp") && channel.Url.ToLower().Contains("live"))
                     {
-                        video.VideoUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&live=true", System.Web.HttpUtility.UrlEncode(channel.Url)));
+						video.VideoUrl = new MPUrlSourceFilter.RtmpUrl(channel.Url) { Live = true }.ToString();
                     }
                     else
                     {

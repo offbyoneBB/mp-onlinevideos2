@@ -203,14 +203,8 @@ namespace OnlineVideos.Sites
                     {
                         string rtmpUrl = String.Format(@"rtmpe://{0}/ondemand?{1}", m.Groups["host"], m.Groups["params"]);
                         string playPath = String.Format(@"mp4:{0}", m.Groups["file"]);
-
-                        string url = String.Format(@"http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&swfVfy={2}",
-                            HttpUtility.UrlEncode(rtmpUrl),
-                            HttpUtility.UrlEncode(playPath),
-                            HttpUtility.UrlEncode(Swf));
-
-                        Log.Debug(@"RTMP URL (after): {0}", url);
-                        result = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, url);
+						result = new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = playPath, SwfUrl = Swf, SwfVerify = true }.ToString();
+						Log.Debug(@"RTMP URL (after): {0}", result);
                     }
                     else
                     {
@@ -221,14 +215,8 @@ namespace OnlineVideos.Sites
                         {
                             string rtmpUrl = String.Format(@"rtmpe://{0}/{1}?{2}", m.Groups["host"], m.Groups["app"], m.Groups["params"]);
                             string playPath = String.Format(@"mp4:{0}?{1}", m.Groups["file"], m.Groups["params"]);
-
-                            string url = String.Format(@"http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&swfUrl={2}",
-                                HttpUtility.UrlEncode(rtmpUrl),
-                                HttpUtility.UrlEncode(playPath),
-                                HttpUtility.UrlEncode(Swf));
-
-                            Log.Debug(@"RTMP URL Secondary Option (after): {0}", url);
-                            result = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, url);
+							result = new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = playPath, SwfUrl = Swf, SwfVerify = true }.ToString();
+                            Log.Debug(@"RTMP URL Secondary Option (after): {0}", result);
                         }
                         else
                         {
