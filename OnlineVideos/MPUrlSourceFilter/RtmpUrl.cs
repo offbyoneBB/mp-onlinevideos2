@@ -526,7 +526,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         public const uint DefaultBufferTime = 30000;
         public static String DefaultToken = null;
         public static String DefaultJtv = null;
-        public const Boolean DefaultSwfVerify = true;
+        public const Boolean DefaultSwfVerify = false;
         public const uint DefaultSwfAge = 0;
 
         #endregion

@@ -62,7 +62,7 @@
 #define RTMP_BUFFER_DEFAULT                                 30000
 #define RTMP_TOKEN_DEFAULT                                  NULL
 #define RTMP_JTV_DEFAULT                                    NULL
-#define RTMP_SWF_VERIFY_DEFAULT                             true
+#define RTMP_SWF_VERIFY_DEFAULT                             false
 #define RTMP_SWF_AGE_DEFAULT                                0
 
 // define tokens for librtmp
