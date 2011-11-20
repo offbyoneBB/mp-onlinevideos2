@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Net;
-using System.Text;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using System.Web;
-using System.Xml;
-using System.ComponentModel;
-using System.Threading;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -62,11 +56,7 @@ namespace OnlineVideos.Sites
           {
             playpath = "flv:" + paths[1].Substring(0, paths[1].Length - 4);
           }
-          string vUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-          string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&port={1}&playpath={2}",
-          System.Web.HttpUtility.UrlEncode("rtmp://" + q_l[1]),
-          "1935",
-          playpath));
+		  string vUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://" + q_l[1]) { PlayPath = playpath }.ToString();
           video.PlaybackOptions.Add(q_l[0], vUrl);
         }
         return aUrl;
@@ -86,10 +76,7 @@ namespace OnlineVideos.Sites
       {
         VideoInfo video = new VideoInfo();
         video.Title = channels[i];
-        video.VideoUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&port={1}&live=true",
-        System.Web.HttpUtility.UrlEncode("rtmp://rtmplive.dr.dk/live/livedr0" + (i + 1) + "astream3"),
-        "1935"));
+		video.VideoUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://rtmplive.dr.dk/live/livedr0" + (i + 1) + "astream3") { Live = true }.ToString();
         res.Add(video);
       }
       return res;
@@ -113,9 +100,8 @@ namespace OnlineVideos.Sites
             video.Description = subContentData.Value<string>("description");
             video.VideoUrl = redirectUrl.Replace("rtmp://vod.dr.dk/", "rtmp://vod.dr.dk/cms/");
             video.ImageUrl = baseUrlDrNu + "/videos/" + item.Value<string>("id") + "/images/400x225.jpg";
-            string len = subContentData.Value<string>("duration");
-            string air = subContentData.Value<string>("formattedBroadcastTime");
-			video.Length = len + '|' + Translation.Instance.Airdate + ": " + air;
+			video.Length = subContentData.Value<string>("duration");
+            video.Airdate = subContentData.Value<string>("formattedBroadcastTime");
             res.Add(video);
           }
         }
@@ -136,9 +122,8 @@ namespace OnlineVideos.Sites
           video.Description = item.Value<string>("description");
           video.VideoUrl = redirectUrl.Replace("rtmp://vod.dr.dk/", "rtmp://vod.dr.dk/cms/");
           video.ImageUrl = baseUrlDrNu + "/videos/" + item.Value<string>("id") + "/images/400x225.jpg";
-          string len = item.Value<string>("duration");
-          string air = item.Value<string>("formattedBroadcastTime");
-		  video.Length = len + '|' + Translation.Instance.Airdate + ": " + air;
+		  video.Length = item.Value<string>("duration");
+          video.Airdate = item.Value<string>("formattedBroadcastTime");
           res.Add(video);
         }
       }
@@ -203,7 +188,7 @@ namespace OnlineVideos.Sites
             {
               videoInfo.Description = info.Value<string>("Description");
               DateTime parsedDate;
-              if (DateTime.TryParse(info.Value<string>("FirstPublished"), out parsedDate)) videoInfo.Length += " | " + parsedDate.ToString("g", OnlineVideoSettings.Instance.Locale);
+              if (DateTime.TryParse(info.Value<string>("FirstPublished"), out parsedDate)) videoInfo.Airdate = parsedDate.ToString("g", OnlineVideoSettings.Instance.Locale);
               foreach (var file in info["Files"])
               {
                 if (file.Value<string>("Type").StartsWith("Video"))
@@ -316,6 +301,7 @@ namespace OnlineVideos.Sites
               Name = item.Value<string>("title"),
               HasSubCategories = false,
               SubCategoriesDiscovered = false,
+			  ParentCategory = parentCat,
               Description = item.Value<string>("description"),
               EstimatedVideoCount = item.Value<uint>("videoCount"),
               Other = "drnu," + item.Value<string>("slug"),
