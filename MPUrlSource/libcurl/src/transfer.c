@@ -1040,13 +1040,13 @@ CURLcode Curl_readwrite(struct connectdata *conn,
        {
          // check if RTMP protocol has finished transmission
          RTMP *r = (RTMP *)conn->proto.generic;
-         if ((r->m_read.status != RTMP_READ_COMPLETE) && (r->m_read.status != RTMP_READ_EOF))
+         if ((r->m_read.status != RTMP_READ_COMPLETE))
          {
 #endif
            result = readwrite_data(data, conn, k, &didwhat, done);
 
 #ifdef USE_LIBRTMP
-           if ((r->m_read.status == RTMP_READ_COMPLETE) || (r->m_read.status == RTMP_READ_EOF))
+           if ((r->m_read.status == RTMP_READ_COMPLETE))
            {
              // set done flag
              *done = TRUE;
