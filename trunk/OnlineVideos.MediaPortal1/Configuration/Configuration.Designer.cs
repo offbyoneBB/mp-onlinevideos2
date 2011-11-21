@@ -207,7 +207,6 @@ namespace OnlineVideos.MediaPortal1
 			this.listBoxHosters = new System.Windows.Forms.ListBox();
 			this.tabPageCodecs = new System.Windows.Forms.TabPage();
 			this.groupBoxSourceFilter = new System.Windows.Forms.GroupBox();
-			this.chkUseRtmpProxy = new System.Windows.Forms.CheckBox();
 			this.tbxHttpSourceFilter = new System.Windows.Forms.TextBox();
 			this.label37 = new System.Windows.Forms.Label();
 			this.videopanel = new System.Windows.Forms.Panel();
@@ -2305,7 +2304,6 @@ namespace OnlineVideos.MediaPortal1
 			// 
 			this.groupBoxSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBoxSourceFilter.Controls.Add(this.chkUseRtmpProxy);
 			this.groupBoxSourceFilter.Controls.Add(this.tbxHttpSourceFilter);
 			this.groupBoxSourceFilter.Controls.Add(this.label37);
 			this.groupBoxSourceFilter.Location = new System.Drawing.Point(6, 6);
@@ -2315,24 +2313,13 @@ namespace OnlineVideos.MediaPortal1
 			this.groupBoxSourceFilter.TabStop = false;
 			this.groupBoxSourceFilter.Text = "Source";
 			// 
-			// chkUseRtmpProxy
-			// 
-			this.chkUseRtmpProxy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.chkUseRtmpProxy.AutoSize = true;
-			this.chkUseRtmpProxy.Location = new System.Drawing.Point(541, 15);
-			this.chkUseRtmpProxy.Name = "chkUseRtmpProxy";
-			this.chkUseRtmpProxy.Size = new System.Drawing.Size(144, 17);
-			this.chkUseRtmpProxy.TabIndex = 2;
-			this.chkUseRtmpProxy.Text = "Use internal RTMP proxy";
-			this.chkUseRtmpProxy.UseVisualStyleBackColor = true;
-			// 
 			// tbxHttpSourceFilter
 			// 
 			this.tbxHttpSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tbxHttpSourceFilter.Location = new System.Drawing.Point(118, 13);
 			this.tbxHttpSourceFilter.Name = "tbxHttpSourceFilter";
-			this.tbxHttpSourceFilter.Size = new System.Drawing.Size(404, 20);
+			this.tbxHttpSourceFilter.Size = new System.Drawing.Size(518, 20);
 			this.tbxHttpSourceFilter.TabIndex = 1;
 			// 
 			// label37
@@ -2905,8 +2892,7 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.TextBox tbxSitesGroupDesc;
         private System.Windows.Forms.Label label43;
         private System.Windows.Forms.Button btnBrowseSitesGroupThumb;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.CheckBox chkUseRtmpProxy;
+		private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.CheckBox chkAutoGroupByLang;
         private System.Windows.Forms.Button btnWiki;
         private System.Windows.Forms.TextBox tbxUpdatePeriod;

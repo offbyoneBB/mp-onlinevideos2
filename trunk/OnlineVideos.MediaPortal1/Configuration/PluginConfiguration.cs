@@ -38,7 +38,6 @@ namespace OnlineVideos.MediaPortal1
         public BindingList<SitesGroup> SitesGroups = new BindingList<SitesGroup>();
         public BindingList<SitesGroup> CachedAutomaticSitesGroups = new BindingList<SitesGroup>();
         public bool autoGroupByLang = true;
-        public bool useRtmpProxy = true;
         public DateTime lastFirstRun;
         public uint updatePeriod = 4;
 		public bool LatestVideosRandomize = true;
@@ -126,7 +125,6 @@ namespace OnlineVideos.MediaPortal1
 				OnlineVideos.OnlineVideoSettings.Instance.DynamicCategoryTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYDISCOVERED_TIMEOUT, OnlineVideos.OnlineVideoSettings.Instance.DynamicCategoryTimeout);
                 wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                 playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
-                useRtmpProxy = settings.GetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
                 autoGroupByLang = settings.GetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
                 OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst = settings.GetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst);
 				LatestVideosRandomize = settings.GetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);
@@ -198,7 +196,6 @@ namespace OnlineVideos.MediaPortal1
                     useQuickSelect = settings.GetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
                     wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                     playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
-                    useRtmpProxy = settings.GetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
                     email = settings.GetValueAsString(CFG_SECTION, CFG_EMAIL, "");
                     password = settings.GetValueAsString(CFG_SECTION, CFG_PASSWORD, "");
                     string lsFilter = settings.GetValueAsString(CFG_SECTION, CFG_FILTER, "").Trim();
@@ -317,7 +314,6 @@ namespace OnlineVideos.MediaPortal1
                         else settings.SetValue(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORY_NUM, searchHistoryNum);
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORYTYPE, (int)searchHistoryType);
-                        settings.SetValueAsBool(CFG_SECTION, CFG_USE_RTMP_PROXY, useRtmpProxy);
                         settings.SetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
                         settings.SetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, ovsconf.FavoritesFirst);
 						settings.SetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);

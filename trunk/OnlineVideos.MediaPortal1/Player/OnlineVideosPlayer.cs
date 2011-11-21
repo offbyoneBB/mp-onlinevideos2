@@ -183,26 +183,17 @@ namespace OnlineVideos.MediaPortal1.Player
                     return false;
                 }
                 
-                // translate url if usage of rtmp proxy is not wanted
-                string urlToLoad = CurrentFile;
-                if (uri.Scheme == "http" && !PluginConfiguration.Instance.useRtmpProxy)
-                {
-                    string proxyIndicator = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, "rtmp://");
-                    if (CurrentFile.StartsWith(proxyIndicator))
-                    {
-                        urlToLoad = Uri.UnescapeDataString("rtmp://" + CurrentFile.Replace(proxyIndicator, ""));
-                    }
-                }
-
-                result = ((IFileSourceFilter)sourceFilter).Load(urlToLoad, null);
+				result = ((IFileSourceFilter)sourceFilter).Load(CurrentFile, null);
 
                 if (result != 0)
                 {
-                    Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned '{0}' ({1})", result.ToString("X"), DirectShowLib.DsError.GetErrorText(result).Trim());
+					string errorText = DirectShowLib.DsError.GetErrorText(result);
+					if (errorText != null) errorText = errorText.Trim();
+					Log.Instance.Warn("BufferFile : IFileSourceFilter.Load returned '{0}'{1}", "0x" + result.ToString("X"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
                     return false;
                 }
 
-                if (sourceFilter is IAMOpenProgress && !CurrentFile.Contains("live=true"))
+				if (sourceFilter is IAMOpenProgress && !CurrentFile.Contains("live=true") && !CurrentFile.Contains("RtmpLive=1"))
                 {
                     // buffer before starting playback
                     bool filterConnected = false;
