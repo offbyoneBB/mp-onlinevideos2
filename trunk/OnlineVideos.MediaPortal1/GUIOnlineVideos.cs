@@ -2362,22 +2362,29 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-                // if the image given was an url -> check if thumb exists otherwise download
-                if (saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http"))
-                {
-                    string thumbFile = Utils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
-                    if (System.IO.File.Exists(thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
-                    else if (ImageDownloader.DownloadAndCheckImage(saveItems.CurrentItem.ThumbFile, thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
-                }
-                // save thumb for this video as well if it exists
-                if (!saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http") && System.IO.File.Exists(saveItems.CurrentItem.ThumbFile))
-                {
-                    string localImageName = System.IO.Path.Combine(
-                        System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
-                        System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile))
-                        + System.IO.Path.GetExtension(saveItems.CurrentItem.ThumbFile);
-                    System.IO.File.Copy(saveItems.CurrentItem.ThumbFile, localImageName, true);
-                }
+				try
+				{
+					// if the image given was an url -> check if thumb exists otherwise download
+					if (saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http"))
+					{
+						string thumbFile = Utils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
+						if (System.IO.File.Exists(thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
+						else if (ImageDownloader.DownloadAndCheckImage(saveItems.CurrentItem.ThumbFile, thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
+					}
+					// save thumb for this video as well if it exists
+					if (!saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http") && System.IO.File.Exists(saveItems.CurrentItem.ThumbFile))
+					{
+						string localImageName = System.IO.Path.Combine(
+							System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
+							System.IO.Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile))
+							+ System.IO.Path.GetExtension(saveItems.CurrentItem.ThumbFile);
+						System.IO.File.Copy(saveItems.CurrentItem.ThumbFile, localImageName, true);
+					}
+				}
+				catch (Exception ex)
+				{
+					Log.Instance.Warn("Error saving thumbnail for download: {0}", ex.ToString());
+				}
 
                 // get file size
                 int fileSize = saveItems.CurrentItem.KbTotal;
