@@ -90,6 +90,10 @@
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
 
+#ifdef USE_LIBRTMP
+#include <librtmp/rtmp.h>
+#endif
+
 /* The last #include file should be: */
 #include "memdebug.h"
 
@@ -1031,10 +1035,21 @@ CURLcode Curl_readwrite(struct connectdata *conn,
      || (conn->handler->protocol & (CURLPROTO_RTMP | CURLPROTO_RTMPE | CURLPROTO_RTMPS | CURLPROTO_RTMPT | CURLPROTO_RTMPTE | CURLPROTO_RTMPTS))
 #endif
      )) {
-
-    result = readwrite_data(data, conn, k, &didwhat, done);
-    if(result || *done)
-      return result;
+#ifdef USE_LIBRTMP
+       if (conn->handler->protocol & (CURLPROTO_RTMP | CURLPROTO_RTMPE | CURLPROTO_RTMPS | CURLPROTO_RTMPT | CURLPROTO_RTMPTE | CURLPROTO_RTMPTS))
+       {
+         // check if RTMP protocol has finished transmission
+         RTMP *r = (RTMP *)conn->proto.generic;
+         if ((r->m_read.status != RTMP_READ_COMPLETE) && (r->m_read.status != RTMP_READ_EOF))
+         {
+#endif
+           result = readwrite_data(data, conn, k, &didwhat, done);
+           if(result || *done)
+             return result;
+#ifdef USE_LIBRTMP
+         }
+       }
+#endif
   }
   else if(k->keepon & KEEP_RECV) {
     DEBUGF(infof(data, "additional stuff not fine %s:%d: %d %d\n",
