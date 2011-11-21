@@ -85,6 +85,11 @@
       <AdditionalDependencies>strmbase.lib;winmm.lib;Shlwapi.lib;Ws2_32.lib;Iphlpapi.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>MPUrlSource.def</ModuleDefinitionFile>
     </Link>
+    <PostBuildEvent>
+      <Command>IF NOT EXIST "$(SolutionDir)\bin\Release" mkdir "$(SolutionDir)\bin\Release"
+copy /Y "$(TargetPath)" "$(SolutionDir)\bin\Release\$(TargetFileName)"</Command>
+      <Message>Copy ax to Release folder</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AsyncRequest.h" />
