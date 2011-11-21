@@ -994,6 +994,10 @@ CURLcode Curl_readwrite(struct connectdata *conn,
   struct SingleRequest *k = &data->req;
   CURLcode result;
   int didwhat=0;
+#ifdef USE_LIBRTMP
+  bool rtmpProtocolActive = false;
+  bool rtmpProtocolFinished = false;
+#endif
 
   curl_socket_t fd_read;
   curl_socket_t fd_write;
@@ -1026,37 +1030,51 @@ CURLcode Curl_readwrite(struct connectdata *conn,
   /* We go ahead and do a read if we have a readable socket or if
      the stream was rewound (in which case we have data in a
      buffer) */
+#ifdef USE_LIBRTMP
+  rtmpProtocolActive = (conn->handler->protocol & (CURLPROTO_RTMP | CURLPROTO_RTMPE | CURLPROTO_RTMPS | CURLPROTO_RTMPT | CURLPROTO_RTMPTE | CURLPROTO_RTMPTS));
+
+  if (rtmpProtocolActive)
+  {
+    // check if RTMP protocol has finished transmission
+    RTMP *r = (RTMP *)conn->proto.generic;
+    if ((r->m_read.status == RTMP_READ_COMPLETE))
+    {
+      // RTMP protocol finished transmission
+      rtmpProtocolFinished = true;
+    }
+  }
+
+#endif
 
   if((k->keepon & KEEP_RECV) &&
      ((select_res & CURL_CSELECT_IN) || conn->bits.stream_was_rewound
-#ifdef USE_LIBRTMP     
+#ifdef USE_LIBRTMP
      // in case of RTMP protocol read always data independently of socket state
      // in another case can be some data unprocessed and we will be waiting for no reason
-     || (conn->handler->protocol & (CURLPROTO_RTMP | CURLPROTO_RTMPE | CURLPROTO_RTMPS | CURLPROTO_RTMPT | CURLPROTO_RTMPTE | CURLPROTO_RTMPTS))
+     || rtmpProtocolActive
 #endif
      )) {
 #ifdef USE_LIBRTMP
-       if (conn->handler->protocol & (CURLPROTO_RTMP | CURLPROTO_RTMPE | CURLPROTO_RTMPS | CURLPROTO_RTMPT | CURLPROTO_RTMPTE | CURLPROTO_RTMPTS))
+       if ((rtmpProtocolActive && (!rtmpProtocolFinished)) || (!rtmpProtocolActive))
        {
-         // check if RTMP protocol has finished transmission
-         RTMP *r = (RTMP *)conn->proto.generic;
-         if ((r->m_read.status != RTMP_READ_COMPLETE))
-         {
 #endif
-           result = readwrite_data(data, conn, k, &didwhat, done);
+         result = readwrite_data(data, conn, k, &didwhat, done);
 
 #ifdef USE_LIBRTMP
+         if (rtmpProtocolActive)
+         {
+           RTMP *r = (RTMP *)conn->proto.generic;
            if ((r->m_read.status == RTMP_READ_COMPLETE))
            {
              // set done flag
              *done = TRUE;
            }
+         }
 #endif
 
-           if(result || *done)
-             return result;
+         if(result || *done)
+           return result;
 #ifdef USE_LIBRTMP
-         }
        }
 #endif
   }
