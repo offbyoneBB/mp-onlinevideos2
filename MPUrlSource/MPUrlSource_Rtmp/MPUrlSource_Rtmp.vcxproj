@@ -82,6 +82,10 @@
       <AdditionalDependencies>mpurlsource.lib;wininet.lib;urlmon.lib;Ws2_32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>mpurlsource_Rtmp.def</ModuleDefinitionFile>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetPath)" "$(SolutionDir)\bin\Release\$(TargetFileName)"</Command>
+      <Message>Copy dll to Release folder</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="mpurlsource_Rtmp.def" />
