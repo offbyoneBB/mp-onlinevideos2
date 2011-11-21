@@ -55,13 +55,14 @@ namespace OnlineVideos.MPUrlSourceFilter
 
         public Exception Download(DownloadInfo downloadInfo)
         {
+			IDownload downloadFilter = null;
             try
             {
                 downloadThread = System.Threading.Thread.CurrentThread;
                 this.downloadResult = 0;
                 this.downloadFinished = false;
 
-                IDownload downloadFilter = (IDownload)new MPUrlSourceFilter();
+                downloadFilter = (IDownload)new MPUrlSourceFilter();
                 int result = downloadFilter.DownloadAsync(downloadInfo.Url, downloadInfo.LocalFile, this);
                 // throw exception if occured while initializing download
                 Marshal.ThrowExceptionForHR(result);
@@ -87,6 +88,7 @@ namespace OnlineVideos.MPUrlSourceFilter
             }
             finally
             {
+				if (downloadFilter != null) Marshal.ReleaseComObject(downloadFilter);
             }
         }
 

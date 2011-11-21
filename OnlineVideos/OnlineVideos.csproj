@@ -192,7 +192,10 @@
     <Compile Include="LocalizableDisplayNameAttribute.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MPUrlSourceFilter\HttpUrl.cs" />
+    <Compile Include="MPUrlSourceFilter\IDownload.cs" />
+    <Compile Include="MPUrlSourceFilter\IDownloadCallback.cs" />
     <Compile Include="MPUrlSourceFilter\LogVerbosity.cs" />
+    <Compile Include="MPUrlSourceFilter\MPUrlSourceFilterDownloader.cs" />
     <Compile Include="MPUrlSourceFilter\Parameter.cs" />
     <Compile Include="MPUrlSourceFilter\ParameterCollection.cs" />
     <Compile Include="MPUrlSourceFilter\RtmpArbitraryData.cs" />

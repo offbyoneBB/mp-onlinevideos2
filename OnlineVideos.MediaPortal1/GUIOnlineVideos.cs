@@ -2264,14 +2264,7 @@ namespace OnlineVideos.MediaPortal1
                 return;
             }
 
-            // translate rtmp urls to the local proxy
-            if (new Uri(url).Scheme.ToLower().StartsWith("rtmp"))
-            {
-                url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(url)));
-            }
-
-            saveItems.CurrentItem.Url = url;
+			saveItems.CurrentItem.Url = url;
             if (string.IsNullOrEmpty(saveItems.CurrentItem.Title)) saveItems.CurrentItem.Title = saveItems.CurrentItem.VideoInfo.Title;
 
 			if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFolder))
@@ -2319,7 +2312,7 @@ namespace OnlineVideos.MediaPortal1
 				{
 					IDownloader dlHelper = null;
 					if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloadHelper();
-					else dlHelper = new HTTPDownloader();
+					else dlHelper = new MPUrlSourceFilter.MPUrlSourceFilterDownloader();
 					dlList.CurrentItem.Downloader = dlHelper;
 					dlList.CurrentItem.Start = DateTime.Now;
                     Log.Instance.Info("Starting download of '{0}' to '{1}' from Site '{2}'", dlList.CurrentItem.Url, dlList.CurrentItem.LocalFile, dlList.CurrentItem.Util.Settings.Name);
@@ -2805,28 +2798,13 @@ namespace OnlineVideos.MediaPortal1
 
 					System.Threading.Thread.Sleep(2000);
 
-					string quality = "";
-					if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
-					{
-						var enumer = video.PlaybackOptions.GetEnumerator();
-						while (enumer.MoveNext())
-						{
-							string compareTo = enumer.Current.Value.ToLower().StartsWith("rtmp") ?
-								ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}", System.Web.HttpUtility.UrlEncode(enumer.Current.Value)))
-								: enumer.Current.Value;
-							if (compareTo == g_Player.CurrentFile)
-							{
-								quality = " (" + enumer.Current.Key + ")";
-								break;
-							}
-						}
-					}
+					string quality = video.PlaybackOptions != null ? video.PlaybackOptions.FirstOrDefault(po => po.Value == g_Player.CurrentFile).Key : null;
 
 					string titleToShow = "";
 					if (!string.IsNullOrEmpty(alternativeTitle))
 						titleToShow = alternativeTitle;
 					else if (!string.IsNullOrEmpty(video.Title))
-						titleToShow = video.Title + (string.IsNullOrEmpty(quality) ? "" : quality);
+						titleToShow = video.Title + (string.IsNullOrEmpty(quality) ? "" : " (" + quality + ")");
 
 					Log.Instance.Info("Setting Video Properties for '{0}'", titleToShow);
 

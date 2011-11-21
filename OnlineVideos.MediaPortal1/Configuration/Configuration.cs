@@ -37,7 +37,6 @@ namespace OnlineVideos.MediaPortal1
             /** fill "Codecs" tab **/
             confPlayer = new ConfigurationPlayer();
             tbxHttpSourceFilter.Text = PluginConfiguration.Instance.httpSourceFilterName;
-            chkUseRtmpProxy.Checked = PluginConfiguration.Instance.useRtmpProxy;
 
             /** fill "General" tab **/
             lblVersion.Text = "Version: " + new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version.ToString();
@@ -229,7 +228,6 @@ namespace OnlineVideos.MediaPortal1
                 OnlineVideoSettings.Instance.UseAgeConfirmation = chkUseAgeConfirmation.Checked;
                 PluginConfiguration.Instance.pinAgeConfirmation = tbxPin.Text;
                 PluginConfiguration.Instance.useQuickSelect = chkUseQuickSelect.Checked;
-                PluginConfiguration.Instance.useRtmpProxy = chkUseRtmpProxy.Checked;
                 PluginConfiguration.Instance.searchHistoryNum = (int)nUPSearchHistoryItemCount.Value;
                 if (rbLastSearch.Checked)
                     PluginConfiguration.Instance.searchHistoryType = PluginConfiguration.SearchHistoryType.Simple;
