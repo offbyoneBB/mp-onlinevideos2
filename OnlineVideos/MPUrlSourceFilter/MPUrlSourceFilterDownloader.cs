@@ -79,6 +79,9 @@ namespace OnlineVideos.MPUrlSourceFilter
 
                     // sleep some time
                     System.Threading.Thread.Sleep(100);
+
+					if (Cancelled) 
+						downloadFilter.AbortOperation();
                 }
 
                 // throw exception if occured while downloading
@@ -86,6 +89,10 @@ namespace OnlineVideos.MPUrlSourceFilter
 
                 return null;
             }
+			catch (Exception ex)
+			{
+				return ex;
+			}
             finally
             {
 				if (downloadFilter != null) Marshal.ReleaseComObject(downloadFilter);
