@@ -58,6 +58,7 @@ namespace OnlineVideos.MediaPortal1
 			RollingFileAppender roller = new RollingFileAppender();
 			roller.Encoding = System.Text.UTF8Encoding.UTF8;
 			roller.Layout = patternLayout;
+			roller.LockingModel = new FileAppender.MinimalLock();
 			roller.AppendToFile = true;
 			roller.RollingStyle = RollingFileAppender.RollingMode.Once;
 			roller.MaxSizeRollBackups = 1;

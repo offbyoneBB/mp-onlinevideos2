@@ -334,10 +334,16 @@ namespace OnlineVideos.Sites
                 return video.Title;
             else // called for downloading
             {
-                string extension = System.IO.Path.GetExtension(new System.Uri(url).LocalPath.Trim(new char[] { '/' }));
+				Uri uri = new Uri(url);
+                string extension = System.IO.Path.GetExtension(uri.LocalPath.Trim(new char[] { '/' }));
                 if (extension == string.Empty) extension = System.IO.Path.GetExtension(url);
                 if (extension == ".f4v" || extension == ".fid") extension = ".flv";
-                string safeName = Utils.GetSaveFilename(video.Title);
+				// downloading via rtmp always creates a flv file
+				if ((string.IsNullOrEmpty(extension) || !OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension)) && uri.Scheme.StartsWith("rtmp"))
+				{
+					extension = ".flv";
+				}				
+				string safeName = Utils.GetSaveFilename(video.Title);
                 return safeName + extension;
             }
         }
