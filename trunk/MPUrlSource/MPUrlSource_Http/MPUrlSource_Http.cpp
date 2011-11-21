@@ -690,7 +690,7 @@ size_t CMPUrlSource_Http::CurlReceiveData(char *buffer, size_t size, size_t nmem
       {
         double streamSize = 0;
         CURLcode errorCode = curl_easy_getinfo(caller->mainCurlInstance->GetCurlHandle(), CURLINFO_CONTENT_LENGTH_DOWNLOAD, &streamSize);
-        if ((errorCode == CURLE_OK) && (streamSize > 0))
+        if ((errorCode == CURLE_OK) && (streamSize > 0) && (caller->streamTime < streamSize))
         {
           LONGLONG total = LONGLONG(streamSize);
           caller->streamLength = total;
