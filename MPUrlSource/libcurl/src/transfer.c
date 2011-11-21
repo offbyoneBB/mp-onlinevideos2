@@ -1044,6 +1044,15 @@ CURLcode Curl_readwrite(struct connectdata *conn,
          {
 #endif
            result = readwrite_data(data, conn, k, &didwhat, done);
+
+#ifdef USE_LIBRTMP
+           if ((r->m_read.status == RTMP_READ_COMPLETE) || (r->m_read.status == RTMP_READ_EOF))
+           {
+             // set done flag
+             *done = TRUE;
+           }
+#endif
+
            if(result || *done)
              return result;
 #ifdef USE_LIBRTMP
