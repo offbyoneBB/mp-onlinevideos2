@@ -1799,20 +1799,6 @@
               <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-              <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>librtmp.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{3c245704-2f63-4ad7-a613-0040ad29ed65}-librtmp.dll</ZipFileName>
-              <DestinationFilename>%Base%\librtmp.dll</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-              <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>LogStub.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{6f0065a2-afa5-4772-83cc-e97b57120d87}-LogStub.dll</ZipFileName>
-              <DestinationFilename>%Base%\LogStub.dll</DestinationFilename>
-            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1976,6 +1962,13 @@
               <LocalFileName>..\Language\OnlineVideos\lt-LT.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c737d67b-1843-4a98-ab44-968906a8e697}-lt-LT.xml</ZipFileName>
               <DestinationFilename>%Language%\OnlineVideos\lt-LT.xml</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\Language\OnlineVideos\zh-CN.xml</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e9511df6-05e9-4f15-a08d-b3a748732a16}-zh-CN.xml</ZipFileName>
+              <DestinationFilename>%Language%\OnlineVideos\zh-CN.xml</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2290,36 +2283,43 @@
         <ParentGroup>Plugin</ParentGroup>
         <DisplayName>Source Filter</DisplayName>
         <DefaulChecked>true</DefaulChecked>
-        <Description>The MediaPortal Url Source Directshow filter enables seeking on HTTP servers with ranges support.</Description>
+        <Description>The MediaPortal Url Source directshow filter enables seeking on HTTP servers with ranges support and playback of rtmp streams.</Description>
         <Files>
           <Items>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSource\MPUrlSource\bin\Release\MPUrlSource.ax</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{6afa8985-d008-46bb-b091-138612d931e5}-MPUrlSource.ax</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSource.ax</DestinationFilename>
+              <LocalFileName>..\MPUrlSource\bin\Release\libcurl.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{7e8138de-3a5b-4763-b6fd-b4039776f430}-libcurl.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSource\libcurl.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSource\libcurl\bin\Release\libcurl.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{e48db2d7-1f4a-4439-92c9-cb412eabe49e}-libcurl.dll</ZipFileName>
-              <DestinationFilename>%Base%\libcurl.dll</DestinationFilename>
+              <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource.ax</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f53f9044-5923-43c9-bca4-c72942a67437}-MPUrlSource.ax</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSource\MPUrlSource.ax</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSource\MPUrlSource_File\bin\Release\MPUrlSource_File.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{a19ead6b-31bd-4c08-a615-79c7323bf418}-MPUrlSource_File.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSource_File.dll</DestinationFilename>
+              <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_File.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9a4f3622-7b75-4d56-a4d4-53a2e1308186}-MPUrlSource_File.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_File.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSource\MPUrlSource_Http\bin\Release\MPUrlSource_Http.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{00a35bc9-3d5e-4dc9-95f8-12c846e26e08}-MPUrlSource_Http.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSource_Http.dll</DestinationFilename>
+              <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_Http.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{29dd6ae1-9b31-4e6b-a7bb-6b6a8b4c79be}-MPUrlSource_Http.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_Http.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_Rtmp.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{c20bed92-1b25-4d0e-bb47-cf2e0a434799}-MPUrlSource_Rtmp.dll</ZipFileName>
+              <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_Rtmp.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -2555,7 +2555,7 @@ public class Script
 ProcessStartInfo psi = new ProcessStartInfo();
         psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
 psi.FileName = "cmd.exe";
-        psi.Arguments = "/c regsvr32 /s \"" + MpeInstaller.TransformInRealPath(@"%Base%\MPUrlSource.ax") + "\"";        psi.Verb = "runas";
+        psi.Arguments = "/c regsvr32 /s \"" + MpeInstaller.TransformInRealPath(@"%Base%\MPUrlSource\MPUrlSource.ax") + "\"";        psi.Verb = "runas";
         psi.CreateNoWindow = true;
         psi.WindowStyle = ProcessWindowStyle.Hidden;
         psi.ErrorDialog = false;
@@ -2630,7 +2630,7 @@ public class Script
         ProcessStartInfo psi = new ProcessStartInfo();
         psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
         psi.FileName = "cmd.exe";
-        psi.Arguments = "/c regsvr32 /s /u \"" + MpeInstaller.TransformInRealPath(@"%Base%\MPUrlSource.ax") + "\"";
+        psi.Arguments = "/c regsvr32 /s /u \"" + MpeInstaller.TransformInRealPath(@"%Base%\MPUrlSource\MPUrlSource.ax") + "\"";
         psi.Verb = "runas";
         psi.CreateNoWindow = true;
         psi.WindowStyle = ProcessWindowStyle.Hidden;
@@ -2707,7 +2707,7 @@ public class Script
               <Params>
                 <Items>
                   <SectionParam Name="Extension package">
-                    <Value>LAV\LAVFilters0.38.0.0.mpe1</Value>
+                    <Value>LAV\LAVFilters0.39.0.0.mpe1</Value>
                     <ValueType>File</ValueType>
                     <Description>Location of the extension package</Description>
                   </SectionParam>
@@ -2798,10 +2798,10 @@ public class Script
         </CompatibleVersion>
         <SubSystemsUsed>
           <Items>
+            <SubSystemItem Name="MP.Players.Video" />
             <SubSystemItem Name="MP.Input" />
             <SubSystemItem Name="MP.Externals.SQLite" />
             <SubSystemItem Name="MP.Config" />
-            <SubSystemItem Name="MP.Players.Video" />
             <SubSystemItem Name="MP.SkinEngine" />
           </Items>
         </SubSystemsUsed>
@@ -2823,14 +2823,13 @@ public class Script
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
     <VersionDescription>added: support for "next page" while viewing catgeories
-added: rtmp streams now handled by the native librtmp
-added: custom source filter that supports HTTP ranges
+added: source filter that supports HTTP ranges and RTMP using rtmplib
 added: updated siteutil dlls will be reloaded while MediaPortal is running
 added: latest online videos can be shown e.g. on Basic Home screen
 added: downloads can be enqueued or concurrent</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.0.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2011-11-07T11:00:00</ReleaseDate>
+    <ReleaseDate>2011-11-27T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -4638,20 +4637,6 @@ added: downloads can be enqueued or concurrent</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>librtmp.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{3c245704-2f63-4ad7-a613-0040ad29ed65}-librtmp.dll</ZipFileName>
-        <DestinationFilename>%Base%\librtmp.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>LogStub.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{6f0065a2-afa5-4772-83cc-e97b57120d87}-LogStub.dll</ZipFileName>
-        <DestinationFilename>%Base%\LogStub.dll</DestinationFilename>
-      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
@@ -4805,6 +4790,13 @@ added: downloads can be enqueued or concurrent</VersionDescription>
         <LocalFileName>..\Language\OnlineVideos\lt-LT.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c737d67b-1843-4a98-ab44-968906a8e697}-lt-LT.xml</ZipFileName>
         <DestinationFilename>%Language%\OnlineVideos\lt-LT.xml</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\Language\OnlineVideos\zh-CN.xml</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e9511df6-05e9-4f15-a08d-b3a748732a16}-zh-CN.xml</ZipFileName>
+        <DestinationFilename>%Language%\OnlineVideos\zh-CN.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5072,33 +5064,40 @@ added: downloads can be enqueued or concurrent</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{dad9b74a-23b6-4a3e-883a-19f710ad1031}-myvideoTitle.xml</ZipFileName>
         <DestinationFilename>%Skin%\DefaultWide\myvideoTitle.xml</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSource\MPUrlSource\bin\Release\MPUrlSource.ax</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{6afa8985-d008-46bb-b091-138612d931e5}-MPUrlSource.ax</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSource.ax</DestinationFilename>
+        <LocalFileName>..\MPUrlSource\bin\Release\libcurl.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{7e8138de-3a5b-4763-b6fd-b4039776f430}-libcurl.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSource\libcurl.dll</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSource\libcurl\bin\Release\libcurl.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e48db2d7-1f4a-4439-92c9-cb412eabe49e}-libcurl.dll</ZipFileName>
-        <DestinationFilename>%Base%\libcurl.dll</DestinationFilename>
+        <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource.ax</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f53f9044-5923-43c9-bca4-c72942a67437}-MPUrlSource.ax</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSource\MPUrlSource.ax</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSource\MPUrlSource_File\bin\Release\MPUrlSource_File.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{a19ead6b-31bd-4c08-a615-79c7323bf418}-MPUrlSource_File.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSource_File.dll</DestinationFilename>
+        <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_File.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9a4f3622-7b75-4d56-a4d4-53a2e1308186}-MPUrlSource_File.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_File.dll</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSource\MPUrlSource_Http\bin\Release\MPUrlSource_Http.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{00a35bc9-3d5e-4dc9-95f8-12c846e26e08}-MPUrlSource_Http.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSource_Http.dll</DestinationFilename>
+        <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_Http.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{29dd6ae1-9b31-4e6b-a7bb-6b6a8b4c79be}-MPUrlSource_Http.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_Http.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_Rtmp.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{c20bed92-1b25-4d0e-bb47-cf2e0a434799}-MPUrlSource_Rtmp.dll</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_Rtmp.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
@@ -5110,8 +5109,8 @@ added: downloads can be enqueued or concurrent</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>LAV\LAVFilters0.38.0.0.mpe1</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{98ede70b-70ad-4707-a459-500668ca0335}-LAVFilters0.38.0.0.mpe1</ZipFileName>
+        <LocalFileName>LAV\LAVFilters0.39.0.0.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e07a88d8-8b87-4f07-b223-073bb15c4d71}-LAVFilters0.39.0.0.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
@@ -5157,6 +5156,16 @@ added: downloads can be enqueued or concurrent</VersionDescription>
         <Folder>..\Skins\DefaultWide</Folder>
         <Group>DefaultWide</Group>
         <Recursive>true</Recursive>
+      </FolderGroup>
+      <FolderGroup InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName />
+        <ZipFileName>Installer{CopyFile}\{0b2c77c7-c575-41d9-9b6a-eb57962d9542}-</ZipFileName>
+        <DestinationFilename>%Base%\MPUrlSource</DestinationFilename>
+        <Folder>..\MPUrlSource\bin\Release</Folder>
+        <Group>MPUrlSource</Group>
+        <Recursive>false</Recursive>
       </FolderGroup>
     </FolderGroups>
     <ProjectFilename>OnlineVideosMP12.xmp2</ProjectFilename>
