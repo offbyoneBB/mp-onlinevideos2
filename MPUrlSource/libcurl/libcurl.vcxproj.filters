@@ -642,4 +642,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="readme_before_update.txt" />
+  </ItemGroup>
 </Project>
