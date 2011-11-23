@@ -28,6 +28,9 @@
     <ClCompile Include="parseurl.c" />
     <ClCompile Include="rtmp.c" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="readme_before_update.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BDA0CC2F-E51F-4CD0-AE70-D6073C120026}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

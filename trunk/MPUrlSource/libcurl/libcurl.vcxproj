@@ -222,6 +222,9 @@
     <ClCompile Include="src\warnless.c" />
     <ClCompile Include="src\wildcard.c" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="readme_before_update.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B25D4555-F218-410A-A37E-176A17996325}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
