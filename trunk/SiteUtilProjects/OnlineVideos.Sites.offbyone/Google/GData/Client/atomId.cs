@@ -33,10 +33,7 @@ namespace Google.GData.Client
     /// <summary>The "atom:id" element conveys a permanent, universally unique identifier for an entry or feed.
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else 
     [TypeConverterAttribute(typeof(AtomBaseLinkConverter)), DescriptionAttribute("Expand to see the link attributes for the Id.")]
-#endif
     public class AtomId : AtomBaseLink, IComparable
     {
 

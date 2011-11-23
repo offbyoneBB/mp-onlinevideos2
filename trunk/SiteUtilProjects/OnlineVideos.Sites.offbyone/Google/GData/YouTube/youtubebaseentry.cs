@@ -16,7 +16,7 @@
 
 using System;
 using System.Xml;
-using System.IO; 
+using System.IO;
 using System.Collections;
 using Google.GData.Client;
 using Google.GData.Extensions;
@@ -26,12 +26,10 @@ using Google.GData.Extensions.Location;
 using Google.GData.Extensions.AppControl;
 
 namespace Google.GData.YouTube {
-
     /// <summary>
     /// this class only holds a few helper methods for other entry classes inside the youtube namespace
     /// </summary>
-    public abstract class YouTubeBaseEntry : AbstractEntry
-    {
+    public abstract class YouTubeBaseEntry : AbstractEntry {
         /// <summary>
         /// instead of having 20 extension elements
         /// we have one string based getter
@@ -39,8 +37,7 @@ namespace Google.GData.YouTube {
         /// </summary>
         /// <param name="extension">the name of the extension to look for</param>
         /// <returns>SimpleElement, or NULL if the extension was not found</returns>
-        public SimpleElement getYouTubeExtension(string extension) 
-        {
+        public SimpleElement getYouTubeExtension(string extension) {
             return FindExtension(extension, YouTubeNameTable.NSYouTube) as SimpleElement;
         }
 
@@ -51,18 +48,13 @@ namespace Google.GData.YouTube {
         /// </summary>
         /// <param name="extension">the name of the extension to look for</param>
         /// <returns>value as string, or NULL if the extension was not found</returns>
-        public string getYouTubeExtensionValue(string extension) 
-        {
+        public string getYouTubeExtensionValue(string extension) {
             SimpleElement e = getYouTubeExtension(extension);
-            if (e != null)
-            {
+            if (e != null) {
                 return e.Value;
             }
             return null;
         }
-
-
-
 
         /// <summary>
         /// instead of having 20 extension elements
@@ -81,34 +73,30 @@ namespace Google.GData.YouTube {
         /// <param name="newValue">the new value for this extension element</param>
         /// <returns>SimpleElement, either a brand new one, or the one
         /// returned by the service</returns>
-        public SimpleElement setYouTubeExtension(string extension, string newValue) 
-        {
-            if (extension == null)
-            {
+        public SimpleElement setYouTubeExtension(string extension, string newValue) {
+            if (extension == null) {
                 throw new System.ArgumentNullException("extension");
             }
 
             SimpleElement ele = getYouTubeExtension(extension);
-            if (ele == null && newValue != null)
-            {
+            if (ele == null && newValue != null) {
                 ele = CreateExtension(extension, YouTubeNameTable.NSYouTube) as SimpleElement;
-                if (ele != null)
-                {
+                if (ele != null) {
                     this.ExtensionElements.Add(ele);
                 }
             }
-            if (ele == null)
-                throw new System.ArgumentException("invalid extension element specified");
 
-            if (newValue == null && ele != null)
-            {
+            if (ele == null) {
+                throw new System.ArgumentException("invalid extension element specified");
+            }
+
+            if (newValue == null && ele != null) {
                 DeleteExtensions(extension, YouTubeNameTable.NSYouTube);
             }
 
-            if (ele != null) 
+            if (ele != null) {
                 ele.Value = newValue;
-
-
+            }
 
             return ele;
         }
@@ -118,11 +106,9 @@ namespace Google.GData.YouTube {
         /// is still supported
         /// </summary>
         /// <returns></returns>
-        internal string getDescription ()
-        {
-            if (this.ProtocolMajor == 1)
-            {
-                 return getYouTubeExtensionValue(YouTubeNameTable.Description);
+        internal string getDescription() {
+            if (this.ProtocolMajor == 1) {
+                return getYouTubeExtensionValue(YouTubeNameTable.Description);
             }
             return this.Summary.Text;
         }
@@ -132,19 +118,15 @@ namespace Google.GData.YouTube {
         /// is still supported
         /// </summary>
         /// <returns></returns>
-        internal void setDescription(string value)
-        {
-            if (this.ProtocolMajor == 1)
-            {
-                setYouTubeExtension(YouTubeNameTable.Description,value);
-            }
-            else 
-            {
+        internal void setDescription(string value) {
+            if (this.ProtocolMajor == 1) {
+                setYouTubeExtension(YouTubeNameTable.Description, value);
+            } else {
                 this.Summary.Text = value;
             }
         }
-
     }
 }
+
 
 

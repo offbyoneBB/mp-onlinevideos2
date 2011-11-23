@@ -16,7 +16,7 @@
 
 using System;
 using System.Xml;
-using System.IO; 
+using System.IO;
 using System.Collections;
 using Google.GData.Client;
 using Google.GData.Extensions;
@@ -26,28 +26,20 @@ using Google.GData.Extensions.Location;
 using Google.GData.Extensions.AppControl;
 
 namespace Google.GData.YouTube {
-
-
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// An individual entry inside the FriendsFeed. It represents a contact of the user
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class FriendsEntry : YouTubeBaseEntry
-    {
+    public class FriendsEntry : YouTubeBaseEntry {
         /// <summary>
         /// Category used to label entries that friends
         /// </summary>
         public static AtomCategory FRIENDS_CATEGORY =
-        new AtomCategory(YouTubeNameTable.KIND_FRIEND, new AtomUri(BaseNameTable.gKind));
-
+            new AtomCategory(YouTubeNameTable.KIND_FRIEND, new AtomUri(BaseNameTable.gKind));
 
         /// <summary>
         /// Constructs a new FriendsEntry instance
         /// </summary>
-        public FriendsEntry()
-        : base()
-        {
+        public FriendsEntry() : base() {
             Tracing.TraceMsg("Created FriendsEntry");
             // add status and username
             this.AddExtension(new Status());
@@ -58,33 +50,28 @@ namespace Google.GData.YouTube {
         /// <summary>
         /// getter/setter for Status subelement
         /// </summary>
-        public string Status 
-        {
-            get
-            {
+        public string Status {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.Status);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.Status,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.Status, value);
             }
         }
 
         /// <summary>
         /// getter/setter for UserName subelement
         /// </summary>
-        public string UserName 
-        {
-            get
-            {
+        public string UserName {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.UserName);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.UserName,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.UserName, value);
             }
         }
     }
 }
+
 
 

@@ -21,9 +21,6 @@ using Google.GData.Client;
 using Google.GData.Extensions;
 
 namespace Google.GData.YouTube {
-
- 
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// A user's playlists feed contains a list of the playlists created by
     ///  that user. If you are requesting the playlists feed for the currently
@@ -36,26 +33,23 @@ namespace Google.GData.YouTube {
     /// in the entry identifies the URL that allows you to retrieve the playlist feed, 
     /// which specifies information about the videos in the playlist.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class PlaylistsFeed : YouTubeFeed
-    {
-
+    public class PlaylistsFeed : YouTubeFeed {
         /// <summary>
-        ///  default constructor
+        /// default constructor
         /// </summary>
         /// <param name="uriBase">the base URI of the feedEntry</param>
         /// <param name="iService">the Service to use</param>
-        public PlaylistsFeed(Uri uriBase, IService iService) : base(uriBase, iService)
-        {
+        public PlaylistsFeed(Uri uriBase, IService iService)
+            : base(uriBase, iService) {
         }
 
         /// <summary>
         /// this needs to get implemented by subclasses
         /// </summary>
         /// <returns>AtomEntry</returns>
-        public override AtomEntry CreateFeedEntry()
-        {
+        public override AtomEntry CreateFeedEntry() {
             return new PlaylistsEntry();
         }
     }
 }
+

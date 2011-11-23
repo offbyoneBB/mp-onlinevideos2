@@ -16,66 +16,49 @@
 
 using System;
 using System.Xml;
-using System.IO; 
+using System.IO;
 using System.Collections;
 using Google.GData.Client;
 using Google.GData.Extensions;
 using System.Globalization;
 
 namespace Google.GData.YouTube {
-
-
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// Entry API customization class for defining entries in an Playlist feed.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class PlaylistEntry : YouTubeEntry
-    {
-         /// <summary>
+    public class PlaylistEntry : YouTubeEntry {
+        /// <summary>
         /// Category used to label entries as Playlistentries
         /// </summary>
         public static AtomCategory PLAYLIST_CATEGORY =
-        new AtomCategory(YouTubeNameTable.KIND_PLAYLIST, new AtomUri(BaseNameTable.gKind));
+            new AtomCategory(YouTubeNameTable.KIND_PLAYLIST, new AtomUri(BaseNameTable.gKind));
 
         /// <summary>
         /// Constructs a new PlayListEntry instance
         /// </summary>
         public PlaylistEntry()
-        : base()
-        {
+            : base() {
             Tracing.TraceMsg("Created PlaylistEntry");
 
-            if (this.ProtocolMajor == 1)
-            {
+            if (this.ProtocolMajor == 1) {
                 Description d = new Description();
                 this.AddExtension(d);
             }
 
             this.AddExtension(new Position());
-
             Categories.Add(PLAYLIST_CATEGORY);
         }
-
 
         /// <summary>
         /// getter/setter for Position subelement
         /// </summary>
-        public int Position
-        {
-            get
-            {
+        public int Position {
+            get {
                 return Convert.ToInt32(getYouTubeExtensionValue(YouTubeNameTable.Position), CultureInfo.InvariantCulture);
             }
-            set
-            {
+            set {
                 setYouTubeExtension(YouTubeNameTable.Position, value.ToString(CultureInfo.InvariantCulture));
             }
         }
-
-      
-
     }
 }
-
-

@@ -27,44 +27,6 @@ using System.Text;
 //////////////////////////////////////////////////////////////////////
 namespace Google.GData.Client
 {
-#if WindowsCE || PocketPC
-    //////////////////////////////////////////////////////////////////////
-    /// <summary>Tracing helper class. Does nothing under WindowsCE
-    ///  </summary> 
-    //////////////////////////////////////////////////////////////////////
-    public sealed class Tracing
-    {
-        private Tracing()
-        {
-        }
-        [Conditional("USE_TRACING")]
-        static public void InitTracing()
-        {
-            return;
-        }
-        [Conditional("USE_TRACING")]
-        static public void ExitTracing() {}
-        [Conditional("USE_TRACING")]
-        static public void TraceCall(string msg) {}
-
-        [Conditional("USE_TRACING")]
-        static public void TraceCall() {}
-
-        [Conditional("USE_TRACING")]
-        static public void TraceInfo(string msg) {}
-
-        [Conditional("USE_TRACING")]
-        static public void Timestamp(string msg) {}
-
-        [Conditional("USE_TRACING")]
-        static public void TraceMsg(string msg) {}
-
-        [Conditional("USE_TRACING")]
-        static public void Assert(bool condition, string msg) {}
-    }
-    /////////////////////////////////////////////////////////////////////////////
-
-#else
     //////////////////////////////////////////////////////////////////////
     /// <summary>Tracing helper class. Uses conditional compilation to 
     ///  exclude tracing code in release builds</summary> 
@@ -212,6 +174,5 @@ namespace Google.GData.Client
 
     }
     /////////////////////////////////////////////////////////////////////////////
-#endif
 }
 /////////////////////////////////////////////////////////////////////////////

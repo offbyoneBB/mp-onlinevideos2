@@ -21,9 +21,6 @@ using Google.GData.Client;
 using Google.GData.Extensions;
 
 namespace Google.GData.YouTube {
-
- 
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// The YouTube Data API allows applications to perform functions normally 
     /// executed on the YouTube website. The API enables your application to search 
@@ -35,17 +32,14 @@ namespace Google.GData.YouTube {
     /// authenticated requests to enable users to create playlists, 
     /// subscriptions, contacts and other account-specific entities.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class YouTubeFeed : AbstractFeed
-    {
-
+    public class YouTubeFeed : AbstractFeed {
         /// <summary>
         ///  default constructor
         /// </summary>
         /// <param name="uriBase">the base URI of the feedEntry</param>
         /// <param name="iService">the Service to use</param>
-        public YouTubeFeed(Uri uriBase, IService iService) : base(uriBase, iService)
-        {
+        public YouTubeFeed(Uri uriBase, IService iService)
+            : base(uriBase, iService) {
             this.ProtocolMajor = VersionDefaults.VersionTwo;
         }
 
@@ -53,19 +47,17 @@ namespace Google.GData.YouTube {
         /// this needs to get implemented by subclasses
         /// </summary>
         /// <returns>AtomEntry</returns>
-        public override AtomEntry CreateFeedEntry()
-        {
+        public override AtomEntry CreateFeedEntry() {
             return new YouTubeEntry();
         }
 
         /// <summary>
-        /// get's called after we already handled the custom entry, to handle all 
+        /// gets called after we already handled the custom entry, to handle all 
         /// other potential parsing tasks
         /// </summary>
         /// <param name="e"></param>
         /// <param name="parser">the atom feed parser used</param>
-        protected override void HandleExtensionElements(ExtensionElementEventArgs e, AtomFeedParser parser)
-        {
+        protected override void HandleExtensionElements(ExtensionElementEventArgs e, AtomFeedParser parser) {
             base.HandleExtensionElements(e, parser);
         }
     }

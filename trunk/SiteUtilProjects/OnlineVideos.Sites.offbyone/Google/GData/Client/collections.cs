@@ -609,6 +609,21 @@ namespace Google.GData.Client
         }
 
         /// <summary>
+        /// removes a factory defined by namespace and local name
+        /// </summary>
+        /// <param name="ns">namespace of the factory</param>
+        /// <param name="name">local name of the factory</param>
+        public bool Remove(string ns, string name) {
+            for (int i = 0; i < _list.Count; i++) {
+                if (_list[i].XmlNameSpace == ns && _list[i].XmlName == name) {
+                    _list.RemoveAt(i);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// default overload, see base class
         /// </summary>
         public IEnumerator<IExtensionElementFactory> GetEnumerator()

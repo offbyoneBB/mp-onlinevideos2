@@ -73,9 +73,6 @@ namespace Google.GData.Client
             }
         }
 
-#if WindowsCE || PocketPC
-#else
-
         /// <summary>
         /// Parses an incoming URI string and sets the instance variables
         /// of this object.
@@ -89,7 +86,8 @@ namespace Google.GData.Client
             {
                 char[] delimiters = { '?', '&' };
 
-                TokenCollection tokens = new TokenCollection(targetUri.Query, delimiters);
+                string source = HttpUtility.UrlDecode(targetUri.Query);
+                TokenCollection tokens = new TokenCollection(source, delimiters);
                 foreach (String token in tokens)
                 {
                     if (token.Length > 0)
@@ -112,7 +110,7 @@ namespace Google.GData.Client
             }
             return this.Uri;
         }
-#endif 
+        
         /// <summary>
         /// Resets object state to default, as if newly created.
         /// </summary>

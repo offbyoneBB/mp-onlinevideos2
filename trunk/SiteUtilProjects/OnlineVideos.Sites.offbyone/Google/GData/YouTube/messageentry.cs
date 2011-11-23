@@ -16,61 +16,49 @@
 
 using System;
 using System.Xml;
-using System.IO; 
+using System.IO;
 using System.Collections;
 using Google.GData.Client;
 using Google.GData.Extensions;
 using System.Globalization;
 
-
 namespace Google.GData.YouTube {
-
-
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// Entry API customization class for defining entries in an messages feed.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class MessageEntry : YouTubeEntry
-    {
-         /// <summary>
+    public class MessageEntry : YouTubeEntry {
+        /// <summary>
         /// Category used to label entries as Playlistentries
         /// </summary>
         public static AtomCategory MESSAGE_CATEGORY =
-        new AtomCategory(YouTubeNameTable.KIND_VIDEO_MESSAGE, new AtomUri(BaseNameTable.gKind));
+            new AtomCategory(YouTubeNameTable.KIND_VIDEO_MESSAGE, new AtomUri(BaseNameTable.gKind));
 
         /// <summary>
         /// Constructs a new PlayListEntry instance
         /// </summary>
-        public MessageEntry()
-        : base()
-        {
+        public MessageEntry() : base() {
             Tracing.TraceMsg("Created MessageEntry");
             Description d = new Description();
 
             this.AddExtension(d);
-
             Categories.Add(MESSAGE_CATEGORY);
         }
 
-
-         /// <summary>
+        /// <summary>
         /// getter/setter for Description subelement
         /// </summary>
-        [Obsolete("replaced with Summary.Text")] 
-        public string Description 
-        {
-            get
-            {
+        [Obsolete("replaced with Summary.Text")]
+        public string Description {
+            get {
                 return getDescription();
             }
-            set
-            {
+            set {
                 setDescription(value);
             }
         }
     }
 }
+
 
 
 

@@ -21,26 +21,20 @@
 
 using System;
 using System.Xml;
-using System.IO; 
+using System.IO;
 using System.Collections;
 using Google.GData.Client;
 using Google.GData.Extensions;
 
 namespace Google.GData.YouTube {
-
-
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// Entry API customization class for defining comment entries in an comments feed.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class ComplaintEntry : YouTubeBaseEntry
-    {
+    public class ComplaintEntry : YouTubeBaseEntry {
         /// <summary>
         /// Describes the nature of the complaint
         /// </summary>
-        public enum ComplaintType
-        {
+        public enum ComplaintType {
             /// <summary>
             /// The video contains sexual content
             /// </summary>
@@ -70,73 +64,56 @@ namespace Google.GData.YouTube {
             /// </summary>
             UNKNOWN
         }
+
         /// <summary>
         /// Constructs a new CommentEntry instance
         /// </summary>
-        public ComplaintEntry()
-        : base()
-        {
+        public ComplaintEntry() : base() {
             Tracing.TraceMsg("Created complaint entry");
 
             Content c = new Content();
-
             this.AddExtension(c);
         }
 
         /// <summary>
         /// getter/setter for yt:content subelement
         /// </summary>
-        public string Complaint
-        {
-            get
-            {
+        public string Complaint {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.Content);
             }
-            set
-            {
+            set {
                 setYouTubeExtension(YouTubeNameTable.Content, value);
             }
         }
 
-
         /// <summary>
         /// gets and sets the associated atom:category
         /// </summary>
-        public ComplaintType Type
-        {
-            get
-            {
+        public ComplaintType Type {
+            get {
                 ComplaintType t = ComplaintType.UNKNOWN;
 
-                foreach (AtomCategory category in this.Categories)
-                {
-                    if (category.Scheme == YouTubeNameTable.ComplaintCategorySchema)
-                    {
-                        try
-                        {
-                            t = (ComplaintType) Enum.Parse(typeof(ComplaintType), category.Term, true);
-                        }
-                        catch (ArgumentException)
-                        {
+                foreach (AtomCategory category in this.Categories) {
+                    if (category.Scheme == YouTubeNameTable.ComplaintCategorySchema) {
+                        try {
+                            t = (ComplaintType)Enum.Parse(typeof(ComplaintType), category.Term, true);
+                        } catch (ArgumentException) {
                             t = ComplaintType.UNKNOWN;
                         }
                     }
                 }
                 return t;
             }
-            set
-            {
+            set {
                 AtomCategory cat = null;
-                foreach (AtomCategory category in this.Categories)
-                {
-                    if (category.Scheme == YouTubeNameTable.ComplaintCategorySchema)
-                    {
+                foreach (AtomCategory category in this.Categories) {
+                    if (category.Scheme == YouTubeNameTable.ComplaintCategorySchema) {
                         cat = category;
                         break;
                     }
                 }
-                if (cat == null)
-                {
+                if (cat == null) {
                     cat = new AtomCategory();
                     this.Categories.Add(cat);
                 }
@@ -146,5 +123,6 @@ namespace Google.GData.YouTube {
         }
     }
 }
+
 
 

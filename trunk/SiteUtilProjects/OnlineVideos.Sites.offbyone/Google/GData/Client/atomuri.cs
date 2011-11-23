@@ -43,11 +43,7 @@ namespace Google.GData.Client
             {
                 throw new ArgumentNullException("uri"); 
             }
-#if WindowsCE || PocketPC
-            this.strContent = uri.ToString(); 
-#else
             this.strContent = HttpUtility.UrlDecode(uri.ToString());
-#endif
         }
 
         /// <summary>alternating constructor with a string</summary> 

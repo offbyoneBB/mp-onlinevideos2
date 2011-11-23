@@ -22,8 +22,6 @@ using System.Collections.Generic;
 using Google.GData.Client;
 
 namespace Google.GData.YouTube {
-
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// A subclass of FeedQuery, to create an YouTube query URI.
     /// The YouTube Data API supports the following standard Google Data query parameters.
@@ -100,40 +98,34 @@ namespace Google.GData.YouTube {
     ///         uploaded within the specified time. Valid values for this parameter are today (1 day), 
     ///         this_week (7 days), this_month (1 month) and all_time. The default value for this parameter is all_time.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class YouTubeQuery : FeedQuery
-    {
-
-
+    public class YouTubeQuery : FeedQuery {
         /// <summary>
         /// describing the requested video format
         /// </summary>
-        public enum VideoFormat
-        {
+        public enum VideoFormat {
             /// <summary>
             /// no parameter. Setting the accessLevel to undefined
             /// implies the server default
             /// </summary>
-            FormatUndefined,
+            FormatUndefined = 0,
             /// <summary>
             /// RTSP streaming URL for mobile video playback. H.263 video (up to 176x144) and AMR audio.
             /// </summary>
-            RTSP,
+            RTSP = 1,
             /// <summary>
             /// HTTP URL to the embeddable player
             /// </summary>
-            Embeddable,
+            Embeddable = 5,
             /// <summary>
             /// SRTSP streaming URL for mobile video playback.
             /// </summary>
-            Mobile,
+            Mobile = 6,
         }
 
         /// <summary>
         /// describing the requested video format
         /// </summary>
-        public enum UploadTime
-        {
+        public enum UploadTime {
             /// <summary>
             /// time undefined, default value for the server
             /// </summary>
@@ -154,13 +146,11 @@ namespace Google.GData.YouTube {
             AllTime
         }
 
-        
         /// <summary>
         /// describing the possible safe search values
         /// <seealso cref="YouTubeQuery.SafeSearch"/>
         /// </summary>
-        public enum SafeSearchValues
-        {
+        public enum SafeSearchValues {
             /// <summary>no restriction</summary>
             None,
             /// <summary>moderate restriction</summary>
@@ -168,10 +158,8 @@ namespace Google.GData.YouTube {
             /// <summary>strict restriction</summary>
             Strict
         }
+
         private SafeSearchValues safeSearch;
-
-
-
         private List<VideoFormat> formats;
         private string videoQuery;
         private string orderBy;
@@ -183,12 +171,12 @@ namespace Google.GData.YouTube {
         private string location;
         private string locationRadius;
         private string uploader;
-        
 
         /// <summary>
         /// the standard feeds URL
         /// </summary>
         public const string StandardFeeds = "https://gdata.youtube.com/feeds/api/standardfeeds/";
+
         /// <summary>
         /// youTube base video URI 
         /// </summary>
@@ -203,7 +191,7 @@ namespace Google.GData.YouTube {
         /// youTube base mobile video URI 
         /// </summary>
         public const string MobileVideoUri = "https://gdata.youtube.com/feeds/mobile/videos";
-       
+
         /// <summary>
         /// youTube base standard top rated video URI 
         /// </summary>
@@ -212,47 +200,47 @@ namespace Google.GData.YouTube {
         /// <summary>
         /// youTube base standard favorites video URI 
         /// </summary>
-        public const string FavoritesVideo = YouTubeQuery.StandardFeeds +"top_favorites";
-        
+        public const string FavoritesVideo = YouTubeQuery.StandardFeeds + "top_favorites";
+
         /// <summary>
         /// youTube base standard most viewed video URI 
         /// </summary>
-        public const string MostViewedVideo = YouTubeQuery.StandardFeeds +"most_viewed";
+        public const string MostViewedVideo = YouTubeQuery.StandardFeeds + "most_viewed";
 
         /// <summary>
         /// youTube base standard most recent video URI 
         /// </summary>
-        public const string MostRecentVideo = YouTubeQuery.StandardFeeds +"most_recent";
+        public const string MostRecentVideo = YouTubeQuery.StandardFeeds + "most_recent";
 
         /// <summary>
         /// youTube base standard most popular video URI 
         /// </summary>
-        public const string MostPopular = YouTubeQuery.StandardFeeds +"most_popular";
+        public const string MostPopular = YouTubeQuery.StandardFeeds + "most_popular";
 
         /// <summary>
         /// youTube base standard most discussed video URI 
         /// </summary>
-        public const string MostDiscussedVideo = YouTubeQuery.StandardFeeds +"most_discussed";
+        public const string MostDiscussedVideo = YouTubeQuery.StandardFeeds + "most_discussed";
 
         /// <summary>
         /// youTube base standard most linked video URI 
         /// </summary>
-        public const string MostLinkedVideo = YouTubeQuery.StandardFeeds +"most_linked";
+        public const string MostLinkedVideo = YouTubeQuery.StandardFeeds + "most_linked";
 
         /// <summary>
         /// youTube base standard most responded video URI 
         /// </summary>
-        public const string MostRespondedVideo = YouTubeQuery.StandardFeeds +"most_responded";
+        public const string MostRespondedVideo = YouTubeQuery.StandardFeeds + "most_responded";
 
         /// <summary>
         /// youTube base standard recently featured video URI 
         /// </summary>
-        public const string RecentlyFeaturedVideo = YouTubeQuery.StandardFeeds +"recently_featured";
+        public const string RecentlyFeaturedVideo = YouTubeQuery.StandardFeeds + "recently_featured";
 
         /// <summary>
         /// youTube base standard mobile phones video URI 
         /// </summary>
-        public const string MobilePhonesVideo = YouTubeQuery.StandardFeeds +"watch_on_mobile";
+        public const string MobilePhonesVideo = YouTubeQuery.StandardFeeds + "watch_on_mobile";
 
         /// <summary>
         /// default users upload account
@@ -264,31 +252,25 @@ namespace Google.GData.YouTube {
         /// </summary>
         public const string BaseUserUri = "https://gdata.youtube.com/feeds/api/users/";
 
-
         /// <summary>
         /// base constructor
         /// </summary>
         public YouTubeQuery()
-        : base()
-        {
+            : base() {
             this.CategoryQueriesAsParameter = true;
             this.SafeSearch = SafeSearchValues.Moderate;
         }
-
-
 
         /// <summary>
         /// base constructor, with initial queryUri
         /// </summary>
         /// <param name="queryUri">the query to use</param>
         public YouTubeQuery(string queryUri)
-        : base(queryUri)
-        {
+            : base(queryUri) {
             this.CategoryQueriesAsParameter = true;
             this.SafeSearch = SafeSearchValues.Moderate;
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>
         /// format	    The format parameter specifies that videos must be available in a particular video format. 
         ///             Your request can specify any of the following formats:
@@ -300,46 +282,22 @@ namespace Google.GData.YouTube {
         ///         6	    RTSP streaming URL for mobile video playback. MPEG-4 SP video (up to 176x144) and AAC audio
         /// </summary>
         /// <returns> the list of formats</returns>
-        //////////////////////////////////////////////////////////////////////
-        public List<VideoFormat> Formats
-        {
+        public List<VideoFormat> Formats {
             get {
-                if (this.formats == null)
-                {
+                if (this.formats == null) {
                     this.formats = new List<VideoFormat>();
                 }
-                return this.formats;}
+                return this.formats;
+            }
         }
-        // end of accessor public VideoFormat Format
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>accessor method public UploadTime Time</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
-        public UploadTime Time
-        {
-            get {return this.uploadTime;}
-            set {this.uploadTime = value;}
+        public UploadTime Time {
+            get { return this.uploadTime; }
+            set { this.uploadTime = value; }
         }
-        // end of accessor public UploadTime Time
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>The vq parameter, which is only supported for video feeds, 
-        /// specifies a search query term. YouTube will search all video 
-        /// metadata for videos matching the term. Video metadata includes
-        ///  titles, keywords, descriptions, authors' usernames, and 
-        /// categories</summary> 
-        /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
-        [Obsolete("replaced with the standard query parameter")] 
-        public string VQ
-        {
-            get {return this.videoQuery;}
-            set {this.videoQuery = value;}
-        }
-        // end of accessor public string VideoQuery
-
-        //////////////////////////////////////////////////////////////////////
         /// <summary>
         /// The orderby parameter, which is only supported for video feeds, 
         /// specifies the value that will be used to sort videos in the search
@@ -356,15 +314,11 @@ namespace Google.GData.YouTube {
         /// for a search results feed.
         /// accessor method public string OrderBy</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
-        public string OrderBy
-        {
-            get {return this.orderBy;}
-            set {this.orderBy = value;}
+        public string OrderBy {
+            get { return this.orderBy; }
+            set { this.orderBy = value; }
         }
-        // end of accessor public string OrderBy
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>
         /// The client parameter is an alphanumeric string that identifies your
         ///  application. The client parameter is an alternate way of specifying 
@@ -377,15 +331,11 @@ namespace Google.GData.YouTube {
         /// this property is only included for completeness
         /// </summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
-        public string Client
-        {
-            get {return this.client;}
-            set {this.client = value;}
+        public string Client {
+            get { return this.client; }
+            set { this.client = value; }
         }
-        // end of accessor public string Client
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>
         /// The lr parameter restricts the search to videos that have a title, 
         /// description or keywords in a specific language. Valid values for 
@@ -394,20 +344,11 @@ namespace Google.GData.YouTube {
         ///  for traditional Chinese. This parameter can be used when requesting 
         /// any video feeds other than standard feeds.
         /// </summary> 
-        //////////////////////////////////////////////////////////////////////
-        public string LR
-        {
-            get {return this.lr;}
-            set {this.lr = value;}
+        public string LR {
+            get { return this.lr; }
+            set { this.lr = value; }
         }
-        // end of accessor public string LR
 
-
-       
-
-
-
-        //////////////////////////////////////////////////////////////////////
         /// <summary>
         /// <para>
         /// The safeSearch parameter indicates whether the search results should include 
@@ -433,14 +374,10 @@ namespace Google.GData.YouTube {
         /// If this happens, please flag the video by filing a complaint, which will help us to better identify restricted content.</para>
         ///<para>Note: The safeSearch parameter was introduced in version 2.0 of the YouTube Data API and replaced the racy parameter, which was used in version 1.0.</para>
         /// </summary>
-        //////////////////////////////////////////////////////////////////////
-        public SafeSearchValues SafeSearch
-        {
-            get {return this.safeSearch;}
-            set {this.safeSearch = value;}
+        public SafeSearchValues SafeSearch {
+            get { return this.safeSearch; }
+            set { this.safeSearch = value; }
         }
-        // end of accessor public string Racy
-
 
         /// <summary>
         /// The location parameter restricts the search to videos that have a geographical location specified in their metadata. The parameter can be used in either of the following contexts:
@@ -462,14 +399,11 @@ namespace Google.GData.YouTube {
         ///  restrict the search results to videos that have a geographical location, but it does not enable you to find videos with a specific geographical location. 
         /// This parameter can be used with all video feeds. A video that has a geographical location will have a georss:where tag in its metadata.<para>
         /// </summary>
-        public string Location
-        {
-            get 
-            {
+        public string Location {
+            get {
                 return this.location;
             }
-            set
-            {
+            set {
                 this.location = value;
             }
         }
@@ -482,21 +416,15 @@ namespace Google.GData.YouTube {
         ///  <seealso cref="YouTubeQuery.Location"/>
         /// </summary>
         /// <returns></returns>
-        public string LocationRadius
-        {
-            get
-            {
+        public string LocationRadius {
+            get {
                 return this.locationRadius;
             }
-            set
-            {
+            set {
                 this.locationRadius = value;
             }
         }
 
-
-
-        //////////////////////////////////////////////////////////////////////
         /// <summary>
         /// The restriction parameter identifies the IP address that should be 
         /// used to filter videos that can only be played in specific countries. 
@@ -515,14 +443,10 @@ namespace Google.GData.YouTube {
         ///  Ð e.g. restriction=DE.
         /// </summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
-        public string Restriction
-        {
-            get {return this.restriction;}
-            set {this.restriction = value;}
+        public string Restriction {
+            get { return this.restriction; }
+            set { this.restriction = value; }
         }
-        // end of accessor public string Restriction
-
 
         /// <summary>
         /// The uploader parameter, which is only supported for search requests, lets you restrict a query to YouTube 
@@ -532,116 +456,100 @@ namespace Google.GData.YouTube {
         /// which the value of the yt:type attribute is partner.</para>
         /// </summary>
         /// <returns></returns>
-        public string Uploader
-        {
-            get 
-            {
+        public string Uploader {
+            get {
                 return this.uploader;
             }
-            set
-            {
+            set {
                 this.uploader = value;
             }
 
         }
 
-
         /// <summary>
-        /// convienience method to create an URI based on a userID
+        /// convenience method to create an URI based on a userID
         /// for the subscriptions
         /// </summary>
         /// <param name="userID"></param>
         /// <returns>string</returns>
-        public static string CreateSubscriptionUri(string userID) 
-        {
+        public static string CreateSubscriptionUri(string userID) {
             return CreateCustomUri(userID, "subscriptions");
         }
 
         /// <summary>
-        /// convienience method to create an URI based on a userID
+        /// convenience method to create an URI based on a userID
         /// for the playlists of an user
         /// </summary>
         /// <param name="userID"></param>
         /// <returns>string</returns>
-        public static string CreatePlaylistsUri(string userID) 
-        {
+        public static string CreatePlaylistsUri(string userID) {
             return CreateCustomUri(userID, "playlists");
         }
 
         /// <summary>
-        /// convienience method to create an URI based on a userID
+        /// convenience method to create an URI based on a userID
         /// for the favorites of an user
         /// </summary>
         /// <param name="userID"></param>
         /// <returns>string</returns>
-        public static string CreateFavoritesUri(string userID) 
-        {
+        public static string CreateFavoritesUri(string userID) {
             return CreateCustomUri(userID, "favorites");
         }
 
         /// <summary>
-        /// convienience method to create an URI based on a userID
+        /// convenience method to create an URI based on a userID
         /// for the messages of an user
         /// </summary>
         /// <param name="userID"></param>
         /// <returns>string</returns>
-        public static string CreateMessagesUri(string userID) 
-        {
+        public static string CreateMessagesUri(string userID) {
             return CreateCustomUri(userID, "inbox");
         }
 
         /// <summary>
-        /// convienience method to create an URI based on a userID
+        /// convenience method to create an URI based on a userID
         /// for the contacts of an user
         /// </summary>
         /// <param name="userID"></param>
         /// <returns>string</returns>
-        public static string CreateContactsUri(string userID) 
-        {
+        public static string CreateContactsUri(string userID) {
             return CreateCustomUri(userID, "contacts");
         }
 
         /// <summary>
-        /// convienience method to create an URI based on a userID
+        /// convenience method to create an URI based on a userID
         /// for the uploaded videos of an user
         /// </summary>
         /// <param name="userID"></param>
         /// <returns>string</returns>
-        public static string CreateUserUri(string userID) 
-        {
+        public static string CreateUserUri(string userID) {
             return CreateCustomUri(userID, "uploads");
         }
 
-        
         /// <summary>
         /// assuming you have a video ID, returns the watch uri as a string
         /// </summary>
         /// <param name="videoID"></param>
         /// <returns></returns>
-        public static string CreateVideoWatchUri(string videoID)
-        {
+        public static string CreateVideoWatchUri(string videoID) {
             return "https://www.youtube.com/watch?v=" + Google.GData.Client.Utilities.UriEncodeUnsafe(videoID);
         }
-    
+
         /// <summary>
         /// assuming you have a video ID, returns the video feed uri as a string
         /// </summary>
         /// <param name="videoID"></param>
         /// <returns></returns>
-        public static string CreateVideoUri(string videoID)
-        {
-            return DefaultVideoUri + "/" +  Google.GData.Client.Utilities.UriEncodeUnsafe(videoID);
+        public static string CreateVideoUri(string videoID) {
+            return DefaultVideoUri + "/" + Google.GData.Client.Utilities.UriEncodeUnsafe(videoID);
         }
 
-
         // helper method for the above publics
-        private static string CreateCustomUri(string userID, string path) 
-        {
-           if (String.IsNullOrEmpty(userID))
-           {
-               return YouTubeQuery.BaseUserUri + "default/" + path;
-           }
-           return YouTubeQuery.BaseUserUri + userID + "/" + path;
+        private static string CreateCustomUri(string userID, string path) {
+            if (String.IsNullOrEmpty(userID)) {
+                return YouTubeQuery.BaseUserUri + "default/" + path;
+            }
+            return YouTubeQuery.BaseUserUri + userID + "/" + path;
         }
 
         /// <summary>
@@ -649,13 +557,10 @@ namespace Google.GData.YouTube {
         /// location at http://gdata.youtube.com/schemas/2007/categories.cat
         /// </summary>
         /// <returns></returns>
-        public static AtomCategoryCollection GetYouTubeCategories()
-        {
+        public static AtomCategoryCollection GetYouTubeCategories() {
             return GetCategories(new Uri("http://gdata.youtube.com/schemas/2007/categories.cat"), new YouTubeCategoryCollection());
         }
 
-
-		
         /// <summary>
         /// retrieves a category collection from the given URL
         /// The owner should be a new Collection object, like:
@@ -665,8 +570,7 @@ namespace Google.GData.YouTube {
         /// </code>
         /// </summary>
         /// <returns></returns>
-        public static AtomCategoryCollection GetCategories(Uri uri, AtomBase owner)
-        {
+        public static AtomCategoryCollection GetCategories(Uri uri, AtomBase owner) {
             // first order is to get the document into an xml dom
             XmlTextReader textReader = new XmlTextReader(uri.AbsoluteUri);
 
@@ -675,163 +579,109 @@ namespace Google.GData.YouTube {
             return collection;
         }
 
-
-   
-#if WindowsCE || PocketPC
-#else
-        //////////////////////////////////////////////////////////////////////
         /// <summary>protected void ParseUri</summary> 
         /// <param name="targetUri">takes an incoming Uri string and parses all the properties out of it</param>
         /// <returns>throws a query exception when it finds something wrong with the input, otherwise returns a baseuri</returns>
-        //////////////////////////////////////////////////////////////////////
-        protected override Uri ParseUri(Uri targetUri)
-        {
+        protected override Uri ParseUri(Uri targetUri) {
             base.ParseUri(targetUri);
-            if (targetUri != null)
-            {
-                char[] deli = { '?', '&' };
+            if (targetUri == null) {
+                return this.Uri;
+            }
 
-                TokenCollection tokens = new TokenCollection(targetUri.Query, deli);
-                foreach (string token in tokens)
-                {
-                    if (token.Length > 0)
-                    {
-                        char[] otherDeli = { '=' };
-                        string[] parameters = token.Split(otherDeli, 2);
-                        switch (parameters[0])
-                        {
-                            case "format":
-                                if (parameters[1] != null)
-                                {
-                                    string [] formats = parameters[1].Split(new char[] {','});
-                                    foreach (string f in formats)
-                                    {
-                                        if (String.Compare(f, "1",  false, CultureInfo.InvariantCulture) == 0)
-                                        {
-                                            this.Formats.Add(VideoFormat.RTSP);
-                                        } 
-                                        else if (String.Compare(f, "5",  false, CultureInfo.InvariantCulture) == 0)
-                                        {
-                                            this.Formats.Add(VideoFormat.Embeddable);
-                                        }
-                                        else if (String.Compare(f, "6",  false, CultureInfo.InvariantCulture) == 0)
-                                        {
-                                            this.Formats.Add(VideoFormat.Mobile);
-                                        }
-                                    }
-                                }
-                                break;
-                            case "orderby":
-                                this.OrderBy = parameters[1];
-                                break;
-                            case "client":
-                                this.Client = parameters[1];
-                                break;
-                            case "lr":
-                                this.LR = parameters[1];
-                                break;
-                            case "location":
-                                this.Location = parameters[1];
-                                break;
-                            case "location-radius":
-                                this.LocationRadius = parameters[1];
-                                break;
-                            case "uploader":
-                                this.Uploader = parameters[1];
-                                break;
-                            case "safeSearch":
-                                if ("none"==parameters[1])
-                                {
-                                    this.SafeSearch = SafeSearchValues.None;
-                                } 
-                                else if ("moderate"==parameters[1])
-                                {
-                                    this.SafeSearch = SafeSearchValues.Moderate;
-                                }
-                                else if ("strict"==parameters[1])
-                                {
-                                    this.SafeSearch = SafeSearchValues.Strict;
-                                }
-                                break;
+            char[] deli = { '?', '&' };
 
-
-                            case "restriction":
-                                this.Restriction = parameters[1];
-                                break;
-                            case "time":
-                                if ("all_time" == parameters[1])
-                                {
-                                    this.Time = UploadTime.AllTime;
-                                } 
-                                else if ("this_month" == parameters[1])
-                                {
-                                    this.Time = UploadTime.ThisMonth;
-                                }
-                                else if ("today" == parameters[1])
-                                {
-                                    this.Time = UploadTime.Today;
-                                }
-                                else if ("this_week" == parameters[1])
-                                {
-                                    this.Time = UploadTime.ThisWeek;
-                                }
-                                else 
-                                {
-                                    this.Time = UploadTime.UploadTimeUndefined;
-                                }
-                                break;
-                        }
-                    }
+            string source = HttpUtility.UrlDecode(targetUri.Query);
+            TokenCollection tokens = new TokenCollection(source, deli);
+            foreach (string token in tokens) {
+                if (token.Length == 0) {
+                    continue;
                 }
-
-        
+                 
+                char[] otherDeli = { '=' };
+                string[] parameters = token.Split(otherDeli, 2);
+                switch (parameters[0]) {
+                    case "format":
+                        if (parameters[1] != null) {
+                            string[] formats = parameters[1].Split(new char[] { ',' });
+                            foreach (string f in formats) {
+                                this.Formats.Add((VideoFormat)Enum.Parse(typeof(VideoFormat), f));
+                            }
+                        }
+                        break;
+                    case "orderby":
+                        this.OrderBy = parameters[1];
+                        break;
+                    case "client":
+                        this.Client = parameters[1];
+                        break;
+                    case "lr":
+                        this.LR = parameters[1];
+                        break;
+                    case "location":
+                        this.Location = parameters[1];
+                        break;
+                    case "location-radius":
+                        this.LocationRadius = parameters[1];
+                        break;
+                    case "uploader":
+                        this.Uploader = parameters[1];
+                        break;
+                    case "safeSearch":
+                        if ("none" == parameters[1]) {
+                            this.SafeSearch = SafeSearchValues.None;
+                        } else if ("moderate" == parameters[1]) {
+                            this.SafeSearch = SafeSearchValues.Moderate;
+                        } else if ("strict" == parameters[1]) {
+                            this.SafeSearch = SafeSearchValues.Strict;
+                        }
+                        break;
+                    case "restriction":
+                        this.Restriction = parameters[1];
+                        break;
+                    case "time":
+                        if ("all_time" == parameters[1]) {
+                            this.Time = UploadTime.AllTime;
+                        } else if ("this_month" == parameters[1]) {
+                            this.Time = UploadTime.ThisMonth;
+                        } else if ("today" == parameters[1]) {
+                            this.Time = UploadTime.Today;
+                        } else if ("this_week" == parameters[1]) {
+                            this.Time = UploadTime.ThisWeek;
+                        } else {
+                            this.Time = UploadTime.UploadTimeUndefined;
+                        }
+                        break;
+                }
             }
             return this.Uri;
         }
-#endif
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Creates the partial URI query string based on all
         ///  set properties.</summary> 
         /// <returns> string => the query part of the URI </returns>
-        //////////////////////////////////////////////////////////////////////
-        protected override string CalculateQuery(string basePath)
-        {
+        protected override string CalculateQuery(string basePath) {
             string path = base.CalculateQuery(basePath);
             StringBuilder newPath = new StringBuilder(path, 2048);
-            char paramInsertion = InsertionParameter(path); 
-            if (this.formats != null)
-            {
-                string res = ""; 
-                foreach (VideoFormat v in this.formats )
-                {
-                    switch (v)
-                    {
-                        case VideoFormat.RTSP:
-                            res += res.Length>0 ? ",1"  : "1";
-                            break;
-                        case VideoFormat.Embeddable:
-                            res += res.Length>0 ? ",5"  : "5";
-                            break;
-                        case VideoFormat.Mobile:
-                            res += res.Length>0 ? ",6"  : "6";
-                            break;
+            char paramInsertion = InsertionParameter(path);
+            if (this.formats != null) {
+                string res = "";
+                foreach (VideoFormat v in this.formats) {
+                    if (res.Length > 0) {
+                        res += ",";
                     }
+                    res += (int)v;
                 }
 
-                if (res.Length > 0)
-                {
+                if (res.Length > 0) {
                     newPath.Append(paramInsertion);
                     newPath.AppendFormat(CultureInfo.InvariantCulture, "format={0}", Utilities.UriEncodeReserved(res));
                     paramInsertion = '&';
                 }
             }
 
-            if (this.Time != UploadTime.UploadTimeUndefined)
-            {
-                string res = ""; 
-                switch (this.Time)
-                {
+            if (this.Time != UploadTime.UploadTimeUndefined) {
+                string res = "";
+                switch (this.Time) {
                     case UploadTime.AllTime:
                         res = "all_time";
                         break;
@@ -848,11 +698,9 @@ namespace Google.GData.YouTube {
                 paramInsertion = AppendQueryPart(res, "time", paramInsertion, newPath);
             }
 
-            if (this.SafeSearch != SafeSearchValues.Moderate)
-            {
-                string res = ""; 
-                switch (this.SafeSearch)
-                {
+            if (this.SafeSearch != SafeSearchValues.Moderate) {
+                string res = "";
+                switch (this.SafeSearch) {
                     case SafeSearchValues.None:
                         res = "none";
                         break;
@@ -875,99 +723,69 @@ namespace Google.GData.YouTube {
         }
     }
 
-
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// A subclass of FeedQuery, to create an Activities Query for YouTube. 
     /// A user activity feed contains information about actions that an authenticated user's 
     /// friends have recently taken on the YouTube site. 
-    //////////////////////////////////////////////////////////////////////
-    public class ActivitiesQuery : FeedQuery
-    {
-        
+    public class ActivitiesQuery : FeedQuery {
         /// <summary>
         /// youTube events feed for friends activities  
         /// </summary>
         public const string ActivityFeedUri = "https://gdata.youtube.com/feeds/api/users/default/friendsactivity";
 
-
         /// <summary>
         /// base constructor
         /// </summary>
         public ActivitiesQuery()
-        : base(ActivitiesQuery.ActivityFeedUri)
-        {
+            : base(ActivitiesQuery.ActivityFeedUri) {
         }
     }
 
-
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// A subclass of FeedQuery, to create an Activities Query for YouTube. 
     /// A user activity feed contains information about actions that an authenticated user's 
     /// friends have recently taken on the YouTube site. 
-    //////////////////////////////////////////////////////////////////////
-    public class UserActivitiesQuery : FeedQuery
-    {
-        
+    public class UserActivitiesQuery : FeedQuery {
         /// <summary>
         /// youTube events feed for friends activities  
         /// </summary>
         public const string ActivityFeedUri = "https://gdata.youtube.com/feeds/api/events";
 
+        private List<string> authors = new List<string>();
 
         /// <summary>
         /// base constructor
         /// </summary>
         public UserActivitiesQuery()
-        : base(UserActivitiesQuery.ActivityFeedUri)
-        {
+            : base(UserActivitiesQuery.ActivityFeedUri) {
         }
 
-
-
-        private List<string> authors = new List<string>();
-        //////////////////////////////////////////////////////////////////////
         /// <summary>holds the list of authors we want to search for</summary> 
-        //////////////////////////////////////////////////////////////////////
-        public List<string> Authors
-        {
-            get { return this.authors;}
-            set { this.authors = value;}
+        public List<string> Authors {
+            get { return this.authors; }
+            set { this.authors = value; }
         }
-        /////////////////////////////////////////////////////////////////////////////
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>Creates the partial URI query string based on all
         ///  set properties.</summary> 
         /// <returns> string => the query part of the URI </returns>
-        //////////////////////////////////////////////////////////////////////
-        protected override string CalculateQuery(string basePath)
-        {
+        protected override string CalculateQuery(string basePath) {
             string path = base.CalculateQuery(basePath);
             StringBuilder newPath = new StringBuilder(path, 2048);
-            char paramInsertion = InsertionParameter(path); 
+            char paramInsertion = InsertionParameter(path);
 
+            string allAuthors = "";
 
-            string allAuthors="";
-
-            foreach (string s in this.authors )
-            {
-                if (allAuthors.Length > 0)
-                {
+            foreach (string s in this.authors) {
+                if (allAuthors.Length > 0) {
                     allAuthors += ",";
                 }
-                allAuthors += s; 
+                allAuthors += s;
             }
 
             paramInsertion = AppendQueryPart(allAuthors, "author", paramInsertion, newPath);
             return newPath.ToString();
         }
-
-
-
     }
-
-
-
 }
+

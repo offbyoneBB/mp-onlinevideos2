@@ -21,32 +21,26 @@ using Google.GData.Client;
 using Google.GData.Extensions;
 
 namespace Google.GData.YouTube {
-
- 
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// Messages can be sent between YouTube users, optionally including a video.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class MessageFeed : YouTubeFeed
-    {
-
+    public class MessageFeed : YouTubeFeed {
         /// <summary>
         ///  default constructor
         /// </summary>
         /// <param name="uriBase">the base URI of the feedEntry</param>
         /// <param name="iService">the Service to use</param>
-        public MessageFeed(Uri uriBase, IService iService) : base(uriBase, iService)
-        {
+        public MessageFeed(Uri uriBase, IService iService)
+            : base(uriBase, iService) {
         }
 
         /// <summary>
         /// this needs to get implemented by subclasses
         /// </summary>
         /// <returns>AtomEntry</returns>
-        public override AtomEntry CreateFeedEntry()
-        {
+        public override AtomEntry CreateFeedEntry() {
             return new MessageEntry();
         }
     }
 }
+
