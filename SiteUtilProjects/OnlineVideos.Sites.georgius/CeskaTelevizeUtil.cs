@@ -342,7 +342,7 @@ namespace OnlineVideos.Sites.georgius
                                 if (source != null)
                                 {
                                     // create rtmp proxy for selected source
-                                    String baseUrl = itemData.Attributes["base"].Value.Replace("&", "%26").Replace("/_definst_", "");
+                                    String baseUrl = itemData.Attributes["base"].Value.Replace("/_definst_", "");
                                     String playPath = source.Attributes["src"].Value;
 
                                     String rtmpUrl = baseUrl + "/" + playPath;
@@ -360,19 +360,9 @@ namespace OnlineVideos.Sites.georgius
                                         if ((firstQuote >= 0) && (secondQuote >= 0) && ((secondQuote - firstQuote) > 0))
                                         {
                                             String swfUrl = baseWebData.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
-
-                                            String rtmpProxy = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                                                String.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&playpath={4}&swfurl={5}&pageurl={6}&live=true",
-                                                    rtmpUrl, //rtmpUrl
-                                                    host, //host
-                                                    tcUrl, //tcUrl
-                                                    app, //app
-                                                    playPath, //playpath
-                                                    swfUrl,
-                                                    video.VideoUrl
-                                                    ));
-
-                                            resultUrls.Add(rtmpProxy);
+                                            String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl }.ToString();
+                                            
+                                            resultUrls.Add(resultUrl);
                                         }
                                     }
                                 }

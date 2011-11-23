@@ -332,6 +332,8 @@ void CMPUrlSource_Rtmp::ReceiveData(bool *shouldExit)
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   this->shouldExit = *shouldExit;
 
+  CLockMutex lock(this->lockMutex, INFINITE);
+
   if (this->internalExitRequest)
   {
     // there is internal exit request pending == changed timestamp
@@ -460,8 +462,13 @@ HRESULT CMPUrlSource_Rtmp::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, RE
 HRESULT CMPUrlSource_Rtmp::AbortStreamReceive()
 {
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
+  CLockMutex lock(this->lockMutex, INFINITE);
 
+  // close connection and set that whole stream downloaded
+  this->CloseConnection();
+  this->wholeStreamDownloaded = true;
+
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
   return S_OK;
 }
 
