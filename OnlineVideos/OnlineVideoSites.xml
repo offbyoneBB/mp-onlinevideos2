@@ -1443,7 +1443,7 @@
 (?:(?!<div\sclass="time">).)*<div\sclass="time">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<]]></item>
         <item key="nextPageRegEx"><![CDATA[title="Next\s*Page\s*"\s+href="(?<url>[^"]*page=\d{1,})">]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\stitle="Previous\spage"\shref="(?<url>[^"]*page=\d{1,})">Prev</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[so\.addParam\("flashvars","[^"]+hashlink=(?<m0>.*?)&]]></item>
+        <item key="fileUrlRegEx"><![CDATA[&(?<n0>[a-zA-Z0-9_]+)_url=(?<m0>[^&"]+)]]></item>
         <item key="searchUrl"><![CDATA[http://www.redtube.com/?search={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.redtube.com]]></item>
         <item key="cookies"><![CDATA[pp=1]]></item>
@@ -1492,7 +1492,7 @@
 (?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>]]></item>
         <item key="nextPageRegEx"><![CDATA[<li\sclass="button-pag[^"]*"><a\shref="(?<url>[^"]+)">NEXT]]></item>
         <item key="prevPageRegEx"><![CDATA[<li\sclass="button-pag[^"]*"><a\shref="(?<url>[^"]+)">PREVIOUS]]></item>
-        <item key="fileUrlRegEx"><![CDATA[var\svideourl="(?<m0>[^"]+)"]]></item>
+        <item key="fileUrlRegEx"><![CDATA[,\s*"video_url"\s*:\s*"(?<m0>[^"]+)"]]></item>
         <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
         <item key="searchUrl"><![CDATA[http://www.tube8.com/search.html?q={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.tube8.com]]></item>
