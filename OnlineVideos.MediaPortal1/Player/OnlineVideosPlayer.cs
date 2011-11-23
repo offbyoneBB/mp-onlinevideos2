@@ -212,16 +212,18 @@ namespace OnlineVideos.MediaPortal1.Player
                             {
                                 try
                                 {
+									Log.Instance.Debug("BufferFile : Rendering unconnected output pins of source filter ...");
                                     // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
                                     DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
                                     PlaybackReady = true;
+									Log.Instance.Debug("BufferFile : Playback Ready.");
                                 }
                                 catch (Exception ex)
                                 {
                                     Log.Instance.Warn(ex.Message);
                                     StopBuffering();
                                 }
-                            }) { IsBackground = true }.Start();
+                            }) { IsBackground = true, Name = "OVGraph" }.Start();
                         }
                         // log every percent
                         if (current > last && current - last >= (double)total * 0.01)
