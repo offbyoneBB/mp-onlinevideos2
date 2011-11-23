@@ -371,11 +371,10 @@ void CMPUrlSource_File::ReceiveData(bool *shouldExit)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
 
+  CLockMutex lock(this->lockMutex, INFINITE);
+
   if (this->IsConnected())
   {
-    // lock access to file
-    CLockMutex lock(this->lockMutex, INFINITE);
-
     if (!this->wholeStreamDownloaded)
     {
       if (!this->setLenght)
@@ -488,8 +487,13 @@ HRESULT CMPUrlSource_File::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, RE
 HRESULT CMPUrlSource_File::AbortStreamReceive()
 {
   this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
+  CLockMutex lock(this->lockMutex, INFINITE);
 
+  // close connection and set that whole stream downloaded
+  this->CloseConnection();
+  this->wholeStreamDownloaded = true;
+
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_ABORT_STREAM_RECEIVE_NAME);
   return S_OK;
 }
 

@@ -319,14 +319,7 @@ namespace OnlineVideos.Sites.georgius
                     string tcUrl = "rtmp://" + host;
                     string playPath = lowQualityUrl.Substring(lowQualityUrl.IndexOf(tcUrl) + tcUrl.Length + 1);
 
-                    string resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&playpath={4}",
-                            lowQualityUrl, //rtmpUrl
-                            host, //host
-                            tcUrl, //tcUrl
-                            app, //app
-                            playPath //playpath
-                            ));
+                    string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(lowQualityUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
 
                     video.PlaybackOptions.Add("Low quality", resultUrl);
                 }
@@ -337,14 +330,7 @@ namespace OnlineVideos.Sites.georgius
                     string tcUrl = "rtmp://" + host;
                     string playPath = highQualityUrl.Substring(highQualityUrl.IndexOf(tcUrl) + tcUrl.Length + 1);
 
-                    string resultUrl = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&playpath={4}",
-                            highQualityUrl, //rtmpUrl
-                            host, //host
-                            tcUrl, //tcUrl
-                            app, //app
-                            playPath //playpath
-                            ));
+                    string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(highQualityUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
 
                     video.PlaybackOptions.Add("High quality", resultUrl);
                 }

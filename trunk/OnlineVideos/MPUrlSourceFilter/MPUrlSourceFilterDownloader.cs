@@ -28,6 +28,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         {
             this.downloadFinished = false;
             this.downloadResult = 0;
+            this.Cancelled = false;
         }
 
         #endregion
@@ -61,10 +62,11 @@ namespace OnlineVideos.MPUrlSourceFilter
                 downloadThread = System.Threading.Thread.CurrentThread;
                 this.downloadResult = 0;
                 this.downloadFinished = false;
+                this.Cancelled = false;
 
                 downloadFilter = (IDownload)new MPUrlSourceFilter();
                 int result = downloadFilter.DownloadAsync(downloadInfo.Url, downloadInfo.LocalFile, this);
-                // throw exception if occured while initializing download
+                // throw exception if error occured while initializing download
                 Marshal.ThrowExceptionForHR(result);
 
                 while (!this.downloadFinished)
@@ -80,11 +82,15 @@ namespace OnlineVideos.MPUrlSourceFilter
                     // sleep some time
                     System.Threading.Thread.Sleep(100);
 
-					if (Cancelled) 
-						downloadFilter.AbortOperation();
+                    if (this.Cancelled)
+                    {
+                        downloadFilter.AbortOperation();
+                        this.downloadFinished = true;
+                        this.downloadResult = 0;
+                    }
                 }
 
-                // throw exception if occured while downloading
+                // throw exception if error occured while downloading
                 Marshal.ThrowExceptionForHR(this.downloadResult);
 
                 return null;
@@ -95,7 +101,10 @@ namespace OnlineVideos.MPUrlSourceFilter
 			}
             finally
             {
-				if (downloadFilter != null) Marshal.ReleaseComObject(downloadFilter);
+                if (downloadFilter != null)
+                {
+                    Marshal.ReleaseComObject(downloadFilter);
+                }
             }
         }
 
