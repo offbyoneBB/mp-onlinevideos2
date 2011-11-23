@@ -22,7 +22,7 @@
 
 using System;
 using System.Xml;
-using System.IO; 
+using System.IO;
 using System.Collections;
 using Google.GData.Client;
 using Google.GData.Extensions;
@@ -30,15 +30,10 @@ using Google.GData.Extensions.MediaRss;
 using System.Globalization;
 
 namespace Google.GData.YouTube {
-
-
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// A user profile contains information that the user lists on his YouTube profile page.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class ProfileEntry : YouTubeBaseEntry
-    {
+    public class ProfileEntry : YouTubeBaseEntry {
         /// <summary>
         /// Category used to label entries that friends
         /// </summary>
@@ -50,8 +45,7 @@ namespace Google.GData.YouTube {
         /// Constructs a new ProfileEntry instance
         /// </summary>
         public ProfileEntry()
-        : base()
-        {
+            : base() {
             Tracing.TraceMsg("Created ProfileEntry");
             Categories.Add(PROFILE_CATEGORY);
 
@@ -76,18 +70,15 @@ namespace Google.GData.YouTube {
         }
 
         /// <summary>
-        /// The yt:ag> tag specifies the user's age, which is calculated based on the birthdate provided 
+        /// The yt:age tag specifies the user's age, which is calculated based on the birthdate provided 
         /// </summary>
         /// <returns></returns>
-        public int Age
-        {
-            get
-            {
+        public int Age {
+            get {
                 return Convert.ToInt32(getYouTubeExtensionValue(YouTubeNameTable.Age), CultureInfo.InvariantCulture);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.Age,value.ToString(CultureInfo.InvariantCulture));
+            set {
+                setYouTubeExtension(YouTubeNameTable.Age, value.ToString(CultureInfo.InvariantCulture));
             }
         }
 
@@ -95,194 +86,155 @@ namespace Google.GData.YouTube {
         /// The yt:company tag identifies the company that the user works for as entered by the user 
         /// in the user's public YouTube profile
         /// </summary>
-        public string Company 
-        {
-            get
-            {
+        public string Company {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.Company);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.Company,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.Company, value);
             }
         }
 
         /// <summary>
         /// The yt:books tag identifies the user's favorite books as entered in the user's YouTube public profile
         /// </summary>
-        public string Books 
-        {
-            get
-            {
+        public string Books {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.Books);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.Books,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.Books, value);
             }
         }
 
         /// <summary>
         /// the users firstname per public profile
         /// </summary>
-        public string Firstname 
-        {
-            get
-            {
+        public string Firstname {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.FirstName);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.FirstName,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.FirstName, value);
             }
         }
 
         /// <summary>
         /// the users lastname per public profile
         /// </summary>
-        public string Lastname 
-        {
-            get
-            {
+        public string Lastname {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.LastName);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.LastName,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.LastName, value);
             }
         }
 
         /// <summary>
         /// the users hobbies per public profile
         /// </summary>
-        public string Hobbies 
-        {
-            get
-            {
+        public string Hobbies {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.Hobbies);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.Hobbies,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.Hobbies, value);
             }
         }
 
         /// <summary>
         /// the users gender per public profile
         /// </summary>
-        public string Gender 
-        {
-            get
-            {
+        public string Gender {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.Gender);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.Gender,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.Gender, value);
             }
         }
 
         /// <summary>
         /// the users location per public profile
         /// </summary>
-        public string Location 
-        {
-            get
-            {
+        public string Location {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.Location);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.Location,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.Location, value);
             }
         }
 
         /// <summary>
         /// the users favorite movies per public profile
         /// </summary>
-        public string Movies 
-        {
-            get
-            {
+        public string Movies {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.Movies);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.Movies,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.Movies, value);
             }
         }
 
         /// <summary>
         /// the users favorite music per public profile
         /// </summary>
-        public string Music 
-        {
-            get
-            {
+        public string Music {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.Music);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.Music,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.Music, value);
             }
         }
 
         /// <summary>
         /// the users occupation per public profile
         /// </summary>
-        public string Occupation 
-        {
-            get
-            {
+        public string Occupation {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.Occupation);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.Occupation,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.Occupation, value);
             }
         }
 
         /// <summary>
         /// the users school per public profile
         /// </summary>
-        public string School 
-        {
-            get
-            {
+        public string School {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.School);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.School,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.School, value);
             }
         }
 
         /// <summary>
         /// getter/setter for UserName subelement
         /// </summary>
-        public string UserName 
-        {
-            get
-            {
+        public string UserName {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.UserName);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.UserName,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.UserName, value);
             }
         }
 
         /// <summary>
         /// The yt:relationship tag identifies the user's relationship status
         /// </summary>
-        public string Relationship
-        {
-            get
-            {
+        public string Relationship {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.Relationship);
             }
-            set
-            {
+            set {
                 setYouTubeExtension(YouTubeNameTable.Relationship, value);
             }
         }
@@ -290,14 +242,11 @@ namespace Google.GData.YouTube {
         /// <summary>
         /// The yt:hometown tag identifies the user's hometown
         /// </summary>
-        public string Hometown
-        {
-            get
-            {
+        public string Hometown {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.HomeTown);
             }
-            set
-            {
+            set {
                 setYouTubeExtension(YouTubeNameTable.HomeTown, value);
             }
         }
@@ -306,31 +255,25 @@ namespace Google.GData.YouTube {
         /// returns the yt:statistics element
         /// </summary>
         /// <returns></returns>
-        public Statistics Statistics
-        {
-            get
-            {
+        public Statistics Statistics {
+            get {
                 return FindExtension(YouTubeNameTable.Statistics,
-                                     YouTubeNameTable.NSYouTube) as Statistics;
+                    YouTubeNameTable.NSYouTube) as Statistics;
             }
-            set
-            {
+            set {
                 ReplaceExtension(YouTubeNameTable.Statistics,
-                                YouTubeNameTable.NSYouTube,
-                                value);
+                    YouTubeNameTable.NSYouTube,
+                    value);
             }
         }
 
         /// <summary>
         ///  property accessor for the Thumbnails 
         /// </summary>
-        public ExtensionCollection<FeedLink> FeedLinks
-        {
-            get 
-            {
-                if (this.links == null)
-                {
-                    this.links = new ExtensionCollection<FeedLink>(this); 
+        public ExtensionCollection<FeedLink> FeedLinks {
+            get {
+                if (this.links == null) {
+                    this.links = new ExtensionCollection<FeedLink>(this);
                 }
                 return this.links;
             }
@@ -339,20 +282,14 @@ namespace Google.GData.YouTube {
         /// <summary>
         /// getter/setter for Description subelement
         /// </summary>
-        [Obsolete("replaced with Summary.Text")] 
-        public string Description 
-        {
-            get
-            {
+        [Obsolete("replaced with Summary.Text")]
+        public string Description {
+            get {
                 return getDescription();
             }
-            set
-            {
+            set {
                 setDescription(value);
             }
         }
     }
 }
-
-
-

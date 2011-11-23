@@ -21,15 +21,10 @@ using System;
 using System.Xml; 
 using System.Net;
 using System.Diagnostics;
-#if WindowsCE || PocketPC
-#else 
 using System.Runtime.Serialization;
-#endif
 using System.Security.Permissions;
 using System.IO;
 using System.Text; 
-
-
 
 #endregion
 
@@ -44,10 +39,7 @@ namespace Google.GData.Client
     /// <summary>standard exception class to be used inside the query object
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else 
     [Serializable]
-#endif
     public class LoggedException : Exception
     {
 
@@ -82,13 +74,10 @@ namespace Google.GData.Client
         }
         /////////////////////////////////////////////////////////////////////////////
 
-#if WindowsCE || PocketPC
-#else 
         /// <summary>here to please FxCop and maybe for future use</summary> 
         protected LoggedException(SerializationInfo info,  StreamingContext context) : base(info, context)
         {
         }
-#endif
         //////////////////////////////////////////////////////////////////////
         /// <summary>protected void EnsureLogging()</summary> 
         //////////////////////////////////////////////////////////////////////
@@ -101,17 +90,11 @@ namespace Google.GData.Client
     /////////////////////////////////////////////////////////////////////////////
 
 
-
-
-
     //////////////////////////////////////////////////////////////////////
     /// <summary>standard exception class to be used inside the query object
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else 
     [Serializable]
-#endif
     public class ClientQueryException : LoggedException
     {
         //////////////////////////////////////////////////////////////////////
@@ -138,13 +121,10 @@ namespace Google.GData.Client
         {
         }
 
-#if WindowsCE || PocketPC
-#else 
         /// <summary>here to please FxCop and maybe for future use</summary> 
         protected ClientQueryException(SerializationInfo info,  StreamingContext context) : base(info, context)
         {
         }
-#endif
     }
     /////////////////////////////////////////////////////////////////////////////
 
@@ -153,10 +133,7 @@ namespace Google.GData.Client
     /// <summary>standard exception class to be used inside the feed object
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else 
     [Serializable]
-#endif
     public class ClientFeedException : LoggedException
     {
 
@@ -183,13 +160,11 @@ namespace Google.GData.Client
         {
         }
         /////////////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else 
+
         /// <summary>here to please FxCop and maybe for future use</summary> 
         protected ClientFeedException(SerializationInfo info,  StreamingContext context) : base(info, context)
         {
         }
-#endif
     }
     /////////////////////////////////////////////////////////////////////////////
 
@@ -197,13 +172,9 @@ namespace Google.GData.Client
     /// <summary>standard exception class to be used inside the feed object
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else 
     [Serializable]
-#endif
     public class GDataBatchRequestException : LoggedException
     {
-
         private AtomFeed batchResult;
 
         //////////////////////////////////////////////////////////////////////
@@ -244,13 +215,11 @@ namespace Google.GData.Client
         {
         }
         /////////////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else 
+
         /// <summary>here to please FxCop and maybe for future use</summary> 
         protected GDataBatchRequestException(SerializationInfo info,  StreamingContext context) : base(info, context)
         {
         }
-#endif
     }
     /////////////////////////////////////////////////////////////////////////////
 
@@ -258,10 +227,7 @@ namespace Google.GData.Client
     /// <summary>standard exception class to be used inside GDataRequest
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else 
     [Serializable]
-#endif
     public class GDataRequestException : LoggedException
     {
 
@@ -298,9 +264,23 @@ namespace Google.GData.Client
                 return (null);
 
             Stream responseStream = this.webResponse.GetResponseStream();
-            
-            if (responseStream == null)
-                return (null);
+
+			for (int i = 0; i < this.webResponse.Headers.Count; ++i) {
+				string headerVal = this.webResponse.Headers[i].ToLower();
+				if (headerVal.Contains("gzip")) {
+					responseStream = new System.IO.Compression.GZipStream(responseStream,
+						System.IO.Compression.CompressionMode.Decompress);
+					break;
+				}
+				if (headerVal.Contains("deflate")) {
+					responseStream = new System.IO.Compression.DeflateStream(responseStream,
+						System.IO.Compression.CompressionMode.Decompress);
+					break;
+				}
+			}
+
+			if (responseStream == null)
+				return (null);
 
             StreamReader reader = new StreamReader(responseStream);
             return (reader.ReadToEnd());
@@ -363,13 +343,11 @@ namespace Google.GData.Client
             this.webResponse = response;
         }
         /////////////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else 
+
         /// <summary>here to please FxCop and maybe for future use</summary> 
         protected GDataRequestException(SerializationInfo info,  StreamingContext context) : base(info, context)
         {
         }
-
 
         /// <summary>overridden to make FxCop happy and future use</summary> 
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter=true)]
@@ -377,11 +355,8 @@ namespace Google.GData.Client
         {
             base.GetObjectData( info, context );
         }
-#endif
     }
     /////////////////////////////////////////////////////////////////////////////
-    
-
 
     //////////////////////////////////////////////////////////////////////
     /// <summary>exception class thrown when we encounter an access denied

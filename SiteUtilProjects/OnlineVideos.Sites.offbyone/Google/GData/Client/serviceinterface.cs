@@ -33,26 +33,22 @@ using System.Collections;
 
 //////////////////////////////////////////////////////////////////////
 // <summary>contains Service, the base interface that 
-//   allows to query a service for different feeds
+//  allows to query a service for different feeds
 //  </summary>
 //////////////////////////////////////////////////////////////////////
-namespace Google.GData.Client
-{
+namespace Google.GData.Client {
     //////////////////////////////////////////////////////////////////////
     /// <summary>base Service interface definition
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-    public interface IService 
-    {
+    public interface IService {
         /// <summary>get/set for credentials to the service calls. Gets passed through to GDatarequest</summary> 
-        GDataCredentials Credentials 
-        {
+        GDataCredentials Credentials {
             get;
             set;
         }
         /// <summary>get/set for the GDataRequestFactory object to use</summary> 
-        IGDataRequestFactory RequestFactory
-        {
+        IGDataRequestFactory RequestFactory {
             get;
             set;
         }
@@ -60,12 +56,11 @@ namespace Google.GData.Client
         /// <summary>
         /// returns the name of the service identifier, like wise for spreadsheets services
         /// </summary>
-        string ServiceIdentifier
-        {
+        string ServiceIdentifier {
             get;
         }
 
-           /// <summary>the minimal Get OpenSearchRssDescription function</summary> 
+        /// <summary>the minimal Get OpenSearchRssDescription function</summary> 
         Stream QueryOpenSearchRssDescription(Uri serviceUri);
 
         /// <summary>the minimal query implementation</summary> 
@@ -81,25 +76,22 @@ namespace Google.GData.Client
         /// <summary>delete an entry</summary> 
         void Delete(Uri uriTarget);
         /// <summary>batch operation, posting of a set of entries</summary>
-        AtomFeed Batch(AtomFeed feed, Uri batchUri); 
+        AtomFeed Batch(AtomFeed feed, Uri batchUri);
         /// <summary>simple update for media resources</summary> 
         AtomEntry Update(Uri uriTarget, Stream input, string contentType, string slugHeader);
         /// <summary>simple insert for media resources</summary> 
         AtomEntry Insert(Uri uriTarget, Stream input, string contentType, string slugHeader);
     }
 
-
     //////////////////////////////////////////////////////////////////////
     /// <summary>the one that creates GDatarequests on the service
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-    public interface IGDataRequestFactory
-    {
+    public interface IGDataRequestFactory {
         /// <summary>creation method for GDatarequests</summary> 
-        IGDataRequest CreateRequest(GDataRequestType type, Uri uriTarget); 
+        IGDataRequest CreateRequest(GDataRequestType type, Uri uriTarget);
         /// <summary>set wether or not to use gzip for new requests</summary>
-        bool UseGZip
-        {
+        bool UseGZip {
             get;
             set;
         }
@@ -107,65 +99,55 @@ namespace Google.GData.Client
         /// <summary>
         /// indicates that the service should use SSL exclusively
         /// </summary>
-        bool UseSSL
-        {
+        bool UseSSL {
             get;
             set;
         }
     }
-    //////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////
     /// <summary>enum to describe the different operations on the GDataRequest
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-    public enum GDataRequestType
-    {
+    public enum GDataRequestType {
         /// <summary>The request is used for query</summary>
-        Query,                       
+        Query,
         /// <summary>The request is used for an insert</summary>
-        Insert,                        
+        Insert,
         /// <summary>The request is used for an update</summary>
-        Update,                    
+        Update,
         /// <summary>The request is used for a delete</summary>
-        Delete, 
+        Delete,
         /// <summary>This request is used for a batch operation</summary>
         Batch
     }
-    /////////////////////////////////////////////////////////////////////////////
-
-    
 
     //////////////////////////////////////////////////////////////////////
     /// <summary>Thin layer to abstract the request/response
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-    public interface IGDataRequest 
-    {
-        /// <summary>get/set for credentials to the service calls. Get's passed through to GDatarequest</summary> 
-        GDataCredentials Credentials 
-        {
+    public interface IGDataRequest {
+        /// <summary>get/set for credentials to the service calls. Gets passed through to GDatarequest</summary> 
+        GDataCredentials Credentials {
             get;
             set;
         }
         /// <summary>set wether or not to use gzip for this request</summary>
-        bool UseGZip
-        {
+        bool UseGZip {
             get;
             set;
         }
         /// <summary>set a timestamp for conditional GET</summary>
-        DateTime IfModifiedSince
-        {
+        DateTime IfModifiedSince {
             get;
             set;
         }
 
-        /// <summary>get's the request stream to write into</summary> 
+        /// <summary>gets the request stream to write into</summary> 
         Stream GetRequestStream();
         /// <summary>Executes the request</summary> 
-        void   Execute();
-        /// <summary>get's the response stream to read from</summary> 
+        void Execute();
+        /// <summary>gets the response stream to read from</summary> 
         Stream GetResponseStream();
     }
 
@@ -173,25 +155,20 @@ namespace Google.GData.Client
     /// interface to indicate that an element supports an Etag. Currently implemented on AbstractEntry,
     /// AbstractFeed and GDataRequest
     /// </summary>
-    public interface ISupportsEtag
-    {
+    public interface ISupportsEtag {
         /// <summary>set the etag for updates</summary>
-        string Etag
-        {
+        string Etag {
             get;
             set;
         }
 
     }
 
-
-
     //////////////////////////////////////////////////////////////////////
     /// <summary>Thin layer to create an action on an item/response
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-    public interface IBaseWalkerAction
-    {
+    public interface IBaseWalkerAction {
         /// <summary>the only relevant method here</summary> 
         bool Go(AtomBase atom);
     }
@@ -199,36 +176,32 @@ namespace Google.GData.Client
     /// <summary>
     /// Wrapper interface used to replace the ExtensionList.
     /// </summary>
-    public interface IExtensionElementFactory
-    {
+    public interface IExtensionElementFactory {
         /// <summary>
         /// returns the XML local name that is used
         /// </summary>
-        string XmlName
-        {
+        string XmlName {
             get;
         }
         /// <summary>
         /// returns the XML namespace that is processed
         /// </summary>
-        string XmlNameSpace
-        {
+        string XmlNameSpace {
             get;
         }
         /// <summary>
         /// returns the xml prefix used 
         /// </summary>
-        string XmlPrefix
-        {
+        string XmlPrefix {
             get;
         }
         /// <summary>
-        /// instantiates the correct extensiohn element
+        /// instantiates the correct extension element
         /// </summary>
         /// <param name="node">the xmlnode to parse</param>
         /// <param name="parser">the atomfeedparser to use if deep parsing of subelements is required</param>
         /// <returns></returns>
-        IExtensionElementFactory CreateInstance(XmlNode node, AtomFeedParser parser); 
+        IExtensionElementFactory CreateInstance(XmlNode node, AtomFeedParser parser);
 
         /// <summary>the only relevant method here</summary> 
         void Save(XmlWriter writer);
@@ -239,22 +212,20 @@ namespace Google.GData.Client
     /// used for AtomBase and SimpleContainer
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-    public interface IExtensionContainer
-    {
-         //////////////////////////////////////////////////////////////////////
+    public interface IExtensionContainer {
+        //////////////////////////////////////////////////////////////////////
         /// <summary>the list of extensions for this container
         /// the elements in that list MUST implement IExtensionElementFactory 
         /// and IExtensionElement</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
-        ExtensionList ExtensionElements
-        {
+        ExtensionList ExtensionElements {
             get;
         }
-      
+
         /// <summary>
-        /// Finds a specific ExtensionElement based on it's local name
-        /// and it's namespace. If namespace is NULL, the first one where
+        /// Finds a specific ExtensionElement based on its local name
+        /// and its namespace. If namespace is NULL, the first one where
         /// the localname matches is found. If there are extensionelements that do 
         /// not implment ExtensionElementFactory, they will not be taken into account
         /// </summary>
@@ -262,7 +233,7 @@ namespace Google.GData.Client
         /// <param name="ns">the namespace of the elementToPersist</param>
         /// <returns>Object</returns>
         IExtensionElementFactory FindExtension(string localName, string ns);
-      
+
         /// <summary>
         /// all extension elements that match a namespace/localname
         /// given will be removed and the new one will be inserted
@@ -271,10 +242,10 @@ namespace Google.GData.Client
         /// <param name="ns">the namespace to match, if null, ns is ignored</param>
         /// <param name="obj">the new element to put in</param>
         void ReplaceExtension(string localName, string ns, IExtensionElementFactory obj);
-        
+
         /// <summary>
-        /// Finds all ExtensionElement based on it's local name
-        /// and it's namespace. If namespace is NULL, allwhere
+        /// Finds all ExtensionElement based on its local name
+        /// and its namespace. If namespace is NULL, allwhere
         /// the localname matches is found. If there are extensionelements that do 
         /// not implment ExtensionElementFactory, they will not be taken into account
         /// Primary use of this is to find XML nodes
@@ -283,9 +254,9 @@ namespace Google.GData.Client
         /// <param name="ns">the namespace of the elementToPersist</param>
         /// <returns>none</returns>
         ExtensionList FindExtensions(string localName, string ns);
-        
+
         /// <summary>
-        /// Delete's all Extensions from the Extension list that match
+        /// Deletes all Extensions from the Extension list that match
         /// a localName and a Namespace. 
         /// </summary>
         /// <param name="localName">the local name to find</param>
@@ -299,10 +270,8 @@ namespace Google.GData.Client
         /// and IExtensionElement</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
-        ExtensionList ExtensionFactories
-        {
+        ExtensionList ExtensionFactories {
             get;
         }
     }
-} 
-/////////////////////////////////////////////////////////////////////////////
+}

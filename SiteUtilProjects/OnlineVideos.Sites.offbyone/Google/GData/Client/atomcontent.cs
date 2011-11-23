@@ -58,9 +58,6 @@ using System.Runtime.InteropServices;
 //////////////////////////////////////////////////////////////////////
 namespace Google.GData.Client
 {
-
-#if WindowsCE || PocketPC
-#else 
     //////////////////////////////////////////////////////////////////////
     /// <summary>TypeConverter, so that AtomContentConverter shows up in the property pages
     /// </summary> 
@@ -99,7 +96,6 @@ namespace Google.GData.Client
     //////////////////////////////////////////////////////////////////////
 
     [TypeConverterAttribute(typeof(AtomContentConverter)), DescriptionAttribute("Expand to see the content objectfor the entry.")]
-#endif
     public class AtomContent : AtomBase
     {
         /// <summary>holds the  type attribute</summary> 
@@ -108,9 +104,6 @@ namespace Google.GData.Client
         private AtomUri src;
         /// <summary>holds the content</summary> 
         private string content; 
-
-
-
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>default constructor. Set's the content type to text.</summary> 

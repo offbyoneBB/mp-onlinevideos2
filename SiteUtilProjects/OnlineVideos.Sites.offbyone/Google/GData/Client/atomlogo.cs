@@ -38,10 +38,7 @@ namespace Google.GData.Client
     ///         implemented currently by reusing atomBaseLink. 
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else 
     [TypeConverterAttribute(typeof(AtomBaseLinkConverter)), DescriptionAttribute("Expand to see the link attributes for the Logo.")]
-#endif
     public class AtomLogo : AtomBaseLink
     {
         #region Persistence overloads

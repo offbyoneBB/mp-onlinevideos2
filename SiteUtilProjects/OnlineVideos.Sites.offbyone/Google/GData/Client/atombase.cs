@@ -304,7 +304,18 @@ namespace Google.GData.Client
             }
             this.ExtensionFactories.Add(factory);
         }
-        //////////////////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// removing an extension factory for extension elements
+        /// </summary>
+        /// <param name="factory">The factory</param>
+        public void RemoveExtension(IExtensionElementFactory factory) {
+            Tracing.Assert(factory != null, "factory should not be null");
+            if (factory == null) {
+                throw new ArgumentNullException("factory");
+            }
+            this.ExtensionFactories.Remove(factory.XmlNameSpace, factory.XmlName);
+        }
 
 
         /// <summary>

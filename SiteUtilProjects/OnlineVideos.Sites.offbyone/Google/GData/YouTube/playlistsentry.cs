@@ -16,24 +16,18 @@
 
 using System;
 using System.Xml;
-using System.IO; 
+using System.IO;
 using System.Collections;
 using Google.GData.Client;
 using Google.GData.Extensions;
 using System.Globalization;
 
-
 namespace Google.GData.YouTube {
-
-
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// Entry API customization class for defining entries in an Playlist feed.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class PlaylistsEntry : YouTubeBaseEntry
-    {
-         /// <summary>
+    public class PlaylistsEntry : YouTubeBaseEntry {
+        /// <summary>
         /// Category used to label entries as Playlistentries
         /// </summary>
         public static AtomCategory PLAYLISTS_CATEGORY =
@@ -42,41 +36,33 @@ namespace Google.GData.YouTube {
         /// <summary>
         /// Constructs a new PlayListEntry instance
         /// </summary>
-        public PlaylistsEntry()
-        : base()
-        {
+        public PlaylistsEntry() : base() {
             Tracing.TraceMsg("Created PlaylistsEntry");
 
-            if (this.ProtocolMajor == 1)
-            {
+            if (this.ProtocolMajor == 1) {
                 Description d = new Description();
                 FeedLink f = new FeedLink();
 
                 this.AddExtension(d);
                 this.AddExtension(f);
-            } 
+            }
+
             CountHint c = new CountHint();
             this.AddExtension(c);
             this.AddExtension(new Private());
 
-
             Categories.Add(PLAYLISTS_CATEGORY);
         }
-
-
 
         /// <summary>
         /// getter/setter for Description subelement
         /// </summary>
-        [Obsolete("replaced with Summary.Text")] 
-        public string Description 
-        {
-            get
-            {
+        [Obsolete("replaced with Summary.Text")]
+        public string Description {
+            get {
                 return getDescription();
             }
-            set
-            {
+            set {
                 setDescription(value);
             }
         }
@@ -84,20 +70,16 @@ namespace Google.GData.YouTube {
         /// <summary>
         /// getter/setter for the feedlink subelement
         /// </summary>
-        [Obsolete("replaced with Content.Src.Content")] 
-        public FeedLink FeedLink 
-        {
-            get
-            {
-                return FindExtension(GDataParserNameTable.XmlFeedLinkElement, 
-                                      BaseNameTable.gNamespace) as FeedLink;
-
+        [Obsolete("replaced with Content.Src.Content")]
+        public FeedLink FeedLink {
+            get {
+                return FindExtension(GDataParserNameTable.XmlFeedLinkElement,
+                    BaseNameTable.gNamespace) as FeedLink;
             }
-            set
-            {
+            set {
                 ReplaceExtension(GDataParserNameTable.XmlFeedLinkElement,
-                                BaseNameTable.gNamespace,
-                                value);
+                    BaseNameTable.gNamespace,
+                    value);
             }
         }
 
@@ -108,22 +90,17 @@ namespace Google.GData.YouTube {
         /// where each entry contains information about a single playlist.</para>
         /// </summary>
         /// <returns>-1 if no counthint was present, else the value</returns>
-        public int CountHint
-        {
-            get
-            {
-                CountHint c =  getYouTubeExtension(YouTubeNameTable.CountHint) as CountHint;
-                if (c != null) 
-                {
+        public int CountHint {
+            get {
+                CountHint c = getYouTubeExtension(YouTubeNameTable.CountHint) as CountHint;
+                if (c != null) {
                     return c.IntegerValue;
                 }
-                return -1; 
+                return -1;
             }
-            set
-            {
-                CountHint c =  getYouTubeExtension(YouTubeNameTable.CountHint) as CountHint;
-                if (c == null)
-                {
+            set {
+                CountHint c = getYouTubeExtension(YouTubeNameTable.CountHint) as CountHint;
+                if (c == null) {
                     c = new CountHint();
                     this.ExtensionElements.Add(c);
                 }
@@ -134,19 +111,16 @@ namespace Google.GData.YouTube {
         /// <summary>
         /// getter/setter for the private subelement. Indicates if the playlist is private
         /// </summary>
-        public bool Private
-        {
-            get
-            {
+        public bool Private {
+            get {
                 return Convert.ToBoolean(getYouTubeExtensionValue(YouTubeNameTable.Private), CultureInfo.InvariantCulture);
             }
-            set
-            {
+            set {
                 setYouTubeExtension(YouTubeNameTable.Private, value ? "" : null);
             }
         }
-
     }
 }
+
 
 

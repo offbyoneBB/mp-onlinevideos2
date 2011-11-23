@@ -19,12 +19,10 @@ using System.Collections.Generic;
 using Google.GData.Client;
 
 namespace Google.GData.YouTube {
-    
     /// <summary>
     /// enum to define different activities. 
     /// </summary>
-    public enum ActivityType
-    {
+    public enum ActivityType {
         /// <summary>
         /// a user rated an entry
         /// </summary>
@@ -59,141 +57,111 @@ namespace Google.GData.YouTube {
         Undefined
     }
 
-
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// Entry API customization class for retrieving activies 
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class ActivityEntry : AbstractEntry
-    {
-
-
-         /// <summary>
+    public class ActivityEntry : AbstractEntry {
+        /// <summary>
         /// Category used to label entries that indicate a user marking a video as a favorite
         /// </summary>
         public static AtomCategory VIDEORATED_CATEGORY =
-        new AtomCategory(YouTubeNameTable.VideoRatedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
+            new AtomCategory(YouTubeNameTable.VideoRatedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
 
-                 /// <summary>
+        /// <summary>
         /// Category used to label entries that indicate a user marking a video as a favorite
         /// </summary>
         public static AtomCategory VIDEOSHARED_CATEGORY =
-        new AtomCategory(YouTubeNameTable.VideoSharedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
+            new AtomCategory(YouTubeNameTable.VideoSharedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
 
-                 /// <summary>
+        /// <summary>
         /// Category used to label entries that indicate a user marking a video as a favorite
         /// </summary>
         public static AtomCategory VIDEOUPLOADED_CATEGORY =
-        new AtomCategory(YouTubeNameTable.VideoUploadedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
+            new AtomCategory(YouTubeNameTable.VideoUploadedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
 
         /// <summary>
         /// Category used to label entries that indicate a user marking a video as a favorite
         /// </summary>
         public static AtomCategory VIDEOFAVORITED_CATEGORY =
-        new AtomCategory(YouTubeNameTable.VideoFavoritedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
+            new AtomCategory(YouTubeNameTable.VideoFavoritedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
 
         /// <summary>
         /// Category used to label entries that indicate a user commenting on a video
         /// </summary>
         public static AtomCategory VIDEOCOMMENTED_CATEGORY =
-        new AtomCategory(YouTubeNameTable.VideoCommentedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
+            new AtomCategory(YouTubeNameTable.VideoCommentedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
+
         /// <summary>
         /// Category used to label entries that indicate a user added a friend
         /// </summary>
         public static AtomCategory FRIENDADDED_CATEGORY =
-        new AtomCategory(YouTubeNameTable.FriendAddedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
+            new AtomCategory(YouTubeNameTable.FriendAddedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
         /// <summary>
+
         /// Category used to label entries that indicate a user added a subscripton
         /// </summary>
         public static AtomCategory USERSUBSCRIPTIONADDED_CATEGORY =
-        new AtomCategory(YouTubeNameTable.UserSubscriptionAddedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
+            new AtomCategory(YouTubeNameTable.UserSubscriptionAddedCategory, new AtomUri(YouTubeNameTable.EventsCategorySchema));
 
         /// <summary>
-        /// Constructs a new EventEmtry instance
+        /// Constructs a new ActivityEntry instance
         /// </summary>
-        public ActivityEntry()
-        : base()
-        {
+        public ActivityEntry() : base() {
             this.AddExtension(new VideoId());
             this.AddExtension(new UserName());
         }
 
         /// <summary>
-        ///  The type of Event, the user action that caused this.
+        ///  The type of Activity, the user action that caused this.
         /// </summary>
         /// <returns></returns>
-        public ActivityType Type
-        {
-            get 
-            {
-                if (this.Categories.Contains(VIDEORATED_CATEGORY))
-                {
+        public ActivityType Type {
+            get {
+                if (this.Categories.Contains(VIDEORATED_CATEGORY)) {
                     return ActivityType.Rated;
-                } 
-                else if (this.Categories.Contains(VIDEOSHARED_CATEGORY))
-                {
+                } else if (this.Categories.Contains(VIDEOSHARED_CATEGORY)) {
                     return ActivityType.Shared;
-                }
-                else if (this.Categories.Contains(VIDEOFAVORITED_CATEGORY))
-                {
+                } else if (this.Categories.Contains(VIDEOFAVORITED_CATEGORY)) {
                     return ActivityType.Favorited;
-                }
-                else if (this.Categories.Contains(VIDEOCOMMENTED_CATEGORY))
-                {
+                } else if (this.Categories.Contains(VIDEOCOMMENTED_CATEGORY)) {
                     return ActivityType.Commented;
-                }
-                else if (this.Categories.Contains(VIDEOUPLOADED_CATEGORY))
-                {
+                } else if (this.Categories.Contains(VIDEOUPLOADED_CATEGORY)) {
                     return ActivityType.Uploaded;
-                }
-                else if (this.Categories.Contains(FRIENDADDED_CATEGORY))
-                {
+                } else if (this.Categories.Contains(FRIENDADDED_CATEGORY)) {
                     return ActivityType.FriendAdded;
-                }
-                else if (this.Categories.Contains(USERSUBSCRIPTIONADDED_CATEGORY))
-                {
+                } else if (this.Categories.Contains(USERSUBSCRIPTIONADDED_CATEGORY)) {
                     return ActivityType.SubscriptionAdded;
                 }
-          
 
                 return ActivityType.Undefined;
             }
-        } 
+        }
 
         /// <summary>
-        ///  property accessor for the VideoID, if applicable
+        /// property accessor for the VideoID, if applicable
         /// </summary>
-        public VideoId VideoId
-        {
-            get
-            {
+        public VideoId VideoId {
+            get {
                 return FindExtension(YouTubeNameTable.VideoID,
-                                     YouTubeNameTable.NSYouTube) as VideoId;
+                    YouTubeNameTable.NSYouTube) as VideoId;
             }
         }
 
         /// <summary>
-        ///  property accessor for the UseName, if applicable
+        /// property accessor for the UserName, if applicable
         /// </summary>
-        public UserName Username
-        {
-            get
-            {
+        public UserName Username {
+            get {
                 return FindExtension(YouTubeNameTable.UserName,
-                                     YouTubeNameTable.NSYouTube) as UserName;
+                    YouTubeNameTable.NSYouTube) as UserName;
             }
         }
 
-        //////////////////////////////////////////////////////////////////////
         /// <summary>returns the video relation link uri, which can be used to
         /// retrieve the video entry</summary> 
         /// <returns> </returns>
-        //////////////////////////////////////////////////////////////////////
-        public AtomUri VideoLink
-        {
-            get
-            {
+        public AtomUri VideoLink {
+            get {
                 AtomLink link = this.Links.FindService(YouTubeNameTable.KIND_VIDEO, AtomLink.ATOM_TYPE);
                 // scan the link collection
                 return link == null ? null : link.HRef;
@@ -201,5 +169,3 @@ namespace Google.GData.YouTube {
         }
     }
 }
-
-

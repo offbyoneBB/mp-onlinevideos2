@@ -21,15 +21,12 @@
 
 using System;
 using System.Xml;
-using System.IO; 
+using System.IO;
 using System.Collections;
 using Google.GData.Client;
 using Google.GData.Extensions;
 
 namespace Google.GData.YouTube {
-
-
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// The gd:feedLink tag in the entry identifies the URL that allows 
     /// you to retrieve videos for the subscription.
@@ -44,14 +41,11 @@ namespace Google.GData.YouTube {
     /// If the subscription is to a keyword query, the yt:queryString element will
     /// contain the subscribed-to query term.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class SubscriptionEntry : YouTubeBaseEntry
-    {
+    public class SubscriptionEntry : YouTubeBaseEntry {
         /// <summary>
         /// describes the subscription types for a subscription feed
         /// </summary>
-        public enum SubscriptionType 
-        {
+        public enum SubscriptionType {
             /// <summary>
             /// indicates a channel subscription
             /// </summary>
@@ -59,7 +53,7 @@ namespace Google.GData.YouTube {
             /// <summary>
             /// indicates a user favorites subscription
             /// </summary>
-            favorites, 
+            favorites,
             /// <summary>
             /// indicates a query based subscription
             /// </summary>
@@ -67,7 +61,7 @@ namespace Google.GData.YouTube {
             /// <summary>
             /// indicates a playlist based subscription
             /// </summary>
-            playlist, 
+            playlist,
             /// <summary>
             /// indicates an unknown state
             /// </summary>
@@ -84,8 +78,7 @@ namespace Google.GData.YouTube {
         /// Constructs a new YouTubeEntry instance
         /// </summary>
         public SubscriptionEntry()
-        : base()
-        {
+            : base() {
             Tracing.TraceMsg("Created SubscriptionEntry");
             this.AddExtension(new UserName());
             this.AddExtension(new QueryString());
@@ -94,45 +87,34 @@ namespace Google.GData.YouTube {
             Categories.Add(SUBSCRIPTION_CATEGORY);
         }
 
-
         /// <summary>
-        /// get's and set's the associated atom:category
+        /// gets and sets the associated atom:category
         /// </summary>
         /// <returns></returns>
-        public SubscriptionType Type
-        {
-            get
-            {
+        public SubscriptionType Type {
+            get {
                 SubscriptionType t = SubscriptionType.unknown;
 
-                foreach (AtomCategory category in this.Categories)
-                {
-                    if (category.Scheme == YouTubeNameTable.SubscriptionCategorySchema)
-                    {
-                        try
-                        {
-                            t = (SubscriptionType) Enum.Parse(typeof(SubscriptionType), category.Term, true);
-                        } catch (ArgumentException)
-                        {
+                foreach (AtomCategory category in this.Categories) {
+                    if (category.Scheme == YouTubeNameTable.SubscriptionCategorySchema) {
+                        try {
+                            t = (SubscriptionType)Enum.Parse(typeof(SubscriptionType), category.Term, true);
+                        } catch (ArgumentException) {
                             t = SubscriptionType.unknown;
                         }
                     }
                 }
-                return t; 
+                return t;
             }
-            set 
-            {
-                AtomCategory cat = null; 
-                foreach (AtomCategory category in this.Categories)
-                {
-                    if (category.Scheme == YouTubeNameTable.SubscriptionCategorySchema)
-                    {
+            set {
+                AtomCategory cat = null;
+                foreach (AtomCategory category in this.Categories) {
+                    if (category.Scheme == YouTubeNameTable.SubscriptionCategorySchema) {
                         cat = category;
                         break;
                     }
                 }
-                if (cat == null)
-                {
+                if (cat == null) {
                     cat = new AtomCategory();
                     this.Categories.Add(cat);
                 }
@@ -141,68 +123,52 @@ namespace Google.GData.YouTube {
             }
         }
 
-
         /// <summary>
         /// getter/setter for UserName subelement
         /// </summary>
-        public string UserName 
-        {
-            get
-            {
+        public string UserName {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.UserName);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.UserName,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.UserName, value);
             }
         }
 
         /// <summary>
         /// getter/setter for QueryString subelement
         /// </summary>
-        public string QueryString 
-        {
-            get
-            {
+        public string QueryString {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.QueryString);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.QueryString,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.QueryString, value);
             }
         }
 
         /// <summary>
         /// getter/setter for PlaylistId subelement
         /// </summary>
-        public string PlaylistId 
-        {
-            get
-            {
+        public string PlaylistId {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.PlaylistId);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.PlaylistId,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.PlaylistId, value);
             }
         }
 
         /// <summary>
         /// getter/setter for PlaylistTitle subelement
         /// </summary>
-        public string PlaylistTitle
-        {
-            get
-            {
+        public string PlaylistTitle {
+            get {
                 return getYouTubeExtensionValue(YouTubeNameTable.PlaylistTitle);
             }
-            set
-            {
-                setYouTubeExtension(YouTubeNameTable.PlaylistTitle,value);
+            set {
+                setYouTubeExtension(YouTubeNameTable.PlaylistTitle, value);
             }
         }
     }
 }
-
-
-

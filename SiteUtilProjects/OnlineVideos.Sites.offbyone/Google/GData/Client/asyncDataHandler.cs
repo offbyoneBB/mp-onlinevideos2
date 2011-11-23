@@ -34,42 +34,18 @@ using System.Collections.Specialized;
 // delegation. Used for the resumable upload and the service object
 //  </summary>
 ////////////////////////////////////////////////////////////////////
-namespace Google.GData.Client
-{
+namespace Google.GData.Client {
+    /// <summary>Delegate declaration for the operation completed event in a service</summary> 
+    public delegate void AsyncOperationCompletedEventHandler(object sender, AsyncOperationCompletedEventArgs e);
 
-#if WindowsCE || PocketPC
-    public class AsyncData : Object
-    {
-    }
-    public class AsyncSendData : AsyncData
-    {
-    }
-    public class AsyncQueryData : AsyncData
-    {
-    }
-    public class AsyncDataHandler : Object
-    { }
-
-    //////////////////////////////////////////////////////////////////////
-    /// <summary>async functionallity of the Service implementation
-    /// </summary> 
-    //////////////////////////////////////////////////////////////////////
-    public partial class Service : IService, IVersionAware
-    {
-        private void InitDelegates()
-        {
-        }
-    }
-}
-
-#else
+    /// <summary>Delegate declaration for the operation progress update event in a service</summary> 
+    public delegate void AsyncOperationProgressEventHandler(object sender, AsyncOperationProgressEventArgs e);
 
     /// <summary>
     /// EventArgument class for async events, this one is used
     /// when the operation is completed.
     /// </summary>
-    public class AsyncOperationCompletedEventArgs : AsyncCompletedEventArgs
-    {
+    public class AsyncOperationCompletedEventArgs : AsyncCompletedEventArgs {
         private AtomFeed feedObject;
         private Stream stream;
         private AtomEntry entryObject;
@@ -79,71 +55,53 @@ namespace Google.GData.Client
         /// </summary>
         /// <param name="data">async data to constructor</param>
         internal AsyncOperationCompletedEventArgs(AsyncData data)
-            : base(data.Exception, false, data.UserData)
-        {
+            : base(data.Exception, false, data.UserData) {
             feedObject = data.Feed;
             stream = data.DataStream;
-  
-            AsyncSendData sData = data as AsyncSendData;
-            if (sData != null)
-            {
-                entryObject = sData.Entry;
-            }
 
+            IAsyncEntryData entryData = data as IAsyncEntryData;
+            if (entryData != null) {
+                entryObject = entryData.Entry;
+            }
         }
 
         internal AsyncOperationCompletedEventArgs(AsyncData data, bool cancelled)
-            : base(data.Exception, cancelled, data.UserData)
-        {
+            : base(data.Exception, cancelled, data.UserData) {
         }
-
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>the feed that was created. If NULL, a stream or entry was returned</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
-        public AtomFeed Feed
-        {
+        public AtomFeed Feed {
             get { return this.feedObject; }
         }
-        ////////////////////////////////////////////////////////////////////////
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>the entry that was created. If NULL, a stream or feed was returned</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
-        public AtomEntry Entry
-        {
+        public AtomEntry Entry {
             get { return this.entryObject; }
         }
-        ////////////////////////////////////////////////////////////////////////
-
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>the stream that was created. If NULL, a feed or entry was returned</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
-        public Stream ResponseStream
-        {
+        public Stream ResponseStream {
             get { return this.stream; }
         }
-        ////////////////////////////////////////////////////////////////////////
-
     }
-    /// <summary>Delegate declaration for the feed creation in a service</summary> 
-    public delegate void AsyncOperationCompletedEventHandler(object sender, AsyncOperationCompletedEventArgs e);
-
 
     /// <summary>
     /// EventArgument class for async operation progress reports
     /// </summary>
-    public class AsyncOperationProgressEventArgs : ProgressChangedEventArgs
-    {
+    public class AsyncOperationProgressEventArgs : ProgressChangedEventArgs {
         private long completeSize;
         private long currentPosition;
         private Uri uri;
         private string httpVerb;
-
 
         /// <summary>
         /// constructor. Takes the URI and the service this event applies to
@@ -153,64 +111,47 @@ namespace Google.GData.Client
         /// <param name="percentage">progress percentage</param>
         /// <param name="userData">The userdata identifying the request</param>
         public AsyncOperationProgressEventArgs(long completeSize, long currentPosition, int percentage,
-                                     Uri targetUri, string httpVerb, 
-                                     object userData)
-            : base(percentage, userData)
-        {
+            Uri targetUri, string httpVerb, object userData)
+            : base(percentage, userData) {
             this.completeSize = completeSize;
             this.currentPosition = currentPosition;
             this.uri = targetUri;
             this.httpVerb = httpVerb;
-
         }
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>the complete upload size</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
-        public long CompleteSize
-        {
+        public long CompleteSize {
             get { return this.completeSize; }
         }
-        ////////////////////////////////////////////////////////////////////////
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>the current position in the upload process</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
-        public long Position
-        {
+        public long Position {
             get { return this.currentPosition; }
         }
-        ////////////////////////////////////////////////////////////////////////
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>the Uri that was used</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
-        public Uri Uri
-        {
+        public Uri Uri {
             get { return this.uri; }
         }
-        ////////////////////////////////////////////////////////////////////////
 
         /// <summary>
         /// returns the http verb that is executed
         /// </summary>
-        public string HttpVerb
-        {
+        public string HttpVerb {
             get { return this.httpVerb; }
         }
-
     }
 
-
-    /// <summary>Delegate declaration for the feed creation in a service</summary> 
-    public delegate void AsyncOperationProgressEventHandler(object sender, AsyncOperationProgressEventArgs e);
-
-
-    public class AsyncData
-    {
+    public class AsyncData {
         private Uri uriToUse;
         private object userData;
         private string httpVerb;
@@ -221,8 +162,7 @@ namespace Google.GData.Client
         private SendOrPostCallback onProgressReportDelegate;
         private AsyncDataHandler handler;
 
-        public AsyncData(Uri uri, AsyncOperation op, object userData, SendOrPostCallback callback, bool parseFeed)
-        {
+        public AsyncData(Uri uri, AsyncOperation op, object userData, SendOrPostCallback callback, bool parseFeed) {
             this.uriToUse = uri;
             this.op = op;
             this.userData = userData;
@@ -231,115 +171,87 @@ namespace Google.GData.Client
         }
 
         public AsyncData(Uri uri, AsyncOperation op, object userData, SendOrPostCallback callback)
-            : this(uri, op, userData, callback, false)
-        {
+            : this(uri, op, userData, callback, false) {
         }
 
         public AsyncData(Uri uri, object userData, SendOrPostCallback callback)
-            : this(uri, null, userData, callback)
-        {
+            : this(uri, null, userData, callback) {
         }
 
         /// <summary>
         /// the uri to use
         /// </summary>
-        public Uri UriToUse
-        {
-            get
-            {
+        public Uri UriToUse {
+            get {
                 return this.uriToUse;
             }
-            set
-            {
+            set {
                 this.uriToUse = value;
             }
         }
 
-        public string HttpVerb
-        {
-            get
-            {
+        public string HttpVerb {
+            get {
                 return this.httpVerb;
             }
-            set
-            {
+            set {
                 this.httpVerb = value;
             }
         }
 
-
-        public AsyncDataHandler DataHandler
-        {
-            get
-            {
+        public AsyncDataHandler DataHandler {
+            get {
                 return this.handler;
             }
-            set
-            {
+            set {
                 this.handler = value;
             }
         }
 
-        public object UserData
-        {
-            get
-            {
+        public object UserData {
+            get {
                 return this.userData;
             }
         }
 
-        public AtomFeed Feed
-        {
-            get
-            {
+        public AtomFeed Feed {
+            get {
                 return this.feed;
             }
-            set
-            {
+            set {
                 this.feed = value;
             }
         }
 
-        public AsyncOperation Operation
-        {
-            get
-            {
+        public AsyncOperation Operation {
+            get {
                 return this.op;
             }
-            set
-            {
+            set {
                 this.op = value;
             }
         }
 
-        public SendOrPostCallback Delegate
-        {
-            get
-            {
+        public SendOrPostCallback Delegate {
+            get {
                 return this.onProgressReportDelegate;
             }
         }
 
-        public Exception Exception
-        {
-            get
-            {
+        public Exception Exception {
+            get {
                 return this.e;
             }
-            set
-            {
+            set {
                 this.e = value;
             }
         }
 
-        public Stream DataStream
-        {
-            get
-            {
+        public Stream DataStream {
+            get {
                 return this.stream;
             }
-            set
-            {
+            set {
                 this.stream = value;
             }
         }
@@ -352,22 +264,16 @@ namespace Google.GData.Client
         public bool ParseFeed { get; private set; }
     }
 
-   
-
-
-   
     /// <summary>
     /// internal class for the data to pass to the async worker thread
     /// </summary>
-    public class AsyncQueryData : AsyncData
-    {
+    public class AsyncQueryData : AsyncData {
         private DateTime ifModifiedDate;
         bool fParseFeed;
 
         public AsyncQueryData(Uri uri, DateTime timeStamp, bool doParse,
-                               AsyncOperation op, object userData, SendOrPostCallback callback)
-            : base(uri, op, userData, callback, doParse)
-        {
+            AsyncOperation op, object userData, SendOrPostCallback callback)
+            : base(uri, op, userData, callback, doParse) {
             this.ifModifiedDate = timeStamp;
             this.fParseFeed = doParse;
         }
@@ -375,23 +281,17 @@ namespace Google.GData.Client
         /// <summary>
         ///  the date for the ifModified timestamp
         /// </summary>
-        public DateTime Modified
-        {
-            get
-            {
+        public DateTime Modified {
+            get {
                 return this.ifModifiedDate;
             }
-            set
-            {
+            set {
                 this.ifModifiedDate = value;
             }
         }
     }
 
-
-    public abstract class AsyncDataHandler
-    {
-
+    public abstract class AsyncDataHandler {
         /// <summary>eventhandler, fired when an async operation is completed</summary> 
         public event AsyncOperationCompletedEventHandler AsyncOperationCompleted;
 
@@ -399,27 +299,19 @@ namespace Google.GData.Client
         public event AsyncOperationProgressEventHandler AsyncOperationProgress;
 
         protected delegate void WorkerQueryEventHandler(AsyncQueryData data, AsyncOperation asyncOp,
-                             SendOrPostCallback completionMethodDelegate);
-
-       
+            SendOrPostCallback completionMethodDelegate);
 
         private SendOrPostCallback onProgressReportDelegate;
         private SendOrPostCallback onCompletedDelegate;
         private SendOrPostCallback completionMethodDelegate;
 
+        private HybridDictionary userStateToLifetime = new HybridDictionary();
 
-        private HybridDictionary userStateToLifetime =
-                                    new HybridDictionary();
-
-
-
-        public AsyncDataHandler()
-        {
+        public AsyncDataHandler() {
             this.onProgressReportDelegate = new SendOrPostCallback(OnAsyncReportProgress);
             this.onCompletedDelegate = new SendOrPostCallback(OnAsyncCompleted);
             this.completionMethodDelegate = new SendOrPostCallback(OnAsyncCompletionMethod);
         }
-
 
         /// <summary>
         /// this method cancels the corresponding async operation. 
@@ -427,14 +319,10 @@ namespace Google.GData.Client
         /// have the cancel property set to true
         /// </summary>
         /// <param name="userData">your identifier for the operation to be cancelled</param>
-        public void CancelAsync(object userData)
-        {
-            lock (this.userStateToLifetime.SyncRoot)
-            {
+        public void CancelAsync(object userData) {
+            lock (this.userStateToLifetime.SyncRoot) {
                 object obj = this.userStateToLifetime[userData];
-                if (obj != null)
-                {
-
+                if (obj != null) {
                     this.userStateToLifetime.Remove(userData);
 
                     AsyncOperation asyncOp = obj as AsyncOperation;
@@ -443,46 +331,36 @@ namespace Google.GData.Client
                     // thread or context.
 
                     AsyncData data = new AsyncData(null, userData, this.onProgressReportDelegate);
-                    AsyncOperationCompletedEventArgs args =
-                     new AsyncOperationCompletedEventArgs(data, true);
+                    AsyncOperationCompletedEventArgs args = new AsyncOperationCompletedEventArgs(data, true);
 
                     asyncOp.PostOperationCompleted(this.onCompletedDelegate, args);
                 }
             }
         }
 
-        protected SendOrPostCallback ProgressReportDelegate
-        {
-            get
-            {
+        protected SendOrPostCallback ProgressReportDelegate {
+            get {
                 return this.onProgressReportDelegate;
             }
         }
 
-        protected SendOrPostCallback CompletionMethodDelegate
-        {
-            get
-            {
+        protected SendOrPostCallback CompletionMethodDelegate {
+            get {
                 return this.completionMethodDelegate;
             }
         }
 
-        protected SendOrPostCallback OnCompletedDelegate
-        {
-            get
-            {
+        protected SendOrPostCallback OnCompletedDelegate {
+            get {
                 return this.onCompletedDelegate;
             }
         }
 
-        protected void AddUserDataToDictionary(Object userData, AsyncOperation asyncOp)
-        {
+        protected void AddUserDataToDictionary(Object userData, AsyncOperation asyncOp) {
             // Multiple threads will access the task dictionary,
             // so it must be locked to serialize access.
-            lock (this.userStateToLifetime.SyncRoot)
-            {
-                if (this.userStateToLifetime.Contains(userData))
-                {
+            lock (this.userStateToLifetime.SyncRoot) {
+                if (this.userStateToLifetime.Contains(userData)) {
                     throw new ArgumentException(
                         "UserData parameter must be unique",
                         "userData");
@@ -492,38 +370,27 @@ namespace Google.GData.Client
             }
         }
 
-        protected bool CheckIfOperationIsCancelled(Object userData)
-        {
-            lock (userStateToLifetime.SyncRoot)
-            {
-                if (!userStateToLifetime.Contains(userData))
-                {
+        protected bool CheckIfOperationIsCancelled(Object userData) {
+            lock (userStateToLifetime.SyncRoot) {
+                if (!userStateToLifetime.Contains(userData)) {
                     return true;
                 }
             }
             return false;
         }
-        
-        
-
 
         // This method is invoked via the AsyncOperation object,
         // so it is guaranteed to be executed on the correct thread.
-        private void OnAsyncReportProgress(object state)
-        {
-            AsyncOperationProgressEventArgs e =
-                state as AsyncOperationProgressEventArgs;
+        private void OnAsyncReportProgress(object state) {
+            AsyncOperationProgressEventArgs e = state as AsyncOperationProgressEventArgs;
 
-            if (this.AsyncOperationProgress != null)
-            {
+            if (this.AsyncOperationProgress != null) {
                 this.AsyncOperationProgress(this, e);
             }
         }
 
-        private void OnAsyncCompleted(Object obj)
-        {
-            if (this.AsyncOperationCompleted != null)
-            {
+        private void OnAsyncCompleted(Object obj) {
+            if (this.AsyncOperationCompleted != null) {
                 AsyncOperationCompletedEventArgs args = obj as AsyncOperationCompletedEventArgs;
                 this.AsyncOperationCompleted(this, args);
             }
@@ -532,33 +399,26 @@ namespace Google.GData.Client
         // This is the method that the underlying, free-threaded 
         // asynchronous behavior will invoke.  This will happen on
         // an arbitrary thread.
-        private void OnAsyncCompletionMethod(object operationState)
-        {
+        private void OnAsyncCompletionMethod(object operationState) {
             AsyncData data = operationState as AsyncData;
-
             AsyncOperation asyncOp = data.Operation;
-
-            AsyncOperationCompletedEventArgs args =
-                         new AsyncOperationCompletedEventArgs(data);
+            AsyncOperationCompletedEventArgs args = new AsyncOperationCompletedEventArgs(data);
 
             // In this case, don't allow cancellation, as the method 
             // is about to raise the completed event.
-            lock (this.userStateToLifetime.SyncRoot)
-            {
-                if (!userStateToLifetime.Contains(data.UserData))
-                {
+            lock (this.userStateToLifetime.SyncRoot) {
+                if (!userStateToLifetime.Contains(data.UserData)) {
                     asyncOp = null;
-                }
-                else
-                {
+                } else {
                     this.userStateToLifetime.Remove(asyncOp.UserSuppliedState);
                 }
             }
 
             // The asyncOp object is responsible for marshaling 
             // the call.
-            if (asyncOp != null)
+            if (asyncOp != null) {
                 asyncOp.PostOperationCompleted(this.onCompletedDelegate, args);
+            }
 
             // Note that after the call to OperationCompleted, 
             // asyncOp is no longer usable, and any attempt to use it
@@ -573,78 +433,71 @@ namespace Google.GData.Client
         /// <param name="responseStream"></param>
         /// <param name="contentLength"></param>
         /// <returns></returns>
-        protected virtual void HandleResponseStream(AsyncData data, Stream responseStream, long contentLength)
-        {
+        protected virtual void HandleResponseStream(AsyncData data, Stream responseStream, long contentLength) {
             data.DataStream = CopyResponseToMemory(data, responseStream, contentLength);
         }
 
+        private MemoryStream CopyResponseToMemory(AsyncData data, Stream responseStream, long contentLength) {
+            if (responseStream == null) {
+                return null;
+            }
 
-        private MemoryStream CopyResponseToMemory(AsyncData data, Stream responseStream, long contentLength)
-        {
-            MemoryStream memStream = null;
-            if (responseStream != null)
-            {
-                // read the stream into memory. That's the only way to satisfy the "main work
-                // on the other thread requirement
-                memStream = new MemoryStream();
-                const int size = 4096;
-                var bytes = new byte[size];
+            // read the stream into memory. That's the only way to satisfy the "main work
+            // on the other thread requirement
+            MemoryStream memStream = new MemoryStream();
+            const int size = 4096;
+            var bytes = new byte[size];
 
-                int numBytes;
+            int numBytes;
+            double current = 0;
+            long bytesWritten = 0;
 
-                double current = 0;
-                long bytesWritten = 0;
+            while ((numBytes = responseStream.Read(bytes, 0, size)) > 0) {
+                memStream.Write(bytes, 0, numBytes);
+                if (data == null || data.Delegate == null) {
+                    continue;
+                }
+                bytesWritten += numBytes;
 
-                while ((numBytes = responseStream.Read(bytes, 0, size)) > 0)
-                {
-                    memStream.Write(bytes, 0, numBytes);
-                    if (data == null || data.Delegate == null)
-                    {
-                        continue;
-                    }
-                    bytesWritten += numBytes;
-
-                    if (contentLength > size)
-                    {
-                        current = bytesWritten * 100d / contentLength;
-                    }
-
-
-
-                    // see if we are still in the list...
-                    // Multiple threads will access the task dictionary,
-                    // so it must be locked to serialize access.
-                    if (CheckIfOperationIsCancelled(data.UserData))
-                    {
-                        throw new ArgumentException("Operation was cancelled");
-                    }
-
-                    var args = new AsyncOperationProgressEventArgs(contentLength, bytesWritten, (int)current, 
-                        data.UriToUse,
-                        data.HttpVerb,
-                        data.UserData);
-                    data.Operation.Post(data.Delegate, args);
+                if (contentLength > size) {
+                    current = bytesWritten * 100d / contentLength;
                 }
 
-                memStream.Seek(0, SeekOrigin.Begin);
+                // see if we are still in the list...
+                // Multiple threads will access the task dictionary,
+                // so it must be locked to serialize access.
+                if (CheckIfOperationIsCancelled(data.UserData)) {
+                    throw new ArgumentException("Operation was cancelled");
+                }
+
+                var args = new AsyncOperationProgressEventArgs(contentLength,
+                    bytesWritten,
+                    (int)current,
+                    data.UriToUse,
+                    data.HttpVerb,
+                    data.UserData);
+                data.Operation.Post(data.Delegate, args);
             }
+
+            memStream.Seek(0, SeekOrigin.Begin);
 
             return memStream;
         }
 
-
-        internal bool SendProgressData(AsyncData data, AsyncOperationProgressEventArgs args)
-        {
+        internal bool SendProgressData(AsyncData data, AsyncOperationProgressEventArgs args) {
             // In this case, don't allow cancellation, as the method 
             // is about to raise the completed event.
             bool ret = !CheckIfOperationIsCancelled(data.UserData);
-            if (ret)
-            {
+            if (ret) {
                 data.Operation.Post(data.Delegate, args);
             }
             return ret;
         }
-        
+    }
+
+    public interface IAsyncEntryData {
+        AtomEntry Entry {
+            get;
+        }
     }
 }
-#endif

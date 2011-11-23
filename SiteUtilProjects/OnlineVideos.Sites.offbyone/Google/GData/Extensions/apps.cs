@@ -38,7 +38,6 @@ namespace Google.GData.Extensions.Apps
         /// e.g. <code>UserEntry</code> or <code>UserFeed</code></param>
         public static void AddProvisioningExtensions(AtomBase baseObject)
         {
-            baseObject.AddExtension(new EmailListElement());
             baseObject.AddExtension(new LoginElement());
             baseObject.AddExtension(new NameElement());
             baseObject.AddExtension(new NicknameElement());
@@ -100,16 +99,6 @@ namespace Google.GData.Extensions.Apps
         public const string Nickname = AppsNamespace + "#nickname";
 
         /// <summary>
-        /// Category term for an email list entry.
-        /// </summary>
-        public const string EmailList = AppsNamespace + "#emailList";
-
-        /// <summary>
-        /// Category term for an email list recipient entry.
-        /// </summary>
-        public const string EmailListRecipient = EmailList + ".recipient";
-
-        /// <summary>
         /// XML element name for user login information.
         /// </summary>
         public const string AppsLogin = "login";
@@ -153,16 +142,6 @@ namespace Google.GData.Extensions.Apps
         /// XML attribute for the changePasswordAtNextLogin flag of a login element.
         /// </summary>
         public const string AppsLoginChangePasswordAtNextLogin = "changePasswordAtNextLogin";
-
-        /// <summary>
-        /// XML element name for email list data.
-        /// </summary>
-        public const string AppsEmailList = "emailList";
-
-        /// <summary>
-        /// XML attribute for the name of an email list.
-        /// </summary>
-        public const string AppsEmailListName = "name";
 
         /// <summary>
         /// XML element name for nickname data.
@@ -292,6 +271,9 @@ namespace Google.GData.Extensions.Apps
         public const string enableFor = "enableFor";
         public const string message = "message";
         public const string contactsOnly = "contactsOnly";
+        public const string domainOnly = "domainOnly";
+        public const string startDate = "startDate";
+        public const string endDate = "endDate";
         public const string signature = "signature";
         public const string language = "language";
         public const string pageSize = "pageSize";
@@ -299,6 +281,10 @@ namespace Google.GData.Extensions.Apps
         public const string arrows = "arrows";
         public const string snippets = "snippets";
         public const string unicode = "unicode";
+        public const string delegationId = "delegationId";
+        public const string shouldStar = "shouldStar";
+        public const string neverSpam = "neverSpam";
+        public const string shouldTrash = "shouldTrash";
     }
 
     /// <summary>
@@ -383,11 +369,25 @@ namespace Google.GData.Extensions.Apps
         public const string description = "description";
         public const string emailPermission = "emailPermission";
         public const string directMember = "directMember";
+        public const string directOnly = "directOnly";
+        public const string includeSuspendedUsers = "includeSuspendedUsers";
         public const string role = "role";
+        public const string member = "member";
+        public const string owner = "owner";
         public const string memberId = "memberId";
         public const string memberType = "memberType";
         public const string email = "email";
         public const string type = "type";
+    }
+
+    /// <summary>
+    /// The permission level for a Google Group.
+    /// </summary>
+    public enum PermissionLevel {
+        Owner,
+        Member,
+        Domain,
+        Anyone
     }
 
     /// <summary>
@@ -414,6 +414,7 @@ namespace Google.GData.Extensions.Apps
 	public class AppsMultiDomainNameTable : AppsNameTable {
 		public const string AppsMultiDomainAliasBaseFeedUri = "https://apps-apis.google.com/a/feeds/alias/2.0";
 		public const string AppsMultiDomainUserBaseFeedUri = "https://apps-apis.google.com/a/feeds/user/2.0";
+        public const string AppsMultiDomainUserEmailBaseFeedUri = "https://apps-apis.google.com/a/feeds/user/userEmail/2.0";
 		public const string AliasEmail = "aliasEmail";
 		public const string FirstName = "firstName";
 		public const string IpWhitelisted = "ipWhitelisted";
@@ -424,6 +425,7 @@ namespace Google.GData.Extensions.Apps
 		public const string NewEmail = "newEmail";
 		public const string Password = "password";
 		public const string UserEmail = "userEmail";
+        public const string HashFunction = "hashFunction";
 	}
 
     /// <summary>
@@ -440,41 +442,56 @@ namespace Google.GData.Extensions.Apps
     }
 
     /// <summary>
-    /// Extension element sed to model a Google Apps email list.
-    /// Has attribute "name".
+    /// Name table for Google Apps extensions specific to the Audit API
     /// </summary>
-    public class EmailListElement : ExtensionBase
-    {
-        /// <summary>
-        /// Constructs an empty EmailListElement instance.
-        /// </summary>
-        public EmailListElement()
-            : base(AppsNameTable.AppsEmailList,
-                   AppsNameTable.AppsPrefix,
-                   AppsNameTable.AppsNamespace)
-        {
-        }
+    public class AuditNameTable : AppsNameTable {
+        public const string AuditBaseFeedUri = "https://apps-apis.google.com/a/feeds/compliance/audit";
+        public const string dateFormat = "yyyy-MM-dd HH:mm";
+        public const string publicKeyUri = "publickey";
+        public const string publicKeyProperty = "publicKey";
+        public const string requestId = "requestId"; 
+        public const string destUserName = "destUserName";
+        public const string beginDate = "beginDate";
+        public const string endDate = "endDate";
+        public const string incomingEmailMonitorLevel = "incomingEmailMonitorLevel";
+        public const string outgoingEmailMonitorLevel = "outgoingEmailMonitorLevel";
+        public const string draftMonitorLevel = "draftMonitorLevel";
+        public const string chatMonitorLevel = "chatMonitorLevel";
+        public const string mail = "mail";
+        public const string monitor = "monitor";
+        public const string searchQuery = "searchQuery";
+        public const string includeDeleted = "includeDeleted";
+        public const string packageContent = "packageContent";
+        public const string export = "export";
+        public const string fromDate = "fromDate";
+        public const string account = "account";
+        public const string userEmailAddress = "userEmailAddress";
+        public const string adminEmailAddress = "adminEmailAddress";
+        public const string requestDate = "requestDate";
+        public const string status = "status";
+        public const string numberOfFiles = "numberOfFiles";
+        public const string completedDate = "completedDate";
+        public const string fileUrl = "fileUrl";
+    }
 
-        /// <summary>
-        /// Constructs a new EmailListElement instance with the specified value.
-        /// </summary>
-        /// <param name="name">the name attribute of this EmailListElement</param>
-        public EmailListElement(string name)
-            : base(AppsNameTable.AppsEmailList,
-                   AppsNameTable.AppsPrefix,
-                   AppsNameTable.AppsNamespace)
-        {
-            this.Name = name;
-        }
+    /// <summary>
+    /// The amount of Audit information to be captured.
+    /// </summary>
+    public enum MonitorLevel {
+        FULL_MESSAGE,
+        HEADER_ONLY
+    }
 
-        /// <summary>
-        /// Name property accessor.
-        /// </summary>
-        public string Name
-        {
-            get { return Convert.ToString(this.Attributes[AppsNameTable.AppsEmailListName]); }
-            set { this.Attributes[AppsNameTable.AppsEmailListName] = value; }
-        }
+    /// <summary>
+    /// The status of a request.
+    /// </summary>
+    public enum RequestStatus {
+        PENDING,
+        COMPLETED,
+        ERROR,
+        EXPIRED,
+        MARKED_DELETE,
+        DELETED
     }
 
     /// <summary>

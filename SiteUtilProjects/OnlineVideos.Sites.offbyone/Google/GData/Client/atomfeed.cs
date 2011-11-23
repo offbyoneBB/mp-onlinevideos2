@@ -118,16 +118,9 @@ namespace Google.GData.Client
     /// </para>
     /// </remarks> 
     //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-
-#else 
-
     [TypeConverterAttribute(typeof(AtomSourceConverter)), DescriptionAttribute("Expand to see the options for the feed")]
-#endif
     public class AtomFeed : AtomSource
     {
-
-
         /// <summary>collection of feed entries</summary> 
         private AtomEntryCollection feedEntries; 
         /// <summary>eventhandler, when the parser creates a new feed entry-> mirrored from underlying parser</summary> 

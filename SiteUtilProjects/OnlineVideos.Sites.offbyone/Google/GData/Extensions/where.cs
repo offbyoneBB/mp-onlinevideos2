@@ -230,38 +230,24 @@ namespace Google.GData.Extensions
         /// Persistence method for the Where object
         /// </summary>
         /// <param name="writer">the xmlwriter to write into</param>
-        public void Save(XmlWriter writer)
-        {
-            if (Utilities.IsPersistable(this.Label) ||
-                Utilities.IsPersistable(this.Rel) ||
-                Utilities.IsPersistable(this.ValueString) ||
-                entryLink != null)
-            {
+        public void Save(XmlWriter writer) {
+            writer.WriteStartElement(BaseNameTable.gDataPrefix, XmlName, BaseNameTable.gNamespace);
 
-                writer.WriteStartElement(BaseNameTable.gDataPrefix, XmlName, BaseNameTable.gNamespace);
+            writer.WriteAttributeString(GDataParserNameTable.XmlAttributeValueString, this.valueString);
 
-                if (Utilities.IsPersistable(this.Label))
-                {
-                    writer.WriteAttributeString(GDataParserNameTable.XmlAttributeLabel, this.Label);
-                }
-
-                if (Utilities.IsPersistable(this.Rel))
-                {
-                    writer.WriteAttributeString(GDataParserNameTable.XmlAttributeRel, this.Rel);
-                }
-
-                if (Utilities.IsPersistable(this.ValueString))
-                {
-                    writer.WriteAttributeString(GDataParserNameTable.XmlAttributeValueString, this.valueString);
-                }
-
-                if (entryLink != null)
-                {
-                    entryLink.Save(writer);
-                }
-
-                writer.WriteEndElement();
+            if (Utilities.IsPersistable(this.Label)) {
+                writer.WriteAttributeString(GDataParserNameTable.XmlAttributeLabel, this.Label);
             }
+
+            if (Utilities.IsPersistable(this.Rel)) {
+                writer.WriteAttributeString(GDataParserNameTable.XmlAttributeRel, this.Rel);
+            }
+
+            if (entryLink != null) {
+                entryLink.Save(writer);
+            }
+
+            writer.WriteEndElement();
         }
 
         #endregion

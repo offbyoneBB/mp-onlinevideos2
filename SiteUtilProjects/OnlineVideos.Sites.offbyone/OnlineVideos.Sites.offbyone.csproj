@@ -111,6 +111,7 @@
     <Compile Include="Google\GData\Client\mediaservice.cs" />
     <Compile Include="Google\GData\Client\mediasource.cs" />
     <Compile Include="Google\GData\Client\oauthbase.cs" />
+    <Compile Include="Google\GData\Client\oauthparameters.cs" />
     <Compile Include="Google\GData\Client\oauthuri.cs" />
     <Compile Include="Google\GData\Client\oauthutil.cs" />
     <Compile Include="Google\GData\Client\request.cs" />

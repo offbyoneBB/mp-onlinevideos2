@@ -247,7 +247,8 @@ namespace Google.GData.Client
                     ch == '=' ||
                     ch == '+' ||
                     ch == '$' ||
-                    ch == ','  ||
+                    ch == ',' ||
+                    ch == '#' ||
                     ch == '%' )
                 {
                     returnString.Append(Uri.HexEscape(ch));
@@ -853,16 +854,29 @@ namespace Google.GData.Client
             return false;
         }
 
+		//////////////////////////////////////////////////////////////////////
+        /// <summary>goes to the Google auth service, and gets a new auth token</summary> 
+        /// <returns>the auth token, or NULL if none received</returns>
+        //////////////////////////////////////////////////////////////////////
+		public static string QueryClientLoginToken(GDataCredentials gc,
+			string serviceName,
+			string applicationName,
+			bool fUseKeepAlive,
+			Uri clientLoginHandler)
+		{
+			return QueryClientLoginToken(gc, serviceName, applicationName, fUseKeepAlive, null, clientLoginHandler);
+		}
+
         //////////////////////////////////////////////////////////////////////
         /// <summary>goes to the Google auth service, and gets a new auth token</summary> 
         /// <returns>the auth token, or NULL if none received</returns>
         //////////////////////////////////////////////////////////////////////
-        public static string QueryClientLoginToken(GDataCredentials gc, 
-                                              string serviceName,
-                                              string applicationName, 
-                                              bool fUseKeepAlive,
-                                              Uri clientLoginHandler
-                                     )
+        public static string QueryClientLoginToken(GDataCredentials gc,
+			string serviceName,
+			string applicationName,
+			bool fUseKeepAlive,
+			IWebProxy proxyServer,
+			Uri clientLoginHandler)
         {
             Tracing.Assert(gc != null, "Do not call QueryAuthToken with no network credentials"); 
             if (gc == null)
@@ -872,7 +886,10 @@ namespace Google.GData.Client
              
             HttpWebRequest authRequest = WebRequest.Create(clientLoginHandler) as HttpWebRequest; 
 
-            authRequest.KeepAlive = fUseKeepAlive;     
+            authRequest.KeepAlive = fUseKeepAlive;
+
+			if (proxyServer != null)
+				authRequest.Proxy = proxyServer;
          
             string accountType = GoogleAuthentication.AccountType;
             if (!String.IsNullOrEmpty(gc.AccountType))

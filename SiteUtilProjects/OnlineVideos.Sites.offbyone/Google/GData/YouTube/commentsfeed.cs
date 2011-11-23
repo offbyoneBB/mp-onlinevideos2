@@ -21,34 +21,28 @@ using Google.GData.Client;
 using Google.GData.Extensions;
 
 namespace Google.GData.YouTube {
-
- 
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// Each video entry contains a gd:comments tag, which encapsulates the 
     /// URL to which you will send API requests to retrieve or append to the
     /// list of comments for the video. 
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class CommentsFeed : YouTubeFeed
-    {
-
+    public class CommentsFeed : YouTubeFeed {
         /// <summary>
-        ///  default constructor
+        /// default constructor
         /// </summary>
         /// <param name="uriBase">the base URI of the feedEntry</param>
         /// <param name="iService">the Service to use</param>
-        public CommentsFeed(Uri uriBase, IService iService) : base(uriBase, iService)
-        {
+        public CommentsFeed(Uri uriBase, IService iService)
+            : base(uriBase, iService) {
         }
 
         /// <summary>
         /// this needs to get implemented by subclasses
         /// </summary>
         /// <returns>AtomEntry</returns>
-        public override AtomEntry CreateFeedEntry()
-        {
+        public override AtomEntry CreateFeedEntry() {
             return new CommentEntry();
         }
     }
 }
+

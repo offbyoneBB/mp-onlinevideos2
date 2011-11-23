@@ -21,15 +21,10 @@ using System;
 using System.Xml; 
 using System.Net;
 using System.Diagnostics;
-#if WindowsCE || PocketPC
-#else 
 using System.Runtime.Serialization;
-#endif
 using System.Security.Permissions;
 using System.IO;
 using System.Text; 
-
-
 
 #endregion
 
@@ -45,10 +40,7 @@ namespace Google.GData.Client
     /// using Google Client Login fails
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else 
     [Serializable]
-#endif
     public class AuthenticationException : LoggedException
     {
         //////////////////////////////////////////////////////////////////////
@@ -71,10 +63,7 @@ namespace Google.GData.Client
      }
 
     /// <summary>thrown when the credentials are wrong</summary> 
-#if WindowsCE || PocketPC
-#else
     [Serializable]
-#endif
     public class InvalidCredentialsException : AuthenticationException
     {
         //////////////////////////////////////////////////////////////////////
@@ -99,10 +88,7 @@ namespace Google.GData.Client
     /// <summary>thrown when the account was deleted
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else
     [Serializable]
-#endif
     public class AccountDeletedException : AuthenticationException
      {
             //////////////////////////////////////////////////////////////////////
@@ -127,10 +113,7 @@ namespace Google.GData.Client
      /// <summary>thrown when the account was disabled
      /// </summary> 
      //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else
     [Serializable]
-#endif
       public class AccountDisabledException : AuthenticationException
       {
              //////////////////////////////////////////////////////////////////////
@@ -155,10 +138,7 @@ namespace Google.GData.Client
       /// <summary>the account hoder was not verified
       /// </summary> 
       //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else
     [Serializable]
-#endif
        public class NotVerifiedException : AuthenticationException
        {
             //////////////////////////////////////////////////////////////////////
@@ -183,10 +163,7 @@ namespace Google.GData.Client
        /// <summary>The Terms were not agreed with..
        /// </summary> 
        //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else
-    [Serializable]
-#endif
+        [Serializable]
         public class TermsNotAgreedException : AuthenticationException
         {
             //////////////////////////////////////////////////////////////////////
@@ -211,10 +188,7 @@ namespace Google.GData.Client
         /// <summary>The service is current not available
         /// </summary> 
         //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else
-    [Serializable]
-#endif
+        [Serializable]
          public class ServiceUnavailableException : AuthenticationException
          {
             //////////////////////////////////////////////////////////////////////
@@ -239,10 +213,7 @@ namespace Google.GData.Client
          /// <summary>many unsuccessfull logins might create this...
          /// </summary> 
          //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else
     [Serializable]
-#endif
           public class CaptchaRequiredException : AuthenticationException
           {
              private string captchaUrl;

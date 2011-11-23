@@ -68,8 +68,6 @@ namespace Google.GData.Client
         xhtml
     }
 
-#if WindowsCE || PocketPC
-#else 
     //////////////////////////////////////////////////////////////////////
     /// <summary>TypeConverter, so that AtomTextConstruct shows up in the property pages
     /// </summary> 
@@ -107,7 +105,6 @@ namespace Google.GData.Client
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
     [TypeConverterAttribute(typeof(AtomTextConstructConverter)), DescriptionAttribute("Expand to see details for this object.")]
-#endif
     public class AtomTextConstruct: AtomBase
     {
         /// <summary>holds the type of the text</summary> 

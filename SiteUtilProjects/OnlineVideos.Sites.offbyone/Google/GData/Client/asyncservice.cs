@@ -32,133 +32,105 @@ using System.Collections.Specialized;
 //   allows to query a service for different feeds
 //  </summary>
 ////////////////////////////////////////////////////////////////////
-namespace Google.GData.Client
-{
-#if WindowsCE || PocketPC
-#else
-   
-
-    public class AsyncSendData : AsyncData
-    {
+namespace Google.GData.Client {
+    public class AsyncSendData : AsyncData, IAsyncEntryData {
         private AtomEntry entry;
         private GDataRequestType type;
         private string contentType;
         private string slugHeader;
 
-        private AsyncSendData(AsyncDataHandler handler, Uri uriToUse, AtomEntry entry, AtomFeed feed, SendOrPostCallback callback, object userData, bool parseFeed)
-            : base(uriToUse, null, userData, callback, parseFeed)
-        {
+        private AsyncSendData(AsyncDataHandler handler, Uri uriToUse, AtomEntry entry, AtomFeed feed,
+            SendOrPostCallback callback, object userData, bool parseFeed)
+            : base(uriToUse, null, userData, callback, parseFeed) {
             this.DataHandler = handler;
             this.entry = entry;
             this.Feed = feed;
         }
 
         public AsyncSendData(AsyncDataHandler handler, Uri uriToUse, AtomEntry entry, SendOrPostCallback callback, object userData)
-            : this(handler, uriToUse, entry, null, callback, userData, false)
-        {
+            : this(handler, uriToUse, entry, null, callback, userData, false) {
         }
 
         public AsyncSendData(AsyncDataHandler handler, AtomEntry entry, SendOrPostCallback callback, object userData)
-            : this(handler, null, entry, null, callback, userData, false)
-        {
+            : this(handler, null, entry, null, callback, userData, false) {
         }
 
         public AsyncSendData(AsyncDataHandler handler, Uri uriToUse, AtomFeed feed, SendOrPostCallback callback, object userData)
-            : this(handler, uriToUse, null, feed, callback, userData, false)
-        {
+            : this(handler, uriToUse, null, feed, callback, userData, false) {
         }
 
         public AsyncSendData(AsyncDataHandler handler, Uri uriToUse, Stream stream, GDataRequestType type,
-                            string contentType, string slugHeader, SendOrPostCallback callback, object userData, bool parseFeed)
-            : this(handler, uriToUse, null, null, callback, userData, parseFeed)
-        {
+            string contentType, string slugHeader, SendOrPostCallback callback, object userData, bool parseFeed)
+            : this(handler, uriToUse, null, null, callback, userData, parseFeed) {
             this.DataStream = stream;
             this.type = type;
             this.contentType = contentType;
             this.slugHeader = slugHeader;
         }
 
-        public AtomEntry Entry
-        {
-            get
-            {
+        public AtomEntry Entry {
+            get {
                 return this.entry;
             }
-            set
-            {
+            set {
                 this.entry = value;
             }
         }
 
-        public string ContentType
-        {
-            get
-            {
+        public string ContentType {
+            get {
                 return this.contentType;
             }
         }
 
-        public string SlugHeader
-        {
-            get
-            {
+        public string SlugHeader {
+            get {
                 return this.slugHeader;
             }
         }
 
-        public GDataRequestType Type
-        {
-            get
-            {
+        public GDataRequestType Type {
+            get {
                 return this.type;
             }
         }
-
     }
 
-    public class AsyncDeleteData : AsyncData
-    {
+    public class AsyncDeleteData : AsyncData, IAsyncEntryData {
         private readonly AtomEntry _entry;
-
         private readonly bool _permanentDelete;
 
         public AsyncDeleteData(AtomEntry entry, bool permanentDelete, object userData, SendOrPostCallback callback)
-            : base(null, userData, callback)
-        {
+            : base(null, userData, callback) {
             _entry = entry;
             _permanentDelete = permanentDelete;
         }
 
-        public bool PermanentDelete
-        {
-            get
-            {
+        public bool PermanentDelete {
+            get {
                 return _permanentDelete;
             }
         }
 
-        public AtomEntry Entry
-        {
-            get
-            {
+        public AtomEntry Entry {
+            get {
                 return _entry;
             }
         }
     }
 
     //////////////////////////////////////////////////////////////////////
-    /// <summary>async functionallity of the Service implementation
+    /// <summary>async functionality of the Service implementation
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-    public partial class Service : AsyncDataHandler, IService, IVersionAware
-    {
+    public partial class Service : AsyncDataHandler, IService, IVersionAware {
 
         private delegate void WorkerSendEventHandler(AsyncSendData data, AsyncOperation asyncOp,
-                                   SendOrPostCallback completionMethodDelegate);
+            SendOrPostCallback completionMethodDelegate);
 
         private delegate void WorkerDeleteEventHandler(AsyncDeleteData data, AsyncOperation asyncOp,
-                                   SendOrPostCallback completionMethodDelegate);
-       
+            SendOrPostCallback completionMethodDelegate);
+
         /// <summary>
         /// the basic interface as an async version. This call will return directly
         /// and you need to rely on the events fired to figure out what happened.
@@ -167,11 +139,9 @@ namespace Google.GData.Client
         /// <param name="ifModifiedSince">The ifmodifiedsince date, use DateTime.MinValue if you want everything</param>
         /// <param name="userData">The userData token. this must be unique if you make several async requests at once</param>
         /// <returns>nothing</returns>
-        public void QueryFeedAync(Uri queryUri, DateTime ifModifiedSince, Object userData)
-        {
+        public void QueryFeedAync(Uri queryUri, DateTime ifModifiedSince, Object userData) {
             this.QueryAsync(queryUri, ifModifiedSince, true, userData);
         }
-
 
         /// <summary>
         /// the basic interface as an async version. This call will return directly
@@ -183,11 +153,9 @@ namespace Google.GData.Client
         /// <param name="ifModifiedSince">The ifmodifiedsince date, use DateTime.MinValue if you want everything</param>
         /// <param name="userData">The userData token. this must be unique if you make several async requests at once</param>
         /// <returns>nothing</returns>
-        public void QueryStreamAync(Uri queryUri, DateTime ifModifiedSince, Object userData)
-        {
+        public void QueryStreamAync(Uri queryUri, DateTime ifModifiedSince, Object userData) {
             this.QueryAsync(queryUri, ifModifiedSince, false, userData);
         }
-
 
         /// <summary>
         /// the basic interface as an async version. This call will return directly
@@ -198,8 +166,7 @@ namespace Google.GData.Client
         /// <param name="doParse">if true, returns a feed, else a stream</param>
         /// <param name="userData">The userData token. this must be unique if you make several async requests at once</param>
         /// <returns>nothing</returns>
-        private void QueryAsync(Uri queryUri, DateTime ifModifiedSince, bool doParse, Object userData)
-        {
+        private void QueryAsync(Uri queryUri, DateTime ifModifiedSince, bool doParse, Object userData) {
             AsyncOperation asyncOp = AsyncOperationManager.CreateOperation(userData);
             AsyncQueryData data = new AsyncQueryData(queryUri, ifModifiedSince, doParse, asyncOp, userData, this.ProgressReportDelegate);
 
@@ -215,8 +182,6 @@ namespace Google.GData.Client
                 null);
         }
 
-
-
         /// <summary>
         ///  worker method for the query case
         /// </summary>
@@ -224,26 +189,18 @@ namespace Google.GData.Client
         /// <param name="asyncOp"></param>
         /// <param name="completionMethodDelegate"></param>
         /// <returns></returns>
-        private void AsyncQueryWorker(AsyncQueryData data, AsyncOperation asyncOp, SendOrPostCallback completionMethodDelegate)
-        {
-            try
-            {
+        private void AsyncQueryWorker(AsyncQueryData data, AsyncOperation asyncOp, SendOrPostCallback completionMethodDelegate) {
+            try {
                 long contentLength;
-                using (var responseStream = Query(data.UriToUse, data.Modified, null, out contentLength))
-                {
+                using (var responseStream = Query(data.UriToUse, data.Modified, null, out contentLength)) {
                     HandleResponseStream(data, responseStream, contentLength);
                 }
-
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 data.Exception = e;
             }
             completionMethodDelegate(data);
         }
 
-       
-       
         /// <summary>
         /// updates the entry asynchronous, you need to supply a valid and unique
         /// token. Events will be send to the async delegates you setup on the service
@@ -252,13 +209,11 @@ namespace Google.GData.Client
         /// <param name="entry"></param>
         /// <param name="userData">a unique identifier to associate this request with</param>
         /// <returns></returns>
-        public void UpdateAsync(AtomEntry entry, Object userData)
-        {
+        public void UpdateAsync(AtomEntry entry, Object userData) {
             AsyncSendData data = new AsyncSendData(this, entry, this.ProgressReportDelegate, userData);
             WorkerSendEventHandler workerDelegate = new WorkerSendEventHandler(AsyncUpdateWorker);
             this.AsyncStarter(data, workerDelegate, userData);
         }
-
 
         /// <summary>
         /// inserts the entry asynchronous, you need to supply a valid and unique
@@ -269,8 +224,7 @@ namespace Google.GData.Client
         /// <param name="entry"></param>
         /// <param name="userData">a unique identifier to associate this request with</param>
         /// <returns></returns>
-        public void InsertAsync(Uri feedUri, AtomEntry entry, Object userData)
-        {
+        public void InsertAsync(Uri feedUri, AtomEntry entry, Object userData) {
             AsyncSendData data = new AsyncSendData(this, feedUri, entry, this.ProgressReportDelegate, userData);
             WorkerSendEventHandler workerDelegate = new WorkerSendEventHandler(AsyncInsertWorker);
             this.AsyncStarter(data, workerDelegate, userData);
@@ -285,8 +239,7 @@ namespace Google.GData.Client
         /// <param name="batchUri">the URI to user</param>
         /// <param name="userData">the userdata identifying this request</param>
         /// <returns></returns>
-        public void BatchAsync(AtomFeed feed, Uri batchUri, Object userData)
-        {
+        public void BatchAsync(AtomFeed feed, Uri batchUri, Object userData) {
             AsyncSendData data = new AsyncSendData(this, batchUri, feed, this.ProgressReportDelegate, userData);
             WorkerSendEventHandler workerDelegate = new WorkerSendEventHandler(AsyncBatchWorker);
             this.AsyncStarter(data, workerDelegate, userData);
@@ -304,12 +257,11 @@ namespace Google.GData.Client
         /// <param name="userData">a unique identifier to associate this request with</param>
         /// <returns></returns>
         public void StreamSendFeedAsync(Uri targetUri,
-                                 Stream inputStream,
-                                 GDataRequestType type,
-                                 string contentType,
-                                 string slugHeader,
-                                 object userData)
-        {
+            Stream inputStream,
+            GDataRequestType type,
+            string contentType,
+            string slugHeader,
+            object userData) {
             StreamSendAsync(targetUri, inputStream, type, contentType, slugHeader, userData, true);
         }
 
@@ -325,12 +277,11 @@ namespace Google.GData.Client
         /// <param name="userData">a unique identifier to associate this request with</param>
         /// <returns></returns>
         public void StreamSendStreamAsync(Uri targetUri,
-                                 Stream inputStream,
-                                 GDataRequestType type,
-                                 string contentType,
-                                 string slugHeader,
-                                 object userData)
-        {
+            Stream inputStream,
+            GDataRequestType type,
+            string contentType,
+            string slugHeader,
+            object userData) {
             StreamSendAsync(targetUri, inputStream, type, contentType, slugHeader, userData, false);
         }
 
@@ -346,14 +297,14 @@ namespace Google.GData.Client
         /// <param name="parseFeed">indicates if the async operation should try to parse the server returned stream, or just return the stream</param>
         /// <returns></returns>
         private void StreamSendAsync(Uri targetUri,
-                                 Stream inputStream,
-                                 GDataRequestType type,
-                                 string contentType,
-                                 string slugHeader,
-                                 object userData, bool parseFeed)
-        {
+            Stream inputStream,
+            GDataRequestType type,
+            string contentType,
+            string slugHeader,
+            object userData,
+            bool parseFeed) {
             AsyncSendData data = new AsyncSendData(this, targetUri, inputStream, type, contentType, slugHeader,
-                                                   this.ProgressReportDelegate, userData, parseFeed);
+                this.ProgressReportDelegate, userData, parseFeed);
             WorkerSendEventHandler workerDelegate = new WorkerSendEventHandler(AsyncStreamSendWorker);
             this.AsyncStarter(data, workerDelegate, userData);
         }
@@ -366,58 +317,46 @@ namespace Google.GData.Client
         /// <param name="responseStream"></param>
         /// <param name="contentLength"></param>
         /// <returns></returns>
-        protected override void HandleResponseStream(AsyncData data, Stream responseStream, long contentLength)
-        {
-            if (data.ParseFeed)
-            {
+        protected override void HandleResponseStream(AsyncData data, Stream responseStream, long contentLength) {
+            if (data.ParseFeed) {
                 data.Feed = CreateAndParseFeed(responseStream, data.UriToUse);
                 data.DataStream = null;
-            }
-            else
-            {
+            } else {
                 base.HandleResponseStream(data, responseStream, contentLength);
             }
         }
-       
+
         /// <summary>
-        ///  worker method for the update case
+        /// worker method for the update case
         /// </summary>
         /// <param name="data"></param>
         /// <param name="asyncOp"></param>
         /// <param name="completionMethodDelegate"></param>
         /// <returns></returns>
         private void AsyncUpdateWorker(AsyncSendData data,
-                                      AsyncOperation asyncOp,
-                                      SendOrPostCallback completionMethodDelegate)
-        {
-            try
-            {
+            AsyncOperation asyncOp,
+            SendOrPostCallback completionMethodDelegate) {
+            try {
                 data.Entry = this.Update(data.Entry, data);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 data.Exception = e;
             }
             completionMethodDelegate(data);
         }
 
         /// <summary>
-        ///  worker method for the Insert case
+        /// worker method for the Insert case
         /// </summary>
         /// <param name="data"></param>
         /// <param name="asyncOp"></param>
         /// <param name="completionMethodDelegate"></param>
         /// <returns></returns>
         private void AsyncInsertWorker(AsyncSendData data,
-                                      AsyncOperation asyncOp,
-                                      SendOrPostCallback completionMethodDelegate)
-        {
-            try
-            {
+            AsyncOperation asyncOp,
+            SendOrPostCallback completionMethodDelegate) {
+            try {
                 data.Entry = this.Insert(data.UriToUse, data.Entry, data);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 data.Exception = e;
             }
             completionMethodDelegate(data);
@@ -431,39 +370,29 @@ namespace Google.GData.Client
         /// <param name="completionMethodDelegate"></param>
         /// <returns></returns>
         private void AsyncBatchWorker(AsyncSendData data,
-                                      AsyncOperation asyncOp,
-                                      SendOrPostCallback completionMethodDelegate)
-        {
-            try
-            {
+            AsyncOperation asyncOp,
+            SendOrPostCallback completionMethodDelegate) {
+            try {
                 data.Feed = this.Batch(data.Feed, data.UriToUse, data);
-
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 data.Exception = e;
             }
             completionMethodDelegate(data);
         }
 
         /// <summary>
-        ///  worker method for the direct stream send
+        /// worker method for the direct stream send
         /// </summary>
         /// <param name="data"></param>
         /// <param name="asyncOp"></param>
         /// <param name="completionMethodDelegate"></param>
         /// <returns></returns>
-        private void AsyncStreamSendWorker(AsyncSendData data, AsyncOperation asyncOp, SendOrPostCallback completionMethodDelegate)
-        {
-            try
-            {
-                using (var responseStream = StreamSend(data.UriToUse, data.DataStream, data.Type, data.ContentType, data.SlugHeader, null, data))
-                {
+        private void AsyncStreamSendWorker(AsyncSendData data, AsyncOperation asyncOp, SendOrPostCallback completionMethodDelegate) {
+            try {
+                using (var responseStream = StreamSend(data.UriToUse, data.DataStream, data.Type, data.ContentType, data.SlugHeader, null, data)) {
                     HandleResponseStream(data, responseStream, -1);
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 data.Exception = e;
             }
 
@@ -477,15 +406,12 @@ namespace Google.GData.Client
         /// <param name="userData"></param>
         /// <param name="workerDelegate"></param>
         /// <returns></returns>
-        private void AsyncStarter(AsyncSendData data, WorkerSendEventHandler workerDelegate, Object userData)
-        {
+        private void AsyncStarter(AsyncSendData data, WorkerSendEventHandler workerDelegate, Object userData) {
             AsyncOperation asyncOp = AsyncOperationManager.CreateOperation(userData);
-
             data.Operation = asyncOp;
 
             AddUserDataToDictionary(userData, asyncOp);
 
-            
             // Start the asynchronous operation.
             workerDelegate.BeginInvoke(
                 data,
@@ -495,14 +421,12 @@ namespace Google.GData.Client
                 null);
         }
 
-        public void DeleteAsync(AtomEntry entry, bool permanentDelete, Object userData)
-        {
+        public void DeleteAsync(AtomEntry entry, bool permanentDelete, Object userData) {
             AsyncDeleteData data = new AsyncDeleteData(entry, permanentDelete, userData, ProgressReportDelegate);
             AsyncStarter(data, AsyncDeleteWorker, userData);
         }
 
-        private void AsyncStarter(AsyncDeleteData data, WorkerDeleteEventHandler workerDelegate, Object userData)
-        {
+        private void AsyncStarter(AsyncDeleteData data, WorkerDeleteEventHandler workerDelegate, Object userData) {
             AsyncOperation asyncOp = AsyncOperationManager.CreateOperation(userData);
             data.Operation = asyncOp;
             AddUserDataToDictionary(userData, asyncOp);
@@ -511,23 +435,14 @@ namespace Google.GData.Client
             workerDelegate.BeginInvoke(data, asyncOp, CompletionMethodDelegate, null, null);
         }
 
-        private void AsyncDeleteWorker(AsyncDeleteData data, AsyncOperation asyncOp, SendOrPostCallback completionMethodDelegate)
-        {
-            try
-            {
+        private void AsyncDeleteWorker(AsyncDeleteData data, AsyncOperation asyncOp, SendOrPostCallback completionMethodDelegate) {
+            try {
                 Delete(data.Entry, data.PermanentDelete);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 data.Exception = e;
             }
 
             completionMethodDelegate(data);
         }
     }
-   //////////////////////////////////////////////////////////////////////////
-#endif
 }
-/////////////////////////////////////////////////////////////////////////////
-
-

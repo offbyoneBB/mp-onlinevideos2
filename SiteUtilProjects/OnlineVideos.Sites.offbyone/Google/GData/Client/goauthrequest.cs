@@ -20,132 +20,108 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 
-namespace Google.GData.Client
-{
+namespace Google.GData.Client {
     /// <summary>
     /// A request factory to generate an authorization header suitable for use
-    /// with two-legged OAuth.
+    /// with OAuth.
     /// </summary>
-    public class GOAuthRequestFactory : GDataGAuthRequestFactory
-    {
+    public class GOAuthRequestFactory : GDataGAuthRequestFactory {
         /// <summary>this factory's agent</summary> 
         public const string GDataGAuthSubAgent = "GOAuthRequestFactory-CS/1.0.0";
 
-        private String tokenSecret;
-        private String token;
+        private string tokenSecret;
+        private string token;
+        private string consumerSecret;
+        private string consumerKey;
 
-        private String consumerSecret;
-        private String consumerKey;
-
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// default constructor.
+        /// </summary>
         public GOAuthRequestFactory(string service, string applicationName)
-            : base(service, applicationName)
-        {
+            : base(service, applicationName) {
         }
-        /////////////////////////////////////////////////////////////////////////////
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
-        public override IGDataRequest CreateRequest(GDataRequestType type, Uri uriTarget)
-        {
+        /// <summary>
+        /// overloaded constructor that sets parameters from an OAuthParameter instance.
+        /// </summary>
+        public GOAuthRequestFactory(string service, string applicationName, OAuthParameters parameters)
+            : base(service, applicationName) {
+            if (parameters.ConsumerKey != null) {
+                this.ConsumerKey = parameters.ConsumerKey;
+            }
+            if (parameters.ConsumerSecret != null) {
+                this.ConsumerSecret = parameters.ConsumerSecret;
+            }
+            if (parameters.Token != null) {
+                this.Token = parameters.Token;
+            }
+            if (parameters.TokenSecret != null) {
+                this.TokenSecret = parameters.TokenSecret;
+            }
+        }
+
+        /// <summary>
+        /// default constructor.
+        /// </summary>
+        public override IGDataRequest CreateRequest(GDataRequestType type, Uri uriTarget) {
             return new GOAuthRequest(type, uriTarget, this);
         }
-        /////////////////////////////////////////////////////////////////////////////
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>accessor method public string ConsumerSecret</summary> 
-        /// <returns>the ConsumerSecret for the oauth request </returns>
-        //////////////////////////////////////////////////////////////////////
-        public string ConsumerSecret
-        {
+        public string ConsumerSecret {
             get { return this.consumerSecret; }
             set { this.consumerSecret = value; }
         }
-        // end of accessor public string ConsumerSecret
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>accessor method public string ConsumerKey</summary> 
-        /// <returns>the ConsumerKey used for the oauth request </returns>
-        //////////////////////////////////////////////////////////////////////
-        public string ConsumerKey
-        {
+        public string ConsumerKey {
             get { return this.consumerKey; }
             set { this.consumerKey = value; }
         }
-        // end of accessor public string ConsumerKey
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>accessor method public string TokenSecret</summary> 
-        /// <returns>the TokenSecret for the oauth request </returns>
-        //////////////////////////////////////////////////////////////////////
-        public string TokenSecret
-        {
+        public string TokenSecret {
             get { return this.tokenSecret; }
             set { this.tokenSecret = value; }
         }
-        // end of accessor public string ConsumerSecret
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>accessor method public string TokenSecret</summary> 
-        /// <returns>the Token for the oauth request </returns>
-        //////////////////////////////////////////////////////////////////////
-        public string Token
-        {
+        public string Token {
             get { return this.token; }
             set { this.token = value; }
         }
-        // end of accessor public string ConsumerSecret
-
     }
-    /////////////////////////////////////////////////////////////////////////////
 
-
-    //////////////////////////////////////////////////////////////////////
-    /// <summary>GOAuthSubRequest implementation</summary> 
-    //////////////////////////////////////////////////////////////////////
-    public class GOAuthRequest : GDataGAuthRequest
-    {
+    /// <summary>
+    /// GOAuthSubRequest implementation.
+    /// </summary>
+    public class GOAuthRequest : GDataGAuthRequest {
         /// <summary>holds the factory instance</summary> 
         private GOAuthRequestFactory factory;
 
-
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>default constructor</summary> 
-        //////////////////////////////////////////////////////////////////////
-        internal GOAuthRequest(GDataRequestType type, Uri uriTarget, GOAuthRequestFactory factory)
-            :
-                base(type, uriTarget, factory)
-        {
+        /// <summary>
+        /// default constructor.
+        /// </summary>
+        internal GOAuthRequest(GDataRequestType type, Uri uriTarget, GOAuthRequestFactory factory) 
+            : base(type, uriTarget, factory) {
             this.factory = factory;
         }
-        /////////////////////////////////////////////////////////////////////////////
 
-        //////////////////////////////////////////////////////////////////////
-        /// <summary>sets up the correct credentials for this call</summary> 
-        //////////////////////////////////////////////////////////////////////
-        protected override void EnsureCredentials()
-        {
+        /// <summary>
+        /// sets up the correct credentials for this call.
+        /// </summary>
+        protected override void EnsureCredentials() {
             HttpWebRequest http = this.Request as HttpWebRequest;
 
-            if (string.IsNullOrEmpty(this.factory.ConsumerKey) || string.IsNullOrEmpty(this.factory.ConsumerSecret))
-            {
+            if (string.IsNullOrEmpty(this.factory.ConsumerKey) || string.IsNullOrEmpty(this.factory.ConsumerSecret)) {
                 throw new GDataRequestException("ConsumerKey and ConsumerSecret must be provided to use GOAuthRequestFactory");
             }
 
-            string oauthHeader = OAuthUtil.GenerateHeader(http.RequestUri, 
-                                                            this.factory.ConsumerKey, 
-                                                            this.factory.ConsumerSecret, 
-                                                            this.factory.Token, 
-                                                            this.factory.TokenSecret,
-                                                            http.Method);
+            string oauthHeader = OAuthUtil.GenerateHeader(
+                http.RequestUri,
+                this.factory.ConsumerKey,
+                this.factory.ConsumerSecret,
+                this.factory.Token,
+                this.factory.TokenSecret,
+                http.Method);
             this.Request.Headers.Remove("Authorization"); // needed?
             this.Request.Headers.Add(oauthHeader);
         }
-        /////////////////////////////////////////////////////////////////////////////
     }
-    /////////////////////////////////////////////////////////////////////////////
 }
-/////////////////////////////////////////////////////////////////////////////

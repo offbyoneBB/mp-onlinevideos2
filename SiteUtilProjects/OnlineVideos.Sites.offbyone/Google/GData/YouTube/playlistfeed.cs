@@ -21,9 +21,6 @@ using Google.GData.Client;
 using Google.GData.Extensions;
 
 namespace Google.GData.YouTube {
-
- 
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// The YouTube Data API allows applications to perform functions normally 
     /// executed on the YouTube website. The API enables your application to search 
@@ -35,26 +32,23 @@ namespace Google.GData.YouTube {
     /// authenticated requests to enable users to create playlists, 
     /// subscriptions, contacts and other account-specific entities.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class PlaylistFeed : YouTubeFeed
-    {
-
+    public class PlaylistFeed : YouTubeFeed {
         /// <summary>
-        ///  default constructor
+        /// default constructor
         /// </summary>
         /// <param name="uriBase">the base URI of the feedEntry</param>
         /// <param name="iService">the Service to use</param>
-        public PlaylistFeed(Uri uriBase, IService iService) : base(uriBase, iService)
-        {
+        public PlaylistFeed(Uri uriBase, IService iService)
+            : base(uriBase, iService) {
         }
 
         /// <summary>
         /// this needs to get implemented by subclasses
         /// </summary>
         /// <returns>AtomEntry</returns>
-        public override AtomEntry CreateFeedEntry()
-        {
+        public override AtomEntry CreateFeedEntry() {
             return new PlaylistEntry();
         }
     }
 }
+

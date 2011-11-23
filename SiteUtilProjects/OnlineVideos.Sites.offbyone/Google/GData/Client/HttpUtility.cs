@@ -457,8 +457,8 @@ namespace Google.GData.Client
 #endif
 
 			bytes = null;
-			return e.GetString(buf);
-		}
+            return e.GetString(buf);
+        }
 
 		public static string UrlDecode(byte[] bytes, Encoding e) {
 			if (bytes == null)
@@ -654,8 +654,8 @@ namespace Google.GData.Client
 			// avoided GetByteCount call
 			byte[] bytes = new byte[Enc.GetMaxByteCount(s.Length)];
 			int realLen = Enc.GetBytes(s, 0, s.Length, bytes, 0);
-			return Encoding.ASCII.GetString(UrlEncodeToBytes(bytes, 0, realLen));
-		}
+            return Encoding.ASCII.GetString(UrlEncodeToBytes(bytes, 0, realLen));
+        }
 
 		public static string UrlEncode(byte[] bytes) {
 			if (bytes == null)
@@ -664,8 +664,8 @@ namespace Google.GData.Client
 			if (bytes.Length == 0)
 				return "";
 
-			return Encoding.ASCII.GetString(UrlEncodeToBytes(bytes, 0, bytes.Length));
-		}
+            return Encoding.ASCII.GetString(UrlEncodeToBytes(bytes, 0, bytes.Length));
+        }
 
 		public static string UrlEncode(byte[] bytes, int offset, int count) {
 			if (bytes == null)
@@ -674,8 +674,8 @@ namespace Google.GData.Client
 			if (bytes.Length == 0)
 				return "";
 
-			return Encoding.ASCII.GetString(UrlEncodeToBytes(bytes, offset, count));
-		}
+            return Encoding.ASCII.GetString(UrlEncodeToBytes(bytes, offset, count));
+        }
 
 		public static byte[] UrlEncodeToBytes(string str) {
 			return UrlEncodeToBytes(str, Encoding.UTF8);
@@ -783,8 +783,8 @@ namespace Google.GData.Client
 			if (str == null)
 				return null;
 
-			return Encoding.ASCII.GetString(UrlEncodeUnicodeToBytes(str));
-		}
+            return Encoding.ASCII.GetString(UrlEncodeUnicodeToBytes(str));
+        }
 
 		public static byte[] UrlEncodeUnicodeToBytes(string str) {
 			if (str == null)

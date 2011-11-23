@@ -19,23 +19,18 @@
 * 
 */
 using System;
-using System.Collections;
-using System.Text;
 using System.Xml;
 using Google.GData.Client;
 using System.Globalization;
 
 namespace Google.GData.Extensions {
-
     /// <summary>
     /// Extensible enum type used in many places.
     /// compared to the base class, this one
     /// adds a default value which is the text content inside the 
     /// element node.
     /// </summary>
-    public abstract class SimpleElement : ExtensionBase
-    {
-
+    public abstract class SimpleElement : ExtensionBase {
         private string value;
 
         /// <summary>
@@ -45,11 +40,8 @@ namespace Google.GData.Extensions {
         /// <param name="prefix">the xml prefix</param>
         /// <param name="ns">the xml namespace</param>
         protected SimpleElement(string name, string prefix, string ns)
-                    :base(name, prefix,ns)
-        {
+            : base(name, prefix, ns) {
         }
-
-
 
         /// <summary>
         /// constructor
@@ -59,143 +51,125 @@ namespace Google.GData.Extensions {
         /// <param name="ns">the xml namespace</param>
         /// <param name="value">the intial value</param>
         protected SimpleElement(string name, string prefix, string ns, string value)
-                    :base(name, prefix, ns)
-        {
+            : base(name, prefix, ns) {
             this.value = value;
         }
 
-       
-       
         /// <summary>
-        ///  Accessor Method for the value
+        ///  Accessor Method for the value as string
         /// </summary>
-        public virtual string Value
-        {
+        public virtual string Value {
             get { return value; }
-            set { this.value = value;}
+            set { this.value = value; }
         }
 
         /// <summary>
         ///  Accessor Method for the value as integer
         /// </summary>
-        public int IntegerValue
-        {
+        public int IntegerValue {
             get { return Convert.ToInt32(this.Value, CultureInfo.InvariantCulture); }
             set { this.Value = value.ToString(CultureInfo.InvariantCulture); }
         }
 
         /// <summary>
-        ///  Accessor Method for the value as integer
+        ///  Accessor Method for the value as unsigned integer
         /// </summary>
         [CLSCompliant(false)]
-        public uint UnsignedIntegerValue
-        {
+        public uint UnsignedIntegerValue {
             get { return Convert.ToUInt32(this.Value, CultureInfo.InvariantCulture); }
+            set { this.Value = value.ToString(CultureInfo.InvariantCulture); }
+        }
+
+        /// <summary>
+        ///  Accessor Method for the value as unsigned long
+        /// </summary>
+        [CLSCompliant(false)]
+        public ulong UnsignedLongValue {
+            get { return Convert.ToUInt64(this.Value, CultureInfo.InvariantCulture); }
             set { this.Value = value.ToString(CultureInfo.InvariantCulture); }
         }
 
         /// <summary>
         ///  Accessor Method for the value as float
         /// </summary>
-        public double FloatValue
-        {
+        public double FloatValue {
             get { return Convert.ToDouble(this.Value, CultureInfo.InvariantCulture); }
             set { this.Value = value.ToString(CultureInfo.InvariantCulture); }
         }
 
-         /// <summary>
+        /// <summary>
         ///  Accessor Method for the value as boolean
         /// </summary>
-        public virtual bool BooleanValue
-        {
-            get { return Utilities.XSDTrue == this.Value;}
-            set { this.Value = value ? Utilities.XSDTrue : Utilities.XSDFalse;}
+        public virtual bool BooleanValue {
+            get { return Utilities.XSDTrue == this.Value; }
+            set { this.Value = value ? Utilities.XSDTrue : Utilities.XSDFalse; }
         }
 
-   
         #region overloaded for persistence
 
         /// <summary>
         /// debugging helper
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return base.ToString() + " for: " + XmlNameSpace + "- " + XmlName;
+        public override string ToString() {
+            return base.ToString() + " for: " + XmlNameSpace + " - " + XmlName;
         }
 
-
         //////////////////////////////////////////////////////////////////////
-        /// <summary>Parses an xml node to create a Who object.</summary> 
-        /// <param name="node">the xml parses node, can be NULL</param>
+        /// <summary>Parses an xml node to create an instance object.</summary> 
+        /// <param name="node">the parsed xml node, can be NULL</param>
         /// <param name="parser">the xml parser to use if we need to dive deeper</param>
         /// <returns>the created SimpleElement object</returns>
         //////////////////////////////////////////////////////////////////////
-        public override IExtensionElementFactory CreateInstance(XmlNode node, AtomFeedParser parser) 
-        {
+        public override IExtensionElementFactory CreateInstance(XmlNode node, AtomFeedParser parser) {
             Tracing.TraceCall();
 
             SimpleElement e = null;
 
-            if (node != null)
-            {
+            if (node != null) {
                 object localname = node.LocalName;
                 if (!localname.Equals(this.XmlName) ||
-                    !node.NamespaceURI.Equals(this.XmlNameSpace))
-                {
+                    !node.NamespaceURI.Equals(this.XmlNameSpace)) {
                     return null;
                 }
             }
-            
-            // memberwise close is fine here, as everything is identical beside the value
+
+            // memberwise close is fine here, as everything is identical besides the value
             e = this.MemberwiseClone() as SimpleElement;
             e.InitInstance(this);
 
-            if (node != null)
-            {
+            if (node != null) {
                 e.ProcessAttributes(node);
-                if (node.HasChildNodes)
-                {
+                if (node.HasChildNodes) {
                     XmlNode n = node.ChildNodes[0];
-                    if (n.NodeType == XmlNodeType.Text && node.ChildNodes.Count == 1)
-                    {
+                    if (n.NodeType == XmlNodeType.Text && node.ChildNodes.Count == 1) {
                         e.Value = node.InnerText;
-                    }
-                    else
-                    {
+                    } else {
                         e.ProcessChildNodes(node, parser);
                     }
                 }
             }
 
-
             return e;
         }
 
-        
         /// <summary>
-        /// saves out the value, get's called from Save
+        /// saves the value, is called from Save
         /// </summary>
         /// <param name="writer"></param>
-        public override void SaveInnerXml(XmlWriter writer)
-        {
-            if (this.value != null)
-            {
+        public override void SaveInnerXml(XmlWriter writer) {
+            if (this.value != null) {
                 writer.WriteString(this.value);
             }
         }
         #endregion
     }
 
-
-
-
     /// <summary>
-    /// a simple element with one attribute,called value that exposes 
-    /// that value as the value property
+    /// a simple element with one attribute, called value, that exposes 
+    /// the given value as the Value property
     /// </summary>
-    public class SimpleAttribute : SimpleElement
-    {
+    public abstract class SimpleAttribute : SimpleElement {
         /// <summary>
         /// constructor
         /// </summary>
@@ -203,12 +177,9 @@ namespace Google.GData.Extensions {
         /// <param name="prefix">the xml prefix</param>
         /// <param name="ns">the xml namespace</param>
         protected SimpleAttribute(string name, string prefix, string ns)
-                    :base(name, prefix, ns)
-        {
+            : base(name, prefix, ns) {
             this.Attributes.Add(BaseNameTable.XmlValue, null);
         }
-
-
 
         /// <summary>
         /// constructor
@@ -216,10 +187,9 @@ namespace Google.GData.Extensions {
         /// <param name="name">the xml name</param>
         /// <param name="prefix">the xml prefix</param>
         /// <param name="ns">the xml namespace</param>
-        /// <param name="value">the intial value</param>
+        /// <param name="value">the initial value</param>
         protected SimpleAttribute(string name, string prefix, string ns, string value)
-                    :base(name, prefix, ns)
-        {
+            : base(name, prefix, ns) {
             this.Attributes.Add(BaseNameTable.XmlValue, value);
         }
 
@@ -227,25 +197,21 @@ namespace Google.GData.Extensions {
         /// <summary>Accessor for "value" attribute.</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
-        public override string Value
-        {
+        public override string Value {
             get {
                 return this.Attributes[BaseNameTable.XmlValue] as string;
             }
-            set
-            {
+            set {
                 this.Attributes[BaseNameTable.XmlValue] = value;
             }
         }
-        // end of accessor public string Value
     }
 
     /// <summary>
-    /// a simple element with two  attribute,called value and name that exposes 
-    /// that value as the value property
+    /// a simple element with two attributes, called value and name, that exposes 
+    /// the given value as the Value property
     /// </summary>
-    public class SimpleNameValueAttribute : SimpleAttribute
-    {
+    public abstract class SimpleNameValueAttribute : SimpleAttribute {
         /// <summary>
         /// constructor
         /// </summary>
@@ -253,28 +219,21 @@ namespace Google.GData.Extensions {
         /// <param name="prefix">the xml prefix</param>
         /// <param name="ns">the xml namespace</param>
         protected SimpleNameValueAttribute(string localName, string prefix, string ns)
-                    :base(localName, prefix, ns)
-        {
+            : base(localName, prefix, ns) {
             this.Attributes.Add(BaseNameTable.XmlName, null);
         }
-
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>Accessor for "name" attribute.</summary> 
         /// <returns> </returns>
         //////////////////////////////////////////////////////////////////////
-        public string Name
-        {
+        public string Name {
             get {
                 return this.Attributes[BaseNameTable.XmlName] as string;
             }
-            set
-            {
+            set {
                 this.Attributes[BaseNameTable.XmlName] = value;
             }
         }
-        // end of accessor public string Value
     }
-
-
 }  

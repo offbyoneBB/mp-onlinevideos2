@@ -276,19 +276,23 @@ namespace Google.GData.Client
         public Uri Uri
         {
             get {
-                String uriToUse = this.baseUri == null ? String.Empty : this.baseUri.Replace(this.UnusedProtocol, this.DefaultProtocol);
+                String computedBaseUri = GetBaseUri();
+                String uriToUse = computedBaseUri == null ? String.Empty : computedBaseUri.Replace(this.UnusedProtocol, this.DefaultProtocol);
                 return new Uri(CalculateQuery(uriToUse));
                 }
-            
-#if WindowsCE || PocketPC
-#else
             set 
                 {
                 ParseUri(value);
                 }
-#endif
         }
         /////////////////////////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Returns the base Uri for the feed.
+        /// </summary>
+        protected virtual string GetBaseUri() {
+            return this.baseUri;
+        }
 
 
         //////////////////////////////////////////////////////////////////////
@@ -302,8 +306,6 @@ namespace Google.GData.Client
         }
         // end of accessor public bool CategoryQueriesAsParameter
 
-#if WindowsCE || PocketPC
-#else
         //////////////////////////////////////////////////////////////////////
         /// <summary>Passing in a complete URI, we strip all the
         /// GData query-related things and then treat the rest
@@ -321,7 +323,6 @@ namespace Google.GData.Client
             service = new Service();
         }
         /////////////////////////////////////////////////////////////////////////////
-#endif
 
         /// <summary>
         /// indicates if constructed feed URIs should use http or https
@@ -542,8 +543,6 @@ namespace Google.GData.Client
         }
         /////////////////////////////////////////////////////////////////////////////
 
-#if WindowsCE || PocketPC
-#else
         //////////////////////////////////////////////////////////////////////
         /// <summary>protected void ParseUri</summary> 
         /// <param name="targetUri">takes an incoming Uri string and parses all the properties out of it</param>
@@ -587,9 +586,10 @@ namespace Google.GData.Client
                     }
                 }
 
-                char [] deli = {'?','&'}; 
+                char [] deli = {'?','&'};
 
-                tokens = new TokenCollection(targetUri.Query, deli); 
+                string source = HttpUtility.UrlDecode(targetUri.Query);
+                tokens = new TokenCollection(source, deli); 
                 foreach (String token in tokens )
                 {
                     if (token.Length > 0)
@@ -611,22 +611,22 @@ namespace Google.GData.Client
                                 this.NumberToRetrieve = int.Parse(parameters[1], CultureInfo.InvariantCulture);
                                 break;
                             case "updated-min":
-                                this.StartDate = DateTime.Parse(Utilities.UrlDecodedValue(parameters[1]), CultureInfo.InvariantCulture);
+                                this.StartDate = DateTime.Parse(parameters[1], CultureInfo.InvariantCulture);
                                 break;
                             case "updated-max":
-                                this.EndDate = DateTime.Parse(Utilities.UrlDecodedValue(parameters[1]), CultureInfo.InvariantCulture);
+                                this.EndDate = DateTime.Parse(parameters[1], CultureInfo.InvariantCulture);
                                 break;
                             case "published-min":
-                                this.MinPublication = DateTime.Parse(Utilities.UrlDecodedValue(parameters[1]), CultureInfo.InvariantCulture);
+                                this.MinPublication = DateTime.Parse(parameters[1], CultureInfo.InvariantCulture);
                                 break;
                             case "published-max":
-                                this.MaxPublication = DateTime.Parse(Utilities.UrlDecodedValue(parameters[1]), CultureInfo.InvariantCulture);
+                                this.MaxPublication = DateTime.Parse(parameters[1], CultureInfo.InvariantCulture);
                                 break;
                             case "category":
                                 ParseCategoryQueryString(parameters[1]);
                                 break;
                             case "xoauth_requestor_id":
-                            	this.OAuthRequestorId = Utilities.UrlDecodedValue(parameters[1]);
+                            	this.OAuthRequestorId = parameters[1];
                             	break;
                             default:
                                 break;
@@ -712,7 +712,7 @@ namespace Google.GData.Client
             
         }
         /////////////////////////////////////////////////////////////////////////////
-#endif 
+ 
         //////////////////////////////////////////////////////////////////////
         /// <summary>Takes an incoming URI segment and removes leading/trailing slashes.</summary> 
         /// <param name="part">the URI segment to clean</param>

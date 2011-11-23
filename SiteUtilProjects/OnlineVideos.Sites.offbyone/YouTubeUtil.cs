@@ -596,9 +596,16 @@ namespace OnlineVideos.Sites
             {
                 // do login
                 service.setUserCredentials(login, password);
-                string token = service.QueryClientLoginToken();
-                service.SetAuthenticationToken(token);
-                return true;
+				try
+				{
+					string token = service.QueryClientLoginToken();
+					service.SetAuthenticationToken(token);
+					return true;
+				}
+				catch (Exception ex)
+				{
+					throw new OnlineVideosException(ex.Message);
+				}
             }
             return false;
         }

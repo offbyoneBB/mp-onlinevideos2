@@ -30,8 +30,6 @@ using System.Runtime.InteropServices;
 //////////////////////////////////////////////////////////////////////
 namespace Google.GData.Client
 {
-#if WindowsCE || PocketPC
-#else
     //////////////////////////////////////////////////////////////////////
     /// <summary>TypeConverter, so that AtomHead shows up in the property pages
     /// </summary> 
@@ -60,8 +58,7 @@ namespace Google.GData.Client
         }
         
     }
-    /////////////////////////////////////////////////////////////////////////////
-#endif 
+
     //////////////////////////////////////////////////////////////////////
     /// <summary>enum to describe the different person types
     /// </summary> 
@@ -83,10 +80,7 @@ namespace Google.GData.Client
     /// <summary>generic Person object, used for the feed and for the entry
     /// </summary> 
     //////////////////////////////////////////////////////////////////////
-#if WindowsCE || PocketPC
-#else
     [TypeConverterAttribute(typeof(AtomPersonConverter)), DescriptionAttribute("Expand to see the person object for the feed/entry.")]
-#endif
     public class AtomPerson : AtomBase
     {
         /// <summary>name holds the Name property as a string</summary> 
@@ -125,10 +119,6 @@ namespace Google.GData.Client
             this.name = name; 
         }
         /////////////////////////////////////////////////////////////////////////////
-
-
-
-
 
         //////////////////////////////////////////////////////////////////////
         /// <summary>accessor method public string Name</summary> 

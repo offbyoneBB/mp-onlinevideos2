@@ -21,9 +21,6 @@ using Google.GData.Client;
 using Google.GData.Extensions;
 
 namespace Google.GData.YouTube {
-
- 
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// A user's subscriptions feed contains a list of the channels, 
     /// favorite video lists and search queries to which the user has subscribed.
@@ -42,26 +39,23 @@ namespace Google.GData.YouTube {
     /// If the subscription is to a keyword query, the yt:queryString element will
     /// contain the subscribed-to query term.
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class SubscriptionFeed : YouTubeFeed
-    {
-
+    public class SubscriptionFeed : YouTubeFeed {
         /// <summary>
-        ///  default constructor
+        /// default constructor
         /// </summary>
         /// <param name="uriBase">the base URI of the feedEntry</param>
         /// <param name="iService">the Service to use</param>
-        public SubscriptionFeed(Uri uriBase, IService iService) : base(uriBase, iService)
-        {
+        public SubscriptionFeed(Uri uriBase, IService iService)
+            : base(uriBase, iService) {
         }
 
         /// <summary>
         /// this needs to get implemented by subclasses
         /// </summary>
         /// <returns>AtomEntry</returns>
-        public override AtomEntry CreateFeedEntry()
-        {
+        public override AtomEntry CreateFeedEntry() {
             return new SubscriptionEntry();
         }
     }
 }
+

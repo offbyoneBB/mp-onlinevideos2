@@ -21,81 +21,77 @@ using System.Globalization;
 namespace Google.GData.Extensions.AppControl {
 
     /// <summary>
-    /// MediaGroup container element for the MediaRss namespace
+    /// app:control schema extension
     /// </summary>
-    public class AppControl : SimpleContainer
-    {
+    public class AppControl : SimpleContainer {
         /// <summary>
-        /// default constructor for media:group
+        /// default constructor for app:control
         /// </summary>
-        public AppControl() :
+        public AppControl()
+            : this(BaseNameTable.AppPublishingNamespace(null)) {
+        }
+
+        /// <summary>
+        /// app:control constructor with namespace as parameter
+        /// </summary>
+        public AppControl(string ns) :
             base(BaseNameTable.XmlElementPubControl,
-                 BaseNameTable.gAppPublishingPrefix,
-                 BaseNameTable.AppPublishingNamespace(null))
-        {
+            BaseNameTable.gAppPublishingPrefix,
+            ns) {
             this.ExtensionFactories.Add(new AppDraft());
         }
 
         /// <summary>
-        /// returns the media:credit element
+        /// returns the app:draft element
         /// </summary>
-        public AppDraft Draft
-        {
-            get
-            {
+        public AppDraft Draft {
+            get {
                 return FindExtension(BaseNameTable.XmlElementPubDraft,
-                                     BaseNameTable.AppPublishingNamespace(this)) as AppDraft;
+                    BaseNameTable.AppPublishingNamespace(this)) as AppDraft;
             }
-            set
-            {
+            set {
                 ReplaceExtension(BaseNameTable.XmlElementPubDraft,
-                                BaseNameTable.AppPublishingNamespace(this),
-                                value);
+                    BaseNameTable.AppPublishingNamespace(this),
+                    value);
             }
         }
 
         /// <summary>
         /// need so setup the namespace based on the version information     
         /// </summary>
-        protected override void VersionInfoChanged()
-        {
+        protected override void VersionInfoChanged() {
             base.VersionInfoChanged();
             this.SetXmlNamespace(BaseNameTable.AppPublishingNamespace(this));
         }
-
-   }
+    }
 
     /// <summary>
     /// app:draft schema extension describing that an entry is in draft mode
     /// it's a child of app:control
     /// </summary>
-    public class AppDraft : SimpleElement
-    {
+    public class AppDraft : SimpleElement {
         /// <summary>
-        /// default constructor for media:credit
+        /// default constructor for app:draft
         /// </summary>
         public AppDraft()
-        : base(BaseNameTable.XmlElementPubDraft, 
-               BaseNameTable.gAppPublishingPrefix,
-               BaseNameTable.AppPublishingNamespace(null))
-        {}
+            : base(BaseNameTable.XmlElementPubDraft,
+            BaseNameTable.gAppPublishingPrefix,
+            BaseNameTable.AppPublishingNamespace(null)) { }
 
-         /// <summary>
-        /// default constructor for media:credit
+        /// <summary>
+        /// default constructor for app:draft
         /// </summary>
         public AppDraft(bool isDraft)
-        : base(BaseNameTable.XmlElementPubDraft, 
-               BaseNameTable.gAppPublishingPrefix,
-               BaseNameTable.AppPublishingNamespace(null),
-               isDraft ? "yes" : "no")
-        {}
+            : base(BaseNameTable.XmlElementPubDraft,
+            BaseNameTable.gAppPublishingPrefix,
+            BaseNameTable.AppPublishingNamespace(null),
+            isDraft ? "yes" : "no") { }
 
-          /// <summary>
+        /// <summary>
         ///  Accessor Method for the value as integer
         /// </summary>
-        public override bool BooleanValue
-        {
-            get { return this.Value == "yes" ? true : false; } 
+        public override bool BooleanValue {
+            get { return this.Value == "yes" ? true : false; }
             set { this.Value = value ? "yes" : "no"; }
         }
 
@@ -103,8 +99,7 @@ namespace Google.GData.Extensions.AppControl {
         /// need so setup the namespace based on the version information
         /// changes
         /// </summary>
-        protected override void VersionInfoChanged()
-        {
+        protected override void VersionInfoChanged() {
             base.VersionInfoChanged();
             this.SetXmlNamespace(BaseNameTable.AppPublishingNamespace(this));
         }
@@ -120,30 +115,25 @@ namespace Google.GData.Extensions.AppControl {
     /// The server SHOULD change the value of this element every time an
     /// Entry Resource or an associated Media Resource has been edited
     /// </summary>
-    public class AppEdited : SimpleElement
-    {
+    public class AppEdited : SimpleElement {
         /// <summary>
         /// creates a default app:edited element
         /// </summary>
         public AppEdited()
             : base(BaseNameTable.XmlElementPubEdited,
-               BaseNameTable.gAppPublishingPrefix,
-               BaseNameTable.NSAppPublishingFinal)
-        { }
+            BaseNameTable.gAppPublishingPrefix,
+            BaseNameTable.NSAppPublishingFinal) { }
 
         /// <summary>
         /// creates a default app:edited element with the given datetime value
         /// </summary>
         public AppEdited(DateTime dateValue)
             : base(BaseNameTable.XmlElementPubEdited,
-               BaseNameTable.gAppPublishingPrefix,
-               BaseNameTable.NSAppPublishingFinal)
-
-        {
+            BaseNameTable.gAppPublishingPrefix,
+            BaseNameTable.NSAppPublishingFinal) {
             this.Value = Utilities.LocalDateTimeInUTC(dateValue);
         }
 
-   
         /// <summary>
         /// creates an app:edited element with the string as it's
         /// default value. The string has to conform to RFC4287
@@ -151,29 +141,21 @@ namespace Google.GData.Extensions.AppControl {
         /// <param name="dateInUtc"></param>
         public AppEdited(string dateInUtc)
             : base(BaseNameTable.XmlElementPubEdited,
-               BaseNameTable.gAppPublishingPrefix,
-               BaseNameTable.NSAppPublishingFinal,
-                dateInUtc)
-
-        {
+            BaseNameTable.gAppPublishingPrefix,
+            BaseNameTable.NSAppPublishingFinal,
+            dateInUtc) {
         }
 
         /// <summary>
         ///  Accessor Method for the value as a DateTime
         /// </summary>
-        public DateTime DateValue
-        {
-            get 
-            {
+        public DateTime DateValue {
+            get {
                 return DateTime.Parse(this.Value, CultureInfo.InvariantCulture);
             }
-
-            set 
-            {
-                this.Value = Utilities.LocalDateTimeInUTC(value); 
+            set {
+                this.Value = Utilities.LocalDateTimeInUTC(value);
             }
         }
-
     }
-
 }

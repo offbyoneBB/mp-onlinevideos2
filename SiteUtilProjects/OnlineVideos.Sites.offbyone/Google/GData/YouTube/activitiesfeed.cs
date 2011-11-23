@@ -21,31 +21,24 @@ using Google.GData.Client;
 using Google.GData.Extensions;
 
 namespace Google.GData.YouTube {
-
- 
-    //////////////////////////////////////////////////////////////////////
     /// <summary>
     /// An ActivitiesFeed contains activities for the friends of a particular youtube user
     /// </summary>
-    //////////////////////////////////////////////////////////////////////
-    public class ActivitiesFeed : AbstractFeed
-    {
-
+    public class ActivitiesFeed : AbstractFeed {
         /// <summary>
-        ///  default constructor
+        /// default constructor
         /// </summary>
         /// <param name="uriBase">the base URI of the feedEntry</param>
         /// <param name="iService">the Service to use</param>
-        public ActivitiesFeed(Uri uriBase, IService iService) : base(uriBase, iService)
-        {
+        public ActivitiesFeed(Uri uriBase, IService iService)
+            : base(uriBase, iService) {
         }
 
         /// <summary>
         /// this needs to get implemented by subclasses
         /// </summary>
         /// <returns>AtomEntry</returns>
-        public override AtomEntry CreateFeedEntry()
-        {
+        public override AtomEntry CreateFeedEntry() {
             return new ActivityEntry();
         }
     }
