@@ -1,50 +1,57 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Xml;
-using System.Collections.Generic;
+using System.Web;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
     public class ScrewattackUtil : GenericSiteUtil
     {
-        [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videoUrl. Group names: 'vid', 'pid'.")]
-        protected string urlRegEx;
+		public override String getUrl(VideoInfo video)
+		{
+			string url = getPlaylistUrl(video.VideoUrl);
 
-        Regex regEx_Url;
+			if (string.IsNullOrEmpty(url))
+			{
+				string dataPage = GetWebData(video.VideoUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+				var ytMatch = Regex.Match(dataPage, "<iframe\\s.*?src=\"http://www.youtube.com/embed/(?<url>[^\"?]+)");
+				if (ytMatch.Success)
+				{
+					video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(ytMatch.Groups["url"].Value);
+					if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+					{
+						return video.PlaybackOptions.First().Value;
+					}
+				}
+				return null;
+			}
 
-        public override void Initialize(SiteSettings siteSettings)
-        {
-            base.Initialize(siteSettings);
-            regEx_Url = new Regex(urlRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
-        }
-
-        public override String getUrl(VideoInfo video)
-        {
-            string data = GetWebData(video.VideoUrl);
-
-            if (!string.IsNullOrEmpty(data))
-            {
-                Match m = regEx_Url.Match(data);
-                if (m.Success)
-                {
-                    string url = "http://v.giantrealm.com/sax/" + m.Groups["pid"].Value + "/" + m.Groups["vid"].Value;
-                    XmlDocument xDoc = GetWebData<XmlDocument>(url);
-
-                    XmlElement fileElem = (XmlElement)xDoc.SelectSingleNode("//*[local-name() = 'file']");
-                    XmlElement fileHQElem = (XmlElement)xDoc.SelectSingleNode("//*[local-name() = 'file-hq']");
-
-                    if (fileElem != null || fileHQElem != null)
-                    {
-                        video.PlaybackOptions = new Dictionary<string, string>();
-                        if (fileElem != null) video.PlaybackOptions.Add("SD", fileElem.InnerText.Trim());
-                        if (fileHQElem != null) video.PlaybackOptions.Add("HD", fileHQElem.InnerText.Trim());
-                        return video.PlaybackOptions.First().Value;
-                    }
-                }
-            }
-            return null;
-        }
+			string newUrl = GetRedirectedUrl(url);
+			var queryItems = HttpUtility.ParseQueryString(new Uri(newUrl).Query);
+			string rssUrl = null;
+			if (!string.IsNullOrEmpty(queryItems.Get("config")))
+			{
+				rssUrl = JObject.Parse(queryItems.Get("config"))["playlist"].Value<string>();
+			}
+			else if (!string.IsNullOrEmpty(queryItems.Get("file")))
+			{
+				rssUrl = queryItems.Get("file");
+			}
+			if (!string.IsNullOrEmpty(rssUrl))
+			{
+				string rss = GetWebData(rssUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+				foreach (RssToolkit.Rss.RssItem rssItem in RssToolkit.Rss.RssDocument.Load(rss).Channel.Items)
+				{
+					VideoInfo aVideo = VideoInfo.FromRssItem(rssItem, regEx_FileUrl != null, new Predicate<string>(isPossibleVideo));
+					if (!string.IsNullOrEmpty(aVideo.VideoUrl))
+					{
+						video.PlaybackOptions = aVideo.PlaybackOptions;
+						return aVideo.VideoUrl;
+					}
+				}
+			}
+			return null;
+		}
     }
 }
