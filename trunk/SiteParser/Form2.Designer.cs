@@ -43,6 +43,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.regexRichText = new System.Windows.Forms.RichTextBox();
+            this.checkBoxOnlySelected = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.TextViewTab = new System.Windows.Forms.TabPage();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
@@ -196,6 +197,7 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.checkBoxOnlySelected);
             this.splitContainer2.Panel2.Controls.Add(this.treeView1);
             this.splitContainer2.Panel2.Controls.Add(this.testButton);
             this.splitContainer2.Size = new System.Drawing.Size(329, 424);
@@ -213,6 +215,17 @@
             this.regexRichText.Size = new System.Drawing.Size(321, 75);
             this.regexRichText.TabIndex = 39;
             this.regexRichText.Text = "";
+            this.regexRichText.SelectionChanged += new System.EventHandler(this.regexRichText_SelectionChanged);
+            // 
+            // checkBoxOnlySelected
+            // 
+            this.checkBoxOnlySelected.AutoSize = true;
+            this.checkBoxOnlySelected.Location = new System.Drawing.Point(5, 7);
+            this.checkBoxOnlySelected.Name = "checkBoxOnlySelected";
+            this.checkBoxOnlySelected.Size = new System.Drawing.Size(142, 17);
+            this.checkBoxOnlySelected.TabIndex = 40;
+            this.checkBoxOnlySelected.Text = "OnlySelected (Real-time)";
+            this.checkBoxOnlySelected.UseVisualStyleBackColor = true;
             // 
             // tabControl1
             // 
@@ -311,6 +324,7 @@
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
             this.splitContainer2.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.TextViewTab.ResumeLayout(false);
@@ -341,5 +355,6 @@
         private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.RichTextBox regexRichText;
         private System.Windows.Forms.Button helpButton;
+        private System.Windows.Forms.CheckBox checkBoxOnlySelected;
     }
 }

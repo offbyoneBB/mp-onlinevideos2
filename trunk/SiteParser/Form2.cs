@@ -251,14 +251,20 @@ namespace SiteParser
             regexRichText.Focus();
         }
 
-        private void testButton_Click(object sender, EventArgs e)
+        private void populateTree(string regexText, bool showMessage)
         {
+            if (String.IsNullOrEmpty(regexRichText.SelectedText))
+            {
+                treeView1.Nodes.Clear();
+                return;
+            }
+
             treeView1.BeginUpdate();
             treeView1.Nodes.Clear();
-
             try
             {
-                Regex test = new Regex(regexRichText.Text, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+
+                Regex test = new Regex(regexText, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
                 Match m = test.Match(testData);
                 while (m.Success)
                 {
@@ -273,9 +279,16 @@ namespace SiteParser
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                if (showMessage)
+                    MessageBox.Show(ex.Message);
             }
             treeView1.EndUpdate();
+        }
+
+        private void testButton_Click(object sender, EventArgs e)
+        {
+
+            populateTree(regexRichText.Text, true);
         }
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -369,6 +382,14 @@ namespace SiteParser
         private void helpButton_Click(object sender, EventArgs e)
         {
             Process.Start(@"http://code.google.com/p/mp-onlinevideos2/wiki/CreateRegex");
+        }
+
+        private void regexRichText_SelectionChanged(object sender, EventArgs e)
+        {
+            if (checkBoxOnlySelected.Checked)
+            {
+                populateTree(regexRichText.SelectedText, false);
+            }
         }
 
     }
