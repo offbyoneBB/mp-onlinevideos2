@@ -31,6 +31,12 @@ namespace SiteParser
                 comboBoxResolving.Items.Add(pt);
             playerComboBox.SelectedIndex = 0;
 
+            FillDecodingCombo(categoryUrlDecodingComboBox);
+            FillDecodingCombo(subCategoryUrlDecodingComboBox);
+            FillDecodingCombo(nextPageUrlDecodingComboBox);
+            FillDecodingCombo(videoListUrlDecodingComboBox);
+            FillDecodingCombo(videoUrlDecodingComboBox);
+
             UtilToGui(generic);
 #if !DEBUG
             debugToolStripMenuItem.Visible = false;
@@ -41,26 +47,32 @@ namespace SiteParser
         GenericSiteUtil generic;
         List<RssLink> staticList = new List<RssLink>();
 
+        private void FillDecodingCombo(ComboBox decodingCombo)
+        {
+            foreach (GenericSiteUtil.UrlDecoding ud in Enum.GetValues(typeof(GenericSiteUtil.UrlDecoding)))
+                decodingCombo.Items.Add(ud);
+            decodingCombo.SelectedIndex = 0;
+        }
 
         private void UtilToGui(GenericSiteUtil util)
         {
             nameTextBox.Text = util.Settings.Name;
 
-            BaseUrlTextbox.Text = (string)GetProperty(util, "baseUrl");
+            baseUrlTextbox.Text = (string)GetProperty(util, "baseUrl");
             descriptionTextBox.Text = util.Settings.Description;
             playerComboBox.SelectedIndex = playerComboBox.Items.IndexOf(util.Settings.Player);
             ageCheckBox.Checked = util.Settings.ConfirmAge;
             languageTextBox.Text = util.Settings.Language;
 
-            CategoryRegexTextbox.Text = GetRegex(util, "regEx_dynamicCategories");
-            dynamicCategoryUrlFormatTextBox.Text = (string)GetProperty(util, "dynamicCategoryUrlFormatString");
-            dynamicCategoryUrlDecodingCheckBox.Checked = (bool)GetProperty(util, "dynamicCategoryUrlDecoding");
-            CategoryNextPageRegexTextBox.Text = (string)GetRegex(util, "regEx_dynamicCategoriesNextPage");
+            categoryRegexTextbox.Text = GetRegex(util, "regEx_dynamicCategories");
+            categoryUrlFormatTextBox.Text = (string)GetProperty(util, "dynamicCategoryUrlFormatString");
+            categoryUrlDecodingComboBox.SelectedItem = (GenericSiteUtil.UrlDecoding)GetProperty(util, "dynamicCategoryUrlDecoding");
+            categoryNextPageRegexTextBox.Text = (string)GetRegex(util, "regEx_dynamicCategoriesNextPage");
 
-            SubcategoryRegexTextBox.Text = GetRegex(util, "regEx_dynamicSubCategories");
-            SubcategoryUrlFormatTextBox.Text = (string)GetProperty(util, "dynamicSubCategoryUrlFormatString");
-            dynamicSubCategoryUrlDecodingCheckBox.Checked = (bool)GetProperty(util, "dynamicSubCategoryUrlDecoding");
-            SubcategoriesNextPageRegexTextBox.Text = (string)GetRegex(util, "regEx_dynamicSubCategoriesNextPage");
+            subcategoryRegexTextBox.Text = GetRegex(util, "regEx_dynamicSubCategories");
+            subcategoryUrlFormatTextBox.Text = (string)GetProperty(util, "dynamicSubCategoryUrlFormatString");
+            subCategoryUrlDecodingComboBox.SelectedItem = (GenericSiteUtil.UrlDecoding)GetProperty(util, "dynamicSubCategoryUrlDecoding");
+            subcategoryNextPageRegexTextBox.Text = (string)GetRegex(util, "regEx_dynamicSubCategoriesNextPage");
 
             videoListRegexTextBox.Text = GetRegex(util, "regEx_VideoList");
             videoListRegexFormatTextBox.Text = (string)GetProperty(util, "videoListRegExFormatString");
@@ -69,12 +81,12 @@ namespace SiteParser
 
             nextPageRegExTextBox.Text = GetRegex(util, "regEx_NextPage");
             nextPageRegExUrlFormatStringTextBox.Text = (string)GetProperty(util, "nextPageRegExUrlFormatString");
-            nextPageRegExUrlDecodingCheckBox.Checked = (bool)GetProperty(util, "nextPageRegExUrlDecoding");
+            nextPageUrlDecodingComboBox.SelectedItem = (GenericSiteUtil.UrlDecoding)GetProperty(util, "nextPageRegExUrlDecoding");
 
             videoUrlRegExTextBox.Text = GetRegex(util, "regEx_VideoUrl");
             videoUrlFormatStringTextBox.Text = (string)GetProperty(util, "videoUrlFormatString");
-            videoListUrlDecodingCheckBox.Checked = (bool)GetProperty(util, "videoListUrlDecoding");
-            videoUrlDecodingCheckBox.Checked = (bool)GetProperty(util, "videoUrlDecoding");
+            videoListUrlDecodingComboBox.SelectedItem = (GenericSiteUtil.UrlDecoding)GetProperty(util, "videoListUrlDecoding");
+            videoUrlDecodingComboBox.SelectedItem = (GenericSiteUtil.UrlDecoding)GetProperty(util, "videoUrlDecoding");
 
             playlistUrlRegexTextBox.Text = GetRegex(util, "regEx_PlaylistUrl");
             playlistUrlFormatStringTextBox.Text = (string)GetProperty(util, "playlistUrlFormatString");
@@ -99,21 +111,21 @@ namespace SiteParser
         private void GuiToUtil(GenericSiteUtil util)
         {
             util.Settings.Name = nameTextBox.Text;
-            SetProperty(util, "baseUrl", BaseUrlTextbox.Text);
+            SetProperty(util, "baseUrl", baseUrlTextbox.Text);
             util.Settings.Description = descriptionTextBox.Text;
             util.Settings.Player = (PlayerType)playerComboBox.SelectedItem;
             util.Settings.ConfirmAge = ageCheckBox.Checked;
             util.Settings.Language = languageTextBox.Text;
 
-            SetRegex(util, "regEx_dynamicCategories", "dynamicCategoriesRegEx", CategoryRegexTextbox.Text);
-            SetProperty(util, "dynamicCategoryUrlFormatString", dynamicCategoryUrlFormatTextBox.Text);
-            SetProperty(util, "dynamicCategoryUrlDecoding", dynamicCategoryUrlDecodingCheckBox.Checked);
-            SetRegex(util, "regEx_dynamicCategoriesNextPage", "dynamicCategoriesNextPageRegEx", CategoryNextPageRegexTextBox.Text);
+            SetRegex(util, "regEx_dynamicCategories", "dynamicCategoriesRegEx", categoryRegexTextbox.Text);
+            SetProperty(util, "dynamicCategoryUrlFormatString", categoryUrlFormatTextBox.Text);
+            SetProperty(util, "dynamicCategoryUrlDecoding", categoryUrlDecodingComboBox.SelectedItem);
+            SetRegex(util, "regEx_dynamicCategoriesNextPage", "dynamicCategoriesNextPageRegEx", categoryNextPageRegexTextBox.Text);
 
-            SetRegex(util, "regEx_dynamicSubCategories", "dynamicSubCategoriesRegEx", SubcategoryRegexTextBox.Text);
-            SetProperty(util, "dynamicSubCategoryUrlFormatString", SubcategoryUrlFormatTextBox.Text);
-            SetProperty(util, "dynamicSubCategoryUrlDecoding", dynamicSubCategoryUrlDecodingCheckBox.Checked);
-            SetRegex(util, "regEx_dynamicSubCategoriesNextPage", "dynamicSubCategoriesNextPageRegEx", SubcategoriesNextPageRegexTextBox.Text);
+            SetRegex(util, "regEx_dynamicSubCategories", "dynamicSubCategoriesRegEx", subcategoryRegexTextBox.Text);
+            SetProperty(util, "dynamicSubCategoryUrlFormatString", subcategoryUrlFormatTextBox.Text);
+            SetProperty(util, "dynamicSubCategoryUrlDecoding", subCategoryUrlDecodingComboBox.SelectedItem);
+            SetRegex(util, "regEx_dynamicSubCategoriesNextPage", "dynamicSubCategoriesNextPageRegEx", subcategoryNextPageRegexTextBox.Text);
 
             SetRegex(util, "regEx_VideoList", "videoListRegEx", videoListRegexTextBox.Text);
             SetProperty(util, "videoListRegExFormatString", videoListRegexFormatTextBox.Text);
@@ -122,12 +134,12 @@ namespace SiteParser
 
             SetRegex(util, "regEx_NextPage", "nextPageRegEx", nextPageRegExTextBox.Text);
             SetProperty(util, "nextPageRegExUrlFormatString", nextPageRegExUrlFormatStringTextBox.Text);
-            SetProperty(util, "nextPageRegExUrlDecoding", nextPageRegExUrlDecodingCheckBox.Checked);
+            SetProperty(util, "nextPageRegExUrlDecoding", nextPageUrlDecodingComboBox.SelectedItem);
 
             SetRegex(util, "regEx_VideoUrl", "videoUrlRegEx", videoUrlRegExTextBox.Text);
             SetProperty(util, "videoUrlFormatString", videoUrlFormatStringTextBox.Text);
-            SetProperty(util, "videoListUrlDecoding", videoListUrlDecodingCheckBox.Checked);
-            SetProperty(util, "videoUrlDecoding", videoUrlDecodingCheckBox.Checked);
+            SetProperty(util, "videoListUrlDecoding", videoListUrlDecodingComboBox.SelectedItem);
+            SetProperty(util, "videoUrlDecoding", videoUrlDecodingComboBox.SelectedItem);
 
             SetRegex(util, "regEx_PlaylistUrl", "playlistUrlRegEx", playlistUrlRegexTextBox.Text);
             SetProperty(util, "playlistUrlFormatString", playlistUrlFormatStringTextBox.Text);
@@ -176,6 +188,7 @@ namespace SiteParser
             categoryInfoListView.Items.Add("VideoUrl").SubItems.Add(video.VideoUrl);
             categoryInfoListView.Items.Add("ImageUrl").SubItems.Add(video.ImageUrl);
             categoryInfoListView.Items.Add("Descr").SubItems.Add(video.Description);
+            categoryInfoListView.Items.Add("AirDate").SubItems.Add(video.Airdate);
             categoryInfoListView.Items.Add("Length").SubItems.Add(video.Length);
         }
 
@@ -190,7 +203,7 @@ namespace SiteParser
         private void CreateCategoryRegexButton_Click(object sender, EventArgs e)
         {
             Form2 f2 = new Form2();
-            CategoryRegexTextbox.Text = f2.Execute(CategoryRegexTextbox.Text, BaseUrlTextbox.Text,
+            categoryRegexTextbox.Text = f2.Execute(categoryRegexTextbox.Text, baseUrlTextbox.Text,
                 new string[] { "url", "title", "thumb", "description" });
         }
 
@@ -219,7 +232,7 @@ namespace SiteParser
             if (parentCat != null)
             {
                 Form2 f2 = new Form2();
-                CategoryNextPageRegexTextBox.Text = f2.Execute(CategoryNextPageRegexTextBox.Text, ((RssLink)parentCat).Url,
+                categoryNextPageRegexTextBox.Text = f2.Execute(categoryNextPageRegexTextBox.Text, ((RssLink)parentCat).Url,
                     new string[] { "url" });
             }
             else
@@ -248,7 +261,7 @@ namespace SiteParser
             if (parentCat != null)
             {
                 Form2 f2 = new Form2();
-                SubcategoryRegexTextBox.Text = f2.Execute(SubcategoryRegexTextBox.Text, ((RssLink)parentCat).Url,
+                subcategoryRegexTextBox.Text = f2.Execute(subcategoryRegexTextBox.Text, ((RssLink)parentCat).Url,
                     new string[] { "url", "title", "thumb", "description" });
             }
             else
@@ -288,7 +301,7 @@ namespace SiteParser
             if (parentCat != null)
             {
                 Form2 f2 = new Form2();
-                SubcategoriesNextPageRegexTextBox.Text = f2.Execute(SubcategoriesNextPageRegexTextBox.Text, ((RssLink)parentCat).Url,
+                subcategoryNextPageRegexTextBox.Text = f2.Execute(subcategoryNextPageRegexTextBox.Text, ((RssLink)parentCat).Url,
                     new string[] { "url" });
             }
             else
@@ -617,14 +630,14 @@ namespace SiteParser
         private void categoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form2 f2 = new Form2();
-            f2.Execute(String.Empty, BaseUrlTextbox.Text,
+            f2.Execute(String.Empty, baseUrlTextbox.Text,
                 new string[] { "url", "title", "thumb", "description" });
         }
 
         private void videoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form2 f2 = new Form2();
-            f2.Execute(String.Empty, BaseUrlTextbox.Text,
+            f2.Execute(String.Empty, baseUrlTextbox.Text,
                 new string[] { "Title", "VideoUrl", "ImageUrl", "Description", "Duration", "Airdate" });
         }
         #endregion
