@@ -565,24 +565,35 @@
       </Configuration>
     </Site>
     <Site name="screwattack.com" util="Screwattack" agecheck="false" enabled="true" lang="en" player="Internal">
-      <Description>Shows from screwattack.com.</Description>
+      <Description>ScrewAttack.com has been rocking the internet's face since 2006 with it's original content and unique spin on everything gaming.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://screwattack.com]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="moreStuffLeft">\s*<a\shref="(?<VideoUrl>[^"]+)"\starget="_self">\s*<img\s*src="(?<ImageUrl>[^"]+)"\s*width="[^"]+"\salt="[^"]+"\s/>\s*</a>\s*</div>\s*<div\sclass="moreStuffRight">\s*<h2>\s*<a\shref="[^"]+"\starget="_self">\s*<[^>]+>\s*(?<Title>[^\n]+)\s*</a>\s*</h2>\s*<small>By\s<a\shref="[^"]+">[^<]+</a>\s*</small>\s*<p>(?<Description>[^<]*)</p>\s*</div>]]></item>
-        <item key="urlRegEx"><![CDATA[<embed\sname="[^"]+"\sFlashVars=".+&vi=(?<vid>[^&]*)&pid=(?<pid>[^&]*)&]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\s+class="views-row[^"]+">
+.*?<div\s+class="image">.*?<img\s+src="(?<ImageUrl>[^"]+)"[^/]+/>
+(?:(?!<h2).)+<h2\s+class="title">\s*<a\s+href="(?<VideoUrl>[^"]+)">(?<Title>[^<]*)</a>\s*</h2>\s*
+<div\s+class="subtitle">(?:(?!Posted).)+Posted(?<Airdate>(?:(?!</div>).)+)</div>\s*
+<div\s+class="info">(?<Description>(?:(?!</div>).)+)</div>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li\sclass="pager-next">\s*<a\s+href="(?<url>[^"]+)"\s+title="Go\sto\snext\spage"[^>]*>next\s›</a></li>]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[<param\s+name="movie"\s+value="(?<url>[^"]+)"]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Hard News">http://screwattack.com/shows/Hard-News</Category>
-        <Category xsi:type="RssLink" name="Metal Gear Ben">http://screwattack.com/shows/Metal-Gear-Ben</Category>
-        <Category xsi:type="RssLink" name="Reviews">http://screwattack.com/shows/VGR</Category>
-        <Category xsi:type="RssLink" name="Joses Puntos">http://screwattack.com/shows/Joses-Puntos</Category>
-        <Category xsi:type="RssLink" name="Clip of the Week">http://screwattack.com/shows/Clip-of-the-Week</Category>
-        <Category xsi:type="RssLink" name="Digital Forecast">http://screwattack.com/shows/The-Digital-Forecast</Category>
-        <Category xsi:type="RssLink" name="Out of the Box">http://screwattack.com/shows/Out-of-the-Box</Category>
-        <Category xsi:type="RssLink" name="Random Awesomeness">http://screwattack.com/shows/Random-Awesomeness</Category>
-        <Category xsi:type="RssLink" name="The Armory">http://screwattack.com/shows/The-Armory</Category>
-        <Category xsi:type="RssLink" name="Video Game Vault">http://screwattack.com/shows/Video-Game-Vault</Category>
-        <Category xsi:type="RssLink" name="Top 10">http://screwattack.com/shows/ScrewAttack-Top-10s</Category>
+        <Category xsi:type="RssLink" name="Clip of the Week">http://www.screwattack.com/shows/originals/clip-of-the-week</Category>
+        <Category xsi:type="RssLink" name="Digital Forecast">http://www.screwattack.com/shows/originals/digital-forecast</Category>
+        <Category xsi:type="RssLink" name="Out of the Box">http://www.screwattack.com/shows/originals/out-of-the-box</Category>
+        <Category xsi:type="RssLink" name="Reboot or Retro">http://www.screwattack.com/shows/originals/reboot-or-retro</Category>
+        <Category xsi:type="RssLink" name="SideScrollers">http://www.screwattack.com/shows/originals/sidescrollers</Category>
+        <Category xsi:type="RssLink" name="Video Game Vault">http://www.screwattack.com/shows/originals/video-game-vault</Category>
+        <Category xsi:type="RssLink" name="DEATH BATTLE!">http://www.screwattack.com/shows/originals/death-battle</Category>
+        <Category xsi:type="RssLink" name="Hard News">http://www.screwattack.com/shows/originals/hard-news</Category>
+        <Category xsi:type="RssLink" name="Random Awesomeness">http://www.screwattack.com/shows/originals/random-awesomeness</Category>
+        <Category xsi:type="RssLink" name="Top 10">http://www.screwattack.com/shows/originals/screwattack-top-10s</Category>
+        <Category xsi:type="RssLink" name="Angry Video Game Nerd">http://www.screwattack.com/shows/partners/angry-video-game-nerd</Category>
+        <Category xsi:type="RssLink" name="Talking Classics">http://www.screwattack.com/shows/partners/talking-classics</Category>
+        <Category xsi:type="RssLink" name="Free to Play Weekly">http://www.screwattack.com/shows/partners/free-play-weekly</Category>
+        <Category xsi:type="RssLink" name="brentalfloss">http://www.screwattack.com/shows/originals/brentalfloss</Category>
+        <Category xsi:type="RssLink" name="The Game OverThinker">http://www.screwattack.com/shows/partners/game-overthinker</Category>
+        <Category xsi:type="RssLink" name="Game Reviews">http://www.screwattack.com/reviews</Category>
+        <Category xsi:type="RssLink" name="Game Trailers">http://www.screwattack.com/trailers</Category>
       </Categories>
     </Site>
     <Site name="Sesamestreet" util="SesameStreet" agecheck="false" enabled="true" lang="en">
