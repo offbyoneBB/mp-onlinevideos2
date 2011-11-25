@@ -18,6 +18,10 @@ namespace OnlineVideos.Sites
         protected string tv4DynamicCategoriesRegEx;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the videos from html. Group names: 'url', 'title', 'thumb', 'date'.")]
         protected string tv4VideolistRegEx;
+		[Category("OnlineVideosConfiguration"), Description("Url of the swf file that used for playing the videos and rtmp verification")]
+		protected string swfUrl = "http://flvplayer.viastream.viasat.tv/flvplayer/play/swf/player.swf";
+
+		protected string redirectedSwfUrl;
 
         protected string tv4VideolistDividingRegEx = @"<div\sclass=""module-center-wrapper"">.*?<h2>.*?{0}.*?</h2>(?<data>.*?)</section>";
         protected string tv4VideolistNextPageRegEx = @"<a\s+href=""(?<url>/search\?categoryids=[^""]+)"".*?><span>Visa\sfler</span></a>";
@@ -39,6 +43,8 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
+			redirectedSwfUrl = GetRedirectedUrl(swfUrl);
+
             Settings.Categories.Clear();
 
             foreach (int i in Enum.GetValues(typeof(ViasatChannel)))
@@ -311,10 +317,6 @@ namespace OnlineVideos.Sites
 						if (xDoc.SelectSingleNode("GeoLock/Success").InnerText != "false")
 						{
 							playstr = xDoc.SelectSingleNode("GeoLock/Url").InnerText;
-							if (playstr.ToLower().StartsWith("rtmp"))
-							{
-								playstr = new MPUrlSourceFilter.RtmpUrl(playstr) { SwfUrl = "http://flvplayer.viastream.viasat.tv/flvplayer/play/swf/player100920.swf", SwfVerify = true }.ToString();
-							}
 						}
 						else
 						{
@@ -322,6 +324,19 @@ namespace OnlineVideos.Sites
 						}
                     }
                 }
+
+				if (playstr.ToLower().StartsWith("rtmp"))
+				{
+					int mp4Index = playstr.ToLower().IndexOf("mp4:flash");
+					if (mp4Index > 0)
+					{
+						playstr = new MPUrlSourceFilter.RtmpUrl(playstr.Substring(0, mp4Index)) { PlayPath = playstr.Substring(mp4Index), SwfUrl = redirectedSwfUrl, SwfVerify = true }.ToString();
+					}
+					else
+					{
+						playstr = new MPUrlSourceFilter.RtmpUrl(playstr) { SwfUrl = redirectedSwfUrl, SwfVerify = true }.ToString();
+					}
+				}
 
                 return playstr;
             }
