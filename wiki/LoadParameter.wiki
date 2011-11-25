@@ -8,10 +8,11 @@ Starting with MediaPortal 1.2 a designer can add a button in the skinfile that c
 
 This is the full parameter specification (each term is optional, order is irrelevant):
 
-site:{{{<sitename>}}}|category:{{{<categoryname>}}}|search:{{{<searchstring>}}}|VKonfail:{{{<true,false>}}}|return:{{{<Locked,Root>}}}
+group:{{{<groupname>}}}|site:{{{<sitename>}}}|category:{{{<categoryname>}}}|search:{{{<searchstring>}}}|VKonfail:{{{<true,false>}}}|return:{{{<Locked,Root>}}}
 
 Settings theses terms (seperated by |) will allow going directly to:
 
+   # a Group of sites
    # a Site (not found = stay at 'All Sites view')
    # a Category of a Site (not found = stay at 'All Categories View')
    # the searchresults of a site (nothing found =
