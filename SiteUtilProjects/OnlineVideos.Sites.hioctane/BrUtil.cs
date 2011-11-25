@@ -2,123 +2,64 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Windows.Forms;
-using Ionic.Zip;
-using System.Xml;
 using System.Text.RegularExpressions;
+using System.Xml;
+using Ionic.Zip;
 
 namespace OnlineVideos.Sites
 {
     public class BrUtil : SiteUtilBase
     {
-        string baseUrl = "http://rd.gl-systemhaus.de/br/b7/archive/archive.xml.zip.adler32";
-        string outputString = "";
+		XmlDocument masterXmlDoc;
 
-        public override int DiscoverDynamicCategories()
-        {
-            WebClient Client = new WebClient();
-            byte[] downloadBuffer = Client.DownloadData (baseUrl);
-            ZipFile zipFile = ZipFile.Read(downloadBuffer);
-            foreach (ZipEntry zipEntry in zipFile)
-            {
-                byte[] output = new byte[0];
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    zipEntry.Extract(ms);
-                    output = ms.ToArray();
-                }
-                outputString = new System.Text.UTF8Encoding().GetString(output);
+		public override int DiscoverDynamicCategories()
+		{
+			Settings.Categories.Clear();
 
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(outputString);
-                XmlElement root = doc.DocumentElement;
-                XmlNodeList list;
-                list = root.SelectNodes("../archiv/sendungen/sendung");
-                foreach (XmlNode sendung in list)
-                {
-                    RssLink cat = new RssLink();
-                    foreach(XmlAttribute attribute in sendung.Attributes)
-                    {
-                        switch (attribute.Name)
-                        {
-                            case "name":
-                                cat.Name = attribute.Value;
-                                break;
-                            case "bild":
-                                cat.Thumb = attribute.Value;
-                                break;
-                            case "id":
-                                cat.Url = attribute.Value;
-                                break;
-                        }
-                    }
-                    if (!String.IsNullOrEmpty(cat.Name) && !String.IsNullOrEmpty(cat.Url))
-                    {
-                        XmlNodeList list2;
-                        list2 = root.SelectNodes("../archiv/ausstrahlungen/ausstrahlung");
-                        int i = 0;
-                        foreach (XmlNode ausstrahlung in list2)
-                        {
-                            if (cat.Url.CompareTo(ausstrahlung.SelectSingleNode("sendung").InnerText) == 0)
-                                if (ausstrahlung.SelectSingleNode("videos").ChildNodes.Count > 0)
-                                   i++;
-                        }
-                        if (i > 0)
-                        {
-                            cat.EstimatedVideoCount = (uint)i;
-                            Settings.Categories.Add(cat);
-                        }
-                    }
-                }
-                Settings.DynamicCategoriesDiscovered = true;
-                return Settings.Categories.Count;
-            }
-            return 0;
-        }
+			string js = GetWebData("http://mediathek-video.br.de/js/config.js");
+			string baseUrl = Regex.Match(js, @"http://.*/archive/archive\.xml\.zip\.adler32").Value;
+			WebClient Client = new WebClient();
+			byte[] downloadBuffer = Client.DownloadData(baseUrl);
+			ZipFile zipFile = ZipFile.Read(downloadBuffer);
+			ZipEntry zipEntry = zipFile[0];
+			masterXmlDoc = new XmlDocument();
+			using (MemoryStream ms = new MemoryStream())
+			{
+				zipEntry.Extract(ms);
+				ms.Position = 0;
+				masterXmlDoc.Load(ms);
+			}
+			foreach (XmlElement sendung in masterXmlDoc.DocumentElement.SelectNodes("../archiv/sendungen/sendung"))
+			{
+				RssLink cat = new RssLink() { Name = sendung.GetAttribute("name"), Thumb = sendung.GetAttribute("bild"), Url = sendung.GetAttribute("id") };
+				if (!String.IsNullOrEmpty(cat.Name) && !String.IsNullOrEmpty(cat.Url))
+				{
+					cat.EstimatedVideoCount = (uint)masterXmlDoc.DocumentElement.SelectNodes("../archiv/ausstrahlungen/ausstrahlung[sendung='" + cat.Url + "' and count(videos/video)>0]").Count;
+					if (cat.EstimatedVideoCount > 0)
+					{
+						Settings.Categories.Add(cat);
+					}
+				}
+			}
 
-        public override String getUrl(VideoInfo video)
-        {
-            if (video.PlaybackOptions == null)
-            {
-                video.PlaybackOptions = new Dictionary<string, string>();
-                Match m = Regex.Match(video.VideoUrl, @"<video\sapplication=""(?<app>[^""]+)""\s*host=""(?<host>[^""]+)""\s*groesse=""(?<title>[^""]+)""\s*stream=""(?<stream>[^""]+)""");
-                while (m.Success)
-                {
-
-                    string rtmpurl = "rtmp://" + m.Groups["host"].Value + ":1935/" + m.Groups["app"].Value + "/";
-                    if(m.Groups["stream"].Value.Contains("mp4"))
-                        rtmpurl = rtmpurl + "mp4:" + m.Groups["stream"].Value;
-                    else
-                        rtmpurl = rtmpurl + m.Groups["stream"].Value;
-                    video.PlaybackOptions.Add(m.Groups["title"].Value, rtmpurl);
-                    m = m.NextMatch();
-                }
-            }
-            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
-            {
-                var enumer = video.PlaybackOptions.GetEnumerator();
-                enumer.MoveNext();
-                return enumer.Current.Value;
-            } 
-            return null;
-        }
+			Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
+			return Settings.Categories.Count;
+		}
 
         public override List<VideoInfo> getVideoList(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
-
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(outputString);
-            XmlElement root = doc.DocumentElement;
-            XmlNodeList list;
-            list = root.SelectNodes("../archiv/ausstrahlungen/ausstrahlung");
-            foreach (XmlNode ausstrahlung in list)
+            foreach (XmlNode ausstrahlung in masterXmlDoc.DocumentElement.SelectNodes("../archiv/ausstrahlungen/ausstrahlung[sendung='" + ((RssLink)category).Url + "' and count(videos/video)>0]"))
             {
                 if ((category as RssLink).Url.CompareTo(ausstrahlung.SelectSingleNode("sendung").InnerText) == 0)
                 {
                     VideoInfo video = new VideoInfo();
+					DateTime airdate = DateTime.MinValue;
+					if (ausstrahlung.SelectSingleNode("beginnPlan") != null) if (DateTime.TryParse(ausstrahlung.SelectSingleNode("beginnPlan").InnerText, out airdate)) video.Airdate = airdate.ToString("g", OnlineVideoSettings.Instance.Locale);
                     video.Title = ausstrahlung.SelectSingleNode("titel").InnerText;
-                    video.Title = video.Title + " - " + ausstrahlung.SelectSingleNode("nebentitel").InnerText;
+					string titleAppend = ausstrahlung.SelectSingleNode("nebentitel").InnerText;
+					if (string.IsNullOrEmpty(titleAppend) && airdate != DateTime.MinValue) titleAppend = airdate.ToShortDateString();
+					if (!string.IsNullOrEmpty(titleAppend)) video.Title += " - " + titleAppend;
                     if(ausstrahlung.SelectSingleNode("bild") != null)video.ImageUrl = ausstrahlung.SelectSingleNode("bild").InnerText;
                     video.Description = ausstrahlung.SelectSingleNode("beschreibung").InnerText;
                     if (string.IsNullOrEmpty(video.Description)) video.Description = ausstrahlung.SelectSingleNode("kurzbeschreibung").InnerText;
@@ -129,5 +70,32 @@ namespace OnlineVideos.Sites
             }
             return videos;
         }
+
+		public override String getUrl(VideoInfo video)
+		{
+			if (video.PlaybackOptions == null)
+			{
+				video.PlaybackOptions = new Dictionary<string, string>();
+				Match m = Regex.Match(video.VideoUrl, @"<video\sapplication=""(?<app>[^""]+)""\s*host=""(?<host>[^""]+)""\s*groesse=""(?<title>[^""]+)""\s*stream=""(?<stream>[^""]+)""");
+				while (m.Success)
+				{
+					string rtmpurl = new MPUrlSourceFilter.RtmpUrl("rtmp://" + m.Groups["host"].Value + ":1935/" + m.Groups["app"].Value)
+					{
+						App = m.Groups["app"].Value,
+						PlayPath = m.Groups["stream"].Value
+					}.ToString();
+					video.PlaybackOptions.Add(m.Groups["title"].Value, rtmpurl);
+					m = m.NextMatch();
+				}
+			}
+			if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+			{
+				var enumer = video.PlaybackOptions.GetEnumerator();
+				enumer.MoveNext();
+				return enumer.Current.Value;
+			}
+			return null;
+		}
+
     }
 }
