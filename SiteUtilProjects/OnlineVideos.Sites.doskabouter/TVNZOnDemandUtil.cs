@@ -49,6 +49,7 @@ namespace OnlineVideos.Sites
                 if (node.Attributes["videos"] != null)
                     show.Description += ", videos: " + node.Attributes["videos"].Value;
                 show.Url = baseUrl + node.Attributes["href"].Value;
+                //http://tvnz.co.nz/content/<contentid>/ps3_xml_skin.xml
                 show.ParentCategory = cat;
                 cat.SubCategories.Add(show);
             }
@@ -97,7 +98,7 @@ namespace OnlineVideos.Sites
                     if (!String.IsNullOrEmpty(subTitle))
                         video.Title += ": " + subTitle;
                     video.Description = episode.InnerText;
-                    video.VideoUrl = baseUrl + episode.Attributes["href"].Value.Split('?')[0];
+                    video.VideoUrl = String.Format(baseUrl + @"/content/{0}/ta_ent_smil_skin.smil?platform=PS3", episode.Attributes["href"].Value);
                     video.ImageUrl = episode.Attributes["src"].Value;
                     string[] epinfo = episode.Attributes["episode"].Value.Split('|');
                     if (epinfo.Length == 1)
@@ -109,7 +110,7 @@ namespace OnlineVideos.Sites
                         if (epinfo.Length > 2)
                             video.Length = epinfo[2].Trim();
                         if (epinfo.Length > 1)
-							video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + epinfo[1].Trim();
+                            video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + epinfo[1].Trim();
                     }
                     res.Add(video);
                 }
