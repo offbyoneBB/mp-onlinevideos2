@@ -84,6 +84,7 @@ The State is one of the three: {{{Broken, Reported, Working}}}. In the default s
   * `#Play.Current.Plot` - description
   * `#Play.Current.Thumb` - thumbnail as in facade
   * `#Play.Current.Year` - duration and airdate if available
+  * `#Play.Current.OnlineVideos.SiteName` - name of the site that video originates from
   * `#Play.Current.OnlineVideos.SiteIcon` - path to the icon for the site that video originates from
   * `#OnlineVideos.IsBuffering` - "true" while a video is beeing buffered before playback will start
   * `#OnlineVideos.buffered` - float (2 digits + decimal point) showing percentage buffered (localized label property: `#OnlineVideos.Translation.Buffered.Label`) 
