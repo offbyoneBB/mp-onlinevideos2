@@ -2798,6 +2798,7 @@ namespace OnlineVideos.MediaPortal1
         {
             // first reset our own properties
             GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", string.Empty);
+			GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteName", string.Empty);
 
             // start a thread that will set the properties in 2 seconds (otherwise MediaPortal core logic would overwrite them)
             if (playItem == null || playItem.Video == null) return;
@@ -2827,7 +2828,11 @@ namespace OnlineVideos.MediaPortal1
 					if (!string.IsNullOrEmpty(video.Airdate)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Airdate);
 					else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", VideoInfo.GetDuration(video.Length));
 
-					if (site != null) GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", GetImageForSite(site.Settings.Name, site.Settings.UtilName, "Icon"));
+					if (site != null)
+					{
+						GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteIcon", GetImageForSite(site.Settings.Name, site.Settings.UtilName, "Icon"));
+						GUIPropertyManager.SetProperty("#Play.Current.OnlineVideos.SiteName", site.Settings.Name);
+					}
 				}
 				catch (Exception ex)
 				{
