@@ -204,7 +204,7 @@ namespace OnlineVideos
                 video.ImageUrl = rssItem.Enclosure.Url;
             }
 
-            if (rssItem.Blip_Runtime != 0) video.Length = TimeSpan.FromSeconds(rssItem.Blip_Runtime).ToString();
+			if (!string.IsNullOrEmpty(rssItem.Blip_Runtime)) video.Length = GetDuration(rssItem.Blip_Runtime);
             if (string.IsNullOrEmpty(video.Length)) video.Length = GetDuration(rssItem.iT_Duration);
 
             // if we are forced to use the Link of the RssItem, just set the video link
