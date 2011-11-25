@@ -2707,7 +2707,7 @@ public class Script
               <Params>
                 <Items>
                   <SectionParam Name="Extension package">
-                    <Value>LAV\LAVFilters0.39.0.0.mpe1</Value>
+                    <Value>LAV\LAVFilters0.40.0.0.mpe1</Value>
                     <ValueType>File</ValueType>
                     <Description>Location of the extension package</Description>
                   </SectionParam>
@@ -2798,11 +2798,11 @@ public class Script
         </CompatibleVersion>
         <SubSystemsUsed>
           <Items>
-            <SubSystemItem Name="MP.Players.Video" />
             <SubSystemItem Name="MP.Input" />
+            <SubSystemItem Name="MP.SkinEngine" />
+            <SubSystemItem Name="MP.Players.Video" />
             <SubSystemItem Name="MP.Externals.SQLite" />
             <SubSystemItem Name="MP.Config" />
-            <SubSystemItem Name="MP.SkinEngine" />
           </Items>
         </SubSystemsUsed>
       </PluginDependencyItem>
@@ -2826,7 +2826,8 @@ public class Script
 added: source filter that supports HTTP ranges and RTMP using rtmplib
 added: updated siteutil dlls will be reloaded while MediaPortal is running
 added: latest online videos can be shown e.g. on Basic Home screen
-added: downloads can be enqueued or concurrent</VersionDescription>
+added: downloads can be enqueued or concurrent
+added: open a group of sites directly</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.0.0.0.mpe1</OnlineLocation>
     <ReleaseDate>2011-11-27T11:00:00</ReleaseDate>
@@ -5109,8 +5110,8 @@ added: downloads can be enqueued or concurrent</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>LAV\LAVFilters0.39.0.0.mpe1</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e07a88d8-8b87-4f07-b223-073bb15c4d71}-LAVFilters0.39.0.0.mpe1</ZipFileName>
+        <LocalFileName>LAV\LAVFilters0.40.0.0.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{48ff0933-0e54-434b-b695-626ad832fd14}-LAVFilters0.40.0.0.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>

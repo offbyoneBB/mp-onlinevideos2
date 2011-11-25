@@ -31,6 +31,6 @@ echo Building OnlineVideos...
 "%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE% "..\OnlineVideos.sln" >> %LOG%
 
 echo Building MPEI
-copy "..\MPEI\OnlineVideos.xmp2" "..\MPEI\OnlineVideos_COPY.xmp2"
-"%progpath%\Team MediaPortal\MediaPortal\MpeMaker.exe" "..\MPEI\OnlineVideos_COPY.xmp2" /B >> %LOG%
-del "..\MPEI\OnlineVideos_COPY.xmp2"
+copy "..\MPEI\OnlineVideosMP12.xmp2" "..\MPEI\OnlineVideosMP12_COPY.xmp2"
+"%progpath%\Team MediaPortal\MediaPortal\MpeMaker.exe" "..\MPEI\OnlineVideosMP12_COPY.xmp2" /B >> %LOG%
+del "..\MPEI\OnlineVideosMP12_COPY.xmp2"
