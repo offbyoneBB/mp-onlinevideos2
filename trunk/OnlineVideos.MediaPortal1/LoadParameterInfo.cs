@@ -12,6 +12,7 @@ namespace OnlineVideos.MediaPortal1
 
         protected bool _ShowVKonFailedSearch = true;
 
+		public string Group { get; protected set; }
         public string Site { get; protected set; }
         public string Category { get; protected set; }
         public string Search { get; protected set; }
@@ -23,11 +24,13 @@ namespace OnlineVideos.MediaPortal1
 
         public LoadParameterInfo(string loadParam)
         {
+			// group:<groupname>
             // site:<sitename>|category:<categoryname>|search:<searchstring>|VKonfail:<true,false>|return:<Locked,Root>
             Return = ReturnMode.Root;
 
             if (string.IsNullOrEmpty(loadParam)) return;
 
+			Group = Regex.Match(loadParam, "group:([^|]*)").Groups[1].Value;
             Site = Regex.Match(loadParam, "site:([^|]*)").Groups[1].Value;
             Category = Regex.Match(loadParam, "category:([^|]*)").Groups[1].Value;
             Search = Regex.Match(loadParam, "search:([^|]*)").Groups[1].Value;
@@ -45,6 +48,11 @@ namespace OnlineVideos.MediaPortal1
         public static string FromGuiProperties()
         {
             List<string> paramsFromGuiProps = new List<string>();
+			if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Group")))
+			{
+				paramsFromGuiProps.Add("group:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Group"));
+				GUIPropertyManager.SetProperty("#OnlineVideos.startparams.Group", string.Empty);
+			}
             if (!string.IsNullOrEmpty(GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Site")))
             {
                 paramsFromGuiProps.Add("site:" + GUIPropertyManager.GetProperty("#OnlineVideos.startparams.Site"));

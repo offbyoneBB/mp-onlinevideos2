@@ -1653,7 +1653,13 @@ namespace OnlineVideos.MediaPortal1
             if (CurrentState == State.sites)
             {
                 if (GroupsEnabled)
-                    DisplayGroups();
+				{
+					// if plugin was called with loadParameter set to the current group and return locked -> go to previous window 
+					if (loadParamInfo != null && loadParamInfo.Return == LoadParameterInfo.ReturnMode.Locked && loadParamInfo.Group == selectedSitesGroup.Label)
+						OnPreviousWindow();
+					else
+						DisplayGroups();
+				}
                 else
                     OnPreviousWindow();
             }

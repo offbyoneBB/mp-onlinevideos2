@@ -208,6 +208,16 @@ namespace OnlineVideos.MediaPortal1
 					loadParamInfo = new LoadParameterInfo(loadParam);
 
 					// set all state variables to reflect the state we were called with
+					if (!string.IsNullOrEmpty(loadParamInfo.Group))
+					{
+						SitesGroup group = PluginConfiguration.Instance.SitesGroups.FirstOrDefault(sg => sg.Name == loadParamInfo.Group);
+						if (group == null) group = PluginConfiguration.Instance.CachedAutomaticSitesGroups.FirstOrDefault(sg => sg.Name == loadParamInfo.Group);
+						if (group != null)
+						{
+							selectedSitesGroup = new OnlineVideosGuiListItem(group);
+							CurrentState = State.sites;
+						}
+					}
 					if (!string.IsNullOrEmpty(loadParamInfo.Site) && OnlineVideoSettings.Instance.SiteUtilsList.ContainsKey(loadParamInfo.Site))
 					{
 						SelectedSite = OnlineVideoSettings.Instance.SiteUtilsList[loadParamInfo.Site];
