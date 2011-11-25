@@ -235,7 +235,7 @@ namespace RssToolkit.Rss
         /// The number of seconds the media object plays.
         /// </summary>
         [XmlElement(ElementName = "runtime", Namespace = "http://blip.tv/dtd/blip/1.0")]
-        public int Blip_Runtime { get; set; }
+        public string Blip_Runtime { get; set; }
 
         #endregion
 
