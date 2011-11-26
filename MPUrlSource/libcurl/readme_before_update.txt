@@ -74,7 +74,8 @@ Code:
 if (conn->data->set.connecttimeout != 0)
 {
   // connect timeout set
-  tv = (int)conn->data->set.connecttimeout;
+  // timeout is divided by three to make at least two connection attempts
+  tv = max((int)conn->data->set.connecttimeout / 3, 1000);
 }
 
 RTMP_Log(r, RTMP_LOGDEBUG, "socket timeout: %d (ms)", tv);
