@@ -1690,6 +1690,20 @@
               <ZipFileName>Installer{CopyFile}\{935c1766-6106-4d7b-a7e7-90bb29792af5}-el.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Langs\el.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\TV4Play.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{55955fc1-bfce-4b92-8c98-1e4f4cb2771e}-TV4Play.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV4Play.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\TV4Play.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d4dea2d6-70aa-465c-ad1f-77bc53d1e6dd}-TV4Play.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV4Play.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -4546,6 +4560,20 @@ added: open a group of sites directly</VersionDescription>
         <LocalFileName>..\SiteImages\Langs\el.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{935c1766-6106-4d7b-a7e7-90bb29792af5}-el.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Langs\el.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\TV4Play.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{55955fc1-bfce-4b92-8c98-1e4f4cb2771e}-TV4Play.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TV4Play.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\TV4Play.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d4dea2d6-70aa-465c-ad1f-77bc53d1e6dd}-TV4Play.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV4Play.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
