@@ -295,6 +295,25 @@ HRESULT CMPUrlSource_Rtmp::OpenConnection(void)
 
       result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
     }
+
+    if (result == S_OK)
+    {
+      // wait until we receive some data or transfer end (whatever comes first)
+      unsigned int state = CURL_STATE_NONE;
+      while ((state != CURL_STATE_RECEIVING_DATA) && (state != CURL_STATE_RECEIVED_ALL_DATA))
+      {
+        state = this->mainCurlInstance->GetCurlState();
+
+        // wait some time
+        Sleep(1);
+      }
+
+      if (state == CURL_STATE_RECEIVED_ALL_DATA)
+      {
+        // we received data too fast
+        result = E_FAIL;
+      }
+    }
   }
 
   if (FAILED(result))
