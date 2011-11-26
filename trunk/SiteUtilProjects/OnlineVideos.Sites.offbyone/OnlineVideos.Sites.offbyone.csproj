@@ -214,6 +214,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SVTPlayUtil.cs" />
+    <Compile Include="TV4Play.cs" />
     <Compile Include="ViasatUtil.cs" />
     <Compile Include="VidiLifeUtil.cs" />
     <Compile Include="WDRUtil.cs" />
