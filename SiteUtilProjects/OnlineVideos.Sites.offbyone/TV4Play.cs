@@ -180,10 +180,15 @@ namespace OnlineVideos.Sites
 			else
 			{
 				string host = xDoc.SelectSingleNode("//meta[@base]/@base").Value;
+				List<KeyValuePair<int, string>> urls = new List<KeyValuePair<int, string>>();
 				foreach (XmlElement videoElem in xDoc.SelectNodes("//video[@src]"))
 				{
-					result = new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = videoElem.GetAttribute("src") }.ToString();
-					video.PlaybackOptions.Add(string.Format("{0} kbps", int.Parse(videoElem.GetAttribute("system-bitrate")) / 1000), result);
+					urls.Add(new KeyValuePair<int,string>(int.Parse(videoElem.GetAttribute("system-bitrate")) / 1000, new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = videoElem.GetAttribute("src") }.ToString()));
+				}
+				foreach(var item in urls.OrderBy(u => u.Key))
+				{
+					video.PlaybackOptions.Add(string.Format("{0} kbps", item.Key), item.Value);
+					result = item.Value;
 				}
 				return result;
 			}
