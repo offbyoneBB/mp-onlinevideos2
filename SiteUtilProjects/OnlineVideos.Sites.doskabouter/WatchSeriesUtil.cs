@@ -532,8 +532,8 @@ namespace OnlineVideos.Sites
                 RssLink cat = new RssLink();
                 cat.Url = m.Groups["url"].Value;
                 if (!string.IsNullOrEmpty(dynamicSubCategoryUrlFormatString)) cat.Url = string.Format(dynamicSubCategoryUrlFormatString, cat.Url);
-				cat.Url = ApplyUrlDecoding(cat.Url, dynamicSubCategoryUrlDecoding);
-				if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
+                cat.Url = ApplyUrlDecoding(cat.Url, dynamicSubCategoryUrlDecoding);
+                if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
                 cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
                 cat.Thumb = m.Groups["thumb"].Value;
                 if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
@@ -582,16 +582,8 @@ namespace OnlineVideos.Sites
                 parent.GetBaseCookie();
                 string webData = GetWebData(newUrl, parent.cc);
 
-                if (parent.isWatchMovies)
-                {
-                    string vidId = GetSubString(webData, @"FlashVars=""input=", @"""");
-                    url = GetRedirectedUrl(parent.baseUrl + @"/open_link.php?input=" + vidId);
-                }
-                else
-                {
-                    url = Regex.Match(webData, @"<a\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay").Groups["url"].Value;
-                    url = GetRedirectedUrl(url);
-                }
+                url = Regex.Match(webData, @"<a\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay").Groups["url"].Value;
+                url = GetRedirectedUrl(url);
                 return GetVideoUrl(url);
             }
         }
