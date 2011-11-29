@@ -249,7 +249,6 @@ namespace OnlineVideos.MediaPortal1.Player
                     GUIPropertyManager.SetProperty("#TV.Record.percent3", PercentageBuffered.ToString());
                     PlaybackReady = true;
                 }
-				if (Log.Instance.LogLevel < log4net.Core.Level.Debug) LogOutputPinsConnectionRecursive(sourceFilter);
             }
             catch (ThreadAbortException)
             {
@@ -292,6 +291,20 @@ namespace OnlineVideos.MediaPortal1.Player
                     mediaCtrl = null;
                     Cleanup();
                     return false;
+                }
+
+                if (Log.Instance.LogLevel < log4net.Core.Level.Debug)
+                {
+                    string sourceFilterName = getSourceFilterName();
+                    if (!string.IsNullOrEmpty(sourceFilterName))
+                    {
+                        IBaseFilter sourceFilter;
+                        if (graphBuilder.FindFilterByName(sourceFilterName, out sourceFilter) == 0 && sourceFilter != null)
+                        {
+                            LogOutputPinsConnectionRecursive(sourceFilter);
+                        }
+                        if (sourceFilter != null) DirectShowUtil.ReleaseComObject(sourceFilter);
+                    }
                 }
 
                 this.Vmr9.SetDeinterlaceMode();
