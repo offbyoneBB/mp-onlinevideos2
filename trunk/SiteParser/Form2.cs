@@ -253,7 +253,7 @@ namespace SiteParser
 
         private void populateTree(string regexText, bool showMessage)
         {
-            if (String.IsNullOrEmpty(regexRichText.SelectedText))
+            if (String.IsNullOrEmpty(regexText))
             {
                 treeView1.Nodes.Clear();
                 return;
