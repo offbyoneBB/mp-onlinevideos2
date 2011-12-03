@@ -23,7 +23,9 @@ namespace OnlineVideos
         /// <param name="siteId">The name of a site to return categories for</param>
         /// <returns>A list of <see cref="Category"/> objects for the given site.</returns>
         List<Category> getFavoriteCategories(string siteId);
+        List<string> getFavoriteCategoriesNames(string siteId);
         bool addFavoriteCategory(Category cat, string siteName);
         bool removeFavoriteCategory(Category cat);
+        bool removeFavoriteCategory(string siteName, string recursiveCategoryName);
     }
 }

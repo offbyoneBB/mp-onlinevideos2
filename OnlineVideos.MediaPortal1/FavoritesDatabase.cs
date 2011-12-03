@@ -210,9 +210,27 @@ namespace OnlineVideos.MediaPortal1
             return results;
         }
 
+        public List<string> getFavoriteCategoriesNames(string siteId)
+        {
+            List<string> results = new List<string>();
+            SQLiteResultSet resultSet = m_db.Execute(string.Format("select CAT_Hierarchy from Favorite_Categories where CAT_SITE_ID = '{0}'", siteId));
+            for (int iRow = 0; iRow < resultSet.Rows.Count; iRow++)
+            {
+                results.Add(DatabaseUtility.Get(resultSet, iRow, "CAT_Hierarchy"));
+            }
+            return results;
+        }
+
         public bool removeFavoriteCategory(Category cat)
         {
             String lsSQL = string.Format("delete from Favorite_Categories where CAT_ID = '{0}'", (cat as RssLink).Url);
+            m_db.Execute(lsSQL);
+            return m_db.ChangedRows() > 0;
+        }
+
+        public bool removeFavoriteCategory(string siteName, string recursiveCategoryName)
+        {
+            String lsSQL = string.Format("delete from Favorite_Categories where CAT_Hierarchy='{0}' AND CAT_SITE_ID='{1}'", recursiveCategoryName, siteName);
             m_db.Execute(lsSQL);
             return m_db.ChangedRows() > 0;
         }
