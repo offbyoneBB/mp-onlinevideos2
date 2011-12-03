@@ -30,6 +30,10 @@
           <scrollOffset>2</scrollOffset>
           <font2>font9</font2>
           <textYOff2>8</textYOff2>
+          <PinIconWidth>32</PinIconWidth>
+          <PinIconHeight>32</PinIconHeight>
+          <PinIconXOff>1050</PinIconXOff>
+          <PinIconYOff>0</PinIconYOff>
         </control>
         <control>
           <description>Thumbnail Panel</description>

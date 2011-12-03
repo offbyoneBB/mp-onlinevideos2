@@ -29,7 +29,11 @@
           <spinPoxY>565</spinPoxY>          
           <scrollOffset>2</scrollOffset>
           <font2>font10</font2>
-          <textYOff2>6</textYOff2>          
+          <textYOff2>6</textYOff2>
+          <PinIconWidth>25</PinIconWidth>
+          <PinIconHeight>25</PinIconHeight>
+          <PinIconXOff>570</PinIconXOff>
+          <PinIconYOff>0</PinIconYOff>
         </control>
         <control>
           <description>Thumbnail Panel</description>

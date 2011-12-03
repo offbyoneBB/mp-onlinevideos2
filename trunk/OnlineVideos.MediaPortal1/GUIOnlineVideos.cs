@@ -320,7 +320,13 @@ namespace OnlineVideos.MediaPortal1
                     if (dlgCat == null) return;
                     dlgCat.Reset();
 					dlgCat.SetHeading(Translation.Instance.Actions);
-					if (!(SelectedSite is Sites.FavoriteUtil) && !aCategory.HasSubCategories) dlgCat.Add(Translation.Instance.AddToFavourites);
+                    if (!(SelectedSite is Sites.FavoriteUtil) && !aCategory.HasSubCategories)
+                    {
+                        if (selectedItem.IsPlayed)
+                            dlgCat.Add(Translation.Instance.RemoveFromFavorites);
+                        else
+                            dlgCat.Add(Translation.Instance.AddToFavourites);
+                    }
                     foreach (string entry in SelectedSite.GetContextMenuEntries(aCategory, null)) dlgCat.Add(entry);
                     dlgCat.DoModal(GUIWindowManager.ActiveWindow);
                     if (dlgCat.SelectedId == -1) return;
@@ -328,7 +334,24 @@ namespace OnlineVideos.MediaPortal1
                     {
 						if (dlgCat.SelectedLabelText == Translation.Instance.AddToFavourites)
                         {
-                            OnlineVideoSettings.Instance.FavDB.addFavoriteCategory(aCategory, SelectedSite.Settings.Name);
+                            bool result = OnlineVideoSettings.Instance.FavDB.addFavoriteCategory(aCategory, SelectedSite.Settings.Name);
+                            if (result)
+                            {
+                                cachedFavoritedCategoriesOfSelectedSite = default(KeyValuePair<string, List<string>>);
+                                selectedItem.IsPlayed = true;
+                                selectedItem.PinImage = GetImageForSite(Translation.Instance.Favourites, type: "Icon");
+                            }
+                        }
+                        else if (dlgCat.SelectedLabelText == Translation.Instance.RemoveFromFavorites)
+                        {
+                            bool result = OnlineVideoSettings.Instance.FavDB.removeFavoriteCategory(SelectedSite.Settings.Name, aCategory.RecursiveName("|"));
+                            if (result)
+                            {
+                                cachedFavoritedCategoriesOfSelectedSite = default(KeyValuePair<string, List<string>>);
+                                selectedItem.IsPlayed = false;
+                                selectedItem.PinImage = "";
+                                selectedItem.RefreshCoverArt();
+                            }
                         }
                         else
                         {
@@ -1164,6 +1187,20 @@ namespace OnlineVideos.MediaPortal1
 			Translation.Instance.GettingNextPageVideos, true);
 		}
 
+        KeyValuePair<string, List<string>> cachedFavoritedCategoriesOfSelectedSite;
+        List<string> FavoritedCategoriesOfSelectedSite
+        {
+            get 
+            {
+                string siteName = SelectedSite.Settings.Name;
+                if (!string.IsNullOrEmpty(siteName) && cachedFavoritedCategoriesOfSelectedSite.Key != siteName)
+                {
+                    cachedFavoritedCategoriesOfSelectedSite = new KeyValuePair<string, List<string>>(siteName, OnlineVideoSettings.Instance.FavDB.getFavoriteCategoriesNames(siteName));
+                }
+                return cachedFavoritedCategoriesOfSelectedSite.Value;
+            }
+        }
+
         private void SetCategoriesToFacade(Category parentCategory, IList<Category> categories, bool? diveDownOrUpIfSingle, bool append = false)
         {
             if (loadParamInfo != null && loadParamInfo.Site == SelectedSite.Settings.Name && parentCategory == null && !string.IsNullOrEmpty(loadParamInfo.Category))
@@ -1212,12 +1249,20 @@ namespace OnlineVideos.MediaPortal1
                     {
                         loListItem = new OnlineVideosGuiListItem(loCat);
                         loListItem.ItemId = GUI_facadeView.Count;
-						if (loCat is NextPageCategory)
-						{
-							loListItem.IconImage = "OnlineVideos\\NextPage.png";
-							loListItem.IconImageBig = "OnlineVideos\\NextPage.png";
-							loListItem.ThumbnailImage = "OnlineVideos\\NextPage.png";
-						}
+                        if (loCat is NextPageCategory)
+                        {
+                            loListItem.IconImage = "OnlineVideos\\NextPage.png";
+                            loListItem.IconImageBig = "OnlineVideos\\NextPage.png";
+                            loListItem.ThumbnailImage = "OnlineVideos\\NextPage.png";
+                        }
+                        else
+                        {
+                            if (FavoritedCategoriesOfSelectedSite.Contains(loCat.RecursiveName("|")))
+                            {
+                                loListItem.IsPlayed = true;
+                                loListItem.PinImage = GetImageForSite(Translation.Instance.Favourites, type: "Icon");
+                            }
+                        }
                         if (!string.IsNullOrEmpty(loCat.Thumb)) imageHash[loCat.Thumb] = true;
                         loListItem.OnItemSelected += OnItemSelected;
                         if (loCat == selectedCategory) categoryIndexToSelect = GUI_facadeView.Count; // select the category that was previously selected
