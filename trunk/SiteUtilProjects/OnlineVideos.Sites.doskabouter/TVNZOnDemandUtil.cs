@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Xml;
 using System.Web;
 
 namespace OnlineVideos.Sites
 {
-    public class TVNZOnDemandUtil : SiteUtilBase
+    public class TVNZOnDemandUtil : BrightCoveUtil
     {
         private string baseUrl = @"http://tvnz.co.nz";
 
@@ -27,6 +28,7 @@ namespace OnlineVideos.Sites
                     dynamicCategories.Add(cat);
                 }
                 // discovery finished, copy them to the actual list -> prevents double entries if error occurs in the middle of adding
+                Settings.Categories = new BindingList<Category>();
                 foreach (Category cat in dynamicCategories) Settings.Categories.Add(cat);
                 Settings.DynamicCategoriesDiscovered = true;
                 return dynamicCategories.Count; // return the number of discovered categories
@@ -98,7 +100,7 @@ namespace OnlineVideos.Sites
                     if (!String.IsNullOrEmpty(subTitle))
                         video.Title += ": " + subTitle;
                     video.Description = episode.InnerText;
-                    video.VideoUrl = String.Format(baseUrl + @"/content/{0}/ta_ent_smil_skin.smil?platform=PS3", episode.Attributes["href"].Value);
+                    video.VideoUrl = String.Format(@"http://tvnz.co.nz/content/{0}.xhtml", episode.Attributes["href"].Value);
                     video.ImageUrl = episode.Attributes["src"].Value;
                     string[] epinfo = episode.Attributes["episode"].Value.Split('|');
                     if (epinfo.Length == 1)
@@ -110,55 +112,10 @@ namespace OnlineVideos.Sites
                         if (epinfo.Length > 2)
                             video.Length = epinfo[2].Trim();
                         if (epinfo.Length > 1)
-                            video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + epinfo[1].Trim();
+                            video.Length = video.Length + '|' + Translation.Airdate + ": " + epinfo[1].Trim();
                     }
                     res.Add(video);
                 }
-            }
-            return res;
-        }
-
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
-        {
-            List<string> res = new List<string>();
-            XmlDocument doc = new XmlDocument();
-            string webData = GetWebData(video.VideoUrl);
-            if (String.IsNullOrEmpty(webData)) return res;
-            doc.LoadXml(webData);
-            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
-            nsmRequest.AddNamespace("a", @"http://www.w3.org/ns/SMIL");
-            XmlNodeList nodes = doc.SelectNodes("//a:smil/a:body/a:seq", nsmRequest);
-
-            foreach (XmlNode node in nodes)
-            {
-                XmlNode vid = node.SelectSingleNode("a:video", nsmRequest);
-                if (vid == null)
-                {
-                    int largestBitrate = 0;
-                    foreach (XmlNode sub in node.SelectNodes("a:par/a:video", nsmRequest))
-                    {
-                        int bitRate = int.Parse(sub.Attributes["systemBitrate"].InnerText);
-                        if (bitRate > largestBitrate)
-                        {
-                            largestBitrate = bitRate;
-                            vid = sub;
-                        }
-                    }
-                }
-                string url = vid.Attributes["src"].InnerText;
-                if (url.StartsWith("rtmp"))
-                {
-                    string plpath = url.Replace("rtmp:", "");
-                    url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                    string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&swfurl={2}&swfsize={3}&swfhash={4}&conn={5}",
-                    "rtmpe://fms-streaming.tvnz.co.nz/tvnz.co.nz/",
-                    plpath,
-                    "http://tvnz.co.nz/stylesheets/tvnz/entertainment/flash/ondemand/player.swf",
-                    "851812",
-                    "2a54a14bd813cd99ac776af676c39fc661528bbe1d85344ed2fdcbdd320cae5f",
-                    "S:-720"));
-                }
-                res.Add(url);
             }
             return res;
         }

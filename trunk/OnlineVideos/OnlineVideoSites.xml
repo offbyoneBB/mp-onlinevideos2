@@ -1159,6 +1159,12 @@
     </Site>
     <Site name="TVNZOnDemand" util="TVNZOnDemand" agecheck="false" enabled="true" lang="en" player="Internal">
       <Description>Television New Zealand: TV One, TV2, TVNZ 6, TVNZ 7</Description>
+      <Configuration>
+        <item key="fileUrlRegEx"><![CDATA[<object\sclass="BrightcoveExperience"\sid="myExperience">\s<param[^>]*>\s<param[^>]*>\s<param[^>]*>\s<param[^>]*>\s<param\svalue="(?<experienceId>[^"]*)"\sname="playerID"\s/>\s<param[^>]*>\s<param[^>]*>\s<param[^>]*>\s<param[^>]*>\s<param\svalue="ref:(?<contentRefId>[^"]*)"\sname="@videoPlayer"\s/>\s<param[^>]*>\s<param[^>]*>\s<param[^>]*>\s</object>]]></item>
+        <item key="hashValue"><![CDATA[f86d6617a68b38ee0f400e1f4dc603d6e3b4e4ed]]></item>
+        <item key="playerId"><![CDATA[1029272630001]]></item>
+        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerId=1029272630001]]></item>
+      </Configuration>
     </Site>
     <Site name="HardwareInfo" util="HardwareInfo" agecheck="false" enabled="true" lang="nl">
       <Description>Informational videos about computer hardware</Description>
