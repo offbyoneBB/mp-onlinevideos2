@@ -112,7 +112,7 @@ namespace OnlineVideos.Sites
                         if (epinfo.Length > 2)
                             video.Length = epinfo[2].Trim();
                         if (epinfo.Length > 1)
-                            video.Length = video.Length + '|' + Translation.Airdate + ": " + epinfo[1].Trim();
+                            video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + epinfo[1].Trim();
                     }
                     res.Add(video);
                 }
