@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="ABCiViewUtil.cs" />
     <Compile Include="AMF3.cs" />
+    <Compile Include="BrassBandTubeUtil.cs" />
     <Compile Include="BrightCoveUtil.cs" />
     <Compile Include="CBCUtil.cs" />
     <Compile Include="EuroSportUtil.cs" />
