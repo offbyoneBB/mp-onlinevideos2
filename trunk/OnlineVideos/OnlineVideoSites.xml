@@ -1316,6 +1316,21 @@
     </Site>
     <Site name="Uitzending Gemist" util="UitzendingGemist" agecheck="false" enabled="true" lang="nl" player="WMP">
       <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://beta.uitzendinggemist.nl/]]></item>
+        <item key="videoListRegEx"><![CDATA[(<li\sclass="episode"\sid="episode_(?<episodeid>[^"]*)">[^<]*<span\sclass="views">[^<]*<img[^>]*>[^<]*</span>[^<]*<a\shref="(?<VideoUrl>[^"]*)"\sclass="thumbnail_wrapper"\stitle="[^"]*">(<img\salt="[^"]*"\sclass="thumbnail"\sdata-src="(?<ImageUrl>[^"]*)"[^>]*>)*</a>[^<]*<h3>[^<]*<a[^>]*>(?<Title>[^<]*)</a>[^<]*(?:<img[^>]*>)?[^<]*<a\shref="[^"]*"><span>\((?<Airdate>[^\)]*)\)</span></a>[^<]*</h3>[^<]*<p>(?<Description>[^<]*)</p>[^<]*</li>)(?#videos of one series)
+        |
+        (<li\sclass="broadcast"\sid="broadcast_(?<broadcastid>[^"]*)">\s*<a\shref="(?<VideoUrl>[^"]*)"\sclass="thumbnail_wrapper"\stitle="[^"]*">(<img\salt="[^"]*"\sclass="thumbnail"\sdata-src="(?<ImageUrl>[^"]*)"[^>]*>)*</a>\s*<div\sclass="info">\s*<span\sclass="channel">[^<]*<img[^>]*>\s*</span>\s*<h3><a\shref="[^"]*"\sclass="series"\srel="episode"\stitle="[^"]*">(?<Title>[^<]*)</a>\s*<span\sclass="broadcasters">\([^\)]*\)</span></h3>\s*<h4>\s*<a\shref="[^"]*"\sclass="episode"\srel="episode"\stitle="[^"]*">(?<Airdate>[^<]*)</a>\s*<img[^>]*>\s*</h4>\s*<div\sclass="description">\s*<p>(?<Description>[^<]*)</p>\s*</div>)(?#videos of recent)
+        |
+        (<li\sclass="episode"\sid="episode_(?<episodeid>[^"]*)">\s*<a\shref="(?<VideoUrl>[^"]*)"\sclass="thumbnail_wrapper"\stitle="[^"]*">(<img\salt="[^"]*"\sclass="thumbnail[^"]*"\s(?:data-src="(?<ImageUrl>[^"]*)")?[^>]*>)*</a>\s*<div\sclass="info">\s*<h3>\s*<a[^>]*>(?<Title>[^<]*)</a>\s*<span\sclass="broadcasters">\([^\)]*\)</span>\s*</h3>\s*<h4>\s*<a[^>]*>(?<Duration>.*?)</a>\s*(?:<img[^>]*>)?\s*</h4>\s*<div\sclass="description">\s*<p>(?<Description>.*?)</p>\s*</div>)(?# searchresults)]]></item>
+        <item key="searchUrl"><![CDATA[http://beta.uitzendinggemist.nl/zoek?query={0}&=Zoek]]></item>
+        <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="next_page"\srel="next">Volgende</a></div>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="next_page"\srel="next">Volgende</a></div>]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
+        <item key="fileUrlRegEx"><![CDATA[load_player\('(?<m0>[^']*)'\,\s*'[^']*'\);]]></item>
+        <item key="fileUrlFormatString"><![CDATA[http://www.player.omroep.nl/ugslplayer.xap/aflid={0}]]></item>
+      </Configuration>
     </Site>
     <Site name="TvTutti" util="TvTutti" agecheck="false" enabled="true" lang="nl" player="WMP">
       <Description>TV Tutti: alle programma’s van Uitzending Gemist, RTL, SBS6, Net5, Veronica</Description>

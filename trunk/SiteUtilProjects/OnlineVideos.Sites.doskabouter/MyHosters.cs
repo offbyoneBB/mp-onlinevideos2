@@ -261,9 +261,10 @@ namespace OnlineVideos.Hoster
             foreach (XmlNode node in doc.SelectNodes("streams/stream"))
             {
                 string quality = node.Attributes["compressie_kwaliteit"].Value;
+                string format = node.Attributes["compressie_formaat"].Value;
                 string streamUrl = node.SelectSingleNode("streamurl").InnerText.Trim();
                 if (!String.IsNullOrEmpty(streamUrl))
-                    PlaybackOptions.Add(quality, streamUrl);
+                    PlaybackOptions.Add(format + ' ' + quality, streamUrl);
             }
             return PlaybackOptions;
         }

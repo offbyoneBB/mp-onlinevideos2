@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Net;
-using System.Web;
-using System.Xml;
 using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
-    public class UitzendingGemistUtil : SiteUtilBase
+    public class UitzendingGemistUtil : GenericSiteUtil
     {
-        private RssLink baseCategory;
+        private enum UgType { None, Recent, Omroepen, Genres, AtoZ, Type1, AtoZSub };
+        private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
+        private Regex savedRegEx_dynamicSubCategoriesNextPage;
+
+        string matchaz = @"(?<=<ol\sclass=""letters"">.*)<li[^>]*>\s*<a\shref=""(?<url>[^""]*)""\stitle=""(?<description>[^""]*)"">(?<title>[^<]*)</a>\s*</li>";
 
         public override void Initialize(OnlineVideos.SiteSettings siteSettings)
         {
@@ -19,21 +19,17 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            RssLink cat;
-            //======================= uitzending gemist ===================
-            cat = new RssLink();
-            cat.Name = "Uitzending Gemist";
-            cat.Thumb = OnlineVideoSettings.Instance.ThumbsDir == null ? null :
-                System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"\Icons\Tvgemist\uitzendinggemist.png");
-            cat.HasSubCategories = true;
-            Settings.Categories.Add(cat);
-            string[] cats = { "Op alfabet", "Op dag", "Op zender" };
-            AddSubcats(cats, cat);
+            savedRegEx_dynamicSubCategoriesNextPage = regEx_dynamicSubCategoriesNextPage;
 
-            CookieContainer cc = new CookieContainer();
-            cat.SubCategories[0].Other = new UitzendingGemistSpecifics(cc, @"<div id=""nav_letter"">", 0);
-            cat.SubCategories[1].Other = new UitzendingGemistSpecifics(cc, @"<div id=""nav_dag"">", 0);
-            cat.SubCategories[2].Other = new UitzendingGemistSpecifics(cc, @"<div id=""nav_net"">", 0);
+            Settings.Categories.Add(new RssLink() { Name = "Afgelopen 7 dagen", Url = @"7dagen", Other = UgType.Recent });
+            Settings.Categories.Add(new RssLink() { Name = "Omroepen", Url = @"omroepen", Other = UgType.Omroepen });
+            Settings.Categories.Add(new RssLink() { Name = "Genres", Url = @"genres", Other = UgType.Genres });
+            Settings.Categories.Add(new RssLink() { Name = "Programma’s A-Z", Url = @"programmas", Other = UgType.Type1 });
+            foreach (RssLink cat in Settings.Categories)
+            {
+                cat.HasSubCategories = true;
+                cat.Url = baseUrl + cat.Url;
+            }
 
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
@@ -41,256 +37,90 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            return UitzendingGemistDiscoverSubCategories((RssLink)parentCategory);
-        }
-
-        public override List<VideoInfo> getVideoList(Category category)
-        {
-            baseCategory = (RssLink)category;
-            UitzendingGemistSpecifics specifics = (UitzendingGemistSpecifics)category.Other;
-            specifics.pageNr = 0;
-            return UitzendingGemistGetVideoList(baseCategory, specifics);
-            throw new NotImplementedException();
-        }
-
-        public override string getUrl(VideoInfo video)
-        {
-            return GenericSiteUtil.GetVideoUrl(video.VideoUrl);
-        }
-
-        public override bool HasNextPage
-        {
-            get
+            switch ((UgType)parentCategory.Other)
             {
-                if (baseCategory.Other is UitzendingGemistSpecifics)
-                    return ((UitzendingGemistSpecifics)baseCategory.Other).hasNextPage;
-                else
-                    return false;
+                case UgType.Recent: return getSubcats(parentCategory, UgType.None, @"<li><a\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></li>");
+                case UgType.Omroepen: return getSubcats(parentCategory, UgType.Type1, @"<li\sclass=""[^""]*"">\s*<a\shref=""(?<url>[^""]*)""><img\salt=""[^""]*""\sclass=""broadcaster-image""\srel=""broadcaster""\ssrc=""(?<thumb>[^""]*)""\stitle=""[^""]*""\s/></a>\s*<h4><a[^>]*>(?<title>[^<]*)</a></h4>\s*</li>");
+                case UgType.Genres: return getSubcats(parentCategory, UgType.Type1, @"<li\sclass=""[^""]*"">\s*<a\shref=""(?<url>[^""]*)""><img\salt=""[^""]*""\sclass=""genre-image""\ssrc=""(?<thumb>[^""]*)""\s/></a>\s*<h2><a\shref=""[^""]*"">(?<title>[^<]*)</a></h2>\s*</li>");
+                case UgType.AtoZ: return getSubcats(parentCategory, UgType.Type1, matchaz);
+                case UgType.Type1: return getType1Subcats(parentCategory);
+                case UgType.AtoZSub: return getSubcats(parentCategory, UgType.None, @"<li\sclass=""series[^""]*""\sid=""series_(?<url>[^""]*)"">\s*(?:<a[^>]*><img\salt=""[^""]*""\sclass=""thumbnail""\ssrc=""(?<thumb>[^""]*)""\s/></a>)?\s*<div\sclass=""info"">\s*<h3>\s*<a\shref=""(?<fullurl>[^""]*)""\sclass=""series""\srel=""series""\stitle=""[^""]*"">(?<title>[^<]*)</a>\s*<span\sclass=""broadcasters"">\([^\)]*\)</span>\s*</h3>\s*</div>");
             }
+            return 0;
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        private int getType1Subcats(Category parentCat)
         {
-            UitzendingGemistSpecifics specifics = (UitzendingGemistSpecifics)baseCategory.Other;
-            specifics.pageNr++;
-            return UitzendingGemistGetVideoList(baseCategory, specifics);
-        }
+            if (parentCat.SubCategories == null) parentCat.SubCategories = new List<Category>();
 
-        private int UitzendingGemistDiscoverSubCategories(RssLink parentCategory)
-        {
-            UitzendingGemistSpecifics specifics = (UitzendingGemistSpecifics)parentCategory.Other;
-            if (specifics.depth == 0)
+            string webData = GetWebData(((RssLink)parentCat).Url);
+
+            RssLink cat = new RssLink()
             {
-                //a..z and maandag..zondag
-                string webData = GetWebData(specifics.baseUrl, specifics.cc);
-                CookieCollection ccol = specifics.cc.GetCookies(new Uri(specifics.baseUrl.Insert(7, "tmp.") + '/'));
-                CookieContainer newcc = new CookieContainer();
-                foreach (Cookie cook in ccol)
-                    newcc.Add(cook);
+                Name = "Alle Programma's",
+                //Other = UgType.AtoZSub, will be set by call to getsubcats
+                ParentCategory = parentCat,
+                HasSubCategories = true
+            };
 
-                Regex regex_SubCatDepth0 = Specifics.getRegex(@"<a(?:(?!href).)*href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<");
-                webData = GetSubString(webData, specifics.startParse, @"</div>");
+            /*
+            For now: no details
+            Match m = Regex.Match(webData, @"<li>\s*<a\shref=""(?<url>[^""]*)""\srel=""detail""\stitle=""[^""]*"">");
+            if (m.Success)
+                cat.Url = new Uri(new Uri(baseUrl), m.Groups["url"].Value).AbsoluteUri;
+            else*/
+            cat.Url = ((RssLink)parentCat).Url;
 
-                parentCategory.SubCategories = new List<Category>();
-                Match m = regex_SubCatDepth0.Match(webData);
-                while (m.Success)
-                {
-                    RssLink cat = new RssLink();
-                    cat.Url = specifics.baseUrl + m.Groups["url"].Value;
-                    cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
-                    cat.ParentCategory = parentCategory;
-                    cat.HasSubCategories = specifics.startParse.IndexOf("nav_letter") >= 0;
-                    cat.Other = new UitzendingGemistSpecifics(newcc, String.Empty, 1);
-                    parentCategory.SubCategories.Add(cat);
-                    m = m.NextMatch();
-                }
-                parentCategory.SubCategoriesDiscovered = true;
-                return parentCategory.SubCategories.Count;
+            parentCat.SubCategories.Add(cat);
+
+            getSubcats(parentCat, UgType.AtoZSub, matchaz);
+            if (parentCat.SubCategories.Count > 0) parentCat.SubCategoriesDiscovered = true;
+            return parentCat.SubCategories.Count;
+        }
+
+        private int getSubcats(Category parentCat, UgType subType, string regexString)
+        {
+            Regex r = new Regex(regexString, defaultRegexOptions);
+            regEx_dynamicSubCategories = r;
+            if ((UgType)parentCat.Other == UgType.AtoZSub)
+            {
+                dynamicSubCategoryUrlFormatString = baseUrl + @"quicksearch/episodes?series_id={0}";
+                regEx_dynamicSubCategoriesNextPage = savedRegEx_dynamicSubCategoriesNextPage;
             }
             else
             {
-                // get series cats
-                parentCategory.SubCategories = new List<Category>();
-                Regex regex_SubCatDepth1 = Specifics.getRegex(@"<div\sstyle=""overflow[^<]*<a(?:(?!href).)*href=""(?<url>[^""]+)""[^>]*>(?<title>[^<]+)<");
-
-                bool hasNextPage = false;
-                int pageNr = 0;
-                do
+                regEx_dynamicSubCategoriesNextPage = null;
+                dynamicSubCategoryUrlFormatString = null;
+            }
+            int res = base.DiscoverSubCategories(parentCat);
+            if (res > 0)
+                foreach (Category cat in parentCat.SubCategories)
                 {
-                    pageNr++;
-                    string webData = GetWebData(pageNr == 1 ? parentCategory.Url : parentCategory.Url + @"&pgNum=" + pageNr.ToString(), specifics.cc);
-                    hasNextPage = webData.Contains(@"populair_bottom_volgende");
-                    Match m = regex_SubCatDepth1.Match(webData);
-                    while (m.Success)
+                    if (subType != UgType.None)
                     {
-                        RssLink cat = new RssLink();
-                        cat.Url = specifics.baseUrl + m.Groups["url"].Value;
-                        cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim());
-                        cat.ParentCategory = parentCategory;
-                        cat.Other = new UitzendingGemistSpecifics(specifics.cc, String.Empty, -1);
-                        parentCategory.SubCategories.Add(cat);
-                        m = m.NextMatch();
+                        cat.HasSubCategories = true;
+                        cat.Other = subType;
                     }
-                } while (hasNextPage);
-
-                parentCategory.SubCategoriesDiscovered = true;
-                return parentCategory.SubCategories.Count;
-            }
-        }
-
-        private string getUrlForPage(string url, int pageNr)
-        {
-            if (pageNr > 1)
-                return url.Replace("&md5=", String.Format("&pgNum={0}&md5=", pageNr.ToString()));
-            else
-                return url;
-        }
-
-        private List<VideoInfo> UitzendingGemistGetVideoList(RssLink category, UitzendingGemistSpecifics specifics)
-        {
-            List<VideoInfo> videos = new List<VideoInfo>();
-            string url = HttpUtility.HtmlDecode(category.Url);
-            string referer = getUrlForPage(url, specifics.pageNr - 1);
-            if (specifics.pageNr >= 1)
-                url = url.Replace("serie?", "serie2?");
-            url = getUrlForPage(url, specifics.pageNr);
-
-            string webData = GetWebData(url, specifics.cc, referer);
-            if (specifics.pageNr == 0)
-                specifics.hasNextPage = webData.Contains(@"alt=""meer afleveringen""");
-            else
-                specifics.hasNextPage = webData.Contains(@"title=""Pagina #" + (specifics.pageNr + 1).ToString() + @"""");
-
-            if (!string.IsNullOrEmpty(webData))
-            {
-
-                Match m;
-                if (specifics.depth == -1)
-                {
-                    if (specifics.pageNr == 0)
-                        m = UitzendingGemistSpecifics.videoListPage0Regex.Match(webData);
-                    else
-                        m = UitzendingGemistSpecifics.videoListPage1Regex.Match(webData);
                 }
-                else
-                    m = UitzendingGemistSpecifics.videolistOpDagRegex.Match(webData);
+            return res;
+        }
 
-                while (m.Success)
+        protected override List<VideoInfo> Parse(string url, string data)
+        {
+            if (data == null)
+                data = GetWebData(url);
+            data = Regex.Unescape(data);
+            List<VideoInfo> res = base.Parse(url, data);
+
+            foreach (VideoInfo video in res)
+                if (!String.IsNullOrEmpty(video.Length))
                 {
-                    VideoInfo video = new VideoInfo();
-                    video.VideoUrl = HttpUtility.HtmlDecode(m.Groups["url"].Value);
-                    if (specifics.depth == -1)
-                        video.VideoUrl = specifics.baseUrl + video.VideoUrl;
-                    video.Title = HttpUtility.HtmlDecode(m.Groups["title"].Value);
-                    string airdate = HttpUtility.HtmlDecode(m.Groups["airdate"].Value);
-                    video.Description = HttpUtility.HtmlDecode(m.Groups["descr"].Value);
-
-                    if (!String.IsNullOrEmpty(video.VideoUrl))
-                    {
-                        if (String.IsNullOrEmpty(video.Title))
-                            fillFromNed(video.VideoUrl, video, specifics);
-                        if (String.IsNullOrEmpty(video.Title))
-                            video.Title = "Aflevering van " + airdate;
-                        if (!String.IsNullOrEmpty(airdate))
-							video.Length = video.Length + '|' + Translation.Instance.Airdate + ": " + airdate;
-                        videos.Add(video);
-                    }
-                    m = m.NextMatch();
+                    video.Title += ' ' + video.Length;
+                    video.Length = null;
                 }
-            }
-            return videos;
+            return res;
         }
 
-        private void fillFromNed(string url, VideoInfo video, UitzendingGemistSpecifics specifics)
-        {
-            try
-            {
-                string tmp = GetWebData(HttpUtility.HtmlDecode(video.VideoUrl), specifics.cc, url);
-                Match detm = UitzendingGemistSpecifics.detailsRegex.Match(tmp);
-                if (detm.Success)
-                {
-                    string airdate = detm.Groups["airdate"].Value;
-                    if (String.IsNullOrEmpty(airdate))
-                        video.Title = GetSubString(tmp, @"<b class=""btitle"">", "</b>");
-                    else
-                        video.Title = "Aflevering van " + airdate;
-
-                    video.VideoUrl = detm.Groups["url"].Value;
-                    string tmpdes = HttpUtility.HtmlDecode(detm.Groups["descr"].Value);
-                    if (!String.IsNullOrEmpty(tmpdes))
-                        video.Description = tmpdes;
-                }
-            }
-            catch
-            {
-                video.VideoUrl = String.Empty;
-            }
-        }
-
-        private void AddSubcats(string[] names, RssLink parentCat)
-        {
-            parentCat.SubCategories = new List<Category>();
-
-            foreach (string name in names)
-            {
-                RssLink cat = new RssLink();
-                cat.Name = name;
-                cat.HasSubCategories = true;
-                cat.Url = parentCat.Url;
-                cat.ParentCategory = parentCat;
-                parentCat.SubCategories.Add(cat);
-            }
-            parentCat.SubCategoriesDiscovered = true;
-        }
-
-
-        #region Specifics
-        private class Specifics
-        {
-            public Specifics(string baseUrl)
-            {
-                this.baseUrl = baseUrl;
-            }
-
-            public string baseUrl;
-
-            public static Regex getRegex(string s)
-            {
-                return new Regex(s, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
-            }
-        }
-
-        private class UitzendingGemistSpecifics : Specifics
-        {
-            public UitzendingGemistSpecifics(CookieContainer cc, string startParse, int depth)
-                : base(@"http://www.uitzendinggemist.nl")
-            {
-                this.cc = cc;
-                this.startParse = startParse;
-                this.depth = depth;
-            }
-            public CookieContainer cc;
-            public string startParse;
-            public int depth;
-            public bool hasNextPage;
-            public int pageNr;
-            public static Regex videoListPage0Regex = Specifics.getRegex(@"<tr\sclass=""bg(odd|even)[^<]*<[^>]*>\s*(?<airdate>[^<]*)<[^>]*>[^>]*>\s*(?<descr>(?:(?!\(<).)*)\(<a\shref=""(?<url>[^""]*)""");
-            public static Regex videoListPage1Regex = Specifics.getRegex(@"<tr\sclass=""bg(odd|even)[^>]*>[^>]*>\s*(?<airdate>[^<]*)<(?:(?!href).)*href=""(?<url>[^""]*)"">(?<descr>[^<]*)<");
-            public static Regex detailsRegex = Specifics.getRegex(@"(<p>Datum\suitzending[^>]*>(?<airdate>[^<]*).*?)?(Deze\saflevering:(?<descr>[^<]*).*?)?<a\shref=""(?<url>[^""]*)""\s*target=""player""");
-            public static Regex videolistOpDagRegex = Specifics.getRegex(@"<div\sstyle=""overflow[^<]*<a(?:(?!href).)*href=""(?<nourl>[^""]+)""[^>]*>(?<title>[^<]+)<(?:(?!<td).)*<td[^>]*>(?<airdate>[^<]*)<(?:(?!http://player.omroep.nl).)*(?<url>[^""]*)""");
-        }
-
-        #endregion
-
-        private static string GetSubString(string s, string start, string until)
-        {
-            int p = s.IndexOf(start);
-            if (p == -1) return String.Empty;
-            p += start.Length;
-            int q = s.IndexOf(until, p);
-            if (q == -1) return s.Substring(p);
-            return s.Substring(p, q - p);
-        }
     }
 
 }
