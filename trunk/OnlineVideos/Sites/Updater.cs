@@ -141,7 +141,9 @@ namespace OnlineVideos.Sites
 						// get site if updated on server
 						if ((onlineSite.LastUpdated - localSite.LastUpdated).TotalMinutes > 2)
 						{
-							if (progressCallback != null) progressCallback.Invoke(localSite.Name, null);
+                            // don't show the name of that site while updating if it is an adult site and the pin has not been entered yet
+                            bool preventMessageDuetoAdult = (localSite.ConfirmAge && OnlineVideoSettings.Instance.UseAgeConfirmation && !OnlineVideoSettings.Instance.AgeConfirmed);
+                            if (progressCallback != null && !preventMessageDuetoAdult) progressCallback.Invoke(localSite.Name, null);
 							SiteSettings updatedSite = GetRemoteSite(onlineSite.Name);
 							if (updatedSite != null)
 							{

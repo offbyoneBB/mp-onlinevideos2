@@ -913,7 +913,8 @@ namespace OnlineVideos.MediaPortal1
                 {
                     OnlineVideoSettings.Instance.AgeConfirmed = false;
                     Log.Instance.Debug("Age Confirmed set to false.");
-                    if (SelectedSite != null && SelectedSite.Settings.ConfirmAge)
+                    // adult site, Downloads or Favorites might show adult videos or categories, so reset to sites overview
+                    if (SelectedSite != null && (SelectedSite.Settings.ConfirmAge || SelectedSite is Sites.FavoriteUtil || SelectedSite is Sites.DownloadedVideoUtil))
                     {
                         CurrentState = State.sites;
                         SelectedSite = null;
@@ -2399,16 +2400,21 @@ namespace OnlineVideos.MediaPortal1
 
         private void OnDownloadFileCompleted(DownloadList saveItems, Exception error)
         {
+            bool preventMessageDuetoAdult = (saveItems.CurrentItem.Util != null && saveItems.CurrentItem.Util.Settings.ConfirmAge && OnlineVideoSettings.Instance.UseAgeConfirmation && !OnlineVideoSettings.Instance.AgeConfirmed);
+
             if (error != null && !saveItems.CurrentItem.Downloader.Cancelled)
             {
-                GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                if (loDlgNotify != null)
+                if (!preventMessageDuetoAdult)
                 {
-                    loDlgNotify.Reset();
-                    loDlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-					loDlgNotify.SetHeading(Translation.Instance.Error);
-					loDlgNotify.SetText(string.Format(Translation.Instance.DownloadFailed, saveItems.CurrentItem.Title));
-                    loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+                    GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                    if (loDlgNotify != null)
+                    {
+                        loDlgNotify.Reset();
+                        loDlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+                        loDlgNotify.SetHeading(Translation.Instance.Error);
+                        loDlgNotify.SetText(string.Format(Translation.Instance.DownloadFailed, saveItems.CurrentItem.Title));
+                        loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+                    }
                 }
             }
             else
@@ -2447,17 +2453,20 @@ namespace OnlineVideos.MediaPortal1
 
                 Log.Instance.Info("{3} download of '{0}' - {1} KB in {2}", saveItems.CurrentItem.LocalFile, fileSize, (DateTime.Now - saveItems.CurrentItem.Start).ToString(), saveItems.CurrentItem.Downloader.Cancelled ? "Cancelled" : "Finished");
 
-                GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                if (loDlgNotify != null)
+                if (!preventMessageDuetoAdult)
                 {
-                    loDlgNotify.Reset();
-                    loDlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-                    if (saveItems.CurrentItem.Downloader.Cancelled)
-						loDlgNotify.SetHeading(Translation.Instance.DownloadCancelled);
-                    else
-						loDlgNotify.SetHeading(Translation.Instance.DownloadComplete);
-                    loDlgNotify.SetText(string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""));
-                    loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+                    GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                    if (loDlgNotify != null)
+                    {
+                        loDlgNotify.Reset();
+                        loDlgNotify.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+                        if (saveItems.CurrentItem.Downloader.Cancelled)
+                            loDlgNotify.SetHeading(Translation.Instance.DownloadCancelled);
+                        else
+                            loDlgNotify.SetHeading(Translation.Instance.DownloadComplete);
+                        loDlgNotify.SetText(string.Format("{0}{1}", saveItems.CurrentItem.Title, fileSize > 0 ? " ( " + fileSize.ToString("n0") + " KB)" : ""));
+                        loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+                    }
                 }
             }
 
