@@ -1704,6 +1704,20 @@
               <ZipFileName>Installer{CopyFile}\{d4dea2d6-70aa-465c-ad1f-77bc53d1e6dd}-TV4Play.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV4Play.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\BrassBandTube.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d57a2296-074a-44eb-80bd-20bc300b59ce}-BrassBandTube.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\BrassBandTube.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\BrassBandTube.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d1dd2831-6d4c-49ba-8b59-ccd6b7744568}-BrassBandTube.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BrassBandTube.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2317,13 +2331,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_File.dll</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9a4f3622-7b75-4d56-a4d4-53a2e1308186}-MPUrlSource_File.dll</ZipFileName>
-              <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_File.dll</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_Http.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{29dd6ae1-9b31-4e6b-a7bb-6b6a8b4c79be}-MPUrlSource_Http.dll</ZipFileName>
               <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_Http.dll</DestinationFilename>
@@ -2721,7 +2728,7 @@ public class Script
               <Params>
                 <Items>
                   <SectionParam Name="Extension package">
-                    <Value>LAV\LAVFilters0.40.0.0.mpe1</Value>
+                    <Value>LAV\LAVFilters0.42.0.0.mpe1</Value>
                     <ValueType>File</ValueType>
                     <Description>Location of the extension package</Description>
                   </SectionParam>
@@ -2844,7 +2851,7 @@ added: downloads can be enqueued or concurrent
 added: open a group of sites directly</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.0.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2011-11-27T11:00:00</ReleaseDate>
+    <ReleaseDate>2011-12-11T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -4575,6 +4582,20 @@ added: open a group of sites directly</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{d4dea2d6-70aa-465c-ad1f-77bc53d1e6dd}-TV4Play.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV4Play.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\BrassBandTube.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d57a2296-074a-44eb-80bd-20bc300b59ce}-BrassBandTube.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\BrassBandTube.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\BrassBandTube.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d1dd2831-6d4c-49ba-8b59-ccd6b7744568}-BrassBandTube.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BrassBandTube.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -5110,13 +5131,6 @@ added: open a group of sites directly</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_File.dll</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9a4f3622-7b75-4d56-a4d4-53a2e1308186}-MPUrlSource_File.dll</ZipFileName>
-        <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_File.dll</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\MPUrlSource\bin\Release\MPUrlSource_Http.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{29dd6ae1-9b31-4e6b-a7bb-6b6a8b4c79be}-MPUrlSource_Http.dll</ZipFileName>
         <DestinationFilename>%Base%\MPUrlSource\MPUrlSource_Http.dll</DestinationFilename>
@@ -5132,14 +5146,14 @@ added: open a group of sites directly</VersionDescription>
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\OnlineVideos.MediaPortal1\OnlineVideos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{5c046df1-9e8b-4f95-aac0-973a92b1f906}-OnlineVideos.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{cdd4ee7e-1468-492f-9bf0-0c432cf2acc2}-OnlineVideos.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>LAV\LAVFilters0.40.0.0.mpe1</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{48ff0933-0e54-434b-b695-626ad832fd14}-LAVFilters0.40.0.0.mpe1</ZipFileName>
+        <LocalFileName>LAV\LAVFilters0.42.0.0.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bf87ba97-6256-4de1-a678-87cf2759385a}-LAVFilters0.42.0.0.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
