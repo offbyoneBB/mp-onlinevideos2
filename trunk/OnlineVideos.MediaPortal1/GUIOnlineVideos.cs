@@ -707,99 +707,127 @@ namespace OnlineVideos.MediaPortal1
         protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
         {
             if (Gui2UtilConnector.Instance.IsBusy || BufferingPlayerFactory != null) return; // wait for any background action e.g. dynamic category discovery to finish
-            if (control == GUI_facadeView && actionType == Action.ActionType.ACTION_SELECT_ITEM)
+            if (control == GUI_facadeView)
             {
-                currentFilter.Clear();
-                GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
-                if (CurrentState == State.groups)
-                {
-                    selectedSitesGroup = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
-                    if (selectedSitesGroup.Item is SitesGroup)
-                        DisplaySites();
-                    else
-                    {
-                        SelectedSite = selectedSitesGroup.Item as Sites.SiteUtilBase;
-                        DisplayCategories(null, true);
-                    }
-                }
-                else if (CurrentState == State.sites)
-                {
-                    if (GUI_facadeView.SelectedListItem.Label == "..")
-                    {
-                        ShowPreviousMenu();
-                    }
-                    else
-                    {
-                        SelectedSite = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Sites.SiteUtilBase;
-                        DisplayCategories(null, true);
-                    }
-                }
-                else if (CurrentState == State.categories)
-                {
-                    if (GUI_facadeView.SelectedListItemIndex == 0)
-                    {
-                        ShowPreviousMenu();
-                    }
-                    else
-                    {
-                        Category categoryToDisplay = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Category;
-						if (categoryToDisplay is NextPageCategory)
-						{
-							DisplayCategories_NextPage(categoryToDisplay as NextPageCategory);
-						}
-						else if (categoryToDisplay.HasSubCategories)
-                        {
-                            DisplayCategories(categoryToDisplay, true);
-                        }
-                        else
-                        {
-                            DisplayVideos_Category(categoryToDisplay, false);
-                        }
-                    }
-                }
-                else if (CurrentState == State.videos)
-                {
-                    ImageDownloader.StopDownload = true;
-                    if (GUI_facadeView.SelectedListItemIndex == 0)
-                    {
-                        ShowPreviousMenu();
-                    }
-					else if (GUI_facadeView.SelectedListItem.Label == Translation.Instance.NextPage)
-                    {
-                        DisplayVideos_NextPage();
-                    }
-                    else
-                    {
-                        selectedVideo = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
-                        if (SelectedSite is IChoice && selectedVideo.HasDetails)
-                        {
-                            // show details view
-                            DisplayDetails();
-                        }
-                        else if (SelectedSite is Sites.FavoriteUtil && selectedVideo.HasDetails &&
-                            (selectedCategory is Sites.FavoriteUtil.FavoriteCategory && (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site is IChoice))
-                        {
-                            SelectedSite = (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site;
-                            // show details view
-                            DisplayDetails();
-                        }
-                        else
-                        {
-                            //play the video
-                            currentPlaylist = null;
-                            currentPlayingItem = null;
+				if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
+				{
+					currentFilter.Clear();
+					GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
+					switch (CurrentState)
+					{
+						case State.groups:
+							selectedSitesGroup = GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem;
+							if (selectedSitesGroup.Item is SitesGroup)
+								DisplaySites();
+							else
+							{
+								SelectedSite = selectedSitesGroup.Item as Sites.SiteUtilBase;
+								DisplayCategories(null, true);
+							}
+							break;
+						case State.sites:
+							if (GUI_facadeView.SelectedListItem.Label == "..")
+							{
+								ShowPreviousMenu();
+							}
+							else
+							{
+								SelectedSite = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Sites.SiteUtilBase;
+								DisplayCategories(null, true);
+							}
+							break;
+						case State.categories:
+							if (GUI_facadeView.SelectedListItemIndex == 0)
+							{
+								ShowPreviousMenu();
+							}
+							else
+							{
+								Category categoryToDisplay = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as Category;
+								if (categoryToDisplay is NextPageCategory)
+								{
+									DisplayCategories_NextPage(categoryToDisplay as NextPageCategory);
+								}
+								else if (categoryToDisplay.HasSubCategories)
+								{
+									DisplayCategories(categoryToDisplay, true);
+								}
+								else
+								{
+									DisplayVideos_Category(categoryToDisplay, false);
+								}
+							}
+							break;
+						case State.videos:
+							ImageDownloader.StopDownload = true;
+							if (GUI_facadeView.SelectedListItemIndex == 0)
+							{
+								ShowPreviousMenu();
+							}
+							else if (GUI_facadeView.SelectedListItem.Label == Translation.Instance.NextPage)
+							{
+								DisplayVideos_NextPage();
+							}
+							else
+							{
+								selectedVideo = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
+								if (SelectedSite is IChoice && selectedVideo.HasDetails)
+								{
+									// show details view
+									DisplayDetails();
+								}
+								else if (SelectedSite is Sites.FavoriteUtil && selectedVideo.HasDetails &&
+									(selectedCategory is Sites.FavoriteUtil.FavoriteCategory && (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site is IChoice))
+								{
+									SelectedSite = (selectedCategory as Sites.FavoriteUtil.FavoriteCategory).Site;
+									// show details view
+									DisplayDetails();
+								}
+								else
+								{
+									//play the video
+									currentPlaylist = null;
+									currentPlayingItem = null;
 
-                            Play_Step1(new PlayListItem(null, null)
-                                    {
-                                        Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
-                                        Video = selectedVideo,
-                                        Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
-                                    }, true);
-                        }
-                    }
-                }
+									Play_Step1(new PlayListItem(null, null)
+											{
+												Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
+												Video = selectedVideo,
+												Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
+											}, true);
+								}
+							}
+							break;
+					}
+				}
+				else if (CurrentState == State.videos && !(SelectedSite is IChoice && selectedVideo.HasDetails) && 
+					(actionType == Action.ActionType.ACTION_MUSIC_PLAY || actionType == Action.ActionType.ACTION_PLAY))
+				{
+					VideoInfo videoPressedPlayOn = (GUI_facadeView.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo;
+					if (videoPressedPlayOn != null)
+					{
+						ImageDownloader.StopDownload = true;
+
+						currentFilter.Clear();
+						GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
+						
+						selectedVideo = videoPressedPlayOn;
+
+						//play the video
+						currentPlaylist = null;
+						currentPlayingItem = null;
+
+						Play_Step1(new PlayListItem(null, null)
+						{
+							Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
+							Video = selectedVideo,
+							Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
+						}, true, true);
+					}
+				}
             }
-            else if (control == GUI_infoList && actionType == Action.ActionType.ACTION_SELECT_ITEM && CurrentState == State.details)
+			else if (control == GUI_infoList && CurrentState == State.details && 
+				(actionType == Action.ActionType.ACTION_SELECT_ITEM || actionType == Action.ActionType.ACTION_MUSIC_PLAY || actionType == Action.ActionType.ACTION_PLAY))
             {
                 ImageDownloader.StopDownload = true;
                 if (GUI_infoList.SelectedListItemIndex == 0)
@@ -817,7 +845,7 @@ namespace OnlineVideos.MediaPortal1
                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                         Video = (GUI_infoList.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo,
                         Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
-                    }, true);
+					}, true, actionType != Action.ActionType.ACTION_SELECT_ITEM);
                 }
             }
             else if (control == GUI_btnViewAs)
@@ -1869,7 +1897,7 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        private void Play_Step1(PlayListItem playItem, bool goFullScreen)
+        private void Play_Step1(PlayListItem playItem, bool goFullScreen, bool skipPlaybackOptionsDialog = false)
         {
             if (!string.IsNullOrEmpty(playItem.FileName))
             {
@@ -1879,7 +1907,7 @@ namespace OnlineVideos.MediaPortal1
                 },
                 delegate(bool success, object result)
                 {
-                    if (success) Play_Step2(playItem, new List<String>() { result as string }, goFullScreen);
+					if (success) Play_Step2(playItem, new List<String>() { result as string }, goFullScreen, skipPlaybackOptionsDialog);
                     else if (currentPlaylist != null && currentPlaylist.Count > 1) PlayNextPlaylistItem();
                 }
 				, Translation.Instance.GettingPlaybackUrlsForVideo, true);
@@ -1892,14 +1920,14 @@ namespace OnlineVideos.MediaPortal1
                 },
                 delegate(bool success, object result)
                 {
-                    if (success) Play_Step2(playItem, result as List<String>, goFullScreen);
+					if (success) Play_Step2(playItem, result as List<String>, goFullScreen, skipPlaybackOptionsDialog);
                     else if (currentPlaylist != null && currentPlaylist.Count > 1) PlayNextPlaylistItem();
                 }
 				, Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
         }
 
-        private void Play_Step2(PlayListItem playItem, List<String> loUrlList, bool goFullScreen)
+		private void Play_Step2(PlayListItem playItem, List<String> loUrlList, bool goFullScreen, bool skipPlaybackOptionsDialog)
         {
             removeInvalidEntries(loUrlList);
 
@@ -1951,7 +1979,7 @@ namespace OnlineVideos.MediaPortal1
             }
             // if multiple quality choices are available show a selection dialogue (also on playlist playback)
             string lsUrl = loUrlList[0];
-            bool resolve = DisplayPlaybackOptions(playItem.Video, ref lsUrl); // resolve only when any playbackoptions were set
+            bool resolve = DisplayPlaybackOptions(playItem.Video, ref lsUrl, skipPlaybackOptionsDialog); // resolve only when any playbackoptions were set
             if (lsUrl == "-1") return; // the user did not chose an option but canceled the dialog
             if (resolve)
             {
@@ -2269,7 +2297,7 @@ namespace OnlineVideos.MediaPortal1
             }
             // if multiple quality choices are available show a selection dialogue
             string lsUrl = loUrlList[0];
-            bool resolve = DisplayPlaybackOptions(saveItems.CurrentItem.VideoInfo, ref lsUrl);
+            bool resolve = DisplayPlaybackOptions(saveItems.CurrentItem.VideoInfo, ref lsUrl, false);
             if (lsUrl == "-1") return; // user canceled the dialog -> don't download
             if (resolve)
             {
@@ -2785,8 +2813,9 @@ namespace OnlineVideos.MediaPortal1
         /// </summary>
         /// <param name="videoInfo"></param>
         /// <param name="defaultUrl">will be set to -1 when the user canceled the dialog, will not be touched if no playbackoptions are set, otherwise set to the chosen key</param>
+		/// <param name="skipDialog">when set to true, the dialog will not display, the default choice is returned</param>
         /// <returns>true when a choice from the PlaybackOptions was made (or only one option was available)</returns>
-        private bool DisplayPlaybackOptions(VideoInfo videoInfo, ref string defaultUrl)
+        private bool DisplayPlaybackOptions(VideoInfo videoInfo, ref string defaultUrl, bool skipDialog)
         {
             // with no options set, return the VideoUrl field
             if (videoInfo.PlaybackOptions == null || videoInfo.PlaybackOptions.Count == 0) return false;
@@ -2797,24 +2826,34 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-                int defaultOption = -1;
-                // show a list of available options and let the user decide
-                GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-                if (dlgSel != null)
-                {
-                    dlgSel.Reset();
-					dlgSel.SetHeading(string.Format("{0} - {1}", videoInfo.Title, Translation.Instance.SelectSource));
-                    int option = 0;
-                    foreach (string key in videoInfo.PlaybackOptions.Keys)
-                    {
-                        dlgSel.Add(key);
-                        if (videoInfo.PlaybackOptions[key] == defaultUrl) defaultOption = option;
-                        option++;
-                    }
-                }
-                if (defaultOption != -1) dlgSel.SelectedLabel = defaultOption;
-                dlgSel.DoModal(GUIWindowManager.ActiveWindow);
-                defaultUrl = (dlgSel.SelectedId == -1) ? "-1" : dlgSel.SelectedLabelText;
+				if (skipDialog)
+				{
+					string defaultUrlUnRef = defaultUrl;
+					var defaultOption = videoInfo.PlaybackOptions.FirstOrDefault(p => p.Value == defaultUrlUnRef).Key;
+					if (!string.IsNullOrEmpty(defaultOption)) defaultUrl = defaultOption;
+					else defaultUrl = videoInfo.PlaybackOptions.First().Key;
+				}
+				else
+				{
+					int defaultOption = -1;
+					// show a list of available options and let the user decide
+					GUIDialogMenu dlgSel = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+					if (dlgSel != null)
+					{
+						dlgSel.Reset();
+						dlgSel.SetHeading(string.Format("{0} - {1}", videoInfo.Title, Translation.Instance.SelectSource));
+						int option = 0;
+						foreach (string key in videoInfo.PlaybackOptions.Keys)
+						{
+							dlgSel.Add(key);
+							if (videoInfo.PlaybackOptions[key] == defaultUrl) defaultOption = option;
+							option++;
+						}
+					}
+					if (defaultOption != -1) dlgSel.SelectedLabel = defaultOption;
+					dlgSel.DoModal(GUIWindowManager.ActiveWindow);
+					defaultUrl = (dlgSel.SelectedId == -1) ? "-1" : dlgSel.SelectedLabelText;
+				}
             }
             return true;
         }
