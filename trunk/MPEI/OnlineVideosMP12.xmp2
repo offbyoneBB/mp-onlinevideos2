@@ -1767,6 +1767,13 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{01ff36dd-4b5a-47d0-88c4-ed79b4ae9e47}-OnlineVideos.Sites.brownard.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</DestinationFilename>
+            </FileItem>            
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4c8dc52e-55c1-48cc-9a34-589f7be39c5c}-OnlineVideos.Sites.corporategadfly.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</DestinationFilename>
@@ -4627,6 +4634,13 @@ changed: OnlineVideos uses its own logfile</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{01ff36dd-4b5a-47d0-88c4-ed79b4ae9e47}-OnlineVideos.Sites.brownard.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</DestinationFilename>
+      </FileItem>      
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
