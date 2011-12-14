@@ -13,7 +13,7 @@ namespace OnlineVideos.Sites
     {
         public enum VideoQuality { Low, Medium, High };
 
-        [Category("OnlineVideosUserConfiguration"), Description("Defines the quality for videos and livestreams.")]
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the quality for videos and livestreams.")]
         VideoQuality videoQuality = VideoQuality.Medium;
 
         protected NrkParser nrkParser = null;

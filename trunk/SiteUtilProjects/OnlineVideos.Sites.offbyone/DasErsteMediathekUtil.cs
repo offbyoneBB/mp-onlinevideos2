@@ -10,7 +10,7 @@ namespace OnlineVideos.Sites
     {        
         public enum VideoQuality { Low, High, Max };
 
-        [Category("OnlineVideosUserConfiguration"), Description("Choose your preferred quality for the videos according to bandwidth.")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName="VideoQuality"), Description("Choose your preferred quality for the videos according to bandwidth.")]
         VideoQuality videoQuality = VideoQuality.High;
 
         public override String getUrl(VideoInfo video)

@@ -39,7 +39,7 @@ namespace OnlineVideos
 		public string GetByName(string name)
 		{
 			string result = name;
-			Strings.TryGetValue(name, out name);
+			Strings.TryGetValue(name, out result);
 			return result;
 		}
 

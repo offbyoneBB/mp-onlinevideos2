@@ -12,7 +12,7 @@ namespace OnlineVideos.Sites.Pondman
         [Category("OnlineVideosUserConfiguration"), Description("Always playback the preferred quality.")]
         bool AlwaysPlaybackPreferredQuality = false;
 
-        [Category("OnlineVideosUserConfiguration"), Description("Defines the preferred quality for video playback.")]
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the preferred quality for video playback.")]
         VideoFormat PreferredVideoQuality = VideoFormat.SD;
 
         [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum height of images when resizing (for poster format). Use 0 to disable resizing and get the full image resolution.")]
