@@ -7,9 +7,9 @@ using OnlineVideos;
 
 namespace RTMP_LIB
 {
-	public class RTMPRequestHandler_OLD : CrossDomanSingletonBase<RTMPRequestHandler_OLD>, IRequestHandler
+	public class RTMPRequestHandler : CrossDomanSingletonBase<RTMPRequestHandler>, IRequestHandler
     {
-		private RTMPRequestHandler_OLD() 
+		private RTMPRequestHandler()
 		{
 			ReverseProxy.Instance.AddHandler(this);
 		}
