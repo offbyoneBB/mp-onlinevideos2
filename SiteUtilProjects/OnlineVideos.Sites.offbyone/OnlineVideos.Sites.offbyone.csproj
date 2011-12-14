@@ -64,7 +64,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BBCiPlayerUtil.cs" />
     <Compile Include="DasErsteMediathekUtil.cs" />
     <Compile Include="GameTrailersUtil.cs" />
     <Compile Include="Google\GData\Client\abstractentry.cs" />
