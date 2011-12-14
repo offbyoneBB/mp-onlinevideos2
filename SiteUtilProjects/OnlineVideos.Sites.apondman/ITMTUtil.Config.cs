@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites.Pondman
         [Category("OnlineVideosUserConfiguration"), Description("Always playback the preferred quality.")]
         bool AlwaysPlaybackPreferredQuality = false;
 
-        [Category("OnlineVideosUserConfiguration"), Description("Defines the preferred quality for trailer playback.")]
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the preferred quality for trailer playback.")]
         VideoQuality PreferredVideoQuality = VideoQuality.HD480;
     }
 }

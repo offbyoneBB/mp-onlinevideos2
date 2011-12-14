@@ -11,7 +11,7 @@ namespace OnlineVideos.Sites
 {
     public class ZDFMediathekUtil : SiteUtilBase
     {
-        [Category("OnlineVideosUserConfiguration"), Description("Defines the maximum quality for the video to be played.")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName="VideoQuality"), Description("Defines the maximum quality for the video to be played.")]
         videoFormitaetQuality videoQuality = videoFormitaetQuality.veryhigh;        
 
         public override int DiscoverDynamicCategories()

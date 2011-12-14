@@ -41,7 +41,9 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public enum VideoQuality { Low, High, HD };
+        public enum VideoQuality { Low, Medium, High, HD, FullHD };
+
+		public enum VideoFormat { flv, mp4, webm };
 
         /// <summary>
         /// http://code.google.com/intl/de-DE/apis/youtube/2.0/reference.html#Standard_feeds
@@ -94,6 +96,10 @@ namespace OnlineVideos.Sites
             [Description("Swedish")]sv
         }
 
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Preferred Format"), Description("Prefer this format when there are more than one for the desired quality.")]
+		VideoFormat preferredFormat = VideoFormat.mp4;
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Undesired Format"), Description("Try to avoid this format when there are more than one for the desired quality.")]
+		VideoFormat undesiredFormat = VideoFormat.webm;
 		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName="VideoQuality"), Description("Defines the maximum quality for the video to be played.")]
         VideoQuality videoQuality = VideoQuality.High;
 		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Account Name"), Description("Your YouTube account name (not Email!). Used for favorites and subscriptions.")]
@@ -156,37 +162,46 @@ namespace OnlineVideos.Sites
 
         public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            List<string> result = new List<string>();
-
-            if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
-            {
-                // don't retrieve playback options more than once
-                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(video.VideoUrl);
-            }
-
+            video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(video.VideoUrl);
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
-                if (video.PlaybackOptions.Count == 1 || videoQuality == VideoQuality.Low)
-                {
-                    //user wants low quality or only one playback option -> use first
-                    result.Add(video.PlaybackOptions.First().Value);
-                }
-                else if (videoQuality == VideoQuality.HD)
-                {
-                    // take highest available quality
-                    result.Add(video.PlaybackOptions.Last().Value);
-                    if (inPlaylist) video.PlaybackOptions = null;
-                }
-                else
-                {
-                    // choose a high quality from options (highest below the HD formats (37 22))
-                    var quality = video.PlaybackOptions.Last(q => !q.Key.Contains("1920") && !q.Key.Contains("1280"));
-                    result.Add(quality.Value);
-                    if (inPlaylist) video.PlaybackOptions = null;
-                }
+				if (video.PlaybackOptions.Count == 1)
+				{
+					// nothing to chose from, only one options available
+					return new List<string>() { video.PlaybackOptions.First().Value };
+				}
+				else
+				{
+					KeyValuePair<string, string> foundQuality = default(KeyValuePair<string, string>);
+					switch (videoQuality)
+					{
+						case VideoQuality.Low:		//use first available option
+							foundQuality = video.PlaybackOptions.First(); break;
+						case VideoQuality.Medium:	//first above 320 that is not 3D
+							foundQuality = video.PlaybackOptions.FirstOrDefault(q => !q.Key.Contains("320") && !q.Key.Contains("3D")); break;
+						case VideoQuality.High:		//highest below the HD formats that is not 3D
+							foundQuality = video.PlaybackOptions.LastOrDefault(q => !q.Key.Contains("1920") && !q.Key.Contains("1280") && !q.Key.Contains("3D")); break;
+						case VideoQuality.HD:		//first below full HD that is not 3D
+							foundQuality = video.PlaybackOptions.LastOrDefault(q => !q.Key.Contains("1920") && !q.Key.Contains("3D")); break;
+						case VideoQuality.FullHD:	//use highest available quality that is not 3D
+							foundQuality = video.PlaybackOptions.Last(q => !q.Key.Contains("3D")); break;
+					}
+					if (!string.IsNullOrEmpty(foundQuality.Key))
+					{
+						string resolution = foundQuality.Key.Substring(0, foundQuality.Key.IndexOf('|'));
+						// try to find one that has the same resolution and the preferred format
+						var bestMatch = video.PlaybackOptions.FirstOrDefault(q => q.Key.Contains(resolution) && !q.Key.Contains("3D") && q.Key.Contains(preferredFormat.ToString()));
+						// try to find one that has the same resolution and not the undesired format
+						if (string.IsNullOrEmpty(bestMatch.Key)) bestMatch = video.PlaybackOptions.FirstOrDefault(q => q.Key.Contains(resolution) && !q.Key.Contains("3D") && !q.Key.Contains(undesiredFormat.ToString()));
+						if (!string.IsNullOrEmpty(bestMatch.Key)) foundQuality = bestMatch;
+					}
+					// fallback when no match was found -> use first choice
+					if (string.IsNullOrEmpty(foundQuality.Key)) foundQuality = video.PlaybackOptions.First();
+					if (inPlaylist) video.PlaybackOptions = null;
+					return new List<string>() { foundQuality.Value };
+				}				
             }
-
-            return result;
+			return null; // no playback options
         }
 
         public override int DiscoverDynamicCategories()

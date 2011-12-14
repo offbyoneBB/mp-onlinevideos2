@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Text;
-using RssToolkit.Rss;
+using System.Text.RegularExpressions;
 using System.Xml;
+using RssToolkit.Rss;
 
 namespace OnlineVideos.Sites
 {
@@ -17,9 +16,9 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Group similar items from the rss feeds into subcategories.")]
         bool autoGrouping = true;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used on a video thumbnail for matching a string to be replaced for higher quality")]
-        string thumbReplaceRegExPattern;
+        protected string thumbReplaceRegExPattern;
         [Category("OnlineVideosConfiguration"), Description("The string used to replace the match if the pattern from the thumbReplaceRegExPattern matched")]
-        string thumbReplaceString;
+		protected string thumbReplaceString;
 
         public override string getUrl(VideoInfo video)
         {
@@ -45,7 +44,7 @@ namespace OnlineVideos.Sites
             doc = new XmlDocument();
             doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + id, null, null, proxyObj)); //uk only
             nsmRequest = new XmlNamespaceManager(doc.NameTable);
-            nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
+            nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");			
 
             SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
             foreach(XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
@@ -69,7 +68,7 @@ namespace OnlineVideos.Sites
                         string identifier = connectionElem.Attributes["identifier"].Value;
                         string auth = connectionElem.Attributes["authString"].Value;
                         string application = connectionElem.GetAttribute("application");
-                        if (string.IsNullOrEmpty(application)) application = video.Other == "livestream" ? "live" : "ondemand";
+						if (string.IsNullOrEmpty(application)) application = video.Other == "livestream" ? "live" : "ondemand";
                         string SWFPlayer = "http://www.bbc.co.uk/emp/10player.swf";
 
                         info = string.Format("{0}x{1} | {2} kbps | {3}", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"), connectionElem.Attributes["kind"].Value);
@@ -112,6 +111,12 @@ namespace OnlineVideos.Sites
                     if (resultUrl != "") sortedPlaybackOptions.Add(info, resultUrl);
                 }
             }
+
+			if (sortedPlaybackOptions.Count == 0)
+			{
+				var errorNodes = doc.SelectNodes("//ns1:error", nsmRequest);
+				if (errorNodes.Count > 0) throw new OnlineVideosException(string.Format("BBC says: {0}", ((XmlElement)errorNodes[0]).GetAttribute("id")));
+			}
 
             string lastUrl = "";
             video.PlaybackOptions = new Dictionary<string, string>();
@@ -197,20 +202,20 @@ namespace OnlineVideos.Sites
                     allOthers.Add(video);
                 }
             }
-            if (allOthers.Count > 0)
-            {
-                // add all others on top
-                parentCategory.SubCategories.Add(new RssLink() { Name = "All Others", ParentCategory = parentCategory, Other = allOthers, EstimatedVideoCount = (uint)allOthers.Count });
-            }
-            // sort the remaining alphabetically
-            string[] keys = new string[possibleSubCatStrings.Count];
-            possibleSubCatStrings.Keys.CopyTo(keys, 0);
-            Array.Sort(keys);
-            foreach(string key in keys)
-            {
-                List<VideoInfo> value = possibleSubCatStrings[key];
-                parentCategory.SubCategories.Add(new RssLink() { Name = key, ParentCategory = parentCategory, Other = value, EstimatedVideoCount = (uint)value.Count });
-            }
+			if (allOthers.Count > 0)
+			{
+				// add all others on top
+				parentCategory.SubCategories.Add(new RssLink() { Name = "All Others", ParentCategory = parentCategory, Thumb = allOthers[0].ImageUrl, Other = allOthers, EstimatedVideoCount = (uint)allOthers.Count });
+			}
+			// sort the remaining alphabetically
+			string[] keys = new string[possibleSubCatStrings.Count];
+			possibleSubCatStrings.Keys.CopyTo(keys, 0);
+			Array.Sort(keys);
+			foreach (string key in keys)
+			{
+				List<VideoInfo> value = possibleSubCatStrings[key];
+				parentCategory.SubCategories.Add(new RssLink() { Name = key, ParentCategory = parentCategory, Thumb = value[0].ImageUrl, Other = value, EstimatedVideoCount = (uint)value.Count });
+			}
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
         }
@@ -241,20 +246,24 @@ namespace OnlineVideos.Sites
 
     }
 
-    class QualityComparer : IComparer<string>
-    {
-        #region IComparer<string> Member
+	class QualityComparer : IComparer<string>
+	{
+		#region IComparer<string> Member
 
-        public int Compare(string x, string y)
-        {
-            int x_kbps = 0;
-            if (!int.TryParse(x.Substring(x.IndexOf('|')+1).Replace(" kbps", ""), out x_kbps)) return 1;
-            int y_kbps = 0;
-            if (!int.TryParse(y.Substring(y.IndexOf('|') + 1).Replace(" kbps", ""), out y_kbps)) return -1;
-            return x_kbps.CompareTo(y_kbps);
-        }
+		public int Compare(string x, string y)
+		{
+			int x_kbps = 0;
+			if (!int.TryParse(Regex.Match(x, @"(\d+) kbps").Groups[1].Value, out x_kbps)) return 1;
+			int y_kbps = 0;
+			if (!int.TryParse(Regex.Match(y, @"(\d+) kbps").Groups[1].Value, out y_kbps)) return -1;
 
-        #endregion
-    }
+			int compare = x_kbps.CompareTo(y_kbps);
+			if (compare == 0) //if bitrates same, sort alphabetically
+				compare = x.CompareTo(y);
+			return compare;
+		}
+
+		#endregion
+	}
 }
 

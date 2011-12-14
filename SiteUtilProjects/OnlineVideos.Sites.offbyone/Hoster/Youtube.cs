@@ -15,7 +15,7 @@ namespace OnlineVideos.Hoster
             return "Youtube.com";
         }
 
-        static readonly byte[] fmtOptionsQualitySorted = new byte[] { 38, 37, 45, 22, 44, 35, 43, 18, 34, 5, 0, 17, 13 };
+		static readonly byte[] fmtOptionsQualitySorted = new byte[] { 38, 85, 46, 37, 102, 84, 45, 22, 101, 83, 44, 35, 100, 82, 43, 18, 34, 6, 5, 0, 17, 13 };
         static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})|(?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|(flashvars=""(?<params>[^""]+)"")", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public override Dictionary<string, string> getPlaybackOptions(string url)
@@ -85,6 +85,7 @@ namespace OnlineVideos.Hoster
                 {
                     var urlOptions = HttpUtility.ParseQueryString(quality.Value);
                     string type = urlOptions.Get("type");
+					string stereo = urlOptions["stereo3d"] == "1" ? " 3D " : " ";
                     if (!string.IsNullOrEmpty(type))
                     {
                         type = Regex.Replace(type, @"; codecs=""[^""]*""", "");
@@ -92,7 +93,7 @@ namespace OnlineVideos.Hoster
                     }
                     string finalUrl = urlOptions.Get("url");
                     if (!string.IsNullOrEmpty(finalUrl))
-                        PlaybackOptions.Add(string.Format("{0} | {1} ({2})", quality.Key[1], type, quality.Key[0]), finalUrl + "&ext=." + type.Replace("webm", "mkv"));
+						PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + "&ext=." + type.Replace("webm", "mkv"));
                     else
                     {
                         string rtmpUrl = urlOptions.Get("conn");
