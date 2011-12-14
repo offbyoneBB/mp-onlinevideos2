@@ -2801,7 +2801,7 @@ public class Script
           <Revision>27644</Revision>
         </MaxVersion>
         <WarnOnly>false</WarnOnly>
-        <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or Final!</Message>
+        <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or Final or higher!</Message>
         <Name>MediaPortal</Name>
       </DependencyItem>
     </Items>
@@ -2819,11 +2819,11 @@ public class Script
         </CompatibleVersion>
         <SubSystemsUsed>
           <Items>
-            <SubSystemItem Name="MP.Input" />
-            <SubSystemItem Name="MP.SkinEngine" />
             <SubSystemItem Name="MP.Players.Video" />
+            <SubSystemItem Name="MP.Input" />
             <SubSystemItem Name="MP.Externals.SQLite" />
             <SubSystemItem Name="MP.Config" />
+            <SubSystemItem Name="MP.SkinEngine" />
           </Items>
         </SubSystemsUsed>
       </PluginDependencyItem>
@@ -2848,10 +2848,13 @@ added: source filter that supports HTTP ranges and RTMP using rtmplib
 added: updated siteutil dlls will be reloaded while MediaPortal is running
 added: latest online videos can be shown e.g. on Basic Home screen
 added: downloads can be enqueued or concurrent
-added: open a group of sites directly</VersionDescription>
+added: open a group of sites directly via load paramter
+added: favorited categories are marked and removable in their respective sites
+added: play a video by pressing PLAY without showing the choices dialog
+changed: OnlineVideos uses its own logfile</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.0.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2011-12-11T11:00:00</ReleaseDate>
+    <ReleaseDate>2011-12-15T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
