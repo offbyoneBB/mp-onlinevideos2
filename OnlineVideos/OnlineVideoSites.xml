@@ -1471,6 +1471,69 @@
     <Site name="BNN" util="BNN" agecheck="false" enabled="true" lang="en">
       <Description>Business News Network is Canada’s only all business and financial news channel.</Description>
     </Site>
+    <Site name="4oD" util="Fourod" agecheck="false" enabled="true" lang="en">
+      <Description>Catchup on all your favourite Channel 4 shows (only available in the UK).</Description>
+      <Categories>
+        <Category xsi:type="RssLink" name="All Shows">http://www.channel4.com/programmes/tags/4od</Category>
+        <Category xsi:type="RssLink" name="Comedy">http://www.channel4.com/programmes/tags/comedy/4od</Category>
+        <Category xsi:type="RssLink" name="Documentaries">http://www.channel4.com/programmes/tags/documentaries/4od</Category>
+        <Category xsi:type="RssLink" name="Drama">http://www.channel4.com/programmes/tags/drama/4od</Category>
+        <Category xsi:type="RssLink" name="Entertainment">http://www.channel4.com/programmes/tags/entertainment/4od</Category>
+        <Category xsi:type="RssLink" name="Food">http://www.channel4.com/programmes/tags/food/4od</Category>
+        <Category xsi:type="RssLink" name="News, Current Affairs and Politics">http://www.channel4.com/programmes/tags/news-current-affairs-and-politics/4od</Category>
+        <Category xsi:type="RssLink" name="Animals">http://www.channel4.com/programmes/tags/animals/4od</Category>
+        <Category xsi:type="RssLink" name="Animation">http://www.channel4.com/programmes/tags/animation/4od</Category>
+        <Category xsi:type="RssLink" name="Art, Design and Literature">http://www.channel4.com/programmes/tags/art-design-and-literature/4od</Category>
+        <Category xsi:type="RssLink" name="Business and Money">http://www.channel4.com/programmes/tags/business-and-money/4od</Category>
+        <Category xsi:type="RssLink" name="Chat Shows">http://www.channel4.com/programmes/tags/chat-shows/4od</Category>
+        <Category xsi:type="RssLink" name="E4">http://www.channel4.com/programmes/tags/e4/4od</Category>
+        <Category xsi:type="RssLink" name="Education and Learning">http://www.channel4.com/programmes/tags/education-and-learning/4od</Category>
+        <Category xsi:type="RssLink" name="Family and Parenting">http://www.channel4.com/programmes/tags/family-and-parenting/4od</Category>
+        <Category xsi:type="RssLink" name="Fashion and Beauty">http://www.channel4.com/programmes/tags/fashion-and-beauty/4od</Category>
+        <Category xsi:type="RssLink" name="Health and Wellbeing">http://www.channel4.com/programmes/tags/health-and-wellbeing/4od</Category>
+        <Category xsi:type="RssLink" name="History">http://www.channel4.com/programmes/tags/history/4od</Category>
+        <Category xsi:type="RssLink" name="Homes and Gardens">http://www.channel4.com/programmes/tags/homes-and-gardens/4od</Category>
+        <Category xsi:type="RssLink" name="More4">http://www.channel4.com/programmes/tags/more4/4od</Category>
+        <Category xsi:type="RssLink" name="4Music">http://www.channel4.com/programmes/tags/music/4od</Category>
+        <Category xsi:type="RssLink" name="Quizzes and Gameshows">http://www.channel4.com/programmes/tags/quizzes-and-gameshows/4od</Category>
+        <Category xsi:type="RssLink" name="Reality Shows">http://www.channel4.com/programmes/tags/reality-shows/4od</Category>
+        <Category xsi:type="RssLink" name="Religion and Belief">http://www.channel4.com/programmes/tags/religion-and-belief/4od</Category>
+        <Category xsi:type="RssLink" name="Science, Nature and the Environment">http://www.channel4.com/programmes/tags/science-nature-and-the-environment/4od</Category>
+        <Category xsi:type="RssLink" name="Sex and Relationships">http://www.channel4.com/programmes/tags/sex-and-relationships/4od</Category>
+        <Category xsi:type="RssLink" name="Society and Culture">http://www.channel4.com/programmes/tags/society-and-culture/4od</Category>
+        <Category xsi:type="RssLink" name="Sports and Games">http://www.channel4.com/programmes/tags/sports-and-games/4od</Category>
+        <Category xsi:type="RssLink" name="US Shows">http://www.channel4.com/programmes/tags/us-shows/4od</Category>
+      </Categories>
+    </Site>
+    <Site name="ITV Player" util="ITVPlayer" agecheck="false" enabled="true" lang="en">
+      <Description>Catchup on all your favourite ITV shows (only available in the UK).</Description>
+      <Categories>
+        <Category xsi:type="RssLink" name="A - Z" thumb="">http://www.itv.com/_data/xml/CatchUpData/CatchUp360/CatchUpMenu.xml</Category>
+        <Category xsi:type="RssLink" name="ITV 1" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv1.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=ITV1</Category>
+        <Category xsi:type="RssLink" name="ITV 2" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv2.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=ITV2</Category>
+        <Category xsi:type="RssLink" name="ITV 3" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv3.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=ITV3</Category>
+        <Category xsi:type="RssLink" name="ITV 4" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/itv4.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=ITV4</Category>
+        <Category xsi:type="RssLink" name="CITV" thumb="http://c1801702.cdn.cloudfiles.rackspacecloud.com/citv.jpg">http://www.itv.com/itvplayer/bychannel/?Filter=CITV</Category>
+      </Categories>
+    </Site>
+    <Site name="Demand 5" util="Demand5" agecheck="false" enabled="true" lang="en">
+      <Description>Catchup on all your favourite Channel 5 shows (only available in the UK).</Description>
+      <Configuration>
+        <item key="hashValue"><![CDATA[8e8e110bb9d7d95eb3c3e500a86a21024eccd983]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Recently on TV">http://www.channel5.com/demand5/recently_on_tv_episodes?visible_items_number=1</Category>
+        <Category xsi:type="RssLink" name="Top Shows">http://url-must-end-with-top-shows.com/topshows</Category>
+        <Category xsi:type="RssLink" name="All Shows" thumb="http://wwwcdn.channel5.com/assets/images/000/019/773/large_size_FifthGear_Oct2011_D5_original.jpg?1322157673">http://www.channel5.com/shows</Category>
+        <Category xsi:type="RssLink" name="Entertainment" thumb="http://wwwcdn.channel5.com/assets/images/000/014/632/large_size_bachelor_main.jpg?1312793454">http://www.channel5.com/shows?genre=entertainment</Category>
+        <Category xsi:type="RssLink" name="Drama" thumb="http://wwwcdn.channel5.com/assets/images/000/006/200/large_size_csim_maina.jpg?1294768057">http://www.channel5.com/shows?genre=drama</Category>
+        <Category xsi:type="RssLink" name="Documentary" thumb="http://wwwcdn.channel5.com/assets/images/000/001/633/large_size_Police_InterceptorsB-640x360.jpg?1285339295">http://www.channel5.com/shows?genre=documentary</Category>
+        <Category xsi:type="RssLink" name="Soap" thumb="http://wwwcdn.channel5.com/assets/images/000/020/048/large_size_summer.jpg?1322843311">http://www.channel5.com/shows?genre=soap</Category>
+        <Category xsi:type="RssLink" name="Milkshake!" thumb="http://wwwcdn.channel5.com/assets/images/000/020/122/large_size_Milkshake_Monkey_640_2.jpg?1323192335">http://www.channel5.com/shows?genre=milkshake!</Category>
+        <Category xsi:type="RssLink" name="Sport" thumb="http://wwwcdn.channel5.com/assets/images/000/019/481/large_size_tysonfury_640.jpg?1321029228">http://www.channel5.com/shows?genre=sport</Category>
+        <Category xsi:type="RssLink" name="Films" thumb="http://wwwcdn.channel5.com/assets/images/000/016/956/large_size_Circuit_D5.jpg?1315841899">http://www.channel5.com/shows?genre=films</Category>
+      </Categories>
+    </Site>
     <Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
       <Configuration>
