@@ -11,30 +11,26 @@ namespace OnlineVideos.Sites.georgius
     {
         #region Private fields
 
-        private static String baseUrl = "http://www.iprima.cz/videoarchiv";
-
-        private static String dynamicCategoryStart = @"<div class=""categoryChoice"">";
+        private static String baseUrl = "http://prima.stream.cz";
+        private static String dynamicCategoryStart = "<ul id=\"sekce_kanalu\">";
         private static String dynamicCategoryEnd = @"</ul>";
 
-        private static String showRegex = @"<a href=""(?<showUrl>[^""]*)"" class=""[^""]*"">(?<showTitle>[^""]*)</a>";
+        private static String showRegex = @"<a[\s]*href=""(?<showUrl>[^""]*)"">(?<showTitle>[^""]*)</a>";
 
-        private static String playerStart = @"<div id=""player"">";
-        private static String playerEnd = @"</div>";
-
-        private static String youtubeEpisodeUrlRegex = @"<param name=""movie"" value=""(?<episodeUrl>[^""]*)""";
-        private static String youtubeFormatRegex = @"(?<width>[0-9]+)x(?<height>[0-9]+) \| (?<format>[a-z0-9]+) \([\s]*[0-9]+\)";
-
-        private static String primaEpisodeUrlRegex = @"LiveboxPlayer.init\('[^']*', width, height, '(?<hqVideoPart>[^']*)', '(?<lqVideoPart>[^']*)', '[^']*', '[^']*','[^']*','[^']*','[^']*'\);";
-        private static String primaEpisodeConfiguration = @"http://embed.livebox.cz/iprima/player-1.js";
-        private static String primaEpisodeStreamRegex = @"stream: '(?<tcUrl>[^']*)'";
+        private static String showEpisodesStart = @"<div id=""videa_kanalu_list"">";
+        private static String showEpisodeBlockStartRegex = @"<div class=""(kanal_1video)|(kanal_1video third)"">";
+        private static String showEpisodeThumbUrlRegex = @"style=""background:#000 url\('(?<showThumbUrl>[^']*)'\) no-repeat 50% 50%;";
+        private static String showEpisodeLengthRegex = @"<span class=""kanal_1vidoe_time"">(?<showLength>[^<]*)</span>";
+        private static String showEpisodeUrlAndTitleRegex = @"<a class=""[^""]*"" href=""(?<showUrl>[^""]*)"" title=""[^""]*"">(?<showTitle>[^<]*)</a>";
 
         private static String videoUrlFormat = @"http://cdn-dispatcher.stream.cz/?id={0}"; // add 'cdnId'
+        private static String showEpisodeNextPageRegex = @"<a href=""(?<url>[^""]*)"" class=""fakeButtonInline"">další&nbsp;&raquo;</a>";
 
         private static String flashVarsStartRegex = @"(<param name=""flashvars"" value=)|(writeSWF)";
-        private static String flashVarsEnd = @">";
+        private static String flashVarsEnd = @"/>";
         private static String idRegex = @"id=(?<id>[^&]+)";
-        private static String cdnLqRegex = @"((cdnLQ)|(cdnID)){1}=(?<cdnLQ>[^&""]+)";
-        private static String cdnHqRegex = @"((cdnHQ)|(hdID)){1}=(?<cdnHQ>[^&""]+)";
+        private static String cdnLqRegex = @"cdnLQ=(?<cdnLQ>[^&]+)";
+        private static String cdnHqRegex = @"cdnHQ=(?<cdnHQ>[^&]+)";
 
         // the number of show episodes per page
         private static int pageSize = 28;
@@ -46,8 +42,6 @@ namespace OnlineVideos.Sites.georgius
         private String nextPageUrl = String.Empty;
 
         private RssLink currentCategory = new RssLink();
-
-        private int pageCounter = 0;
 
         #endregion
 
@@ -70,7 +64,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(PrimaUtil.baseUrl, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(PrimaUtil.baseUrl);
 
             int index = baseWebData.IndexOf(PrimaUtil.dynamicCategoryStart);
             if (index > 0)
@@ -94,7 +88,7 @@ namespace OnlineVideos.Sites.georgius
                         {
                             Name = showTitle,
                             HasSubCategories = false,
-                            Url = Utils.FormatAbsoluteUrl(showUrl, PrimaUtil.baseUrl)
+                            Url = showUrl
                         });
 
                     dynamicCategoriesCount++;
@@ -112,34 +106,75 @@ namespace OnlineVideos.Sites.georgius
 
             if (!String.IsNullOrEmpty(pageUrl))
             {
-                String modifiedPageUrl = pageUrl.Replace("videoarchiv", "videoarchiv_ajax") + "?method=json&action=relevant&page=" + this.pageCounter++;
-                String baseWebData = SiteUtilBase.GetWebData(modifiedPageUrl);
+                String baseWebData = SiteUtilBase.GetWebData(pageUrl);
 
-                Newtonsoft.Json.Linq.JObject jsonObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(baseWebData);
-                Newtonsoft.Json.Linq.JArray data = (Newtonsoft.Json.Linq.JArray)jsonObject["data"];
-
-                this.nextPageUrl = (data.Count == 0) ? String.Empty : pageUrl;
-
-                for (int i = 0; i < data.Count; i++)
+                int index = baseWebData.IndexOf(PrimaUtil.showEpisodesStart);
+                if (index > 0)
                 {
-                    Newtonsoft.Json.Linq.JObject showObject = (Newtonsoft.Json.Linq.JObject)data[i];
-
-                    String showTitle = (String)showObject["title"];
-                    String showThumbUrl = Utils.FormatAbsoluteUrl(String.Format("/{0}", (String)showObject["image"]), PrimaUtil.baseUrl);
-                    String showUrl = pageUrl.Replace("all/", String.Format("{0}/", (String)showObject["nid"]));
-                    String showDescription = (String)showObject["date"];
-
-                    VideoInfo videoInfo = new VideoInfo()
-                    {
-                        Description = showDescription,
-                        ImageUrl = showThumbUrl,
-                        Title = showTitle,
-                        VideoUrl = showUrl
-                    };
-
-                    pageVideos.Add(videoInfo);
+                    baseWebData = baseWebData.Substring(index);
                 }
 
+
+                while (true)
+                {
+                    Match showEpisodeBlockStart = Regex.Match(baseWebData, PrimaUtil.showEpisodeBlockStartRegex);
+                    if (showEpisodeBlockStart.Success)
+                    {
+                        baseWebData = baseWebData.Substring(showEpisodeBlockStart.Index + showEpisodeBlockStart.Length);
+
+                        String showTitle = String.Empty;
+                        String showThumbUrl = String.Empty;
+                        String showUrl = String.Empty;
+                        String showLength = String.Empty;
+                        String showDescription = String.Empty;
+
+                        Match showEpisodeThumbUrl = Regex.Match(baseWebData, PrimaUtil.showEpisodeThumbUrlRegex);
+                        if (showEpisodeThumbUrl.Success)
+                        {
+                            showThumbUrl = showEpisodeThumbUrl.Groups["showThumbUrl"].Value;
+                            baseWebData = baseWebData.Substring(showEpisodeThumbUrl.Index + showEpisodeThumbUrl.Length);
+                        }
+
+                        Match showEpisodeLength = Regex.Match(baseWebData, PrimaUtil.showEpisodeLengthRegex);
+                        if (showEpisodeLength.Success)
+                        {
+                            showLength = showEpisodeLength.Groups["showLength"].Value;
+                            baseWebData = baseWebData.Substring(showEpisodeLength.Index + showEpisodeLength.Length);
+                        }
+
+                        Match showEpisodeUrlAndTitle = Regex.Match(baseWebData, PrimaUtil.showEpisodeUrlAndTitleRegex);
+                        if (showEpisodeUrlAndTitle.Success)
+                        {
+                            showUrl = showEpisodeUrlAndTitle.Groups["showUrl"].Value;
+                            showTitle = showEpisodeUrlAndTitle.Groups["showTitle"].Value;
+                            baseWebData = baseWebData.Substring(showEpisodeUrlAndTitle.Index + showEpisodeUrlAndTitle.Length);
+                        }
+
+                        if (!((showEpisodeThumbUrl.Success) && (showEpisodeLength.Success) && (showEpisodeUrlAndTitle.Success)))
+                        {
+                            break;
+                        }
+
+                        VideoInfo videoInfo = new VideoInfo()
+                        {
+                            Description = showDescription,
+                            ImageUrl = showThumbUrl,
+                            Length = showLength,
+                            Title = showTitle,
+                            VideoUrl = showUrl
+                        };
+
+                        pageVideos.Add(videoInfo);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+
+                Match nextPageMatch = Regex.Match(baseWebData, PrimaUtil.showEpisodeNextPageRegex);
+                this.nextPageUrl = (nextPageMatch.Success) ? String.Format("{0}{1}", PrimaUtil.baseUrl, nextPageMatch.Groups["url"].Value.Replace("amp;", "")) : String.Empty;
             }
 
             return pageVideos;
@@ -201,7 +236,6 @@ namespace OnlineVideos.Sites.georgius
 
         public override List<VideoInfo> getVideoList(Category category)
         {
-            this.pageCounter = 0;
             this.currentStartIndex = 0;
             return this.GetVideoList(category, PrimaUtil.pageSize - 2);
         }
@@ -225,137 +259,56 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
-            this.Settings.Player = PlayerType.Internal;
+            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl);
+            baseWebData = HttpUtility.HtmlDecode(baseWebData);
 
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
-
-            int startIndex = baseWebData.IndexOf(PrimaUtil.playerStart);
-            if (startIndex >= 0)
+            Match flashVarsStart = Regex.Match(baseWebData, PrimaUtil.flashVarsStartRegex);
+            if (flashVarsStart.Success)
             {
-                int endIndex = baseWebData.IndexOf(PrimaUtil.playerEnd, startIndex);
-                if (endIndex >= 0)
+                int end = baseWebData.IndexOf(PrimaUtil.flashVarsEnd, flashVarsStart.Index);
+                if (end > 0)
                 {
-                    String playerData = baseWebData.Substring(startIndex, endIndex - startIndex);
+                    baseWebData = baseWebData.Substring(flashVarsStart.Index, end - flashVarsStart.Index);
 
-                    Match youtubeMatch = Regex.Match(playerData, PrimaUtil.youtubeEpisodeUrlRegex);
-                    if ((youtubeMatch.Success) && (youtubeMatch.Groups["episodeUrl"].Value.IndexOf("youtube", StringComparison.InvariantCultureIgnoreCase) >= 0))
+                    Match idMatch = Regex.Match(baseWebData, PrimaUtil.idRegex);
+                    Match cdnLqMatch = Regex.Match(baseWebData, PrimaUtil.cdnLqRegex);
+                    Match cdnHqMatch = Regex.Match(baseWebData, PrimaUtil.cdnHqRegex);
+
+                    String id = (idMatch.Success) ? idMatch.Groups["id"].Value : String.Empty;
+                    String cdnLq = (cdnLqMatch.Success) ? cdnLqMatch.Groups["cdnLQ"].Value : String.Empty;
+                    String cdnHq = (cdnHqMatch.Success) ? cdnHqMatch.Groups["cdnHQ"].Value : String.Empty;
+
+                    if ((!String.IsNullOrEmpty(cdnLq)) && (!String.IsNullOrEmpty(cdnHq)))
                     {
-                        Dictionary<String, String> playbackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(youtubeMatch.Groups["episodeUrl"].Value);
-                        if (playbackOptions != null)
-                        {
-                            int width = 0;
-                            String format = String.Empty;
-                            String url = String.Empty;
+                        // we got low and high quality
+                        String lowQualityUrl = SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnLq));
+                        String highQualityUrl = SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnHq));
 
-                            foreach (var option in playbackOptions)
-                            {
-                                Match optionMatch = Regex.Match(option.Key, PrimaUtil.youtubeFormatRegex);
-                                if (optionMatch.Success)
-                                {
-                                    int tempWidth = int.Parse(optionMatch.Groups["width"].Value);
-                                    String tempFormat = optionMatch.Groups["format"].Value;
-
-                                    if ((tempWidth > width) ||
-                                        ((tempWidth == width) && (tempFormat == "mp4")))
-                                    {
-                                        width = tempWidth;
-                                        url = option.Value;
-                                        format = tempFormat;
-                                    }
-                                }
-                            }
-
-                            return url;
-                        }
+                        video.PlaybackOptions = new Dictionary<string, string>();
+                        video.PlaybackOptions.Add("Low quality", lowQualityUrl);
+                        video.PlaybackOptions.Add("High quality", highQualityUrl);
                     }
-
-                    Match primaMatch = Regex.Match(playerData, PrimaUtil.primaEpisodeUrlRegex);
-                    if (primaMatch.Success)
+                    else if (!String.IsNullOrEmpty(cdnLq))
                     {
-                        String data = SiteUtilBase.GetWebData(PrimaUtil.primaEpisodeConfiguration, null, video.VideoUrl, null, true);
-                        Match tcUrlMatch = Regex.Match(data, PrimaUtil.primaEpisodeStreamRegex);
-                        if (tcUrlMatch.Success)
-                        {
-                            video.PlaybackOptions = new Dictionary<string, string>();
-
-                            String tcUrl = tcUrlMatch.Groups["tcUrl"].Value;
-                            String app = tcUrl.Substring(tcUrl.IndexOf('/', tcUrl.IndexOf(':') + 3) + 1);
-
-                            if (!String.IsNullOrEmpty(primaMatch.Groups["hqVideoPart"].Value))
-                            {
-                                String playPath = "mp4:" + primaMatch.Groups["hqVideoPart"].Value;
-                                String rtmpUrl = tcUrl + "/" + playPath;
-
-                                String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { App = app, TcUrl = tcUrl, PlayPath = playPath }.ToString();
-
-                                video.PlaybackOptions.Add("High quality", resultUrl);
-                            }
-
-                            if (!String.IsNullOrEmpty(primaMatch.Groups["lqVideoPart"].Value))
-                            {
-                                String playPath = "mp4:" + primaMatch.Groups["lqVideoPart"].Value;
-                                String rtmpUrl = tcUrl + "/" + playPath;
-
-                                String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { App = app, TcUrl = tcUrl, PlayPath = playPath }.ToString();
-
-                                video.PlaybackOptions.Add("Low quality", resultUrl);
-                            }
-
-                            if ((video.PlaybackOptions != null) && (video.PlaybackOptions.Count > 0))
-                            {
-                                var enumer = video.PlaybackOptions.GetEnumerator();
-                                enumer.MoveNext();
-                                return enumer.Current.Value;
-                            }
-                        }
+                        video.VideoUrl = SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnLq));
                     }
-
-                    Match flashVarsStart = Regex.Match(playerData, PrimaUtil.flashVarsStartRegex);
-                    if (flashVarsStart.Success)
+                    else if (!String.IsNullOrEmpty(cdnHq))
                     {
-                        int end = playerData.IndexOf(PrimaUtil.flashVarsEnd, flashVarsStart.Index);
-                        if (end > 0)
-                        {
-                            playerData = playerData.Substring(flashVarsStart.Index, end - flashVarsStart.Index);
-
-                            Match idMatch = Regex.Match(playerData, PrimaUtil.idRegex);
-                            Match cdnLqMatch = Regex.Match(playerData, PrimaUtil.cdnLqRegex);
-                            Match cdnHqMatch = Regex.Match(playerData, PrimaUtil.cdnHqRegex);
-
-                            String id = (idMatch.Success) ? idMatch.Groups["id"].Value : String.Empty;
-                            String cdnLq = (cdnLqMatch.Success) ? cdnLqMatch.Groups["cdnLQ"].Value : String.Empty;
-                            String cdnHq = (cdnHqMatch.Success) ? cdnHqMatch.Groups["cdnHQ"].Value : String.Empty;
-
-                            if ((!String.IsNullOrEmpty(cdnLq)) && (!String.IsNullOrEmpty(cdnHq)))
-                            {
-                                // we got low and high quality
-                                String lowQualityUrl = SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnLq));
-                                String highQualityUrl = SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnHq));
-
-                                video.PlaybackOptions = new Dictionary<string, string>();
-                                video.PlaybackOptions.Add("High quality", highQualityUrl);
-                                video.PlaybackOptions.Add("Low quality", lowQualityUrl);
-
-                                var enumer = video.PlaybackOptions.GetEnumerator();
-                                enumer.MoveNext();
-                                return enumer.Current.Value;
-                            }
-                            else if (!String.IsNullOrEmpty(cdnLq))
-                            {
-                                return SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnLq));
-                            }
-                            else if (!String.IsNullOrEmpty(cdnHq))
-                            {
-                                return SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnHq));
-                            }
-                        }
+                        video.VideoUrl = SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnHq));
                     }
                 }
             }
 
-            return String.Empty;
+            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+            {
+                var enumer = video.PlaybackOptions.GetEnumerator();
+                enumer.MoveNext();
+                return enumer.Current.Value;
+            }
+
+            return video.VideoUrl;
         }
 
         #endregion
-    }
+    }    
 }

@@ -14,22 +14,30 @@ namespace OnlineVideos.Sites.georgius
     {
         #region Private fields
 
-        private static String baseUrl = "http://archiv.nova.cz";
+        private static String baseUrl = "http://voyo.nova.cz/serialy";
 
-        private static String dynamicCategoryStart = @"<li class=""menu_item"" id=""main_letter"">";
-        private static String showRegex = @"<a class=""list_item"" href=""(?<showUrl>[^""]*)"">(?<showTitle>[^""]*)</a>";
+        private static String dynamicCategoryStart = @"<!--p id=""seriesFilterAllSeries9055d130301""";
+        private static String dynamicCategoryEnd = @"<div class=""cw_1""";
 
-        private static String showEpisodesStart = @"<div id=""searched_videos"">";
+        private static String categoryNextPage = @"<a href='(?<categoryNextPage>[^']*)' onclick='[^']*'>další</a>";
 
-        private static String showEpisodeBlockStartRegex = @"<li class=""catchup_related_video status";
-        private static String showEpisodeThumbUrlRegex = @"<img class=""img"" src=""(?<showThumbUrl>[^""]*)""";
-        private static String showEpisodeUrlAndTitleRegex = @"<a class=""title_url"" href=""(?<showUrl>[^""]*)"">(?<showTitle>[^<]*)</a>";
-        private static String showEpisodeDateLengthRegex = @"<span class=""date"">(?<showDate>[^\s]+) \((?<showLength>[^\)]+)\)</span>";
-        private static String showEpisodeDescriptionRegex = @"<p class=""perex"">(?<showDescription>[^<]*)</p>";
+        private static String showStart = @"<div class='poster'>";
+        private static String showEnd = @"</div>";
 
-        private static String showEpisodeNextPageBlockStartRegex = @"<div id=""pager"" class=""lister"">";
-        private static String showEpisodeNextPageStartRegex = @"<span class=""selected";
-        private static String showEpisodeNextPageRegex = @"<a href=""(?<nextPageUrl>[^""]+)"" class=""normal";
+		private static String showUrlTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>";
+        private static String showThumbRegex = @"<img src='(?<showThumbUrl>[^']*)";
+
+        private static String showEpisodesStart = @"<div class=""productsList"">";
+
+        private static String showEpisodeBlockStart = @"<div class='section_item'>";
+        private static String showEpisodeBlockEnd = @"<div class='clearer'>";
+
+        private static String showEpisodeThumbUrlRegex = @"<img src='(?<showThumbUrl>[^']*)";
+        private static String showEpisodeUrlAndTitleRegex = @"<a href='(?<showUrl>[^']*)' title='(?<showTitle>[^']*)'>";
+        private static String showEpisodeDescriptionStart = @"<div class=""padding"" >";
+        private static String showEpisodeDescriptionEnd = @"</div>";
+
+        private static String showEpisodeNextPageRegex = @"<a href='(?<nextPageUrl>[^']*)' onclick='[^']*'>další</a>";
 
         // the number of show episodes per page
         private static int pageSize = 28;
@@ -42,8 +50,7 @@ namespace OnlineVideos.Sites.georgius
 
         private RssLink currentCategory = new RssLink();
 
-        private static String variableBlockRegex = @"<script language=""JavaScript1.1"" type=""text/javascript"">(?<variableBlock>[^<]+)</script>";
-        private static String variableRegex = @"var[\s]+(?<variableName>[^\s]+)[\s]+=[\s]+(""|')?(?<variableValue>[^'"";]+)(""|')?;";
+        private static String mediaIdRegex = @"mainVideo = new mediaData\([^,]*, [^,]*, (?<mediaId>[^,]*)";
 
         #endregion
 
@@ -66,29 +73,82 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(NovaUtil.baseUrl, null, null, null, true);
+            List<RssLink> unsortedCategories = new List<RssLink>();
+            String pageUrl = NovaUtil.baseUrl;
 
-            int index = baseWebData.IndexOf(NovaUtil.dynamicCategoryStart);
-            if (index > 0)
+            while (!String.IsNullOrEmpty(pageUrl))
             {
-                baseWebData = baseWebData.Substring(index);
-                Match match = Regex.Match(baseWebData, NovaUtil.showRegex);
-                while (match.Success)
+                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                pageUrl = String.Empty;
+
+                int startIndex = baseWebData.IndexOf(NovaUtil.dynamicCategoryStart);
+                if (startIndex > 0)
                 {
-                    String showUrl = match.Groups["showUrl"].Value;
-                    String showTitle = match.Groups["showTitle"].Value;
+                    int endIndex = baseWebData.IndexOf(NovaUtil.dynamicCategoryEnd, startIndex);
+                    if (endIndex >= 0)
+                    {
+                        baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                    this.Settings.Categories.Add(
-                        new RssLink()
+                        Match match = Regex.Match(baseWebData, NovaUtil.categoryNextPage);
+                        if (match.Success)
                         {
-                            Name = showTitle,
-                            HasSubCategories = false,
-                            Url = String.Format("{0}{1}", NovaUtil.baseUrl, showUrl)
-                        });
+                            pageUrl = Utils.FormatAbsoluteUrl(match.Groups["categoryNextPage"].Value, NovaUtil.baseUrl);
+                        }
 
-                    dynamicCategoriesCount++;
-                    match = match.NextMatch();
+                        while (true)
+                        {
+                            int showStartIndex = baseWebData.IndexOf(NovaUtil.showStart);
+                            if (showStartIndex >= 0)
+                            {
+                                int showEndIndex = baseWebData.IndexOf(NovaUtil.showEnd, showStartIndex);
+                                if (showEndIndex >= 0)
+                                {
+                                    String showData = baseWebData.Substring(showStartIndex, showEndIndex - showStartIndex);
+
+                                    String showUrl = String.Empty;
+                                    String showTitle = String.Empty;
+                                    String showThumbUrl = String.Empty;
+
+                                    match = Regex.Match(showData, NovaUtil.showUrlTitleRegex);
+                                    if (match.Success)
+                                    {
+                                        showUrl = Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, NovaUtil.baseUrl);
+                                        showTitle = HttpUtility.HtmlDecode(match.Groups["showTitle"].Value);
+                                    }
+
+                                    match = Regex.Match(showData, NovaUtil.showThumbRegex);
+                                    if (match.Success)
+                                    {
+                                        showThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showThumbUrl"].Value, NovaUtil.baseUrl);
+                                    }
+
+                                    if (!(String.IsNullOrEmpty(showUrl) || String.IsNullOrEmpty(showTitle)))
+                                    {
+                                        unsortedCategories.Add(new RssLink()
+                                        {
+                                            Name = showTitle,
+                                            HasSubCategories = false,
+                                            Url = showUrl,
+                                            Thumb = showThumbUrl
+                                        });
+                                    }
+                                }
+
+                                baseWebData = baseWebData.Substring(showStartIndex + NovaUtil.showStart.Length);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
                 }
+            }
+
+            foreach (var category in unsortedCategories.OrderBy(cat => cat.Name))
+            {
+                this.Settings.Categories.Add(category);
+                dynamicCategoriesCount++;
             }
 
             this.Settings.DynamicCategoriesDiscovered = true;
@@ -98,6 +158,7 @@ namespace OnlineVideos.Sites.georgius
         private List<VideoInfo> GetPageVideos(String pageUrl)
         {
             List<VideoInfo> pageVideos = new List<VideoInfo>();
+            this.nextPageUrl = String.Empty;
 
             if (!String.IsNullOrEmpty(pageUrl))
             {
@@ -108,86 +169,69 @@ namespace OnlineVideos.Sites.georgius
                 {
                     baseWebData = baseWebData.Substring(index);
 
+                    Match match = Regex.Match(baseWebData, NovaUtil.showEpisodeNextPageRegex);
+                    if (match.Success)
+                    {
+                        this.nextPageUrl = Utils.FormatAbsoluteUrl(match.Groups["nextPageUrl"].Value, NovaUtil.baseUrl);
+                    }
 
                     while (true)
                     {
-                        Match showEpisodeBlockStart = Regex.Match(baseWebData, NovaUtil.showEpisodeBlockStartRegex);
-                        if (showEpisodeBlockStart.Success)
+                        int showEpisodeBlockStart = baseWebData.IndexOf(NovaUtil.showEpisodeBlockStart);
+                        if (showEpisodeBlockStart >= 0)
                         {
-                            baseWebData = baseWebData.Substring(showEpisodeBlockStart.Index + showEpisodeBlockStart.Length);
-
-                            String showTitle = String.Empty;
-                            String showThumbUrl = String.Empty;
-                            String showUrl = String.Empty;
-                            String showLength = String.Empty;
-                            String showDescription = String.Empty;
-                            String showDate = String.Empty;
-
-                            Match showEpisodeThumbUrl = Regex.Match(baseWebData, NovaUtil.showEpisodeThumbUrlRegex);
-                            if (showEpisodeThumbUrl.Success)
+                            int showEpisodeBlockEnd = baseWebData.IndexOf(NovaUtil.showEpisodeBlockEnd, showEpisodeBlockStart);
+                            if (showEpisodeBlockEnd >= 0)
                             {
-                                showThumbUrl = showEpisodeThumbUrl.Groups["showThumbUrl"].Value;
-                                baseWebData = baseWebData.Substring(showEpisodeThumbUrl.Index + showEpisodeThumbUrl.Length);
+                                String showData = baseWebData.Substring(showEpisodeBlockStart, showEpisodeBlockEnd - showEpisodeBlockStart);
+
+                                String showTitle = String.Empty;
+                                String showThumbUrl = String.Empty;
+                                String showUrl = String.Empty;
+                                String showDescription = String.Empty;
+
+                                match = Regex.Match(showData, NovaUtil.showEpisodeThumbUrlRegex);
+                                if (match.Success)
+                                {
+                                    showThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showThumbUrl"].Value, NovaUtil.baseUrl);
+                                }
+
+                                match = Regex.Match(showData, NovaUtil.showEpisodeUrlAndTitleRegex);
+                                if (match.Success)
+                                {
+                                    showUrl = Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, NovaUtil.baseUrl);
+                                    showTitle = HttpUtility.HtmlDecode(match.Groups["showTitle"].Value);
+                                }
+
+                                int descriptionStart = showData.IndexOf(NovaUtil.showEpisodeDescriptionStart);
+                                if (descriptionStart >= 0)
+                                {
+                                    int descriptionEnd = showData.IndexOf(NovaUtil.showEpisodeDescriptionEnd, descriptionStart);
+                                    if (descriptionEnd >= 0)
+                                    {
+                                        showDescription = showData.Substring(descriptionStart + NovaUtil.showEpisodeDescriptionStart.Length, descriptionEnd - descriptionStart - NovaUtil.showEpisodeDescriptionStart.Length);
+                                    }
+                                }
+
+                                if (!(String.IsNullOrEmpty(showUrl) || String.IsNullOrEmpty(showTitle)))
+                                {
+                                    VideoInfo videoInfo = new VideoInfo()
+                                    {
+                                        Description = showDescription,
+                                        ImageUrl = showThumbUrl,
+                                        Title = showTitle,
+                                        VideoUrl = showUrl
+                                    };
+
+                                    pageVideos.Add(videoInfo);
+                                }
                             }
 
-                            Match showEpisodeUrlAndTitle = Regex.Match(baseWebData, NovaUtil.showEpisodeUrlAndTitleRegex);
-                            if (showEpisodeUrlAndTitle.Success)
-                            {
-                                showUrl = showEpisodeUrlAndTitle.Groups["showUrl"].Value;
-                                showTitle = showEpisodeUrlAndTitle.Groups["showTitle"].Value;
-                                baseWebData = baseWebData.Substring(showEpisodeUrlAndTitle.Index + showEpisodeUrlAndTitle.Length);
-                            }
-
-                            Match showEpisodeDateLength = Regex.Match(baseWebData, NovaUtil.showEpisodeDateLengthRegex);
-                            if (showEpisodeDateLength.Success)
-                            {
-                                showLength = showEpisodeDateLength.Groups["showLength"].Value;
-                                showDate = showEpisodeDateLength.Groups["showDate"].Value;
-                                baseWebData = baseWebData.Substring(showEpisodeDateLength.Index + showEpisodeDateLength.Length);
-                            }
-
-                            Match showEpisodeDescription = Regex.Match(baseWebData, NovaUtil.showEpisodeDescriptionRegex);
-                            if (showEpisodeDescription.Success)
-                            {
-                                showDescription = showEpisodeDescription.Groups["showDescription"].Value;
-                                baseWebData = baseWebData.Substring(showEpisodeDescription.Index + showEpisodeDescription.Length);
-                            }
-
-                            if (!((showEpisodeThumbUrl.Success) && (showEpisodeDateLength.Success) && (showEpisodeUrlAndTitle.Success) && (showEpisodeDescription.Success)))
-                            {
-                                break;
-                            }
-
-                            VideoInfo videoInfo = new VideoInfo()
-                            {
-                                Description = showDescription,
-                                ImageUrl = showThumbUrl,
-                                Length = showLength,
-                                Title = showTitle,
-                                VideoUrl = String.Format("{0}{1}", NovaUtil.baseUrl, showUrl)
-                            };
-
-                            pageVideos.Add(videoInfo);
+                            baseWebData = baseWebData.Substring(showEpisodeBlockStart + NovaUtil.showEpisodeBlockStart.Length);
                         }
                         else
                         {
                             break;
-                        }
-                    }
-
-
-                    Match showEpisodeNextPageBlockStart = Regex.Match(baseWebData, NovaUtil.showEpisodeNextPageBlockStartRegex);
-                    if (showEpisodeNextPageBlockStart.Success)
-                    {
-                        baseWebData = baseWebData.Substring(showEpisodeNextPageBlockStart.Index + showEpisodeNextPageBlockStart.Length);
-
-                        Match showEpisodeNextPageStart = Regex.Match(baseWebData, NovaUtil.showEpisodeNextPageStartRegex);
-                        if (showEpisodeNextPageStart.Success)
-                        {
-                            baseWebData = baseWebData.Substring(showEpisodeNextPageStart.Index + showEpisodeNextPageStart.Length);
-
-                            Match nextPageMatch = Regex.Match(baseWebData, NovaUtil.showEpisodeNextPageRegex);
-                            this.nextPageUrl = (nextPageMatch.Success) ? String.Format("{0}{1}", NovaUtil.baseUrl, HttpUtility.HtmlDecode(nextPageMatch.Groups["nextPageUrl"].Value)) : String.Empty;
                         }
                     }
                 }
@@ -276,25 +320,18 @@ namespace OnlineVideos.Sites.georgius
         public override string getUrl(VideoInfo video)
         {
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
-            Match variableBlockMatch = Regex.Match(baseWebData, NovaUtil.variableBlockRegex);
+            Match mediaIdMatch = Regex.Match(baseWebData, NovaUtil.mediaIdRegex);
 
-            if ((video.PlaybackOptions == null) && (variableBlockMatch.Success))
+            if ((video.PlaybackOptions == null) && (mediaIdMatch.Success))
             {
                 video.PlaybackOptions = new Dictionary<string, string>();
 
-                if (variableBlockMatch.Success)
+                if (mediaIdMatch.Success)
                 {
-                    String variableBlock = variableBlockMatch.Groups["variableBlock"].Value;
-
-                    MatchCollection matches = Regex.Matches(variableBlock, NovaUtil.variableRegex);
-                    Hashtable variables = new Hashtable(matches.Count);
-                    foreach (Match match in matches)
-                    {
-                        variables.Add(match.Groups["variableName"].Value, match.Groups["variableValue"].Value);
-                    }
+                    String mediaId = mediaIdMatch.Groups["mediaId"].Value;
 
                     String time = DateTime.Now.ToString("yyyyMMddHHmmss");
-                    String signature = String.Format("nova-vod|{0}|{1}|tajne.heslo", variables["media_id"], time);
+                    String signature = String.Format("nova-vod|{0}|{1}|tajne.heslo", mediaId, time);
                     String encodedHash = String.Empty;
                     using (MD5 md5 = MD5.Create())
                     {
@@ -302,29 +339,45 @@ namespace OnlineVideos.Sites.georgius
                         encodedHash = Convert.ToBase64String(md5hash);
                     }
 
-                    String videoPlaylistUrl = String.Format("http://master-ng.nacevi.cz/cdn.server/PlayerLink.ashx?t={1}&c=nova-vod|{0}&h=0&d=1&s={2}&tm=nova", variables["media_id"], time, encodedHash);
+                    String videoPlaylistUrl = String.Format("http://master-ng.nacevi.cz/cdn.server/PlayerLink.ashx?t={1}&c=nova-vod|{0}&h=0&d=1&s={2}&tm=nova", mediaId, time, encodedHash);
                     String videoPlaylistWebData = SiteUtilBase.GetWebData(videoPlaylistUrl);
 
                     XmlDocument videoPlaylist = new XmlDocument();
                     videoPlaylist.LoadXml(videoPlaylistWebData);
 
-                    String videoBaseUrl = videoPlaylist.SelectSingleNode("//baseUrl").InnerText;
-
-                    foreach (XmlNode node in videoPlaylist.SelectNodes("//media"))
+                    if (videoPlaylist.SelectSingleNode("//baseUrl") != null)
                     {
-                        String quality = node.SelectSingleNode("quality").InnerText;
-                        String url = node.SelectSingleNode("url").InnerText;
+                        String videoBaseUrl = videoPlaylist.SelectSingleNode("//baseUrl").InnerText;
 
-                        String movieUrl = String.Format("{0}/{1}", videoBaseUrl, url);
+                        foreach (XmlNode node in videoPlaylist.SelectNodes("//media"))
+                        {
+                            String quality = node.SelectSingleNode("quality").InnerText;
+                            String url = node.SelectSingleNode("url").InnerText;
 
-                        String host = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf(":", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
-                        String app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
-                        String tcUrl = videoBaseUrl;
-                        String playPath = url;
+                            String movieUrl = String.Format("{0}/{1}", videoBaseUrl, url);
 
-                        string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(movieUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
+                            String host = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf(":", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
+                            String app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
+                            String tcUrl = videoBaseUrl;
+                            String playPath = url;
 
-                        video.PlaybackOptions.Add(((quality == "flv") || (quality == "lq")) ? "Low quality" : "High quality", resultUrl);
+                            string resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(movieUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath }.ToString();
+
+                            switch (quality.ToUpperInvariant())
+                            {
+                                case "FLV":
+                                case "LQ":
+                                    video.PlaybackOptions.Add("Low quality", resultUrl);
+                                    break;
+                                case "HQ":
+                                    video.PlaybackOptions.Add("High quality", resultUrl);
+                                    break;
+                                default:
+                                    video.PlaybackOptions.Add(quality.ToUpperInvariant(), resultUrl);
+                                    break;
+                            }
+                            
+                        }
                     }
                 }
             }
