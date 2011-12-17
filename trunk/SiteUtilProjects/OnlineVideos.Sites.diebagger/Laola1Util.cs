@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.ComponentModel;
+using Microsoft.Win32;
 
 namespace OnlineVideos.Sites
 {
@@ -27,7 +28,9 @@ namespace OnlineVideos.Sites
         String laola1TvBaseUrl = "http://www.laola1.tv/en/int/home/"; //default is international
 
         private const String PLAYDATA_URL = "http://www.laola1.tv/server/ondemand_xml_esi.php?playkey={0}-{1}";//0=playkey1, 1=playkey2
-        private const String ACCESSDATA_URL_ARCHIVE = "http://streamaccess.laola1.tv/flash/vod/22/{0}_{1}.xml";//0=playkey1, 1=quality
+        //65196_high.xml?partnerid=22&streamid=65196
+        //private const String ACCESSDATA_URL_ARCHIVE = "http://streamaccess.laola1.tv/flash/vod/22/{0}_{1}.xml";//0=playkey1, 1=quality
+        private const String ACCESSDATA_URL_ARCHIVE = "http://streamaccess.laola1.tv/flash/vod/22/{0}_{1}.xml?partnerid=22&streamdid={0}";//0=playkey1, 1=quality
         private const String ACCESSDATA_URL_LIVE = "http://streamaccess.laola1.tv/flash/1/{0}_{1}.xml";//0=playkey1, 1=quality
         private const String IDENT_URL = "http://{0}/fcs/ident";//0=ident server
 
@@ -50,7 +53,7 @@ namespace OnlineVideos.Sites
         private string regexVideoSubCategories = @"<td style="".+?"" width="".+?""><h2><a href=""(?<url>.+?)"" style="".+?"">(?<title>.+?)</a></h2></td>";//get sub-categories
         private string regexVideosArchive = @"<div class="".+?"" title="".+?""><a href=""(?<url>.+?)""><img src=""(?<img>.+?)"" border="".+?"" /></a></div>.+?<div class=""teaser_head_video"" title="".+?"">(?<date>.+?)</div>.+?<div class=""teaser_text"" title="".+?"">(?<title>.+?)</div>";//get archived videos
         private string regexVideoNextPage = @"<a href=""(.+)"" class=""teaser_text"">vor</a>";//next page in videos
-        private string regexGetPlaykeys = @"""playkey=(?<playkey1>.+?)-(?<playkey2>.+?)&adv.+?""";//get playkeys
+        private string regexGetPlaykeys = @"AC_FL_RunContent.*?""src"", ""(?<flashplayer>.*?)"".*?""width"", ""(?<width>[0-9]*)"".*?""height"", ""(?<height>[0-9]*)"".*?playkey=(?<playkey1>.+?)-(?<playkey2>.+?)&adv.*?fversion=(?<flashversion>.+?)""";//get playkeys
         private string regexGetVideoInfo = @"<(?<quality>[^<]+?)server=""(?<server>.+?)/(?<servertype>.+?)"" pfad=""(?<path>.+?)"" .+? ptitle=""(?<title>.+?)""";//get playkeys
         private string regexGetAuthArchive = @"auth=""(?<auth>.+?)"".+?url=""(?<url>.+?)"".+?stream=""(?<stream>.+?)"".+?status=""(?<status>.+?)"".+?statustext=""(?<statustext>.+?)"".+?aifp=""(?<aifp>.+?)""";//get auth
         private string regexGetIp = @"<ip>(?<ip>.+?)</ip>";
@@ -283,16 +286,15 @@ namespace OnlineVideos.Sites
         public override string getUrl(VideoInfo video)
         {
             Log.Info("Get url: " + video.VideoUrl);
-            String data = GetWebData(video.VideoUrl);
-
+            
             LaolaCategoryTypes type = (LaolaCategoryTypes)video.Other;
             if (type == LaolaCategoryTypes.Archive)
             {
-                return getVideoArchiveUrl(data);
+                return getVideoArchiveUrl(video);
             }
             else if (type == LaolaCategoryTypes.Live)
             {
-                return getVideoLiveUrl(data);
+                return getVideoLiveUrl(video);
             }
 
             return null;
@@ -301,20 +303,21 @@ namespace OnlineVideos.Sites
         /// <summary>
         /// Get playback url for live video items
         /// </summary>
-        /// <param name="data">The webdata of the playback site</param>
+        /// <param name="video"></param>
         /// <returns>Playback url</returns>
-        private string getVideoLiveUrl(string data)
+        private string getVideoLiveUrl(VideoInfo video)
         {
+            String data = GetWebData(video.VideoUrl);
             Match isLiveStreamActive = regEx_IsLiveAvailable.Match(data);
             if (isLiveStreamActive.Success)
             {
                 String msg = isLiveStreamActive.Groups["inner"].Value;
-                Log.Warn("Stream not available: " + msg);
+                Log.Info("Stream not available: " + msg);
                 //TODO: better detect parts of error message (e.g. Dieser Stream beginnt Donnerstag, 12.09.20111 um 14:00 Uhr CET)
                 //and insert linebreaks (whole line is too long for dialogs)
                 if (msg.Contains(","))
                 {
-                    msg = msg.Insert(msg.IndexOf(",") + 1, "\n");
+                    //msg = msg.Replace(",  ", ",\n");
                 }
                 throw new OnlineVideosException(msg);
             }
@@ -325,8 +328,10 @@ namespace OnlineVideos.Sites
                 {
                     String playkey1 = c.Groups["playkey1"].Value;
                     String playkey2 = c.Groups["playkey2"].Value;
+                    String flashPlayer = c.Groups["flashplayer"].Value + ".swf";
+                    String flashVersion = c.Groups["flashversion"].Value;
                     LiveStreamType liveType = LiveStreamType.Default;
-                    if (data.Contains("http://www.laola1.tv/swf/hdplayer_2_0"))
+                    if (data.Contains("http://www.laola1.tv/swf/hdplayer_2"))
                     {
                         //TODO: better detection of stream type
                         liveType = LiveStreamType.HD;
@@ -337,11 +342,12 @@ namespace OnlineVideos.Sites
                      */
                     if (liveType == LiveStreamType.HD)
                     {
-                        return GetHdStreamingUrl(playkey1, playkey2);
+                        throw new OnlineVideosException("This stream type isn't supported yet");
+                        //return GetHdStreamingUrl(flashPlayer, playkey1, playkey2);
                     }
                     else
                     {
-                        return GetDefaultStreamingUrl(playkey1, playkey2);
+                        return GetDefaultStreamingUrl(video, flashPlayer, playkey1, playkey2);
                     }
                 }
             }
@@ -355,10 +361,11 @@ namespace OnlineVideos.Sites
         /// 
         /// The stream starts correctly, but fails after some time for an unknown reason.
         /// </summary>
+        /// <param name="video">Video object</param>
         /// <param name="playkey1">Playkey1 for this video</param>
         /// <param name="playkey2">Playkey2 for this video</param>
         /// <returns>Url for streaming</returns>
-        private string GetDefaultStreamingUrl(string playkey1, string playkey2)
+        private string GetDefaultStreamingUrl(VideoInfo video, string flashplayer, string playkey1, string playkey2)
         {
             String playData = GetWebData(String.Format(PLAYDATA_URL, playkey1, playkey2));
             Match c2 = regEx_GetVideoInfo.Match(playData);
@@ -405,23 +412,24 @@ namespace OnlineVideos.Sites
                     {
                         Log.Warn("Couldn't parse " + identData);
                     }
-                    //db.aCdLaxa.dTcGbWapapbDbraIbKascobl-boB4Md-cOW-eS-zzJnDFpFHpy-r6o7&amp;p=&amp;e=&amp;u=&amp;t=livevideo&amp;l=&amp;a=
-                    //path='rtmp://'+ip+':1935/'+servertype+'?_fcs_vhost='+url+'/'+stream+'?auth='+auth+'&p=1&e='+playkey1+'&u=&t=livevideo&l='+'&a='+'&aifp='+aifp+' swfUrl=http://www.laola1.tv/swf/player.v11.3.swf swfVfy=true live=true')
-                    //swfVfy=true live=true
-                    String rtmpUrl = String.Format("rtmp://{0}:1935/{1}?_fcs_vhost={2}/{3}?auth={4}&p=1&e={5}&u=&t=livevideo&l=&a=&aifp={6}", ip, servertype, url, stream, auth, playkey1, aifp);
-                    String playpath = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                            string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}&live={2}",
-                            System.Web.HttpUtility.UrlEncode(rtmpUrl),
-                            System.Web.HttpUtility.UrlEncode("true"),
-                            System.Web.HttpUtility.UrlEncode("true")
-                            ));
 
+                    String rtmpUrl = String.Format("rtmp://{0}:1935/{1}?_fcs_vhost={2}/{3}?auth={4}&p=1&e={5}&u=&t=livevideo&l=&a=&aifp={6}", ip, servertype, url, stream, auth, playkey1, aifp);
+                    MPUrlSourceFilter.RtmpUrl resultUrl = new MPUrlSourceFilter.RtmpUrl(rtmpUrl);
+                    //resultUrl.FlashVersion = flashVersion;
+                    resultUrl.Live = true;
+                    resultUrl.PageUrl = video.VideoUrl;
+                    resultUrl.SwfUrl = flashplayer;
+                    //TODO: I need the mp4, otherwise the stream isn't found, check if there are other formats than mp4 on laola1.tv
+                    resultUrl.PlayPath = "mp4:" + stream;
                     //Log.Info("Playback Url: " + playpath);
 
-                    return playpath;
+                    return resultUrl.ToString() ;
 
                 }
                 c2 = c2.NextMatch();
+
+
+
             }
             if (!videoQualityFound)
             {
@@ -437,10 +445,11 @@ namespace OnlineVideos.Sites
         /// 
         /// This streaming type is used for many major sport events (e.g. soccer games, ice hockey, etc.) 
         /// </summary>
+        /// <param name="video">Video object</param>
         /// <param name="playkey1">Playkey1 for this video</param>
         /// <param name="playkey2">Playkey2 for this video</param>
         /// <returns>Url for streaming</returns>
-        private string GetHdStreamingUrl(string playkey1, string playkey2)
+        private string GetHdStreamingUrl(string flashplayer, string playkey1, string playkey2)
         {
             //TODO: this isn't working yet. MediaPortal doesn't play the stream for some reason.
             //Downloading works though and the file can be played after that.
@@ -485,15 +494,19 @@ namespace OnlineVideos.Sites
         /// <summary>
         /// Get playback url for archived video items (VOD)
         /// </summary>
-        /// <param name="data">The webdata of the playback site</param>
+        /// <param name="video">Video object</param>
         /// <returns>Playback url</returns>
-        private string getVideoArchiveUrl(string data)
+        private string getVideoArchiveUrl(VideoInfo video)
         {
+            String data = GetWebData(video.VideoUrl);
             Match c = regEx_GetPlaykeys.Match(data);
             while (c.Success)
             {
                 String playkey1 = c.Groups["playkey1"].Value;
                 String playkey2 = c.Groups["playkey2"].Value;
+                String flashplayer = c.Groups["flashplayer"].Value + ".swf";
+                String flashVersion = c.Groups["flashversion"].Value;
+
                 String playData = GetWebData(String.Format(PLAYDATA_URL, playkey1, playkey2));
                 Match c2 = regEx_GetVideoInfo.Match(playData);
                 bool videoQualityFound = false;
@@ -516,6 +529,7 @@ namespace OnlineVideos.Sites
                         {
                             auth = c3.Groups["auth"].Value;
                             auth = auth.Replace("amp;", "");
+                            auth = auth.Replace("e=", "e=" + playkey1);
                             aifp = c3.Groups["aifp"].Value;
                             stream = c3.Groups["stream"].Value;
                             c3 = c3.NextMatch();
@@ -534,10 +548,16 @@ namespace OnlineVideos.Sites
                             c4 = c4.NextMatch();
                         }
                         
-                        String playpath = String.Format("rtmp://{0}:1935/{1}?_fcs_vhost={2}&auth={3}&aifp={4}&slist={5}", ip, servertype, server, auth, aifp, stream);
+                        String url = String.Format("rtmp://{0}:1935/{1}?_fcs_vhost={2}&auth={3}&aifp={4}&slist={5}", ip, servertype, server, auth, aifp, stream);
                         //Log.Debug("Playback Url: " + playpath);
-
-                        return playpath;
+                        MPUrlSourceFilter.RtmpUrl resultUrl = new MPUrlSourceFilter.RtmpUrl(url);
+                        resultUrl.FlashVersion = flashVersion;
+                        resultUrl.Live = false;
+                        resultUrl.PageUrl = video.VideoUrl;
+                        resultUrl.SwfUrl = flashplayer;
+                        //TODO: I need the mp4, otherwise the stream isn't found, check if there are other formats than mp4 on laola1.tv
+                        resultUrl.PlayPath = "mp4:"+ stream;
+                        return resultUrl.ToString();
                     }
                     c2 = c2.NextMatch();
                 }
