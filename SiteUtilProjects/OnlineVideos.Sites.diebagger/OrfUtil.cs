@@ -30,14 +30,14 @@ namespace OnlineVideos.Sites
         string mainCategoryRegex = @"<h4>(?<title>.*?)</h4>(?<subcategories>.*?)</ul";
         string subCategoryRegex = @"<li>.*?<a href=""(?<url>.*?)"".*?>(?<title>.*?)</a>.*?</li>";
 
-        string videolistRegex = @"</a></div>[^<]*<h3 class=""title"">.*?<span>(?<title>[^<]+)</span>";
+        string videolistRegex = @"</a></div>[^<]*<h3 class=""title"">.*?<span>(?<title>[^<]+-(?<date>[^<]+))</span>";
         string videolistRegex2 = @"<li.*?><a href.*?>(?<day>[^<]+)</a>(?<items>.*?)</ul>";
         string videolistRegex3 = @"<li><a href=""(?<url>[^""]+)"" title=""(?<alt>[^""]+)"">(?<title>[^<]+)</a>";
         string videolistRegex4 = @"<li><a href=""(?<url>[^""]+)"">(?<title>[^<]+)</a>";
         string playlistRegex = @"<div id=""btn_playlist""( style=""[^""]+"")?>.*?<a href=""(?<url>[^""]+)"" id=""open_playlist""";
 
-        string liveRegex = @"<hr />.*?<a href=""(?<url>.*?)"".*?src=""(?<channelimg>.*?)"".*?<h3 class=""title"">.*?<span>(?<title>.*?)</span>.*?<video.*?poster=""(?<img>.*?)""";
-        string liveRegexBeginTime = @"Der Livestream beginnt um (?<begintime>.*?). Bitte beachten";
+        string liveRegexStreamRunning = @"<hr />.*?<a href=""(?<url>.*?)"".*?src=""(?<channelimg>.*?)"".*?<h3 class=""title"">.*?<span>(?<title>.*?)</span>.*?<video.*?poster=""(?<img>.*?)""";
+        string liveRegexNoStreamRunning = @"<div id=""livestreamCommingSoon.*?<h3 class=""title"">.*?<span>(?<title>.*?)</span>.*?<img src=""(?<img>.*?)"".*?class=""live_comming_soon"" />.*?Der Livestream beginnt um (?<begintime>.*?)\..*?id=""more_livestreams"">";
         string liveRegexFurther = @"<li class=""vod"">.*?<a href=""(?<url>/live.*?)"".*?title=""(?<showtitle>.*?)"">.*?<img src=""(?<img>.*?)"".*?<strong>(?<title>.*?)</strong>";
         string liveRegexUpcoming = @"<li class=""vod"">.*?<div class=""live"">.*?<img src=""(?<img>.*?)"".*?title=""(?<title>.*?)"".*?<span class=""desc"">.*?:(?<date>.*?)</span>.*?</li>";
         string liveUrlRegex = @"<param name=""URL"" value=""(?<url>.*?)"" />";
@@ -53,8 +53,8 @@ namespace OnlineVideos.Sites
         Regex regEx_Categories;
         Regex regEx_MainCategories;
         Regex regEx_SubCategories;
-        Regex regEx_Live;
-        Regex regEx_LiveBeginTime;
+        Regex regEx_LiveStreamRunning;
+        Regex regEx_LiveNoStreamRunning;
         Regex regEx_LiveFurther;
         Regex regEx_LiveUpcoming;
         Regex regEx_LiveUrl;
@@ -71,8 +71,8 @@ namespace OnlineVideos.Sites
 
             regEx_LiveFurther = new Regex(liveRegexFurther, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_LiveUpcoming = new Regex(liveRegexUpcoming, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
-            regEx_Live = new Regex(liveRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
-            regEx_LiveBeginTime = new Regex(liveRegexBeginTime, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_LiveStreamRunning = new Regex(liveRegexStreamRunning, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+            regEx_LiveNoStreamRunning = new Regex(liveRegexNoStreamRunning, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_LiveUrl = new Regex(liveUrlRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
             regEx_Videolist = new Regex(videolistRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
@@ -228,14 +228,46 @@ namespace OnlineVideos.Sites
             Log.Info("Get url: " + video.VideoUrl);
             if ((CategoryType)video.Other == CategoryType.Live)
             {
-                string data = GetWebData(video.VideoUrl);
-                if (!string.IsNullOrEmpty(data))
+                if (video.VideoUrl != null && !video.VideoUrl.Equals(""))
                 {
-                    Match m = regEx_LiveUrl.Match(data);
-                    if (m.Success)
+                    string data = GetWebData(video.VideoUrl);
+                    if (!string.IsNullOrEmpty(data))
                     {
-                        String videoUrl = m.Groups["url"].Value;
-                        return videoUrl;
+                        Match l = regEx_LiveNoStreamRunning.Match(data);
+                        if (l.Success)
+                        {
+                            //a live link that already has a playback link (detail page) but the stream hasn't yet started
+                            throw new OnlineVideosException("Stream beginnt um " + l.Groups["begintime"].Value);
+                        }
+                        else
+                        {
+                            //a live link that is currently running
+                            Match m = regEx_LiveUrl.Match(data);
+                            if (m.Success)
+                            {
+                                String videoUrl = m.Groups["url"].Value;
+                                return videoUrl;
+                            }
+                            else
+                            {
+                                //video should be running but for some reason the url extraction failed
+                                Log.Warn("Couldn't retrieve playback url from " + video.VideoUrl);
+                                throw new OnlineVideosException("Fehler beim starten des streams");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (video.Airdate != null)
+                    {
+                        //for live links that didn't yet have a playback link attached
+                        throw new OnlineVideosException("Stream beginnt: " + video.Airdate);
+                    }
+                    else
+                    {
+                        //A stream with no playback link and no air date set, this shouldn't happen
+                        throw new OnlineVideosException("Stream beginnt zu einem späteren Zeitpunk");
                     }
                 }
             }
@@ -267,27 +299,41 @@ namespace OnlineVideos.Sites
             string data = GetWebData((category as RssLink).Url);
             if (!string.IsNullOrEmpty(data))
             {
-
-                Match m = regEx_Live.Match(data);
-                if (m.Success)
+                if (data.Contains("<div id=\"livestreamCommingSoon\""))
                 {
-                    VideoInfo video = new VideoInfo();
-                    video.Title = m.Groups["title"].Value;
-                    Match begin = regEx_LiveBeginTime.Match(data);
-                    if (begin.Success)
+                    Match m = regEx_LiveNoStreamRunning.Match(data);
+                    if (m.Success)
                     {
+                        VideoInfo video = new VideoInfo();
                         //the video that is shown on front should have the same format
                         //as the videos shown in the "Weitere Livestreams" section
                         //(e.g. "Live: Burgenland heute, 19:00 Uhr")
-                        video.Title = video.Title + ", " + begin.Groups["begintime"].Value;
+                        video.Title = m.Groups["title"].Value + ", " + m.Groups["begintime"].Value;
+
+                        video.Title = video.Title.Replace("&#160;", " ");
+
+                        video.ImageUrl = m.Groups["img"].Value;
+                        video.VideoUrl = (category as RssLink).Url;
+                        video.Other = CategoryType.Live;
+
+                        videos.Add(video);
                     }
-                    video.Title = video.Title.Replace("&#160;", " ");
+                }
+                else
+                {
+                    Match m = regEx_LiveStreamRunning.Match(data);
+                    if (m.Success)
+                    {
+                        VideoInfo video = new VideoInfo();
+                        video.Title = m.Groups["title"].Value;
+                        video.Title = video.Title.Replace("&#160;", " ");
 
-                    video.ImageUrl = m.Groups["img"].Value;
-                    video.VideoUrl = ORF_BASE + m.Groups["url"].Value;
-                    video.Other = CategoryType.Live;
+                        video.ImageUrl = m.Groups["img"].Value;
+                        video.VideoUrl = ORF_BASE + m.Groups["url"].Value;
+                        video.Other = CategoryType.Live;
 
-                    videos.Add(video);
+                        videos.Add(video);
+                    }
                 }
 
                 Match m2 = regEx_LiveFurther.Match(data);
@@ -313,6 +359,7 @@ namespace OnlineVideos.Sites
                     VideoInfo video = new VideoInfo();
                     String date = m3.Groups["date"].Value.Replace("&#160;", " ").Trim();
                     video.Title = "Demnächst: " + m3.Groups["title"].Value + " (" + date + ")";
+                    video.Airdate = date;
                     video.Description = m3.Groups["title"].Value;
                     video.ImageUrl = m3.Groups["img"].Value;
                     //video.VideoUrl = ORF_BASE + m2.Groups["url"].Value;
@@ -353,6 +400,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = new VideoInfo();
                     video.Title = m.Groups["title"].Value;
+                    video.Airdate = m.Groups["date"].Value;
                     video.Title = video.Title.Replace("&amp;", "&");
                     video.VideoUrl = (category as RssLink).Url;
                     video.Other = CategoryType.VOD;
@@ -381,6 +429,7 @@ namespace OnlineVideos.Sites
                                 video.Title = n.Groups["title"].Value;
                                 video.VideoUrl = n.Groups["url"].Value;
                                 video.VideoUrl = ORF_BASE + video.VideoUrl;
+                                video.Airdate = day;
                                 video.Other = CategoryType.VOD;
                                 video.ImageUrl = thumb;
                                 videos.Add(video);
@@ -399,6 +448,7 @@ namespace OnlineVideos.Sites
                                 {
                                     VideoInfo video = new VideoInfo();
                                     video.Title = prefix + " " + HttpUtility.HtmlDecode(o.Groups["title"].Value) + ", " + day;
+                                    video.Airdate = day;
                                     video.VideoUrl = o.Groups["url"].Value;
                                     video.VideoUrl = ORF_BASE + video.VideoUrl;
                                     video.ImageUrl = thumb;
