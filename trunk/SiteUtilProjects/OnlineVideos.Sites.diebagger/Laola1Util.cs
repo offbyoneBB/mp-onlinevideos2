@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
     /// - Next pages are currently not processed
     /// - 
     /// </summary>
-    public class Laola1Util : SiteUtilBase, ISimpleRequestHandler
+    public class Laola1Util : SiteUtilBase
     {
         [Category("OnlineVideosUserConfiguration"), Description("Choose your preferred quality for the videos according to bandwidth.")]
         VideoQuality videoQuality = VideoQuality.High;
@@ -103,9 +103,6 @@ namespace OnlineVideos.Sites
             regEx_GetAuthLive = new Regex(regexGetAuthLive, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_GetLiveHdBaseUrls = new Regex(regexLiveHdBaseUrls, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
             regEx_GetLiveHdSources = new Regex(regexLiveHdSources, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
-
-            // add a special reversed proxy handler
-            ReverseProxy.Instance.AddHandler(this);
         }
 
         /// <summary>
@@ -547,16 +544,26 @@ namespace OnlineVideos.Sites
                             ip = c4.Groups["ip"].Value;
                             c4 = c4.NextMatch();
                         }
-                        
+
                         String url = String.Format("rtmp://{0}:1935/{1}?_fcs_vhost={2}&auth={3}&aifp={4}&slist={5}", ip, servertype, server, auth, aifp, stream);
-                        //Log.Debug("Playback Url: " + playpath);
                         MPUrlSourceFilter.RtmpUrl resultUrl = new MPUrlSourceFilter.RtmpUrl(url);
                         resultUrl.FlashVersion = flashVersion;
                         resultUrl.Live = false;
                         resultUrl.PageUrl = video.VideoUrl;
                         resultUrl.SwfUrl = flashplayer;
-                        //TODO: I need the mp4, otherwise the stream isn't found, check if there are other formats than mp4 on laola1.tv
-                        resultUrl.PlayPath = "mp4:"+ stream;
+                        
+                        if (stream.EndsWith(".mp4"))
+                        {
+                            //for videos where the returned stream ends with .mp4, the laola1.tv server wants a play command like
+                            //play('mp4:77154/flash/2011/volleyball/CEV_CL/111215_innsbruck_macerata_cut_high.mp4')
+                            resultUrl.PlayPath = "mp4:" + stream;
+                        }
+                        else
+                        {
+                            resultUrl.PlayPath = stream;
+                        }
+                        
+                        
                         return resultUrl.ToString();
                     }
                     c2 = c2.NextMatch();
@@ -570,11 +577,6 @@ namespace OnlineVideos.Sites
 
             //something has gone wrong -> return null
             return null;
-        }
-
-        public void UpdateRequest(System.Net.HttpWebRequest request)
-        {
-            
         }
     }
 }
