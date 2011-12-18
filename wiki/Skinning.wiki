@@ -19,6 +19,8 @@ The plugin comes with its own localization, so skinners are encouraged to use th
 
 The skin for the window 4755 should set `allowoverlay` to yes, because external players (WindowsMediaPlayer, VLC Media Player) will be used for some clips.
 
+----
+
 = Window 4755 required controls =
 || *Id* || *type* || *default localized label* || *description* ||
 || 2 || button || {{{#OnlineVideos.Translation.LayoutList.Label}}} || Change facade viewmode ||
@@ -33,8 +35,15 @@ The skin for the window 4755 should set `allowoverlay` to yes, because external 
 || 51 || listcontrol || - || additional list used instead of facade in details view ||
 ||47016 || button || {{{#OnlineVideos.currentDownloads}}} || optional button that will go directly to the current downloads screen ||
 
-The icon shown for each site in the facade can be overridden by the skin if a png in {{{[CurrentSkinFolder]\Media\OnlineVideos\Icons\}}} is found. <br/>The same goes for the site's banner ({{{[CurrentSkinFolder]\Media\OnlineVideos\Banners\}}}).<br/>
+== facade info ==
+The listcontrol of the facade needs to set the PinIcon width, height and offset, because it is used to indicate a favorited category.
+
+The icon shown for each site in the facade can be overridden by the skin if a png in {{{[CurrentSkinFolder]\Media\OnlineVideos\Icons\}}} is found.
+The same goes for the site's banner ({{{[CurrentSkinFolder]\Media\OnlineVideos\Banners\}}}).
+
 A new icon is needed for an item in the facade for retrieving the next page videos: ({{{[CurrentSkinFolder]\Media\OnlineVideos\NextPage.png}}}).
+
+----
 
 = Window 4757 required controls =
 || *Id* || *type* || *default localized label* || *description* ||
@@ -47,9 +56,9 @@ A new icon is needed for an item in the facade for retrieving the next page vide
 || 507 || selectbutton || {{{#OnlineVideos.Translation.Filter.Label: #OnlineVideos.Translation.Language.Label}}} ||| Language Filter ||
 
 
-The listcontrol (id 50) also sets the PinImage for each listitem to an image file with this path: {{{[CurrentSkinFolder]\Media\OnlineVideos\[State].png}}}.<br/>
-The State is one of the three: {{{Broken, Reported, Working}}}. In the default skin, these states are represented by a red, yellow and green icon.
+The listcontrol (id 50) also sets the PinIcon for each listitem to an image file with this path: {{{[CurrentSkinFolder]\Media\OnlineVideos\[State].png}}}. The State is one of the three: {{{Broken, Reported, Working}}}. In the default skin, these states are represented by a red, yellow and green icon.
 
+----
 
 = Properties set in the code =
  * Global
@@ -90,7 +99,7 @@ The State is one of the three: {{{Broken, Reported, Working}}}. In the default s
   * `#Play.Current.OnlineVideos.SiteIcon` - path to the icon for the site that video originates from
   * `#OnlineVideos.IsBuffering` - "true" while a video is beeing buffered before playback will start
   * `#OnlineVideos.buffered` - float (2 digits + decimal point) showing percentage buffered (localized label property: `#OnlineVideos.Translation.Buffered.Label`) 
-= Videos View =
+== Videos View ==
 ===!YouTube===
 detect by (`string.equals(#OnlineVideos.selectedSiteUtil, YouTube)`)
   * `#OnlineVideos.Details.Uploader`
@@ -98,7 +107,7 @@ detect by (`string.equals(#OnlineVideos.selectedSiteUtil, YouTube)`)
   * `#OnlineVideos.Details.NumRaters`
   * `#OnlineVideos.Details.FavoriteCount`
   * `#OnlineVideos.Details.ViewCount`
-= Details View =
+== Details View ==
 
   * `#OnlineVideos.Details.Poster` - path to a poster format image
 
@@ -135,7 +144,7 @@ detect by (`string.equals(#OnlineVideos.selectedSiteUtil, IMDb)`)
   * `#OnlineVideos.DetailsItem.Description` - Description of the video
   * `#OnlineVideos.DetailsItem.Duration` - Duration of the video
 
-= Latest videos =
+== Latest videos ==
 Latest OnlineVideos GuiProperties are available throughout MediaPortal at any time - they are set by a background thread.
 The videos will rotate after a user configurable amount of time.
 The user can configure how many videos he wants, but the default is 3 (replace 1 with any number to get the properties of that video).
