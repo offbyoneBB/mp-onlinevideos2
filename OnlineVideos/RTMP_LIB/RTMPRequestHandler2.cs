@@ -9,6 +9,7 @@ using OnlineVideos;
 
 namespace RTMP_LIB
 {
+	[Obsolete("Use MPUrlSourceFilter.RtmpUrl instead.")]
 	public class RTMPRequestHandler2 : CrossDomanSingletonBase<RTMPRequestHandler2>, IRequestHandler
     {
         private RTMPRequestHandler2()
