@@ -13,8 +13,8 @@ The videos/streams can be discovered by reading RSS feeds, parsing HTML, program
  * thumbnails for sites, categories and videos/streams
  * pin to protect adult sites
  * search (on sites that support search)
- * paging in videolists
- * download videos
+ * paging in video and category lists
+ * download videos (concurrent or queued)
  * add videos and categories to a Favorites site
  * play all videos currently shown
  * play with Windows Media Player, <a href="http://www.videolan.org/vlc/">VLC media player</a>
