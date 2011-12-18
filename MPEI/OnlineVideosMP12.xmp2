@@ -2861,7 +2861,7 @@ added: play a video by pressing PLAY without showing the choices dialog
 changed: OnlineVideos uses its own logfile</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.0.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2011-12-15T11:00:00</ReleaseDate>
+    <ReleaseDate>2011-12-18T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
