@@ -1,6 +1,8 @@
 #summary A guide what GUI elements are required and may be used to visually present this plugin using your skin.
 
-= Windows =
+<wiki:toc max_depth="3" />
+
+= Window IDs =
 
 !OnlineVideos requires 4 window skin files:
  * Id: *4755* ( _myonlinevideos.xml_ )<br/>The main OnlineVideos window where the user can browse sites and play videos.<br/>
