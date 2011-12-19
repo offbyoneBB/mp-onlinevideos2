@@ -658,7 +658,8 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (!hashedLocalSites.ContainsKey(onlineSites[i].Name))
                 {
-                    onlineSites[i].Owner_FK = onlineSites[i].Owner_FK.Substring(0, onlineSites[i].Owner_FK.IndexOf('@'));
+					int indexOfAt = onlineSites[i].Owner_FK.IndexOf('@');
+					if (indexOfAt > 0) onlineSites[i].Owner_FK = onlineSites[i].Owner_FK.Substring(0, onlineSites[i].Owner_FK.IndexOf('@'));
                     onlyOnlineSites.Add(onlineSites[i]);
                 }
                 i++;
