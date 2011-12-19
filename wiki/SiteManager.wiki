@@ -9,3 +9,9 @@ The plugin offers 3 ways to update your sites from within MediaPortal, if you ha
   * a) *Full Update*<br/>The hidden menu of the !SiteManager window has one entry that allows you to do a full update of your local site list. This will add all sites that are currently only on the server to your local list and update (overwrite) all entries in your list. So any changes you made to the categories are lost! After successfull execution of this update, your local list will be equal to the one on the server and you will have all sites available locally. (A restart of MediaPortal is required if binaries were updated).<br/><br/>
   * b) *Manual Update*<br/>Clicking on a site in the !SiteManager gives you the possibility to update only that site (+preserving categories), if it is already in your local list, or otherwise add it to your list. The new configuration data (xml), binary (dll) and site icon/banner (png) will be downloaded. From the same menu, you are also able to remove a site from your local list.<br/><br/>
   * c) *Reporting Sites*<br/>If you have thoroughly tested a site, checked that your are not having codec problems (try to download inside MediaPortal), and the website actually still exists, you can write a small report, informing the site creator that it is broken in MediaPortal. Please make sure that your provided description is helpfull. Additionally you can post a logfile in the forum.
+
+= Screenshots =
+<img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_SiteManager_SideMenu.jpg"/>
+
+
+<img width="640" src="http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_SiteManager_ContextMenu.jpg"/>
