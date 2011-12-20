@@ -56,7 +56,10 @@ namespace OnlineVideos.Sites
                         video.ImageUrl = "http://" + host + n.Groups["ImageUrl"].Value;
                         video.Title = n.Groups["SubTitle"].Value;
                         video.VideoUrl = "http://" + host + n.Groups["Url"].Value;
-                        video.Description = n.Groups["Date"].Value;
+
+						string[] dateLengthInfos = n.Groups["Date"].Value.Split('|');
+						video.Airdate = dateLengthInfos[0].Trim();
+						video.Length = dateLengthInfos[1].Replace("MIN", "").Trim();
 
                         data[n.Groups["Title"].Value].Add(video);
                         
@@ -105,6 +108,7 @@ namespace OnlineVideos.Sites
                 else
                     url = rtmpBase + geoblock + filename;
 
+				url = new MPUrlSourceFilter.RtmpUrl(url) { SwfUrl = "http://www.sat1.de/imperia/moveplayer/HybridPlayer.swf", SwfVerify = true }.ToString();
             }
 
             string clipId = Regex.Match(webData, @",""id"":""(?<Value>[^""]+)""").Groups["Value"].Value;
