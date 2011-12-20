@@ -282,6 +282,7 @@ namespace OnlineVideos.MediaPortal1
 					}, null, false);
 					if (updateResult == true) newDllsDownloaded = true;
 					else if (updateResult == null) newDataSaved = true;
+					if (dlgPrgrs != null) dlgPrgrs.Close();
                     GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
                 }) { Name = "OVFullUpdate", IsBackground = true }.Start();
             }
@@ -302,6 +303,7 @@ namespace OnlineVideos.MediaPortal1
 					});
 					if (updateResult == true) newDllsDownloaded = true;
 					else if (updateResult == null) newDataSaved = true;
+					if (dlgPrgrs != null) dlgPrgrs.Close();
                     GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
                 }) { Name = "OVAutoUpdate", IsBackground = true }.Start();
             }
@@ -398,6 +400,7 @@ namespace OnlineVideos.MediaPortal1
 					}, GUI_infoList.ListItems.Select(g => g.TVTag as OnlineVideosWebservice.Site).ToList(), dlgSel.SelectedLabelText == Translation.Instance.UpdateAllSkipCategories);
 					if (updateResult == true) newDllsDownloaded = true;
 					else if (updateResult == null) newDataSaved = true;
+					if (dlgPrgrs != null) dlgPrgrs.Close();
                     GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
                 }) { Name = "OnlineVideosAutoUpdate", IsBackground = true }.Start();
             }
