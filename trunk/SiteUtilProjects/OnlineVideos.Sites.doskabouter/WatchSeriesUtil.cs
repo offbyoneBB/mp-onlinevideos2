@@ -227,6 +227,9 @@ namespace OnlineVideos.Sites
 
                     video.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                     video.VideoUrl = m.Groups["VideoUrl"].Value.Replace("..", baseUrl);
+                    video.Airdate = m.Groups["Airdate"].Value;
+                    if (video.Airdate == "-")
+                        video.Airdate = String.Empty;
                     Match m2 = Regex.Match(video.VideoUrl, @"-(?<id>\d+).html");
 
                     if (m2.Success) video.VideoUrl = baseUrl + "/getlinks.php?q=" + m2.Groups["id"].Value + "&domain=all";
