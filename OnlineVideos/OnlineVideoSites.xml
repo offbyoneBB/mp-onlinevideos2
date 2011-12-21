@@ -1597,8 +1597,8 @@
         <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass='hRotator'\s>\s*<img\ssrc='(?<ImageUrl>[^']*)'\s(?:(?!alt).)*alt="(?<Title>[^"]*)"/>]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='last'>Next</a>]]></item>
         <item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
-        <item key="fileUrlRegEx"><![CDATA['file':\s'(?<m0>[^']*)',\s*'image']]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://xhamster.com/flv2/{0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA['srv':\s'(?<m0>[^']*)',\s*'file':\s'(?<m1>[^']*)',\s*'image']]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}/key={1}]]></item>
         <item key="searchUrl"><![CDATA[http://www.xhamster.com/search.php?q={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
       </Configuration>
