@@ -267,6 +267,7 @@ namespace OnlineVideos.MediaPortal1
             }
             else if (control == GUI_btnFullUpdate)
             {
+				Log.Instance.Info("SiteManager: Running Full Update");
 				GUIDialogProgress dlgPrgrs = PrepareProgressDialog(Translation.Instance.FullUpdate);
                 new System.Threading.Thread(delegate()
                 {
@@ -288,6 +289,7 @@ namespace OnlineVideos.MediaPortal1
             }
             else if (control == GUI_btnAutoUpdate)
             {
+				Log.Instance.Info("SiteManager: Running AutoUpdate");
 				GUIDialogProgress dlgPrgrs = PrepareProgressDialog(Translation.Instance.AutomaticUpdate);
                 new System.Threading.Thread(delegate()
                 {
@@ -402,7 +404,7 @@ namespace OnlineVideos.MediaPortal1
 					else if (updateResult == null) newDataSaved = true;
 					if (dlgPrgrs != null) dlgPrgrs.Close();
                     GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => { RefreshDisplayedOnlineSites(); return 0; }, 0, 0, null);
-                }) { Name = "OnlineVideosAutoUpdate", IsBackground = true }.Start();
+				}) { Name = "OVSelectUpdate", IsBackground = true }.Start();
             }
 			else if (dlgSel.SelectedLabelText == Translation.Instance.RemoveFromMySites)
             {
