@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Text;
 using RssToolkit.Rss;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
@@ -82,13 +83,14 @@ namespace OnlineVideos.Sites
             {
                 string s = node.Attributes["url"].Value;
 
-                string url = string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}&app=rtevod",
-                        System.Web.HttpUtility.UrlEncode(s),
-                        System.Web.HttpUtility.UrlEncode(@"http://www.rte.ie/player/assets/player_403.swf"));
+                RtmpUrl rtmpUrl = new RtmpUrl(s)
+                {
+                    SwfVerify = true,
+                    App = "rtevod",
+                    SwfUrl = @"http://www.rte.ie/player/assets/player_403.swf"
+                };
 
-                result.Add(ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, url));
-
-                result.Add(s);
+                result.Add(rtmpUrl.ToString());
             }
             return result;
         }
