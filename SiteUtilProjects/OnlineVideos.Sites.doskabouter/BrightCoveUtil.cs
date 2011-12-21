@@ -144,11 +144,7 @@ namespace OnlineVideos.Sites
 
                     string rtmp = parts[0] + auth;
                     string playpath = parts[1].Split('?')[0] + auth;
-
-                    url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}",
-                        HttpUtility.UrlEncode(rtmp),
-                        HttpUtility.UrlEncode(playpath)));
+                    url = new MPUrlSourceFilter.RtmpUrl(rtmp) { PlayPath = playpath }.ToString();
 
                 }
                 video.PlaybackOptions.Add(nm, url);

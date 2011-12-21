@@ -51,19 +51,19 @@ namespace OnlineVideos.Sites
 
                 if (!WatchSeriesUtil.GotTrackingInfoData(name, season, episode, year))
                 {
-                  trackingInfoMatch = Regex.Match(video.VideoUrl, @"\/S(?<season>\d{1,3})E(?<episode>\d{1,3})-", RegexOptions.IgnoreCase);
-                  WatchSeriesUtil.FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
-                  name = "South Park";
+                    trackingInfoMatch = Regex.Match(video.VideoUrl, @"\/S(?<season>\d{1,3})E(?<episode>\d{1,3})-", RegexOptions.IgnoreCase);
+                    WatchSeriesUtil.FillTrackingInfoData(trackingInfoMatch, ref name, ref season, ref episode, ref year);
+                    name = "South Park";
                 }
 
                 if (WatchSeriesUtil.GotTrackingInfoData(name, season, episode, year))
                 {
-                  TrackingInfo tInfo = new TrackingInfo();
-                  tInfo.Title = name;
-                  tInfo.Season = (uint)season;
-                  tInfo.Episode = (uint)episode;
-                  tInfo.VideoKind = VideoKind.TvSeries;
-                  (video.Other as VideoInfoOtherHelper).TI = tInfo;
+                    TrackingInfo tInfo = new TrackingInfo();
+                    tInfo.Title = name;
+                    tInfo.Season = (uint)season;
+                    tInfo.Episode = (uint)episode;
+                    tInfo.VideoKind = VideoKind.TvSeries;
+                    (video.Other as VideoInfoOtherHelper).TI = tInfo;
                 }
             }
             return res;
@@ -146,13 +146,9 @@ namespace OnlineVideos.Sites
                     //case SouthParkCountry.Nl: swfUrl = String.Empty; break;
                 }
 
-                string resultUrl = string.Format("rtmpurl={0}&swfVfy={1}",
-                        System.Web.HttpUtility.UrlEncode(url),
-                        System.Web.HttpUtility.UrlEncode(swfUrl));
-
                 res.Add(bitrate + "K " + videoType,
-                    ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                    "http://127.0.0.1/stream.flv?" + resultUrl));
+                    new MPUrlSourceFilter.RtmpUrl(url) { SwfVerify = true, SwfUrl = swfUrl }.ToString());
+
             }
             return res;
         }
@@ -174,7 +170,7 @@ namespace OnlineVideos.Sites
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
         {
-          return (video.Other as VideoInfoOtherHelper).TI == null ? base.GetTrackingInfo(video) : (video.Other as VideoInfoOtherHelper).TI;
+            return (video.Other as VideoInfoOtherHelper).TI == null ? base.GetTrackingInfo(video) : (video.Other as VideoInfoOtherHelper).TI;
         }
 
         private class VideoInfoOtherHelper
@@ -185,7 +181,7 @@ namespace OnlineVideos.Sites
             public VideoInfoOtherHelper()
             {
             }
-            
+
             public VideoInfoOtherHelper(SouthParkCountry spCountry, TrackingInfo trackingInfo)
             {
                 this.SPCountry = spCountry;
