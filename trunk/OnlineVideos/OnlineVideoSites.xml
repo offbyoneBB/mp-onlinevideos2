@@ -961,11 +961,10 @@
       <Description>Wir bringen dir die News aus der Musikszene, aus den Bereichen Games und Kino/Film, informieren dich über die neuesten Veröffentlichungen, sind für dich auf den wichtigsten Festivals, Events und Konzerten.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.bunch.tv]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\s+class="news_img\s+type-news">\s+<a\s+href="(?<VideoUrl>[^"]*)"><img\s+src="(?<ImageUrl>[^"]*)"[^/]*/>\s*</a>\s*</div>
-.*?<div\s+class="news_title\s+type-news">\s*<a.*?>(?<Title>.*?)</a></div>
-.*?<div\s+class="news_date">\s*<span[^>]*>(?<Duration>[^<]*)</span>\s*</div>\s*
-<div\s+class="news_text">(?<Description>.*?)</div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<li\s+class="pager-next"><a\s+href="(?<url>[^"]+)".*?>next.*?</a></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\s+class="news-image.image">\s+<a\s+href="(?<VideoUrl>[^"]*)"[^>]*>\s*<img\s+src="(?<ImageUrl>[^"]*)"\s+alt="(?<Title>[^"]+)"[^/]*/>\s*</a>\s*</div>
+.*?<div\s+class="news-date">(?<Airdate>[^<]*)</div>\s*
+<div\s+class="news-text">(?<Description>.*?)</div>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<span\s+class="pager-current">\d+</span>\s*\|\s*<span\s+class="pager-item"><a\s+href="(?<url>[^"]+)"]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://streaming04.exozet.com/bunchtv-streaming/{0}]]></item>
         <item key="forceUTF8Encoding"><![CDATA[true]]></item>
       </Configuration>
