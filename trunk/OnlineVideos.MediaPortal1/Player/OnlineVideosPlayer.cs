@@ -179,7 +179,9 @@ namespace OnlineVideos.MediaPortal1.Player
                 int result = graphBuilder.FindFilterByName(sourceFilterName, out sourceFilter);
                 if (result != 0)
                 {
-                    Log.Instance.Warn("BufferFile : FindFilterByName returned {0}", result);
+					string errorText = DirectShowLib.DsError.GetErrorText(result);
+					if (errorText != null) errorText = errorText.Trim();
+					Log.Instance.Warn("BufferFile : FindFilterByName returned '{0}'{1}", "0x" + result.ToString("X"), !string.IsNullOrEmpty(errorText) ? " : (" + errorText + ")" : "");
                     return false;
                 }
                 
