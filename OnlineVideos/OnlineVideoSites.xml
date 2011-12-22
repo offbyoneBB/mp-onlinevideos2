@@ -1437,6 +1437,9 @@
         <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAAnreg4lk~,iutjDgKpeknlx9PrvSDXvaNgtPFQB9Vx]]></item>
       </Configuration>
     </Site>
+    <Site name="ABC.com" util="ABC" agecheck="false" enabled="true" lang="en">
+      <Description>The American Broadcasting Company (ABC) is an American commercial broadcasting television network.</Description>
+    </Site>
     <Site name="CTV.ca" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>CTV is Canada's largest private broadcaster, offering a wide range of leading news, sports, and entertainment programming.</Description>
     </Site>
