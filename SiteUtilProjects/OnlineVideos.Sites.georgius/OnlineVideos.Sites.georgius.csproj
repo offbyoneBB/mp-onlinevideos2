@@ -47,6 +47,9 @@
     <Compile Include="CeskaTelevizeJsonTextWriter.cs" />
     <Compile Include="CeskaTelevizeUtil.cs" />
     <Compile Include="DomaUtil.cs" />
+    <Compile Include="Flowplayer\Commercial\V3_1_5_17_002\Aes.cs" />
+    <Compile Include="Flowplayer\Commercial\V3_1_5_17_002\Base64.cs" />
+    <Compile Include="Flowplayer\Commercial\V3_1_5_17_002\Utf8.cs" />
     <Compile Include="JojPlusUtil.cs" />
     <Compile Include="JojUtil.cs" />
     <Compile Include="MarkizaUtil.cs" />
