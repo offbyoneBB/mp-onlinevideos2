@@ -9,7 +9,7 @@ namespace OnlineVideos.Sites
         private static string mainCategoriesUrl = @"http://cdn.abc.go.com/vp2/ws-supt/s/syndication/2000/rss/001/001/-1/-1/-1/-1/-1/-1";
         private static string ajaxUrlForShowId = @"http://abc.go.com/vp2/s/carousel?svc=season&showid={0}&bust=07000000_0";
 
-        private Regex mainCategoriesRegex = new Regex(@"<item><description>.*?<link>(?<link>.*?)</link><title>(?<title>.*?)</title>",
+        private Regex mainCategoriesRegex = new Regex(@"<item><description>.*?<image>(?<image>.*?)</image><link>(?<link>.*?)</link><title>(?<title>.*?)</title>",
             RegexOptions.Compiled);
         private Regex rssLinkRegex = new Regex(@"<link href=""(?<link>[^""]*)"" rel=""alternate"" type=""application/rss\+xml""",
             RegexOptions.Compiled);
@@ -37,6 +37,7 @@ namespace OnlineVideos.Sites
 
                     cat.Name = m.Groups["title"].Value;
                     cat.Url = m.Groups["link"].Value;
+                    cat.Thumb = m.Groups["image"].Value;
                     cat.HasSubCategories = false;
 
                     Settings.Categories.Add(cat);
