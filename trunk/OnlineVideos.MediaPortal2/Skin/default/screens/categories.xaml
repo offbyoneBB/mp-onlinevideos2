@@ -19,7 +19,7 @@
         </Storyboard>
 
         <!-- Contents -->
-        <ResourceWrapper x:Key="Contents_Element">
+        <ControlTemplate x:Key="Contents_Template">
             <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
                 <ListView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" Style="{ThemeResource EmptyStyle}"
                            ItemsSource="{Binding Path=CategoriesList}">
@@ -109,7 +109,7 @@
 
             </DockPanel>
 
-        </ResourceWrapper>
+        </ControlTemplate>
 
     </Include.Resources>
 </Include>

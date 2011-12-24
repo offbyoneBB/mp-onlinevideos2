@@ -42,9 +42,9 @@ namespace OnlineVideos.MediaPortal2
             get { return DateTime.Now; }
         }
 
-        public ResourcePath LocalResourcePath
+        public string Path
         {
-            get { return ResourcePath.BuildBaseProviderPath(RawUrlMediaProvider.RAW_URL_MEDIA_PROVIDER_ID, rawUrl); }
+            get { return ResourcePath.BuildBaseProviderPath(RawUrlMediaProvider.RAW_URL_MEDIA_PROVIDER_ID, rawUrl).Serialize(); }
         }
 
         public System.IO.Stream OpenRead()

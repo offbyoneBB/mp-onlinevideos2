@@ -11,7 +11,7 @@
 
         <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
 
-        <ResourceWrapper x:Key="Contents_Element">
+        <ControlTemplate x:Key="Contents_Template">
             <StackPanel Width="500" Height="200" DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
                 <TextBox Text="{Binding Path=SearchString, Mode=OneWayToSource}" SetFocus="true"
                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -29,7 +29,7 @@
                         Command="{Command Source={Service ScreenManager},Path=CloseTopmostDialog}"/>
                 </Grid>
             </StackPanel>
-        </ResourceWrapper>
+        </ControlTemplate>
 
     </Include.Resources>
 </Include>

@@ -14,7 +14,7 @@
         <ovs:ExtendedInfoConverter x:Key="ExtendedInfoConverter"/>
 
         <!-- Contents -->
-        <ResourceWrapper x:Key="Contents_Element">
+        <ControlTemplate x:Key="Contents_Template">
             <Grid DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -52,7 +52,7 @@
                     </ListView>
                 </DockPanel>
             </Grid>
-        </ResourceWrapper>
+        </ControlTemplate>
 
     </Include.Resources>
 </Include>
