@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MediaPortal.Common.General;
+using MediaPortal.UI.Presentation.DataObjects;
 
 namespace OnlineVideos.MediaPortal2
 {
-    public class CategoryViewModel
+    public class CategoryViewModel : ListItem
     {
         protected AbstractProperty _nameProperty;
         public AbstractProperty NameProperty { get { return _nameProperty; } }
@@ -65,6 +66,8 @@ namespace OnlineVideos.MediaPortal2
             _hasFocus = new WProperty(typeof(bool), false);
 
             _category.PropertyChanged += (sender, e) => { if (e.PropertyName == "ThumbnailImage") Thumb = Category.ThumbnailImage; };
+
+            if (Category is NextPageCategory) Thumb = "NextPage.png";
         }
 
         uint? CalculateChildrenCount()

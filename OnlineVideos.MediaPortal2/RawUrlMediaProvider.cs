@@ -33,7 +33,7 @@ namespace OnlineVideos.MediaPortal2
 
         public RawUrlMediaProvider()
         {
-			_metadata = new ResourceProviderMetadata(RAW_URL_MEDIA_PROVIDER_ID, "OnlineVideos Url mediaprovider", true);
+			_metadata = new ResourceProviderMetadata(RAW_URL_MEDIA_PROVIDER_ID, "OnlineVideos Url mediaprovider", "Provides Access to Raw Uri", true);
         }
 
         #endregion

@@ -13,6 +13,7 @@ using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
 using OnlineVideos.Sites;
+using MediaPortal.UiComponents.Media.General;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -50,9 +51,6 @@ namespace OnlineVideos.MediaPortal2
             SitesList = new List<SiteViewModel>();
 
             OnlineVideoSettings.Instance.SiteUtilsList.Values.ToList().ForEach(s => SitesList.Add(new SiteViewModel(s) { HasFocus = SitesList.Count == 0 }));
-
-            // add a special reversed proxy handler for rtmp
-            ReverseProxy.Instance.AddHandler(RTMP_LIB.RTMPRequestHandler.Instance); 
         }
 
         protected AbstractProperty _searchStringProperty = new WProperty(typeof(string), string.Empty);
@@ -66,11 +64,12 @@ namespace OnlineVideos.MediaPortal2
         public List<SiteViewModel> SitesList { get; protected set; }
         public SiteUtilBase SelectedSite { get; protected set; }
         public Category SelectedCategory { get; protected set; }
-        public List<CategoryViewModel> CategoriesList { get; protected set; }
+        public ItemsList CategoriesList { get; protected set; }
         public ItemsList VideosList { get; protected set; }
         public List<VideoInfoViewModel> DetailsVideosList { get; protected set; }
         public VideoInfoViewModel SelectedVideo { get; protected set; }
-        public Dictionary<string, string> PlaybackOptions { get; protected set; }
+        /// <summary>The MP2 simple dialog requires Items to be of type <see cref="ListItem"/> and have a Name to show a label in the GUI.</summary>
+        public ItemsList PlaybackOptions { get; protected set; }
         
         public bool IsExecutingBackgroundTask { get { return currentBackgroundTask != null; } }
         IWork currentBackgroundTask = null;
@@ -119,17 +118,77 @@ namespace OnlineVideos.MediaPortal2
             if (catProxy != null)
             {
                 Category cat = catProxy.Category;
-                if (cat.HasSubCategories)
+                if (cat is NextPageCategory)
                 {
-                    if (!cat.SubCategoriesDiscovered)
+                    // append next page categories
+                    ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
+                    currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
+                    =>
                     {
+                        try
+                        {
+                            SelectedSite.DiscoverNextPageCategories(cat as NextPageCategory);
+                        }
+                        catch (Exception ex)
+                        {
+                            currentBackgroundTask.Exception = ex;
+                        }
+                    },
+                    (args) =>
+                    {
+                        ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
+                        currentBackgroundTask = null;
+                        int selectNr = CategoriesList.Count - 1;
+                        CategoriesList.Clear();
+                        IList<Category> catList = cat.ParentCategory == null ? (IList<Category>)SelectedSite.Settings.Categories : cat.ParentCategory.SubCategories;
+                        foreach (Category c in catList) CategoriesList.Add(new CategoryViewModel(c) { HasFocus = CategoriesList.Count == selectNr });
+                        ImageDownloader.GetImages<Category>(catList);
+                        CategoriesList.FireChange();
+                    });
+                }
+                else
+                {
+                    if (cat.HasSubCategories)
+                    {
+                        if (!cat.SubCategoriesDiscovered)
+                        {
+                            ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
+                            currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
+                                =>
+                                {
+                                    try
+                                    {
+                                        SelectedSite.DiscoverSubCategories(cat);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        currentBackgroundTask.Exception = ex;
+                                    }
+                                },
+                                (args) =>
+                                {
+                                    ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
+                                    SelectedCategory = cat;
+                                    ShowCategories(cat.SubCategories, cat.Name);
+                                    currentBackgroundTask = null;
+                                });
+                        }
+                        else
+                        {
+                            SelectedCategory = cat;
+                            ShowCategories(cat.SubCategories, cat.Name);
+                        }
+                    }
+                    else
+                    {
+                        List<VideoInfo> videos = null;
                         ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
                         currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
                             =>
                             {
                                 try
                                 {
-                                    SelectedSite.DiscoverSubCategories(cat);
+                                    videos = SelectedSite.getVideoList(cat);
                                 }
                                 catch (Exception ex)
                                 {
@@ -139,39 +198,10 @@ namespace OnlineVideos.MediaPortal2
                             (args) =>
                             {
                                 ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                                SelectedCategory = cat;
-                                ShowCategories(cat.SubCategories, cat.Name);
+                                ShowVideos(cat, videos);
                                 currentBackgroundTask = null;
                             });
                     }
-                    else
-                    {
-                        SelectedCategory = cat;
-                        ShowCategories(cat.SubCategories, cat.Name);
-                    }
-                }
-                else
-                {
-                    List<VideoInfo> videos = null;
-                    ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-                    currentBackgroundTask = ServiceRegistration.Get<IThreadPool>().Add(()
-                        =>
-                        {
-                            try
-                            {
-                                videos = SelectedSite.getVideoList(cat);
-                            }
-                            catch (Exception ex)
-                            {
-                                currentBackgroundTask.Exception = ex;
-                            }
-                        },
-                        (args) =>
-                        {
-                            ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                            ShowVideos(cat, videos);
-                            currentBackgroundTask = null;
-                        });
                 }
             }
         }
@@ -310,9 +340,9 @@ namespace OnlineVideos.MediaPortal2
             }
         }
 
-        public void SelectedPlaybackOption(string selectedItem)
+        public void SelectedPlaybackOption(ListItem selectedItem)
         {
-            Play(SelectedVideo, PlaybackOptions[selectedItem]);
+            Play(SelectedVideo, ((KeyValuePair<string,string>)selectedItem.AdditionalProperties[Consts.KEY_MEDIA_ITEM]).Value);
         }
 
         public void StartSearch()
@@ -355,7 +385,13 @@ namespace OnlineVideos.MediaPortal2
 
         void ShowPlaybackOptions(VideoInfo videoInfo)
         {
-            PlaybackOptions = videoInfo.PlaybackOptions;
+            PlaybackOptions = new ItemsList();
+            foreach (var item in videoInfo.PlaybackOptions) 
+            {
+                var listItem = new ListItem(Consts.KEY_NAME, item.Key);
+                listItem.AdditionalProperties.Add(Consts.KEY_MEDIA_ITEM, item);
+                PlaybackOptions.Add(listItem); 
+            }
             ServiceRegistration.Get<IScreenManager>().ShowDialog("dialogPlaybackOptions");
         }
 
@@ -392,7 +428,7 @@ namespace OnlineVideos.MediaPortal2
         
         void ShowCategories(IList<Category> categories, string navigationLabel)
         {
-            CategoriesList = new List<CategoryViewModel>();
+            CategoriesList = new ItemsList();
             foreach (Category c in categories) CategoriesList.Add(new CategoryViewModel(c) { HasFocus = CategoriesList.Count == 0 });
             ImageDownloader.GetImages<Category>(categories);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
@@ -451,7 +487,7 @@ namespace OnlineVideos.MediaPortal2
                 // going up in hierarchy
                 if (oldContext.Predecessor == newContext)
                 {
-                    CategoriesList = new List<CategoryViewModel>();
+                    CategoriesList = new ItemsList();
                     if (SelectedCategory.ParentCategory != null)
                     {
                         SelectedCategory.ParentCategory.SubCategories.ForEach(c => CategoriesList.Add(new CategoryViewModel(c) { HasFocus = c.Name == SelectedCategory.Name }));
@@ -470,7 +506,7 @@ namespace OnlineVideos.MediaPortal2
             else if (newContext.WorkflowState.StateId == Guids.WorkflowStateCategories && oldContext.WorkflowState.StateId == Guids.WorkflowStateVideos)
             {
                 VideosList = null;
-                CategoriesList = new List<CategoryViewModel>();
+                CategoriesList = new ItemsList();
 
                 if (SelectedCategory != null && SelectedCategory.ParentCategory != null)
                 {

@@ -31,7 +31,7 @@
         Name="Home->OnlineVideos"
         DisplayCategory="z-OnlineVideos"
         SortOrder="a"
-        SourceState="7F702D9C-F2DD-42da-9ED8-0BA92F07787F"
+        SourceStates="7F702D9C-F2DD-42da-9ED8-0BA92F07787F"
         TargetState="F9D7500D-EC5C-4FEF-8FAE-E4DED8A22CE0"
         DisplayTitle="[OnlineVideos.MenuEntry]"/>    
 
@@ -39,7 +39,7 @@
         Name="OnlineVideos->Search"
         DisplayCategory="z-OnlineVideos"
         SortOrder="a"
-        SourceState="*"
+        SourceStates="*"
         ContributorModelId="C43F4CD9-418A-4DFB-A0BD-DF24704B5BD6"
         DisplayTitle="Search"/>
     
