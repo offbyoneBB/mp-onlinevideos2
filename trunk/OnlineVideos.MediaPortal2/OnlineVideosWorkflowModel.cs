@@ -41,6 +41,7 @@ namespace OnlineVideos.MediaPortal2
             OnlineVideoSettings.Instance.LoadSites();
             OnlineVideoSettings.Instance.BuildSiteUtilsList();
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asf")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asf", false);
+            if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".asx")) OnlineVideoSettings.Instance.VideoExtensions.Add(".asx", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".flv")) OnlineVideoSettings.Instance.VideoExtensions.Add(".flv", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".m4v")) OnlineVideoSettings.Instance.VideoExtensions.Add(".m4v", false);
             if (!OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(".mov")) OnlineVideoSettings.Instance.VideoExtensions.Add(".mov", false);
@@ -340,8 +341,9 @@ namespace OnlineVideos.MediaPortal2
             }
         }
 
-        public void SelectedPlaybackOption(ListItem selectedItem)
+        public void SelectPlaybackOption(ListItem selectedItem)
         {
+            // todo : resolve playback option
             Play(SelectedVideo, ((KeyValuePair<string,string>)selectedItem.AdditionalProperties[Consts.KEY_MEDIA_ITEM]).Value);
         }
 
