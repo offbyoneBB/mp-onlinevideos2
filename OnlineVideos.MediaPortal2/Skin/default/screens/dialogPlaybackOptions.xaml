@@ -18,7 +18,7 @@
         </ResourceWrapper>
 
         <!-- Command -->
-        <CommandStencil x:Key="Execute_Command_Stencil" Source="{StaticResource OnlineVideosModel}" Path="SelectedPlaybackOption"/>
+        <CommandStencil x:Key="Execute_Command_Stencil" Source="{StaticResource OnlineVideosModel}" Path="SelectPlaybackOption"/>
 
     </Include.Resources>
 </Include>

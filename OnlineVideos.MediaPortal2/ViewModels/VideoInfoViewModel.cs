@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using MediaPortal.Common.General;
 using MediaPortal.UI.Presentation.DataObjects;
+using MediaPortal.UiComponents.Media.General;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -71,6 +72,7 @@ namespace OnlineVideos.MediaPortal2
         }
 
         public VideoInfoViewModel(VideoInfo videoInfo)
+            : base(Consts.KEY_NAME, !string.IsNullOrEmpty(videoInfo.Title2) ? videoInfo.Title2 : videoInfo.Title)
         {
             _videoInfo = videoInfo;
 

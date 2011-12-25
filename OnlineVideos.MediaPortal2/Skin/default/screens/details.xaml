@@ -30,7 +30,7 @@
                     <StackPanel DockPanel.Dock="Top">
                         <Label Content="{Binding Path=SelectedVideo.VideoInfo.Other, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Actors}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true"/>
                         <Label Content="{Binding Path=SelectedVideo.VideoInfo.Other, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Directors}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true"/>
-                        <Label Content="{Binding Path=SelectedVideo.VideoInfo.Other, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Plot}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true" Scroll="Auto" MaxHeight="100"/>
+                        <Label Content="{Binding Path=SelectedVideo.VideoInfo.Other, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Plot}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true" Scroll="Auto" MaxHeight="150"/>
                     </StackPanel>
                     <ListView Style="{ThemeResource MenuListViewStyle}" ItemsSource="{Binding Path=DetailsVideosList,Mode=OneTime}" SetFocus="true">
                         <ListView.Resources>
@@ -42,13 +42,6 @@
                                 </Command>
                             </CommandList>
                         </ListView.Resources>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid x:Name="ItemControl" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                                    <Label x:Name="ItemLabel" Content="{Binding Path=Title2}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
                     </ListView>
                 </DockPanel>
             </Grid>

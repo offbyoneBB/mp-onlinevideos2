@@ -16,9 +16,9 @@
         <ovs:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
         
         <Storyboard x:Key="WobbleAnimation">
-            <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX" From="1.3" To="1.4" 
+            <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleX" From="1.3" To="1.35" 
                                                  Duration="0:0:0.8" RepeatBehavior="Forever" AutoReverse="True" />
-            <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="1.3" To="1.4" 
+            <DoubleAnimation Storyboard.TargetName="ovsGrowControl" Storyboard.TargetProperty="RenderTransform.Children[0].ScaleY" From="1.3" To="1.35" 
                                                  Duration="0:0:0.8" RepeatBehavior="Forever" AutoReverse="True" />
         </Storyboard>
 
@@ -103,8 +103,8 @@
                                 <Rectangle x:Name="ovsButtonControlRectangle" StrokeThickness="2" Stroke="{ThemeResource ButtonStrokeColor}" Width="115" Height="115" RadiusX="7" RadiusY="7"/>
                                 <Image x:Name="thumb" Stretch="Uniform" Margin="8" Source="{Binding Path=Site, Converter={StaticResource SiteUtilIconConverter}}"/>
                                 <Image Width="16" Margin="0,3,3,0" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding Path=Settings.Language, Converter={StaticResource LanguageConverter}}"/>
-                                <Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Content="{Binding Path=Settings.Name}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}}"/>
-                                <Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding Path=Settings.Name}" FontSize="11" IsVisible="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}, ConverterParameter=inverted}"/>
+                                <Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Content="{Binding Path=Settings.Name}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}}" Color="{ThemeResource TextColor}"/>
+                                <Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding Path=Settings.Name}" FontSize="11" IsVisible="{Binding ElementName=thumb, Path=Source, Converter={StaticResource NullVisibilityConverter}, ConverterParameter=inverted}" Color="{ThemeResource TextColor}"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
