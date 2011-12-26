@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites
 
         public virtual Boolean IsVideoListStartsFromStartingPanelLevel { get { return true; } }
 
-        public static string videoLibraryUri = @"/AJAX/VideoLibraryWithFrame.aspx";
+        public static string mainVideoLibraryUri = @"/AJAX/VideoLibraryWithFrame.aspx";
         public static Regex mainCategoriesRegex = new Regex(@"<li[^>]*>\s*<a\sid=""(?<id>[^""]*)""\sonclick=""[^""]*""\shref=""(?<url>[^""]*)""\stitle=""[^""]*"">\s*(?<title>[^<]*)<span></span>\s*</a>\s*</li>",
             RegexOptions.Compiled);
 
@@ -44,7 +44,7 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
 
-            string webData = GetWebData(BaseUrl + videoLibraryUri);
+            string webData = GetWebData(BaseUrl + mainVideoLibraryUri);
 
             if (!string.IsNullOrEmpty(webData))
             {

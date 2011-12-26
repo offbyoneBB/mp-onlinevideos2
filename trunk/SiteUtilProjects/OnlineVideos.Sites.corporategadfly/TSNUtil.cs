@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
 
-            string webData = GetWebData(BaseUrl + videoLibraryUri);
+            string webData = GetWebData(BaseUrl + mainVideoLibraryUri);
 
             if (!string.IsNullOrEmpty(webData))
             {
