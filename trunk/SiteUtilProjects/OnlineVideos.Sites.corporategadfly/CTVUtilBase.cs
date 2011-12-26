@@ -20,11 +20,11 @@ namespace OnlineVideos.Sites
 
         public virtual Regex EpisodeListRegex { get { return _episodeListRegex; } }
 
-        public virtual Boolean IsMainCategoryContainsSubCategories { get { return true; } }
-
-        public virtual Boolean IsVideoListStartsFromStartingPanelLevel { get { return true; } }
+        public virtual Boolean IsLookaheadNeededAtMainLevel { get { return false; } }
 
         public static string mainVideoLibraryUri = @"/AJAX/VideoLibraryWithFrame.aspx";
+        public static string contentsVideoLibraryUri = @"/AJAX/VideoLibraryContents.aspx?GetChildOnly=true&PanelID=2&ShowID={0}";
+
         public static Regex mainCategoriesRegex = new Regex(@"<li[^>]*>\s*<a\sid=""(?<id>[^""]*)""\sonclick=""[^""]*""\shref=""(?<url>[^""]*)""\stitle=""[^""]*"">\s*(?<title>[^<]*)<span></span>\s*</a>\s*</li>",
             RegexOptions.Compiled);
 
@@ -54,7 +54,22 @@ namespace OnlineVideos.Sites
 
                     cat.Name = m.Groups["title"].Value;
                     cat.Url = m.Groups["url"].Value;
-                    cat.HasSubCategories = IsMainCategoryContainsSubCategories;
+                    cat.HasSubCategories = true;
+
+                    if (IsLookaheadNeededAtMainLevel)
+                    {
+                        // a look-ahead is needed to determine whether the main
+                        // category contains subcatagories or simply episodes
+                        cat.Url = BaseUrl + String.Format(contentsVideoLibraryUri, m.Groups["id"].Value);
+                        webData = GetWebData(cat.Url);
+
+                        if (!string.IsNullOrEmpty(webData))
+                        {
+                            Match subcategoriesMatch = subcategoriesRegex.Match(webData);
+                            Log.Debug(@"For category: {0}, found subcategories: {1}", cat.Name, subcategoriesMatch.Success);
+                            cat.HasSubCategories = subcategoriesMatch.Success;
+                        }
+                    }
 
                     Settings.Categories.Add(cat);
                 }
@@ -96,24 +111,7 @@ namespace OnlineVideos.Sites
         {
             List<VideoInfo> result = new List<VideoInfo>();
 
-            string url;
-
-            if (IsVideoListStartsFromStartingPanelLevel)
-            {
-                string parentId = (string)((RssLink)category).Other;
-
-                // StartingPanelLevel shows list of episodes
-                url = BaseUrl
-                    + @"/AJAX/VideoLibraryContents.aspx?GetChildOnly=true&PanelID="
-                    + StartingPanelLevel
-                    + @"&" + VideoLibraryParameter + @"="
-                    + parentId;
-            }
-            else
-            {
-                url = (string) ((RssLink) category).Url;
-            }
-
+            string url = (string) ((RssLink) category).Url;
             string webData = GetWebData(url);
 
             if (!string.IsNullOrEmpty(webData))
