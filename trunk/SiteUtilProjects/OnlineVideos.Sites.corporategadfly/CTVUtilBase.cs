@@ -136,6 +136,14 @@ namespace OnlineVideos.Sites
         {
             List<string> result = new List<string>();
 
+            if (video.VideoUrl.StartsWith("rtmp"))
+            {
+                // video URL starts with rtmp so return immediately
+                Log.Debug(@"Returning immediately for URL: {0}", video.VideoUrl);
+                result.Add(video.VideoUrl);
+                return result;
+            }
+
             if (StartingPanelLevel.Equals(2))
             {
                 video.VideoUrl = String.Format("http://cls.ctvdigital.net/cliplookup.aspx?id={0}", video.Other);
@@ -178,7 +186,7 @@ namespace OnlineVideos.Sites
             return CreateRTMPUrl(clonedVideoInfo);
         }
 
-        private string CreateRTMPUrl(VideoInfo clonedVideoInfo)
+        public string CreateRTMPUrl(VideoInfo clonedVideoInfo)
         {
             Log.Debug(@"Video URL (before): {0}", clonedVideoInfo.VideoUrl);
 
