@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="ApetitTv.cs" />
     <Compile Include="AutosalonUtil.cs" />
-    <None Include="BarrandovTvUtil.cs" />
+    <Compile Include="BarrandovTvUtil.cs" />
     <Compile Include="CeskaTelevizeJsonTextWriter.cs" />
     <Compile Include="CeskaTelevizeUtil.cs" />
     <Compile Include="DomaUtil.cs" />

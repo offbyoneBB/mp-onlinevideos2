@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace OnlineVideos.Sites.SK_CZ
+namespace OnlineVideos.Sites.georgius
 {
     public sealed class TA3Util : SiteUtilBase
     {

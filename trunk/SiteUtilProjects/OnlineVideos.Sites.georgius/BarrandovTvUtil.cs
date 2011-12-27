@@ -6,32 +6,38 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 
-
-namespace OnlineVideos.Sites.SK_CZ
+namespace OnlineVideos.Sites.georgius
 {
     public sealed class BarrandovTvUtil : SiteUtilBase
     {
         #region Private fields
 
-        private static String baseUrl = @"http://www.barrandov.tv";
-        private static String archiveUrl = @"http://www.barrandov.tv/video";
+        private static String baseUrl = @"http://www.barrandov.tv/video";
 
-        private static String dynamicCategoryStart = @"<ul class=""videosmenu"">";
-        private static String showStart = @"<li>";
-        private static String showUrlAndTitleRegex = @"<a href=""video/(?<showUrl>[^""]+)"" class=""[^""]*"">(?<showTitle>[^<]+)</a>";
+        private static String dynamicCategoryStart = @"<div class=""videosGenre"">";
+        private static String dynamicCategoryEnd = @"bmone2n";
 
-        private static String showEpisodesStart = @"<ul class=""prglist video"">";
-        private static String showEpisodesEnd = @"</ul>";
+        private static String showStart = @"<div class=""genreDetail"">";
+        private static String showEnd = @"</ul>";
+
+        private static String showTitleRegex = @"<h3>(?<showTitle>[^<]*)";
+        private static String showUrlRegex = @"<a href=""(?<showUrl>[^""]+)";
+
+        private static String showEpisodesStart = @"<ul class=""videoHpList"">";
+        private static String showEpisodesEnd = @"<div class=""cols footerMenu"">";
+
         private static String showEpisodeStart = @"<li";
         private static String showEpisodeEnd = @"</li>";
-        private static String showEpisodeThumbRegex = @"<img src=""(?<showEpisodeThumbUrl>[^""]+)"" alt=""[^""]*"" />";
-        private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showEpisodeUrl>[^""]+)"">(?<showEpisodeTitle>[^<]+)</a>";
-        private static String showEpisodeDateRegex = @"<span class=""ml"">(?<showEpisodeDate>[^<]*)</span>";
 
-        private static String showEpisodeNextPageRegex = @"<a href=""javascript:Ajax\('[^']*', '(?<nextPageUrl>[^']+)'\)"">další »</a>";
+        private static String showEpisodeUrlRegex = @"<a href=""(?<showEpisodeUrl>[^""]+)";
+        private static String showEpisodeThumbRegex = @"<img src=""(?<showEpisodeThumbUrl>[^""]+)";
+        private static String showEpisodeTitleRegex = @"<span>(?<showEpisodeTitle>[^<]+)";
+        private static String showEpisodeDateRegex = @"Vysíláno:(?<showEpisodeDate>[^<]*)";
 
-        private static String showEpisodeVideoIdRegex = @"SWFObject\('/flash/unigramPlayer_v1.swf\?itemid=(?<videoId>[^']+)'";
-        private static String showEpisodeVideoDataFormat = "{0}/special/videoplayerdata/{1}"; // baseUrl, videoId
+        private static String showEpisodeNextPageRegex = @"<a class=""right"" href=""(?<nextPageUrl>[^""]+)"">další";
+
+        private static String showEpisodeVideoIdRegex = @"SWFObject\('/flash/tvbPlayer3.swf\?itemid=(?<videoId>[^']+)'";
+        private static String showEpisodeVideoDataFormat = "http://www.barrandov.tv/special/voddata/{1}"; // videoId
 
         // the number of show episodes per page
         private static int pageSize = 28;
@@ -68,48 +74,65 @@ namespace OnlineVideos.Sites.SK_CZ
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(BarrandovTvUtil.archiveUrl);
+            String baseWebData = SiteUtilBase.GetWebData(BarrandovTvUtil.baseUrl);
 
-            int index = baseWebData.IndexOf(BarrandovTvUtil.dynamicCategoryStart);
-            if (index > 0)
+            int startIndex = baseWebData.IndexOf(BarrandovTvUtil.dynamicCategoryStart);
+            if (startIndex >= 0)
             {
-                baseWebData = baseWebData.Substring(index);
+                int endIndex = baseWebData.IndexOf(BarrandovTvUtil.dynamicCategoryEnd, startIndex + BarrandovTvUtil.dynamicCategoryStart.Length);
 
-                while (true)
+                if (endIndex >= 0)
                 {
-                    index = baseWebData.IndexOf(BarrandovTvUtil.showStart);
+                    baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                    if (index > 0)
+                    while (true)
                     {
-                        baseWebData = baseWebData.Substring(index);
-
-                        String showUrl = String.Empty;
-                        String showTitle = String.Empty;
-
-                        Match match = Regex.Match(baseWebData, BarrandovTvUtil.showUrlAndTitleRegex);
-                        if (match.Success)
+                        startIndex = baseWebData.IndexOf(BarrandovTvUtil.showStart);
+                        if (startIndex >= 0)
                         {
-                            showUrl = match.Groups["showUrl"].Value;
-                            showTitle = match.Groups["showTitle"].Value;
-                            baseWebData = baseWebData.Substring(match.Index + match.Length);
-                        }
+                            endIndex = baseWebData.IndexOf(BarrandovTvUtil.showEnd, startIndex + BarrandovTvUtil.showStart.Length);
 
-                        if ((String.IsNullOrEmpty(showUrl)) && (String.IsNullOrEmpty(showTitle)))
+                            if (endIndex >= 0)
+                            {
+                                String showData = baseWebData.Substring(startIndex, endIndex - startIndex);
+
+                                String showUrl = String.Empty;
+                                String showTitle = String.Empty;
+
+                                Match match = Regex.Match(showData, BarrandovTvUtil.showTitleRegex);
+                                if (match.Success)
+                                {
+                                    showTitle = match.Groups["showTitle"].Value;
+                                }
+
+                                match = Regex.Match(showData, BarrandovTvUtil.showUrlRegex);
+                                if (match.Success)
+                                {
+                                    showUrl = match.Groups["showUrl"].Value;
+                                }
+
+                                if (!((String.IsNullOrEmpty(showUrl)) || (String.IsNullOrEmpty(showTitle))))
+                                {
+                                    this.Settings.Categories.Add(
+                                    new RssLink()
+                                    {
+                                        Name = showTitle,
+                                        Url = Utils.FormatAbsoluteUrl(showUrl, BarrandovTvUtil.baseUrl)
+                                    });
+                                    dynamicCategoriesCount++;
+                                }
+
+                                baseWebData = baseWebData.Substring(endIndex + BarrandovTvUtil.showEnd.Length);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
                         {
                             break;
                         }
-
-                        this.Settings.Categories.Add(
-                            new RssLink()
-                            {
-                                Name = showTitle,
-                                Url = String.Format("{0}/{1}", BarrandovTvUtil.archiveUrl, showUrl),
-                            });
-                        dynamicCategoriesCount++;
-                    }
-                    else
-                    {
-                        break;
                     }
                 }
             }
@@ -126,72 +149,73 @@ namespace OnlineVideos.Sites.SK_CZ
             {
                 String baseWebData = SiteUtilBase.GetWebData(pageUrl);
 
-                int index = baseWebData.IndexOf(BarrandovTvUtil.showEpisodesStart);
-                if (index > 0)
+                int startIndex = baseWebData.IndexOf(BarrandovTvUtil.showEpisodesStart);
+                if (startIndex >= 0)
                 {
-                    baseWebData = baseWebData.Substring(index);
-                    index = baseWebData.IndexOf(BarrandovTvUtil.showEpisodesEnd);
+                    int endIndex = baseWebData.IndexOf(BarrandovTvUtil.showEpisodesEnd, startIndex + BarrandovTvUtil.showEpisodesStart.Length);
 
-                    if (index > 0)
+                    if (endIndex > 0)
                     {
-                        String episodesData = baseWebData.Substring(0, index);
+                        baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
+
+                        Match nextPageMatch = Regex.Match(baseWebData, BarrandovTvUtil.showEpisodeNextPageRegex);
+                        this.nextPageUrl = (nextPageMatch.Success) ? Utils.FormatAbsoluteUrl(HttpUtility.HtmlDecode(nextPageMatch.Groups["nextPageUrl"].Value), pageUrl) : String.Empty;
 
                         while (true)
                         {
-                            index = episodesData.IndexOf(BarrandovTvUtil.showEpisodeStart);
+                            startIndex = baseWebData.IndexOf(BarrandovTvUtil.showEpisodeStart);
 
-                            if (index > 0)
+                            if (startIndex >= 0)
                             {
-                                episodesData = episodesData.Substring(index);
-                                index = episodesData.IndexOf(BarrandovTvUtil.showEpisodeEnd);
+                                endIndex = baseWebData.IndexOf(BarrandovTvUtil.showEpisodeEnd, startIndex + BarrandovTvUtil.showEpisodeStart.Length);
 
-                                if (index > 0)
+                                if (endIndex >= 0)
                                 {
-                                    String showData = episodesData.Substring(0, index);
+                                    String episodeData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
                                     String showEpisodeUrl = String.Empty;
                                     String showEpisodeTitle = String.Empty;
                                     String showEpisodeThumb = String.Empty;
                                     String showEpisodeDate = String.Empty;
 
-                                    Match match = Regex.Match(showData, BarrandovTvUtil.showEpisodeThumbRegex);
-                                    if (match.Success)
-                                    {
-                                        showEpisodeThumb = String.Format("{0}{1}", BarrandovTvUtil.baseUrl, HttpUtility.HtmlDecode(match.Groups["showEpisodeThumbUrl"].Value));
-                                        showData = showData.Substring(match.Index + match.Length);
-                                    }
-
-                                    match = Regex.Match(showData, BarrandovTvUtil.showEpisodeUrlAndTitleRegex);
+                                    Match match = Regex.Match(episodeData, BarrandovTvUtil.showEpisodeUrlRegex);
                                     if (match.Success)
                                     {
                                         showEpisodeUrl = match.Groups["showEpisodeUrl"].Value;
-                                        showEpisodeTitle = match.Groups["showEpisodeTitle"].Value;
-                                        showData = showData.Substring(match.Index + match.Length);
                                     }
 
-                                    match = Regex.Match(showData, BarrandovTvUtil.showEpisodeDateRegex);
+                                    match = Regex.Match(episodeData, BarrandovTvUtil.showEpisodeThumbRegex);
+                                    if (match.Success)
+                                    {
+                                        showEpisodeThumb = Utils.FormatAbsoluteUrl(HttpUtility.HtmlDecode(match.Groups["showEpisodeThumbUrl"].Value), BarrandovTvUtil.baseUrl);
+                                    }
+
+                                    match = Regex.Match(episodeData, BarrandovTvUtil.showEpisodeTitleRegex);
+                                    if (match.Success)
+                                    {
+                                        showEpisodeTitle = match.Groups["showEpisodeTitle"].Value;
+                                    }
+
+                                    match = Regex.Match(episodeData, BarrandovTvUtil.showEpisodeDateRegex);
                                     if (match.Success)
                                     {
                                         showEpisodeDate = match.Groups["showEpisodeDate"].Value;
-                                        showData = showData.Substring(match.Index + match.Length);
                                     }
 
-                                    if ((String.IsNullOrEmpty(showEpisodeUrl)) && (String.IsNullOrEmpty(showEpisodeThumb)) && (String.IsNullOrEmpty(showEpisodeTitle)) && (String.IsNullOrEmpty(showEpisodeDate)))
+                                    if (!((String.IsNullOrEmpty(showEpisodeUrl)) || (String.IsNullOrEmpty(showEpisodeThumb)) || (String.IsNullOrEmpty(showEpisodeTitle)) || (String.IsNullOrEmpty(showEpisodeDate))))
                                     {
-                                        break;
+                                        VideoInfo videoInfo = new VideoInfo()
+                                        {
+                                            Description = showEpisodeDate,
+                                            ImageUrl = showEpisodeThumb,
+                                            Title = showEpisodeTitle,
+                                            VideoUrl = Utils.FormatAbsoluteUrl(showEpisodeUrl, BarrandovTvUtil.baseUrl)
+                                        };
+
+                                        pageVideos.Add(videoInfo);
                                     }
 
-                                    VideoInfo videoInfo = new VideoInfo()
-                                    {
-                                        Description = showEpisodeDate,
-                                        ImageUrl = showEpisodeThumb,
-                                        Title = showEpisodeTitle,
-                                        VideoUrl = String.Format("{0}{1}", BarrandovTvUtil.baseUrl, showEpisodeUrl)
-                                    };
-
-                                    pageVideos.Add(videoInfo);
-
-                                    episodesData = episodesData.Substring(index);
+                                    baseWebData = baseWebData.Substring(endIndex + BarrandovTvUtil.showEpisodeEnd.Length);
                                 }
                                 else
                                 {
@@ -204,9 +228,6 @@ namespace OnlineVideos.Sites.SK_CZ
                             }
                         }
                     }
-
-                    Match nextPageMatch = Regex.Match(baseWebData, BarrandovTvUtil.showEpisodeNextPageRegex);
-                    this.nextPageUrl = (nextPageMatch.Success) ? String.Format("{0}{1}", BarrandovTvUtil.baseUrl, HttpUtility.HtmlDecode(nextPageMatch.Groups["nextPageUrl"].Value)) : String.Empty;
                 }
             }
 
@@ -304,26 +325,19 @@ namespace OnlineVideos.Sites.SK_CZ
                 XmlDocument document = new XmlDocument();
                 document.LoadXml(baseWebData);
 
-                XmlNode hostname = document.SelectSingleNode("//hostname");
-                XmlNode streamname = document.SelectSingleNode("//streamname");
+                XmlNode hostname = document.SelectSingleNode("//host");
+                XmlNode streamname = document.SelectSingleNode("//file");
 
                 if ((hostname != null) && (streamname != null))
                 {
-                    String movieUrl = String.Format("rtmp://{0}/{1}", hostname.InnerText, streamname.InnerText);
+                    String movieUrl = String.Format("rtmpe://{0}/{1}", hostname.InnerText, streamname.InnerText);
 
-                    string host = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf("/", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
-                    string app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
-                    string tcUrl = "rtmp://" + host + ":1935/" + app;
-                    string playPath = movieUrl.Substring(movieUrl.IndexOf(app) + app.Length + 1);
+                    String host = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf("/", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
+                    String app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
+                    String tcUrl = "rtmpe://" + host + "/" + app;
+                    String playPath = movieUrl.Substring(movieUrl.IndexOf(app) + app.Length + 1);
 
-                    string resultUrl = ReverseProxy.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                        string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&hostname={1}&tcUrl={2}&app={3}&playpath={4}",
-                            movieUrl, //rtmpUrl
-                            host, //host
-                            tcUrl, //tcUrl
-                            app, //app
-                            playPath //playpath
-                            ));
+                    String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(movieUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, Token = "#ed%h0#w@1" }.ToString();
 
                     video.PlaybackOptions.Add(video.Title, resultUrl);
                 }
