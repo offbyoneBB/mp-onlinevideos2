@@ -282,12 +282,12 @@
             this.ageCheckBox.Text = "Age Check";
             this.ageCheckBox.UseVisualStyleBackColor = true;
             // 
-            // BaseUrlTextbox
+            // baseUrlTextbox
             // 
             this.baseUrlTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.baseUrlTextbox.Location = new System.Drawing.Point(3, 64);
-            this.baseUrlTextbox.Name = "BaseUrlTextbox";
+            this.baseUrlTextbox.Name = "baseUrlTextbox";
             this.baseUrlTextbox.Size = new System.Drawing.Size(451, 20);
             this.baseUrlTextbox.TabIndex = 3;
             // 
@@ -332,12 +332,12 @@
             this.label27.TabIndex = 57;
             this.label27.Text = "DynamicCategoryUrlDecoding";
             // 
-            // DynamicCategoryUrlDecodingComboBox
+            // categoryUrlDecodingComboBox
             // 
             this.categoryUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.categoryUrlDecodingComboBox.FormattingEnabled = true;
             this.categoryUrlDecodingComboBox.Location = new System.Drawing.Point(155, 172);
-            this.categoryUrlDecodingComboBox.Name = "DynamicCategoryUrlDecodingComboBox";
+            this.categoryUrlDecodingComboBox.Name = "categoryUrlDecodingComboBox";
             this.categoryUrlDecodingComboBox.Size = new System.Drawing.Size(66, 21);
             this.categoryUrlDecodingComboBox.TabIndex = 56;
             // 
@@ -351,12 +351,12 @@
             this.CreateCategoryNextPageRegexButton.UseVisualStyleBackColor = true;
             this.CreateCategoryNextPageRegexButton.Click += new System.EventHandler(this.CreateCategoryNextPageRegexButton_Click);
             // 
-            // CategoryNextPageRegexTextBox
+            // categoryNextPageRegexTextBox
             // 
             this.categoryNextPageRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.categoryNextPageRegexTextBox.Location = new System.Drawing.Point(3, 238);
-            this.categoryNextPageRegexTextBox.Name = "CategoryNextPageRegexTextBox";
+            this.categoryNextPageRegexTextBox.Name = "categoryNextPageRegexTextBox";
             this.categoryNextPageRegexTextBox.Size = new System.Drawing.Size(451, 20);
             this.categoryNextPageRegexTextBox.TabIndex = 54;
             // 
@@ -399,12 +399,12 @@
             this.CreateCategoryRegexButton.UseVisualStyleBackColor = true;
             this.CreateCategoryRegexButton.Click += new System.EventHandler(this.CreateCategoryRegexButton_Click);
             // 
-            // dynamicCategoryUrlFormatTextBox
+            // categoryUrlFormatTextBox
             // 
             this.categoryUrlFormatTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.categoryUrlFormatTextBox.Location = new System.Drawing.Point(3, 147);
-            this.categoryUrlFormatTextBox.Name = "dynamicCategoryUrlFormatTextBox";
+            this.categoryUrlFormatTextBox.Name = "categoryUrlFormatTextBox";
             this.categoryUrlFormatTextBox.Size = new System.Drawing.Size(451, 20);
             this.categoryUrlFormatTextBox.TabIndex = 26;
             // 
@@ -436,13 +436,13 @@
             this.label2.TabIndex = 21;
             this.label2.Text = "CategoryRegex";
             // 
-            // CategoryRegexTextbox
+            // categoryRegexTextbox
             // 
             this.categoryRegexTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.categoryRegexTextbox.Location = new System.Drawing.Point(3, 48);
             this.categoryRegexTextbox.Multiline = true;
-            this.categoryRegexTextbox.Name = "CategoryRegexTextbox";
+            this.categoryRegexTextbox.Name = "categoryRegexTextbox";
             this.categoryRegexTextbox.Size = new System.Drawing.Size(451, 80);
             this.categoryRegexTextbox.TabIndex = 16;
             // 
@@ -477,12 +477,12 @@
             this.label29.TabIndex = 59;
             this.label29.Text = "DynamicSubCategoryUrlDecoding";
             // 
-            // DynamicSubCategoryUrlDecodingComboBox
+            // subCategoryUrlDecodingComboBox
             // 
             this.subCategoryUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.subCategoryUrlDecodingComboBox.FormattingEnabled = true;
             this.subCategoryUrlDecodingComboBox.Location = new System.Drawing.Point(174, 172);
-            this.subCategoryUrlDecodingComboBox.Name = "DynamicSubCategoryUrlDecodingComboBox";
+            this.subCategoryUrlDecodingComboBox.Name = "subCategoryUrlDecodingComboBox";
             this.subCategoryUrlDecodingComboBox.Size = new System.Drawing.Size(66, 21);
             this.subCategoryUrlDecodingComboBox.TabIndex = 58;
             // 
@@ -496,12 +496,12 @@
             this.CreateSubcategoriesNextPageRegexButton.UseVisualStyleBackColor = true;
             this.CreateSubcategoriesNextPageRegexButton.Click += new System.EventHandler(this.CreateSubcategoriesNextPageRegexButton_Click);
             // 
-            // SubcategoriesNextPageRegexTextBox
+            // subcategoryNextPageRegexTextBox
             // 
             this.subcategoryNextPageRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.subcategoryNextPageRegexTextBox.Location = new System.Drawing.Point(3, 238);
-            this.subcategoryNextPageRegexTextBox.Name = "SubcategoriesNextPageRegexTextBox";
+            this.subcategoryNextPageRegexTextBox.Name = "subcategoryNextPageRegexTextBox";
             this.subcategoryNextPageRegexTextBox.Size = new System.Drawing.Size(451, 20);
             this.subcategoryNextPageRegexTextBox.TabIndex = 54;
             // 
@@ -534,12 +534,12 @@
             this.CreateSubcategoriesRegexButton.UseVisualStyleBackColor = true;
             this.CreateSubcategoriesRegexButton.Click += new System.EventHandler(this.CreateSubcategoriesRegexButton_Click);
             // 
-            // SubcategoryUrlFormatTextBox
+            // subcategoryUrlFormatTextBox
             // 
             this.subcategoryUrlFormatTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.subcategoryUrlFormatTextBox.Location = new System.Drawing.Point(3, 147);
-            this.subcategoryUrlFormatTextBox.Name = "SubcategoryUrlFormatTextBox";
+            this.subcategoryUrlFormatTextBox.Name = "subcategoryUrlFormatTextBox";
             this.subcategoryUrlFormatTextBox.Size = new System.Drawing.Size(451, 20);
             this.subcategoryUrlFormatTextBox.TabIndex = 31;
             // 
@@ -571,13 +571,13 @@
             this.label5.TabIndex = 28;
             this.label5.Text = "SubCategoryRegex";
             // 
-            // SubcategoryRegexTextBox
+            // subcategoryRegexTextBox
             // 
             this.subcategoryRegexTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.subcategoryRegexTextBox.Location = new System.Drawing.Point(3, 48);
             this.subcategoryRegexTextBox.Multiline = true;
-            this.subcategoryRegexTextBox.Name = "SubcategoryRegexTextBox";
+            this.subcategoryRegexTextBox.Name = "subcategoryRegexTextBox";
             this.subcategoryRegexTextBox.Size = new System.Drawing.Size(451, 80);
             this.subcategoryRegexTextBox.TabIndex = 27;
             // 
@@ -617,12 +617,12 @@
             this.label32.TabIndex = 61;
             this.label32.Text = "NextPageUrlDecoding";
             // 
-            // NextPageUrlDecodingComboBox
+            // nextPageUrlDecodingComboBox
             // 
             this.nextPageUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.nextPageUrlDecodingComboBox.FormattingEnabled = true;
             this.nextPageUrlDecodingComboBox.Location = new System.Drawing.Point(119, 311);
-            this.nextPageUrlDecodingComboBox.Name = "NextPageUrlDecodingComboBox";
+            this.nextPageUrlDecodingComboBox.Name = "nextPageUrlDecodingComboBox";
             this.nextPageUrlDecodingComboBox.Size = new System.Drawing.Size(66, 21);
             this.nextPageUrlDecodingComboBox.TabIndex = 60;
             // 
@@ -635,12 +635,12 @@
             this.label31.TabIndex = 59;
             this.label31.Text = "VideoListUrlDecoding";
             // 
-            // VideoListUrlDecodingComboBox
+            // videoListUrlDecodingComboBox
             // 
             this.videoListUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.videoListUrlDecodingComboBox.FormattingEnabled = true;
             this.videoListUrlDecodingComboBox.Location = new System.Drawing.Point(115, 134);
-            this.videoListUrlDecodingComboBox.Name = "VideoListUrlDecodingComboBox";
+            this.videoListUrlDecodingComboBox.Name = "videoListUrlDecodingComboBox";
             this.videoListUrlDecodingComboBox.Size = new System.Drawing.Size(66, 21);
             this.videoListUrlDecodingComboBox.TabIndex = 58;
             // 
@@ -818,12 +818,12 @@
             this.label33.TabIndex = 89;
             this.label33.Text = "VideoUrlDecoding";
             // 
-            // VideoUrlDecodingComboBox
+            // videoUrlDecodingComboBox
             // 
             this.videoUrlDecodingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.videoUrlDecodingComboBox.FormattingEnabled = true;
             this.videoUrlDecodingComboBox.Location = new System.Drawing.Point(99, 114);
-            this.videoUrlDecodingComboBox.Name = "VideoUrlDecodingComboBox";
+            this.videoUrlDecodingComboBox.Name = "videoUrlDecodingComboBox";
             this.videoUrlDecodingComboBox.Size = new System.Drawing.Size(66, 21);
             this.videoUrlDecodingComboBox.TabIndex = 88;
             // 
@@ -1316,14 +1316,14 @@
             // categoryToolStripMenuItem
             // 
             this.categoryToolStripMenuItem.Name = "categoryToolStripMenuItem";
-            this.categoryToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.categoryToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.categoryToolStripMenuItem.Text = "Category";
             this.categoryToolStripMenuItem.Click += new System.EventHandler(this.categoryToolStripMenuItem_Click);
             // 
             // videoToolStripMenuItem
             // 
             this.videoToolStripMenuItem.Name = "videoToolStripMenuItem";
-            this.videoToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.videoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.videoToolStripMenuItem.Text = "Video";
             this.videoToolStripMenuItem.Click += new System.EventHandler(this.videoToolStripMenuItem_Click);
             // 

@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Web;
 using System.Text;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
@@ -15,10 +16,6 @@ namespace OnlineVideos.Sites
         protected string app;
         [Category("OnlineVideosConfiguration"), Description("tcUrl")]
         protected string tcUrl;
-        [Category("OnlineVideosConfiguration"), Description("hostname")]
-        protected string hostname;
-        [Category("OnlineVideosConfiguration"), Description("port")]
-        protected string port;
         [Category("OnlineVideosConfiguration"), Description("playpath")]
         protected string playpath;
         [Category("OnlineVideosConfiguration"), Description("subscribepath")]
@@ -27,10 +24,6 @@ namespace OnlineVideos.Sites
         protected string pageurl;
         [Category("OnlineVideosConfiguration"), Description("swfurl")]
         protected string swfurl;
-        [Category("OnlineVideosConfiguration"), Description("swfsize")]
-        protected string swfsize;
-        [Category("OnlineVideosConfiguration"), Description("swfhash")]
-        protected string swfhash;
         [Category("OnlineVideosConfiguration"), Description("swfVfy")]
         protected string swfVfy;
         [Category("OnlineVideosConfiguration"), Description("live")]
@@ -39,52 +32,43 @@ namespace OnlineVideos.Sites
         protected string auth;
         [Category("OnlineVideosConfiguration"), Description("token")]
         protected string token;
-        [Category("OnlineVideosConfiguration"), Description("")]
-        protected string conn;
 
         public override string getUrl(VideoInfo video)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("http://127.0.0.1/stream.flv?");
 
             string url;
             if (!String.IsNullOrEmpty(rtmpurl))
                 url = rtmpurl;
             else
                 url = base.getUrl(video);
+
+            RtmpUrl theUrl = new RtmpUrl(url.Split('?')[0]);
+
             Uri uri = new Uri(url);
             NameValueCollection paramsHash = HttpUtility.ParseQueryString(uri.Query);
 
-            UriBuilder ub = new UriBuilder(uri);
-            ub.Query = String.Empty;
+            string t;
 
-            sb.Append("rtmpurl=" + HttpUtility.UrlEncode(ub.ToString()));
+            if ((t = GetValue(app, paramsHash["app"])) != null) theUrl.App = t;
+            if ((t = GetValue(tcUrl, paramsHash["tcUrl"])) != null) theUrl.TcUrl = t;
+            if ((t = GetValue(playpath, paramsHash["playpath"])) != null) theUrl.PlayPath = t;
+            if ((t = GetValue(subscribepath, paramsHash["subscribepath"])) != null) theUrl.Subscribe = t;
+            if ((t = GetValue(pageurl, paramsHash["pageurl"])) != null) theUrl.PageUrl = t;
+            if ((t = GetValue(swfurl, paramsHash["swfurl"])) != null) theUrl.SwfUrl = t;
+            if ((t = GetValue(swfVfy, paramsHash["swfVfy"])) != null) theUrl.SwfVerify = Boolean.Parse(t);
+            if ((t = GetValue(live, paramsHash["live"])) != null) theUrl.Live = Boolean.Parse(t);
+            if ((t = GetValue(token, paramsHash["token"])) != null) theUrl.Token = t;
 
-            AddValue("app", app, paramsHash["app"], sb);
-            AddValue("tcUrl", tcUrl, paramsHash["tcUrl"], sb);
-            AddValue("hostname", hostname, paramsHash["hostname"], sb);
-            AddValue("port", port, paramsHash["port"], sb);
-            AddValue("playpath", playpath, paramsHash["playpath"], sb);
-            AddValue("subscribepath", subscribepath, paramsHash["subscribepath"], sb);
-            AddValue("pageurl", pageurl, paramsHash["pageurl"], sb);
-            AddValue("swfurl", swfurl, paramsHash["swfurl"], sb);
-            AddValue("swfsize", swfsize, paramsHash["swfsize"], sb);
-            AddValue("swfhash", swfhash, paramsHash["swfhash"], sb);
-            AddValue("swfVfy", swfVfy, paramsHash["swfVfy"], sb);
-            AddValue("live", live, paramsHash["live"], sb);
-            AddValue("auth", auth, paramsHash["auth"], sb);
-            AddValue("token", token, paramsHash["token"], sb);
-            AddValue("conn", conn, paramsHash["conn"], sb);
-
-
-            return ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance, sb.ToString());
+            return theUrl.ToString();
         }
 
-        private void AddValue(string name, string configValue, string urlValue, StringBuilder sb)
+        private string GetValue(string configValue, string urlValue)
         {
-            if (urlValue != null) sb.Append("&" + name + "=" + HttpUtility.UrlEncode(urlValue));
+            if (urlValue != null) return urlValue;
             else
-                if (configValue != null) sb.Append("&" + name + "=" + HttpUtility.UrlEncode(configValue));
+                if (configValue != null) return configValue;
+                else
+                    return null;
         }
     }
 }
