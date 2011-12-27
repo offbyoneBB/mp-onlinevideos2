@@ -263,8 +263,10 @@ namespace OnlineVideos.Hoster
                 string quality = node.Attributes["compressie_kwaliteit"].Value;
                 string format = node.Attributes["compressie_formaat"].Value;
                 string streamUrl = node.SelectSingleNode("streamurl").InnerText.Trim();
-                if (!String.IsNullOrEmpty(streamUrl))
+                if (!String.IsNullOrEmpty(streamUrl) && Uri.IsWellFormedUriString(streamUrl, System.UriKind.Absolute))
+                {
                     PlaybackOptions.Add(format + ' ' + quality, streamUrl);
+                }
             }
             return PlaybackOptions;
         }

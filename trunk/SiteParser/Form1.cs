@@ -627,19 +627,28 @@ namespace SiteParser
         #endregion
 
         #region debug
-        private void categoryToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private void f2Exec(string[] names)
         {
             Form2 f2 = new Form2();
-            f2.Execute(String.Empty, baseUrlTextbox.Text,
-                new string[] { "url", "title", "thumb", "description" });
+            if (String.IsNullOrEmpty(baseUrlTextbox.Text))
+            {
+                if (MessageBox.Show("Use html data from clipboard?", "No BaseUrl specified", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                    f2.Execute(String.Empty, Clipboard.GetText(), null, names);
+            }
+            else
+                f2.Execute(String.Empty, baseUrlTextbox.Text, names);
+        }
+        private void categoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            f2Exec(new string[] { "url", "title", "thumb", "description" });
         }
 
         private void videoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form2 f2 = new Form2();
-            f2.Execute(String.Empty, baseUrlTextbox.Text,
-                new string[] { "Title", "VideoUrl", "ImageUrl", "Description", "Duration", "Airdate" });
+            f2Exec(new string[] { "Title", "VideoUrl", "ImageUrl", "Description", "Duration", "Airdate" });
         }
+
         #endregion
 
         #region GenericProperties
