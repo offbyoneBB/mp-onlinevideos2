@@ -38,13 +38,13 @@ namespace OnlineVideos.Sites
             List<Category> cats = new List<Category>();
             foreach (Match match in regex.Matches(html))
             {
-                Category cat = new Category();
+                RssLink cat = new RssLink();
                 string append = "";
                 if (match.Groups["awayteam"].Value != "")
                     append = " v " + match.Groups["awayteam"].Value;
                 cat.Name = match.Groups["hometeam"].Value + append;
                 cat.Description = getTime(match.Groups["starttime"].Value + " - " + match.Groups["endtime"].Value) + "\n" + match.Groups["date"].Value + "\n" + match.Groups["comp"].Value;
-                cat.Other = BASE_URL + match.Groups["url"].Value;
+                cat.Url = System.Web.HttpUtility.HtmlDecode(BASE_URL + match.Groups["url"].Value);
                 cat.Thumb = BASE_URL + match.Groups["thumb"].Value;
                 cat.ParentCategory = parentCategory;
                 cats.Add(cat);
@@ -62,7 +62,7 @@ namespace OnlineVideos.Sites
 
             List<VideoInfo> vids = new List<VideoInfo>();
             //links page
-            string html = GetWebData((string)category.Other);
+            string html = GetWebData(((RssLink)category).Url);
 
             Regex regex = new Regex(channelRegex, RegexOptions.Singleline);
 
