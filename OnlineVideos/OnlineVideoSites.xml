@@ -1128,14 +1128,10 @@
     <Site name="EscapistMagazine" util="TheEscapist" agecheck="false" enabled="true" lang="en">
       <Description>The mouthpiece of the gaming generation, The Escapist aims to capture and celebrate the contemporary video gaming lifestyle and the diverse global video game culture by way of in-depth features, thought provoking articles and relevant columns authored by leading video game authorities, as well as cutting-edge video shorts, engaging forums and robust social media elements that incorporate the video gaming experience.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<a\shref='(?<url>/videos/[^']*)'\sid='[^>]*>(?<title>[^<]*)</a>]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[{0}]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[(<div\sclass='line_item\simage'\s*style='position:\srelative;\sfloat:\sleft;\swidth:\s170px;'><a\shref='(?<url>[^']*)'><img\ssrc='(?<thumb>[^']*)'\swidth='50'\sheight='30'\sborder='0'\sstyle='float:left;\smargin-right:\s5px;'>\s*(?<title>[^<]*)</a></div>)|(<li><a\shref="(?<url>/videos[^"]*)">(?<title>[^<]*)</a></li>\s*)]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass='gallery_latest\ssite_panel'><div\sclass='gallery_title'><a\shref='(?<url>[^']*)'>(?<title>[^<]*)</a></div><[^<]*</a><div\sclass='gallery_description'>(?<description>[^<]*)</div><div\sclass='gallery_title_card'><[^<]*<img\ssrc='(?<thumb>[^']*)'[^<]*</a>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass='filmstrip_video'><a\shref='(?<VideoUrl>[^']*)'><img\ssrc='(?<ImageUrl>[^']*)'></a>(?:<div\sclass='gallery_title'>[^<]*</div>)?<div\sclass='title'>(?<Title>[^<]*)</div><div\sclass='date'>Date:\s*(?<Airdate>[^<]*)</div><div\sclass='comments'>[^>]*>[^<]*</a></div></div>]]></item>
+        <item key="videoListRegEx"><![CDATA[(?<!video_box_footer'.*)<div\sclass='filmstrip_video'><a\shref='(?<VideoUrl>[^']*)'><img\ssrc='(?<ImageUrl>[^']*)'></a>(?:<div\sclass='gallery_title'>[^<]*</div>)?<div\sclass='title'>(?<Title>[^<]*)</div><div\sclass='date'>Date:\s*(?<Airdate>[^<]*)</div><div\sclass='comments'>[^>]*>[^<]*</a></div></div>]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='next_page'>Next</a>]]></item>
-        <item key="nextPageRegExUrlFormatString"><![CDATA[{0}]]></item>
-        <item key="prevPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='prev_page'>Prev</a>]]></item>
-        <item key="prevPageRegExUrlFormatString"><![CDATA[{0}]]></item>
         <item key="playlistUrlRegEx"><![CDATA[<meta\sproperty="og:video"\scontent="http://cdn2\.themis-media\.com/media/global/movies/player/flowplayer\.commercial-\d\.\d\.\d\.swf\?config=(?<url>.*?)%3Fembed%3D1%26fb%3D1">]]></item>
         <item key="playlistUrlFormatString"><![CDATA[{0}?playerId=player_api&host=escapistmagazine.com]]></item>
         <item key="fileUrlRegEx"><![CDATA[,{'url':'(?<m0>[^']*)','a]]></item>
