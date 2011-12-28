@@ -325,6 +325,7 @@ namespace OnlineVideos.Sites.georgius
                 XmlDocument document = new XmlDocument();
                 document.LoadXml(baseWebData);
 
+                XmlNode mediainfo = document.SelectSingleNode("//mediainfo");
                 XmlNode hostname = document.SelectSingleNode("//host");
                 XmlNode streamname = document.SelectSingleNode("//file");
 
@@ -339,7 +340,43 @@ namespace OnlineVideos.Sites.georgius
 
                     String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(movieUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, Token = "#ed%h0#w@1" }.ToString();
 
-                    video.PlaybackOptions.Add(video.Title, resultUrl);
+                    video.PlaybackOptions.Add("Low quality", resultUrl);
+                }
+
+                if ((mediainfo != null) && (mediainfo.Attributes != null) && (mediainfo.Attributes["multibitrate"] != null))
+                {
+                    // multi-bitrate
+                    if (mediainfo.Attributes["multibitrate"].Value.ToUpperInvariant() == "TRUE")
+                    {
+                        String movieUrl = String.Format("rtmpe://{0}/{1}", hostname.InnerText, streamname.InnerText).Replace("_500", "_1000");
+
+                        String host = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf("/", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
+                        String app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
+                        String tcUrl = "rtmpe://" + host + "/" + app;
+                        String playPath = movieUrl.Substring(movieUrl.IndexOf(app) + app.Length + 1);
+
+                        String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(movieUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, Token = "#ed%h0#w@1" }.ToString();
+
+                        video.PlaybackOptions.Add("High quality", resultUrl);
+                    }
+                }
+
+                if ((mediainfo != null) && (mediainfo.Attributes != null) && (mediainfo.Attributes["hd"] != null))
+                {
+                    // multi-bitrate
+                    if (mediainfo.Attributes["hd"].Value.ToUpperInvariant() == "TRUE")
+                    {
+                        String movieUrl = String.Format("rtmpe://{0}/{1}", hostname.InnerText, streamname.InnerText).Replace("_500", "_HD");
+
+                        String host = movieUrl.Substring(movieUrl.IndexOf(":") + 3, movieUrl.IndexOf("/", movieUrl.IndexOf(":") + 3) - (movieUrl.IndexOf(":") + 3));
+                        String app = movieUrl.Substring(movieUrl.IndexOf("/", host.Length) + 1, movieUrl.IndexOf("/", movieUrl.IndexOf("/", host.Length) + 1) - movieUrl.IndexOf("/", host.Length) - 1);
+                        String tcUrl = "rtmpe://" + host + "/" + app;
+                        String playPath = movieUrl.Substring(movieUrl.IndexOf(app) + app.Length + 1);
+
+                        String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(movieUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, Token = "#ed%h0#w@1" }.ToString();
+
+                        video.PlaybackOptions.Add("HD", resultUrl);
+                    }
                 }
             }
 
