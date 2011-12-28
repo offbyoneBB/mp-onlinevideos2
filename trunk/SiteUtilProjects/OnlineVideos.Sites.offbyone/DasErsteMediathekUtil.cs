@@ -39,15 +39,7 @@ namespace OnlineVideos.Sites
                     string resultUrl = "";
                     if (infos[infos.Length - 2].ToLower().StartsWith("rtmp"))
                     {
-                        Uri uri = new Uri(infos[infos.Length - 2]);
-                        if (uri.Host == "gffstream.fcod.llnwd.net")
-                        {
-                            resultUrl = uri.OriginalString.Trim('/') + "/" + infos[infos.Length - 1].Trim(new char[] { '"', ' ' });
-                        }
-                        else
-                        {
-							resultUrl = new MPUrlSourceFilter.RtmpUrl(infos[infos.Length - 2]) { PlayPath = infos[infos.Length - 1].Trim(new char[] { '"', ' ' }) }.ToString();
-                        }
+						resultUrl = new MPUrlSourceFilter.RtmpUrl(infos[infos.Length - 2]) { PlayPath = infos[infos.Length - 1].Trim(new char[] { '"', ' ' }) }.ToString();
                         video.PlaybackOptions.Add(string.Format("{0} | rtmp:// | {1}", quality.ToString().PadRight(4, ' '), infos[infos.Length - 1].ToLower().Contains("mp4:") ? ".mp4" : ".flv"), resultUrl);
                     }
                     else
