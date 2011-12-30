@@ -146,8 +146,8 @@ namespace OnlineVideos.Sites
 
             if (StartingPanelLevel.Equals(2))
             {
-                video.VideoUrl = String.Format("http://cls.ctvdigital.net/cliplookup.aspx?id={0}", video.Other);
-                result.Add(CreateRTMPUrl(video));
+                // convert to RTMP and add to result
+                result.Add(CreateRTMPUrl(String.Format(@"http://cls.ctvdigital.net/cliplookup.aspx?id={0}", video.Other)));
             }
             else
             {
@@ -164,17 +164,15 @@ namespace OnlineVideos.Sites
                     {
                         string clipId = m.Groups["clip"].Value;
                         // this is the URL which will eventually reveal the rtmpe locations
-                        result.Add(String.Format("http://cls.ctvdigital.net/cliplookup.aspx?id={0}", clipId));
+                        result.Add(String.Format(@"http://cls.ctvdigital.net/cliplookup.aspx?id={0}", clipId));
                     }
                 }
                 Log.Debug(@"Found {0} episodes at level {1}", result.Count, StartingPanelLevel + 1);
 
                 if (result.Count.Equals(1))
                 {
-                    // if there was only one result, we should translate it to the RTMP URL now
-                    video.VideoUrl = result[0];
-                    result = new List<string>();
-                    result.Add(CreateRTMPUrl(video));
+                    // if there was only one result, we should covert to RTMP
+                    result[0] = CreateRTMPUrl(result[0]);
                 }
             }
 
@@ -183,17 +181,17 @@ namespace OnlineVideos.Sites
 
         public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
         {
-            return CreateRTMPUrl(clonedVideoInfo);
+            return CreateRTMPUrl(clonedVideoInfo.VideoUrl);
         }
 
-        public string CreateRTMPUrl(VideoInfo clonedVideoInfo)
+        public string CreateRTMPUrl(string url)
         {
-            Log.Debug(@"Video URL (before): {0}", clonedVideoInfo.VideoUrl);
+            Log.Debug(@"Video URL (before): {0}", url);
 
-            string result = clonedVideoInfo.VideoUrl;
+            string result = url;
 
-            // must specify referer (or we will get 403 Forbidden from cls.ctvdigital.net)
-            string webData = GetWebData(clonedVideoInfo.VideoUrl, null, BaseUrl);
+            // must specify referer as 3rd argument (or we will get 403 Forbidden from cls.ctvdigital.net)
+            string webData = GetWebData(url, null, BaseUrl);
 
             if (!string.IsNullOrEmpty(webData))
             {

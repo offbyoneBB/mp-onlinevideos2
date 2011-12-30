@@ -42,9 +42,7 @@ namespace OnlineVideos.Sites
                     if (weekdayMatch.Success)
                     {
                         // Weekday episodes need to be looked up directly now
-                        VideoInfo video = new VideoInfo();
-                        video.VideoUrl = String.Format("http://cls.ctvdigital.net/cliplookup.aspx?id={0}", info.Other);
-                        info.VideoUrl = CreateRTMPUrl(video);
+                        info.VideoUrl = CreateRTMPUrl(String.Format("http://cls.ctvdigital.net/cliplookup.aspx?id={0}", info.Other));
                     }
 
                     result.Add(info);
