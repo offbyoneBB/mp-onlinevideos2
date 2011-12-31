@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_http.dll
+
+EXPORTS
+			CreateProtocolInstance		PRIVATE
+			DestroyProtocolInstance		PRIVATE
