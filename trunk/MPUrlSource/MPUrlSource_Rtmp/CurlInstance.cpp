@@ -274,11 +274,7 @@ TCHAR *CCurlInstance::GetCurlErrorMessage(CURLcode errorCode)
 {
   const char *error = curl_easy_strerror(errorCode);
   TCHAR *result = NULL;
-#ifdef _MBCS
-  result = ConvertToMultiByteA(error);
-#else
   result = ConvertToUnicodeA(error);
-#endif
 
   // there is no need to free error message
 
@@ -535,11 +531,7 @@ void CCurlInstance::RtmpLogCallback(RTMP *r, int level, const char *format, va_l
   }
 
   // convert buffer to TCHAR
-#ifdef _MBCS
-  TCHAR *convertedBuffer = ConvertToMultiByteA(buffer);
-#else
   TCHAR *convertedBuffer = ConvertToUnicodeA(buffer);
-#endif
 
   int loggerLevel = LOGGER_NONE;
 

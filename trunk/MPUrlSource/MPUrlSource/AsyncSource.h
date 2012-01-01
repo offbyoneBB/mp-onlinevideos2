@@ -37,12 +37,8 @@ class CAsyncSource : public CBaseFilter, public IBaseProtocol, public IDownloadC
 public:
   // initialise the pin count for the filter
   // the user will create the pins in the derived class
-  CAsyncSource(__in_opt LPCTSTR pName, __inout_opt LPUNKNOWN lpunk, CLSID clsid, __inout HRESULT *phr);
-  CAsyncSource(__in_opt LPCTSTR pName, __inout_opt LPUNKNOWN lpunk, CLSID clsid);
-#ifdef UNICODE
   CAsyncSource(__in_opt LPCSTR pName, __inout_opt LPUNKNOWN lpunk, CLSID clsid, __inout HRESULT *phr);
   CAsyncSource(__in_opt LPCSTR pName, __inout_opt LPUNKNOWN lpunk, CLSID clsid);
-#endif
 
   ~CAsyncSource();
 
