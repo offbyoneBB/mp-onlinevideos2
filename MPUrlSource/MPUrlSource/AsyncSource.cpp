@@ -21,22 +21,6 @@
 #include "StdAfx.h"
 #include "AsyncSource.h"
 
-CAsyncSource::CAsyncSource(__in_opt LPCTSTR pName, __inout_opt LPUNKNOWN lpunk, CLSID clsid)
-  : CBaseFilter(pName, lpunk, &m_cStateLock, clsid),
-  m_iPins(0),
-  m_paStreams(NULL)
-{
-}
-
-CAsyncSource::CAsyncSource(__in_opt LPCTSTR pName, __inout_opt LPUNKNOWN lpunk, CLSID clsid, __inout HRESULT *phr)
-  : CBaseFilter(pName, lpunk, &m_cStateLock, clsid),
-  m_iPins(0),
-  m_paStreams(NULL)
-{
-  UNREFERENCED_PARAMETER(phr);
-}
-
-#ifdef UNICODE
 CAsyncSource::CAsyncSource(__in_opt LPCSTR pName, __inout_opt LPUNKNOWN lpunk, CLSID clsid)
   : CBaseFilter(pName, lpunk, &m_cStateLock, clsid),
   m_iPins(0),
@@ -51,7 +35,6 @@ CAsyncSource::CAsyncSource(__in_opt LPCSTR pName, __inout_opt LPUNKNOWN lpunk, C
 {
   UNREFERENCED_PARAMETER(phr);
 }
-#endif
 
 CAsyncSource::~CAsyncSource()
 {

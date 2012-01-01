@@ -274,11 +274,7 @@ TCHAR *CCurlInstance::GetCurlErrorMessage(CURLcode errorCode)
 {
   const char *error = curl_easy_strerror(errorCode);
   TCHAR *result = NULL;
-#ifdef _MBCS
-  result = ConvertToMultiByteA(error);
-#else
   result = ConvertToUnicodeA(error);
-#endif
 
   // there is no need to free error message
 
@@ -466,11 +462,7 @@ int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *dat
       memcpy(tempData, data, size);
 
       // now convert data to used character set
-#ifdef _MBCS
-      TCHAR *curlData = ConvertToMultiByteA(tempData);
-#else
       TCHAR *curlData = ConvertToUnicodeA(tempData);
-#endif
       if (curlData != NULL)
       {
         // we have converted and null terminated data

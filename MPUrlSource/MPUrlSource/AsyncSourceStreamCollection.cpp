@@ -48,11 +48,7 @@ int CAsyncSourceStreamCollection::CompareItemKeys(TCHAR *firstKey, TCHAR *second
 
 TCHAR *CAsyncSourceStreamCollection::GetKey(CAsyncSourceStream *item)
 {
-#ifdef _MBCS
-  return ConvertToMultiByteW(item->Name());
-#else
   return ConvertToUnicode(item->Name());
-#endif
 }
 
 void CAsyncSourceStreamCollection::FreeKey(TCHAR *key)

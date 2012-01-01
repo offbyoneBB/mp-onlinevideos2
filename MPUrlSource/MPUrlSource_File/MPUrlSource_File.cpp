@@ -272,11 +272,7 @@ HRESULT CMPUrlSource_File::ParseUrl(const TCHAR *url, const CParameterCollection
           // if we are here, then file url was successfully parsed
           // now store parsed url into this->filePath
 
-#ifdef _MBCS
-          this->filePath = ConvertToMultiByteW(parsedFilePath);
-#else
           this->filePath = ConvertToUnicodeW(parsedFilePath);
-#endif
           if (this->filePath == NULL)
           {
             this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_PARSE_URL_NAME, _T("cannot convert from Unicode file path to file path"));

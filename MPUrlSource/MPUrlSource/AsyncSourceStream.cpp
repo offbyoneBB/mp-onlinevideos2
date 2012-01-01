@@ -50,8 +50,8 @@
 #define METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME                  _T("AsyncRequestProcessWorker()")
 
 
-CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCTSTR pObjectName, __inout HRESULT *phr, __inout CAsyncSource *ps, __in_opt LPCWSTR pPinName, CParameterCollection *configuration)
-  : CBasePin(pObjectName, ps, ps->GetStateLock(), phr, pPinName, PINDIR_OUTPUT)
+CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCSTR pObjectName, __inout HRESULT *phr, __inout CAsyncSource *pms, __in_opt LPCWSTR pName, CParameterCollection *configuration)
+  : CBasePin(pObjectName, pms, pms->GetStateLock(), phr, pName, PINDIR_OUTPUT)
 {
   this->configuration = new CParameterCollection();
   if (configuration != NULL)
@@ -62,7 +62,7 @@ CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCTSTR pObjectName, __inout HRE
   this->logger = new CLogger(this->configuration);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 
-  this->filter = ps;
+  this->filter = pms;
   this->requestsCollection = new CAsyncRequestCollection();
   *phr = this->filter->AddPin(this);
   this->queriedForAsyncReader = false;
@@ -77,48 +77,14 @@ CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCTSTR pObjectName, __inout HRE
   
   this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
   this->downloadingFile = (this->storeFilePath != NULL);
+  this->downloadFinished = false;
+  this->downloadCallbackCalled = false;
   this->connectedToAnotherPin = false;
 
   this->CreateAsyncRequestProcessWorker();
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 }
-
-
-#ifdef UNICODE
-CAsyncSourceStream::CAsyncSourceStream(__in_opt LPCSTR pObjectName, __inout HRESULT *phr, __inout CAsyncSource *ps, __in_opt LPCWSTR pPinName, CParameterCollection *configuration)
-  : CBasePin(pObjectName, ps, ps->GetStateLock(), phr, pPinName, PINDIR_OUTPUT)
-{
-  this->configuration = new CParameterCollection();
-  if (configuration != NULL)
-  {
-    this->configuration->Append(configuration);
-  }
-  this->logger = new CLogger(this->configuration);
-  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
-
-  this->filter = ps;
-  this->requestsCollection = new CAsyncRequestCollection();
-  *phr = this->filter->AddPin(this);
-  this->queriedForAsyncReader = false;
-  this->flushing = false;
-  this->mediaPacketCollection = new CMediaPacketCollection();
-  this->totalLength = 0;
-  this->estimate = true;
-  this->asyncRequestProcessingShouldExit = false;
-  this->requestId = 0;
-  this->requestMutex = CreateMutex(NULL, FALSE, NULL);
-  this->mediaPacketMutex = CreateMutex(NULL, FALSE, NULL);
-
-  this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
-  this->downloadingFile = (this->storeFilePath != NULL);
-  this->connectedToAnotherPin = false;
-
-  this->CreateAsyncRequestProcessWorker();
-
-  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
-}
-#endif
 
 CAsyncSourceStream::~CAsyncSourceStream(void)
 {
@@ -720,7 +686,7 @@ HRESULT CAsyncSourceStream::InitAllocator(IMemAllocator **allocator)
   *allocator = NULL;
 
   // create a default memory allocator
-  pMemObject = new CMemAllocator(NAME("Base memory allocator"), NULL, &result);
+  pMemObject = new CMemAllocator("Base memory allocator", NULL, &result);
   if (pMemObject == NULL)
   {
     result = E_OUTOFMEMORY;
@@ -1853,9 +1819,9 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
               if (size.QuadPart >= 0)
               {
                 unsigned int i = 0;
+                bool allMediaPacketsStored = true;
                 while (i < caller->mediaPacketCollection->Count())
                 {
-                  bool error = false;
                   CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(i);
 
                   if (!mediaPacket->IsStoredToFile())
@@ -1880,17 +1846,38 @@ DWORD WINAPI CAsyncSourceStream::AsyncRequestProcessWorker(LPVOID lpParam)
                             mediaPacket->SetStoredToFile(size.QuadPart);
                             size.QuadPart += length;
                           }
+                          else
+                          {
+                            allMediaPacketsStored = false;
+                          }
                         }
                         else
                         {
+                          allMediaPacketsStored = false;
                           caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, _T("not written"));
                         }
                       }
+                      else
+                      {
+                        allMediaPacketsStored = false;
+                      }
                       FREE_MEM(buffer);
+                    }
+                    else
+                    {
+                      allMediaPacketsStored = false;
                     }
                   }
 
                   i++;
+                }
+
+                if (caller->downloadingFile && caller->downloadFinished && allMediaPacketsStored && (!caller->downloadCallbackCalled))
+                {
+                  // all data received
+                  // call download callback method
+                  caller->filter->OnDownloadCallback(S_OK);
+                  caller->downloadCallbackCalled = true;
                 }
               }
 
@@ -2005,10 +1992,10 @@ HRESULT CAsyncSourceStream::EndOfStreamReached(const TCHAR *outputPinName, LONGL
     else
     {
       // all data received
-      // if downloading file, call download callback method
+      // if downloading file, mark that download callback can be called after storing all data to download file
       if (this->downloadingFile)
       {
-        this->filter->OnDownloadCallback(S_OK);
+        this->downloadFinished = true;
       }
     }
   }

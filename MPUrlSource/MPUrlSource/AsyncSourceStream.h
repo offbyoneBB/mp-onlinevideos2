@@ -37,10 +37,7 @@ class CAsyncRequestCollection;
 class CAsyncSourceStream : public CBasePin, public IAsyncReader, public IOutputStream
 {
 public:
-  CAsyncSourceStream(__in_opt LPCTSTR pObjectName, __inout HRESULT *phr, __inout CAsyncSource *pms, __in_opt LPCWSTR pName, CParameterCollection *configuration);
-#ifdef UNICODE
   CAsyncSourceStream(__in_opt LPCSTR pObjectName, __inout HRESULT *phr, __inout CAsyncSource *pms, __in_opt LPCWSTR pName, CParameterCollection *configuration);
-#endif
   ~CAsyncSourceStream(void);  // virtual destructor ensures derived class destructors are called too
 
   GUID GetInstanceId(void);
@@ -102,6 +99,10 @@ protected:
   // specifies if we are downloading file
   // in that case we don't delete file on end
   bool downloadingFile;
+  // specifies if download finished (all data from stream has been received - it doesn't mean that has been stored to file)
+  bool downloadFinished;
+  // specifies if download callback has been called
+  bool downloadCallbackCalled;
 
   // specifies if pin is successfully connected to another pin
   bool connectedToAnotherPin;

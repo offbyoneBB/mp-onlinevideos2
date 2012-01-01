@@ -157,11 +157,8 @@ TCHAR *GetInterfaceAddress(CLogger *logger, const TCHAR *protocolName, const TCH
         error = FALSE;
 
         // unify interface friendly name
-#ifdef _MBCS
-        TCHAR *friendlyName = ConvertToMultiByteW(pCurrAddresses->FriendlyName);
-#else
         TCHAR *friendlyName = ConvertToUnicodeW(pCurrAddresses->FriendlyName);
-#endif
+
         if (friendlyName == NULL)
         {
           logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_GET_INTERFACE_ADDRESS_NAME, _T("cannot convert interface friendly name"));
@@ -264,11 +261,8 @@ ULONG GetInterfaceId(CLogger *logger, const TCHAR *protocolName, const TCHAR *in
     {
       result = 0;
       // unify interface friendly name
-#ifdef _MBCS
-      TCHAR *friendlyName = ConvertToMultiByteW(pCurrAddresses->FriendlyName);
-#else
       TCHAR *friendlyName = ConvertToUnicodeW(pCurrAddresses->FriendlyName);
-#endif
+
       if (friendlyName == NULL)
       {
         logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_GET_INTERFACE_ID_NAME, _T("cannot convert interface friendly name"));
@@ -1107,7 +1101,7 @@ int ProcessError(CLogger *logger, const TCHAR *protocolName, const TCHAR *functi
   return result;
 }
 
-int Send(CLogger *logger, const TCHAR *protocolName, const TCHAR *functionName, SOCKET s, const TCHAR *buffer, int length, int flags, unsigned int timeout)
+int Send(CLogger *logger, const TCHAR *protocolName, const TCHAR *functionName, SOCKET s, const char *buffer, int length, int flags, unsigned int timeout)
 {
   int result = 0;
 

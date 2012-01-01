@@ -50,7 +50,7 @@ class CAsyncSourceStream;
 #define PARAMETER_ASSIGN                                          _T("=")
 
 CMPUrlSourceFilter::CMPUrlSourceFilter(IUnknown *pUnk, HRESULT *phr)
-  : CAsyncSource(NAME(_T("MediaPortal Url Source Filter")), pUnk, CLSID_MPUrlSourceFilter)
+  : CAsyncSource("MediaPortal Url Source Filter", pUnk, CLSID_MPUrlSourceFilter)
 {
   this->configuration = new CParameterCollection();
 
@@ -245,15 +245,20 @@ STDMETHODIMP CMPUrlSourceFilter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName
 
   if (result == S_OK)
   {
-#ifdef _MBCS
-    this->url = ConvertToMultiByteW(uri);
-    this->downloadFileName = ConvertToMultiByteW(fileName);
-#else
     this->url = ConvertToUnicodeW(uri);
     this->downloadFileName = ConvertToUnicodeW(fileName);
-#endif
 
-    result = ((this->url == NULL) || (this->downloadFileName == NULL)) ? E_OUTOFMEMORY : S_OK;
+    if (this->url == NULL)
+    {
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_ASYNC_NAME, _T("not enough memory for 'url'"));
+      result = E_OUTOFMEMORY;
+    }
+
+    if (this->downloadFileName == NULL)
+    {
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_ASYNC_NAME, _T("not enough memory for 'download file name'"));
+      result = E_OUTOFMEMORY;
+    }
   }
 
   if (result == S_OK)
@@ -317,11 +322,7 @@ STDMETHODIMP CMPUrlSourceFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE
     }
   }
 
-#ifdef _MBCS
-  this->url = ConvertToMultiByteW(pszFileName);
-#else
   this->url = ConvertToUnicodeW(pszFileName);
-#endif
 
   if (this->url == NULL)
   {
@@ -399,12 +400,8 @@ STDMETHODIMP CMPUrlSourceFilter::Load()
     for (unsigned int i = 0; i < streamNames->Count(); i++)
     {
       asyncStreamResult = S_OK;
-#ifdef _MBCS
-      wchar_t *streamName = ConvertToUnicodeA(streamNames->GetItem(i));
-#else
       wchar_t *streamName = ConvertToUnicodeW(streamNames->GetItem(i));
-#endif
-      CAsyncSourceStream *asyncStream = new CAsyncSourceStream(NAME(_T("Asynchronous Source Filter Output Pin")), &asyncStreamResult, this, streamName, this->configuration);
+      CAsyncSourceStream *asyncStream = new CAsyncSourceStream("Asynchronous Source Filter Output Pin", &asyncStreamResult, this, streamName, this->configuration);
 
       if (asyncStreamResult != S_OK)
       {
@@ -1198,11 +1195,8 @@ CParameterCollection *CMPUrlSourceFilter::ParseParameters(const TCHAR *parameter
 
                     if (result == S_OK)
                     {
-#ifdef _MBCS
-                      TCHAR *unescapedValue = ConvertToMultiByteA(unescapedCurlValue);
-#else
                       TCHAR *unescapedValue = ConvertToUnicodeA(unescapedCurlValue);
-#endif
+
                       if (unescapedValue == NULL)
                       {
                         this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, _T("not enough memory for unescaped value"));
