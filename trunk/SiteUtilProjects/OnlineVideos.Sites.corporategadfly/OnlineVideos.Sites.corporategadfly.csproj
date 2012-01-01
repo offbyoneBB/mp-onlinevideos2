@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Web" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ABCUtil.cs" />
@@ -47,6 +48,7 @@
     <Compile Include="CTVUtilBase.cs" />
     <Compile Include="DiscoveryUtil.cs" />
     <Compile Include="FashionUtil.cs" />
+    <Compile Include="GlobalUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpaceCastUtil.cs" />
     <Compile Include="TSNUtil.cs" />

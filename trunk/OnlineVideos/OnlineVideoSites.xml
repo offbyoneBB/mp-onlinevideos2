@@ -1483,6 +1483,9 @@
     <Site name="BNN" util="BNN" agecheck="false" enabled="true" lang="en">
       <Description>Business News Network is Canada’s only all business and financial news channel.</Description>
     </Site>
+    <Site name="Global TV" util="Global" agecheck="false" enabled="true" lang="en">
+      <Description>Global Television reaches almost 100% of Canadians and is the online destination for Global Entertainment show information, episodes, web exclusives and more!</Description>
+    </Site>
     <Site name="4oD" util="Fourod" agecheck="false" enabled="true" lang="en">
       <Description>Catchup on all your favourite Channel 4 shows (only available in the UK).</Description>
       <Categories>
