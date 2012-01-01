@@ -1213,6 +1213,21 @@
         <Category xsi:type="RssLink" name="Joezny" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/joezjny.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/joezjny/</Category>
       </Categories>
     </Site>
+    <Site name="MuzuTV" util="MuzuTV" agecheck="false" enabled="true" lang="en">
+      <Description>Watch official music videos, documentaries, TV shows, interviews, behind the scenes, tutorials and loads of exclusive and rare footage.</Description>
+      <Configuration>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(<li><a\shref="/[^/]*/channels/(?<url>[^/]*)/[^"]*"\stitle="[^"]*">(?<title>[^<]*)</a></li>)
+        |
+        (<h3><a\shref="/[^/]*/channels/(?<url>[^/]*)/[^"]*"\sclass="green">(?<title>[^<]*)</a></h3>)]]></item>
+        <item key="baseUrl"><![CDATA[http://www.muzu.tv/]]></item>
+        <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<li\sid="next">\s*<a\shref='(?<url>[^']*)'>Next</a>\s*</li>]]></item>
+        <item key="videoListRegEx"><![CDATA[(<li>\s*<a\stitle="[^"]*"\shref="/[^/]*/[^/]*/[^/]*/(?<VideoUrl>[^/]*)/">\s*<img\salt="[^"]*"\stitle="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*<span>(?<Title>[^<]*)</span>\s*</a>\s*</li>)(?#videos of one channel)
+        |
+        (<li\sdata-id="(?<VideoUrl>[^"]*)">\s*<h4>(?<Title>[^<]*)</h4>\s*</li>)(?#videos of one playlist)]]></item>
+        <item key="videoListRegExFormatString"><![CDATA[player/playAsset?assetId={0}]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li\sid="next">\s*<a\shref="(?<url>[^"]*)">Next</a>\s*</li>]]></item>
+      </Configuration>
+    </Site>
     <Site name="Nickelodeon.nl" util="NickelodeonNL" agecheck="false" enabled="true" lang="nl">
       <Description>Nickelodeon.nl is de leukste website voor kinderen met veel online videos van Spongebob, Dora, Big Time Rush en Pinguins van Madagascar.</Description>
       <Configuration>
