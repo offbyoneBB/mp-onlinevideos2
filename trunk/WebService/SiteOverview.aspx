@@ -24,7 +24,7 @@
             </asp:ImageField>
             <asp:TemplateField HeaderText="Site" SortExpression="Name" ItemStyle-HorizontalAlign="Center" ItemStyle-Font-Bold="true">
                 <ItemTemplate>
-                    <asp:HyperLink ID="HyperLink1" runat="server" Text='<%# Eval("Name") %>' Visible='<%# (uint)Eval("ReportCount") > 0 %>' NavigateUrl='<%# "Reports.aspx?site=" + Eval("Name") %>' />
+                    <asp:HyperLink ID="HyperLink1" runat="server" Text='<%# Eval("Name") %>' Visible='<%# (uint)Eval("ReportCount") > 0 %>' NavigateUrl='<%# "Reports.aspx?site=" + HttpUtility.UrlEncode((string)Eval("Name")) %>' />
                     <asp:Label ID="Label1" runat="server" Text='<%# Eval("Name") %>' Visible='<%# (uint)Eval("ReportCount") == 0 %>' />
                 </ItemTemplate>
             </asp:TemplateField>
