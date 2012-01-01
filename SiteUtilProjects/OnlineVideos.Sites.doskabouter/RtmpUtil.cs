@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Web;
-using System.Text;
 using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
