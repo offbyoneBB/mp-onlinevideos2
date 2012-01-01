@@ -199,7 +199,7 @@
     <Site name="MyVideo - Serien" util="MyVideoSerien" agecheck="false" enabled="true" lang="de">
       <Description>Ganze Folgen deutscher Fernsehserien.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass='sThumb'><a\shref='(?<url>[^']+)'\sclass='sThumb'\starget='_top'\s*title='(?<title>[^']+)'>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<div\s+class='sThumb'[^>]*>\s*<a\shref='(?<url>[^']+)'\sclass='sThumb'\starget='_top'\s*title='(?<title>[^']+)'>\s*<img\s+src='(?<thumb>[^']+)']]></item>
         <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.myvideo.de{0}]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[src='(?<thumb>[^']+)'\s*alt=''\sclass='vThumb'/></a></div></div><div\sclass='lContent\spChContent'>\s*<div\sclass='pChHead'><a\shref='(?<url>[^']+)'\sclass[^>]+>(?<title>[^<]+)</a></div><div\s*class='pChText'>(?<description>[^<]+)</div>]]></item>
         <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.myvideo.de{0}]]></item>
