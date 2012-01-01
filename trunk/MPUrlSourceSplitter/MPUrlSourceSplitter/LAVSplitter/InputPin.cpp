@@ -81,9 +81,11 @@ CLAVInputPin::CLAVInputPin(TCHAR *pName, CLAVSplitter *pFilter, CCritSec *pLock,
   this->protocolImplementations = NULL;
   this->url = NULL;
   this->downloadFileName = NULL;
+  this->asyncDownloadFinished = false;
   this->downloadFinished = false;
-  this->downloadResult = S_OK;
-  this->downloadCallback = NULL;
+  this->downloadCallbackCalled = false;
+  this->asyncDownloadResult = S_OK;
+  this->asyncDownloadCallback = NULL;
   this->hReceiveDataWorkerThread = NULL;
   this->status = STATUS_NONE;
   this->mainModuleHandle = GetModuleHandle(MODULE_FILE_NAME);
@@ -98,7 +100,7 @@ CLAVInputPin::CLAVInputPin(TCHAR *pName, CLAVSplitter *pFilter, CCritSec *pLock,
   
   this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
   this->downloadingFile = (this->storeFilePath != NULL);
-  this->connectedToAnotherPin = false;
+  this->connectedToAnotherPin = true;
 
   if (this->mainModuleHandle == NULL)
   {
@@ -376,7 +378,8 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
     }
   }
 
-  this->url = ConvertToUnicodeW(pszFileName);
+  //this->url = ConvertToUnicodeW(pszFileName);
+  this->url = ConvertToUnicode(L"http://o-o.preferred.orangesk-bts1.v10.lscache7.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Cratebypass%2Ccp&fexp=919100%2C904438%2C910103&itag=37&ip=109.0.0.0&signature=08783533213107D9B35BB6BD07DD97267FC12D67.A0C2BBD74C5D12927AAC324B695C620CE909AAE7&sver=3&ratebypass=yes&source=youtube&expire=1325462512&key=yt1&ipbits=8&cp=U0hRSlRRUF9GTENOMV9MS1RGOmppT3lIWHlUOTVX&id=290eb3afa9023e3f&ext=.mp4");
 
   if (this->url == NULL)
   {
@@ -452,13 +455,13 @@ void STDMETHODCALLTYPE CLAVInputPin::OnDownloadCallback(HRESULT downloadResult)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_CALLBACK_NAME);
 
-  this->downloadResult = downloadResult;
-  this->downloadFinished = true;
+  this->asyncDownloadResult = downloadResult;
+  this->asyncDownloadFinished = true;
 
-  if ((this->downloadCallback != NULL) && (this->downloadCallback != this))
+  if ((this->asyncDownloadCallback != NULL) && (this->asyncDownloadCallback != this))
   {
     // if download callback is set and it is not current instance (avoid recursion)
-    this->downloadCallback->OnDownloadCallback(downloadResult);
+    this->asyncDownloadCallback->OnDownloadCallback(downloadResult);
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_CALLBACK_NAME);
@@ -476,13 +479,13 @@ STDMETHODIMP CLAVInputPin::Download(LPCOLESTR uri, LPCOLESTR fileName)
   {
     // downloading process is successfully started
     // just wait for callback and return to caller
-    while (!this->downloadFinished)
+    while (!this->asyncDownloadFinished)
     {
       // just sleep
       Sleep(100);
     }
 
-    result = this->downloadResult;
+    result = this->asyncDownloadResult;
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_NAME, result);
@@ -516,9 +519,9 @@ STDMETHODIMP CLAVInputPin::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDow
       }
     }
 
-    this->downloadResult = S_OK;
-    this->downloadFinished = false;
-    this->downloadCallback = downloadCallback;
+    this->asyncDownloadResult = S_OK;
+    this->asyncDownloadFinished = false;
+    this->asyncDownloadCallback = downloadCallback;
   }
 
   if (result == S_OK)
@@ -1198,10 +1201,10 @@ HRESULT CLAVInputPin::EndOfStreamReached(LONGLONG streamPosition)
       else
       {
         // all data received
-        // if downloading file, call download callback method
+        // if downloading file, mark that download callback can be called after storing all data to download file
         if (this->downloadingFile)
         {
-          this->OnDownloadCallback(S_OK);
+          this->downloadFinished = true;
         }
       }
     }
@@ -1887,13 +1890,13 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   caller->logger->Log(LOGGER_DATA, L"%s: %s: request '%u' complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_OK);
                   request->SetBufferLength(foundDataLength);
 
-                  if (request->GetState() == CAsyncRequest::Requested)
-                  {
-                    // set that request is buffering data for another request
-                    // it means that request is completed but we are waiting for more data to buffer
-                    request->BufferingData();
-                  }
-                  else
+                  //if (request->GetState() == CAsyncRequest::Requested)
+                  //{
+                  //  // set that request is buffering data for another request
+                  //  // it means that request is completed but we are waiting for more data to buffer
+                  //  request->BufferingData();
+                  //}
+                  //else
                   {
                     request->Complete(S_OK);
                   }
@@ -2188,9 +2191,9 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
               if (size.QuadPart >= 0)
               {
                 unsigned int i = 0;
+                bool allMediaPacketsStored = true;
                 while (i < caller->mediaPacketCollection->Count())
                 {
-                  bool error = false;
                   CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(i);
 
                   if (!mediaPacket->IsStoredToFile())
@@ -2215,17 +2218,38 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                             mediaPacket->SetStoredToFile(size.QuadPart);
                             size.QuadPart += length;
                           }
+                          else
+                          {
+                            allMediaPacketsStored = false;
+                          }
                         }
                         else
                         {
+                          allMediaPacketsStored = false;
                           caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, L"not written");
                         }
                       }
+                      else
+                      {
+                        allMediaPacketsStored = false;
+                      }
                       FREE_MEM(buffer);
+                    }
+                    else
+                    {
+                      allMediaPacketsStored = false;
                     }
                   }
 
                   i++;
+                }
+
+                if (caller->downloadingFile && caller->downloadFinished && allMediaPacketsStored && (!caller->downloadCallbackCalled))
+                {
+                  // all data received
+                  // call download callback method
+                  caller->OnDownloadCallback(S_OK);
+                  caller->downloadCallbackCalled = true;
                 }
               }
 
