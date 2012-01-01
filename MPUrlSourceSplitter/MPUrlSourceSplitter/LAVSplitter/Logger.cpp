@@ -95,67 +95,63 @@ void CLogger::Log(unsigned int level, const wchar_t *format, ...)
 
     if (logRow != NULL)
     {
-      char *logRowInFile = ConvertToMultiByteW(logRow);
-      if (logRowInFile != NULL)
+      // now we have log row
+      // get log file
+      wchar_t *fileName = GetMediaPortalFilePath(MPURLSOURCESPLITTER_LOG_FILE);
+
+      if (fileName != NULL)
       {
-        // now we have log row
-        // get log file
-        wchar_t *fileName = GetMediaPortalFilePath(MPURLSOURCESPLITTER_LOG_FILE);
+        LARGE_INTEGER size;
+        size.QuadPart = 0;
 
-        if (fileName != NULL)
+        // open or create file
+        HANDLE hLogFile = CreateFile(fileName, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+        if (hLogFile != INVALID_HANDLE_VALUE)
         {
-          LARGE_INTEGER size;
-          size.QuadPart = 0;
-
-          // open or create file
-          HANDLE hLogFile = CreateFile(fileName, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-          if (hLogFile != INVALID_HANDLE_VALUE)
+          if (!GetFileSizeEx(hLogFile, &size))
           {
-            if (!GetFileSizeEx(hLogFile, &size))
-            {
-              // error occured while getting file size
-              size.QuadPart = 0;
-            }
-
-            CloseHandle(hLogFile);
-            hLogFile = INVALID_HANDLE_VALUE;
+            // error occured while getting file size
+            size.QuadPart = 0;
           }
 
-          if ((size.LowPart + strlen(logRowInFile)) > this->maxLogSize)
-          {
-            // log file exceedes maximum log size
-            wchar_t *moveFileName = GetMediaPortalFilePath(MPURLSOURCESPLITTER_LOG_FILE_BAK);
-            if (moveFileName != NULL)
-            {
-              // remove previous backup file
-              DeleteFile(moveFileName);
-              MoveFile(fileName, moveFileName);
-
-              FREE_MEM(moveFileName);
-            }
-          }
-
-          hLogFile = CreateFile(fileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
-          if (hLogFile != INVALID_HANDLE_VALUE)
-          {
-            // move to end of log file
-            LARGE_INTEGER distanceToMove;
-            distanceToMove.QuadPart = 0;
-            SetFilePointerEx(hLogFile, distanceToMove, NULL, FILE_END);
-
-            // write data to log file
-            DWORD written = 0;
-            WriteFile(hLogFile, logRowInFile, strlen(logRowInFile) * sizeof(char), &written, NULL);
-
-            CloseHandle(hLogFile);
-            hLogFile = INVALID_HANDLE_VALUE;
-          }
-
-          FREE_MEM(fileName);
+          CloseHandle(hLogFile);
+          hLogFile = INVALID_HANDLE_VALUE;
         }
+
+        if ((size.LowPart + wcslen(logRow)) > this->maxLogSize)
+        {
+          // log file exceedes maximum log size
+          wchar_t *moveFileName = GetMediaPortalFilePath(MPURLSOURCESPLITTER_LOG_FILE_BAK);
+          if (moveFileName != NULL)
+          {
+            // remove previous backup file
+            DeleteFile(moveFileName);
+            MoveFile(fileName, moveFileName);
+
+            FREE_MEM(moveFileName);
+          }
+        }
+
+        hLogFile = CreateFile(fileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+        if (hLogFile != INVALID_HANDLE_VALUE)
+        {
+          // move to end of log file
+          LARGE_INTEGER distanceToMove;
+          distanceToMove.QuadPart = 0;
+          SetFilePointerEx(hLogFile, distanceToMove, NULL, FILE_END);
+
+          // write data to log file
+          DWORD written = 0;
+          WriteFile(hLogFile, logRow, wcslen(logRow) * sizeof(wchar_t), &written, NULL);
+
+          CloseHandle(hLogFile);
+          hLogFile = INVALID_HANDLE_VALUE;
+        }
+
+        FREE_MEM(fileName);
       }
-      FREE_MEM(logRowInFile);
+
       FREE_MEM(logRow);
     }
 
