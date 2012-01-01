@@ -97,7 +97,7 @@ namespace OnlineVideos.Sites
 
                         data = GetWebData(xmlUrl);
 
-                        Match m = Regex.Match(data, @"<video\slang=""(?<lang>[^""]+)""\sref=""(?<url>[^""]+)""/>");
+                        Match m = Regex.Match(data, @"<video\slang=""(?<lang>[^""]+)""\sref=""(?<url>[^""]+)""\s*/>");
                         while (m.Success)
                         {
                             langValues.Add(m.Groups["lang"].Value);
