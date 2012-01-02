@@ -404,10 +404,10 @@ CLAVOutputPin *CLAVSplitter::GetOutputPin(DWORD streamId, BOOL bActiveOnly)
 //  return InitDemuxer();
 //}
 
-STDMETHODIMP CLAVSplitter::BreakInputConnection()
-{
-  return Close();
-}
+//STDMETHODIMP CLAVSplitter::BreakInputConnection()
+//{
+//  return Close();
+//}
 
 // IFileSourceFilter
 STDMETHODIMP CLAVSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt)

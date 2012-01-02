@@ -185,8 +185,8 @@ public:
   STDMETHODIMP RenameOutputPin(DWORD TrackNumSrc, DWORD TrackNumDst, std::vector<CMediaType> pmts);
   STDMETHODIMP UpdateForcedSubtitleMediaType();
 
-  STDMETHODIMP CompleteInputConnection();
-  STDMETHODIMP BreakInputConnection();
+  /*STDMETHODIMP CompleteInputConnection();
+  STDMETHODIMP BreakInputConnection();*/
 
 protected:
   STDMETHODIMP LoadDefaults();
