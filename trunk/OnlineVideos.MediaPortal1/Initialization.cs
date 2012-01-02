@@ -34,6 +34,9 @@ namespace OnlineVideos.MediaPortal1
 				// Get the BackgroundWorker that raised this event.
 				BackgroundWorker worker = sender as BackgroundWorker;
 
+				// clear cache files that might be left over from an application crash
+				MPUrlSourceFilter.MPUrlSourceFilterDownloader.ClearDownloadCache();
+
 				// Load localized strings and set them to Translation class and GuiProperties
 				Translator.TranslateSkin();
 
