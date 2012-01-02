@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace OnlineVideos.MPUrlSourceFilter
 {
@@ -113,6 +114,14 @@ namespace OnlineVideos.MPUrlSourceFilter
             this.downloadResult = downloadResult;
             this.downloadFinished = true;
         }
+
+		public static void ClearDownloadCache()
+		{
+			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MPUrlSource");
+			if (Directory.Exists(path)) foreach (var file in Directory.GetFiles(path)) try { File.Delete(file); } catch {}
+			path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MPUrlSourceSplitter");
+			if (Directory.Exists(path))foreach (var file in Directory.GetFiles(path)) try { File.Delete(file); } catch {}
+		}
 
         #endregion
 
