@@ -378,8 +378,8 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
     }
   }
 
-  //this->url = ConvertToUnicodeW(pszFileName);
-  this->url = ConvertToUnicode(L"http://o-o.preferred.orangesk-bts1.v10.lscache7.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Cratebypass%2Ccp&fexp=919100%2C904438%2C910103&itag=37&ip=109.0.0.0&signature=08783533213107D9B35BB6BD07DD97267FC12D67.A0C2BBD74C5D12927AAC324B695C620CE909AAE7&sver=3&ratebypass=yes&source=youtube&expire=1325462512&key=yt1&ipbits=8&cp=U0hRSlRRUF9GTENOMV9MS1RGOmppT3lIWHlUOTVX&id=290eb3afa9023e3f&ext=.mp4");
+  this->url = ConvertToUnicodeW(pszFileName);
+  //this->url = ConvertToUnicode(L"http://o-o.preferred.gtsce-bts1.v19.lscache6.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Cratebypass%2Ccp&fexp=917000%2C916003%2C902200%2C901801%2C916800%2C916201&itag=22&ip=195.0.0.0&signature=24997DA842DA0E0CD203746536546FB47E2AE628.26A738219498E3F4C9F71A76152E1DA229AB53&sver=3&ratebypass=yes&source=youtube&expire=1325520112&key=yt1&ipbits=8&cp=U0hRSlVNTl9GTENOMV9NR1JCOjNCVDdpbTdUY1Bx&id=290eb3afa9023e3f&ext=.mp4");
 
   if (this->url == NULL)
   {
