@@ -369,18 +369,21 @@ namespace OnlineVideos.AMF3
             OutShort(3); //version
             OutShort(0); //headercount
             OutShort(1); //responsecount
-            OutString("com.brightcove.player.runtime.PlayerMediaFacade.findMediaById");
+            OutString(target);
             OutString("/1");
             OutShort(0); //??
 
             int lengthpos = output.Count;
             OutShort(0xA00); //array
             OutShort(0); //??
-            OutShort((short)(values.Length << 8 | 0x2)); //??
+            output.Add((byte)values.Length);
             foreach (object obj in values)
             {
                 if (obj is String)
+                {
+                    output.Add((byte)0x02);
                     OutString((String)obj);
+                }
                 else if (obj is double)
                 {
                     output.Add((byte)0x00);
@@ -394,10 +397,10 @@ namespace OnlineVideos.AMF3
                     }
                     output.AddRange(bytes);
                 }
+                else if (obj == null)
+                    output.Add((byte)0x05);
                 /*else if (obj is AMF3Array)
                     OutParamValue((AMF3Array)obj);
-                else if (obj == null)
-                    output.Add((byte)AMF3Type.NullMarker);
                 else if (obj is int)
                     OutParamValue((int)obj);*/
                 else
