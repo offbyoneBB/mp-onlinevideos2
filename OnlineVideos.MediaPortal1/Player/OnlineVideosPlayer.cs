@@ -37,37 +37,47 @@ namespace OnlineVideos.MediaPortal1.Player
                 return base.GetInterfaces();
         }      
 
-        float PercentageBuffered;
+		public override void Process()
+		{
+			if ((DateTime.Now - lastProgressCheck).TotalMilliseconds > 100) // check progress at maximum 10 times per second
+			{
+				lastProgressCheck = DateTime.Now;
+				if (percentageBuffered >= 100.0f) // already buffered 100%, simply set the Property
+				{
+					GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
+				}
+				else
+				{
+					if (graphBuilder != null && GetSourceFilterName(CurrentFile) == MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName) // only when progress reporting is possible
+					{
+						IBaseFilter sourceFilter = null;
+						try
+						{
+							int result = graphBuilder.FindFilterByName(MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName, out sourceFilter);
+							if (result == 0)
+							{
+								long total = 0, current = 0;
+								((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
+								percentageBuffered = (float)current / (float)total * 100.0f;
+								GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
+							}
+						}
+						catch (Exception ex)
+						{
+							Log.Instance.Warn("Error Quering Progress: {0}", ex.Message);
+						}
+						finally
+						{
+							if (sourceFilter != null) DirectShowUtil.ReleaseComObject(sourceFilter, 2000);
+						}
+					}					
+				}
+			}
+			base.Process();
+		}
 
-        DateTime lastProgressCheck = DateTime.MinValue;
-        public override void Process()
-        {
-            if (PercentageBuffered < 100.0f && graphBuilder != null && (DateTime.Now - lastProgressCheck).TotalMilliseconds > 100)
-            {
-                lastProgressCheck = DateTime.Now;
-                IBaseFilter sourceFilter = null;
-                try
-                {
-                    int result = graphBuilder.FindFilterByName(PluginConfiguration.Instance.httpSourceFilterName, out sourceFilter);
-                    if (result == 0)
-                    {
-                        long total = 0, current = 0;
-                        ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
-                        PercentageBuffered = (float)current / (float)total * 100.0f;
-                        GUIPropertyManager.SetProperty("#TV.Record.percent3", PercentageBuffered.ToString());
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Instance.Warn("Error Quering Progress: {0}", ex.Message);
-                }
-                finally
-                {
-                    if (sourceFilter != null) DirectShowUtil.ReleaseComObject(sourceFilter, 2000);
-                }
-            }
-            base.Process();
-        }
+		float percentageBuffered;
+		DateTime lastProgressCheck = DateTime.MinValue;
 
         public bool BufferingStopped { get; protected set; }
         public void StopBuffering() { BufferingStopped = true; }
@@ -75,16 +85,16 @@ namespace OnlineVideos.MediaPortal1.Player
         protected bool skipBuffering = false;
         public void SkipBuffering() { skipBuffering = true; }
 
-        string getSourceFilterName()
+        public static string GetSourceFilterName(string videoUrl)
         {
-            string sourceFilterName;
-            Uri uri = new Uri(CurrentFile);
+			string sourceFilterName = string.Empty;
+			Uri uri = new Uri(videoUrl);
 			string protocol = uri.Scheme.Substring(0, Math.Min(uri.Scheme.Length, 4));
 			switch (protocol)
 			{
 				case "http":
 				case "rtmp":
-					sourceFilterName = PluginConfiguration.Instance.httpSourceFilterName;
+					sourceFilterName = MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName;
 					break;
 				case "sop":
 					sourceFilterName = "SopCast ASF Splitter";
@@ -92,11 +102,7 @@ namespace OnlineVideos.MediaPortal1.Player
 				case "mms":
 					sourceFilterName = "WM ASF Reader";
 					break;
-				default:
-					sourceFilterName = CurrentFile.ToLower().Contains(".asf") ? "WM ASF Reader" : string.Empty;
-					break;
 			}
-
             return sourceFilterName;
         }
 
@@ -108,7 +114,7 @@ namespace OnlineVideos.MediaPortal1.Player
         /// <returns>true, if the url can be buffered (a graph was started), false if it can't be and null if an error occured building the graph</returns>
         public bool? PrepareGraph()
         {
-            string sourceFilterName = getSourceFilterName();
+			string sourceFilterName = GetSourceFilterName(CurrentFile);
 
             if (!string.IsNullOrEmpty(sourceFilterName))
             {
@@ -167,14 +173,13 @@ namespace OnlineVideos.MediaPortal1.Player
         /// <returns>true, when playback can be started</returns>
         public bool BufferFile()
         {
+			Thread renderPinsThread = null;
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent; // prevents the BlackRectangle on first time playback
-
-            Uri uri = new Uri(CurrentFile);
             bool PlaybackReady = false;
             IBaseFilter sourceFilter = null;
             try
             {
-                string sourceFilterName = getSourceFilterName();
+				string sourceFilterName = GetSourceFilterName(CurrentFile);
 
                 int result = graphBuilder.FindFilterByName(sourceFilterName, out sourceFilter);
                 if (result != 0)
@@ -199,47 +204,53 @@ namespace OnlineVideos.MediaPortal1.Player
                 {
                     // buffer before starting playback
                     bool filterConnected = false;
-                    PercentageBuffered = 0.0f;
+                    percentageBuffered = 0.0f;
                     long total = 0, current = 0, last = 0;
                     do
                     {
                         result = ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
-                        PercentageBuffered = (float)current / (float)total * 100.0f;
+                        percentageBuffered = (float)current / (float)total * 100.0f;
                         // after configured percentage has been buffered, connect the graph
-                        if (!filterConnected && (PercentageBuffered >= PluginConfiguration.Instance.playbuffer || skipBuffering))
+                        if (!filterConnected && (percentageBuffered >= PluginConfiguration.Instance.playbuffer || skipBuffering))
                         {
-                            if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", PercentageBuffered);
+                            if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
                             filterConnected = true;
-                            new Thread(delegate()
+                            renderPinsThread = new Thread(delegate()
                             {
-                                try
-                                {
+								try
+								{
 									Log.Instance.Debug("BufferFile : Rendering unconnected output pins of source filter ...");
-                                    // connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
-                                    DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                                    PlaybackReady = true;
+									// connect the pin automatically -> will buffer the full file in cases of bad metadata in the file or request of the audio or video filter
+									DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
 									Log.Instance.Debug("BufferFile : Playback Ready.");
-                                }
-                                catch (Exception ex)
-                                {
-                                    Log.Instance.Warn(ex.Message);
-                                    StopBuffering();
-                                }
-                            }) { IsBackground = true, Name = "OVGraph" }.Start();
+									PlaybackReady = true;
+								}
+								catch (ThreadAbortException)
+								{
+									Thread.ResetAbort();
+									Log.Instance.Info("RenderUnconnectedOutputPins foribly aborted.");
+								}
+								catch (Exception ex)
+								{
+									Log.Instance.Warn(ex.Message);
+									StopBuffering();
+								}
+                            }) { IsBackground = true, Name = "OVGraph" };
+							renderPinsThread.Start();
                         }
                         // log every percent
                         if (current > last && current - last >= (double)total * 0.01)
                         {
-                            Log.Instance.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)PercentageBuffered);
+                            Log.Instance.Debug("Buffering: {0}/{1} KB ({2}%)", current / 1024, total / 1024, (int)percentageBuffered);
                             last = current;
                         }
                         // set the percentage to a gui property, formatted according to percentage, so the user knows very early if anything is buffering                   
                         string formatString = "###";
-                        if (PercentageBuffered == 0f) formatString = "0.0";
-                        else if (PercentageBuffered < 1f) formatString = ".00";
-                        else if (PercentageBuffered < 10f) formatString = "0.0";
-                        else if (PercentageBuffered < 100f) formatString = "##";
-                        GUIPropertyManager.SetProperty("#OnlineVideos.buffered", PercentageBuffered.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
+                        if (percentageBuffered == 0f) formatString = "0.0";
+                        else if (percentageBuffered < 1f) formatString = ".00";
+                        else if (percentageBuffered < 10f) formatString = "0.0";
+                        else if (percentageBuffered < 100f) formatString = "##";
+                        GUIPropertyManager.SetProperty("#OnlineVideos.buffered", percentageBuffered.ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
                         Thread.Sleep(50); // no need to do this more often than 20 times per second
                     }
                     while (!PlaybackReady && graphBuilder != null && !BufferingStopped);
@@ -247,8 +258,8 @@ namespace OnlineVideos.MediaPortal1.Player
                 else
                 {
                     DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
-                    PercentageBuffered = 100.0f; // no progress reporting possible
-                    GUIPropertyManager.SetProperty("#TV.Record.percent3", PercentageBuffered.ToString());
+                    percentageBuffered = 100.0f; // no progress reporting possible
+                    GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
                     PlaybackReady = true;
                 }
             }
@@ -264,6 +275,14 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 if (sourceFilter != null)
                 {
+					// the render pin thread was already started and is still runnning
+					if (renderPinsThread != null && (renderPinsThread.ThreadState & ThreadState.Stopped) == 0)
+					{
+						// buffering was stopped by the user -> abort the thread
+						if (BufferingStopped) renderPinsThread.Abort();
+					}
+
+					// playback is not ready but the source filter is already downloading -> abort the operation
                     if (!PlaybackReady)
                     {
 						Log.Instance.Info("Buffering was aborted.");
@@ -297,7 +316,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 if (Log.Instance.LogLevel < log4net.Core.Level.Debug)
                 {
-                    string sourceFilterName = getSourceFilterName();
+					string sourceFilterName = GetSourceFilterName(CurrentFile);
                     if (!string.IsNullOrEmpty(sourceFilterName))
                     {
                         IBaseFilter sourceFilter;
@@ -377,6 +396,12 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
             }
 #endif
+			AnalyseStreams();
+#if !MP11
+			SelectSubtitles();
+			SelectAudioLanguage();
+#endif
+			OnInitialized();
 
             int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
             if (hr < 0)
@@ -437,12 +462,6 @@ namespace OnlineVideos.MediaPortal1.Player
             SetVideoWindow();
             mediaPos.get_Duration(out m_dDuration);
             Log.Instance.Info("OnlineVideosPlayer: Duration {0} sec", m_dDuration.ToString("F"));
-            AnalyseStreams();
-#if !MP11
-            SelectSubtitles();
-            SelectAudioLanguage();
-#endif
-            OnInitialized();
 
             return true;
         }

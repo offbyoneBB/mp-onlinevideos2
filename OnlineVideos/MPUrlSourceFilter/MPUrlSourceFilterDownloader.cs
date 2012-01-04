@@ -126,6 +126,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         #endregion
 
         #region Constants
+		public const string FilterName = "MediaPortal Url Source Splitter";
         #endregion
 
         #region Internals

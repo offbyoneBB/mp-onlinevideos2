@@ -206,9 +206,6 @@ namespace OnlineVideos.MediaPortal1
 			this.propertyGridHoster = new System.Windows.Forms.PropertyGrid();
 			this.listBoxHosters = new System.Windows.Forms.ListBox();
 			this.tabPageCodecs = new System.Windows.Forms.TabPage();
-			this.groupBoxSourceFilter = new System.Windows.Forms.GroupBox();
-			this.tbxHttpSourceFilter = new System.Windows.Forms.TextBox();
-			this.label37 = new System.Windows.Forms.Label();
 			this.videopanel = new System.Windows.Forms.Panel();
 			this.groupBoxSplitter = new System.Windows.Forms.GroupBox();
 			this.btnTestAvi = new System.Windows.Forms.Button();
@@ -290,7 +287,6 @@ namespace OnlineVideos.MediaPortal1
 			this.tabSites.SuspendLayout();
 			this.tabHosters.SuspendLayout();
 			this.tabPageCodecs.SuspendLayout();
-			this.groupBoxSourceFilter.SuspendLayout();
 			this.groupBoxSplitter.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.sitesBindingSource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -2290,7 +2286,6 @@ namespace OnlineVideos.MediaPortal1
 			// 
 			// tabPageCodecs
 			// 
-			this.tabPageCodecs.Controls.Add(this.groupBoxSourceFilter);
 			this.tabPageCodecs.Controls.Add(this.videopanel);
 			this.tabPageCodecs.Controls.Add(this.groupBoxSplitter);
 			this.tabPageCodecs.Location = new System.Drawing.Point(4, 22);
@@ -2302,46 +2297,14 @@ namespace OnlineVideos.MediaPortal1
 			this.tabPageCodecs.Text = "Codecs";
 			this.tabPageCodecs.UseVisualStyleBackColor = true;
 			// 
-			// groupBoxSourceFilter
-			// 
-			this.groupBoxSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBoxSourceFilter.Controls.Add(this.tbxHttpSourceFilter);
-			this.groupBoxSourceFilter.Controls.Add(this.label37);
-			this.groupBoxSourceFilter.Location = new System.Drawing.Point(6, 6);
-			this.groupBoxSourceFilter.Name = "groupBoxSourceFilter";
-			this.groupBoxSourceFilter.Size = new System.Drawing.Size(691, 46);
-			this.groupBoxSourceFilter.TabIndex = 2;
-			this.groupBoxSourceFilter.TabStop = false;
-			this.groupBoxSourceFilter.Text = "Source";
-			// 
-			// tbxHttpSourceFilter
-			// 
-			this.tbxHttpSourceFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.tbxHttpSourceFilter.Location = new System.Drawing.Point(118, 13);
-			this.tbxHttpSourceFilter.Name = "tbxHttpSourceFilter";
-			this.tbxHttpSourceFilter.ReadOnly = true;
-			this.tbxHttpSourceFilter.Size = new System.Drawing.Size(518, 20);
-			this.tbxHttpSourceFilter.TabIndex = 1;
-			// 
-			// label37
-			// 
-			this.label37.AutoSize = true;
-			this.label37.Location = new System.Drawing.Point(6, 16);
-			this.label37.Name = "label37";
-			this.label37.Size = new System.Drawing.Size(25, 13);
-			this.label37.TabIndex = 0;
-			this.label37.Text = "http";
-			// 
 			// videopanel
 			// 
 			this.videopanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.videopanel.Location = new System.Drawing.Point(6, 204);
+			this.videopanel.Location = new System.Drawing.Point(6, 157);
 			this.videopanel.Name = "videopanel";
-			this.videopanel.Size = new System.Drawing.Size(691, 311);
+			this.videopanel.Size = new System.Drawing.Size(691, 377);
 			this.videopanel.TabIndex = 3;
 			// 
 			// groupBoxSplitter
@@ -2368,14 +2331,14 @@ namespace OnlineVideos.MediaPortal1
 			this.groupBoxSplitter.Controls.Add(this.label12);
 			this.groupBoxSplitter.Controls.Add(this.chkFLVSplitterInstalled);
 			this.groupBoxSplitter.Controls.Add(this.label11);
-			this.groupBoxSplitter.Location = new System.Drawing.Point(6, 57);
+			this.groupBoxSplitter.Location = new System.Drawing.Point(6, 10);
 			this.groupBoxSplitter.Margin = new System.Windows.Forms.Padding(2);
 			this.groupBoxSplitter.Name = "groupBoxSplitter";
 			this.groupBoxSplitter.Padding = new System.Windows.Forms.Padding(2);
 			this.groupBoxSplitter.Size = new System.Drawing.Size(691, 142);
 			this.groupBoxSplitter.TabIndex = 1;
 			this.groupBoxSplitter.TabStop = false;
-			this.groupBoxSplitter.Text = "Splitter";
+			this.groupBoxSplitter.Text = "Filetypes";
 			// 
 			// btnTestAvi
 			// 
@@ -2722,8 +2685,6 @@ namespace OnlineVideos.MediaPortal1
 			this.tabSites.ResumeLayout(false);
 			this.tabHosters.ResumeLayout(false);
 			this.tabPageCodecs.ResumeLayout(false);
-			this.groupBoxSourceFilter.ResumeLayout(false);
-			this.groupBoxSourceFilter.PerformLayout();
 			this.groupBoxSplitter.ResumeLayout(false);
 			this.groupBoxSplitter.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.sitesBindingSource)).EndInit();
@@ -2860,10 +2821,7 @@ namespace OnlineVideos.MediaPortal1
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownBtnImport;
         private System.Windows.Forms.ToolStripMenuItem btnImportXml;
         private System.Windows.Forms.ToolStripMenuItem btnImportGlobal;
-        private System.Windows.Forms.ToolStripButton btnCreateSite;
-        private System.Windows.Forms.GroupBox groupBoxSourceFilter;
-        private System.Windows.Forms.TextBox tbxHttpSourceFilter;
-        private System.Windows.Forms.Label label37;
+		private System.Windows.Forms.ToolStripButton btnCreateSite;
         private System.Windows.Forms.RadioButton rbExtendedSearchHistory;
         private System.Windows.Forms.RadioButton rbLastSearch;
         private System.Windows.Forms.RadioButton rbOff;
