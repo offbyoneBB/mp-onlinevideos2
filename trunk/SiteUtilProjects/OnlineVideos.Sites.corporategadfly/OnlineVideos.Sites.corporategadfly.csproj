@@ -48,12 +48,18 @@
     <Compile Include="CTVUtil.cs" />
     <Compile Include="CTVUtilBase.cs" />
     <Compile Include="DiscoveryUtil.cs" />
+    <Compile Include="DIYUtil.cs" />
     <Compile Include="FashionUtil.cs" />
+    <Compile Include="FoodNetworkUtil.cs" />
     <Compile Include="GlobalUtil.cs" />
+    <Compile Include="HGTVUtil.cs" />
     <Compile Include="HistoryTVUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShowcaseUtil.cs" />
+    <Compile Include="SliceUtil.cs" />
     <Compile Include="SpaceCastUtil.cs" />
     <Compile Include="TSNUtil.cs" />
+    <Compile Include="TVtropolisUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">

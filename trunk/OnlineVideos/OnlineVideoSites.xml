@@ -1489,6 +1489,24 @@
     <Site name="History Television" util="HistoryTV" agecheck="false" enabled="true" lang="en">
       <Description>History Television captivates Canadian audiences with gripping stories about the people and events that have shaped our world.</Description>
     </Site>
+    <Site name="The Food Network" util="FoodNetwork" agecheck="false" enabled="true" lang="en">
+      <Description>Foodnetwork.ca is the destination for Canadians for all things food-related.</Description>
+    </Site>
+    <Site name="HGTV" util="HGTV" agecheck="false" enabled="true" lang="en">
+      <Description>www.HGTV.ca is the online destination for home and garden information. The website is home to helpful articles, do-it-yourself project plans, expert advice, interactive quizzes, time-saving etools, information about HGTV programs and hosts, and much more. Informative, interesting, fun, and interactive, HGTV.ca is a must-click destination for home and garden enthusiasts. As well, the website offers a popular biweekly newsletter filled with advice, promotional opportunities and more.</Description>
+    </Site>
+    <Site name="Showcase" util="Showcase" agecheck="false" enabled="true" lang="en">
+      <Description>Big. Bold. Hits. With a top-rated line-up of hit series, breakout cable exclusives and big-ticket movies, Showcase is a powerhouse of TV’s best. From the off-beat characters in House, the unconventional storylines of Weeds and the chemistry-fuelled Bones, to Hollywood heavy-hitters Superbad and I Am Legend, Showcase delivers the best and most colourful collection of television.</Description>
+    </Site>
+    <Site name="Slice" util="Slice" agecheck="false" enabled="true" lang="en">
+      <Description>With highly addictive, must-see entertainment, Slice™ is the juicy channel women have been waiting for. Targeting viewers with an attitude found nowhere else in the lifestyle television landscape, Slice™ brings an unapologetic attitude to topics that matter to women – family, fashion, relationships, celebrity, finances and gossip – to name just a few.</Description>
+    </Site>
+    <Site name="TVtropolis" util="TVtropolis" agecheck="false" enabled="true" lang="en">
+      <Description>TVtropolis is the home of back-to-back, recent iconic TV series celebrating the shows and stars that have defined pop culture. Favourites including Seinfeld, Friends, Family Guy, Frasier, That 70’s Show, Everybody Loves Raymond, and King of Queens make TVtropolis a TV lover’s destination.</Description>
+    </Site>
+    <Site name="DIY Network Canada" util="DIY" agecheck="false" enabled="true" lang="en">
+      <Description>DIY Network Canada is the go-to destination for rip-up, knock-out home improvement television.</Description>
+    </Site>
     <Site name="4oD" util="Fourod" agecheck="false" enabled="true" lang="en">
       <Description>Catchup on all your favourite Channel 4 shows (only available in the UK).</Description>
       <Categories>
