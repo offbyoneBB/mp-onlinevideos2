@@ -244,6 +244,12 @@ namespace OnlineVideos.Sites
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(xml.NameTable);
             nsmRequest.AddNamespace("a", @"http://www.w3.org/2001/SMIL20/Language");
 
+            XmlNode metaBase = xml.SelectSingleNode(@"//a:meta", nsmRequest);
+            string metaBaseValue = metaBase.Attributes["base"].Value;
+
+            // base URL may be stored in the base attribute of <meta> tag
+            string baseRtmp = metaBaseValue.StartsWith("rtmp") ? metaBaseValue : String.Empty;
+
             foreach (XmlNode node in xml.SelectNodes("//a:body/a:switch/a:video", nsmRequest))
             {
                 int bitrate = int.Parse(node.Attributes["system-bitrate"].Value);
@@ -251,6 +257,11 @@ namespace OnlineVideos.Sites
                 if (bitrate == 0) continue;
 
                 string url = node.Attributes["src"].Value;
+                if (!string.IsNullOrEmpty(baseRtmp))
+                {
+                    // prefix url with base (from <meta> tag) and artifical <break>
+                    url = baseRtmp + @"<break>" + url;
+                }
                 Log.Debug(@"bitrate: {0}, url: {1}", bitrate / 1000, url);
 
                 if (url.StartsWith("rtmp"))
