@@ -68,8 +68,13 @@ namespace OnlineVideos.Sites
                                     // populate category
                                     RssLink cat = new RssLink();
                                     cat.Name = item.Value<string>("title");
-                                    cat.Other = item.Value<string>("depth") + @"|" + item.Value<string>("fullTitle");
-                                    cat.HasSubCategories = true;
+                                    bool hasChildren = item.Value<bool>("hasChildren");
+                                    cat.Other = hasChildren
+                                        ?
+                                        item.Value<string>("depth") + @"|" + item.Value<string>("fullTitle")
+                                        :
+                                        item.Value<string>("ID");
+                                    cat.HasSubCategories = hasChildren;
                                     Settings.Categories.Add(cat);
                                 }
                             }
@@ -195,7 +200,7 @@ namespace OnlineVideos.Sites
                 if (items != null)
                 {
                     // use dictionary to keep track of which titles have been seen already
-                    // (the titles appear multiple times due to multiple bitrates)
+                    // (the titles may appear multiple times due to multiple bitrates)
                     Dictionary<string, bool> dictionary = new Dictionary<string, bool>();
 
                     foreach (JToken item in items)
