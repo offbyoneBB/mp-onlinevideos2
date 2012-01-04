@@ -41,6 +41,7 @@
     <Compile Include="BNNUtil.cs" />
     <Compile Include="BravoFactUtil.cs" />
     <Compile Include="BravoUtil.cs" />
+    <Compile Include="CanWestUtilBase.cs" />
     <Compile Include="ComedyNetworkUtil.cs" />
     <Compile Include="CTVLocalNewsUtil.cs" />
     <Compile Include="CTVNewsUtil.cs" />
@@ -49,6 +50,7 @@
     <Compile Include="DiscoveryUtil.cs" />
     <Compile Include="FashionUtil.cs" />
     <Compile Include="GlobalUtil.cs" />
+    <Compile Include="HistoryTVUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpaceCastUtil.cs" />
     <Compile Include="TSNUtil.cs" />

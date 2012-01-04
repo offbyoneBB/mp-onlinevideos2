@@ -1486,6 +1486,9 @@
     <Site name="Global TV" util="Global" agecheck="false" enabled="true" lang="en">
       <Description>Global Television reaches almost 100% of Canadians and is the online destination for Global Entertainment show information, episodes, web exclusives and more!</Description>
     </Site>
+    <Site name="History Television" util="HistoryTV" agecheck="false" enabled="true" lang="en">
+      <Description>History Television captivates Canadian audiences with gripping stories about the people and events that have shaped our world.</Description>
+    </Site>
     <Site name="4oD" util="Fourod" agecheck="false" enabled="true" lang="en">
       <Description>Catchup on all your favourite Channel 4 shows (only available in the UK).</Description>
       <Categories>
