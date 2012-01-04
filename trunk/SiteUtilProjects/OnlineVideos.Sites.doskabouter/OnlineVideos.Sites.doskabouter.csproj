@@ -61,7 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ABCiViewUtil.cs" />
-    <Compile Include="AMF3.cs" />
+    <Compile Include="AMF.cs" />
     <Compile Include="BrassBandTubeUtil.cs" />
     <Compile Include="BrightCoveUtil.cs" />
     <Compile Include="CBCUtil.cs" />
@@ -88,6 +88,7 @@
     <Compile Include="Hoster\Speedload.cs" />
     <Compile Include="Hoster\Tubeload.cs" />
     <Compile Include="Hoster\Veoh.cs" />
+    <Compile Include="Hoster\Viddler.cs" />
     <Compile Include="Hoster\VideoBB.cs" />
     <Compile Include="Hoster\VideoWeed.cs" />
     <Compile Include="Hoster\Vimeo.cs" />
