@@ -20,7 +20,6 @@ namespace OnlineVideos.MediaPortal1
         public bool Play(string fileName, Control parent, out string ErrorOrSplitter)
         {
             ErrorOrSplitter = "";
-            Uri uri = new Uri(fileName);
             int hr;
             _parentControl = parent;
 
@@ -45,8 +44,8 @@ namespace OnlineVideos.MediaPortal1
 #endif
 
             // add the source filter
-            string sourceFilterName = (uri.Scheme == "mms" || fileName.ToLower().Contains(".asf") || fileName.ToLower().Contains(".wmv")) ? "WM ASF Reader" : uri.Scheme == "http" ? PluginConfiguration.Instance.httpSourceFilterName : string.Empty;
-
+            string sourceFilterName = OnlineVideos.MediaPortal1.Player.OnlineVideosPlayer.GetSourceFilterName(fileName);
+			if (string.IsNullOrEmpty(sourceFilterName)) return false;
             IBaseFilter sourceFilter = null;
             try
             {
@@ -90,7 +89,30 @@ namespace OnlineVideos.MediaPortal1
                             if (pinDir == PinDirection.Output)
                             {
                                 hr = _graphBuilder.Render(pins[0]);
-                                if (hr == 0) numConnected++;
+								if (hr == 0)
+								{
+									numConnected++;
+									IPin connectedPin;
+									if (pins[0].ConnectedTo(out connectedPin) == 0 && connectedPin != null)
+									{
+										PinInfo connectedPinInfo;
+										connectedPin.QueryPinInfo(out connectedPinInfo);
+										FilterInfo connectedFilterInfo;
+										connectedPinInfo.filter.QueryFilterInfo(out connectedFilterInfo);
+										DirectShowUtil.ReleaseComObject(connectedPin, 2000);
+										IBaseFilter connectedFilter;
+										if (connectedFilterInfo.pGraph.FindFilterByName(connectedFilterInfo.achName, out connectedFilter) == 0 && connectedFilter != null)
+										{
+											var codecInfo = GetCodecInfo(connectedFilter, connectedFilterInfo.achName);
+											if (codecInfo != null)
+											{
+												if (string.IsNullOrEmpty(ErrorOrSplitter)) ErrorOrSplitter = codecInfo.ToString();
+												else ErrorOrSplitter += ", " + codecInfo.ToString();
+											}
+											DirectShowUtil.ReleaseComObject(connectedFilter);
+										}
+									}
+								}
                             }
                             DirectShowUtil.ReleaseComObject(pins[0], 2000);
                         }
@@ -118,31 +140,6 @@ namespace OnlineVideos.MediaPortal1
                 mediaEvents.SetNotifyWindow(_parentControl.FindForm().Handle, WMGraphNotify, IntPtr.Zero);
 
                 _parentControl.SizeChanged += _parentControl_SizeChanged;
-
-                CodecConfiguration.Codec? codecInfo;
-                if (sourceFilterName == "WM ASF Reader")
-                {
-                    ErrorOrSplitter = sourceFilterName;
-                    codecInfo = GetCodecInfo(sourceFilter, sourceFilterName);
-                }
-                else
-                {
-                    IPin outputPin = DirectShowUtil.FindPin(sourceFilter, PinDirection.Output, "Output");
-                    IPin connectedPin;
-                    outputPin.ConnectedTo(out connectedPin);
-                    PinInfo connectedPinInfo;
-                    connectedPin.QueryPinInfo(out connectedPinInfo);
-                    FilterInfo connectedFilterInfo;
-                    connectedPinInfo.filter.QueryFilterInfo(out connectedFilterInfo);
-                    ErrorOrSplitter = connectedFilterInfo.achName;
-
-                    codecInfo = GetCodecInfo(_graphBuilder, ErrorOrSplitter);
-                    
-                    DirectShowUtil.ReleaseComObject(connectedPin, 2000);
-                    DirectShowUtil.ReleaseComObject(outputPin, 2000);
-                    DirectShowUtil.ReleaseComObject(sourceFilter, 2000);
-                }
-                if (codecInfo != null) ErrorOrSplitter = codecInfo.ToString();
                 return true;
             }
             else

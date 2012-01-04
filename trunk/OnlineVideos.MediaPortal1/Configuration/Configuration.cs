@@ -36,7 +36,6 @@ namespace OnlineVideos.MediaPortal1
         {
             /** fill "Codecs" tab **/
             confPlayer = new ConfigurationPlayer();
-            tbxHttpSourceFilter.Text = PluginConfiguration.Instance.httpSourceFilterName;
 
             /** fill "General" tab **/
             lblVersion.Text = "Version: " + new System.Reflection.AssemblyName(System.Reflection.Assembly.GetExecutingAssembly().FullName).Version.ToString();
@@ -246,7 +245,6 @@ namespace OnlineVideos.MediaPortal1
                 if (chkDoAutoUpdate.CheckState == CheckState.Indeterminate) PluginConfiguration.Instance.updateOnStart = null;
                 else PluginConfiguration.Instance.updateOnStart = chkDoAutoUpdate.Checked;
                 PluginConfiguration.Instance.updatePeriod = uint.Parse(tbxUpdatePeriod.Text);
-                PluginConfiguration.Instance.httpSourceFilterName = tbxHttpSourceFilter.Text;
                 PluginConfiguration.Instance.autoGroupByLang = chkAutoGroupByLang.Checked;
                 OnlineVideoSettings.Instance.FavoritesFirst = chkFavFirst.Checked;
 				PluginConfiguration.Instance.LatestVideosRandomize = chkLatestVideosRandomize.Checked;

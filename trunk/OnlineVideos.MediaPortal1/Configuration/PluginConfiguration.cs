@@ -32,7 +32,6 @@ namespace OnlineVideos.MediaPortal1
         public bool? updateOnStart = null;
         public string email = "";
         public string password = "";
-        public string httpSourceFilterName = "File Source (URL)";
         public SearchHistoryType searchHistoryType = SearchHistoryType.Simple;
         public int searchHistoryNum = 9;
         public BindingList<SitesGroup> SitesGroups = new BindingList<SitesGroup>();
@@ -242,7 +241,6 @@ namespace OnlineVideos.MediaPortal1
 					listOfExtensions.Sort();
 					ovsconf.AddSupportedVideoExtensions(listOfExtensions);
 
-                    httpSourceFilterName = settings.GetValueAsString(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
                     autoGroupByLang = settings.GetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
 					ovsconf.FavoritesFirst = settings.GetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, ovsconf.FavoritesFirst);
 
@@ -310,8 +308,6 @@ namespace OnlineVideos.MediaPortal1
                         if (!string.IsNullOrEmpty(password)) settings.SetValue(CFG_SECTION, CFG_PASSWORD, password);
                         if (updateOnStart == null) settings.RemoveEntry(CFG_SECTION, CFG_UPDATEONSTART);
                         else settings.SetValueAsBool(CFG_SECTION, CFG_UPDATEONSTART, updateOnStart.Value);
-                        if (httpSourceFilterName == "File Source (URL)") settings.RemoveEntry(CFG_SECTION, CFG_HTTP_SOURCE_FILTER);
-                        else settings.SetValue(CFG_SECTION, CFG_HTTP_SOURCE_FILTER, httpSourceFilterName);
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORY_NUM, searchHistoryNum);
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORYTYPE, (int)searchHistoryType);
                         settings.SetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
