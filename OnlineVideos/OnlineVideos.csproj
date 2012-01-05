@@ -533,14 +533,12 @@
     <Compile Include="RTMP_LIB\HTTP\HTTPServerSession.cs" />
     <Compile Include="RTMP_LIB\HTTP\IHTTPRequestHandler.cs" />
     <Compile Include="RTMP_LIB\HTTP\IHTTPRequestHandlerFactory.cs" />
-    <Compile Include="RTMP_LIB\LibRTMP.cs" />
     <Compile Include="RTMP_LIB\Link.cs" />
     <Compile Include="RTMP_LIB\Log.cs" />
     <Compile Include="RTMP_LIB\Metadata.cs" />
     <Compile Include="RTMP_LIB\RTMP.cs" />
     <Compile Include="RTMP_LIB\RTMPPacket.cs" />
     <Compile Include="RTMP_LIB\RTMPRequestHandler.cs" />
-    <Compile Include="RTMP_LIB\RTMPRequestHandler2.cs" />
     <Compile Include="RTMP_LIB\Tea.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\ByteArray.cs" />
     <Compile Include="Sites\Cornerstone\CustomTypes\DynamicList.cs" />
