@@ -1718,6 +1718,83 @@
               <ZipFileName>Installer{CopyFile}\{d1dd2831-6d4c-49ba-8b59-ccd6b7744568}-BrassBandTube.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BrassBandTube.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\abc.com.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{bb7b8f11-05fb-43fb-b318-beeab68eb7d2}-abc.com.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\abc.com.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\diy network canada.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{2ebeef86-809e-4aa3-a7c2-268e8d6f0062}-diy network canada.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\diy network canada.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\global tv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b8b16c23-55e7-4db6-ba7e-1954b74ac8b9}-global tv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\global tv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\hgtv.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{446349dc-a800-4877-a8e0-ddc1f7c0f9bb}-hgtv.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\hgtv.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\history television.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4af491bb-02a7-4b65-b6e0-228bf6fc1755}-history television.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\history television.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\MuzuTV.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{974256f4-32d5-4fbe-b93f-3508f816fd43}-MuzuTV.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MuzuTV.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\showcase.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ea1a102a-1b2c-4fe9-98fc-8a002ccc146d}-showcase.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\showcase.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\slice.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4b500f2b-605e-4ce2-9f8a-d8c4bae44dee}-slice.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\slice.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\the food network.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{f23754b9-0917-42cc-aea3-34862bf44806}-the food network.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\the food network.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\tvtropolis.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{97f97ac0-4378-4638-8e69-1b2991275b71}-tvtropolis.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvtropolis.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\MuzuTV.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{e1278496-a778-4c6e-aa8e-d3e83fe362c1}-MuzuTV.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MuzuTV.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -1755,7 +1832,7 @@
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.0.0.0\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.1.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -1770,7 +1847,7 @@
               <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{01ff36dd-4b5a-47d0-88c4-ed79b4ae9e47}-OnlineVideos.Sites.brownard.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</DestinationFilename>
-            </FileItem>            
+            </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -2012,7 +2089,7 @@
         <ParentGroup>Skins</ParentGroup>
         <DisplayName>Default</DisplayName>
         <DefaulChecked>true</DefaulChecked>
-        <Description>Default</Description>
+        <Description>Skin files for Default Skin</Description>
         <Files>
           <Items>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
@@ -2134,7 +2211,7 @@
         <ParentGroup>Skins</ParentGroup>
         <DisplayName>DefaultWide</DisplayName>
         <DefaulChecked>true</DefaulChecked>
-        <Description>DefaultWide</Description>
+        <Description>Skin files for DefaultWide Skin</Description>
         <Files>
           <Items>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
@@ -2470,7 +2547,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
-            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
+            <ActionItem Name="SetRights/Cleanup" ActionType="Script" ConditionGroup="">
               <Params>
                 <Items>
                   <SectionParam Name="Script">
@@ -2565,123 +2642,7 @@ public class Script
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
-            <ActionItem Name="Script" ActionType="Script" ConditionGroup="MPUrlSource">
-              <Params>
-                <Items>
-                  <SectionParam Name="Script">
-                    <Value>//css_reference "MpeCore.dll";
-
-using MpeCore.Classes;
-using MpeCore;
-using System.Diagnostics;
-using System;
-
-public class Script
-{
-    public static void Main(PackageClass packageClass, ActionItem actionItem)
-    {
-ProcessStartInfo psi = new ProcessStartInfo();
-        psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
-psi.FileName = "cmd.exe";
-        psi.Arguments = "/c regsvr32 /s \"" + MpeInstaller.TransformInRealPath(@"%Base%\MPUrlSource\MPUrlSource.ax") + "\"";        psi.Verb = "runas";
-        psi.CreateNoWindow = true;
-        psi.WindowStyle = ProcessWindowStyle.Hidden;
-        psi.ErrorDialog = false;
-        try
-        {
-            Process p = System.Diagnostics.Process.Start(psi);
-            p.WaitForExit(10000);
-        }
-        catch (Exception ex)
-        {
-            
-        }
-    }
-}
-</Value>
-                    <ValueType>Script</ValueType>
-                    <Description />
-                  </SectionParam>
-                  <SectionParam Name="Uninstall Script">
-                    <Value>//css_reference "MpeCore.dll";
-
-using MpeCore.Classes;
-using MpeCore;
-
-public class Script
-{
-    public static void Main(PackageClass packageClass, UnInstallItem item)
-    {
-        return;
-    }
-}
-</Value>
-                    <ValueType>Script</ValueType>
-                    <Description />
-                  </SectionParam>
-                </Items>
-              </Params>
-              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
-            </ActionItem>
-            <ActionItem Name="Script" ActionType="Script" ConditionGroup="MPUrlSource">
-              <Params>
-                <Items>
-                  <SectionParam Name="Script">
-                    <Value>//css_reference "MpeCore.dll";
-
-using MpeCore.Classes;
-using MpeCore;
-
-public class Script
-{
-    public static void Main(PackageClass packageClass, ActionItem actionItem)
-    {
-        return;
-    }
-}
-</Value>
-                    <ValueType>Script</ValueType>
-                    <Description />
-                  </SectionParam>
-                  <SectionParam Name="Uninstall Script">
-                    <Value>//css_reference "MpeCore.dll";
-
-using MpeCore.Classes;
-using MpeCore;
-using System.Diagnostics;
-using System;
-
-public class Script
-{
-    public static void Main(PackageClass packageClass, UnInstallItem item)
-    {
-        ProcessStartInfo psi = new ProcessStartInfo();
-        psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
-        psi.FileName = "cmd.exe";
-        psi.Arguments = "/c regsvr32 /s /u \"" + MpeInstaller.TransformInRealPath(@"%Base%\MPUrlSource\MPUrlSource.ax") + "\"";
-        psi.Verb = "runas";
-        psi.CreateNoWindow = true;
-        psi.WindowStyle = ProcessWindowStyle.Hidden;
-        psi.ErrorDialog = false;
-        try
-        {
-            Process p = System.Diagnostics.Process.Start(psi);
-            p.WaitForExit(10000);
-        }
-        catch (Exception ex)
-        {
-        }
-    }
-}
-</Value>
-                    <ValueType>Script</ValueType>
-                    <Description />
-                  </SectionParam>
-                </Items>
-              </Params>
-              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
-            </ActionItem>
-            <ActionItem Name="Script" ActionType="Script" ConditionGroup="">
+            <ActionItem Name="EnablePluginInConfigXml" ActionType="Script" ConditionGroup="">
               <Params>
                 <Items>
                   <SectionParam Name="Script">
@@ -2701,7 +2662,6 @@ public class Script
            xmlwriter.SetValue("plugins", "OnlineVideos", "yes");
            xmlwriter.SetValue("pluginsdlls", "OnlineVideos.MediaPortal1.dll", "yes");
            xmlwriter.SetValue("pluginswindows", "OnlineVideos.MediaPortal1.GUIOnlineVideos", "yes");
-           xmlwriter.SetValue("onlinevideos", "httpsourcefilter", "MediaPortal Url Source Filter");
        }
        MediaPortal.Profile.Settings.SaveCache();
         return;
@@ -2731,11 +2691,54 @@ public class Script
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
-            <ActionItem Name="Extension Installer" ActionType="Extension Installer" ConditionGroup="LAVFilters">
+            <ActionItem Name="Un/Register MPUrlSource Filter" ActionType="RunApplication" ConditionGroup="MPUrlSource">
+              <Params>
+                <Items>
+                  <SectionParam Name="Path to application">
+                    <Value>%System%\regsvr32.exe</Value>
+                    <ValueType>Template</ValueType>
+                    <Description>Path to the application like 
+ %Base%\MediaPortal.exe</Description>
+                  </SectionParam>
+                  <SectionParam Name="Parameters for application">
+                    <Value>/s "%Base%\MPUrlSource\MPUrlSource.ax"</Value>
+                    <ValueType>String</ValueType>
+                    <Description>Command line parameters</Description>
+                  </SectionParam>
+                  <SectionParam Name="Wait for exit">
+                    <Value>YES</Value>
+                    <ValueType>Bool</ValueType>
+                    <Description>Wait for exit </Description>
+                  </SectionParam>
+                  <SectionParam Name="Don't run when silent install">
+                    <Value>NO</Value>
+                    <ValueType>Bool</ValueType>
+                    <Description>If set to Yes the aplication don't run when the istalation is silent </Description>
+                  </SectionParam>
+                  <SectionParam Name="Path to uninstall application">
+                    <Value>%System%\regsvr32.exe</Value>
+                    <ValueType>Template</ValueType>
+                    <Description>Path to the application which should be executed when uninstall</Description>
+                  </SectionParam>
+                  <SectionParam Name="Parameters for uninstall application">
+                    <Value>/s /u "%Base%\MPUrlSource\MPUrlSource.ax"</Value>
+                    <ValueType>String</ValueType>
+                    <Description>Command line parameters for uninstall app</Description>
+                  </SectionParam>
+                  <SectionParam Name="Wait for exit on uninstall">
+                    <Value>YES</Value>
+                    <ValueType>Bool</ValueType>
+                    <Description>Wait for exit on uninstall </Description>
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
+            </ActionItem>
+            <ActionItem Name="LAV Extension Installer" ActionType="Extension Installer" ConditionGroup="LAVFilters">
               <Params>
                 <Items>
                   <SectionParam Name="Extension package">
-                    <Value>LAV\LAVFilters0.42.0.0.mpe1</Value>
+                    <Value>LAV\LAVFilters0.43.0.0.mpe1</Value>
                     <ValueType>File</ValueType>
                     <Description>Location of the extension package</Description>
                   </SectionParam>
@@ -2827,10 +2830,10 @@ public class Script
         <SubSystemsUsed>
           <Items>
             <SubSystemItem Name="MP.Players.Video" />
+            <SubSystemItem Name="MP.SkinEngine" />
             <SubSystemItem Name="MP.Input" />
             <SubSystemItem Name="MP.Externals.SQLite" />
             <SubSystemItem Name="MP.Config" />
-            <SubSystemItem Name="MP.SkinEngine" />
           </Items>
         </SubSystemsUsed>
       </PluginDependencyItem>
@@ -2845,23 +2848,15 @@ public class Script
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
       <Major>1</Major>
-      <Minor>0</Minor>
+      <Minor>1</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>added: support for "next page" while viewing catgeories
-added: source filter that supports HTTP ranges and RTMP using rtmplib
-added: updated siteutil dlls will be reloaded while MediaPortal is running
-added: latest online videos can be shown e.g. on Basic Home screen
-added: downloads can be enqueued or concurrent
-added: open a group of sites directly via load paramter
-added: favorited categories are marked and removable in their respective sites
-added: play a video by pressing PLAY without showing the choices dialog
-changed: OnlineVideos uses its own logfile</VersionDescription>
+    <VersionDescription />
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.0.0.0.mpe1</OnlineLocation>
-    <ReleaseDate>2011-12-18T11:00:00</ReleaseDate>
+    <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.1.0.0.mpe1</OnlineLocation>
+    <ReleaseDate>2012-01-06T11:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
     <Params>
@@ -4606,6 +4601,83 @@ changed: OnlineVideos uses its own logfile</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{d1dd2831-6d4c-49ba-8b59-ccd6b7744568}-BrassBandTube.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BrassBandTube.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\abc.com.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bb7b8f11-05fb-43fb-b318-beeab68eb7d2}-abc.com.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\abc.com.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\diy network canada.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{2ebeef86-809e-4aa3-a7c2-268e8d6f0062}-diy network canada.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\diy network canada.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\global tv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b8b16c23-55e7-4db6-ba7e-1954b74ac8b9}-global tv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\global tv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\hgtv.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{446349dc-a800-4877-a8e0-ddc1f7c0f9bb}-hgtv.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\hgtv.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\history television.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4af491bb-02a7-4b65-b6e0-228bf6fc1755}-history television.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\history television.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\MuzuTV.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{974256f4-32d5-4fbe-b93f-3508f816fd43}-MuzuTV.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MuzuTV.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\showcase.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ea1a102a-1b2c-4fe9-98fc-8a002ccc146d}-showcase.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\showcase.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\slice.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4b500f2b-605e-4ce2-9f8a-d8c4bae44dee}-slice.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\slice.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\the food network.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{f23754b9-0917-42cc-aea3-34862bf44806}-the food network.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\the food network.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\tvtropolis.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{97f97ac0-4378-4638-8e69-1b2991275b71}-tvtropolis.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\tvtropolis.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\MuzuTV.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{e1278496-a778-4c6e-aa8e-d3e83fe362c1}-MuzuTV.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MuzuTV.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -4625,7 +4697,7 @@ changed: OnlineVideos uses its own logfile</VersionDescription>
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.0.0.0\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.1.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
@@ -4640,7 +4712,7 @@ changed: OnlineVideos uses its own logfile</VersionDescription>
         <LocalFileName>C:\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{01ff36dd-4b5a-47d0-88c4-ed79b4ae9e47}-OnlineVideos.Sites.brownard.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</DestinationFilename>
-      </FileItem>      
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -5169,8 +5241,8 @@ changed: OnlineVideos uses its own logfile</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>LAV\LAVFilters0.42.0.0.mpe1</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{bf87ba97-6256-4de1-a678-87cf2759385a}-LAVFilters0.42.0.0.mpe1</ZipFileName>
+        <LocalFileName>LAV\LAVFilters0.43.0.0.mpe1</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bf87ba97-6256-4de1-a678-87cf2759385a}-LAVFilters0.43.0.0.mpe1</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
