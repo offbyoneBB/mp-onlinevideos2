@@ -10,7 +10,7 @@ using System.Net;
 
 namespace OnlineVideos.Sites.georgius
 {
-    public class VideaCeskyCzUtil : SiteUtilBase, IRequestHandler
+    public class VideaCeskyCzUtil : SiteUtilBase
     {
         #region Private fields
 
@@ -58,7 +58,6 @@ namespace OnlineVideos.Sites.georgius
         public VideaCeskyCzUtil()
             : base()
         {
-            ReverseProxy.Instance.AddHandler(this);
         }
 
         #endregion
@@ -387,88 +386,6 @@ namespace OnlineVideos.Sites.georgius
         //        Url = String.Format(VideaCeskyCzUtil.searchQueryUrl, query)
         //    });
         //}
-
-        #endregion
-
-        #region IRequestHandler Members
-
-        bool IRequestHandler.DetectInvalidPackageHeader()
-        {
-            return false;
-        }
-
-        void IRequestHandler.HandleRequest(string url, HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
-        {
-            try
-            {
-                NameValueCollection paramsHash = System.Web.HttpUtility.ParseQueryString(new Uri(url).Query);
-
-                if (!String.IsNullOrEmpty(paramsHash["url"]))
-                {
-                    ConnectAndGetStream(paramsHash["url"].Replace("videaceskycz-", ""), request, response);
-                }
-            }
-            finally
-            {
-            }
-        }
-
-        private static void ConnectAndGetStream(String url, HybridDSP.Net.HTTP.HTTPServerRequest request, HybridDSP.Net.HTTP.HTTPServerResponse response)
-        {
-            Stream responseStream = null;
-            Stream remoteResponseStream = null;
-            try
-            {
-                request.KeepAlive = true; // keep connection alive
-                response.ContentType = "video/x-flv";
-                response.KeepAlive = true;
-
-                HttpWebRequest remoteWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
-                HttpWebResponse remoteWebResponse = (HttpWebResponse)remoteWebRequest.GetResponse();
-
-                if (request.Get("User-Agent") != OnlineVideos.OnlineVideoSettings.Instance.UserAgent)
-                {
-                    response.ContentLength = remoteWebResponse.ContentLength;
-                }
-
-                responseStream = response.Send();
-                remoteResponseStream = remoteWebResponse.GetResponseStream();
-
-                Byte[] buffer = new Byte[64 * 1024];
-                int readedBytes = 0;
-                do
-                {
-                    readedBytes = remoteResponseStream.Read(buffer, 0, buffer.Length);
-                    responseStream.Write(buffer, 0, readedBytes);
-                }
-                while (readedBytes != 0);
-
-                responseStream.Close();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-
-                if (remoteResponseStream != null)
-                {
-                    remoteResponseStream.Close();
-                    remoteResponseStream.Dispose();
-                    remoteResponseStream = null;
-                }
-
-                if (responseStream != null)
-                {
-                    responseStream.Close();
-                }
-                else
-                {
-                    // no data to play was ever received and send to the requesting client -> send an error now
-                    response.ContentLength = 0;
-                    response.StatusAndReason = HybridDSP.Net.HTTP.HTTPServerResponse.HTTPStatus.HTTP_INTERNAL_SERVER_ERROR;
-                    response.Send().Close();
-                }
-            }
-        }
 
         #endregion
     }
