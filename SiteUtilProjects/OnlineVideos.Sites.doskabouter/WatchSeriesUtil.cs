@@ -351,29 +351,11 @@ namespace OnlineVideos.Sites
                 foreach (string name in video.PlaybackOptions.Keys)
                 {
                     PlaybackElement element = new PlaybackElement(name, video.PlaybackOptions[name]);
-
-                    if (element.server.StartsWith("youtube.com"))
-                    {
-                        Dictionary<string, string> savOptions = video.PlaybackOptions;
-                        video.GetPlaybackOptionUrl(name);
-                        foreach (string nm in video.PlaybackOptions.Keys)
-                        {
-                            PlaybackElement el = new PlaybackElement();
-                            el.server = element.server;
-                            el.extra = nm;
-                            el.percentage = element.percentage;
-                            lst.Add(el);
-                        }
-                        video.PlaybackOptions = savOptions;
-                    }
-                    else
-                    {
-                        element.status = "ns";
-                        if (element.server.Equals("videoclipuri") ||
-                            HosterFactory.ContainsName(element.server.ToLower().Replace("google", "googlevideo")))
-                            element.status = String.Empty;
-                        lst.Add(element);
-                    }
+                    element.status = "ns";
+                    if (element.server.Equals("videoclipuri") ||
+                        HosterFactory.ContainsName(element.server.ToLower().Replace("google", "googlevideo")))
+                        element.status = String.Empty;
+                    lst.Add(element);
                 }
 
             Dictionary<string, int> counts = new Dictionary<string, int>();
@@ -580,7 +562,6 @@ namespace OnlineVideos.Sites
             public override string GetPlaybackOptionUrl(string url)
             {
                 string newUrl = base.PlaybackOptions[url];
-                if (newUrl.StartsWith(@"http://youtube.com/get_video?video_id=")) return newUrl; //already handled youtube link
 
                 parent.GetBaseCookie();
                 string webData = GetWebData(newUrl, parent.cc);
