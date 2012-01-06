@@ -2432,7 +2432,7 @@
       <GroupItem Name="LAVFilters">
         <ParentGroup>Plugin</ParentGroup>
         <DisplayName>LAV Filters</DisplayName>
-        <DefaulChecked>true</DefaulChecked>
+        <DefaulChecked>false</DefaulChecked>
         <Description>LAV Filters are a set of open-source DirectShow filters, aimed to play all modern media.</Description>
         <Files>
           <Items />
