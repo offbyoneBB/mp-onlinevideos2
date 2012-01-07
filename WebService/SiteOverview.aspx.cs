@@ -54,7 +54,7 @@ namespace OnlineVideos.WebService
             {
                 if (dc.DatabaseExists())
                 {
-                    var query = from a in dc.Site select new { Description = a.Description, Language = a.Language, IsAdult = a.IsAdult, LastUpdated = a.LastUpdated, Name = a.Name, State = a.State, Owner_FK = a.Owner_FK, RequiredDll = a.RequiredDll };
+					var query = from a in dc.Site select new { Description = a.Description, Language = a.Language, IsAdult = a.IsAdult, LastUpdated = a.LastUpdated, Name = a.Name, State = a.State, Owner_FK = a.Owner_FK, RequiredDll = a.RequiredDll, ReportCount = (uint)dc.Report.Count(r => r.Site_FK == a.Name) };
                     switch (e.SortExpression)
                     {
                         case "Name": query = query.OrderBy(s => s.Name); break;
