@@ -135,7 +135,8 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                Log.Warn(@"could not extract RTMP Url from Thumbnail");
+                Log.Warn(@"could not extract RTMP Url from Thumbnail Url: {0}", result);
+                result = String.Empty;
             }
 
             return result;
