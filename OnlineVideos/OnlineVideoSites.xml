@@ -852,15 +852,13 @@
         <item key="fileUrlFormatString"><![CDATA[http://video.spiegel.de/flash/{0}_996x560_H264_1400.mp4]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Aktuell">http://www.spiegel.de/video/aktuell/index.rss</Category>
-        <Category xsi:type="RssLink" name="News">http://www.spiegel.de/video/news/index.rss</Category>
         <Category xsi:type="RssLink" name="Politik und Wirtschaft">http://www.spiegel.de/video/politik_wirtschaft/index.rss</Category>
         <Category xsi:type="RssLink" name="Panorama">http://www.spiegel.de/video/panorama/index.rss</Category>
         <Category xsi:type="RssLink" name="Kino">http://www.spiegel.de/video/kino/index.rss</Category>
         <Category xsi:type="RssLink" name="Kultur">http://www.spiegel.de/video/kultur/index.rss</Category>
         <Category xsi:type="RssLink" name="Sport">http://www.spiegel.de/video/sport/index.rss</Category>
         <Category xsi:type="RssLink" name="Wissen und Technik">http://www.spiegel.de/video/wissenschaft_technik/index.rss</Category>
-        <Category xsi:type="RssLink" name="Satiren und Blogs">http://www.spiegel.de/video/satire_blogs/index.rss</Category>
+        <Category xsi:type="RssLink" name="Blogs">http://www.spiegel.de/video/blogs/index.rss</Category>
         <Category xsi:type="RssLink" name="SpiegelTV Magazin">http://www.spiegel.de/video/spiegeltv/index.rss</Category>
       </Categories>
     </Site>
