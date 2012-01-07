@@ -17,6 +17,11 @@
             EnableModelValidation="True" Font-Names="Calibri">
             <RowStyle ForeColor="#000066" />
         <Columns>
+            <asp:TemplateField HeaderText="Nr." ItemStyle-HorizontalAlign="Right">
+                <ItemTemplate>
+                    <asp:Label runat="server" Text='<%# ((int)DataBinder.Eval(Container, "DataItemIndex")+1).ToString() + "." %>' />
+                </ItemTemplate>
+            </asp:TemplateField>
             <asp:ImageField HeaderText="Logo" DataImageUrlField="Name" 
                 DataImageUrlFormatString="./Icons/{0}.png" ControlStyle-Width="48" 
                 ControlStyle-Height="48">
