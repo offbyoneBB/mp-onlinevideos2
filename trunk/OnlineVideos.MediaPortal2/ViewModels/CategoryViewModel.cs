@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using MediaPortal.Common.General;
 using MediaPortal.UI.Presentation.DataObjects;
+using MediaPortal.UI.SkinEngine.ScreenManagement;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -41,12 +42,12 @@ namespace OnlineVideos.MediaPortal2
             set { _estimatedChildrenProperty.SetValue(value); }
         }
 
-        protected AbstractProperty _hasFocus;
-        public AbstractProperty HasFocusProperty { get { return _hasFocus; } }
-        public bool HasFocus
+        protected AbstractProperty _focusPrio;
+        public AbstractProperty FocusPrioProperty { get { return _focusPrio; } }
+        public SetFocusPriority FocusPrio
         {
-            get { return (bool)_hasFocus.GetValue(); }
-            set { _hasFocus.SetValue(value); }
+            get { return (SetFocusPriority)_focusPrio.GetValue(); }
+            set { _focusPrio.SetValue(value); }
         }
 
         protected Category _category;
@@ -63,7 +64,7 @@ namespace OnlineVideos.MediaPortal2
             _descriptionProperty = new WProperty(typeof(string), category.Description);
             _thumbProperty = new WProperty(typeof(string), null);
             _estimatedChildrenProperty = new WProperty(typeof(uint?), CalculateChildrenCount());
-            _hasFocus = new WProperty(typeof(bool), false);
+			_focusPrio = new WProperty(typeof(SetFocusPriority), SetFocusPriority.None);
 
             _category.PropertyChanged += (sender, e) => { if (e.PropertyName == "ThumbnailImage") Thumb = Category.ThumbnailImage; };
 

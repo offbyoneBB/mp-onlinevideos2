@@ -5,6 +5,7 @@ using System.Text;
 using MediaPortal.Common.General;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UiComponents.Media.General;
+using MediaPortal.UI.SkinEngine.ScreenManagement;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -50,13 +51,13 @@ namespace OnlineVideos.MediaPortal2
             set { _thumbnailImageProperty.SetValue(value); }
         }
 
-        protected AbstractProperty _hasFocus;
-        public AbstractProperty HasFocusProperty { get { return _hasFocus; } }
-        public bool HasFocus
-        {
-            get { return (bool)_hasFocus.GetValue(); }
-            set { _hasFocus.SetValue(value); }
-        }
+		protected AbstractProperty _focusPrio;
+		public AbstractProperty FocusPrioProperty { get { return _focusPrio; } }
+		public SetFocusPriority FocusPrio
+		{
+			get { return (SetFocusPriority)_focusPrio.GetValue(); }
+			set { _focusPrio.SetValue(value); }
+		}
         
         protected VideoInfo _videoInfo;
         public VideoInfo VideoInfo
@@ -68,7 +69,7 @@ namespace OnlineVideos.MediaPortal2
         {
             _titleProperty = new WProperty(typeof(string), title);
             _thumbnailImageProperty = new WProperty(typeof(string), thumbImage);
-            _hasFocus = new WProperty(typeof(bool), false);
+			_focusPrio = new WProperty(typeof(SetFocusPriority), SetFocusPriority.None);
         }
 
         public VideoInfoViewModel(VideoInfo videoInfo)
@@ -81,7 +82,7 @@ namespace OnlineVideos.MediaPortal2
             _descriptionProperty = new WProperty(typeof(string), videoInfo.Description);
             _lengthProperty = new WProperty(typeof(string), videoInfo.Length);
             _thumbnailImageProperty = new WProperty(typeof(string), videoInfo.ThumbnailImage);
-            _hasFocus = new WProperty(typeof(bool), false);
+			_focusPrio = new WProperty(typeof(SetFocusPriority), SetFocusPriority.None);
 
             _videoInfo.PropertyChanged += (sender, e) => { if (e.PropertyName == "ThumbnailImage") ThumbnailImage = VideoInfo.ThumbnailImage; };
         }

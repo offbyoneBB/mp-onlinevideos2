@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MediaPortal.Common.General;
+using MediaPortal.UI.SkinEngine.ScreenManagement;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -15,12 +16,12 @@ namespace OnlineVideos.MediaPortal2
             get { return (SiteSettings)_settings.GetValue(); }
         }
 
-        protected AbstractProperty _hasFocus;
-        public AbstractProperty HasFocusProperty { get { return _hasFocus; } }
-        public bool HasFocus
+        protected AbstractProperty _focusPrio;
+        public AbstractProperty FocusPrioProperty { get { return _focusPrio; } }
+		public SetFocusPriority FocusPrio
         {
-            get { return (bool)_hasFocus.GetValue(); }
-            set { _hasFocus.SetValue(value); }
+			get { return (SetFocusPriority)_focusPrio.GetValue(); }
+            set { _focusPrio.SetValue(value); }
         }
 
         protected Sites.SiteUtilBase _site;
@@ -34,7 +35,7 @@ namespace OnlineVideos.MediaPortal2
             _site = site;
 
             _settings = new WProperty(typeof(SiteSettings), site.Settings);
-            _hasFocus = new WProperty(typeof(bool), false);
+			_focusPrio = new WProperty(typeof(SetFocusPriority), SetFocusPriority.None);
         }
     }
 }
