@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System.Web;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
@@ -116,21 +114,25 @@ namespace OnlineVideos.Sites
             {
                 string[] parts = video.VideoUrl.Split('/');
                 string fileName = parts[parts.Length - 1];
-                return ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                     String.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&playpath={1}&app={2}&swfVfy={3}&live=true",
-                     HttpUtility.UrlEncode(video.VideoUrl),
-                     HttpUtility.UrlEncode(fileName),
-                     HttpUtility.UrlEncode("live/" + fileName + "?auth=" + auth + "&aifp=v001"),
-                     HttpUtility.UrlEncode(@"http://www.abc.net.au/iview/images/iview.jpg")));
+                return new RtmpUrl(video.VideoUrl)
+                {
+                    SwfVerify = true,
+                    SwfUrl = @"http://www.abc.net.au/iview/images/iview.jpg",
+                    PlayPath = fileName,
+                    App = "live/" + fileName + "?auth=" + auth + "&aifp=v001",
+                    Live = true
+                }.ToString();
             }
             string host = doc.SelectSingleNode(@"a:iview/a:host", nsmRequest).InnerText;
 
-            string url;
+            RtmpUrl rtmpUrl;
             if (host.Equals("Akamai", StringComparison.InvariantCultureIgnoreCase))
-                url = String.Format("rtmpurl={0}&tcurl={1}",
-                    HttpUtility.UrlEncode(@"rtmp://cp53909.edgefcs.net///flash/playback/_definst_/" + video.VideoUrl),
-                    HttpUtility.UrlEncode(@"rtmp://cp53909.edgefcs.net/ondemand?auth=" + auth)
-                    );
+            {
+                rtmpUrl = new RtmpUrl(@"rtmp://cp53909.edgefcs.net///flash/playback/_definst_/" + video.VideoUrl)
+                {
+                    TcUrl = @"rtmp://cp53909.edgefcs.net/ondemand?auth=" + auth
+                };
+            }
             else
             {
                 string authUrl = doc.SelectSingleNode(@"a:iview/a:server", nsmRequest).InnerText +
@@ -138,16 +140,12 @@ namespace OnlineVideos.Sites
                 string vidUrl = video.VideoUrl;
                 if (vidUrl.EndsWith(".mp4", StringComparison.InvariantCultureIgnoreCase))
                     vidUrl = "mp4:" + vidUrl.Substring(0, vidUrl.Length - 4);
-                url = String.Format("rtmpurl={0}&playpath={1}",
-                    HttpUtility.UrlEncode(authUrl),
-                    HttpUtility.UrlEncode(vidUrl)
-                    );
+                rtmpUrl = new RtmpUrl(authUrl) { PlayPath = vidUrl };
             }
 
-            url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                string.Format("http://127.0.0.1/stream.flv?{0}&swfVfy={1}", url,
-                               HttpUtility.UrlEncode(@"http://www.abc.net.au/iview/images/iview.jpg")));
-            return url;
+            rtmpUrl.SwfVerify = true;
+            rtmpUrl.SwfUrl = @"http://www.abc.net.au/iview/images/iview.jpg";
+            return rtmpUrl.ToString();
         }
     }
 }
