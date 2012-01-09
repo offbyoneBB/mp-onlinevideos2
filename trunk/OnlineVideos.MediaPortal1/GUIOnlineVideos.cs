@@ -1999,23 +1999,16 @@ namespace OnlineVideos.MediaPortal1
             if (resolve)
             {
                 playItem.ChosenPlaybackOption = lsUrl;
-                if (playItem.Video.GetType().FullName == typeof(VideoInfo).FullName)
+                // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-                    Play_Step3(playItem, playItem.Video.GetPlaybackOptionUrl(lsUrl), goFullScreen);
-                }
-                else
+                    return playItem.Video.GetPlaybackOptionUrl(lsUrl);
+                },
+                delegate(bool success, object result)
                 {
-                    // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
-                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
-                    {
-                        return playItem.Video.GetPlaybackOptionUrl(lsUrl);
-                    },
-                    delegate(bool success, object result)
-                    {
-                        if (success) Play_Step3(playItem, result as string, goFullScreen);
-                    }
-					, Translation.Instance.GettingPlaybackUrlsForVideo, true);
+                    if (success) Play_Step3(playItem, result as string, goFullScreen);
                 }
+				, Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
             else
             {
