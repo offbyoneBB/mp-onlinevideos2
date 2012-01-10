@@ -352,10 +352,14 @@ namespace OnlineVideos.Sites
         {
             //Int64 retval=0;
            
-            string s = GetWebData("http://wiilook.netau.net/script/time.php");
-            s = s.Substring(1, s.IndexOf("<") - 1);
-            return Int64.Parse(s);
-
+            //string s = GetWebData("http://wiilook.netau.net/script/time.php");
+            //s = s.Substring(1, s.IndexOf("<") - 1);
+            //return Int64.Parse(s);
+			Int64 retval=0;
+            DateTime st= new DateTime(1970,1,1);
+            TimeSpan t= (DateTime.Now.ToUniversalTime()-st);
+            retval = (Int64)(t.TotalMilliseconds + 0.5);
+            return retval;
             //DateTime st= new DateTime(1970,1,1);
             //TimeSpan t= (DateTime.Now.ToUniversalTime()-st);
             //retval = (Int64)(t.TotalMilliseconds + 0.5);
