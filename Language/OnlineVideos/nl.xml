@@ -131,4 +131,26 @@
   <string Field="VideoQuality">Video kwaliteit</string>
   <string Field="Working">Bezig</string>
   <string Field="Writers">Auteurs</string>
+  <string Field="Settings_Yes">Ja</string>
+  <string Field="Settings_No">Nee</string>
+  <string Field="Settings_SearchHistoryType_Off">Uit</string>
+  <string Field="Settings_SearchHistoryType_Simple">Eenvoudig</string>
+  <string Field="Settings_SearchHistoryType_Extended">Uitgebreid</string>
+  <string Field="Settings_BasicHomeName">Basic Home naam</string>
+  <string Field="Settings_PluginEnabled">Plugin ingeschakeld</string>
+  <string Field="Settings_ListedInHome">In Home-lijst</string>
+  <string Field="Settings_ListedInPlugins">In Plugin-lijst</string>
+  <string Field="Settings_AutoGroupByLang">Sites automatisch groeperen per taal</string>
+  <string Field="Settings_UseQuickSelect">Alfanumerieke toetsen gebruiken voor snelle selectie</string>
+  <string Field="Settings_SearchHistoryType">Zoek-geschiedenis</string>
+  <string Field="Settings_ThumbAge">Maximale ouderdom (in dagen) voor voorvertoningen</string>
+  <string Field="Settings_CacheTimeout">Maximale ouderdom (in minuten) van gecachede web-data</string>
+  <string Field="Settings_CategoryDiscoveryTimeout">Maximale ouderdom (in minuten) van categorie-data</string>
+  <string Field="Settings_UtilTimeout">Timeout waarde voor web-aanvragen (in seconden)</string>
+  <string Field="Settings_WmpBuffer">Buffer-tijd (in milliseconden) voor afspelen met Windows Media Player</string>
+  <string Field="Settings_PlayBuffer">Buffer-percentage voor afspelen (overig)</string>
+  <string Field="Settings_FavoritesFirst">Favorieten en Downloads bovenaan in de lijst in plaats van onderaan</string>
+  <string Field="Settings_LatestVideosRandomize">Alle laatste videos in willekeurige volgorde laten zien</string>
+  <string Field="Settings_LatestVideosOnlineDataRefresh">Tijd (in minuten) waarna opnieuw de laatste videos worden opgezocht</string>
+  <string Field="Settings_LatestVideosGuiDataRefresh">Tijd (in seconden) waarna opnieuw de laatste videos worden getoond</string>
 </strings>
