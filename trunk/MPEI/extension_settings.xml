@@ -3,22 +3,22 @@
 		<setting entryname="plugins" name="OnlineVideos" displayname="Plugin Enabled" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
 	</disable_entry>
 	<settings section="Plugin">
-			<setting entryname="onlinevideos" name="basicHomeScreenName" displayname="Basic Home Name" defaultvalue="Online Videos" type="string" description="This name will appear on the Basic Home screen menu that goes to OnlineVideos." listvalues="" displaylistvalues=""/>
-			<setting entryname="plugins" name="OnlineVideos" displayname="Plugin Enabled" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
-			<setting entryname="home" name="OnlineVideos" displayname="Listed in Home" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
-			<setting entryname="myplugins" name="OnlineVideos" displayname="Listed in My Plugins" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/>
-      <setting entryname="onlinevideos" name="autoGroupByLang" displayname="Automatically group all sites by their language" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
-      <setting entryname="onlinevideos" name="useQuickSelect" displayname="Use alphanumeric keys to quickly select items by first letter" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/> 
-      <setting entryname="onlinevideos" name="searchHistoryType" displayname="Search history" defaultvalue="1" type="int" listvalues="0|1|2" displaylistvalues="Off|Simple|Extended"/>
-      <setting entryname="onlinevideos" name="thumbAge" displayname="Maximum age (days) for thumbnails" defaultvalue="100" type="int" listvalues="" displaylistvalues=""/>
-      <setting entryname="onlinevideos" type="int" name="cacheTimeout" displayname="Time (minutes) to cache data from the web" defaultvalue="30" listvalues="" displaylistvalues=""/>
-      <setting entryname="onlinevideos" type="int" name="categoryDiscoveryTimeout" displayname="Time (minutes) after which categories are reloaded from the web" defaultvalue="300" listvalues="" displaylistvalues=""/>
-      <setting entryname="onlinevideos" type="int" name="utilTimeout" displayname="Timeout (seconds) for webrequests" defaultvalue="15" listvalues="" displaylistvalues=""/>
-      <setting entryname="onlinevideos" type="int" name="wmpbuffer" displayname="Buffer (milliseconds) for Windows Media Player" defaultvalue="5000" listvalues="" displaylistvalues=""/>
-      <setting entryname="onlinevideos" type="int" name="playbuffer" displayname="Percentage to buffer before starting playback" defaultvalue="2" listvalues="" displaylistvalues=""/>
-      <setting entryname="onlinevideos" name="favoritesFirst" displayname="Put Favorites and Downloads sites first in the list instead of last" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/>
-      <setting entryname="onlinevideos" name="latestVideosRandomize" displayname="Randomize all latest videos before displaying" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="Yes|No"/>
-      <setting entryname="onlinevideos" type="int" name="latestVideosOnlineDataRefresh" displayname="Refresh latest videos data from web every x minutes" defaultvalue="30"/>
-      <setting entryname="onlinevideos" type="int" name="latestVideosGuiDataRefresh" displayname="Refresh displayed latest videos every x seconds" defaultvalue="30"/>
+			<setting entryname="onlinevideos" name="basicHomeScreenName" displayname="#OnlineVideos.Translation.Settings_BasicHomeName.Label" defaultvalue="Online Videos" type="string" description="This name will appear on the Basic Home screen menu that goes to OnlineVideos." listvalues="" displaylistvalues=""/>
+			<setting entryname="plugins" name="OnlineVideos" displayname="#OnlineVideos.Translation.Settings_PluginEnabled.Label" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="#OnlineVideos.Translation.Settings_Yes.Label|#OnlineVideos.Translation.Settings_No.Label"/> 
+			<setting entryname="home" name="OnlineVideos" displayname="#OnlineVideos.Translation.Settings_ListedInHome.Label" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="#OnlineVideos.Translation.Settings_Yes.Label|#OnlineVideos.Translation.Settings_No.Label"/> 
+			<setting entryname="myplugins" name="OnlineVideos" displayname="#OnlineVideos.Translation.Settings_ListedInPlugins.Label" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="#OnlineVideos.Translation.Settings_Yes.Label|#OnlineVideos.Translation.Settings_No.Label"/>
+      <setting entryname="onlinevideos" name="autoGroupByLang" displayname="#OnlineVideos.Translation.Settings_AutoGroupByLang.Label" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="#OnlineVideos.Translation.Settings_Yes.Label|#OnlineVideos.Translation.Settings_No.Label"/> 
+      <setting entryname="onlinevideos" name="useQuickSelect" displayname="#OnlineVideos.Translation.Settings_UseQuickSelect.Label" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="#OnlineVideos.Translation.Settings_Yes.Label|#OnlineVideos.Translation.Settings_No.Label"/> 
+      <setting entryname="onlinevideos" name="searchHistoryType" displayname="#OnlineVideos.Translation.Settings_SearchHistoryType.Label" defaultvalue="1" type="int" listvalues="0|1|2" displaylistvalues="#OnlineVideos.Translation.Settings_SearchHistoryType_Off.Label|#OnlineVideos.Translation.Settings_SearchHistoryType_Simple.Label|#OnlineVideos.Translation.Settings_SearchHistoryType_Extended.Label"/>
+      <setting entryname="onlinevideos" name="thumbAge" displayname="#OnlineVideos.Translation.Settings_ThumbAge.Label" defaultvalue="100" type="int" listvalues="" displaylistvalues=""/>
+      <setting entryname="onlinevideos" type="int" name="cacheTimeout" displayname="#OnlineVideos.Translation.Settings_CacheTimeout.Label" defaultvalue="30" listvalues="" displaylistvalues=""/>
+      <setting entryname="onlinevideos" type="int" name="categoryDiscoveryTimeout" displayname="#OnlineVideos.Translation.Settings_CategoryDiscoveryTimeout.Label" defaultvalue="300" listvalues="" displaylistvalues=""/>
+      <setting entryname="onlinevideos" type="int" name="utilTimeout" displayname="#OnlineVideos.Translation.Settings_UtilTimeout.Label" defaultvalue="15" listvalues="" displaylistvalues=""/>
+      <setting entryname="onlinevideos" type="int" name="wmpbuffer" displayname="#OnlineVideos.Translation.Settings_WmpBuffer.Label" defaultvalue="5000" listvalues="" displaylistvalues=""/>
+      <setting entryname="onlinevideos" type="int" name="playbuffer" displayname="#OnlineVideos.Translation.Settings_PlayBuffer.Label" defaultvalue="2" listvalues="" displaylistvalues=""/>
+      <setting entryname="onlinevideos" name="favoritesFirst" displayname="#OnlineVideos.Translation.Settings_FavoritesFirst.Label" defaultvalue="no" type="string" listvalues="yes|no" displaylistvalues="#OnlineVideos.Translation.Settings_Yes.Label|#OnlineVideos.Translation.Settings_No.Label"/>
+      <setting entryname="onlinevideos" name="latestVideosRandomize" displayname="#OnlineVideos.Translation.Settings_LatestVideosRandomize.Label" defaultvalue="yes" type="string" listvalues="yes|no" displaylistvalues="#OnlineVideos.Translation.Settings_Yes.Label|#OnlineVideos.Translation.Settings_No.Label"/>
+      <setting entryname="onlinevideos" type="int" name="latestVideosOnlineDataRefresh" displayname="#OnlineVideos.Translation.Settings_LatestVideosOnlineDataRefresh.Label" defaultvalue="30"/>
+      <setting entryname="onlinevideos" type="int" name="latestVideosGuiDataRefresh" displayname="#OnlineVideos.Translation.Settings_LatestVideosGuiDataRefresh.Label" defaultvalue="30"/>
   </settings>
 </extension_settings>
