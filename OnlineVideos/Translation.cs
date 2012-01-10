@@ -237,5 +237,29 @@ namespace OnlineVideos
         // Y
 
         // Z
+
+		// Strings from the settings file
+		public string Settings_Yes = "Yes";
+		public string Settings_No = "No";
+		public string Settings_SearchHistoryType_Off = "Off";
+		public string Settings_SearchHistoryType_Simple = "Simple";
+		public string Settings_SearchHistoryType_Extended = "Extended";
+		public string Settings_BasicHomeName = "Basic Home Name";
+		public string Settings_PluginEnabled = "Plugin Enabled";
+		public string Settings_ListedInHome = "Listed in Home";
+		public string Settings_ListedInPlugins = "Listed in My Plugins";
+		public string Settings_AutoGroupByLang = "Automatically group all sites by their language";
+		public string Settings_UseQuickSelect = "Use alphanumeric keys to quickly select items by first letter";
+		public string Settings_SearchHistoryType = "Search history";
+		public string Settings_ThumbAge = "Maximum age (days) for thumbnails";
+		public string Settings_CacheTimeout = "Time (minutes) to cache data from the web";
+		public string Settings_CategoryDiscoveryTimeout = "Time (minutes) after which categories are reloaded from the web";
+		public string Settings_UtilTimeout = "Timeout (seconds) for webrequests";
+		public string Settings_WmpBuffer = "Buffer (milliseconds) for Windows Media Player";
+		public string Settings_PlayBuffer = "Percentage to buffer before starting playback";
+		public string Settings_FavoritesFirst = "Put Favorites and Downloads sites first in the list instead of last";
+		public string Settings_LatestVideosRandomize = "Randomize all latest videos before displaying";
+		public string Settings_LatestVideosOnlineDataRefresh = "Refresh latest videos data from web every x minutes";
+		public string Settings_LatestVideosGuiDataRefresh = "Refresh displayed latest videos every x seconds";
     }
 }

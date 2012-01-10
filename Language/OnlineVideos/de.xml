@@ -131,4 +131,26 @@
   <string Field="VideoQuality">Video Qualität</string>
   <string Field="Working">Funktionierend</string>
   <string Field="Writers">Autoren</string>
+  <string Field="Settings_Yes">Ja</string>
+  <string Field="Settings_No">Nein</string>
+  <string Field="Settings_SearchHistoryType_Off">Kein Verlauf</string>
+  <string Field="Settings_SearchHistoryType_Simple">Letzte Suche</string>
+  <string Field="Settings_SearchHistoryType_Extended">Liste der letzten</string>
+  <string Field="Settings_BasicHomeName">Name im BasicHome Fenster</string>
+  <string Field="Settings_PluginEnabled">Erweiterung Aktiviert</string>
+  <string Field="Settings_ListedInHome">Aufgelisted im Home Menü</string>
+  <string Field="Settings_ListedInPlugins">Aufgelisted im Erweiterungen Menü</string>
+  <string Field="Settings_AutoGroupByLang">Automatisch alle Sites nach Sprache gruppieren</string>
+  <string Field="Settings_UseQuickSelect">Buchstaben- und Zahlentasten zum Springen in Auflistungen verwenden</string>
+  <string Field="Settings_SearchHistoryType">Suchverlauf</string>
+  <string Field="Settings_ThumbAge">Maximales Alter (Tage) bevor Miniaturbilder gelöscht werden</string>
+  <string Field="Settings_CacheTimeout">Dauer (Minuten) für die Internetdaten zwischengespeichert werden</string>
+  <string Field="Settings_CategoryDiscoveryTimeout">Dauer (Minuten) nach der Rubriken neu geladen werden</string>
+  <string Field="Settings_UtilTimeout">Dauer (Sekunden) nach welcher Internetaufrufe abgebrochen werden</string>
+  <string Field="Settings_WmpBuffer">Puffer (Millisekunden) für abzuspielenden Dateien mit WindowsMediaPlayer</string>
+  <string Field="Settings_PlayBuffer">Puffer (Prozent) für abzuspielende Dateien</string>
+  <string Field="Settings_FavoritesFirst">Favorites und Downloads am Start der Liste</string>
+  <string Field="Settings_LatestVideosRandomize">Zufällige Anordnung der neuesten Videos</string>
+  <string Field="Settings_LatestVideosOnlineDataRefresh">Aktualisierung (Minuten) der neuesten Videos aus dem Internet</string>
+  <string Field="Settings_LatestVideosGuiDataRefresh">Aktualisierung (Sekunden) der Anzeige der neuesten Videos</string>
 </strings>

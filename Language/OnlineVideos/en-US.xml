@@ -176,4 +176,28 @@
 
   <!-- Y -->
 
+  <!-- Strings from the settings file -->
+  <string Field="Settings_Yes">Yes</string>
+  <string Field="Settings_No">No</string>
+  <string Field="Settings_SearchHistoryType_Off">Off</string>
+  <string Field="Settings_SearchHistoryType_Simple">Simple</string>
+  <string Field="Settings_SearchHistoryType_Extended">Extended</string>
+  <string Field="Settings_BasicHomeName">Basic Home Name</string>
+  <string Field="Settings_PluginEnabled">Plugin Enabled</string>
+  <string Field="Settings_ListedInHome">Listed in Home</string>
+  <string Field="Settings_ListedInPlugins">Listed in My Plugins</string>
+  <string Field="Settings_AutoGroupByLang">Automatically group all sites by their language</string>
+  <string Field="Settings_UseQuickSelect">Use alphanumeric keys to quickly select items by first letter</string>
+  <string Field="Settings_SearchHistoryType">Search history</string>
+  <string Field="Settings_ThumbAge">Maximum age (days) for thumbnails</string>
+  <string Field="Settings_CacheTimeout">Time (minutes) to cache data from the web</string>
+  <string Field="Settings_CategoryDiscoveryTimeout">Time (minutes) after which categories are reloaded from the web</string>
+  <string Field="Settings_UtilTimeout">Timeout (seconds) for webrequests</string>
+  <string Field="Settings_WmpBuffer">Buffer (milliseconds) for Windows Media Player</string>
+  <string Field="Settings_PlayBuffer">Percentage to buffer before starting playback</string>
+  <string Field="Settings_FavoritesFirst">Put Favorites and Downloads sites first in the list instead of last</string>
+  <string Field="Settings_LatestVideosRandomize">Randomize all latest videos before displaying</string>
+  <string Field="Settings_LatestVideosOnlineDataRefresh">Refresh latest videos data from web every x minutes</string>
+  <string Field="Settings_LatestVideosGuiDataRefresh">Refresh displayed latest videos every x seconds</string>
+
 </strings>
