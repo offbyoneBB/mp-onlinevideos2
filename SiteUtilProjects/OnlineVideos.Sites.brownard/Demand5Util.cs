@@ -91,7 +91,7 @@ namespace OnlineVideos.Sites
                 return getRecentlyOnVids(rss.Url);
 
             List<VideoInfo> vids = getVideoListInternal(rss.Url + "/episodes");
-            if(vids.Count == 0)
+            if (vids.Count == 0)
                 vids = getVideoListInternal(rss.Url);
 
             return vids;
@@ -115,6 +115,7 @@ namespace OnlineVideos.Sites
             return vids;
         }
 
+        List<string> nextPageUrls = new List<string>();
         List<VideoInfo> getVideoListInternal(string url)
         {
             List<VideoInfo> vids = new List<VideoInfo>();
@@ -131,6 +132,12 @@ namespace OnlineVideos.Sites
                 vids.Add(vid);
             }
 
+            if (!url.EndsWith("&subepisodes=yes"))
+            {
+                reg = new Regex(@"<h2><span class=""sifr_white""><a href="".*?[?]([^""]*)"">[^<]*</a>.*?<img.*? src="".*?[?](\d+)"".*?</h2>\s*</div><!-- /.group_heading -->\s*</div><!-- /.group_container -->");
+                foreach (Match m in reg.Matches(html))
+                    vids.AddRange(getVideoListInternal(string.Format("{0}/previous_episodes?_={1}&{2}&subepisodes=yes", url, m.Groups[2], m.Groups[1])));
+            }
             return vids;
         }
 
