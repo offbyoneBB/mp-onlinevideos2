@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
 using System.Web;
+using System.Linq;
 
 namespace OnlineVideos.Sites
 {
     public class UitzendingGemistUtil : GenericSiteUtil
     {
+
+        public enum VideoFormat { Wmv_Sb, Mov_Sb, Wmv_Bb, Mov_Bb, Mov_Std, Wvc1_Std };
+
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Preferred Format"), Description("Prefer this format when there are more than one for the desired quality.")]
+        VideoFormat preferredFormat = VideoFormat.Wvc1_Std;
+
         private enum UgType { None, Recent, Omroepen, Genres, AtoZ, Type1, AtoZSub, Search };
         private RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
         private Regex savedRegEx_dynamicSubCategoriesNextPage;
@@ -99,7 +107,6 @@ namespace OnlineVideos.Sites
                 }
             string data = GetWebData(((RssLink)parentCat).Url, userAgent: UgUserAgent);
             int res = ParseSubCategories(parentCat, data);
-            //int res = base.DiscoverSubCategories(parentCat);
             if (res > 0)
                 foreach (RssLink cat in parentCat.SubCategories)
                 {
@@ -115,6 +122,29 @@ namespace OnlineVideos.Sites
                         cat.Other = subType;
                     }
                 }
+            return res;
+        }
+
+        public override string getUrl(VideoInfo video)
+        {
+            string res = base.getUrl(video);
+            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
+            {
+                foreach (KeyValuePair<string, string> kv in video.PlaybackOptions)
+                {
+                    VideoFormat fmt;
+                    try
+                    {
+                        fmt = (VideoFormat)Enum.Parse(typeof(VideoFormat), kv.Key.Replace(' ', '_'), true);
+                        if (Enum.IsDefined(typeof(VideoFormat), fmt) && fmt.Equals(preferredFormat))
+                            return kv.Value;
+                    }
+                    catch (ArgumentException)
+                    {
+                    }
+                }
+                res = video.PlaybackOptions.Last().Value;
+            }
             return res;
         }
 

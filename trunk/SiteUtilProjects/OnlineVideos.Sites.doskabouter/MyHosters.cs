@@ -236,6 +236,9 @@ namespace OnlineVideos.Hoster
     public class PlayerOmroep : HosterBase
     {
 
+        private static readonly string[] sortedFormats = new string[] { "wmv", "mov", "wvc1" };
+        private static readonly string[] sortedQualities = new string[] { "sb", "bb", "std" };
+
         public override string getHosterUrl()
         {
             return "player.omroep.nl";
@@ -248,7 +251,8 @@ namespace OnlineVideos.Hoster
 
             int aflID = Convert.ToInt32(url.Split('&')[0].Split('=')[1]);
             XmlDocument doc = new XmlDocument();
-            doc.Load(@"http://pi.omroep.nl/info/security/");
+            string seqData = SiteUtilBase.GetWebData(@"http://pi.omroep.nl/info/security/");
+            doc.LoadXml(seqData);
             string data = doc.SelectSingleNode("session/key").InnerText;
             byte[] tmp = Convert.FromBase64String(data);
             string[] secparts = Encoding.ASCII.GetString(tmp).Split('|');
@@ -257,7 +261,10 @@ namespace OnlineVideos.Hoster
             string hash = Utils.GetMD5Hash(prehash).ToUpperInvariant();
             string url2 = String.Format(@"http://pi.omroep.nl/info/stream/aflevering/{0}/{1}", aflID, hash);
             doc.Load(url2);
-            Dictionary<string, string> PlaybackOptions = new Dictionary<string, string>();
+
+            List<KeyValuePair<KeyValuePair<string, string>, string>> playbackOptions =
+                new List<KeyValuePair<KeyValuePair<string, string>, string>>();
+
             foreach (XmlNode node in doc.SelectNodes("streams/stream"))
             {
                 string quality = node.Attributes["compressie_kwaliteit"].Value;
@@ -265,10 +272,16 @@ namespace OnlineVideos.Hoster
                 string streamUrl = node.SelectSingleNode("streamurl").InnerText.Trim();
                 if (!String.IsNullOrEmpty(streamUrl) && Uri.IsWellFormedUriString(streamUrl, System.UriKind.Absolute))
                 {
-                    PlaybackOptions.Add(format + ' ' + quality, streamUrl);
+                    KeyValuePair<string, string> q = new KeyValuePair<string, string>(quality, format);
+                    playbackOptions.Add(new KeyValuePair<KeyValuePair<string, string>, string>(q, streamUrl));
                 }
             }
-            return PlaybackOptions;
+            playbackOptions.Sort(Compare);
+
+            Dictionary<string, string> res = new Dictionary<string, string>();
+            foreach (KeyValuePair<KeyValuePair<string, string>, string> kv in playbackOptions)
+                res.Add(kv.Key.Value + ' ' + kv.Key.Key, kv.Value);
+            return res;
         }
 
         public override string getVideoUrls(string url)
@@ -303,6 +316,14 @@ namespace OnlineVideos.Hoster
 
             }
             return null;
+        }
+
+        public int Compare(KeyValuePair<KeyValuePair<string, string>, string> a, KeyValuePair<KeyValuePair<string, string>, string> b)
+        {
+            int res = Array.IndexOf(sortedQualities, a.Key.Key).CompareTo(Array.IndexOf(sortedQualities, b.Key.Key));
+            if (res != 0)
+                return res;
+            return Array.IndexOf(sortedFormats, a.Key.Value).CompareTo(Array.IndexOf(sortedFormats, b.Key.Value));
         }
     }
 
