@@ -73,7 +73,6 @@ namespace OnlineVideos.Sites
 
                         info = string.Format("{0}x{1} | {2} kbps | {3}", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"), connectionElem.Attributes["kind"].Value);
                         resultUrl = "";
-
                         if (connectionElem.Attributes["kind"].Value == "limelight")
                         {
 							resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth), server, 1935) 
@@ -181,32 +180,42 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            parentCategory.SubCategories = new List<Category>();
+            parentCategory.SubCategories = discoverSubCategoriesLocal(parentCategory, (parentCategory as RssLink).Url);
+            parentCategory.SubCategoriesDiscovered = true;
+            return parentCategory.SubCategories.Count;
+        }
+
+        List<Category> discoverSubCategoriesLocal(Category parentCategory, string url)
+        {
+            List<Category> subCategories = new List<Category>();
             Dictionary<string, List<VideoInfo>> possibleSubCatStrings = new Dictionary<string, List<VideoInfo>>();
-            List<VideoInfo> allOthers = new List<VideoInfo>();            
-            List<VideoInfo> videos = getVideoListInternal((parentCategory as RssLink).Url);
+            //List<VideoInfo> allOthers = new List<VideoInfo>();            
+            List<VideoInfo> videos = getVideoListInternal(url);
             foreach (VideoInfo video in videos)
             {
-                int colonIndex = video.Title.IndexOf(":");
+                string title = video.Title;
+                int colonIndex = title.IndexOf(":");
                 if (colonIndex > 0)
                 {
-                    string title = video.Title.Substring(0, colonIndex);
-                    List<VideoInfo> catVids;
-                    if (!possibleSubCatStrings.TryGetValue(title, out catVids)) catVids = new List<VideoInfo>();
-                    catVids.Add(video);
-                    video.Title = video.Title.Substring(colonIndex+1).Trim();
-                    possibleSubCatStrings[title] = catVids;
+                    title = video.Title.Substring(0, colonIndex);
+                    video.Title = video.Title.Substring(colonIndex + 1).Trim();                    
                 }
-                else
-                {
-                    allOthers.Add(video);
-                }
+
+                List<VideoInfo> catVids;
+                if (!possibleSubCatStrings.TryGetValue(title, out catVids)) 
+                    catVids = new List<VideoInfo>();
+                catVids.Add(video);
+                possibleSubCatStrings[title] = catVids;
+                //else
+                //{
+                //    allOthers.Add(video);
+                //}
             }
-			if (allOthers.Count > 0)
-			{
-				// add all others on top
-				parentCategory.SubCategories.Add(new RssLink() { Name = "All Others", ParentCategory = parentCategory, Thumb = allOthers[0].ImageUrl, Other = allOthers, EstimatedVideoCount = (uint)allOthers.Count });
-			}
+            //if (allOthers.Count > 0)
+            //{
+            //    // add all others on top
+            //    parentCategory.SubCategories.Add(new RssLink() { Name = "All Others", ParentCategory = parentCategory, Thumb = allOthers[0].ImageUrl, Other = allOthers, EstimatedVideoCount = (uint)allOthers.Count });
+            //}
 			// sort the remaining alphabetically
 			string[] keys = new string[possibleSubCatStrings.Count];
 			possibleSubCatStrings.Keys.CopyTo(keys, 0);
@@ -214,10 +223,10 @@ namespace OnlineVideos.Sites
 			foreach (string key in keys)
 			{
 				List<VideoInfo> value = possibleSubCatStrings[key];
-				parentCategory.SubCategories.Add(new RssLink() { Name = key, ParentCategory = parentCategory, Thumb = value[0].ImageUrl, Other = value, EstimatedVideoCount = (uint)value.Count });
+				subCategories.Add(new RssLink() { Name = key, ParentCategory = parentCategory, Thumb = value[0].ImageUrl, Other = value, EstimatedVideoCount = (uint)value.Count });
 			}
-            parentCategory.SubCategoriesDiscovered = true;
-            return parentCategory.SubCategories.Count;
+
+            return subCategories;
         }
 
         List<VideoInfo> getVideoListInternal(string url)
@@ -235,12 +244,20 @@ namespace OnlineVideos.Sites
 
         #region Search
 
+        public override List<ISearchResultItem> DoSearch(string query)
+        {
+            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            foreach (Category cat in discoverSubCategoriesLocal(null, string.Format(searchUrl, query)))
+                results.Add(cat);
+            return results;
+        }
+
         public override bool CanSearch { get { return !string.IsNullOrEmpty(searchUrl); } }
 
-        public override List<VideoInfo> Search(string query)
-        {
-            return getVideoListInternal(string.Format(searchUrl, query));
-        }
+        //public override List<VideoInfo> Search(string query)
+        //{
+        //    return getVideoListInternal(string.Format(searchUrl, query));
+        //}
 
         #endregion
 
