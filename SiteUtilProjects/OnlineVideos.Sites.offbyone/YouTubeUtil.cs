@@ -128,6 +128,8 @@ namespace OnlineVideos.Sites
         const string PLAYLIST_FEED = "http://gdata.youtube.com/feeds/api/playlists/{0}";
 		const string USER_NEWSUBSCRIPTIONS_FEED = "http://gdata.youtube.com/feeds/api/users/default/newsubscriptionvideos";
 		const string USER_RECOMMENDATIONS_FEED = "https://gdata.youtube.com/feeds/api/users/default/recommendations";
+		const string USER_WATCH_LATER_FEED = "https://gdata.youtube.com/feeds/api/users/default/watch_later?v=2";
+		const string USER_WATCH_HISTORY_FEED = "https://gdata.youtube.com/feeds/api/users/default/watch_history?v=2";
         
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -144,20 +146,11 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getVideoList(Category category)
         {
             currentVideosTitle = null;  // use default title for videos retrieved via this method (which is the Category Name)
-            if (category is RssLink)
-            {
-                string fsUrl = ((RssLink)category).Url;
-                YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(fsUrl) };
-                query.NumberToRetrieve = pageSize;
-                return parseGData(query);
-            }
-            else
-            {
-				if (category.Name.EndsWith(Translation.Instance.Favourites))
-					return getFavorites();
-				else
-					return getRecommendations();
-            }
+			if (((RssLink)category).Other == "Login") Login();
+            string fsUrl = ((RssLink)category).Url;
+            YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(fsUrl) };
+            query.NumberToRetrieve = pageSize;
+            return parseGData(query);
         }
 
         public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
@@ -232,8 +225,10 @@ namespace OnlineVideos.Sites
             // if a username was set add a category for the users a) favorites and b) subscriptions
             if (!string.IsNullOrEmpty(accountname))
             {
-				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Favourites) });
-				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Recommendations) });
+				Settings.Categories.Add(new RssLink() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Favourites), Url = YouTubeQuery.CreateFavoritesUri(accountname), Other="Login" });
+				Settings.Categories.Add(new RssLink() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Recommendations), Url = USER_RECOMMENDATIONS_FEED, Other = "Login" });
+				Settings.Categories.Add(new RssLink() { Name = string.Format("{0}'s {1}", accountname, "Watch Later Playlist"), Url = USER_WATCH_LATER_FEED, Other = "Login" });
+				Settings.Categories.Add(new RssLink() { Name = string.Format("{0}'s {1}", accountname, "Watch History Feed"), Url = USER_WATCH_HISTORY_FEED, Other = "Login" });
 				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Subscriptions), HasSubCategories = true });
 				Settings.Categories.Add(new Category() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Playlists), HasSubCategories = true });
             }
@@ -556,20 +551,6 @@ namespace OnlineVideos.Sites
             }
             return false;
         }
-
-        protected List<VideoInfo> getFavorites()
-        {
-            Login();
-            YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(YouTubeQuery.CreateFavoritesUri(accountname)), NumberToRetrieve = pageSize };
-            return parseGData(query);
-        }
-
-		protected List<VideoInfo> getRecommendations()
-		{
-			Login();
-			YouTubeQuery query = new YouTubeQuery() { Uri = new Uri(USER_RECOMMENDATIONS_FEED), NumberToRetrieve = pageSize };
-			return parseGData(query);
-		}
 
         protected void addFavorite(VideoInfo video)
         {
