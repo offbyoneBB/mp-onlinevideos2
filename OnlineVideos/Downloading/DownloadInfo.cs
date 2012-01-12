@@ -195,21 +195,12 @@ namespace OnlineVideos
             KbDownloaded = (int)(currentBytes / 1024);
             NotifyPropertyChanged("ProgressInfo");
         }
-        public void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
+        public void DownloadProgressCallback(byte percent)
         {
-            PercentComplete = e.ProgressPercentage;
-            KbTotal = (int)(e.TotalBytesToReceive / 1024);
-            KbDownloaded = (int)(e.BytesReceived / 1024);
+            PercentComplete = percent;
             NotifyPropertyChanged("ProgressInfo");
         }
-        public void DownloadProgressCallback(object sender, MMSStreamProgressChangedEventArgs e)
-        {
-            PercentComplete = e.ProgressPercentage;
-            KbTotal = (int)(e.TotalBytesToReceive / 1024);
-            KbDownloaded = (int)(e.BytesReceived / 1024);
-            NotifyPropertyChanged("ProgressInfo");
-        }
-
+        
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         protected void NotifyPropertyChanged(string property)
         {

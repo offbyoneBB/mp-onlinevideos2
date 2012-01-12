@@ -2399,7 +2399,7 @@ namespace OnlineVideos.MediaPortal1
 				try
 				{
 					IDownloader dlHelper = null;
-					if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloadHelper();
+					if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloader();
 					else dlHelper = new MPUrlSourceFilter.MPUrlSourceFilterDownloader();
 					dlList.CurrentItem.Downloader = dlHelper;
 					dlList.CurrentItem.Start = DateTime.Now;
