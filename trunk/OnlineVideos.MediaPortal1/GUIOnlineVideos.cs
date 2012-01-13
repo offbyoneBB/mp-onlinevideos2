@@ -2305,7 +2305,7 @@ namespace OnlineVideos.MediaPortal1
             }
             // if multiple quality choices are available show a selection dialogue
             string lsUrl = loUrlList[0];
-            bool resolve = DisplayPlaybackOptions(saveItems.CurrentItem.VideoInfo, ref lsUrl, false);
+            bool resolve = DisplayPlaybackOptions(saveItems.CurrentItem.VideoInfo, ref lsUrl, enque == null); // skip dialog when downloading an item of a queue
             if (lsUrl == "-1") return; // user canceled the dialog -> don't download
             if (resolve)
             {
