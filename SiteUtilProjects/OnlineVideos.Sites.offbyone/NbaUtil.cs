@@ -63,7 +63,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> getVideoList(Category category)
         {
             currentPage = 1; pagesInCategory = 1; sectionBaseUrl = ((RssLink)category).Url; // reset next/prev fields
-            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=1&npp=" + itemsPerPage + "&" + ((RssLink)category).Url + "&season=1011&sort=recent");
+            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=1&npp=" + itemsPerPage + "&" + ((RssLink)category).Url + "&season=1112&sort=recent");
         }
 
         List<VideoInfo> getVideoList(string inUrl)
@@ -185,14 +185,14 @@ namespace OnlineVideos.Sites
         {
             currentPage++;
             int start = ((currentPage - 1) * itemsPerPage) + 1;
-            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + start.ToString() + "&npp=" + itemsPerPage + "&" + sectionBaseUrl + "&season=1011&sort=recent");
+            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + start.ToString() + "&npp=" + itemsPerPage + "&" + sectionBaseUrl + "&season=1112&sort=recent");
         }
 
         public override List<VideoInfo> getPreviousPageVideos()
         {
             currentPage--;
             int start = ((currentPage - 1) * itemsPerPage) + 1;
-            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + start.ToString() + "&npp=" + itemsPerPage + "&" + sectionBaseUrl + "&season=1011&sort=recent");
+            return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=" + start.ToString() + "&npp=" + itemsPerPage + "&" + sectionBaseUrl + "&season=1112&sort=recent");
         }
 
         #endregion
