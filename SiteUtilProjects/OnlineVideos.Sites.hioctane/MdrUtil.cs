@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
@@ -9,6 +10,11 @@ namespace OnlineVideos.Sites
 {
     public class MdrUtil : SiteUtilBase
     {
+		public enum VideoQuality { low, medium, high };
+
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the preferred quality for the video to be played.")]
+		VideoQuality videoQuality = VideoQuality.high;
+
         string showStartLetterPages = @"<li\s+class=""[^""]*item\w"">\s*<a\s+href=""(?<url>[^""]+)""[^>]*>\s*\w*\s*</a>\s*</li>";
         string showsRegex = @"<div\sclass=""teaserImage"">\s*<a\shref=""(?<url>[^""]+)""[^>]*>\s*<img.+?src=""(?<img>[^""]+)""[^>]*>\s*</a>\s*</div>\s*<h3><a[^>]*>(?<title>[^<]+)</a>";
         string videolistRegEx = @"<div\sclass=""teaserImage"">\s*
@@ -172,13 +178,15 @@ namespace OnlineVideos.Sites
                         video.PlaybackOptions.Add(baseInfo, url);
                     }
 
-                    video.VideoUrl = video.PlaybackOptions.First().Value;
+					if (video.PlaybackOptions.Count > 0)
+					{
+						video.VideoUrl = video.PlaybackOptions.First().Value;
+						// set serialized version of PlaybackOptions to Other so it can be deserialized from a favorite
+						if (video.PlaybackOptions.Count > 1)
+							video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(video.PlaybackOptions);
 
-                    // set serialized version of PlaybackOptions to Other so it can be deserialized from a favorite
-                    if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
-                        video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(video.PlaybackOptions);
-
-                    videos.Add(video);
+						videos.Add(video);
+					}
                 }
             }
             
@@ -191,7 +199,6 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(video.SiteName) && video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
                 video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
 
-
             // resolve any asx to WMV
             foreach (var v in video.PlaybackOptions)
             {
@@ -202,9 +209,36 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            video.VideoUrl = video.PlaybackOptions.First().Value;
-
-            return video.VideoUrl;
+			// sort
+			var keyList = video.PlaybackOptions.Keys.ToList();
+			keyList.Sort((s1, s2) =>
+			{
+				try
+				{
+					int b1 = int.Parse(Regex.Match(s1, @"\((?<bitrate>\d+)\skbps\)").Groups["bitrate"].Value);
+					int b2 = int.Parse(Regex.Match(s2, @"\((?<bitrate>\d+)\skbps\)").Groups["bitrate"].Value);
+					return b1.CompareTo(b2);
+				}
+				catch
+				{
+					return 0;
+				}
+			});
+			Dictionary<string, string> newPlaybackOptions = new Dictionary<string, string>();
+			keyList.ForEach(k => newPlaybackOptions.Add(k, video.PlaybackOptions[k]));
+			video.PlaybackOptions = newPlaybackOptions;
+			if (videoQuality == VideoQuality.low)
+				return video.PlaybackOptions.First().Value;
+			else if (videoQuality == VideoQuality.high)
+				return video.PlaybackOptions.Last().Value;
+			else
+			{
+				if (video.PlaybackOptions.Count > 2)
+					return video.PlaybackOptions.ElementAt(video.PlaybackOptions.Count-2).Value;
+				else
+					return video.PlaybackOptions.First().Value;
+			}
+			
         }
 
     }
