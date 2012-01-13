@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -10,6 +12,11 @@ namespace OnlineVideos.Sites
 {
     public class BrUtil : SiteUtilBase
     {
+		public enum VideoQuality { small, large, xlarge };
+
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the preferred quality for the video to be played.")]
+		VideoQuality videoQuality = VideoQuality.large;
+
 		XmlDocument masterXmlDoc;
 
 		public override int DiscoverDynamicCategories()
@@ -73,6 +80,7 @@ namespace OnlineVideos.Sites
 
 		public override String getUrl(VideoInfo video)
 		{
+			string defaultUrl =  null;
 			if (video.PlaybackOptions == null)
 			{
 				video.PlaybackOptions = new Dictionary<string, string>();
@@ -85,14 +93,31 @@ namespace OnlineVideos.Sites
 						PlayPath = m.Groups["stream"].Value
 					}.ToString();
 					video.PlaybackOptions.Add(m.Groups["title"].Value, rtmpurl);
+					if (m.Groups["title"].Value == videoQuality.ToString()) defaultUrl = rtmpurl;
 					m = m.NextMatch();
 				}
 			}
 			if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
 			{
-				var enumer = video.PlaybackOptions.GetEnumerator();
-				enumer.MoveNext();
-				return enumer.Current.Value;
+				var keyList = video.PlaybackOptions.Keys.ToList();
+				keyList.Sort((s1, s2) =>
+				{
+					try
+					{
+						VideoQuality v1 = (VideoQuality)Enum.Parse(typeof(VideoQuality), s1);
+						VideoQuality v2 = (VideoQuality)Enum.Parse(typeof(VideoQuality), s2);
+						return v1.CompareTo(v2);
+					}
+					catch (Exception)
+					{
+						return 0;
+					}
+				});
+				Dictionary<string, string> newPlaybackOptions = new Dictionary<string, string>();
+				keyList.ForEach(k => newPlaybackOptions.Add(k, video.PlaybackOptions[k]));
+				video.PlaybackOptions = newPlaybackOptions;
+				if (defaultUrl != null) return defaultUrl;
+				else return video.PlaybackOptions.First().Value;
 			}
 			return null;
 		}
