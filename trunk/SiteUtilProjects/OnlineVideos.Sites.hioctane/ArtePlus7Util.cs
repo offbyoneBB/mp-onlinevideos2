@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Xml;
 
 namespace OnlineVideos.Sites
 {
     public class ArtePlus7Util : SiteUtilBase
     {
+		public enum VideoQuality { SD, HD };
+
+		[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the preferred quality for the video to be played.")]
+		VideoQuality videoQuality = VideoQuality.HD;
+
         protected string baseUrl = "http://videos.arte.tv";
         protected string videoListRegEx = @"<div\s+class=""duration_thumbnail"">(?<Duration>[^<]*)</div>\s*
 <a\s+href=""(?<VideoUrl>[^""]+)""><img(?:(?!src).)*src=""(?<ImageUrl>[^""]+)""\s*/></a>\s*
@@ -114,7 +120,7 @@ namespace OnlineVideos.Sites
                                     Match n = Regex.Match(xmlFile, @"<url\squality=""(?<quality>[^""]+)"">(?<url>[^<]+)</url>");
                                     while (n.Success)
                                     {
-                                        string title = langValues[i] + " - " + n.Groups["quality"].Value;
+                                        string title = langValues[i].ToUpper() + " - " + n.Groups["quality"].Value.ToUpper();
 
                                         string url = n.Groups["url"].Value;
                                         string host = url.Substring(url.IndexOf(":") + 3, url.IndexOf("/", url.IndexOf(":") + 3) - (url.IndexOf(":") + 3));
@@ -145,9 +151,24 @@ namespace OnlineVideos.Sites
             }
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
-                var enumer = video.PlaybackOptions.GetEnumerator();
-                enumer.MoveNext();
-                return enumer.Current.Value;
+				string lang = video.Other as string ?? "";
+				var keyList = video.PlaybackOptions.Keys.ToList();
+				keyList.Sort((s1, s2) => 
+				{ 
+					if (s1.StartsWith(lang))
+					{
+						if (!s2.StartsWith(lang)) return -1;
+					}
+					else if (s2.StartsWith(lang))
+					{
+						if (!s1.StartsWith(lang)) return 1;
+					}
+					return videoQuality == VideoQuality.HD ? s1.CompareTo(s2) : s2.CompareTo(s1);
+				});
+				Dictionary<string, string> newPlaybackOptions = new Dictionary<string, string>();
+				keyList.ForEach(k => newPlaybackOptions.Add(k, video.PlaybackOptions[k]));
+				video.PlaybackOptions = newPlaybackOptions;
+                return video.PlaybackOptions.First().Value;
             }
             return "";
         }
@@ -183,6 +204,7 @@ namespace OnlineVideos.Sites
                 videoInfo.Length = m.Groups["Duration"].Value;
                 videoInfo.Airdate = m.Groups["Airdate"].Value;
                 videoInfo.Description = m.Groups["Description"].Value;
+				videoInfo.Other = currentCategory.ParentCategory.Name.Substring(0, 2);
                 videos.Add(videoInfo);
                 m = m.NextMatch();
             }
