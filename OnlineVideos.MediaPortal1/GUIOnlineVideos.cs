@@ -421,6 +421,8 @@ namespace OnlineVideos.MediaPortal1
                             {
 								dlgSel.Add(Translation.Instance.PlayAll);
                                 dialogOptions.Add("PlayAll");
+								dlgSel.Add(Translation.Instance.PlayAllRandom);
+								dialogOptions.Add("PlayAllRandom");
                             }
                             if (!(SelectedSite is Sites.FavoriteUtil) && !(SelectedSite is Sites.DownloadedVideoUtil))
                             {
@@ -495,6 +497,9 @@ namespace OnlineVideos.MediaPortal1
                                     break;
                                 case "PlayAll":
                                     PlayAll();
+                                    break;
+								case "PlayAllRandom":
+									PlayAll(true);
                                     break;
                                 case "AddToFav":
                                     string suggestedTitle = SelectedSite.GetFileNameForDownload(aVideo, selectedCategory, null);
@@ -2173,7 +2178,7 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        private void PlayAll()
+        private void PlayAll(bool random = false)
         {
             currentPlaylist = new Player.PlayList() { IsPlayAll = true };
             currentPlayingItem = null;
@@ -2194,7 +2199,11 @@ namespace OnlineVideos.MediaPortal1
                     Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName] : SelectedSite
                 });
             }
-            if (currentPlaylist.Count > 0) Play_Step1(currentPlaylist[0], true);
+			if (currentPlaylist.Count > 0)
+			{
+				if (random) ((List<PlayListItem>)currentPlaylist).Randomize();
+				Play_Step1(currentPlaylist[0], true);
+			}
         }
 
         /// <summary>

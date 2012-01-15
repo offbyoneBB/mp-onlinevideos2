@@ -79,6 +79,7 @@
   <string Field="NewSearch">Neue Suche</string>
   <string Field="Others">Sonstige</string>
   <string Field="PlayAll">Alle abspielen</string>
+  <string Field="PlayAllRandom">Alle abspielen (zufällige Reihenfolge)</string>
   <string Field="PlayWith">Abspielen mit ...</string>
   <string Field="Playlists">Playlists</string>
   <string Field="PlaybackWillBeStopped">Abspielen wird gestoppt.</string>

@@ -167,6 +167,7 @@ namespace OnlineVideos
 
         // P
         public string PlayAll = "Play all";
+		public string PlayAllRandom = "Play all (random order)";
         public string PlayWith = "Play with ...";
 		public string Playlists = "Playlists";
 		public string PlaybackWillBeStopped = "Playback will be stopped.";
