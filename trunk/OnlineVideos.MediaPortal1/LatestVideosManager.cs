@@ -63,7 +63,7 @@ namespace OnlineVideos.MediaPortal1
 						GUIPropertyManager.SetProperty("#OnlineVideos.LatestVideosEnabled", (Math.Min(latestVideos.Count, PluginConfiguration.Instance.LatestVideosMaxItems) > 0).ToString().ToLower());
 						if (latestVideos.Count > 0)
 						{
-							if (PluginConfiguration.Instance.LatestVideosRandomize) Randomize(latestVideos);
+							if (PluginConfiguration.Instance.LatestVideosRandomize) latestVideos.Randomize();
 							ImageDownloader.DownloadImages<VideoInfo>(latestVideos.Select(v => v.Value).ToList());
 						}
 					}
@@ -118,20 +118,6 @@ namespace OnlineVideos.MediaPortal1
 				}
 			}
 			return latestVideos;
-		}
-
-		void Randomize<T>(List<T> list)
-		{
-			Random rng = new Random();
-			int n = list.Count;
-			while (n > 1)
-			{
-				n--;
-				int k = rng.Next(n + 1);
-				T value = list[k];
-				list[k] = list[n];
-				list[n] = value;
-			}
 		}
 
 		void SetLatestVideoGuiProperties(KeyValuePair<string, VideoInfo> video, int index)
