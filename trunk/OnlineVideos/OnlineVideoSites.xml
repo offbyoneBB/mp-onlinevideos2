@@ -110,10 +110,13 @@
     <Site name="Sat1" util="Sat1" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen des Senders Sat1.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.sat1.de/videocenter/]]></item>
+        <item key="baseUrl"><![CDATA[http://www.sat1.de/tv]]></item>
         <item key="rtmpBase"><![CDATA[rtmp://pssimsat1fs.fplive.net:1935/pssimsat1ls/]]></item>
-        <item key="regExPagingToken"><![CDATA[var\sparameter\s=\s"(?<token>[^"]+)";\s*var[^=]+=\snew\sPaging\('(?<tag>[^']+)',(?<pages>[^,]+),parameter\);]]></item>
-        <item key="regExDynamicCategory"><![CDATA[:url\((?<ImageUrl>[^\)]+)\)">[^>]+>[^>]+></a><br\s*/>\s*<[^<]+<[^<]+</h6><[^>]+>(?<Title>[^<]+)</h6><[^>]+></h6></div>\s*<h1><a\shref="(?<Url>[^"]+)"\s.*?>(?<SubTitle>[^<]+)</a></h1>\s*<p><[^>]+>(?<Date>[^<]+)</a></p>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass="show">\s*<figure>\s*<a\s+href="(?<url>[^"]+)"[^>]+>\s*<img\s+src="(?<thumb>[^"]+)"[^>]*>\s*<span[^>]*>\s*<span[^>]*>(?<description>.*?)</span>]]></item>
+        <item key="videoListRegEx"><![CDATA[<li>\s*<div\s+class="video_teaser\s+trackable_teaser">\s*
+<figure\s+class="image">\s*<a\s+href="(?<VideoUrl>[^"]+)">\s*
+<img\s+src="(?<ImageUrl>[^"]+)"[^>]*>.*?</figure>.*?<span\s+class="length[^>]*>(?<Duration>.*?)</span>\s*
+<span\s+class="title">(?<Title>.*?)</span>]]></item>
       </Configuration>
     </Site>
     <Site name="Pro7" util="Pro7" agecheck="false" enabled="true" lang="de">
