@@ -2182,7 +2182,12 @@ namespace OnlineVideos.MediaPortal1
             {
                 // when not in details view of a site with details view only include videos that don't have details
                 if (currentState != State.details && SelectedSite is IChoice && video.HasDetails) continue;
-                currentPlaylist.Add(new Player.PlayListItem(video.Title, null)
+
+				// filter out by the current filter
+				if (!currentFilter.Matches(video.Title) || FilterOut(video.Title) || FilterOut(video.Description)) continue;
+				if (!string.IsNullOrEmpty(videosVKfilter) && !video.Title.ToLower().Contains(videosVKfilter.ToLower())) continue;
+
+				currentPlaylist.Add(new Player.PlayListItem(video.Title, null)
                 {
                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                     Video = video,
