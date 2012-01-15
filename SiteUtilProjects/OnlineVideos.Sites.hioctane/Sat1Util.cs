@@ -4,6 +4,7 @@ using System.ComponentModel;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Web;
 
 namespace OnlineVideos.Sites
 {
@@ -11,10 +12,10 @@ namespace OnlineVideos.Sites
     {
         [Category("OnlineVideosConfiguration"), Description("Url used for category generation.")]
         protected string baseUrl;
-        [Category("OnlineVideosConfiguration"), Description("Url used to parse the pagingtoken for dynamic category generation")]
-		protected string regExPagingToken;
         [Category("OnlineVideosConfiguration"), Description("Url used to parse Category Content from Page")]
-		protected string regExDynamicCategory;
+		protected string dynamicCategoriesRegEx;
+		[Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for videos. Group names: 'VideoUrl', 'ImageUrl', 'Title', 'Duration', 'Description', 'Airdate'.")]
+		protected string videoListRegEx;
         [Category("OnlineVideosConfiguration"), Description("Url to rtmp Server")]
 		protected string rtmpBase;
 
@@ -25,53 +26,49 @@ namespace OnlineVideos.Sites
 			base.Initialize(siteSettings);
 		}
 
-        public override int DiscoverDynamicCategories()
-        {
-            Settings.Categories.Clear();
-            string page = GetWebData(baseUrl);
-            string host = new Uri(baseUrl).Host;
+		public override int DiscoverDynamicCategories()
+		{
+			string page = GetWebData(baseUrl);
+			Match m = Regex.Match(page, dynamicCategoriesRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+			Settings.Categories.Clear();
+			while (m.Success)
+			{
+				RssLink cat = new RssLink();
+				cat.Url = m.Groups["url"].Value + "/video";
+				if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
+				cat.Thumb = m.Groups["thumb"].Value;
+				if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
+				cat.Description = Utils.PlainTextFromHtml(m.Groups["description"].Value).Replace('\n', ' ');
+				cat.Name = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cat.Url.Substring(cat.Url.LastIndexOf('/')+1).Replace('-', ' '));
+				Settings.Categories.Add(cat);
+				m = m.NextMatch();
+			}
+			Settings.DynamicCategoriesDiscovered = true;
+			return Settings.Categories.Count;
+		}
 
-            Match m = Regex.Match(page, regExPagingToken);
-            if (m.Success)
-            {
-                for (int i = 0; i < Convert.ToInt32(m.Groups["pages"].Value); i++)
-                {
-                    string queryUrl = "http://" + host + "/imperia/teasermanager/ajax_pagination.php?uebersicht_" + m.Groups["tag"].Value + "=" + i + ":1:0:0&parameter=" + m.Groups["token"].Value;
-                    string webData = GetWebData(queryUrl);
-
-                    Match n = Regex.Match(webData, regExDynamicCategory);
-                    while (n.Success)
-                    {
-                        if(!data.ContainsKey(n.Groups["Title"].Value))
-                        {
-                            data[n.Groups["Title"].Value] = new List<VideoInfo>();
-
-                            RssLink cat = new RssLink();
-                            cat.Name = n.Groups["Title"].Value;
-                            cat.Thumb = "http://" + host + n.Groups["ImageUrl"].Value;
-                            Settings.Categories.Add(cat);
-                        }
-
-                        VideoInfo video = new VideoInfo();
-                        video.ImageUrl = "http://" + host + n.Groups["ImageUrl"].Value;
-                        video.Title = n.Groups["SubTitle"].Value;
-                        video.VideoUrl = "http://" + host + n.Groups["Url"].Value;
-
-						string[] dateLengthInfos = n.Groups["Date"].Value.Split('|');
-						video.Airdate = dateLengthInfos[0].Trim();
-						video.Length = dateLengthInfos[1].Replace("MIN", "").Trim();
-
-                        data[n.Groups["Title"].Value].Add(video);
-                        
-                        n = n.NextMatch();
-                    }
-                }
-            }
-
-            Settings.DynamicCategoriesDiscovered = true;
-            return Settings.Categories.Count;
-        }
-
+		public override List<VideoInfo> getVideoList(Category category)
+		{
+			List<VideoInfo> videoList = new List<VideoInfo>();
+			string page = GetWebData(((RssLink)category).Url);
+			Match m = Regex.Match(page, videoListRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+			while (m.Success)
+			{
+				VideoInfo videoInfo = new VideoInfo();
+				videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
+				// get, format and if needed absolutify the video url
+				videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
+				if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
+				// get, format and if needed absolutify the thumb url
+				videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+				if (!string.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
+				videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
+				videoList.Add(videoInfo);
+				m = m.NextMatch();
+			}
+			return videoList;
+		}
+ 
         public override String getUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl);
@@ -128,9 +125,5 @@ namespace OnlineVideos.Sites
             return url;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
-        {
-            return data[category.Name];
-        }
     }
 }
