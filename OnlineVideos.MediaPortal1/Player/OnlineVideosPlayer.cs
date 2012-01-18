@@ -287,8 +287,12 @@ namespace OnlineVideos.MediaPortal1.Player
                     {
 						Log.Instance.Info("Buffering was aborted.");
                         if (sourceFilter is IAMOpenProgress) ((IAMOpenProgress)sourceFilter).AbortOperation();
+						Thread.Sleep(100); // give it some time
+						int result = graphBuilder.RemoveFilter(sourceFilter); // remove the filter from the graph to prevent lockup later in Dispose
                     }
-                    DirectShowUtil.ReleaseComObject(sourceFilter, 2000);
+
+					// release the COM pointer that we created
+					DirectShowUtil.ReleaseComObject(sourceFilter);
                 }
             }
 
