@@ -299,7 +299,7 @@ namespace OnlineVideos
             string possibleExtension = System.IO.Path.GetExtension(url).ToLower();
             if (possibleExtension != ".gif" & possibleExtension != ".jpg") possibleExtension = ".jpg";
             string name = string.Format("Thumbs{0}L{1}", EncryptLine(url), possibleExtension);
-            return System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, name);
+			return Path.Combine(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Cache\"), name);
         }
 
         /// <summary>

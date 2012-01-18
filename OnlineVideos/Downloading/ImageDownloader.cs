@@ -187,7 +187,7 @@ namespace OnlineVideos
             try
             {
                 DateTime keepdate = DateTime.Now.AddDays(-maxAge);
-                FileInfo[] files = new DirectoryInfo(OnlineVideoSettings.Instance.ThumbsDir).GetFiles();
+				FileInfo[] files = new DirectoryInfo(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Cache\")).GetFiles();
                 Log.Info("Checking {0} thumbnails for age.", files.Length);
                 for (int i = 0; i < files.Length; i++)
                 {
