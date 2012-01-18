@@ -100,6 +100,8 @@ namespace OnlineVideos
             if (!string.IsNullOrEmpty(iconDir) && !Directory.Exists(iconDir)) Directory.CreateDirectory(iconDir);
             string bannerDir = string.IsNullOrEmpty(ThumbsDir) ? string.Empty : Path.Combine(ThumbsDir, @"Banners\");
             if (!string.IsNullOrEmpty(bannerDir) && !Directory.Exists(bannerDir)) Directory.CreateDirectory(bannerDir);
+			string cacheDir = string.IsNullOrEmpty(ThumbsDir) ? string.Empty : Path.Combine(ThumbsDir, @"Cache\");
+			if (!string.IsNullOrEmpty(cacheDir) && !Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
             try { if (!string.IsNullOrEmpty(DllsDir) && !Directory.Exists(DllsDir)) Directory.CreateDirectory(DllsDir); }
             catch { /* might fail due to UAC */ }
 
