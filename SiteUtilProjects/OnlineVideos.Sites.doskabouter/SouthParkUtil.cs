@@ -138,7 +138,7 @@ namespace OnlineVideos.Sites
                 string videoType = list[i].ParentNode.Attributes["type"].Value.Replace(@"video/", String.Empty);
                 string url = list[i].InnerText;
 
-                string swfUrl = String.Empty;
+                string swfUrl = null;
                 switch (spc)
                 {
                     case SouthParkCountry.World:
@@ -147,7 +147,7 @@ namespace OnlineVideos.Sites
                 }
 
                 res.Add(bitrate + "K " + videoType,
-                    new MPUrlSourceFilter.RtmpUrl(url) { SwfVerify = true, SwfUrl = swfUrl }.ToString());
+                    new MPUrlSourceFilter.RtmpUrl(url) { SwfVerify = swfUrl != null, SwfUrl = swfUrl }.ToString());
 
             }
             return res;
