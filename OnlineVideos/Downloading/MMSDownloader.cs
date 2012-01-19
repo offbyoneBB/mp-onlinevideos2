@@ -1,15 +1,5 @@
 using System;
-using System.Net;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Threading;
-using System.Diagnostics;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.IO;
-using System.Collections.ObjectModel;
-using System.Runtime.Remoting.Messaging;
 
 namespace OnlineVideos
 {
@@ -25,7 +15,6 @@ namespace OnlineVideos
 
         bool connectionEstablished = false;
         DownloadInfo downloadInfo;
-        bool cancelled;
         System.Threading.Thread downloadThread;
 
         long TotalFileSize
@@ -52,16 +41,13 @@ namespace OnlineVideos
             }
         }
 
-        public bool Cancelled { get { return cancelled; } }
+        public bool Cancelled { get; private set; }
 
-        public void CancelAsync()
-        {
-            cancelled = true;
-        }
+        public void CancelAsync() { Cancelled = true; }
 
         public void Abort()
         {
-            cancelled = true;
+            Cancelled = true;
             if (downloadThread != null) downloadThread.Abort();
         }
 
@@ -75,7 +61,7 @@ namespace OnlineVideos
             }
             catch (Exception ex)
             {
-                if (!connectionEstablished && !cancelled)
+                if (!connectionEstablished && !Cancelled)
                 {
                     try
                     {
@@ -98,10 +84,12 @@ namespace OnlineVideos
         {
             return here.Substring(here.IndexOf(here1) + here1.Length, here.IndexOf(here2, here.IndexOf(here1) + here1.Length) - here.IndexOf(here1) - here1.Length);
         }
+
         string StringEndToEnd(string here, string here1, string here2)
         {
             return here.Substring(here.LastIndexOf(here1) + here1.Length, here.LastIndexOf(here2) - here.LastIndexOf(here1) - here1.Length);
         }
+
         string HexString(byte[] b, int l, int offset)
         {
             int i = 0;
@@ -114,92 +102,37 @@ namespace OnlineVideos
             }
             return str;
         }
+
         void InitiateSession(System.Net.Sockets.Socket sd, string @base)
         {
             string Command = "NSPlayer/9.0.0.2980; {" + Guid.NewGuid().ToString() + "}; Host: " + @base;
-            byte[] P1B1 = {
-			0xf0,
-			0xf0,
-			0xf0,
-			0xf0,
-			0xb,
-			0x0,
-			0x4,
-			0x0,
-			0x1c,
-			0x0,
-			0x3,
-			0x0
-		};
+            byte[] P1B1 = { 0xf0, 0xf0, 0xf0, 0xf0, 0xb, 0x0, 0x4, 0x0, 0x1c, 0x0, 0x3, 0x0 };
             byte[] P1B2 = Pad0(System.Text.ASCIIEncoding.ASCII.GetBytes(Command), 6);
             sd.Send(HPacket(0x1, P1B1, P1B2));
         }
+
         void SendTimingTest(System.Net.Sockets.Socket sd)
         {
-            byte[] P2B1 = {
-			0xf1,
-			0xf0,
-			0xf0,
-			0xf0,
-			0xb,
-			0x0,
-			0x4,
-			0x0
-		};
+            byte[] P2B1 = { 0xf1, 0xf0, 0xf0, 0xf0, 0xb, 0x0, 0x4, 0x0 };
             sd.Send(HPacket(0x18, P2B1, null));
         }
+
         void RequestConnection(System.Net.Sockets.Socket sd)
         {
             string Command3 = "\\\\" + sd.LocalEndPoint.ToString().Replace(":", "\\TCP\\");
             Command3 = "\\\\" + StringHereToHere(Command3, "\\\\", "\\TCP\\") + "\\TCP\\1755";
-            byte[] P3B1 = {
-			0xf1,
-			0xf0,
-			0xf0,
-			0xf0,
-			0xff,
-			0xff,
-			0xff,
-			0xff,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0xa0,
-			0x0,
-			0x2,
-			0x0,
-			0x0,
-			0x0
-		};
+            byte[] P3B1 = { 0xf1, 0xf0, 0xf0, 0xf0, 0xff, 0xff, 0xff, 0xff, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xa0, 0x0, 0x2, 0x0, 0x0, 0x0 };
             byte[] P3B2 = Pad0(System.Text.ASCIIEncoding.ASCII.GetBytes(Command3), 2);
             sd.Send(HPacket(0x2, P3B1, P3B2));
         }
+
         void RequestFile(System.Net.Sockets.Socket sd, string rest)
         {
-            byte[] P4B1 = {
-			0x1,
-			0x0,
-			0x0,
-			0x0,
-			0xff,
-			0xff,
-			0xff,
-			0xff,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0
-		};
+            byte[] P4B1 = { 0x1, 0x0, 0x0, 0x0, 0xff, 0xff, 0xff, 0xff, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
             byte[] P4B2 = Pad0(System.Text.ASCIIEncoding.ASCII.GetBytes(rest), 0);
             sd.Send(HPacket(0x5, P4B1, P4B2));
         }
+
         void MMSDownload(string Url, string path)
         {
             string @base = null;
@@ -209,31 +142,31 @@ namespace OnlineVideos
             @base = @base.Substring(0, @base.IndexOf("/"));
             rest = Url.Replace("mms://" + @base + "/", "");
             rest = rest.Replace(" ", "%20");
-            Console.WriteLine("Resolving IP address...");
+            Log.Debug("MMSDownloader : Resolving IP address...");
             System.Net.Sockets.Socket sd = new System.Net.Sockets.Socket(System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp);
             System.Net.IPEndPoint dip = new System.Net.IPEndPoint(System.Net.Dns.GetHostEntry(@base).AddressList[0], 1755);
-            Console.WriteLine("Connecting...");
+            Log.Debug("MMSDownloader : Connecting...");
             sd.Connect(dip);
-            Console.WriteLine("Connected.");
-            Console.WriteLine("Initializing Session...");
+            Log.Debug("MMSDownloader : Connected.");
+            Log.Debug("MMSDownloader : Initializing Session...");
             InitiateSession(sd, @base);
             CommandCheck(sd, 0x1);
-            Console.WriteLine("Session Established. Sending 1st Network Timing Test...");
+            Log.Debug("MMSDownloader : Session Established. Sending 1st Network Timing Test...");
             SendTimingTest(sd);
             CommandCheck(sd, 0x15);
-            Console.WriteLine("Session Established. Sending 2nd Network Timing Test...");
+            Log.Debug("MMSDownloader : Session Established. Sending 2nd Network Timing Test...");
             SendTimingTest(sd);
             CommandCheck(sd, 0x15);
-            Console.WriteLine("Session Established. Sending 3rd Network Timing Test...");
+            Log.Debug("MMSDownloader : Session Established. Sending 3rd Network Timing Test...");
             SendTimingTest(sd);
             CommandCheck(sd, 0x15);
-            Console.WriteLine("Network Timing Test Successful. Requesting TCP Connection...");
+            Log.Debug("MMSDownloader : Network Timing Test Successful. Requesting TCP Connection...");
             RequestConnection(sd);
             CommandCheck(sd, 0x2);
-            Console.WriteLine("TCP Connection Accepted. Requesting File " + rest);
+            Log.Debug("MMSDownloader : TCP Connection Accepted. Requesting File " + rest);
             RequestFile(sd, rest);
             byte[] b = CommandCheck(sd, 0x6);
-            Console.WriteLine("File Request Accepted.");
+            Log.Debug("MMSDownloader : File Request Accepted.");
             string t = HexM(b[71]) + HexM(b[70]) + HexM(b[69]) + HexM(b[68]) + HexM(b[67]) + HexM(b[66]) + HexM(b[65]) + HexM(b[64]);
             int psize = b[92] + b[93] * 256 + b[94] * 4096;
             int nps = b[96] + b[97] * 256 + b[98] * 4096;
@@ -242,10 +175,11 @@ namespace OnlineVideos
             decimal time = (DoublePercisionHex(t) - 3.6M);
             connectionEstablished = true;
             TotalFileSize = fsize;
-            Console.WriteLine("File Size: " + fsize + "Bytes" + Environment.NewLine + "Media Length: " + time + "Seconds" + Environment.NewLine + "Packet Size: " + psize + "Bytes" + Environment.NewLine + "Header Size: " + hsize + "Bytes" + Environment.NewLine + "Number of Packets: " + nps + "Packets");
+            Log.Debug("MMSDownloader : File Size: " + fsize + "Bytes" + Environment.NewLine + "Media Length: " + time + "Seconds" + Environment.NewLine + "Packet Size: " + psize + "Bytes" + Environment.NewLine + "Header Size: " + hsize + "Bytes" + Environment.NewLine + "Number of Packets: " + nps + "Packets");
             WriteStream(sd, path, time, hsize);
-            Console.WriteLine("Done!");
+            Log.Debug("MMSDownloader : Done!");
         }
+
         void HTTPMMSDownload(string Url, string path)
         {
             string @base = null;
@@ -253,9 +187,9 @@ namespace OnlineVideos
             @base = @base.Substring(0, @base.IndexOf("/"));
             System.Net.Sockets.Socket s = new System.Net.Sockets.Socket(System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp);
             System.Net.IPEndPoint ip = new System.Net.IPEndPoint(System.Net.Dns.GetHostEntry(@base).AddressList[0], 80);
-            Console.WriteLine("Connecting...");
+            Log.Debug("MMSDownloader : Connecting...");
             s.Connect(ip);
-            Console.WriteLine("Connected. Sending Get Request...");
+            Log.Debug("MMSDownloader : Connected. Sending Get Request...");
             string getfile = null;
             getfile = Url.Replace("mms://" + @base, "");
             System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
@@ -266,22 +200,22 @@ namespace OnlineVideos
             byte[] recbytes = new byte[1024];
             string hinfo = "";
             int rbytes = 0;
-            Console.WriteLine("Recieving Command Header...");
+            Log.Debug("MMSDownloader : Recieving Command Header...");
             do
             {
                 n = s.Receive(recbytes, 1, System.Net.Sockets.SocketFlags.None);
                 rbytes = rbytes + n;
                 hinfo = hinfo + enc.GetString(recbytes, 0, n);
-                Console.WriteLine("Recieving Command Header..." + rbytes + "Bytes Recieved...");
+                Log.Debug("MMSDownloader : Recieving Command Header..." + rbytes + "Bytes Recieved...");
                 if (hinfo.Contains(Environment.NewLine + Environment.NewLine) == true)
                     break;
             } while (true);
             byte[] tbytes = new byte[10001];
             if (hinfo.Contains("Busy") == true)
             {
-                Console.WriteLine("Session Not Ready." + Environment.NewLine + "Retry in 10 seconds..."); return;
+                Log.Debug("MMSDownloader : Session Not Ready. Retry in 10 seconds..."); return;
             }
-            Console.WriteLine("Header Recieved...Recieving Data...");
+            Log.Debug("MMSDownloader : Header Recieved...Recieving Data...");
             int i = 0;
             int n1 = 0;
             int cur = 0;
@@ -297,7 +231,7 @@ namespace OnlineVideos
                 {
                     n = s.Receive(tbytes, n1, 16, System.Net.Sockets.SocketFlags.None);
                     n1 = n1 + n;
-                    Console.WriteLine("Sorting Header..." + n1 + "Bytes Recieved...");
+                    Log.Debug("MMSDownloader : Sorting Header..." + n1 + "Bytes Recieved...");
                 } while (!(Find(y.ToByteArray(), tbytes) > 0));
                 Array[] x = SortOutHeader(tbytes, n1);
                 connectionEstablished = true;
@@ -307,7 +241,7 @@ namespace OnlineVideos
                 i = bs[6] + bs[7] * (256) - 8 - x[0].Length;
                 cur = cur + i + x[0].Length;
             more:
-                Console.WriteLine("Header Size: " + cur + "Bytes");
+                Log.Debug("MMSDownloader : Header Size: " + cur + "Bytes");
                 byte[] header = new byte[i];
                 n1 = 0;
                 while (!(n1 == i))
@@ -356,12 +290,12 @@ namespace OnlineVideos
                     cur = cur + p;
                     PercentDownloaded = (byte)((float)rp / np * 100f);
                     CurrentBytesDownloaded = cur;
-                    Console.WriteLine("Recieving Packets. Packet Size Is " + p + "." + Environment.NewLine + "Recieved " + rp + " Packets Out Of " + np + "." + Environment.NewLine + "Downloaded So Far " + cur + "Bytes.");
+                    Log.Debug("MMSDownloader : Recieving Packets. Packet Size Is " + p + "." + Environment.NewLine + "Recieved " + rp + " Packets Out Of " + np + "." + Environment.NewLine + "Downloaded So Far " + cur + "Bytes.");
                     n1 = 0;
                     while (n1 != 12)
                     {
                         n = s.Receive(bs, n1, 12 - n1, 0);
-                        if ((n == 0 && rp >= np) || cancelled) break;
+                        if ((n == 0 && rp >= np) || Cancelled) break;
                         n1 = n1 + n;
                     }
                     //Console.WriteLine(HexString(bs, 0, 0))
@@ -374,12 +308,13 @@ namespace OnlineVideos
                     //    n1 = n1 + n
                     //Loop
                     //Console.WriteLine(HexString(bs, 0, 0))
-                } while (n != 0 && !cancelled);
+                } while (n != 0 && !Cancelled);
                 n = s.Receive(bs, 1, 0);
                 if (n > 0)
-                    Console.WriteLine("MORE!");
+                    Log.Debug("MMSDownloader : MORE!");
             }
         }
+
         void WriteStream(System.Net.Sockets.Socket sd, string path, decimal time, int hsize)
         {
             int p = 0;
@@ -388,56 +323,7 @@ namespace OnlineVideos
             System.IO.FileStream fs = null;
             bool fe = System.IO.File.Exists(path);
             fs = new System.IO.FileStream(path, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, FileShare.None);
-            byte[] P5B1 = {
-			0x1,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x80,
-			0x0,
-			0x0,
-			0xff,
-			0xff,
-			0xff,
-			0xff,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x20,
-			0xac,
-			0x40,
-			0x2,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0
-		};
+            byte[] P5B1 = { 0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x80, 0x0, 0x0, 0xff, 0xff, 0xff, 0xff, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x20, 0xac, 0x40, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
             byte[] rb = null;
             if (fe == true)
             {
@@ -451,7 +337,7 @@ namespace OnlineVideos
                 byte[] br = HexDoublePercision(rtime);
                 Array.ConstrainedCopy(br, 0, P5B1, 8, 8);
             }
-            Console.WriteLine("Requesting Media Header...");
+            Log.Debug("MMSDownloader : Requesting Media Header...");
             sd.Send(HPacket(0x15, P5B1, null));
             int n = 0;
             int n1 = 0;
@@ -475,7 +361,7 @@ namespace OnlineVideos
                 i = bs[6] + bs[7] * (256) - 8;
                 string s = HexString(bs, 0, 0);
                 cur = cur + i;
-                Console.WriteLine("Header Size: " + cur + "Bytes");
+                Log.Debug("MMSDownloader : Header Size: " + cur + "Bytes");
                 byte[] header = new byte[i];
                 n1 = 0;
                 while (!(n1 == i))
@@ -486,7 +372,7 @@ namespace OnlineVideos
                 if (fe == true)
                 {
                     if (Find(header, rb) == -1)
-                        Console.WriteLine("ERROR! Files Dont Match!");
+                        Log.Debug("MMSDownloader : ERROR! Files Dont Match!");
                     //: Exit Sub
                 }
                 if (p == 0)
@@ -501,41 +387,8 @@ namespace OnlineVideos
             }
             if (fe == true)
                 fs.Position = fs.Length - 1;
-            Console.WriteLine("Header Recieved And Written...Requesting Media...");
-            byte[] P6B1 = {
-			0x1,
-			0x0,
-			0x0,
-			0x0,
-			0xff,
-			0xff,
-			0x1,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0xff,
-			0xff,
-			0xff,
-			0xff,
-			0xff,
-			0xff,
-			0xff,
-			0xff,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0
-		};
+            Log.Debug("MMSDownloader : Header Recieved And Written...Requesting Media...");
+            byte[] P6B1 = { 0x1, 0x0, 0x0, 0x0, 0xff, 0xff, 0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
             sd.Send(HPacket(0x7, P6B1, null));
             byte[] b2 = ReturnB(sd);
             cur = 0;
@@ -568,7 +421,7 @@ namespace OnlineVideos
                             if (Find(buffer, rb) > -1)
                             {
                                 sp = sp + 1;
-                                Console.WriteLine("skipped: " + sp);
+                                Log.Debug("MMSDownloader : skipped: " + sp);
                                 goto skip;
                             }
                             else
@@ -578,12 +431,12 @@ namespace OnlineVideos
                         }
                         s = HexString(buffer, 0, 0);
                         if (s.Contains("1B 0 4 0") == true)
-                            Console.WriteLine("!!!!");
+                            Log.Debug("MMSDownloader : !!!!");
                         fs.Write(buffer, 0, p);
                         cur = cur + p;
                         PercentDownloaded = (byte)((float)rp / np * 100f);
                         CurrentBytesDownloaded = cur;
-                        Console.WriteLine("Recieving Packets. Packet Size Is " + p + "." + Environment.NewLine + "Recieved " + rp + " Packets Out Of " + np + "." + Environment.NewLine + "Downloaded So Far " + cur + "Bytes.");
+                        Log.Debug("MMSDownloader : Recieving Packets. Packet Size Is " + p + "." + Environment.NewLine + "Recieved " + rp + " Packets Out Of " + np + "." + Environment.NewLine + "Downloaded So Far " + cur + "Bytes.");
                     skip:
                         n1 = 0;
                         int b1 = 0;
@@ -593,7 +446,7 @@ namespace OnlineVideos
                             if (n == 0)
                                 b1 = b1 + 1;
                             if (b1 > 0)
-                                Console.WriteLine(b1);
+                                Log.Debug("MMSDownloader : " + b1);
                             n1 = n1 + n;
                         }
                         string s1 = HexString(bs, 0, 0);
@@ -604,11 +457,11 @@ namespace OnlineVideos
                                 int x = ReturnB2(sd);
                                 if (x == 1)
                                 {
-                                    Console.WriteLine("Download Is Complete!"); return;
+                                    Log.Debug("MMSDownloader : Download Is Complete!"); return;
                                 }
                                 if (x == 2)
                                 {
-                                    Console.WriteLine("Sending Network Timing Test..");
+                                    Log.Debug("MMSDownloader : Sending Network Timing Test..");
                                     TTTest(sd);
                                     n1 = 0;
                                     while (!(n1 == 8))
@@ -625,6 +478,7 @@ namespace OnlineVideos
                 }
             }
         }
+
         string HexM(int i)
         {
             string str = Convert.ToString(i, 16);
@@ -632,6 +486,7 @@ namespace OnlineVideos
                 str = "0" + str;
             return str;
         }
+
         decimal DoublePercisionHex(string str)
         {
             string strFull = HexToBinary64BitCalculate(str);
@@ -639,15 +494,16 @@ namespace OnlineVideos
             string E = strFull.Substring(1, 11);
             string F = strFull.Substring(12, 52);
             if (S + E + F != strFull)
-                Console.WriteLine("Calculation Error!");
+                Log.Debug("MMSDownloader : Calculation Error!");
             F = "1." + F;
             int exp = (int)BinaryCalculate(E) - 1023;
             if (exp > 2047 | exp < 0)
-                Console.WriteLine("Calculation Error!");
+                Log.Debug("MMSDownloader : Calculation Error!");
             decimal d = BinaryCalculate(F);
             exp = (int)Math.Pow(2, exp);
             return exp * d;
         }
+
         byte[] HexDoublePercision(decimal d)
         {
             string str = "";
@@ -679,6 +535,7 @@ namespace OnlineVideos
             bs[7] = Convert.ToByte("0x" + hs.Substring(0, 2), 16);
             return bs;
         }
+
         private string HexToBinary64BitCalculate(string str)
         {
             int n = 0;
@@ -697,6 +554,7 @@ namespace OnlineVideos
             }
             return @out;
         }
+
         private decimal BinaryCalculate(string str)
         {
             decimal i = 0;
@@ -721,6 +579,7 @@ namespace OnlineVideos
             }
             return i;
         }
+
         Int64 BinaryICalculate(string str)
         {
             Int64 i = 0;
@@ -737,17 +596,19 @@ namespace OnlineVideos
             }
             return i;
         }
+
         private string ZM(string str, int n)
         {
             str = str.Substring(0, str.IndexOf("."));
             if (str.Length > n)
-                Console.WriteLine("!!!!111");
+                Log.Debug("MMSDownloader : !!!!111");
             while (!(str.Length == n))
             {
                 str = "0" + str;
             }
             return str;
         }
+
         private string BinaryConvert(string dec)
         {
             string strp = dec;
@@ -781,6 +642,7 @@ namespace OnlineVideos
             }
             return str;
         }
+
         bool CheckQueryAtOffset(byte[] Query, byte[] Pool, int PoolOffset)
         {
             byte[] b1 = Query;
@@ -793,6 +655,7 @@ namespace OnlineVideos
             }
             return true;
         }
+
         int Find(byte[] Query, byte[] Pool)
         {
             int i = 0;
@@ -805,6 +668,7 @@ namespace OnlineVideos
             }
             return -1;
         }
+
         Array[] SortOutHeader(byte[] b, int n1)
         {
             Array[] x = new Array[2];
@@ -818,6 +682,7 @@ namespace OnlineVideos
             x[1] = bs;
             return x;
         }
+
         int GetPacketLength(byte[] header)
         {
             Guid y = new Guid("8CABDCA1-A947-11CF-8EE4-00C00C205365");
@@ -838,6 +703,7 @@ namespace OnlineVideos
             int psize = header[pos] + header[pos + 1] * 256 + header[pos + 2] * 4096;
             return psize;
         }
+
         int GetNumberOfPackets(byte[] header)
         {
             Guid y = new Guid("8CABDCA1-A947-11CF-8EE4-00C00C205365");
@@ -858,6 +724,7 @@ namespace OnlineVideos
             int npackets = header[pos] + header[pos + 1] * 256 + header[pos + 2] * 4096;
             return npackets;
         }
+
         bool CheckByteArrays(byte[] byte1, byte[] byte2, int offset2)
         {
             byte[] b1 = byte1;
@@ -870,6 +737,7 @@ namespace OnlineVideos
             }
             return true;
         }
+
         byte[] ReturnB(System.Net.Sockets.Socket sd)
         {
             int n = 0;
@@ -901,6 +769,7 @@ namespace OnlineVideos
             Array.ConstrainedCopy(b, 0, c, 0, 16 + i);
             return c;
         }
+
         int ReturnB2(System.Net.Sockets.Socket sd)
         {
             int n = 0;
@@ -923,6 +792,7 @@ namespace OnlineVideos
                 return 2;
             throw new Exception("Error");
         }
+
         byte[] CommandCheck(System.Net.Sockets.Socket sd, int comm)
         {
             int n1 = 0;
@@ -954,8 +824,8 @@ namespace OnlineVideos
             if (s.Contains("1b 0 4 0") == true) { TTTest(sd); return CommandCheck(sd, comm); }
             if (b[36] != comm)
             {
-                if (b[36] == 0x1b) { Console.WriteLine("Performing Network Timing Test"); TTTest(sd); }
-                if (b[36] == 0x15) { Console.WriteLine("Validating Network Connection..."); return CommandCheck(sd, comm); }
+                if (b[36] == 0x1b) { Log.Debug("MMSDownloader : Performing Network Timing Test"); TTTest(sd); }
+                if (b[36] == 0x15) { Log.Debug("MMSDownloader : Validating Network Connection..."); return CommandCheck(sd, comm); }
             }
             return b;
             /*if ((n > i) == true)
@@ -981,6 +851,7 @@ namespace OnlineVideos
                 }
             }*/
         }
+
         byte[] Pad0(byte[] array, int extra)
         {
             byte[] narray = new byte[array.Length * 2 - 1 + extra + 1];
@@ -996,6 +867,7 @@ namespace OnlineVideos
             }
             return narray;
         }
+
         byte[] HPacket(int comm, byte[] b1, byte[] b2, byte[] b3 = null)
         {
             int tot = 0;
@@ -1023,48 +895,7 @@ namespace OnlineVideos
             {
                 x = tot - 16;
             }
-            byte[] h = {
-			0x1,
-			0x0,
-			0x0,
-			0x0,
-			0xce,
-			0xfa,
-			0xb,
-			0xb0,
-			Convert.ToByte(x),
-			Convert.ToByte((tot - 16) / 256),
-			0x0,
-			0x0,
-			0x4d,
-			0x4d,
-			0x53,
-			0x20,
-			Convert.ToByte((tot - 16) / 8),
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			0x0,
-			Convert.ToByte((tot - 32) / 8),
-			0x0,
-			0x0,
-			0x0,
-			Convert.ToByte(comm),
-			0x0,
-			0x3,
-			0x0
-		};
+            byte[] h = { 0x1, 0x0, 0x0, 0x0, 0xce, 0xfa, 0xb, 0xb0, Convert.ToByte(x), Convert.ToByte((tot - 16) / 256), 0x0, 0x0, 0x4d, 0x4d, 0x53, 0x20, Convert.ToByte((tot - 16) / 8), 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, Convert.ToByte((tot - 32) / 8), 0x0, 0x0, 0x0, Convert.ToByte(comm), 0x0, 0x3, 0x0 };
             byte[] pack = new byte[tot];
             Array.ConstrainedCopy(h, 0, pack, 0, 40);
             Array.ConstrainedCopy(b1, 0, pack, 40, b1.Length);
@@ -1075,18 +906,10 @@ namespace OnlineVideos
             string s = HexString(pack, pack.Length, 0);
             return pack;
         }
+
         void TTTest(System.Net.Sockets.Socket sd)
         {
-            byte[] HB = {
-			0x1,
-			0x0,
-			0x0,
-			0x0,
-			0xff,
-			0xff,
-			0x1,
-			0x0
-		};
+            byte[] HB = { 0x1, 0x0, 0x0, 0x0, 0xff, 0xff, 0x1, 0x0 };
             sd.Send(HPacket(0x1b, HB, null));
         }
     }
