@@ -9,7 +9,7 @@ namespace OnlineVideos.Sites
     public class ABCUtil : SiteUtilBase
     {
         private static string mainCategoriesUrl = @"http://cdn.abc.go.com/vp2/ws-supt/s/syndication/2000/rss/001/001/-1/-1/-1/-1/-1/-1";
-        private static string ajaxUrlForShowId = @"http://abc.go.com/vp2/s/carousel?svc=season&showid={0}&bust=07000000_0";
+        private static string ajaxUrlForShowId = @"http://abc.go.com/vp2/s/carousel?service=seasons&parser=VP2_Data_Parser_Seasons&showid={0}&view=season";
 
         private Regex mainCategoriesRegex = new Regex(@"<item><description>.*?<image>(?<image>.*?)</image><link>(?<link>.*?)</link><title>(?<title>.*?)</title>",
             RegexOptions.Compiled);
@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
             RegexOptions.Compiled);
         private Regex thumbnailRegex = new Regex(@"http://cdn\.video\.abc\.com/abcvideo/video_fep/thumbnails/220x124/(?<episode>.*?)_220x124\.jpg",
             RegexOptions.Compiled);
-        private Regex showIdRegex = new Regex(@"/(?<showId>SH.*?)/[0-9]*?/-1/-1",
+        private Regex showIdRegex = new Regex(@"/(?<showId>SH\d+)",
             RegexOptions.Compiled);
         private Regex seasonIdRegex = new Regex(@"seasonid=""(?<seasonid>[^""]*)""",
             RegexOptions.Compiled);
@@ -57,6 +57,17 @@ namespace OnlineVideos.Sites
             string url = (string) ((RssLink) category).Url;
             string webData = GetWebData(url);
 
+            // determine show ID from the url
+            string showId = string.Empty;
+            Match showIdMatch = showIdRegex.Match(url);
+
+            if (showIdMatch.Success)
+            {
+                showId = showIdMatch.Groups["showId"].Value;
+            }
+
+            Log.Debug(@"Retrieved show ID: {0} from url: {1}", showId, url);
+
             if (!string.IsNullOrEmpty(webData))
             {
                 // look for RSS link
@@ -67,28 +78,32 @@ namespace OnlineVideos.Sites
 
                     int currentYear = DateTime.Now.Year;
 
-                    // RSS link ends with current year and /-1/-1, so we must find the real RSS link
-                    if (rssLink.EndsWith(currentYear + @"/-1/-1"))
+                    // RSS link ends with
+                    //      current year and /-1/-1
+                    //      or
+                    //      -1/-1/-1
+                    // so we must find the real RSS link by finding season ID
+                    if (rssLink.EndsWith(currentYear + @"/-1/-1") || rssLink.EndsWith(@"-1/-1/-1"))
                     {
-                        // first find the show id
-                        Match showIdMatch = showIdRegex.Match(rssLink);
+                        // make ajax call to URL which includes the show ID
+                        webData = GetWebData(String.Format(ajaxUrlForShowId, showId));
 
-                        if (showIdMatch.Success)
+                        Match seasonIdMatch = seasonIdRegex.Match(webData);
+                        if (seasonIdMatch.Success)
                         {
-                            string showId = showIdMatch.Groups["showId"].Value;
+                            // extract season id from response
+                            String seasonId = seasonIdMatch.Groups["seasonid"].Value;
 
-                            // make ajax call to URL which includes the show ID
-                            webData = GetWebData(String.Format(ajaxUrlForShowId, showId));
-
-                            Match seasonIdMatch = seasonIdRegex.Match(webData);
-
-                            if (seasonIdMatch.Success)
+                            // override rssLink
+                            if (rssLink.EndsWith(currentYear + @"/-1/-1"))
                             {
-                                // extract season id from response
-                                String seasonId = seasonIdMatch.Groups["seasonid"].Value;
-
-                                // override rssLink with 
+                                // replace currentYear with season ID
                                 rssLink = Regex.Replace(rssLink, "/" + currentYear + "/", "/" + seasonId + "/");
+                            }
+                            else if (rssLink.EndsWith(@"-1/-1/-1"))
+                            {
+                                // replace first occurence of -1 with season ID
+                                rssLink = Regex.Replace(rssLink, "/-1/-1/-1", "/" + seasonId + "/-1/-1");
                             }
                         }
                     }
