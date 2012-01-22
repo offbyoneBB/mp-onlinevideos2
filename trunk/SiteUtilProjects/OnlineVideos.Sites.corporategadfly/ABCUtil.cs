@@ -9,7 +9,7 @@ namespace OnlineVideos.Sites
     public class ABCUtil : SiteUtilBase
     {
         private static string mainCategoriesUrl = @"http://cdn.abc.go.com/vp2/ws-supt/s/syndication/2000/rss/001/001/-1/-1/-1/-1/-1/-1";
-        private static string ajaxUrlForShowId = @"http://abc.go.com/vp2/s/carousel?service=seasons&parser=VP2_Data_Parser_Seasons&showid={0}&view=season";
+        private static string seasonDiscoveryUrl = @"http://abc.go.com/vp2/s/carousel?service=seasons&parser=VP2_Data_Parser_Seasons&showid={0}&view=season";
 
         private Regex mainCategoriesRegex = new Regex(@"<item><description>.*?<image>(?<image>.*?)</image><link>(?<link>.*?)</link><title>(?<title>.*?)</title>",
             RegexOptions.Compiled);
@@ -21,18 +21,20 @@ namespace OnlineVideos.Sites
             RegexOptions.Compiled);
         private Regex showIdRegex = new Regex(@"/(?<showId>SH\d+)",
             RegexOptions.Compiled);
-        private Regex seasonIdRegex = new Regex(@"seasonid=""(?<seasonid>[^""]*)""",
+        // <a href="javascript:void(0)" seasonid="31" seasonnumber="31" class="season_link">Season 31</a>
+        private Regex seasonIdRegex = new Regex(@"seasonid=""(?<id>[^""]*)""[^>]*>(?<name>[^<]*)</a>",
             RegexOptions.Compiled);
 
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
 
-            // look for main categories
+            // retrieve contents of main categories url
             string webData = GetWebData(mainCategoriesUrl);
 
             if (!string.IsNullOrEmpty(webData))
             {
+                // look for main categories
                 foreach (Match m in mainCategoriesRegex.Matches(webData))
                 {
                     RssLink cat = new RssLink();
@@ -40,7 +42,7 @@ namespace OnlineVideos.Sites
                     cat.Name = m.Groups["title"].Value;
                     cat.Url = m.Groups["link"].Value;
                     cat.Thumb = m.Groups["image"].Value;
-                    cat.HasSubCategories = false;
+                    cat.HasSubCategories = true;
 
                     Settings.Categories.Add(cat);
                 }
@@ -50,82 +52,83 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            parentCategory.SubCategories = new List<Category>();
+
+            string url = ((RssLink)parentCategory).Url;
+
+            Match showIdMatch = showIdRegex.Match(url);
+            if (showIdMatch.Success)
+            {
+                string showId = showIdMatch.Groups["showId"].Value;
+                Log.Debug(@"Retrieved show ID: {0} from url: {1}", showId, url);
+
+                // retrieve contents of subcategory url
+                string webData = GetWebData(url);
+
+                if (!string.IsNullOrEmpty(webData))
+                {
+                    string rssLink = String.Empty;
+
+                    // look for RSS link
+                    Match rssLinkMatch = rssLinkRegex.Match(webData);
+                    if (rssLinkMatch.Success)
+                    {
+                        rssLink = rssLinkMatch.Groups["link"].Value;
+                    }
+
+                    // retrieve contents of URL to discover all the seasons
+                    webData = GetWebData(String.Format(seasonDiscoveryUrl, showId));
+
+                    if (!string.IsNullOrEmpty(webData))
+                    {
+                        // look for all seasons
+                        foreach (Match m in seasonIdRegex.Matches(webData))
+                        {
+                            string seasonId = m.Groups["id"].Value;
+                            string seasonName = m.Groups["name"].Value;
+                            Log.Debug(@"Season: {0}, ID: {1}", seasonName, seasonId);
+
+                            RssLink cat = new RssLink();
+
+                            cat.ParentCategory = parentCategory;
+                            cat.Name = seasonName;
+                            cat.Url = Regex.Replace(rssLink, @"/(\d+|-1)/-1/-1", "/" + seasonId + "/-1/-1");
+                            Log.Debug(@"Url after ID replacement {0}", cat.Url);
+                            cat.HasSubCategories = false;
+
+                            parentCategory.SubCategories.Add(cat);
+                        }
+                    }
+                }
+            }
+
+            parentCategory.SubCategoriesDiscovered = true;
+            return parentCategory.SubCategories.Count;
+        }
+
         public override List<VideoInfo> getVideoList(Category category)
         {
             List<VideoInfo> result = new List<VideoInfo>();
 
             string url = (string) ((RssLink) category).Url;
+            // retrieve contents of video list url
             string webData = GetWebData(url);
-
-            // determine show ID from the url
-            string showId = string.Empty;
-            Match showIdMatch = showIdRegex.Match(url);
-
-            if (showIdMatch.Success)
-            {
-                showId = showIdMatch.Groups["showId"].Value;
-            }
-
-            Log.Debug(@"Retrieved show ID: {0} from url: {1}", showId, url);
 
             if (!string.IsNullOrEmpty(webData))
             {
-                // look for RSS link
-                Match rssLinkMatch = rssLinkRegex.Match(webData);
-                if (rssLinkMatch.Success)
+                // look for list of episodes
+                foreach (Match m in episodeListRegex.Matches(webData))
                 {
-                    string rssLink = rssLinkMatch.Groups["link"].Value;
+                    VideoInfo info = new VideoInfo();
+                    info.Title = m.Groups["title"].Value;
+                    info.ImageUrl = m.Groups["image"].Value;
+                    info.Description = m.Groups["description"].Value;
+                    info.Other = m.Groups["link"].Value;
+                    info.VideoUrl = info.ImageUrl;
 
-                    int currentYear = DateTime.Now.Year;
-
-                    // RSS link ends with
-                    //      current year and /-1/-1
-                    //      or
-                    //      -1/-1/-1
-                    // so we must find the real RSS link by finding season ID
-                    if (rssLink.EndsWith(currentYear + @"/-1/-1") || rssLink.EndsWith(@"-1/-1/-1"))
-                    {
-                        // make ajax call to URL which includes the show ID
-                        webData = GetWebData(String.Format(ajaxUrlForShowId, showId));
-
-                        Match seasonIdMatch = seasonIdRegex.Match(webData);
-                        if (seasonIdMatch.Success)
-                        {
-                            // extract season id from response
-                            String seasonId = seasonIdMatch.Groups["seasonid"].Value;
-
-                            // override rssLink
-                            if (rssLink.EndsWith(currentYear + @"/-1/-1"))
-                            {
-                                // replace currentYear with season ID
-                                rssLink = Regex.Replace(rssLink, "/" + currentYear + "/", "/" + seasonId + "/");
-                            }
-                            else if (rssLink.EndsWith(@"-1/-1/-1"))
-                            {
-                                // replace first occurence of -1 with season ID
-                                rssLink = Regex.Replace(rssLink, "/-1/-1/-1", "/" + seasonId + "/-1/-1");
-                            }
-                        }
-                    }
-
-                    // follow the RSS link
-                    webData = GetWebData(rssLink);
-
-                    if (!string.IsNullOrEmpty(webData))
-                    {
-                        // look for list of episodes
-                        foreach (Match m in episodeListRegex.Matches(webData))
-                        {
-                            VideoInfo info = new VideoInfo();
-                            info.Title = m.Groups["title"].Value;
-                            info.ImageUrl = m.Groups["image"].Value;
-                            info.Description = m.Groups["description"].Value;
-                            info.Other = m.Groups["link"].Value;
-                            info.VideoUrl = info.ImageUrl;
-
-                            result.Add(info);
-                        }
-                    }
+                    result.Add(info);
                 }
             }
 
