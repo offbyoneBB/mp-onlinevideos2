@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Linq;
 using System.ComponentModel;
 using OnlineVideos.Sites.doskabouter.Vimeo;
 
@@ -145,6 +145,16 @@ namespace OnlineVideos.Sites
             return videoListFromVimeo(currentVideoListUrl + pageNr.ToString());
         }
 
+        public override string getUrl(VideoInfo video)
+        {
+            video.PlaybackOptions = null;
+            string res=base.getUrl(video);
+            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+                return video.PlaybackOptions.First().Value;
+            else
+                return res;
+
+        }
         #endregion
 
         private int subcatsFromVimeo(Category parentCategory, string url, string key)
