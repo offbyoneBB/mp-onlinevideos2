@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
@@ -22,15 +23,18 @@ namespace OnlineVideos.Sites
             string[] bitRates = { "330K", "700K" };
             foreach (string bitRate in bitRates)
             {
-                string url = ReverseProxy.Instance.GetProxyUri(RTMP_LIB.RTMPRequestHandler.Instance,
-                string.Format("http://127.0.0.1/stream.flv?rtmpurl={0}&swfVfy={1}",
-                HttpUtility.UrlEncode(res + bitRate),
-                HttpUtility.UrlEncode(@"http://static.mediaworks.co.nz/video/3.9/videoPlayer3.9.swf")));
-                video.PlaybackOptions.Add(bitRate, url);
+
+                RtmpUrl rtmpUrl = new RtmpUrl(res + bitRate)
+                {
+                    SwfVerify = true,
+                    SwfUrl = @"http://static.mediaworks.co.nz/video/3.9/videoPlayer3.9.swf"
+                };
+
+                video.PlaybackOptions.Add(bitRate, rtmpUrl.ToString());
                 //rtmpe://nzcontent.mediaworks.co.nz/tv3/_definst_/mp4:/transfer/07022011/HW031459_700K -W http://static.mediaworks.co.nz/video/3.9/videoPlayer3.9.swf
                 //rtmpe://nzcontent.mediaworks.co.nz/c4/_definst_/mp4:/transfer/07022011/HW031459_700K -W http://static.mediaworks.co.nz/video/3.9/videoPlayer3.9.swf
             }
-            return video.PlaybackOptions[bitRates[0]];
+            return video.PlaybackOptions[bitRates[1]];
         }
     }
 }
