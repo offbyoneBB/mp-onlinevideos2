@@ -123,7 +123,7 @@ namespace OnlineVideos
 
         public override string ToString()
         {
-            return string.Format("Title:{0}\nDesc:{1}\nVidUrl:{2}\nImgUrl:{3}\nLength:{4}\nAirdate:{5}", Title, Description, VideoUrl, ImageUrl, Length, Airdate);
+			return string.Format("Title:{0}\r\nDesc:{1}\r\nVidUrl:{2}\r\nImgUrl:{3}\r\nLength:{4}\r\nAirdate:{5}", Title, Description, VideoUrl, ImageUrl, Length, Airdate);
         }
 
         /// <summary>
