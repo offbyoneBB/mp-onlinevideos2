@@ -66,7 +66,7 @@ namespace OnlineVideos.Sites
 							if (!Uri.IsWellFormedUriString(anUrl, System.UriKind.Absolute)) anUrl = new Uri(new Uri(baseUrl), anUrl).AbsoluteUri;
                             videoUrls.Add(m.Groups["PostTitle"].Captures.Count - 1 >= i ? m.Groups["PostTitle"].Captures[i].Value : (i + 1).ToString(), anUrl);
                         }
-                        if (videoUrls.Count > 1) { videoInfo.PlaybackOptions = videoUrls; videoInfo.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(videoUrls); }
+                        if (videoUrls.Count > 1) videoInfo.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(videoUrls);
                         else if (videoUrls.Count == 1) videoInfo.VideoUrl = videoUrls.First().Value;
                         else continue;
                         // get, format and if needed absolutify the thumb url
