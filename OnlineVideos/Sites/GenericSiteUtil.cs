@@ -284,8 +284,8 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = CreateVideoInfo();
                     video.Title = channel.StreamName;
-                    // rtmp live stream urls need to set the live flag
-                    if (channel.Url.ToLower().StartsWith("rtmp") && channel.Url.ToLower().Contains("live"))
+					// rtmp live stream urls need to set the live flag (if they are not yet in the MPUrlSourceFilter format)
+					if (channel.Url.ToLower().StartsWith("rtmp") && !channel.Url.Contains(MPUrlSourceFilter.RtmpUrl.ParameterSeparator))
                     {
 						video.VideoUrl = new MPUrlSourceFilter.RtmpUrl(channel.Url) { Live = true }.ToString();
                     }
@@ -391,11 +391,15 @@ namespace OnlineVideos.Sites
 
         public override string getUrl(VideoInfo video)
         {
-            // Get playbackoptins back from favorite video if they were saved in Other object
-            if (!string.IsNullOrEmpty(video.SiteName) && video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
-                video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
+			// it is a live stream that was configured in the xml, return the url right away
+			if (video.Other as string == "livestream") return video.VideoUrl;
 
-            if (video.Other as string == "livestream") return video.VideoUrl;
+			// set playbackoption to null, as they will be rediscovered (not doing so would result in double resolving of them)
+			video.PlaybackOptions = null; 
+
+			// deserialize PlaybackOptions if they were saved in Other object (happens if they are already discovered when building the list of videos)
+            if (video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
+                video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));            
 
             string resultUrl = getFormattedVideoUrl(video);
 
