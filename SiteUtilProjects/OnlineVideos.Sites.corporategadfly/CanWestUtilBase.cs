@@ -15,6 +15,9 @@ namespace OnlineVideos.Sites
         public abstract Regex FeedPIDRegex { get; }
         public abstract string PlayerTag { get; }
 
+        public virtual Boolean IsSwfUrlNeeded { get { return false; } }
+        public virtual string SwfUrl { get { return @""; } }
+
         private static string categoriesJsonUrl = baseUrl + @"getCategoryList?PID={0}&field=ID&field=depth&field=title&field=hasReleases&field=fullTitle&field=hasChildren&query=CustomText|PlayerTag|{1}";
         private static string releasesJsonUrl = baseUrl + @"getReleaseList?PID={0}&field=title&field=PID&field=ID&field=description&field=categoryIDs&field=thumbnailURL&field=URL&field=airdate&field=length&field=bitrate&sortField=airdate&sortDescending=true&startIndex=1&endIndex=100&query=CategoryIDs|{1}";
         private static string videoContentUrl = @"http://release.theplatform.com/content.select?pid={0}&format=SMIL&mbr=true";
@@ -279,14 +282,22 @@ namespace OnlineVideos.Sites
                         string playPath = rtmpUrlMatch.Groups["playPath"].Value;
                         if (playPath.EndsWith(@".mp4") && !playPath.StartsWith(@"mp4:"))
                         {
+                            // prepend with mp4:
                             playPath = @"mp4:" + playPath;
                         }
                         else if (playPath.EndsWith(@".flv"))
                         {
+                            // strip extension
                             playPath = playPath.Substring(0, playPath.Length - 4);
                         }
                         Log.Debug(@"Host: {0}, PlayPath: {1}", host, playPath);
-                        urlsDictionary.Add(bitrate / 1000, new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = playPath }.ToString());
+                        MPUrlSourceFilter.RtmpUrl rtmpUrl = new MPUrlSourceFilter.RtmpUrl(host) { PlayPath = playPath };
+                        if (IsSwfUrlNeeded)
+                        {
+                            rtmpUrl.SwfUrl = SwfUrl;
+                            rtmpUrl.SwfVerify = true;
+                        }
+                        urlsDictionary.Add(bitrate / 1000, rtmpUrl.ToString());
                     }
                 }
             }
