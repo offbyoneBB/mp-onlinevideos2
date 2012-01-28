@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using OnlineVideos.Hoster.Base;
 using System.Web;
+using System.Globalization;
 
 namespace OnlineVideos.Hoster
 {
@@ -16,7 +17,8 @@ namespace OnlineVideos.Hoster
         }
 
 		static readonly byte[] fmtOptionsQualitySorted = new byte[] { 38, 85, 46, 37, 102, 84, 45, 22, 101, 83, 44, 35, 100, 82, 43, 18, 34, 6, 5, 0, 17, 13 };
-        static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS')\s*(?:=|\:)\s(?<json>\{.+\})|(?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|(flashvars=""(?<params>[^""]+)"")", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS'|swf)\s*(?:=|\:)\s((""\s*(?<html>.*)"";)|(?<json>\{.+\})|(?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|(flashvars=""(?<params>[^""]+)""))", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static Regex unicodeFinder = new Regex(@"\\[uU]([0-9A-F]{4})", RegexOptions.Compiled);
 
         public override Dictionary<string, string> getPlaybackOptions(string url)
         {
@@ -60,6 +62,13 @@ namespace OnlineVideos.Hoster
                             {
                                 Items.Add(z.Key, z.Value.Value<string>(z.Key));
                             }
+                        }
+                        else if (m.Groups["html"].Success)
+                        {                            
+                            Items.Clear();
+                            string html = Regex.Match(m.Groups["html"].Value, @"flashvars=\\""(?<value>.+?)\\""").Groups["value"].Value;
+                            html = unicodeFinder.Replace(html, match => ((char)Int32.Parse(match.Value.Substring(2), NumberStyles.HexNumber)).ToString());
+                            Items = System.Web.HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(html));
                         }
                     }
                 }
