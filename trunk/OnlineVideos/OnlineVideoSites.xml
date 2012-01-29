@@ -143,7 +143,7 @@
         <item key="dynamicCategoriesRegEx"><![CDATA[<div[^>]*>\s*<a\s+href="(?<url>[^"]+)"[^>]*>\s*
 <img(?:(?!src).)+src="(?<thumb>[^"]+)"[^>]*>\s*</a>\s*</div>\s*
 <div[^>]*>\s*
-<span[^>]*>\s*FREE\s+\|\s+Jetzt\s+ansehen\s*<br>\s*</span>\s*
+<span[^>]*>.*?</span>\s*
 <h2>(?<title>[^<]+)</h2>\s*(?<description>[^<]*)</div>]]></item>
         <item key="videoListRegEx"><![CDATA[<div\s+onclick=[^>]*>\s*<a[^>]*>(?<Title>[^<]+)</a>\s*</div>\s*
 <div[^>]*>[^<]*</div>\s*
@@ -1077,7 +1077,7 @@
       <Configuration>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\sclass="rb"\shref="(?<url>[^"]*)"[^>]*>(?<title>[^\s]*)\s*(?<description>[^\s]*)\s*</a>]]></item>
         <item key="videoListRegEx"><![CDATA[<a\sclass="travel"\shref="(?<VideoUrl>[^"]+)">(?<Title>[^<]+)</a>\s*</td><td[^>]*><img\ssrc="../img/[^\.]+\.gif"\swidth="50"\sheight="24"></td>\s*<td[^>]*>(?:<center>)?\s*<a\s*class="[sqm]"[^>]*>(?<Duration>[^<]+)</a>\s*</td><td[^>]*><font[^>]*>(?<Description>[^>]*)</td></tr>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<a\sclass="s"\shref="(?<m0>[^"]*)">]]></item>
+        <item key="fileUrlRegEx"><![CDATA[(<a\sclass="s"\shref="(?<m0>[^"]*)">)|(<param\s+Name="initParams"\s+value="VideoSource=(?<m0>[^,]+),)]]></item>
         <item key="searchUrl"><![CDATA[http://swwitv.com/search.php?zoom_query={0}]]></item>
         <item key="baseUrl"><![CDATA[http://wwitv.com/menu_left.htm]]></item>
       </Configuration>
