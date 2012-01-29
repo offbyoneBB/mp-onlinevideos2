@@ -17,9 +17,13 @@ namespace OnlineVideos.Sites
 
 			if (!string.IsNullOrEmpty(data))
 			{
-				Match m = Regex.Match(data, @"data\:""(?<url>[^""]+)"",");
+				Match m = Regex.Match(data, @"data\:'(?<url>[^']+)',");
 				if (m.Success)
 				{
+					string swfUrl = new Uri(new Uri(baseUrl), "/includes/rtlnow_videoplayer09_2.swf").AbsoluteUri;
+					Match swfMatch = Regex.Match(data, @"http://.*?\.swf[^""]+");
+					if (swfMatch.Success) swfUrl = swfMatch.Value;
+
 					string url = HttpUtility.UrlDecode(m.Groups["url"].Value);
 					if (!Uri.IsWellFormedUriString(url, System.UriKind.Absolute)) url = new Uri(new Uri(baseUrl), url).AbsoluteUri;
 					data = GetWebData(url);
@@ -73,7 +77,7 @@ namespace OnlineVideos.Sites
 						return new MPUrlSourceFilter.RtmpUrl(tcUrl, host, 1935)
 						{
 							App = app,
-							SwfUrl = new Uri(new Uri(baseUrl), "/includes/rtlnow_videoplayer09_2.swf").AbsoluteUri,
+							SwfUrl = swfUrl,
 							SwfVerify = true,
 							PageUrl = new Uri(new Uri(baseUrl), "/p/").AbsoluteUri,
 							PlayPath = combinedPlaypath
