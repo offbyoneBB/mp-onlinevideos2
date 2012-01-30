@@ -34,7 +34,7 @@ namespace OnlineVideos.Sites
                 return 0;
             Log.Debug("tld, emailaddress and password != null");
 
-            SubcatRegex = new Regex(@"<option value=""UpdateAjaxVod\('(?<url>[^']*)'\);"">(?<title>[^<]*)</option>");
+            SubcatRegex = new Regex(@"<option value=""UpdateAjaxVod\('(?<url>[^']*)'[^>]*>(?<title>[^<]*)</option>");
             baseUrl = String.Format(@"http://www.eurosportplayer.{0}/", tld);
 
             CookieContainer cc = new CookieContainer();
@@ -127,7 +127,7 @@ namespace OnlineVideos.Sites
                 VideoInfo video = new VideoInfo();
                 video.Title = node.SelectSingleNode("title").InnerText;
                 video.ImageUrl = node.SelectSingleNode("img").InnerText;
-				video.Length = '|' + Translation.Instance.Airdate + ": " + node.SelectSingleNode("date").InnerText;
+                video.Length = '|' + Translation.Instance.Airdate + ": " + node.SelectSingleNode("date").InnerText;
                 video.VideoUrl = baseUrl + node.SelectSingleNode("link").InnerText.TrimStart('/');
                 video.Other = category.Other;
                 result.Add(video);
@@ -138,7 +138,7 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> GetVideoListFromLive(Category category)
         {
             string getData = GetWebData(((RssLink)category).Url, newcc);
-            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""(?<value>[^&]*)&#xA;\s*lang=(?<lang>[^&]*)&#xA;\s*,geoloc=(?<geoloc>[^&]*)&#xA;\s*,realip=(?<realip>[^&]*)&#xA;\s*,ut=(?<ut>[^&]*)&#xA;\s*,ht=(?<ht>[^&]*)&#xA;\s*,vidid=(?<vidid>[^&]*)&#xA;\s*,cuvid=(?<cuvid>[^&]*)&#xA;\s*,prdid=(?<prdid>[^&]*)&");
+            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""&\#xA;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
 
             string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
 <s:Body xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
@@ -157,7 +157,7 @@ namespace OnlineVideos.Sites
 </s:Body></s:Envelope>", tld.ToUpperInvariant(), m.Groups["lang"].Value, -1, m.Groups["realip"].Value,
                    m.Groups["ut"].Value, m.Groups["ht"].Value);
 
-            string postData = GetWebDataFromPost("http://videoshop.ws.eurosport.com/PlayerProductService.asmx",
+            string postData = GetWebDataFromPost("http://videoshop.eurosport.com/PlayerProductService.asmx",
                 post, @"SOAPAction: ""http://tempuri.org/FindDefaultProductShortsByCountryAndService""");
 
             XmlDocument doc = new XmlDocument();
@@ -211,7 +211,7 @@ namespace OnlineVideos.Sites
         private string GetUrlFromVideo(VideoInfo video)
         {
             string getData = GetWebData(video.VideoUrl, newcc);
-            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""(?<value>[^&]*)&#xA;\s*lang=(?<lang>[^&]*)&#xA;\s*,geoloc=(?<geoloc>[^&]*)&#xA;\s*,realip=(?<realip>[^&]*)&#xA;\s*,ut=(?<ut>[^&]*)&#xA;\s*,ht=(?<ht>[^&]*)&#xA;\s*,vidid=(?<vidid>[^&]*)&#xA;\s*,cuvid=(?<cuvid>[^&]*)&#xA;\s*,prdid=(?<prdid>[^&]*)&");
+            Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""&\#xA;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;&\#x9;lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
 
             string post = String.Format(@"<s:Envelope xmlns:s=""http://schemas.xmlsoap.org/soap/envelope/"">
 <s:Body xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
@@ -229,7 +229,7 @@ namespace OnlineVideos.Sites
 </s:Body></s:Envelope>", tld.ToUpperInvariant(), m.Groups["lang"].Value, 1, m.Groups["realip"].Value,
                    m.Groups["ut"].Value, m.Groups["ht"].Value);
 
-            string postData = GetWebDataFromPost("http://videoshop.ws.eurosport.com/PlayerVideoService.asmx",
+            string postData = GetWebDataFromPost("http://videoshop.eurosport.com/PlayerVideoService.asmx",
                 post, @"SOAPAction: ""http://tempuri.org/GetVideoSecurizedAsync""");
 
             XmlDocument doc = new XmlDocument();
@@ -250,14 +250,20 @@ namespace OnlineVideos.Sites
             video.PlaybackOptions = new Dictionary<string, string>();
             foreach (XmlNode stream in streams)
             {
-                string url = stream.SelectSingleNode("a:securedurl", nsmRequest).InnerText;
+                string securedUrl = stream.SelectSingleNode("a:securedurl", nsmRequest).InnerText;
                 XmlNode nameNode = stream.SelectSingleNode("a:label/a:name", nsmRequest);
                 string name;
                 if (nameNode != null)
                     name = stream.SelectSingleNode("a:label/a:name", nsmRequest).InnerText;
                 else
                     name = String.Empty;
-                video.PlaybackOptions.Add(name, url);
+                if (!Uri.IsWellFormedUriString(securedUrl, System.UriKind.Absolute))
+                {
+                    string url = stream.SelectSingleNode("a:url", nsmRequest).InnerText;
+                    securedUrl = new Uri(new Uri(url), securedUrl).AbsoluteUri;
+                }
+
+                video.PlaybackOptions.Add(name, securedUrl);
             }
 
             string resultUrl;
