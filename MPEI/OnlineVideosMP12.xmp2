@@ -2339,7 +2339,7 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteParser\bin\Debug\SiteParser.exe</LocalFileName>
+              <LocalFileName>..\SiteParser\bin\SiteParser.exe</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{d97676eb-b0ee-4f86-912a-c7d92baaf10b}-SiteParser.exe</ZipFileName>
               <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe</DestinationFilename>
             </FileItem>
@@ -2829,8 +2829,8 @@ public class Script
         </CompatibleVersion>
         <SubSystemsUsed>
           <Items>
-            <SubSystemItem Name="MP.Players.Video" />
             <SubSystemItem Name="MP.SkinEngine" />
+            <SubSystemItem Name="MP.Players.Video" />
             <SubSystemItem Name="MP.Input" />
             <SubSystemItem Name="MP.Externals.SQLite" />
             <SubSystemItem Name="MP.Config" />
@@ -5164,7 +5164,7 @@ public class Script
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteParser\bin\Debug\SiteParser.exe</LocalFileName>
+        <LocalFileName>..\SiteParser\bin\SiteParser.exe</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{d97676eb-b0ee-4f86-912a-c7d92baaf10b}-SiteParser.exe</ZipFileName>
         <DestinationFilename>%Base%\OnlineVideos.SiteCreator.exe</DestinationFilename>
       </FileItem>
