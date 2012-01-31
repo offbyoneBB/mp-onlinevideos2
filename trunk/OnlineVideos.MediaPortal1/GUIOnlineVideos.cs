@@ -2158,7 +2158,14 @@ namespace OnlineVideos.MediaPortal1
         {
             IPlayerFactory savedFactory = g_Player.Factory;
             g_Player.Factory = factory;
-            bool playing = g_Player.Play(lsUrl, g_Player.MediaType.Video);
+			try
+			{
+				g_Player.Play(lsUrl, g_Player.MediaType.Video);
+			}
+			catch (Exception ex) // since many plugins attach to the g_Player.PlayBackStarted event, this might throw unexpected errors
+			{
+				Log.Instance.Warn(ex.ToString());
+			}
             g_Player.Factory = savedFactory;
 
             if (g_Player.Player != null && g_Player.HasVideo)
