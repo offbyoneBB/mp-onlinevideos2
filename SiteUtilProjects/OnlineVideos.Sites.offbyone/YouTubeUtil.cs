@@ -114,7 +114,7 @@ namespace OnlineVideos.Sites
         bool localize = false;
 
         [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
-        bool useDynamicCategories = true;               
+        bool useDynamicCategories = true;
 
         private YouTubeService service;
         private List<int> steps = new List<int>() { 10, 20, 30, 40, 50 };
@@ -209,21 +209,23 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            if (!useDynamicCategories) return base.DiscoverDynamicCategories();
+			// add categories defined by YouTube
+			if (useDynamicCategories)
+			{
+				Dictionary<String, String> categories = getYoutubeCategories();
+				foreach (KeyValuePair<String, String> cat in categories)
+				{
+					RssLink item = new RssLink();
+					item.Name = cat.Key;
+					YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
+					query.Categories.Add(new QueryCategory(cat.Value, QueryCategoryOperator.AND));
+					item.Url = query.Uri.ToString();
+					Settings.Categories.Add(item);
+				}
+			}
 
-            Dictionary<String, String> categories = getYoutubeCategories();
-            foreach (KeyValuePair<String, String> cat in categories)
-            {
-                RssLink item = new RssLink();
-                item.Name = cat.Key;
-                YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri);
-                query.Categories.Add(new QueryCategory(cat.Value, QueryCategoryOperator.AND));
-                item.Url = query.Uri.ToString();
-                Settings.Categories.Add(item);
-            }
-
-            // if a username was set add a category for the users a) favorites and b) subscriptions
-            if (!string.IsNullOrEmpty(accountname))
+            // if a username was set add categories for a user on YouTube
+			if (!string.IsNullOrEmpty(accountname) && !string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(accountname))
             {
 				Settings.Categories.Add(new RssLink() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Favourites), Url = YouTubeQuery.CreateFavoritesUri(accountname), Other="Login" });
 				Settings.Categories.Add(new RssLink() { Name = string.Format("{0}'s {1}", accountname, Translation.Instance.Recommendations), Url = USER_RECOMMENDATIONS_FEED, Other = "Login" });
@@ -234,7 +236,7 @@ namespace OnlineVideos.Sites
             }
 
             Settings.DynamicCategoriesDiscovered = true;
-            return categories.Count;
+			return Settings.Categories.Count;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
