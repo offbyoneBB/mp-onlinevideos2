@@ -149,8 +149,14 @@ namespace OnlineVideos.Sites
                 string episode = episodeMatch.Groups["episode"].Value;
                 Log.Debug(@"episode found: {0}", episode);
 
-                // convert thumbnail URL to the playPath
-                string playPath = String.Format(@"mp4:/abcvideo/video_fep/mov/{0}_768x432_700.mov", episode.ToLower());
+                bool hasLowResolution = video.VideoUrl.Contains(@"extreme-makeover-home-edition");
+
+                // convert thumbnail URL to the playPath (episode has to be lower-case)
+                string playPath = String.Format(
+                    hasLowResolution ?
+                    @"mp4:/abcvideo/video_fep/mov/{0}_768x432_700.mov" :
+                    @"mp4:/abcvideo/video_fep/mov/{0}_576x432_700.mov",
+                    episode.ToLower());
                 Log.Debug(@"playPath: {0}", playPath);
 
                 result = new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = playPath }.ToString();
