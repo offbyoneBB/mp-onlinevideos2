@@ -23,7 +23,7 @@
 
 #include "MPUrlSourceSplitter_File_Exports.h"
 #include "Logger.h"
-#include "ProtocolInterface.h"
+#include "IProtocol.h"
 #include "LinearBuffer.h"
 
 #include <stdio.h>
@@ -71,11 +71,12 @@ public:
   unsigned int GetReceiveDataTimeout(void);
   GUID GetInstanceId(void);
   unsigned int GetOpenConnectionMaximumAttempts(void);
-  HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime);
   HRESULT AbortStreamReceive();  
   HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
   HRESULT QueryStreamAvailableLength(CStreamAvailableLength *availableLength);
-  HRESULT QueryRangesSupported(CRangesSupported *rangesSupported);
+  unsigned int GetSeekingCapabilities(void);
+  int64_t SeekToTime(int64_t time);
+  int64_t SeekToPosition(int64_t start, int64_t end);
 
 protected:
   CLogger *logger;
@@ -104,7 +105,7 @@ protected:
   bool setLenght;
 
   // stream time
-  REFERENCE_TIME streamTime;
+  int64_t streamTime;
 
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;

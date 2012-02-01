@@ -19,15 +19,17 @@
 
 #pragma once
 
-#include "ProtocolInterface.h"
+#include "IProtocol.h"
 #include "Logger.h"
 #include "Download.h"
 
 #include "AsyncRequest.h"
 #include "AsyncRequestCollection.h"
 #include "MediaPacketCollection.h"
-#include "RangesSupported.h"
 #include "StreamAvailableLength.h"
+#include "IFilter.h"
+
+#include <set>
 
 class CLAVSplitter;
 class CAsyncRequest;
@@ -43,6 +45,10 @@ struct ProtocolImplementation
   DESTROYPROTOCOLINSTANCE destroyProtocolInstance;
 };
 
+#define STATUS_NONE                                               0
+#define STATUS_NO_DATA_ERROR                                      -1
+#define STATUS_RECEIVING_DATA                                     1
+
 class CLAVInputPin 
   : public CUnknown
   , public CCritSec
@@ -50,22 +56,19 @@ class CLAVInputPin
   , public IOutputStream
   , public IDownload
   , public IDownloadCallback
+  , public IMediaSeeking
+  , public IFilter
 {
 public:
-  CLAVInputPin(TCHAR* pName, CLAVSplitter *pFilter, CCritSec* pLock, HRESULT* phr);
+  CLAVInputPin(CLogger *logger, TCHAR* pName, CLAVSplitter *pFilter, CCritSec* pLock, HRESULT* phr);
   ~CLAVInputPin(void);
 
-  HRESULT GetAVIOContext(AVIOContext** ppContext);
+  AVIOContext *GetAVIOContext(void);
+  void ReleaseAVIOContext(void);
 
   // IUnknown
   DECLARE_IUNKNOWN
   STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
-
-  // CBasePin
-  /*HRESULT CheckMediaType(const CMediaType* pmt);
-  HRESULT CheckConnect(IPin* pPin);
-  HRESULT BreakConnect();
-  HRESULT CompleteConnect(IPin* pPin);*/
 
   STDMETHODIMP BeginFlush();
   STDMETHODIMP EndFlush();
@@ -91,7 +94,7 @@ public:
   // @param total : total length of stream in bytes
   // @param estimate : specifies if length is estimate
   // @return : S_OK if successful
-  HRESULT SetTotalLength(LONGLONG total, bool estimate);
+  HRESULT SetTotalLength(int64_t total, bool estimate);
 
   // pushes media packet to output pin
   // @param mediaPacket : reference to media packet to push to output pin
@@ -99,9 +102,10 @@ public:
   HRESULT PushMediaPacket(CMediaPacket *mediaPacket);
 
   // notifies output stream that end of stream was reached
+  // this method can be called only when protocol support SEEKING_METHOD_POSITION
   // @param streamPosition : the last valid stream position
   // @return : S_OK if successful
-  HRESULT EndOfStreamReached(LONGLONG streamPosition);
+  HRESULT EndOfStreamReached(int64_t streamPosition);
 
   // request protocol implementation to cancel the stream reading operation
   // @return : S_OK if successful
@@ -113,13 +117,80 @@ public:
   // @return : S_OK if successful, VFW_S_ESTIMATED if returned values are estimates, E_UNEXPECTED if unexpected error
   HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
 
+  // IMediaSeeking
+  STDMETHODIMP GetCapabilities(DWORD* pCapabilities);
+  STDMETHODIMP CheckCapabilities(DWORD* pCapabilities);
+  STDMETHODIMP IsFormatSupported(const GUID* pFormat);
+  STDMETHODIMP QueryPreferredFormat(GUID* pFormat);
+  STDMETHODIMP GetTimeFormat(GUID* pFormat);
+  STDMETHODIMP IsUsingTimeFormat(const GUID* pFormat);
+  STDMETHODIMP SetTimeFormat(const GUID* pFormat);
+  STDMETHODIMP GetDuration(LONGLONG* pDuration);
+  STDMETHODIMP GetStopPosition(LONGLONG* pStop);
+  STDMETHODIMP GetCurrentPosition(LONGLONG* pCurrent);
+  STDMETHODIMP ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat);
+  STDMETHODIMP SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
+  STDMETHODIMP GetPositions(LONGLONG* pCurrent, LONGLONG* pStop);
+  STDMETHODIMP GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest);
+  STDMETHODIMP SetRate(double dRate);
+  STDMETHODIMP GetRate(double* pdRate);
+  STDMETHODIMP GetPreroll(LONGLONG* pllPreroll);
+
+  REFERENCE_TIME GetStart(void);
+  REFERENCE_TIME GetStop(void);
+  REFERENCE_TIME GetCurrent(void);
+  REFERENCE_TIME GetNewStart(void);
+  REFERENCE_TIME GetNewStop(void);
+  double GetPlayRate(void);
+  BOOL GetStopValid(void);
+
+  void SetStart(REFERENCE_TIME time);
+  void SetStop(REFERENCE_TIME time);
+  void SetCurrent(REFERENCE_TIME time);
+  void SetNewStart(REFERENCE_TIME time);
+  void SetNewStop(REFERENCE_TIME time);
+  void SetPlayRate(double rate);
+  void SetStopValid(BOOL valid);
+
+  // IFilter interface
+
+  // gets seeking capabilities of protocol
+  // @return : bitwise combination of SEEKING_METHOD flags
+  unsigned int GetSeekingCapabilities(void);
+
+  // gets logger instance
+  // @return : logger instance or NULL if error
+  CLogger *GetLogger(void);
+
+  // seeks to time (in ms)
+  // @return : time in ms where seek finished or lower than zero if error
+  int64_t SeekToTime(int64_t time);
+
+  // request protocol implementation to receive data from specified position to specified position
+  // @param start : the requested start position (zero is start of stream)
+  // @param end : the requested end position, if end position is lower or equal to start position than end position is not specified
+  // @return : position where seek finished or lower than zero if error
+  int64_t SeekToPosition(int64_t start, int64_t end);
+
 protected:
   static int Read(void *opaque, uint8_t *buf, int buf_size);
   static int64_t Seek(void *opaque, int64_t offset, int whence);
 
-  LONGLONG m_llPos;
+  LONGLONG m_llBufferPosition;
 
 private:
+  // Times
+  REFERENCE_TIME m_rtStart, m_rtStop, m_rtCurrent, m_rtNewStart, m_rtNewStop;
+  double m_dRate;
+  BOOL m_bStopValid;
+
+  // Seeking
+  REFERENCE_TIME m_rtLastStart, m_rtLastStop;
+  std::set<void *> m_LastSeekers;
+
+  // specifies if demuxer has been created
+  bool createdDemuxer;
+
   AVIOContext *m_pAVIOContext;
 
   wchar_t* url;
@@ -146,7 +217,7 @@ private:
   // request ID for async requests
   unsigned int requestId;
 
-  LONGLONG totalLength;
+  int64_t totalLength;
   bool estimate;
 
   // file path for storing received data to file
@@ -158,9 +229,6 @@ private:
   bool downloadFinished;
   // specifies if download callback has been called
   bool downloadCallbackCalled;
-
-  // specifies if pin is successfully connected to another pin
-  bool connectedToAnotherPin;
 
   // handle to MPUrlSourceSplitter.ax
   HMODULE mainModuleHandle;
@@ -205,7 +273,7 @@ private:
   // @return : reference to variable holding collection of parameters or NULL if error
   CParameterCollection *ParseParameters(const wchar_t *parameters);
 
-  HRESULT Request(unsigned int *requestId, LONGLONG position, LONG length, IMediaSample *sample, BYTE *buffer, bool aligned, DWORD_PTR userData);
+  HRESULT Request(unsigned int *requestId, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData);
   HRESULT EnqueueAsyncRequest(CAsyncRequest *request);
 
   // handle for thread which makes relation between CMediaPacket and CAsyncRequest
@@ -219,9 +287,9 @@ private:
   // @param mediaPacket : media packet
   // @param mediaPacketDataStart : the reference to variable that holds data start within media packet (if successful)
   // @param mediaPacketDataLength : the reference to variable that holds data length within media packet (if successful)
-  // @param startTime : start timestamp of data
+  // @param startPosition : start position of data
   // @return : S_OK if successful, error code otherwise
-  HRESULT CheckValues(CAsyncRequest *request, CMediaPacket *mediaPacket, unsigned int *mediaPacketDataStart, unsigned int *mediaPacketDataLength, REFERENCE_TIME startTime);
+  HRESULT CheckValues(CAsyncRequest *request, CMediaPacket *mediaPacket, unsigned int *mediaPacketDataStart, unsigned int *mediaPacketDataLength, int64_t startPosition);
 
   // creates async request worker
   // @return : S_OK if successful
@@ -239,7 +307,7 @@ private:
   // @param length : specifies the number of bytes to read
   // @param buffer : reference to a buffer that receives the data
   // @return : S_OK if successful, S_FALSE if retrieved fewer bytes than requested (probably the end of the stream was reached)
-  STDMETHODIMP SyncRead(LONGLONG position, LONG length, BYTE* buffer);
+  STDMETHODIMP SyncRead(int64_t position, LONG length, BYTE* buffer);
 
   // retrieves the total length of the stream
   // @param total : pointer to a variable that receives the length of the stream, in bytes
@@ -252,18 +320,23 @@ private:
   // @return : S_OK if successful, other error codes if error
   HRESULT QueryStreamAvailableLength(CStreamAvailableLength *availableLength);
 
-  // queries protocol implementation if ranges are supported
-  // @param rangesSupported : reference to instance of class that receives if ranges are supported
-  // @return : S_OK if successful
-  HRESULT QueryRangesSupported(CRangesSupported *rangesSupported);
-
   // get timeout (in ms) for receiving data
   // @return : timeout (in ms) for receiving data
   unsigned int GetReceiveDataTimeout(void);
 
-  // request protocol implementation to receive data from specified time
-  // @param startTime : the requested start time (zero is start of stream)
-  // @param endTime : the requested end time, if endTime is lower or equal to startTime than endTime is not specified
-  // @return : S_OK if successful, error code otherwise
-  HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime);
+  HANDLE hCreateDemuxerWorkerThread;
+  DWORD dwCreateDemuxerWorkerThreadId;
+  bool demuxerWorkerShouldExit;
+  static DWORD WINAPI DemuxerWorker(LPVOID lpParam);
+
+  // creates demuxer worker
+  // @return : S_OK if successful
+  HRESULT CreateDemuxerWorker(void);
+
+  // destroys demuxer worker
+  // @return : S_OK if successful
+  HRESULT DestroyDemuxerWorker(void);
+
+  friend class CLAVSplitter;
+  STDMETHODIMP SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
 };

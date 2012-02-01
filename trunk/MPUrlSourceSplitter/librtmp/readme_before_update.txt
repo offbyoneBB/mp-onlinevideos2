@@ -179,3 +179,48 @@ Comment: all methods must have first parameter 'RTMP *r'
 Code:
 
 --------------------------------------------
+
+Comment: in RTMP_ConnectStream() method add to beginning
+Code: 
+
+int tempSeekTime = 0;
+
+--------------------------------------------
+
+Comment: in RTMP_ConnectStream() method comment
+Code: 
+
+/*if (seekTime > 0)
+    r->Link.seekTime = seekTime;*/
+
+--------------------------------------------
+
+Comment: in RTMP_ConnectStream() method add before 'while (!r->m_bPlaying && RTMP_IsConnected(r) && RTMP_ReadPacket(r, &packet))'
+Code: 
+
+RTMP_Log(r, RTMP_LOGDEBUG, "ConnectStream(): Start");
+RTMP_Log(r, RTMP_LOGDEBUG, "ConnectStream(): link seek time: %d, seek time: %d", r->Link.seekTime, seekTime);
+
+tempSeekTime = r->Link.seekTime;
+r->Link.seekTime = 0;
+
+--------------------------------------------
+
+Comment: in RTMP_ConnectStream() method add after 'while (!r->m_bPlaying && RTMP_IsConnected(r) && RTMP_ReadPacket(r, &packet))' cycle
+Code: 
+
+r->Link.seekTime = tempSeekTime;
+
+if ((r->Link.seekTime > 0) && (r->m_bPlaying))
+{
+  RTMP_Log(r, RTMP_LOGDEBUG, "ConnectStream(): playing, trying to seek: %d", r->Link.seekTime);
+  if (!RTMP_SendSeek(r, r->Link.seekTime))
+  {
+    RTMP_Log(r, RTMP_LOGDEBUG, "ConnectStream(): playing, seeking failed");
+    RTMP_Close(r);
+  }
+}
+
+RTMP_Log(r, RTMP_LOGDEBUG, "ConnectStream(): End");
+
+--------------------------------------------

@@ -29,9 +29,9 @@
 
 // protocol implementation name
 #ifdef _DEBUG
-#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSource_Httpd"
+#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSourceSplitter_Httpd"
 #else
-#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSource_Http"
+#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSourceSplitter_Http"
 #endif
 
 #define METHOD_COMPARE_RANGES_BUFFERS_NAME                              L"CompareRangesBuffers()"
@@ -497,7 +497,7 @@ void CMPUrlSourceSplitter_Http::ReceiveData(bool *shouldExit)
 
           // notify filter the we reached end of stream
           // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-          REFERENCE_TIME streamTime = this->streamTime;
+          int64_t streamTime = this->streamTime;
           this->streamTime = this->streamLength;
           this->filter->EndOfStreamReached(max(0, streamTime - 1));
         }
@@ -535,29 +535,29 @@ unsigned int CMPUrlSourceSplitter_Http::GetOpenConnectionMaximumAttempts(void)
   return this->openConnetionMaximumAttempts;
 }
 
-HRESULT CMPUrlSourceSplitter_Http::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime)
+int64_t CMPUrlSourceSplitter_Http::SeekToPosition(int64_t start, int64_t end)
 {
-  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME);
-  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, startTime, endTime);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME);
+  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, start, end);
 
-  HRESULT result = E_FAIL;
+  int64_t result = -1;
 
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
 
-  if (startTime >= this->streamLength)
+  if (start >= this->streamLength)
   {
-    result = E_INVALIDARG;
+    result = -2;
   }
   else if (this->internalExitRequest)
   {
     // there is pending request exit request
     // set stream time to new value
-    this->streamTime = startTime;
-    this->endStreamTime = endTime;
+    this->streamTime = start;
+    this->endStreamTime = end;
 
     // connection should be reopened automatically
-    result = S_OK;
+    result = start;
   }
   else
   {
@@ -565,14 +565,14 @@ HRESULT CMPUrlSourceSplitter_Http::ReceiveDataFromTimestamp(REFERENCE_TIME start
     this->internalExitRequest = true;
 
     // set stream time to new value
-    this->streamTime = startTime;
-    this->endStreamTime = endTime;
+    this->streamTime = start;
+    this->endStreamTime = end;
 
     // connection should be reopened automatically
-    result = S_OK;
+    result = start;
   }
 
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, result);
   return result;
 }
 
@@ -615,49 +615,7 @@ HRESULT CMPUrlSourceSplitter_Http::QueryStreamAvailableLength(CStreamAvailableLe
   if (result == S_OK)
   {
     availableLength->SetQueryResult(S_OK);
-    availableLength->SetAvailableLength((availableLength->IsFilterConnectedToAnotherPin() && (this->rangesSupported == RANGES_STATE_SUPPORTED)) ? this->streamLength : this->streamTime);
-  }
-
-  return result;
-}
-
-HRESULT CMPUrlSourceSplitter_Http::QueryRangesSupported(CRangesSupported *rangesSupported)
-{
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, rangesSupported);
-
-  if (result == S_OK)
-  {
-    if (rangesSupported->IsFilterConnectedToAnotherPin())
-    {
-      rangesSupported->SetQueryResult(S_OK);
-      switch (this->rangesSupported)
-      {
-      case RANGES_STATE_UNKNOWN:
-        rangesSupported->SetRangesSupported(false);
-        break;
-      case RANGES_STATE_NOT_SUPPORTED:
-        rangesSupported->SetRangesSupported(false);
-        break;
-      case RANGES_STATE_PENDING_REQUEST:
-        rangesSupported->SetQueryResult(E_PENDING);
-        rangesSupported->SetRangesSupported(false);
-        break;
-      case RANGES_STATE_SUPPORTED:
-        rangesSupported->SetRangesSupported(true);
-        break;
-      default:
-        rangesSupported->SetRangesSupported(false);
-        break;
-      }
-    }
-    else
-    {
-      // we are not connected to another pin, assume that ranges are not supported (it makes connection to another filter more faster)
-      // in the case on web streams we can assume that we don't need data from end of stream
-      rangesSupported->SetQueryResult(S_OK);
-      rangesSupported->SetRangesSupported(false);
-    }
+    availableLength->SetAvailableLength((this->rangesSupported == RANGES_STATE_SUPPORTED) ? this->streamLength : this->streamTime);
   }
 
   return result;
@@ -705,17 +663,16 @@ size_t CMPUrlSourceSplitter_Http::CurlReceiveData(char *buffer, size_t size, siz
           {
             // stream length not set
             // just make guess
-            unsigned int bufferingPercentage = caller->configurationParameters->GetValueLong(PARAMETER_NAME_BUFFERING_PERCENTAGE, true, BUFFERING_PERCENTAGE_DEFAULT);
-            caller->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER * 100 / bufferingPercentage);
+            caller->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
             caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
-            caller->filter->SetTotalLength(caller->streamLength, false);
+            caller->filter->SetTotalLength(caller->streamLength, true);
           }
           else if ((caller->streamTime > (caller->streamLength * 3 / 4)))
           {
             // it is time to adjust stream length, we are approaching to end but still we don't know total length
             caller->streamLength = caller->streamTime * 2;
             caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
-            caller->filter->SetTotalLength(caller->streamLength, false);
+            caller->filter->SetTotalLength(caller->streamLength, true);
           }
         }
       }
@@ -763,13 +720,8 @@ size_t CMPUrlSourceSplitter_Http::CurlReceiveData(char *buffer, size_t size, siz
         CMediaPacket *mediaPacket = new CMediaPacket();
         mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
         mediaPacket->GetBuffer()->AddToBuffer(buffer, bytesRead);
-
-        REFERENCE_TIME timeEnd = caller->streamTime + bytesRead - 1;
-        HRESULT result = mediaPacket->SetTime(&caller->streamTime, &timeEnd);
-        if (result != S_OK)
-        {
-          caller->logger->Log(LOGGER_WARNING, L"%s: %s: stream time not set, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
-        }
+        mediaPacket->SetStart(caller->streamTime);
+        mediaPacket->SetEnd(caller->streamTime + bytesRead - 1);
 
         if (FAILED(caller->filter->PushMediaPacket(mediaPacket)))
         {
@@ -898,3 +850,12 @@ void CMPUrlSourceSplitter_Http::CompareRangesBuffers()
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_COMPARE_RANGES_BUFFERS_NAME);
 }
 
+unsigned int CMPUrlSourceSplitter_Http::GetSeekingCapabilities(void)
+{
+  return (this->rangesSupported == RANGES_STATE_SUPPORTED) ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE;
+}
+
+int64_t CMPUrlSourceSplitter_Http::SeekToTime(int64_t time)
+{
+  return E_NOTIMPL;
+}

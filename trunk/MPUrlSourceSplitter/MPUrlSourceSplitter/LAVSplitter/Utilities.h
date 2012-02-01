@@ -29,7 +29,7 @@
 #include <streams.h>
 #include <WinInet.h>
 
-#define INI_FILE          _T("MPUrlSourceSplitter.ini")
+#define INI_FILE          L"MPUrlSourceSplitter.ini"
 
 // get Tv Server folder
 // @return : reference to null terminated string with path of Tv Server ended with '\' or NULL if error occured

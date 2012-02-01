@@ -38,26 +38,104 @@
 
 #include "IGraphRebuildDelegate.h"
 
+#ifdef _DEBUG
+#define MODULE_NAME                                               L"LAVSplitterd"
+#else
+#define MODULE_NAME                                               L"LAVSplitter"
+#endif
+
+#define METHOD_LOAD_NAME                                          L"Load()"
+#define METHOD_CREATE_DEMUXER_NAME                                L"CreateDemuxer()"
+#define METHOD_SET_POSITIONS_INTERNAL_NAME                        L"SetPositionsInternal()"
+
+#define METHOD_STREAM_OPEN_NAME                                   L"stream_open()"
+#define METHOD_STREAM_READ_NAME                                   L"stream_read()"
+#define METHOD_STREAM_SEEK_NAME                                   L"stream_seek()"
+#define METHOD_STREAM_CLOSE_NAME                                  L"stream_close()"
+#define METHOD_STREAM_GET_FILE_HANDLE_NAME                        L"stream_get_file_handle()"
+#define METHOD_STREAM_READ_PAUSE_NAME                             L"stream_read_pause()"
+#define METHOD_STREAM_READ_SEEK_NAME                              L"stream_read_seek()"
+
+//unsigned int CLAVSplitter::instanceCounter = 0;
+
+// if ffmpeg_log_callback_set is true than ffmpeg log callback will not be set
+// in that case we don't receive messages from ffmpeg
+static volatile bool ffmpeg_log_callback_set = false;
+static CLogger ffmpeg_logger_instance(NULL);
+
 CLAVSplitter::CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr) 
   : CBaseFilter(NAME("lavf dshow source filter"), pUnk, this,  __uuidof(this), phr)
-  , m_rtStart(0)
-  , m_rtStop(0)
-  , m_dRate(1.0)
-  , m_rtLastStart(_I64_MIN)
-  , m_rtLastStop(_I64_MIN)
-  , m_rtCurrent(0)
+  //, m_rtStart(0)
+  //, m_rtStop(0)
+  //, m_dRate(1.0)
+  //, m_rtLastStart(_I64_MIN)
+  //, m_rtLastStop(_I64_MIN)
+  //, m_rtCurrent(0)
   , m_bPlaybackStarted(FALSE)
   , m_pDemuxer(NULL)
   , m_bRuntimeConfig(FALSE)
   , m_pSite(NULL)
   , m_bFakeASFReader(FALSE)
-  , m_bStopValid(FALSE)
+  //, m_bStopValid(FALSE)
 {
+  this->logger = new CLogger(NULL);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
+
   WCHAR fileName[1024];
   GetModuleFileName(NULL, fileName, 1024);
   m_processName = PathFindFileName (fileName);
 
+  m_pInput = new CLAVInputPin(this->logger, NAME("LAV Input Pin"), this, this, phr);
+
   CLAVFDemuxer::ffmpeg_init();
+
+  if (!ffmpeg_log_callback_set)
+  {
+    // callback for ffmpeg log is not set
+    av_log_set_callback(ffmpeg_log_callback);
+    av_log_set_level(AV_LOG_DEBUG);
+
+    ffmpeg_log_callback_set = true;
+  }
+
+  // now register protocols
+  //StreamProtocol *streamProtocol = (StreamProtocol *)av_mallocz(sizeof(StreamProtocol));
+  //if (streamProtocol != NULL)
+  //{
+  //  CAutoLock cAutoLock(this);
+
+  //  // this is little flaw in design of ffmpeg library
+  //  // ffmpeg library needs that all protocols are registered
+  //  // but protocol cannot be unregistered (which leads to memory leak)
+  //  // size of StreamProtocol structure is 60 bytes
+
+  //  // we assume that stream_ methods will not be called after closing demuxer and splitter
+  //  // in another case it will possibly lead to crash
+
+  //  this->streamProtocolName = FormatString(L"stream%08X", CLAVSplitter::instanceCounter++);
+  //  streamProtocol->name = ConvertToMultiByteW(this->streamProtocolName);
+  //  if (streamProtocol->name != NULL)
+  //  {
+  //    streamProtocol->url_open = stream_open;
+  //    streamProtocol->url_read = stream_read;
+  //    streamProtocol->url_write = NULL;
+  //    streamProtocol->url_seek = stream_seek;
+  //    //streamProtocol->url_seek = NULL;
+  //    //streamProtocol->url_read_pause = stream_read_pause;
+  //    //streamProtocol->url_read_seek = stream_read_seek;
+  //    streamProtocol->url_close = stream_close;
+  //    streamProtocol->url_get_file_handle = stream_get_file_handle;
+  //    streamProtocol->splitter = this;
+
+  //    av_register_protocol2(streamProtocol, sizeof(StreamProtocol));
+  //    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: registered stream protocol: %s", MODULE_NAME, METHOD_CONSTRUCTOR_NAME, this->streamProtocolName);
+  //  }
+  //  else
+  //  {
+  //    // cleanup stream protocol name
+  //    FREE_MEM(this->streamProtocolName);
+  //  }
+  //}
 
   m_InputFormats.clear();
 
@@ -65,8 +143,6 @@ CLAVSplitter::CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr)
   m_InputFormats.insert(lavf_formats.begin(), lavf_formats.end());
 
   LoadSettings();
-
-  m_pInput = new CLAVInputPin(NAME("LAV Input Pin"), this, this, phr);
 
 #ifdef DEBUG
   DbgSetModuleLevel (LOG_TRACE, DWORD_MAX);
@@ -76,10 +152,121 @@ CLAVSplitter::CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr)
   DbgSetLogFileDesktop(LAVF_LOG_FILE);
 #endif
 #endif
+
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 }
+
+//int CLAVSplitter::stream_open(URLContext *h, const char *uri, int flags)
+//{
+//  int result = AVERROR(ENOSYS);
+//
+//  /*if (h->prot != NULL)
+//  {
+//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
+//    CLAVSplitter *splitter = protocol->splitter;
+//
+//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s, connected: %d, streamed: %d, flags: 0x%08X", MODULE_NAME, METHOD_STREAM_OPEN_NAME, splitter->streamProtocolName, h->is_connected, h->is_streamed, h->flags);
+//    result = (splitter->m_pInput->status == STATUS_RECEIVING_DATA) ? 0 : AVERROR(ENOTCONN);
+//  }*/
+//
+//  return result;
+//}
+//
+//int CLAVSplitter::stream_read(URLContext *h, uint8_t *buf, int size)
+//{
+//  int result = AVERROR(ENOSYS);
+//
+//  /*if (h->prot != NULL)
+//  {
+//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
+//    CLAVSplitter *splitter = protocol->splitter;
+//
+//    result = CLAVInputPin::Read(splitter->m_pInput, buf, size);
+//  }*/
+//
+//  return result;
+//}
+//
+//int64_t CLAVSplitter::stream_seek(URLContext *h, int64_t off, int whence)
+//{
+//  int64_t result = AVERROR(ENOSYS);
+//
+//  /*if (h->prot != NULL)
+//  {
+//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
+//    CLAVSplitter *splitter = protocol->splitter;
+//
+//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s, offset: %llu, whence: %d", MODULE_NAME, METHOD_STREAM_SEEK_NAME, splitter->streamProtocolName, off, whence);
+//    result = CLAVInputPin::Seek(splitter->m_pInput, off, whence);
+//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: End, result: %lld", MODULE_NAME, METHOD_STREAM_SEEK_NAME, result);
+//  }*/
+//
+//  return result;
+//}
+//
+//int CLAVSplitter::stream_read_pause(URLContext *h, int pause)
+//{
+//  // this method seems to be called NEVER
+//  /*if (h->prot != NULL)
+//  {
+//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
+//    CLAVSplitter *splitter = protocol->splitter;
+//
+//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s", MODULE_NAME, METHOD_STREAM_READ_PAUSE_NAME, splitter->streamProtocolName);
+//  }*/
+//
+//  return 0;
+//}
+//
+//int64_t CLAVSplitter::stream_read_seek(URLContext *h, int stream_index, int64_t timestamp, int flags)
+//{
+//  int64_t result = AVERROR(ENOSYS);
+//  // this method is called when
+//  /*if (h->prot != NULL)
+//  {
+//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
+//    CLAVSplitter *splitter = protocol->splitter;
+//
+//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s, stream index: %d, timestamp: %I64d, flags : 0x%08X", MODULE_NAME, METHOD_STREAM_READ_SEEK_NAME, splitter->streamProtocolName, stream_index, timestamp, flags);
+//    result = splitter->m_pInput->ReadSeek(splitter->m_pInput, stream_index, timestamp, flags);
+//
+//    splitter->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, MODULE_NAME, METHOD_STREAM_READ_SEEK_NAME, result);
+//  }*/
+//
+//  return result;
+//}
+//
+//int CLAVSplitter::stream_close(URLContext *h)
+//{
+//  /*if (h->prot != NULL)
+//  {
+//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
+//    CLAVSplitter *splitter = protocol->splitter;
+//
+//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s", MODULE_NAME, METHOD_STREAM_CLOSE_NAME, splitter->streamProtocolName);
+//  }*/
+//
+//  return 0;
+//}
+//
+//int CLAVSplitter::stream_get_file_handle(URLContext *h)
+//{
+//  // this method seems to be called NEVER
+//  /*if (h->prot != NULL)
+//  {
+//    StreamProtocol *protocol = (StreamProtocol *)h->prot;
+//    CLAVSplitter *splitter = protocol->splitter;
+//
+//    splitter->logger->Log(LOGGER_VERBOSE, L"%s: %s: protocol name: %s", MODULE_NAME, METHOD_STREAM_GET_FILE_HANDLE_NAME, splitter->streamProtocolName);
+//  }*/
+//
+//  return 0;
+//}
 
 CLAVSplitter::~CLAVSplitter()
 {
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
+
   SAFE_DELETE(m_pInput);
   Close();
 
@@ -95,6 +282,13 @@ CLAVSplitter::~CLAVSplitter()
 #if defined(DEBUG) && ENABLE_DEBUG_LOGFILE
   DbgCloseLogFile();
 #endif
+
+  //FREE_MEM(this->streamProtocolName);
+
+  this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
+
+  delete logger;
+  logger = NULL;
 }
 
 STDMETHODIMP CLAVSplitter::Close()
@@ -409,64 +603,133 @@ CLAVOutputPin *CLAVSplitter::GetOutputPin(DWORD streamId, BOOL bActiveOnly)
 //  return Close();
 //}
 
+STDMETHODIMP CLAVSplitter::CreateDemuxer(wchar_t *pszFileName)
+{
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_NAME);
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
+  //CHECK_POINTER(result, this->streamProtocolName, S_OK, E_OUTOFMEMORY);
+
+  if (SUCCEEDED(result))
+  {
+    m_bPlaybackStarted = FALSE;
+
+    SAFE_DELETE(m_pDemuxer);
+    CLAVFDemuxer *pDemux = new CLAVFDemuxer(this, this, this);
+
+    AVIOContext *pContext = m_pInput->GetAVIOContext();
+    result = (pContext != NULL) ? S_OK : E_OUTOFMEMORY;
+
+    if (FAILED(result))
+    {
+      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_NAME, L"GetAVIOContext() returned error");
+    }
+
+    if (SUCCEEDED(result))
+    {
+      //result = pDemux->OpenInputStream(pContext, pszFileName);
+      //result = pDemux->OpenInputStream(NULL, pszFileName);
+      //wchar_t *fileName = FormatString(L"%s://sample.filename", this->streamProtocolName);
+      //result = (fileName != NULL) ? S_OK : E_OUTOFMEMORY;
+
+      if (SUCCEEDED(result))
+      {
+        //result = pDemux->OpenInputStream(NULL, fileName);
+        result = pDemux->OpenInputStream(pContext, pszFileName);
+
+        if (SUCCEEDED(result))
+        {
+          m_pDemuxer = pDemux;
+          m_pDemuxer->AddRef();
+
+          result = InitDemuxer();
+        }
+        else
+        {
+          this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_NAME, L"OpenInputStream() returned error");
+          SAFE_DELETE(pDemux);
+        }
+      }
+      //FREE_MEM(fileName);
+    }
+  }
+
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_NAME, result);
+  return result;
+}
+
 // IFileSourceFilter
 STDMETHODIMP CLAVSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt)
 {
-  CheckPointer(pszFileName, E_POINTER);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
+  HRESULT result = S_OK;
 
+  CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
   m_bPlaybackStarted = FALSE;
 
-  //m_fileName = std::wstring(pszFileName);
-
-  //HRESULT hr = S_OK;
-  HRESULT hr = m_pInput->Load(pszFileName, pmt);
-
-  if (SUCCEEDED(hr))
+  if (SUCCEEDED(result))
   {
-    //SAFE_DELETE(m_pDemuxer);
-    //LPWSTR extension = PathFindExtensionW(pszFileName);
-
-    //DbgLog((LOG_TRACE, 10, L"::Load(): Opening file '%s' (extension: %s)", pszFileName, extension));
-
-    //// BDMV uses the BD demuxer, everything else LAVF
-    ///*if (_wcsicmp(extension, L".bdmv") == 0 || _wcsicmp(extension, L".mpls") == 0) {
-    //m_pDemuxer = new CBDDemuxer(this, this);
-    //} else {
-    //m_pDemuxer = new CLAVFDemuxer(this, this);
-    //}*/
-    //m_pDemuxer = new CLAVFDemuxer(this, this);
-    //if(FAILED(hr = m_pDemuxer->Open(pszFileName))) {
-    //  SAFE_DELETE(m_pDemuxer);
-    //  return hr;
-    //}
-    //m_pDemuxer->AddRef();
-
-    //return InitDemuxer();
-
-    SAFE_DELETE(m_pDemuxer);
-    CLAVFDemuxer *pDemux = new CLAVFDemuxer(this, this);
-    
-    AVIOContext *pContext = NULL;
-
-    if (FAILED(hr = m_pInput->GetAVIOContext(&pContext))) {
-      return hr;
-    }
-    
-    if(FAILED(hr = pDemux->OpenInputStream(pContext, pszFileName))) {
-      SAFE_DELETE(pDemux);
-      return hr;
-    }
-    m_pDemuxer = pDemux;
-    m_pDemuxer->AddRef();
-
-    return InitDemuxer();
-  }
-  else
-  {
-    return hr;
+    result = m_pInput->Load(pszFileName, pmt);
   }
 
-  //return m_pInput->Load(pszFileName, pmt);
+  //if (SUCCEEDED(result))
+  //{
+  //  //SAFE_DELETE(m_pDemuxer);
+  //  //LPWSTR extension = PathFindExtensionW(pszFileName);
+
+  //  //DbgLog((LOG_TRACE, 10, L"::Load(): Opening file '%s' (extension: %s)", pszFileName, extension));
+
+  //  //// BDMV uses the BD demuxer, everything else LAVF
+  //  ///*if (_wcsicmp(extension, L".bdmv") == 0 || _wcsicmp(extension, L".mpls") == 0) {
+  //  //m_pDemuxer = new CBDDemuxer(this, this);
+  //  //} else {
+  //  //m_pDemuxer = new CLAVFDemuxer(this, this);
+  //  //}*/
+  //  //m_pDemuxer = new CLAVFDemuxer(this, this);
+  //  //if(FAILED(hr = m_pDemuxer->Open(pszFileName))) {
+  //  //  SAFE_DELETE(m_pDemuxer);
+  //  //  return hr;
+  //  //}
+  //  //m_pDemuxer->AddRef();
+
+  //  //return InitDemuxer();
+
+  //  do
+  //  {
+  //    result = S_OK;
+
+  //    SAFE_DELETE(m_pDemuxer);
+  //    CLAVFDemuxer *pDemux = new CLAVFDemuxer(this, this);
+
+  //    AVIOContext *pContext = NULL;
+  //    result = m_pInput->GetAVIOContext(&pContext);
+  //    if (FAILED(result))
+  //    {
+  //      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, L"GetAVIOContext() returned error");
+  //    }
+
+  //    if (SUCCEEDED(result))
+  //    {
+  //      result = pDemux->OpenInputStream(pContext, pszFileName);
+
+  //      if (SUCCEEDED(result))
+  //      {
+  //        m_pDemuxer = pDemux;
+  //        m_pDemuxer->AddRef();
+
+  //        result = InitDemuxer();
+  //      }
+  //      else
+  //      {
+  //        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, L"OpenInputStream() returned error");
+  //        SAFE_DELETE(pDemux);
+  //      }
+  //    }
+  //  } while (FAILED(result));
+  //}
+
+  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, result);
+  return result;
 }
 
 // Get the currently loaded file
@@ -493,8 +756,13 @@ STDMETHODIMP CLAVSplitter::InitDemuxer()
   // Disable subtitles in applications known to fail with them (explorer thumbnail generator, power point, basically all applications using MCI)
   bool bNoSubtitles = _wcsicmp(m_processName.c_str(), L"dllhost.exe") == 0 || _wcsicmp(m_processName.c_str(), L"explorer.exe") == 0 || _wcsicmp(m_processName.c_str(), L"powerpnt.exe") == 0 || _wcsicmp(m_processName.c_str(), L"pptview.exe") == 0;
 
-  m_rtStart = m_rtNewStart = m_rtCurrent = 0;
-  m_rtStop = m_rtNewStop = m_pDemuxer->GetDuration();
+  //m_rtStart = m_rtNewStart = m_rtCurrent = 0;
+  this->m_pInput->SetCurrent(0);
+  this->m_pInput->SetNewStart(0);
+  this->m_pInput->SetStart(0);
+  //m_rtStop = m_rtNewStop = m_pDemuxer->GetDuration();
+  this->m_pInput->SetNewStop(m_pDemuxer->GetDuration());
+  this->m_pInput->SetStop(this->m_pInput->GetNewStop());
 
   const CBaseDemuxer::stream *videoStream = m_pDemuxer->SelectVideoStream();
   if (videoStream) {
@@ -596,11 +864,15 @@ DWORD CLAVSplitter::ThreadProc()
 
     SetThreadPriority(m_hThread, THREAD_PRIORITY_BELOW_NORMAL);
 
-    m_rtStart = m_rtNewStart;
-    m_rtStop = m_rtNewStop;
+    //m_rtStart = m_rtNewStart;
+    this->m_pInput->SetStart(this->m_pInput->GetNewStart());
+    //m_rtStop = m_rtNewStop;
+    this->m_pInput->SetStop(this->m_pInput->GetNewStop());
 
-    if(m_bPlaybackStarted || m_rtStart != 0 || cmd == CMD_SEEK)
-      DemuxSeek(m_rtStart);
+    //if(m_bPlaybackStarted || m_rtStart != 0 || cmd == CMD_SEEK)
+    if(m_bPlaybackStarted || this->m_pInput->GetStart() != 0 || cmd == CMD_SEEK)
+      //DemuxSeek(m_rtStart);
+      DemuxSeek(this->m_pInput->GetStart());
 
     if(cmd != (DWORD)-1)
       Reply(S_OK);
@@ -612,7 +884,8 @@ DWORD CLAVSplitter::ThreadProc()
 
     for(pinIter = m_pPins.begin(); pinIter != m_pPins.end() && !m_fFlushing; ++pinIter) {
       if ((*pinIter)->IsConnected()) {
-        (*pinIter)->DeliverNewSegment(m_rtStart, m_rtStop, m_dRate);
+        //(*pinIter)->DeliverNewSegment(m_rtStart, m_rtStop, m_dRate);
+        (*pinIter)->DeliverNewSegment(this->m_pInput->GetStart(), this->m_pInput->GetStop(), this->m_pInput->GetPlayRate());
         m_pActivePins.push_back(*pinIter);
       }
     }
@@ -677,16 +950,21 @@ HRESULT CLAVSplitter::DeliverPacket(Packet *pPacket)
   }
 
   if(pPacket->rtStart != Packet::INVALID_TIME) {
-    m_rtCurrent = pPacket->rtStart;
+    //m_rtCurrent = pPacket->rtStart;
+    this->m_pInput->SetCurrent(pPacket->rtStart);
 
-    if (m_bStopValid && m_rtStop && pPacket->rtStart > m_rtStop) {
-      DbgLog((LOG_TRACE, 10, L"::DeliverPacket(): Reached the designated stop time of %I64d at %I64d", m_rtStop, pPacket->rtStart));
+    //if (m_bStopValid && m_rtStop && pPacket->rtStart > m_rtStop) {
+    if (this->m_pInput->GetStopValid() && this->m_pInput->GetStop() && pPacket->rtStart > this->m_pInput->GetStop()) {
+      //DbgLog((LOG_TRACE, 10, L"::DeliverPacket(): Reached the designated stop time of %I64d at %I64d", m_rtStop, pPacket->rtStart));
+      //DbgLog((LOG_TRACE, 10, L"::DeliverPacket(): Reached the designated stop time of %I64d at %I64d", this->m_pInput->GetStop(), pPacket->rtStart));
       delete pPacket;
       return E_FAIL;
     }
 
-    pPacket->rtStart -= m_rtStart;
-    pPacket->rtStop -= m_rtStart;
+    //pPacket->rtStart -= m_rtStart;
+    pPacket->rtStart -= this->m_pInput->GetStart();
+    //pPacket->rtStop -= m_rtStart;
+    pPacket->rtStop -= this->m_pInput->GetStart();
 
     ASSERT(pPacket->rtStart <= pPacket->rtStop);
   }
@@ -800,7 +1078,7 @@ void CLAVSplitter::DeliverEndFlush()
 // IMediaSeeking
 STDMETHODIMP CLAVSplitter::GetCapabilities(DWORD* pCapabilities)
 {
-  CheckPointer(pCapabilities, E_POINTER);
+  /*CheckPointer(pCapabilities, E_POINTER);
 
   *pCapabilities =
     AM_SEEKING_CanGetStopPos   |
@@ -809,121 +1087,251 @@ STDMETHODIMP CLAVSplitter::GetCapabilities(DWORD* pCapabilities)
     AM_SEEKING_CanSeekForwards |
     AM_SEEKING_CanSeekBackwards;
 
-  return S_OK;
+  return S_OK;*/
+
+  return this->m_pInput->GetCapabilities(pCapabilities);
 }
 
 STDMETHODIMP CLAVSplitter::CheckCapabilities(DWORD* pCapabilities)
 {
-  CheckPointer(pCapabilities, E_POINTER);
-  // capabilities is empty, all is good
-  if(*pCapabilities == 0) return S_OK;
-  // read caps
-  DWORD caps;
-  GetCapabilities(&caps);
+  //CheckPointer(pCapabilities, E_POINTER);
+  //// capabilities is empty, all is good
+  //if(*pCapabilities == 0) return S_OK;
+  //// read caps
+  //DWORD caps;
+  //GetCapabilities(&caps);
 
-  // Store the caps that we wanted
-  DWORD wantCaps = *pCapabilities;
-  // Update pCapabilities with what we have
-  *pCapabilities = caps & wantCaps;
+  //// Store the caps that we wanted
+  //DWORD wantCaps = *pCapabilities;
+  //// Update pCapabilities with what we have
+  //*pCapabilities = caps & wantCaps;
 
-  // if nothing matches, its a disaster!
-  if(*pCapabilities == 0) return E_FAIL;
-  // if all matches, its all good
-  if(*pCapabilities == wantCaps) return S_OK;
-  // otherwise, a partial match
-  return S_FALSE;
+  //// if nothing matches, its a disaster!
+  //if(*pCapabilities == 0) return E_FAIL;
+  //// if all matches, its all good
+  //if(*pCapabilities == wantCaps) return S_OK;
+  //// otherwise, a partial match
+  //return S_FALSE;
+
+  return this->m_pInput->CheckCapabilities(pCapabilities);
 }
 
-STDMETHODIMP CLAVSplitter::IsFormatSupported(const GUID* pFormat) {return !pFormat ? E_POINTER : *pFormat == TIME_FORMAT_MEDIA_TIME ? S_OK : S_FALSE;}
-STDMETHODIMP CLAVSplitter::QueryPreferredFormat(GUID* pFormat) {return GetTimeFormat(pFormat);}
-STDMETHODIMP CLAVSplitter::GetTimeFormat(GUID* pFormat) {return pFormat ? *pFormat = TIME_FORMAT_MEDIA_TIME, S_OK : E_POINTER;}
-STDMETHODIMP CLAVSplitter::IsUsingTimeFormat(const GUID* pFormat) {return IsFormatSupported(pFormat);}
-STDMETHODIMP CLAVSplitter::SetTimeFormat(const GUID* pFormat) {return S_OK == IsFormatSupported(pFormat) ? S_OK : E_INVALIDARG;}
-STDMETHODIMP CLAVSplitter::GetDuration(LONGLONG* pDuration) {CheckPointer(pDuration, E_POINTER); CheckPointer(m_pDemuxer, E_UNEXPECTED); *pDuration = m_pDemuxer->GetDuration(); if (*pDuration < 0) return E_FAIL; return S_OK;}
-STDMETHODIMP CLAVSplitter::GetStopPosition(LONGLONG* pStop) {return GetDuration(pStop);}
-STDMETHODIMP CLAVSplitter::GetCurrentPosition(LONGLONG* pCurrent) {return E_NOTIMPL;}
-STDMETHODIMP CLAVSplitter::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat) {return E_NOTIMPL;}
+STDMETHODIMP CLAVSplitter::IsFormatSupported(const GUID* pFormat)
+{
+  //return !pFormat ? E_POINTER : *pFormat == TIME_FORMAT_MEDIA_TIME ? S_OK : S_FALSE;
+  return this->m_pInput->IsFormatSupported(pFormat);
+}
+
+STDMETHODIMP CLAVSplitter::QueryPreferredFormat(GUID* pFormat)
+{
+  //return GetTimeFormat(pFormat);
+  return this->m_pInput->QueryPreferredFormat(pFormat);
+}
+
+STDMETHODIMP CLAVSplitter::GetTimeFormat(GUID* pFormat)
+{
+  //return pFormat ? *pFormat = TIME_FORMAT_MEDIA_TIME, S_OK : E_POINTER;
+  return this->m_pInput->GetTimeFormat(pFormat);
+}
+
+STDMETHODIMP CLAVSplitter::IsUsingTimeFormat(const GUID* pFormat)
+{
+  //return IsFormatSupported(pFormat);
+  return this->m_pInput->IsUsingTimeFormat(pFormat);
+}
+
+STDMETHODIMP CLAVSplitter::SetTimeFormat(const GUID* pFormat)
+{
+  //return S_OK == IsFormatSupported(pFormat) ? S_OK : E_INVALIDARG;
+  return this->m_pInput->SetTimeFormat(pFormat);
+}
+
+STDMETHODIMP CLAVSplitter::GetDuration(LONGLONG* pDuration)
+{
+  /*CheckPointer(pDuration, E_POINTER);
+  CheckPointer(m_pDemuxer, E_UNEXPECTED);
+  *pDuration = m_pDemuxer->GetDuration();
+  if (*pDuration < 0) return E_FAIL; return S_OK;*/
+  return this->m_pInput->GetDuration(pDuration);
+}
+
+STDMETHODIMP CLAVSplitter::GetStopPosition(LONGLONG* pStop)
+{
+  //return GetDuration(pStop);
+  return this->m_pInput->GetStopPosition(pStop);
+}
+
+STDMETHODIMP CLAVSplitter::GetCurrentPosition(LONGLONG* pCurrent)
+{
+  //return E_NOTIMPL;
+  return this->m_pInput->GetCurrentPosition(pCurrent);
+}
+
+STDMETHODIMP CLAVSplitter::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat)
+{
+  //return E_NOTIMPL;
+  return this->m_pInput->ConvertTimeFormat(pTarget, pTargetFormat, Source, pSourceFormat);
+}
+
 STDMETHODIMP CLAVSplitter::SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
 {
   return SetPositionsInternal(this, pCurrent, dwCurrentFlags, pStop, dwStopFlags);
+  //return this->m_pInput->SetPositions(pCurrent, dwCurrentFlags, pStop, dwStopFlags);
+  //return this->SetPositionsInternal(this, pCurrent, dwCurrentFlags, pStop, dwStopFlags);
 }
+
 STDMETHODIMP CLAVSplitter::SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
 {
-  DbgLog((LOG_TRACE, 20, "::SetPositions() - seek request; caller: %p, current: %I64d; start: %I64d; flags: 0x%x, stop: %I64d; flags: 0x%x", caller, m_rtCurrent, pCurrent ? *pCurrent : -1, dwCurrentFlags, pStop ? *pStop : -1, dwStopFlags));
-  CAutoLock cAutoLock(this);
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SET_POSITIONS_INTERNAL_NAME);
+  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: seek request; this: %p; caller: %p, start: %I64d; flags: 0x%08X, stop: %I64d; flags: 0x%08X", MODULE_NAME, METHOD_SET_POSITIONS_INTERNAL_NAME, this, caller, pCurrent ? *pCurrent : -1, dwCurrentFlags, pStop ? *pStop : -1, dwStopFlags);
 
-  if(!pCurrent && !pStop
-    || (dwCurrentFlags&AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning 
-    && (dwStopFlags&AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning) {
-      return S_OK;
-  }
+  HRESULT result = this->m_pInput->SetPositionsInternal(caller, pCurrent, dwCurrentFlags, pStop, dwStopFlags);
 
-  REFERENCE_TIME
-    rtCurrent = m_rtCurrent,
-    rtStop = m_rtStop;
-
-  if(pCurrent) {
-    switch(dwCurrentFlags&AM_SEEKING_PositioningBitsMask)
-    {
-    case AM_SEEKING_NoPositioning: break;
-    case AM_SEEKING_AbsolutePositioning: rtCurrent = *pCurrent; break;
-    case AM_SEEKING_RelativePositioning: rtCurrent = rtCurrent + *pCurrent; break;
-    case AM_SEEKING_IncrementalPositioning: rtCurrent = rtCurrent + *pCurrent; break;
-    }
-  }
-
-  if(pStop){
-    switch(dwStopFlags&AM_SEEKING_PositioningBitsMask)
-    {
-    case AM_SEEKING_NoPositioning: break;
-    case AM_SEEKING_AbsolutePositioning: rtStop = *pStop; m_bStopValid = TRUE; break;
-    case AM_SEEKING_RelativePositioning: rtStop += *pStop; m_bStopValid = TRUE; break;
-    case AM_SEEKING_IncrementalPositioning: rtStop = rtCurrent + *pStop; m_bStopValid = TRUE; break;
-    }
-  }
-
-  if(m_rtCurrent == rtCurrent && m_rtStop == rtStop) {
-    return S_OK;
-  }
-
-  if(m_rtLastStart == rtCurrent && m_rtLastStop == rtStop && m_LastSeekers.find(caller) == m_LastSeekers.end()) {
-    m_LastSeekers.insert(caller);
-    return S_OK;
-  }
-
-  m_rtLastStart = rtCurrent;
-  m_rtLastStop = rtStop;
-  m_LastSeekers.clear();
-  m_LastSeekers.insert(caller);
-
-  m_rtNewStart = m_rtCurrent = rtCurrent;
-  m_rtNewStop = rtStop;
-
-  DbgLog((LOG_TRACE, 20, " -> Performing seek to %I64d", m_rtNewStart));
-  if(ThreadExists())
+  if (result == S_FALSE)
   {
-    DeliverBeginFlush();
-    CallWorker(CMD_SEEK);
-    DeliverEndFlush();
-  }
-  DbgLog((LOG_TRACE, 20, " -> Seek finished", m_rtNewStart));
+    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: performing seek to %I64d", MODULE_NAME, METHOD_SET_POSITIONS_INTERNAL_NAME, this->m_pInput->GetNewStart());
 
-  return S_OK;
+    if(ThreadExists())
+    {
+      DeliverBeginFlush();
+      CallWorker(CMD_SEEK);
+      DeliverEndFlush();
+    }
+
+    this->logger->Log(LOGGER_VERBOSE, L"%s: %s: seek to %I64d finished", MODULE_NAME, METHOD_SET_POSITIONS_INTERNAL_NAME, this->m_pInput->GetNewStart());
+  }
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SET_POSITIONS_INTERNAL_NAME, result);
+  return result;
 }
+
+//STDMETHODIMP CLAVSplitter::SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
+//{
+//  DbgLog((LOG_TRACE, 20, "::SetPositions() - seek request; caller: %p, current: %I64d; start: %I64d; flags: 0x%x, stop: %I64d; flags: 0x%x", caller, m_rtCurrent, pCurrent ? *pCurrent : -1, dwCurrentFlags, pStop ? *pStop : -1, dwStopFlags));
+//  CAutoLock cAutoLock(this);
+//
+//  if(!pCurrent && !pStop
+//    || (dwCurrentFlags&AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning 
+//    && (dwStopFlags&AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning) {
+//      return S_OK;
+//  }
+//
+//  /*REFERENCE_TIME
+//    rtCurrent = m_rtCurrent,
+//    rtStop = m_rtStop;*/
+//  REFERENCE_TIME rtCurrent = this->m_pInput->GetCurrent();
+//  REFERENCE_TIME rtStop = this->m_pInput->GetStop();
+//
+//  if(pCurrent) {
+//    switch(dwCurrentFlags&AM_SEEKING_PositioningBitsMask)
+//    {
+//    case AM_SEEKING_NoPositioning: break;
+//    case AM_SEEKING_AbsolutePositioning: rtCurrent = *pCurrent; break;
+//    case AM_SEEKING_RelativePositioning: rtCurrent = rtCurrent + *pCurrent; break;
+//    case AM_SEEKING_IncrementalPositioning: rtCurrent = rtCurrent + *pCurrent; break;
+//    }
+//  }
+//
+//  if(pStop){
+//    switch(dwStopFlags&AM_SEEKING_PositioningBitsMask)
+//    {
+//    case AM_SEEKING_NoPositioning: break;
+//    /*case AM_SEEKING_AbsolutePositioning: rtStop = *pStop; m_bStopValid = TRUE; break;
+//    case AM_SEEKING_RelativePositioning: rtStop += *pStop; m_bStopValid = TRUE; break;
+//    case AM_SEEKING_IncrementalPositioning: rtStop = rtCurrent + *pStop; m_bStopValid = TRUE; break;*/
+//    case AM_SEEKING_AbsolutePositioning: rtStop = *pStop; this->m_pInput->SetStopValid(TRUE); break;
+//    case AM_SEEKING_RelativePositioning: rtStop += *pStop; this->m_pInput->SetStopValid(TRUE); break;
+//    case AM_SEEKING_IncrementalPositioning: rtStop = rtCurrent + *pStop; this->m_pInput->SetStopValid(TRUE); break;
+//    }
+//  }
+//
+//  //if(m_rtCurrent == rtCurrent && m_rtStop == rtStop) {
+//  if(this->m_pInput->GetCurrent() == rtCurrent && this->m_pInput->GetStop() == rtStop) {
+//    return S_OK;
+//  }
+//
+//  if(m_rtLastStart == rtCurrent && m_rtLastStop == rtStop && m_LastSeekers.find(caller) == m_LastSeekers.end()) {
+//    m_LastSeekers.insert(caller);
+//    return S_OK;
+//  }
+//
+//  m_rtLastStart = rtCurrent;
+//  m_rtLastStop = rtStop;
+//  m_LastSeekers.clear();
+//  m_LastSeekers.insert(caller);
+//
+//  //m_rtNewStart = m_rtCurrent = rtCurrent;
+//  this->m_pInput->SetCurrent(rtCurrent);
+//  this->m_pInput->SetNewStart(rtCurrent);
+//  //m_rtNewStop = rtStop;
+//  this->m_pInput->SetNewStop(rtStop);
+//
+//  DbgLog((LOG_TRACE, 20, " -> Performing seek to %I64d", m_rtNewStart));
+//  if(ThreadExists())
+//  {
+//    DeliverBeginFlush();
+//    CallWorker(CMD_SEEK);
+//    DeliverEndFlush();
+//  }
+//  DbgLog((LOG_TRACE, 20, " -> Seek finished", m_rtNewStart));
+//
+//  return S_OK;
+//}
+
 STDMETHODIMP CLAVSplitter::GetPositions(LONGLONG* pCurrent, LONGLONG* pStop)
 {
-  if(pCurrent) *pCurrent = m_rtCurrent;
-  if(pStop) *pStop = m_rtStop;
-  return S_OK;
+  /*if(pCurrent) *pCurrent = m_rtCurrent;
+  if(pStop) *pStop = m_rtStop;*/
+  //if(pCurrent) *pCurrent = this->m_pInput->GetCurrent();
+  //if(pStop) *pStop = this->m_pInput->GetStop();
+  //return S_OK;
+  return this->m_pInput->GetPositions(pCurrent, pStop);
 }
+
 STDMETHODIMP CLAVSplitter::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest)
 {
-  if(pEarliest) *pEarliest = 0;
-  return GetDuration(pLatest);
+  //if(pEarliest) *pEarliest = 0;
+  //return GetDuration(pLatest);
+  return this->m_pInput->GetAvailable(pEarliest, pLatest);
 }
-STDMETHODIMP CLAVSplitter::SetRate(double dRate) {return dRate > 0 ? m_dRate = dRate, S_OK : E_INVALIDARG;}
-STDMETHODIMP CLAVSplitter::GetRate(double* pdRate) {return pdRate ? *pdRate = m_dRate, S_OK : E_POINTER;}
-STDMETHODIMP CLAVSplitter::GetPreroll(LONGLONG* pllPreroll) {return pllPreroll ? *pllPreroll = 0, S_OK : E_POINTER;}
+
+STDMETHODIMP CLAVSplitter::SetRate(double dRate)
+{
+  //this->m_pInput->SetPlayRate(dRate);
+  //return dRate > 0 ? m_dRate = dRate, S_OK : E_INVALIDARG;
+  //return dRate > 0 ? S_OK : E_INVALIDARG;
+  //return this->m_pInput->SetRate(dRate);
+
+  /*if (dRate > 0)
+  {
+    this->m_pInput->SetPlayRate(dRate);
+    return S_OK;
+  }
+  else
+  {
+    return E_INVALIDARG;
+  }*/
+
+  return this->m_pInput->SetRate(dRate);
+}
+
+STDMETHODIMP CLAVSplitter::GetRate(double* pdRate)
+{
+  //return pdRate ? *pdRate = m_dRate, S_OK : E_POINTER;
+  //return pdRate ? *pdRate = this->m_pInput->GetPlayRate(), S_OK : E_POINTER;
+
+  /*CheckPointer(pdRate, E_POINTER);
+  *pdRate = this->m_pInput->GetPlayRate();
+  return S_OK;*/
+
+  return this->m_pInput->GetRate(pdRate);
+}
+
+STDMETHODIMP CLAVSplitter::GetPreroll(LONGLONG* pllPreroll)
+{
+  //return pllPreroll ? *pllPreroll = 0, S_OK : E_POINTER;
+  return this->m_pInput->GetPreroll(pllPreroll);
+}
 
 STDMETHODIMP CLAVSplitter::UpdateForcedSubtitleMediaType()
 {
@@ -1507,4 +1915,74 @@ STDMETHODIMP CLAVSplitter::Download(LPCOLESTR uri, LPCOLESTR fileName)
 STDMETHODIMP CLAVSplitter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileName, IDownloadCallback *downloadCallback)
 {
   return m_pInput->DownloadAsync(uri, fileName, downloadCallback);
+}
+
+CBaseDemuxer *CLAVSplitter::GetDemuxer(void)
+{
+  return this->m_pDemuxer;
+}
+
+void CLAVSplitter::ffmpeg_log_callback(void *ptr, int log_level, const char *format, va_list vl)
+{
+  int length = _vscprintf(format, vl) + 1;
+  ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
+  if (buffer != NULL)
+  {
+    vsprintf_s(buffer, length, format, vl);
+
+    wchar_t *logLine = ConvertToUnicodeA(buffer);
+
+    if (logLine != NULL)
+    {
+      int loggerLevel = LOGGER_DATA;
+      switch (log_level)
+      {
+      case AV_LOG_PANIC:
+      case AV_LOG_FATAL:
+      case AV_LOG_ERROR:
+        loggerLevel = LOGGER_ERROR;
+        break;
+      case AV_LOG_INFO:
+        loggerLevel = LOGGER_INFO;
+        break;
+      case AV_LOG_DEBUG:
+        loggerLevel = LOGGER_DATA;
+        break;
+      case AV_LOG_VERBOSE:
+        loggerLevel = LOGGER_VERBOSE;
+        break;
+      case AV_LOG_WARNING:
+        loggerLevel = LOGGER_WARNING;
+        break;
+      }
+      //ffmpeg_logger_instance.Log(loggerLevel, L"%s: %s: log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", log_level, logLine);
+      ffmpeg_logger_instance.Log(LOGGER_VERBOSE, L"%s: %s: log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", log_level, logLine);
+    }
+
+    FREE_MEM(logLine);
+  }
+
+  FREE_MEM(buffer);
+}
+
+// IFilter interface
+
+unsigned int CLAVSplitter::GetSeekingCapabilities(void)
+{
+  return m_pInput->GetSeekingCapabilities();
+}
+
+CLogger *CLAVSplitter::GetLogger(void)
+{
+  return m_pInput->GetLogger();
+}
+
+int64_t CLAVSplitter::SeekToTime(int64_t time)
+{
+  return m_pInput->SeekToTime(time);
+}
+
+int64_t CLAVSplitter::SeekToPosition(int64_t start, int64_t end)
+{
+  return m_pInput->SeekToPosition(start, end);
 }

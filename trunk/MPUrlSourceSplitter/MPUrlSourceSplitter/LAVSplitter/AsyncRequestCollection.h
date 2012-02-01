@@ -28,7 +28,7 @@
 
 class CAsyncRequest;
 
-class CAsyncRequestCollection : public CCollection<CAsyncRequest, LONGLONG>
+class CAsyncRequestCollection : public CCollection<CAsyncRequest, int64_t>
 {
 public:
   CAsyncRequestCollection(void);
@@ -50,12 +50,12 @@ protected:
   // @param secondKey : the second item key to compare
   // @param context : the reference to user defined context
   // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(LONGLONG firstKey, LONGLONG secondKey, void *context);
+  int CompareItemKeys(int64_t firstKey, int64_t secondKey, void *context);
 
   // gets key for item
   // @param item : the item to get key
   // @return : the key of item
-  LONGLONG GetKey(CAsyncRequest *item);
+  int64_t GetKey(CAsyncRequest *item);
 
   // clones specified item
   // @param item : the item to clone

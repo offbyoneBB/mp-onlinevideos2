@@ -52,28 +52,57 @@
 #define METHOD_CREATE_ASYNC_REQUEST_PROCESS_WORKER_NAME           L"CreateAsyncRequestProcessWorker()"
 #define METHOD_DESTROY_ASYNC_REQUEST_PROCESS_WORKER_NAME          L"DestroyAsyncRequestProcessWorker()"
 #define METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME                  L"AsyncRequestProcessWorker()"
+#define METHOD_CREATE_DEMUXER_WORKER_NAME                         L"CreateDemuxerWorker()"
+#define METHOD_DESTROY_DEMUXER_WORKER_NAME                        L"DestroyDemuxerWorker()"
+#define METHOD_DEMUXER_WORKER_NAME                                L"DemuxerWorker()"
+
+#define METHOD_GET_CAPABILITIES_NAME                              L"GetCapabilities()"
+#define METHOD_CHECK_CAPABILITIES_NAME                            L"CheckCapabilities()"
+#define METHOD_IS_FORMAT_SUPPORTED_NAME                           L"IsFormatSupported()"
+#define METHOD_QUERY_PREFFERED_FORMAT_NAME                        L"QueryPreferredFormat()"
+#define METHOD_GET_TIME_FORMAT_NAME                               L"GetTimeFormat()"
+#define METHOD_IS_USING_TIME_FORMAT_NAME                          L"IsUsingTimeFormat()"
+#define METHOD_SET_TIME_FORMAT_NAME                               L"SetTimeFormat()"
+#define METHOD_GET_DURATION_NAME                                  L"GetDuration()"
+#define METHOD_GET_STOP_POSITION_NAME                             L"GetStopPosition()"
+#define METHOD_GET_CURRENT_POSITION_NAME                          L"GetCurrentPosition()"
+#define METHOD_CONVERT_TIME_FORMAT_NAME                           L"ConvertTimeFormat()"
+#define METHOD_SET_POSITIONS_NAME                                 L"SetPositions()"
+#define METHOD_GET_POSITIONS_NAME                                 L"GetPositions()"
+#define METHOD_GET_AVAILABLE_NAME                                 L"GetAvailable()"
+#define METHOD_SET_RATE_NAME                                      L"SetRate()"
+#define METHOD_GET_RATE_NAME                                      L"GetRate()"
+#define METHOD_GET_PREROLL_NAME                                   L"GetPreroll()"
+#define METHOD_SET_POSITIONS_INTERNAL_NAME                        L"SetPositionsInternal()"
+#define METHOD_SEEK_NAME                                          L"Seek()"
+#define METHOD_READ_SEEK_NAME                                     L"ReadSeek()"
+#define METHOD_READ_NAME                                          L"Read()"
 
 #define PARAMETER_SEPARATOR                                       L"&"
 #define PARAMETER_IDENTIFIER                                      L"####"
 #define PARAMETER_ASSIGN                                          L"="
 
-#define STATUS_NONE                                               0
-#define STATUS_NO_DATA_ERROR                                      -1
-#define STATUS_RECEIVING_DATA                                     1
-
 extern "C" char *curl_easy_unescape(void *handle, const char *string, int length, int *olen);
 extern "C" void curl_free(void *p);
 
-CLAVInputPin::CLAVInputPin(TCHAR *pName, CLAVSplitter *pFilter, CCritSec *pLock, HRESULT *phr)
+CLAVInputPin::CLAVInputPin(CLogger *logger, TCHAR *pName, CLAVSplitter *pFilter, CCritSec *pLock, HRESULT *phr)
   : CUnknown(pName, NULL)
+  , m_rtStart(0)
+  , m_rtStop(0)
+  , m_dRate(1.0)
+  , m_rtLastStart(_I64_MIN)
+  , m_rtLastStop(_I64_MIN)
+  , m_rtCurrent(0)
+  , m_bStopValid(FALSE)
 {
   this->configuration = new CParameterCollection();
 
-  this->logger = new CLogger(this->configuration);
+  this->logger = logger;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
   
+  this->createdDemuxer = false;
   this->m_pAVIOContext = NULL;
-  this->m_llPos = 0;
+  this->m_llBufferPosition = 0;
   this->filter = pFilter;
   this->receiveDataWorkerShouldExit = false;
   this->activeProtocol = NULL;
@@ -100,7 +129,8 @@ CLAVInputPin::CLAVInputPin(TCHAR *pName, CLAVSplitter *pFilter, CCritSec *pLock,
   
   this->storeFilePath = Duplicate(this->configuration->GetValue(PARAMETER_NAME_DOWNLOAD_FILE_NAME, true, NULL));
   this->downloadingFile = (this->storeFilePath != NULL);
-  this->connectedToAnotherPin = true;
+
+  this->hCreateDemuxerWorkerThread = NULL;
 
   if (this->mainModuleHandle == NULL)
   {
@@ -110,7 +140,11 @@ CLAVInputPin::CLAVInputPin(TCHAR *pName, CLAVSplitter *pFilter, CCritSec *pLock,
   // load plugins from directory
   this->LoadPlugins();
 
-  HRESULT result = this->CreateAsyncRequestProcessWorker();
+  HRESULT result = S_OK;
+  if (SUCCEEDED(result))
+  {
+    result = this->CreateAsyncRequestProcessWorker();
+  }
 
   if (phr)
   {
@@ -124,12 +158,7 @@ CLAVInputPin::~CLAVInputPin(void)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
 
-  if (m_pAVIOContext) {
-    av_free(m_pAVIOContext->buffer);
-    av_free(m_pAVIOContext);
-    m_pAVIOContext = NULL;
-  }
-
+  this->DestroyDemuxerWorker();
   this->DestroyReceiveDataWorker();
 
   // close active protocol connection
@@ -144,8 +173,8 @@ CLAVInputPin::~CLAVInputPin(void)
   }
 
   this->receiveDataWorkerShouldExit = false;
-
   this->DestroyAsyncRequestProcessWorker();
+  this->ReleaseAVIOContext();
 
   // decrements the number of pins on this filter
   delete this->requestsCollection;
@@ -201,9 +230,6 @@ CLAVInputPin::~CLAVInputPin(void)
   FREE_MEM(this->downloadFileName);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
-
-  delete this->logger;
-  this->logger = NULL;
 }
 
 STDMETHODIMP CLAVInputPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
@@ -214,80 +240,13 @@ STDMETHODIMP CLAVInputPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
     __super::NonDelegatingQueryInterface(riid, ppv);
 }
 
-//HRESULT CLAVInputPin::CheckMediaType(const CMediaType* pmt)
-//{
-//  //return pmt->majortype == MEDIATYPE_Stream ? S_OK : VFW_E_TYPE_NOT_ACCEPTED;
-//  return S_OK;
-//}
-//
-//HRESULT CLAVInputPin::CheckConnect(IPin* pPin)
-//{
-//  HRESULT hr;
-//  if(FAILED(hr = __super::CheckConnect(pPin))) {
-//    return hr;
-//  }
-//
-//  IAsyncReader *pReader = NULL;
-//  if (FAILED(hr = pPin->QueryInterface(&pReader)) || pReader == NULL) {
-//    return E_FAIL;
-//  }
-//
-//  SafeRelease(&pReader);
-//
-//  return S_OK;
-//}
-//
-//HRESULT CLAVInputPin::BreakConnect()
-//{
-//  HRESULT hr;
-//
-//  if(FAILED(hr = __super::BreakConnect())) {
-//    return hr;
-//  }
-//
-//  if(FAILED(hr = (static_cast<CLAVSplitter *>(m_pFilter))->BreakInputConnection())) {
-//    return hr;
-//  }
-//
-//  SafeRelease(&m_pAsyncReader);
-//
-//  if (m_pAVIOContext) {
-//    av_free(m_pAVIOContext->buffer);
-//    av_free(m_pAVIOContext);
-//    m_pAVIOContext = NULL;
-//  }
-//
-//  return S_OK;
-//}
-//
-//HRESULT CLAVInputPin::CompleteConnect(IPin* pPin)
-//{
-//  HRESULT hr;
-//
-//  if(FAILED(hr = __super::CompleteConnect(pPin))) {
-//    return hr;
-//  }
-//
-//  CheckPointer(pPin, E_POINTER);
-//  if (FAILED(hr = pPin->QueryInterface(&m_pAsyncReader)) || m_pAsyncReader == NULL) {
-//    return E_FAIL;
-//  }
-//
-//  m_llPos = 0;
-//
-//  if(FAILED(hr = (static_cast<CLAVSplitter *>(m_pFilter))->CompleteInputConnection())) {
-//    return hr;
-//  }
-//
-//  return S_OK;
-//}
-
 int CLAVInputPin::Read(void *opaque, uint8_t *buf, int buf_size)
 {
   CLAVInputPin *pin = static_cast<CLAVInputPin *>(opaque);
   CAutoLock lock(pin);
 
-  HRESULT hr = pin->SyncRead(pin->m_llPos, buf_size, buf);
+  //pin->logger->Log(LOGGER_VERBOSE, L"%s: %s: position: %llu, size: %d", MODULE_NAME, METHOD_READ_NAME, pin->m_llBufferPosition, buf_size);
+  HRESULT hr = pin->SyncRead(pin->m_llBufferPosition, buf_size, buf);
   if (FAILED(hr)) {
     return -1;
   }
@@ -295,13 +254,13 @@ int CLAVInputPin::Read(void *opaque, uint8_t *buf, int buf_size)
     // read single bytes, its internally buffered..
     int count = 0;
     do {
-      hr = pin->SyncRead(pin->m_llPos, 1, buf+count);
-      pin->m_llPos++;
+      hr = pin->SyncRead(pin->m_llBufferPosition, 1, buf+count);
+      pin->m_llBufferPosition++;
     } while(hr == S_OK && (++count) < buf_size);
 
     return count;
   }
-  pin->m_llPos += buf_size;
+  pin->m_llBufferPosition += buf_size;
   return buf_size;
 }
 
@@ -310,40 +269,79 @@ int64_t CLAVInputPin::Seek(void *opaque,  int64_t offset, int whence)
   CLAVInputPin *pin = static_cast<CLAVInputPin *>(opaque);
   CAutoLock lock(pin);
 
-  int64_t pos = 0;
+  pin->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SEEK_NAME);
 
+  int64_t pos = 0;
   LONGLONG total = 0;
   LONGLONG available = 0;
   pin->Length(&total, &available);
 
-  if (whence == SEEK_SET) {
-    pin->m_llPos = offset;
-  } else if (whence == SEEK_CUR) {
-    pin->m_llPos += offset;
-  } else if (whence == SEEK_END) {
-    pin->m_llPos = total - offset;
-  } else if (whence == AVSEEK_SIZE) {
-    return total;
-  } else
-    return -1;
+  int64_t result = 0;
+  bool resultSet = false;
 
-  if (pin->m_llPos > available)
-    pin->m_llPos = available;
+  if (whence == SEEK_SET)
+  {
+    pin->m_llBufferPosition = offset;
+    pin->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, SEEK_SET", MODULE_NAME, METHOD_SEEK_NAME, offset);
+  }
+  else if (whence == SEEK_CUR)
+  {
+    pin->m_llBufferPosition += offset;
+    pin->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, SEEK_CUR", MODULE_NAME, METHOD_SEEK_NAME, offset);
+  }
+  else if (whence == SEEK_END)
+  {
+    pin->m_llBufferPosition = total - offset;
+    pin->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, SEEK_END", MODULE_NAME, METHOD_SEEK_NAME, offset);
+  }
+  else if (whence == AVSEEK_SIZE)
+  {
+    result = total;
+    resultSet = true;
+    pin->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, AVSEEK_SIZE", MODULE_NAME, METHOD_SEEK_NAME, offset);
+  }
+  else
+  {
+    result = -1;
+    resultSet = true;
+    pin->logger->Log(LOGGER_ERROR, L"%s: %s: offset: %lld, unknown seek value", MODULE_NAME, METHOD_SEEK_NAME, offset);
+  }
 
-  return pin->m_llPos;
+  if (!resultSet)
+  {
+    if (pin->m_llBufferPosition > available)
+    {
+      pin->m_llBufferPosition = available;
+    }
+
+    result = pin->m_llBufferPosition;
+    resultSet = true;
+  }
+
+  pin->logger->Log(LOGGER_INFO, L"%s: %s: End, result: %lld", MODULE_NAME, METHOD_SEEK_NAME, result);
+  return result;
 }
 
-HRESULT CLAVInputPin::GetAVIOContext(AVIOContext** ppContext)
+AVIOContext *CLAVInputPin::GetAVIOContext(void)
 {
-  CheckPointer(ppContext, E_POINTER);
-
-  if (!m_pAVIOContext) {
+  if (!m_pAVIOContext)
+  {
     uint8_t *buffer = (uint8_t *)av_mallocz(READ_BUFFER_SIZE + FF_INPUT_BUFFER_PADDING_SIZE);
     m_pAVIOContext = avio_alloc_context(buffer, READ_BUFFER_SIZE, 0, this, Read, NULL, Seek);
   }
-  *ppContext = m_pAVIOContext;
 
-  return S_OK;
+  return m_pAVIOContext;
+}
+
+void CLAVInputPin::ReleaseAVIOContext(void)
+{
+  if (this->m_pAVIOContext != NULL)
+  {
+    av_free(this->m_pAVIOContext->buffer);
+    av_free(this->m_pAVIOContext);
+    this->m_pAVIOContext = NULL;
+    this->m_llBufferPosition = 0;
+  }
 }
 
 STDMETHODIMP CLAVInputPin::BeginFlush()
@@ -362,6 +360,7 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_LOAD_NAME);
 
+  this->DestroyDemuxerWorker();
   // stop receiving data
   this->DestroyReceiveDataWorker();
 
@@ -378,8 +377,10 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
     }
   }
 
-  this->url = ConvertToUnicodeW(pszFileName);
-  //this->url = ConvertToUnicode(L"http://o-o.preferred.gtsce-bts1.v19.lscache6.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Cratebypass%2Ccp&fexp=917000%2C916003%2C902200%2C901801%2C916800%2C916201&itag=22&ip=195.0.0.0&signature=24997DA842DA0E0CD203746536546FB47E2AE628.26A738219498E3F4C9F71A76152E1DA229AB53&sver=3&ratebypass=yes&source=youtube&expire=1325520112&key=yt1&ipbits=8&cp=U0hRSlVNTl9GTENOMV9NR1JCOjNCVDdpbTdUY1Bx&id=290eb3afa9023e3f&ext=.mp4");
+  //this->url = ConvertToUnicodeW(pszFileName);
+  //this->url = ConvertToUnicodeW(L"http://o-o.preferred.orangesk-bts1.v11.lscache3.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Calgorithm%2Cburst%2Cfactor%2Ccp&fexp=913100%2C913603&algorithm=throttle-factor&itag=35&ip=109.0.0.0&burst=40&sver=3&signature=5107DECD1DA24BE91D418EDA2AF5B77DB7CEDABF.6CCA2F5D73B8D80253E764DDF0B0408D67BCDCF4&source=youtube&expire=1327798912&key=yt1&ipbits=8&factor=1.25&cp=U0hRTFdUVl9GTENOMV9PTlpKOnJndFVIc1J3eEdx&id=290eb3afa9023e3f&ext=.flv");
+  //this->url = ConvertToUnicodeW(L"http://o-o.preferred.orangesk-bts1.v19.lscache6.c.youtube.com/videoplayback?sparams=id%2Cexpire%2Cip%2Cipbits%2Citag%2Csource%2Cratebypass%2Ccp&fexp=913101%2C914102&itag=22&ip=109.0.0.0&signature=4BFB2A666D60B3FB7EF21015A8ADDFAF7A453D14.4C8D82ACE304C95383AE07D40ABE57629EB9563B&sver=3&ratebypass=yes&source=youtube&expire=1328151712&key=yt1&ipbits=8&cp=U0hRTVFQT19GTENOMV9JSlNIOnJwNlBBUUhBVDhh&id=290eb3afa9023e3f&ext=.mp4");
+  //this->url = ConvertToUnicodeW(L"rtmp://wcdn101.nacevi.cz/ct-vod?id=MTQxMzYxODU3NXw2MzQ2MzcyNjA3MzE3MDM3NTA=&type=wpl/mp4:iVysilani/2011/06/05/3Plus1SMiroslaveCT1-050611-MP4_576p.mp4####Url=rtmp%3a%2f%2fwcdn101.nacevi.cz%2fct-vod%3fid%3dMTQxMzYxODU3NXw2MzQ2MzcyNjA3MzE3MDM3NTA%3d%26type%3dwpl%2fmp4%3aiVysilani%2f2011%2f06%2f05%2f3Plus1SMiroslaveCT1-050611-MP4_576p.mp4&RtmpApp=ct-vod%3fid%3dMTQxMzYxODU3NXw2MzQ2MzcyNjA3MzE3MDM3NTA%3d%26type%3dwpl&RtmpPageUrl=http%3a%2f%2fwww.ceskatelevize.cz%2fivysilani%2f1148961737-3-plus-1-s-miroslavem-donutilem%2f211512120790001-3-plus-1-s-miroslavem-donutilem-smolari%2f&RtmpPlayPath=mp4%3aiVysilani%2f2011%2f06%2f05%2f3Plus1SMiroslaveCT1-050611-MP4_576p.mp4&RtmpSwfUrl=http%3a%2f%2fimg9.ceskatelevize.cz%2flibraries%2fplayer%2fflashPlayer.swf%3fversion%3d1.44.6&RtmpTcUrl=rtmp%3a%2f%2fwcdn101.nacevi.cz%2fct-vod%3fid%3dMTQxMzYxODU3NXw2MzQ2MzcyNjA3MzE3MDM3NTA%3d%26type%3dwpl");
 
   if (this->url == NULL)
   {
@@ -415,6 +416,12 @@ STDMETHODIMP CLAVInputPin::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE * pmt
   {
     // loads protocol based on current configuration parameters
     result = this->Load();
+  }
+
+  if (SUCCEEDED(result) && (!this->downloadingFile))
+  {
+    // splitter is not needed when downloading file
+    result = this->CreateDemuxerWorker();
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LOAD_NAME, result);
@@ -894,10 +901,9 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
       CMediaPacketCollection *unprocessedMediaPackets = new CMediaPacketCollection();
       if (unprocessedMediaPackets->Add(mediaPacket->Clone()))
       {
-        REFERENCE_TIME start = 0;
-        REFERENCE_TIME stop = 0;
-        HRESULT getTimeResult = mediaPacket->GetTime(&start, &stop);
-        this->logger->Log(LOGGER_DATA, L"%s: %s media packet start: %016llu, length: %08u, result: 0x%08X", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, start, mediaPacket->GetBuffer()->GetBufferOccupiedSpace(), getTimeResult);
+        int64_t start = mediaPacket->GetStart();
+        int64_t stop = mediaPacket->GetEnd();
+        this->logger->Log(LOGGER_DATA, L"%s: %s media packet start: %016llu, length: %08u", MODULE_NAME, METHOD_PUSH_MEDIA_PACKET_NAME, start, mediaPacket->GetBuffer()->GetBufferOccupiedSpace());
 
         result = S_OK;
         while ((unprocessedMediaPackets->Count() != 0) && (result == S_OK))
@@ -906,14 +912,13 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
           // get first media packet
           CMediaPacket *unprocessedMediaPacket = unprocessedMediaPackets->GetItem(0);
 
-          REFERENCE_TIME unprocessedMediaPacketStart = 0;
-          REFERENCE_TIME unprocessedMediaPacketEnd = 0;
-          result = unprocessedMediaPacket->GetTime(&unprocessedMediaPacketStart, &unprocessedMediaPacketEnd);
+          int64_t unprocessedMediaPacketStart = unprocessedMediaPacket->GetStart();
+          int64_t unprocessedMediaPacketEnd = unprocessedMediaPacket->GetEnd();
 
           if (result == S_OK)
           {
             // try to find overlapping media packet
-            CMediaPacket *overlappingPacket = this->mediaPacketCollection->GetItem(this->mediaPacketCollection->GetMediaPacketIndexOverlappingTimes(unprocessedMediaPacketStart, unprocessedMediaPacketEnd));
+            CMediaPacket *overlappingPacket = this->mediaPacketCollection->GetItem(this->mediaPacketCollection->GetMediaPacketIndexOverlappingPositions(unprocessedMediaPacketStart, unprocessedMediaPacketEnd));
             if (overlappingPacket == NULL)
             {
               // there isn't overlapping media packet
@@ -926,9 +931,8 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
               // it means that this packet has same data (in overlapping range)
               // there is no need to duplicate data in collection
 
-              REFERENCE_TIME overlappingMediaPacketStart = 0;
-              REFERENCE_TIME overlappingMediaPacketEnd = 0;
-              result = overlappingPacket->GetTime(&overlappingMediaPacketStart, &overlappingMediaPacketEnd);
+              int64_t overlappingMediaPacketStart = overlappingPacket->GetStart();
+              int64_t overlappingMediaPacketEnd = overlappingPacket->GetEnd();
 
               if (result == S_OK)
               {
@@ -939,8 +943,8 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
                   // insert them into unprocessed media packet collection
 
                   // initialize first part
-                  REFERENCE_TIME start = unprocessedMediaPacketStart;
-                  REFERENCE_TIME end = overlappingMediaPacketStart - 1;
+                  int64_t start = unprocessedMediaPacketStart;
+                  int64_t end = overlappingMediaPacketStart - 1;
                   CMediaPacket *firstPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
 
                   // initialize second part
@@ -1005,8 +1009,8 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
                   // insert them into unprocessed media packet collection
 
                   // initialize first part
-                  REFERENCE_TIME start = unprocessedMediaPacketStart;
-                  REFERENCE_TIME end = overlappingMediaPacketEnd;
+                  int64_t start = unprocessedMediaPacketStart;
+                  int64_t end = overlappingMediaPacketEnd;
                   CMediaPacket *firstPart = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
 
                   // initialize second part
@@ -1105,7 +1109,7 @@ HRESULT CLAVInputPin::PushMediaPacket(CMediaPacket *mediaPacket)
   return result;
 }
 
-HRESULT CLAVInputPin::EndOfStreamReached(LONGLONG streamPosition)
+HRESULT CLAVInputPin::EndOfStreamReached(int64_t streamPosition)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME);
 
@@ -1119,21 +1123,16 @@ HRESULT CLAVInputPin::EndOfStreamReached(LONGLONG streamPosition)
       this->logger->Log(LOGGER_VERBOSE, L"%s: %s: media packet count: %u, stream position: %llu", MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, this->mediaPacketCollection->Count(), streamPosition);
 
       // check media packets from supplied last valid stream position
-      REFERENCE_TIME startTime = 0;
-      REFERENCE_TIME endTime = 0;
-      unsigned int mediaPacketIndex = this->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(streamPosition);
+      int64_t startPosition = 0;
+      int64_t endPosition = 0;
+      unsigned int mediaPacketIndex = this->mediaPacketCollection->GetMediaPacketIndexBetweenPositions(streamPosition);
 
       if (mediaPacketIndex != UINT_MAX)
       {
         CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(mediaPacketIndex);
-        REFERENCE_TIME mediaPacketStart = 0;
-        REFERENCE_TIME mediaPacketEnd = 0;
-        if (mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd) == S_OK)
-        {
-          startTime = mediaPacketStart;
-          endTime = mediaPacketStart;
-          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: for stream position '%llu' found media packet, start: %llu, end: %llu", MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, streamPosition, mediaPacketStart, mediaPacketEnd);
-        }
+        startPosition = mediaPacket->GetStart();
+        endPosition = mediaPacket->GetEnd();
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: for stream position '%llu' found media packet, start: %llu, end: %llu", MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, streamPosition, startPosition, endPosition);
       }
 
       for (int i = 0; i < 2; i++)
@@ -1143,46 +1142,39 @@ HRESULT CLAVInputPin::EndOfStreamReached(LONGLONG streamPosition)
         while (mediaPacketIndex != UINT_MAX)
         {
           CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(mediaPacketIndex);
-          REFERENCE_TIME mediaPacketStart = 0;
-          REFERENCE_TIME mediaPacketEnd = 0;
-          if (mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd) == S_OK)
+          int64_t mediaPacketStart = mediaPacket->GetStart();
+          int64_t mediaPacketEnd = mediaPacket->GetEnd();;
+          if (startPosition == mediaPacketStart)
           {
-            if (startTime == mediaPacketStart)
-            {
-              // next start time is next to end of current media packet
-              startTime = mediaPacketEnd + 1;
-              mediaPacketIndex++;
+            // next start time is next to end of current media packet
+            startPosition = mediaPacketEnd + 1;
+            mediaPacketIndex++;
 
-              if (mediaPacketIndex >= this->mediaPacketCollection->Count())
-              {
-                // stop checking, all media packets checked
-                endTime = startTime;
-                this->logger->Log(LOGGER_VERBOSE, L"%s: %s: all media packets checked, start: %llu, end: %llu", MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startTime, endTime);
-                mediaPacketIndex = UINT_MAX;
-              }
-            }
-            else
+            if (mediaPacketIndex >= this->mediaPacketCollection->Count())
             {
-              // we found gap between media packets
-              // set end time and stop checking media packets
-              endTime = mediaPacketStart - 1;
-              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: found gap between media packets, start: %llu, end: %llu", MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startTime, endTime);
+              // stop checking, all media packets checked
+              endPosition = startPosition;
+              this->logger->Log(LOGGER_VERBOSE, L"%s: %s: all media packets checked, start: %llu, end: %llu", MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startPosition, endPosition);
               mediaPacketIndex = UINT_MAX;
             }
           }
           else
           {
+            // we found gap between media packets
+            // set end time and stop checking media packets
+            endPosition = mediaPacketStart - 1;
+            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: found gap between media packets, start: %llu, end: %llu", MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startPosition, endPosition);
             mediaPacketIndex = UINT_MAX;
           }
         }
 
-        if ((!estimate) && (startTime >= this->totalLength) && (i == 0))
+        if ((!estimate) && (startPosition >= this->totalLength) && (i == 0))
         {
           // we are after end of stream
           // check media packets from start if we don't have gap
-          startTime = 0;
-          endTime = 0;
-          mediaPacketIndex = this->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(startTime);
+          startPosition = 0;
+          endPosition = 0;
+          mediaPacketIndex = this->mediaPacketCollection->GetMediaPacketIndexBetweenPositions(startPosition);
           this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, L"searching for gap in media packets from beginning");
         }
         else
@@ -1192,11 +1184,11 @@ HRESULT CLAVInputPin::EndOfStreamReached(LONGLONG streamPosition)
         }
       }
 
-      if (((!estimate) && (startTime < this->totalLength)) || (estimate))
+      if (((!estimate) && (startPosition < this->totalLength)) || (estimate))
       {
         // found part which is not downloaded
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: requesting stream part from: %llu, to: %llu", MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startTime, endTime);
-        this->ReceiveDataFromTimestamp(startTime, endTime);
+        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: requesting stream part from: %llu, to: %llu", MODULE_NAME, METHOD_END_OF_STREAM_REACHED_NAME, startPosition, endPosition);
+        this->SeekToPosition(startPosition, endPosition);
       }
       else
       {
@@ -1216,7 +1208,7 @@ HRESULT CLAVInputPin::EndOfStreamReached(LONGLONG streamPosition)
   return result;
 }
 
-HRESULT CLAVInputPin::SetTotalLength(LONGLONG total, bool estimate)
+HRESULT CLAVInputPin::SetTotalLength(int64_t total, bool estimate)
 {
   HRESULT result = E_FAIL;
 
@@ -1382,10 +1374,6 @@ CParameterCollection *CLAVInputPin::ParseParameters(const wchar_t *parameters)
 
     parsedParameters->Clear();
 
-    // initialize CURL library
-    //CURL *curl = curl_easy_init();
-    //result = (curl != NULL) ? S_OK : E_FAIL;
-
     if (result == S_OK)
     {
       bool splitted = false;
@@ -1454,7 +1442,6 @@ CParameterCollection *CLAVInputPin::ParseParameters(const wchar_t *parameters)
 
                   if (result == S_OK)
                   {
-                    //char *unescapedCurlValue = curl_easy_unescape(curl, curlValue, 0, NULL);
                     char *unescapedCurlValue = curl_easy_unescape(NULL, curlValue, 0, NULL);
 
                     if (unescapedCurlValue == NULL)
@@ -1501,12 +1488,6 @@ CParameterCollection *CLAVInputPin::ParseParameters(const wchar_t *parameters)
       }
     }
 
-    /*if (curl != NULL)
-    {
-      curl_easy_cleanup(curl);
-      curl = NULL;
-    }*/
-
     if (result == S_OK)
     {
       this->logger->Log(LOGGER_INFO, L"%s: %s: count of parameters: %u", MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, parsedParameters->Count());
@@ -1549,7 +1530,7 @@ HRESULT CLAVInputPin::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
   return result;
 }
 
-HRESULT CLAVInputPin::Request(unsigned int *requestId, LONGLONG position, LONG length, IMediaSample *sample, BYTE *buffer, bool aligned, DWORD_PTR userData)
+HRESULT CLAVInputPin::Request(unsigned int *requestId, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData)
 {
   CAsyncRequest* request = new CAsyncRequest();
   if (!request)
@@ -1557,7 +1538,7 @@ HRESULT CLAVInputPin::Request(unsigned int *requestId, LONGLONG position, LONG l
     return E_OUTOFMEMORY;
   }
 
-  HRESULT result = request->Request(this->requestId++, position, length, sample, buffer, userData);
+  HRESULT result = request->Request(this->requestId++, position, length, buffer, userData);
 
   if (SUCCEEDED(result))
   {
@@ -1658,7 +1639,7 @@ HRESULT CLAVInputPin::DestroyAsyncRequestProcessWorker(void)
   return result;
 }
 
-HRESULT CLAVInputPin::CheckValues(CAsyncRequest *request, CMediaPacket *mediaPacket, unsigned int *mediaPacketDataStart, unsigned int *mediaPacketDataLength, REFERENCE_TIME startTime)
+HRESULT CLAVInputPin::CheckValues(CAsyncRequest *request, CMediaPacket *mediaPacket, unsigned int *mediaPacketDataStart, unsigned int *mediaPacketDataLength, int64_t startPosition)
 {
   HRESULT result = S_OK;
 
@@ -1672,25 +1653,24 @@ HRESULT CLAVInputPin::CheckValues(CAsyncRequest *request, CMediaPacket *mediaPac
     LONGLONG requestStart = request->GetStart();
     LONGLONG requestEnd = request->GetStart() + request->GetBufferLength();
 
-    result = ((startTime >= requestStart) && (startTime <= requestEnd)) ? S_OK : E_INVALIDARG;
+    result = ((startPosition >= requestStart) && (startPosition <= requestEnd)) ? S_OK : E_INVALIDARG;
 
     if (result == S_OK)
     {
-      REFERENCE_TIME mediaPacketStart = 0;
-      REFERENCE_TIME mediaPacketEnd = 0;
-      result = mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd);
+      int64_t mediaPacketStart = mediaPacket->GetStart();
+      int64_t mediaPacketEnd = mediaPacket->GetEnd();
 
-      this->logger->Log(LOGGER_DATA, L"%s: %s: async request start: %llu, end: %llu, start time: %llu", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, requestStart, requestEnd, startTime);
+      this->logger->Log(LOGGER_DATA, L"%s: %s: async request start: %llu, end: %llu, start time: %llu", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, requestStart, requestEnd, startPosition);
       this->logger->Log(LOGGER_DATA, L"%s: %s: media packet start: %llu, end: %llu", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, mediaPacketStart, mediaPacketEnd);
 
       if (result == S_OK)
       {
-        // check if start time is in media packet
-        result = ((startTime >= mediaPacketStart) && (startTime <= mediaPacketEnd)) ? S_OK : E_INVALIDARG;
+        // check if start position is in media packet
+        result = ((startPosition >= mediaPacketStart) && (startPosition <= mediaPacketEnd)) ? S_OK : E_INVALIDARG;
 
         if (result == S_OK)
         {
-          // increase timeEnd because timeEnd is stamp of last byte in buffer
+          // increase position end because position end is stamp of last byte in buffer
           mediaPacketEnd++;
 
           // check if async request and media packet are overlapping
@@ -1704,7 +1684,7 @@ HRESULT CLAVInputPin::CheckValues(CAsyncRequest *request, CMediaPacket *mediaPac
         // maximum length of data in media packet can be UINT_MAX - 1
         // async request cannot start after UINT_MAX - 1 because then async request and media packet are not overlapping
 
-        REFERENCE_TIME tempMediaPacketDataStart = ((startTime - mediaPacketStart) > 0) ? startTime : mediaPacketStart;
+        int64_t tempMediaPacketDataStart = ((startPosition - mediaPacketStart) > 0) ? startPosition : mediaPacketStart;
         if ((min(requestEnd, mediaPacketEnd) - tempMediaPacketDataStart) >= UINT_MAX)
         {
           // it's there just for sure
@@ -1730,12 +1710,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
   CLAVInputPin *caller = (CLAVInputPin *)lpParam;
   caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME);
 
-  unsigned int bufferingPercentage = caller->configuration->GetValueLong(PARAMETER_NAME_BUFFERING_PERCENTAGE, true, BUFFERING_PERCENTAGE_DEFAULT);
-  unsigned int maxBufferingSize = caller->configuration->GetValueLong(PARAMETER_NAME_MAX_BUFFERING_SIZE, true, MAX_BUFFERING_SIZE);
   DWORD lastCheckTime = GetTickCount();
-
-  bufferingPercentage = ((bufferingPercentage < 0) || (bufferingPercentage > 100)) ? BUFFERING_PERCENTAGE_DEFAULT : bufferingPercentage;
-  maxBufferingSize = (maxBufferingSize < 0) ? MAX_BUFFERING_SIZE : maxBufferingSize;
 
   while (!caller->asyncRequestProcessingShouldExit)
   {
@@ -1755,7 +1730,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
           unsigned int foundDataLength = 0;
           HRESULT result = S_OK;
           // current stream position is get only when media packet for request is not found
-          LONGLONG currentStreamPosition = -1;
+          int64_t currentStreamPosition = -1;
 
           // first try to find starting media packet (packet which have first data)
           unsigned int packetIndex = UINT_MAX;
@@ -1763,8 +1738,8 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
             // lock access to media packets
             CLockMutex mediaPacketLock(caller->mediaPacketMutex, INFINITE);
 
-            REFERENCE_TIME startTime = request->GetStart();
-            packetIndex = caller->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(startTime);            
+            int64_t startPosition = request->GetStart();
+            packetIndex = caller->mediaPacketCollection->GetMediaPacketIndexBetweenPositions(startPosition);            
             if (packetIndex != UINT_MAX)
             {
               while (packetIndex != UINT_MAX)
@@ -1775,14 +1750,13 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                 // get media packet
                 CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(packetIndex);
                 // check packet values against async request values
-                result = caller->CheckValues(request, mediaPacket, &mediaPacketDataStart, &mediaPacketDataLength, startTime);
+                result = caller->CheckValues(request, mediaPacket, &mediaPacketDataStart, &mediaPacketDataLength, startPosition);
 
                 if (result == S_OK)
                 {
                   // successfully checked values
-                  REFERENCE_TIME timeStart = 0;
-                  REFERENCE_TIME timeEnd = 0;
-                  mediaPacket->GetTime(&timeStart, &timeEnd);
+                  int64_t positionStart = mediaPacket->GetStart();
+                  int64_t positionEnd = mediaPacket->GetEnd();
 
                   // copy data from media packet to request buffer
                   caller->logger->Log(LOGGER_DATA, L"%s: %s: copy data from media packet '%u' to async request '%u', start: %u, data length: %u, request buffer position: %u, request buffer length: %lu", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, packetIndex, request->GetRequestId(), mediaPacketDataStart, mediaPacketDataLength, foundDataLength, request->GetBufferLength());
@@ -1846,8 +1820,8 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   if (foundDataLength < (unsigned int)request->GetBufferLength())
                   {
                     // find another media packet after end of this media packet
-                    startTime = timeEnd + 1;
-                    packetIndex = caller->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(startTime);
+                    startPosition = positionEnd + 1;
+                    packetIndex = caller->mediaPacketCollection->GetMediaPacketIndexBetweenPositions(startPosition);
                     caller->logger->Log(LOGGER_DATA, L"%s: %s: next media packet '%u'", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, packetIndex);
                   }
                   else
@@ -1889,17 +1863,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   // found data length is equal than requested, return S_OK
                   caller->logger->Log(LOGGER_DATA, L"%s: %s: request '%u' complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), S_OK);
                   request->SetBufferLength(foundDataLength);
-
-                  //if (request->GetState() == CAsyncRequest::Requested)
-                  //{
-                  //  // set that request is buffering data for another request
-                  //  // it means that request is completed but we are waiting for more data to buffer
-                  //  request->BufferingData();
-                  //}
-                  //else
-                  {
-                    request->Complete(S_OK);
-                  }
+                  request->Complete(S_OK);
                 }
                 else
                 {
@@ -1962,169 +1926,107 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
               // there isn't any packet containg some data for request
               // check if ranges are supported
 
-              CRangesSupported *rangesSupported = new CRangesSupported();
-              rangesSupported->SetFilterConnectedToAnotherPin(caller->connectedToAnotherPin);
-              // check if ranges are supported
-              HRESULT rangesSupportedResult = caller->QueryRangesSupported(rangesSupported);
-              if (rangesSupportedResult == S_OK)
+              unsigned int seekingCapabilities = caller->GetSeekingCapabilities();
+              if (seekingCapabilities & SEEKING_METHOD_POSITION)
               {
-                if (rangesSupported->AreRangesSupported())
+                if (SUCCEEDED(result))
                 {
-                  if (SUCCEEDED(result))
+                  // not found start packet and request wasn't requested from filter yet
+                  // first found start and end of request
+
+                  int64_t requestStart = request->GetStart();
+                  int64_t requestEnd = requestStart;
+
+                  unsigned int startIndex = 0;
+                  unsigned int endIndex = 0;
                   {
-                    // not found start packet and request wasn't requested from filter yet
-                    // first found start and end of request
+                    // lock access to media packets
+                    CLockMutex mediaPacketLock(caller->mediaPacketMutex, INFINITE);
 
-                    LONGLONG requestStart = request->GetStart();
-                    LONGLONG requestEnd = requestStart;
-
-                    unsigned int startIndex = 0;
-                    unsigned int endIndex = 0;
+                    if (caller->mediaPacketCollection->GetItemInsertPosition(request->GetStart(), NULL, &startIndex, &endIndex))
                     {
-                      // lock access to media packets
-                      CLockMutex mediaPacketLock(caller->mediaPacketMutex, INFINITE);
-
-                      if (caller->mediaPacketCollection->GetItemInsertPosition(request->GetStart(), NULL, &startIndex, &endIndex))
+                      // start and end index found successfully
+                      if (startIndex == endIndex)
                       {
-                        // start and end index found successfully
-                        if (startIndex == endIndex)
+                        int64_t endPacketStartPosition = 0;
+                        int64_t endPacketStopPosition = 0;
+                        unsigned int mediaPacketIndex = caller->mediaPacketCollection->GetMediaPacketIndexBetweenPositions(endPacketStartPosition);
+
+                        // media packet exists in collection
+                        while (mediaPacketIndex != UINT_MAX)
                         {
-                          REFERENCE_TIME endPacketStartTime = 0;
-                          REFERENCE_TIME endPacketStopTime = 0;
-                          unsigned int mediaPacketIndex = caller->mediaPacketCollection->GetMediaPacketIndexBetweenTimes(endPacketStartTime);
-
-                          // media packet exists in collection
-                          while (mediaPacketIndex != UINT_MAX)
+                          CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(mediaPacketIndex);
+                          int64_t mediaPacketStart = mediaPacket->GetStart();
+                          int64_t mediaPacketEnd = mediaPacket->GetEnd();
+                          if (endPacketStartPosition == mediaPacketStart)
                           {
-                            CMediaPacket *mediaPacket = caller->mediaPacketCollection->GetItem(mediaPacketIndex);
-                            REFERENCE_TIME mediaPacketStart = 0;
-                            REFERENCE_TIME mediaPacketEnd = 0;
-                            if (mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd) == S_OK)
-                            {
-                              if (endPacketStartTime == mediaPacketStart)
-                              {
-                                // next start time is next to end of current media packet
-                                endPacketStartTime = mediaPacketEnd + 1;
-                                mediaPacketIndex++;
+                            // next start time is next to end of current media packet
+                            endPacketStartPosition = mediaPacketEnd + 1;
+                            mediaPacketIndex++;
 
-                                if (mediaPacketIndex >= caller->mediaPacketCollection->Count())
-                                {
-                                  // stop checking, all media packets checked
-                                  mediaPacketIndex = UINT_MAX;
-                                }
-                              }
-                              else
-                              {
-                                endPacketStopTime = mediaPacketStart - 1;
-                                mediaPacketIndex = UINT_MAX;
-                              }
-                            }
-                            else
+                            if (mediaPacketIndex >= caller->mediaPacketCollection->Count())
                             {
+                              // stop checking, all media packets checked
                               mediaPacketIndex = UINT_MAX;
                             }
                           }
+                          else
+                          {
+                            endPacketStopPosition = mediaPacketStart - 1;
+                            mediaPacketIndex = UINT_MAX;
+                          }
+                        }
 
-                          requestEnd = endPacketStopTime;
-                        }
-                        else if ((startIndex == (caller->mediaPacketCollection->Count() - 1)) && (endIndex == UINT_MAX))
+                        requestEnd = endPacketStopPosition;
+                      }
+                      else if ((startIndex == (caller->mediaPacketCollection->Count() - 1)) && (endIndex == UINT_MAX))
+                      {
+                        // media packet belongs to end
+                        // do nothing, default request is from specific point until end of stream
+                      }
+                      else if ((startIndex == UINT_MAX) && (endIndex == 0))
+                      {
+                        // media packet belongs to start
+                        CMediaPacket *endMediaPacket = caller->mediaPacketCollection->GetItem(endIndex);
+                        if (endMediaPacket != NULL)
                         {
-                          // media packet belongs to end
-                          // do nothing, default request is from specific point until end of stream
+                          // requests data from requestStart until end packet start position
+                          requestEnd = endMediaPacket->GetStart() - 1;
                         }
-                        else if ((startIndex == UINT_MAX) && (endIndex == 0))
+                      }
+                      else
+                      {
+                        // media packet belongs between packets startIndex and endIndex
+                        CMediaPacket *endMediaPacket = caller->mediaPacketCollection->GetItem(endIndex);
+                        if (endMediaPacket != NULL)
                         {
-                          // media packet belongs to start
-                          CMediaPacket *endMediaPacket = caller->mediaPacketCollection->GetItem(endIndex);
-                          if (endMediaPacket != NULL)
-                          {
-                            REFERENCE_TIME endPacketStartTime = 0;
-                            REFERENCE_TIME endPacketStopTime = 0;
-                            if (endMediaPacket->GetTime(&endPacketStartTime, &endPacketStopTime) == S_OK)
-                            {
-                              // requests data from requestStart until end packet start time
-                              requestEnd = endPacketStartTime - 1;
-                            }
-                          }
-                        }
-                        else
-                        {
-                          // media packet belongs between packets startIndex and endIndex
-                          CMediaPacket *endMediaPacket = caller->mediaPacketCollection->GetItem(endIndex);
-                          if (endMediaPacket != NULL)
-                          {
-                            REFERENCE_TIME endPacketStartTime = 0;
-                            REFERENCE_TIME endPacketStopTime = 0;
-                            if (endMediaPacket->GetTime(&endPacketStartTime, &endPacketStopTime) == S_OK)
-                            {
-                              // requests data from requestStart until end packet start time
-                              requestEnd = endPacketStartTime - 1;
-                            }
-                          }
+                          // requests data from requestStart until end packet start position
+                          requestEnd = endMediaPacket->GetStart() - 1;
                         }
                       }
                     }
-
-                    if (requestEnd < requestStart)
-                    {
-                      caller->logger->Log(LOGGER_WARNING, L"%s: %s: request '%u' has start '%llu' after end '%llu', modifying to equal", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), requestStart, requestEnd);
-                      requestEnd = requestStart;
-                    }
-
-                    // request filter to receive data from request start to end
-                    result = caller->ReceiveDataFromTimestamp(requestStart, requestEnd);
                   }
 
-                  if (SUCCEEDED(result))
+                  if (requestEnd < requestStart)
                   {
-                    request->Request();
+                    caller->logger->Log(LOGGER_WARNING, L"%s: %s: request '%u' has start '%llu' after end '%llu', modifying to equal", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), requestStart, requestEnd);
+                    requestEnd = requestStart;
                   }
-                  else
-                  {
-                    // if error occured while requesting filter for data
-                    caller->logger->Log(LOGGER_WARNING, L"%s: %s: request '%u' error while requesting data, complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
-                    request->Complete(result);
-                  }
+
+                  // request filter to receive data from request start to end
+                  result = (caller->SeekToPosition(requestStart, requestEnd) >= 0) ? S_OK : E_FAIL;
                 }
-                else if (rangesSupported->IsQueryError())
+
+                if (SUCCEEDED(result))
                 {
-                  // error occured while quering if ranges are supported
-                  caller->logger->Log(LOGGER_WARNING, L"%s: %s: request '%u' error while quering if ranges are supported, complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), rangesSupported->GetQueryResult());
-                  request->Complete(rangesSupported->GetQueryResult());
+                  request->Request();
                 }
-              }
-            }
-          }
-        }
-
-        if (request->GetState() == CAsyncRequest::Buffering)
-        {
-          // request is buffering data for another request
-          LONGLONG total = 0;
-          LONGLONG current = 0;
-          if (SUCCEEDED(caller->QueryStreamProgress(&total, &current)))
-          {
-            // values can be estimated, but no error occured
-            if (current < request->GetStart())
-            {
-              // we are receiving data from somewhere else
-              // don't wait for data
-              request->Complete(S_OK);
-            }
-            else if (current == total)
-            {
-              // we are at the end of stream
-              // don't wait for data
-              request->Complete(S_OK);
-            }
-            else
-            {
-              LONGLONG bufferingSize = total * bufferingPercentage / 100; // two percent
-              if ((current - request->GetStart()) >= min(maxBufferingSize, bufferingSize))
-              {
-                // we buffered some data
-                // complete request
-                request->Complete(S_OK);
+                else
+                {
+                  // if error occured while requesting filter for data
+                  caller->logger->Log(LOGGER_WARNING, L"%s: %s: request '%u' error while requesting data, complete status: 0x%08X", MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, request->GetRequestId(), result);
+                  request->Complete(result);
+                }
               }
             }
           }
@@ -2200,45 +2102,38 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
                   {
                     // if media packet is not stored to file
                     // store it to file
-                    REFERENCE_TIME mediaPacketStartTime = 0;
-                    REFERENCE_TIME mediaPacketEndTime = 0;
-                    if (mediaPacket->GetTime(&mediaPacketStartTime, &mediaPacketEndTime) == S_OK)
-                    {
-                      unsigned int length = (unsigned int)(mediaPacketEndTime + 1 - mediaPacketStartTime);
+                    int64_t mediaPacketStartPosition = mediaPacket->GetStart();
+                    int64_t mediaPacketEndPosition = mediaPacket->GetEnd();
+                    unsigned int length = (unsigned int)(mediaPacketEndPosition + 1 - mediaPacketStartPosition);
 
-                      ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
-                      if (mediaPacket->GetBuffer()->CopyFromBuffer(buffer, length, 0, 0) == length)
+                    ALLOC_MEM_DEFINE_SET(buffer, char, length, 0);
+                    if (mediaPacket->GetBuffer()->CopyFromBuffer(buffer, length, 0, 0) == length)
+                    {
+                      DWORD written = 0;
+                      if (WriteFile(hTempFile, buffer, length, &written, NULL))
                       {
-                        DWORD written = 0;
-                        if (WriteFile(hTempFile, buffer, length, &written, NULL))
+                        if (length == written)
                         {
-                          if (length == written)
-                          {
-                            // mark as stored
-                            mediaPacket->SetStoredToFile(size.QuadPart);
-                            size.QuadPart += length;
-                          }
-                          else
-                          {
-                            allMediaPacketsStored = false;
-                          }
+                          // mark as stored
+                          mediaPacket->SetStoredToFile(size.QuadPart);
+                          size.QuadPart += length;
                         }
                         else
                         {
                           allMediaPacketsStored = false;
-                          caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, L"not written");
                         }
                       }
                       else
                       {
                         allMediaPacketsStored = false;
+                        caller->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_ASYNC_REQUEST_PROCESS_WORKER_NAME, L"not written");
                       }
-                      FREE_MEM(buffer);
                     }
                     else
                     {
                       allMediaPacketsStored = false;
                     }
+                    FREE_MEM(buffer);
                   }
 
                   i++;
@@ -2272,7 +2167,7 @@ DWORD WINAPI CLAVInputPin::AsyncRequestProcessWorker(LPVOID lpParam)
   return S_OK;
 }
 
-STDMETHODIMP CLAVInputPin::SyncRead(LONGLONG position, LONG length, BYTE *buffer)
+STDMETHODIMP CLAVInputPin::SyncRead(int64_t position, LONG length, BYTE *buffer)
 {
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_SYNC_READ_NAME);
 
@@ -2283,7 +2178,7 @@ STDMETHODIMP CLAVInputPin::SyncRead(LONGLONG position, LONG length, BYTE *buffer
   if ((SUCCEEDED(result)) && (length > 0))
   {
     unsigned int requestId = 0;
-    result = this->Request(&requestId, position, length, NULL, buffer, false, NULL);
+    result = this->Request(&requestId, position, length, buffer, NULL);
 
     if (SUCCEEDED(result))
     {
@@ -2294,12 +2189,6 @@ STDMETHODIMP CLAVInputPin::SyncRead(LONGLONG position, LONG length, BYTE *buffer
 
       if (SUCCEEDED(result))
       {
-        bool buffering = false;
-
-        CRangesSupported *rangesSupported = new CRangesSupported();
-        rangesSupported->SetFilterConnectedToAnotherPin(this->connectedToAnotherPin);
-        result = this->QueryRangesSupported(rangesSupported);
-
         // if ranges are not supported than we must wait for data
 
         result = VFW_E_TIMEOUT;
@@ -2308,11 +2197,7 @@ STDMETHODIMP CLAVInputPin::SyncRead(LONGLONG position, LONG length, BYTE *buffer
         // wait until request is completed or cancelled
         while (!this->asyncRequestProcessingShouldExit)
         {
-          if (rangesSupported->IsQueryPending())            
-          {
-            // protocol implementation doesn't know yet if ranges are supported
-            this->QueryRangesSupported(rangesSupported);
-          }
+          unsigned int seekingCapabilities = this->GetSeekingCapabilities();
 
           CAsyncRequest *request = NULL;
 
@@ -2346,28 +2231,6 @@ STDMETHODIMP CLAVInputPin::SyncRead(LONGLONG position, LONG length, BYTE *buffer
                 result = E_ABORT;
                 break;
               }
-              else if (request->GetState() == CAsyncRequest::Buffering)
-              {
-                // data for request are buffered from stream
-                // just wait for completition
-
-                if (!buffering)
-                {
-                  // first case when request is in buffering state
-                  // remember actual ticks
-                  ticks = GetTickCount();
-                  buffering = true;
-                }
-                else
-                {
-                  // check for timeout
-                  // if timeout occure than it is not error because request is completed
-                  if ((GetTickCount() - ticks) > timeout)
-                  {
-                    request->Complete(S_OK);
-                  }
-                }
-              }
               else if (request->GetState() == CAsyncRequest::WaitingIgnoreTimeout)
               {
                 // we are waiting for data and we have to ignore timeout
@@ -2375,7 +2238,7 @@ STDMETHODIMP CLAVInputPin::SyncRead(LONGLONG position, LONG length, BYTE *buffer
               else
               {
                 // common case
-                if ((rangesSupported->AreRangesSupported()) && ((GetTickCount() - ticks) > timeout))
+                if ((seekingCapabilities != SEEKING_METHOD_NONE) && ((GetTickCount() - ticks) > timeout))
                 {
                   // if ranges are supported and timeout occured then stop waiting for data and exit with VFW_E_TIMEOUT error
                   result = VFW_E_TIMEOUT;
@@ -2395,9 +2258,6 @@ STDMETHODIMP CLAVInputPin::SyncRead(LONGLONG position, LONG length, BYTE *buffer
           // sleep some time
           Sleep(10);
         }
-
-        // remove ranges supported from memory, it's no longer needed
-        delete rangesSupported;
       }
 
       {
@@ -2448,7 +2308,6 @@ STDMETHODIMP CLAVInputPin::Length(LONGLONG *total, LONGLONG *available)
     unsigned int mediaPacketCount = this->mediaPacketCollection->Count();
 
     CStreamAvailableLength *availableLength = new CStreamAvailableLength();
-    availableLength->SetFilterConnectedToAnotherPin(this->connectedToAnotherPin);
     result = this->QueryStreamAvailableLength(availableLength);
     if (result == S_OK)
     {
@@ -2470,15 +2329,12 @@ STDMETHODIMP CLAVInputPin::Length(LONGLONG *total, LONGLONG *available)
       for (unsigned int i = 0; i < mediaPacketCount; i++)
       {
         CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(i);
-        REFERENCE_TIME mediaPacketStart = 0;
-        REFERENCE_TIME mediaPacketEnd = 0;
+        int64_t mediaPacketStart = mediaPacket->GetStart();
+        int64_t mediaPacketEnd = mediaPacket->GetEnd();
 
-        if (mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd) == S_OK)
+        if ((mediaPacketEnd + 1) > (*available))
         {
-          if ((mediaPacketEnd + 1) > (*available))
-          {
-            *available = mediaPacketEnd + 1;
-          }
+          *available = mediaPacketEnd + 1;
         }
       }
 
@@ -2505,25 +2361,371 @@ HRESULT CLAVInputPin::QueryStreamAvailableLength(CStreamAvailableLength *availab
   return result;
 }
 
-HRESULT CLAVInputPin::QueryRangesSupported(CRangesSupported *rangesSupported)
+int64_t CLAVInputPin::SeekToPosition(int64_t start, int64_t end)
 {
-  HRESULT result = E_NOTIMPL;
+  int64_t result = -1;
 
   if (this->activeProtocol != NULL)
   {
-    result = this->activeProtocol->QueryRangesSupported(rangesSupported);
+    result = this->activeProtocol->SeekToPosition(start, end);
   }
 
   return result;
 }
 
-HRESULT CLAVInputPin::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime)
+HRESULT CLAVInputPin::CreateDemuxerWorker(void)
 {
-  HRESULT result = E_NOT_VALID_STATE;
+  HRESULT result = S_OK;
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_WORKER_NAME);
+
+  this->demuxerWorkerShouldExit = false;
+
+  this->hCreateDemuxerWorkerThread = CreateThread( 
+    NULL,                                                 // default security attributes
+    0,                                                    // use default stack size  
+    &CLAVInputPin::DemuxerWorker,                         // thread function name
+    this,                                                 // argument to thread function 
+    0,                                                    // use default creation flags 
+    &dwCreateDemuxerWorkerThreadId);                      // returns the thread identifier
+
+  if (this->hCreateDemuxerWorkerThread == NULL)
+  {
+    // thread not created
+    result = HRESULT_FROM_WIN32(GetLastError());
+    this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", MODULE_NAME, METHOD_CREATE_DEMUXER_WORKER_NAME, result);
+  }
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_WORKER_NAME, result);
+  return result;
+}
+
+HRESULT CLAVInputPin::DestroyDemuxerWorker(void)
+{
+  HRESULT result = S_OK;
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DESTROY_DEMUXER_WORKER_NAME);
+
+  this->demuxerWorkerShouldExit = true;
+
+  // wait for the receive data worker thread to exit      
+  if (this->hCreateDemuxerWorkerThread != NULL)
+  {
+    if (WaitForSingleObject(this->hCreateDemuxerWorkerThread, 1000) == WAIT_TIMEOUT)
+    {
+      // thread didn't exit, kill it now
+      this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_DEMUXER_WORKER_NAME, L"thread didn't exit, terminating thread");
+      TerminateThread(this->hCreateDemuxerWorkerThread, 0);
+    }
+  }
+
+  this->hCreateDemuxerWorkerThread = NULL;
+  this->demuxerWorkerShouldExit = false;
+
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DESTROY_DEMUXER_WORKER_NAME, result);
+  return result;
+}
+
+DWORD WINAPI CLAVInputPin::DemuxerWorker(LPVOID lpParam)
+{
+  CLAVInputPin *caller = (CLAVInputPin *)lpParam;
+  caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DEMUXER_WORKER_NAME);
+
+  while (!caller->demuxerWorkerShouldExit)
+  {
+    if (!caller->createdDemuxer)
+    {
+      caller->m_llBufferPosition = 0;
+      if (SUCCEEDED(caller->filter->CreateDemuxer(caller->url)))
+      {
+        caller->createdDemuxer = true;
+        break;
+      }
+      else
+      {
+        caller->ReleaseAVIOContext();
+      }
+    }
+
+    Sleep(100);
+  }
+
+  caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DEMUXER_WORKER_NAME);
+  return S_OK;
+}
+
+// IMediaSeeking
+STDMETHODIMP CLAVInputPin::GetCapabilities(DWORD* pCapabilities)
+{
+  CheckPointer(pCapabilities, E_POINTER);
+
+  *pCapabilities =
+    AM_SEEKING_CanGetStopPos   |
+    AM_SEEKING_CanGetDuration  |
+    AM_SEEKING_CanSeekAbsolute |
+    AM_SEEKING_CanSeekForwards |
+    AM_SEEKING_CanSeekBackwards;
+
+  return S_OK;
+}
+
+STDMETHODIMP CLAVInputPin::CheckCapabilities(DWORD* pCapabilities)
+{
+  CheckPointer(pCapabilities, E_POINTER);
+  // capabilities is empty, all is good
+  if(*pCapabilities == 0) return S_OK;
+  // read caps
+  DWORD caps;
+  GetCapabilities(&caps);
+
+  // Store the caps that we wanted
+  DWORD wantCaps = *pCapabilities;
+  // Update pCapabilities with what we have
+  *pCapabilities = caps & wantCaps;
+
+  // if nothing matches, its a disaster!
+  if(*pCapabilities == 0) return E_FAIL;
+  // if all matches, its all good
+  if(*pCapabilities == wantCaps) return S_OK;
+  // otherwise, a partial match
+  return S_FALSE;
+}
+
+STDMETHODIMP CLAVInputPin::IsFormatSupported(const GUID* pFormat)
+{
+  return !pFormat ? E_POINTER : *pFormat == TIME_FORMAT_MEDIA_TIME ? S_OK : S_FALSE;
+}
+
+STDMETHODIMP CLAVInputPin::QueryPreferredFormat(GUID* pFormat)
+{
+  return this->GetTimeFormat(pFormat);
+}
+
+STDMETHODIMP CLAVInputPin::GetTimeFormat(GUID* pFormat)
+{
+  return pFormat ? *pFormat = TIME_FORMAT_MEDIA_TIME, S_OK : E_POINTER;
+}
+
+STDMETHODIMP CLAVInputPin::IsUsingTimeFormat(const GUID* pFormat)
+{
+  return this->IsFormatSupported(pFormat);
+}
+
+STDMETHODIMP CLAVInputPin::SetTimeFormat(const GUID* pFormat)
+{
+  return S_OK == this->IsFormatSupported(pFormat) ? S_OK : E_INVALIDARG;
+}
+
+STDMETHODIMP CLAVInputPin::GetDuration(LONGLONG* pDuration)
+{
+  CheckPointer(pDuration, E_POINTER);
+  CBaseDemuxer *demuxer = this->filter->GetDemuxer();
+
+  //CheckPointer(this->filter->m_pDemuxer, E_UNEXPECTED);
+  CheckPointer(demuxer, E_UNEXPECTED);
+  
+  *pDuration = demuxer->GetDuration();
+
+  return (*pDuration < 0) ? E_FAIL : S_OK;
+}
+
+STDMETHODIMP CLAVInputPin::GetStopPosition(LONGLONG* pStop)
+{
+  return this->GetDuration(pStop);
+}
+
+STDMETHODIMP CLAVInputPin::GetCurrentPosition(LONGLONG* pCurrent)
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CLAVInputPin::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat)
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CLAVInputPin::SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
+{
+  return this->SetPositionsInternal(this, pCurrent, dwCurrentFlags, pStop, dwStopFlags);
+}
+
+STDMETHODIMP CLAVInputPin::SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
+{
+  this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SET_POSITIONS_INTERNAL_NAME);
+  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: seek request; this: %p; caller: %p, current: %I64d; start: %I64d; flags: 0x%08X, stop: %I64d; flags: 0x%08X", MODULE_NAME, METHOD_SET_POSITIONS_INTERNAL_NAME, this, caller, this->m_rtCurrent, pCurrent ? *pCurrent : -1, dwCurrentFlags, pStop ? *pStop : -1, dwStopFlags);
+
+  CAutoLock cAutoLock(this);
+  HRESULT result = E_FAIL;
+
+  if ((pCurrent == NULL) && (pStop == NULL)
+    || (((dwCurrentFlags & AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning)
+      && ((dwStopFlags & AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning)))
+  {
+      result = S_OK;
+  }
+  else
+  {
+    REFERENCE_TIME rtCurrent = this->m_rtCurrent, rtStop = this->m_rtStop;
+
+    if (pCurrent != NULL)
+    {
+      switch(dwCurrentFlags & AM_SEEKING_PositioningBitsMask)
+      {
+      case AM_SEEKING_NoPositioning:
+        break;
+      case AM_SEEKING_AbsolutePositioning:
+        rtCurrent = *pCurrent;
+        break;
+      case AM_SEEKING_RelativePositioning:
+        rtCurrent = rtCurrent + *pCurrent;
+        break;
+      case AM_SEEKING_IncrementalPositioning:
+        rtCurrent = rtCurrent + *pCurrent;
+        break;
+      }
+    }
+
+    if (pStop != NULL)
+    {
+      switch(dwStopFlags & AM_SEEKING_PositioningBitsMask)
+      {
+      case AM_SEEKING_NoPositioning:
+        break;
+      case AM_SEEKING_AbsolutePositioning:
+        rtStop = *pStop;
+        this->m_bStopValid = TRUE;
+        break;
+      case AM_SEEKING_RelativePositioning:
+        rtStop += *pStop;
+        this->m_bStopValid = TRUE;
+        break;
+      case AM_SEEKING_IncrementalPositioning:
+        rtStop = rtCurrent + *pStop;
+        this->m_bStopValid = TRUE;
+        break;
+      }
+    }
+
+    if ((this->m_rtCurrent == rtCurrent) && (this->m_rtStop == rtStop))
+    {
+      result = S_OK;
+    }
+    else
+    {
+      if ((this->m_rtLastStart == rtCurrent) && (this->m_rtLastStop == rtStop) && (this->m_LastSeekers.find(caller) == this->m_LastSeekers.end()))
+      {
+        this->m_LastSeekers.insert(caller);
+        result = S_OK;
+      }
+      else
+      {
+        this->m_rtLastStart = rtCurrent;
+        this->m_rtLastStop = rtStop;
+        this->m_LastSeekers.clear();
+        this->m_LastSeekers.insert(caller);
+
+        this->m_rtNewStart = this->m_rtCurrent = rtCurrent;
+        this->m_rtNewStop = rtStop;
+
+        // perform seek in CLAVSplitter::SetPositionsInternal()
+        result = S_FALSE;
+      }
+    }
+  }
+  this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_SET_POSITIONS_INTERNAL_NAME, result);
+  return result;
+}
+
+STDMETHODIMP CLAVInputPin::GetPositions(LONGLONG* pCurrent, LONGLONG* pStop)
+{
+  if (pCurrent)
+  {
+    *pCurrent = m_rtCurrent;
+  }
+  if (pStop)
+  {
+    *pStop = m_rtStop;
+  }
+  return S_OK;
+}
+
+STDMETHODIMP CLAVInputPin::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest)
+{
+  if (pEarliest)
+  {
+    *pEarliest = 0;
+  }
+  return this->GetDuration(pLatest);
+}
+
+STDMETHODIMP CLAVInputPin::SetRate(double dRate)
+{
+  return dRate > 0 ? m_dRate = dRate, S_OK : E_INVALIDARG;
+}
+
+STDMETHODIMP CLAVInputPin::GetRate(double* pdRate)
+{
+  return pdRate ? *pdRate = m_dRate, S_OK : E_POINTER;
+}
+
+STDMETHODIMP CLAVInputPin::GetPreroll(LONGLONG* pllPreroll)
+{
+  return pllPreroll ? *pllPreroll = 0, S_OK : E_POINTER;
+}
+
+REFERENCE_TIME CLAVInputPin::GetStart(void) { return this->m_rtStart; }
+REFERENCE_TIME CLAVInputPin::GetStop(void) { return this->m_rtStop; }
+REFERENCE_TIME CLAVInputPin::GetCurrent(void) { return this->m_rtCurrent; }
+REFERENCE_TIME CLAVInputPin::GetNewStart(void) { return this->m_rtNewStart; }
+REFERENCE_TIME CLAVInputPin::GetNewStop(void) { return this->m_rtNewStop; }
+double CLAVInputPin::GetPlayRate(void) { return this->m_dRate; }
+BOOL CLAVInputPin::GetStopValid(void) { return this->m_bStopValid; }
+
+void CLAVInputPin::SetStart(REFERENCE_TIME time) { this->m_rtStart = time; }
+void CLAVInputPin::SetStop(REFERENCE_TIME time) { this->m_rtStop = time; }
+void CLAVInputPin::SetCurrent(REFERENCE_TIME time)  { this->m_rtCurrent = time; }
+void CLAVInputPin::SetNewStart(REFERENCE_TIME time)  { this->m_rtNewStart = time; }
+void CLAVInputPin::SetNewStop(REFERENCE_TIME time)  { this->m_rtNewStop = time; }
+void CLAVInputPin::SetPlayRate(double rate)  { this->m_dRate = rate; }
+void CLAVInputPin::SetStopValid(BOOL valid) { this->m_bStopValid = valid; }
+
+// IFilter interface
+
+unsigned int CLAVInputPin::GetSeekingCapabilities(void)
+{
+  unsigned int capabilities = SEEKING_METHOD_NONE;
 
   if (this->activeProtocol != NULL)
   {
-    result = this->activeProtocol->ReceiveDataFromTimestamp(startTime, endTime);
+    capabilities = this->activeProtocol->GetSeekingCapabilities();
+  }
+
+  return capabilities;
+}
+
+CLogger *CLAVInputPin::GetLogger(void)
+{
+  return this->logger;
+}
+
+int64_t CLAVInputPin::SeekToTime(int64_t time)
+{
+  int64_t result = -1;
+
+  if (this->activeProtocol != NULL)
+  {
+    result = this->activeProtocol->SeekToTime(time);
+    if (result >= 0)
+    {
+      // lock access to media packets
+      CLockMutex mediaPacketLock(this->mediaPacketMutex, INFINITE);
+      // clear media packets, we are starting from beginning
+      // delete buffer file and set buffer position to zero
+      this->mediaPacketCollection->Clear();
+      if (this->storeFilePath != NULL)
+      {
+        DeleteFile(this->storeFilePath);
+      }
+      this->m_llBufferPosition = 0;
+    }
   }
 
   return result;

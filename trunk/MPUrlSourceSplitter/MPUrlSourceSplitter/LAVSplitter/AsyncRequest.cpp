@@ -38,12 +38,11 @@ CAsyncRequest::~CAsyncRequest(void)
 {
 }
 
-HRESULT CAsyncRequest::Request(unsigned int requestId, LONGLONG position, LONG length, IMediaSample *sample, BYTE *buffer, DWORD_PTR userData)
+HRESULT CAsyncRequest::Request(unsigned int requestId, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData)
 {
   this->requestId = requestId;
   this->position = position;
   this->length = length;
-  this->sample = sample;
   this->buffer = buffer;
   this->requestState = CAsyncRequest::Waiting;
   this->errorCode = S_OK;
@@ -65,7 +64,7 @@ void CAsyncRequest::SetBufferLength(LONG length)
   this->length = length;
 }
 
-LONGLONG CAsyncRequest::GetStart(void)
+int64_t CAsyncRequest::GetStart(void)
 {
   return this->position;
 }
@@ -84,11 +83,6 @@ void CAsyncRequest::Cancel(void)
 void CAsyncRequest::Request(void)
 {
   this->requestState = CAsyncRequest::Requested;
-}
-
-void CAsyncRequest::BufferingData(void)
-{
-  this->requestState = CAsyncRequest::Buffering;
 }
 
 void CAsyncRequest::WaitAndIgnoreTimeout(void)
@@ -114,11 +108,6 @@ DWORD_PTR CAsyncRequest::GetUserData(void)
 unsigned int CAsyncRequest::GetRequestId(void)
 {
   return this->requestId;
-}
-
-IMediaSample *CAsyncRequest::GetMediaSample(void)
-{
-  return this->sample;
 }
 
 BYTE *CAsyncRequest::GetBuffer(void)

@@ -110,8 +110,8 @@ wchar_t *CParameterCollection::GetValue(wchar_t *name, bool invariant, wchar_t *
 
 long CParameterCollection::GetValueLong(wchar_t *name, bool invariant, long defaultValue)
 {
-  TCHAR *value = this->GetValue(name, invariant, L"");
-  TCHAR *end = NULL;
+  wchar_t *value = this->GetValue(name, invariant, L"");
+  wchar_t *end = NULL;
   long valueLong = wcstol(value, &end, 10);
   if ((valueLong == 0) && (value == end))
   {
@@ -124,9 +124,23 @@ long CParameterCollection::GetValueLong(wchar_t *name, bool invariant, long defa
 
 long CParameterCollection::GetValueUnsignedInt(wchar_t *name, bool invariant, unsigned int defaultValue)
 {
-  TCHAR *value = this->GetValue(name, invariant, L"");
-  TCHAR *end = NULL;
+  wchar_t *value = this->GetValue(name, invariant, L"");
+  wchar_t *end = NULL;
   long valueLong = wcstol(value, &end, 10);
+  if ((valueLong == 0) && (value == end))
+  {
+    // error while converting
+    valueLong = defaultValue;
+  }
+
+  return (unsigned int)valueLong;
+}
+
+int64_t CParameterCollection::GetValueInt64(wchar_t *name, bool invariant, int64_t defaultValue)
+{
+  wchar_t *value = this->GetValue(name, invariant, L"");
+  wchar_t *end = NULL;
+  int64_t valueLong = _wcstoi64(value, &end, 10);
   if ((valueLong == 0) && (value == end))
   {
     // error while converting

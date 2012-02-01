@@ -57,8 +57,8 @@
 #define RTMP_PLAYLIST_DEFAULT                               false
 #define RTMP_LIVE_DEFAULT                                   false
 #define RTMP_SUBSCRIBE_DEFAULT                              NULL
-#define RTMP_START_DEFAULT                                  UINT_MAX
-#define RTMP_STOP_DEFAULT                                   UINT_MAX
+#define RTMP_START_DEFAULT                                  INT64_MAX
+#define RTMP_STOP_DEFAULT                                   INT64_MAX
 #define RTMP_BUFFER_DEFAULT                                 30000
 #define RTMP_TOKEN_DEFAULT                                  NULL
 #define RTMP_JTV_DEFAULT                                    NULL
@@ -148,22 +148,6 @@ public:
   // @param writeData : user specified data supplied to write callback method
   void SetWriteCallback(curl_write_callback writeCallback, void *writeData);
 
-  // gets start stream time
-  // @return : start stream time
-  REFERENCE_TIME GetStartStreamTime(void);
-
-  // sets start stream time
-  // @param startStreamTime : the start stream time to set
-  void SetStartStreamTime(REFERENCE_TIME startStreamTime);
-
-  // gets end stream time
-  // @return : end stream time
-  REFERENCE_TIME GetEndStreamTime(void);
-
-  // sets end stream time
-  // @param endStreamTime : the end stream time to set
-  void SetEndStreamTime(REFERENCE_TIME endStreamTime);
-
   // starts receiving data
   // @return : true if successful, false otherwise
   bool StartReceivingData(void);
@@ -183,8 +167,8 @@ public:
   void SetRtmpPlaylist(bool rtmpPlaylist);
   void SetRtmpLive(bool rtmpLive);
   void SetRtmpSubscribe(const wchar_t *rtmpSubscribe);
-  void SetRtmpStart(unsigned int rtmpStart);
-  void SetRtmpStop(unsigned int rtmpStop);
+  void SetRtmpStart(int64_t rtmpStart);
+  void SetRtmpStop(int64_t rtmpStop);
   void SetRtmpBuffer(unsigned int rtmpBuffer);
   void SetRtmpToken(const wchar_t *rtmpToken);
   void SetRtmpJtv(const wchar_t *rtmpJtv);
@@ -200,10 +184,6 @@ private:
   DWORD dwCurlWorkerThreadId;
   CURLcode curlWorkerErrorCode;
   static DWORD WINAPI CurlWorker(LPVOID lpParam);
-
-  // start stream time and end stream time
-  REFERENCE_TIME startStreamTime;
-  REFERENCE_TIME endStreamTime;
 
   // the stream url
   wchar_t *url;
@@ -256,12 +236,12 @@ private:
 
   // start at num seconds into the stream
   // not valid for live streams
-  // the default value is not set (UINT_MAX)
-  unsigned int rtmpStart;
+  // the default value is not set (INT64_MAX)
+  int64_t rtmpStart;
 
   // stop at num seconds into the stream
-  // the default value is not set (UINT_MAX)
-  unsigned int rtmpStop;
+  // the default value is not set (INT64_MAX)
+  int64_t rtmpStop;  
 
   // set buffer time to num milliseconds
   // the default is RTMP_BUFFER_DEFAULT
@@ -334,6 +314,13 @@ private:
   // @param value : the value of parameter
   // @return : true if successful, false otherwise
   bool AddToRtmpConnectionString(wchar_t **connectionString, const wchar_t *name, unsigned int value);
+
+  // adds to librtmp connection string new parameter with specified name and value
+  // @param connectionString : librtmp connection string
+  // @param name : the name of parameter
+  // @param value : the value of parameter
+  // @return : true if successful, false otherwise
+  bool AddToRtmpConnectionString(wchar_t **connectionString, const wchar_t *name, int64_t value);
 
   // adds to librtmp connection string new parameter with specified name and value
   // @param connectionString : librtmp connection string

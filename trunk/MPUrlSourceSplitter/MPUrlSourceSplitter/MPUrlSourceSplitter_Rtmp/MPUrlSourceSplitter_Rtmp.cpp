@@ -29,9 +29,9 @@
 
 // protocol implementation name
 #ifdef _DEBUG
-#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSource_Rtmpd"
+#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSourceSplitter_Rtmpd"
 #else
-#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSource_Rtmp"
+#define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSourceSplitter_Rtmp"
 #endif
 
 PIProtocol CreateProtocolInstance(CParameterCollection *configuration)
@@ -65,13 +65,14 @@ CMPUrlSourceSplitter_Rtmp::CMPUrlSourceSplitter_Rtmp(CParameterCollection *confi
   this->streamLength = 0;
   this->setLenght = false;
   this->streamTime = 0;
-  this->endStreamTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
   this->url = NULL;
   this->internalExitRequest = false;
   this->wholeStreamDownloaded = false;
   this->mainCurlInstance = NULL;
   this->streamDuration = 0;
+  this->bytePosition = 0;
+  this->seekingActive = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -119,7 +120,6 @@ HRESULT CMPUrlSourceSplitter_Rtmp::ClearSession(void)
   this->streamLength = 0;
   this->setLenght = false;
   this->streamTime = 0;
-  this->endStreamTime = 0;
   FREE_MEM(this->url);
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT;
@@ -268,8 +268,6 @@ HRESULT CMPUrlSourceSplitter_Rtmp::OpenConnection(void)
   {
     this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
     this->mainCurlInstance->SetWriteCallback(CMPUrlSourceSplitter_Rtmp::CurlReceiveData, this);
-    this->mainCurlInstance->SetStartStreamTime(this->streamTime);
-    this->mainCurlInstance->SetEndStreamTime(this->endStreamTime);
 
     this->mainCurlInstance->SetRtmpApp(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_APP, true, RTMP_APP_DEFAULT));
     this->mainCurlInstance->SetRtmpArbitraryData(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_ARBITRARY_DATA, true, NULL));
@@ -280,8 +278,8 @@ HRESULT CMPUrlSourceSplitter_Rtmp::OpenConnection(void)
     this->mainCurlInstance->SetRtmpPageUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_PAGE_URL, true, RTMP_PAGE_URL_DEFAULT));
     this->mainCurlInstance->SetRtmpPlaylist(this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_PLAYLIST, true, RTMP_PLAYLIST_DEFAULT));
     this->mainCurlInstance->SetRtmpPlayPath(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_PLAY_PATH, true, RTMP_PLAY_PATH_DEFAULT));
-    this->mainCurlInstance->SetRtmpStart(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTMP_START, true, RTMP_START_DEFAULT));
-    this->mainCurlInstance->SetRtmpStop(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTMP_STOP, true, RTMP_STOP_DEFAULT));
+    this->mainCurlInstance->SetRtmpStart((this->streamTime >= 0) ? this->streamTime : this->configurationParameters->GetValueInt64(PARAMETER_NAME_RTMP_START, true, RTMP_START_DEFAULT));
+    this->mainCurlInstance->SetRtmpStop(this->configurationParameters->GetValueInt64(PARAMETER_NAME_RTMP_STOP, true, RTMP_STOP_DEFAULT));
     this->mainCurlInstance->SetRtmpSubscribe(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_SUBSCRIBE, true, RTMP_SUBSCRIBE_DEFAULT));
     this->mainCurlInstance->SetRtmpSwfAge(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTMP_SWF_AGE, true, RTMP_SWF_AGE_DEFAULT));
     this->mainCurlInstance->SetRtmpSwfUrl(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_SWF_URL, true, RTMP_SWF_URL_DEFAULT));
@@ -381,21 +379,6 @@ void CMPUrlSourceSplitter_Rtmp::ReceiveData(bool *shouldExit)
         {
           // whole stream downloaded
           this->wholeStreamDownloaded = true;
-
-          // notify filter of length of data (if needed)
-          if (!this->setLenght)
-          {
-            this->streamLength = this->streamTime;
-            this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-            this->filter->SetTotalLength(this->streamLength, false);
-            this->setLenght = true;
-          }
-
-          // notify filter the we reached end of stream
-          // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-          REFERENCE_TIME streamTime = this->streamTime;
-          this->streamTime = this->streamLength;
-          this->filter->EndOfStreamReached(max(0, streamTime - 1));
         }
 
         // connection is no longer needed
@@ -431,44 +414,14 @@ unsigned int CMPUrlSourceSplitter_Rtmp::GetOpenConnectionMaximumAttempts(void)
   return this->openConnetionMaximumAttempts;
 }
 
-HRESULT CMPUrlSourceSplitter_Rtmp::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime)
+int64_t CMPUrlSourceSplitter_Rtmp::SeekToPosition(int64_t start, int64_t end)
 {
-  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME);
-  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, startTime, endTime);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME);
+  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, start, end);
 
-  HRESULT result = E_FAIL;
+  int64_t result = -1;
 
-  // lock access to stream
-  CLockMutex lock(this->lockMutex, INFINITE);
-
-  if ((this->setLenght) && (startTime >= this->streamLength))
-  {
-    result = E_INVALIDARG;
-  }
-  else if (this->internalExitRequest)
-  {
-    // there is pending request exit request
-    // set stream time to new value
-    this->streamTime = startTime;
-    this->endStreamTime = endTime;
-
-    // connection should be reopened automatically
-    result = S_OK;
-  }
-  else
-  {
-    // only way how to "request" curl to interrupt transfer is set internalExitRequest to true
-    this->internalExitRequest = true;
-
-    // set stream time to new value
-    this->streamTime = startTime;
-    this->endStreamTime = endTime;
-
-    // connection should be reopened automatically
-    result = S_OK;
-  }
-
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, result);
   return result;
 }
 
@@ -496,7 +449,7 @@ HRESULT CMPUrlSourceSplitter_Rtmp::QueryStreamProgress(LONGLONG *total, LONGLONG
   if (result == S_OK)
   {
     *total = (this->streamLength == 0) ? 1 : this->streamLength;
-    *current = (this->streamLength == 0) ? 0 : this->streamTime;
+    *current = (this->streamLength == 0) ? 0 : this->bytePosition;
 
     if (!this->setLenght)
     {
@@ -516,52 +469,14 @@ HRESULT CMPUrlSourceSplitter_Rtmp::QueryStreamAvailableLength(CStreamAvailableLe
   if (result == S_OK)
   {
     availableLength->SetQueryResult(S_OK);
-    if (availableLength->IsFilterConnectedToAnotherPin())
+    if (!this->setLenght)
     {
-      if (!this->setLenght)
-      {
-        availableLength->SetAvailableLength(this->streamTime);
-      }
-      else
-      {
-        availableLength->SetAvailableLength(this->streamLength);
-      }
+      availableLength->SetAvailableLength(this->bytePosition);
     }
     else
     {
-      availableLength->SetAvailableLength(this->streamTime);
+      availableLength->SetAvailableLength(this->streamLength);
     }
-  }
-
-  return result;
-}
-
-HRESULT CMPUrlSourceSplitter_Rtmp::QueryRangesSupported(CRangesSupported *rangesSupported)
-{
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, rangesSupported);
-
-  if (result == S_OK)
-  {
-    // RTMP protocol doesn't have ranges to support
-    rangesSupported->SetQueryResult(S_OK);
-    rangesSupported->SetRangesSupported(false);
-
-    //if (rangesSupported->IsFilterConnectedToAnotherPin())
-    //{
-    //  // if we don't have live RTMP session than ranges are supported
-    //  bool rtmpLive = this->configurationParameters->GetValueBool(PARAMETER_NAME_RTMP_LIVE, true, false);
-
-    //  rangesSupported->SetQueryResult(S_OK);
-    //  rangesSupported->SetRangesSupported(!rtmpLive);
-    //}
-    //else
-    //{
-    //  // we are not connected to another pin, assume that ranges are not supported (it makes connection to another filter more faster)
-    //  // in the case on web streams we can assume that we don't need data from end of stream
-    //  rangesSupported->SetQueryResult(S_OK);
-    //  rangesSupported->SetRangesSupported(false);
-    //}
   }
 
   return result;
@@ -602,13 +517,13 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
 
     if (!caller->setLenght)
     {
-      if ((caller->streamLength == 0) || (caller->streamTime > (caller->streamLength * 3 / 4)))
+      if ((caller->streamLength == 0) || (caller->bytePosition > (caller->streamLength * 3 / 4)))
       {
         double currentTime = 0;
         CURLcode errorCode = curl_easy_getinfo(caller->mainCurlInstance->GetCurlHandle(), CURLINFO_RTMP_CURRENT_TIME, &currentTime);
         if ((errorCode == CURLE_OK) && (currentTime > 0) && (caller->streamDuration != 0))
         {
-          LONGLONG tempLength = static_cast<LONGLONG>(caller->streamTime * caller->streamDuration / currentTime);
+          LONGLONG tempLength = static_cast<LONGLONG>(caller->bytePosition * caller->streamDuration / currentTime);
           if (tempLength > caller->streamLength)
           {
             caller->streamLength = tempLength;
@@ -616,21 +531,20 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
             caller->filter->SetTotalLength(caller->streamLength, false);
           }
         }
-        else if (caller->streamTime != 0)
+        else if (caller->bytePosition != 0)
         {
           if (caller->streamLength == 0)
           {
             // error occured or stream duration is not set
             // just make guess
-            unsigned int bufferingPercentage = caller->configurationParameters->GetValueLong(PARAMETER_NAME_BUFFERING_PERCENTAGE, true, BUFFERING_PERCENTAGE_DEFAULT);
-            caller->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER * 100 / bufferingPercentage);
+            caller->streamLength = LONGLONG(MINIMUM_RECEIVED_DATA_FOR_SPLITTER);
             caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
             caller->filter->SetTotalLength(caller->streamLength, false);
           }
-          else if ((caller->streamTime > (caller->streamLength * 3 / 4)))
+          else if ((caller->bytePosition > (caller->streamLength * 3 / 4)))
           {
             // it is time to adjust stream length, we are approaching to end but still we don't know total length
-            caller->streamLength = caller->streamTime * 2;
+            caller->streamLength = caller->bytePosition * 2;
             caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: adjusting quess total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, caller->streamLength);
             caller->filter->SetTotalLength(caller->streamLength, false);
           }
@@ -643,21 +557,75 @@ size_t CMPUrlSourceSplitter_Rtmp::CurlReceiveData(char *buffer, size_t size, siz
       // create media packet
       // set values of media packet
       CMediaPacket *mediaPacket = new CMediaPacket();
-      mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
-      mediaPacket->GetBuffer()->AddToBuffer(buffer, bytesRead);
+      unsigned int bytesToCopy = bytesRead;
 
-      REFERENCE_TIME timeEnd = caller->streamTime + bytesRead - 1;
-      HRESULT result = mediaPacket->SetTime(&caller->streamTime, &timeEnd);
-      if (result != S_OK)
+      if (caller->seekingActive && (bytesRead > 12))
       {
-        caller->logger->Log(LOGGER_WARNING, L"%s: %s: stream time not set, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
+        // when seeking is active and first 3 bytes are 'FLV' then remove first 13 bytes from buffer
+        if (strncmp("FLV", buffer, 3) == 0)
+        {
+          bytesToCopy = bytesRead - 13;
+          caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: seeking active, found 'FLV', removing first 13 bytes", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
+        }
       }
 
+      mediaPacket->GetBuffer()->InitializeBuffer(bytesToCopy);
+      if (bytesToCopy == bytesRead)
+      {
+        mediaPacket->GetBuffer()->AddToBuffer(buffer, bytesToCopy);
+      }
+      else
+      {
+        mediaPacket->GetBuffer()->AddToBuffer(buffer + 13, bytesToCopy);
+      }
+
+      mediaPacket->SetStart(caller->bytePosition);
+      mediaPacket->SetEnd(caller->bytePosition + bytesToCopy - 1);
+
       caller->filter->PushMediaPacket(mediaPacket);
-      caller->streamTime += bytesRead;
+      caller->bytePosition += bytesToCopy;
     }
   }
 
+  // we are definitely not seeking
+  caller->seekingActive = false;
+
   // if returned 0 (or lower value than bytesRead) it cause transfer interruption
   return ((caller->shouldExit) || (caller->internalExitRequest)) ? 0 : (bytesRead);
+}
+
+unsigned int CMPUrlSourceSplitter_Rtmp::GetSeekingCapabilities(void)
+{
+  return SEEKING_METHOD_TIME;
+}
+
+int64_t CMPUrlSourceSplitter_Rtmp::SeekToTime(int64_t time)
+{
+  CLockMutex lock(this->lockMutex, INFINITE);
+
+  this->seekingActive = true;
+
+  // there is internal exit request pending == changed timestamp
+  // close connection
+  this->CloseConnection();
+
+  // RTMP protocol can seek only to seconds
+  // time is in ms
+
+  // 1 second back
+  this->streamTime = max(0, time - 1000);
+
+  // reopen connection
+  // OpenConnection() reset wholeStreamDownloaded
+  this->OpenConnection();
+
+  if (this->IsConnected())
+  {
+    this->bytePosition = 0;
+    return ((max(0, time - 5000) / 1000) * 1000);
+  }
+  else
+  {
+    return -1;
+  }
 }

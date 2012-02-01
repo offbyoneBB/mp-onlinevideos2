@@ -37,23 +37,16 @@ public:
     Waiting,
     WaitingIgnoreTimeout,
     Requested,
-    Buffering,
     Completed,
     Cancelled
   };
 
 private:
   // starting position of requested data
-  LONGLONG position;
-
-  //// flag if data have to be aligned
-  //bool aligned;
+  int64_t position;
 
   // the length of requested data 
   LONG length;
-
-  // media sample
-  IMediaSample *sample;
 
   // the buffer where to write requested data
   BYTE *buffer;
@@ -74,10 +67,9 @@ public:
   // @param requestId :
   // @param position :
   // @param length :
-  // @param sample :
   // @param buffer :
   // @return : S_OK if successful, E_POINTER if stream or buffer is NULL
-  HRESULT Request(unsigned int requestId, LONGLONG position, LONG length, IMediaSample *sample, BYTE *buffer, DWORD_PTR userData);
+  HRESULT Request(unsigned int requestId, int64_t position, LONG length, BYTE *buffer, DWORD_PTR userData);
 
   // mark request as completed
   // @param errorCode : the error code of async request
@@ -89,19 +81,12 @@ public:
   // mark request as requested from filter
   void Request(void);
 
-  // mark request as buffering data for another request
-  void BufferingData(void);
-
   // mark request as waiting for data and ignore timeout
   void WaitAndIgnoreTimeout();
 
   // gets current state of async request
   // @return : one of AsyncState values
   AsyncState GetState(void);
-
-  // gets media sample
-  // @return : reference to IMediaSample
-  IMediaSample *GetMediaSample(void);
 
   // gets buffer length
   // @return : buffer length
@@ -113,7 +98,7 @@ public:
 
   // gets start position
   // @return : start position
-  LONGLONG GetStart(void);
+  int64_t GetStart(void);
 
   // returns error code
   // @return : error code

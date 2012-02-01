@@ -984,34 +984,55 @@ int
 RTMP_ConnectStream(RTMP *r, int seekTime)
 {
   RTMPPacket packet = { 0 };
+  int tempSeekTime = 0;
 
   /* seekTime was already set by SetupStream / SetupURL.
    * This is only needed by ReconnectStream.
    */
-  if (seekTime > 0)
-    r->Link.seekTime = seekTime;
+  /*if (seekTime > 0)
+    r->Link.seekTime = seekTime;*/
 
   r->m_mediaChannel = 0;
 
-  while (!r->m_bPlaying && RTMP_IsConnected(r) && RTMP_ReadPacket(r, &packet))
-    {
-      if (RTMPPacket_IsReady(&packet))
-	{
-	  if (!packet.m_nBodySize)
-	    continue;
-	  if ((packet.m_packetType == RTMP_PACKET_TYPE_AUDIO) ||
-	      (packet.m_packetType == RTMP_PACKET_TYPE_VIDEO) ||
-	      (packet.m_packetType == RTMP_PACKET_TYPE_INFO))
-	    {
-	      RTMP_Log(r, RTMP_LOGWARNING, "Received FLV packet before play()! Ignoring.");
-	      RTMPPacket_Free(r, &packet);
-	      continue;
-	    }
+  RTMP_Log(r, RTMP_LOGDEBUG, "ConnectStream(): Start");
+  RTMP_Log(r, RTMP_LOGDEBUG, "ConnectStream(): link seek time: %d, seek time: %d", r->Link.seekTime, seekTime);
 
-	  RTMP_ClientPacket(r, &packet);
-	  RTMPPacket_Free(r, &packet);
-	}
+  tempSeekTime = r->Link.seekTime;
+  r->Link.seekTime = 0;
+
+  while (!r->m_bPlaying && RTMP_IsConnected(r) && RTMP_ReadPacket(r, &packet))
+  {
+    if (RTMPPacket_IsReady(&packet))
+    {
+      if (!packet.m_nBodySize)
+        continue;
+      if ((packet.m_packetType == RTMP_PACKET_TYPE_AUDIO) ||
+        (packet.m_packetType == RTMP_PACKET_TYPE_VIDEO) ||
+        (packet.m_packetType == RTMP_PACKET_TYPE_INFO))
+      {
+        RTMP_Log(r, RTMP_LOGWARNING, "Received FLV packet before play()! Ignoring.");
+        RTMPPacket_Free(r, &packet);
+        continue;
+      }
+
+      RTMP_ClientPacket(r, &packet);
+      RTMPPacket_Free(r, &packet);
     }
+  }
+
+  r->Link.seekTime = tempSeekTime;
+
+  if ((r->Link.seekTime > 0) && (r->m_bPlaying))
+  {
+    RTMP_Log(r, RTMP_LOGDEBUG, "ConnectStream(): playing, trying to seek: %d", r->Link.seekTime);
+    if (!RTMP_SendSeek(r, r->Link.seekTime))
+    {
+      RTMP_Log(r, RTMP_LOGDEBUG, "ConnectStream(): playing, seeking failed");
+      RTMP_Close(r);
+    }
+  }
+
+  RTMP_Log(r, RTMP_LOGDEBUG, "ConnectStream(): End");
 
   return r->m_bPlaying;
 }

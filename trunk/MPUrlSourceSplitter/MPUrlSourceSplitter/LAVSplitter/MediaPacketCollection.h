@@ -26,34 +26,28 @@
 #include "Collection.h"
 #include "MediaPacket.h"
 
-class CMediaPacketCollection : public CCollection<CMediaPacket, REFERENCE_TIME>
+class CMediaPacketCollection : public CCollection<CMediaPacket, int64_t>
 {
 public:
   CMediaPacketCollection(void);
   ~CMediaPacketCollection(void);
 
-  // gets index of media packet where time is between start time and end time
-  // @param time : the time between start time and end time
+  // gets index of media packet where position is between start position and end position
+  // @param position : the position between start position and end position
   // @return : index of media packet or UINT_MAX if not exists
-  unsigned int GetMediaPacketIndexBetweenTimes(REFERENCE_TIME time);
+  unsigned int GetMediaPacketIndexBetweenPositions(int64_t position);
 
-  //// gets index of media packet where time is between start time and end time searching from specified packet index
-  //// @param startIndex : the index of packet where to start searching
-  //// @param time : the time between start time and end time
-  //// @return : index of media packet or UINT_MAX if not exists
-  //unsigned int GetMediaPacketIndexBetweenTimes(unsigned int startIndex, REFERENCE_TIME time);
-
-  // gets index of media packet which overlap time range between start and end time
-  // @param startTime : start of time range
-  // @param endTime : end of time range
+  // gets index of media packet which overlap position range between start and end position
+  // @param start : start of position range
+  // @param end : end of position range
   // @return : index of media packet or UINT_MAX if not exists
-  unsigned int GetMediaPacketIndexOverlappingTimes(REFERENCE_TIME startTime, REFERENCE_TIME endTime);
+  unsigned int GetMediaPacketIndexOverlappingPositions(int64_t start, int64_t end);
 
-  // get item index of item with specified start time
+  // get item index of item with specified start position
   // @param key : the key of item to find
   // @param context : reference to user defined context
   // @return : the index of item or UINT_MAX if not found
-  unsigned int GetItemIndex(REFERENCE_TIME key, void *context);
+  unsigned int GetItemIndex(int64_t key, void *context);
 
   // add item to collection
   // @param item : the reference to item to add
@@ -70,7 +64,7 @@ public:
   // @param startIndex : reference to variable which holds start index where item have to be placed
   // @param endIndex : reference to variable which holds end index where item have to be placed
   // @return : true if successful, false otherwise
-  bool GetItemInsertPosition(REFERENCE_TIME key, void *context, unsigned int *startIndex, unsigned int *endIndex);
+  bool GetItemInsertPosition(int64_t key, void *context, unsigned int *startIndex, unsigned int *endIndex);
 
 protected:
   // compare two item keys
@@ -78,17 +72,17 @@ protected:
   // @param secondKey : the second item key to compare
   // @param context : the reference to user defined context
   // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(REFERENCE_TIME firstKey, REFERENCE_TIME secondKey, void *context);
+  int CompareItemKeys(int64_t firstKey, int64_t secondKey, void *context);
 
   // gets key for item
   // caller is responsible of deleting item key using FreeKey() method
   // @param item : the item to get key
   // @return : the key of item
-  REFERENCE_TIME GetKey(CMediaPacket *item);
+  int64_t GetKey(CMediaPacket *item);
 
   // frees item key
   // @param key : the item to free
-  void FreeKey(REFERENCE_TIME key);
+  void FreeKey(int64_t key);
 
   // clones specified item
   // @param item : the item to clone

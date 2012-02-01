@@ -243,21 +243,6 @@ bool CCurlInstance::Initialize(void)
         result = false;
       }
     }
-
-    /*if (errorCode == CURLE_OK)
-    {
-      TCHAR *range = FormatString((this->endStreamTime <= this->startStreamTime) ? _T("%llu-") : _T("%llu-%llu"), this->startStreamTime, this->endStreamTime);
-      this->logger->Log(LOGGER_VERBOSE, _T("%s: %s: requesting range: %s"), this->protocolName, METHOD_OPEN_CONNECTION_NAME, range);
-      char *curlRange = ConvertToMultiByte(range);
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_RANGE, curlRange);
-      if (errorCode != CURLE_OK)
-      {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_OPEN_CONNECTION_NAME, _T("error while setting range"), errorCode);
-        result = false;
-      }
-      FREE_MEM(curlRange);
-      FREE_MEM(range);
-    }*/
   }
 
   if (result)
@@ -372,26 +357,6 @@ void CCurlInstance::SetWriteCallback(curl_write_callback writeCallback, void *wr
   this->writeData = writeData;
 }
 
-REFERENCE_TIME CCurlInstance::GetStartStreamTime(void)
-{
-  return this->startStreamTime;
-}
-
-void CCurlInstance::SetStartStreamTime(REFERENCE_TIME startStreamTime)
-{
-  this->startStreamTime = startStreamTime;
-}
-
-REFERENCE_TIME CCurlInstance::GetEndStreamTime(void)
-{
-  return this->endStreamTime;
-}
-
-void CCurlInstance::SetEndStreamTime(REFERENCE_TIME endStreamTime)
-{
-  this->endStreamTime = endStreamTime;
-}
-
 bool CCurlInstance::StartReceivingData(void)
 {
   return (this->CreateCurlWorker() == S_OK);
@@ -480,12 +445,12 @@ void CCurlInstance::SetRtmpSubscribe(const wchar_t *rtmpSubscribe)
   this->rtmpSubscribe = Duplicate(rtmpSubscribe);
 }
 
-void CCurlInstance::SetRtmpStart(unsigned int rtmpStart)
+void CCurlInstance::SetRtmpStart(int64_t rtmpStart)
 {
   this->rtmpStart = rtmpStart;
 }
 
-void CCurlInstance::SetRtmpStop(unsigned int rtmpStop)
+void CCurlInstance::SetRtmpStop(int64_t rtmpStop)
 {
   this->rtmpStop = this->rtmpStop;
 }
@@ -598,6 +563,14 @@ wchar_t *CCurlInstance::CreateRtmpEncodedParameter(const wchar_t *name, const wc
 bool CCurlInstance::AddToRtmpConnectionString(wchar_t **connectionString, const wchar_t *name, unsigned int value)
 {
   wchar_t *formattedValue = FormatString(L"%u", value);
+  bool result = this->AddToRtmpConnectionString(connectionString, name, formattedValue, false);
+  FREE_MEM(formattedValue);
+  return result;
+}
+
+bool CCurlInstance::AddToRtmpConnectionString(wchar_t **connectionString, const wchar_t *name, int64_t value)
+{
+  wchar_t *formattedValue = FormatString(L"%lld", value);
   bool result = this->AddToRtmpConnectionString(connectionString, name, formattedValue, false);
   FREE_MEM(formattedValue);
   return result;

@@ -26,7 +26,6 @@ CStreamAvailableLength::CStreamAvailableLength(void)
 {
   this->queryResult = E_FAIL;
   this->availableLength = 0;
-  this->filterConnectedToAnotherPin = false;
 }
 
 CStreamAvailableLength::~CStreamAvailableLength(void)
@@ -61,14 +60,4 @@ void CStreamAvailableLength::SetAvailableLength(LONGLONG availableLength)
 void CStreamAvailableLength::SetQueryResult(HRESULT queryResult)
 {
   this->queryResult = queryResult;
-}
-
-bool CStreamAvailableLength::IsFilterConnectedToAnotherPin(void)
-{
-  return this->filterConnectedToAnotherPin;
-}
-
-void CStreamAvailableLength::SetFilterConnectedToAnotherPin(bool filterConnectedToAnotherPin)
-{
-  this->filterConnectedToAnotherPin = filterConnectedToAnotherPin;
 }

@@ -393,13 +393,8 @@ void CMPUrlSourceSplitter_File::ReceiveData(bool *shouldExit)
           mediaPacket->GetBuffer()->InitializeBuffer(bytesRead);
           mediaPacket->GetBuffer()->AddToBuffer(receiveBuffer, bytesRead);
 
-          REFERENCE_TIME timeEnd = this->streamTime + bytesRead - 1;
-          HRESULT result = mediaPacket->SetTime(&this->streamTime, &timeEnd);
-          if (result != S_OK)
-          {
-            this->logger->Log(LOGGER_WARNING, L"%s: %s: stream time not set, error: 0x%08X", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, result);
-          }
-
+          mediaPacket->SetStart(this->streamTime);
+          mediaPacket->SetEnd(this->streamTime + bytesRead - 1);
           this->filter->PushMediaPacket(mediaPacket);
           this->streamTime += bytesRead;
         }
@@ -411,7 +406,7 @@ void CMPUrlSourceSplitter_File::ReceiveData(bool *shouldExit)
 
         // notify filter the we reached end of stream
         // EndOfStreamReached() can call ReceiveDataFromTimestamp() which can set this->streamTime
-        REFERENCE_TIME streamTime = this->streamTime;
+        int64_t streamTime = this->streamTime;
         this->streamTime = this->fileLength;
         this->filter->EndOfStreamReached(max(0, streamTime - 1));
       }
@@ -445,12 +440,12 @@ unsigned int CMPUrlSourceSplitter_File::GetOpenConnectionMaximumAttempts(void)
   return this->openConnetionMaximumAttempts;
 }
 
-HRESULT CMPUrlSourceSplitter_File::ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime)
+int64_t CMPUrlSourceSplitter_File::SeekToPosition(int64_t start, int64_t end)
 {
-  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME);
-  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, startTime, endTime);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME);
+  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, start, end);
 
-  HRESULT result = E_NOT_VALID_STATE;
+  int64_t result = -1;
 
   if (this->IsConnected())
   {
@@ -458,16 +453,16 @@ HRESULT CMPUrlSourceSplitter_File::ReceiveDataFromTimestamp(REFERENCE_TIME start
       // lock access to file
       CLockMutex lock(this->lockMutex, INFINITE);
 
-      result = (fseek(this->fileStream, (long)startTime, SEEK_SET) == 0) ? S_OK : E_FAIL;
+      result = (fseek(this->fileStream, (long)start, SEEK_SET) == 0) ? start : -1;
       if (SUCCEEDED(result))
       {
         this->wholeStreamDownloaded = false;
-        this->streamTime = startTime;
+        this->streamTime = start;
       }
     }
   }
 
-  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_FROM_TIMESTAMP_NAME, result);
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_POSITION_NAME, result);
   return result;
 }
 
@@ -516,16 +511,12 @@ HRESULT CMPUrlSourceSplitter_File::QueryStreamAvailableLength(CStreamAvailableLe
   return result;
 }
 
-HRESULT CMPUrlSourceSplitter_File::QueryRangesSupported(CRangesSupported *rangesSupported)
+unsigned int CMPUrlSourceSplitter_File::GetSeekingCapabilities(void)
 {
-  HRESULT result = S_OK;
-  CHECK_POINTER_DEFAULT_HRESULT(result, rangesSupported);
+  return SEEKING_METHOD_POSITION;
+}
 
-  if (result == S_OK)
-  {
-    rangesSupported->SetQueryResult(S_OK);
-    rangesSupported->SetRangesSupported(true);
-  }
-
-  return result;
+int64_t CMPUrlSourceSplitter_File::SeekToTime(int64_t time)
+{
+  return E_NOTIMPL;
 }
