@@ -1205,6 +1205,13 @@
         <Category xsi:type="RssLink" name="Losse Items">http://nl.hardware.info/tv/losse-items/</Category>
       </Categories>
     </Site>
+    <Site name="Khan Academy" util="KhanAcademy" agecheck="false" enabled="true" lang="en">
+      <Description>Khan Academy is on a mission to provide a free world-class education to anyone anywhere. With over 2,600 videos covering everything from arithmetic to physics, finance, and history and 200 practice exercises, we're helping students learn whatever they want, whenever they want, at their own pace.</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://www.khanacademy.org/api/v1/playlists]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
+      </Configuration>
+    </Site>
     <Site name="LuckyTV" util="LuckyTV" agecheck="false" enabled="true" lang="nl">
       <Description>LuckyTV. Uw dagelijkse mediarevolte na De Wereld Draait Door. Bekijk hier de laatste Lucky of bezoek het ontzagwekkende LuckyTV videoarchief:  honderden filmpjes uit DWDD, De Staat van Verwarring, Vara Laat, Jensen en meer. LuckyTV. Wir leben Fernsehen.</Description>
       <Configuration>
