@@ -94,6 +94,7 @@
     <Compile Include="Hoster\Vimeo.cs" />
     <Compile Include="Hoster\Xtream.cs" />
     <Compile Include="Hoster\zShare.cs" />
+    <Compile Include="KhanAcademyUtil.cs" />
     <Compile Include="LuckyTVUtil.cs" />
     <Compile Include="MuzuTV.cs" />
     <Compile Include="NickelodeonNLUtil.cs" />
