@@ -13,15 +13,19 @@ namespace OnlineVideos.Sites.georgius
 
         private static String title = "Autosalon";
 
-        private static String baseUrl = "http://autosalontv.cz";
+        private static String baseUrl = "http://autosalontv.cz/videa";
         private static String showEpisodeBaseUrl = "http://autosalontv.cz/default.aspx";
 
-        private static String showEpisodesStart = @"<table class=""vyber-dilu"">";
-        private static String showEpisodeBlockStartRegex = @"<tr class=""radek-dil"">";
-        
-        private static String showEpisodeThumbUrlRegex = @"<img src=""(?<showThumbUrl>[^""]*)"" />";
-        private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showUrl>[^""]*)"">(?<showTitle>[^<]*)</a>";
-        private static String showEpisodeDescriptionEnd = @"</div>";
+        private static String showEpisodesStart = @"<div class=""video_items"">";
+        private static String showEpisodesEnd = @"<div class=""index_banner"">";
+
+        private static String showEpisodeStart = @"<div class=""newVideo"">";
+        private static String showEpisodeEnd = @"</p>";
+
+        private static String showEpisodeDateRegex = @"<span class=""date"">(?<showDate>[^<]*)";
+        private static String showEpisodeDescriptionRegex = @"<div class=""s"">(?<showDescription>[^<]*)";
+        private static String showEpisodeThumbUrlRegex = @"href=""[^""]*""><img src=""(?<showThumbUrl>[^""]*)";
+        private static String showEpisodeUrlAndTitleRegex = @"<h4><a href=""(?<showUrl>[^""]*)"">(?<showTitle>[^<]*)";
         
         private static String showEpisodeVideoUrlFormat = @"mms://bcastd.livebox.cz/up/as/{1}/_{0}{1}.wmv"; // 0 - week, 1 - year
         private static String showEpisodeVideoUrlRegex = @"year=(?<year>[0-9]+)&week=(?<week>[0-9]+)";
@@ -77,74 +81,81 @@ namespace OnlineVideos.Sites.georgius
             {
                 String baseWebData = SiteUtilBase.GetWebData(pageUrl);
 
-                int index = baseWebData.IndexOf(AutosalonUtil.showEpisodesStart);
-                if (index > 0)
+                int startIndex = baseWebData.IndexOf(AutosalonUtil.showEpisodesStart);
+                if (startIndex >= 0)
                 {
-                    baseWebData = baseWebData.Substring(index);
-                }
-
-                Match showEpisodeBlockStart = Regex.Match(baseWebData, AutosalonUtil.showEpisodeBlockStartRegex);
-                if (showEpisodeBlockStart.Success)
-                {
-                    while (true)
+                    int endIndex = baseWebData.IndexOf(AutosalonUtil.showEpisodesEnd, startIndex + AutosalonUtil.showEpisodesStart.Length);
+                    if (endIndex >= 0)
                     {
-                        baseWebData = baseWebData.Substring(showEpisodeBlockStart.Index + showEpisodeBlockStart.Length);
+                        baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
-                        String showTitle = String.Empty;
-                        String showThumbUrl = String.Empty;
-                        String showUrl = String.Empty;
-                        String showDescription = String.Empty;
-
-                        Match showEpisodeThumbUrl = Regex.Match(baseWebData, AutosalonUtil.showEpisodeThumbUrlRegex);
-                        if (showEpisodeThumbUrl.Success)
+                        while (true)
                         {
-                            showThumbUrl = String.Format("{0}{1}", AutosalonUtil.baseUrl, showEpisodeThumbUrl.Groups["showThumbUrl"].Value);
-                            baseWebData = baseWebData.Substring(showEpisodeThumbUrl.Index + showEpisodeThumbUrl.Length);
-                        }
-
-                        Match showEpisodeUrlAndTitle = Regex.Match(baseWebData, AutosalonUtil.showEpisodeUrlAndTitleRegex);
-                        if (showEpisodeUrlAndTitle.Success)
-                        {
-                            showUrl = String.Format("{0}{1}", AutosalonUtil.showEpisodeBaseUrl, showEpisodeUrlAndTitle.Groups["showUrl"].Value);
-                            showTitle = showEpisodeUrlAndTitle.Groups["showTitle"].Value;
-                            baseWebData = baseWebData.Substring(showEpisodeUrlAndTitle.Index + showEpisodeUrlAndTitle.Length);
-                        }
-
-                        index = baseWebData.IndexOf(AutosalonUtil.showEpisodeDescriptionEnd);
-                        if (index > 0)
-                        {
-                            showDescription = baseWebData.Substring(0, index - 1);
-                            baseWebData = baseWebData.Substring(index);
-
-                            // remove all between '<' and '>'
-                            while (true)
+                            startIndex = baseWebData.IndexOf(AutosalonUtil.showEpisodeStart);
+                            if (startIndex >= 0)
                             {
-                                Match match = Regex.Match(showDescription, "<[^>]+>");
-                                if (match.Success)
+                                endIndex = baseWebData.IndexOf(AutosalonUtil.showEpisodeEnd, startIndex + AutosalonUtil.showEpisodeStart.Length);
+                                if (endIndex >= 0)
                                 {
-                                    showDescription = showDescription.Remove(match.Index, match.Length);
+                                    String episodeData = baseWebData.Substring(startIndex, endIndex - startIndex);
+
+                                    String showTitle = String.Empty;
+                                    String showThumbUrl = String.Empty;
+                                    String showUrl = String.Empty;
+                                    String showDescription = String.Empty;
+                                    String showDate = String.Empty;
+
+                                    Match match = Regex.Match(episodeData, AutosalonUtil.showEpisodeDateRegex);
+                                    if (match.Success)
+                                    {
+                                        showDate = match.Groups["showDate"].Value;
+                                    }
+
+                                    match = Regex.Match(episodeData, AutosalonUtil.showEpisodeDescriptionRegex);
+                                    if (match.Success)
+                                    {
+                                        showDescription = HttpUtility.HtmlDecode(match.Groups["showDescription"].Value);
+                                    }
+
+                                    match = Regex.Match(episodeData, AutosalonUtil.showEpisodeThumbUrlRegex);
+                                    if (match.Success)
+                                    {
+                                        showThumbUrl = Utils.FormatAbsoluteUrl(match.Groups["showThumbUrl"].Value, pageUrl);
+                                    }
+
+                                    match = Regex.Match(episodeData, AutosalonUtil.showEpisodeUrlAndTitleRegex);
+                                    if (match.Success)
+                                    {
+                                        showUrl = Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, pageUrl);
+                                        showTitle = HttpUtility.HtmlDecode(match.Groups["showTitle"].Value);
+                                    }
+
+                                    if (!(String.IsNullOrEmpty(showUrl) || String.IsNullOrEmpty(showTitle)))
+                                    {
+                                        VideoInfo videoInfo = new VideoInfo()
+                                        {
+                                            Description = showDescription.Trim(),
+                                            ImageUrl = showThumbUrl,
+                                            Title = showTitle,
+                                            VideoUrl = showUrl,
+                                            Airdate = showDate
+                                        };
+
+                                        pageVideos.Add(videoInfo);
+                                    }
+
+                                    baseWebData = baseWebData.Substring(endIndex + AutosalonUtil.showEpisodeEnd.Length);
                                 }
                                 else
                                 {
                                     break;
                                 }
                             }
+                            else
+                            {
+                                break;
+                            }
                         }
-
-                        if (!((showEpisodeThumbUrl.Success) || (showEpisodeUrlAndTitle.Success)))
-                        {
-                            break;
-                        }
-
-                        VideoInfo videoInfo = new VideoInfo()
-                        {
-                            Description = showDescription.Trim(),
-                            ImageUrl = showThumbUrl,
-                            Title = showTitle,
-                            VideoUrl = showUrl
-                        };
-
-                        pageVideos.Add(videoInfo);
                     }
                 }
 

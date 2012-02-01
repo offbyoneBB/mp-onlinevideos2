@@ -35,8 +35,8 @@ namespace OnlineVideos.Sites.georgius
         private static String showEpisodeDateRegex = @"Vysíláno:(?<showEpisodeDate>[^<]*)";
 
         private static String showEpisodeNextPageRegex = @"<a class=""right"" href=""(?<nextPageUrl>[^""]+)"">další";
-
-        private static String showEpisodeVideoIdRegex = @"SWFObject\('/flash/tvbPlayer3.swf\?itemid=(?<videoId>[^']+)'";
+        
+        private static String showEpisodeVideoIdRegex = @"SWFObject\('[^\?]*\?itemid=(?<videoId>[^']+)'";
         private static String showEpisodeVideoDataFormat = "http://www.barrandov.tv/special/voddata/{1}"; // videoId
 
         // the number of show episodes per page
