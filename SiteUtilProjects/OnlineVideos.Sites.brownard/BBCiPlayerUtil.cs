@@ -11,6 +11,10 @@ namespace OnlineVideos.Sites
     {
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
         string proxy = null;
+		[Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a username, set it here.")]
+		string proxyUsername = null;
+		[Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a password, set it here.")]
+		string proxyPassword = null;
         [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
         string searchUrl = "http://feeds.bbc.co.uk/iplayer/search/tv/?q={0}";
         [Category("OnlineVideosUserConfiguration"), Description("Group similar items from the rss feeds into subcategories.")]
@@ -27,7 +31,12 @@ namespace OnlineVideos.Sites
             string id;
 
             System.Net.WebProxy proxyObj = null;// new System.Net.WebProxy("127.0.0.1", 8118);
-            if (!string.IsNullOrEmpty(proxy)) proxyObj = new System.Net.WebProxy(proxy);
+			if (!string.IsNullOrEmpty(proxy))
+			{
+				proxyObj = new System.Net.WebProxy(proxy);
+				if (!string.IsNullOrEmpty(proxyUsername) && !string.IsNullOrEmpty(proxyPassword))
+					proxyObj.Credentials = new System.Net.NetworkCredential(proxyUsername, proxyPassword);
+			}
 
             if (video.Other == "livestream")
             {
