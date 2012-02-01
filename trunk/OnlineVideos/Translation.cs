@@ -163,7 +163,9 @@ namespace OnlineVideos
         public string NewSearch = "New search";
 
         // O
-        public string Others = "Others";
+		public string OnlyLocal = "Only Local";
+		public string OnlyServer = "Only Server";
+		public string Others = "Others";
 
         // P
         public string PlayAll = "Play all";
@@ -190,6 +192,7 @@ namespace OnlineVideos
         public string Reports = "Reports";
         public string Runtime = "Runtime";
         public string RemoveFromMySites = "Remove from my sites";
+		public string RemoveAllFromMySites = "Remove all from my sites";
         public string RestartMediaPortal = "Restart MediaPortal!";
         public string RetrievingRemoteDlls = "Retrieving remote dlls ...";
         public string RetrievingRemoteSites = "Retrieving remote sites ...";
