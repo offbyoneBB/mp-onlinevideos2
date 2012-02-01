@@ -133,8 +133,18 @@
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.kabeleins.de/videos/]]></item>
         <item key="rtmpBase"><![CDATA[rtmp://pssimkabel1fs.fplive.net:1935/pssimkabel1ls/]]></item>
-        <item key="regExPagingToken"><![CDATA[var\sparameterp01s02m01\s=\s"(?<token>[^"]+)";\s*[^=]+=\snew\sPaging\('(?<tag>[^']+)','(?<pages>[^']+)',parameter]]></item>
-        <item key="regExDynamicCategory"><![CDATA[:url\((?<ImageUrl>[^\)]+)\)">[^>]+><a\s*href="(?<Url>[^"]+)"[^<]+<[^<]+</a></div></td>[^>]+>[^>]+>[^>]+>[^>]+>(?<SubTitle>[^<]+)</a>\s*</h2>\s*<p>(?<Title>[^<]+)</p>\s*<p>(?<Date>[^<]+)</p>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<div\s+class="teaser-horizontal[^"]+">\s*
+<a\s+href="(?<url>[^"]+)"[^>]*>\s*
+<img\s+src="(?<thumb>[^"]+)"[^>]+>\s*
+<p[^>]*>(?<title>[^<]*)<span[^>]*></span></p>\s*</a>\s*</div>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\s+class="rel">\s*
+<a\s+href="[^"]+"[^>]*>\s*
+<img\s+src="(?<ImageUrl>[^"]+)"[^>]*>\s*</a>\s*
+<p\s+class="medium\s+upper">\s*<a\s+href="(?<VideoUrl>[^"]+)"[^>]*>(?<Title>[^<]+)</a>\s*</p>\s*
+<div\s+class="videoinfo\s+small\s+gradient-light">\s*
+<p\s+class="date">(?<Airdate>[^<]+)</p>\s*
+<p\s+class="time">(?<Duration>[^<]+)</p>\s*
+</div>]]></item>
       </Configuration>
     </Site>
     <Site name="RTL Now" util="RTLGroup" agecheck="false" enabled="true" lang="de">
