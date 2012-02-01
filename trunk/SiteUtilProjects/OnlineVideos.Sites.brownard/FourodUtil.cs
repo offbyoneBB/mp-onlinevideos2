@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using RTMP_LIB;
+using System.ComponentModel;
 
 namespace OnlineVideos.Sites
 {
     public class FourodUtil : SiteUtilBase
     {
+        [Category("OnlineVideosConfiguration"), Description("Url of the 4od swf object")]
+        string swfObjectUrl = "http://www.channel4.com/static/programmes/asset/flash/swf/4odplayer-11.21.2.swf";
+
         DateTime lastRefesh = DateTime.MinValue;
 
         public override int DiscoverDynamicCategories()
@@ -187,7 +191,7 @@ namespace OnlineVideos.Sites
             return new MPUrlSourceFilter.RtmpUrl(playUrl + "?ovpfv=1.1&" + auth)
             {
                 PlayPath = playPath,
-                SwfUrl = "http://www.channel4.com/static/programmes/asset/flash/swf/4odplayer-11.8.5.swf",
+                SwfUrl = swfObjectUrl,
                 SwfVerify = true,
                 Live = false
             }.ToString();
