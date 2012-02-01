@@ -27,12 +27,8 @@ CMediaPacket::CMediaPacket(void)
   this->buffer = new LinearBuffer();
   this->buffer->DeleteBuffer();
 
-  this->flags = 0;
   this->start = 0;
   this->end = 0;
-  /*this->mediaStart = 0;
-  this->mediaEnd = 0;
-  this->mediaType = NULL;*/
   this->storeFilePosition = -1;
 }
 
@@ -42,10 +38,6 @@ CMediaPacket::~CMediaPacket(void)
   {
     delete this->buffer;
   }
-  /*if (mediaType)
-  {
-    DeleteMediaType(mediaType);
-  }*/
 }
 
 LinearBuffer *CMediaPacket::GetBuffer()
@@ -58,7 +50,6 @@ CMediaPacket *CMediaPacket::Clone(void)
   CMediaPacket *clone = new CMediaPacket();
   clone->start = this->start;
   clone->end = this->end;
-  clone->flags = this->flags;
   clone->storeFilePosition = this->storeFilePosition;
 
   // because in clone is created linear buffer we need to delete clone buffer
@@ -81,19 +72,20 @@ CMediaPacket *CMediaPacket::Clone(void)
   return clone;
 }
 
-CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(REFERENCE_TIME timeStart, REFERENCE_TIME timeEnd)
+CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(int64_t start, int64_t end)
 {
   CMediaPacket *mediaPacket = new CMediaPacket();
   char *buffer = NULL;
-  bool success = ((timeStart >= this->start) && (timeEnd >= timeStart) && (this->GetBuffer() != NULL));
+  bool success = ((start >= this->start) && (end >= start) && (this->GetBuffer() != NULL));
 
   if (success)
   {
     // initialize new media packet start, end and length
-    unsigned int length = (unsigned int)(timeEnd - timeStart + 1);
+    unsigned int length = (unsigned int)(end - start + 1);
 
     // initialize new media packet data
-    success = (mediaPacket->SetTime(&timeStart, &timeEnd) == S_OK);
+    mediaPacket->SetStart(start);
+    mediaPacket->SetEnd(end);
     if (success)
     {
       success = (mediaPacket->GetBuffer()->InitializeBuffer(length));
@@ -108,7 +100,7 @@ CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(REFERENCE_TIME timeSt
 
     if (success)
     {
-      success = (this->GetBuffer()->CopyFromBuffer(buffer, length, 0, (unsigned int)(timeStart - this->start)) == length);
+      success = (this->GetBuffer()->CopyFromBuffer(buffer, length, 0, (unsigned int)(start - this->start)) == length);
     }
 
     if (success)
@@ -130,248 +122,26 @@ CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(REFERENCE_TIME timeSt
   return mediaPacket;
 }
 
-HRESULT CMediaPacket::GetTime(REFERENCE_TIME *timeStart, REFERENCE_TIME *timeEnd)
+int64_t CMediaPacket::GetStart(void)
 {
-  HRESULT result = S_OK;
-
-  CHECK_POINTER_DEFAULT_HRESULT(result, timeStart);
-  CHECK_POINTER_DEFAULT_HRESULT(result, timeEnd);
-
-  if (result == S_OK)
-  {
-    if (!(this->flags & Sample_StopValid))
-    {
-      if (!(this->flags & Sample_TimeValid))
-      {
-        result = VFW_E_SAMPLE_TIME_NOT_SET;
-      }
-      else
-      {
-        *timeStart = this->start;
-
-        //  make sure old stuff works
-        *timeEnd = this->start + 1;
-        result = VFW_S_NO_STOP_TIME;
-      }
-    }
-    else
-    {
-      *timeStart = this->start;
-      *timeEnd = this->end;
-    }
-  }
-
-  return result;
+  return this->start;
 }
 
-HRESULT CMediaPacket::SetTime(REFERENCE_TIME *timeStart, REFERENCE_TIME *timeEnd)
+int64_t CMediaPacket::GetEnd(void)
 {
-  HRESULT result = S_OK;
-
-  if (timeStart == NULL)
-  {
-    if (timeEnd != NULL)
-    {
-      result = E_POINTER;
-    }
-    else
-    {
-      this->flags &= ~(Sample_TimeValid | Sample_StopValid);
-    }
-  }
-  else
-  {
-    if (timeEnd == NULL)
-    {
-      this->start = *timeStart;
-      this->flags |= Sample_TimeValid;
-      this->flags &= ~Sample_StopValid;
-    }
-    else
-    {
-      CHECK_CONDITION(result, *timeEnd >= *timeStart, S_OK, E_INVALIDARG);
-
-      if (result == S_OK)
-      {
-        this->start = *timeStart;
-        this->end = *timeEnd;
-        this->flags |= Sample_TimeValid | Sample_StopValid;
-      }
-    }
-  }
-
-  return result;
+  return this->end;
 }
 
-//bool CMediaPacket::IsSyncPoint(void)
-//{
-//  return ((this->flags & Sample_SyncPoint) != 0);
-//}
-//
-//void CMediaPacket::SetSyncPoint(bool isSyncPoint)
-//{
-//  if (isSyncPoint)
-//  {
-//    this->flags |= Sample_SyncPoint;
-//  }
-//  else
-//  {
-//    this->flags &= ~Sample_SyncPoint;
-//  }
-//}
-//
-//bool CMediaPacket::IsPreroll(void)
-//{
-//  return ((this->flags & Sample_Preroll) != 0);
-//}
-//
-//void CMediaPacket::SetPreroll(bool isPreroll)
-//{
-//  if (isPreroll)
-//  {
-//    this->flags |= Sample_Preroll;
-//  }
-//  else
-//  {
-//    this->flags &= ~Sample_Preroll;
-//  }
-//}
-//
-//bool CMediaPacket::IsDiscontinuity(void)
-//{
-//  return ((this->flags & Sample_Discontinuity) != 0);
-//}
-//
-//void CMediaPacket::SetDiscontinuity(bool discontinuity)
-//{
-//  if (discontinuity)
-//  {
-//    this->flags |= Sample_Discontinuity;
-//  }
-//  else
-//  {
-//    this->flags &= ~Sample_Discontinuity;
-//  }
-//}
-//
-//HRESULT CMediaPacket::GetMediaTime(LONGLONG *timeStart, LONGLONG *timeEnd)
-//{
-//  HRESULT result = S_OK;
-//
-//  CHECK_POINTER_DEFAULT_HRESULT(result, timeStart);
-//  CHECK_POINTER_DEFAULT_HRESULT(result, timeEnd);
-//
-//  if (result == S_OK)
-//  {
-//    if (!(this->flags & Sample_MediaTimeValid))
-//    {
-//      result = VFW_E_MEDIA_TIME_NOT_SET;
-//    }
-//  }
-//
-//  if (result == S_OK)
-//  {
-//    *timeStart = this->mediaStart;
-//    *timeEnd = this->mediaEnd;
-//  }
-//
-//  return result;
-//}
-//
-//HRESULT CMediaPacket::SetMediaTime(LONGLONG *timeStart, LONGLONG *timeEnd)
-//{
-//  HRESULT result = S_OK;
-//
-//  if (timeStart == NULL)
-//  {
-//    if (timeEnd == NULL)
-//    {
-//      this->flags &= ~Sample_MediaTimeValid;
-//    }
-//    else
-//    {
-//      result = E_POINTER;
-//    }
-//  }
-//  else
-//  {
-//    CHECK_POINTER_DEFAULT_HRESULT(result, timeEnd);
-//
-//    if (result == S_OK)
-//    {
-//      CHECK_CONDITION(result, *timeEnd >= *timeStart, S_OK, E_INVALIDARG);
-//    }
-//
-//    if (result == S_OK)
-//    {
-//      this->mediaStart = *timeStart;
-//      this->mediaEnd = *timeEnd;
-//      this->flags |= Sample_MediaTimeValid;
-//    }
-//  }
-//
-//  return result;
-//}
-//
-//HRESULT CMediaPacket::GetMediaType(AM_MEDIA_TYPE **mediaType)
-//{
-//  HRESULT result = S_OK;
-//
-//  CHECK_POINTER_DEFAULT_HRESULT(result, mediaType);
-//
-//  if (result == S_OK)
-//  {
-//    if (!(this->flags & Sample_TypeChanged))
-//    {
-//      *mediaType = NULL;
-//      result = S_FALSE;
-//    }
-//    else
-//    {
-//      // create copy of our media type
-//      *mediaType = CreateMediaType(this->mediaType);
-//      CHECK_POINTER(result, *mediaType, S_OK, E_OUTOFMEMORY);
-//    }
-//  }
-//
-//  return result;
-//}
-//
-//HRESULT CMediaPacket::SetMediaType(AM_MEDIA_TYPE *mediaType)
-//{
-//  HRESULT result = S_OK;
-//
-//  // delete current media type
-//  if (this->mediaType != NULL)
-//  {
-//    DeleteMediaType(this->mediaType);
-//    this->mediaType = NULL;
-//  }
-//
-//  // reset format type
-//  if (mediaType == NULL)
-//  {
-//    this->flags &= ~Sample_TypeChanged;
-//  }
-//  else
-//  {
-//    this->mediaType = CreateMediaType(mediaType);
-//
-//    if (this->mediaType == NULL)
-//    {
-//      // clear flag of type changed and return out of memory
-//      this->flags &= ~Sample_TypeChanged;
-//      result = E_OUTOFMEMORY;
-//    }
-//    else
-//    {
-//      // set flag of type changed
-//      this->flags |= Sample_TypeChanged;
-//    }
-//  }
-//
-//  return result;
-//}
+
+void CMediaPacket::SetStart(int64_t position)
+{
+  this->start = position;
+}
+
+void CMediaPacket::SetEnd(int64_t position)
+{
+  this->end = position;
+}
 
 bool CMediaPacket::IsStoredToFile(void)
 {

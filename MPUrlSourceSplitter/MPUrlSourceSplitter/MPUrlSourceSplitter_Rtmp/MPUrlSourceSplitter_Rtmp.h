@@ -25,7 +25,7 @@
 
 #include "MPUrlSourceSplitter_Rtmp_Exports.h"
 #include "Logger.h"
-#include "ProtocolInterface.h"
+#include "IProtocol.h"
 #include "LinearBuffer.h"
 #include "CurlInstance.h"
 
@@ -164,11 +164,12 @@ public:
   unsigned int GetReceiveDataTimeout(void);
   GUID GetInstanceId(void);
   unsigned int GetOpenConnectionMaximumAttempts(void);
-  HRESULT ReceiveDataFromTimestamp(REFERENCE_TIME startTime, REFERENCE_TIME endTime);
   HRESULT AbortStreamReceive();  
   HRESULT QueryStreamProgress(LONGLONG *total, LONGLONG *current);
   HRESULT QueryStreamAvailableLength(CStreamAvailableLength *availableLength);
-  HRESULT QueryRangesSupported(CRangesSupported *rangesSupported);
+  unsigned int GetSeekingCapabilities(void);
+  int64_t SeekToTime(int64_t time);
+  int64_t SeekToPosition(int64_t start, int64_t end);
 
 protected:
   CLogger *logger;
@@ -196,8 +197,11 @@ protected:
   bool setLenght;
 
   // stream time and end stream time
-  REFERENCE_TIME streamTime;
-  REFERENCE_TIME endStreamTime;
+  int64_t streamTime;
+
+  // specifies position in buffer
+  // it is always reset on seek
+  int64_t bytePosition;
 
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
@@ -217,6 +221,8 @@ protected:
   bool internalExitRequest;
   // specifies if whole stream is downloaded
   bool wholeStreamDownloaded;
+  // specifies if seeking (cleared when first data arrive)
+  bool seekingActive;
 };
 
 #endif

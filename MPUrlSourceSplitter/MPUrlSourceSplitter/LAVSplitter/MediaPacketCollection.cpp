@@ -77,7 +77,7 @@ bool CMediaPacketCollection::Add(CMediaPacket *item)
   return true;
 }
 
-bool CMediaPacketCollection::GetItemInsertPosition(REFERENCE_TIME key, void *context, unsigned int *startIndex, unsigned int *endIndex)
+bool CMediaPacketCollection::GetItemInsertPosition(int64_t key, void *context, unsigned int *startIndex, unsigned int *endIndex)
 {
   bool result = ((startIndex != NULL) && (endIndex != NULL));
 
@@ -146,7 +146,7 @@ bool CMediaPacketCollection::GetItemInsertPosition(REFERENCE_TIME key, void *con
   return result;
 }
 
-unsigned int CMediaPacketCollection::GetItemIndex(REFERENCE_TIME key, void *context)
+unsigned int CMediaPacketCollection::GetItemIndex(int64_t key, void *context)
 {
   unsigned int result = UINT_MAX;
 
@@ -163,7 +163,7 @@ unsigned int CMediaPacketCollection::GetItemIndex(REFERENCE_TIME key, void *cont
   return result;
 }
 
-int CMediaPacketCollection::CompareItemKeys(REFERENCE_TIME firstKey, REFERENCE_TIME secondKey, void *context)
+int CMediaPacketCollection::CompareItemKeys(int64_t firstKey, int64_t secondKey, void *context)
 {
   if (firstKey < secondKey)
   {
@@ -179,18 +179,12 @@ int CMediaPacketCollection::CompareItemKeys(REFERENCE_TIME firstKey, REFERENCE_T
   }
 }
 
-REFERENCE_TIME CMediaPacketCollection::GetKey(CMediaPacket *item)
+int64_t CMediaPacketCollection::GetKey(CMediaPacket *item)
 {
-  REFERENCE_TIME timeStart = 0;
-  REFERENCE_TIME timeEnd = 0;
-
-  // ignore return value
-  item->GetTime(&timeStart, &timeEnd);
-
-  return timeStart;
+  return item->GetStart();
 }
 
-void CMediaPacketCollection::FreeKey(REFERENCE_TIME key)
+void CMediaPacketCollection::FreeKey(int64_t key)
 {
   // no need for deleting key (not reference type)
 }
@@ -201,7 +195,7 @@ CMediaPacket *CMediaPacketCollection::Clone(CMediaPacket *item)
   return NULL;
 }
 
-unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenTimes(REFERENCE_TIME time)
+unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenPositions(int64_t time)
 {
   unsigned int index = UINT_MAX;
 
@@ -212,21 +206,15 @@ unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenTimes(REFERENCE_T
   {
     if (startIndex != UINT_MAX)
     {
-      // if requested time is somewhere after start of media packets
+      // if requested position is somewhere after start of media packets
       CMediaPacket *mediaPacket = this->GetItem(startIndex);
-      REFERENCE_TIME timeStart;
-      REFERENCE_TIME timeEnd;
-      HRESULT result = mediaPacket->GetTime(&timeStart, &timeEnd);
+      int64_t positionStart = mediaPacket->GetStart();
+      int64_t positionEnd = mediaPacket->GetEnd();
 
-      if (result == S_OK)
+      if ((time >= positionStart) && (time <= positionEnd))
       {
-        // successfully get sample time
-
-        if ((time >= timeStart) && (time <= timeEnd))
-        {
-          // we found media packet
-          index = startIndex;
-        }
+        // we found media packet
+        index = startIndex;
       }
     }
   }
@@ -234,27 +222,21 @@ unsigned int CMediaPacketCollection::GetMediaPacketIndexBetweenTimes(REFERENCE_T
   return index;
 
 }
-unsigned int CMediaPacketCollection::GetMediaPacketIndexOverlappingTimes(REFERENCE_TIME startTime, REFERENCE_TIME endTime)
+unsigned int CMediaPacketCollection::GetMediaPacketIndexOverlappingPositions(int64_t start, int64_t end)
 {
   unsigned int index = UINT_MAX;
 
   for (unsigned int i = 0; i < this->itemCount; i++)
   {
     CMediaPacket *mediaPacket = this->GetItem(i);
-    REFERENCE_TIME mediaPacketStart;
-    REFERENCE_TIME mediaPacketEnd;
-    HRESULT result = mediaPacket->GetTime(&mediaPacketStart, &mediaPacketEnd);
+    int64_t mediaPacketStart = mediaPacket->GetStart();
+    int64_t mediaPacketEnd = mediaPacket->GetEnd();
 
-    if (result == S_OK)
+    if ((start <= mediaPacketEnd) && (end >= mediaPacketStart))
     {
-      // successfully get sample time
-
-      if ((startTime <= mediaPacketEnd) && (endTime >= mediaPacketStart))
-      {
-        // we found media packet which overlaps time range
-        index = i;
-        break;
-      }
+      // we found media packet which overlaps position range
+      index = i;
+      break;
     }
   }
 

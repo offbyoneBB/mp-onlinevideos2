@@ -78,9 +78,6 @@
     <ClCompile Include="MediaPacketCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RangesSupported.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="StreamAvailableLength.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -164,9 +161,6 @@
     <ClInclude Include="MPUrlSourceSplitterExports.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProtocolInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LinearBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -188,10 +182,16 @@
     <ClInclude Include="MediaPacketCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RangesSupported.h">
+    <ClInclude Include="StreamAvailableLength.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StreamAvailableLength.h">
+    <ClInclude Include="IFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ISeeking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IProtocol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

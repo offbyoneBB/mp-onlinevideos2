@@ -35,6 +35,7 @@
 #include "SettingsProp.h"
 
 #include "Download.h"
+#include "IFilter.h"
 
 //#define LAVF_REGISTRY_KEY L"Software\\LAV\\Splitter"
 //#define LAVF_REGISTRY_KEY_FORMATS LAVF_REGISTRY_KEY L"\\Formats"
@@ -56,9 +57,9 @@ class CLAVSplitter
   , public IMediaSeeking
   , public IAMStreamSelect
   , public ILAVFSettingsInternal
-  //, public ISpecifyPropertyPages
   , public IObjectWithSite
   , public IDownload
+  , public IFilter
 {
 public:
   CLAVSplitter(LPUNKNOWN pUnk, HRESULT* phr);
@@ -104,9 +105,6 @@ public:
   STDMETHODIMP Count(DWORD *pcStreams);
   STDMETHODIMP Enable(long lIndex, DWORD dwFlags);
   STDMETHODIMP Info(long lIndex, AM_MEDIA_TYPE **ppmt, DWORD *pdwFlags, LCID *plcid, DWORD *pdwGroup, WCHAR **ppszName, IUnknown **ppObject, IUnknown **ppUnk);
-
-  // ISpecifyPropertyPages
-  //STDMETHODIMP GetPages(CAUUID *pPages);
 
   // IObjectWithSite
   STDMETHODIMP SetSite(IUnknown *pUnkSite);
@@ -160,6 +158,7 @@ public:
 
   bool IsAnyPinDrying();
   void SetFakeASFReader(BOOL bFlag) { m_bFakeASFReader = bFlag; }
+
 protected:
   // CAMThread
   enum {CMD_EXIT, CMD_SEEK};
@@ -177,6 +176,8 @@ protected:
 
   STDMETHODIMP InitDemuxer();
 
+  friend class CLAVInputPin;
+
   friend class CLAVOutputPin;
   STDMETHODIMP SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
 
@@ -185,8 +186,30 @@ public:
   STDMETHODIMP RenameOutputPin(DWORD TrackNumSrc, DWORD TrackNumDst, std::vector<CMediaType> pmts);
   STDMETHODIMP UpdateForcedSubtitleMediaType();
 
-  /*STDMETHODIMP CompleteInputConnection();
-  STDMETHODIMP BreakInputConnection();*/
+  // creates demuxer after loading some data from stream
+  // this method should be called by input pin while not returned S_OK
+  STDMETHODIMP CreateDemuxer(wchar_t *pszFileName);
+  CBaseDemuxer *GetDemuxer(void);
+
+  // IFilter interface
+
+  // gets seeking capabilities of protocol
+  // @return : bitwise combination of SEEKING_METHOD flags
+  unsigned int GetSeekingCapabilities(void);
+
+  // gets logger instance
+  // @return : logger instance or NULL if error
+  CLogger *GetLogger(void);
+
+  // seeks to time (in ms)
+  // @return : time in ms where seek finished or lower than zero if error
+  int64_t SeekToTime(int64_t time);
+
+  // request protocol implementation to receive data from specified position to specified position
+  // @param start : the requested start position (zero is start of stream)
+  // @param end : the requested end position, if end position is lower or equal to start position than end position is not specified
+  // @return : position where seek finished or lower than zero if error
+  int64_t SeekToPosition(int64_t start, int64_t end);
 
 protected:
   STDMETHODIMP LoadDefaults();
@@ -195,6 +218,7 @@ protected:
 
 protected:
   CLAVInputPin *m_pInput;
+  CLogger *logger;
 
 private:
   CCritSec m_csPins;
@@ -203,22 +227,12 @@ private:
   std::vector<CLAVOutputPin *> m_pRetiredPins;
   std::set<DWORD> m_bDiscontinuitySent;
 
-  //std::wstring m_fileName;
   std::wstring m_processName;
 
   CBaseDemuxer *m_pDemuxer;
 
   BOOL m_bPlaybackStarted;
   BOOL m_bFakeASFReader;
-
-  // Times
-  REFERENCE_TIME m_rtStart, m_rtStop, m_rtCurrent, m_rtNewStart, m_rtNewStop;
-  double m_dRate;
-  BOOL m_bStopValid;
-
-  // Seeking
-  REFERENCE_TIME m_rtLastStart, m_rtLastStop;
-  std::set<void *> m_LastSeekers;
 
   // flushing
   bool m_fFlushing;
@@ -246,4 +260,7 @@ private:
   BOOL m_bRuntimeConfig;
 
   IUnknown *m_pSite;
+
+  // ffmpeg log callback
+  static void ffmpeg_log_callback(void *ptr, int log_level, const char *format, va_list vl);
 };

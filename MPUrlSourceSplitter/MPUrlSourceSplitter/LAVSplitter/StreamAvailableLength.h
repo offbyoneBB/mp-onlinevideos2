@@ -55,18 +55,9 @@ public:
   // @param queryResult : the result of query
   void SetQueryResult(HRESULT queryResult);
 
-  // tests if filer is connected to another pin
-  // @return : true if connected, false otherwise
-  bool IsFilterConnectedToAnotherPin(void);
-
-  // sets if filter is connected to another pin
-  // @param filterConnectedToAnotherPin : true if connected, false otherwise
-  void SetFilterConnectedToAnotherPin(bool filterConnectedToAnotherPin);
-
 private:
   LONGLONG availableLength;
   HRESULT queryResult;
-  bool filterConnectedToAnotherPin;
 };
 
 #endif

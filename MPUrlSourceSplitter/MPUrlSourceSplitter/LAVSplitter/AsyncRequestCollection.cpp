@@ -30,7 +30,7 @@ CAsyncRequestCollection::~CAsyncRequestCollection(void)
 {
 }
 
-int CAsyncRequestCollection::CompareItemKeys(LONGLONG firstKey, LONGLONG secondKey, void *context)
+int CAsyncRequestCollection::CompareItemKeys(int64_t firstKey, int64_t secondKey, void *context)
 {
   if (firstKey < secondKey)
   {
@@ -46,7 +46,7 @@ int CAsyncRequestCollection::CompareItemKeys(LONGLONG firstKey, LONGLONG secondK
   }
 }
 
-LONGLONG CAsyncRequestCollection::GetKey(CAsyncRequest *item)
+int64_t CAsyncRequestCollection::GetKey(CAsyncRequest *item)
 {
   return item->GetStart();
 }
@@ -56,7 +56,7 @@ CAsyncRequest *CAsyncRequestCollection::Clone(CAsyncRequest *item)
   return NULL;
 }
 
-void CAsyncRequestCollection::FreeKey(LONGLONG key)
+void CAsyncRequestCollection::FreeKey(int64_t key)
 {
 }
 

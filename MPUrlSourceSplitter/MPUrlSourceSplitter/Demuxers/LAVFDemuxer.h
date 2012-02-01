@@ -26,6 +26,7 @@
 #include "IKeyFrameInfo.h"
 #include "ITrackInfo.h"
 #include "FontInstaller.h"
+#include "IFilter.h"
 
 #define SUBMODE_FORCED_PGS_ONLY 0xFF
 
@@ -36,7 +37,7 @@ class FormatInfo;
 class CLAVFDemuxer : public CBaseDemuxer, public IAMExtendedSeeking, public IKeyFrameInfo, public ITrackInfo
 {
 public:
-  CLAVFDemuxer(CCritSec *pLock, ILAVFSettingsInternal *settings);
+  CLAVFDemuxer(CCritSec *pLock, ILAVFSettingsInternal *settings, IFilter *filter);
   ~CLAVFDemuxer();
 
   static void ffmpeg_init();
@@ -123,6 +124,10 @@ private:
   //HRESULT CheckBDM2TSCPLI(LPCOLESTR pszFileName);
 
   HRESULT UpdateForcedSubtitleStream(unsigned audio_pid);
+
+  IFilter *m_pFilter;
+  STDMETHODIMP SeekByPosition(REFERENCE_TIME time, int flags);
+  STDMETHODIMP SeekByTime(REFERENCE_TIME time, int flags);
 
 private:
   AVFormatContext *m_avFormat;

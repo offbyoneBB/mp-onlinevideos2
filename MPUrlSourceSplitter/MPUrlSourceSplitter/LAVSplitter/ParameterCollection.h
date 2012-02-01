@@ -27,24 +27,20 @@
 #define LOG_VERBOSITY_DEFAULT                                       LOGGER_VERBOSE
 // maximum count of plugins
 #define MAX_PLUGINS_DEFAULT                                         256
-// default buffering percentage is 2%
-#define BUFFERING_PERCENTAGE_DEFAULT                                2
-// maximum buffering size
-#define MAX_BUFFERING_SIZE                                          5 * 1024 * 1024
 
 #define PARAMETER_NAME_INTERFACE                                    L"Interface"
 #define PARAMETER_NAME_URL                                          L"Url"
 #define PARAMETER_NAME_MAX_LOG_SIZE                                 L"MaxLogSize"
 #define PARAMETER_NAME_LOG_VERBOSITY                                L"LogVerbosity"
 #define PARAMETER_NAME_MAX_PLUGINS                                  L"MaxPlugins"
-#define PARAMETER_NAME_BUFFERING_PERCENTAGE                         L"BufferingPercentage"
-#define PARAMETER_NAME_MAX_BUFFERING_SIZE                           L"MaxBufferingSize"
 #define PARAMETER_NAME_DOWNLOAD_FILE_NAME                           L"DownloadFileName"
 
 #include "Parameter.h"
 #include "Logger.h"
 #include "Collection.h"
 #include "MPUrlSourceSplitterExports.h"
+
+#include <stdint.h>
 
 class CLogger;
 
@@ -91,6 +87,13 @@ public:
   // @param defaultValue : the default value to return
   // @return : the value of parameter or default value if not found
   long GetValueUnsignedInt(wchar_t *name, bool invariant, unsigned int defaultValue);
+
+  // get 64-bit integer value of parameter with specified name
+  // @param name : the name of parameter to find
+  // @param invariant : specifies if parameter name shoud be find with invariant casing
+  // @param defaultValue : the default value to return
+  // @return : the value of parameter or default value if not found
+  int64_t GetValueInt64(wchar_t *name, bool invariant, int64_t defaultValue);
 
   // get the boolean value of parameter with specified name
   // @param name : the name of parameter to find

@@ -125,7 +125,6 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClCompile Include="Memory.cpp" />
     <ClCompile Include="Parameter.cpp" />
     <ClCompile Include="ParameterCollection.cpp" />
-    <ClCompile Include="RangesSupported.cpp" />
     <ClCompile Include="SettingsProp.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -153,7 +152,9 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="AsyncRequestCollection.h" />
     <ClInclude Include="Collection.h" />
     <ClInclude Include="Download.h" />
+    <ClInclude Include="IFilter.h" />
     <ClInclude Include="InputPin.h" />
+    <ClInclude Include="ISeeking.h" />
     <ClInclude Include="LinearBuffer.h" />
     <ClInclude Include="LockMutex.h" />
     <ClInclude Include="Logger.h" />
@@ -163,8 +164,7 @@ copy /Y "$(TargetDir)$(TargetFileName)" "$(SolutionDir)bin_$(PlatformName)\$(Tar
     <ClInclude Include="MPUrlSourceSplitterExports.h" />
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="ParameterCollection.h" />
-    <ClInclude Include="ProtocolInterface.h" />
-    <ClInclude Include="RangesSupported.h" />
+    <ClInclude Include="IProtocol.h" />
     <ClInclude Include="SettingsProp.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
