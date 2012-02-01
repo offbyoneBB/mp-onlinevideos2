@@ -77,6 +77,8 @@
   <string Field="NoReportsForSite">Geen meldingen van deze site beschikbaar</string>
   <string Field="NewDllDownloaded">Nieuwe dll gedownload!</string>
   <string Field="NewSearch">Nieuwe zoekopdracht</string>
+  <string Field="OnlyLocal">Alleen van deze PC</string>
+  <string Field="OnlyServer">Alleen van de server</string>
   <string Field="Others">Overige</string>
   <string Field="PlayAll">Alles afspelen</string>
   <string Field="PlayAllRandom">Alles afspelen in willekeurige volgorde</string>
@@ -98,6 +100,7 @@
   <string Field="Reports">Meldingen</string>
   <string Field="Runtime">Duur:</string>
   <string Field="RemoveFromMySites">Verwijderen uit mijn sites</string>
+  <string Field="RemoveAllFromMySites">Alles uit mijn sites verwijderen</string>
   <string Field="RestartMediaPortal">Herstart Mediaportal!</string>
   <string Field="RetrievingRemoteDlls">Ophalen externe dll's...</string>
   <string Field="RetrievingRemoteSites">Ophalen externe sites...</string>
