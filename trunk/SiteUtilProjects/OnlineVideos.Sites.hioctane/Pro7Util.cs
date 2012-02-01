@@ -56,7 +56,8 @@ namespace OnlineVideos.Sites
                         VideoInfo video = new VideoInfo();
                         video.ImageUrl = "http://" + host + n.Groups["ImageUrl"].Value;
                         video.Title = n.Groups["SubTitle"].Value;
-                        video.VideoUrl = "http://" + host + n.Groups["Url"].Value;
+                        video.VideoUrl = n.Groups["Url"].Value;
+						if (!Uri.IsWellFormedUriString(video.VideoUrl, System.UriKind.Absolute)) video.VideoUrl = new Uri(new Uri(baseUrl), video.VideoUrl).AbsoluteUri;
                         video.Description = n.Groups["Date"].Value;
 
                         data[n.Groups["Title"].Value].Add(video);

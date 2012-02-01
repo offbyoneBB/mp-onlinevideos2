@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using System.Web;
 
 namespace OnlineVideos.Sites
@@ -34,12 +32,16 @@ namespace OnlineVideos.Sites
 			while (m.Success)
 			{
 				RssLink cat = new RssLink();
-				cat.Url = m.Groups["url"].Value + "/video";
+				cat.Url = m.Groups["url"].Value;
 				if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
 				cat.Thumb = m.Groups["thumb"].Value;
 				if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
 				cat.Description = Utils.PlainTextFromHtml(m.Groups["description"].Value).Replace('\n', ' ');
-				cat.Name = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cat.Url.Substring(cat.Url.LastIndexOf('/')+1).Replace('-', ' '));
+				if (m.Groups["title"].Success && !string.IsNullOrEmpty(m.Groups["title"].Value)) 
+					cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+				else
+					cat.Name = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cat.Url.Substring(cat.Url.LastIndexOf('/')+1).Replace('-', ' '));
+				if (!Regex.Match(cat.Url, "/videos?$").Success) cat.Url += "/video";
 				Settings.Categories.Add(cat);
 				m = m.NextMatch();
 			}
@@ -63,6 +65,7 @@ namespace OnlineVideos.Sites
 				videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
 				if (!string.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
 				videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
+				videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
 				videoList.Add(videoInfo);
 				m = m.NextMatch();
 			}
