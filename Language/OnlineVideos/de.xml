@@ -77,6 +77,8 @@
   <string Field="NoReportsForSite">Keine Meldungen für diese Site vorhanden.</string>
   <string Field="NewDllDownloaded">Neue DLL heruntergeladen!</string>
   <string Field="NewSearch">Neue Suche</string>
+  <string Field="OnlyLocal">Nur Lokale</string>
+  <string Field="OnlyServer">Nur auf Server</string>
   <string Field="Others">Sonstige</string>
   <string Field="PlayAll">Alle abspielen</string>
   <string Field="PlayAllRandom">Alle abspielen (zufällige Reihenfolge)</string>
@@ -98,6 +100,7 @@
   <string Field="Reports">Meldungen</string>
   <string Field="Runtime">Laufzeit</string>
   <string Field="RemoveFromMySites">Aus meinen Sites entfernen</string>
+  <string Field="RemoveAllFromMySites">Alle aus meinen Sites entfernen</string>
   <string Field="RestartMediaPortal">Bitte MediaPortal neu starten!</string>
   <string Field="RetrievingRemoteDlls">Lade DLLs vom Server ...</string>
   <string Field="RetrievingRemoteSites">Lade Sites vom Server ...</string>

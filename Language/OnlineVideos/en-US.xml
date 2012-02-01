@@ -103,6 +103,8 @@
   <string Field="NewSearch">New search</string>
 
   <!-- O -->
+  <string Field="OnlyLocal">Only Local</string>
+  <string Field="OnlyServer">Only Server</string>
   <string Field="Others">Others</string>
 
   <!-- P -->
@@ -130,6 +132,7 @@
   <string Field="Reports">Reports</string>
   <string Field="Runtime">Runtime</string>
   <string Field="RemoveFromMySites">Remove from my sites</string>
+  <string Field="RemoveAllFromMySites">Remove all from my sites</string>
   <string Field="RestartMediaPortal">Restart MediaPortal!</string>
   <string Field="RetrievingRemoteDlls">Retrieving remote dlls ...</string>
   <string Field="RetrievingRemoteSites">Retrieving remote sites ...</string>

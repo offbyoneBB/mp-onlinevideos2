@@ -15,7 +15,7 @@ namespace OnlineVideos.MediaPortal1
     {
         public const int WindowId = 4757;
 
-        enum FilterStateOption { All, Reported, Broken, Working, Updatable };
+        enum FilterStateOption { All, Reported, Broken, Working, Updatable, OnlyLocal, OnlyServer };
         enum SortOption { Updated, Name, Language_Name, Language_Updated };
 
         [SkinControlAttribute(50)]
@@ -356,6 +356,7 @@ namespace OnlineVideos.MediaPortal1
 
                 if (GUI_infoList.Count > 1)
                 {
+					dlgSel.Add(Translation.Instance.RemoveAllFromMySites);
 					dlgSel.Add(Translation.Instance.UpdateAll);
 					dlgSel.Add(Translation.Instance.UpdateAllSkipCategories);
                 }
@@ -413,101 +414,120 @@ namespace OnlineVideos.MediaPortal1
                 newDataSaved = true;
                 RefreshDisplayedOnlineSites();
             }
+			else if (dlgSel.SelectedLabelText == Translation.Instance.RemoveAllFromMySites)
+			{
+				bool needRefresh = false;
+				foreach (var siteToRemove in GUI_infoList.ListItems.Where(g => g.IsPlayed).Select(g => g.TVTag as OnlineVideosWebservice.Site).ToList())
+				{
+					localSiteIndex = OnlineVideoSettings.Instance.GetSiteByName(siteToRemove.Name, out localSite);
+					if (localSiteIndex >= 0)
+					{
+						OnlineVideoSettings.Instance.RemoveSiteAt(localSiteIndex);
+						needRefresh = true;
+					}
+				}
+				if (needRefresh)
+				{
+					OnlineVideoSettings.Instance.SaveSites();
+					newDataSaved = true;
+					RefreshDisplayedOnlineSites();
+				}
+			}
 			else if (dlgSel.SelectedLabelText == Translation.Instance.ShowReports)
-            {
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
-                    () =>
-                    {
-                        OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
-                        return ws.GetReports(site.Name);
-                    },
-                    (success, result) =>
-                    {
-                        if (success)
-                        {
-                            OnlineVideosWebservice.Report[] reports = result as OnlineVideosWebservice.Report[];
+			{
+				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
+					() =>
+					{
+						OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+						return ws.GetReports(site.Name);
+					},
+					(success, result) =>
+					{
+						if (success)
+						{
+							OnlineVideosWebservice.Report[] reports = result as OnlineVideosWebservice.Report[];
 
-                            if (reports == null || reports.Length == 0)
-                            {
-                                GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                                if (dlg != null)
-                                {
-                                    dlg.Reset();
-                                    dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
-                                    dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+							if (reports == null || reports.Length == 0)
+							{
+								GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+								if (dlg != null)
+								{
+									dlg.Reset();
+									dlg.SetImage(GUIOnlineVideos.GetImageForSite("OnlineVideos", type: "Icon"));
+									dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
 									dlg.SetText(Translation.Instance.NoReportsForSite);
-                                    dlg.DoModal(GUIWindowManager.ActiveWindow);
-                                }
-                            }
-                            else
-                            {
-                                selectedSite = site.Name;
-                                GUIControl.ClearControl(GetID, GUI_infoList.GetID);
+									dlg.DoModal(GUIWindowManager.ActiveWindow);
+								}
+							}
+							else
+							{
+								selectedSite = site.Name;
+								GUIControl.ClearControl(GetID, GUI_infoList.GetID);
 
-                                Array.Sort(reports, new Comparison<OnlineVideosWebservice.Report>(delegate(OnlineVideosWebservice.Report a, OnlineVideosWebservice.Report b)
-                                {
-                                    return b.Date.CompareTo(a.Date);
-                                }));
+								Array.Sort(reports, new Comparison<OnlineVideosWebservice.Report>(delegate(OnlineVideosWebservice.Report a, OnlineVideosWebservice.Report b)
+								{
+									return b.Date.CompareTo(a.Date);
+								}));
 
-                                foreach (OnlineVideosWebservice.Report report in reports)
-                                {
-                                    string shortMsg = report.Message.Replace(Environment.NewLine, " ").Replace("\n", " ").Replace("\r", " ");
-                                    GUIListItem loListItem = new GUIListItem(shortMsg.Length > 44 ? shortMsg.Substring(0, 40) + " ..." : shortMsg);
-                                    loListItem.TVTag = report;
-                                    loListItem.Label2 = report.Type.ToString();
-                                    loListItem.Label3 = report.Date.ToString("g", OnlineVideoSettings.Instance.Locale);
-                                    loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnReportSelected);
-                                    GUI_infoList.Add(loListItem);
-                                }
-                                GUIControl.SelectItemControl(GetID, GUI_infoList.GetID, 0);
-                                GUIPropertyManager.SetProperty("#itemcount", GUI_infoList.Count.ToString());
+								foreach (OnlineVideosWebservice.Report report in reports)
+								{
+									string shortMsg = report.Message.Replace(Environment.NewLine, " ").Replace("\n", " ").Replace("\r", " ");
+									GUIListItem loListItem = new GUIListItem(shortMsg.Length > 44 ? shortMsg.Substring(0, 40) + " ..." : shortMsg);
+									loListItem.TVTag = report;
+									loListItem.Label2 = report.Type.ToString();
+									loListItem.Label3 = report.Date.ToString("g", OnlineVideoSettings.Instance.Locale);
+									loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnReportSelected);
+									GUI_infoList.Add(loListItem);
+								}
+								GUIControl.SelectItemControl(GetID, GUI_infoList.GetID, 0);
+								GUIPropertyManager.SetProperty("#itemcount", GUI_infoList.Count.ToString());
 								GUIPropertyManager.SetProperty("#itemtype", Translation.Instance.Reports);
-                            }
-                        }
+							}
+						}
 					}, Translation.Instance.GettingReports, true);
-            }
+			}
 			else if (dlgSel.SelectedLabelText == Translation.Instance.ReportBroken)
-            {
-                if (CheckOnlineVideosVersion())
-                {
-                    string userReason = "";
-                    if (GUIOnlineVideos.GetUserInputString(ref userReason, false))
-                    {
-                        if (userReason.Length < 15)
-                        {
-                            GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                            if (dlg != null)
-                            {
-                                dlg.Reset();
-                                dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+			{
+				if (CheckOnlineVideosVersion())
+				{
+					string userReason = "";
+					if (GUIOnlineVideos.GetUserInputString(ref userReason, false))
+					{
+						if (userReason.Length < 15)
+						{
+							GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+							if (dlg != null)
+							{
+								dlg.Reset();
+								dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
 								dlg.SetLine(1, Translation.Instance.PleaseEnterDescription);
-                                dlg.DoModal(GUIWindowManager.ActiveWindow);
-                            }
-                        }
-                        else
-                        {
-                            OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
-                            string message = "";
-                            bool success = ws.SubmitReport(site.Name, userReason, OnlineVideosWebservice.ReportType.Broken, out message);
-                            GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                            if (dlg != null)
-                            {
-                                dlg.Reset();
-                                dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+								dlg.DoModal(GUIWindowManager.ActiveWindow);
+							}
+						}
+						else
+						{
+							OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+							string message = "";
+							bool success = ws.SubmitReport(site.Name, userReason, OnlineVideosWebservice.ReportType.Broken, out message);
+							GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+							if (dlg != null)
+							{
+								dlg.Reset();
+								dlg.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
 								dlg.SetLine(1, success ? Translation.Instance.Done : Translation.Instance.Error);
-                                dlg.SetLine(2, message);
-                                dlg.DoModal(GUIWindowManager.ActiveWindow);
-                            }
-                            if (success)
-                            {
-                                // reload online sites
+								dlg.SetLine(2, message);
+								dlg.DoModal(GUIWindowManager.ActiveWindow);
+							}
+							if (success)
+							{
+								// reload online sites
 								OnlineVideos.Sites.Updater.GetRemoteOverviews(true);
-                                RefreshDisplayedOnlineSites();
-                            }
-                        }
-                    }
-                }
-            }
+								RefreshDisplayedOnlineSites();
+							}
+						}
+					}
+				}
+			}
         }
 		
 		internal void ReloadDownloadedDlls()
@@ -572,15 +592,17 @@ namespace OnlineVideos.MediaPortal1
                 case FilterStateOption.Broken:
                     return site.State == OnlineVideos.OnlineVideosWebservice.SiteState.Broken;
                 case FilterStateOption.Updatable:
-                    foreach (SiteSettings localSite in OnlineVideoSettings.Instance.SiteSettingsList)
-                    {
-                        if (localSite.Name == site.Name)
-                        {
-                            if ((site.LastUpdated - localSite.LastUpdated).TotalMinutes > 2) return true;
-                            else return false;
-                        }
-                    }
+					SiteSettings localSite = null;
+					if (OnlineVideoSettings.Instance.GetSiteByName(site.Name, out localSite) >= 0)
+					{
+						if ((site.LastUpdated - localSite.LastUpdated).TotalMinutes > 2) return true;
+						else return false;
+					}
                     return false;
+				case FilterStateOption.OnlyLocal:
+					return OnlineVideoSettings.Instance.GetSiteByName(site.Name, out localSite) >= 0;
+				case FilterStateOption.OnlyServer:
+					return OnlineVideoSettings.Instance.GetSiteByName(site.Name, out localSite) < 0;
                 default: return true;
             }
         }
