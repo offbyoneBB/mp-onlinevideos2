@@ -603,6 +603,11 @@ int64_t CMPUrlSourceSplitter_Rtmp::SeekToTime(int64_t time)
 {
   CLockMutex lock(this->lockMutex, INFINITE);
 
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME);
+  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, time);
+
+  int64_t result = -1;
+
   this->seekingActive = true;
 
   // there is internal exit request pending == changed timestamp
@@ -622,10 +627,9 @@ int64_t CMPUrlSourceSplitter_Rtmp::SeekToTime(int64_t time)
   if (this->IsConnected())
   {
     this->bytePosition = 0;
-    return ((max(0, time - 5000) / 1000) * 1000);
+    result = ((max(0, time - 1000) / 1000) * 1000);
   }
-  else
-  {
-    return -1;
-  }
+
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
+  return result;
 }

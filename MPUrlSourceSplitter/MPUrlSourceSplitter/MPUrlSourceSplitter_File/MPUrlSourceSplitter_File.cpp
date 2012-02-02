@@ -518,5 +518,11 @@ unsigned int CMPUrlSourceSplitter_File::GetSeekingCapabilities(void)
 
 int64_t CMPUrlSourceSplitter_File::SeekToTime(int64_t time)
 {
-  return E_NOTIMPL;
+  this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME);
+  this->logger->Log(LOGGER_VERBOSE, L"%s: %s: from time: %llu, to time: %llu", PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, time);
+
+  int64_t result = -1;
+
+  this->logger->Log(LOGGER_VERBOSE, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
+  return result;
 }
