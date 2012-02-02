@@ -42,7 +42,6 @@
     <Compile Include="BravoFactUtil.cs" />
     <Compile Include="BravoUtil.cs" />
     <Compile Include="CanWestUtilBase.cs" />
-    <Compile Include="CityTVUtil.cs" />
     <Compile Include="ComedyNetworkUtil.cs" />
     <Compile Include="CTVLocalNewsUtil.cs" />
     <Compile Include="CTVNewsUtil.cs" />
@@ -66,10 +65,6 @@
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
       <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
       <Name>OnlineVideos</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OnlineVideos.Sites.doskabouter\OnlineVideos.Sites.doskabouter.csproj">
-      <Project>{D43B3A93-FDF8-4B5C-8BD0-714FBBF9AF31}</Project>
-      <Name>OnlineVideos.Sites.doskabouter</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
